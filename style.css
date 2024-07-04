@@ -102,3 +102,12 @@ input[type="radio"]:checked::before {
   border-top: 2px dashed #222222;
   width: 100%;
 }
+.inprocrass {
+  @apply text-[#E3B231] bg-[#E3B231]/10 text-xs px-1 py-1 rounded-sm;
+}
+.delivered {
+  @apply text-[#3CD139] bg-[#3CD139]/10 text-xs px-2 py-1 rounded-sm;
+}
+.product-card:hover .btn {
+  @apply visible opacity-100 
+}

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Order Summary</title>
+    <title>My Orders</title>
 
     <link rel="stylesheet" href="../style.css" />
     <link
@@ -79,7 +79,7 @@
             ></span>
             <span><i class="fa-regular fa-heart text-xl"></i></span>
             <span>
-              <a href="checkout.html"
+              <a href="./src/checkout.html"
                 ><i class="fa-regular fa-bag-shopping text-xl relative">
                   <span
                     class="-bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center"
@@ -100,182 +100,187 @@
     </header>
 
     <main>
-      <!--Order Summary-->
+      <!-- My Orders -->
       <section class="container">
-        <div class="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
-          <h1 class="h1cart">Review Your Order</h1>
-          <div class="grid lg:grid-cols-12 lg:gap-20 px-0 justify-center">
-            <div
-              class="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]"
-            >
-              <div class="mb-7">
-                <div class="flex items-center space-x-0">
-                  <div class="pl-1">
-                    <i
-                      class="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-                      style="color: #ffffff"
-                    ></i>
-                  </div>
-                  <hr class="m-0 dashed-black" />
-                  <div class="text-center">
-                    <i
-                      class="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-                    ></i>
-                  </div>
-                  <hr class="m-0 dashed-black" />
-                  <div class="pr-1 text-center">
-                    <i
-                      class="fa-light fa-file-invoice bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-                    ></i>
-                  </div>
-                </div>
-                <div class="flex justify-between space-x-0">
-                  <div class="text-center">
-                    <span class="">Address</span>
-                  </div>
-
-                  <div class="text-center">
-                    <span>Payment Method</span>
-                  </div>
-
-                  <div class="text-center">
-                    <span>Review</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-[30px]">
-                <h3 class="title-h3">Estimated delivery: 22 Feb 2024</h3>
-
-                <div class="px-2 mb-8">
-                  <div
-                    class="flex gap-5 px-2 items-center border-b border-hrBlack py-5"
-                  >
-                    <img
-                      src="../assets/images/checkout/sanpham1.png"
-                      alt=""
-                      class="w-12 h-12"
-                    />
-
-                    <div class="px-1">
-                      <h3 class="font-bold my-1">
-                        Grils Pink Moana Printed Dress
-                      </h3>
-                      <p>$80.00</p>
-                      <p>Size: <span>S</span></p>
-                    </div>
-                  </div>
-                  <div
-                    class="flex gap-5 px-2 items-center border-b border-hrBlack py-5"
-                  >
-                    <img
-                      src="../assets/images/checkout/sanpham1.png"
-                      alt=""
-                      class="w-12 h-12"
-                    />
-
-                    <div class="px-1">
-                      <h3 class="font-bold my-1">
-                        Grils Pink Moana Printed Dress
-                      </h3>
-                      <p>$80.00</p>
-                      <p>Size: <span>S</span></p>
-                    </div>
-                  </div>
-                  <div
-                    class="flex gap-5 px-2 items-center border-b border-hrBlack py-5"
-                  >
-                    <img
-                      src="../assets/images/checkout/sanpham1.png"
-                      alt=""
-                      class="w-12 h-12"
-                    />
-
-                    <div class="px-1">
-                      <h3 class="font-bold my-1">
-                        Grils Pink Moana Printed Dress
-                      </h3>
-                      <p>$80.00</p>
-                      <p>Size: <span>S</span></p>
-                    </div>
-                  </div>
-                </div>
-                <div class="lg:w-[755px]">
-                  <h3 class="title-h3">Shipping Address</h3>
-                  <div
-                    class="py-6 items-center flex justify-between border-b border-hrBlack"
-                  >
-                    <div class="mb-3">
-                      <h4 class="font-bold text-xl">Robert Fox</h4>
-                      <p class="my-2 w-96 lg:w-[720px]">
-                        FR7V+8CF, Hồng Vũ Thắng Lợi, Khu đô thị, Tp. Sông Công,
-                        Thái Nguyên 250000
-                      </p>
-                    </div>
-
-                    <div
-                      class="text-lg rounded-lg bg-slate-100 px-[9px] py-1 text-center"
-                    >
-                      <i class="fa-regular fa-pen-to-square lowercase"></i>
-                    </div>
-                  </div>
-                  <h3 class="title-h3 mt-8">Payment Method</h3>
-                  <div
-                    class="py-6 flex justify-between border-b lg:w-[755px] border-hrBlack"
-                  >
-                    <div class="title-h3">
-                      <span>Debit Card(.... ... ... ..89)</span>
-                    </div>
-                    <div
-                      class="text-lg rounded-lg bg-slate-100 px-[9px] py-1 text-center"
-                    >
-                      <i class="fa-regular fa-pen-to-square lowercase"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <div class="lg:mx-14 mx-6 lg:my-[80px] my-[42px]">
+          <div class="grid lg:grid-cols-12 md:grid-cols-8 gap-2 items-center">
+            <div class="lg:col-span-7 md:col-span-4">
+              <h1 class="lg:text-4xl text-3xl tracking-wider">My Profile</h1>
             </div>
-            <div class="lg:col-span-4 col-span-6">
-              <div class="border px-4 py-1 lg:w-[359px] rounded-md">
-                <div
-                  class="flex justify-between font-bold border-hrBlack border-b py-4"
-                >
-                  <h4>Subtotal</h4>
-                  <span class="px-2">$200.00</span>
+            <div class="lg:col-span-5  md:col-span-4 relative flex">
+              <i
+                class="fa-light fa-magnifying-glass lg:text-2xl text-lg absolute lg:top-4 lg:left-5 top-[10px] left-3"
+              ></i>
+              <input
+                type="search"
+                value=""
+                placeholder="Search"
+                class="border border-blackL lg:w-[320px] md:w-[298px] lg:h-[56px] h-[36px]  rounded-xl lg:px-[50px]  px-[35px] mr-8"
+              />
+              <button
+                class="btn-black items-center px-8 flex whitespace-nowrap rounded-lg hover:text-black"
+              >
+                <span class="mr-3">Filter</span>
+                <i class="fa-solid fa-sliders"></i>
+              </button>
+            </div>
+          </div>
+          <div class="grid lg:grid-cols-12 grid-cols-8 lg:gap-8 gap-2 my-12">
+            <div class="lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] lg:h-[524px] rounded-lg">
+              <div class="flex items-center p-5 border-b border-hrBlack">
+                <img
+                  src="../assets/images/myorder/Ellipse 958.png"
+                  alt=""
+                  class="rounded-full w-[51px] h-[51px]"
+                />
+                <div class="px-4 py-2">
+                  <span class=""></span>
+                    <img src="../assets/images/myorder/Hello.png" class="px-[2px]" alt=""
+                  /></span>
+                  <h4 class="font-bold text-lg">Robert Fox</h4>
                 </div>
-                <div class="py-4">
-                  <label class="text-xs">Enter Discount Code</label><br />
+                <div class="lg:hidden " >
+<button>                <i class=" fa-solid fa-layer-group pl-5 text-xl"></i>
+</button>             </div> </div>
+              <nav class="lg:block hidden py-5 w-full">
+                <ul class="space-y-2">
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-user mr-3"></i>Personal Information
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-box mr-3"></i>My Orders
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-heart mr-3"></i>My Wishlist
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-location-dot mr-3"></i>Manage Addresses
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-light fa-credit-card mr-3"></i>Saved Cards
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-bell mr-3"></i>Notifications
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                     
+ 
 
-                  <div class="flex">
-                    <input
-                      type="text"
-                      placeholder="FLAT50"
-                      class="lg:w-[218px] w-[300px] h-[56px] px-4 rounded-s-lg focus:outline-none border border-l-2 border-t-2 border-blackL border-r-0"
-                    />
-                    <button
-                      class="bg-black hover:bg-stone-700 w-[101px] h-[55px] border border-black rounded-r-lg text-white"
-                    >
-                      Apply
-                    </button>
-                  </div>
-
+<i class="fa-regular fa-gear mr-3"></i>Settings
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="lg:col-span-9  col-span-8 lg:pl-9">
+              <div class=" pb-6 flex justify-between border-b border-hrBlack">
+                <div class="grid justify-between ">
                   <div
-                    class="py-4 flex justify-between font-medium border-b border-hrBlack"
+                    class="flex gap-5  items-center  "
                   >
-                    <p>Delivery Charge</p>
-                    <span class="px-2">$5.00</span>
+                    <img
+                      src="../assets/images/checkout/sanpham1.png"
+                      alt=""
+                      class="w-12 h-12"
+                    />
+
+                    <div class="px-1">
+                      <h3 class="font-bold my-1">
+                        Grils Pink Moana Printed Dress
+                      </h3>
+ <p class="  font-bold md:hidden block">Price: $80.00</p>
+                      <p>Size: <span>S</span></p>
+                      <p>Qyt: 1</p>
+                     
+                    </div>
+                  </div>
+                  <div class="mt-9 px-7  ">
+                    <a href="" class="delivered text-xs px-2 py-1 rounded-sm">Delivered</a>
+                    <span >Your product has been delivered</span>
                   </div>
                 </div>
-                <div class="flex justify-between font-bold mb-8">
-                  <h4>Grand Total</h4>
-                  <span>$205.00</span>
+                <div class="text-center py-8  font-bold md:block hidden"><p>$80.00</p></div>
+                <div class="hidden sm:block ">
+                  <button class="  hover:bg-blackL hover:text-white shadow font-medium  shadow-black/50 text-sm py-3 px-6 mb-2 rounded-lg">View Order</button><br>
+                  <button class="bg-blackL hover:bg-white  hover:text-blackL  shadow-lg shadow-slate-600/50 text-white px-4 text-sm py-3 rounded-lg">Write A Review</button>
                 </div>
-                <button
-                  type="submit"
-                  class="block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
-                >
-                  Place Order
-                </button>
+              </div>
+              <div class=" pb-6 flex justify-between border-b border-hrBlack">
+                <div class="grid justify-between ">
+                  <div
+                    class="flex gap-5  items-center  "
+                  >
+                    <img
+                      src="../assets/images/checkout/sanpham1.png"
+                      alt=""
+                      class="w-12 h-12"
+                    />
+
+                    <div class="px-1">
+                      <h3 class="font-bold my-1">
+                        Grils Pink Moana Printed Dress
+                      </h3>
+                      <p class="  font-bold md:hidden block ">Price: $80.00</p>
+
+                      <p>Size: <span>S</span></p>
+                      <p>Qyt: 1</p>
+                    </div>
+                  </div>
+                  <div class="mt-9 px-7  ">
+                    <a href="" class="inprocrass text-xs px-2 py-1 rounded-sm">In Procrass</a>
+                    <span>Your product has been Inprocrass</span>
+                  </div>
+                </div>
+                <div class="text-center py-8  font-bold md:block hidden"><p>$80.00</p></div>
+                <div class="hidden sm:block ">
+                  <button class="  hover:bg-blackL hover:text-white shadow font-medium  shadow-black/50 text-sm py-3 px-6 mb-2 rounded-lg">View Order</button><br>
+                  <button class="bg-[#FF7262] hover:bg-[#e9b2ac]    shadow-lg shadow-slate-600/50 text-white px-5 text-sm py-3 rounded-lg">Cancel Order</button>
+                </div>
+              </div>
+              <div class=" pb-6 flex justify-between border-b border-hrBlack">
+                <div class="grid justify-between ">
+                  <div
+                    class="flex gap-5  items-center  "
+                  >
+                    <img
+                      src="../assets/images/checkout/sanpham1.png"
+                      alt=""
+                      class="w-12 h-12"
+                    />
+
+                    <div class="px-1">
+                      <h3 class="font-bold my-1">
+                        Grils Pink Moana Printed Dress
+                      </h3>
+                      <p class="  font-bold md:hidden block md:block hidden">Price: $80.00</p>
+
+                      <p>Size: <span>S</span></p>
+                      <p>Qyt: 1</p>
+                    </div>
+                  </div>
+                  <div class="mt-9 px-7  ">
+                    <a href="" class="inprocrass text-xs px-2 py-1 rounded-sm">In Procrass</a>
+                    <span>Your product has been Inprocrass</span>
+                  </div>
+                </div>
+                <div class="text-center py-8  font-bold"><p>$80.00</p></div>
+                <div class="hidden sm:block ">
+                  <button class="  hover:bg-blackL hover:text-white shadow font-medium  shadow-black/50 text-sm py-3 px-6 mb-2 rounded-lg">View Order</button><br>
+                  <button class="bg-[#FF7262] hover:bg-[#e9b2ac]    shadow-lg shadow-slate-600/50 text-white px-5 text-sm py-3 rounded-lg">Cancel Order</button>
+                </div>
               </div>
             </div>
           </div>
