@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krist - Women's Collection</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/src/css/style.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <div class="flex flex-wrap -mx-4">
+            <!-- Sidebar Filters -->
+            <div class="w-full lg:w-1/4 p-4 border-r mb-4 lg:mb-0">
+                <!-- Product Categories -->
+                <div class="mb-4">
+                    <h2 class="font-semibold mb-2">Product Categories</h2>
+                    <div>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Men
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Women
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Kids
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Bags
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Belts
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Wallets
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Watches
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Accessories
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> Winter Wear
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Filter by Price -->
+                <div class="mb-4">
+                    <h2 class="font-semibold mb-2">Filter by Price</h2>
+                    <input type="range" min="0" max="2000" value="1000" class="w-full">
+                    <div class="flex justify-between text-sm">
+                        <span>$0</span>
+                        <span>$2000</span>
+                    </div>
+                </div>
+
+                <!-- Filter by Color -->
+                <div class="mb-4">
+                    <h2 class="font-semibold mb-2">Filter by Color</h2>
+                    <div class="flex flex-col">
+                        <div class="flex items-center mb-2">
+                            <span class="w-4 h-4 bg-red-500 inline-block mr-2"></span>
+                            <span>Red (10)</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <span class="w-4 h-4 bg-blue-500 inline-block mr-2"></span>
+                            <span>Blue (14)</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <span class="w-4 h-4 bg-orange-500 inline-block mr-2"></span>
+                            <span>Orange (8)</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <span class="w-4 h-4 bg-black inline-block mr-2"></span>
+                            <span>Black (9)</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <span class="w-4 h-4 bg-green-500 inline-block mr-2"></span>
+                            <span>Green (4)</span>
+                        </div>
+                        <div class="flex items-center mb-2">
+                            <span class="w-4 h-4 bg-yellow-500 inline-block mr-2"></span>
+                            <span>Yellow (2)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter by Size -->
+                <div class="mb-4">
+                    <h2 class="font-semibold mb-2">Filter by Size</h2>
+                    <div>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> S (6)
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> M (20)
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> L (7)
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> XL (16)
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> XXL (10)
+                        </label>
+                        <label class="block">
+                            <input type="checkbox" class="mr-2"> XXXL (2)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- Product Listings -->
+            <div class="w-full lg:w-3/4 px-4">
+                <div class="flex justify-between items-center mb-4">
+                    <span>Showing 1–16 of 72 results</span>
+                    <div class="flex space-x-2">
+                        <button class="bg-gray-200 p-2 rounded"><i class="fas fa-th-large"></i></button>
+                        <button class="bg-gray-200 p-2 rounded"><i class="fas fa-bars"></i></button>
+                    </div>
+                </div>
+                <section class="bg-white py-12">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-2xl font-extrabold text-gray-900">Our Bestseller</h2>
+                        <div class="mt-6 grid grid-cols-2 gap-y-10 sm:grid-cols-3 gap-x-6 lg:grid-cols-4 lg:gap-x-8">
+                            <!-- Product 1 -->
+                            <div class="relative group">
+                                <div class="category-card">
+                                    <a href="#"
+                                        class="block h-64 rounded-lg shadow-lg overflow-hidden group-hover:opacity-100">
+                                        <img src="/assets/images/aomau2.png" alt="Product 1"
+                                            class="w-full h-full object-center object-cover">
+                                        <h3 class="add-to-cart text-lg font-medium bg-white text-gray-600 w-[250px] rounded-2xl text-center py-2">
+                                            Add To Cart
+                                        </h3>
+                                    </a>
+                                    <div class="icons flex absolute top-4 right-4 space-x-2">
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-star"></i>
+                                        </button>
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-sync"></i>
+                                        </button>
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <h3 class="text-sm text-gray-700">
+                                        <a href="#">Allen Solly</a>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">Women Textured Handheld Bag</p>
+                                    <p class="mt-1 text-sm font-medium text-gray-900">$80.00 <span class="line-through">$100.00</span></p>
+                                </div>
+                            </div>
+            
+                            <!-- Product 2 -->
+                            <div class="relative group">
+                                <div class="category-card">
+                                    <a href="#"
+                                        class="block h-64 rounded-lg shadow-lg overflow-hidden group-hover:opacity-100">
+                                        <img src="/assets/images/aomau2.png" alt="Product 1"
+                                            class="w-full h-full object-center object-cover">
+                                        <h3 class="add-to-cart text-lg font-medium bg-white text-gray-600 w-[250px] rounded-2xl text-center py-2">
+                                            Add To Cart
+                                        </h3>
+                                    </a>
+                                    <div class="icons flex absolute top-4 right-4 space-x-2">
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-star"></i>
+                                        </button>
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-sync"></i>
+                                        </button>
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <h3 class="text-sm text-gray-700">
+                                        <a href="#">Allen Solly</a>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">Women Textured Handheld Bag</p>
+                                    <p class="mt-1 text-sm font-medium text-gray-900">$80.00 <span class="line-through">$100.00</span></p>
+                                </div>
+                            </div>
+            
+                            <!-- Product 3 -->
+                            <div class="relative group">
+                                <div class="category-card">
+                                    <a href="#"
+                                        class="block h-64 rounded-lg shadow-lg overflow-hidden group-hover:opacity-100">
+                                        <img src="/assets/images/aomau2.png" alt="Product 1"
+                                            class="w-full h-full object-center object-cover">
+                                        <h3 class="add-to-cart text-lg font-medium bg-white text-gray-600 w-[250px] rounded-2xl text-center py-2">
+                                            Add To Cart
+                                        </h3>
+                                    </a>
+                                    <div class="icons flex absolute top-4 right-4 space-x-2">
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-star"></i>
+                                        </button>
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-sync"></i>
+                                        </button>
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <h3 class="text-sm text-gray-700">
+                                        <a href="#">Allen Solly</a>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">Women Textured Handheld Bag</p>
+                                    <p class="mt-1 text-sm font-medium text-gray-900">$80.00 <span class="line-through">$100.00</span></p>
+                                </div>
+                            </div>
+            
+                            <!-- Product 4 -->
+                            <div class="relative group">
+                                <div class="category-card">
+                                    <a href="#"
+                                        class="block h-64 rounded-lg shadow-lg overflow-hidden group-hover:opacity-100">
+                                        <img src="/assets/images/aomau2.png" alt="Product 1"
+                                            class="w-full h-full object-center object-cover">
+                                        <h3 class="add-to-cart text-lg font-medium bg-white text-gray-600 w-[250px] rounded-2xl text-center py-2">
+                                            Add To Cart
+                                        </h3>
+                                    </a>
+                                    <div class="icons flex absolute top-4 right-4 space-x-2">
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-star"></i>
+                                        </button>
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-sync"></i>
+                                        </button>
+                                        <button class="bg-white p-2 rounded-full shadow hover:bg-gray-200">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <h3 class="text-sm text-gray-700">
+                                        <a href="#">Allen Solly</a>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">Women Textured Handheld Bag</p>
+                                    <p class="mt-1 text-sm font-medium text-gray-900">$80.00 <span class="line-through">$100.00</span></p>
+                                </div>
+                            </div>
+                            <!-- Add more products here... -->
+                        </div>
+            
+                        <!-- Pagination -->
+                        <div class="flex justify-center mt-8">
+                            <div class="flex items-center space-x-2">
+                                <button class="px-3 py-1 rounded bg-gray-200 text-gray-500 hover:bg-gray-300">
+                                    &larr;
+                                </button>
+                                <button class="px-3 py-1 rounded bg-black text-white">
+                                    1
+                                </button>
+                                <button class="px-3 py-1 rounded bg-white text-gray-700 hover:bg-gray-200">
+                                    2
+                                </button>
+                                <button class="px-3 py-1 rounded bg-white text-gray-700 hover:bg-gray-200">
+                                    3
+                                </button>
+                                <button class="px-3 py-1 rounded bg-white text-gray-700 hover:bg-gray-200">
+                                    4
+                                </button>
+                                <button class="px-3 py-1 rounded bg-white text-gray-700 hover:bg-gray-200">
+                                    5
+                                </button>
+                                <button class="px-3 py-1 rounded bg-gray-200 text-gray-500 hover:bg-gray-300">
+                                    &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-16 text-center">
+            <div>
+                <img src="/assets/images/truck-fast-solid.svg" alt="Free Shipping" class="h-7 w-7 mx-auto mb-2">
+                <h3 class="font-bold">Free Shipping</h3>
+                <p>Free shipping for order above $150</p>
+            </div>
+            <div>
+                <img src="/assets/images/coins-solid.svg" alt="Money Guarantee" class="h-7 w-7 mx-auto mb-2">
+                <h3 class="font-bold">Money Guarantee</h3>
+                <p>Within 30 days for an exchange</p>
+            </div>
+            <div>
+                <img src="/assets/images/phone-solid.svg" alt="Online Support" class="h-7 w-7 mx-auto mb-2">
+                <h3 class="font-bold">Online Support</h3>
+                <p>24 hours a day, 7 days a week</p>
+            </div>
+            <div>
+                <img src="/assets/images/credit-card-regular.svg" alt="Flexible Payment" class="h-7 w-7 mx-auto mb-2">
+                <h3 class="font-bold">Flexible Payment</h3>
+                <p>Pay with multiple credit cards</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

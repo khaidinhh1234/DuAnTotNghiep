@@ -8,8 +8,8 @@ export default {
         hrBlack: "#eaeaeb",
       },
       backgroundImage: {
-        bannerL: "url('/src/assets/images/banner.png')",
-        Logninimge: "url('/src/assets/images/lognin/banner.png')",
+        bannerL: "url('./src/assets/images/Homepage/banner1.png')",
+        Logninimge: "url('./src/assets/images/lognin/banner.png')",
       },
     },
   },
