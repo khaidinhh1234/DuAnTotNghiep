@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Check Out</title>
+
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Heaser -->
+    <header>
+      <div class="container my-3">
+        <div class="flex justify-around lg:justify-between items-center">
+          <div class="order-1 lg:hidden">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </div>
+          <div class="order-2 Logo w-28">
+            <img
+              src="../assets/images/Logo.svg "
+              alt=""
+              class="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
+            />
+          </div>
+
+          <nav class="order-3 hidden lg:block">
+            <ul class="flex items-center space-x-2">
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Shop</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Our Story</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Blog</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Contact Us</a
+                >
+              </li>
+            </ul>
+          </nav>
+          <div class="order-4 icon space-x-6 *:cursor-pointer">
+            <span class=""
+              ><i class="fa-solid fa-magnifying-glass text-xl"></i
+            ></span>
+            <span><i class="fa-regular fa-heart text-xl"></i></span>
+            <span>
+              <a href="./src/checkout.html"
+                ><i class="fa-regular fa-bag-shopping text-xl relative">
+                  <span
+                    class="-bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center"
+                    >0</span
+                  ></i
+                ></a
+              >
+            </span>
+
+            <button
+              class="btn-black lg:text-lg lg:py-3 lg:px-7 py-2 px-5 font-serif rounded-lg"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!--Checkout -->
+      <section>
+        <div class="container">
+          <div class="mx-14 flex mt-[70px] mb-9">
+            <p class="pr-2">shop</p>
+            >
+            <p class="px-2">All Products</p>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="container">
+          <div class="flex flex-wrap sm:mx-10 items-start w-full">
+            <!-- Sidebar Filters -->
+            <button class="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
+              <i
+                class="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"
+              ></i>
+            </button>
+            <div class="lg:block hidden w-1/4 py-4 px-5 mb-4 lg:mb-0">
+              <!-- Product Categories -->
+              <div class="mb-9">
+                <div class="flex justify-between items-center">
+                  <h2 class="font-bold mb-2 text-lg">Product Categories</h2>
+                  <button><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+                <div class="mt-3">
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Men
+                    </label>
+                    <i class="fa-solid fa-plus"></i>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Women
+                    </label>
+                    <i class="fa-solid fa-plus"></i>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Kids
+                    </label>
+                    <i class="fa-solid fa-plus"></i>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Bags
+                    </label>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Belts
+                    </label>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Wallets
+                    </label>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Watches
+                    </label>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Accessories
+                    </label>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex">
+                      <input type="checkbox" class="mr-2" /> Winter Wear
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filter by Price -->
+              <div class="mb-1">
+                <h2 class="font-bold text-lg mb-2">Filter by Price</h2>
+                <p class="my-4 font-medium">Price: 1$ - 2000$</p>
+
+                <div class="w-2/3">
+                  <div class="range-container">
+                    <div class="range-slider"></div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="2000"
+                      value="0"
+                      class="range-input"
+                      id="range1"
+                    />
+                    <input
+                      type="range"
+                      min="0"
+                      max="2000"
+                      value="2000"
+                      class="range-input"
+                      id="range2"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filter by Color -->
+              <div class="mb-16">
+                <div class="flex justify-between items-center">
+                  <h2 class="font-bold text-lg mb-2">Filter by Color</h2>
+                  <button><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+                <div class="flex flex-col">
+                  <div class="flex justify-between items-center mt-3">
+                    <div class="flex items-center font-semibold">
+                      <span
+                        class="w-6 h-6 bg-red-500 inline-block mr-2 rounded-[4px]"
+                      ></span
+                      ><span>Red</span>
+                    </div>
+                    <span class="px-3"> (10)</span>
+                  </div>
+                  <div class="flex justify-between items-center mt-3">
+                    <div class="flex items-center font-semibold">
+                      <span
+                        class="w-6 h-6 bg-blue-500 inline-block mr-2 rounded-[4px]"
+                      ></span>
+                      <span>Blue </span>
+                    </div>
+                    <span class="px-3"> (14)</span>
+                  </div>
+                  <div class="flex justify-between items-center mt-3">
+                    <div class="flex items-center font-semibold">
+                      <span
+                        class="w-6 h-6 bg-orange-500 inline-block mr-2 rounded-[4px]"
+                      ></span>
+                      <span>Orange </span>
+                    </div>
+                    <span class="px-3"> (8)</span>
+                  </div>
+                  <div class="flex justify-between items-center mt-3">
+                    <div class="flex items-center font-semibold">
+                      <span
+                        class="w-6 h-6 bg-black inline-block mr-2 rounded-[4px]"
+                      ></span>
+                      <span>Black </span>
+                    </div>
+                    <span class="px-3"> (9)</span>
+                  </div>
+                  <div class="flex justify-between items-center mt-3">
+                    <div class="flex items-center font-semibold">
+                      <span
+                        class="w-6 h-6 bg-green-500 inline-block mr-2 rounded-[4px]"
+                      ></span>
+                      <span>Green </span>
+                    </div>
+                    <span class="px-3"> (4)</span>
+                  </div>
+                  <div class="flex justify-between items-center mt-3">
+                    <div class="flex items-center font-semibold">
+                      <span
+                        class="w-6 h-6 bg-yellow-500 inline-block mr-2 rounded-[4px]"
+                      ></span>
+                      <span>Yellow </span>
+                    </div>
+                    <span class="px-3"> (2)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filter by Size -->
+              <div class="mb-4">
+                <div class="flex justify-between items-center">
+                  <h2 class="font-bold text-lg mb-2">Filter by Size</h2>
+                  <i class="fa-solid fa-chevron-up"></i>
+                </div>
+                <div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex font-normal">
+                      <input type="checkbox" class="mr-2" /> S
+                    </label>
+                    <span>(6)</span>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex font-normal">
+                      <input type="checkbox" class="mr-2" /> M
+                    </label>
+                    <span>(20)</span>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex font-normal">
+                      <input type="checkbox" class="mr-2" /> L
+                    </label>
+                    <span>(7)</span>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex font-normal">
+                      <input type="checkbox" class="mr-2" /> XL
+                    </label>
+                    <span>(16)</span>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex font-normal">
+                      <input type="checkbox" class="mr-2" /> XXL
+                    </label>
+                    <span>(10)</span>
+                  </div>
+                  <div class="flex justify-between items-center my-4">
+                    <label class="flex font-normal">
+                      <input type="checkbox" class="mr-2" /> XXXL
+                    </label>
+                    <span>(2)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Product Listings -->
+            <div class="sm:w-3/4 w-3/4 px-5">
+              <div
+                class="flex justify-between sm:items-center items-start mb-4"
+              >
+                <div class="sm:flex items-center mt-2">
+                  <div class="flex space-x-2">
+                    <button class="text-2xl rounded">
+                      <i class="fa-light fa-grid-2"></i>
+                    </button>
+                    <button class="text-2xl px-3 rounded">
+                      <i class="fa-light fa-line-height"></i>
+                    </button>
+                  </div>
+                  <div>
+                    <p class="text-gray-700">
+                      Showing
+                      <span class="font-medium">1</span>
+                      to
+                      <span class="font-medium">10</span>
+                      of
+                      <span class="font-medium">97</span>
+                      results
+                    </p>
+                  </div>
+                </div>
+                <div class="w-0.5/4 sm:text-base text-sm flex items-center">
+                  Short by latest <i class="fa-solid fa-chevron-down pl-1"></i>
+                </div>
+              </div>
+              <section class="">
+                <div class="container">
+                  <div class="grid grid-cols-12 justify-center lg:gap-7 gap-14">
+                    <div
+                      class="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto"
+                    >
+                      <div class="product-card hover:bg-zinc-100">
+                        <div class="w-full sm:h-[332px] h-[400px] relative">
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <img
+                            src="../assets/images/myorder/product.png"
+                            alt=""
+                            class="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
+                          />
+                          <button
+                            class="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                        <div class="bg-white pt-4">
+                          <a href="#"
+                            ><h5 class="font-bold sm:text-lg text-xl">
+                              Allen Solly
+                            </h5></a
+                          >
+                          <p class="my-1 font-normal">
+                            Women Texttured Handheld Bag
+                          </p>
+                          <p class="font-medium">
+                            $80.00
+                            <span class="text-black/20 line-through px-1"
+                              >$100.00</span
+                            >
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto"
+                    >
+                      <div class="product-card hover:bg-zinc-100">
+                        <div class="w-full sm:h-[332px] h-[400px] relative">
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <img
+                            src="../assets/images/myorder/product.png"
+                            alt=""
+                            class="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
+                          />
+                          <button
+                            class="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                        <div class="bg-white pt-4">
+                          <a href="#"
+                            ><h5 class="font-bold sm:text-lg text-xl">
+                              Allen Solly
+                            </h5></a
+                          >
+                          <p class="my-1 font-normal">
+                            Women Texttured Handheld Bag
+                          </p>
+                          <p class="font-medium">
+                            $80.00
+                            <span class="text-black/20 line-through px-1"
+                              >$100.00</span
+                            >
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto"
+                    >
+                      <div class="product-card hover:bg-zinc-100">
+                        <div class="w-full sm:h-[332px] h-[400px] relative">
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <img
+                            src="../assets/images/myorder/product.png"
+                            alt=""
+                            class="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
+                          />
+                          <button
+                            class="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                        <div class="bg-white pt-4">
+                          <a href="#"
+                            ><h5 class="font-bold sm:text-lg text-xl">
+                              Allen Solly
+                            </h5></a
+                          >
+                          <p class="my-1 font-normal">
+                            Women Texttured Handheld Bag
+                          </p>
+                          <p class="font-medium">
+                            $80.00
+                            <span class="text-black/20 line-through px-1"
+                              >$100.00</span
+                            >
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto"
+                    >
+                      <div class="product-card hover:bg-zinc-100">
+                        <div class="w-full sm:h-[332px] h-[400px] relative">
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <img
+                            src="../assets/images/myorder/product.png"
+                            alt=""
+                            class="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
+                          />
+                          <button
+                            class="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                        <div class="bg-white pt-4">
+                          <a href="#"
+                            ><h5 class="font-bold sm:text-lg text-xl">
+                              Allen Solly
+                            </h5></a
+                          >
+                          <p class="my-1 font-normal">
+                            Women Texttured Handheld Bag
+                          </p>
+                          <p class="font-medium">
+                            $80.00
+                            <span class="text-black/20 line-through px-1"
+                              >$100.00</span
+                            >
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto"
+                    >
+                      <div class="product-card hover:bg-zinc-100">
+                        <div class="w-full sm:h-[332px] h-[400px] relative">
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <img
+                            src="../assets/images/myorder/product.png"
+                            alt=""
+                            class="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
+                          />
+                          <button
+                            class="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                        <div class="bg-white pt-4">
+                          <a href="#"
+                            ><h5 class="font-bold sm:text-lg text-xl">
+                              Allen Solly
+                            </h5></a
+                          >
+                          <p class="my-1 font-normal">
+                            Women Texttured Handheld Bag
+                          </p>
+                          <p class="font-medium">
+                            $80.00
+                            <span class="text-black/20 line-through px-1"
+                              >$100.00</span
+                            >
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto"
+                    >
+                      <div class="product-card hover:bg-zinc-100">
+                        <div class="w-full sm:h-[332px] h-[400px] relative">
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <img
+                            src="../assets/images/myorder/product.png"
+                            alt=""
+                            class="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
+                          />
+                          <button
+                            class="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                        <div class="bg-white pt-4">
+                          <a href="#"
+                            ><h5 class="font-bold sm:text-lg text-xl">
+                              Allen Solly
+                            </h5></a
+                          >
+                          <p class="my-1 font-normal">
+                            Women Texttured Handheld Bag
+                          </p>
+                          <p class="font-medium">
+                            $80.00
+                            <span class="text-black/20 line-through px-1"
+                              >$100.00</span
+                            >
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto"
+                    >
+                      <div class="product-card hover:bg-zinc-100">
+                        <div class="w-full sm:h-[332px] h-[400px] relative">
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <a href="#"
+                            ><i
+                              class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                            ></i
+                          ></a>
+                          <img
+                            src="../assets/images/myorder/product.png"
+                            alt=""
+                            class="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
+                          />
+                          <button
+                            class="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                        <div class="bg-white pt-4">
+                          <a href="#" class=""
+                            ><p class="font-bold sm:text-lg text-xl">
+                              Allen Solly
+                            </p></a
+                          >
+                          <p class="my-1 font-normal">
+                            Women Texttured Handheld Bag
+                          </p>
+                          <p class="font-medium">
+                            $80.00
+                            <span class="text-black/20 line-through px-1"
+                              >$100.00</span
+                            >
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Pagination -->
+                  <div class="flex justify-end mt-8">
+                    <div
+                      class="flex items-center justify-between border-gray-200 bg-white px-4 py-3 sm:px-6"
+                    >
+                      <div class="flex flex-1 justify-between sm:hidden">
+                        <a
+                          href="#"
+                          class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                          >Previous</a
+                        >
+                        <a
+                          href="#"
+                          class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                          >Next</a
+                        >
+                      </div>
+                      <div
+                        class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between"
+                      >
+                        <div>
+                          <nav
+                            class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                            aria-label="Pagination"
+                          >
+                            <a
+                              href="#"
+                              class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                            >
+                              <span class="sr-only">Previous</span>
+                              <svg
+                                class="h-5 w-5"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                                  clip-rule="evenodd"
+                                />
+                              </svg>
+                            </a>
+                            <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
+                            <a
+                              href="#"
+                              aria-current="page"
+                              class="relative z-10 inline-flex items-center bg-blackL px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blackL"
+                              >1</a
+                            >
+                            <a
+                              href="#"
+                              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                              >2</a
+                            >
+                            <a
+                              href="#"
+                              class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
+                              >3</a
+                            >
+                            <span
+                              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
+                              >...</span
+                            >
+                            <a
+                              href="#"
+                              class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
+                              >8</a
+                            >
+                            <a
+                              href="#"
+                              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                              >9</a
+                            >
+                            <a
+                              href="#"
+                              class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                              >10</a
+                            >
+                            <a
+                              href="#"
+                              class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                            >
+                              <span class="sr-only">Next</span>
+                              <svg
+                                class="h-5 w-5"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                  clip-rule="evenodd"
+                                />
+                              </svg>
+                            </a>
+                          </nav>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <!-- End Main -->
+        <div class="container">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-14 mt-24 mb-24">
+            <div class="mx-auto">
+              <i class="fa-regular fa-box text-3xl"></i>
+              <h3 class="font-bold text-xl mt-3 mb-2">Free Shipping</h3>
+              <p>Free shipping for order above $150</p>
+            </div>
+            <div class="mx-auto">
+              <i class="fa-regular fa-circle-dollar text-3xl"></i>
+              <h3 class="font-bold text-xl mt-3 mb-2">Money Guarantee</h3>
+              <p>Within 30 days for an exchange</p>
+            </div>
+            <div class="mx-auto">
+              <i class="fa-regular fa-headphones text-3xl"></i>
+              <h3 class="font-bold text-xl mt-3 mb-2">Online Support</h3>
+              <p>24 hours a day, 7 days a week</p>
+            </div>
+            <div class="mx-auto">
+              <i class="fa-light fa-credit-card text-3xl"></i>
+              <h3 class="font-bold text-xl mt-3 mb-2">Flexible Payment</h3>
+              <p>Pay with multiple credit cards</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="bg-black text-white">
+      <div class="container">
+        <div
+          class="grid grid-cols-12 gap-8 mx-4 py-14 border-b border-stone-700"
+        >
+          <div class="lg:col-span-4 col-span-6">
+            <div>
+              <img
+                src="../assets/images/Logofooter.png "
+                alt=""
+                class="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
+              />
+            </div>
+            <div class="my-[39px] space-y-5 w-[261px]">
+              <div class="*:px-1">
+                <i class="fa-regular fa-phone-volume text-lg"></i>
+                <span class="text-base">(704)555-0127</span>
+              </div>
+              <div class="*:px-1">
+                <i class="fa-light fa-envelope text-lg"></i
+                ><span class="mx-1">kist@example.com</span>
+              </div>
+              <div class="*:px-1 flex">
+                <i class="fa-regular fa-location-dot text-lg"></i>
+                <span class="mx-2 lg:w-full w-48"
+                  >3891 Ranchview Dr.Richardson, California 626339</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-2 col-span-6">
+            <h1 class="text-xl font-semibold mb-3">Information</h1>
+            <ul class="">
+              <li class="mb-3"><a href="" class="">My Acount</a></li>
+              <li class="mb-3"><a href="">Login</a></li>
+              <li class="mb-3"><a href="">My Cart</a></li>
+              <li class="mb-3"><a href="">My Wishlist</a></li>
+
+              <li class="mb-3"><a href="">Checkout</a></li>
+            </ul>
+          </div>
+          <div class="lg:col-span-2 col-span-6">
+            <h1 class="text-xl font-semibold mb-3">Service</h1>
+            <ul>
+              <li class="mb-3"><a href="">About Us</a></li>
+              <li class="mb-3"><a href="">Careers</a></li>
+              <li class="mb-3"><a href="">Delivery Information</a></li>
+              <li class="mb-3"><a href="">Privacy Policy</a></li>
+              <li class="mb-3"><a href="">Terms & Conditions</a></li>
+            </ul>
+          </div>
+          <div class="lg:col-span-4 col-span-6">
+            <h1 class="text-xl font-semibold mb-4">Subscribe</h1>
+            <p class="lg:w-80 mb-5">
+              Enter your email below to be the first to know about new
+              collections and product launches.
+            </p>
+            <div class="relative">
+              <i
+                class="fa-regular fa-envelope absolute top-3 left-4 text-2xl"
+              ></i>
+
+              <input
+                type="email"
+                placeholder="Your Email"
+                class="lg:w-[305px] w-[200px] bg-blackL text-[15px] py-3 px-12 rounded-lg text-white border shadow-lg shadow-slate-600/50 focus:ring focus:ring-blue-500 focus:ring-opacity-50 focus:outline-none placeholder-white"
+              />
+              <button type="submit">
+                <i
+                  class="fa-solid fa-arrow-right absolute text-gray-400 lg:top-4 lg:left-[270px] text-xl top-4 left-[170px]"
+                ></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between py-3">
+          <div class="">
+            <img src="../assets/images/bank.png" alt="" class="h-7" />
+          </div>
+          <div>© 2024 Krist All Rights are Reserved.</div>
+          <div class="*:text-2xl *:px-3">
+            <i class="fa-brands fa-facebook" style="color: #ffffff"></i
+            ><i class="fa-brands fa-instagram"></i
+            ><i class="fa-brands fa-twitter" style="color: #ffffff"></i>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
