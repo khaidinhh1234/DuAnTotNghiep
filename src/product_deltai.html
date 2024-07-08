@@ -8,13 +8,16 @@
     <title>Order Summary</title>
 
     <link rel="stylesheet" href="../style.css" />
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 
 <body>
@@ -74,136 +77,142 @@
 
     <main>
         <!--Order Summary-->
-        <section class="container">
-            <h2 class="mt-6 mb-6">
-                <a href="">Home</a>
-                <i class="fa-solid fa-angle-up fa-rotate-90" style="color: #000000;"></i>
-                <a href="">Shop</a>
-                <i class="fa-solid fa-angle-up fa-rotate-90" style="color: #000000;"></i>
-                <a href="">Women Textured Hanhed Bag</a>
-                <i class="fa-solid fa-angle-up fa-rotate-90" style="color: #000000;"></i>
-            </h2>
-
-            <section class="product_detail flex  " style="width: 100%; ">
-                <section class="pro_detail_img " style="width: 50%;">
-                    <div class="pro_detail_img_main ">
-                        <img src="../assets/images/myorder/product.png" alt="" class="w-full" style="height: 620px;">
+        <section>
+            <div class="container">
+              <div class="mx-14 flex mt-[70px] mb-9">  <p class="pr-2">Home</p>
+                >
+                <p class="px-2">Shop</p>
+                >
+                <p class="px-2">All Products</p>
+              </div>
+            </div>
+          </section>
+        <section >
+        <div class=" container pb-11" >
+            <div class="md:px-14 px-5 pt-3 grid grid-cols-12  gap-3  w-[100%]  justify-center" >
+                <div class="lg:col-span-6 col-span-12 mx-auto mb-6 ">
+                    <div class=" bg-[#FAFAFB] xl:w-[555px] lg:w-[455px] lg:h-[455px]  md:h-[555px]  md:w-[655px]  w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60 ">
+                        <img src="../assets/images/myorder/product.png" alt="" class="lg:w-[440px] lg:h-[500px] md:w-[540px] md:h-[600px] w-[320px] h-[400px]" >
                     </div>
-                    <div class="pro_detail_img_extra flex">
-                        <img src="../assets/images/myorder/product.png" alt="" style="width: 156px; height: 200px">
-                        <img src="../assets/images/myorder/product.png" alt="" style="width: 156px; height: 200px">
-
-                        <img src="../assets/images/myorder/product.png" alt="" style="width: 156px; height: 200px">
-
-                        <img src="../assets/images/myorder/product.png" alt="" style="width: 156px; height: 200px">
-
+                    <div class=" flex gap-5 justify-center ">
+                    <div class="md:w-[92px] md:h-[90px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">    <img src="../assets/images/myorder/product.png" alt="" class="md:w-[82px] md:h-[90px] [42px] h-[50px]"></div>
+                     
+                    <div class="md:w-[92px] md:h-[90px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">    <img src="../assets/images/myorder/product.png" alt="" class="md:w-[82px] md:h-[90px] [42px] h-[50px]"></div>
+                    <div class="md:w-[92px] md:h-[90px]  w-[62px] h-[60px]bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">    <img src="../assets/images/myorder/product.png" alt="" class="md:w-[82px] md:h-[90px] [42px] h-[50px]"></div>
+                    <div class="md:w-[92px] md:h-[90px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">    <img src="../assets/images/myorder/product.png" alt="" class="md:w-[82px] md:h-[90px] [42px] h-[50px]"></div>
+                        
                     </div>
-                </section>
-                <section class="data_product_detail p-4" style="width: 50%;">
+                </div>
+                <div class="lg:col-span-6 col-span-12 px-4 w-[100%] " >
                     <div class="product_detail_name">
-                        <h3 class="pro_name font-bold text-2xl mb-4">
+                       <div class="flex justify-between mb-2">
+                         <h3 class=" font-bold text-3xl ">
                             YK Disney
                         </h3>
-                        <span class="mb-4" style=" text-transform: uppercase;">Áo đẹp thoáng mát co giãn </span>
+                        <div><a href="" class="bg-[#3CD139]/10 text-sm px-2 py-1 text-[#3CD139] rounded-sm">In Stock</a></div></div>
+                        <h4 class="mb-3 text-2xl font-normal" >Áo đẹp thoáng mát co giãn </h4>
                         <div class="stars_reviews d-flex mb-3">
                             <span>
 
-                                <i class="fa-solid fa-star" style="color: #dcbe50;"></i>
-                                <i class="fa-solid fa-star" style="color: #dcbe50;"></i>
-                                <i class="fa-solid fa-star" style="color: #dcbe50;"></i>
-                                <i class="fa-solid fa-star" style="color: #dcbe50;"></i>
-                                <i class="fa-solid fa-star" style="color: #dcbe50;"></i>
+                                <i class="fa-solid fa-star  text-yellow-400 text-xl" ></i>
+                                <i class="fa-solid fa-star text-yellow-400 text-xl" ></i>
+                                <i class="fa-solid fa-star text-yellow-400 text-xl" ></i>
+                                <i class="fa-solid fa-star text-yellow-400 text-xl" ></i>
+                                <i class="fa-solid fa-star text-yellow-400 text-xl" ></i>
                             </span>
-                            <span class="views" style="color: rgb(196, 195, 195);">
-                                5.0(122 Views)
+                            <span class="px-2 text-[#A4A1AA]" >
+                                5.0 <span class="px-[2px]">(122 Reviews)</span>
                             </span>
                         </div>
                     </div>
-                    <div class="product_deltai_price mb-3 text-xl">
-                        $80.00 <del>$100.00</del>
+                    <div class=" mb-5 text-xl font-medium">
+                        $80.00 <del class="text-[#A4A1AA]">$100.00</del>
                     </div>
-                    <p class="description mb-3">
+                    <p class="description mb-4 font-medium">
                         To use these apps, you will need to open the app and then take a picture of the image. The
                         app will then process the image and return the extracted text.
                     </p>
                     <div class="mb-4">
-                        <h3 class="  text-gray-900 mb-2 font-bold text-lg">Color :</h3>
+                        <h3 class="  text-gray-900 mb-2 font-bold text-lg">Color </h3>
                         <div class="flex space-x-2">
                             <button
-                                class="w-6 h-6 bg-red-500 rounded-full border-2 border-transparent hover:border-gray-500"></button>
+                                class="w-9 h-9 bg-red-500 rounded-md border-2 border-transparent hover:border-blackL"></button>
                             <button
-                                class="w-6 h-6 bg-blue-500 rounded-full border-2 border-transparent hover:border-gray-500"></button>
+                                class="w-9 h-9 bg-blue-500 rounded-md border-2 border-transparent hover:border-blackL"></button>
                             <button
-                                class="w-6 h-6 bg-purple-500 rounded-full border-2 border-transparent hover:border-gray-500"></button>
+                                class="w-9 h-9 bg-purple-500 rounded-md border-2 border-transparent hover:border-blackL"></button>
                             <button
-                                class="w-6 h-6 bg-black rounded-full border-2 border-transparent hover:border-gray-500"></button>
+                                class="w-9 h-9 bg-black rounded-md border-2 border-transparent hover:border-blackL"></button>
                             <button
-                                class="w-6 h-6 bg-yellow-500 rounded-full border-2 border-transparent hover:border-gray-500"></button>
+                                class="w-9 h-9 bg-yellow-500 rounded-md border-2 border-transparent hover:border-blackL"></button>
                             <button
-                                class="w-6 h-6 bg-green-500 rounded-full border-2 border-transparent hover:border-gray-500"></button>
+                                class="w-9 h-9 bg-green-500 rounded-md border-2 border-transparent hover:border-blackL"></button>
                         </div>
                     </div>
 
 
                     <div class=" items-center mt-4 mb-3">
-                        <h3 class=" mr-4 font-bold text-lg">Size :</h3>
-                        <div class="flex mt-2">
+                        <h3 class=" mr-4 font-bold text-lg">Size </h3>
+                        <div class="flex mt-3">
                             <button
-                                class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 mr-2">S</button>
+                                class="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2">S</button>
                             <button
-                                class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 ml-2 mr-2">M</button>
+                                class="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">M</button>
                             <button
-                                class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 ml-2 mr-2">L</button>
+                                class="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">L</button>
                             <button
-                                class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 ml-2 mr-2">XL</button>
+                                class="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">XL</button>
                             <button
-                                class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 ml-2 mr-2">XXL</button>
+                                class="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">XXL</button>
                         </div>
                     </div>
 
+                
 
+                    <div class="mt-12 flex gap-5">
+                        <div class="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
+                            <button class="py-2 pr-2">
+                              <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <input
+                              type="number"
+                              id="numberInput"
+                              value="1"
+                                min="1"
+                                maxlength="2"
+                              class="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
+                            />
+                            <button class="py-2 pl-2">
+                              <i class="fa-solid fa-plus"></i>
+                            </button>
+                          </div>
+                          <button class="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">Add to Cart</button>
+                   
+                   <button class="border border-black xl:w-16 lg:w-11 md:w-16 w-11  xl:h-14  lg:h-10 md:h-14  h-10 rounded-lg flex items-center justify-center  shadow-lg shadow-slate-400/50"><i class="fa-regular fa-heart text-2xl" style="color: #ff1100;"></i> </button>   </div>
+                   
 
-                    <div class="flex items-center  mt-12  " style="display: flex; gap: 10px; margin-top: 10px;">
-                        <div class="flex items-center space-x-3"
-                            style="border: 1px solid black; border-radius: 5px; height: 40px;">
-                            <button class="px-3 py-1 border border-gray-300 rounded" style="border: none;"><i
-                                    class="fa-solid fa-minus"></i></button>
-                            <span class="ml-12 mr-12 text-center" style="width: 50px;">1</span>
-                            <button class="px-3 py-1 border border-gray-300 rounded" style="border: none;"><i
-                                    class="fa-solid fa-plus"></i></button>
-                        </div>
-                        <button class="px-6 py-2 bg-black text-white rounded w-96" style=" border-radius: 5px;">Add to
-                            Cart</button>
-                        <button class="p-2 border border-gray-300 rounded-full">
-                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    </div>
+</div>
+</div>
 
-
-
-
-                </section>
+               
             </section>
 
-            <section class="bg-white rounded-lg shadow-lg p-6  mx-auto my-10">
+            <section  >
+                <div class="container">
+                <div class=" mx-14 bg-white rounded-lg    my-10 lg:mb-24">
                 <div class="border-b border-gray-200 mb-4">
-                    <nav class="flex space-x-4">
+                    <nav class="flex space-x-4 h-7">
                         <button data-tab="descriptions"
-                            class="text-gray-900 border-b-2 border-black pb-2 focus:outline-none">Descriptions</button>
+                            class="hover:text-gray-900 text-gray-500 border-b-2 border-white hover:border-black pb-2 focus:outline-none hover:text-xl hover:font-semibold">Descriptions</button>
                         <button data-tab="additional-info"
-                            class="text-gray-500 hover:text-gray-900 pb-2 focus:outline-none">Additional
+                            class="text-gray-500 hover:text-gray-900 pb-2 focus:outline-none border-b-2 border-white hover:border-black hover:text-xl hover:font-semibold">Additional
                             Information</button>
                         <button data-tab="reviews"
-                            class="text-gray-500 hover:text-gray-900 pb-2 focus:outline-none">Reviews</button>
+                            class="text-gray-500 hover:text-gray-900 pb-2 focus:outline-none border-b-2 border-white hover:border-black hover:text-xl hover:font-semibold">Reviews</button>
                     </nav>
                 </div>
-                <div id="descriptions" data-content class="p-4">
-                    <p class="text-gray-600">
+                <div id="descriptions" data-content class="py-4 h-auto">
+                    <p class="text-gray-600"><span>+</span>
                         It is a long established fact that a reader will be distracted by the readable content of a page
                         when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal
                         distribution of letters, as opposed to using 'Content here, content here', making it look like
@@ -227,120 +236,271 @@
                         This is the reviews tab content. Display customer reviews and ratings here.
                     </p>
 
+                </div></div></div>
+            </section>
+
+            <div class="">
+                <div class="container mx-14 pb-10"> 
+                <h2 class="mx-14 text-4xl font-medium  tracking-[1px] mb-12">Related Products</h2>
+                <div class="mx-14 lg:flex lg:gap-7  h-[500px] ">
+                    <div class="swiper mySwiper">
+                        <div class="swiper-wrapper">
+                          <div class="swiper-slide">   <div
+                            class="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[264px] mx-auto"
+                          >
+                            <div class="product-card hover:bg-zinc-100">
+                              <div class="w-full h-[332px] relative">
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <img
+                                  src="../assets/images/myorder/product.png"
+                                  alt=""
+                                  class="w-[285px] h-[320px] "
+                                />
+                                <button
+                                  class="hover:bg-blackL hover:text-white absolute px-[75px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                                >
+                                  Add to Cart
+                                </button>
+                              </div>
+                              <div class="bg-white pt-4">
+                                <a href="#"><h5 class="font-bold text-lg">Allen Solly</h5></a>
+                                <p class="my-1 font-normal ">
+                                  Women Texttured Handheld Bag
+                                </p>
+                                <p class="font-medium text-lg">
+                                  $80.00
+                                  <span class="text-black/20 line-through px-1">$100.00</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div> </div>
+                          <div class="swiper-slide">   <div
+                            class="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[264px] mx-auto"
+                          >
+                            <div class="product-card hover:bg-zinc-100">
+                              <div class="w-full h-[332px] relative">
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <img
+                                  src="../assets/images/myorder/product.png"
+                                  alt=""
+                                  class="w-[285px] h-[320px] "
+                                />
+                                <button
+                                  class="hover:bg-blackL hover:text-white absolute px-[75px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                                >
+                                  Add to Cart
+                                </button>
+                              </div>
+                              <div class="bg-white pt-4">
+                                <a href="#"><h5 class="font-bold text-lg">Allen Solly</h5></a>
+                                <p class="my-1 font-normal ">
+                                  Women Texttured Handheld Bag
+                                </p>
+                                <p class="font-medium text-lg">
+                                  $80.00
+                                  <span class="text-black/20 line-through px-1">$100.00</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div> </div>
+                          <div class="swiper-slide">   <div
+                            class="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[264px] mx-auto"
+                          >
+                            <div class="product-card hover:bg-zinc-100">
+                              <div class="w-full h-[332px] relative">
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <img
+                                  src="../assets/images/myorder/product.png"
+                                  alt=""
+                                  class="w-[285px] h-[320px] "
+                                />
+                                <button
+                                  class="hover:bg-blackL hover:text-white absolute px-[75px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                                >
+                                  Add to Cart
+                                </button>
+                              </div>
+                              <div class="bg-white pt-4">
+                                <a href="#"><h5 class="font-bold text-lg">Allen Solly</h5></a>
+                                <p class="my-1 font-normal ">
+                                  Women Texttured Handheld Bag
+                                </p>
+                                <p class="font-medium text-lg">
+                                  $80.00
+                                  <span class="text-black/20 line-through px-1">$100.00</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div> </div>
+                          <div class="swiper-slide">   <div
+                            class="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[264px] mx-auto"
+                          >
+                            <div class="product-card hover:bg-zinc-100">
+                              <div class="w-full h-[332px] relative">
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <img
+                                  src="../assets/images/myorder/product.png"
+                                  alt=""
+                                  class="w-[285px] h-[320px] "
+                                />
+                                <button
+                                  class="hover:bg-blackL hover:text-white absolute px-[75px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                                >
+                                  Add to Cart
+                                </button>
+                              </div>
+                              <div class="bg-white pt-4">
+                                <a href="#"><h5 class="font-bold text-lg">Allen Solly</h5></a>
+                                <p class="my-1 font-normal ">
+                                  Women Texttured Handheld Bag
+                                </p>
+                                <p class="font-medium text-lg">
+                                  $80.00
+                                  <span class="text-black/20 line-through px-1">$100.00</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div> </div>
+                          <div class="swiper-slide">   <div
+                            class="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[264px] mx-auto"
+                          >
+                            <div class="product-card hover:bg-zinc-100">
+                              <div class="w-full h-[332px] relative">
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <a href="#"
+                                  ><i
+                                    class="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"
+                                  ></i
+                                ></a>
+                                <img
+                                  src="../assets/images/myorder/product.png"
+                                  alt=""
+                                  class="w-[285px] h-[320px] "
+                                />
+                                <button
+                                  class="hover:bg-blackL hover:text-white absolute px-[75px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300"
+                                >
+                                  Add to Cart
+                                </button>
+                              </div>
+                              <div class="bg-white pt-4">
+                                <a href="#"><h5 class="font-bold text-lg">Allen Solly</h5></a>
+                                <p class="my-1 font-normal ">
+                                  Women Texttured Handheld Bag
+                                </p>
+                                <p class="font-medium text-lg">
+                                  $80.00
+                                  <span class="text-black/20 line-through px-1">$100.00</span>
+                                </p>
+                              </div>
+                            </div>
+                          </div> </div>
+                          
+                        </div>
+                       
+                      </div>
+                 
+                  
+            </div></div>
+
+</div>
+            </section>
+
+         
+
+
+        <section>
+            <!-- End Main -->
+            <div class="container">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-14 mt-12 mb-24">
+                <div class="mx-auto">
+                  <i class="fa-regular fa-box text-3xl"></i>
+                  <h3 class="font-bold text-xl mt-3 mb-2">Free Shipping</h3>
+                  <p>Free shipping for order above $150</p>
                 </div>
-            </section>
-
-            <section class=" mx-auto px-4 pb-12 mt-4">
-                <h2 class="text-3xl font-bold text-center mb-8">Related Products</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white rounded-lg shadow-md">
-                        <img src="https://cdn.shopify.com/s/files/1/2023/10/10/2262/files/US-Polo-Printed-Blazer-for-Men-1.jpg?v=1670705520"
-                            alt="US Polo Printed Blazer for Men" class="rounded-t-lg w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="text-gray-900 font-medium mb-2">US Polo Printed Blazer for Men</h3>
-                            <p class="text-gray-600 mb-4">It is a long established fact that a reader will be</p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600 font-bold">$40.00</span>
-                                <button
-                                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600">Add
-                                    to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow-md">
-                        <img src="https://cdn.shopify.com/s/files/1/2023/10/10/2262/files/Roadstar-Red-Printed-T-Shirt-1.jpg?v=1670705520"
-                            alt="Roadstar Red Printed T-Shirt" class="rounded-t-lg w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="text-gray-900 font-medium mb-2">Roadstar Red Printed T-Shirt</h3>
-                            <p class="text-gray-600 mb-4">It is a long established fact that a reader will be </p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600 font-bold">$50.00</span>
-                                <button
-                                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600">Add
-                                    to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow-md">
-                        <img src="https://cdn.shopify.com/s/files/1/2023/10/10/2262/files/YK-Disney-Leather-Hand-Purse-1.jpg?v=1670705520"
-                            alt="YK Disney Leather Hand Purse" class="rounded-t-lg w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="text-gray-900 font-medium mb-2">YK Disney Leather Hand Purse</h3>
-                            <p class="text-gray-600 mb-4">It is a long established fact that a reader will</p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600 font-bold">$50.00</span>
-                                <button
-                                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600">Add
-                                    to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-lg shadow-md">
-                        <img src="https://cdn.shopify.com/s/files/1/2023/10/10/2262/files/YK-Disney-Leather-Hand-Purse-1.jpg?v=1670705520"
-                            alt="YK Disney Leather Hand Purse" class="rounded-t-lg w-full h-48 object-cover">
-                        <div class="p-4">
-                            <h3 class="text-gray-900 font-medium mb-2">YK Disney Leather Hand Purse</h3>
-                            <p class="text-gray-600 mb-4">It is a long established fact that a reader </p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-gray-600 font-bold">$50.00</span>
-                                <button
-                                    class="bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600">Add
-                                    to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-
-
-            </section>
-
-            <section class=" mx-auto px-4 pb-12">
-                <div class="flex flex-col md:flex-row " style=" padding: 30px 0px 30px 0px; border: 1px solid  #d7d7d7; display: flex; gap: 120px;">
-                    <div class="ml-3">
-                        <div class="mr-4 md:mr-0 text-center">
-                            <i class="fa-solid fa-boxes-stacked" style="color: #000000;"></i>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="text-lg font-medium mb-2">Free Shipping</h3>
-                            <p class="text-gray-600">Free shipping for order above $150</p>
-                        </div>
-                    </div>
-
-                    <div class="ml-3">
-                        <div class="mr-4 md:mr-0 text-center">
-                            <i class="fa-solid fa-money-bill" style="color: #000000;"></i>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="text-lg font-medium mb-2">Money Guarantee</h3>
-                            <p class="text-gray-600">Within 30 days for an exchange</p>
-                        </div>
-                    </div>
-
-                    <div class="ml-3">
-                        <div class="mr-4 md:mr-0 text-center">
-                            <i class="fa-solid fa-phone" style="color: #000000;"></i>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="text-lg font-medium mb-2">Online Support</h3>
-                            <p class="text-gray-600">24 hours a day, 7 days a week</p>
-                        </div>
-                    </div>
-
-                    <div class="ml-3">
-                        <div class="mr-4 md:mr-0 text-center">
-                            <i class="fa-brands fa-paypal" style="color: #000000;"></i>
-                        </div>
-                        <div class="text-center">
-                            <h3 class="text-lg font-medium mb-2">Flexsible Payment</h3>
-                            <p class="text-gray-600">Pay with multile credit card</p>
-                        </div>
-                    </div>
+                <div class="mx-auto">
+                  <i class="fa-regular fa-circle-dollar text-3xl"></i>
+                  <h3 class="font-bold text-xl mt-3 mb-2">Money Guarantee</h3>
+                  <p>Within 30 days for an exchange</p>
                 </div>
-            </section>
-
-
-        </section>
+                <div class="mx-auto">
+                  <i class="fa-regular fa-headphones text-3xl"></i>
+                  <h3 class="font-bold text-xl mt-3 mb-2">Online Support</h3>
+                  <p>24 hours a day, 7 days a week</p>
+                </div>
+                <div class="mx-auto">
+                  <i class="fa-light fa-credit-card text-3xl"></i>
+                  <h3 class="font-bold text-xl mt-3 mb-2">Flexible Payment</h3>
+                  <p>Pay with multiple credit cards</p>
+                </div>
+              </div>
+            </div>
+          </section>
     </main>
     <footer class="bg-black text-white">
         <div class="container">
@@ -416,22 +576,9 @@
             </div>
         </div>
     </footer>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const tabs = document.querySelectorAll("[data-tab]");
-            const contents = document.querySelectorAll("[data-content]");
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="../main.js"></script>
 
-            tabs.forEach(tab => {
-                tab.addEventListener("click", function () {
-                    tabs.forEach(t => t.classList.remove("text-gray-900", "border-black"));
-                    tab.classList.add("text-gray-900", "border-black");
-
-                    contents.forEach(content => content.classList.add("hidden"));
-                    document.querySelector(`#${tab.dataset.tab}`).classList.remove("hidden");
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>

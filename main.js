@@ -12,6 +12,28 @@ var swiper = new Swiper(".swiper", {
       swiper.changeDirection(getDirection());
     },
   },
+  breakpoints: {
+    240: {
+      slidesPerView: 1.5,
+      spaceBetween: 10,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    768: {
+      slidesPerView: 2.5,
+      spaceBetween: 40,
+    },
+    998: {
+      slidesPerView: 2.5,
+      spaceBetween: 20,
+    },
+    1024: {
+      slidesPerView: 3.5,
+      spaceBetween: 50,
+    },
+  },
 });
 new Swiper(".feedblack", {
   slidesPerView: 3,
@@ -44,6 +66,33 @@ new Swiper(".feedblack", {
 //     prevEl: ".swiper-button-prev",
 //   },
 // });
+var swiper = new Swiper(".mySwiper", {
+  slidesPerView: 1,
+  spaceBetween: 50,
+
+  breakpoints: {
+    240: {
+      slidesPerView: 2,
+      spaceBetween: 10,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    768: {
+      slidesPerView: 2,
+      spaceBetween: 40,
+    },
+    898: {
+      slidesPerView: 3,
+      spaceBetween: 40,
+    },
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 50,
+    },
+  },
+});
 function getDirection() {
   var windowWidth = window.innerWidth;
   var direction = window.innerWidth <= 760 ? "vertical" : "horizontal";
