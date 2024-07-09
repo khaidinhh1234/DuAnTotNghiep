@@ -36,8 +36,8 @@ var swiper = new Swiper(".swiper", {
   },
 });
 new Swiper(".feedblack", {
-  slidesPerView: 3,
-  spaceBetween: 30,
+  slidesPerView: 1,
+  spaceBetween: 10,
   freeMode: true,
   direction: getDirection(),
   navigation: {
@@ -45,8 +45,25 @@ new Swiper(".feedblack", {
     prevEl: ".swiper-button-prev",
   },
   breakpoints: {
+    240: {
+      slidesPerView: 1,
+      spaceBetween: 0,
+    },
+    640: {
+      slidesPerView: 1.5,
+      spaceBetween: 20,
+    },
     768: {
-      centeredSlides: false,
+      slidesPerView: 2,
+      spaceBetween: 30,
+    },
+    938: {
+      slidesPerView: 2.5,
+      spaceBetween: 40,
+    },
+    1024: {
+      slidesPerView: 3,
+      spaceBetween: 50,
     },
   },
 });
