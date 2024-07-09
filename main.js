@@ -85,8 +85,12 @@ new Swiper(".feedblack", {
 // });
 var swiper = new Swiper(".mySwiper", {
   slidesPerView: 1,
-  spaceBetween: 50,
-
+  spaceBetween: 30,
+  loop: true,
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
   breakpoints: {
     240: {
       slidesPerView: 2,
@@ -106,6 +110,36 @@ var swiper = new Swiper(".mySwiper", {
     },
     1024: {
       slidesPerView: 4,
+      spaceBetween: 50,
+    },
+  },
+});
+var swiper = new Swiper(".voucher", {
+  slidesPerView: 1,
+  spaceBetween: 10,
+  loop: true,
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    // 140: {
+    //   slidesPerView: 1,
+    //   spaceBetween: 10,
+    // },
+    768: {
+      slidesPerView: 1.5,
+      magrin: 20,
+      spaceBetween: 20,
+    },
+    918: {
+      slidesPerView: 2,
+      spaceBetween: 50,
+      magrin: 20,
+    },
+    1024: {
+      slidesPerView: 3,
+      magrin: 20,
       spaceBetween: 50,
     },
   },
