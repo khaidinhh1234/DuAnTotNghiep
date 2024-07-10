@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create New Account</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body
+    class="min-h-screen bg-gray-100 md:bg-white font-['Jost'] bg-mobile-only bg-cover bg-center md:bg-none"
+  >
+    <div class="flex flex-col md:flex-row min-h-screen">
+      <div class="hidden md:flex md:w-1/2 bg-gray-100 relative">
+        <img
+          src="../assets/images/Logo.svg"
+          alt="Krist Logo"
+          class="absolute top-5 left-5 w-22 md:w-34"
+        />
+        <img
+          src="../assets/images/lognin/Rectangle 3463274.png"
+          alt="Fashion Model"
+          class="object-cover w-full h-845"
+        />
+      </div>
+
+      <div class="flex-1 flex items-center justify-center p-4 md:p-0">
+        <div class="w-full max-w-md p-6 md:p-8 bg-white shadow-lg rounded-lg">
+          <h2 class="text-3xl font-bold mb-2">Create New Account</h2>
+          <p class="text-gray-600 mb-6">Please enter details</p>
+          <form>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2"
+                >First Name</label
+              >
+              <input
+                type="text"
+                class="w-full p-3 border border-gray-300 rounded-md"
+                placeholder="Robert"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2"
+                >Last Name</label
+              >
+              <input
+                type="text"
+                class="w-full p-3 border border-gray-300 rounded-md"
+                placeholder="Fox"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                class="w-full p-3 border border-gray-300 rounded-md"
+                placeholder="robertfox@example.com"
+              />
+            </div>
+            <div class="mb-6">
+              <label class="block text-gray-700 text-sm font-bold mb-2"
+                >Password</label
+              >
+              <input
+                type="password"
+                class="w-full p-3 border border-gray-300 rounded-md"
+                placeholder="••••••••••••••••"
+              />
+            </div>
+            <div class="flex items-center mb-6">
+              <input type="checkbox" class="mr-2" />
+              <span class="text-sm text-gray-600"
+                >I agree to the
+                <span class="font-semibold">Terms & Conditions</span></span
+              >
+            </div>
+            <button
+              class="w-full bg-black text-white p-3 rounded-md hover:bg-gray-800 text-sm font-bold"
+            >
+              Signup
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
