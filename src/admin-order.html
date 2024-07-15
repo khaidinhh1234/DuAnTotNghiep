@@ -2,6 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+<<<<<<< HEAD
+=======
+    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+>>>>>>> 761ab86b11d76babc9945b62916b1b9153d859c7
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Refined Sidebar</title>
     <link rel="stylesheet" href="../style.css" />
@@ -15,6 +19,7 @@
       href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
+<<<<<<< HEAD
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
@@ -456,5 +461,283 @@
         </footer>
       </main>
     </div>
+=======
+  </head>
+
+  <body>
+    <div class="h-screen grid grid-cols-12 gap-2">
+      <!-- sidebar -->
+      <nav class="flex flex-col bg-gray-900 text-white col-span-2 w-[300px]">
+        <div class="py-4 flex justify-evenly">
+          <img src="../assets/images/Logofooter.png" alt="" class="w-20 h-7" />
+          <a href="/src/dashboard.html" class="text-2xl font-bold">
+            Hello Admin
+          </a>
+        </div>
+        <ul class="flex flex-col p-4">
+          <li class="text-gray-400 mb-2">Pages</li>
+          <li class="mb-2">
+            <a
+              href="/src/dashboard.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <i class="fas fa-tachometer-alt ml-2"></i>
+              <span class="ml-2 text-xl">Dashboard</span>
+            </a>
+          </li>
+          <li class="mb-2">
+            <a
+              href="/src/profile.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <i class="fas fa-user ml-2"></i>
+              <span class="ml-2 text-xl">User</span>
+            </a>
+          </li>
+          <li class="mb-2">
+            <div class="relative">
+              <button
+                id="category-menu-button"
+                class="ml-2 flex items-center p-2 text-white hover:bg-gray-700 rounded w-full focus:outline-none"
+              >
+                <i class="fas fa-list ml-2"></i>
+                <span class="ml-2 text-xl">Category</span>
+                <i class="fas fa-chevron-up ml-auto"></i>
+              </button>
+              <div
+                id="category-menu"
+                class="dropdown-menu hidden absolute bg-white mt-2 w-48 rounded-md shadow-lg"
+              >
+                <a
+                  href="/src/list-category.html"
+                  class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-xl"
+                  >List Category</a
+                >
+              </div>
+            </div>
+          </li>
+          <li class="mb-2">
+            <div class="relative">
+              <button
+                id="product-menu-button"
+                class="ml-2 flex items-center p-2 text-white hover:bg-gray-700 rounded w-full focus:outline-none"
+              >
+                <i class="fas fa-box ml-2"></i>
+                <span class="ml-2 text-xl">Product</span>
+                <i class="fas fa-chevron-up ml-auto"></i>
+              </button>
+            </div>
+            <a
+              href="/src/admin-list-product.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <span class="ml-2 text-xl">List Product</span>
+            </a>
+            <a
+              href="/src/admin-add-product.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <span class="ml-2 text-xl">Add Product</span>
+            </a>
+          </li>
+          <li class="mb-2">
+            <a
+              href="/src/admin-order.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <i class="fas fa-file-alt ml-2"></i>
+              <span class="ml-2 text-xl">Order</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- end sidebar -->
+      <section class="content flex flex-col border-b border-black col-span-10">
+        <!-- header -->
+        <header class="border-b border-black">
+          <nav class="p-4 flex justify-between items-center">
+            <div class="flex items-center">
+              <form class="ml-4">
+                <div class="relative">
+                  <i
+                    class="fa-regular fa-magnifying-glass absolute text-2xl px-1 py-[5px] text-neutral-400 top-1"
+                  ></i>
+                  <input
+                    type="search"
+                    class="w-96 h-10 px-9 text-xl bg-none focus:outline-none"
+                    placeholder="Search..."
+                  />
+                </div>
+              </form>
+            </div>
+            <div class="px-5">
+              <div class="flex space-x-5">
+                <button
+                  type="button"
+                  class="relative rounded-full p-1 text-gray-400 hover:text-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                >
+                  <span class="absolute -inset-1.5"></span>
+                  <span class="sr-only">View notifications</span>
+                  <svg
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  id="user-menu-button"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                >
+                  <span class="absolute -inset-1.5"></span>
+                  <span class="sr-only">Open user menu</span>
+                  <img
+                    class="h-8 w-8 rounded-full"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt=""
+                  />
+                </button>
+              </div>
+            </div>
+          </nav>
+        </header>
+        <!-- end header -->
+        <!-- form product -->
+        <main class="p-4 flex-1 overflow-y-auto">
+          <h2 class="text-4xl font-bold mb-4">Danh sách sản phẩm</h2>
+          <div class="grid grid-cols-12">
+            <div class="col-span-12">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-100">
+                  <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th class="px-6 py-3">ID</th>
+                    <th class="px-6 py-3">Tài khoản</th>
+                    <th class="px-6 py-3">Tên khách hàng</th>
+                    <th class="px-6 py-3">Số điện thoại</th>
+                    <th class="px-6 py-3">Địa chỉ</th>
+                    <th class="px-6 py-3">Các sản phẩm</th>
+                    <th class="px-6 py-3">Tổng tiền</th>
+                    <th class="px-6 py-3">Trạng thái</th>
+                    <th class="px-6 py-3">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="text-left text-sm text-gray-700">
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">3</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">moi@gmail.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">tony</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">0123456789</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Hà Nội</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
+                                <i class="fas fa-chevron-down"></i>
+                                <span class="ml-2 text-gray-900">Sản phẩm 6</span>  
+                                <p class="text-sm text-gray-500">Số lượng: 4</p>
+                                <p class="text-sm text-gray-500">Giá: 300.000VNĐ</p>
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">1.200.000VNĐ</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <div class="rounded-md bg-green-600 text-center text-white font-bold text-[9px]">Đã giao</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <button class="bg-red-500 text-white px-2 py-2 rounded-lg">Xóa</button>
+                            <button id="view-info-btn" class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600">Cập nhập</button>                            
+                        </td>
+                    </tr>
+                </tbody> 
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="text-left text-sm text-gray-700">
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">3</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">moi@gmail.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">tony</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">0123456789</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Hà Nội</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
+                                <i class="fas fa-chevron-down"></i>
+                                <span class="ml-2 text-gray-900">Sản phẩm 6</span>  
+                                <p class="text-sm text-gray-500">Số lượng: 4</p>
+                                <p class="text-sm text-gray-500">Giá: 300.000VNĐ</p>
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">1.200.000VNĐ</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <div class="rounded-md bg-green-600 text-center text-white font-bold text-[9px]">Đã giao</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <button class="bg-red-500 text-white px-2 py-2 rounded-lg">Xóa</button>
+                            <button id="view-info-btn" class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600">Cập nhập</button>                            
+                        </td>
+                    </tr>
+                </tbody>    
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="text-left text-sm text-gray-700">
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">3</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">moi@gmail.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">tony</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">0123456789</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Hà Nội</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
+                                <i class="fas fa-chevron-down"></i>
+                                <span class="ml-2 text-gray-900">Sản phẩm 6</span>  
+                                <p class="text-sm text-gray-500">Số lượng: 4</p>
+                                <p class="text-sm text-gray-500">Giá: 300.000VNĐ</p>
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">1.200.000VNĐ</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <div class="rounded-md bg-green-600 text-center text-white font-bold text-[9px]">Đã giao</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <button class="bg-red-500 text-white px-2 py-2 rounded-lg">Xóa</button>
+                            <button id="view-info-btn" class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600">Cập nhập</button>                            
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr class="text-left text-sm text-gray-700">
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">3</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">moi@gmail.com</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">tony</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">0123456789</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Hà Nội</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
+                                <i class="fas fa-chevron-up"></i>
+                                <span class="ml-2 text-gray-900">Sản phẩm 6</span>  
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">1.200.000VNĐ</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <div class="rounded-md bg-green-600 text-center text-white font-bold text-[9px]">Đã giao</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                            <button class="bg-red-500 text-white px-2 py-2 rounded-lg">Xóa</button>
+                            <button id="view-info-btn" class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600">Cập nhập</button>                            
+                        </td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+        <!-- end form product -->
+      </section>
+    </div>
+    <script src="/src/index.js"></script>
+>>>>>>> 761ab86b11d76babc9945b62916b1b9153d859c7
   </body>
 </html>
