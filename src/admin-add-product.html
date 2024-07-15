@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-L0+8xNpX3V9QpQPEIB5CV3CwvCQg6gB0Y3uzEg9F46Kb3oIezVVPlO6c9t1P06a5boIHT6fxGAbjRnS3tk+U2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body class="font-sans">
+    <!-- sidebar -->
+    <nav id="sidebar" class="flex flex-col bg-gray-900 text-white">
+        <div class="p-4">
+            <a href="/src/dashboard.html" class="text-xl font-bold">
+                Hello Admin
+            </a>
+        </div>
+        <ul class="flex flex-col p-4">
+            <li class="text-gray-400 mb-2">Pages</li>
+            <li class="mb-2">
+                <a href="/src/dashboard.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
+                    <i class="fas fa-tachometer-alt ml-2"></i>
+                    <span class="ml-2">Dashboard</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="/src/profile.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
+                    <i class="fas fa-user ml-2"></i>
+                    <span class="ml-2">User</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <div class="relative">
+                    <button id="category-menu-button"
+                        class="ml-2 flex items-center p-2 text-white hover:bg-gray-700 rounded w-full focus:outline-none">
+                        <i class="fas fa-list ml-2"></i>
+                        <span class="ml-2">Category</span>
+                        <i class="fas fa-chevron-up ml-auto"></i>
+                    </button>
+                    <div id="category-menu"
+                        class="dropdown-menu hidden absolute bg-white mt-2 w-48 rounded-md shadow-lg">
+                        <a href="/src/list-category.html"
+                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">List Category</a>
+                    </div>
+                </div>
+            </li>
+            <li class="mb-2">
+                <div class="relative">
+                    <button id="product-menu-button"
+                        class="ml-2 flex items-center p-2 text-white hover:bg-gray-700 rounded w-full focus:outline-none">
+                        <i class="fas fa-box ml-2"></i>
+                        <span class="ml-2">Product</span>
+                        <i class="fas fa-chevron-up ml-auto"></i>
+                    </button>
+                </div>
+                <a href="/src/admin-list-product.html"
+                    class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
+                    <span class="ml-2">List Product</span>
+                </a>
+                <a href="/src/admin-add-product.html"
+                    class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
+                    <span class="ml-2">Add Product</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="/src/admin-order.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
+                    <i class="fas fa-file-alt ml-2"></i>
+                    <span class="ml-2">Order</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="/src/setting.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
+                    <i class="fas fa-cogs ml-2"></i>
+                    <span class="ml-2">Setting</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <!-- end sidebar -->
+    <section class="content flex flex-col border-b border-black">
+        <!-- header -->
+        <header class="">
+            <div class="\">
+                <nav class="p-4 flex justify-between items-center">
+                    <div class="flex items-center">
+                        <!-- <button id="menu-button" class="text-gray-600 focus:outline-none">
+                            <i class="fas fa-bars ml-2"></i>
+                        </button> -->
+                        <form class="ml-4">
+                            <div class="relative">
+                                <i
+                                    class="fa-regular fa-magnifying-glass absolute text-2xl px-1 py-[5px] text-neutral-400"></i>
+                                <input type="search" class="w-72 h-10 px-9 text-xl bg-none focus:outline-none"
+                                    placeholder="Search..." />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <button class="text-gray-600 focus:outline-none">
+                                <i class="fas fa-bell ml-2"></i>
+                            </button>
+                            <!-- <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">4</span> -->
+                        </div>
+
+                        <div class="relative dropdown-container">
+                            <button id="user-menu-button" class="flex items-center text-gray-600 focus:outline-none">
+                                <img src="https://i.pinimg.com/474x/b2/57/81/b2578191becd55a7ebbc3aa9cfda9a7a.jpg"
+                                    alt="User Name" class="h-8 w-8 rounded-full">
+                            </button>
+                            <div id="user-menu" class="dropdown-menu">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">HomePage</a>
+                                <a href="settings.html"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log out</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <!-- end header -->
+        <!-- form product -->
+        <main class="p-4 mx-auto">
+            <h2 class="text-2xl font-bold mb-4">Thêm sản phẩm</h2>
+            <div class="overflow-x-auto">
+                <form class="max-w-sm ">
+                    <div class="mb-5">
+                        <label for="productName"
+                            class="block mb-2 text-sm font-medium text-gray-900 ">Tên sản phẩm</label>
+                        <input type="text" id="productName"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                            placeholder="Tên sản phẩm" required />
+                    </div>
+                    <div class="mb-5">
+                        <label for="price"
+                            class="block mb-2 text-sm font-medium text-gray-900 ">Giá</label>
+                        <input type="text" id="price"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                            placeholder="Giá" required />
+                    </div>
+                    <div class="mb-5">
+                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900 ">Mô
+                            tả</label>
+                        <textarea id="description"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                            placeholder="Mô tả" required></textarea>
+                    </div>
+                    <div class="mb-5">
+                        <label for="quantity" class="block mb-2 text-sm font-medium text-gray-900 ">Số
+                            lượng</label>
+                        <input type="number" id="quantity"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                            placeholder="Số lượng" required />
+                    </div>
+                    <div class="mb-5">
+                        <label for="brand" class="block mb-2 text-sm font-medium text-gray-900 ">Thương
+                            hiệu</label>
+                        <select id="brand"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                            required>
+                            <option value="" disabled selected>Chọn thương hiệu</option>
+                            <option value="sam sung">Sam Sung</option>
+                            <option value="ios">iOS</option>
+                            <option value="xioami">Xiaomi</option>
+                        </select>
+                    </div>
+                    <div class="mb-5">
+                        <label for="category" class="block mb-2 text-sm font-medium text-gray-900 ">Danh
+                            mục</label>
+                        <select id="category"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                            required>
+                            <option value="" disabled selected>Chọn danh mục</option>
+                            <option value="điện thoại">Điện thoại</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="tai nghe">Tai nghe</option>
+                        </select>
+                    </div>
+                    <div class="mb-5">
+                        <label for="image"
+                            class="block mb-2 text-sm font-medium text-gray-900 d">Ảnh</label>
+                        <input type="file" id="image"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg "
+                            required />
+                    </div>
+                    <button type="submit"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                </form>
+            </div>
+        </main>
+        <!-- end form product -->
+    </section>
+</body>
+
+</html>

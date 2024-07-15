@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile</title>
+
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Heaser -->
+    <header>
+      <div class="container my-3">
+        <div class="flex justify-around lg:justify-between items-center">
+          <div class="order-1 lg:hidden">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </div>
+          <div class="order-2 Logo lg:w-60">
+            <img
+              src="../assets/images/Logo.svg "
+              alt=""
+              class="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
+            />
+          </div>
+
+          <nav class="order-3 hidden lg:block">
+            <ul class="flex items-center space-x-2">
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Shop</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Our Story</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Blog</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Contact Us</a
+                >
+              </li>
+            </ul>
+          </nav>
+          <div class="order-4 icon space-x-6 *:cursor-pointer">
+            <span class=""
+              ><i class="fa-solid fa-magnifying-glass text-xl"></i
+            ></span>
+            <span><i class="fa-regular fa-heart text-xl"></i></span>
+            <span>
+              <a href="./src/checkout.html"
+                ><i class="fa-regular fa-bag-shopping text-xl relative">
+                  <span
+                    class="-bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center"
+                    >0</span
+                  ></i
+                ></a
+              >
+            </span>
+
+            <button
+              class="btn-black lg:text-lg lg:py-3 lg:px-7 py-2 px-5 font-serif rounded-lg"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <!-- My Orders -->
+      <section class="container ">
+        <div class="lg:mx-14 md:mx-6 lg:my-[80px] mt-[42px] ">
+       
+            <div class="lg:colx-span-7 md:col-span-4">
+              <h1 class="lg:text-4xl text-3xl tracking-wider font-medium">My Profile</h1>
+            </div>
+           
+       
+      
+          <div class="grid lg:grid-cols-12 grid-cols-8 lg:gap-8 gap-2 lg:my-12 my-6">
+                <!-- Sidebar -->
+            <div class="lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] lg:h-[524px] rounded-lg">
+              <div class="flex items-center p-5 border-b border-hrBlack">
+                <img
+                  src="../assets/images/myorder/Ellipse 958.png"
+                  alt=""
+                  class="rounded-full md:w-[51px] md:h-[51px]"
+                />
+                <div class="px-4 py-2">
+                  <span class=""></span>
+                    <img src="../assets/images/myorder/Hello.png" class="px-[2px]" alt=""
+                  /></span>
+                  <h4 class="font-bold text-lg">Robert Fox</h4>
+                </div>
+                <div class="lg:hidden " >
+               <button> <i class=" fa-solid fa-layer-group pl-5 text-xl"></i></button>
+             </div> </div>
+              <nav class="lg:block hidden py-5 w-full">
+                <ul class="space-y-2">
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-user mr-3"></i>Personal Information
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-box mr-3"></i>My Orders
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-heart mr-3"></i>My Wishlist
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-location-dot mr-3"></i>Manage Addresses
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-light fa-credit-card mr-3"></i>Saved Cards
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                      <i class="fa-regular fa-bell mr-3"></i>Notifications
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" class="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center">
+                     
+ 
+
+<i class="fa-regular fa-gear mr-3"></i>Settings
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+            <div class="lg:col-span-9  col-span-8 lg:pl-5">
+          <!-- Content -->
+           <div class="flex justify-between items-center">
+            <div class="relative">
+               <a href=""> <i class="fa-regular fa-pen-to-square text-sm pl-[6px] pb-[6px] pt-1 pr-1 rounded-lg bg-blackL text-white absolute -right-0 -bottom-0"></i></a>
+            <img src="../assets//images/myorder/Ellipse 958.png" alt="" class="md:w-20 md:h-20 w-14 h-14 rounded-full"></div>
+            <button
+            class="btn-black items-center md:px-8 md:py-4 px-4 py-2 flex whitespace-nowrap rounded-lg hover:text-black"
+          > <i class="fa-solid fa-pen-to-square"></i>
+            <span class="ml-3">Edit Profile</span>
+           
+          </button></div>
+          <form class="my-8 mb-8">
+            <div
+            class="flex justify-between  mb-7"
+          >
+            <div class="">
+              <label for="name" class="text-md px-3"> Firt Name</label
+              ><br />
+              <input
+                type="text"
+                value="Robert"
+                readonly
+                class="cursor-default border border-t-2 border-l-2 border-blackL px-5 py-3 xl:w-[403px] lg:w-[350px] md:w-[353px] sm:w-[273px] h-14 focus:ring-1 focus:ring-slate-500 rounded-xl mr-2"
+              />
+            </div>
+            <div class="">
+              <label for="name" class="text-md px-3">Last Name</label><br />
+              <input
+                type="text"
+                value="Fox"
+                readonly
+                class="border border-t-2 border-l-2 border-blackL px-5 py-3 xl:w-[403px]  lg:w-[350px] md:w-[353px] sm:w-[273px] h-14 focus:ring-1 focus:ring-slate-500 rounded-xl"
+              />
+            </div>
+          </div>       
+          <div
+          class="flex justify-between  mb-7"
+        >
+          <div class="">
+            <label for="name" class="text-md px-3"> Phone Number</label
+            ><br />
+            <input
+              type="number"
+              value="09856874578"
+              readonly
+              class="cursor-default border border-t-2 border-l-2 border-blackL px-5 py-3 xl:w-[403px]  lg:w-[350px] md:w-[353px] sm:w-[273px] h-14 focus:ring-1 focus:ring-slate-500 rounded-xl mr-2"
+            />
+          </div>
+          <div class="">
+            <label for="name" class="text-md px-3">Email Address</label><br />
+            <input
+              type="text"
+              value="rebert@gmail.com"
+              readonly
+              class="border border-t-2 border-l-2 border-blackL px-5 py-3 xl:w-[403px]  lg:w-[350px] md:w-[353px] sm:w-[273px] h-14 focus:ring-1 focus:ring-slate-500 rounded-xl"
+            />
+          </div>
+        </div>   
+            <div class="my-5">
+              <label for="name" class="text-md px-1"> Address</label
+              ><br />
+              <input
+                type="text"
+                value="Đối Diện Bưu Điện Hà Đông(15 Quang Trung Hà Đông)"
+         
+                readonly
+                class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-full focus:ring-1 focus:ring-slate-500 rounded-xl"
+              />
+            </div>
+           
+
+       
+          </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="bg-black text-white">
+      <div class="container">
+        <div
+          class="grid grid-cols-12 gap-8 mx-4 py-14 border-b border-stone-700"
+        >
+          <div class="lg:col-span-4 col-span-6">
+            <div>
+              <img
+                src="../assets/images/Logofooter.png "
+                alt=""
+                class="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
+              />
+            </div>
+            <div class="my-[39px] space-y-5 w-[261px]">
+              <div class="*:px-1">
+                <i class="fa-regular fa-phone-volume text-lg"></i>
+                <span class="text-base">(704)555-0127</span>
+              </div>
+              <div class="*:px-1">
+                <i class="fa-light fa-envelope text-lg"></i
+                ><span class="mx-1">kist@example.com</span>
+              </div>
+              <div class="*:px-1 flex">
+                <i class="fa-regular fa-location-dot text-lg"></i>
+                <span class="mx-2 lg:w-full w-48"
+                  >3891 Ranchview Dr.Richardson, California 626339</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-2 col-span-6">
+            <h1 class="text-xl font-semibold mb-3">Information</h1>
+            <ul class="">
+              <li class="mb-3"><a href="" class="">My Acount</a></li>
+              <li class="mb-3"><a href="">Login</a></li>
+              <li class="mb-3"><a href="">My Cart</a></li>
+              <li class="mb-3"><a href="">My Wishlist</a></li>
+
+              <li class="mb-3"><a href="">Checkout</a></li>
+            </ul>
+          </div>
+          <div class="lg:col-span-2 col-span-6">
+            <h1 class="text-xl font-semibold mb-3">Service</h1>
+            <ul>
+              <li class="mb-3"><a href="">About Us</a></li>
+              <li class="mb-3"><a href="">Careers</a></li>
+              <li class="mb-3"><a href="">Delivery Information</a></li>
+              <li class="mb-3"><a href="">Privacy Policy</a></li>
+              <li class="mb-3"><a href="">Terms & Conditions</a></li>
+            </ul>
+          </div>
+          <div class="lg:col-span-4 col-span-6">
+            <h1 class="text-xl font-semibold mb-4">Subscribe</h1>
+            <p class="lg:w-80 mb-5">
+              Enter your email below to be the first to know about new
+              collections and product launches.
+            </p>
+            <div class="relative">
+              <i
+                class="fa-regular fa-envelope absolute top-3 left-4 text-2xl"
+              ></i>
+
+              <input
+                type="email"
+                placeholder="Your Email"
+                class="lg:w-[305px] w-[200px] bg-blackL text-[15px] py-3 px-12 rounded-lg text-white border shadow-lg shadow-slate-600/50 focus:ring focus:ring-blue-500 focus:ring-opacity-50 focus:outline-none placeholder-white"
+              />
+              <button type="submit">
+                <i
+                  class="fa-solid fa-arrow-right absolute text-gray-400 lg:top-4 lg:left-[270px] text-xl top-4 left-[170px]"
+                ></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between py-3">
+          <div class="">
+            <img src="../assets/images/bank.png" alt="" class="h-7" />
+          </div>
+          <div>© 2024 Krist All Rights are Reserved.</div>
+          <div class="*:text-2xl *:px-3">
+            <i class="fa-brands fa-facebook" style="color: #ffffff"></i
+            ><i class="fa-brands fa-instagram"></i
+            ><i class="fa-brands fa-twitter" style="color: #ffffff"></i>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
