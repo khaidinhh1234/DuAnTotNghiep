@@ -23,18 +23,17 @@
     />
     <style>
       .dropdown-content {
-          display: none;
-          position: absolute;
-          background-color: #ffffff;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          z-index: 1;
-          
+        display: none;
+        position: absolute;
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1;
       }
 
       .dropdown:hover .dropdown-content {
-          display: block;
+        display: block;
       }
-  </style>
+    </style>
   </head>
   <body>
     <!-- Heaser -->
@@ -67,76 +66,265 @@
                   class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
                   >Shop</a
                 > -->
-                        <div class="relative inline-block text-left dropdown">
-                    <button class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg">
-
-                        Shop
-                        <!-- <svg class="w-6 h-6 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                <div class="relative inline-block text-left dropdown">
+                  <button
+                    class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >
+                    Shop
+                    <!-- <svg class="w-6 h-6 ml-1" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
                                 d="M5.292 7.292a1 1 0 011.416 0L10 10.586l3.292-3.294a1 1 0 011.416 1.416l-4 4a1 1 0 01-1.416 0l-4-4a1 1 0 010-1.416z"
                                 clip-rule="evenodd" />
                         </svg> -->
-                    </button>
-                    <div class="dropdown-content mt-2 p-8 w-auto rounded-md shadow-lg left-1/2 transform -translate-x-1/3">
-                      <div class="flex space-x-12 ">
-                            <div>
-                                <h3 class="font-bold mb-4 text-lg">Men</h3>
-                                <ul class="space-y-2">
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">T-Shirts</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Casual Shirts</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Formal Shirts</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Jackets</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Blazers & Coats</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Indian & Festive Wear</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Kurtas & Kurta Sets</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Sherwanis</a></li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 class="font-bold mb-4 text-lg">Women</h3>
-                                <ul class="space-y-2">
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Kurtas & Suits</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Sarees</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Ethnic Wear</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Lehenga Cholis</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Jackets</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Western Wear</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Dresses</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Jumpsuits</a></li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 class="font-bold mb-4 text-lg">Footwear</h3>
-                                <ul class="space-y-2">
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Flats</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Casual Shoes</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Heels</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Boots</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Sports Shoes & Floaters</a></li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 class="font-bold mb-4 text-lg">Kids</h3>
-                                <ul class="space-y-1">
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">T-Shirts</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Shirts</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Jeans</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Trousers</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Party Wear</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Innerwear & Thermal</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Track Pants</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg">Value Pack</a></li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3 class="font-bold mb-4 text-lg">Product Features</h3>
-                                <ul class="space-y-1">
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">360 Product Viewer</a></li>
-                                    <li><a href="#" class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Product with Video</a></li>
-                                </ul>
-                            </div>
-                        </div>
+                  </button>
+                  <div
+                    class="dropdown-content p-8 w-auto rounded-md shadow-lg left-1/2 transform -translate-x-1/3"
+                  >
+                    <div class="flex space-x-12">
+                      <div>
+                        <h3 class="font-bold mb-4 text-lg">Men</h3>
+                        <ul class="space-y-2">
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >T-Shirts</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Casual Shirts</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Formal Shirts</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Jackets</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Blazers & Coats</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Indian & Festive Wear</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Kurtas & Kurta Sets</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Sherwanis</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 class="font-bold mb-4 text-lg">Women</h3>
+                        <ul class="space-y-2">
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Kurtas & Suits</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Sarees</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Ethnic Wear</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Lehenga Cholis</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Jackets</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Western Wear</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Dresses</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Jumpsuits</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 class="font-bold mb-4 text-lg">Footwear</h3>
+                        <ul class="space-y-2">
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Flats</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Casual Shoes</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Heels</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Boots</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Sports Shoes & Floaters</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 class="font-bold mb-4 text-lg">Kids</h3>
+                        <ul class="space-y-1">
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >T-Shirts</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Shirts</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Jeans</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Trousers</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Party Wear</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Innerwear & Thermal</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Track Pants</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg"
+                              >Value Pack</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                      <div>
+                        <h3 class="font-bold mb-4 text-lg">Product Features</h3>
+                        <ul class="space-y-1">
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >360 Product Viewer</a
+                            >
+                          </li>
+                          <li>
+                            <a
+                              href="#"
+                              class="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >Product with Video</a
+                            >
+                          </li>
+                        </ul>
+                      </div>
                     </div>
+                  </div>
                 </div>
               </li>
               <li>
