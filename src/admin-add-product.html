@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="grid grid-cols-12 gap-2">
+      <!-- sidebar -->
+      <nav class="flex flex-col bg-gray-900 text-white col-span-3 w-[300px]">
+        <div class="py-4 flex justify-evenly">
+          <img src="../assets/images/Logofooter.png" alt="" class="w-20 h-7" />
+          <a href="/src/dashboard.html" class="text-2xl font-bold">
+            Hello Admin
+          </a>
+        </div>
+        <ul class="flex flex-col p-4">
+          <li class="text-gray-400 mb-2">Pages</li>
+          <li class="mb-2">
+            <a
+              href="/src/dashboard.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <i class="fas fa-tachometer-alt ml-2"></i>
+              <span class="ml-2 text-xl">Dashboard</span>
+            </a>
+          </li>
+          <li class="mb-2">
+            <a
+              href="/src/profile.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <i class="fas fa-user ml-2"></i>
+              <span class="ml-2 text-xl">User</span>
+            </a>
+          </li>
+          <li class="mb-2">
+            <div class="relative">
+              <button
+                id="category-menu-button"
+                class="ml-2 flex items-center p-2 text-white hover:bg-gray-700 rounded w-full focus:outline-none"
+              >
+                <i class="fas fa-list ml-2"></i>
+                <span class="ml-2 text-xl">Category</span>
+                <i class="fas fa-chevron-up ml-auto"></i>
+              </button>
+              <div
+                id="category-menu"
+                class="dropdown-menu hidden absolute bg-white mt-2 w-48 rounded-md shadow-lg"
+              >
+                <a
+                  href="/src/list-category.html"
+                  class="block px-4 py-2 text-gray-700 hover:bg-gray-100 text-xl"
+                  >List Category</a
+                >
+              </div>
+            </div>
+          </li>
+          <li class="mb-2">
+            <div class="relative">
+              <button
+                id="product-menu-button"
+                class="ml-2 flex items-center p-2 text-white hover:bg-gray-700 rounded w-full focus:outline-none"
+              >
+                <i class="fas fa-box ml-2"></i>
+                <span class="ml-2 text-xl">Product</span>
+                <i class="fas fa-chevron-up ml-auto"></i>
+              </button>
+            </div>
+            <a
+              href="/src/admin-list-product.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <span class="ml-2 text-xl">List Product</span>
+            </a>
+            <a
+              href="/src/admin-add-product.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <span class="ml-2 text-xl">Add Product</span>
+            </a>
+          </li>
+          <li class="mb-2">
+            <a
+              href="/src/admin-order.html"
+              class="flex items-center p-2 text-white hover:bg-gray-700 rounded"
+            >
+              <i class="fas fa-file-alt ml-2"></i>
+              <span class="ml-2 text-xl">Order</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- end sidebar -->
+      <section class="content flex flex-col border-b border-black col-span-9">
+        <!-- header -->
+        <header class="border-b border-black">
+          <div class="\">
+            <nav class="p-4 flex justify-between items-center">
+              <div class="flex items-center">
+                <!-- <button id="menu-button" class="text-gray-600 focus:outline-none">
+                            <i class="fas fa-bars ml-2"></i>
+                        </button> -->
+                <form class="ml-4">
+                  <div class="relative">
+                    <i
+                      class="fa-regular fa-magnifying-glass absolute text-2xl px-1 py-[5px] text-neutral-400 top-1"
+                    ></i>
+                    <input
+                      type="search"
+                      class="w-96 h-10 px-9 text-xl bg-none focus:outline-none"
+                      placeholder="Search..."
+                    />
+                  </div>
+                </form>
+              </div>
+              <div class="px-5">
+                <div class="flex space-x-5">
+                  <button
+                    type="button"
+                    class="relative rounded-full p-1 text-gray-400 hover:text-black focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  >
+                    <span class="absolute -inset-1.5"></span>
+                    <span class="sr-only">View notifications</span>
+                    <svg
+                      class="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    id="user-menu-button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                  >
+                    <span class="absolute -inset-1.5"></span>
+                    <span class="sr-only">Open user menu</span>
+                    <img
+                      class="h-8 w-8 rounded-full"
+                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      alt=""
+                    />
+                  </button>
+                </div>
+
+                <!--
+                Dropdown menu, show/hide based on menu state.
+    
+                Entering: "transition ease-out duration-100"
+                  From: "transform opacity-0 scale-95"
+                  To: "transform opacity-100 scale-100"
+                Leaving: "transition ease-in duration-75"
+                  From: "transform opacity-100 scale-100"
+                  To: "transform opacity-0 scale-95"
+              -->
+                <!-- <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1"> -->
+                <!-- Active: "bg-gray-100", Not Active: "" -->
+                <!-- <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-0">Your Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-1">Settings</a>
+                <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a> -->
+                <!-- </div> -->
+              </div>
+            </nav>
+          </div>
+        </header>
+        <!-- end header -->
+        <!-- form product -->
+        <main class="p-4">
+          <h2 class="text-4xl font-bold mb-4">Thêm sản phẩm</h2>
+          <div class="grid grid-cols-12">
+            <div class="col-span-5 mx-auto py-5">
+              <img
+                src="../assets/images/Homepage/sanpham1.png"
+                alt=""
+                class="w-72"
+              />
+            </div>
+            <div class="col-span-5">
+              <form class="max-w-sm">
+                <div class="my-5">
+                  <label for="name" class="text-md px-1">Name</label><br />
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[300px] sm:w-[260px] md:w-[520px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                  />
+                </div>
+                <div class="mb-5">
+                  <label for="price" class="text-md px-1">Giá</label>
+                  <input
+                    type="text"
+                    placeholder="Giá"
+                    class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[300px] sm:w-[260px] md:w-[520px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                  />
+                </div>
+                <div class="mb-5">
+                  <label for="description" class="text-md px-1">Mô tả</label>
+                  <textarea
+                    id="description"
+                    class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[300px] sm:w-[260px] md:w-[520px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                    placeholder="Mô tả"
+                    required
+                  ></textarea>
+                </div>
+                <div class="mb-5">
+                  <label for="quantity" class="text-md px-1">Số lượng</label>
+                  <input
+                    type="text"
+                    placeholder="Số lượng"
+                    class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[300px] sm:w-[260px] md:w-[520px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                  />
+                </div>
+                <div class="mb-5">
+                  <label for="brand" class="text-md px-1">Thương hiệu</label>
+                  <select
+                    id="brand"
+                    class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[300px] sm:w-[260px] md:w-[520px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                  >
+                    <option value="" disabled selected>Chọn thương hiệu</option>
+                    <option value="sam sung">Sam Sung</option>
+                    <option value="ios">iOS</option>
+                    <option value="xioami">Xiaomi</option>
+                  </select>
+                </div>
+                <div class="mb-5">
+                  <label for="category" class="text-md px-1">Danh mục</label>
+                  <select
+                    id="category"
+                    class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[300px] sm:w-[260px] md:w-[520px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                    required
+                  >
+                    <option value="" disabled selected>Chọn danh mục</option>
+                    <option value="điện thoại">Điện thoại</option>
+                    <option value="laptop">Laptop</option>
+                    <option value="tai nghe">Tai nghe</option>
+                  </select>
+                </div>
+                <div class="mb-5">
+                  <label for="image" class="text-md px-1">Ảnh</label>
+                  <input
+                    type="file"
+                    id="image"
+                    class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[300px] sm:w-[260px] md:w-[520px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
+          </div>
+        </main>
+        <!-- end form product -->
+      </section>
+    </div>
+  </body>
+</html>
