@@ -1,280 +1,460 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+  <head>
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
+    <title>Refined Sidebar</title>
     <link rel="stylesheet" href="../style.css" />
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        integrity="sha512-L0+8xNpX3V9QpQPEIB5CV3CwvCQg6gB0Y3uzEg9F46Kb3oIezVVPlO6c9t1P06a5boIHT6fxGAbjRnS3tk+U2A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="admin.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+  </head>
+  <body class="text-white">
+    <div class="flex">
+      <slibar class="h-auto w-[300px] bg-gray-900 p-6 hidden sm:block">
+        <div class="flex items-center mb-14 px-2">
+          <img src="../assets/images/Logofooter.png" alt="" class="w-24 h-7" />
+        </div>
+        <nav class="flex flex-col space-y-2">
+          <a
+            href="#"
+            class="flex items-center p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-200 text-lg"
+          >
+            <i class="fa-regular fa-house px-2 text-xl"></i>
+            Dashboard
+          </a>
+          <a
+            href="#"
+            class="flex items-center p-2 rounded-lg hover:bg-gray-700 transition duration-200 text-lg"
+          >
+            <i class="fa-solid fa-shirt px-2"></i>
+            Products
+          </a>
+          <a
+            href="#"
+            class="flex items-center p-2 rounded-lg hover:bg-gray-700 transition duration-200 text-lg"
+          >
+            <i class="fa-solid fa-layer-group px-2"></i>
+            Category
+          </a>
+          <a
+            href="#"
+            class="flex items-center p-2 rounded-lg hover:bg-gray-700 transition duration-200 text-lg"
+          >
+            <i class="fa-solid fa-briefcase px-2"></i>
+            Orders
+          </a>
+        </nav>
+      </slibar>
+      <main class="w-full">
+        <header class="px-2 sm:px-6 lg:px-8 border-b border-white bg-gray-800">
+          <div class="relative flex h-16 items-center justify-between">
+            <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+              <!-- Mobile menu button-->
+              <button
+                type="button"
+                class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                aria-controls="mobile-menu"
+                aria-expanded="false"
+              >
+                <span class="absolute -inset-0.5"></span>
+                <span class="sr-only">Open main menu</span>
+                <!--
+                Icon when menu is closed.
     
-</head>
+                Menu open: "hidden", Menu closed: "block"
+              -->
+                <svg
+                  class="block h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                  />
+                </svg>
+                <!--
+                Icon when menu is open.
+    
+                Menu open: "block", Menu closed: "hidden"
+              -->
+                <svg
+                  class="hidden h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div
+              class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start relative mx-10"
+            >
+              <i
+                class="fa-solid fa-magnifying-glass absolute text-zinc-400/60 text-2xl top-2 left-4"
+              ></i>
+              <input
+                type="text"
+                class="w-[300px] h-10 rounded-xl text-lg bg-gray-700 pl-12 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:ring-offset-2 focus:ring-offset-gray-800"
+                placeholder="Search..."
+              />
+            </div>
+            <div
+              class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
+            >
+              <button
+                type="button"
+                class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+              >
+                <span class="absolute -inset-1.5"></span>
+                <span class="sr-only">View notifications</span>
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                  />
+                </svg>
+              </button>
 
-<body class="font-sans">
-    <!-- sidebar -->
-    <nav id="sidebar" class="flex flex-col bg-gray-900 text-white">
-        <div class="p-4">
-            <a href="/src/dashboard.html" class="text-xl font-bold">
-                Hello Admin
-            </a>
-        </div>
-        <ul class="flex flex-col p-4">
-            <li class="text-gray-400 mb-2">Pages</li>
-            <li class="mb-2">
-                <a href="/src/dashboard.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
-                    <i class="fas fa-tachometer-alt ml-2"></i>
-                    <span class="ml-2">Dashboard</span>
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="/src/profile.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
-                    <i class="fas fa-user ml-2"></i>
-                    <span class="ml-2">User</span>
-                </a>
-            </li>
-            <li class="mb-2">
-                <div class="relative">
-                    <button id="category-menu-button"
-                        class="ml-2 flex items-center p-2 text-white hover:bg-gray-700 rounded w-full focus:outline-none">
-                        <i class="fas fa-list ml-2"></i>
-                        <span class="ml-2">Category</span>
-                        <i class="fas fa-chevron-up ml-auto"></i>
-                    </button>
-                    <div id="category-menu"
-                        class="dropdown-menu hidden absolute bg-white mt-2 w-48 rounded-md shadow-lg">
-                        <a href="/src/list-category.html"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">List Category</a>
-                    </div>
+              <!-- Profile dropdown -->
+              <div class="relative ml-3">
+                <div>
+                  <button
+                    type="button"
+                    class="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    id="user-menu-button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                  >
+                    <span class="absolute -inset-1.5"></span>
+                    <span class="sr-only">Open user menu</span>
+                    <img
+                      class="h-8 w-8 rounded-full"
+                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      alt=""
+                    />
+                  </button>
                 </div>
-            </li>
-            <li class="mb-2">
-                <div class="relative">
-                    <button id="product-menu-button"
-                        class="ml-2 flex items-center p-2 text-white hover:bg-gray-700 rounded w-full focus:outline-none">
-                        <i class="fas fa-box ml-2"></i>
-                        <span class="ml-2">Product</span>
-                        <i class="fas fa-chevron-up ml-auto"></i>
-                    </button>
-                </div>
-                <a href="/src/admin-list-product.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
-                    <span class="ml-2">List Product</span>
-                </a>
-                <a href="/src/admin-add-product.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
-                    <span class="ml-2">Add Product</span>
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="/src/admin-order.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
-                    <i class="fas fa-file-alt ml-2"></i>
-                    <span class="ml-2">Order</span>
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="/src/setting.html" class="flex items-center p-2 text-white hover:bg-gray-700 rounded">
-                    <i class="fas fa-cogs ml-2"></i>
-                    <span class="ml-2">Setting</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <section class="content flex flex-col border-b border-black">
-        <!-- header -->
-    <header class="">
-        <div class="\">
-            <nav class="p-4 flex justify-between items-center">
-                <div class="flex items-center">
-                    <!-- <button id="menu-button" class="text-gray-600 focus:outline-none">
-                        <i class="fas fa-bars ml-2"></i>
-                    </button> -->
-                    <form class="ml-4">
-                        <div class="relative">
-                            <i
-                              class="fa-regular fa-magnifying-glass absolute text-2xl px-1 py-[5px] text-neutral-400"
-                            ></i>
-                            <input
-                              type="search"
-                              class="w-72 h-10 px-9 text-xl bg-none focus:outline-none"
-                              placeholder="Search..."
-                            /></div>
-                    </form>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <button class="text-gray-600 focus:outline-none">
-                            <i class="fas fa-bell ml-2"></i>
-                        </button>
-                        <!-- <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">4</span> -->
-                    </div>
+
+                <!--
+                Dropdown menu, show/hide based on menu state.
     
-                    <div class="relative dropdown-container">
-                        <button id="user-menu-button" class="flex items-center text-gray-600 focus:outline-none">
-                            <img src="https://i.pinimg.com/474x/b2/57/81/b2578191becd55a7ebbc3aa9cfda9a7a.jpg"
-                                alt="User Name" class="h-8 w-8 rounded-full">
-                        </button>
-                        <div id="user-menu" class="dropdown-menu">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">HomePage</a>
-                            <a href="settings.html"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log out</a>
-                        </div>
-    
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </header>
-    <!-- order -->
-    <main class="p-4">
-        <h2 class="text-2xl font-bold mb-4">Danh sách Orders</h2>
-        <div class="overflow-x-auto">
+                Entering: "transition ease-out duration-100"
+                  From: "transform opacity-0 scale-95"
+                  To: "transform opacity-100 scale-100"
+                Leaving: "transition ease-in duration-75"
+                  From: "transform opacity-100 scale-100"
+                  To: "transform opacity-0 scale-95"
+              -->
+                <!-- <div
+                  class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="user-menu-button"
+                  tabindex="-1"
+                >
+                 Active: "bg-gray-100", Not Active: "" -->
+                <!-- <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="user-menu-item-0"
+                    >Your Profile</a
+                  >
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="user-menu-item-1"
+                    >Settings</a
+                  >
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="user-menu-item-2"
+                    >Sign out</a
+                  >
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="bg-white py-5">
+          <h2 class="text-2xl font-bold mb-4">Danh sách Orders</h2>
+          <div class="overflow-x-auto border border-black mx-10 rounded-lg">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-100">
-                    <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        <th class="px-6 py-3">ID</th>
-                        <th class="px-6 py-3">Tài khoản</th>
-                        <th class="px-6 py-3">Tên khách hàng</th>
-                        <th class="px-6 py-3">Số điện thoại</th>
-                        <th class="px-6 py-3">Địa chỉ</th>
-                        <th class="px-6 py-3">Các sản phẩm</th>
-                        <th class="px-6 py-3">Tổng tiền</th>
-                        <th class="px-6 py-3">Trạng thái</th>
-                        <th class="px-6 py-3">Quản trị</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="text-left text-sm text-gray-700">
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">1</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">abcxyz@gmail.com</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Tèo</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">0123456789</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Hà Nội</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
-                                <i class="fas fa-chevron-down"></i>
-                                <span class="ml-2 text-gray-900">Sản phẩm 1</span>  
-                                <p class="text-sm text-gray-500">Số lượng: 2</p>
-                                <p class="text-sm text-gray-500">Giá: 100.000VNĐ</p>
-                            </button>
-                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
-                                <i class="fas fa-chevron-down"></i>
-                                <span class="ml-2 text-gray-900">Sản phẩm 2</span>  
-                                <p class="text-sm text-gray-500">Số lượng: 2</p>
-                                <p class="text-sm text-gray-500">Giá: 100.000VNĐ</p>
-                            </button>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">400.000VNĐ</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <div class="rounded-md bg-red-600 text-center text-white font-bold text-[9px]">Chưa xác nhận</div>
-                        </td>
+              <thead class="bg-gray-100">
+                <tr
+                  class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  <th class="px-6 py-3">ID</th>
+                  <th class="px-6 py-3">Tài khoản</th>
+                  <th class="px-6 py-3">Tên khách hàng</th>
+                  <th class="px-6 py-3">Số điện thoại</th>
+                  <th class="px-6 py-3">Địa chỉ</th>
+                  <th class="px-6 py-3">Các sản phẩm</th>
+                  <th class="px-6 py-3">Tổng tiền</th>
+                  <th class="px-6 py-3">Trạng thái</th>
+                  <th class="px-6 py-3">Quản trị</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="text-left text-sm text-gray-700">
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    1
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    abcxyz@gmail.com
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    Tèo
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    0123456789
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    Hà Nội
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <button
+                      class="block border-red-500 border px-3 py-2 rounded-md mb-2 transition-colors duration-300"
+                    >
+                      <i class="fas fa-chevron-down"></i>
+                      <span class="ml-2 text-gray-900">Sản phẩm 1</span>
+                      <p class="text-sm text-gray-500">Số lượng: 2</p>
+                      <p class="text-sm text-gray-500">Giá: 100.000VNĐ</p>
+                    </button>
+                    <button
+                      class="block border-red-500 border px-3 py-2 rounded-md mb-2 transition-colors duration-300"
+                    >
+                      <i class="fas fa-chevron-down"></i>
+                      <span class="ml-2 text-gray-900">Sản phẩm 2</span>
+                      <p class="text-sm text-gray-500">Số lượng: 2</p>
+                      <p class="text-sm text-gray-500">Giá: 100.000VNĐ</p>
+                    </button>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    400.000VNĐ
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <div
+                      class="rounded-md bg-red-600 text-center text-white font-bold text-[9px]"
+                    >
+                      Chưa xác nhận
+                    </div>
+                  </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <button class="bg-red-500 text-white px-2 py-2 rounded-lg">Xóa</button>
-                            <button id="view-info-btn" class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600">Cập nhập</button>
-                        </td>
-                    </tr>
-                </tbody>   
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="text-left text-sm text-gray-700">
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">2</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">mixi@gmail.com</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">pog</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">0123456789</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Hà Nội</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
-                                <i class="fas fa-chevron-down"></i>
-                                <span class="ml-2 text-gray-900">Sản phẩm 6</span>  
-                                <p class="text-sm text-gray-500">Số lượng: 4</p>
-                                <p class="text-sm text-gray-500">Giá: 300.000VNĐ</p>
-                            </button>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">1.200.000VNĐ</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <div class="rounded-md bg-blue-600 text-center text-white font-bold text-[9px]">Đang giao</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <button class="bg-red-500 text-white px-2 py-2 rounded-lg">Xóa</button>
-                            <button id="view-info-btn" class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600">Cập nhập</button>
-                        </td>
-                    </tr>
-                </tbody>    
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="text-left text-sm text-gray-700">
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">3</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">moi@gmail.com</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">tony</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">0123456789</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Hà Nội</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
-                                <i class="fas fa-chevron-down"></i>
-                                <span class="ml-2 text-gray-900">Sản phẩm 6</span>  
-                                <p class="text-sm text-gray-500">Số lượng: 4</p>
-                                <p class="text-sm text-gray-500">Giá: 300.000VNĐ</p>
-                            </button>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">1.200.000VNĐ</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <div class="rounded-md bg-green-600 text-center text-white font-bold text-[9px]">Đã giao</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <button class="bg-red-500 text-white px-2 py-2 rounded-lg">Xóa</button>
-                            <button id="view-info-btn" class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600">Cập nhập</button>                            
-                        </td>
-                    </tr>
-                </tbody>     
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr class="text-left text-sm text-gray-700">
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">4</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">moi@gmail.com</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">tony</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">0123456789</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">Hà Nội</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <button class="block border-red-500 border  px-3 py-2 rounded-md mb-2  transition-colors duration-300">
-                                <i class="fas fa-chevron-up"></i>
-                                <span class="ml-2 text-gray-900">Sản phẩm 10</span>
-                            </button>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">1.200.000VNĐ</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <div class="rounded-md bg-green-600 text-center text-white font-bold text-[9px]">Đã giao</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left align-top">
-                            <button class="bg-red-500 text-white px-2 py-2 rounded-lg">Xóa</button>
-                            <button id="view-info-btn" class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600">Cập nhập</button>                            
-                        </td>
-                    </tr>
-                </tbody>     
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <button class="bg-red-500 text-white px-2 py-2 rounded-lg">
+                      Xóa
+                    </button>
+                    <button
+                      id="view-info-btn"
+                      class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600"
+                    >
+                      Cập nhập
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="text-left text-sm text-gray-700">
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    2
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    mixi@gmail.com
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    pog
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    0123456789
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    Hà Nội
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <button
+                      class="block border-red-500 border px-3 py-2 rounded-md mb-2 transition-colors duration-300"
+                    >
+                      <i class="fas fa-chevron-down"></i>
+                      <span class="ml-2 text-gray-900">Sản phẩm 6</span>
+                      <p class="text-sm text-gray-500">Số lượng: 4</p>
+                      <p class="text-sm text-gray-500">Giá: 300.000VNĐ</p>
+                    </button>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    1.200.000VNĐ
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <div
+                      class="rounded-md bg-blue-600 text-center text-white font-bold text-[9px]"
+                    >
+                      Đang giao
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <button class="bg-red-500 text-white px-2 py-2 rounded-lg">
+                      Xóa
+                    </button>
+                    <button
+                      id="view-info-btn"
+                      class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600"
+                    >
+                      Cập nhập
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="text-left text-sm text-gray-700">
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    3
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    moi@gmail.com
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    tony
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    0123456789
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    Hà Nội
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <button
+                      class="block border-red-500 border px-3 py-2 rounded-md mb-2 transition-colors duration-300"
+                    >
+                      <i class="fas fa-chevron-down"></i>
+                      <span class="ml-2 text-gray-900">Sản phẩm 6</span>
+                      <p class="text-sm text-gray-500">Số lượng: 4</p>
+                      <p class="text-sm text-gray-500">Giá: 300.000VNĐ</p>
+                    </button>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    1.200.000VNĐ
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <div
+                      class="rounded-md bg-green-600 text-center text-white font-bold text-[9px]"
+                    >
+                      Đã giao
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <button class="bg-red-500 text-white px-2 py-2 rounded-lg">
+                      Xóa
+                    </button>
+                    <button
+                      id="view-info-btn"
+                      class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600"
+                    >
+                      Cập nhập
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="text-left text-sm text-gray-700">
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    4
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    moi@gmail.com
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    tony
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    0123456789
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    Hà Nội
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <button
+                      class="block border-red-500 border px-3 py-2 rounded-md mb-2 transition-colors duration-300"
+                    >
+                      <i class="fas fa-chevron-up"></i>
+                      <span class="ml-2 text-gray-900">Sản phẩm 10</span>
+                    </button>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    1.200.000VNĐ
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <div
+                      class="rounded-md bg-green-600 text-center text-white font-bold text-[9px]"
+                    >
+                      Đã giao
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-left align-top">
+                    <button class="bg-red-500 text-white px-2 py-2 rounded-lg">
+                      Xóa
+                    </button>
+                    <button
+                      id="view-info-btn"
+                      class="bg-blue-500 text-white px-2 py-2 rounded-lg hover:bg-blue-600"
+                    >
+                      Cập nhập
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
             </table>
-        </div>
-    </main>
-    </section>
-    
-    <script>
-        const userMenuButton = document.getElementById('user-menu-button');
-        const userMenu = document.getElementById('user-menu');
-
-        userMenuButton.addEventListener('click', () => {
-            userMenu.classList.toggle('show');
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
-                userMenu.classList.remove('show');
-            }
-        });
-    </script>
-</body>
-
+          </div>
+        </main>
+        <footer class="bg-gray-800 py-4">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center items-center">
+              <!-- Right side - Copyright -->
+              <div class="text-gray-400">
+                &copy; 2024 Your Company. All rights reserved.
+              </div>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </body>
 </html>
