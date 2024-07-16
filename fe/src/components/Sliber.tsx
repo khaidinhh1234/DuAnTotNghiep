@@ -28,9 +28,13 @@ const SlibarProduct = () => {
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <Package2 className="h-6 w-6" />
-            <span className="">Acme Inc</span>
+            <span className="">Krist</span>
           </Link>
-          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+          <Button
+            variant="outline"
+            size="icon"
+            className="ml-auto h-8 w-8 borber border-black rounded-[7px]"
+          >
             <Bell className="h-4 w-4" />
             <span className="sr-only">Toggle notifications</span>
           </Button>
@@ -50,9 +54,9 @@ const SlibarProduct = () => {
             >
               <ShoppingCart className="h-4 w-4" />
               Orders
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+              {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                 6
-              </Badge>
+              </Badge> */}
             </Link>
             <Link
               to="/admin/products"
