@@ -21,7 +21,7 @@ const Header = () => {
               <li>
                 <a
                   href="/"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-xl"
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
                 >
                   Home
                 </a>
@@ -29,7 +29,7 @@ const Header = () => {
               <li>
                 <a
                   href="/shop"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-xl"
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
                 >
                   Shop
                 </a>
@@ -37,7 +37,7 @@ const Header = () => {
               <li>
                 <a
                   href="/ourstory"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-xl"
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
                 >
                   Our Story
                 </a>
@@ -45,7 +45,7 @@ const Header = () => {
               <li>
                 <a
                   href=""
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-xl"
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
                 >
                   Blog
                 </a>
@@ -53,7 +53,7 @@ const Header = () => {
               <li>
                 <a
                   href=""
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-xl"
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
                 >
                   Contact Us
                 </a>
@@ -76,7 +76,7 @@ const Header = () => {
                 </i>
               </a>
             </span>
-            <button className="btn-black bg-black text-white hover:bg-white hover:text-black lg:text-lg lg:py-3 lg:px-7 py-2 px-5 font-serif rounded-2xl">
+            <button className="bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white px-6 py-3 rounded-xl text-lg font-medium">
               Login
             </button>
           </div>
