@@ -1,4 +1,4 @@
-import logo from "@/assets/Images/logo.png";
-import banner from "@/assets/Images/banner.png";
+import products1 from "@/assets/images/Homepage/sanpham1.png";
+import products2 from "@/assets/images/Homepage/sanpham2.png";
 
-export { logo, banner };
+export { products1, products2 };

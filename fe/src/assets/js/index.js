@@ -1,29 +1,152 @@
-// drigging scroll x
-const scroll_dragging = document.querySelector(".scroll_dragging");
-let checkMouseDow = false;
-let startMouse = 0;
+var swiper = new Swiper(".swiper", {
+  slidesPerView: 3.5,
+  spaceBetween: 30,
+  loop: true,
 
-scroll_dragging.addEventListener("mousedown", (e) => {
-  checkMouseDow = true;
-  startMouse = e.clientX;
-  scroll_dragging.style.cursor = "pointer";
+  direction: getDirection(),
+  pagination: {
+    el: ".swiper-mix-match-pagination",
+  },
+  on: {
+    resize: function () {
+      swiper.changeDirection(getDirection());
+    },
+  },
+  breakpoints: {
+    240: {
+      slidesPerView: 1.5,
+      spaceBetween: 10,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    768: {
+      slidesPerView: 2.5,
+      spaceBetween: 40,
+    },
+    998: {
+      slidesPerView: 2.5,
+      spaceBetween: 20,
+    },
+    1024: {
+      slidesPerView: 3.5,
+      spaceBetween: 50,
+    },
+  },
 });
-
-scroll_dragging.addEventListener("mouse", () => {});
-
-scroll_dragging.addEventListener("mouseleave", () => {
-  checkMouseDow = false;
+new Swiper(".feedblack", {
+  slidesPerView: 1,
+  spaceBetween: 10,
+  freeMode: true,
+  direction: getDirection(),
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    240: {
+      slidesPerView: 1,
+      spaceBetween: 0,
+    },
+    640: {
+      slidesPerView: 1.5,
+      spaceBetween: 20,
+    },
+    768: {
+      slidesPerView: 2,
+      spaceBetween: 30,
+    },
+    938: {
+      slidesPerView: 2.5,
+      spaceBetween: 40,
+    },
+    1024: {
+      slidesPerView: 3,
+      spaceBetween: 50,
+    },
+  },
 });
-scroll_dragging.addEventListener("mousemove", (e) => {
-  if (!checkMouseDow) return;
-  scroll_dragging.scrollLeft += startMouse - e.clientX;
-});
+// new Swiper(".mix-match", {
+//   slidesPerView: 1,
+//   spaceBetween: 30,
 
-// filter
-const sale1 = document.querySelector("#sale1");
-console.log(sale1.disabled);
-
-const sale2 = document.querySelector(".sale2");
-sale2.addEventListener("click", () => {
-  console.log(sale1.disabled);
+// });
+// new Swiper(".mySwiper", {
+//   loop: true,
+//   pagination: {
+//     el: ".swiper-pagination",
+//     clickable: true,
+//   },
+//   navigation: {
+//     nextEl: ".swiper-button-next",
+//     prevEl: ".swiper-button-prev",
+//   },
+// });
+var swiper = new Swiper(".mySwiper", {
+  slidesPerView: 1,
+  spaceBetween: 30,
+  loop: true,
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    240: {
+      slidesPerView: 2,
+      spaceBetween: 10,
+    },
+    640: {
+      slidesPerView: 2,
+      spaceBetween: 20,
+    },
+    768: {
+      slidesPerView: 2,
+      spaceBetween: 40,
+    },
+    898: {
+      slidesPerView: 3,
+      spaceBetween: 40,
+    },
+    1024: {
+      slidesPerView: 4,
+      spaceBetween: 50,
+    },
+  },
 });
+var swiper = new Swiper(".voucher", {
+  slidesPerView: 1,
+  spaceBetween: 10,
+  loop: true,
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+  },
+  breakpoints: {
+    // 140: {
+    //   slidesPerView: 1,
+    //   spaceBetween: 10,
+    // },
+    768: {
+      slidesPerView: 1.5,
+      magrin: 20,
+      spaceBetween: 20,
+    },
+    918: {
+      slidesPerView: 2,
+      spaceBetween: 50,
+      magrin: 20,
+    },
+    1024: {
+      slidesPerView: 3,
+      magrin: 20,
+      spaceBetween: 50,
+    },
+  },
+});
+function getDirection() {
+  var windowWidth = window.innerWidth;
+  var direction = window.innerWidth <= 760 ? "vertical" : "horizontal";
+
+  return direction;
+}
