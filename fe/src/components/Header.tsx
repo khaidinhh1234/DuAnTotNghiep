@@ -20,7 +20,7 @@ const Header = () => {
             <ul className="flex items-center space-x-2">
               <li>
                 <a
-                  href="homepage.html"
+                  href="/"
                   className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-xl"
                 >
                   Home
@@ -28,7 +28,7 @@ const Header = () => {
               </li>
               <li>
                 <a
-                  href="src/shop.html"
+                  href="/shop"
                   className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-xl"
                 >
                   Shop
@@ -36,7 +36,7 @@ const Header = () => {
               </li>
               <li>
                 <a
-                  href="src/OurStory.html"
+                  href="/ourstory"
                   className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-xlg"
                 >
                   Our Story
