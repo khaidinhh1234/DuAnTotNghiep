@@ -11,7 +11,7 @@ const Header = () => {
           </div>
           <div className="order-2 Logo lg:w-60">
             <img
-              src="../assets/images/Logo.svg "
+              src={logo}
               alt=""
               className="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
             />
