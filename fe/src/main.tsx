@@ -8,13 +8,13 @@ import "./global.css";
 // import "./assets/js/index.js"
 // import "./styles/style.scss";
 
-const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <QueryClientProvider client={queryClient}>
+
     <React.StrictMode>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </React.StrictMode>
-  </QueryClientProvider>
+
 );
