@@ -12,6 +12,9 @@ import bannerOurStory from "@/assets/images/ourstory/banner.png";
 import our1 from "@/assets/images/ourstory/our1.png";
 import our2 from "@/assets/images/ourstory/our2.png";
 import logo from "@/assets/images/Logo.svg";
+
+import bank from "@/assets/images/bank.png";
+import logofooter from "@/assets/images/Logofooter.png";
 import anh1 from "@/assets/images/ourstory/1.png";
 import anh2 from "@/assets/images/ourstory/2.png";
 import anh3 from "@/assets/images/ourstory/3.png";
@@ -26,6 +29,8 @@ export {
   sanPham2,
   banner2,
   sanPham3,
+  logofooter,
+  bank,
   //   ellipse,
   story,
   bannerOurStory,

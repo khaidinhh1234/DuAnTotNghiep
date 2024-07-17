@@ -1,3 +1,4 @@
+import { bank, logofooter } from "@/assets/img";
 import React from "react";
 
 type Props = {};
@@ -11,7 +12,7 @@ const Footer = () => {
             <div className="lg:col-span-4 col-span-6">
               <div>
                 <img
-                  src="../assets/images/Logofooter.png "
+                  src={logofooter}
                   alt=""
                   className="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
                 />
@@ -80,21 +81,21 @@ const Footer = () => {
                 collections and product launches.
               </p>
               <div className="relative">
-                <i className="fa-regular fa-envelope absolute top-3 left-4 text-2xl" />
+                <i className="fa-regular fa-envelope absolute top-2 left-4 text-2xl" />
                 <input
                   type="email"
                   placeholder="Your Email"
                   className="lg:w-[305px] w-[200px] bg-blackL text-[15px] py-3 px-12 rounded-lg text-white border shadow-lg shadow-slate-600/50 focus:ring focus:ring-blue-500 focus:ring-opacity-50 focus:outline-none placeholder-white"
                 />
                 <button type="submit">
-                  <i className="fa-solid fa-arrow-right absolute text-gray-400 lg:top-4 lg:left-[270px] text-xl top-4 left-[170px]" />
+                  <i className="fa-solid fa-arrow-right absolute text-gray-400 lg:top-3 lg:left-[270px] text-xl top-3 left-[170px]" />
                 </button>
               </div>
             </div>
           </div>
           <div className="flex justify-between py-3">
             <div>
-              <img src="../assets/images/bank.png" alt="" className="h-7" />
+              <img src={bank} alt="" className="h-7" />
             </div>
             <div>© 2024 Krist All Rights are Reserved.</div>
             <div className="*:text-2xl *:px-3">
