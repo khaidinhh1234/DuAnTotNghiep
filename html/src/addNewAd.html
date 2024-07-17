@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-md w-846 max-w-md mt-64">
+        <div class="mt-[60px]">
+            <h3 class="title-h3">Add new as address</h3>
+            <form class="my-7">
+              <div class="my-5">
+                <label for="name" class="text-md px-1">Name</label><br />
+                <input
+                  type="text"
+                  id="name"
+                  class="w-full p-3 border border-t-2 border-l-2 border-blackL rounded  rounded-xl focus:outline-none focus:ring focus:border-blue-300"
+                  placeholder="Enter Name"
+                />
+              </div>
+              <div class="my-5">
+                <label for="name" class="text-md px-1">Mobile Number</label
+                ><br />
+                <input
+                  type="number"
+                  placeholder="Enter Mobile Number"
+                  class="w-full p-3 border border-t-2 border-l-2 border-blackL rounded  rounded-xl focus:outline-none focus:ring focus:border-blue-300"
+                />
+              </div>
+              <div class="my-5">
+                <label for="name" class="text-md px-3"
+                  >Flat, House no., Buiding, Company, Apartment</label
+                ><br />
+                <input
+                  type="text"
+                  class="w-full p-3 border border-t-2 border-l-2 border-blackL rounded  rounded-xl focus:outline-none focus:ring focus:border-blue-300"
+                />
+              </div>
+              <div class="my-5">
+                <label for="name" class="text-md px-3"
+                  >Area, Colony, Street, Sector, Vilage</label
+                ><br />
+                <input
+                  type="text"
+                  class="w-full p-3 border border-t-2 border-l-2 border-blackL rounded  rounded-xl focus:outline-none focus:ring focus:border-blue-300"
+                />
+              </div>
+              <div class="my-5">
+                <label for="name" class="text-md px-3">City</label><br />
+                <select
+                  name=""
+                  id=""
+                  class="w-full p-3 border border-t-2 border-l-2 border-blackL rounded  rounded-xl focus:outline-none focus:ring focus:border-blue-300"
+                >
+                  <option value="1">Hà Nội</option>
+                  <option value="2">Huế</option>
+
+                  <option value="3">Hồ Chí Minh</option>
+                </select>
+       
+              </div>
+              <div class="my-5">
+                <label for="name" class="text-md px-3">Pin Code</label
+                ><br />
+                <input
+                  type="text"
+                  placeholder="Enter Pin Code"
+                  class="w-full p-3 border border-t-2 border-l-2 border-blackL rounded  rounded-xl focus:outline-none focus:ring focus:border-blue-300"
+                />
+              </div>
+              <div class="my-5">
+                <label for="name" class="text-md px-3">State</label><br />
+                <select
+                class="w-full p-3 border border-t-2 border-l-2 border-blackL rounded  rounded-xl focus:outline-none focus:ring focus:border-blue-300"
+                >
+                  <option value="1">Select State</option>
+                  <option value="2">Huế</option>
+
+                  <option value="3">Hồ Chí Minh</option>
+                </select>
+              </div>
+              <div class="my-5 flex items-center px-2">
+                <input type="checkbox" class="dashed-line" /><label
+                  for="name"
+                  class="text-md px-3"
+                  >Use as my default address
+                </label>
+              </div>
+
+              <div class="flex justify-between">
+                <button type="button" class="mr-2 px-6 py-3 bg-gray-300 text-gray-700 rounded  hover:bg-blackL hover:text-white">Cancel</button>
+                <button type="submit" class="px-6 py-3 bg-black text-white rounded   border border-gray-300 hover:bg-white hover:text-black">Add New Address</button>
+            </div>
+            </form>
+          </div>
+        <!-- <form>
+            <div>
+                <h2 class="text-2xl font-bold mb-6">Add a new address</h2>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="name">Name</label>
+                <input type="text" id="name" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter Name">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="mobile">Mobile Number</label>
+                <input type="text" id="mobile" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter Mobile Number">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="address">Flat, House no., Building, Company, Apartment</label>
+                <input type="text" id="address" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter Address">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="area">Area, Colony, Street, Sector, Village</label>
+                <input type="text" id="area" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter Area">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="city">City</label>
+                <select id="city" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300">
+                    <option value="">Select City</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="pincode">Pin Code</label>
+                <input type="text" id="pincode" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter Pin Code">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2" for="state">State</label>
+                <select id="state" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300">
+                    <option value="">Select State</option>
+                </select>
+            </div>
+            <div class="mb-4 flex items-center">
+                <input type="checkbox" id="default" class="mr-2">
+                <label class="text-gray-700" for="default">Use as my default address</label>
+            </div>
+            <div class="flex justify-between">
+                <button type="button" class="mr-2 px-6 py-3 bg-gray-300 text-gray-700 rounded">Cancel</button>
+                <button type="submit" class="px-6 py-3 bg-black text-white rounded">Add New Address</button>
+            </div>
+        </form> -->
+    </div>
+</body>
+</html>

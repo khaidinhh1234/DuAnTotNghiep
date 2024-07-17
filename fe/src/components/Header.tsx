@@ -20,17 +20,22 @@ const Header = () => {
           <nav className="order-3 hidden lg:block ">
             <ul className="flex items-center space-x-2 ">
               <li>
+
                 <NavLink
                   to="/"
                   className="hover:shadow-slate-500/50  font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
-                >
+
+               
                   Home
                 </NavLink>
               </li>
               <li>
                 <a
                   href="/shop"
+
                   className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+
                 >
                   Shop
                 </a>
@@ -38,7 +43,10 @@ const Header = () => {
               <li>
                 <a
                   href="/ourstory"
+
                   className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+ 
                 >
                   Our Story
                 </a>
@@ -46,7 +54,10 @@ const Header = () => {
               <li>
                 <a
                   href=""
+
                   className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+         
                 >
                   Blog
                 </a>
@@ -54,7 +65,10 @@ const Header = () => {
               <li>
                 <a
                   href=""
+
                   className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+
                 >
                   Contact Us
                 </a>
