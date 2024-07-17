@@ -1,11 +1,9 @@
-import React from 'react'
+import React, { useState } from "react";
 
-type Props = {}
+type Props = {};
 
 const NotFoundPage = (props: Props) => {
-  return (
-    <div>NotFoundPage</div>
-  )
-}
+  return <></>;
+};
 
-export default NotFoundPage
+export default NotFoundPage;

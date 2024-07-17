@@ -1,5 +1,6 @@
 import { logo } from "@/assets/img";
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -16,20 +17,25 @@ const Header = () => {
               className="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
             />
           </div>
-          <nav className="order-3 hidden lg:block">
-            <ul className="flex items-center space-x-2">
+          <nav className="order-3 hidden lg:block ">
+            <ul className="flex items-center space-x-2 ">
               <li>
-                <a
-                  href="/"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
-                >
+
+                <NavLink
+                  to="/"
+                  className="hover:shadow-slate-500/50  font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+               
                   Home
-                </a>
+                </NavLink>
               </li>
               <li>
                 <a
                   href="/shop"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+
                 >
                   Shop
                 </a>
@@ -37,7 +43,10 @@ const Header = () => {
               <li>
                 <a
                   href="/ourstory"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+ 
                 >
                   Our Story
                 </a>
@@ -45,7 +54,10 @@ const Header = () => {
               <li>
                 <a
                   href=""
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+         
                 >
                   Blog
                 </a>
@@ -53,7 +65,10 @@ const Header = () => {
               <li>
                 <a
                   href=""
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+
+
                 >
                   Contact Us
                 </a>

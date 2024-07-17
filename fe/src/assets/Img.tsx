@@ -1,6 +1,6 @@
 import products1 from "@/assets/images/Homepage/sanpham1.png";
 import products2 from "@/assets/images/Homepage/sanpham2.png";
-
+import bannermobile from "@/assets/images/Homepage/banner-mobile.png";
 import bannerHome from "@/assets/images/Homepage/banner1.png";
 import banner from "@/assets/images/ourstory/banner.png";
 import banner2 from "@/assets/images/Homepage/banner2.png";
@@ -21,6 +21,7 @@ import anh3 from "@/assets/images/ourstory/3.png";
 import bannerend from "@/assets/images/ourstory/bannerend.png";
 
 export {
+  bannermobile,
   products1,
   products2,
   logo,

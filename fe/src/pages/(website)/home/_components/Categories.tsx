@@ -11,8 +11,8 @@ const Categories = () => {
               Shop by Categories
             </h1>
           </div>
-          <div className="mb:hidden sm:block h-full overflow-x-auto hidden_scroll_x">
-            <div className="grid grid-flow-col auto-cols-[100px]   gap-x-[22px] ">
+          <div className=" h-full overflow-x-auto hidden_scroll_x">
+            <div className="grid grid-flow-col lg:auto-cols-[100px]  md:auto-cols-[50px]  auto-cols-[40px] gap-x-[12px] lg:gap-x-[22px] ">
               <div className=" lg:col-span-3 col-span-6">
                 <div className="w-[300px] h-[400px] bg-neutral-200/70 relative">
                   <h1 className="text-neutral-300 absolute pt-5 truncate flex items-center justify-center px-6 text-7xl font-bold text-center z-0">
