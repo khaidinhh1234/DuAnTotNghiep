@@ -7,6 +7,7 @@ import LayoutWebsite from "@/pages/(website)/layout";
 import { Route, Routes } from "react-router-dom";
 import Page from "./../pages/(website)/shop/shop";
 import PageOur from "../pages/(website)/ourstory/pageOur";
+import Cart from "@/pages/(website)/cart/Cart";
 
 const Router = () => {
   return (
@@ -16,6 +17,7 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route path="/ourstory" element={<PageOur />} />
+          <Route path="/gio-hang" element={<Cart />} />
         </Route>
         <Route path="admin" element={<LayoutAdmin />}>
           <Route index element={<Dashboard />} />
