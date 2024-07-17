@@ -10,11 +10,6 @@ const Categories = () => {
             <h1 className="md:text-4xl text-2xl font-medium tracking-[1px]">
               Shop by Categories
             </h1>
-            <div>
-              <div className="swiper mySwiper">
-                <div className="swiper-wrapper"></div>
-              </div>
-            </div>
           </div>
           <div className="flex flex-col-12">
             <div className="swiper xl:swiper1 lg:swiper2 md:swiper3 swiper4">
