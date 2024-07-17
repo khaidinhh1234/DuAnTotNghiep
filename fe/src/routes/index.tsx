@@ -17,13 +17,13 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route path="/ourstory" element={<PageOur />} />
-          <Route path="/gio-hang" element={<Cart />} />
+          <Route path="/gio-hang" element={<Cart />} />{" "}
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
         <Route path="admin" element={<LayoutAdmin />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );
