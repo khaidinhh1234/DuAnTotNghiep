@@ -21,7 +21,7 @@ const CheckOut = () => {
             <tr className="*:py-8">
               <td>
                 <div className="flex gap-5 px-2 xl:w-[352px] sm:w-[392px] md:w-[309px]">
-                  <img src="../assets/images/checkout/sanpham1.png" alt className="w-12 h-12" />
+                  <img src="../assets/images/checkout/sanpham1.png" alt="" className="w-12 h-12" />
                   <div className="px-1">
                     <h3 className="font-bold">Product Name NameName</h3>
                     <p>Size: <span>S</span></p>
