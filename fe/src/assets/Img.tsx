@@ -19,7 +19,7 @@ import anh1 from "@/assets/images/ourstory/1.png";
 import anh2 from "@/assets/images/ourstory/2.png";
 import anh3 from "@/assets/images/ourstory/3.png";
 import bannerend from "@/assets/images/ourstory/bannerend.png";
-
+import login from "@/assets/images/lognin/Rectangle 3463274.png"
 export {
   bannermobile,
   products1,
@@ -41,4 +41,5 @@ export {
   anh2,
   anh3,
   bannerend,
+  login,
 };
