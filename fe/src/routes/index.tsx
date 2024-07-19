@@ -14,7 +14,6 @@ import ForgotPassword from "@/pages/(website)/ForgotPassword/ForgotPassword";
 import EnterOtp from "@/pages/(website)/EnterOTP/EnterOTP";
 import LoginSuccessfull from "@/pages/(website)/LoginSuccessfull/LoginSuccessfull";
 
-
 const Router = () => {
   return (
     <>

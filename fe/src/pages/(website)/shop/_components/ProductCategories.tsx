@@ -25,7 +25,7 @@ const ProductCategories = () => {
                   className="flex justify-between items-center cursor-pointer"
                   onClick={() => setShowcate(!showcate)}
                 >
-                  <h2 className="font-bold mb-2 text-lg">Product Categories</h2>
+                  <h2 className="font-bold mb-2 text-lg">Danh mục sản phẩm</h2>
                   <button className="mr-3">
                     {showcate ? (
                       <i className="fa-solid fa-chevron-up"></i>
@@ -38,50 +38,50 @@ const ProductCategories = () => {
                   <div className="mt-7">
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Men
+                        <input type="checkbox" className="mr-2" /> Nam
                       </label>
                       <i className="fa-solid fa-plus mr-3"></i>
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Women
+                        <input type="checkbox" className="mr-2" /> Nữ
                       </label>
                       <i className="fa-solid fa-plus mr-3"></i>
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Kids
+                        <input type="checkbox" className="mr-2" /> Trẻ em
                       </label>
                       <i className="fa-solid fa-plus mr-3"></i>
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Bags
+                        <input type="checkbox" className="mr-2" /> Túi Xách
                       </label>
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Belts
+                        <input type="checkbox" className="mr-2" /> Thắt lưng
                       </label>
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Wallets
+                        <input type="checkbox" className="mr-2" /> Ví
                       </label>
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Watches
+                        <input type="checkbox" className="mr-2" /> Đồng Hồ
                       </label>
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Accessories
+                        <input type="checkbox" className="mr-2" /> Phụ Kiện
                       </label>
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Winter Wear
+                        <input type="checkbox" className="mr-2" /> Trang Phục Mùa Đông
                       </label>
                     </div>
                   </div>
@@ -94,7 +94,7 @@ const ProductCategories = () => {
                   className=" flex justify-between items-center cursor-pointer"
                   onClick={() => setShowprice(!showprice)}
                 >
-                  <h2 className="font-bold text-lg mb-2">Filter by Price</h2>
+                  <h2 className="font-bold text-lg mb-2">Lọc Theo Giá</h2>
                   <button className="mr-3">
                     {showprice ? (
                       <i className="fa-solid fa-chevron-up"></i>
@@ -138,7 +138,7 @@ const ProductCategories = () => {
                   className="flex justify-between items-center cursor-pointer"
                   onClick={() => setShowcolor(!showcolor)}
                 >
-                  <h2 className="font-bold text-lg mb-2">Filter by Color</h2>
+                  <h2 className="font-bold text-lg mb-2">Lọc Theo Màu Sắc</h2>
                   <button className="mr-3">
                     {showcolor ? (
                       <i className="fa-solid fa-chevron-up"></i>
@@ -201,7 +201,7 @@ const ProductCategories = () => {
                   className="flex justify-between items-center"
                   onClick={() => setShowsize(!showsize)}
                 >
-                  <h2 className="font-bold text-lg mb-2">Filter by Size</h2>
+                  <h2 className="font-bold text-lg mb-2">Lọc Theo Kích Cỡ</h2>
                   {showsize ? (
                     <i className="fa-solid fa-chevron-up"></i>
                   ) : (
