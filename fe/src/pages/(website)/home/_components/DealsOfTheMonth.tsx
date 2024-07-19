@@ -4,17 +4,17 @@ import React from 'react'
 const DealsOfTheMonth = () => {
   return (
     <>
-    <section className="bg-white">
+      <section className="bg-white">
         <div
           className="max-w-7xl mx-auto flex flex-col md:flex-row items-center px-6 mb-32"
         >
           <div className="order-2 md:order-1 w-full md:w-1/2 p-6">
-            <h2 className="text-4xl font-bold mb-4">Deals of the Month</h2>
+            <h2 className="text-4xl font-bold mb-4">Ưu đãi của tháng</h2>
             <p className="text-gray-700 mb-7">
-              It is a long established fact that a reader will be distracted by
-              the readable content of a page when looking at its layout. The
-              point of using Lorem Ipsum is that it has a more-or-less normal
-              distribution of letters.
+              Một thực tế đã được chứng minh từ lâu là người đọc sẽ bị phân 
+              tâm bởi nội dung có thể đọc được của một trang khi nhìn vào bố cục 
+              của nó. Mục đích của việc sử dụng Lorem Ipsum là nó có sự phân bố chữ 
+              cái ít nhiều theo chuẩn mực.
             </p>
             <div className="flex space-x-4 text-center mb-14">
               <div
