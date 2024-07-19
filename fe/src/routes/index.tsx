@@ -8,6 +8,8 @@ import { Route, Routes } from "react-router-dom";
 import Page from "./../pages/(website)/shop/shop";
 import PageOur from "../pages/(website)/ourstory/pageOur";
 import Cart from "@/pages/(website)/cart/Cart";
+import Login from '../pages/(website)/auth/Login';
+import Register from "@/pages/(website)/auth/Register";
 
 const Router = () => {
   return (
@@ -17,13 +19,15 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route path="/ourstory" element={<PageOur />} />
-          <Route path="/gio-hang" element={<Cart />} />
+          <Route path="/gio-hang" element={<Cart />} />{" "}
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
         <Route path="admin" element={<LayoutAdmin />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

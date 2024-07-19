@@ -1,10 +1,10 @@
-import { our1, our2 } from '@/assets/img'
-import React from 'react'
+import { our1, our2 } from "@/assets/img";
+import React from "react";
 
 const OurMission = () => {
   return (
     <>
-    <section id="OurMission" className="mb-16 bg-neutral-200 pt-10 pb-20">
+      <section id="OurMission" className="mb-16 bg-neutral-200 pt-10 pb-20">
         <div className="container">
           <h2 className="lg:text-4xl text-2xl font-semibold mb-10 text-center">
             Our Mission
@@ -45,7 +45,7 @@ const OurMission = () => {
         </div>
       </section>
     </>
-  )
-}
+  );
+};
 
-export default OurMission
+export default OurMission;

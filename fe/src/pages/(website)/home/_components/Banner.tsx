@@ -7,7 +7,7 @@ const Banner = () => {
     <div>
       {" "}
       <section
-        className={`lg:bg-[url(${bannerHome})] bg-[url(${banner})] min-h-[585px] lg:min-h-[885px] lg:min-w-[1380px] bg-top bg-no-repeat lg:bg-center bg-cover mx-7 flex py-32 lg:items-center lg:py-0 mt-9 mb-24`}
+        className={`lg:bg-[url('./assets/images/Homepage/banner1.png')] bg-[url('./assets/images/Homepage/banner-mobile.png')] min-h-[585px] lg:min-h-[885px] lg:min-w-[1280px] bg-top bg-no-repeat lg:bg-center bg-cover mx-7 flex py-32 lg:items-center lg:py-0 mt-9 mb-24`}
       >
         {/* <!-- Banner --> */}
         <div className="container">

@@ -85,9 +85,9 @@ input[type="radio"]:checked::before {
 .custom-radio label {
   margin-left: 0.5rem;
 }
-/* .btn-black {
+.btn-black {
   @apply bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white;
-} */
+}
 
 .h1cart {
   @apply lg:text-4xl text-2xl font-medium tracking-[1px] mb-9;

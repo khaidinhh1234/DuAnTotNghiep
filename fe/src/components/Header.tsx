@@ -1,5 +1,6 @@
 import { logo } from "@/assets/img";
 import React from "react";
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -21,8 +22,8 @@ const Header = () => {
               <li>
                 <a
                   href="/"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
 
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
 
                 >
                   Home
@@ -31,7 +32,9 @@ const Header = () => {
               <li>
                 <a
                   href="/shop"
+
                   className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
+
 
                 >
                   Shop
@@ -40,7 +43,9 @@ const Header = () => {
               <li>
                 <a
                   href="/ourstory"
+
                   className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
+
 
                 >
                   Our Story
@@ -50,10 +55,9 @@ const Header = () => {
                 <a
                   href=""
 
+
                   className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
                >
-
-
                   Blog
                 </a>
               </li>
@@ -61,8 +65,8 @@ const Header = () => {
                 <a
                   href=""
 
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
 
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
 
                 >
                   Contact Us
@@ -86,7 +90,7 @@ const Header = () => {
                 </i>
               </a>
             </span>
-            <button className="bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white px-6 py-3 rounded-[7px] text-lg font-medium">
+            <button className="bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white px-6 py-3 rounded-xl text-lg font-medium">
 
               Login
             </button>
