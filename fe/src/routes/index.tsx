@@ -11,14 +11,15 @@ import Login from "@/pages/(website)/login/login";
 import Cart from "@/pages/(website)/cart/Cart";
 import Register from "@/pages/(website)/register/register";
 import ForgotPassword from "@/pages/(website)/ForgotPassword/ForgotPassword";
-import EnterOtp from "@/pages/(website)/EnterOTP/EnterOTP";
 import LoginSuccessfull from "@/pages/(website)/LoginSuccessfull/LoginSuccessfull";
-import MyOrder from "@/pages/(website)/login copy 7/Myorder";
-import OrderPlaceSuccess from "@/pages/(website)/login copy 6/OrderPlaceSuccessfully";
-import Minicard from "@/pages/(website)/login copy/Minicard";
-import Payment from "@/pages/(website)/login copy 4/PayMent";
-import Ordersummary from "@/pages/(website)/login copy 5/ordersummary";
-import ShippingAddressPage from "@/pages/(website)/login copy 3/ShipingAdrres";
+import OrderPlaceSuccess from "@/pages/(website)/OrderPlaceSuccessfully/OrderPlaceSuccessfully";
+import Minicard from "@/pages/(website)/MInicard/Minicard";
+import MyOrder from "@/pages/(website)/myOrder/Myorder";
+import Ordersummary from "@/pages/(website)/ordersummary/ordersummary";
+import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
+import Payment from "@/pages/(website)/payment/PayMent";
+import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
+
 
 const Router = () => {
   return (
@@ -30,8 +31,8 @@ const Router = () => {
           <Route path="/ourstory" element={<PageOur />} />
           <Route path="/login" element={<Login/>} />
           <Route path="/register" element={<Register/>} />
-          <Route path="/forgotpassword" element={<ForgotPassword/>} />EnterOtp
-          {/* <Route path="/EnterOtp" element={<EnterOtp/>} /> */}OrderPlaceSuccess
+          <Route path="/forgotpassword" element={<ForgotPassword/>} />
+          <Route path="/EnterOtp" element={<OTPPage/>} />
           <Route path="/loginSuccessfull" element={<LoginSuccessfull/>} />
           <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess/>} />
           <Route path="/minicard" element={<Minicard/>} />=
