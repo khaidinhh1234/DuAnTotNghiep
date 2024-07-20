@@ -13,6 +13,7 @@ import Register from "@/pages/(website)/register/register";
 import ForgotPassword from "@/pages/(website)/ForgotPassword/ForgotPassword";
 import EnterOtp from "@/pages/(website)/EnterOTP/EnterOTP";
 import LoginSuccessfull from "@/pages/(website)/LoginSuccessfull/LoginSuccessfull";
+import MyOrder from "@/pages/(website)/login copy 7/Myorder";
 
 
 const Router = () => {
@@ -28,6 +29,7 @@ const Router = () => {
           <Route path="/forgotpassword" element={<ForgotPassword/>} />EnterOtp
           <Route path="/EnterOtp" element={<EnterOtp/>} />
           <Route path="/loginSuccessfull" element={<LoginSuccessfull/>} />
+          <Route path="/myorder" element={<MyOrder/>} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="*" element={<NotFoundPage />} />
         </Route>

@@ -1,17 +1,18 @@
-import ImageSection from './_components/ImageSection'
-import LoginForm from './_components/loginForm'
-import React from 'react'
 
-const Page = () => {
+import React from 'react'
+import Sidebar from './_components/sliber'
+import ProductList from './_components/product'
+
+const MyOrder = () => {
   return (
     <>
     <div className="h-screen overflow-hidden bg-gray-100 md:bg-white">
     <div className="flex flex-col md:flex-row min-h-screen">
-    <ImageSection/>
-    <LoginForm/>
+    <Sidebar/>
+    <ProductList/>
     </div>
     </div>
     </>
   )
 }
-export default Page
+export default MyOrder
