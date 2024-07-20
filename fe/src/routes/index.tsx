@@ -20,7 +20,6 @@ import Payment from "@/pages/(website)/login copy 4/PayMent";
 import Ordersummary from "@/pages/(website)/login copy 5/ordersummary";
 import ShippingAddressPage from "@/pages/(website)/login copy 3/ShipingAdrres";
 
-
 const Router = () => {
   return (
     <>
