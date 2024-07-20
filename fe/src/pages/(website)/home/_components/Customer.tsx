@@ -10,7 +10,7 @@ const Customer = () => {
         <div className="container">
           <div className="mb-14">
             <h1 className="text-4xl font-semibold pl-9">
-              What our Customer say's
+              Đánh giá của khách hàng
             </h1>
           </div>
 

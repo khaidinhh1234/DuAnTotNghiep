@@ -8,7 +8,7 @@ const Categories = () => {
         <div className="container mb-32">
           <div className="mb-14">
             <h1 className="md:text-4xl text-2xl font-medium tracking-[1px]">
-              Shop by Categories
+            Sắm Theo Danh Mục
             </h1>
           </div>
           <div className=" h-full overflow-x-auto hidden_scroll_x">

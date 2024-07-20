@@ -1,10 +1,10 @@
 import React from 'react'
-// import CheckOut from './_components/CheckOut'
+import CheckOut from './_components/CheckOut'
 
 const Cart = () => {
   return (
     <>
-    {/* <CheckOut/> */}
+    <CheckOut/>
     </>
   )
 }
