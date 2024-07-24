@@ -81,7 +81,7 @@ const Header = () => {
               <li>
                 <a
                   href=""
-                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
+                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 "
                 >
                   Liên Hệ
                 </a>
@@ -96,14 +96,14 @@ const Header = () => {
                   open={isModalVisible}
                   onCancel={handleCancel}
                   footer={null}
-                title="Tìm kiếm" // Tiêu đề đã bị xóa
+                title="Tìm kiếm" 
                 >
                   <Input
                     placeholder="Nhập từ khóa tìm kiếm"
                     size="large"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
-                    onPressEnter={() => onSearch(searchValue)} // Tìm kiếm khi nhấn Enter
+                    onPressEnter={() => onSearch(searchValue)} 
                   />
                 </Modal>
               </div>
@@ -121,7 +121,7 @@ const Header = () => {
               </a>
             </span>
             <Link to="/login">
-              <button className="bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white px-6 py-3 rounded-[7px] text-lg font-medium">
+              <button className="bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white px-6 py-3 rounded-xl text-lg font-medium">
 
                 Đăng nhập
               </button>
