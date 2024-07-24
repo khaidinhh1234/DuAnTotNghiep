@@ -1,5 +1,6 @@
 import ImageSection from './_components/ImageSection'
 import LoginForm from './_components/loginForm'
+import React from 'react'
 
 const Page = () => {
   return (
@@ -13,5 +14,4 @@ const Page = () => {
     </>
   )
 }
-
 export default Page
