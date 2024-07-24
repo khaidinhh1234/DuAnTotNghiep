@@ -6,12 +6,13 @@ import banner from "@/assets/images/ourstory/banner.png";
 import banner2 from "@/assets/images/Homepage/banner2.png";
 import sanPham2 from "@/assets/images/Homepage/sanpham2.png";
 import sanPham3 from "@/assets/images/Homepage/sanpham3.png";
-// import ellipse from "@/assets/images/Homepage/Ellipse 958.png";
+import ellipse from "@/assets/images/myorder/Ellipse 958.png";
 import story from "@/assets/images/Homepage/story.png";
 import bannerOurStory from "@/assets/images/ourstory/banner.png";
 import our1 from "@/assets/images/ourstory/our1.png";
 import our2 from "@/assets/images/ourstory/our2.png";
 import logo from "@/assets/images/Logo.svg";
+import hello from "@/assets/images/myorder/Hello.png";
 
 import bank from "@/assets/images/bank.png";
 import logofooter from "@/assets/images/Logofooter.png";
@@ -21,6 +22,8 @@ import anh3 from "@/assets/images/ourstory/3.png";
 import bannerend from "@/assets/images/ourstory/bannerend.png";
 
 import login from "@/assets/images/lognin/Rectangle 3463274.png"
+import master from "@/assets/images/myorder/master.png"
+import visa from "@/assets/images/myorder/visa.png"
 
 export {
   bannermobile,
@@ -34,7 +37,7 @@ export {
   sanPham3,
   logofooter,
   bank,
-  //   ellipse,
+    ellipse,
   story,
   bannerOurStory,
   our1,
@@ -44,4 +47,7 @@ export {
   anh3,
   bannerend,
   login,
+  hello,
+  master,
+  visa
 };

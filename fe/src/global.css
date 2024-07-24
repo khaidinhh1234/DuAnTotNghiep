@@ -174,7 +174,7 @@ input[type="range"]::-ms-track {
   cursor: pointer;
   position: relative;
 }
-@layer tailwind-base, antd;
+/* @layer tailwind-base, antd;
 
 @layer tailwind-base {
   @tailwind base;
@@ -183,4 +183,4 @@ input[type="range"]::-ms-track {
   @import 'antd/dist/reset.css';
 }
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
