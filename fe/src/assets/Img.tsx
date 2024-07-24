@@ -12,8 +12,6 @@ import bannerOurStory from "@/assets/images/ourstory/banner.png";
 import our1 from "@/assets/images/ourstory/our1.png";
 import our2 from "@/assets/images/ourstory/our2.png";
 import logo from "@/assets/images/Logo.svg";
-import hello from "@/assets/images/myorder/Hello.png";
-
 import bank from "@/assets/images/bank.png";
 import logofooter from "@/assets/images/Logofooter.png";
 import anh1 from "@/assets/images/ourstory/1.png";
@@ -22,13 +20,10 @@ import anh3 from "@/assets/images/ourstory/3.png";
 import bannerend from "@/assets/images/ourstory/bannerend.png";
 
 import login from "@/assets/images/lognin/Rectangle 3463274.png"
-<<<<<<< HEAD
 import master from "@/assets/images/myorder/master.png"
 import visa from "@/assets/images/myorder/visa.png"
-=======
 import avata from "@/assets/images/myorder/Ellipse 958.png"
 import hello from "@/assets/images/myorder/Hello.png"
->>>>>>> 358d1fcd69196bef4844820df816adcff051120c
 
 export {
   bannermobile,
@@ -52,12 +47,8 @@ export {
   anh3,
   bannerend,
   login,
-<<<<<<< HEAD
-  hello,
   master,
-  visa
-=======
+  visa,
   avata,
   hello,
->>>>>>> 358d1fcd69196bef4844820df816adcff051120c
 };
