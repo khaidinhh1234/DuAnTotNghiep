@@ -73,18 +73,18 @@ const Header = () => {
               <li>
                 <a
                   href=""
-                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
+                  className="hover:shadow-slate-500/50  hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
                 >
                   Nhật Ký
                 </a>
               </li>
               <li>
-                <a
-                  href=""
-                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 "
+                <Link
+                  to="/contact"
+                  className="hover:shadow-slate-500/50  hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
                 >
                   Liên Hệ
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
