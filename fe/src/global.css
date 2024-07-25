@@ -1,9 +1,16 @@
 /* get 'DM Sans' font from fonts.google.com */
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap");
-@tailwind base;
+
+@layer tailwind-base, antd;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+@layer antd {
+  @import "antd/dist/reset.css";
+}
 @tailwind components;
 @tailwind utilities;
-
 body {
   font-family: "Jost", sans-serif;
 }
@@ -175,22 +182,4 @@ input[type="range"]::-ms-track {
   border-radius: 50%;
   cursor: pointer;
   position: relative;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
 }

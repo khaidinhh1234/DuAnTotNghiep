@@ -1,8 +1,27 @@
 import { logo } from "@/assets/img";
-import React from "react";
-import { NavLink } from "react-router-dom";
-
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Input, Modal } from "antd";
+import { FaSearch } from "react-icons/fa";
+import { SearchOutlined, CloseOutlined } from "@ant-design/icons";
+const { Search } = Input;
 const Header = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+
+  const onSearch = (value: any) => {
+    console.log("Search value:", value);
+    // Add your search logic here
+    setIsModalVisible(false);
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
   return (
     <header>
       <div className="container my-3">
@@ -17,29 +36,28 @@ const Header = () => {
               className="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
             />
           </div>
-          <nav className="order-3 hidden lg:block ">
-            <ul className="flex items-center space-x-2 ">
+          <nav className="order-3 hidden lg:block">
+            <ul className="flex items-center space-x-2">
               <li>
-                <NavLink
-                  to="/"
-                  className="hover:shadow-slate-500/50  font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                <a
+                  href="/"
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
                 >
-                  {" "}
-                  Home
-                </NavLink>
+                  Trang chủ
+                </a>
               </li>
               <li>
                 <a
                   href="/shop"
-                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
                 >
-                  Shop
+                  Sản phẩm
                 </a>
               </li>
               <li>
                 <a
                   href="/ourstory"
-                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
                 >
                   Our Story
                 </a>
@@ -47,24 +65,43 @@ const Header = () => {
               <li>
                 <a
                   href=""
-                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  className="hover:shadow-slate-500/50  hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
                 >
-                  Blog
+                  Nhật Ký
                 </a>
               </li>
               <li>
-                <a
-                  href=""
-                  className="hover:shadow-slate-500/50 font-semibold hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                <Link
+                  to="/contact"
+                  className="hover:shadow-slate-500/50  hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
                 >
-                  Contact Us
-                </a>
+                  Liên Hệ
+                </Link>
               </li>
             </ul>
           </nav>
-          <div className="order-4 icon space-x-6 *:cursor-pointer">
+          <div className="order-4 flex items-center space-x-6 cursor-pointer">
             <span>
-              <i className="fa-solid fa-magnifying-glass text-xl" />
+              <div className="relative">
+                <SearchOutlined
+                  className="text-xl cursor-pointer"
+                  onClick={showModal}
+                />
+                <Modal
+                  open={isModalVisible}
+                  onCancel={handleCancel}
+                  footer={null}
+                  title="Tìm kiếm"
+                >
+                  <Input
+                    placeholder="Nhập từ khóa tìm kiếm"
+                    size="large"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    onPressEnter={() => onSearch(searchValue)}
+                  />
+                </Modal>
+              </div>
             </span>
             <span>
               <i className="fa-regular fa-heart text-xl" />
@@ -78,11 +115,11 @@ const Header = () => {
                 </i>
               </a>
             </span>
-<a href="/login">
-            <button className="bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white px-6 py-3 rounded-xl text-lg font-medium">
-              Login
-            </button>
-            </a>
+            <Link to="/login">
+              <button className="bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white px-6 py-3 rounded-xl text-lg font-medium">
+                Đăng nhập
+              </button>
+            </Link>
           </div>
         </div>
       </div>
