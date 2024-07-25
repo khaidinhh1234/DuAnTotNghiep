@@ -17,5 +17,13 @@ export default {
       },
     },
   },
+  darkMode: false, // or 'media' or 'class'
+
+  variants: {
+    extend: {
+      opacity: ["responsive", "hover", "focus", "active"],
+      transform: ["responsive", "hover", "focus"],
+    },
+  },
   plugins: [],
 };

@@ -1,3 +1,11 @@
+//Home
+import banner1 from "@/assets/images/Homepage/b1.jpg";
+import banner3 from "@/assets/images/Homepage/b2.jpg";
+import banner4 from "@/assets/images/Homepage/b3.jpg";
+
+import banner5 from "@/assets/images/Homepage/b4.jpg";
+import banner6 from "@/assets/images/Homepage/b5.jpg";
+
 import products1 from "@/assets/images/Homepage/sanpham1.png";
 import products2 from "@/assets/images/Homepage/sanpham2.png";
 import bannermobile from "@/assets/images/Homepage/banner-mobile.png";
@@ -12,15 +20,21 @@ import bannerOurStory from "@/assets/images/ourstory/banner.png";
 import our1 from "@/assets/images/ourstory/our1.png";
 import our2 from "@/assets/images/ourstory/our2.png";
 import logo from "@/assets/images/Logo.svg";
-
+import message from "@/assets/images/message.png";
 import bank from "@/assets/images/bank.png";
 import logofooter from "@/assets/images/Logofooter.png";
 import anh1 from "@/assets/images/ourstory/1.png";
 import anh2 from "@/assets/images/ourstory/2.png";
 import anh3 from "@/assets/images/ourstory/3.png";
 import bannerend from "@/assets/images/ourstory/bannerend.png";
+import login from "@/assets/images/lognin/Rectangle 3463274.png";
 
 export {
+  banner1,
+  banner6,
+  banner3,
+  banner4,
+  banner5,
   bannermobile,
   products1,
   products2,
@@ -32,6 +46,7 @@ export {
   sanPham3,
   logofooter,
   bank,
+  message,
   //   ellipse,
   story,
   bannerOurStory,
@@ -41,4 +56,5 @@ export {
   anh2,
   anh3,
   bannerend,
+  login,
 };

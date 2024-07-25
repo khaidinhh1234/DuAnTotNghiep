@@ -1,5 +1,3 @@
-import { banner, bannerHome } from "@/assets/img";
-
 type Props = {};
 
 const Banner = () => {

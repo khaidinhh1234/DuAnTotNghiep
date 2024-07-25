@@ -24,6 +24,6 @@
             "@/*": ["src/*"]
         }
     },
-    "include": ["src"],
+    "include": ["src", "src/pages/(website)/ForgotPassword/ForgotPassword.tsx"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
