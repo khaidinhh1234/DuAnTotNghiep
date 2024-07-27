@@ -11,6 +11,9 @@
 }
 @tailwind components;
 @tailwind utilities;
+html {
+  scroll-behavior: smooth;
+}
 body {
   font-family: "Jost", sans-serif;
 }

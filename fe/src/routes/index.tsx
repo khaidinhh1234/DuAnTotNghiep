@@ -27,10 +27,13 @@ import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
 import Payment from "@/pages/(website)/payment/PayMent";
 import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
 import Contact from "@/pages/(website)/contact/Contact";
+import ScrollToTop from "@/assets/js/scrolltotop";
 
 const Router = () => {
   return (
     <>
+      {" "}
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />

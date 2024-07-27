@@ -52,7 +52,7 @@ const Bestseller = () => {
 
           <div className="grid grid-cols-12 justify-center gap-7">
             {" "}
-            {products.map((product, index) => (
+            {products.slice(0, 4).map((product, index) => (
               <div
                 className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[300px] mx-auto"
                 key={index}
