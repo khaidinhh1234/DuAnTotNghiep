@@ -45,34 +45,32 @@ const Header = () => {
     },
   ];
   return (
-    <header>
-      <div className="container my-3">
-        <div className="flex justify-around lg:justify-between items-center">
-          <div className="order-1 lg:hidden">
-            <i className="fa-solid fa-bars text-2xl" />
+    <header className="h-12 ">
+      <div className="fixed top-0 left-0 w-full z-50  shadow-lg bg-white bg-opacity-70">
+        <div className="container mx-auto my-3 h-16 flex justify-between items-center">
+          <div className="lg:hidden order-1">
+            <i className="fa-solid fa-bars text-2xl"></i>
           </div>
-          <div className="order-2 Logo lg:w-60">
+          <div className="order-2 lg:w-60">
             <img
               src={logo}
-              alt=""
+              alt="Logo"
               className="lg:w-[200px] lg:h-[60px] w-32 h-10"
             />
           </div>
-          <nav className="order-3 hidden lg:block">
-            <ul className="flex items-center space-x-2">
+          <nav className="hidden lg:block order-3">
+            <ul className="flex items-center space-x-4">
               {MenuList.map((item, index) => (
                 <li key={index}>
                   <NavLink
                     to={item.path}
-                    className={({ isActive }) => {
-                      return (
-                        "px-4 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black " +
-                        (!isActive
-                          ? "text-black hover:shadow-slate-500/50  hover:shadow-lg hover:border-0"
-                          : "text-white bg-black")
-                      );
-                      //
-                    }}
+                    className={({ isActive }) =>
+                      `px-4 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
+                        !isActive
+                          ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
+                          : "text-white bg-black"
+                      }`
+                    }
                   >
                     {item.name}
                   </NavLink>
@@ -104,7 +102,7 @@ const Header = () => {
               </div>
             </span>
             <span>
-              <i className="fa-regular fa-heart text-xl" />
+              <i className="fa-regular fa-heart text-xl"></i>
             </span>
             <span>
               <a href="/gio-hang">
@@ -116,7 +114,7 @@ const Header = () => {
               </a>
             </span>
             <Link to="/login">
-              <button className=" bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2  py-2 lg:rounded-xl rounded-lg text-lg font-medium">
+              <button className="bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium">
                 Đăng nhập
               </button>
             </Link>
