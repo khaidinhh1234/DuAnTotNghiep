@@ -1,6 +1,6 @@
 import { logo } from "@/assets/img";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Input, Modal } from "antd";
 import { FaSearch } from "react-icons/fa";
 import { SearchOutlined, CloseOutlined } from "@ant-design/icons";
@@ -22,6 +22,28 @@ const Header = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const MenuList = [
+    {
+      name: "Trang chủ",
+      path: "/",
+    },
+    {
+      name: "Sản phẩm",
+      path: "/shop",
+    },
+    {
+      name: "Our Story",
+      path: "/ourstory",
+    },
+    {
+      name: "Nhật Ký",
+      path: "*",
+    },
+    {
+      name: "Liên Hệ",
+      path: "/contact",
+    },
+  ];
   return (
     <header>
       <div className="container my-3">
@@ -33,51 +55,29 @@ const Header = () => {
             <img
               src={logo}
               alt=""
-              className="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
+              className="lg:w-[200px] lg:h-[60px] w-32 h-10"
             />
           </div>
           <nav className="order-3 hidden lg:block">
             <ul className="flex items-center space-x-2">
-              <li>
-                <a
-                  href="/"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
-                >
-                  Trang chủ
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/shop"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
-                >
-                  Sản phẩm
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/ourstory"
-                  className="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
-                >
-                  Our Story
-                </a>
-              </li>
-              <li>
-                <a
-                  href=""
-                  className="hover:shadow-slate-500/50  hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
-                >
-                  Nhật Ký
-                </a>
-              </li>
-              <li>
-                <Link
-                  to="/contact"
-                  className="hover:shadow-slate-500/50  hover:text-white  hover:bg-black hover:shadow-lg hover:border-0 px-4 py-2 rounded-[7px]"
-                >
-                  Liên Hệ
-                </Link>
-              </li>
+              {MenuList.map((item, index) => (
+                <li key={index}>
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) => {
+                      return (
+                        "px-4 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black " +
+                        (!isActive
+                          ? "text-black hover:shadow-slate-500/50  hover:shadow-lg hover:border-0"
+                          : "text-white bg-black")
+                      );
+                      //
+                    }}
+                  >
+                    {item.name}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
           </nav>
           <div className="order-4 flex items-center space-x-6 cursor-pointer">
@@ -116,7 +116,7 @@ const Header = () => {
               </a>
             </span>
             <Link to="/login">
-              <button className="bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white px-6 py-3 rounded-xl text-lg font-medium">
+              <button className=" bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2  py-2 lg:rounded-xl rounded-lg text-lg font-medium">
                 Đăng nhập
               </button>
             </Link>

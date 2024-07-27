@@ -3,7 +3,6 @@ import banner1 from "@/assets/images/Homepage/b1.jpg";
 import banner3 from "@/assets/images/Homepage/b2.jpg";
 import banner4 from "@/assets/images/Homepage/b3.jpg";
 import banner5 from "@/assets/images/Homepage/b4.jpg";
-
 import banner6 from "@/assets/images/Homepage/b5.jpg";
 import products1 from "@/assets/images/Homepage/sanpham1.png";
 import products2 from "@/assets/images/Homepage/sanpham2.png";
@@ -13,12 +12,12 @@ import banner from "@/assets/images/ourstory/banner.png";
 import banner2 from "@/assets/images/Homepage/banner2.png";
 import sanPham2 from "@/assets/images/Homepage/sanpham2.png";
 import sanPham3 from "@/assets/images/Homepage/sanpham3.png";
-import ellipse from "@/assets/images/myorder/Ellipse 958.png";
+import ellipse from "@/assets/images/myorder/avt.png";
 import story from "@/assets/images/Homepage/story.png";
 import bannerOurStory from "@/assets/images/ourstory/banner.png";
 import our1 from "@/assets/images/ourstory/our1.png";
 import our2 from "@/assets/images/ourstory/our2.png";
-import logo from "@/assets/images/Logo.svg";
+import logo from "@/assets/images/Logo.png";
 import message from "@/assets/images/message.png";
 import bank from "@/assets/images/bank.png";
 import logofooter from "@/assets/images/Logofooter.png";
@@ -29,7 +28,7 @@ import bannerend from "@/assets/images/ourstory/bannerend.png";
 import login from "@/assets/images/lognin/Rectangle 3463274.png";
 import master from "@/assets/images/myorder/master.png";
 import visa from "@/assets/images/myorder/visa.png";
-import avata from "@/assets/images/myorder/Ellipse 958.png";
+import avata from "@/assets/images/myorder/avt.png";
 import hello from "@/assets/images/myorder/Hello.png";
 
 export {
