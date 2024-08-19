@@ -28,6 +28,7 @@ import Payment from "@/pages/(website)/payment/PayMent";
 import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
 import Contact from "@/pages/(website)/contact/Contact";
 import ScrollToTop from "@/assets/js/scrolltotop";
+import Test from "@/pages/(website)/test";
 
 const Router = () => {
   return (
@@ -35,6 +36,7 @@ const Router = () => {
       {" "}
       <ScrollToTop />
       <Routes>
+        {/* TRang USER */}
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
@@ -56,17 +58,19 @@ const Router = () => {
           <Route path="/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
+          <Route path="/test" element={<Test />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
+        {/* TRang admin */}
+        <Route path="admin" element={<LayoutAdmin />}>
+          <Route index element={<Dashboard />} />
+          <Route path="products" element={<Products />} />
+        </Route>{" "}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/EnterOtp" element={<OTPPage />} />
-        <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />
-        <Route path="admin" element={<LayoutAdmin />}>
-          <Route index element={<Dashboard />} />
-          <Route path="products" element={<Products />} />
-        </Route>
+        <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />{" "}
       </Routes>
     </>
   );

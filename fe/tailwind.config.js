@@ -10,7 +10,7 @@ export default {
       backgroundImage: {
         bannerL: "url('./src/assets/images/Homepage/banner1.png')",
         Logninimge: "url('./src/assets/images/lognin/banner.png')",
-        notfound: "url('../assets/images/notfound/image 25.svg')",
+        notfound: "url('@/assets/images/notfound/image25.svg')",
       },
       fontFamily: {
         lexend: '"Lexend", sans-serif',
