@@ -18,7 +18,7 @@ import "swiper/css/navigation";
 // import required modules
 import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
 
-const Banner = () => {
+const Test = () => {
   // var settings = {
   //   dots: true,
   //   infinite: true,
@@ -201,4 +201,4 @@ const Banner = () => {
   );
 };
 
-export default Banner;
+export default Test;
