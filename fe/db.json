@@ -100,5 +100,37 @@
             "quantity": 90,
             "featured": true
         }
+    ],
+    "images": [
+        {
+            "id": 2,
+            "title": "Image 1",
+            "url": "https://picsum.photos/id/35/200/300",
+            "random": "sdgfsgfdsgfdgdfhfdh"
+        },
+        {
+            "id": 1,
+            "title": "Image 2",
+            "url": "https://picsum.photos/id/36/200/300",
+            "random": "sdgfsgfdsgfdgdfhfdh"
+        },
+        {
+            "id": 3,
+            "title": "Image 3",
+            "url": "https://picsum.photos/id/37/200/300",
+            "random": "sdgfsgfdsgfdgdfhfdh"
+        },
+        {
+            "id": 4,
+            "title": "Image 4",
+            "url": "https://picsum.photos/id/38/200/300",
+            "random": "sdgfsgfdsgfdgdfhfdh"
+        },
+        {
+            "id": 5,
+            "title": "Image 5",
+            "url": "https://picsum.photos/id/39/200/300",
+            "random": "sdgfsgfdsgfdgdfhfdh"
+        }
     ]
 }

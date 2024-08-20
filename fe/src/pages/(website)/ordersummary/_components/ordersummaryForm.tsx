@@ -1,5 +1,6 @@
-import React from 'react';
 import { sanPham2 } from "@/assets/img";
+import React from "react";
+
 const Order = () => {
   return (
     <div className="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]">
@@ -8,20 +9,16 @@ const Order = () => {
           <div className="pl-1">
             <i
               className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-              style={{ color: '#ffffff' }}
+              style={{ color: "#ffffff" }}
             ></i>
           </div>
           <hr className="m-0 dashed-black" />
           <div className="text-center">
-            <i
-              className="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-            ></i>
+            <i className="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
           </div>
           <hr className="m-0 dashed-black" />
           <div className="pr-1 text-center">
-            <i
-              className="fa-light fa-file-invoice bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-            ></i>
+            <i className="fa-light fa-file-invoice bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
           </div>
         </div>
         <div className="flex justify-between space-x-0">
@@ -46,17 +43,13 @@ const Order = () => {
               key={index}
               className="flex gap-5 px-2 items-center border-b border-hrBlack py-5"
             >
-              <img
-                src={sanPham2}
-                alt="Sản phẩm"
-                className="w-12 h-12"
-              />
+              <img src={sanPham2} alt="Sản phẩm" className="w-12 h-12" />
               <div className="px-1">
-                <h3 className="font-bold my-1">
-                  Đầm in Moana Hồng
-                </h3>
+                <h3 className="font-bold my-1">Đầm in Moana Hồng</h3>
                 <p>$80.00</p>
-                <p>Size: <span>S</span></p>
+                <p>
+                  Size: <span>S</span>
+                </p>
               </div>
             </div>
           ))}
@@ -68,8 +61,8 @@ const Order = () => {
             <div className="mb-3">
               <h4 className="font-bold text-xl">Robert Fox</h4>
               <p className="my-2 w-96 lg:w-[720px]">
-                FR7V+8CF, Hồng Vũ Thắng Lợi, Khu đô thị, Tp. Sông Công,
-                Thái Nguyên 250000
+                FR7V+8CF, Hồng Vũ Thắng Lợi, Khu đô thị, Tp. Sông Công, Thái
+                Nguyên 250000
               </p>
             </div>
             <div className="text-lg rounded-lg bg-slate-100 px-[9px] py-1 text-center">
