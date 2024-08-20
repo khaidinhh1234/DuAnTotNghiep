@@ -1,12 +1,11 @@
-import React from 'react'
-import ProductDetail from './_components/ProductDetail'
+import ProductDetail from "./_components/ProductDetail";
 
 const PageProductDetail = () => {
   return (
     <div>
-      <ProductDetail/>
+      <ProductDetail />
     </div>
-  )
-}
+  );
+};
 
-export default PageProductDetail
+export default PageProductDetail;

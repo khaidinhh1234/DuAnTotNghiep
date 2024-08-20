@@ -15,7 +15,7 @@ const HomePage = () => {
       <DealsOfTheMonth />
       <Customer />
       <InstagramStories />
-      <Method />
+      <Method />{" "}
     </div>
   );
 };

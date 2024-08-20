@@ -1,6 +1,6 @@
 //Home
 import banner1 from "@/assets/images/Homepage/b1.jpg";
-import product from "@/assets/images/myorder/product.png";
+import product from "@/assets/images/myorder/product.png"
 import banner3 from "@/assets/images/Homepage/b2.png";
 import banner4 from "@/assets/images/Homepage/b3.png";
 import banner5 from "@/assets/images/Homepage/b4.png";
