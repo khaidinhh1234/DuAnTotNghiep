@@ -6,15 +6,12 @@ import {
   banner6,
   message,
 } from "@/assets/img";
-// Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-// import required modules
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 
 const Test = () => {
