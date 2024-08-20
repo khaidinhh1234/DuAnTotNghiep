@@ -1,5 +1,5 @@
+import { sanPham2 } from '@/assets/img';
 import React from 'react';
-import { sanPham2 } from "@/assets/img";
 
 // Component hiển thị thông tin sản phẩm
 const ProductItem = ({ status, price }) => {

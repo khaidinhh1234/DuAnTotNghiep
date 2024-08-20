@@ -1,4 +1,4 @@
-import { login, logo } from "@/assets/img";
+import { login, logo }from '@/assets/img';
 
 const ImageSection = () => {
   return (
