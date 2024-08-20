@@ -15,32 +15,23 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-// import required modules
 import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
 
 const Banner = () => {
-  // var settings = {
-  //   dots: true,
-  //   infinite: true,
-  //   slidesToShow: 1,
-  //   slidesToScroll: 1,
-  //   autoplay: true,
-  //   autoplaySpeed: 2000,
-  //   cssEase: "linear",
-  // };
   return (
     <div>
       {" "}
-      <section className="mt-1 mb-20 ">
-        <div className="flex min-h-screen items-center justify-center ">
+      <section className="mt-10 mb-20 ">
+        <div className="flex  justify-center ">
           <div className="mx-auto w-full  ">
             <Swiper
-              spaceBetween={30}
+              spaceBetween={0}
               centeredSlides={true}
               autoplay={{
-                delay: 2500,
+                delay: 2000,
                 disableOnInteraction: false,
               }}
+              speed={2000}
               // pagination={{
               //   clickable: true,
               // }}
@@ -52,7 +43,7 @@ const Banner = () => {
                 <img
                   src={banner1}
                   alt=""
-                  className="w-full h-auto object   -cover"
+                  className="md:w-full h-auto object-cover"
                 />
 
                 <div className="absolute  top-[270px] left-64">
