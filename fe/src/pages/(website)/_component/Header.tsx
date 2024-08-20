@@ -39,7 +39,7 @@ const Header = () => {
       path: "/shop",
     },
     {
-      name: "Our Story",
+      name: "Giới thiệu",
       path: "/ourstory",
     },
     {

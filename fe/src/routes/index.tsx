@@ -29,6 +29,7 @@ import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
 import Contact from "@/pages/(website)/contact/Contact";
 import ScrollToTop from "@/assets/js/scrolltotop";
 import { Test } from "@/pages/(website)/test";
+import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
 
 const Router = () => {
   return (
@@ -40,6 +41,7 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
+          <Route path="/product-detail" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           <Route path="/myprofile" element={<MyProfile />} />
           <Route path="/mywishlist" element={<MyWishlists />} />

@@ -1,6 +1,6 @@
 import { sanPham2 } from "@/assets/img";
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const ProductCategories = () => {
   const [showcate, setShowcate] = useState(true);
@@ -283,23 +283,23 @@ const ProductCategories = () => {
                 <div className="container">
                   <div className="grid grid-cols-12 justify-center lg:gap-7 gap-14">
                     <div className="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto">
-                      <div className="product-card hover:bg-zinc-100">
+                      <div className="product-card hover:bg-zinc-100 relative group">
                         <div className="w-full sm:h-[332px] h-[400px] relative">
                           <a href="#">
-                            <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-regular fa-star text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
                           <a href="#">
-                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
-                          <a href="#">
-                            <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
-                          </a>
+                          <Link to="#">
+                            <i className="fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                          </Link>
                           <img
                             src={sanPham2}
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -322,23 +322,23 @@ const ProductCategories = () => {
                       </div>
                     </div>
                     <div className="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto">
-                      <div className="product-card hover:bg-zinc-100">
+                      <div className="product-card hover:bg-zinc-100 relative group">
                         <div className="w-full sm:h-[332px] h-[400px] relative">
                           <a href="#">
-                            <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-regular fa-star text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
                           <a href="#">
-                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
-                          <a href="#">
-                            <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
-                          </a>
+                          <Link to="#">
+                            <i className="fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                          </Link>
                           <img
                             src={sanPham2}
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -361,23 +361,23 @@ const ProductCategories = () => {
                       </div>
                     </div>
                     <div className="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto">
-                      <div className="product-card hover:bg-zinc-100">
+                      <div className="product-card hover:bg-zinc-100 relative group">
                         <div className="w-full sm:h-[332px] h-[400px] relative">
                           <a href="#">
-                            <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-regular fa-star text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
                           <a href="#">
-                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
-                          <a href="#">
-                            <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
-                          </a>
+                          <Link to="#">
+                            <i className="fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                          </Link>
                           <img
                             src={sanPham2}
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -400,23 +400,23 @@ const ProductCategories = () => {
                       </div>
                     </div>
                     <div className="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto">
-                      <div className="product-card hover:bg-zinc-100">
+                      <div className="product-card hover:bg-zinc-100 relative group">
                         <div className="w-full sm:h-[332px] h-[400px] relative">
                           <a href="#">
-                            <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-regular fa-star text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
                           <a href="#">
-                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
-                          <a href="#">
-                            <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
-                          </a>
+                          <Link to="#">
+                            <i className="fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                          </Link>
                           <img
                             src={sanPham2}
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -439,23 +439,23 @@ const ProductCategories = () => {
                       </div>
                     </div>
                     <div className="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto">
-                      <div className="product-card hover:bg-zinc-100">
+                      <div className="product-card hover:bg-zinc-100 relative group">
                         <div className="w-full sm:h-[332px] h-[400px] relative">
                           <a href="#">
-                            <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-regular fa-star text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
                           <a href="#">
-                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
-                          <a href="#">
-                            <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
-                          </a>
+                          <Link to="#">
+                            <i className="fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                          </Link>
                           <img
                             src={sanPham2}
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -478,23 +478,23 @@ const ProductCategories = () => {
                       </div>
                     </div>
                     <div className="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto">
-                      <div className="product-card hover:bg-zinc-100">
+                      <div className="product-card hover:bg-zinc-100 relative group">
                         <div className="w-full sm:h-[332px] h-[400px] relative">
                           <a href="#">
-                            <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-regular fa-star text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
                           <a href="#">
-                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
-                          <a href="#">
-                            <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
-                          </a>
+                          <Link to="#">
+                            <i className="fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                          </Link>
                           <img
                             src={sanPham2}
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -517,31 +517,31 @@ const ProductCategories = () => {
                       </div>
                     </div>
                     <div className="xl:col-span-4 lg:col-span-6 col-span-12 sm:col-span-6 mb-2 sm:w-[264px] w-[300px] mx-auto">
-                      <div className="product-card hover:bg-zinc-100">
+                      <div className="product-card hover:bg-zinc-100 relative group">
                         <div className="w-full sm:h-[332px] h-[400px] relative">
                           <a href="#">
-                            <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-regular fa-star text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
                           <a href="#">
-                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
+                            <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                           </a>
-                          <a href="#">
-                            <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white"></i>
-                          </a>
+                          <Link to="#">
+                            <i className="fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                          </Link>
                           <img
-                            src={""}
+                            src={sanPham2}
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
                         <div className="bg-white pt-4">
-                          <a href="#" className="">
-                            <p className="font-bold sm:text-lg text-xl">
+                          <a href="#">
+                            <h5 className="font-bold sm:text-lg text-xl">
                               Allen Solly
-                            </p>
+                            </h5>
                           </a>
                           <p className="my-1 font-normal">
                             Women Texttured Handheld Bag
