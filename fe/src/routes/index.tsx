@@ -28,7 +28,7 @@ import Payment from "@/pages/(website)/payment/PayMent";
 import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
 import Contact from "@/pages/(website)/contact/Contact";
 import ScrollToTop from "@/assets/js/scrolltotop";
-import Test from "@/pages/(website)/test";
+import { Test } from "@/pages/(website)/test";
 
 const Router = () => {
   return (

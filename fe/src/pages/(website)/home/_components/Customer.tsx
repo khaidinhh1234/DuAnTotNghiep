@@ -37,6 +37,30 @@ const Customer = () => {
             <Swiper
               spaceBetween={50}
               slidesPerView={3}
+              breakpoints={{
+                0: {
+                  slidesPerView: 1.2,
+                  spaceBetween: 30,
+                },
+                550: {
+                  slidesPerView: 1.3,
+                  spaceBetween: 30,
+                },
+                640: {
+                  slidesPerView: 1.5,
+                  spaceBetween: 30,
+                },
+                780: {
+                  slidesPerView: 2,
+                  spaceBetween: 30,
+                },
+                1024: {
+                  slidesPerView: 2.5,
+                },
+                1154: {
+                  slidesPerView: 3,
+                },
+              }}
               onSlideChange={() => console.log("slide change")}
               onSwiper={(swiper) => console.log(swiper)}
             >
