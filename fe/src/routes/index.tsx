@@ -12,7 +12,6 @@ import Register from "@/pages/(website)/register/register";
 import { Route, Routes } from "react-router-dom";
 import PageOur from "../pages/(website)/ourstory/pageOur";
 import Page from "./../pages/(website)/shop/shop";
-
 import ScrollToTop from "@/assets/js/scrolltotop";
 import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
 import Minicard from "@/pages/(website)/MInicard/Minicard";
@@ -29,12 +28,14 @@ import Payment from "@/pages/(website)/payment/PayMent";
 import SavedCard from "@/pages/(website)/savedcards/SavedCard";
 import Setting from "@/pages/(website)/settings/Setting";
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
+import Test from "@/pages/(website)/test";
 const Router = () => {
   return (
     <>
       {" "}
       <ScrollToTop />
       <Routes>
+        {/* TRang USER */}
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
@@ -57,17 +58,19 @@ const Router = () => {
           <Route path="/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
+          <Route path="/test" element={<Test />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
+        {/* TRang admin */}
+        <Route path="admin" element={<LayoutAdmin />}>
+          <Route index element={<Dashboard />} />
+          <Route path="products" element={<Products />} />
+        </Route>{" "}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/EnterOtp" element={<OTPPage />} />
-        <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />
-        <Route path="admin" element={<LayoutAdmin />}>
-          <Route index element={<Dashboard />} />
-          <Route path="products" element={<Products />} />
-        </Route>
+        <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />{" "}
       </Routes>
     </>
   );

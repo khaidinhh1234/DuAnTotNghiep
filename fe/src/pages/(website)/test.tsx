@@ -6,19 +6,18 @@ import {
   banner6,
   message,
 } from "@/assets/img";
-import React, { useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
 import "swiper/css";
-import "swiper/css/pagination";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 // import required modules
-import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
+import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 
-const Banner = () => {
+const Test = () => {
   // var settings = {
   //   dots: true,
   //   infinite: true,
@@ -201,4 +200,4 @@ const Banner = () => {
   );
 };
 
-export default Banner;
+export default Test;
