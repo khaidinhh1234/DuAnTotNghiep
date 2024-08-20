@@ -12,12 +12,9 @@ import Register from "@/pages/(website)/register/register";
 import { Route, Routes } from "react-router-dom";
 import PageOur from "../pages/(website)/ourstory/pageOur";
 import Page from "./../pages/(website)/shop/shop";
-import ScrollToTop from "@/assets/js/scrolltotop";
-import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
 import Minicard from "@/pages/(website)/MInicard/Minicard";
 import OrderPlaceSuccess from "@/pages/(website)/OrderPlaceSuccessfully/OrderPlaceSuccessfully";
 import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
-import Contact from "@/pages/(website)/contact/Contact";
 import ManageAddresses from "@/pages/(website)/manageaddresses/ManageAddresses";
 import MyOrder from "@/pages/(website)/myOrder/Myorder";
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
@@ -29,6 +26,9 @@ import SavedCard from "@/pages/(website)/savedcards/SavedCard";
 import Setting from "@/pages/(website)/settings/Setting";
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
 import Test from "@/pages/(website)/test";
+import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
+import Contact from "@/pages/(website)/contact/Contact";
+import ScrollToTop from "@/assets/js/scrolltotop";
 const Router = () => {
   return (
     <>

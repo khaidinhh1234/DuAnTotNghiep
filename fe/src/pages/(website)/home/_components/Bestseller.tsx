@@ -1,5 +1,6 @@
 import { sanPham2 } from "@/assets/img";
-import React from "react";
+
+import { Link } from "react-router-dom";
 
 const Bestseller = () => {
   const products = [
@@ -65,9 +66,9 @@ const Bestseller = () => {
                     <a href="#">
                       <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                     </a>
-                    <a href="#">
+                    <Link to="#">
                       <i className="fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-                    </a>
+                    </Link>
                     <img
                       src={sanPham2}
                       alt=""
