@@ -169,16 +169,16 @@ input[type="range"]::-ms-track {
   background-position: center;
 }
 
-.mySwiper {
+.mySwiper1 {
   box-sizing: border-box;
   padding: 10px 0;
 }
 
-.mySwiper .swiper-slide {
+.mySwiper1 .swiper-slide {
   opacity: 0.4;
 }
 
-.mySwiper .swiper-slide-thumb-active {
+.mySwiper1 .swiper-slide-thumb-active {
   opacity: 1;
   background: #f4f4f4;
   border: 1px solid #cccccc;

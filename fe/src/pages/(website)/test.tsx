@@ -93,7 +93,7 @@ export default function Test() {
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                  className="mySwiper"
+                  className="mySwiper1"
                 >
                   <SwiperSlide className="swiper-slide-first">
                     <div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px]  rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
