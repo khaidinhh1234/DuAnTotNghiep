@@ -190,7 +190,13 @@ input[type="range"]::-ms-track {
 
   object-fit: cover;
 }
+.swiper-with-hover .swiper-slide img {
+  transition: transform 0.3s ease;
+}
 
+.swiper-with-hover .swiper-slide img:hover {
+  transform: scale(1.1);
+}
 .range-container {
   position: relative;
   width: 100%;
