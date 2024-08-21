@@ -29,9 +29,9 @@ const Categories = () => {
     <>
       <section>
         {/* <!-- Shop by categories --> */}
-        <div className="container mb-32">
-          <div className="mb-14">
-            <h1 className="md:text-4xl text-2xl font-semibold tracking-[1px]">
+        <div className="md:container md:mb-28  mb-16  container-mobile">
+          <div className="md:mb-14 mb-8 mx-2 md:mx-0">
+            <h1 className="md:text-4xl text-3xl font-semibold tracking-[1px]">
               Danh Mục
             </h1>
           </div>
@@ -87,8 +87,6 @@ const Categories = () => {
               </SwiperSlide>
             ))}
           </Swiper>
-          {/* </div> */}
-          {/* </div> */}
         </div>
       </section>
     </>

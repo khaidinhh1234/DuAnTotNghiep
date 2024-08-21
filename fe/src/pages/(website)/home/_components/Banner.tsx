@@ -6,7 +6,7 @@ import {
   banner6,
   message,
 } from "@/assets/img";
-import React, { useRef, useState } from "react";
+
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -32,10 +32,6 @@ const Banner = () => {
                 disableOnInteraction: false,
               }}
               speed={2000}
-              // pagination={{
-              //   clickable: true,
-              // }}
-              // navigation={true}
               modules={[Autoplay, Pagination, Navigation, EffectFade]}
               className="mySwiper "
             >

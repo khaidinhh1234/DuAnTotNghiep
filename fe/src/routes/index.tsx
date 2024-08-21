@@ -28,8 +28,10 @@ import Payment from "@/pages/(website)/payment/PayMent";
 import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
 import Contact from "@/pages/(website)/contact/Contact";
 import ScrollToTop from "@/assets/js/scrolltotop";
-import { Test } from "@/pages/(website)/test";
+
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
+import Voucher from "@/pages/(website)/vourcher/page";
+import Test from "@/pages/(website)/test";
 
 const Router = () => {
   return (
@@ -50,7 +52,8 @@ const Router = () => {
           <Route path="/savedcard" element={<SavedCard />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} />
-          <Route path="/minicard" element={<Minicard />} />=
+          <Route path="/minicard" element={<Minicard />} />
+          <Route path="/voucher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
           <Route

@@ -1,6 +1,26 @@
-import { product, products1 } from "@/assets/img";
+import { product, products1, products2 } from "@/assets/img";
+// import React, { useRef, useState } from "react";
+// // Import Swiper React components
+// import { Swiper, SwiperSlide } from "swiper/react";
 
+// // Import Swiper styles
+// import "swiper/css";
+// import "swiper/css/free-mode";
+// import "swiper/css/navigation";
+// import "swiper/css/thumbs";
+
+// import "./styles.css";
+
+// // import required modules
+// import { FreeMode, Navigation, Thumbs } from "swiper/modules";
 const ProductDetail = () => {
+  const images = [
+    "https://product.hstatic.net/200000423303/product/bong_cai_xanh_baby_huu_co_e7962ebc7b5c45b686bbbdb1d411c673_large.jpeg",
+    "https://product.hstatic.net/200000423303/product/dia-chi-mua-bong-atiso_3af178ba4a734d178a33a2e7ef454a4b_large.png",
+    "https://product.hstatic.net/200000423303/product/dot_rau_lang_organic_db894f83890b41e18e21186e994179d6_large.jpeg",
+    "https://product.hstatic.net/200000423303/product/ca-chua-bee-cherry-huu-co_2afe5b08b1f242809cac54171701fff4_large.jpg",
+  ];
+  // const [thumbsSwiper, setThumbsSwiper] = useState(null);
   return (
     <div>
       <main>
@@ -20,40 +40,41 @@ const ProductDetail = () => {
           <div className=" container pb-11">
             <div className="md:px-14 px-5 pt-3 grid grid-cols-12  gap-3  w-[100%]  justify-center">
               <div className="lg:col-span-6 col-span-12 mx-auto mb-6 ">
-                <div className=" bg-[#FAFAFB] xl:w-[555px] lg:w-[455px] lg:h-[455px]  md:h-[555px]  md:w-[655px]  w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60 ">
+                <div className=" bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px]  md:h-[555px]  md:w-[655px]  w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60 ">
                   <img
                     src={product}
                     alt=""
-                    className="lg:w-[440px] lg:h-[500px] md:w-[540px] md:h-[600px] w-[320px] h-[400px]"
+                    className="xl:h-[590px] lg:w-[530px] lg:h-[500px] md:w-[540px] md:h-[600px] w-[320px] h-[400px]"
                   />
                 </div>
                 <div className=" flex gap-5 justify-center ">
-                  <div className="md:w-[92px] md:h-[90px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
+                  <div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
                     <img
-                      src={product}
+                      src={products2}
                       alt=""
-                      className="md:w-[82px] md:h-[90px] [42px] h-[50px]"
+                      className="md:w-[92px] md:h-[100px] [42px] h-[50px]"
                     />
                   </div>
-                  <div className="md:w-[92px] md:h-[90px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
+                  <div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
                     <img
                       src={product}
                       alt=""
-                      className="md:w-[82px] md:h-[90px] [42px] h-[50px]"
+                      className="md:w-[92px] md:h-[100px] [42px] h-[50px]"
                     />
                   </div>
-                  <div className="md:w-[92px] md:h-[90px]  w-[62px] h-[60px]bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
+
+                  <div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
                     <img
                       src={product}
                       alt=""
-                      className="md:w-[82px] md:h-[90px] [42px] h-[50px]"
+                      className="md:w-[92px] md:h-[100px] [42px] h-[50px]"
                     />
                   </div>
-                  <div className="md:w-[92px] md:h-[90px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
+                  <div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] hover:border-slate-400 flex justify-center items-center">
                     <img
                       src={product}
                       alt=""
-                      className="md:w-[82px] md:h-[90px] [42px] h-[50px]"
+                      className="md:w-[92px] md:h-[100px] [42px] h-[50px]"
                     />
                   </div>
                 </div>

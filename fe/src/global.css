@@ -20,7 +20,9 @@ body {
 .container {
   @apply mx-auto max-w-7xl  px-4;
 }
-
+.container-mobile {
+  @apply mx-auto max-w-2xl  px-4;
+}
 .placeholder-white::placeholder {
   color: #ffffff;
   opacity: 1;
@@ -97,9 +99,9 @@ input[type="radio"]:checked::before {
 .custom-radio label {
   margin-left: 0.5rem;
 }
-/* .btn-black {
+.btn-black {
   @apply bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white;
-} */
+}
 
 .h1cart {
   @apply lg:text-4xl text-2xl font-medium tracking-[1px] mb-9;
@@ -143,6 +145,52 @@ input[type="range"]::-moz-range-track {
 input[type="range"]::-ms-track {
   @apply bg-gray-800;
 } */
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+
+  object-fit: cover;
+}
+
+.swiper-slide {
+  background-size: cover;
+
+  background-position: center;
+}
+
+.mySwiper {
+  box-sizing: border-box;
+  padding: 10px 0;
+}
+
+.mySwiper .swiper-slide {
+  opacity: 0.4;
+}
+
+.mySwiper .swiper-slide-thumb-active {
+  opacity: 1;
+  background: #f4f4f4;
+  border: 1px solid #cccccc;
+  border-radius: 1rem;
+}
+
+.swiper-slide img {
+  display: block;
+
+  object-fit: cover;
+}
+
 .range-container {
   position: relative;
   width: 100%;

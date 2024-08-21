@@ -1,6 +1,6 @@
 //Home
 import banner1 from "@/assets/images/Homepage/b1.jpg";
-import product from "@/assets/images/myorder/product.png"
+import product from "@/assets/images/myorder/product.png";
 import banner3 from "@/assets/images/Homepage/b2.png";
 import banner4 from "@/assets/images/Homepage/b3.png";
 import banner5 from "@/assets/images/Homepage/b4.png";
@@ -32,7 +32,7 @@ import visa from "@/assets/images/myorder/visa.png";
 import avata from "@/assets/images/myorder/avt.png";
 import hello from "@/assets/images/myorder/Hello.png";
 import not from "@/assets/images/notfound/image25.svg";
-
+import bannervoucher from "@/assets/images/voucher/bannervoucher.png";
 export {
   banner1,
   banner6,
@@ -67,4 +67,5 @@ export {
   avata,
   hello,
   not,
+  bannervoucher,
 };

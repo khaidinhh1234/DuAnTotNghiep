@@ -43,7 +43,7 @@ const Header = () => {
       path: "/ourstory",
     },
     {
-      name: "Nhật Ký",
+      name: "Khuyến mãi",
       path: "*",
     },
     {
@@ -119,8 +119,9 @@ const Header = () => {
                 <li key={index}>
                   <NavLink
                     to={item.path}
+                    // className="xl:px-4 lg:px-1  py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black"
                     className={({ isActive }) =>
-                      `px-4 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
+                      `xl:px-4 lg:px-1  py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
                         !isActive
                           ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
                           : "text-white bg-black"
