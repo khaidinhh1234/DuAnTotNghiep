@@ -54,7 +54,7 @@ const Header = () => {
   return (
     <header className="h-12 ">
       <div
-        className={` ${menu == true ? "bg-black/40 h-screen " : ""} fixed top-0 left-0 w-full z-10  shadow-lg  bg-opacity-70`}
+        className={` ${menu == true ? "bg-black/40 h-screen " : "bg-white"} fixed top-0 left-0 w-full z-10  shadow-lg  `}
       >
         {menu && (
           <div
