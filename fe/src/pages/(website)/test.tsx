@@ -29,7 +29,7 @@ export default function Test() {
       <section>
         <div className=" container pb-11">
           <div className="md:px-14 px-5 pt-3 grid grid-cols-12  gap-3  w-[100%]  justify-center">
-            <div className="lg:col-span-6 col-span-12 mx-auto mb-6 ">
+            <div className="lg:col-span-6 col-span-12  mb-6 ">
               <div className=" bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px]  md:h-[555px]  md:w-[655px]  w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60 ">
                 <SwiperReact
                   style={{
@@ -47,7 +47,7 @@ export default function Test() {
                   navigation={true}
                   thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
                   modules={[Autoplay, Pagination, Navigation, Thumbs, FreeMode]}
-                  className="mySwiper2"
+                  className="mySwiper2 w-[555px]"
                   loop={true}
                   spaceBetween={10}
                 >
@@ -82,7 +82,7 @@ export default function Test() {
                   className="xl:h-[590px] lg:w-[530px] lg:h-[500px] md:w-[540px] md:h-[600px] w-[320px] h-[400px]"
                 /> */}
               </div>
-              <div className=" w-[500px]  flex  mx-auto">
+              <div className=" w-[500px]">
                 <SwiperReact
                   onSwiper={(swiperInstance: SwiperType) =>
                     setThumbsSwiper(swiperInstance)
