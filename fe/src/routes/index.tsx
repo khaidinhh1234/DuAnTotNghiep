@@ -64,6 +64,7 @@ const Router = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<Test />} />
+
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         {/* TRang admin */}
