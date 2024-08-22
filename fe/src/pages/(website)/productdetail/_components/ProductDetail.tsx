@@ -6,6 +6,7 @@ import { Autoplay, Pagination, Navigation, FreeMode, Thumbs } from 'swiper/modul
 import { product,products2, products1, sanPham2  } from "@/assets/img";
 
 const ProductDetail = () => {
+  const [activeTab, setActiveTab] = useState("descriptions"); // State to manage active tab
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
@@ -23,10 +24,8 @@ const ProductDetail = () => {
   ];
 
   return (
-    <div>
-  <main>
-         {/*Order Summary*/}
-         <section>
+    <>
+    <section>
            <div className="container">
              <div className="mx-14 flex mt-[70px] mb-9">
                <p className="pr-2">Home</p>
@@ -36,7 +35,8 @@ const ProductDetail = () => {
                <p className="px-2">All Products</p>
              </div>
            </div>
-         </section>        <section>
+         </section>      
+           <section>
           <div className="container pb-11">
             <div className="md:px-14 px-5 pt-3 grid grid-cols-12 gap-3 w-[100%] justify-center">
               <div className="lg:col-span-6 col-span-12 mb-6 ">
@@ -199,33 +199,33 @@ const ProductDetail = () => {
             </div>
           </div>
         </section>
-
-        <section>
-          <div className="container">
-            <div className=" mx-14 bg-white rounded-lg my-10 lg:mb-24">
-              <div className="border-b border-gray-200 mb-4">
-                <nav className="flex space-x-4 h-7">
-                  <button
-                    data-tab="descriptions"
-                    className="hover:text-gray-900 text-gray-500 border-b-2 border-white hover:border-black pb-2 focus:outline-none hover:text-xl hover:font-semibold"
-                  >
-                    Descriptions
-                  </button>
-                  <button
-                    data-tab="additional-info"
-                    className="text-gray-500 hover:text-gray-900 pb-2 focus:outline-none border-b-2 border-white hover:border-black hover:text-xl hover:font-semibold"
-                  >
-                    Additional Information
-                  </button>
-                  <button
-                    data-tab="reviews"
-                    className="text-gray-500 hover:text-gray-900 pb-2 focus:outline-none border-b-2 border-white hover:border-black hover:text-xl hover:font-semibold"
-                  >
-                    Reviews
-                  </button>
-                </nav>
-              </div>
-              <div id="descriptions" data-content className="py-4 h-auto">
+      
+      <div className="max-w-6xl mx-auto p-8">
+        <div className="flex space-x-8 border-b pb-2 mb-4">
+          <button 
+            className={`font-medium ${activeTab === "descriptions" ? "text-black border-b-2 border-black pb-2" : "text-gray-700"}`}
+            onClick={() => setActiveTab("descriptions")}
+          >
+            Descriptions
+          </button>
+          <button 
+            className={`font-medium ${activeTab === "additionalInfo" ? "text-black border-b-2 border-black pb-2" : "text-gray-700"}`}
+            onClick={() => setActiveTab("additionalInfo")}
+          >
+            Additional Information
+          </button>
+          <button 
+            className={`font-medium ${activeTab === "reviews" ? "text-black border-b-2 border-black pb-2" : "text-gray-700"}`}
+            onClick={() => setActiveTab("reviews")}
+          >
+            Reviews
+          </button>
+        </div>
+        
+        {activeTab === "descriptions" && (
+          <div className="mb-4">
+            <p className="description mb-4 font-medium">
+      <div id="descriptions" data-content className="py-4 h-auto">
                 <p className="text-gray-600">
                   <span>+</span>
                   It is a long established fact that a reader will be distracted
@@ -254,13 +254,118 @@ const ProductDetail = () => {
                   This is the reviews tab content. Display customer reviews and
                   ratings here.
                 </p>
-              </div>
+              </div>         </p>
+          </div>
+        )}
+
+        {activeTab === "additionalInfo" && (
+          <div className="mb-4">
+            <h3 className="text-gray-900 mb-2 font-bold text-lg">Color</h3>
+            <div className="flex space-x-2">
+              {/* Color buttons here */}
+              <h1>Đỏ,</h1>
+              <h1>Xanh dương,</h1>
+              <h1>Tím,</h1>
+              <h1>Đen,</h1>
+              <h1>cam,</h1>
+
+            </div>
+            <h3 className="mt-4 mb-2 font-bold text-lg">Size</h3>
+            <div className="flex space-x-2">
+              {/* Size buttons here */}
+              <h1>S,</h1>
+              <h1>L,</h1>
+              <h1>XL,</h1>
+              <h1>XXL,</h1>
+
             </div>
           </div>
-        </section>
+        )}
 
-        <div>
-          <div className="container mx-14 pb-10">
+        {activeTab === "reviews" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
+            {/* <div className="space-y-6">
+            <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2> */}
+
+<div className="space-y-6">
+  {/* Review Item */}
+  <div className="border p-4 rounded-lg">
+    <div className="flex items-center space-x-4 mb-2">
+      <div className="w-12 h-12 rounded-full overflow-hidden">
+        <img src="https://i.pravatar.cc/100" alt="Mark Williams" className="w-full h-full object-cover" />
+      </div>
+      <div>
+        <h4 className="font-medium">Mark Williams</h4>
+        <div className="flex items-center">
+          <span className="text-yellow-500 text-xl">★★★★★</span>
+          <span className="ml-2 text-sm text-gray-500">Jan 05, 2023</span>
+        </div>
+      </div>
+    </div>
+    <p className="text-gray-700 font-medium mb-2">Excellent Product, I Love It 😍</p>
+    <p className="text-gray-600">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+  </div>
+
+  {/* Another Review Item */}
+  <div className="border p-4 rounded-lg">
+    <div className="flex items-center space-x-4 mb-2">
+      <div className="w-12 h-12 rounded-full overflow-hidden">
+        <img src="https://i.pravatar.cc/100?img=2" alt="Alexa Johnson" className="w-full h-full object-cover" />
+      </div>
+      <div>
+        <h4 className="font-medium">Alexa Johnson</h4>
+        <div className="flex items-center">
+          <span className="text-yellow-500 text-xl">★★★★★</span>
+          <span className="ml-2 text-sm text-gray-500">Jan 06, 2023</span>
+        </div>
+      </div>
+    </div>
+    <p className="text-gray-700 font-medium mb-2">My Daughter is very much happy with this product</p>
+    <p className="text-gray-600">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+  </div>
+{/* </div> */}
+
+{/* Add Review Form */}
+<h3 className="text-lg font-semibold mt-8 mb-4">Add your Review</h3>
+<form className="space-y-4">
+  <div>
+    <label className="block font-medium">Your Rating</label>
+    <div className="flex space-x-2 text-yellow-500 text-xl">
+      {[...Array(5)].map((_, i) => (
+        <button key={i} type="button">★</button>
+      ))}
+    </div>
+  </div>
+
+  <div>
+    <label className="block font-medium">Name</label>
+    <input type="text" className="w-full border p-2 rounded" placeholder="Enter Your Name" />
+  </div>
+
+  <div>
+    <label className="block font-medium">Email Address</label>
+    <input type="email" className="w-full border p-2 rounded" placeholder="Enter Your Email" />
+  </div>
+
+  <div>
+    <label className="block font-medium">Your Review</label>
+    <textarea className="w-full border p-2 rounded" placeholder="Enter Your Review"></textarea>
+  </div>
+
+  <button type="submit" className="bg-black text-white px-4 py-2 rounded">
+    Submit
+  </button>
+</form>   
+         </div>
+            {/* <h3 className="text-lg font-semibold mt-8 mb-4">Add your Review</h3> */}
+            <form className="space-y-4">
+              {/* Review form here */}
+            </form>
+          </div>
+        )}
+      </div>
+      <div className="container mx-14 pb-10">
             <h2 className="mx-14 text-4xl font-medium tracking-[1px] mb-12">
               Related Products
             </h2>
@@ -312,9 +417,7 @@ const ProductDetail = () => {
               </div>
             </div>
           </div>
-        </div>
         <section>
-           {/* End Main */}
          <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-14 mt-12 mb-24">
                <div className="mx-auto">
@@ -342,8 +445,7 @@ const ProductDetail = () => {
 </div>
            </div>
          </section>
-      </main>
-
+         
       {previewImage && (
         <Image
           wrapperStyle={{ display: 'none' }}
@@ -355,7 +457,8 @@ const ProductDetail = () => {
           src={previewImage}
         />
       )}
-    </div>
+      
+    </>
   );
 };
 
