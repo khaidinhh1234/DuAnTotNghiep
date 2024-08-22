@@ -7,11 +7,11 @@ import LayoutWebsite from "@/pages/(website)/layout";
 import { Route, Routes } from "react-router-dom";
 import Page from "./../pages/(website)/shop/shop";
 import PageOur from "../pages/(website)/ourstory/pageOur";
-import Login from "@/pages/(website)/login/login";
+import Login from "@/pages/(auth)/login/login";
 import Cart from "@/pages/(website)/cart/Cart";
-import Register from "@/pages/(website)/register/register";
-import ForgotPassword from "@/pages/(website)/ForgotPassword/ForgotPassword";
-import LoginSuccessfull from "@/pages/(website)/LoginSuccessfull/LoginSuccessfull";
+import Register from "@/pages/(auth)/register/register";
+import ForgotPassword from "@/pages/(auth)/ForgotPassword/ForgotPassword";
+import LoginSuccessfull from "@/pages/(auth)/LoginSuccessfull/LoginSuccessfull";
 
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
 import MyWishlists from "@/pages/(website)/mywishlists/MyWishlists";
@@ -25,7 +25,7 @@ import MyOrder from "@/pages/(website)/myOrder/Myorder";
 import Ordersummary from "@/pages/(website)/ordersummary/ordersummary";
 import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
 import Payment from "@/pages/(website)/payment/PayMent";
-import OTPPage from "@/pages/(website)/EnterOTP/EntOtp";
+import OTPPage from "@/pages/(auth)/EnterOTP/EntOtp";
 import Contact from "@/pages/(website)/contact/Contact";
 import ScrollToTop from "@/assets/js/scrolltotop";
 
@@ -64,7 +64,6 @@ const Router = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<Test />} />
-
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         {/* TRang admin */}

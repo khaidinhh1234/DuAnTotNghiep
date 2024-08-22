@@ -1,51 +1,54 @@
-
-import React, { useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Image } from 'antd';
-import { Autoplay, Pagination, Navigation, FreeMode, Thumbs } from 'swiper/modules';
-import { product,products2, products1, sanPham2  } from "@/assets/img";
-
+import React, { useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Image } from "antd";
+import {
+  Autoplay,
+  Pagination,
+  Navigation,
+  FreeMode,
+  Thumbs,
+} from "swiper/modules";
+import { product, products2, products1, sanPham2 } from "@/assets/img";
+import type { Swiper as SwiperType } from "swiper";
 const ProductDetail = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
+  const [previewImage, setPreviewImage] = useState("");
 
-  const handlePreview = (imageUrl : string) => {
+  const handlePreview = (imageUrl: string) => {
     setPreviewImage(imageUrl);
     setPreviewOpen(true);
   };
 
-  const images = [
-    product,
-    products1,
-    products2,
-    sanPham2,
-  ];
+  const images = [product, products1, products2, sanPham2];
 
   return (
     <div>
-  <main>
-         {/*Order Summary*/}
-         <section>
-           <div className="container">
-             <div className="mx-14 flex mt-[70px] mb-9">
-               <p className="pr-2">Home</p>
-               &gt;
-               <p className="px-2">Shop</p>
-               &gt;
-               <p className="px-2">All Products</p>
-             </div>
-           </div>
-         </section>        <section>
+      <main>
+        {/*Order Summary*/}
+        <section>
+          <div className="container">
+            <div className="mx-14 flex mt-[70px] mb-9">
+              <p className="pr-2">Home</p>
+              &gt;
+              <p className="px-2">Shop</p>
+              &gt;
+              <p className="px-2">All Products</p>
+            </div>
+          </div>
+        </section>{" "}
+        <section>
           <div className="container pb-11">
             <div className="md:px-14 px-5 pt-3 grid grid-cols-12 gap-3 w-[100%] justify-center">
               <div className="lg:col-span-6 col-span-12 mb-6 ">
                 <div className="bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60">
                   <Swiper
-                    style={{
-                      "--swiper-navigation-color": "#000000",
-                      "--swiper-pagination-color": "#000000",
-                    }}
+                    style={
+                      {
+                        "--swiper-navigation-color": "#000000",
+                        "--swiper-pagination-color": "#000000",
+                      } as React.CSSProperties
+                    }
                     centeredSlides={true}
                     autoplay={{
                       delay: 2500,
@@ -56,7 +59,13 @@ const ProductDetail = () => {
                     }}
                     navigation={true}
                     thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
-                    modules={[Autoplay, Pagination, Navigation, Thumbs, FreeMode]}
+                    modules={[
+                      Autoplay,
+                      Pagination,
+                      Navigation,
+                      Thumbs,
+                      FreeMode,
+                    ]}
                     className="mySwiper2 w-[555px] swiper-with-hover"
                     loop={true}
                     spaceBetween={10}
@@ -67,7 +76,7 @@ const ProductDetail = () => {
                           src={image}
                           alt=""
                           onClick={() => handlePreview(image)}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: "pointer" }}
                         />
                       </SwiperSlide>
                     ))}
@@ -75,8 +84,8 @@ const ProductDetail = () => {
                 </div>
                 <div className="w-[500px] mx-auto">
                   <Swiper
-                    onSwiper={(swiperInstance) =>
-                      setThumbsSwiper(swiperInstance)
+                    onSwiper={(swiperInstance: SwiperType) =>
+                      setThumbsSwiper(swiperInstance as any)
                     }
                     loop={true}
                     spaceBetween={31}
@@ -88,12 +97,11 @@ const ProductDetail = () => {
                   >
                     {images.map((image, index) => (
                       <SwiperSlide key={index}>
-<div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] flex justify-center items-center">
-<img
+                        <div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] flex justify-center items-center">
+                          <img
                             src={image}
                             alt=""
-                            style={{ cursor: 'pointer' }}
-
+                            style={{ cursor: "pointer" }}
                           />
                         </div>
                       </SwiperSlide>
@@ -102,104 +110,103 @@ const ProductDetail = () => {
                 </div>
               </div>
               <div className="lg:col-span-6 col-span-12 px-4 w-[100%] ">
-              <div className="product_detail_name">
-                <div className="flex justify-between mb-2">
-                  <h3 className=" font-bold text-3xl ">YK Disney</h3>
-                  <div>
-                    <a className="bg-[#3CD139]/10 text-sm px-2 py-1 text-[#3CD139] rounded-sm">
-                      In Stock
-                    </a>
+                <div className="product_detail_name">
+                  <div className="flex justify-between mb-2">
+                    <h3 className=" font-bold text-3xl ">YK Disney</h3>
+                    <div>
+                      <a className="bg-[#3CD139]/10 text-sm px-2 py-1 text-[#3CD139] rounded-sm">
+                        In Stock
+                      </a>
+                    </div>
+                  </div>
+                  <h4 className="mb-3 text-2xl font-normal">
+                    Áo đẹp thoáng mát co giãn{" "}
+                  </h4>
+                  <div className="stars_reviews d-flex mb-3">
+                    <span>
+                      <i className="fa-solid fa-star  text-yellow-400 text-xl" />
+                      <i className="fa-solid fa-star text-yellow-400 text-xl" />
+                      <i className="fa-solid fa-star text-yellow-400 text-xl" />
+                      <i className="fa-solid fa-star text-yellow-400 text-xl" />
+                      <i className="fa-solid fa-star text-yellow-400 text-xl" />
+                    </span>
+                    <span className="px-2 text-[#A4A1AA]">
+                      5.0 <span className="px-[2px]">(122 Reviews)</span>
+                    </span>
                   </div>
                 </div>
-                <h4 className="mb-3 text-2xl font-normal">
-                  Áo đẹp thoáng mát co giãn{" "}
-                </h4>
-                <div className="stars_reviews d-flex mb-3">
-                  <span>
-                    <i className="fa-solid fa-star  text-yellow-400 text-xl" />
-                    <i className="fa-solid fa-star text-yellow-400 text-xl" />
-                    <i className="fa-solid fa-star text-yellow-400 text-xl" />
-                    <i className="fa-solid fa-star text-yellow-400 text-xl" />
-                    <i className="fa-solid fa-star text-yellow-400 text-xl" />
-                  </span>
-                  <span className="px-2 text-[#A4A1AA]">
-                    5.0 <span className="px-[2px]">(122 Reviews)</span>
-                  </span>
+                <div className=" mb-5 text-xl font-medium">
+                  $80.00 <del className="text-[#A4A1AA]">$100.00</del>
+                </div>
+                <p className="description mb-4 font-medium">
+                  To use these apps, you will need to open the app and then take
+                  a picture of the image. The app will then process the image
+                  and return the extracted text.
+                </p>
+                <div className="mb-4">
+                  <h3 className="  text-gray-900 mb-2 font-bold text-lg">
+                    Color{" "}
+                  </h3>
+                  <div className="flex space-x-2">
+                    <button className="w-9 h-9 bg-red-500 rounded-md border-2 border-transparent hover:border-blackL" />
+                    <button className="w-9 h-9 bg-blue-500 rounded-md border-2 border-transparent hover:border-blackL" />
+                    <button className="w-9 h-9 bg-purple-500 rounded-md border-2 border-transparent hover:border-blackL" />
+                    <button className="w-9 h-9 bg-black rounded-md border-2 border-transparent hover:border-blackL" />
+                    <button className="w-9 h-9 bg-yellow-500 rounded-md border-2 border-transparent hover:border-blackL" />
+                    <button className="w-9 h-9 bg-green-500 rounded-md border-2 border-transparent hover:border-blackL" />
+                  </div>
+                </div>
+                <div className=" items-center mt-4 mb-3">
+                  <h3 className=" mr-4 font-bold text-lg">Size </h3>
+                  <div className="flex mt-3">
+                    <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2">
+                      S
+                    </button>
+                    <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
+                      M
+                    </button>
+                    <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
+                      L
+                    </button>
+                    <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
+                      XL
+                    </button>
+                    <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
+                      XXL
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-12 flex gap-5">
+                  <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
+                    <button className="py-2 pr-2">
+                      <i className="fa-solid fa-minus" />
+                    </button>
+                    <input
+                      type="number"
+                      id="numberInput"
+                      defaultValue={1}
+                      min={1}
+                      maxLength={2}
+                      className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
+                    />
+                    <button className="py-2 pl-2">
+                      <i className="fa-solid fa-plus" />
+                    </button>
+                  </div>
+                  <button className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
+                    Add to Cart
+                  </button>
+                  <button className="border border-black xl:w-16 lg:w-11 md:w-16 w-11  xl:h-14  lg:h-10 md:h-14  h-10 rounded-lg flex items-center justify-center  shadow-lg shadow-slate-400/50">
+                    <i
+                      className="fa-regular fa-heart text-2xl"
+                      style={{ color: "#ff1100" }}
+                    />{" "}
+                  </button>
                 </div>
               </div>
-              <div className=" mb-5 text-xl font-medium">
-                $80.00 <del className="text-[#A4A1AA]">$100.00</del>
-              </div>
-              <p className="description mb-4 font-medium">
-                To use these apps, you will need to open the app and then take a
-                picture of the image. The app will then process the image and
-                return the extracted text.
-              </p>
-              <div className="mb-4">
-                <h3 className="  text-gray-900 mb-2 font-bold text-lg">
-                  Color{" "}
-                </h3>
-                <div className="flex space-x-2">
-                  <button className="w-9 h-9 bg-red-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-blue-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-purple-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-black rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-yellow-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-green-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                </div>
-              </div>
-              <div className=" items-center mt-4 mb-3">
-                <h3 className=" mr-4 font-bold text-lg">Size </h3>
-                <div className="flex mt-3">
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2">
-                    S
-                  </button>
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
-                    M
-                  </button>
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
-                    L
-                  </button>
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
-                    XL
-                  </button>
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
-                    XXL
-                  </button>
-                </div>
-              </div>
-              <div className="mt-12 flex gap-5">
-                <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
-                  <button className="py-2 pr-2">
-                    <i className="fa-solid fa-minus" />
-                  </button>
-                  <input
-                    type="number"
-                    id="numberInput"
-                    defaultValue={1}
-                    min={1}
-                    maxLength={2}
-                    className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
-                  />
-                  <button className="py-2 pl-2">
-                    <i className="fa-solid fa-plus" />
-                  </button>
-                </div>
-                <button className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
-                  Add to Cart
-                </button>
-                <button className="border border-black xl:w-16 lg:w-11 md:w-16 w-11  xl:h-14  lg:h-10 md:h-14  h-10 rounded-lg flex items-center justify-center  shadow-lg shadow-slate-400/50">
-                  <i
-                    className="fa-regular fa-heart text-2xl"
-                    style={{ color: "#ff1100" }}
-                  />{" "}
-                </button>
-              </div>
-            </div>
             </div>
           </div>
         </section>
-
         <section>
           <div className="container">
             <div className=" mx-14 bg-white rounded-lg my-10 lg:mb-24">
@@ -258,7 +265,6 @@ const ProductDetail = () => {
             </div>
           </div>
         </section>
-
         <div>
           <div className="container mx-14 pb-10">
             <h2 className="mx-14 text-4xl font-medium tracking-[1px] mb-12">
@@ -307,50 +313,49 @@ const ProductDetail = () => {
                     </div>
                   </div>
                   {/* Add more related product slides as needed */}
-                  
                 </div>
               </div>
             </div>
           </div>
         </div>
         <section>
-           {/* End Main */}
-         <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-14 mt-12 mb-24">
-               <div className="mx-auto">
+          {/* End Main */}
+          <div className="container">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-14 mt-12 mb-24">
+              <div className="mx-auto">
                 <i className="fa-regular fa-box text-3xl" />
-                 <h3 className="font-bold text-xl mt-3 mb-2">Free Shipping</h3>
+                <h3 className="font-bold text-xl mt-3 mb-2">Free Shipping</h3>
                 <p>Free shipping for order above $150</p>
               </div>
               <div className="mx-auto">
-                 <i className="fa-regular fa-circle-dollar text-3xl" />
-                 <h3 className="font-bold text-xl mt-3 mb-2">Money Guarantee</h3>
-                 <p>Within 30 days for an exchange</p>
-               </div>
-               <div className="mx-auto">
-                 <i className="fa-regular fa-headphones text-3xl" />
-                 <h3 className="font-bold text-xl mt-3 mb-2">Online Support</h3>
-                 <p>24 hours a day, 7 days a week</p>
-               </div>
-               <div className="mx-auto">
-                 <i className="fa-light fa-credit-card text-3xl" />
-<h3 className="font-bold text-xl mt-3 mb-2">
-                  Flexible Payment
-</h3>
-                 <p>Pay with multiple credit cards</p>
+                <i className="fa-regular fa-circle-dollar text-3xl" />
+                <h3 className="font-bold text-xl mt-3 mb-2">Money Guarantee</h3>
+                <p>Within 30 days for an exchange</p>
               </div>
-</div>
-           </div>
-         </section>
+              <div className="mx-auto">
+                <i className="fa-regular fa-headphones text-3xl" />
+                <h3 className="font-bold text-xl mt-3 mb-2">Online Support</h3>
+                <p>24 hours a day, 7 days a week</p>
+              </div>
+              <div className="mx-auto">
+                <i className="fa-light fa-credit-card text-3xl" />
+                <h3 className="font-bold text-xl mt-3 mb-2">
+                  Flexible Payment
+                </h3>
+                <p>Pay with multiple credit cards</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       {previewImage && (
         <Image
-          wrapperStyle={{ display: 'none' }}
+          wrapperStyle={{ display: "none" }}
           preview={{
             visible: previewOpen,
             onVisibleChange: (visible) => setPreviewOpen(visible),
-            afterOpenChange: (visible) => !visible && setPreviewImage(''),
+            afterOpenChange: (visible) => !visible && setPreviewImage(""),
           }}
           src={previewImage}
         />

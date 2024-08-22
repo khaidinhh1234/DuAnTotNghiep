@@ -81,7 +81,8 @@ const ProductCategories = () => {
                     </div>
                     <div className="flex justify-between items-center my-4">
                       <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Trang Phục Mùa Đông
+                        <input type="checkbox" className="mr-2" /> Trang Phục
+                        Mùa Đông
                       </label>
                     </div>
                   </div>
@@ -299,7 +300,7 @@ const ProductCategories = () => {
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white  transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -338,7 +339,7 @@ const ProductCategories = () => {
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white  transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -377,7 +378,7 @@ const ProductCategories = () => {
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white  transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -416,7 +417,7 @@ const ProductCategories = () => {
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white  transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -455,7 +456,7 @@ const ProductCategories = () => {
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white  transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -494,7 +495,7 @@ const ProductCategories = () => {
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white  transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
@@ -533,7 +534,7 @@ const ProductCategories = () => {
                             alt=""
                             className="sm:w-[270px] w-[300px] sm:h-[370px] h-[400px] ml-2"
                           />
-                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white opacity-30 transition-opacity duration-300 group-hover:opacity-100">
+                          <button className="hover:bg-blackL hover:text-white absolute sm:px-[75px] px-[93px] py-3 left-4 rounded-lg bottom-5 bg-white  transition-opacity duration-300 group-hover:opacity-100">
                             Add to Cart
                           </button>
                         </div>
