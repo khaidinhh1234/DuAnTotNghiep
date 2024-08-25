@@ -32,10 +32,12 @@ export default function Test() {
             <div className="lg:col-span-6 col-span-12  mb-6 ">
               <div className=" bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px]  md:h-[555px]  md:w-[655px]  w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60 ">
                 <SwiperReact
-                  style={{
-                    "--swiper-navigation-color": "#000000",
-                    "--swiper-pagination-color": "#000000",
-                  }}
+                  style={
+                    {
+                      "--swiper-navigation-color": "#000000",
+                      "--swiper-pagination-color": "#000000",
+                    } as React.CSSProperties
+                  }
                   centeredSlides={true}
                   autoplay={{
                     delay: 2500,

@@ -1,8 +1,8 @@
-import React, { useState } from "react";
 import { Popconfirm, Space, Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
 import { Button } from "@/components/ui/button";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, RollbackOutlined } from "@ant-design/icons";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 type TableRowSelection<T extends object = object> =
@@ -19,6 +19,7 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "Tên sản phẩm",
     dataIndex: "name",
+    className: " pl-10",
   },
   {
     title: "Giá",
@@ -34,7 +35,7 @@ const columns: TableColumnsType<DataType> = [
     render: (_, record) => (
       <Space>
         <Popconfirm
-          title="Chuyển vào thùng rác "
+          title="Xóa vĩnh viễn "
           description="Bạn có chắc chắn muốn xóa không?"
           okText="Có "
           cancelText="Không"
@@ -44,7 +45,7 @@ const columns: TableColumnsType<DataType> = [
           </Button>
         </Popconfirm>
         <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-          Cập nhật{" "}
+          Khôi phục
         </Button>
       </Space>
     ),
@@ -71,8 +72,7 @@ const data: DataType[] = [
     address: "Sidney No. 1 Lake Park",
   },
 ];
-
-const ProductsAdmin = () => {
+const Remote = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -117,32 +117,35 @@ const ProductsAdmin = () => {
       },
     ],
   };
-
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="flex items-center">
-        <h1 className=" md:text-base">
-          Quản trị / <span className="font-semibold px-px=">Sản phẩm</span>{" "}
-        </h1>
-      </div>
-      <div className="flex items-center justify-between">
-        <h1 className=" font-semibold md:text-3xl">Sản phẩm </h1>
-        <Link to="remote">
-          <Button className="ml-auto bg-black text-white rounded-lg  py-1">
-            <DeleteOutlined className="mr-1" />
-            Thùng rác
-          </Button>
-        </Link>
-      </div>
-      <div className=" ">
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={data}
-        />
-      </div>
-    </main>
+    <div>
+      {" "}
+      <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+        <div className="flex items-center">
+          <h1 className=" md:text-base">
+            Quản trị / Sản phẩm /
+            <span className="font-semibold px-1">Thùng rác</span>{" "}
+          </h1>
+        </div>
+        <div className="flex items-center justify-between">
+          <h1 className=" font-semibold md:text-3xl">Thùng rác </h1>
+          <Link to={"/admin/products"}>
+            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
+              <RollbackOutlined className="mr-1" />
+              Quay lại
+            </Button>
+          </Link>
+        </div>
+        <div className=" ">
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={data}
+          />
+        </div>
+      </main>
+    </div>
   );
 };
 
-export default ProductsAdmin;
+export default Remote;

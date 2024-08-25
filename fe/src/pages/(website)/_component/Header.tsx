@@ -44,7 +44,7 @@ const Header = () => {
     },
     {
       name: "Khuyến mãi",
-      path: "*",
+      path: "/vourcher",
     },
     {
       name: "Liên Hệ",
@@ -158,7 +158,9 @@ const Header = () => {
               </div>
             </span>
             <span>
-              <i className="fa-regular fa-heart text-xl"></i>
+              <a href="/mywishlist">
+                <i className="fa-regular fa-heart text-xl"></i>
+              </a>
             </span>
             <span>
               <a href="/gio-hang">

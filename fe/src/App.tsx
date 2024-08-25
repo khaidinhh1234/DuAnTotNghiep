@@ -1,13 +1,16 @@
-import { Toaster } from '@/components/ui/toaster'
-import Router from './routes'
+import { Toaster } from "@/components/ui/toaster";
+import { ToastContainer } from "react-toastify";
+
+import Router from "./routes";
 
 function App() {
-    return (
-        <>
-            <Router />
-            <Toaster />
-        </>
-    )
+  return (
+    <>
+      <Router />
+      <Toaster />
+      <ToastContainer />
+    </>
+  );
 }
 
-export default App
+export default App;
