@@ -11,6 +11,7 @@ import {
 import { product, products2, products1, sanPham2 } from "@/assets/img";
 import type { Swiper as SwiperType } from "swiper";
 const ProductDetail = () => {
+  const [activeTab, setActiveTab] = useState("descriptions"); // State to manage active tab
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -24,20 +25,19 @@ const ProductDetail = () => {
 
   return (
     <div>
-      <main>
-        {/*Order Summary*/}
-        <section>
-          <div className="container">
-            <div className="mx-14 flex mt-[70px] mb-9">
-              <p className="pr-2">Home</p>
-              &gt;
-              <p className="px-2">Shop</p>
-              &gt;
-              <p className="px-2">All Products</p>
-            </div>
-          </div>
-        </section>{" "}
-        <section>
+  <main>
+         {/*Order Summary*/}
+         <section>
+           <div className="container">
+             <div className="mx-14 flex mt-[70px] mb-9">
+               <p className="pr-2">Home</p>
+               &gt;
+               <p className="px-2">Shop</p>
+               &gt;
+               <p className="px-2">All Products</p>
+             </div>
+           </div>
+         </section>        <section>
           <div className="container pb-11">
             <div className="md:px-14 px-5 pt-3 grid grid-cols-12 gap-3 w-[100%] justify-center">
               <div className="lg:col-span-6 col-span-12 mb-6 ">
@@ -207,6 +207,7 @@ const ProductDetail = () => {
             </div>
           </div>
         </section>
+
         <section>
           <div className="container">
             <div className=" mx-14 bg-white rounded-lg my-10 lg:mb-24">
@@ -261,10 +262,34 @@ const ProductDetail = () => {
                   This is the reviews tab content. Display customer reviews and
                   ratings here.
                 </p>
-              </div>
+              </div>         </p>
+          </div>
+        )}
+
+        {activeTab === "additionalInfo" && (
+          <div className="mb-4">
+            <h3 className="text-gray-900 mb-2 font-bold text-lg">Color</h3>
+            <div className="flex space-x-2">
+              {/* Color buttons here */}
+              <h1>Đỏ,</h1>
+              <h1>Xanh dương,</h1>
+              <h1>Tím,</h1>
+              <h1>Đen,</h1>
+              <h1>cam,</h1>
+
+            </div>
+            <h3 className="mt-4 mb-2 font-bold text-lg">Size</h3>
+            <div className="flex space-x-2">
+              {/* Size buttons here */}
+              <h1>S,</h1>
+              <h1>L,</h1>
+              <h1>XL,</h1>
+              <h1>XXL,</h1>
+
             </div>
           </div>
         </section>
+
         <div>
           <div className="container mx-14 pb-10">
             <h2 className="mx-14 text-4xl font-medium tracking-[1px] mb-12">
@@ -313,16 +338,17 @@ const ProductDetail = () => {
                     </div>
                   </div>
                   {/* Add more related product slides as needed */}
+                  
                 </div>
               </div>
             </div>
           </div>
         </div>
         <section>
-          {/* End Main */}
-          <div className="container">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-14 mt-12 mb-24">
-              <div className="mx-auto">
+           {/* End Main */}
+         <div className="container">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  gap-14 mt-12 mb-24">
+               <div className="mx-auto">
                 <i className="fa-regular fa-box text-3xl" />
                 <h3 className="font-bold text-xl mt-3 mb-2">Free Shipping</h3>
                 <p>Free shipping for order above $150</p>
@@ -344,9 +370,9 @@ const ProductDetail = () => {
                 </h3>
                 <p>Pay with multiple credit cards</p>
               </div>
-            </div>
-          </div>
-        </section>
+</div>
+           </div>
+         </section>
       </main>
 
       {previewImage && (
@@ -360,7 +386,8 @@ const ProductDetail = () => {
           src={previewImage}
         />
       )}
-    </div>
+      
+    </>
   );
 };
 
