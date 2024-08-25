@@ -135,35 +135,39 @@
   ],
   "users": [
     {
-      "email": "toan1234@gmail.com",
-      "password": "$2a$10$qULX/AHzi3W1qhgWJwpGPecBW6npfA0y6H5XnakEc2VC2CjAPRrha",
-      "first_name": "Ngô",
-      "last_name": "Toản",
-      "confirmPassword": "123123",
+      "email": "khaidinhh2@gmail.com",
+      "password": "$2a$10$oEkVVPPnAShbLzKNrF.rh.drcaPWRAaGq0fNSBn0NnbX7PYBNsJ96",
+      "first_name": "Nguyễn",
+      "last_name": "Khải",
+      "confirmPassword": "khaidinhh2@gmail.comA",
+      "checkboxs": true,
       "id": 1
     },
     {
-      "email": "toan123@gmail.com",
-      "password": "$2a$10$6inABAYVLbcf8N6txtCKD.gYH4bW02Im7ps7bE3L3ZVRke2Ck9oF6",
-      "first_name": "Ngô",
-      "last_name": "Toản",
-      "confirmPassword": "Toanngo1",
+      "email": "khaidinhh23@gmail.com",
+      "password": "$2a$10$6KmQf2aSQeS5gSw9Sap/uufS2dIIpeACoHoeIYMithtwBZmQgBBqO",
+      "first_name": "Nguyễn",
+      "last_name": "Khải",
+      "confirmPassword": "khaidinhh23@gmail.comA",
+      "checkboxs": true,
       "id": 2
     },
     {
-      "email": "toan12@gmail.com",
-      "password": "$2a$10$oG6mZ4J3TSGKjdXMQSq8W.HqgOmWBNAPcrOEyRPHoDIMgCkFiej2e",
-      "first_name": "Ngô",
-      "last_name": "Toản",
-      "confirmPassword": "123123",
+      "email": "khaidinhh232345@gmail.com",
+      "password": "$2a$10$ZROP8h.2pJbs9pSNJLDgEey64Fjhh.vMlv8V95rX2QR0XJKiv7bqa",
+      "first_name": "Nguyễn",
+      "last_name": "Khải",
+      "confirmPassword": "khaidinhh23@gmail.comA",
+      "checkboxs": true,
       "id": 3
     },
     {
-      "email": "toan1@gmail.com",
-      "password": "$2a$10$i4o/KAdcNk8cDuSHgcQDJOvV/VRi/ry.h9BTAkXjPHqFWjSvZsUHS",
-      "first_name": "Ngô",
-      "last_name": "Toản",
-      "confirmPassword": "Toanngo1",
+      "email": "khaidinhh2323345@gmail.com",
+      "password": "$2a$10$KNtTpOzWBlgVY3ya.QfMlOPtnfDlaXpqEt.Pu5JBJoNrNrxcLvVfy",
+      "first_name": "Nguyễn",
+      "last_name": "Khải",
+      "confirmPassword": "khaidinhh2323345@gmail.comA",
+      "checkboxs": true,
       "id": 4
     }
   ]

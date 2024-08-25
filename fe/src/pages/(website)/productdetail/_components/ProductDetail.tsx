@@ -42,10 +42,14 @@ const ProductDetail = () => {
             <div className="lg:col-span-6 col-span-12 mb-6 ">
               <div className="bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60">
                 <Swiper
-                  style={{
-                    "--swiper-navigation-color": "#000000",
-                    "--swiper-pagination-color": "#000000",
-                  }}
+
+                  style={
+                    {
+                      "--swiper-navigation-color": "#000000",
+                      "--swiper-pagination-color": "#000000",
+                    } as React.CSSProperties
+                  }
+
                   centeredSlides={true}
                   autoplay={{
                     delay: 2500,
@@ -72,10 +76,13 @@ const ProductDetail = () => {
                     </SwiperSlide>
                   ))}
                 </Swiper>
+
               </div>
               <div className="w-[500px] mx-auto">
                 <Swiper
-                  onSwiper={(swiperInstance) => setThumbsSwiper(swiperInstance)}
+                  onSwiper={(swiperInstance) =>
+                    setThumbsSwiper(swiperInstance as any)
+                  }
                   loop={true}
                   spaceBetween={31}
                   slidesPerView={4}
@@ -93,6 +100,7 @@ const ProductDetail = () => {
                   ))}
                 </Swiper>
               </div>
+
             </div>
             <div className="lg:col-span-6 col-span-12 px-4 w-[100%] ">
               <div className="product_detail_name">
@@ -459,16 +467,7 @@ const ProductDetail = () => {
               <h3 className="font-bold text-xl mt-3 mb-2">Money Guarantee</h3>
               <p>Within 30 days for an exchange</p>
             </div>
-            <div className="mx-auto">
-              <i className="fa-regular fa-headphones text-3xl" />
-              <h3 className="font-bold text-xl mt-3 mb-2">Online Support</h3>
-              <p>24 hours a day, 7 days a week</p>
-            </div>
-            <div className="mx-auto">
-              <i className="fa-light fa-credit-card text-3xl" />
-              <h3 className="font-bold text-xl mt-3 mb-2">Flexible Payment</h3>
-              <p>Pay with multiple credit cards</p>
-            </div>
+
           </div>
         </div>
       </section>
