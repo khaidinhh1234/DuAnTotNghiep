@@ -4,7 +4,9 @@ import React from "react";
 const CheckOut = () => {
   return (
     <section className="container">
+
       <div className="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
+
         <h1 className="h1cart">Checkout</h1>
         <div className="grid lg:grid-cols-12 gap-4 px-0 justify-center">
           <div className="lg:col-span-8 col-span-6 md:px-0 px-3">

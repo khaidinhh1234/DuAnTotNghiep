@@ -1,6 +1,7 @@
 import { IUser } from "@/common/types/user";
 import { registerSchema } from "@/common/validations/auth";
 
+
 import instance from "@/configs/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -11,11 +12,13 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 const SignupForm = () => {
   const nav = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IUser>({
+
     resolver: zodResolver(registerSchema),
   });
   const { mutate } = useMutation({
@@ -142,6 +145,7 @@ const SignupForm = () => {
           </div>
           <button
             type="submit"
+
             className="w-full my-5 bg-black text-white p-3 rounded-md hover:bg-gray-800 text-sm font-bold hover:scale-105 "
           >
             Đăng ký
@@ -155,6 +159,7 @@ const SignupForm = () => {
               Đăng nhập ngay <i className="fa-solid fa-arrow-right text-xs"></i>
             </a>
           </div>
+
         </form>
       </div>
     </section>

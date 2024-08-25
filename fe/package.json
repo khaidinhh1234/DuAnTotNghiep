@@ -40,7 +40,7 @@
     "clsx": "^2.1.0",
     "concurrently": "^8.2.2",
     "joi": "^17.13.3",
-    "json-server": "^0.17.0",
+    "json-server": "^0.17.4",
     "json-server-auth": "^2.1.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.360.0",

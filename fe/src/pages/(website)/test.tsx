@@ -1,27 +1,6 @@
-import React, { useState } from "react";
-// Import Swiper React components
-import { Swiper as SwiperReact, SwiperSlide } from "swiper/react";
-
-// Import Swiper styles
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-
-// import required modules
-import {
-  Autoplay,
-  Pagination,
-  Navigation,
-  FreeMode,
-  Thumbs,
-} from "swiper/modules";
-
-// Định nghĩa kiểu cho Swiper
-import type { Swiper as SwiperType } from "swiper";
-import { product, products2 } from "@/assets/img";
-
 export default function Test() {
-  // Sử dụng kiểu SwiperType hoặc null
+
+
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
 
   return (
@@ -236,4 +215,5 @@ export default function Test() {
       </section>
     </>
   );
+
 }

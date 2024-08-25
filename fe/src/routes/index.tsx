@@ -9,6 +9,7 @@ import Cart from "@/pages/(website)/cart/Cart";
 import Register from "@/pages/(auth)/register/register";
 import ForgotPassword from "@/pages/(auth)/ForgotPassword/ForgotPassword";
 import LoginSuccessfull from "@/pages/(auth)/LoginSuccessfull/LoginSuccessfull";
+
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
 import MyWishlists from "@/pages/(website)/mywishlists/MyWishlists";
 import ManageAddresses from "@/pages/(website)/manageaddresses/ManageAddresses";
