@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Popconfirm, Space, Table } from "antd";
+import { Input, Popconfirm, Space, Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
 import { Button } from "@/components/ui/button";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -10,23 +10,34 @@ type TableRowSelection<T extends object = object> =
 
 interface DataType {
   key: React.Key;
-  name: string;
-  age: number;
-  address: string;
+  image: string;
+  title: string;
+  price: number;
+  description: string;
+  quantity: number;
+
 }
 
 const columns: TableColumnsType<DataType> = [
   {
+    title: "Ảnh",
+    dataIndex: "image",
+  },
+  {
     title: "Tên sản phẩm",
-    dataIndex: "name",
+    dataIndex: "title",
   },
   {
     title: "Giá",
-    dataIndex: "age",
+    dataIndex: "price",
   },
   {
-    title: "Địa chỉ",
-    dataIndex: "address",
+    title: "Mô tả",
+    dataIndex: "description",
+  },
+  {
+    title: "Số lượng",
+    dataIndex: "quantity",
   },
   {
     title: "Quản trị",
@@ -54,21 +65,27 @@ const columns: TableColumnsType<DataType> = [
 const data: DataType[] = [
   {
     key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
+    image: "https://picsum.photos/id/10/300/300",
+    title: "John abc",
+    price: 32,
+    description: "New York No. 1 Lake Park",
+    quantity: 32,
   },
   {
     key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
+    image: "https://picsum.photos/id/10/300/300",
+    title: "Jim Green",
+    price: 42,
+    description: "London No. 1 Lake Park",
+    quantity: 32,
   },
   {
     key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
+    image: "https://picsum.photos/id/10/300/300",
+    title: "Joe Black",
+    price: 32,
+    description: "Sidney No. 1 Lake Park",
+    quantity: 32,
   },
 ];
 
@@ -127,6 +144,7 @@ const ProductsAdmin = () => {
       </div>
       <div className="flex items-center justify-between">
         <h1 className=" font-semibold md:text-3xl">Sản phẩm </h1>
+       
         <Link to="remote">
           <Button className="ml-auto bg-black text-white rounded-lg  py-1">
             <DeleteOutlined className="mr-1" />

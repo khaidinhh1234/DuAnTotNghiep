@@ -1,5 +1,4 @@
 import { bank, logofooter } from "@/assets/img";
-import React from "react";
 
 type Props = {};
 
@@ -14,7 +13,7 @@ const Footer = () => {
                 <img
                   src={logofooter}
                   alt=""
-                  className="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
+                  className="lg:w-[130px] w-28 h-auto"
                 />
               </div>
               <div className="my-[39px] space-y-5 w-[261px]">
