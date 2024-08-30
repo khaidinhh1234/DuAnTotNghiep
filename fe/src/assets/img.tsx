@@ -18,7 +18,7 @@ import story from "@/assets/images/Homepage/story.png";
 import bannerOurStory from "@/assets/images/ourstory/banner.png";
 import our1 from "@/assets/images/ourstory/our1.png";
 import our2 from "@/assets/images/ourstory/our2.png";
-import logo from "@/assets/images/Logo.png";
+import logo from "@/assets/images/LOGOGLOW.png";
 import message from "@/assets/images/message.png";
 import bank from "@/assets/images/bank.png";
 import logofooter from "@/assets/images/Logofooter.jpg";

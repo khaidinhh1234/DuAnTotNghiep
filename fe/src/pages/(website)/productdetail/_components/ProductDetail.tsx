@@ -1,21 +1,40 @@
-import React, { useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Image } from "antd";
-import {
-  Autoplay,
-  Pagination,
-  Navigation,
-  FreeMode,
-  Thumbs,
-} from "swiper/modules";
-import { product, products2, products1, sanPham2 } from "@/assets/img";
+
+import { product, products1, products2, sanPham2 } from "@/assets/img";
+import { Image } from 'antd';
+import { useState } from 'react';
+import { Autoplay, FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState("descriptions"); // State to manage active tab
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [isHeart, setIsHeart] = useState(false);
 
+  const handleColorClick = (color: any) => {
+    setSelectedColor(color);
+  };
+
+  const colors = [
+    'bg-red-500',
+    'bg-blue-500',
+    'bg-purple-500',
+    'bg-black',
+    'bg-yellow-500',
+    'bg-green-500',
+  ];
+  const handleSizeClick = (size: string) => {
+    setSelectedSize(size);
+  };
+
+  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+
+  const handleClickHeart = () => {
+    setIsHeart(!isHeart);
+  };
   const handlePreview = (imageUrl: string) => {
     setPreviewImage(imageUrl);
     setPreviewOpen(true);
@@ -140,33 +159,38 @@ const ProductDetail = () => {
                 <h3 className="  text-gray-900 mb-2 font-bold text-lg">
                   Color{" "}
                 </h3>
-                <div className="flex space-x-2">
+                {/* <div className="flex space-x-2">
                   <button className="w-9 h-9 bg-red-500 rounded-md border-2 border-transparent hover:border-blackL" />
                   <button className="w-9 h-9 bg-blue-500 rounded-md border-2 border-transparent hover:border-blackL" />
                   <button className="w-9 h-9 bg-purple-500 rounded-md border-2 border-transparent hover:border-blackL" />
                   <button className="w-9 h-9 bg-black rounded-md border-2 border-transparent hover:border-blackL" />
                   <button className="w-9 h-9 bg-yellow-500 rounded-md border-2 border-transparent hover:border-blackL" />
                   <button className="w-9 h-9 bg-green-500 rounded-md border-2 border-transparent hover:border-blackL" />
+                </div> */}
+                <div className="flex space-x-2">
+                  {colors.map((color, index) => (
+                    <button
+                      key={index}
+                      className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? 'border-black' : 'border-transparent'
+                        } ${selectedColor === color ? color : `${color} opacity-50`}`}
+                      onClick={() => handleColorClick(color)}
+                    />
+                  ))}
                 </div>
               </div>
               <div className=" items-center mt-4 mb-3">
                 <h3 className=" mr-4 font-bold text-lg">Size </h3>
                 <div className="flex mt-3">
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2">
-                    S
-                  </button>
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
-                    M
-                  </button>
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
-                    L
-                  </button>
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
-                    XL
-                  </button>
-                  <button className="w-10 h-10  rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white ml-2 mr-2">
-                    XXL
-                  </button>
+                  {sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => handleSizeClick(size)}
+                      className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${selectedSize === size ? 'bg-blackL text-white' : ''
+                        }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
                 </div>
               </div>
               <div className="mt-12 flex gap-5">
@@ -189,11 +213,12 @@ const ProductDetail = () => {
                 <button className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
                   Add to Cart
                 </button>
-                <button className="border border-black xl:w-16 lg:w-11 md:w-16 w-11  xl:h-14  lg:h-10 md:h-14  h-10 rounded-lg flex items-center justify-center  shadow-lg shadow-slate-400/50">
-                  <i
-                    className="fa-regular fa-heart text-2xl"
-                    style={{ color: "#ff1100" }}
-                  />{" "}
+                <button
+                  onClick={handleClickHeart}
+                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${isHeart ? 'bg-red-600' : ''
+                    }`}
+                >
+                  <i className={`fa-regular fa-heart text-2xl ${isHeart ? 'text-white' : 'text-red-600'}`} />
                 </button>
               </div>
             </div>

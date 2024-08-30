@@ -58,9 +58,8 @@ const Header = () => {
       >
         {menu && (
           <div
-            className={`fixed z-20 transform transition duration-1000 ease-in-out ${
-              isClosing ? "-translate-x-full" : "translate-x-0"
-            }`}
+            className={`fixed z-20 transform transition duration-1000 ease-in-out ${isClosing ? "-translate-x-full" : "translate-x-0"
+              }`}
             onMouseLeave={handleMouseLeave}
           >
             <div className="bg-white relative">
@@ -106,11 +105,11 @@ const Header = () => {
               <i className="fa-solid fa-bars text-2xl"></i>
             </button>
           </div>
-          <div className="order-2 lg:w-60">
+          <div className="order-2 lg:w-50">
             <img
               src={logo}
               alt="Logo"
-              className="lg:w-[200px] lg:h-[60px] w-32 h-10"
+              className="lg:w-[140px] lg:h-[42px] w-20 h-6"
             />
           </div>
           <nav className="hidden lg:block order-3">
@@ -121,10 +120,9 @@ const Header = () => {
                     to={item.path}
                     // className="xl:px-4 lg:px-1  py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black"
                     className={({ isActive }) =>
-                      `xl:px-4 lg:px-1  py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
-                        !isActive
-                          ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
-                          : "text-white bg-black"
+                      `xl:px-4 lg:px-1  py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${!isActive
+                        ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
+                        : "text-white bg-black"
                       }`
                     }
                   >
