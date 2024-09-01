@@ -52,47 +52,77 @@ const Header = () => {
     },
   ];
   return (
-    <header className="h-12 ">
+    <header className="h-12 relative ">
       <div
-        className={` ${menu == true ? "bg-black/40 h-screen " : "bg-white"} fixed top-0 left-0 w-full z-10  shadow-lg  `}
+      // className={` ${menu == true ? "bg-black/40 h-screen " : "bg-white"} fixed top-0 left-0 w-full z-10  shadow-lg  transition-transform duration-300 ease-in-out`}
       >
-        {menu && (
+        <div
+          className={`fixed top-0 left-0 w-full h-screen z-10 transition-transform duration-300 ease-in-out ${
+            menu ? "translate-x-0" : "-translate-x-full"
+          }`}
+          style={{
+            backgroundColor: menu ? "rgba(0, 0, 0, 0.4)" : "transparent",
+          }}
+        >
           <div
-            className={`fixed z-20 transform transition duration-1000 ease-in-out ${
-              isClosing ? "-translate-x-full" : "translate-x-0"
-            }`}
+            className="px-10 bg-white h-full w-96 sm:w-96 fixed top-0 left-0 shadow-lg transition-transform duration-300 ease-in-out "
+            style={{ transform: menu ? "translateX(0)" : "translateX(-100%)" }}
             onMouseLeave={handleMouseLeave}
           >
-            <div className="bg-white relative">
-              <nav className="lg:hidden h-screen w-[260px] sm:w-[460px]">
-                <ul>
-                  <li>
-                    <a href="">Trang chủ</a>
-                  </li>
-                  <li>
-                    <a href="">Giới Thiệu</a>
-                  </li>
-                  <li>
-                    <a href="">Liên hệ</a>
-                  </li>
-                  <li>
-                    <a href="">Trang chủ</a>
-                  </li>
+            <div className="grid ">
+              <div className="my-10 text-2xl *:mx-2">
+                <a href="" className="font-bold text-xl">
+                  Nam
+                </a>{" "}
+                |
+                <a className="font-bold text-2xl" href="">
+                  Nữ
+                </a>
+                |
+                <a href="" className="font-bold text-2xl">
+                  Trẻ em
+                </a>
+              </div>
+              <nav className="h-full my-5 px-2">
+                <ul className="space-y-4  text-xl font-bold  ">
+                  {MenuList.map((item, index) => (
+                    <li className="" key={index}>
+                      <NavLink
+                        to={item.path}
+                        onClick={() => setMenu(!menu)}
+                        className={({ isActive }) =>
+                          isActive ? "underline decoration-sky-500" : ""
+                        }
+                      >
+                        {item.name}
+                      </NavLink>
+                    </li>
+                  ))}
                 </ul>
               </nav>
-              <div className="absolute top-[20px] left-[280px] sm:left-[480px]">
-                <button
-                  onClick={() => {
-                    setMenu(!menu);
-                    console.log(menu);
-                  }}
-                >
-                  <i className="fa-solid fa-x text-3xl text-white"></i>
-                </button>
+            </div>
+            <div className="fixed bottom-0  py-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2 text-xl font-semibold ">
+                  <i className="fa-regular fa-user"></i>
+                  <a href="/login">
+                    <button className=" px-4 py-2 rounded-lg">Đăng nhập</button>
+                  </a>
+                  |
+                  <a href="/register">
+                    <button className=" px-4 py-2 rounded-lg">Đăng ký</button>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
-        )}
+          <button
+            className="absolute top-1 left-[400px] text-3xl text-white"
+            onClick={() => setMenu(!menu)}
+          >
+            <i className="fa-solid fa-x"></i>
+          </button>
+        </div>
         <div className="container mx-auto my-3 h-16 flex justify-between items-center">
           <div className="lg:hidden order-1 relative">
             {" "}

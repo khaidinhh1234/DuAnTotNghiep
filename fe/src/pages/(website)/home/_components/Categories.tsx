@@ -56,10 +56,10 @@ const Categories = () => {
               1024: {
                 slidesPerView: 3,
               },
-              1124: {
+              1184: {
                 slidesPerView: 3.5,
               },
-              1154: {
+              1244: {
                 slidesPerView: 4,
               },
             }}

@@ -175,11 +175,13 @@ const Banner = () => {
           </div>
           <div className="fixed bottom-10 right-10 z-20">
             <p className="text-xl font-semibold text-white">
-              <img
-                src={message}
-                alt=""
-                className="w-24 h-18 fa-bounce cursor-pointer"
-              />
+              <a href="">
+                <img
+                  src={message}
+                  alt=""
+                  className="w-24 h-18 fa-bounce cursor-pointer"
+                />
+              </a>
             </p>
           </div>
         </div>
