@@ -23,7 +23,6 @@ const Voucher = () => {
   return (
     <div>
       <div>
-        {"{"}" "{"}"}
         <main>
           <section className="container">
             <div className="lg:mx-14 mx-6 lg:my-[40px] my-[42px]">

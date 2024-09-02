@@ -37,7 +37,7 @@ const menu = [
   },
   {
     name: "Kho sản phẩm",
-    path: "centralstocks ",
+    path: "centralstocks",
     icon: Package,
   },
   {

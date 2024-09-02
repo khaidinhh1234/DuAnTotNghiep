@@ -10,34 +10,45 @@ type TableRowSelection<T extends object = object> =
 
 interface DataType {
   key: React.Key;
-  image: string;
-  title: string;
-  price: number;
-  description: string;
-  quantity: number;
-
+  anh_san_pham: string;
+  ten_san_pham: string;
+  id_danh_muc: string;
+  luot_xem: number;
+  mo_ta_ngan: string;
+  noi_dung: string;
 }
 
 const columns: TableColumnsType<DataType> = [
   {
     title: "Ảnh",
-    dataIndex: "image",
+    render: (record) => (
+      <img
+        src={record.anh_san_pham}
+        alt=""
+        className="w-20 h-20 object-cover rounded-lg p-2 border"
+      />
+    ),
   },
   {
     title: "Tên sản phẩm",
-    dataIndex: "title",
+    dataIndex: "ten_san_pham",
   },
   {
-    title: "Giá",
-    dataIndex: "price",
+    title: "Danh mục",
+    dataIndex: "id_danh_muc",
+  },
+
+  {
+    title: "Mô tả Ngắn",
+    dataIndex: "mo_ta_ngan",
   },
   {
-    title: "Mô tả",
-    dataIndex: "description",
+    title: "noi_dung",
+    dataIndex: "noi_dung",
   },
   {
-    title: "Số lượng",
-    dataIndex: "quantity",
+    title: "luot_xem",
+    dataIndex: "luot_xem",
   },
   {
     title: "Quản trị",
@@ -65,27 +76,31 @@ const columns: TableColumnsType<DataType> = [
 const data: DataType[] = [
   {
     key: "1",
-    image: "https://picsum.photos/id/10/300/300",
-    title: "John abc",
-    price: 32,
-    description: "New York No. 1 Lake Park",
-    quantity: 32,
+    anh_san_pham: "https://picsum.photos/id/10/300/300",
+    ten_san_pham: "John abc",
+    luot_xem: 32,
+    id_danh_muc: "áo sơ mi",
+
+    mo_ta_ngan: "New York No. 1 Lake Park",
+    noi_dung: "2134",
   },
   {
     key: "2",
-    image: "https://picsum.photos/id/10/300/300",
-    title: "Jim Green",
-    price: 42,
-    description: "London No. 1 Lake Park",
-    quantity: 32,
+    anh_san_pham: "https://picsum.photos/id/10/300/300",
+    ten_san_pham: "Jim Green",
+    id_danh_muc: "quần dài",
+    luot_xem: 42,
+    mo_ta_ngan: "London No. 1 Lake Park",
+    noi_dung: "2345234",
   },
   {
     key: "3",
-    image: "https://picsum.photos/id/10/300/300",
-    title: "Joe Black",
-    price: 32,
-    description: "Sidney No. 1 Lake Park",
-    quantity: 32,
+    anh_san_pham: "https://picsum.photos/id/10/300/300",
+    ten_san_pham: "Joe Black",
+    luot_xem: 32,
+    id_danh_muc: "quần đùi",
+    mo_ta_ngan: "Sidney No. 1 Lake Park",
+    noi_dung: "2345324",
   },
 ];
 
@@ -144,7 +159,7 @@ const ProductsAdmin = () => {
       </div>
       <div className="flex items-center justify-between">
         <h1 className=" font-semibold md:text-3xl">Sản phẩm </h1>
-       
+
         <Link to="remote">
           <Button className="ml-auto bg-black text-white rounded-lg  py-1">
             <DeleteOutlined className="mr-1" />
