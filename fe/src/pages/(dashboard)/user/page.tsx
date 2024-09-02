@@ -1,28 +1,41 @@
-import React, { useState } from "react";
-import { Popconfirm, Space, Table } from "antd";
-import type { TableColumnsType, TableProps } from "antd";
-import { Button } from "@/components/ui/button";
 import { DeleteOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Popconfirm,
+  Space,
+  Table,
+  TableColumnsType,
+  TableProps,
+} from "antd";
 import { Link } from "react-router-dom";
-
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
 
 interface DataType {
   key: React.Key;
-  name: string;
-  age: number;
+  first_name: string;
+  last_name: string;
+  // name: string;
+  email: string;
+  phoneNumber?: string;
   address: string;
 }
-
 const columns: TableColumnsType<DataType> = [
   {
-    title: "Tên sản phẩm",
-    dataIndex: "name",
+    title: "Họ",
+    dataIndex: "first_name",
   },
   {
-    title: "Giá",
-    dataIndex: "age",
+    title: "Tên",
+    dataIndex: "last_name",
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+  },
+  {
+    title: "Số địa thoại",
+    dataIndex: "phoneNumber",
   },
   {
     title: "Địa chỉ",
@@ -34,109 +47,75 @@ const columns: TableColumnsType<DataType> = [
     render: (_, record) => (
       <Space>
         <Popconfirm
-          title="Chuyển vào thùng rác "
-          description="Bạn có chắc chắn muốn xóa không?"
+          title="Khóa tài khoản người dùng"
+          description="Bạn có chắc chắn muốn khóa không?"
           okText="Có "
           cancelText="Không"
         >
           <Button className=" border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-            Xóa
+            Khóa
           </Button>
         </Popconfirm>
-        <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-          Cập nhật{" "}
-        </Button>
       </Space>
     ),
   },
 ];
-
 const data: DataType[] = [
   {
     key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
+    first_name: "a",
+    last_name: "bc",
+    email: "john.doe@example.com",
+    phoneNumber: "0987654321",
+    address: "123 Main St, Anytown, USA",
   },
   {
     key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
+    first_name: "a",
+    last_name: "bc",
+    email: "john.doe@example.com",
+    phoneNumber: "0987654321",
+    address: "123 Main St, Anytown, USA",
   },
   {
     key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
+    first_name: "a",
+    last_name: "bc",
+    email: "john.doe@example.com",
+    phoneNumber: "0987654321",
+    address: "123 Main St, Anytown, USA",
   },
 ];
-
 const UserAdmin = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection: TableRowSelection<DataType> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-      {
-        key: "odd",
-        text: "Select Odd Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false;
-            }
-            return true;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-      {
-        key: "even",
-        text: "Select Even Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true;
-            }
-            return false;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-    ],
-  };
-
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className=" md:text-base">
-          Quản trị / <span className="font-semibold px-px=">Khách hàng </span>{" "}
+          Quản trị / <span className="font-semibold px-px=">Người dùng</span>{" "}
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className=" font-semibold md:text-3xl">Khách hàng </h1>
-        <Link to="remote">
+        <h1 className=" font-semibold md:text-3xl">Người dùng</h1>
+
+        {/* <Link to="remote">
+>>>>>>> main
           <Button className="ml-auto bg-black text-white rounded-lg  py-1">
             <DeleteOutlined className="mr-1" />
             Thùng rác
           </Button>
-        </Link>
+
+        </Link> */}
       </div>
       <div className=" ">
         <Table
-          rowSelection={rowSelection}
+          rowSelection={
+            {
+              // type: selectionType,
+              // ...rowSelection,
+            }
+          }
+          // rowSelection={rowSelection}
+
           columns={columns}
           dataSource={data}
         />

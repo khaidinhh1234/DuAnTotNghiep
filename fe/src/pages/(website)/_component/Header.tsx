@@ -65,8 +65,9 @@ const Header = () => {
           }}
         >
           <div
-            className="px-10 bg-white h-full w-96 sm:w-96 fixed top-0 left-0 shadow-lg transition-transform duration-300 ease-in-out "
-            style={{ transform: menu ? "translateX(0)" : "translateX(-100%)" }}
+            className={`fixed z-20 transform transition duration-1000 ease-in-out ${
+              isClosing ? "-translate-x-full" : "translate-x-0"
+            }`}
             onMouseLeave={handleMouseLeave}
           >
             <div className="grid ">
@@ -136,11 +137,11 @@ const Header = () => {
               <i className="fa-solid fa-bars text-2xl"></i>
             </button>
           </div>
-          <div className="order-2 lg:w-60">
+          <div className="order-2 lg:w-50">
             <img
               src={logo}
               alt="Logo"
-              className="lg:w-[200px] lg:h-[60px] w-32 h-10"
+              className="lg:w-[140px] lg:h-[42px] w-20 h-6"
             />
           </div>
           <nav className="hidden lg:block order-3">

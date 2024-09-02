@@ -169,6 +169,15 @@
       "confirmPassword": "khaidinhh2323345@gmail.comA",
       "checkboxs": true,
       "id": 4
+    },
+    {
+      "email": "toan2k4@gmail.com",
+      "password": "$2a$10$Wc1FkZZpzo0dfW/28ZjodOAmXKheyNtGZF6GJSYvPtIRyQQc9B4cS",
+      "first_name": "Ngô",
+      "last_name": "Toản",
+      "confirmPassword": "Toan123",
+      "checkboxs": true,
+      "id": 5
     }
   ]
 }
