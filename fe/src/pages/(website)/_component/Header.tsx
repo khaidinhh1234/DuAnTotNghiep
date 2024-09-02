@@ -9,7 +9,6 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-
   const handleMouseLeave = () => {
     setTimeout(() => {
       setMenu(false);
@@ -21,11 +20,9 @@ const Header = () => {
     // Add your search logic here
     setIsModalVisible(false);
   };
-
   const showModal = () => {
     setIsModalVisible(true);
   };
-
   const handleCancel = () => {
     setIsModalVisible(false);
   };
@@ -52,10 +49,8 @@ const Header = () => {
     },
   ];
   return (
-    <header className="h-12 relative ">
-      <div
-      // className={` ${menu == true ? "bg-black/40 h-screen " : "bg-white"} fixed top-0 left-0 w-full z-10  shadow-lg  transition-transform duration-300 ease-in-out`}
-      >
+    <header className="h-12 relative">
+      <div className="bg-white w-full">
         <div
           className={`fixed top-0 left-0 w-full h-screen z-10 transition-transform duration-300 ease-in-out ${
             menu ? "translate-x-0" : "-translate-x-full"
@@ -65,13 +60,12 @@ const Header = () => {
           }}
         >
           <div
-            className={`fixed z-20 transform transition duration-1000 ease-in-out ${
-              isClosing ? "-translate-x-full" : "translate-x-0"
-            }`}
+            className="px-10 bg-white h-full w-96 sm:w-96 fixed top-0 left-0 shadow-lg transition-transform duration-300 ease-in-out"
+            style={{ transform: menu ? "translateX(0)" : "translateX(-100%)" }}
             onMouseLeave={handleMouseLeave}
           >
-            <div className="grid ">
-              <div className="my-10 text-2xl *:mx-2">
+            <div className="grid">
+              <div className="my-10 text-2xl">
                 <a href="" className="font-bold text-xl">
                   Nam
                 </a>{" "}
@@ -85,9 +79,9 @@ const Header = () => {
                 </a>
               </div>
               <nav className="h-full my-5 px-2">
-                <ul className="space-y-4  text-xl font-bold  ">
+                <ul className="space-y-4 text-xl font-bold">
                   {MenuList.map((item, index) => (
-                    <li className="" key={index}>
+                    <li key={index}>
                       <NavLink
                         to={item.path}
                         onClick={() => setMenu(!menu)}
@@ -102,16 +96,16 @@ const Header = () => {
                 </ul>
               </nav>
             </div>
-            <div className="fixed bottom-0  py-5">
+            <div className="fixed bottom-0 py-5">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 text-xl font-semibold ">
+                <div className="flex items-center space-x-2 text-xl font-semibold">
                   <i className="fa-regular fa-user"></i>
                   <a href="/login">
-                    <button className=" px-4 py-2 rounded-lg">Đăng nhập</button>
+                    <button className="px-4 py-2 rounded-lg">Đăng nhập</button>
                   </a>
                   |
                   <a href="/register">
-                    <button className=" px-4 py-2 rounded-lg">Đăng ký</button>
+                    <button className="px-4 py-2 rounded-lg">Đăng ký</button>
                   </a>
                 </div>
               </div>
@@ -124,98 +118,100 @@ const Header = () => {
             <i className="fa-solid fa-x"></i>
           </button>
         </div>
-        <div className="container mx-auto my-3 h-16 flex justify-between items-center">
-          <div className="lg:hidden order-1 relative">
-            {" "}
-            <button
-              onClick={() => {
-                setMenu(!menu);
-                console.log(menu);
-              }}
-            >
-              {" "}
-              <i className="fa-solid fa-bars text-2xl"></i>
-            </button>
-          </div>
-          <div className="order-2 lg:w-50">
-            <img
-              src={logo}
-              alt="Logo"
-              className="lg:w-[140px] lg:h-[42px] w-20 h-6"
-            />
-          </div>
-          <nav className="hidden lg:block order-3">
-            <ul className="flex items-center space-x-4">
-              {MenuList.map((item, index) => (
-                <li key={index}>
-                  <NavLink
-                    to={item.path}
-                    // className="xl:px-4 lg:px-1  py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black"
-                    className={({ isActive }) =>
-                      `xl:px-4 lg:px-1  py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
-                        !isActive
-                          ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
-                          : "text-white bg-black"
-                      }`
-                    }
-                  >
-                    {item.name}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div className="order-4 flex items-center space-x-6 cursor-pointer">
-            <span>
-              <div className="relative">
-                <SearchOutlined
-                  className="text-xl cursor-pointer"
-                  onClick={showModal}
-                />
-                <Modal
-                  open={isModalVisible}
-                  onCancel={handleCancel}
-                  footer={null}
-                  title="Tìm kiếm"
-                >
-                  <Input
-                    placeholder="Nhập từ khóa tìm kiếm"
-                    size="large"
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    onPressEnter={() => onSearch(searchValue)}
-                  />
-                </Modal>
-              </div>
-            </span>
-            <span>
-              <a href="/mywishlist">
-                <i className="fa-regular fa-heart text-xl"></i>
-              </a>
-            </span>
-            <span>
-              <a href="/gio-hang">
-                <i className="fa-regular fa-bag-shopping text-xl relative">
-                  <span
-                    className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""} -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
-                  >
-                    0
-                  </span>
-                </i>
-              </a>
-            </span>
-            <Link to="/login">
+        <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-4 opacity-90">
+          <div className="max-w-7xl mx-auto flex justify-between items-center ">
+            <div className="lg:hidden order-1 relative">
               <button
-                className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""} bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
+                onClick={() => {
+                  setMenu(!menu);
+                  console.log(menu);
+                }}
               >
-                Đăng nhập
+                <i className="fa-solid fa-bars text-2xl"></i>
               </button>
-            </Link>
+            </div>
+            <div className="order-2 lg:w-60">
+              <img
+                src={logo}
+                alt="Logo"
+                className="lg:w-[150px] lg:h-[45px] w-32 h-10"
+              />
+            </div>
+            <nav className="hidden lg:block order-3">
+              <ul className="flex items-center space-x-4">
+                {MenuList.map((item, index) => (
+                  <li key={index}>
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
+                          !isActive
+                            ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
+                            : "text-white bg-black"
+                        }`
+                      }
+                    >
+                      {item.name}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div className="order-4 flex items-center space-x-6 cursor-pointer">
+              <span>
+                <div className="relative">
+                  <SearchOutlined
+                    className="text-xl cursor-pointer"
+                    onClick={showModal}
+                  />
+                  <Modal
+                    open={isModalVisible}
+                    onCancel={handleCancel}
+                    footer={null}
+                    title="Tìm kiếm"
+                  >
+                    <Input
+                      placeholder="Nhập từ khóa tìm kiếm"
+                      size="large"
+                      value={searchValue}
+                      onChange={(e) => setSearchValue(e.target.value)}
+                      onPressEnter={() => onSearch(searchValue)}
+                    />
+                  </Modal>
+                </div>
+              </span>
+              <span>
+                <a href="/mywishlist">
+                  <i className="fa-regular fa-heart text-xl"></i>
+                </a>
+              </span>
+              <span>
+                <a href="/gio-hang">
+                  <i className="fa-regular fa-bag-shopping text-xl relative">
+                    <span
+                      className={`${
+                        menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                      } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                    >
+                      0
+                    </span>
+                  </i>
+                </a>
+              </span>
+              <Link to="/login">
+                <button
+                  className={`${
+                    menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                  } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
+                >
+                  Đăng nhập
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
     </header>
   );
 };
-
 export default Header;
