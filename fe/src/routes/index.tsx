@@ -33,12 +33,13 @@ import { Dashboard } from "@/pages/(dashboard)/dashboard/page";
 
 import Remote from "@/pages/(dashboard)/products/remote/page";
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
-import CategoryAdmin from "@/pages/(dashboard)/categories/page";
+
 import OrderAdmin from "@/pages/(dashboard)/order/page";
 import VoucherAdmin from "@/pages/(dashboard)/vourcher/page";
 import UserAdmin from "@/pages/(dashboard)/user/page";
 import AnalyticsAdmin from "@/pages/(dashboard)/analytics/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
+import CategoryAdmin from "@/pages/(dashboard)/categories/page";
 
 const Router = () => {
   return (
