@@ -41,6 +41,7 @@ import AnalyticsAdmin from "@/pages/(dashboard)/analytics/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import SheetSide from "@/pages/(website)/test";
 import CategoryAdmin from "@/pages/(dashboard)/categories/page";
+import Suportuser from "@/pages/(dashboard)/suportuser/suportuser";
 
 const Router = () => {
   return (
@@ -90,6 +91,7 @@ const Router = () => {
           <Route path="users" element={<UserAdmin />} />
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
+          <Route path="suportuser" element={<Suportuser />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
