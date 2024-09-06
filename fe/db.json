@@ -144,40 +144,13 @@
       "id": 1
     },
     {
-      "email": "khaidinhh23@gmail.com",
-      "password": "$2a$10$6KmQf2aSQeS5gSw9Sap/uufS2dIIpeACoHoeIYMithtwBZmQgBBqO",
-      "first_name": "Nguyễn",
-      "last_name": "Khải",
-      "confirmPassword": "khaidinhh23@gmail.comA",
+      "email": "khaidinhh21@gmail.com",
+      "password": "$2a$10$qz3bMqiFeSWW/.zxxevAjubLvs8K5aEyOwFkVMNcnP2PQLVFCLlBi",
+      "first_name": "2345",
+      "last_name": "234",
+      "confirmPassword": "khaidinhh2@gmail.comA",
       "checkboxs": true,
       "id": 2
-    },
-    {
-      "email": "khaidinhh232345@gmail.com",
-      "password": "$2a$10$ZROP8h.2pJbs9pSNJLDgEey64Fjhh.vMlv8V95rX2QR0XJKiv7bqa",
-      "first_name": "Nguyễn",
-      "last_name": "Khải",
-      "confirmPassword": "khaidinhh23@gmail.comA",
-      "checkboxs": true,
-      "id": 3
-    },
-    {
-      "email": "khaidinhh2323345@gmail.com",
-      "password": "$2a$10$KNtTpOzWBlgVY3ya.QfMlOPtnfDlaXpqEt.Pu5JBJoNrNrxcLvVfy",
-      "first_name": "Nguyễn",
-      "last_name": "Khải",
-      "confirmPassword": "khaidinhh2323345@gmail.comA",
-      "checkboxs": true,
-      "id": 4
-    },
-    {
-      "email": "toan2k4@gmail.com",
-      "password": "$2a$10$Wc1FkZZpzo0dfW/28ZjodOAmXKheyNtGZF6GJSYvPtIRyQQc9B4cS",
-      "first_name": "Ngô",
-      "last_name": "Toản",
-      "confirmPassword": "Toan123",
-      "checkboxs": true,
-      "id": 5
     }
   ]
 }

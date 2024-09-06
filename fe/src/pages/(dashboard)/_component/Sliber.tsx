@@ -56,6 +56,11 @@ const menu = [
     icon: Users,
   },
   {
+    name: " Hỗ Trợ khách hàng",
+    path: "suportuser",
+    icon: Users,
+  },
+  {
     name: "Thống kê",
     path: "analytics",
     icon: LineChart,
