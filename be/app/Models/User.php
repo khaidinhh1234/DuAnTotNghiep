@@ -51,4 +51,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'mat_khau' => 'hashed',
     ];
+
+    public function vaiTros()
+    {
+        return $this->hasMany(User::class);
+    }
 }
