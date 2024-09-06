@@ -17,10 +17,19 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+    const TYPE_NAM = 'Nam';
+    const TYPE_NU = 'Nữ';
+    const TYPE_KHAC = 'Khác';
     protected $fillable = [
-        'name',
+        'ho',
+        'ten',
         'email',
-        'password',
+        'mat_khau',
+        'so_dien_thoai',
+        'dic_chi',
+        'ngay_sinh',
+        'gioi_tinh',
     ];
 
     /**
@@ -29,7 +38,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'mat_khau',
         'remember_token',
     ];
 
@@ -40,6 +49,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'mat_khau' => 'hashed',
     ];
 }
