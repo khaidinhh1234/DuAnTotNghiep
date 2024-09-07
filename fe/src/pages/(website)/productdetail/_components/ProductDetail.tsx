@@ -1,9 +1,14 @@
-
 import { product, products1, products2, sanPham2 } from "@/assets/img";
-import { Image } from 'antd';
-import { useState } from 'react';
-import { Autoplay, FreeMode, Navigation, Pagination, Thumbs } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Image } from "antd";
+import { useState } from "react";
+import {
+  Autoplay,
+  FreeMode,
+  Navigation,
+  Pagination,
+  Thumbs,
+} from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState("descriptions"); // State to manage active tab
@@ -19,18 +24,18 @@ const ProductDetail = () => {
   };
 
   const colors = [
-    'bg-red-500',
-    'bg-blue-500',
-    'bg-purple-500',
-    'bg-black',
-    'bg-yellow-500',
-    'bg-green-500',
+    "bg-red-500",
+    "bg-blue-500",
+    "bg-purple-500",
+    "bg-black",
+    "bg-yellow-500",
+    "bg-green-500",
   ];
   const handleSizeClick = (size: string) => {
     setSelectedSize(size);
   };
 
-  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+  const sizes = ["S", "M", "L", "XL", "XXL"];
 
   const handleClickHeart = () => {
     setIsHeart(!isHeart);
@@ -61,14 +66,12 @@ const ProductDetail = () => {
             <div className="lg:col-span-6 col-span-12 mb-6 ">
               <div className="bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60">
                 <Swiper
-
                   style={
                     {
                       "--swiper-navigation-color": "#000000",
                       "--swiper-pagination-color": "#000000",
                     } as React.CSSProperties
                   }
-
                   centeredSlides={true}
                   autoplay={{
                     delay: 2500,
@@ -95,7 +98,6 @@ const ProductDetail = () => {
                     </SwiperSlide>
                   ))}
                 </Swiper>
-
               </div>
               <div className="w-[500px] mx-auto">
                 <Swiper
@@ -119,7 +121,6 @@ const ProductDetail = () => {
                   ))}
                 </Swiper>
               </div>
-
             </div>
             <div className="lg:col-span-6 col-span-12 px-4 w-[100%] ">
               <div className="product_detail_name">
@@ -171,8 +172,9 @@ const ProductDetail = () => {
                   {colors.map((color, index) => (
                     <button
                       key={index}
-                      className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? 'border-black' : 'border-transparent'
-                        } ${selectedColor === color ? color : `${color} opacity-50`}`}
+                      className={`w-9 h-9 rounded-md border-2 ${
+                        selectedColor === color ? "border-black" : ""
+                      } ${selectedColor === color ? color : `${color} opacity-100`}`}
                       onClick={() => handleColorClick(color)}
                     />
                   ))}
@@ -185,8 +187,9 @@ const ProductDetail = () => {
                     <button
                       key={size}
                       onClick={() => handleSizeClick(size)}
-                      className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${selectedSize === size ? 'bg-blackL text-white' : ''
-                        }`}
+                      className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
+                        selectedSize === size ? "bg-blackL text-white" : ""
+                      }`}
                     >
                       {size}
                     </button>
@@ -215,10 +218,13 @@ const ProductDetail = () => {
                 </button>
                 <button
                   onClick={handleClickHeart}
-                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${isHeart ? 'bg-red-600' : ''
-                    }`}
+                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${
+                    isHeart ? "bg-red-600" : ""
+                  }`}
                 >
-                  <i className={`fa-regular fa-heart text-2xl ${isHeart ? 'text-white' : 'text-red-600'}`} />
+                  <i
+                    className={`fa-regular fa-heart text-2xl ${isHeart ? "text-white" : "text-red-600"}`}
+                  />
                 </button>
               </div>
             </div>
@@ -492,7 +498,6 @@ const ProductDetail = () => {
               <h3 className="font-bold text-xl mt-3 mb-2">Money Guarantee</h3>
               <p>Within 30 days for an exchange</p>
             </div>
-
           </div>
         </div>
       </section>

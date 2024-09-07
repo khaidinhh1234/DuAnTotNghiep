@@ -1,10 +1,10 @@
-import { story } from '@/assets/img'
-import React from 'react'
+import { story } from "@/assets/img";
+import React from "react";
 
 const InstagramStories = () => {
   return (
     <>
-    <section>
+      <section>
         {/* <!-- Our Instagram  Stories --> */}
         <div>
           <div className="container">
@@ -16,61 +16,29 @@ const InstagramStories = () => {
               </div>
 
               <div className="grid grid-cols-12 gap-3 mb-24">
-                <div
-                  className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto"
-                >
-                  <button
-                    className="btn absolute w-11 h-11 px-2 py-[10px] bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300"
-                  >
+                <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
+                  <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
                     <i className="fa-brands fa-instagram text-2xl"></i>
                   </button>
-                  <img
-                    src={story}
-                    alt=""
-                    className=""
-                  />
+                  <img src={story} alt="" className="" />
                 </div>
-                <div
-                  className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto"
-                >
-                  <button
-                    className="btn absolute w-11 h-11 px-2 py-[10px] bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300"
-                  >
+                <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
+                  <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
                     <i className="fa-brands fa-instagram text-2xl"></i>
                   </button>
-                  <img
-                     src={story}
-                    alt=""
-                    className=""
-                  />
+                  <img src={story} alt="" className="" />
                 </div>
-                <div
-                  className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto"
-                >
-                  <button
-                    className="btn absolute w-11 h-11 px-2 py-[10px] bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300"
-                  >
+                <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
+                  <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
                     <i className="fa-brands fa-instagram text-2xl"></i>
                   </button>
-                  <img
-                     src={story}
-                    alt=""
-                    className=""
-                  />
+                  <img src={story} alt="" className="" />
                 </div>
-                <div
-                  className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto"
-                >
-                  <button
-                    className="btn absolute w-11 h-11 px-2 py-[10px] bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300"
-                  >
+                <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
+                  <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
                     <i className="fa-brands fa-instagram text-2xl"></i>
                   </button>
-                  <img
-                     src={story}
-                    alt=""
-                    className=""
-                  />
+                  <img src={story} alt="" className="" />
                 </div>
               </div>
             </div>
@@ -78,7 +46,7 @@ const InstagramStories = () => {
         </div>
       </section>
     </>
-  )
-}
+  );
+};
 
-export default InstagramStories
+export default InstagramStories;

@@ -27,18 +27,26 @@ import Contact from "@/pages/(website)/contact/Contact";
 import ScrollToTop from "@/assets/js/scrolltotop";
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
 import Voucher from "@/pages/(website)/vourcher/page";
-import Test from "@/pages/(website)/test";
+
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
 import { Dashboard } from "@/pages/(dashboard)/dashboard/page";
 
 import Remote from "@/pages/(dashboard)/products/remote/page";
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
-import CategoryAdmin from "@/pages/(dashboard)/categories/page";
+
 import OrderAdmin from "@/pages/(dashboard)/order/page";
 import VoucherAdmin from "@/pages/(dashboard)/vourcher/page";
 import UserAdmin from "@/pages/(dashboard)/user/page";
 import AnalyticsAdmin from "@/pages/(dashboard)/analytics/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
+import SheetSide from "@/pages/(website)/test";
+import CategoryAdmin from "@/pages/(dashboard)/categories/page";
+import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
+import RevenueAdmin from "@/pages/(dashboard)/revenue/page";
+import UserPrivilegeAdmin from "@/pages/(dashboard)/userprivileges/page";
+import PagePrivilegeAdmin from "@/pages/(dashboard)/userprivileges/admin/page";
+import PageAddAdmin from "@/pages/(dashboard)/userprivileges/addAdmin/page";
+import PageAddPermission from "@/pages/(dashboard)/userprivileges/addpermission/page";
 
 const Router = () => {
   return (
@@ -70,20 +78,30 @@ const Router = () => {
           <Route path="/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
-          <Route path="/test" element={<Test />} />
+          <Route path="/test" element={<SheetSide />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         {/* TRang admin */}
         <Route path="admin" element={<LayoutAdmin />}>
           <Route path="dashboard" element={<Dashboard />} />
+
           <Route path="products" element={<ProductsAdmin />} />
+          {/* <Route path="products/add" element={<ProductsAdd />} />
+          <Route path="products/edit/:id" element={<ProductsEdit />} /> */}
           <Route path="products/remote" element={<Remote />} />
+
           <Route path="categories" element={<CategoryAdmin />} />
           <Route path="orders" element={<OrderAdmin />} />
           <Route path="vouchers" element={<VoucherAdmin />} />
           <Route path="users" element={<UserAdmin />} />
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
+          <Route path="evaluates" element={<EvaluateAdmin />} />
+          <Route path="revenues" element={<RevenueAdmin />} />
+          <Route path="userprivileges" element={<UserPrivilegeAdmin />} />
+          <Route path="privilegeadmin" element={<PagePrivilegeAdmin />} />
+          <Route path="add-admin" element={<PageAddAdmin />} />
+          <Route path="add-permission" element={<PageAddPermission />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}

@@ -1,5 +1,12 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Table, TableColumnsType, TableProps } from "antd";
+import {
+  Button,
+  Popconfirm,
+  Space,
+  Table,
+  TableColumnsType,
+  TableProps,
+} from "antd";
 import { Link } from "react-router-dom";
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -11,7 +18,7 @@ interface DataType {
   // name: string;
   email: string;
   phoneNumber?: string;
-  address: string
+  address: string;
 }
 const columns: TableColumnsType<DataType> = [
   {
@@ -57,7 +64,7 @@ const data: DataType[] = [
   {
     key: "1",
     first_name: "a",
-    last_name:"bc",
+    last_name: "bc",
     email: "john.doe@example.com",
     phoneNumber: "0987654321",
     address: "123 Main St, Anytown, USA",
@@ -65,7 +72,7 @@ const data: DataType[] = [
   {
     key: "2",
     first_name: "a",
-    last_name:"bc",
+    last_name: "bc",
     email: "john.doe@example.com",
     phoneNumber: "0987654321",
     address: "123 Main St, Anytown, USA",
@@ -73,7 +80,7 @@ const data: DataType[] = [
   {
     key: "3",
     first_name: "a",
-    last_name:"bc",
+    last_name: "bc",
     email: "john.doe@example.com",
     phoneNumber: "0987654321",
     address: "123 Main St, Anytown, USA",
@@ -89,27 +96,32 @@ const UserAdmin = () => {
       </div>
       <div className="flex items-center justify-between">
         <h1 className=" font-semibold md:text-3xl">Người dùng</h1>
-       
+
         {/* <Link to="remote">
+>>>>>>> main
           <Button className="ml-auto bg-black text-white rounded-lg  py-1">
             <DeleteOutlined className="mr-1" />
             Thùng rác
           </Button>
+
         </Link> */}
       </div>
       <div className=" ">
         <Table
-        rowSelection={{
-          // type: selectionType,
-          // ...rowSelection,
-        }}
+          rowSelection={
+            {
+              // type: selectionType,
+              // ...rowSelection,
+            }
+          }
           // rowSelection={rowSelection}
+
           columns={columns}
           dataSource={data}
         />
       </div>
     </main>
-  )
+  );
 };
 
 export default UserAdmin;

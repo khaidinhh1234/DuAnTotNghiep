@@ -1,6 +1,15 @@
-import { Button, Popconfirm, Popover, Space, Table, TableColumnsType, TableProps } from "antd";
+import {
+  Button,
+  Popconfirm,
+  Popover,
+  Space,
+  Table,
+  TableColumnsType,
+  TableProps,
+} from "antd";
 
-type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
+type TableRowSelection<T extends object = object> =
+  TableProps<T>["rowSelection"];
 
 interface DataType {
   key: React.Key;
@@ -53,7 +62,8 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "Trạng thái",
     dataIndex: "status",
-    render: (status) => (status === "Đã giao hàng" ? "Đã giao hàng" : "Chưa giao hàng"),
+    render: (status) =>
+      status === "Đã giao hàng" ? "Đã giao hàng" : "Chưa giao hàng",
   },
   {
     title: "Quản trị",
@@ -93,10 +103,7 @@ const OrderAdmin = () => {
         <h1 className="font-semibold md:text-3xl">Sản phẩm</h1>
       </div>
       <div>
-        <Table
-          columns={columns}
-          dataSource={data}
-        />
+        <Table columns={columns} dataSource={data} />
       </div>
     </main>
   );
