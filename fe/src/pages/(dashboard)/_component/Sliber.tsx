@@ -90,7 +90,11 @@ const SlibarProduct = () => {
             <Package2 className="h-6 w-6" />
             <span>GLOW</span>
           </Link>
-          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+          <Button
+            variant="outline"
+            size="icon"
+            className="ml-auto h-8 w-8 borber border-black rounded-[7px]"
+          >
             <Bell className="h-4 w-4" />
             <span className="sr-only">Toggle notifications</span>
           </Button>

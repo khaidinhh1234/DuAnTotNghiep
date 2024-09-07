@@ -1,12 +1,10 @@
-import React, { useState } from "react";
-import { Input, Popconfirm, Space, Table } from "antd";
-import type { TableColumnsType, TableProps } from "antd";
-import { Button } from "@/components/ui/button";
-import { DeleteOutlined } from "@ant-design/icons";
+import React, { useRef, useState } from "react";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import { Button, Input, Popconfirm, Space, Table } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-
-type TableRowSelection<T extends object = object> =
-  TableProps<T>["rowSelection"];
 
 interface DataType {
   key: React.Key;
@@ -18,60 +16,7 @@ interface DataType {
   noi_dung: string;
 }
 
-const columns: TableColumnsType<DataType> = [
-  {
-    title: "Ảnh",
-    render: (record) => (
-      <img
-        src={record.anh_san_pham}
-        alt=""
-        className="w-20 h-20 object-cover rounded-lg p-2 border"
-      />
-    ),
-  },
-  {
-    title: "Tên sản phẩm",
-    dataIndex: "ten_san_pham",
-  },
-  {
-    title: "Danh mục",
-    dataIndex: "id_danh_muc",
-  },
-
-  {
-    title: "Mô tả Ngắn",
-    dataIndex: "mo_ta_ngan",
-  },
-  {
-    title: "noi_dung",
-    dataIndex: "noi_dung",
-  },
-  {
-    title: "luot_xem",
-    dataIndex: "luot_xem",
-  },
-  {
-    title: "Quản trị",
-    key: "action",
-    render: (_, record) => (
-      <Space>
-        <Popconfirm
-          title="Chuyển vào thùng rác "
-          description="Bạn có chắc chắn muốn xóa không?"
-          okText="Có "
-          cancelText="Không"
-        >
-          <Button className=" border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-            Xóa
-          </Button>
-        </Popconfirm>
-        <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-          Cập nhật{" "}
-        </Button>
-      </Space>
-    ),
-  },
-];
+type DataIndex = keyof DataType;
 
 const data: DataType[] = [
   {
@@ -82,7 +27,8 @@ const data: DataType[] = [
     id_danh_muc: "áo sơ mi",
 
     mo_ta_ngan: "New York No. 1 Lake Park",
-    noi_dung: "2134",
+    noi_dung:
+      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
   },
   {
     key: "2",
@@ -91,64 +37,199 @@ const data: DataType[] = [
     id_danh_muc: "quần dài",
     luot_xem: 42,
     mo_ta_ngan: "London No. 1 Lake Park",
-    noi_dung: "2345234",
+    noi_dung:
+      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
   },
   {
     key: "3",
     anh_san_pham: "https://picsum.photos/id/10/300/300",
     ten_san_pham: "Joe Black",
-    luot_xem: 32,
+    luot_xem: 389,
     id_danh_muc: "quần đùi",
     mo_ta_ngan: "Sidney No. 1 Lake Park",
-    noi_dung: "2345324",
+    noi_dung:
+      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
   },
 ];
 
-const ProductsAdmin = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+const ProductsAdmin: React.FC = () => {
+  // const [searchText, setSearchText] = useState
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps["confirm"],
+    dataIndex: DataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
   };
 
-  const rowSelection: TableRowSelection<DataType> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-      {
-        key: "odd",
-        text: "Select Odd Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false;
-            }
-            return true;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-      {
-        key: "even",
-        text: "Select Even Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true;
-            }
-            return false;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-    ],
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
   };
+
+  const getColumnSearchProps = (
+    dataIndex: DataIndex
+  ): TableColumnType<DataType> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: "Ảnh sản phẩm",
+      render: (record) => (
+        <img
+          src={record.anh_san_pham}
+          alt=""
+          className="w-20 h-20 object-cover rounded-lg p-2 border "
+        />
+      ),
+      className: "pl-10",
+      width: "15%",
+      key: "anh_san_pham",
+    },
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "ten_san_pham",
+      key: "ten_san_pham",
+      width: "15%",
+      ...getColumnSearchProps("ten_san_pham"),
+      sorter: (a: any, b: any) => a.ten_san_pham.length - b.ten_san_pham.length,
+    },
+    {
+      title: "Danh mục",
+      dataIndex: "id_danh_muc",
+      key: "id_danh_muc",
+      width: "15%",
+      ...getColumnSearchProps("ten_san_pham"),
+      sorter: (a: any, b: any) => a.ten_san_pham.length - b.ten_san_pham.length,
+    },
+    {
+      title: "Mô tả Ngắn",
+      dataIndex: "mo_ta_ngan",
+      width: "10%",
+      key: "mo_ta_ngan",
+    },
+    {
+      title: "Nội dung",
+      dataIndex: "noi_dung",
+      className: "w-96",
+
+      key: "noi_dung",
+    },
+    {
+      title: "Lượt xem",
+      dataIndex: "luot_xem",
+      width: "7%",
+
+      sorter: (a: any, b: any) => a.luot_xem - b.luot_xem,
+      sortDirections: ["descend", "ascend"],
+      key: "luot_xem",
+    },
+    {
+      title: "Quản trị",
+      key: "action",
+      render: (_, record) => (
+        <Space>
+          <Popconfirm
+            title="Chuyển vào thùng rác "
+            description="Bạn có chắc chắn muốn xóa không?"
+            okText="Có "
+            cancelText="Không"
+          >
+            <Button className=" border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+              Xóa
+            </Button>
+          </Popconfirm>
+          <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            Cập nhật{" "}
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+  const [searchText, setSearchText] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      console.log(searchText);
+      // Thực hiện hành động tìm kiếm tại đây
+    }
+  };
+  const products = [...data].reverse();
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -168,11 +249,16 @@ const ProductsAdmin = () => {
         </Link>
       </div>
       <div className=" ">
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={data}
-        />
+        <div className="max-w-xs my-2">
+          <Input
+            placeholder="Tìm kiếm..."
+            size="large"
+            value={searchText}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
+        <Table columns={columns} dataSource={data} />;
       </div>
     </main>
   );
