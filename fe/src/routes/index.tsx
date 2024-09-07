@@ -1,14 +1,11 @@
+import { Dashboard } from "@/pages/(dashboard)/dashboard/page";
+import Products from "@/pages/(dashboard)/products/page";
 import NotFoundPage from "@/pages/(website)/404/page";
 import HomePage from "@/pages/(website)/home/page";
 import LayoutWebsite from "@/pages/(website)/layout";
 import { Route, Routes } from "react-router-dom";
 import Page from "./../pages/(website)/shop/shop";
 import PageOur from "../pages/(website)/ourstory/pageOur";
-import Login from "@/pages/(auth)/login/login";
-import Cart from "@/pages/(website)/cart/Cart";
-import Register from "@/pages/(auth)/register/register";
-import ForgotPassword from "@/pages/(auth)/ForgotPassword/ForgotPassword";
-import LoginSuccessfull from "@/pages/(auth)/LoginSuccessfull/LoginSuccessfull";
 
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
 import MyWishlists from "@/pages/(website)/mywishlists/MyWishlists";
@@ -22,14 +19,12 @@ import MyOrder from "@/pages/(website)/myOrder/Myorder";
 import Ordersummary from "@/pages/(website)/ordersummary/ordersummary";
 import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
 import Payment from "@/pages/(website)/payment/PayMent";
-import OTPPage from "@/pages/(auth)/EnterOTP/EntOtp";
 import Contact from "@/pages/(website)/contact/Contact";
 import ScrollToTop from "@/assets/js/scrolltotop";
+
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
 import Voucher from "@/pages/(website)/vourcher/page";
 
-import { LayoutAdmin } from "@/pages/(dashboard)/layout";
-import { Dashboard } from "@/pages/(dashboard)/dashboard/page";
 
 import Remote from "@/pages/(dashboard)/products/remote/page";
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
@@ -41,7 +36,19 @@ import AnalyticsAdmin from "@/pages/(dashboard)/analytics/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import SheetSide from "@/pages/(website)/test";
 import CategoryAdmin from "@/pages/(dashboard)/categories/page";
-import Suportuser from "@/pages/(dashboard)/suportuser/suportuser";
+import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
+import RevenueAdmin from "@/pages/(dashboard)/revenue/page";
+import UserPrivilegeAdmin from "@/pages/(dashboard)/userprivileges/page";
+import PagePrivilegeAdmin from "@/pages/(dashboard)/userprivileges/admin/page";
+import PageAddAdmin from "@/pages/(dashboard)/userprivileges/addAdmin/page";
+import PageAddPermission from "@/pages/(dashboard)/userprivileges/addpermission/page";
+import Cart from "@/pages/(website)/cart/Cart";
+import  Login  from '@/pages/(auth)/login/login';
+import Register from "@/pages/(auth)/register/register";
+import  ForgotPassword  from '@/pages/(auth)/ForgotPassword/ForgotPassword';
+import OTPPage from "@/pages/(auth)/EnterOTP/EntOtp";
+import LoginSuccessfull from "@/pages/(auth)/LoginSuccessfull/LoginSuccessfull";
+import { LayoutAdmin } from "@/pages/(dashboard)/layout";
 
 const Router = () => {
   return (
@@ -63,7 +70,7 @@ const Router = () => {
           <Route path="/setting" element={<Setting />} />
           <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} />
           <Route path="/minicard" element={<Minicard />} />
-          <Route path="/vourcher" element={<Voucher />} />
+          <Route path="/voucher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
           <Route
@@ -73,7 +80,8 @@ const Router = () => {
           <Route path="/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
-          <Route path="/test" element={<SheetSide />} />
+          {/* <Route path="/test" element={<Test />} /> */}
+
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         {/* TRang admin */}
@@ -91,7 +99,12 @@ const Router = () => {
           <Route path="users" element={<UserAdmin />} />
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
-          <Route path="suportuser" element={<Suportuser />} />
+          <Route path="evaluates" element={<EvaluateAdmin />} />
+          <Route path="revenues" element={<RevenueAdmin />} />
+          <Route path="userprivileges" element={<UserPrivilegeAdmin />} />
+          <Route path="privilegeadmin" element={<PagePrivilegeAdmin />} />
+          <Route path="add-admin" element={<PageAddAdmin />} />
+          <Route path="add-permission" element={<PageAddPermission />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
