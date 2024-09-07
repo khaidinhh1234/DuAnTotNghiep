@@ -65,6 +65,11 @@ const menu = [
     path: "analytics",
     icon: LineChart,
   },
+  {
+    name: "Nội dung",
+    path: "content",
+    icon: LineChart,
+  },
 ];
 const SlibarProduct = () => {
   return (
