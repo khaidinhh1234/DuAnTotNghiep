@@ -1,148 +1,381 @@
-import React, { useState } from "react";
-import { Popconfirm, Space, Table } from "antd";
-import type { TableColumnsType, TableProps } from "antd";
-import { Button } from "@/components/ui/button";
-import { DeleteOutlined } from "@ant-design/icons";
+import React, { useRef, useState } from "react";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
-type TableRowSelection<T extends object = object> =
-  TableProps<T>["rowSelection"];
-
-interface DataType {
+interface PromotionType {
   key: React.Key;
-  name: string;
-  age: number;
-  address: string;
+  ten_khuyen_mai: string;
+  loai_khuyen_mai: string;
+  gia_tri: number | string;
+  ngay_bat_dau: string;
+  ngay_ket_thuc: string;
+  trang_thai: string;
+  dieu_kien_ap_dung: string;
+  so_luot_su_dung: number;
+  gioi_han_su_dung: number;
 }
 
-const columns: TableColumnsType<DataType> = [
-  {
-    title: "Tên sản phẩm",
-    dataIndex: "name",
-  },
-  {
-    title: "Giá",
-    dataIndex: "age",
-  },
-  {
-    title: "Địa chỉ",
-    dataIndex: "address",
-  },
-  {
-    title: "Quản trị",
-    key: "action",
-    render: (_, record) => (
-      <Space>
-        <Popconfirm
-          title="Chuyển vào thùng rác "
-          description="Bạn có chắc chắn muốn xóa không?"
-          okText="Có "
-          cancelText="Không"
-        >
-          <Button className=" border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-            Xóa
-          </Button>
-        </Popconfirm>
-        <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-          Cập nhật{" "}
-        </Button>
-      </Space>
-    ),
-  },
-];
-
-const data: DataType[] = [
+const promotions: PromotionType[] = [
   {
     key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
+    ten_khuyen_mai: "Giảm giá 10% cho đơn hàng trên 500k",
+    loai_khuyen_mai: "Giảm giá phần trăm",
+    gia_tri: "10",
+    ngay_bat_dau: "2024-09-01",
+    ngay_ket_thuc: "2024-09-30",
+    trang_thai: "Đang hoạt động",
+    dieu_kien_ap_dung: "Đơn hàng từ 500,000 VND",
+    so_luot_su_dung: 15,
+    gioi_han_su_dung: 100,
   },
   {
     key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
+    ten_khuyen_mai: "Giảm 200k cho đơn hàng từ 1 triệu",
+    loai_khuyen_mai: "Giảm giá tiền mặt",
+    gia_tri: 200000,
+    ngay_bat_dau: "2024-08-01",
+    ngay_ket_thuc: "2024-08-31",
+    trang_thai: "Đã kết thúc",
+    dieu_kien_ap_dung: "Đơn hàng từ 1,000,000 VND",
+    so_luot_su_dung: 40,
+    gioi_han_su_dung: 50,
   },
   {
     key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
+    ten_khuyen_mai: "Giảm giá 15% cho đơn hàng trên 1 triệu",
+    loai_khuyen_mai: "Giảm giá phần trăm",
+    gia_tri: "15",
+    ngay_bat_dau: "2024-10-01",
+    ngay_ket_thuc: "2024-10-31",
+    trang_thai: "Đang hoạt động",
+    dieu_kien_ap_dung: "Đơn hàng từ 1,000,000 VND",
+    so_luot_su_dung: 25,
+    gioi_han_su_dung: 75,
+  },
+  {
+    key: "4",
+    ten_khuyen_mai: "Giảm 50k cho đơn hàng từ 500k",
+    loai_khuyen_mai: "Giảm giá tiền mặt",
+    gia_tri: 50000,
+    ngay_bat_dau: "2024-07-01",
+    ngay_ket_thuc: "2024-07-31",
+    trang_thai: "Đang hoạt động",
+    dieu_kien_ap_dung: "Đơn hàng từ 500,000 VND",
+    so_luot_su_dung: 60,
+    gioi_han_su_dung: 100,
+  },
+  {
+    key: "5",
+    ten_khuyen_mai: "Giảm giá 5% cho tất cả sản phẩm",
+    loai_khuyen_mai: "Giảm giá phần trăm",
+    gia_tri: "5",
+    ngay_bat_dau: "2024-09-15",
+    ngay_ket_thuc: "2024-09-30",
+    trang_thai: "Đang hoạt động",
+    dieu_kien_ap_dung: "Áp dụng cho tất cả sản phẩm",
+    so_luot_su_dung: 120,
+    gioi_han_su_dung: 300,
+  },
+  {
+    key: "6",
+    ten_khuyen_mai: "Giảm 100k cho đơn hàng từ 700k",
+    loai_khuyen_mai: "Giảm giá tiền mặt",
+    gia_tri: 100000,
+    ngay_bat_dau: "2024-08-15",
+    ngay_ket_thuc: "2024-09-15",
+    trang_thai: "Đang hoạt động",
+    dieu_kien_ap_dung: "Đơn hàng từ 700,000 VND",
+    so_luot_su_dung: 80,
+    gioi_han_su_dung: 150,
+  },
+  {
+    key: "7",
+    ten_khuyen_mai: "Tặng quà 50k cho đơn hàng từ 600k",
+    loai_khuyen_mai: "Quà tặng",
+    gia_tri: 50000,
+    ngay_bat_dau: "2024-08-01",
+    ngay_ket_thuc: "2024-09-01",
+    trang_thai: "Đang hoạt động",
+    dieu_kien_ap_dung: "Đơn hàng từ 600,000 VND",
+    so_luot_su_dung: 70,
+    gioi_han_su_dung: 100,
+  },
+  {
+    key: "8",
+    ten_khuyen_mai: "Giảm giá 20% cho đơn hàng trên 2 triệu",
+    loai_khuyen_mai: "Giảm giá phần trăm",
+    gia_tri: "20",
+    ngay_bat_dau: "2024-09-01",
+    ngay_ket_thuc: "2024-10-01",
+    trang_thai: "Đang hoạt động",
+    dieu_kien_ap_dung: "Đơn hàng từ 2,000,000 VND",
+    so_luot_su_dung: 90,
+    gioi_han_su_dung: 200,
   },
 ];
 
-const VourcherAdmin = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+type DataIndex = keyof PromotionType;
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
+const PromotionAdmin: React.FC = () => {
+  const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
+  // const [searchText, setSearchText] = useState("");
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 4,
+  });
+  const searchInput = useRef<InputRef>(null);
+
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps["confirm"],
+    dataIndex: DataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
   };
 
-  const rowSelection: TableRowSelection<DataType> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-      {
-        key: "odd",
-        text: "Select Odd Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false;
-            }
-            return true;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-      {
-        key: "even",
-        text: "Select Even Row",
-        onSelect: (changeableRowKeys) => {
-          let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true;
-            }
-            return false;
-          });
-          setSelectedRowKeys(newSelectedRowKeys);
-        },
-      },
-    ],
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
   };
 
+  const handleTableChange = (pagination: any) => {
+    setPagination(pagination);
+  };
+
+  const getColumnSearchProps = (
+    dataIndex: DataIndex
+  ): TableColumnType<PromotionType> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+
+
+  const columns: TableColumnsType<PromotionType> = [
+    {
+      title: "Tên khuyến mãi",
+      dataIndex: "ten_khuyen_mai",
+      key: "ten_khuyen_mai",
+      width: "15%",
+      ...getColumnSearchProps("ten_khuyen_mai"),
+      sorter: (a: any, b: any) => a.ten_khuyen_mai.length - b.ten_khuyen_mai.length,
+
+    },
+    {
+      title: "Loại khuyến mãi",
+      dataIndex: "loai_khuyen_mai",
+      key: "loai_khuyen_mai",
+      width: "15%",
+    },
+    {
+      title: "Giá trị",
+      dataIndex: "gia_tri",
+      key: "gia_tri",
+      width: "15%",
+      render: (gia_tri: number | string) =>
+        typeof gia_tri === "number" ? `${gia_tri.toLocaleString()} VND` : `${gia_tri}%`,
+      // ...getColumnSearchProps("gia_tri"),
+      sorter: (a: any, b: any) => a.gia_tri - b.gia_tri,
+
+    },
+    {
+      title: "Ngày bắt đầu",
+      dataIndex: "ngay_bat_dau",
+      key: "ngay_bat_dau",
+      width: "15%",
+      ...getColumnSearchProps("ngay_bat_dau"),
+      sorter: (a: any, b: any) => a.ngay_bat_dau - b.ngay_bat_dau,
+
+    },
+    {
+      title: "Ngày kết thúc",
+      dataIndex: "ngay_ket_thuc",
+      key: "ngay_ket_thuc",
+      width: "15%",
+      ...getColumnSearchProps("ngay_ket_thuc"),
+      sorter: (a: any, b: any) => a.ngay_ket_thuc - b.ngay_ket_thuc,
+
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "trang_thai",
+      key: "trang_thai",
+      width: "10%",
+      render: (trang_thai: string) => {
+        let color: string;
+  
+        switch (trang_thai) {
+          case 'Đang hoạt động':
+            color = 'green';
+            break;
+          case 'Đã kết thúc':
+            color = 'volcano';
+            break;
+          default:
+            color = 'default';
+            break;
+        }
+  
+        return (
+          <Tag color={color} key={trang_thai}>
+            {trang_thai.toUpperCase()}
+          </Tag>
+        );
+      },
+    },
+  
+    {
+      title: "Điều kiện áp dụng",
+      dataIndex: "dieu_kien_ap_dung",
+      key: "dieu_kien_ap_dung",
+      width: "20%",
+      ...getColumnSearchProps("dieu_kien_ap_dung"),
+      sorter: (a: any, b: any) => a.dieu_kien_ap_dung.length - b.dieu_kien_ap_dung.length,
+
+    },
+    {
+      title: "Quản trị",
+      key: "action",
+      render: (_, record) => (
+        <Space>
+          <Popconfirm
+            title="Chuyển vào thùng rác"
+            description="Bạn có chắc chắn muốn xóa không?"
+            okText="Có"
+            cancelText="Không"
+          >
+            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+              Xóa
+            </Button>
+          </Popconfirm>
+          <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            Cập nhật
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+  const [searchText, setSearchText] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      console.log(searchText);
+    }
+  };
+  const products = [...promotions].reverse();
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
-        <h1 className=" md:text-base">
-          Quản trị / <span className="font-semibold px-px=">Khuyến mãi</span>{" "}
+        <h1 className="md:text-base">
+          Quản trị / <span className="font-semibold px-px">Khuyến mãi</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className=" font-semibold md:text-3xl">Khuyến mãi</h1>
-        <Link to="remote">
-          <Button className="ml-auto bg-black text-white rounded-lg  py-1">
-            <DeleteOutlined className="mr-1" />
-            Thùng rác
-          </Button>
-        </Link>
-      </div>
+  <h1 className="font-semibold md:text-3xl">Khuyến mãi</h1>
+  
+  <div className="flex gap-2">
+    <Link to="create">
+      <Button className="bg-black text-white rounded-lg py-1">
+        Thêm khuyến mãi
+      </Button>
+    </Link>
+    <Link to="remote">
+      <Button className="bg-black text-white rounded-lg py-1">
+        <DeleteOutlined className="mr-1" />
+        Thùng rác
+      </Button>
+    </Link>
+  </div>
+</div>
+
       <div className=" ">
-        <Table
-          rowSelection={rowSelection}
-          columns={columns}
-          dataSource={data}
-        />
+        <div className="max-w-xs my-2">
+          <Input
+            placeholder="Tìm kiếm..."
+            size="large"
+            value={searchText}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+          />
+        </div>
+      <Table columns={columns} dataSource={promotions}   onChange={handleTableChange}
+      pagination={pagination}
+ />
       </div>
-    </main>
+      </main>
   );
 };
 
-export default VourcherAdmin;
+export default PromotionAdmin;
