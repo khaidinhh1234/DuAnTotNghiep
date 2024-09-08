@@ -9,16 +9,11 @@ const Suportuser = () => {
           <span className="font-semibold px-px=">Hỗ trợ khách hàng </span>{" "}
         </h1>
       </div>
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <h1 className=" font-semibold md:text-3xl">Hỗ trợ khách hàng </h1>
 
-        {/* <Link to="remote">
-            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
-                <DeleteOutlined className="mr-1" />
-                Thùng rác
-            </Button>
-        </Link> */}
-      </div>
+ 
+      </div> */}
       <div className=" ">
         {/* <div className="max-w-xs my-2">
             <Input

@@ -7,9 +7,7 @@ import {
   ShoppingCart,
   Users,
 } from "lucide-react";
-// import Link from "next/link";
-import { Link, NavLink } from "react-router-dom";
-
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +17,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
+
 const menu = [
   {
     name: "Trang chủ",
@@ -29,9 +30,13 @@ const menu = [
     name: "Sản phẩm",
     path: "products",
     icon: Package,
+    subMenu: [
+      { name: "Danh sách sản phẩm", path: "products/list" },
+      { name: "Thêm sản phẩm", path: "products/add" },
+    ],
   },
   {
-    name: " Danh mục",
+    name: "Danh mục",
     path: "categories",
     icon: Package,
   },
@@ -41,22 +46,22 @@ const menu = [
     icon: Package,
   },
   {
-    name: "khuyến mãi",
+    name: "Khuyến mãi",
     path: "vouchers",
     icon: Package,
   },
   {
-    name: " Đơn hàng",
+    name: "Đơn hàng",
     path: "orders",
     icon: ShoppingCart,
   },
   {
-    name: " Người dùng",
+    name: "Người dùng",
     path: "users",
     icon: Users,
   },
   {
-    name: " Hỗ Trợ khách hàng",
+    name: "Hỗ Trợ khách hàng",
     path: "suportuser",
     icon: Users,
   },
@@ -66,10 +71,32 @@ const menu = [
     icon: LineChart,
   },
 ];
+
 const SlibarProduct = () => {
+  const location = useLocation(); // Lấy đường dẫn hiện tại
+  const [openMenu, setOpenMenu] = useState<number | null>(null); // Trạng thái mở/đóng submenu
+
+  useEffect(() => {
+    // Duyệt qua menu để xem có submenu nào chứa đường dẫn hiện tại
+    menu.forEach((item, index) => {
+      if (item.subMenu) {
+        const isCurrentSubmenu = item.subMenu.some((subItem) =>
+          location.pathname.includes(subItem.path)
+        );
+        if (isCurrentSubmenu) {
+          setOpenMenu(index); // Giữ mở nếu submenu chứa đường dẫn hiện tại
+        }
+      }
+    });
+  }, [location.pathname]);
+
+  const toggleSubMenu = (index: any) => {
+    setOpenMenu(openMenu === index ? null : index); // Toggle giữa mở và đóng
+  };
+
   return (
     <div className="hidden border-r bg-muted/40 md:block bg-[#f3f2f2]">
-      <div className="flex h-full max-h-screen flex-col gap-2  m-5 rounded-xl border  bg-white">
+      <div className="flex h-full max-h-screen flex-col gap-2 m-5 rounded-xl border bg-white">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <Package2 className="h-6 w-6" />
@@ -82,20 +109,46 @@ const SlibarProduct = () => {
         </div>
         <div className="flex-1 mt-3">
           {menu?.map((item, index) => (
-            <nav
-              className="grid items-start px-2 text-sm font-medium lg:px-4 "
-              key={index}
-            >
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  ` my-1 flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary text-base font-bold  ${!isActive ? "text-[#607D8B]" : "bg-black text-white"}`
-                }
+            <div key={index}>
+              <nav
+                className="grid items-start px-2 text-sm font-medium lg:px-4"
+                onClick={() => toggleSubMenu(index)}
               >
-                <item.icon className="h-5 w-5" />
-                {item.name}
-              </NavLink>
-            </nav>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `my-1 flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary text-base font-bold  ${
+                      !isActive ? "text-[#607D8B]" : "bg-black text-white"
+                    }`
+                  }
+                >
+                  <item.icon className="h-5 w-5" />
+                  {item.name}
+                  {item.subMenu && (
+                    <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                      {openMenu === index ? <DownOutlined /> : <UpOutlined />}
+                    </Badge>
+                  )}
+                </NavLink>
+                {item.subMenu && openMenu === index && (
+                  <div className="ml-6 mt-1">
+                    {item.subMenu.map((subItem, subIndex) => (
+                      <NavLink
+                        to={subItem.path}
+                        key={subIndex}
+                        className={({ isActive }) =>
+                          `my-1 flex items-center gap-3 rounded-lg px-3 py-1 text-muted-foreground transition-all hover:text-primary text-base font-bold  ${
+                            isActive ? "bg-black/70 text-white" : "bg-primary"
+                          }`
+                        }
+                      >
+                        <item.icon className="h-5 w-5" /> {subItem.name}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </nav>
+            </div>
           ))}
         </div>
         <div className="mt-auto p-4">

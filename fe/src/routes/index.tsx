@@ -42,6 +42,17 @@ import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import SheetSide from "@/pages/(website)/test";
 import CategoryAdmin from "@/pages/(dashboard)/categories/page";
 import Suportuser from "@/pages/(dashboard)/suportuser/suportuser";
+import Test from "@/pages/(dashboard)/test";
+
+import { Navigation } from "swiper/modules";
+import { Navigate } from "react-router";
+import ProductsAdd from "@/pages/(dashboard)/products/add/page";
+import ProductsEdit from "@/pages/(dashboard)/products/edit/page";
+import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
+import CategoriesAdd from "@/pages/(dashboard)/categories/add/page";
+import CategoriesEdit from "@/pages/(dashboard)/categories/edit/page";
+import CategoriesRemote from "@/pages/(dashboard)/categories/remote/page";
+import CategoriesAdmin from "@/pages/(dashboard)/categories/page";
 
 const Router = () => {
   return (
@@ -79,19 +90,26 @@ const Router = () => {
         {/* TRang admin */}
         <Route path="admin" element={<LayoutAdmin />}>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route
+            path="products"
+            element={<Navigate to="/admin/products/list" />}
+          />
+          <Route path="products/list" element={<ProductsAdmin />} />
+          <Route path="products/add" element={<ProductsAdd />} />
+          <Route path="products/edit/:id" element={<ProductsEdit />} />
+          <Route path="products/remote" element={<ProductsRemote />} />
 
-          <Route path="products" element={<ProductsAdmin />} />
-          {/* <Route path="products/add" element={<ProductsAdd />} />
-          <Route path="products/edit/:id" element={<ProductsEdit />} /> */}
-          <Route path="products/remote" element={<Remote />} />
-
-          <Route path="categories" element={<CategoryAdmin />} />
+          <Route path="categories" element={<CategoriesAdmin />} />
+          <Route path="categories/add" element={<CategoriesAdd />} />
+          <Route path="categories/edit/:id" element={<CategoriesEdit />} />
+          <Route path="categories/remote" element={<CategoriesRemote />} />
           <Route path="orders" element={<OrderAdmin />} />
           <Route path="vouchers" element={<VoucherAdmin />} />
           <Route path="users" element={<UserAdmin />} />
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
           <Route path="suportuser" element={<Suportuser />} />
+          <Route path="test" element={<Test />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
