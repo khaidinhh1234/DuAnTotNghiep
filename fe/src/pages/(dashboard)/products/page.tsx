@@ -170,8 +170,8 @@ const ProductsAdmin: React.FC = () => {
       dataIndex: "id_danh_muc",
       key: "id_danh_muc",
       width: "15%",
-      ...getColumnSearchProps("ten_san_pham"),
-      sorter: (a: any, b: any) => a.ten_san_pham.length - b.ten_san_pham.length,
+      ...getColumnSearchProps("id_danh_muc"),
+      sorter: (e: any, c: any) => e.id_danh_muc.length - c.id_danh_muc.length,
     },
     {
       title: "Mô tả Ngắn",
@@ -210,9 +210,11 @@ const ProductsAdmin: React.FC = () => {
               Xóa
             </Button>
           </Popconfirm>
-          <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-            Cập nhật{" "}
-          </Button>
+          <Link to={"/admin/products/edit/1"}>
+            <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+              Cập nhật{" "}
+            </Button>
+          </Link>
         </Space>
       ),
     },
@@ -240,13 +242,21 @@ const ProductsAdmin: React.FC = () => {
       </div>
       <div className="flex items-center justify-between">
         <h1 className=" font-semibold md:text-3xl">Sản phẩm </h1>
-
-        <Link to="remote">
-          <Button className="ml-auto bg-black text-white rounded-lg  py-1">
-            <DeleteOutlined className="mr-1" />
-            Thùng rác
-          </Button>
-        </Link>
+        <div>
+          {" "}
+          <Link to="/admin/products/add" className="mr-1">
+            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
+              <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
+              Thêm
+            </Button>
+          </Link>
+          <Link to="/admin/products/remote">
+            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
+              <DeleteOutlined className="mr-1" />
+              Thùng rác
+            </Button>
+          </Link>
+        </div>
       </div>
       <div className=" ">
         <div className="max-w-xs my-2">
