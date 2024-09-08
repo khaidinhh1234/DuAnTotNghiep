@@ -184,20 +184,23 @@ const AddVoucher = () => {
               label="Mã khuyến mãi (CODE)"
               name="code"
               initialValue={voucherCode}
-              rules={[{ required: true, message: 'Please input the voucher code!' }]}
+              rules={[{ required: true, message: 'Vui lòng nhập mã khuyến mãi!' }]}
             >
-              <Input
-                addonAfter={
-                  <Button
-                    onClick={generateRandomCode}
-                    className="bg-blue-500 text-white hover:bg-blue-600"
-                  >
-                    Tạo mã
-                  </Button>
-                }
-                className="rounded-md"
-              />
+              <div className="flex items-center">
+                <Input
+                  value={voucherCode}
+                  readOnly
+                  className="rounded-md flex-1"
+                />
+                <Button
+                  onClick={generateRandomCode}
+                  className="ml-4 bg-blue-500 text-white hover:bg-blue-600"
+                >
+                  Tạo mã
+                </Button>
+              </div>
             </Form.Item>
+
 
             <Tabs defaultActiveKey="1" items={tabItems} className="mb-6" />
 
