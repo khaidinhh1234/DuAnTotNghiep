@@ -1,13 +1,7 @@
-import {
-  Bell,
-  Home,
-  LineChart,
-  Package,
-  Package2,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { Bell, Home, Package, ShoppingCart, Users } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,8 +11,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import { CheckCircle, LineChart, Package2, AlignJustify } from "lucide-react";
 
 const menu = [
   {
@@ -28,7 +23,7 @@ const menu = [
   },
   {
     name: "Sản phẩm",
-    path: "products",
+    path: "/admin/products",
     icon: Package,
     subMenu: [
       { name: "Danh sách sản phẩm", path: "products/list" },
@@ -38,11 +33,12 @@ const menu = [
   {
     name: "Danh mục",
     path: "categories",
+
     icon: Package,
   },
   {
     name: "Kho sản phẩm",
-    path: "centralstocks",
+    path: "/admin/centralstocks",
     icon: Package,
   },
   {
@@ -66,13 +62,41 @@ const menu = [
     icon: Users,
   },
   {
+    name: "Đánh giá",
+    path: "/admin/evaluates",
+    icon: CheckCircle,
+  },
+  {
+    name: "Doanh thu",
+    path: "/admin/revenues",
+    icon: CheckCircle,
+  },
+  {
+    name: "Admin",
+    icon: CheckCircle,
+    path: "/admin",
+    subMenu: [
+      { name: "Quản lý admin", path: "admin/privilegeadmin" },
+      { name: "Phân quyền", path: "admin/userprivileges" },
+    ],
+  },
+  {
+    name: "Nội dung",
+    path: "/admin",
+    icon: AlignJustify,
+    subMenu: [
+      { name: "Footer", path: "/admin/qlfooter" },
+      { name: "Banner", path: "/admin/qlbanner" },
+    ],
+  },
+  {
     name: "Thống kê",
-    path: "analytics",
+    path: "/admin/analytics",
     icon: LineChart,
   },
 ];
 
-const SlibarProduct = () => {
+const SlidebarProduct = () => {
   const location = useLocation(); // Lấy đường dẫn hiện tại
   const [openMenu, setOpenMenu] = useState<number | null>(null); // Trạng thái mở/đóng submenu
 
@@ -172,4 +196,4 @@ const SlibarProduct = () => {
   );
 };
 
-export default SlibarProduct;
+export default SlidebarProduct;

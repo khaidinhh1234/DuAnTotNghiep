@@ -152,5 +152,43 @@
       "checkboxs": true,
       "id": 2
     }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "reviewerName": "John Brown",
+      "reviewerEmail": "john@example.com",
+      "product": "Sản phẩm 1",
+      "rating": 4,
+      "comment": "Sản phẩm tốt, giao hàng nhanh.",
+      "status": "Đã duyệt"
+    },
+    {
+      "id": 2,
+      "reviewerName": "Jane Smith",
+      "reviewerEmail": "jane@example.com",
+      "product": "Sản phẩm 2",
+      "rating": 2,
+      "comment": "Sản phẩm không như mong đợi.",
+      "status": "Chưa duyệt"
+    },
+    {
+      "id": 3,
+      "reviewerName": "Alice Johnson",
+      "reviewerEmail": "alice@example.com",
+      "product": "Sản phẩm 3",
+      "rating": 5,
+      "comment": "Tuyệt vời, rất hài lòng.",
+      "status": "Đã duyệt"
+    },
+    {
+      "id": 4,
+      "reviewerName": "Bob Williams",
+      "reviewerEmail": "bob@example.com",
+      "product": "Sản phẩm 4",
+      "rating": 3,
+      "comment": "Chấp nhận được.",
+      "status": "Chưa duyệt"
+    }
   ]
 }
