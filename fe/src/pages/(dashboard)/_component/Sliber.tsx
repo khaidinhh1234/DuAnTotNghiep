@@ -9,10 +9,12 @@ import {
   CheckCircle,
   LineChart,
   Package2,
+  TicketPercent,
+  AlignJustify,
 } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
 
 const menu = [
   {
@@ -38,7 +40,7 @@ const menu = [
   {
     name: 'Khuyến mãi',
     path: '/admin/vouchers',
-    icon: Package,
+    icon: TicketPercent,
   },
   {
     name: 'Đơn hàng',
@@ -69,13 +71,21 @@ const menu = [
     ],
   },
   {
+    name: 'Nội dung',
+    icon: AlignJustify,
+    submenu: [
+      { name: 'Footer', path: '/admin/qlfooter' },
+      { name: 'Banner', path: '/admin/qlbanner' },
+    ],
+  },
+  {
     name: 'Thống kê',
     path: '/admin/analytics',
     icon: LineChart,
   },
 ];
 
-const SlibarProduct = () => {
+const SidebarProduct = () => {
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   const toggleSubmenu = (menuName: string) => {
@@ -93,7 +103,7 @@ const SlibarProduct = () => {
           <Button
             variant="outline"
             size="icon"
-            className="ml-auto h-8 w-8 borber border-black rounded-[7px]"
+            className="ml-auto h-8 w-8 border border-black rounded-[7px]"
           >
             <Bell className="h-4 w-4" />
             <span className="sr-only">Toggle notifications</span>
@@ -142,7 +152,7 @@ const SlibarProduct = () => {
           ))}
         </div>
         <div className="mt-auto p-4">
-          <Card x-chunk="dashboard-02-chunk-0">
+          <Card>
             <CardHeader className="p-2 pt-0 md:p-4">
               <CardTitle>Upgrade to Pro</CardTitle>
               <CardDescription>
@@ -162,4 +172,4 @@ const SlibarProduct = () => {
   );
 };
 
-export default SlibarProduct;
+export default SidebarProduct;

@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+
+import React, { ChangeEvent, useRef, useState } from "react";
+import { DeleteOutlined, PlusCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tag, Checkbox } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
@@ -115,18 +116,18 @@ const promotions: PromotionType[] = [
     dieu_kien_ap_dung: "Đơn hàng từ 2,000,000 VND",
     so_luot_su_dung: 90,
     gioi_han_su_dung: 200,
-  },
-];
+  },];
 
 type DataIndex = keyof PromotionType;
 
 const PromotionAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
-  // const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 4,
   });
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const searchInput = useRef<InputRef>(null);
 
   const handleSearch = (
@@ -218,8 +219,13 @@ const PromotionAdmin: React.FC = () => {
       ),
   });
 
-
   const columns: TableColumnsType<PromotionType> = [
+    {
+      title: "STT",
+      key: "index",
+      render: (_, __, index) => index + 1,
+      width: "3%",
+    },
     {
       title: "Tên khuyến mãi",
       dataIndex: "ten_khuyen_mai",
@@ -227,7 +233,6 @@ const PromotionAdmin: React.FC = () => {
       width: "15%",
       ...getColumnSearchProps("ten_khuyen_mai"),
       sorter: (a: any, b: any) => a.ten_khuyen_mai.length - b.ten_khuyen_mai.length,
-
     },
     {
       title: "Loại khuyến mãi",
@@ -242,9 +247,7 @@ const PromotionAdmin: React.FC = () => {
       width: "15%",
       render: (gia_tri: number | string) =>
         typeof gia_tri === "number" ? `${gia_tri.toLocaleString()} VND` : `${gia_tri}%`,
-      // ...getColumnSearchProps("gia_tri"),
       sorter: (a: any, b: any) => a.gia_tri - b.gia_tri,
-
     },
     {
       title: "Ngày bắt đầu",
@@ -253,7 +256,6 @@ const PromotionAdmin: React.FC = () => {
       width: "15%",
       ...getColumnSearchProps("ngay_bat_dau"),
       sorter: (a: any, b: any) => a.ngay_bat_dau - b.ngay_bat_dau,
-
     },
     {
       title: "Ngày kết thúc",
@@ -262,7 +264,6 @@ const PromotionAdmin: React.FC = () => {
       width: "15%",
       ...getColumnSearchProps("ngay_ket_thuc"),
       sorter: (a: any, b: any) => a.ngay_ket_thuc - b.ngay_ket_thuc,
-
     },
     {
       title: "Trạng thái",
@@ -285,13 +286,12 @@ const PromotionAdmin: React.FC = () => {
         }
   
         return (
-          <Tag color={color} key={trang_thai}>
+          <Tag color={color} style={{ border: 'none', padding: '2', borderRadius: '4px' }}>
             {trang_thai.toUpperCase()}
           </Tag>
         );
       },
     },
-  
     {
       title: "Điều kiện áp dụng",
       dataIndex: "dieu_kien_ap_dung",
@@ -299,7 +299,6 @@ const PromotionAdmin: React.FC = () => {
       width: "20%",
       ...getColumnSearchProps("dieu_kien_ap_dung"),
       sorter: (a: any, b: any) => a.dieu_kien_ap_dung.length - b.dieu_kien_ap_dung.length,
-
     },
     {
       title: "Quản trị",
@@ -312,29 +311,42 @@ const PromotionAdmin: React.FC = () => {
             okText="Có"
             cancelText="Không"
           >
-            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
               Xóa
             </Button>
           </Popconfirm>
-          <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+          <Button className="bg-white text-orange-600 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors">
             Cập nhật
           </Button>
         </Space>
       ),
     },
   ];
-  const [searchText, setSearchText] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      console.log(searchText);
+  const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedRowKeys(promotions.map(p => p.key));
+    } else {
+      setSelectedRowKeys([]);
     }
   };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedKeys: React.Key[]) => {
+      setSelectedRowKeys(selectedKeys);
+    },
+  };
+
   const products = [...promotions].reverse();
+  function handleChange(_event: ChangeEvent<HTMLInputElement>): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleKeyDown(_event: KeyboardEvent<HTMLInputElement>): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -343,24 +355,25 @@ const PromotionAdmin: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between">
-  <h1 className="font-semibold md:text-3xl">Khuyến mãi</h1>
-  
-  <div className="flex gap-2">
-    <Link to="create">
-      <Button className="bg-black text-white rounded-lg py-1">
-        Thêm khuyến mãi
-      </Button>
-    </Link>
-    <Link to="remote">
-      <Button className="bg-black text-white rounded-lg py-1">
-        <DeleteOutlined className="mr-1" />
-        Thùng rác
-      </Button>
-    </Link>
-  </div>
-</div>
+        <h1 className="font-semibold md:text-3xl">Khuyến mãi</h1>
 
-      <div className=" ">
+        <div className="flex gap-2">
+          <Link to="/admin/add-vocher">
+            <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+              <PlusCircleOutlined /> Thêm khuyến mãi
+            </Button>
+          </Link>
+
+          <Link to="remote">
+            <Button className="bg-red-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
+              <DeleteOutlined className="mr-1" />
+              Thùng rác
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      <div>
         <div className="max-w-xs my-2">
           <Input
             placeholder="Tìm kiếm..."
@@ -370,11 +383,25 @@ const PromotionAdmin: React.FC = () => {
             onKeyDown={handleKeyDown}
           />
         </div>
-      <Table columns={columns} dataSource={promotions}   onChange={handleTableChange}
-      pagination={pagination}
- />
+        <Table
+          columns={columns}
+          dataSource={promotions}
+          onChange={handleTableChange}
+          pagination={pagination}
+          rowSelection={rowSelection}
+          rowKey="key"
+          // title={() => (
+          //   <Checkbox
+          //     indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < promotions.length}
+          //     onChange={handleSelectAllChange}
+          //     checked={selectedRowKeys.length === promotions.length}
+          //   >
+          //     Chọn tất cả
+          //   </Checkbox>
+          // )}
+        />
       </div>
-      </main>
+    </main>
   );
 };
 
