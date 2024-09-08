@@ -49,6 +49,9 @@ import  ForgotPassword  from '@/pages/(auth)/ForgotPassword/ForgotPassword';
 import OTPPage from "@/pages/(auth)/EnterOTP/EntOtp";
 import LoginSuccessfull from "@/pages/(auth)/LoginSuccessfull/LoginSuccessfull";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
+import Content from "@/pages/(dashboard)/content/footer/footer";
+import AddVoucher from "@/pages/(dashboard)/vourcher/add/add";
+import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 
 const Router = () => {
   return (
@@ -106,8 +109,8 @@ const Router = () => {
           <Route path="add-admin" element={<PageAddAdmin />} />
           <Route path="add-permission" element={<PageAddPermission />} />
           <Route path="qlfooter" element={<Content />} />
-<Route path="qlbanner" element={<BannerAdminManagement />} />
-<Route path="add-vocher" element={<AddVocher />} />
+<Route path="qlbanner" element={<BannerManagement />} />
+<Route path="add-vocher" element={<AddVoucher />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
         <Route path="/login" element={<Login />} />
