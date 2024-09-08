@@ -127,8 +127,8 @@ const Router = () => {
           <Route path="add-admin" element={<PageAddAdmin />} />
           <Route path="add-permission" element={<PageAddPermission />} />
           <Route path="qlfooter" element={<Content />} />
-<Route path="qlbanner" element={<BannerManagement />} />
-<Route path="add-vocher" element={<AddVoucher />} />
+          <Route path="qlbanner" element={<BannerManagement />} />
+          <Route path="add-vocher" element={<AddVoucher />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
         <Route path="/login" element={<Login />} />

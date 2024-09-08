@@ -76,8 +76,8 @@ const menu = [
     icon: CheckCircle,
     path: "/admin",
     subMenu: [
-      { name: "Quản lý admin", path: "admin/privilegeadmin" },
-      { name: "Phân quyền", path: "admin/userprivileges" },
+      { name: "Quản lý admin", path: "privilegeadmin" },
+      { name: "Phân quyền", path: "userprivileges" },
     ],
   },
   {
