@@ -13,6 +13,12 @@ class DanhMuc extends Model
         'cha_id',
         'ten_danh_muc'
     ];
+    public function parent() {
+        return $this->belongsTo(DanhMuc::class, 'cha_id');
+    }
+    public function children() {
+        return $this->hasMany(DanhMuc::class, 'cha_id');
+    }
 
     public function sanPhams(){
         return $this->hasMany(SanPham::class);
