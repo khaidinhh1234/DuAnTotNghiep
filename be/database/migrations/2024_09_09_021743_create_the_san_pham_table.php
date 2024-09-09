@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\SanPham;
+use App\Models\The;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,12 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quyens', function (Blueprint $table) {
-            $table->id();
-            $table->string('ten_quyen', 100)->unique();
-            $table->string('mo_ta')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::create('the_san_pham', function (Blueprint $table) {
+            $table->foreignIdFor(SanPham::class)->constrained();
+            $table->foreignIdFor(The::class)->constrained();
+
+            $table->primary(['san_pham_id', 'the_id']);
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quyens');
+        Schema::dropIfExists('the_san_pham');
     }
 };

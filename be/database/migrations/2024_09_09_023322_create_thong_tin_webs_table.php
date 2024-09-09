@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quyens', function (Blueprint $table) {
+        Schema::create('thong_tin_webs', function (Blueprint $table) {
             $table->id();
-            $table->string('ten_quyen', 100)->unique();
-            $table->string('mo_ta')->nullable();
+            $table->string('ten_doanh_nghiep')->nullable();
+            $table->string('dia_chi')->nullable();
+            $table->string('email')->nullable();
+            $table->string('so_dien_thoai')->nullable();
+            $table->string('cau_noi')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quyens');
+        Schema::dropIfExists('thong_tin_webs');
     }
 };

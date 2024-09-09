@@ -5,18 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use PhpParser\Node\Stmt\Return_;
 
-class Quyen extends Model
+class BienTheMauSac extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'ten_quyen',
-        'mo_ta',
+        'ten_mau_sac',
+        'ma_mau_sac',
     ];
-
-    public function vaiTros()
+    public function bienTheSanPhams()
     {
-        return $this->belongsToMany(VaiTro::class, "quyen_vai_tro", "vai_tro_id", "quyen_id");
+        return $this->hasMany(BienTheSanPham::class);
     }
 }
