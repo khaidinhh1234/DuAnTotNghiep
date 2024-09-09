@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quyens', function (Blueprint $table) {
+        Schema::create('danh_mucs', function (Blueprint $table) {
             $table->id();
-            $table->string('ten_quyen', 100)->unique();
-            $table->string('mo_ta')->nullable();
+            $table->string('ten_danh_muc')->unique();
+            $table->unsignedBigInteger('cha_id')->index()->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quyens');
+        Schema::dropIfExists('danh_mucs');
     }
 };

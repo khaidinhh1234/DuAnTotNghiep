@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\DonHang;
+use App\Models\GioHangChiTiet;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,10 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quyens', function (Blueprint $table) {
+        Schema::create('don_hang_chi_tiets', function (Blueprint $table) {
             $table->id();
-            $table->string('ten_quyen', 100)->unique();
-            $table->string('mo_ta')->nullable();
+            $table->foreignIdFor(GioHangChiTiet::class)->constrained();
+            $table->foreignIdFor(DonHang::class)->constrained();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quyens');
+        Schema::dropIfExists('don_hang_chi_tiets');
     }
 };
