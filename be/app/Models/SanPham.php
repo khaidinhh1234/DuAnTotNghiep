@@ -13,6 +13,8 @@ class SanPham extends Model
         'danh_muc_id',
         'ten_san_pham',
         'anh_san_pham',
+        'ma_san_pham',
+        'duong_dan',
         'mo_ta_ngan',
         'noi_dung',
         'luot_xem',
@@ -22,12 +24,12 @@ class SanPham extends Model
         return $this->belongsTo(DanhMuc::class);
     }
 
-    public function bienTheSanPhams()
+    public function bienTheSanPham()
     {
         return $this->hasMany(BienTheSanPham::class);
     }
-    public function thes()
+    public function theSanPham()
     {
-        return $this->belongsToMany(The::class, 'the_san_pham', 'the_id', 'san_pham_id');
+        return $this->belongsToMany(The::class, 'the_san_pham', 'san_pham_id', 'the_id');
     }
 }

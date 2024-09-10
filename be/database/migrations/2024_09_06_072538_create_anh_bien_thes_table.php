@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('anh_bien_thes', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(BienTheSanPham::class)->constrained();
-            $table->string('ten_anh')->nullable();
+            $table->string('duong_dan_anh')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

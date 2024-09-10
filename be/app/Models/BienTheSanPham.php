@@ -21,16 +21,20 @@ class BienTheSanPham extends Model
     {
         return $this->belongsTo(SanPham::class);
     }
-    public function bienTheMauSac()
+
+
+    public function anhBienThe()
+    {
+        return $this->hasMany(AnhBienThe::class);
+    }
+
+    public function mauBienThe()
     {
         return $this->belongsTo(BienTheMauSac::class);
     }
-    public function bienTheKichThuoc()
+
+    public function kichThuocBienThe()
     {
         return $this->belongsTo(BienTheKichThuoc::class);
-    }
-    public function anhBienThes()
-    {
-        return $this->hasMany(AnhBienThe::class);
     }
 }

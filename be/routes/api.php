@@ -31,3 +31,8 @@ Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
 // Danh muc
 Route::apiResource('danhmuc', DanhMucController::class);
+
+// Sản phẩm
+Route::get('sanpham/thung-rac', [App\Http\Controllers\Admin\Api\SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
+Route::post('sanpham/thung-rac/{id}', [App\Http\Controllers\Admin\Api\SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
+Route::apiResource('sanpham', App\Http\Controllers\Admin\Api\SanPhamController::class);

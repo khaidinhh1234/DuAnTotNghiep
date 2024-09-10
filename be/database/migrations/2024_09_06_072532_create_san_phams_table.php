@@ -14,9 +14,11 @@ return new class extends Migration
     {
         Schema::create('san_phams', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(DanhMuc::class)->constrained();
+            $table->foreignIdFor(DanhMuc::class)->nullable()->constrained()->onDelete('set null');
             $table->string('ten_san_pham')->unique();
             $table->string('anh_san_pham')->nullable();
+            $table->string('ma_san_pham')->unique();
+            $table->string('duong_dan');
             $table->string('mo_ta_ngan')->nullable();
             $table->text('noi_dung')->nullable();
             $table->integer('luot_xem')->default(0);

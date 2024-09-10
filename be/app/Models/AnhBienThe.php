@@ -11,7 +11,7 @@ class AnhBienThe extends Model
     use HasFactory , SoftDeletes;
     protected $fillable = [
         'bien_the_san_pham_id',
-        'ten_anh',
+        'duong_dan_anh',
     ];
     public function bienTheSanPham()
     {
