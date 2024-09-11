@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\API\Auth\ForgotPasswordController;
-use App\Http\Controllers\API\Auth\ResetPasswordController;
-use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\Api\DanhMucController;
-use App\Models\DanhMuc;
+use App\Http\Controllers\Admin\Api\SanPham\DanhMucController;
+use App\Http\Controllers\Admin\Api\SanPham\SanPhamController;
+use App\Http\Controllers\Client\Api\Auth\AuthController;
+use App\Http\Controllers\Client\Api\ForgotPasswordController;
+use App\Http\Controllers\Client\Api\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +33,6 @@ Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 Route::apiResource('danhmuc', DanhMucController::class);
 
 // Sản phẩm
-Route::get('sanpham/thung-rac', [App\Http\Controllers\Admin\Api\SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
-Route::post('sanpham/thung-rac/{id}', [App\Http\Controllers\Admin\Api\SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
-Route::apiResource('sanpham', App\Http\Controllers\Admin\Api\SanPhamController::class);
+Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
+Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
+Route::apiResource('sanpham', SanPhamController::class);
