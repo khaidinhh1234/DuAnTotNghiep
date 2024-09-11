@@ -26,7 +26,7 @@ class User extends Authenticatable
         'ho',
         'ten',
         'email',
-        'mat_khau',
+        'password',
         'so_dien_thoai',
         'dia_chi',
         'ngay_sinh',
@@ -39,7 +39,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'mat_khau',
+        'password',
         'remember_token',
     ];
 
@@ -50,7 +50,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'mat_khau' => 'hashed',
+        'password' => 'hashed',
     ];
 
     public function vaiTros()
