@@ -24,7 +24,6 @@ import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
 import Voucher from "@/pages/(website)/vourcher/page";
 
-
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
 
 import AnalyticsAdmin from "@/pages/(dashboard)/analytics/page";
@@ -45,8 +44,8 @@ import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
 import { Navigate } from "react-router";
 
 import OTPPage from "@/pages/(auth)/EnterOTP/EntOtp";
-import ForgotPassword from '@/pages/(auth)/ForgotPassword/ForgotPassword';
-import Login from '@/pages/(auth)/login/login';
+import ForgotPassword from "@/pages/(auth)/ForgotPassword/ForgotPassword";
+import Login from "@/pages/(auth)/login/login";
 import LoginSuccessfull from "@/pages/(auth)/LoginSuccessfull/LoginSuccessfull";
 import Register from "@/pages/(auth)/register/register";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
@@ -60,7 +59,7 @@ import PagePrivilegeAdmin from "@/pages/(dashboard)/userprivileges/admin/page";
 import UserPrivilegeAdmin from "@/pages/(dashboard)/userprivileges/page";
 import AddVoucher from "@/pages/(dashboard)/vourcher/add/add";
 import Cart from "@/pages/(website)/cart/Cart";
-
+import ChangePassword from "@/pages/(auth)/ChangePassword/changepassword";
 
 const Router = () => {
   return (
@@ -93,7 +92,6 @@ const Router = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           {/* <Route path="/test" element={<Test />} /> */}
-
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         {/* TRang admin */}
@@ -135,6 +133,7 @@ const Router = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/EnterOtp" element={<OTPPage />} />
+        <Route path="/changePassword" element={<ChangePassword />} />
         <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />{" "}
       </Routes>
     </>
