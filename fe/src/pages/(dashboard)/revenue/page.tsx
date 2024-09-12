@@ -8,10 +8,13 @@ import {
   Input,
   Select,
   DatePicker,
+  Card,
+  Statistic,
 } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { SearchOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { Line } from 'recharts';
 
 const { Option } = Select;
 
@@ -89,6 +92,7 @@ const data: RevenueDataType[] = [
     totalAmount: 2500000,
     paymentStatus: 'Chưa thanh toán',
   },
+  
 ];
 
 const RevenueAdmin: React.FC = () => {
@@ -117,37 +121,86 @@ const RevenueAdmin: React.FC = () => {
     return matchesSearch && matchesDate && matchesStatus;
   });
 
+  const totalRevenue = filteredData.reduce((sum, item) => sum + item.totalAmount, 0);
+  const totalOrders = filteredData.length;
+  const paidOrders = filteredData.filter(item => item.paymentStatus === 'Đã thanh toán').length;
+  const unpaidOrders = filteredData.filter(item => item.paymentStatus === 'Chưa thanh toán').length;
+
+  const revenueByMonth = [
+    { month: '01/2024', revenue: 5000000 },
+    { month: '02/2024', revenue: 4500000 },
+    // Add more data
+  ];
+
+  const config = {
+    data: revenueByMonth,
+    xField: 'month',
+    yField: 'revenue',
+    point: {
+      size: 5,
+      shape: 'diamond',
+    },
+    label: {
+      style: {
+        fill: '#aaa',
+      },
+    },
+    xAxis: {
+      label: {
+        formatter: (v: any) => dayjs(v).format('MM/YYYY'),
+      },
+    },
+    yAxis: {
+      label: {
+        formatter: (v: any) => new Intl.NumberFormat('vi-VN').format(v),
+      },
+    },
+    smooth: true,
+  };
+
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="flex items-center">
-        <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold">Doanh thu</span>
-        </h1>
+    <main className="flex flex-col gap-6 p-6">
+      <div className="flex items-center mb-6">
+        <h1 className="text-2xl font-semibold">Quản lý doanh thu</h1>
       </div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Quản lý doanh thu</h1>
+      <div className="flex items-center justify-between mb-6">
         <div className="flex gap-4">
           <Input
             placeholder="Tìm kiếm theo tên khách hàng"
             prefix={<SearchOutlined />}
             onChange={(e) => handleSearch(e.target.value)}
-            style={{ width: 200 }}
+            className="w-80"
           />
           <DatePicker.RangePicker
             format="DD/MM/YYYY"
             onChange={handleDateRangeChange}
+            className="w-80"
           />
           <Select
             placeholder="Chọn trạng thái"
             onChange={handleStatusFilterChange}
-            style={{ width: 200 }}
+            className="w-80"
           >
             <Option value="Đã thanh toán">Đã thanh toán</Option>
             <Option value="Chưa thanh toán">Chưa thanh toán</Option>
           </Select>
         </div>
       </div>
-      <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <Card>
+          <Statistic title="Tổng doanh thu (VND)" value={new Intl.NumberFormat('vi-VN').format(totalRevenue)} />
+        </Card>
+        <Card>
+          <Statistic title="Số đơn hàng" value={totalOrders} />
+        </Card>
+        <Card>
+          <Statistic title="Đã thanh toán" value={paidOrders} />
+        </Card>
+        <Card>
+          <Statistic title="Chưa thanh toán" value={unpaidOrders} />
+        </Card>
+      </div>
+      <div className="bg-white p-6 rounded-lg shadow-lg">
         <Table columns={columns} dataSource={filteredData} rowKey="key" />
       </div>
     </main>
