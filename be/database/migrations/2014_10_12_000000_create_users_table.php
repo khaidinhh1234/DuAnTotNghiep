@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('ho', 30);
             $table->string('ten', 30);
+            $table->string('anh_nguoi_dung')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
