@@ -13,15 +13,23 @@ return new class extends Migration
     {
         Schema::create('thong_tin_webs', function (Blueprint $table) {
             $table->id();
+            $table->string('ten_website')->nullable();
+            $table->string('logo_website')->nullable();
             $table->string('ten_doanh_nghiep')->nullable();
             $table->string('dia_chi')->nullable();
             $table->string('email')->nullable();
-            $table->string('so_dien_thoai')->nullable();
+            $table->string('so_dien_thoai_dat_hang', 15)->nullable();
+            $table->string('so_dien_thoai_khieu_nai', 15)->nullable();
             $table->string('cau_noi')->nullable();
+            $table->string('link_facebook')->nullable();
+            $table->string('link_youtube')->nullable();
+            $table->string('link_zalo')->nullable();
+            $table->string('link_instagram')->nullable();
+            $table->string('link_tiktok')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
+
 
     /**
      * Reverse the migrations.
