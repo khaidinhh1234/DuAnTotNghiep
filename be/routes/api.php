@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\Api\SanPham\DanhMucController;
-use App\Http\Controllers\Admin\Api\SanPham\SanPhamController;
+use App\Http\Controllers\Admin\Api\DanhMucController;
+use App\Http\Controllers\Admin\Api\SanPhamController;
+use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Client\Api\Auth\AuthController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
@@ -33,6 +34,11 @@ Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']
 Route::apiResource('danhmuc', DanhMucController::class);
 
 // Sản phẩm
-Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
-Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
+Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa']);
+Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham']);
 Route::apiResource('sanpham', SanPhamController::class);
+
+// Thẻ
+Route::get('the/thung-rac', [TheController::class, 'danhSachTheDaXoa']);
+Route::post('the/thung-rac/{id}', [TheController::class, 'khoiPhucThe']);
+Route::apiResource('the', TheController::class);
