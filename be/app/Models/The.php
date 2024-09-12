@@ -10,7 +10,8 @@ class The extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'ten_the'
+        'ten_the',
+        'duong_dan',
     ];
     public function sanPhams()
     {
