@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Client\Api;
+namespace App\Http\Controllers\Client\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 class ResetPasswordController extends Controller
 {
-    public function reset(Request $request)
+    public function resetPassword(Request $request)
     {
         $request->validate([
             'token' => 'required',
@@ -28,14 +28,14 @@ class ResetPasswordController extends Controller
             ->first();
 
         if (!$record || Carbon::parse($record->created_at)->addMinutes(60)->isPast()) {
-            return response()->json(['message' => 'Invalid or expired reset token.'], 400);
+            return response()->json(['message' => 'Mã thông báo đặt lại không hợp lệ hoặc đã hết hạn.'], 400);
         }
 
         // Cập nhật mật khẩu người dùng
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'User not found.'], 404);
+            return response()->json(['message' => 'Không tìm thấy người dùng.'], 404);
         }
 
         $user->forceFill([
@@ -48,6 +48,6 @@ class ResetPasswordController extends Controller
 
         event(new PasswordReset($user));
 
-        return response()->json(['message' => 'Password reset successful.'], 200);
+        return response()->json(['message' => 'Đặt lại mật khẩu thành công.'], 200);
     }
 }

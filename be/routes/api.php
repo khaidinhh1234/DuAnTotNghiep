@@ -3,8 +3,8 @@
 use App\Http\Controllers\Admin\Api\SanPham\DanhMucController;
 use App\Http\Controllers\Admin\Api\SanPham\SanPhamController;
 use App\Http\Controllers\Client\Api\Auth\AuthController;
-use App\Http\Controllers\Client\Api\ForgotPasswordController;
-use App\Http\Controllers\Client\Api\ResetPasswordController;
+use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
+use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,7 +27,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
-Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 // Danh muc
 Route::apiResource('danhmuc', DanhMucController::class);
