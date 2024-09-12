@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Models\VaiTro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,8 @@ class AuthController extends Controller
     {
         // Tạo người dùng mới
         $user = User::create($request->all());
-
+        $member = VaiTro::query()->where('ten_vai_tro', 'member')->pluck('id');
+        $user->vaiTros()->attach($member);
         // Tạo token cho người dùng
         $token = $user->createToken('auth_token')->plainTextToken;
 

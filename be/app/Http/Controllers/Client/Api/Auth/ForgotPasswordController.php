@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client\Api\Auth;
 
+use App\Events\SendMail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,10 +31,7 @@ class ForgotPasswordController extends Controller
         ]);
 
         // Gửi email với link reset
-        Mail::send('emails.password-reset', ['token' => $token], function ($message) use ($email) {
-            $message->to($email);
-            $message->subject('Reset Password Notification');
-        });
+        event(new SendMail($email, $token));
 
         return response()->json(['message' => 'Liên kết quên mật khẩu được gửi đến email của bạn.'], 200);
     }

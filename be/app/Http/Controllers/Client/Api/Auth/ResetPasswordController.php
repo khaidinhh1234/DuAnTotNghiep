@@ -17,13 +17,13 @@ class ResetPasswordController extends Controller
     {
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email',
+            // 'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
         ]);
 
         // Kiểm tra token reset trong bảng password_reset_tokens
         $record = DB::table('password_reset_tokens')
-            ->where('email', $request->email)
+            // ->where('email', $request->email)
             ->where('token', $request->token)
             ->first();
 
@@ -32,7 +32,7 @@ class ResetPasswordController extends Controller
         }
 
         // Cập nhật mật khẩu người dùng
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $record->email)->first();
 
         if (!$user) {
             return response()->json(['message' => 'Không tìm thấy người dùng.'], 404);
@@ -44,7 +44,7 @@ class ResetPasswordController extends Controller
         ])->save();
 
         // Xóa token sau khi sử dụng
-        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+        DB::table('password_reset_tokens')->where('token', $request->token)->delete();
 
         event(new PasswordReset($user));
 
