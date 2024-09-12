@@ -46,7 +46,7 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'message' => 'Thông tin đăng nhập không hợp lệ',
+            'message' => 'Tài khoản hoặc mật khẩu không chính xác.',
         ], 401);
     }
 
