@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('thes', function (Blueprint $table) {
             $table->id();
             $table->string('ten_the')->unique();
+            $table->string('duong_dan')->unique();
             $table->timestamps();
             $table->softDeletes();
         });
