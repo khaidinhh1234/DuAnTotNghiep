@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\BienTheSanPham;
 use App\Models\DonHang;
 use App\Models\GioHangChiTiet;
 use Illuminate\Database\Migrations\Migration;
@@ -15,8 +16,13 @@ return new class extends Migration
     {
         Schema::create('don_hang_chi_tiets', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(GioHangChiTiet::class)->constrained();
             $table->foreignIdFor(DonHang::class)->constrained();
+            $table->foreignIdFor(BienTheSanPham::class)->constrained();
+            $table->bigInteger('so_luong');
+            $table->decimal('gia', 15, 2);
+            $table->string('ten_mau_bien_the_san_pham');
+            $table->string('ten_kich_thuoc_bien_the_san_pham');
+            $table->decimal('thanh_tien', 15, 2);
             $table->timestamps();
             $table->softDeletes();
         });
