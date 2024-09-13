@@ -27,11 +27,11 @@ class DanhMucController extends Controller
     public function store(Request $request)
     {
         try {
-            $vadidateDanhMuc = $request->validate([
+            $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
                 'cha_id' => 'nullable',
             ]);
-            $danhMuc = DanhMuc::create($vadidateDanhMuc);
+            $danhMuc = DanhMuc::create($validateDanhMuc);
 
             return response()->json($danhMuc, 201);
         } catch (\Throwable $th) {
@@ -53,12 +53,12 @@ class DanhMucController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $vadidateDanhMuc = $request->validate([
+            $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs,ten_danh_muc,' . $id . '|max:255',
                 'cha_id' => 'nullable',
             ]);
             $danhMuc = DanhMuc::findOrFail($id);
-            $danhMuc->update($vadidateDanhMuc);
+            $danhMuc->update($validateDanhMuc);
 
             return response()->json($danhMuc, 200);
         } catch (\Throwable $th) {
