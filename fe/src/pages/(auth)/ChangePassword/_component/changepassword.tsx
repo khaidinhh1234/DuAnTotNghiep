@@ -1,5 +1,6 @@
 import React from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import { Link } from "react-router-dom";
 
 const Change = () => {
   const recaptchaRef = React.createRef<ReCAPTCHA>();
@@ -28,8 +29,8 @@ const Change = () => {
     <section className="flex-1 flex items-center justify-center p-4 md:p-0">
       <div className="w-full max-w-md p-6 md:p-8 bg-white shadow-lg rounded-lg">
         <div className="mb-6">
-          <a
-            href="#"
+          <Link
+            to="/login"
             className="text-gray-600 hover:text-gray-800 flex items-center"
           >
             <svg
@@ -47,7 +48,7 @@ const Change = () => {
               ></path>
             </svg>
             Back
-          </a>
+          </Link>
         </div>
 
         <h2 className="text-3xl font-bold mb-2">Đặt lại mật khẩu</h2>

@@ -20,7 +20,7 @@ const SignupForm = () => {
   });
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
-      console.log(user);
+      // console.log(user);
       try {
         const res = await instance.post("/register", user);
 
@@ -29,9 +29,9 @@ const SignupForm = () => {
         console.log(res);
         return res.data;
       } catch (error: any) {
-        console.log(error);
-        if (error.response.data == "Email already exists") {
-          toast.error("Email  đã tồn tại");
+        // console.log(error);
+        if (error.response.data == "Tài khoản đã tồn tại ") {
+          toast.error("Tài khoản đã tồn tại");
         } else {
           toast.error("Đăng ký thất bại");
         }
@@ -86,7 +86,7 @@ const SignupForm = () => {
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Địa chỉ Email
+              Tài khoản (Email)
             </label>
             <input
               type="email"
