@@ -25,10 +25,12 @@ class AuthController extends Controller
 
         // Trả về phản hồi với token
         return response()->json([
+            'status' => true,
+            'status_code' => 200,
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user,
-        ]);
+        ], 200);
     }
 
     // Đăng nhập người dùng
@@ -39,6 +41,8 @@ class AuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
+                'status' => true,
+                'status_code' => 200,
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
@@ -46,6 +50,8 @@ class AuthController extends Controller
         }
 
         return response()->json([
+            'status' => false,
+            'status_code' => 401,
             'message' => 'Tài khoản hoặc mật khẩu không chính xác.',
         ], 401);
     }
@@ -54,6 +60,10 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
-        return response()->json(['message' => 'Đăng xuất thành công']);
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Đăng xuất thành công'
+        ], 200);
     }
 }
