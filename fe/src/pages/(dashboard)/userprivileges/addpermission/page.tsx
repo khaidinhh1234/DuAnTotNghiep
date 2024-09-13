@@ -4,86 +4,50 @@ import { Button, Checkbox, Form, Input, Row, Col, Card } from 'antd';
 const { TextArea } = Input;
 
 const PageAddPermission: React.FC = () => {
-  // Trạng thái lưu trữ các quyền theo chức năng
   const [permissions, setPermissions] = useState({
-    manageProduct: {
-      view: false,
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    manageCategory: {
-      view: false,
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    managePost: {
-      view: false,
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    manageOrder: {
-      view: false,
-      add: false,
-      edit: false,
-      delete: false,
-    },
+    manageProduct: false,
+    view: false,
+    add: false,
+    edit: false,
+    delete: false,
   });
 
-  // Hàm xử lý khi gửi form
   const onFinish = (values: any) => {
     const permissionData = {
       ...values,
       permissions,
     };
-    console.log('Nhận giá trị:', permissionData);
+    console.log('Received values:', permissionData);
     // Thực hiện logic gửi dữ liệu đến API hoặc server tại đây
   };
 
-  // Hàm xử lý thay đổi cho checkbox con theo chức năng
-  const handleCheckboxChange = (e: any, category: string) => {
-    const { value, checked } = e.target;
-    setPermissions(prev => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        [value]: checked,
-      },
-    }));
+  const handleMainCheckboxChange = (e: any) => {
+    const checked = e.target.checked;
+    setPermissions({
+      manageProduct: checked,
+      view: checked,
+      add: checked,
+      edit: checked,
+      delete: checked,
+    });
   };
 
-  // Hàm xử lý thay đổi cho checkbox chính
-  const handleMasterCheckboxChange = (e: any, category: string) => {
-    const { checked } = e.target;
+  const handleSubCheckboxChange = (e: any) => {
     setPermissions(prev => ({
       ...prev,
-      [category]: {
-        view: checked,
-        add: checked,
-        edit: checked,
-        delete: checked,
-      },
+      [e.target.value]: e.target.checked,
     }));
-  };
-
-  // Hàm kiểm tra trạng thái của checkbox chính
-  const isMasterCheckboxChecked = (category: string) => {
-    const values = permissions[category];
-    return values.view && values.add && values.edit && values.delete;
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <Row gutter={16}>
-        {/* Phần thông tin quyền */}
-        <Col span={12}>
-          <Card title="Thông tin quyền" bordered={false}>
+    <div className="container mx-auto p-6">
+      <Row gutter={24}>
+        <Col xs={24} md={12}>
+          <Card title="Thông tin quyền" bordered={true} className="shadow-lg">
             <Form
               layout="vertical"
               onFinish={onFinish}
-              style={{ maxWidth: 800 }}
+              style={{ maxWidth: 600 }}
             >
               <Form.Item
                 label="Tên quyền"
@@ -98,7 +62,6 @@ const PageAddPermission: React.FC = () => {
               >
                 <TextArea placeholder="Nhập mô tả" rows={4} />
               </Form.Item>
-              {/* Nút lưu quyền */}
               <Form.Item>
                 <Button type="primary" htmlType="submit" className="w-full">
                   Lưu Quyền
@@ -108,44 +71,62 @@ const PageAddPermission: React.FC = () => {
           </Card>
         </Col>
 
-        {/* Phần phân quyền */}
-        <Col span={12}>
-          <Card title="Quản lý quyền" bordered={false}>
+        <Col xs={24} md={12}>
+          <Card title="Quản lý quyền truy cập" bordered={true} className="shadow-lg">
             <Form layout="vertical">
-              {/* Checkbox nhóm quyền theo chức năng */}
               <Form.Item>
-                <Row gutter={16}>
-                  {Object.keys(permissions).map((category) => (
-                    <Col span={24} key={category}>
-                      <Card title={`Quản lý ${category.replace('manage', '')}`} bordered={false}>
+                <Checkbox
+                  checked={permissions.manageProduct}
+                  onChange={handleMainCheckboxChange}
+                >
+                  Quản lý sản phẩm
+                </Checkbox>
+                <div style={{ marginTop: 16, paddingLeft: 24 }}>
+                  <Checkbox.Group>
+                    <Row gutter={16}>
+                      <Col span={24}>
                         <Checkbox
-                          checked={isMasterCheckboxChecked(category)}
-                          onChange={(e) => handleMasterCheckboxChange(e, category)}
+                          value="view"
+                          checked={permissions.view}
+                          onChange={handleSubCheckboxChange}
+                          disabled={!permissions.manageProduct}
                         >
-                          Tất cả quyền
+                          Xem
                         </Checkbox>
-                        <Checkbox.Group style={{ display: 'block', marginTop: 8 }}>
-                          <Row>
-                            {Object.keys(permissions[category]).map(action => (
-                              <Col span={24} key={action}>
-                                <Checkbox
-                                  value={action}
-                                  checked={permissions[category][action]}
-                                  onChange={(e) => handleCheckboxChange(e, category)}
-                                >
-                                  {action === 'view' ? 'Xem' :
-                                    action === 'add' ? 'Thêm' :
-                                    action === 'edit' ? 'Sửa' :
-                                    action === 'delete' ? 'Xóa' : ''}
-                                </Checkbox>
-                              </Col>
-                            ))}
-                          </Row>
-                        </Checkbox.Group>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
+                      </Col>
+                      <Col span={24}>
+                        <Checkbox
+                          value="add"
+                          checked={permissions.add}
+                          onChange={handleSubCheckboxChange}
+                          disabled={!permissions.manageProduct}
+                        >
+                          Thêm
+                        </Checkbox>
+                      </Col>
+                      <Col span={24}>
+                        <Checkbox
+                          value="edit"
+                          checked={permissions.edit}
+                          onChange={handleSubCheckboxChange}
+                          disabled={!permissions.manageProduct}
+                        >
+                          Sửa
+                        </Checkbox>
+                      </Col>
+                      <Col span={24}>
+                        <Checkbox
+                          value="delete"
+                          checked={permissions.delete}
+                          onChange={handleSubCheckboxChange}
+                          disabled={!permissions.manageProduct}
+                        >
+                          Xóa
+                        </Checkbox>
+                      </Col>
+                    </Row>
+                  </Checkbox.Group>
+                </div>
               </Form.Item>
             </Form>
           </Card>

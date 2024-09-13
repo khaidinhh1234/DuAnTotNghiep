@@ -16,10 +16,10 @@ class VaiTro extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, "vai_tro_tai_khoan", "vai_tro_id", "user_id");
     }
     public function quyen()
     {
-        return $this->belongsToMany(Quyen::class, "quyen_vai_tro", "quyen_id", "vai_tro_id");
+        return $this->belongsToMany(Quyen::class, "quyen_vai_tro", "vai_tro_id", "quyen_id");
     }
 }

@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('the_san_pham', function (Blueprint $table) {
             $table->foreignIdFor(SanPham::class)->constrained();
             $table->foreignIdFor(The::class)->constrained();
-
             $table->primary(['san_pham_id', 'the_id']);
         });
     }

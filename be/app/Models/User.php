@@ -25,6 +25,7 @@ class User extends Authenticatable
     protected $fillable = [
         'ho',
         'ten',
+        'anh_nguoi_dung',
         'email',
         'password',
         'so_dien_thoai',
@@ -55,7 +56,7 @@ class User extends Authenticatable
 
     public function vaiTros()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class, 'vai_tro_tai_khoan', 'user_id', 'vai_tro_id');
     }
 
     public function lichSuTimKiem()

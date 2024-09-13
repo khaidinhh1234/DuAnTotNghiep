@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Models\VaiTro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,16 +18,19 @@ class AuthController extends Controller
     {
         // Tạo người dùng mới
         $user = User::create($request->all());
-
+        $member = VaiTro::query()->where('ten_vai_tro', 'member')->pluck('id');
+        $user->vaiTros()->attach($member);
         // Tạo token cho người dùng
         $token = $user->createToken('auth_token')->plainTextToken;
 
         // Trả về phản hồi với token
         return response()->json([
+            'status' => true,
+            'status_code' => 200,
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user,
-        ]);
+        ], 200);
     }
 
     // Đăng nhập người dùng
@@ -37,6 +41,8 @@ class AuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
+                'status' => true,
+                'status_code' => 200,
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
@@ -44,7 +50,9 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'message' => 'Thông tin đăng nhập không hợp lệ',
+            'status' => false,
+            'status_code' => 401,
+            'message' => 'Tài khoản hoặc mật khẩu không chính xác.',
         ], 401);
     }
 
@@ -52,6 +60,10 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
-        return response()->json(['message' => 'Đăng xuất thành công']);
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Đăng xuất thành công'
+        ], 200);
     }
 }

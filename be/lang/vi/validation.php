@@ -151,7 +151,7 @@ return [
     'starts_with' => 'Trường :attribute phải bắt đầu bằng một trong các trường sau: :values.',
     'string' => 'Trường :attribute phải là một chuỗi.',
     'timezone' => 'Trường :attribute phải là múi giờ hợp lệ.',
-    'unique' => 'Thuộc tính :attribute đã được sử dụng.',
+    'unique' => ':attribute đã tồn tại.',
     'uploaded' => 'Không thể tải lên :thuộc tính.',
     'uppercase' => 'Trường :attribute phải viết hoa.',
     'url' => 'Trường :attribute phải là URL hợp lệ.',
