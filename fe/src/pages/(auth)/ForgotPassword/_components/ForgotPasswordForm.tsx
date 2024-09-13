@@ -18,8 +18,8 @@ const ForgotPasswordForm = () => {
       try {
         const res = await instance.post("/forgot-password", user);
         toast.success(" Gửi yêu cầu  thành công");
-        // nav(`/changePassword?token=`);
-        console.log(res);
+        nav(`/login`);
+        // console.log(res);
         return res.data;
       } catch (error: any) {
         console.log(error);
