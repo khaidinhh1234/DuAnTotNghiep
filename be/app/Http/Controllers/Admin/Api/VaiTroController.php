@@ -101,17 +101,19 @@ class VaiTroController extends Controller
     {
         try {
             DB::beginTransaction();
+            $quyen_id = [];
             $vaiTro = VaiTro::query()->with('quyen')->findOrFail($id);
             $vaiTro->update([
                 'ten_vai_tro' => $request->ten_vai_tro,
                 'mo_ta' => $request->mo_ta
             ]);
-            foreach ($request->ten_quyen as $ten_quyen) {
+            foreach ($request->ten_quyen ?? [] as $ten_quyen) {
                 $quyen = Quyen::updateOrCreate([
                     'ten_quyen' => $ten_quyen,
                 ]);
-                $vaiTro->quyen()->sync($quyen->id);
+                array_push($quyen_id, $quyen->id);
             }
+            $vaiTro->quyen()->sync($quyen_id);
             DB::commit();
             return response()->json([
                 'status' => true,
