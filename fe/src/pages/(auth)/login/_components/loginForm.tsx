@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const nav = useNavigate();
@@ -17,12 +18,25 @@ const LoginForm = () => {
   });
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
-
       const { data } = await instance.post("/login", user);
 
       localStorage.setItem("user", JSON.stringify(data));
       localStorage.setItem("accessToken", data.accessToken);
       nav("/");
+    },
+    onSuccess: () => {
+      toast.success("Đăng nhập thành công");
+    },
+    onError: (error: any) => {
+      console.log(error.response.data.message);
+      if (
+        error.response.data.message ==
+        "Tài khoản hoặc mật khẩu không chính xác."
+      ) {
+        toast.error("Tài khoản hoặc mật khâu không chính xác");
+      } else {
+        toast.error("Đăng nhập thất bại");
+      }
     },
   });
   const onSubmit = (data: any) => {
@@ -30,7 +44,6 @@ const LoginForm = () => {
   };
   return (
     <section className="flex-1 flex items-center justify-center p-4 md:p-0">
-
       <div className="w-full max-w-md p-6 md:p-8 bg-white shadow-lg rounded-lg border border-slate-100 h-auto">
         <h1 className="text-2xl font-bold mb-4 ">Chào Mừng 👋</h1>
         <p className="text-gray-600 mb-6 text-xs  my-5">
@@ -45,9 +58,7 @@ const LoginForm = () => {
             </label>
             <input
               type="email"
-
               className={`w-full p-3 border  rounded-md   ${errors.email?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
-
               placeholder="robertfox@example.com"
               {...register("email", { required: true })}
             />
@@ -57,15 +68,12 @@ const LoginForm = () => {
           </div>
 
           <div className="mb-2">
-
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Mật khẩu
             </label>
             <input
               type="password"
-
               className={`w-full p-3 border  rounded-md   ${errors.email?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
-
               placeholder="••••••••••••••••"
               {...register("password", { required: true })}
             />
@@ -95,7 +103,6 @@ const LoginForm = () => {
               Đăng ký ngay <i className="fa-solid fa-arrow-right text-xs"></i>
             </a>
           </div>
-
         </form>
       </div>
     </section>

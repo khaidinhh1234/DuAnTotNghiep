@@ -1,7 +1,5 @@
 import { IUser } from "@/common/types/user";
-import { loginSchema } from "@/common/validations/auth";
 import instance from "@/configs/axios";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
@@ -20,8 +18,8 @@ const ForgotPasswordForm = () => {
       try {
         const res = await instance.post("/forgot-password", user);
         toast.success(" Gửi yêu cầu  thành công");
-        nav("/changePassword");
-        console.log(res);
+        nav(`/login`);
+        // console.log(res);
         return res.data;
       } catch (error: any) {
         console.log(error);

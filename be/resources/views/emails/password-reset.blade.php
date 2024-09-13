@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 
 <head>
     <meta charset="UTF-8">
@@ -9,7 +11,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
+
 <body >
+
     <h2>Xin chào,</h2>
     <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình. Vui lòng nhấn vào link dưới đây để đặt lại mật khẩu:</p>
     <p>
@@ -19,4 +23,6 @@
     <p>Trân trọng,<br>{{ config('app.name') }}</p>
 </body>
 
+
 </html>
+

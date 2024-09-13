@@ -60,6 +60,7 @@ import UserPrivilegeAdmin from "@/pages/(dashboard)/userprivileges/page";
 import AddVoucher from "@/pages/(dashboard)/vourcher/add/add";
 import Cart from "@/pages/(website)/cart/Cart";
 import ChangePassword from "@/pages/(auth)/ChangePassword/changepassword";
+import SheetSide from "@/pages/(website)/test";
 
 const Router = () => {
   return (
@@ -91,7 +92,7 @@ const Router = () => {
           <Route path="/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
-          {/* <Route path="/test" element={<Test />} /> */}
+          <Route path="/test" element={<SheetSide />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         {/* TRang admin */}
@@ -127,6 +128,7 @@ const Router = () => {
           <Route path="qlfooter" element={<Content />} />
           <Route path="qlbanner" element={<BannerManagement />} />
           <Route path="add-vocher" element={<AddVoucher />} />
+
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
         <Route path="/login" element={<Login />} />
