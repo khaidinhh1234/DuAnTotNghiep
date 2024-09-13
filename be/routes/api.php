@@ -54,3 +54,6 @@ Route::apiResource('vaitro', VaiTroController::class);
 // Thông tin website
 Route::get('thong-tin-web', [ThongTinWebController::class, 'index']);
 Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate']);
+
+// Mã khuyến mãi
+Route::apiResource('makhuyenmai', App\Http\Controllers\Admin\Api\MaKhuyenMaiController::class);
