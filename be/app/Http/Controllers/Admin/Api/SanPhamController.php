@@ -46,12 +46,19 @@ class SanPhamController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ten_san_pham' => 'required|string|max:255',
-            'anh_san_pham' => 'required',
+            'anh_san_pham' => 'required|string',
+            'ma_san_pham' => 'required|string|max:255',
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'the' => 'required|array',
+            'the.*' => 'integer',
             'bien_the' => 'required|array',
+            'bien_the.*.gia_ban' => 'required|numeric',
+            'bien_the.*.gia_khuyen_mai' => 'required|numeric',
+            'bien_the.*.so_luong_bien_the' => 'required|integer',
+            'bien_the.*.anh' => 'required|array',
+            'bien_the.*.anh.*' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -59,7 +66,6 @@ class SanPhamController extends Controller
         }
 
         $dataSanPham = $request->except('bien_the', 'the');
-        $dataSanPham['ma_san_pham'] = 'SP-' . random_int(1000, 5000) . '-' . random_int(5001, 9999);
         $dataSanPham['duong_dan'] = Str::slug($dataSanPham['ten_san_pham']);
         $theSanPham = $request->the;
         $bienTheSanPhamTmp = $request->bien_the;
