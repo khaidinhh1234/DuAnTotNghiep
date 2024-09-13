@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TheController;
+use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Client\Api\Auth\AuthController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
@@ -42,3 +43,7 @@ Route::apiResource('sanpham', SanPhamController::class);
 Route::get('the/thung-rac', [TheController::class, 'danhSachTheDaXoa']);
 Route::post('the/thung-rac/{id}', [TheController::class, 'khoiPhucThe']);
 Route::apiResource('the', TheController::class);
+
+// Thông tin website
+Route::get('thong-tin-web', [ThongTinWebController::class, 'index']);
+Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate']);
