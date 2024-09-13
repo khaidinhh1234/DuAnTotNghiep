@@ -76,8 +76,8 @@ const menu = [
     icon: CheckCircle,
     path: "/admin",
     subMenu: [
-      { name: "Quản lý admin", path: "admin/privilegeadmin" },
-      { name: "Phân quyền", path: "admin/userprivileges" },
+      { name: "Quản lý admin", path: "privilegeadmin" },
+      { name: "Phân quyền", path: "userprivileges" },
     ],
   },
   {
@@ -97,8 +97,8 @@ const menu = [
 ];
 
 const SlidebarProduct = () => {
-  const location = useLocation(); // Lấy đường dẫn hiện tại
-  const [openMenu, setOpenMenu] = useState<number | null>(null); // Trạng thái mở/đóng submenu
+  const location = useLocation(); 
+  const [openMenu, setOpenMenu] = useState<number | null>(null); 
 
   useEffect(() => {
     // Duyệt qua menu để xem có submenu nào chứa đường dẫn hiện tại
@@ -108,14 +108,14 @@ const SlidebarProduct = () => {
           location.pathname.includes(subItem.path)
         );
         if (isCurrentSubmenu) {
-          setOpenMenu(index); // Giữ mở nếu submenu chứa đường dẫn hiện tại
+          setOpenMenu(index); 
         }
       }
     });
   }, [location.pathname]);
 
   const toggleSubMenu = (index: any) => {
-    setOpenMenu(openMenu === index ? null : index); // Toggle giữa mở và đóng
+    setOpenMenu(openMenu === index ? null : index); 
   };
 
   return (

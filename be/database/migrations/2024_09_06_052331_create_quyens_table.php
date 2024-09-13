@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('quyens', function (Blueprint $table) {
             $table->id();
             $table->string('ten_quyen', 100)->unique();
-            $table->string('mo_ta');
+            $table->string('mo_ta')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

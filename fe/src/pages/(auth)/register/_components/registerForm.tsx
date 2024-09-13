@@ -1,12 +1,10 @@
 import { IUser } from "@/common/types/user";
 import { registerSchema } from "@/common/validations/auth";
 
-
 import instance from "@/configs/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { useState } from "react";
+
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -18,14 +16,13 @@ const SignupForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<IUser>({
-
     resolver: zodResolver(registerSchema),
   });
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
       console.log(user);
       try {
-        const res = await instance.post("http://localhost:3000/register", user);
+        const res = await instance.post("/register", user);
 
         toast.success("Đăng ký thành công");
         nav("/login");
@@ -66,12 +63,12 @@ const SignupForm = () => {
               </label>
               <input
                 type="text"
-                className={`w-full p-3 border  rounded-md    ${errors.first_name?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
+                className={`w-full p-3 border  rounded-md    ${errors.ten?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
                 placeholder="Robert"
-                {...register("first_name", { required: true })}
+                {...register("ten", { required: true })}
               />
-              {errors.first_name && (
-                <p className="text-red-600">{errors.first_name.message}</p>
+              {errors.ten && (
+                <p className="text-red-600">{errors.ten.message}</p>
               )}
             </div>
             <div className="mb-4">
@@ -80,13 +77,11 @@ const SignupForm = () => {
               </label>
               <input
                 type="text"
-                className={`w-full p-3 border  rounded-md   ${errors.last_name?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
+                className={`w-full p-3 border  rounded-md   ${errors.ho?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
                 placeholder="Fox"
-                {...register("last_name", { required: true })}
+                {...register("ho", { required: true })}
               />
-              {errors.last_name && (
-                <p className="text-red-600">{errors.last_name.message}</p>
-              )}
+              {errors.ho && <p className="text-red-600">{errors.ho.message}</p>}
             </div>
           </div>
           <div className="mb-4">
@@ -123,12 +118,14 @@ const SignupForm = () => {
             </label>
             <input
               type="password"
-              className={`w-full p-3 border  rounded-md   ${errors.confirmPassword?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
+              className={`w-full p-3 border  rounded-md   ${errors.password_confirmation?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
               placeholder="••••••••••••••••"
-              {...register("confirmPassword", { required: true })}
+              {...register("password_confirmation", { required: true })}
             />
-            {errors.confirmPassword && (
-              <p className="text-red-600">{errors.confirmPassword.message}</p>
+            {errors.password_confirmation && (
+              <p className="text-red-600">
+                {errors.password_confirmation.message}
+              </p>
             )}
           </div>
           <div className="flex items-center mb-6">
@@ -145,7 +142,6 @@ const SignupForm = () => {
           </div>
           <button
             type="submit"
-
             className="w-full my-5 bg-black text-white p-3 rounded-md hover:bg-gray-800 text-sm font-bold hover:scale-105 "
           >
             Đăng ký
@@ -159,7 +155,6 @@ const SignupForm = () => {
               Đăng nhập ngay <i className="fa-solid fa-arrow-right text-xs"></i>
             </a>
           </div>
-
         </form>
       </div>
     </section>

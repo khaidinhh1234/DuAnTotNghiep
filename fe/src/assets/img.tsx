@@ -26,13 +26,17 @@ import anh1 from "@/assets/images/ourstory/1.png";
 import anh2 from "@/assets/images/ourstory/2.png";
 import anh3 from "@/assets/images/ourstory/3.png";
 import bannerend from "@/assets/images/ourstory/bannerend.png";
-import login from "@/assets/images/lognin/Rectangle 3463274.png";
+import login from "@/assets/images/lognin/Rectangle3463274.png";
 import master from "@/assets/images/myorder/master.png";
 import visa from "@/assets/images/myorder/visa.png";
 import avata from "@/assets/images/myorder/avt.png";
 import hello from "@/assets/images/myorder/Hello.png";
 import not from "@/assets/images/notfound/image25.svg";
 import bannervoucher from "@/assets/images/voucher/bannervoucher.png";
+import imglogin2 from "@/assets/images/lognin/login2.png";
+import imglogin3 from "@/assets/images/lognin/login3.png";
+import imglogin4 from "@/assets/images/lognin/login4.png";
+
 export {
   banner1,
   banner6,
@@ -68,4 +72,7 @@ export {
   hello,
   not,
   bannervoucher,
+  imglogin2,
+  imglogin3,
+  imglogin4,
 };

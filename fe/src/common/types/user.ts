@@ -1,13 +1,13 @@
 export interface IUser {
-  _id?: number | string;
-  first_name: string;
-  last_name: string;
+  id?: number | string;
+  ho: string;
+  ten: string;
   email: string;
   password: string;
-  confirmPassword?: string;
-  phoneNumber?: string;
+  password_confirmation?: string;
+  so_dien_thoai?: string;
   avatar?: string;
-  address?: string;
+  dia_chi?: string;
   role?: "admin" | "member" | "guest";
   createdAt?: Date;
   updatedAt?: Date;

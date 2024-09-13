@@ -16,15 +16,17 @@ return new class extends Migration
             $table->id();
             $table->string('ho', 30);
             $table->string('ten', 30);
+            $table->string('anh_nguoi_dung')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('mat_khau');
-            $table->string('so_dien_thoai', 15);
-            $table->string('dia_chi', 100);
-            $table->date('ngay_sinh');
-            $table->enum('gioi_tinh', [User::TYPE_NAM, User::TYPE_NU, User::TYPE_KHAC]);
+            $table->string('password')->nullable();
+            $table->string('so_dien_thoai', 15)->nullable();
+            $table->string('dia_chi', 100)->nullable();
+            $table->date('ngay_sinh')->nullable();
+            $table->enum('gioi_tinh', [User::TYPE_NAM, User::TYPE_NU, User::TYPE_KHAC])->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

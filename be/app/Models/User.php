@@ -4,13 +4,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -24,10 +25,11 @@ class User extends Authenticatable
     protected $fillable = [
         'ho',
         'ten',
+        'anh_nguoi_dung',
         'email',
-        'mat_khau',
+        'password',
         'so_dien_thoai',
-        'dic_chi',
+        'dia_chi',
         'ngay_sinh',
         'gioi_tinh',
     ];
@@ -38,7 +40,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'mat_khau',
+        'password',
         'remember_token',
     ];
 
@@ -49,11 +51,16 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'mat_khau' => 'hashed',
+        'password' => 'hashed',
     ];
 
     public function vaiTros()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsToMany(User::class, 'vai_tro_tai_khoan', 'user_id', 'vai_tro_id');
+    }
+
+    public function lichSuTimKiem()
+    {
+        return $this->hasMany(LichSuTimKiem::class);
     }
 }
