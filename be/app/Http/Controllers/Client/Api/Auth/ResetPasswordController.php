@@ -28,14 +28,22 @@ class ResetPasswordController extends Controller
             ->first();
 
         if (!$record || Carbon::parse($record->created_at)->addMinutes(60)->isPast()) {
-            return response()->json(['message' => 'Mã thông báo đặt lại không hợp lệ hoặc đã hết hạn.'], 400);
+            return response()->json([
+                'status' => false,
+                'status_code' => 200,
+                'message' => 'Mã thông báo đặt lại không hợp lệ hoặc đã hết hạn.'
+            ], 400);
         }
 
         // Cập nhật mật khẩu người dùng
         $user = User::where('email', $record->email)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'Không tìm thấy người dùng.'], 404);
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy người dùng.'
+            ], 404);
         }
 
         $user->forceFill([
@@ -48,6 +56,10 @@ class ResetPasswordController extends Controller
 
         event(new PasswordReset($user));
 
-        return response()->json(['message' => 'Đặt lại mật khẩu thành công.'], 200);
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Đặt lại mật khẩu thành công.'
+        ], 200);
     }
 }

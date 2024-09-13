@@ -37,6 +37,7 @@ class SanPhamController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
