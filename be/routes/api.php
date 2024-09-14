@@ -33,6 +33,8 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 // Danh muc
+Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa']);
+Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc']);
 Route::apiResource('danhmuc', DanhMucController::class);
 
 // Sản phẩm

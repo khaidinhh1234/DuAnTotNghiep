@@ -63,4 +63,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(LichSuTimKiem::class);
     }
+
+    public function tinTuc() {
+        return $this->hasMany(TinTuc::class, 'user_id');
+    }
 }
