@@ -3,6 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { changePassword } from "@/common/validations/auth";
+
 type IUser = {
   password: string;
   password_confirmation: string;
@@ -14,7 +17,10 @@ const Change = () => {
   const token = queryParams.get("token");
   // console.log(token);
   const nav = useNavigate();
-  const { register, handleSubmit } = useForm<IUser>();
+  const { register, handleSubmit,     formState: { errors },
+} = useForm<IUser>({
+  resolver: zodResolver(changePassword),
+});
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
       try {
@@ -102,12 +108,12 @@ const Change = () => {
             <input
               type="password"
               {...register("password")}
-              className={`w-full p-3 border  rounded-md  border-gray-300`}
+              className={`w-full p-3 border  rounded-md   ${errors.password?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
               placeholder="••••••••••••••••"
             />
-            {/* {errors.password && (
+          {errors.password && (
               <p className="text-red-600">{errors.password.message}</p>
-            )} */}
+            )}
           </div>
           <div className="mb-6">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -115,14 +121,16 @@ const Change = () => {
             </label>
             <input
               type="password"
-              {...register("password_confirmation")}
-              className={`w-full p-3 border  rounded-md   order-gray-300`}
+              {...register("password_confirmation", {required: true})}
+              className={`w-full p-3 border  rounded-md   ${errors.password_confirmation?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
               placeholder="••••••••••••••••"
             />
-            {/* {errors.password_confirmation && (
-              <p className="text-red-600">{errors.password_confirmation.message}</p>
-            )} */}
-          </div>
+       {errors.password_confirmation && (
+              <p className="text-red-600">
+                {errors.password_confirmation.message}
+              </p>
+            )}
+            </div>
           {/* <ReCAPTCHA
             ref={recaptchaRef}
             sitekey="6LeZ7DsqAAAAAFQ4zz5W8jQ9DzNxF6MDRLr4QWBB"
