@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreVaiTroRequest;
-use App\Http\Requests\UpdateVaiTroRequest;
-use App\Models\Quyen;
+use App\Http\Requests\StoreTaiKhoanRequest;
+use App\Http\Requests\UpdateTaiKhoanRequest;
+use App\Models\User;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class VaiTroController extends Controller
+class TaiKhoanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,47 +18,55 @@ class VaiTroController extends Controller
     public function index()
     {
         try {
-            $data = VaiTro::query()->with('quyen')->orderByDesc('id')->get();
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công',
-                'data' => $data,
-            ], 200);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
-                'error' => $exception->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreVaiTroRequest $request)
-    {
-        try {
             DB::beginTransaction();
-            $vaiTro = VaiTro::create([
-                'ten_vai_tro' => $request->ten_vai_tro,
-                'mo_ta' => $request->mo_ta
-            ]);
-            foreach ($request->ten_quyen ?? [] as $ten_quyen) {
-                $quyen = Quyen::updateOrCreate([
-                    'ten_quyen' => $ten_quyen
-                ]);
-                $vaiTro->quyen()->attach($quyen->id);
-            }
-
+            $data = User::query()->with('vaiTros')->orderBy('id', 'desc')->get();
             DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Vai trò được tạo thành công.',
-                'data' => $vaiTro,
+                'message' => 'Lấy dữ liệu thành công.',
+                'data' => $data
+            ], 200);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu.',
+                'error' => $exception->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreTaiKhoanRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+            $taiKhoan = User::create([
+                'ho' => $request->ho,
+                'ten' => $request->ten,
+                'anh_nguoi_dung' => $request->anh_nguoi_dung,
+                'email' => $request->email,
+                'password' => $request->password,
+                'so_dien_thoai' => $request->so_dien_thoai,
+                'dia_chi' => $request->dia_chi,
+                'ngay_sinh' => $request->ngay_sinh,
+                'gioi_tinh' => $request->gioi_tinh,
+            ]);
+            foreach ($request->vai_tros ?? [] as $vaiTro) {
+                $vaiTro_id = VaiTro::query()->where('ten_vai_tro', $vaiTro)->pluck('id');
+                $taiKhoan->vaiTros()->attach($vaiTro_id);
+            }
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Tài khoản được tạo thành công.',
+                'data' => $taiKhoan
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -77,18 +85,18 @@ class VaiTroController extends Controller
     public function show(string $id)
     {
         try {
-            $vaiTro = VaiTro::query()->with('quyen')->findOrFail($id);
+            $taiKhoan = User::query()->with('vaiTros')->findOrFail($id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công',
-                'data' => $vaiTro
+                'message' => 'Lấy dữ liệu thành công.',
+                'data' => $taiKhoan
             ], 200);
         } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Đã xảy ra lỗi khi lấy dữ liệu',
+                'message' => 'Đã xảy ra lỗi khi lấy dữ liệu.',
                 'error' => $exception->getMessage()
             ], 500);
         }
@@ -97,36 +105,41 @@ class VaiTroController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateVaiTroRequest $request, string $id)
+    public function update(UpdateTaiKhoanRequest $request, User $taikhoan)
     {
         try {
             DB::beginTransaction();
-            $quyen_id = [];
-            $vaiTro = VaiTro::query()->with('quyen')->findOrFail($id);
-            $vaiTro->update([
-                'ten_vai_tro' => $request->ten_vai_tro,
-                'mo_ta' => $request->mo_ta
+            $vaiTro_id = [];
+            $taiKhoan = User::query()->with('vaiTros')->findOrFail($taikhoan->id);
+            $taiKhoan->update([
+                'ho' => $request->ho,
+                'ten' => $request->ten,
+                'anh_nguoi_dung' => $request->anh_nguoi_dung,
+                'email' => $request->email,
+                'password' => $request->password,
+                'so_dien_thoai' => $request->so_dien_thoai,
+                'dia_chi' => $request->dia_chi,
+                'ngay_sinh' => $request->ngay_sinh,
+                'gioi_tinh' => $request->gioi_tinh,
             ]);
-            foreach ($request->ten_quyen ?? [] as $ten_quyen) {
-                $quyen = Quyen::updateOrCreate([
-                    'ten_quyen' => $ten_quyen,
-                ]);
-                array_push($quyen_id, $quyen->id);
+            foreach ($request->vai_tros ?? [] as $vaiTro) {
+                $vaiTro = VaiTro::query()->where('ten_vai_tro', $vaiTro)->first();
+                array_push($vaiTro_id, $vaiTro->id);
             }
-            $vaiTro->quyen()->sync($quyen_id);
+            $taiKhoan->vaiTros()->sync($vaiTro_id);
             DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Vai trò được cập nhật thành công.',
-                'data' => $vaiTro
+                'message' => 'Tài khoản được cập nhật thành công.',
+                'data' => $taiKhoan
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Đã xảy ra lỗi khi cập nhật vai trò.',
+                'message' => 'Đã xảy ra lỗi khi cập nhật tài khoản.',
                 'error' => $exception->getMessage()
             ], 500);
         }
@@ -139,38 +152,36 @@ class VaiTroController extends Controller
     {
         try {
             DB::beginTransaction();
-            $vaiTro = VaiTro::query()->findOrFail($id);
+            $taiKhoan = User::query()->findOrFail($id);
+            $taiKhoan->vaiTros()->sync([]);
 
-            $vaiTro->quyen()->sync([]);
-            $vaiTro->delete();
-
+            $taiKhoan->delete();
             DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Vai trò đã được xóa thành công.'
+                'message' => 'Tài khoản đã bị block.'
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Xóa vai trò thất bại!',
+                'message' => 'Xóa tài khoản thất bại!',
                 'error' => $exception->getMessage()
             ], 500);
         }
     }
 
-    public function danhSachVaiTroDaXoa()
+    public function danhSachTaiKhoanDaXoa()
     {
         try {
-            $vaiTro = VaiTro::onlyTrashed()->orderByDesc('deleted_at')->get();
-
+            $taiKhoan = User::onlyTrashed()->orderByDesc('deleted_at')->get();
             return response()->json([
-                'status' => true,
+                'success' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'data' => $vaiTro,
+                'data' => $taiKhoan,
             ], 200);
         } catch (\Exception $exception) {
             return response()->json([
@@ -181,24 +192,24 @@ class VaiTroController extends Controller
             ], 500);
         }
     }
-    public function khoiPhucVaiTro(string $id)
+    public function khoiPhucTaiKhoan(string $id)
     {
         try {
             DB::beginTransaction();
-            $vaiTro = VaiTro::onlyTrashed()->findOrFail($id);
-            $vaiTro->restore();
+            $taiKhoan = User::onlyTrashed()->findOrFail($id);
+            $taiKhoan->restore();
             DB::commit();
             return response()->json([
-                'status' => true,
+                'success' => true,
                 'status_code' => 200,
                 'message' => 'Khôi phục vai trò thành công',
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
-                'status' => false,
+                'success' => false,
                 'status_code' => 500,
-                'message' => 'Khôi phục vai trò thất bại',
+                'message' => 'Khôi phục tài khoản bị block thất bại',
                 'error' => $exception->getMessage()
             ], 500);
         }

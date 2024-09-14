@@ -11,7 +11,8 @@ class DanhMuc extends Model
     use HasFactory, SoftDeletes;
     protected $fillable = [
         'cha_id',
-        'ten_danh_muc'
+        'ten_danh_muc',
+        'duong_dan'
     ];
     public function parent() {
         return $this->belongsTo(DanhMuc::class, 'cha_id');
