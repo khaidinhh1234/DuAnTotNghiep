@@ -167,7 +167,7 @@ class VaiTroController extends Controller
             $vaiTro = VaiTro::onlyTrashed()->orderByDesc('deleted_at')->get();
 
             return response()->json([
-                'success' => true,
+                'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công',
                 'data' => $vaiTro,
@@ -189,14 +189,14 @@ class VaiTroController extends Controller
             $vaiTro->restore();
             DB::commit();
             return response()->json([
-                'success' => true,
+                'status' => true,
                 'status_code' => 200,
                 'message' => 'Khôi phục vai trò thành công',
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
-                'success' => false,
+                'status' => false,
                 'status_code' => 500,
                 'message' => 'Khôi phục vai trò thất bại',
                 'error' => $exception->getMessage()

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DanhMuc;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 
 class DanhMucController extends Controller
 {
@@ -15,9 +18,22 @@ class DanhMucController extends Controller
     {
         try {
             $danhMucs = DanhMuc::with('parent')->get();
-            return response()->json($danhMucs, 200);
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $danhMucs,
+                ],
+                200
+            );
         } catch (\Throwable $th) {
-            return response()->json(['error' => 'Đã có lỗi xảy ra khi lấy danh mục'], 500);
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
+                'error' => $th->getMessage()
+            ], 500);
         }
     }
 
@@ -27,15 +43,32 @@ class DanhMucController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
                 'cha_id' => 'nullable',
+                'duong_dan'
             ]);
+            $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc = DanhMuc::create($validateDanhMuc);
-
-            return response()->json($danhMuc, 201);
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục đã được thêm thành công',
+                    'data' => $danhMuc,
+                ],
+                200
+            );
         } catch (\Throwable $th) {
-            return response()->json(['error' => 'Đã có lỗi xảy ra khi thêm danh mục'], 500);
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi thêm danh mục',
+                'error' => $th->getMessage()
+            ], 500);
         }
     }
 
@@ -53,16 +86,32 @@ class DanhMucController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            DB::beginTransaction();
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs,ten_danh_muc,' . $id . '|max:255',
                 'cha_id' => 'nullable',
             ]);
             $danhMuc = DanhMuc::findOrFail($id);
+            $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc->update($validateDanhMuc);
-
-            return response()->json($danhMuc, 200);
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục đã được cập nhập thành công',
+                    'data' => $danhMuc,
+                ],
+                200
+            );
         } catch (\Throwable $th) {
-            return response()->json(['error' => 'Đã có lỗi xảy ra khi sửa danh mục'], 500);
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi cập nhập danh mục',
+                'error' => $th->getMessage()
+            ], 500);
         }
     }
 
@@ -72,12 +121,85 @@ class DanhMucController extends Controller
     public function destroy(string $id)
     {
         try {
+            DB::beginTransaction();
             $danhMuc = DanhMuc::findOrFail($id);
             $danhMuc->delete();
-
-            return response()->json(['message' => 'Danh mục đã được xóa'], 200);
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục đã được xóa',
+                ],
+                200
+            );
         } catch (\Throwable $th) {
-            return response()->json(['error' => 'Đã có lỗi xảy ra khi xóa danh mục'], 500);
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi xóa danh mục',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Display a listing of trashed resources.
+     */
+    public function danhSachDanhMucDaXoa()
+    {
+        try {
+            DB::beginTransaction();
+            $trashedDanhMucs = DanhMuc::onlyTrashed()->get();
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $trashedDanhMucs,
+                ],
+                200
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Lấy dữ liệu không công',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Restore the specified trashed resource.
+     */
+    public function khoiPhucDanhMuc(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $danhMuc = DanhMuc::onlyTrashed()->findOrFail($id);
+            $danhMuc->restore();
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Khôi phục Danh Mục thành công',
+                    'data' => $danhMuc,
+                ],
+                200
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Khôi phục Danh Mục không công',
+                'error' => $th->getMessage()
+            ], 500);
         }
     }
 }
