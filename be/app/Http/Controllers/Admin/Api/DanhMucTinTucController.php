@@ -26,7 +26,7 @@ class DanhMucTinTucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $exception) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -58,7 +58,7 @@ class DanhMucTinTucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $exception) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
@@ -100,7 +100,7 @@ class DanhMucTinTucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $exception) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
@@ -129,7 +129,7 @@ class DanhMucTinTucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $exception) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
@@ -157,7 +157,7 @@ class DanhMucTinTucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $exception) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
@@ -186,7 +186,7 @@ class DanhMucTinTucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $exception) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
