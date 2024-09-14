@@ -47,7 +47,8 @@ class DanhMucController extends Controller
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
                 'cha_id' => 'nullable',
-                'duong_dan'
+                'duong_dan' => 'nullable',
+
             ]);
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc = DanhMuc::create($validateDanhMuc);
@@ -90,6 +91,8 @@ class DanhMucController extends Controller
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs,ten_danh_muc,' . $id . '|max:255',
                 'cha_id' => 'nullable',
+                'duong_dan' => 'nullable',
+
             ]);
             $danhMuc = DanhMuc::findOrFail($id);
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);

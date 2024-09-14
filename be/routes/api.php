@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
+use App\Http\Controllers\Admin\Api\TinTucController;
 use App\Http\Controllers\Client\Api\Auth\AuthController;
 use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
@@ -63,8 +64,13 @@ Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate']);
 
 //Danh Mục Tin Tức
 Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa']);
-Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc']);
+Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucTinTuc']);
 Route::apiResource('danhmuctintuc', DanhMucTinTucController::class);
+
+//Tin Tức
+Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa']);
+Route::post('tintuc/thung-rac/{id}', [TinTucController::class, 'khoiPhucTinTuc']);
+Route::apiResource('tintuc', TinTucController::class);
 
 // Mã khuyến mãi
 Route::apiResource('makhuyenmai', App\Http\Controllers\Admin\Api\MaKhuyenMaiController::class);
