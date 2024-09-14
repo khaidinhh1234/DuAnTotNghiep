@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\Api\DanhMucController;
+use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
+use App\Http\Controllers\Admin\Api\TinTucController;
 use App\Http\Controllers\Client\Api\Auth\AuthController;
 use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
@@ -37,6 +39,8 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 // Danh muc
+Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa']);
+Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc']);
 Route::apiResource('danhmuc', DanhMucController::class);
 
 // Sản phẩm
@@ -58,6 +62,16 @@ Route::apiResource('vaitro', VaiTroController::class);
 // Thông tin website
 Route::get('thong-tin-web', [ThongTinWebController::class, 'index']);
 Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate']);
+
+//Danh Mục Tin Tức
+Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa']);
+Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucTinTuc']);
+Route::apiResource('danhmuctintuc', DanhMucTinTucController::class);
+
+//Tin Tức
+Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa']);
+Route::post('tintuc/thung-rac/{id}', [TinTucController::class, 'khoiPhucTinTuc']);
+Route::apiResource('tintuc', TinTucController::class);
 
 // Mã khuyến mãi
 Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa']);

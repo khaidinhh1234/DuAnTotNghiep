@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('tieu_de')->nullable();
             $table->string('anh_tin_tuc')->nullable();
             $table->text('noi_dung')->nullable();
+            $table->string('duong_dan')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
