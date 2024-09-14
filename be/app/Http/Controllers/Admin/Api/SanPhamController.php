@@ -160,13 +160,7 @@ class SanPhamController extends Controller
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'the' => 'required|array',
-            'the.*' => 'integer',
             'bien_the' => 'required|array',
-            'bien_the.*.gia_ban' => 'required|numeric',
-            'bien_the.*.gia_khuyen_mai' => 'required|numeric',
-            'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.anh' => 'required|array',
-            'bien_the.*.anh.*' => 'required|string'
         ]);
 
         if ($validator->fails()) {
