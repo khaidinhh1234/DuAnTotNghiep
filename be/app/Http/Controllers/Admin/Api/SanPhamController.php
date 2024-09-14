@@ -45,7 +45,7 @@ class SanPhamController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ten_san_pham' => 'required|string|max:255',
+            'ten_san_pham' => 'required|string|max:255|unique:san_phams,ten_san_pham',
             'anh_san_pham' => 'required|string',
             'ma_san_pham' => 'required|string|max:255',
             'mo_ta_ngan' => 'required|string|max:255',
@@ -154,13 +154,19 @@ class SanPhamController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'ten_san_pham' => 'required|string|max:255',
+            'ten_san_pham' => 'required|string|max:255|unique:san_phams,ten_san_pham,' . $id,
             'anh_san_pham' => 'required',
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'the' => 'required|array',
+            'the.*' => 'integer',
             'bien_the' => 'required|array',
+            'bien_the.*.gia_ban' => 'required|numeric',
+            'bien_the.*.gia_khuyen_mai' => 'required|numeric',
+            'bien_the.*.so_luong_bien_the' => 'required|integer',
+            'bien_the.*.anh' => 'required|array',
+            'bien_the.*.anh.*' => 'required|string'
         ]);
 
         if ($validator->fails()) {
