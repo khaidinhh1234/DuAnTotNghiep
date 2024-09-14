@@ -27,12 +27,12 @@ class DanhMucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $th) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
-                'error' => $th->getMessage()
+                'error' => $exception->getMessage()
             ], 500);
         }
     }
@@ -61,13 +61,13 @@ class DanhMucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $th) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi thêm danh mục',
-                'error' => $th->getMessage()
+                'error' => $exception->getMessage()
             ], 500);
         }
     }
@@ -104,13 +104,13 @@ class DanhMucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $th) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi cập nhập danh mục',
-                'error' => $th->getMessage()
+                'error' => $exception->getMessage()
             ], 500);
         }
     }
@@ -133,13 +133,13 @@ class DanhMucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $th) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi xóa danh mục',
-                'error' => $th->getMessage()
+                'error' => $exception->getMessage()
             ], 500);
         }
     }
@@ -162,13 +162,13 @@ class DanhMucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $th) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Lấy dữ liệu không công',
-                'error' => $th->getMessage()
+                'error' => $exception->getMessage()
             ], 500);
         }
     }
@@ -192,13 +192,13 @@ class DanhMucController extends Controller
                 ],
                 200
             );
-        } catch (\Throwable $th) {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Khôi phục Danh Mục không công',
-                'error' => $th->getMessage()
+                'error' => $exception->getMessage()
             ], 500);
         }
     }
