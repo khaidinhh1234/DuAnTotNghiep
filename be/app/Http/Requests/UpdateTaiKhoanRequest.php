@@ -6,8 +6,9 @@ use Illuminate\Contracts\Validation\Validator as ValidationValidator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class RegisterRequest extends FormRequest
+class UpdateTaiKhoanRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,16 +25,19 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = $this->route('taikhoan');
+        $userId= $user->id;
         return [
             'ho' => 'required|string|max:255',
             'ten' => 'required|string|max:255',
             'anh_nguoi_dung' => 'nullable',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+            'email' => "required|string|email|max:255|unique:users,email," . $userId,
+            'password' => 'required|string|min:6',
             'so_dien_thoai' => 'nullable|string|max:15',
             'dia_chi' => 'nullable|string',
             'ngay_sinh' => 'nullable|date',
             'gioi_tinh' => 'nullable|in:nam,nu,khac',
+            'vai_tros' => 'array'
         ];
     }
     protected function failedValidation(ValidationValidator $validator)

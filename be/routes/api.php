@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
+use App\Http\Controllers\Admin\Api\TaiKhoanController;
 use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
@@ -60,3 +61,9 @@ Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate']);
 
 // Mã khuyến mãi
 Route::apiResource('makhuyenmai', App\Http\Controllers\Admin\Api\MaKhuyenMaiController::class);
+
+// Tài khoản
+Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa']);
+Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan']);
+Route::apiResource('taikhoan', TaiKhoanController::class);
+

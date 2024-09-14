@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function vaiTros()
     {
-        return $this->belongsToMany(User::class, 'vai_tro_tai_khoan', 'user_id', 'vai_tro_id');
+        return $this->belongsToMany(VaiTro::class, 'vai_tro_tai_khoan', 'user_id', 'vai_tro_id');
     }
 
     public function lichSuTimKiem()
