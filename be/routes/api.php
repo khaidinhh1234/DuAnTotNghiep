@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Api\DanhMucController;
+use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
@@ -59,6 +60,11 @@ Route::apiResource('vaitro', VaiTroController::class);
 // Thông tin website
 Route::get('thong-tin-web', [ThongTinWebController::class, 'index']);
 Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate']);
+
+//Danh Mục Tin Tức
+Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa']);
+Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc']);
+Route::apiResource('danhmuctintuc', DanhMucTinTucController::class);
 
 // Mã khuyến mãi
 Route::apiResource('makhuyenmai', App\Http\Controllers\Admin\Api\MaKhuyenMaiController::class);
