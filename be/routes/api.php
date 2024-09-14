@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Api\DanhMucController;
+use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
@@ -59,4 +60,6 @@ Route::get('thong-tin-web', [ThongTinWebController::class, 'index']);
 Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate']);
 
 // Mã khuyến mãi
+Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa']);
+Route::post('makhuyenmai/thung-rac/{id}', [MaKhuyenMaiController::class, 'khoiPhucMaKhuyenMai']);
 Route::apiResource('makhuyenmai', App\Http\Controllers\Admin\Api\MaKhuyenMaiController::class);
