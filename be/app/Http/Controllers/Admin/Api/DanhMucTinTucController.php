@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\DanhMuc;
+use App\Models\DanhMucTinTuc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-
-class DanhMucController extends Controller
+class DanhMucTinTucController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,13 +16,13 @@ class DanhMucController extends Controller
     public function index()
     {
         try {
-            $danhMucs = DanhMuc::with('parent')->get();
+            $danhMucTinTucs = DanhMucTinTuc::all();
             return response()->json(
                 [
                     'status' => true,
                     'status_code' => 200,
                     'message' => 'Lấy dữ liệu thành công',
-                    'data' => $danhMucs,
+                    'data' => $danhMucTinTucs,
                 ],
                 200
             );
@@ -44,21 +43,18 @@ class DanhMucController extends Controller
     {
         try {
             DB::beginTransaction();
-            $validateDanhMuc = $request->validate([
-                'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
-                'cha_id' => 'nullable',
-                'duong_dan' => 'nullable',
-
+            $validateDanhMucTinTuc = $request->validate([
+                'ten_danh_muc_tin_tuc' => 'required|string|max:255',
             ]);
-            $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
-            $danhMuc = DanhMuc::create($validateDanhMuc);
+            $validateDanhMucTinTuc['duong_dan'] = Str::slug($validateDanhMucTinTuc['ten_danh_muc_tin_tuc']);
+            $danhMucTinTuc = DanhMucTinTuc::create($validateDanhMucTinTuc);
             DB::commit();
             return response()->json(
                 [
                     'status' => true,
                     'status_code' => 200,
-                    'message' => 'Danh mục đã được thêm thành công',
-                    'data' => $danhMuc,
+                    'message' => 'Danh mục tin tức đã được thêm thành công',
+                    'data' => $danhMucTinTuc,
                 ],
                 200
             );
@@ -67,7 +63,7 @@ class DanhMucController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Đã có lỗi xảy ra khi thêm danh mục',
+                'message' => 'Đã có lỗi xảy ra khi thêm danh mục tin tức',
                 'error' => $exception->getMessage()
             ], 500);
         }
@@ -88,22 +84,19 @@ class DanhMucController extends Controller
     {
         try {
             DB::beginTransaction();
-            $validateDanhMuc = $request->validate([
-                'ten_danh_muc' => 'required|unique:danh_mucs,ten_danh_muc,' . $id . '|max:255',
-                'cha_id' => 'nullable',
-                'duong_dan' => 'nullable',
-
+            $validateDanhMucTinTuc = $request->validate([
+                'ten_danh_muc_tin_tuc' => 'required|string|max:255',
             ]);
-            $danhMuc = DanhMuc::findOrFail($id);
-            $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
-            $danhMuc->update($validateDanhMuc);
+            $danhMucTinTuc = DanhMucTinTuc::findOrFail($id);
+            $validateDanhMucTinTuc['duong_dan'] = Str::slug($validateDanhMucTinTuc['ten_danh_muc_tin_tuc']);
+            $danhMucTinTuc->update($validateDanhMucTinTuc);
             DB::commit();
             return response()->json(
                 [
                     'status' => true,
                     'status_code' => 200,
-                    'message' => 'Danh mục đã được cập nhập thành công',
-                    'data' => $danhMuc,
+                    'message' => 'Danh mục tin tức đã được Cập nhập thành công',
+                    'data' => $danhMucTinTuc,
                 ],
                 200
             );
@@ -112,7 +105,7 @@ class DanhMucController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Đã có lỗi xảy ra khi cập nhập danh mục',
+                'message' => 'Đã có lỗi xảy ra khi Cập nhập danh mục tin tức',
                 'error' => $exception->getMessage()
             ], 500);
         }
@@ -125,14 +118,14 @@ class DanhMucController extends Controller
     {
         try {
             DB::beginTransaction();
-            $danhMuc = DanhMuc::findOrFail($id);
-            $danhMuc->delete();
+            $danhMucTinTuc = DanhMucTinTuc::findOrFail($id);
+            $danhMucTinTuc->delete();
             DB::commit();
             return response()->json(
                 [
                     'status' => true,
                     'status_code' => 200,
-                    'message' => 'Danh mục đã được xóa',
+                    'message' => 'Danh mục tin tức đã được xóa',
                 ],
                 200
             );
@@ -141,27 +134,26 @@ class DanhMucController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Đã có lỗi xảy ra khi xóa danh mục',
+                'message' => 'Đã có lỗi xảy ra khi xóa danh mục tin tức',
                 'error' => $exception->getMessage()
             ], 500);
         }
     }
-
     /**
      * Display a listing of trashed resources.
      */
-    public function danhSachDanhMucDaXoa()
+    public function danhSachDanhMucTinTucDaXoa()
     {
         try {
             DB::beginTransaction();
-            $trashedDanhMucs = DanhMuc::onlyTrashed()->get();
+            $trashedDanhMucTinTucs = DanhMucTinTuc::onlyTrashed()->get();
             DB::commit();
             return response()->json(
                 [
                     'status' => true,
                     'status_code' => 200,
                     'message' => 'Lấy dữ liệu thành công',
-                    'data' => $trashedDanhMucs,
+                    'data' => $trashedDanhMucTinTucs,
                 ],
                 200
             );
@@ -179,19 +171,18 @@ class DanhMucController extends Controller
     /**
      * Restore the specified trashed resource.
      */
-    public function khoiPhucDanhMuc(string $id)
+    public function khoiPhucDanhMucTinTuc(string $id)
     {
         try {
             DB::beginTransaction();
-            $danhMuc = DanhMuc::onlyTrashed()->findOrFail($id);
-            $danhMuc->restore();
+            $danhMucTinTuc = DanhMucTinTuc::onlyTrashed()->findOrFail($id);
+            $danhMucTinTuc->restore();
             DB::commit();
             return response()->json(
                 [
                     'status' => true,
                     'status_code' => 200,
-                    'message' => 'Khôi phục Danh Mục thành công',
-                    'data' => $danhMuc,
+                    'message' => 'Khôi phục Danh Mục tin tức thành công',
                 ],
                 200
             );
@@ -200,7 +191,7 @@ class DanhMucController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Khôi phục Danh Mục không công',
+                'message' => 'Khôi phục Danh Mục tin tức không công',
                 'error' => $exception->getMessage()
             ], 500);
         }
