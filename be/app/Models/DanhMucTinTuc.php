@@ -12,7 +12,7 @@ class DanhMucTinTuc extends Model
 
     protected $fillable = [
         'ten_danh_muc_tin_tuc',
-        'duong_dan'
+        'duong_dan',
     ];
     public function tinTuc() {
         return $this->hasMany(TinTuc::class, 'danh_muc_tin_tuc_id');

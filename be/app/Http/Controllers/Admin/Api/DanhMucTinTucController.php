@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DanhMucTinTuc;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class DanhMucTinTucController extends Controller
 {
@@ -12,7 +15,25 @@ class DanhMucTinTucController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $danhMucTinTucs = DanhMucTinTuc::all();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $danhMucTinTucs,
+                ],
+                200
+            );
+        } catch (\Throwable $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -20,7 +41,32 @@ class DanhMucTinTucController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $validateDanhMucTinTuc = $request->validate([
+                'ten_danh_muc_tin_tuc' => 'required|string|max:255',
+            ]);
+            $validateDanhMucTinTuc['duong_dan'] = Str::slug($validateDanhMucTinTuc['ten_danh_muc_tin_tuc']);
+            $danhMucTinTuc = DanhMucTinTuc::create($validateDanhMucTinTuc);
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục tin tức đã được thêm thành công',
+                    'data' => $danhMucTinTuc,
+                ],
+                200
+            );
+        } catch (\Throwable $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi thêm danh mục tin tức',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -36,7 +82,33 @@ class DanhMucTinTucController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $validateDanhMucTinTuc = $request->validate([
+                'ten_danh_muc_tin_tuc' => 'required|string|max:255',
+            ]);
+            $danhMucTinTuc = DanhMucTinTuc::findOrFail($id);
+            $validateDanhMucTinTuc['duong_dan'] = Str::slug($validateDanhMucTinTuc['ten_danh_muc_tin_tuc']);
+            $danhMucTinTuc->update($validateDanhMucTinTuc);
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục tin tức đã được Cập nhập thành công',
+                    'data' => $danhMucTinTuc,
+                ],
+                200
+            );
+        } catch (\Throwable $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi Cập nhập danh mục tin tức',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -44,8 +116,84 @@ class DanhMucTinTucController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $danhMucTinTuc = DanhMucTinTuc::findOrFail($id);
+            $danhMucTinTuc->delete();
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục tin tức đã được xóa',
+                ],
+                200
+            );
+        } catch (\Throwable $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi xóa danh mục tin tức',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+    /**
+     * Display a listing of trashed resources.
+     */
+    public function danhSachDanhMucTinTucDaXoa()
+    {
+        try {
+            DB::beginTransaction();
+            $trashedDanhMucTinTucs = DanhMucTinTuc::onlyTrashed()->get();
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $trashedDanhMucTinTucs,
+                ],
+                200
+            );
+        } catch (\Throwable $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Lấy dữ liệu không công',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 
-
+    /**
+     * Restore the specified trashed resource.
+     */
+    public function khoiPhucDanhMucTinTuc(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $danhMucTinTuc = DanhMucTinTuc::onlyTrashed()->findOrFail($id);
+            $danhMucTinTuc->restore();
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Khôi phục Danh Mục tin tức thành công',
+                ],
+                200
+            );
+        } catch (\Throwable $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Khôi phục Danh Mục tin tức không công',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 }
