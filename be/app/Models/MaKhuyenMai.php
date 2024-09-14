@@ -21,4 +21,9 @@ class MaKhuyenMai extends Model
         'chi_tieu_toi_thieu',
         'tong_giam_gia_toi_da',
     ];
+
+    public function sanPhams()
+    {
+        return $this->belongsToMany(SanPham::class, 'khuyen_mai_san_pham', 'ma_khuyen_mai_id', 'san_pham_id');
+    }
 }
