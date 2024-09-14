@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Form, Input, InputNumber, Select, DatePicker, Tabs, Button } from 'antd';
+import { Form, Input, InputNumber, Select, DatePicker, Tabs, Button, Divider } from 'antd';
 import { DateTime } from 'luxon';
 import { v4 as uuidv4 } from 'uuid';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,9 @@ const { Option } = Select;
 const AddVoucher = () => {
   const [form] = Form.useForm();
   const [voucherCode, setVoucherCode] = useState('');
-
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const handleSubmit = (values: any) => {
 
     const formattedEndDate = values.endDate
@@ -28,21 +30,89 @@ const AddVoucher = () => {
     form.setFieldsValue({ code: randomCode });
   };
 
+  const productList = [
+    { id: 1, name: 'Áo Thun Nam' },
+    { id: 2, name: 'Áo Sơ Mi Nam' },
+    { id: 3, name: 'Áo Thun Nữ' },
+    { id: 4, name: 'Áo Sơ Mi Nữ' },
+    { id: 5, name: 'Điện thoại' },
+    { id: 6, name: 'Laptop' },
+  ];
+
+  const handleSelectAll = () => {
+    setSelectedProducts([]);
+    setIsAllSelected(true);
+    setSearchTerm(''); 
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedProducts([]);
+    setIsAllSelected(false);
+    setSearchTerm(''); 
+  };
+
+  const handleProductChange = (value) => {
+    if (isAllSelected) {
+      if (value.length > 0) {
+        setIsAllSelected(false);
+        setSelectedProducts(value);
+      }
+    } else {
+      if (value.length === productList.length) {
+        setIsAllSelected(true);
+      }
+      setSelectedProducts(value);
+    }
+
+    if (value.length > 0) {
+      setSearchTerm('');
+    }
+  };
+
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+  };
+
+  const getSelectLabel = () => {
+    if (isAllSelected) {
+      return 'Tất cả sản phẩm';
+    }
+    return selectedProducts.length > 0
+      ? `Đã chọn ${selectedProducts.length} sản phẩm`
+      : 'Chọn sản phẩm';
+  };
+
+  const filteredProducts = productList.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const tabItems = [
     {
       key: '1',
       label: 'Giá trị khuyến mãi',
       children: (
+
         <div className="flex flex-col gap-6">
+          <div className="flex items-center">
+            <label className="w-1/4 font-semibold">Tên khuyến mãi</label>
+            <Form.Item
+              name="discountType"
+              initialValue=""
+              rules={[{ required: true, message: 'Vui lòng chọn Nhập tên khuyễn mãi!' }]}
+              className="mb-0 w-3/4"
+            >
+                  <Input placeholder="Nhập tên khuyến mãi" />
+
+            </Form.Item>
+          </div>
           <div className="flex items-center">
             <label className="w-1/4 font-semibold">Giá trị giảm giá:</label>
             <Form.Item
-              name="discountValue"
-              initialValue={300000}
-              rules={[{ required: true, message: 'Please input the discount amount!' }]}
+              name="name"
+              initialValue=""
+              rules={[{ required: true, message: 'Vui lòng chọn Nhập giá trị giảm giá!' }]}
               className="mb-0 w-3/4"
             >
-              <InputNumber className="w-full rounded-md" />
+              <InputNumber className="w-full rounded-md" placeholder="Nhập tên Giá trị khuyến mãi"/>
             </Form.Item>
           </div>
 
@@ -51,7 +121,7 @@ const AddVoucher = () => {
             <Form.Item
               name="discountType"
               initialValue="Flat Amount (₫)"
-              rules={[{ required: true, message: 'Please select a discount type!' }]}
+              rules={[{ required: true, message: 'Vui lòng chọn Chọn kiểu giảm giá!' }]}
               className="mb-0 w-3/4"
             >
               <Select className="w-full rounded-md">
@@ -61,7 +131,7 @@ const AddVoucher = () => {
             </Form.Item>
           </div>
 
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <label className="w-1/4 font-semibold">Giảm giá với các danh mục:</label>
             <Form.Item
               name="categoryDiscount"
@@ -74,13 +144,51 @@ const AddVoucher = () => {
                 <Option value="All">Quần Nam</Option>
               </Select>
             </Form.Item>
-          </div>
-
+          </div> */}
+         <div className="flex items-center mb-4">
+        <label className="w-1/4 font-semibold">
+          {getSelectLabel()}
+        </label>
+        <Form.Item
+          name="productDiscount"
+          rules={[{ required: !isAllSelected && selectedProducts.length === 0, message: 'Vui lòng chọn sản phẩm!' }]}
+          className="mb-0 w-3/4"
+        >
+          <Select
+            mode="multiple" 
+            placeholder="Chọn sản phẩm"
+            value={selectedProducts}
+            onChange={handleProductChange}
+            style={{ width: '100%' }}
+            showSearch
+            filterOption={false} 
+            onSearch={handleSearch}
+            dropdownRender={(menu) => (
+              <div>
+                <Button
+                  type="link"
+                  onClick={isAllSelected ? handleDeselectAll : handleSelectAll}
+                >
+                  {isAllSelected ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
+                </Button>
+                <Divider style={{ margin: '4px 0' }} />
+                {menu}
+              </div>
+            )}
+          >
+            {filteredProducts.map((product) => (
+              <Option key={product.id} value={product.id}>
+                {product.name}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+      </div>
           <div className="flex items-center">
             <label className="w-1/4 font-semibold">Giảm giá với các phương thức thanh toán:</label>
             <Form.Item
               name="paymentDiscount"
-              rules={[{ required: true, message: 'Please select a payment method!' }]}
+              rules={[{ required: true, message: 'Vui lòng chọn phương thước thanh toán!' }]}
               className="mb-0 w-3/4"
             >
               <Select className="w-full rounded-md">
@@ -91,10 +199,20 @@ const AddVoucher = () => {
           </div>
 
           <div className="flex items-center">
+            <label className="w-1/4 font-semibold">Ngày bắt đầu:</label>
+            <Form.Item
+              name="Date"
+              rules={[{ required: true, message: 'Vui lòng chọn!' }]}
+              className="mb-0 w-3/4"
+            >
+              <DatePicker className="w-full rounded-md" />
+            </Form.Item>
+          </div>
+          <div className="flex items-center">
             <label className="w-1/4 font-semibold">Ngày kết thúc:</label>
             <Form.Item
               name="endDate"
-              rules={[{ required: true, message: 'Please select an end date!' }]}
+              rules={[{ required: true, message: 'Vui lòng chọn!' }]}
               className="mb-0 w-3/4"
             >
               <DatePicker className="w-full rounded-md" />
@@ -112,23 +230,23 @@ const AddVoucher = () => {
             <label className="w-1/4 font-semibold">Chi tiêu tối thiểu:</label>
             <Form.Item
               name="minSpend"
-              initialValue={500000}
-              rules={[{ required: true, message: 'Please input the minimum spend!' }]}
+              initialValue=""
+              // rules={[{ required: true, message: 'Please input the minimum spend!' }]}
               className="mb-0 w-3/4"
             >
-              <InputNumber className="w-full rounded-md" />
+              <InputNumber className="w-full rounded-md" placeholder="Nhập Chi tiêu tối thiểu" />
             </Form.Item>
           </div>
 
           <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Chi tiêu tối đa:</label>
+            <label className="w-1/4 font-semibold">Giảm giá tối đa:</label>
             <Form.Item
               name="usageLimit"
-              initialValue={100}
-              rules={[{ required: true, message: 'Please input the usage limit!' }]}
+              initialValue=""
+              rules={[{ required: true, message: 'vui long Nhập!' }]}
               className="mb-0 w-3/4"
             >
-              <InputNumber className="w-full rounded-md" />
+              <InputNumber className="w-full rounded-md" placeholder="Nhập giamr tối đa"/>
             </Form.Item>
           </div>
         </div>
@@ -143,11 +261,11 @@ const AddVoucher = () => {
             <label className="w-1/4 font-semibold">Số lượng khuyến mãi tối đa:</label>
             <Form.Item
               name="maxTotalUses"
-              initialValue={1000}
-              rules={[{ required: true, message: 'Please input the max total uses!' }]}
+              initialValue=""
+              rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}
               className="mb-0 w-3/4"
             >
-              <InputNumber className="w-full rounded-md" />
+              <InputNumber className="w-full rounded-md" placeholder="Nhập số lượng" />
             </Form.Item>
           </div>
         </div>
@@ -173,7 +291,7 @@ const AddVoucher = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row lg:gap-6">
+      <div className="flex flex-col lg:flex-row lg:gap-6 ">
         <div className="bg-white p-8 shadow-lg rounded-lg w-full lg:w-[calc(100%+300px)]">
           <Form
             form={form}
@@ -208,7 +326,7 @@ const AddVoucher = () => {
         </div>
       </div>
 
-      <Form.Item className="absolute bottom-12 right-6">
+      <Form.Item className="absolute bottom-2 right-14">
         <Button
           type="primary"
           htmlType="submit"
