@@ -47,13 +47,15 @@ class SanPhamController extends Controller
         $validator = Validator::make($request->all(), [
             'ten_san_pham' => 'required|string|max:255|unique:san_phams,ten_san_pham',
             'anh_san_pham' => 'required|string',
-            'ma_san_pham' => 'required|string|max:255',
+            'ma_san_pham' => 'required|string|max:255|unique:san_phams,ma_san_pham',
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'the' => 'required|array',
             'the.*' => 'integer',
             'bien_the' => 'required|array',
+            'bien_the.*.mau_sac_id' => 'required|integer',
+            'bien_the.*.kich_thuoc_id' => 'required|integer',
             'bien_the.*.gia_ban' => 'required|numeric',
             'bien_the.*.gia_khuyen_mai' => 'required|numeric',
             'bien_the.*.so_luong_bien_the' => 'required|integer',
@@ -72,12 +74,11 @@ class SanPhamController extends Controller
 
         $bienTheSanPham = [];
 
-        foreach ($bienTheSanPhamTmp as $key => $value) {
-            $tmp = explode('-', $key);
+        foreach ($bienTheSanPhamTmp as $value) {
             if ($value['gia_ban'] !== null && $value['so_luong_bien_the'] !== null) {
                 $bienTheSanPham[] = [
-                    'bien_the_mau_sac_id' => $tmp[0],
-                    'bien_the_kich_thuoc_id' => $tmp[1],
+                    'bien_the_mau_sac_id' => $value['mau_sac_id'],
+                    'bien_the_kich_thuoc_id' => $value['kich_thuoc_id'],
                     'gia_ban' => $value['gia_ban'],
                     'gia_khuyen_mai' => $value['gia_khuyen_mai'],
                     'so_luong_bien_the' => $value['so_luong_bien_the'],
@@ -125,6 +126,7 @@ class SanPhamController extends Controller
         }
     }
 
+
     public function show($id)
     {
         try {
@@ -155,12 +157,20 @@ class SanPhamController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ten_san_pham' => 'required|string|max:255|unique:san_phams,ten_san_pham,' . $id,
-            'anh_san_pham' => 'required',
+            'anh_san_pham' => 'required|string',
+            'ma_san_pham' => 'required|string|max:255|unique:san_phams,ma_san_pham,' . $id,
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'the' => 'required|array',
             'bien_the' => 'required|array',
+            'bien_the.*.mau_sac_id' => 'required|integer',
+            'bien_the.*.kich_thuoc_id' => 'required|integer',
+            'bien_the.*.gia_ban' => 'required|numeric',
+            'bien_the.*.gia_khuyen_mai' => 'required|numeric',
+            'bien_the.*.so_luong_bien_the' => 'required|integer',
+            'bien_the.*.anh' => 'required|array',
+            'bien_the.*.anh.*' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -168,6 +178,7 @@ class SanPhamController extends Controller
         }
 
         $sanPham = SanPham::findOrFail($id);
+
         $dataSanPham = $request->except('bien_the', 'the');
         $dataSanPham['duong_dan'] = Str::slug($dataSanPham['ten_san_pham']);
         $theSanPham = $request->the;
@@ -175,12 +186,11 @@ class SanPhamController extends Controller
 
         $bienTheSanPham = [];
 
-        foreach ($bienTheSanPhamTmp as $key => $value) {
-            $tmp = explode('-', $key);
+        foreach ($bienTheSanPhamTmp as $value) {
             if ($value['gia_ban'] !== null && $value['so_luong_bien_the'] !== null) {
                 $bienTheSanPham[] = [
-                    'bien_the_mau_sac_id' => $tmp[0],
-                    'bien_the_kich_thuoc_id' => $tmp[1],
+                    'bien_the_mau_sac_id' => $value['mau_sac_id'],
+                    'bien_the_kich_thuoc_id' => $value['kich_thuoc_id'],
                     'gia_ban' => $value['gia_ban'],
                     'gia_khuyen_mai' => $value['gia_khuyen_mai'],
                     'so_luong_bien_the' => $value['so_luong_bien_the'],
@@ -191,6 +201,7 @@ class SanPhamController extends Controller
 
         try {
             DB::beginTransaction();
+
             $sanPham->update($dataSanPham);
 
             foreach ($bienTheSanPham as $bienThe) {
@@ -207,6 +218,7 @@ class SanPhamController extends Controller
                 );
 
                 AnhBienThe::where('bien_the_san_pham_id', $bienTheSP->id)->delete();
+
                 foreach ($anhBienThe as $anh) {
                     if ($anh !== null) {
                         AnhBienThe::create([
@@ -218,6 +230,7 @@ class SanPhamController extends Controller
             }
 
             $sanPham->theSanPham()->sync($theSanPham);
+
             DB::commit();
 
             return response()->json([
@@ -228,6 +241,7 @@ class SanPhamController extends Controller
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
+
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -236,6 +250,7 @@ class SanPhamController extends Controller
             ], 500);
         }
     }
+
 
     public function destroy($id)
     {
