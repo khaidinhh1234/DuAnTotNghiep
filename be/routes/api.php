@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -90,3 +91,9 @@ Route::get('/donhang', [DonHangController::class, 'index']);
 Route::get('/donhang/{id}', action: [DonHangController::class, 'show']);
 Route::put('/donhang/{id}/trang-thai-thanh-toan', action: [DonHangController::class, 'updatePaymentStatus']);
 Route::put('/donhang/{id}/trang-thai-don-hang', action: [DonHangController::class, 'capNhatTrangThaiDonHang']);
+
+
+// Kích thước biến thể
+Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem']);
+Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem']);
+Route::apiResource('bienthekichthuoc', App\Http\Controllers\Admin\Api\BienTheKichThuocController::class);

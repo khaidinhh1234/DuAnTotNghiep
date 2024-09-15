@@ -126,6 +126,11 @@ class DanhMucController extends Controller
         try {
             DB::beginTransaction();
             $danhMuc = DanhMuc::findOrFail($id);
+
+            if ($danhMuc->children()->count() > 0) {
+                return response()->json(['error' => 'Không thể xóa danh mục này vì vẫn còn danh mục con.']);
+            }
+
             $danhMuc->delete();
             DB::commit();
             return response()->json(
