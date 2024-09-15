@@ -35,17 +35,17 @@ class DatabaseSeeder extends Seeder
 //            ]);
 //        }
 
-        for ($i = 1; $i < 10; $i++) {
-            \App\Models\DanhMuc::query()->create([
-                'ten_danh_muc' => 'Danh mục ' . $i,
-            ]);
-        }
+        // for ($i = 1; $i < 10; $i++) {
+        //     \App\Models\DanhMuc::query()->create([
+        //         'ten_danh_muc' => 'Danh mục ' . $i,
+        //     ]);
+        // }
 
-        for ($i = 1; $i < 10; $i++) {
-            \App\Models\The::query()->create([
-                'ten_the' => 'Thẻ ' . $i,
-            ]);
-        }
+        // for ($i = 1; $i < 10; $i++) {
+        //     \App\Models\The::query()->create([
+        //         'ten_the' => 'Thẻ ' . $i,
+        //     ]);
+        // }
 
     }
 }

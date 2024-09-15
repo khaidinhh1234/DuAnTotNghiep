@@ -19,4 +19,25 @@ class DonHang extends Model
     const TTDH_DGH = 'Đang giao hàng';
     const TTDH_DGTC = 'Đã giao hàng thành công';
     const TTDH_DH = 'Đã hủy hàng';
+    const TTDH_CTT = 'Chờ thanh toán ';
+
+    protected $fillable = [
+        'user_id',
+        'ghi_chu',
+        'trang_thai_don_hang',
+        'phuong_thuc_thanh_toan',
+        'tong_tien_don_hang',
+        'ten_nguoi_dat_hang',
+        'so_dien_thoai_nguoi_dat_hang',
+        'dia_chi_nguoi_dat_hang',
+        'ma_giam_gia',
+        'so_tien_giam_gia',
+        'trang_thai_thanh_toan'
+    ];
+
+    // Relationship with DonHangChiTiet
+    public function chiTiets()
+    {
+        return $this->hasMany(DonHangChiTiet::class);
+    }
 }

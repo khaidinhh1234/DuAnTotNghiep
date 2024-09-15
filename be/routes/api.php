@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
+use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TaiKhoanController;
 use App\Http\Controllers\Admin\Api\TheController;
@@ -84,3 +85,8 @@ Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDa
 Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan']);
 Route::apiResource('taikhoan', TaiKhoanController::class);
 
+// Đơn hàng
+Route::get('/donhang', [DonHangController::class, 'index']);
+Route::get('/donhang/{id}', action: [DonHangController::class, 'show']);
+Route::put('/donhang/{id}/trang-thai-thanh-toan', action: [DonHangController::class, 'updatePaymentStatus']);
+Route::put('/donhang/{id}/trang-thai-don-hang', action: [DonHangController::class, 'capNhatTrangThaiDonHang']);
