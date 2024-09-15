@@ -74,6 +74,10 @@
             margin-bottom: 15px;
         }
 
+        .content a {
+            color: #fff;
+        }
+
         .cta-button {
             display: block;
             background: #ed4b4d;
@@ -124,7 +128,8 @@
             <p>Chúng tôi đã nhận được yêu cầu đổi mật khẩu của bạn. Vui lòng sử dụng liên kết dưới đây để tạo mật khẩu
                 mới:</p>
 
-            <a class="cta-button" href="{{ 'http://localhost:5173/changePassword?token=' . $token }}">Đặt lại mật khẩu</a>
+            <a class="cta-button" href="{{ 'http://localhost:5173/changePassword?token=' . $token }}">Đặt lại mật
+                khẩu</a>
 
             <p>Nếu bạn không yêu cầu đổi mật khẩu, vui lòng bỏ qua email này.</p>
         </div>
