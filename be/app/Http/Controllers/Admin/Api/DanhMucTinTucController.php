@@ -119,6 +119,11 @@ class DanhMucTinTucController extends Controller
         try {
             DB::beginTransaction();
             $danhMucTinTuc = DanhMucTinTuc::findOrFail($id);
+
+            if ($danhMucTinTuc->tinTuc()->count() > 0) {
+                return response()->json(['error' => 'Không thể xóa danh mục này vì vẫn còn tin tức.']);
+            }
+
             $danhMucTinTuc->delete();
             DB::commit();
             return response()->json(
