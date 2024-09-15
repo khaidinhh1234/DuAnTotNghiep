@@ -24,7 +24,8 @@ class SendMailForgotPassword implements ShouldQueue
     {
         $email = $event->email;
         $token = $event->token;
-        Mail::send('emails.password-reset', compact('token'), function ($message) use ($email) {
+        $name = $event->name;
+        Mail::send('emails.password-reset', compact('token', 'name'), function ($message) use ($email) {
             $message->to($email);
             $message->subject('Thông báo đặt lại mật khẩu');
         });

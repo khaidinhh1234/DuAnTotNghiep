@@ -21,7 +21,7 @@ class ForgotPasswordController extends Controller
         // Tạo token reset
         $token = Str::random(60);
         $user = User::query()->where('email', $request->email)->first();
-
+        $name = implode(" ", [$user->ho, $user->ten]);
         if ($user) {
             // Xóa token cũ và thêm token mới vào bảng password_reset_tokens
             DB::table('password_reset_tokens')->where('email', $user->email)->delete();
@@ -33,12 +33,13 @@ class ForgotPasswordController extends Controller
             ]);
 
             // Gửi email với link reset
-            event(new SendMail($user->email, $token));
+            event(new SendMail($user->email, $name, $token));
 
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Liên kết quên mật khẩu được gửi đến email của bạn.'
+                'message' => 'Liên kết quên mật khẩu được gửi đến email của bạn.',
+                'data' => $name
             ], 200);
         }
         return response()->json([
