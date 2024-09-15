@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -84,3 +85,8 @@ Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDa
 Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan']);
 Route::apiResource('taikhoan', TaiKhoanController::class);
 
+
+// Kích thước biến thể
+Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem']);
+Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem']);
+Route::apiResource('bienthekichthuoc', App\Http\Controllers\Admin\Api\BienTheKichThuocController::class);
