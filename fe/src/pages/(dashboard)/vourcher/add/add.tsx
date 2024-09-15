@@ -93,7 +93,7 @@ const AddVoucher = () => {
 
         <div className="flex flex-col gap-6">
           <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Tên khuyến mãi</label>
+            <label className="w-1/4 font-semibold">Mô tả khuyến mãi</label>
             <Form.Item
               name="discountType"
               initialValue=""
@@ -131,20 +131,6 @@ const AddVoucher = () => {
             </Form.Item>
           </div>
 
-          {/* <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Giảm giá với các danh mục:</label>
-            <Form.Item
-              name="categoryDiscount"
-              rules={[{ required: true, message: 'Please select a category!' }]}
-              className="mb-0 w-3/4"
-            >
-              <Select className="w-full rounded-md">
-                <Option value="All">Áo Nam</Option>
-                <Option value="All">Áo Nữ</Option>
-                <Option value="All">Quần Nam</Option>
-              </Select>
-            </Form.Item>
-          </div> */}
          <div className="flex items-center mb-4">
         <label className="w-1/4 font-semibold">
           {getSelectLabel()}
@@ -184,19 +170,6 @@ const AddVoucher = () => {
           </Select>
         </Form.Item>
       </div>
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Giảm giá với các phương thức thanh toán:</label>
-            <Form.Item
-              name="paymentDiscount"
-              rules={[{ required: true, message: 'Vui lòng chọn phương thước thanh toán!' }]}
-              className="mb-0 w-3/4"
-            >
-              <Select className="w-full rounded-md">
-                <Option value="All">Tiền mặt</Option>
-                <Option value="All">Thanh toán Momo</Option>
-              </Select>
-            </Form.Item>
-          </div>
 
           <div className="flex items-center">
             <label className="w-1/4 font-semibold">Ngày bắt đầu:</label>

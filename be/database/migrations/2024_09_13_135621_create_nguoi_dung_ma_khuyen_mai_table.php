@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('nguoi_dung_ma_khuyen_mai', function (Blueprint $table) {
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(MaKhuyenMai::class)->constrained();
+            $table->boolean('da_su_dung')->default(false);
             $table->dateTime('ngay_su_dung')->nullable();
             $table->primary(['user_id', 'ma_khuyen_mai_id']);
         });

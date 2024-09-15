@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('so_dien_thoai_dat_hang', 15);
             $table->string('so_dien_thoai_khieu_nai', 15);
-            $table->string('cau_noi')->nullable();
+            $table->text('cau_noi')->nullable();
             $table->json('banner');
             $table->string('link_facebook')->nullable();
             $table->string('link_youtube')->nullable();
