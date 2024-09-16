@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {forgotpassword} from "@/common/validations/auth";
+import { forgotpassword } from "@/common/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const ForgotPasswordForm = () => {
@@ -78,12 +78,12 @@ const ForgotPasswordForm = () => {
               Email
             </label>
             <input
-              type="email" 
-              {...register("email", {required : true})}
+              type="email"
+              {...register("email", { required: true })}
               className={`w-full p-3 border  rounded-md   ${errors.email?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
-              placeholder="robertfox@example.com"
+              placeholder="glowclothing24@example.com"
             />
-                {errors.email?.message && (
+            {errors.email?.message && (
               <p className="text-red-600">{errors.email?.message}</p>
             )}
           </div>
