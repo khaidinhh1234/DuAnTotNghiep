@@ -33,12 +33,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth:sanctum');
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 // Danh muc
