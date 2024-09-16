@@ -206,12 +206,12 @@ const ProductsRemote: React.FC = () => {
             okText="Có "
             cancelText="Không"
           >
-            <Button className=" border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-              Xóa
+            <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
+            Xóa
             </Button>
           </Popconfirm>
-          <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-            Khôi phục
+          <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
+          Khôi phục
           </Button>
         </Space>
       ),
