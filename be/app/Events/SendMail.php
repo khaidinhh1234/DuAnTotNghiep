@@ -19,10 +19,12 @@ class SendMail
      */
     public $email;
     public $token;
-    public function __construct($email, $token)
+    public $name;
+    public function __construct($email, $name, $token)
     {
         $this->token = $token;
         $this->email = $email;
+        $this->name = $name;
     }
 
     /**

@@ -57,9 +57,15 @@ class TaiKhoanController extends Controller
                 'ngay_sinh' => $request->ngay_sinh,
                 'gioi_tinh' => $request->gioi_tinh,
             ]);
-            foreach ($request->vai_tros ?? [] as $vaiTro) {
-                $vaiTro_id = VaiTro::query()->where('ten_vai_tro', $vaiTro)->pluck('id');
-                $taiKhoan->vaiTros()->attach($vaiTro_id);
+
+            if ($request->vai_tros == []) {
+                $member = VaiTro::query()->where('ten_vai_tro', 'member')->pluck('id');
+                $taiKhoan->vaiTros()->attach($member);
+            } else {
+                foreach ($request->vai_tros ?? [] as $vaiTro) {
+                    $vaiTro_id = VaiTro::query()->where('ten_vai_tro', $vaiTro)->pluck('id');
+                    $taiKhoan->vaiTros()->attach($vaiTro_id);
+                }
             }
             DB::commit();
             return response()->json([
