@@ -59,11 +59,19 @@ class AuthController extends Controller
     // Đăng xuất người dùng
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => 'Đăng xuất thành công'
-        ], 200);
+        if ($request->user()->tokens()) {
+            $request->user()->tokens()->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Đăng xuất thành công'
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'Đăng xuất thất bại'
+            ], 400);
+        }
     }
 }
