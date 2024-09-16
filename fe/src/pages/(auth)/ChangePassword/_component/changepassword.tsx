@@ -17,16 +17,19 @@ const Change = () => {
   const token = queryParams.get("token");
   // console.log(token);
   const nav = useNavigate();
-  const { register, handleSubmit,     formState: { errors },
-} = useForm<IUser>({
-  resolver: zodResolver(changePassword),
-});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IUser>({
+    resolver: zodResolver(changePassword),
+  });
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
       try {
         const res = await instance.post("/reset-password", user);
         console.log(res);
-        if (res.data.satatusText === "OK") {
+        if (res.data.status) {
           toast.success(res.data.message);
           setTimeout(() => {
             nav(`/login`);
@@ -38,7 +41,7 @@ const Change = () => {
           return false;
         }
       } catch (error: any) {
-        console.log(error.response.data.message);
+        // toast.error(error.response.data.message);
         toast.error("Đổi mật khẩu thất bại");
       }
     },
@@ -111,8 +114,8 @@ const Change = () => {
               className={`w-full p-3 border  rounded-md   ${errors.password?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
               placeholder="••••••••••••••••"
             />
-          {errors.password && (
-              <p className="text-red-600">{errors.password.message}</p>
+            {errors.password && (
+              <p className="text-red-600 my-1">{errors.password.message}</p>
             )}
           </div>
           <div className="mb-6">
@@ -121,16 +124,16 @@ const Change = () => {
             </label>
             <input
               type="password"
-              {...register("password_confirmation", {required: true})}
+              {...register("password_confirmation", { required: true })}
               className={`w-full p-3 border  rounded-md   ${errors.password_confirmation?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
               placeholder="••••••••••••••••"
             />
-       {errors.password_confirmation && (
-              <p className="text-red-600">
+            {errors.password_confirmation && (
+              <p className="text-red-600 my-1">
                 {errors.password_confirmation.message}
               </p>
             )}
-            </div>
+          </div>
           {/* <ReCAPTCHA
             ref={recaptchaRef}
             sitekey="6LeZ7DsqAAAAAFQ4zz5W8jQ9DzNxF6MDRLr4QWBB"
