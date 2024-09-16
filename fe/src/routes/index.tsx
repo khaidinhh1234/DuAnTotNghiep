@@ -66,6 +66,7 @@ import UsersRemote from "@/pages/(dashboard)/user/nhanvien/remote/page";
 import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
 import UsersAdminNhanvien from "@/pages/(dashboard)/user/nhanvien/page";
 import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
+import ErrorAuth from "@/pages/(auth)/ErrorAuth/changepassword";
 
 const Router = () => {
   return (
@@ -153,6 +154,7 @@ const Router = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/EnterOtp" element={<OTPPage />} />
+        <Route path="/error" element={<ErrorAuth />} />
         <Route path="/changePassword" element={<ChangePassword />} />
         <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />{" "}
       </Routes>
