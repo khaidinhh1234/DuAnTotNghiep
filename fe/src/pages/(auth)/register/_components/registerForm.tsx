@@ -51,8 +51,8 @@ const SignupForm = () => {
         <h2 className="text-3xl font-bold mb-2 text-center">
           Tạo Tài Khoản Mới
         </h2>
-        <p className="text-gray-600 mb-6 text-xs text-center my-5">
-          Trở thành thành viên GLOW <br />
+        <p className="text-gray-600 mt-1 mb-6 text-xs text-center my-5">
+          Trở thành thành viên Glow Clothing <br />
           <span>để nhận nhiều những chương trình ưu đãi hấp dẫn,</span>
         </p>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -63,12 +63,12 @@ const SignupForm = () => {
               </label>
               <input
                 type="text"
-                className={`w-full p-3 border  rounded-md    ${errors.ten?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
-                placeholder="Robert"
-                {...register("ten", { required: true })}
+                className={`w-full p-3 border  rounded-md   ${errors.ho?.message ? "border-red-600 mt-1 placeholder-red-400" : "border-gray-300"}`}
+                placeholder="Nhập họ của bạn"
+                {...register("ho", { required: true })}
               />
               {errors.ten && (
-                <p className="text-red-600">{errors.ten.message}</p>
+                <p className="text-red-600 mt-1">{errors.ho?.message}</p>
               )}
             </div>
             <div className="mb-4">
@@ -77,11 +77,13 @@ const SignupForm = () => {
               </label>
               <input
                 type="text"
-                className={`w-full p-3 border  rounded-md   ${errors.ho?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
-                placeholder="Fox"
-                {...register("ho", { required: true })}
+                className={`w-full p-3 border  rounded-md    ${errors.ten?.message ? "border-red-600 mt-1 placeholder-red-400" : "border-gray-300"}`}
+                placeholder="Nhập tên của bạn"
+                {...register("ten", { required: true })}
               />
-              {errors.ho && <p className="text-red-600">{errors.ho.message}</p>}
+              {errors.ho && (
+                <p className="text-red-600 mt-1">{errors.ten?.message}</p>
+              )}
             </div>
           </div>
           <div className="mb-4">
@@ -90,12 +92,12 @@ const SignupForm = () => {
             </label>
             <input
               type="email"
-              className={`w-full p-3 border  rounded-md   ${errors.email?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
-              placeholder="robertfox@example.com"
+              className={`w-full p-3 border  rounded-md   ${errors.email?.message ? "border-red-600 mt-1 placeholder-red-400" : "border-gray-300"}`}
+              placeholder="glowclothing24@example.com"
               {...register("email", { required: true })}
             />
             {errors.email && (
-              <p className="text-red-600">{errors.email.message}</p>
+              <p className="text-red-600 mt-1">{errors.email.message}</p>
             )}
           </div>
           <div className="mb-6">
@@ -104,12 +106,12 @@ const SignupForm = () => {
             </label>
             <input
               type="password"
-              className={`w-full p-3 border  rounded-md   ${errors.password?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
+              className={`w-full p-3 border  rounded-md   ${errors.password?.message ? "border-red-600 mt-1 placeholder-red-400" : "border-gray-300"}`}
               placeholder="••••••••••••••••"
               {...register("password")}
             />
             {errors.password && (
-              <p className="text-red-600">{errors.password.message}</p>
+              <p className="text-red-600 mt-1">{errors.password.message}</p>
             )}
           </div>
           <div className="mb-6">
@@ -118,12 +120,12 @@ const SignupForm = () => {
             </label>
             <input
               type="password"
-              className={`w-full p-3 border  rounded-md   ${errors.password_confirmation?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
+              className={`w-full p-3 border  rounded-md   ${errors.password_confirmation?.message ? "border-red-600 mt-1 placeholder-red-400" : "border-gray-300"}`}
               placeholder="••••••••••••••••"
               {...register("password_confirmation", { required: true })}
             />
             {errors.password_confirmation && (
-              <p className="text-red-600">
+              <p className="text-red-600 mt-1">
                 {errors.password_confirmation.message}
               </p>
             )}
@@ -135,7 +137,7 @@ const SignupForm = () => {
               {...register("checkboxs")}
             />
 
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 mt-1">
               Tôi đồng ý với{" "}
               <span className="font-semibold">Điều khoản & Điều kiện</span>
             </span>

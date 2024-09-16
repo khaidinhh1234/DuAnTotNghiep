@@ -52,9 +52,13 @@ const menu = [
     icon: ShoppingCart,
   },
   {
-    name: "Người dùng",
+    name: "Tài khoản",
     path: "users",
     icon: Users,
+    subMenu: [
+      { name: "Khách hàng", path: "users/khachhang" },
+      { name: "Nhân viên ", path: "users/nhanvien" },
+    ],
   },
   {
     name: "Hỗ Trợ khách hàng",
@@ -97,8 +101,8 @@ const menu = [
 ];
 
 const SlidebarProduct = () => {
-  const location = useLocation(); 
-  const [openMenu, setOpenMenu] = useState<number | null>(null); 
+  const location = useLocation();
+  const [openMenu, setOpenMenu] = useState<number | null>(null);
 
   useEffect(() => {
     // Duyệt qua menu để xem có submenu nào chứa đường dẫn hiện tại
@@ -108,20 +112,20 @@ const SlidebarProduct = () => {
           location.pathname.includes(subItem.path)
         );
         if (isCurrentSubmenu) {
-          setOpenMenu(index); 
+          setOpenMenu(index);
         }
       }
     });
   }, [location.pathname]);
 
   const toggleSubMenu = (index: any) => {
-    setOpenMenu(openMenu === index ? null : index); 
+    setOpenMenu(openMenu === index ? null : index);
   };
 
   return (
-    <div className="hidden border-r bg-muted/40 md:block bg-[#f3f2f2]">
-      <div className="flex h-full max-h-screen flex-col gap-2 m-5 rounded-xl border bg-white">
-        <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+    <div className=" border-r bg-muted/40 md:block bg-[#f3f2f2] h-auto">
+      <div className="flex  max-h-fit flex-col gap-2 m-5 rounded-xl border bg-white ">
+        <div className="flex h-14 items-center border-b px-4  lg:px-6">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <Package2 className="h-6 w-6" />
             <span className="">GLOW</span>
@@ -175,7 +179,7 @@ const SlidebarProduct = () => {
             </div>
           ))}
         </div>
-        <div className="mt-auto p-4">
+        <div className="mt-auto p-4  ">
           <Card x-chunk="dashboard-02-chunk-0">
             <CardHeader className="p-2 pt-0 md:p-4">
               <CardTitle>Upgrade to Pro</CardTitle>

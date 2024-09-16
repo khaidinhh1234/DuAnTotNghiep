@@ -29,7 +29,7 @@ import ProductsAdmin from "@/pages/(dashboard)/products/page";
 import AnalyticsAdmin from "@/pages/(dashboard)/analytics/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import OrderAdmin from "@/pages/(dashboard)/order/page";
-import UserAdmin from "@/pages/(dashboard)/user/page";
+
 import VoucherAdmin from "@/pages/(dashboard)/vourcher/page";
 
 import Suportuser from "@/pages/(dashboard)/suportuser/suportuser";
@@ -61,6 +61,11 @@ import AddVoucher from "@/pages/(dashboard)/vourcher/add/add";
 import Cart from "@/pages/(website)/cart/Cart";
 import ChangePassword from "@/pages/(auth)/ChangePassword/changepassword";
 import SheetSide from "@/pages/(website)/test";
+import UsersAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
+import UsersRemote from "@/pages/(dashboard)/user/nhanvien/remote/page";
+import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
+import UsersAdminNhanvien from "@/pages/(dashboard)/user/nhanvien/page";
+import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
 
 const Router = () => {
   return (
@@ -98,6 +103,7 @@ const Router = () => {
         {/* TRang admin */}
         <Route path="admin" element={<LayoutAdmin />}>
           <Route path="dashboard" element={<Dashboard />} />
+          {/* Sản phẩm  */}
           <Route
             path="products"
             element={<Navigate to="/admin/products/list" />}
@@ -106,14 +112,26 @@ const Router = () => {
           <Route path="products/add" element={<ProductsAdd />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
-
+          {/* danh mục */}
           <Route path="categories" element={<CategoriesAdmin />} />
           <Route path="categories/add" element={<CategoriesAdd />} />
           <Route path="categories/edit/:id" element={<CategoriesEdit />} />
           <Route path="categories/remote" element={<CategoriesRemote />} />
           <Route path="orders" element={<OrderAdmin />} />
           <Route path="vouchers" element={<VoucherAdmin />} />
-          <Route path="users" element={<UserAdmin />} />
+          {/* Tài khoản */}
+          <Route
+            path="users"
+            element={<Navigate to="/admin/users/khachhang" />}
+          />
+          <Route path="users/khachhang" element={<UsersAdminkhachhang />} />
+          <Route path="users/khachhang/add" element={<UserskhachhangAdd />} />
+          <Route path="users/remote" element={<UsersRemote />} />
+
+          <Route path="users/nhanvien" element={<UsersAdminNhanvien />} />
+          <Route path="users/add" element={<UsersAdd />} />
+          <Route path="users/remote" element={<UsersRemote />} />
+
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
 
