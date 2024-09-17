@@ -5,7 +5,6 @@ import LayoutWebsite from "@/pages/(website)/layout";
 import { Route, Routes } from "react-router-dom";
 import PageOur from "../pages/(website)/ourstory/pageOur";
 import Page from "./../pages/(website)/shop/shop";
-
 import ScrollToTop from "@/assets/js/scrolltotop";
 import Contact from "@/pages/(website)/contact/Contact";
 import ManageAddresses from "@/pages/(website)/manageaddresses/ManageAddresses";
@@ -20,20 +19,14 @@ import Payment from "@/pages/(website)/payment/PayMent";
 import SavedCard from "@/pages/(website)/savedcards/SavedCard";
 import Setting from "@/pages/(website)/settings/Setting";
 import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
-
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
 import Voucher from "@/pages/(website)/vourcher/page";
-
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
-
 import AnalyticsAdmin from "@/pages/(dashboard)/analytics/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import OrderAdmin from "@/pages/(dashboard)/order/page";
-
 import VoucherAdmin from "@/pages/(dashboard)/vourcher/page";
-
 import Suportuser from "@/pages/(dashboard)/suportuser/suportuser";
-
 import CategoriesAdd from "@/pages/(dashboard)/categories/add/page";
 import CategoriesEdit from "@/pages/(dashboard)/categories/edit/page";
 import CategoriesAdmin from "@/pages/(dashboard)/categories/page";
@@ -42,7 +35,6 @@ import ProductsAdd from "@/pages/(dashboard)/products/add/page";
 import ProductsEdit from "@/pages/(dashboard)/products/edit/page";
 import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
 import { Navigate } from "react-router";
-
 import OTPPage from "@/pages/(auth)/EnterOTP/EntOtp";
 import ForgotPassword from "@/pages/(auth)/ForgotPassword/ForgotPassword";
 import Login from "@/pages/(auth)/login/login";
@@ -61,12 +53,16 @@ import AddVoucher from "@/pages/(dashboard)/vourcher/add/add";
 import Cart from "@/pages/(website)/cart/Cart";
 import ChangePassword from "@/pages/(auth)/ChangePassword/changepassword";
 import SheetSide from "@/pages/(website)/test";
-import UsersAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
-import UsersRemote from "@/pages/(dashboard)/user/nhanvien/remote/page";
 import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
-import UsersAdminNhanvien from "@/pages/(dashboard)/user/nhanvien/page";
 import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
-
+import ErrorAuth from "@/pages/(auth)/ErrorAuth/changepassword";
+import UserskhachhangEdit from "@/pages/(dashboard)/user/khachhang/edit/page";
+import UsersAdminNhanvien from "@/pages/(dashboard)/user/nhanvien/page";
+import UsersNhanvienAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
+import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
+import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
+import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
+import { Navigation } from "swiper/modules";
 const Router = () => {
   return (
     <>
@@ -126,11 +122,26 @@ const Router = () => {
           />
           <Route path="users/khachhang" element={<UsersAdminkhachhang />} />
           <Route path="users/khachhang/add" element={<UserskhachhangAdd />} />
-          <Route path="users/remote" element={<UsersRemote />} />
+          <Route
+            path="users/khachhang/edit/:id"
+            element={<UserskhachhangEdit />}
+          />
+
+          <Route
+            path="users/khachhang/remote"
+            element={<UserskhachangRemote />}
+          />
 
           <Route path="users/nhanvien" element={<UsersAdminNhanvien />} />
-          <Route path="users/add" element={<UsersAdd />} />
-          <Route path="users/remote" element={<UsersRemote />} />
+          <Route path="users/nhanvien/add" element={<UsersNhanvienAdd />} />
+          <Route
+            path="users/nhanvien/edit/:id"
+            element={<UsersnhanvienEdit />}
+          />
+          <Route
+            path="users/nhanvien/remote"
+            element={<UsersRemoteNhanvien />}
+          />
 
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
@@ -139,12 +150,22 @@ const Router = () => {
 
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          <Route path="userprivileges" element={<UserPrivilegeAdmin />} />
-          <Route path="privilegeadmin" element={<PagePrivilegeAdmin />} />
+          <Route
+            path="ADmin"
+            element={<Navigate to="/admin/ADmin/privilegeadmin" />}
+          />
+
+          <Route path="ADmin/userprivileges" element={<UserPrivilegeAdmin />} />
+
+          <Route path="ADmin/privilegeadmin" element={<PagePrivilegeAdmin />} />
           <Route path="add-admin" element={<PageAddAdmin />} />
           <Route path="add-permission" element={<PageAddPermission />} />
-          <Route path="qlfooter" element={<Content />} />
-          <Route path="qlbanner" element={<BannerManagement />} />
+          <Route
+            path="Content"
+            element={<Navigate to="/admin/Content/qlfooter" />}
+          />
+          <Route path="Content/qlfooter" element={<Content />} />
+          <Route path="Content/qlbanner" element={<BannerManagement />} />
           <Route path="add-vocher" element={<AddVoucher />} />
 
           <Route path="*" element={<NotFoundPage />} />
@@ -153,6 +174,7 @@ const Router = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/EnterOtp" element={<OTPPage />} />
+        <Route path="/error" element={<ErrorAuth />} />
         <Route path="/changePassword" element={<ChangePassword />} />
         <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />{" "}
       </Routes>
