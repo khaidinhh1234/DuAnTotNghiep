@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
+use App\Http\Controllers\Admin\Api\BienTheMauSacController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -100,3 +101,8 @@ Route::put('/donhang/{id}/trang-thai-don-hang', action: [DonHangController::clas
 Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem']);
 Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem']);
 Route::apiResource('bienthekichthuoc', App\Http\Controllers\Admin\Api\BienTheKichThuocController::class);
+
+// Màu sắc biến thể
+Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem']);
+Route::post('bienthemausac/thung-rac/{id}', [BienTheMauSacController::class, 'khoiPhucXoaMem']);
+Route::apiResource('bienthemausac', App\Http\Controllers\Admin\Api\BienTheMauSacController::class);
