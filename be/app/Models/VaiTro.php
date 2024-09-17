@@ -14,11 +14,11 @@ class VaiTro extends Model
         'mo_ta',
     ];
 
-    public function user()
+    public function users()
     {
         return $this->belongsToMany(User::class, "vai_tro_tai_khoan", "vai_tro_id", "user_id");
     }
-    public function quyen()
+    public function quyens()
     {
         return $this->belongsToMany(Quyen::class, "quyen_vai_tro", "vai_tro_id", "quyen_id");
     }

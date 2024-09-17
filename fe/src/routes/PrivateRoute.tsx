@@ -1,14 +1,28 @@
+import instance from "@/configs/axios";
 import { type ReactElement } from "react";
 import { Navigate } from "react-router";
 
 interface Props {
-    children: ReactElement;
+  children: ReactElement;
 }
 
 const PrivateRoute: React.FC<Props> = ({ children }) => {
-    // Replace with your auth condition
-    const isAuthenticated = true;
-    return isAuthenticated ? children : <Navigate to="/" />;
+  instance.interceptors.request.use(
+    (config) => {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const token = user.access_token;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  // Replace with your auth condition
+  const isAuthenticated = !!localStorage.getItem("user");
+  return isAuthenticated ? children : <Navigate to="/" />;
 };
 
 export default PrivateRoute;

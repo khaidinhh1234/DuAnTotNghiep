@@ -36,7 +36,7 @@ import bannervoucher from "@/assets/images/voucher/bannervoucher.png";
 import imglogin2 from "@/assets/images/lognin/login2.png";
 import imglogin3 from "@/assets/images/lognin/login3.png";
 import imglogin4 from "@/assets/images/lognin/login4.png";
-
+import time from "@/assets/images/lognin/time.png";
 export {
   banner1,
   banner6,
@@ -75,4 +75,5 @@ export {
   imglogin2,
   imglogin3,
   imglogin4,
+  time,
 };

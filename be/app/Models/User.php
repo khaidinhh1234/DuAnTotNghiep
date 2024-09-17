@@ -19,9 +19,9 @@ class User extends Authenticatable
      * @var array<int, string>
      */
 
-    const TYPE_NAM = 'Nam';
-    const TYPE_NU = 'Nữ';
-    const TYPE_KHAC = 'Khác';
+    const TYPE_NAM = 1;
+    const TYPE_NU = 2;
+    const TYPE_KHAC = 0;
     protected $fillable = [
         'ho',
         'ten',

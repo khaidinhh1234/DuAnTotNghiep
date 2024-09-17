@@ -1,10 +1,14 @@
 import { logo } from "@/assets/img";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal } from "antd";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-const { Search } = Input;
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 const Header = () => {
+  const [user] = useLocalStorage("user", {});
+  const member = user.user;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
@@ -198,15 +202,96 @@ const Header = () => {
                   </i>
                 </a>
               </span>
-              <Link to="/login">
-                <button
-                  className={`${
-                    menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                  } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
-                >
-                  Đăng nhập
-                </button>
-              </Link>
+              {member ? (
+                <>
+                  <Avatar className="relative">
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <div
+                    className="absolute top-20 w-60 h-auto p-3 rounded-lg shadow-lg
+                   bg-white border"
+                  >
+                    <ul>
+                      <li className="mb-1">
+                        <a
+                          href=""
+                          className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
+                        >
+                          <img
+                            src="https://github.com/shadcn.png"
+                            alt=""
+                            className="w-[30px] h-[30px] rounded-full"
+                          />
+                          <h6 className="font-semibold mx-2 text-lg ">
+                            {" "}
+                            {member.ten + " " + member.ho}
+                          </h6>
+                        </a>
+                      </li>
+                      <hr />
+                      <li className="my-1">
+                        <a
+                          href="admin/dashboard"
+                          className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+                        >
+                          <img
+                            src="https://github.com/shadcn.png"
+                            alt=""
+                            className="w-[30px] h-[30px] rounded-full"
+                          />
+                          <h6 className="font-semibold mx-2 text-lg ">
+                            Quản trị
+                          </h6>
+                        </a>
+                      </li>
+                      <li className="my-1">
+                        <a
+                          href=""
+                          className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+                        >
+                          <img
+                            src="https://github.com/shadcn.png"
+                            alt=""
+                            className="w-[30px] h-[30px] rounded-full"
+                          />
+                          <h6 className="font-semibold mx-2 text-lg ">
+                            Cài đặt
+                          </h6>
+                        </a>
+                      </li>
+                      <li className="mb-2">
+                        <a
+                          href=""
+                          className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+                        >
+                          <img
+                            src="https://github.com/shadcn.png"
+                            alt=""
+                            className="w-[30px] h-[30px] rounded-full"
+                          />
+                          <h6 className="font-semibold mx-2 text-lg ">
+                            Đăng xuất
+                          </h6>
+                        </a>
+                      </li>
+                    </ul>
+                    <p className="text-[12px] p-2">
+                      Quyền riêng tư · Điều khoản · © 2024
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <Link to="/login">
+                  <button
+                    className={`${
+                      menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                    } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
+                  >
+                    Đăng nhập
+                  </button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

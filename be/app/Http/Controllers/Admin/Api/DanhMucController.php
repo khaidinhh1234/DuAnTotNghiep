@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\DanhMuc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 
@@ -47,9 +49,16 @@ class DanhMucController extends Controller
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
                 'cha_id' => 'nullable',
+                'anh_danh_muc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'duong_dan' => 'nullable',
 
             ]);
+
+            if ($request->hasFile('anh_danh_muc')) {
+                $pathFile = $request->file('anh_danh_muc')->store('danh_mucs', 'public');
+                $validateDanhMuc['anh_danh_muc'] = Storage::url($pathFile);
+            }
+
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc = DanhMuc::create($validateDanhMuc);
             DB::commit();
@@ -73,12 +82,30 @@ class DanhMucController extends Controller
         }
     }
 
+
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        try {
+            // Tìm danh mục theo ID hoặc trả về lỗi 404 nếu không tìm thấy
+            $danhMuc = DanhMuc::with('parent')->findOrFail($id);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $danhMuc,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -91,10 +118,23 @@ class DanhMucController extends Controller
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs,ten_danh_muc,' . $id . '|max:255',
                 'cha_id' => 'nullable',
+                'anh_danh_muc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'duong_dan' => 'nullable',
 
             ]);
+
             $danhMuc = DanhMuc::findOrFail($id);
+
+            if ($request->hasFile('anh_danh_muc')) {
+                if ($danhMuc->anh_danh_muc) {
+                    Storage::delete('public/' . basename($danhMuc->anh_danh_muc));
+                }
+                $pathFile = $request->file('anh_danh_muc')->store('danh_mucs', 'public');
+                $validateDanhMuc['anh_danh_muc'] = Storage::url($pathFile);
+            } else {
+                $validateDanhMuc['anh_danh_muc'] = $danhMuc->anh_danh_muc;
+            }
+
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc->update($validateDanhMuc);
             DB::commit();
@@ -127,12 +167,23 @@ class DanhMucController extends Controller
             DB::beginTransaction();
             $danhMuc = DanhMuc::findOrFail($id);
 
-            if ($danhMuc->children()->count() > 0) {
-                return response()->json(['error' => 'Không thể xóa danh mục này vì vẫn còn danh mục con.']);
+            if ($danhMuc->children()->exists()) {
+                return response()->json(['error' => 'Không thể xóa danh mục này vì vẫn còn danh mục con.'], 422);
+            }
+
+            // Kiểm tra và xóa file ảnh nếu có
+            if ($danhMuc->anh_danh_muc) {
+                $fileName = basename($danhMuc->anh_danh_muc);
+                $filePath = public_path('storage/danh_mucs/' . $fileName);
+
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                } else {
+                    Log::error('File không tồn tại: ' . $filePath);
+                }
             }
 
             $danhMuc->delete();
-            DB::commit();
             return response()->json(
                 [
                     'status' => true,
@@ -142,7 +193,6 @@ class DanhMucController extends Controller
                 200
             );
         } catch (\Exception $exception) {
-            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -151,6 +201,7 @@ class DanhMucController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Display a listing of trashed resources.

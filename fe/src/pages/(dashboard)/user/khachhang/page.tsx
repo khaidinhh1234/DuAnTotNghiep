@@ -1,13 +1,13 @@
-import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { useLocalStorage } from "@/components/hook/useStoratge";
+import instance from "@/configs/axios";
+import { SearchOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, Popconfirm, Space, Spin, Table } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import instance from "@/configs/axios";
-import { Tag } from "antd";
 
 interface DataType {
   key: React.Key;
@@ -67,11 +67,11 @@ const UsersAdminkhachhang: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/taikhoan");
+      const res = await instance.get("/admin/taikhoan");
       return res.data;
     },
   });
-  // (data?.data);
+
   const user = data?.data.map((item: any, index: number) => {
     return { ...item, key: item.id, index: index };
   });
@@ -170,7 +170,7 @@ const UsersAdminkhachhang: React.FC = () => {
   const columns: TableColumnsType<DataType> = [
     {
       title: "STT",
-      render: (record, index) => <span>{record.index + 1}</span>,
+      render: (record) => <span>{record.index + 1}</span>,
       key: "key",
       className: "pl-5",
     },
@@ -257,28 +257,7 @@ const UsersAdminkhachhang: React.FC = () => {
       ...getColumnSearchProps("ngay_sinh"),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-    {
-      title: "Vai trò",
-      render: (record) =>
-        record.vai_tros ? (
-          <div>
-            <Tag color="#11998e" className="rounded-xl font-bold">
-              Quản trị viên
-            </Tag>
-            <Tag color="#6a82fb" className="rounded-xl font-bold">
-              Nhân viên
-            </Tag>
-            <Tag color="#800080" className="rounded-xl font-bold">
-              Khách hàng
-            </Tag>
-          </div>
-        ) : (
-          "Chưa có dữ liệu"
-        ),
-      key: "vai_tros",
-      width: "15%",
-      sorter: (a: any, b: any) => a.vai_tros.length - b.vai_tros.length,
-    },
+
     {
       title: "Quản trị",
       key: "action",
@@ -294,7 +273,7 @@ const UsersAdminkhachhang: React.FC = () => {
               Chặn
             </Button>
           </Popconfirm>
-          <Link to={`/admin/products/edit/${record.key}`}>
+          <Link to={`/admin/users/khachhang/edit/${record.key}`}>
             <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
               Chỉnh sửa
             </Button>
@@ -305,16 +284,16 @@ const UsersAdminkhachhang: React.FC = () => {
   ];
   const [searchText, setSearchText] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchText(e.target.value);
+  // };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      console.log(searchText);
-      // Thực hiện hành động tìm kiếm tại đây
-    }
-  };
+  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter") {
+  //     console.log(searchText);
+  //     // Thực hiện hành động tìm kiếm tại đây
+  //   }
+  // };
 
   // const products = [...data].reverse();
   isError && <div>Đã xảy ra lỗi</div>;
@@ -327,7 +306,7 @@ const UsersAdminkhachhang: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className=" font-semibold md:text-3xl">Tài khoản </h1>
+        <h1 className=" font-semibold md:text-3xl">Tài khoản Khách hàng</h1>
         <div className="flex">
           {" "}
           <Link to="/admin/users/khachhang/add" className="mr-1">
@@ -336,7 +315,7 @@ const UsersAdminkhachhang: React.FC = () => {
               Thêm
             </Button>
           </Link>
-          <Link to="/admin/users/remote">
+          <Link to="/admin/users/khachhang/remote">
             <Button className="ml-auto bg-black text-white rounded-lg  py-1">
               {/* <DeleteOutlined className="mr-1" /> */}
               Chặn
@@ -345,15 +324,6 @@ const UsersAdminkhachhang: React.FC = () => {
         </div>
       </div>
       <div className=" ">
-        <div className="max-w-xs my-2">
-          <Input
-            placeholder="Tìm kiếm..."
-            size="large"
-            value={searchText}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
         <Table columns={columns} dataSource={user} />
       </div>
     </main>
