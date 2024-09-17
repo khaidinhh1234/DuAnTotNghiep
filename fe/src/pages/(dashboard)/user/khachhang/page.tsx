@@ -1,3 +1,6 @@
+
+import { useLocalStorage } from "@/components/hook/useStoratge";
+
 import instance from "@/configs/axios";
 import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
@@ -66,11 +69,11 @@ const UsersAdminkhachhang: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/taikhoan");
+      const res = await instance.get("/admin/taikhoan");
       return res.data;
     },
   });
-  // (data?.data);
+
   const user = data?.data.map((item: any, index: number) => {
     return { ...item, key: item.id, index: index };
   });

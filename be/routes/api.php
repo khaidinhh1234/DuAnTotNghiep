@@ -110,8 +110,10 @@ Route::middleware(['auth:sanctum', 'auth.checkrole'])
         Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');;
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class);
 
+
         // Màu sắc biến thể
         Route::get('bienthemausac/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem']);
         Route::post('bienthemausac/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem']);
         Route::apiResource('bienthemausac', BienTheKichThuocController::class);
+
     });
