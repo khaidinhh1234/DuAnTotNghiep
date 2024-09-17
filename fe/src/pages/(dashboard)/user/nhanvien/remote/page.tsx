@@ -63,7 +63,7 @@ type DataIndex = keyof DataType;
 //   },
 // ];
 
-const UsersRemote: React.FC = () => {
+const UsersRemoteNhanvien: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
@@ -306,7 +306,7 @@ const UsersRemote: React.FC = () => {
         <h1 className=" font-semibold md:text-3xl">Chặn tài khoản</h1>
         <div>
           {" "}
-          <Link to="/admin/users" className="mr-1">
+          <Link to="/admin/users/nhanvien" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg  py-1">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Quay lại
@@ -330,4 +330,4 @@ const UsersRemote: React.FC = () => {
   );
 };
 
-export default UsersRemote;
+export default UsersRemoteNhanvien;

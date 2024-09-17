@@ -1,13 +1,12 @@
-import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import instance from "@/configs/axios";
+import { SearchOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table } from "antd";
+import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import instance from "@/configs/axios";
-import { Tag } from "antd";
 
 interface DataType {
   key: React.Key;
@@ -72,8 +71,8 @@ const UsersAdminNhanvien: React.FC = () => {
     },
   });
   // (data?.data);
-  const user = data?.data.map((item: any) => {
-    return { ...item, key: item.id };
+  const user = data?.data.map((item: any, index: number) => {
+    return { ...item, key: item.id, index: index };
   });
 
   // const users = user.reverse();
@@ -170,19 +169,26 @@ const UsersAdminNhanvien: React.FC = () => {
   const columns: TableColumnsType<DataType> = [
     {
       title: "STT",
-      dataIndex: "key",
+      render: (record) => <span>{record.index + 1}</span>,
       key: "key",
       className: "pl-5",
     },
     {
       title: "Ảnh người dùng",
-      render: (record) => (
-        <img
-          src={record.anh_nguoi_dung}
-          alt=""
-          className="w-20 h-20 object-cover rounded-lg p-2 border"
-        />
-      ),
+      render: (record) =>
+        record.anh_nguoi_dung ? (
+          <Image
+            src={record.anh_nguoi_dung}
+            alt=""
+            className="w-20 h-20 object-cover rounded-lg p-2 border"
+          />
+        ) : (
+          <img
+            src="https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
+            alt=""
+            className="w-20 h-20 object-cover rounded-lg p-2 border"
+          />
+        ),
       className: "pl-10",
       width: "15%",
       key: "anh_nguoi_dung",
@@ -194,6 +200,7 @@ const UsersAdminNhanvien: React.FC = () => {
       width: "5%",
       ...getColumnSearchProps("ten"),
       sorter: (a: any, b: any) => a.ten.length - b.ten.length,
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Họ",
@@ -202,8 +209,8 @@ const UsersAdminNhanvien: React.FC = () => {
       width: "5%",
       ...getColumnSearchProps("ho"),
       sorter: (a: any, b: any) => a.ho.length - b.ho.length,
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-
     {
       title: "Email",
       dataIndex: "email",
@@ -211,6 +218,7 @@ const UsersAdminNhanvien: React.FC = () => {
       width: "20%",
       ...getColumnSearchProps("email"),
       sorter: (a: any, b: any) => a.email.length - b.email.length,
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Số điện thoại",
@@ -218,7 +226,9 @@ const UsersAdminNhanvien: React.FC = () => {
       key: "so_dien_thoai",
       width: "15%",
       ...getColumnSearchProps("so_dien_thoai"),
-      sorter: (a: any, b: any) => a.so_dien_thoai - b.so_dien_thoai,
+      sorter: (a: any, b: any) =>
+        a.so_dien_thoai.length - b.so_dien_thoai.length,
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Địa chỉ",
@@ -227,6 +237,7 @@ const UsersAdminNhanvien: React.FC = () => {
       width: "20%",
       ...getColumnSearchProps("dia_chi"),
       sorter: (a: any, b: any) => a.dia_chi.length - b.dia_chi.length,
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Giới tính",
@@ -235,35 +246,36 @@ const UsersAdminNhanvien: React.FC = () => {
       width: "10%",
       ...getColumnSearchProps("gioi_tinh"),
       sorter: (a: any, b: any) => a.gioi_tinh.length - b.gioi_tinh.length,
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Ngày sinh",
       dataIndex: "ngay_sinh",
       key: "ngay_sinh",
       width: "15%",
-
       ...getColumnSearchProps("ngay_sinh"),
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Vai trò",
-      render: (record) => (
-        // console.log(record),
-        <div>
-          {" "}
-          {/* <Tag color="#11998e" className="rounded-xl font-bold">
-            Quản trị viên
-          </Tag> */}
-          <Tag color="#6a82fb" className="rounded-xl font-bold">
-            Nhân viên
-          </Tag>
-          {/* <Tag color="#800080" className="rounded-xl font-bold">
-            Khách hàng
-          </Tag> */}
-        </div>
-      ),
+      render: (record) =>
+        record.vai_tros ? (
+          <div>
+            <Tag color="#11998e" className="rounded-xl font-bold">
+              Quản trị viên
+            </Tag>
+            <Tag color="#6a82fb" className="rounded-xl font-bold">
+              Nhân viên
+            </Tag>
+            <Tag color="#800080" className="rounded-xl font-bold">
+              Khách hàng
+            </Tag>
+          </div>
+        ) : (
+          "Chưa có dữ liệu"
+        ),
       key: "vai_tros",
       width: "15%",
-      // ...getColumnSearchProps("vai_tros"),
       sorter: (a: any, b: any) => a.vai_tros.length - b.vai_tros.length,
     },
     {
@@ -281,7 +293,7 @@ const UsersAdminNhanvien: React.FC = () => {
               Chặn
             </Button>
           </Popconfirm>
-          <Link to={`/admin/products/edit/${record.key}`}>
+          <Link to={`/admin/users/nhanvien/edit/${record.key}`}>
             <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
               Chỉnh sửa
             </Button>
@@ -292,16 +304,16 @@ const UsersAdminNhanvien: React.FC = () => {
   ];
   const [searchText, setSearchText] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
+  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setSearchText(e.target.value);
+  // };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      console.log(searchText);
-      // Thực hiện hành động tìm kiếm tại đây
-    }
-  };
+  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter") {
+  //     console.log(searchText);
+  //     // Thực hiện hành động tìm kiếm tại đây
+  //   }
+  // };
 
   // const products = [...data].reverse();
   isError && <div>Đã xảy ra lỗi</div>;
@@ -310,21 +322,20 @@ const UsersAdminNhanvien: React.FC = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className=" md:text-base">
-          Quản trị /{" "}
-          <span className="font-semibold px-px=">Tài khoản nhân viên</span>{" "}
+          Quản trị / <span className="font-semibold px-px=">Tài khoản </span>{" "}
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className=" font-semibold md:text-3xl">Tài khoản nhân viên</h1>
-        <div>
+        <h1 className=" font-semibold md:text-3xl">Tài khoản Nhân Viên</h1>
+        <div className="flex">
           {" "}
-          <Link to="/admin/users/add" className="mr-1">
+          <Link to="/admin/users/nhanvien/add" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg  py-1">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm
             </Button>
           </Link>
-          <Link to="/admin/users/remote">
+          <Link to="/admin/users/nhanvien/remote">
             <Button className="ml-auto bg-black text-white rounded-lg  py-1">
               {/* <DeleteOutlined className="mr-1" /> */}
               Chặn
@@ -333,16 +344,7 @@ const UsersAdminNhanvien: React.FC = () => {
         </div>
       </div>
       <div className=" ">
-        <div className="max-w-xs my-2">
-          <Input
-            placeholder="Tìm kiếm..."
-            size="large"
-            value={searchText}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-        <Table columns={columns} dataSource={user} />;
+        <Table columns={columns} dataSource={user} />
       </div>
     </main>
   );
