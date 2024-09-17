@@ -69,8 +69,8 @@ const CategoriesAdmin: React.FC = () => {
     },
   });
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error: {isError.message}</p>;
+  // if (isLoading) return <p>Loading...</p>; 
+  // if (isError) return <p>Error: {isError.message}</p>;
 
   const handleSearch = (
     selectedKeys: string[],
