@@ -18,7 +18,7 @@ class VaiTroController extends Controller
     public function index()
     {
         try {
-            $data = VaiTro::query()->with('quyen')->orderByDesc('id')->get();
+            $data = VaiTro::query()->with('quyens')->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
