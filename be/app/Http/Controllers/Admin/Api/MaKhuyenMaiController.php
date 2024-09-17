@@ -16,7 +16,7 @@ class MaKhuyenMaiController extends Controller
     public function index()
     {
         try {
-            $data = MaKhuyenMai::query()->with('sanPhams')->orderByDesc('id')->get();
+            $data = MaKhuyenMai::query()->with(['sanPhams','hangThanhViens'])->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -49,6 +49,7 @@ class MaKhuyenMaiController extends Controller
             'chi_tieu_thoi_thieu' => 'nullable|numeric',
             'tong_giam_gia_toi_da'=> 'nullable|numeric',
             'khuyen_mai_san_pham' => 'nullable|array',
+            'hang_thanh_vien'     => 'required|array'
         ]);
 
         if ($validator->fails()) {
@@ -65,7 +66,7 @@ class MaKhuyenMaiController extends Controller
                 $dataKhuyenMaiSanPham = $sanPhamIds;  // Gán toàn bộ sản phẩm vào khuyến mãi
             }
             $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
-
+            $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -90,7 +91,7 @@ class MaKhuyenMaiController extends Controller
     public function show(string $id)
     {
         try {
-            $maKhuyenMai = MaKhuyenMai::query()->with('sanPhams')->findOrFail($id);
+            $maKhuyenMai = MaKhuyenMai::query()->with(['sanPhams','hangThanhViens'])->findOrFail($id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -123,6 +124,7 @@ class MaKhuyenMaiController extends Controller
             'chi_tieu_thoi_thieu' => 'nullable|numeric',
             'tong_giam_gia_toi_da'=> 'nullable|numeric',
             'khuyen_mai_san_pham' => 'nullable|array',  // Cho phép null hoặc mảng
+            'hang_thanh_vien'     => 'required|array'
         ]);
 
         if ($validator->fails()) {
@@ -143,7 +145,7 @@ class MaKhuyenMaiController extends Controller
             }
 
             $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
-
+            $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
             DB::commit();
             return response()->json([
                 'status' => true,

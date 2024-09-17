@@ -19,6 +19,11 @@ class BienTheSanPham extends Model
         'ngay_bat_dau_khuyen_mai',
         'ngay_ket_thuc_khuyen_mai',
     ];
+
+    protected $dates = [
+        'ngay_bat_dau_khuyen_mai',
+        'ngay_ket_thuc_khuyen_mai',
+    ];
     public function sanPham()
     {
         return $this->belongsTo(SanPham::class);
