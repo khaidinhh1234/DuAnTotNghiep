@@ -164,7 +164,7 @@ const CategoriesAdmin: React.FC = () => {
     },
     {
       title: "Tên danh mục",
-      width: "15%",
+      width: "25%",
       key: "ten_danh_muc",
       dataIndex: "ten_danh_muc",
       ...getColumnSearchProps("ten_danh_muc"),
@@ -172,13 +172,13 @@ const CategoriesAdmin: React.FC = () => {
     },
     {
       title: "Đường dẫn",
-      width: "15%",
+      width: "25%",
       key: "duong_dan",
       dataIndex: "duong_dan",
     },
     {
       title: "Danh mục cha",
-      width: "15%",
+      width: "25%",
       key: "cha_id",
       dataIndex: "cha_id",
       render: (text: string) => categoriesMap.get(text) || "không có",
@@ -223,7 +223,7 @@ const CategoriesAdmin: React.FC = () => {
           Quản trị / <span className="font-semibold px-px">Danh mục</span>
         </h1>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Danh mục</h1>
         <div>
           <Link to="/admin/categories/add" className="mr-1">
@@ -240,8 +240,15 @@ const CategoriesAdmin: React.FC = () => {
           </Link>
         </div>
       </div>
-      <div className="max-w-4xl">
-        <Table columns={columns} dataSource={dataSource} />
+      <div className="flex">
+        <div className="w-1/2 pr-2">
+          <h2 className="text-xl font-semibold mb-4">Danh mục cha</h2>
+          <Table columns={columns} dataSource={dataSource.filter(category => !category.cha_id)} />
+        </div>
+        <div className="w-1/2 pl-2">
+          <h2 className="text-xl font-semibold mb-4">Danh mục con</h2>
+          <Table columns={columns} dataSource={dataSource.filter(category => category.cha_id)} />
+        </div>
       </div>
     </main>
   );
