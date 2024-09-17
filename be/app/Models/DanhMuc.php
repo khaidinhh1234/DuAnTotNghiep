@@ -12,7 +12,8 @@ class DanhMuc extends Model
     protected $fillable = [
         'cha_id',
         'ten_danh_muc',
-        'duong_dan'
+        'duong_dan',
+        'anh_danh_muc'
     ];
     public function parent() {
         return $this->belongsTo(DanhMuc::class, 'cha_id');
