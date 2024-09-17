@@ -18,6 +18,7 @@ class DanhmucSeeder extends Seeder
             DB::table('danh_mucs')->insert([
                 'ten_danh_muc' => 'Danh mục ' . $i,
                 'cha_id' => $i > 1 ? rand(1, $i - 1) : null, // Random cha_id cho các danh mục từ 2 trở đi
+                'anh_danh_muc' => 'https://example.com/image' . $i . '.jpg', // Thêm đường dẫn ảnh mẫu
                 'duong_dan' => Str::slug('Danh mục ' . $i),
                 'created_at' => now(),
                 'updated_at' => now(),

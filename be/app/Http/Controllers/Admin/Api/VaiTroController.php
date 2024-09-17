@@ -18,7 +18,7 @@ class VaiTroController extends Controller
     public function index()
     {
         try {
-            $data = VaiTro::query()->with('quyen')->orderByDesc('id')->get();
+            $data = VaiTro::query()->with('quyens')->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -77,7 +77,7 @@ class VaiTroController extends Controller
     public function show(string $id)
     {
         try {
-            $vaiTro = VaiTro::query()->with('quyen')->findOrFail($id);
+            $vaiTro = VaiTro::query()->with('quyens')->findOrFail($id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -102,7 +102,7 @@ class VaiTroController extends Controller
         try {
             DB::beginTransaction();
             $quyen_id = [];
-            $vaiTro = VaiTro::query()->with('quyen')->findOrFail($id);
+            $vaiTro = VaiTro::query()->with('quyens')->findOrFail($id);
             $vaiTro->update([
                 'ten_vai_tro' => $request->ten_vai_tro,
                 'mo_ta' => $request->mo_ta

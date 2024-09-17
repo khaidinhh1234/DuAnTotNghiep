@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
-use App\Http\Controllers\Admin\Api\BienTheMauSacController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -16,6 +15,7 @@ use App\Http\Controllers\Client\Api\Auth\AuthController;
 use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
+use App\Models\VaiTro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,7 +33,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
-});
+    // $users = $request->user()->vaiTros;
+    // foreach ($users as $user) {
+    //     $vaiTro = VaiTro::query()->where('ten_vai_tro', $user->ten_vai_tro)->with('quyens')->first();
+    //     $tenQuyen = $vaiTro->quyens->pluck('ten_quyen');
+    // }
+    // return $tenQuyen;
+})->name('user');
 
 // Auth
 Route::post('/register', [AuthController::class, 'register']);
@@ -45,64 +51,67 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
-// Danh muc
-Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa']);
-Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc']);
-Route::apiResource('danhmuc', DanhMucController::class);
+Route::middleware(['auth:sanctum', 'auth.checkrole'])
+    ->prefix('admin')
+    ->group(function () {
+        // Danh muc
+        Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa'])->name('danhmuc.thungrac');
+        Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc'])->name('danhmuc.khoiphuc');
+        Route::apiResource('danhmuc', DanhMucController::class);
 
-// Sản phẩm
-Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa']);
-Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham']);
-Route::apiResource('sanpham', SanPhamController::class);
+        // Sản phẩm
+        Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
+        Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
+        Route::apiResource('sanpham', SanPhamController::class);
 
-// Thẻ
-Route::get('the/thung-rac', [TheController::class, 'danhSachTheDaXoa']);
-Route::post('the/thung-rac/{id}', [TheController::class, 'khoiPhucThe']);
-Route::apiResource('the', TheController::class);
-
-
-//Vai trò
-Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa']);
-Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro']);
-Route::apiResource('vaitro', VaiTroController::class);
-
-// Thông tin website
-Route::get('thong-tin-web', [ThongTinWebController::class, 'index']);
-Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate']);
-
-//Danh Mục Tin Tức
-Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa']);
-Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucTinTuc']);
-Route::apiResource('danhmuctintuc', DanhMucTinTucController::class);
-
-//Tin Tức
-Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa']);
-Route::post('tintuc/thung-rac/{id}', [TinTucController::class, 'khoiPhucTinTuc']);
-Route::apiResource('tintuc', TinTucController::class);
-
-// Mã khuyến mãi
-Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa']);
-Route::post('makhuyenmai/thung-rac/{id}', [MaKhuyenMaiController::class, 'khoiPhucMaKhuyenMai']);
-Route::apiResource('makhuyenmai', App\Http\Controllers\Admin\Api\MaKhuyenMaiController::class);
-
-// Tài khoản
-Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa']);
-Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan']);
-Route::apiResource('taikhoan', TaiKhoanController::class);
-
-// Đơn hàng
-Route::get('/donhang', [DonHangController::class, 'index']);
-Route::get('/donhang/{id}', action: [DonHangController::class, 'show']);
-Route::put('/donhang/{id}/trang-thai-thanh-toan', action: [DonHangController::class, 'updatePaymentStatus']);
-Route::put('/donhang/{id}/trang-thai-don-hang', action: [DonHangController::class, 'capNhatTrangThaiDonHang']);
+        // Thẻ
+        Route::get('the/thung-rac', [TheController::class, 'danhSachTheDaXoa'])->name('the.thungrac');
+        Route::post('the/thung-rac/{id}', [TheController::class, 'khoiPhucThe'])->name('the.khoiphuc');
+        Route::apiResource('the', TheController::class);
 
 
-// Kích thước biến thể
-Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem']);
-Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem']);
-Route::apiResource('bienthekichthuoc', App\Http\Controllers\Admin\Api\BienTheKichThuocController::class);
+        //Vai trò
+        Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
+        Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
+        Route::apiResource('vaitro', VaiTroController::class);
 
-// Màu sắc biến thể
-Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem']);
-Route::post('bienthemausac/thung-rac/{id}', [BienTheMauSacController::class, 'khoiPhucXoaMem']);
-Route::apiResource('bienthemausac', App\Http\Controllers\Admin\Api\BienTheMauSacController::class);
+        // Thông tin website
+        Route::get('thong-tin-web', [ThongTinWebController::class, 'index'])->name('thongtinweb.index');
+        Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate'])->name('thongtinweb.update');
+
+        //Danh Mục Tin Tức
+        Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
+        Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucTinTuc'])->name('danhmuctintuc.khoiphuc');
+        Route::apiResource('danhmuctintuc', DanhMucTinTucController::class);
+
+        //Tin Tức
+        Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa'])->name('tintuc.thungrac');
+        Route::post('tintuc/thung-rac/{id}', [TinTucController::class, 'khoiPhucTinTuc'])->name('tintuc.khoiphuc');
+        Route::apiResource('tintuc', TinTucController::class);
+
+        // Mã khuyến mãi
+        Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa'])->name('makhuyenmai.thungrac');
+        Route::post('makhuyenmai/thung-rac/{id}', [MaKhuyenMaiController::class, 'khoiPhucMaKhuyenMai'])->name('mathungrac.khoiphuc');
+        Route::apiResource('makhuyenmai', MaKhuyenMaiController::class);
+
+        // Tài khoản
+        Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');;
+        Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');;
+        Route::apiResource('taikhoan', TaiKhoanController::class);
+
+        // Đơn hàng
+        Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
+        Route::get('/donhang/{id}',  [DonHangController::class, 'show'])->name('donhang.show');
+        Route::put('/donhang/{id}/trang-thai-thanh-toan',  [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
+        Route::put('/donhang/{id}/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
+
+        // Kích thước biến thể
+        Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');;
+        Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');;
+        Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class);
+
+        // Màu sắc biến thể
+        Route::get('bienthemausac/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem']);
+        Route::post('bienthemausac/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem']);
+        Route::apiResource('bienthemausac', BienTheKichThuocController::class);
+    });
