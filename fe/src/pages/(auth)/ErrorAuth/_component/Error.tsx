@@ -1,11 +1,5 @@
-import instance from "@/configs/axios";
-import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { changePassword } from "@/common/validations/auth";
 import { time } from "@/assets/img";
+import { Link } from "react-router-dom";
 
 type IUser = {
   password: string;
