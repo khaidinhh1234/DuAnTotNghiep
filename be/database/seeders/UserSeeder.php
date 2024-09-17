@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             DB::table('users')->insert([
                 'ho' => Str::random(5),
                 'ten' => Str::random(5),
-                'anh_nguoi_dung' => null,
+                'anh_nguoi_dung' => 'https://example.com/image' . $i . '.jpg', // Thêm đường dẫn ảnh mẫu
                 'email' => 'user' . $i . '@example.com',
                 'email_verified_at' => Carbon::now(),
                 'password' => bcrypt('password'),
