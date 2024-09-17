@@ -23,26 +23,26 @@ const UserskhachhangAdd = () => {
   const mutate = useMutation({
     mutationFn: async (data) => {
       try {
-        const res = await instance.post("/taikhoan", data);
+        const res = await instance.post("/admin/taikhoan", data);
         return res.data;
-      } catch (error) {
-        throw error;
+      } catch (error: any) {
+        console.log(error.response.data.error.email);
+        message.open({
+          type: "error",
+          content:
+            error?.response?.data?.message || error.response.data.error.email,
+        });
       }
     },
-    onSuccess: () => {
-      message.open({
-        type: "success",
-        content: "Thêm tài khoản khách hàng thành công",
-      });
-      nav("/admin/users/khachhang");
-
+    onSuccess: (data) => {
+      if (data) {
+        message.open({
+          type: "success",
+          content: "Thêm tài khoản khách hàng thành công",
+        });
+        nav("/admin/users/khachhang");
+      }
       // form.resetFields();
-    },
-    onError: (error: any) => {
-      message.open({
-        type: "error",
-        content: error?.response?.data?.message || "Có lỗi xảy ra",
-      });
     },
   });
   const [isPending] = useState(false);
@@ -52,9 +52,10 @@ const UserskhachhangAdd = () => {
       ngay_sinh: values.ngay_sinh
         ? (values.ngay_sinh as any).format("YYYY-MM-DD")
         : undefined,
-      gioi_tinh: "nam",
+      // gioi_tinh: "nam",
     };
     mutate.mutate(data as any);
+    console.log(data);
   };
   // const onChange: DatePickerProps["onChange"] = (dateString) => {
   //   console.log(dateString);
@@ -151,19 +152,19 @@ const UserskhachhangAdd = () => {
                 >
                   <Radio.Group className="flex ">
                     <Radio
-                      value={1}
+                      value="1"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Nam
                     </Radio>
                     <Radio
-                      value={2}
+                      value="2"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Nữ
                     </Radio>
                     <Radio
-                      value={3}
+                      value="0"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Khác...
