@@ -1,21 +1,12 @@
 import { Loading3QuartersOutlined } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  DatePickerProps,
-  Form,
-  Input,
-  message,
-  Radio,
-} from "antd";
-import viVN from "antd/es/date-picker/locale/vi_VN";
+import { Button, DatePicker, Form, Input, message, Radio } from "antd";
 
-import { useState } from "react";
 import { FormProps } from "antd";
+import { useState } from "react";
 
-import { Link, useNavigate, useNavigation } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import instance from "@/configs/axios";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
 type FieldType = {
   ho?: string;
   ten?: string;
@@ -27,7 +18,7 @@ type FieldType = {
   ngay_sinh?: string;
 };
 const UserskhachhangAdd = () => {
-  const [messageApi, contextHolder] = message.useMessage();
+  // const [messageApi, contextHolder] = message.useMessage();
   const nav = useNavigate();
   const mutate = useMutation({
     mutationFn: async (data) => {
@@ -38,7 +29,7 @@ const UserskhachhangAdd = () => {
         throw error;
       }
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       message.open({
         type: "success",
         content: "Thêm tài khoản khách hàng thành công",
@@ -54,7 +45,7 @@ const UserskhachhangAdd = () => {
       });
     },
   });
-  const [isPending, setIsPending] = useState(false);
+  const [isPending] = useState(false);
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const data = {
       ...values,
@@ -87,7 +78,7 @@ const UserskhachhangAdd = () => {
         </h1>
         <div>
           {" "}
-          <Link to="/admin/products/add" className="mr-1">
+          <Link to="/admin/users/khachhang" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg  py-1">
               Quay lại
             </Button>

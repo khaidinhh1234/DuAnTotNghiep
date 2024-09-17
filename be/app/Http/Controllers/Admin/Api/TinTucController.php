@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\TinTuc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -45,15 +46,15 @@ class TinTucController extends Controller
             $validateTinTuc = $request->validate([
                 'user_id' => 'required|exists:users,id',
                 'danh_muc_tin_tuc_id' => 'required|exists:danh_muc_tin_tucs,id',
-                'tieu_de' => 'required|string|max:255',
-                'anh_tin_tuc' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
+                'tieu_de' => 'required|unique:tin_tucs,tieu_de',
+                'anh_tin_tuc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'noi_dung' => 'required|string',
                 'duong_dan' => 'nullable',
             ]);
 
             if ($request->hasFile('anh_tin_tuc')) {
-                $pathFile = $request->file('anh_tin_tuc')->store('tin_tucs');
-                $validateTinTuc['anh_tin_tuc'] = $pathFile;
+                $pathFile = $request->file('anh_tin_tuc')->store('tin_tucs', 'public');
+                $validateTinTuc['anh_tin_tuc'] = Storage::url($pathFile);
             }
 
             $validateTinTuc['duong_dan'] = Str::slug($validateTinTuc['tieu_de']);
@@ -65,7 +66,7 @@ class TinTucController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Thêm mới tin tức thành công',
-                'data' => $tinTuc,
+                'data' => $validateTinTuc,
             ]);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -130,13 +131,13 @@ class TinTucController extends Controller
             }
 
             if ($request->hasFile('anh_tin_tuc')) {
-                if ($tinTuc->anh_tin_tuc && Storage::exists($tinTuc->anh_tin_tuc)) {
-                    Storage::delete($tinTuc->anh_tin_tuc);
+                if ($tinTuc->anh_danh_muc) {
+                    Storage::delete('public/' . basename($tinTuc->anh_tin_tuc));
                 }
-                $pathFile = $request->file('anh_tin_tuc')->store('tin_tucs');
-                $validateTinTuc['anh_tin_tuc'] = $pathFile;
+                $pathFile = $request->file('anh_tin_tuc')->store('tin_tucs', 'public');
+                $validateTinTuc['anh_tin_tuc'] = Storage::url($pathFile);
             } else {
-                unset($validateTinTuc['anh_tin_tuc']);
+                $validateTinTuc['anh_tin_tuc'] = $tinTuc->anh_tin_tuc;
             }
 
             if (isset($validateTinTuc['tieu_de'])) {
@@ -174,8 +175,15 @@ class TinTucController extends Controller
             DB::beginTransaction();
             $tinTuc = TinTuc::find($id);
 
-            if ($tinTuc->anh_tin_tuc && file_exists(public_path($tinTuc->anh_tin_tuc))) {
-                unlink(public_path($tinTuc->anh_tin_tuc));
+            if ($tinTuc->anh_tin_tuc) {
+                $fileName = basename($tinTuc->anh_tin_tuc);
+                $filePath = public_path('storage/tin_tucs/' . $fileName);
+
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                } else {
+                    Log::error('File không tồn tại: ' . $filePath);
+                }
             }
 
             $tinTuc->delete();

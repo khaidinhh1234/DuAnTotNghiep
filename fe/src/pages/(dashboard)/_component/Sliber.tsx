@@ -78,19 +78,19 @@ const menu = [
   {
     name: "Admin",
     icon: CheckCircle,
-    path: "/admin",
+    path: "ADmin",
     subMenu: [
-      { name: "Quản lý admin", path: "privilegeadmin" },
-      { name: "Phân quyền", path: "userprivileges" },
+      { name: "Quản lý admin", path: "ADmin/privilegeadmin" },
+      { name: "Phân quyền", path: "ADmin/userprivileges" },
     ],
   },
   {
     name: "Nội dung",
-    path: "/admin",
+    path: "Content",
     icon: AlignJustify,
     subMenu: [
-      { name: "Footer", path: "/admin/qlfooter" },
-      { name: "Banner", path: "/admin/qlbanner" },
+      { name: "Footer", path: "Content/qlfooter" },
+      { name: "Banner", path: "Content/qlbanner" },
     ],
   },
   {

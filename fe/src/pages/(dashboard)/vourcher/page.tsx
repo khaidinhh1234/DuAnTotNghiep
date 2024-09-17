@@ -312,7 +312,7 @@ const PromotionAdmin: React.FC = () => {
             cancelText="Không"
           >
             <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
-              Xóa
+            Xóa
             </Button>
           </Popconfirm>
           <Button className="bg-white text-orange-600 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors">
@@ -360,7 +360,8 @@ const PromotionAdmin: React.FC = () => {
         <div className="flex gap-2">
           <Link to="/admin/add-vocher">
             <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
-              <PlusCircleOutlined /> Thêm khuyến mãi
+            <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
+            Thêm khuyến mãi
             </Button>
           </Link>
 
