@@ -15,9 +15,9 @@ class SanPhamSeeder extends Seeder
     public function run()
     {
         $sanPhams = [
-            ['ten_san_pham' => 'Áo thun', 'ma_san_pham' => 'AO001', 'duong_dan' => 'ao-thun', 'mo_ta_ngan' => 'Áo thun chất lượng cao'],
-            ['ten_san_pham' => 'Quần jean', 'ma_san_pham' => 'QJ001', 'duong_dan' => 'quan-jean', 'mo_ta_ngan' => 'Quần jean phong cách'],
-            ['ten_san_pham' => 'Váy dài', 'ma_san_pham' => 'VD001', 'duong_dan' => 'vay-dai', 'mo_ta_ngan' => 'Váy dài sang trọng'],
+            ['ten_san_pham' => 'Áo thun', 'ma_san_pham' => 'AO001', 'duong_dan' => 'ao-thun', 'mo_ta_ngan' => 'Áo thun chất lượng cao', 'anh_san_pham' => 'ao-thun.jpg'],
+            ['ten_san_pham' => 'Quần jean', 'ma_san_pham' => 'QJ001', 'duong_dan' => 'quan-jean', 'mo_ta_ngan' => 'Quần jean phong cách', 'anh_san_pham' => 'quan-jean.jpg'],
+            ['ten_san_pham' => 'Váy dài', 'ma_san_pham' => 'VD001', 'duong_dan' => 'vay-dai', 'mo_ta_ngan' => 'Váy dài sang trọng', 'anh_san_pham' => 'vay-dai.jpg'],
         ];
 
         foreach ($sanPhams as $sanPham) {
@@ -27,6 +27,7 @@ class SanPhamSeeder extends Seeder
                 'duong_dan' => $sanPham['duong_dan'],
                 'mo_ta_ngan' => $sanPham['mo_ta_ngan'],
                 'danh_muc_id' => DanhMuc::inRandomOrder()->first()->id,
+                'anh_san_pham' => $sanPham['anh_san_pham'],
             ]);
         }
     }

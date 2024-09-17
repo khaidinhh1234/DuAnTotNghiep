@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('ten_danh_muc')->unique();
             $table->unsignedBigInteger('cha_id')->index()->nullable();
+            $table->string(column: 'anh_danh_muc')->nullable();
             $table->string('duong_dan')->nullable();
+            $table->string('anh_danh_muc')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

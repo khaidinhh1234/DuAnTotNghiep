@@ -63,7 +63,7 @@ type DataIndex = keyof DataType;
 //   },
 // ];
 
-const UsersRemote: React.FC = () => {
+const UserskhachangRemote: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
@@ -330,4 +330,4 @@ const UsersRemote: React.FC = () => {
   );
 };
 
-export default UsersRemote;
+export default UserskhachangRemote;
