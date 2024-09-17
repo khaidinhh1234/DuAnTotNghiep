@@ -18,13 +18,13 @@ return new class extends Migration
         Schema::create('bien_the_san_phams', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(SanPham::class)->constrained();
-            $table->foreignIdFor(BienTheMauSac::class)->nullable()->constrained()->onDelete('set null');;
-            $table->foreignIdFor(BienTheKichThuoc::class)->nullable()->constrained()->onDelete('set null');;
-            $table->decimal('gia_ban', 15, 2)->nullable();
+            $table->foreignIdFor(BienTheMauSac::class)->constrained();
+            $table->foreignIdFor(BienTheKichThuoc::class)->constrained();
+            $table->decimal('gia_ban', 15, 2);
             $table->integer('so_luong_bien_the')->nullable();
             $table->decimal('gia_khuyen_mai', 15, 2)->nullable();
-            $table->timestamp('ngay_bat_dau_khuyen_mai')->nullable(); // Ngày bắt đầu khuyến mãi
-            $table->timestamp('ngay_ket_thuc_khuyen_mai')->nullable(); // Ngày kết thúc khuyến mãi
+            $table->dateTime('ngay_bat_dau_khuyen_mai')->nullable(); // Ngày bắt đầu khuyến mãi
+            $table->dateTime('ngay_ket_thuc_khuyen_mai')->nullable(); // Ngày kết thúc khuyến mãi
             $table->timestamps();
             $table->softDeletes();
         });
