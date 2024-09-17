@@ -21,14 +21,14 @@ class AuthController extends Controller
         $member = VaiTro::query()->where('ten_vai_tro', 'member')->pluck('id');
         $user->vaiTros()->attach($member);
         // Tạo token cho người dùng
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // $token = $user->createToken('auth_token')->plainTextToken;
 
         // Trả về phản hồi với token
         return response()->json([
             'status' => true,
             'status_code' => 200,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
+            // 'access_token' => $token,
+            // 'token_type' => 'Bearer',
             'user' => $user,
         ], 200);
     }

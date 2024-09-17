@@ -25,18 +25,18 @@ class UpdateTaiKhoanRequest extends FormRequest
      */
     public function rules(): array
     {
-        $user = $this->route('taikhoan');
-        $userId= $user->id;
+        // $user = $this->route('taikhoan');
+        // $userId= $user->id;
         return [
             'ho' => 'required|string|max:255',
             'ten' => 'required|string|max:255',
             'anh_nguoi_dung' => 'nullable',
-            'email' => "required|string|email|max:255|unique:users,email," . $userId,
-            'password' => 'required|string|min:6',
+            // 'email' => "required|string|email|max:255|unique:users,email," . $userId,
+            // 'password' => 'required|string|min:6',
             'so_dien_thoai' => 'nullable|string|max:15',
             'dia_chi' => 'nullable|string',
             'ngay_sinh' => 'nullable|date',
-            'gioi_tinh' => 'nullable|in:nam,nu,khac',
+            'gioi_tinh' => 'nullable|in:1,2,0',
             'vai_tros' => 'array'
         ];
     }
