@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
+use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TaiKhoanController;
 use App\Http\Controllers\Admin\Api\TheController;
@@ -32,12 +33,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth:sanctum');
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 // Danh muc
@@ -84,6 +88,12 @@ Route::apiResource('makhuyenmai', App\Http\Controllers\Admin\Api\MaKhuyenMaiCont
 Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa']);
 Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan']);
 Route::apiResource('taikhoan', TaiKhoanController::class);
+
+// Đơn hàng
+Route::get('/donhang', [DonHangController::class, 'index']);
+Route::get('/donhang/{id}', action: [DonHangController::class, 'show']);
+Route::put('/donhang/{id}/trang-thai-thanh-toan', action: [DonHangController::class, 'updatePaymentStatus']);
+Route::put('/donhang/{id}/trang-thai-don-hang', action: [DonHangController::class, 'capNhatTrangThaiDonHang']);
 
 
 // Kích thước biến thể

@@ -7,14 +7,19 @@ import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import instance from "@/configs/axios";
+import { Tag } from "antd";
+
 interface DataType {
   key: React.Key;
-  anh_san_pham: string;
-  ten_san_pham: string;
-  id_danh_muc: string;
-  gia: number; // Thay đổi từ luot_xem thành gia
-  mo_ta_ngan: string;
-  noi_dung: string;
+  anh_nguoi_dung: string;
+  ho: string;
+  ten: string;
+  email: string;
+  so_dien_thoai: string;
+  dia_chi: string;
+  gioi_tinh: string;
+  ngay_sinh: Date;
+  vai_tros: string;
 }
 
 type DataIndex = keyof DataType;
@@ -22,50 +27,60 @@ type DataIndex = keyof DataType;
 // const data: DataType[] = [
 //   {
 //     key: "1",
-//     anh_san_pham: "https://picsum.photos/id/10/300/300",
-//     ten_san_pham: "John abc",
-//     gia: 100000, // Thay đổi từ luot_xem thành gia
-//     id_danh_muc: "áo sơ mi",
-//     mo_ta_ngan: "New York No. 1 Lake Park",
-//     noi_dung:
-//       "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
+//     anh_nguoi_dung: "https://picsum.photos/id/10/300/300",
+//     ho: "Nguyen",
+//     ten: "Van A",
+//     email: "vana@example.com",
+//     so_dien_thoai: "0123456789",
+//     dia_chi: "123 Main St",
+//     gioi_tinh: "Nam",
+//     ngay_sinh: "1990-01-01",
+//     vai_tros: "Admin",
 //   },
 //   {
 //     key: "2",
-//     anh_san_pham: "https://picsum.photos/id/10/300/300",
-//     ten_san_pham: "Jim Green",
-//     gia: 200000, // Thay đổi từ luot_xem thành gia
-//     id_danh_muc: "quần dài",
-//     mo_ta_ngan: "London No. 1 Lake Park",
-//     noi_dung:
-//       "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
+//     anh_nguoi_dung: "https://picsum.photos/id/11/300/300",
+//     ho: "Tran",
+//     ten: "Thi B",
+//     email: "thib@example.com",
+//     so_dien_thoai: "0987654321",
+//     dia_chi: "456 Elm St",
+//     gioi_tinh: "Nu",
+//     ngay_sinh: "1992-02-02",
+//     vai_tros: "User",
 //   },
 //   {
 //     key: "3",
-//     anh_san_pham: "https://picsum.photos/id/10/300/300",
-//     ten_san_pham: "Joe Black",
-//     gia: 300000, // Thay đổi từ luot_xem thành gia
-//     id_danh_muc: "quần đùi",
-//     mo_ta_ngan: "Sidney No. 1 Lake Park",
-//     noi_dung:
-//       "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
+//     anh_nguoi_dung: "https://picsum.photos/id/12/300/300",
+//     ho: "Le",
+//     ten: "Van C",
+//     email: "vanc@example.com",
+//     so_dien_thoai: "0112233445",
+//     dia_chi: "789 Oak St",
+//     gioi_tinh: "Nam",
+//     ngay_sinh: "1988-03-03",
+//     vai_tros: "Moderator",
 //   },
 // ];
 
-const ProductsAdmin: React.FC = () => {
-  const [searchedColumn, setSearchedColumn] = useState("");
-  const [searchText, setSearchText] = useState("");
-  const searchInput = useRef<InputRef>(null);
+const UsersAdminNhanvien: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["sanpham"],
+    queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/sanpham");
+      const res = await instance.get("/taikhoan");
       return res.data;
     },
   });
-  const sanpham = data?.data.map((item: any, index: number) => {
-    return { ...item, key: item.id, index: index };
+  // (data?.data);
+  const user = data?.data.map((item: any) => {
+    return { ...item, key: item.id };
   });
+
+  // const users = user.reverse();
+
+  // const [searchText, setSearchText] = useState
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const searchInput = useRef<InputRef>(null);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -155,57 +170,101 @@ const ProductsAdmin: React.FC = () => {
   const columns: TableColumnsType<DataType> = [
     {
       title: "STT",
-      key: "stt",
-      render: (text, record, index) => index + 1,
-      width: "7%",
+      dataIndex: "key",
+      key: "key",
+      className: "pl-5",
     },
     {
-      title: "Ảnh sản phẩm",
+      title: "Ảnh người dùng",
       render: (record) => (
         <img
-          src={record.anh_san_pham}
+          src={record.anh_nguoi_dung}
           alt=""
-          className="w-20 h-20 object-cover rounded-lg p-2 border "
+          className="w-20 h-20 object-cover rounded-lg p-2 border"
         />
       ),
       className: "pl-10",
       width: "15%",
-      key: "anh_san_pham",
+      key: "anh_nguoi_dung",
     },
     {
-      title: "Tên sản phẩm",
-      dataIndex: "ten_san_pham",
-      key: "ten_san_pham",
+      title: "Tên",
+      dataIndex: "ten",
+      key: "ten",
+      width: "5%",
+      ...getColumnSearchProps("ten"),
+      sorter: (a: any, b: any) => a.ten.length - b.ten.length,
+    },
+    {
+      title: "Họ",
+      dataIndex: "ho",
+      key: "ho",
+      width: "5%",
+      ...getColumnSearchProps("ho"),
+      sorter: (a: any, b: any) => a.ho.length - b.ho.length,
+    },
+
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      width: "20%",
+      ...getColumnSearchProps("email"),
+      sorter: (a: any, b: any) => a.email.length - b.email.length,
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "so_dien_thoai",
+      key: "so_dien_thoai",
       width: "15%",
-      ...getColumnSearchProps("ten_san_pham"),
-      sorter: (a: any, b: any) => a.ten_san_pham.length - b.ten_san_pham.length,
+      ...getColumnSearchProps("so_dien_thoai"),
+      sorter: (a: any, b: any) => a.so_dien_thoai - b.so_dien_thoai,
     },
     {
-      title: "Danh mục",
-      dataIndex: "id_danh_muc",
-      key: "id_danh_muc",
+      title: "Địa chỉ",
+      dataIndex: "dia_chi",
+      key: "dia_chi",
+      width: "20%",
+      ...getColumnSearchProps("dia_chi"),
+      sorter: (a: any, b: any) => a.dia_chi.length - b.dia_chi.length,
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gioi_tinh",
+      key: "gioi_tinh",
+      width: "10%",
+      ...getColumnSearchProps("gioi_tinh"),
+      sorter: (a: any, b: any) => a.gioi_tinh.length - b.gioi_tinh.length,
+    },
+    {
+      title: "Ngày sinh",
+      dataIndex: "ngay_sinh",
+      key: "ngay_sinh",
       width: "15%",
-      ...getColumnSearchProps("id_danh_muc"),
-      sorter: (e: any, c: any) => e.id_danh_muc.length - c.id_danh_muc.length,
+
+      ...getColumnSearchProps("ngay_sinh"),
     },
     {
-      title: "Giá", 
-      dataIndex: "gia",
-      width: "10%", 
-      key: "gia",
-      render: (text) => `${text.toLocaleString()} VND`, 
-    },
-    {
-      title: "Mô tả ngắn",
-      dataIndex: "mo_ta_ngan",
-      className: "10%",
-      key:  "mo_ta_ngan",
-    },
-    {
-      title: "Nội dung",
-      dataIndex: "noi_dung",
-      className: "w-96",
-      key: "noi_dung",
+      title: "Vai trò",
+      render: (record) => (
+        // console.log(record),
+        <div>
+          {" "}
+          {/* <Tag color="#11998e" className="rounded-xl font-bold">
+            Quản trị viên
+          </Tag> */}
+          <Tag color="#6a82fb" className="rounded-xl font-bold">
+            Nhân viên
+          </Tag>
+          {/* <Tag color="#800080" className="rounded-xl font-bold">
+            Khách hàng
+          </Tag> */}
+        </div>
+      ),
+      key: "vai_tros",
+      width: "15%",
+      // ...getColumnSearchProps("vai_tros"),
+      sorter: (a: any, b: any) => a.vai_tros.length - b.vai_tros.length,
     },
     {
       title: "Quản trị",
@@ -213,24 +272,25 @@ const ProductsAdmin: React.FC = () => {
       render: (_, record) => (
         <Space>
           <Popconfirm
-            title="Chuyển vào thùng rác "
+            title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
-            okText="Có "
+            okText="Có"
             cancelText="Không"
           >
-            <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors" style={{ marginRight: 5 }}>
-              Xóa
+            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+              Chặn
             </Button>
           </Popconfirm>
           <Link to={`/admin/products/edit/${record.key}`}>
-            <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors">
-              Cập nhật
+            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+              Chỉnh sửa
             </Button>
           </Link>
         </Space>
       ),
     },
   ];
+  const [searchText, setSearchText] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -242,33 +302,37 @@ const ProductsAdmin: React.FC = () => {
       // Thực hiện hành động tìm kiếm tại đây
     }
   };
+
+  // const products = [...data].reverse();
   isError && <div>Đã xảy ra lỗi</div>;
   isLoading && <div>Đang tải dữ liệu...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className=" md:text-base">
-          Quản trị / <span className="font-semibold">Sản phẩm</span>
+          Quản trị /{" "}
+          <span className="font-semibold px-px=">Tài khoản nhân viên</span>{" "}
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Sản phẩm</h1>
-        <div className="flex gap-2">
-          <Link to="/admin/products/add" className="mr-1">
-            <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+        <h1 className=" font-semibold md:text-3xl">Tài khoản nhân viên</h1>
+        <div>
+          {" "}
+          <Link to="/admin/users/add" className="mr-1">
+            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
-              Thêm sản phẩm
+              Thêm
             </Button>
           </Link>
-          <Link to="/admin/products/remote">
-            <Button className="bg-red-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-              <DeleteOutlined className="mr-1" />
-              Thùng rác
+          <Link to="/admin/users/remote">
+            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
+              {/* <DeleteOutlined className="mr-1" /> */}
+              Chặn
             </Button>
           </Link>
         </div>
       </div>
-      <div>
+      <div className=" ">
         <div className="max-w-xs my-2">
           <Input
             placeholder="Tìm kiếm..."
@@ -278,10 +342,10 @@ const ProductsAdmin: React.FC = () => {
             onKeyDown={handleKeyDown}
           />
         </div>
-        <Table columns={columns} dataSource={sanpham} />
+        <Table columns={columns} dataSource={user} />;
       </div>
     </main>
   );
 };
 
-export default ProductsAdmin;
+export default UsersAdminNhanvien;

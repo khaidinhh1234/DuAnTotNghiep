@@ -3,11 +3,13 @@ import { loginSchema } from "@/common/validations/auth";
 import instance from "@/configs/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const LoginForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const nav = useNavigate();
   const {
     register,
@@ -47,7 +49,7 @@ const LoginForm = () => {
       <div className="w-full max-w-md p-6 md:p-8 bg-white shadow-lg rounded-lg border border-slate-100 h-auto">
         <h1 className="text-2xl font-bold mb-4 ">Chào Mừng 👋</h1>
         <p className="text-gray-600 mb-6 text-xs  my-5">
-          Thành viên GLOW <br />
+          Thành viên Glow Clothing <br />
           <span>để nhận nhiều những chương trình ưu đãi hấp dẫn,</span>
         </p>
 
@@ -59,26 +61,36 @@ const LoginForm = () => {
             <input
               type="email"
               className={`w-full p-3 border  rounded-md   ${errors.email?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
-              placeholder="robertfox@example.com"
+              placeholder="glowclothing24@example.com"
               {...register("email", { required: true })}
             />
             {errors.email?.message && (
-              <p className="text-red-600">{errors.email?.message}</p>
+              <p className="text-red-600 mt-1">{errors.email?.message}</p>
             )}
           </div>
 
-          <div className="mb-2">
+          <div className="mb-2 relative">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Mật khẩu
-            </label>
+            </label>{" "}
+            <div
+              className="absolute right-5 top-11 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <i className="fa-solid fa-eye  "></i>
+              ) : (
+                <i className="fa-solid fa-eye-slash"></i>
+              )}
+            </div>
             <input
-              type="password"
+              type={`${showPassword ? "text" : "password"}`}
               className={`w-full p-3 border  rounded-md   ${errors.email?.message ? "border-red-600 placeholder-red-400" : "border-gray-300"}`}
-              placeholder="••••••••••••••••"
+              placeholder="••••••••••••••"
               {...register("password", { required: true })}
             />
             {errors.password?.message && (
-              <p className="text-red-600">{errors.password?.message}</p>
+              <p className="text-red-600 mt-1">{errors.password?.message}</p>
             )}
           </div>
 

@@ -18,40 +18,6 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const data: DataType[] = [
-  {
-    key: "1",
-    anh_san_pham: "https://picsum.photos/id/10/300/300",
-    ten_san_pham: "John abc",
-    luot_xem: 32,
-    id_danh_muc: "áo sơ mi",
-
-    mo_ta_ngan: "New York No. 1 Lake Park",
-    noi_dung:
-      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
-  },
-  {
-    key: "2",
-    anh_san_pham: "https://picsum.photos/id/10/300/300",
-    ten_san_pham: "Jim Green",
-    id_danh_muc: "quần dài",
-    luot_xem: 42,
-    mo_ta_ngan: "London No. 1 Lake Park",
-    noi_dung:
-      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
-  },
-  {
-    key: "3",
-    anh_san_pham: "https://picsum.photos/id/10/300/300",
-    ten_san_pham: "Joe Black",
-    luot_xem: 389,
-    id_danh_muc: "quần đùi",
-    mo_ta_ngan: "Sidney No. 1 Lake Park",
-    noi_dung:
-      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
-  },
-];
-
 const ProductsRemote: React.FC = () => {
   // const [searchText, setSearchText] = useState
   const [searchedColumn, setSearchedColumn] = useState("");
