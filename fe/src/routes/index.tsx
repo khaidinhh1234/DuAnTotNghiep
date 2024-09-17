@@ -1,3 +1,4 @@
+
 import ScrollToTop from "@/assets/js/scrolltotop";
 import ChangePassword from "@/pages/(auth)/ChangePassword/changepassword";
 
@@ -14,6 +15,7 @@ import CategoriesRemote from "@/pages/(dashboard)/categories/remote/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
+
 import { Dashboard } from "@/pages/(dashboard)/dashboard/page";
 import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
@@ -35,6 +37,7 @@ import Cart from "@/pages/(website)/cart/Cart";
 import Contact from "@/pages/(website)/contact/Contact";
 import HomePage from "@/pages/(website)/home/page";
 import LayoutWebsite from "@/pages/(website)/layout";
+
 import ManageAddresses from "@/pages/(website)/manageaddresses/ManageAddresses";
 import Minicard from "@/pages/(website)/MInicard/Minicard";
 import MyOrder from "@/pages/(website)/myOrder/Myorder";
@@ -48,9 +51,11 @@ import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail
 import SavedCard from "@/pages/(website)/savedcards/SavedCard";
 import Setting from "@/pages/(website)/settings/Setting";
 import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
+
 import SheetSide from "@/pages/(website)/test";
 
 import Voucher from "@/pages/(website)/vourcher/page";
+
 import { Navigate } from "react-router";
 import { Route, Routes } from "react-router-dom";
 import PageOur from "../pages/(website)/ourstory/pageOur";
@@ -66,6 +71,7 @@ import UsersNhanvienAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
 import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
 import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
 import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
+
 
 const Router = () => {
   return (
