@@ -20,7 +20,7 @@ class ThongKeDoanhThuController extends Controller
         return response()->json(['doanh_thu' => $doanhThu], 200);
     }
 
-    public function doanhThuTheoTuan(Request $request)
+    public function doanhThuTheoTuan()
     {
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfWeek();
@@ -32,7 +32,7 @@ class ThongKeDoanhThuController extends Controller
         return response()->json(['doanh_thu' => $doanhThu], 200);
     }
 
-    public function doanhThuTheoThang(Request $request)
+    public function doanhThuTheoThang()
     {
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
@@ -44,9 +44,9 @@ class ThongKeDoanhThuController extends Controller
         return response()->json(['doanh_thu' => $doanhThu], 200);
     }
 
-    public function doanhThuTheoQuy(Request $request)
+    public function doanhThuTheoQuy()
     {
-        $currentQuarter = ceil(Carbon::now()->month / 3);
+        // $currentQuarter = ceil(Carbon::now()->month / 3);
         $startOfQuarter = Carbon::now()->firstOfQuarter();
         $endOfQuarter = Carbon::now()->lastOfQuarter();
 
@@ -57,7 +57,7 @@ class ThongKeDoanhThuController extends Controller
         return response()->json(['doanh_thu' => $doanhThu], 200);
     }
 
-    public function doanhThuTheoNam(Request $request)
+    public function doanhThuTheoNam()
     {
         $startOfYear = Carbon::now()->startOfYear();
         $endOfYear = Carbon::now()->endOfYear();

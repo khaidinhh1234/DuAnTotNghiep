@@ -113,9 +113,7 @@ Route::middleware([])
 
         // Kích thước biến thể
         Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');
-        ;
         Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');
-        ;
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class);
 
 
