@@ -65,7 +65,6 @@
       <path value="$PROJECT_DIR$/be/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/finder" />
       <path value="$PROJECT_DIR$/be/vendor/laravel/pint" />
-      <path value="$PROJECT_DIR$/be/vendor/laravel/ui" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/deprecation-contracts" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/error-handler" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/event-dispatcher-contracts" />
@@ -110,7 +109,6 @@
       <path value="$PROJECT_DIR$/be/vendor/spatie/backtrace" />
       <path value="$PROJECT_DIR$/be/vendor/vlucas/phpdotenv" />
       <path value="$PROJECT_DIR$/be/vendor/psr/event-dispatcher" />
-      <path value="$PROJECT_DIR$/be/vendor/psr/cache" />
       <path value="$PROJECT_DIR$/be/vendor/psr/http-client" />
       <path value="$PROJECT_DIR$/be/vendor/psr/http-message" />
       <path value="$PROJECT_DIR$/be/vendor/psr/http-factory" />
@@ -119,15 +117,11 @@
       <path value="$PROJECT_DIR$/be/vendor/psr/clock" />
       <path value="$PROJECT_DIR$/be/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/be/vendor/psr/log" />
-      <path value="$PROJECT_DIR$/be/vendor/doctrine/event-manager" />
       <path value="$PROJECT_DIR$/be/vendor/mockery/mockery" />
-      <path value="$PROJECT_DIR$/be/vendor/doctrine/cache" />
       <path value="$PROJECT_DIR$/be/vendor/doctrine/lexer" />
-      <path value="$PROJECT_DIR$/be/vendor/doctrine/deprecations" />
       <path value="$PROJECT_DIR$/be/vendor/fakerphp/faker" />
       <path value="$PROJECT_DIR$/be/vendor/tijsverkoyen/css-to-inline-styles" />
       <path value="$PROJECT_DIR$/be/vendor/doctrine/inflector" />
-      <path value="$PROJECT_DIR$/be/vendor/doctrine/dbal" />
       <path value="$PROJECT_DIR$/be/vendor/dflydev/dot-access-data" />
       <path value="$PROJECT_DIR$/be/vendor/dragonmantank/cron-expression" />
       <path value="$PROJECT_DIR$/be/vendor/egulias/email-validator" />
@@ -135,6 +129,10 @@
       <path value="$PROJECT_DIR$/be/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/be/vendor/ramsey/collection" />
       <path value="$PROJECT_DIR$/be/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/be/vendor/spatie/error-solutions" />
+      <path value="$PROJECT_DIR$/be/vendor/mews/captcha" />
+      <path value="$PROJECT_DIR$/be/vendor/intervention/image" />
+      <path value="$PROJECT_DIR$/be/vendor/intervention/gif" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
