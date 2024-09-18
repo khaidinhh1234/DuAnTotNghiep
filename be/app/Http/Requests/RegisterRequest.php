@@ -33,7 +33,7 @@ class RegisterRequest extends FormRequest
             'so_dien_thoai' => 'nullable|string|max:15',
             'dia_chi' => 'nullable|string',
             'ngay_sinh' => 'nullable|date',
-            'gioi_tinh' => 'nullable|in:nam,nu,khac',
+            'gioi_tinh' => 'nullable|in:1,2,3',
         ];
     }
     protected function failedValidation(ValidationValidator $validator)

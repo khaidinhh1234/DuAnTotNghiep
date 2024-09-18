@@ -1,21 +1,12 @@
 import { Loading3QuartersOutlined } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  DatePickerProps,
-  Form,
-  Input,
-  message,
-  Radio,
-} from "antd";
-import viVN from "antd/es/date-picker/locale/vi_VN";
+import { Button, DatePicker, Form, Input, message, Radio } from "antd";
 
-import { useState } from "react";
 import { FormProps } from "antd";
+import { useState } from "react";
 
-import { Link, useNavigate, useNavigation } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import instance from "@/configs/axios";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
 type FieldType = {
   ho?: string;
   ten?: string;
@@ -27,43 +18,44 @@ type FieldType = {
   ngay_sinh?: string;
 };
 const UserskhachhangAdd = () => {
-  const [messageApi, contextHolder] = message.useMessage();
+  // const [messageApi, contextHolder] = message.useMessage();
   const nav = useNavigate();
   const mutate = useMutation({
     mutationFn: async (data) => {
       try {
-        const res = await instance.post("/taikhoan", data);
+        const res = await instance.post("/admin/taikhoan", data);
         return res.data;
-      } catch (error) {
-        throw error;
+      } catch (error: any) {
+        console.log(error.response.data.error.email);
+        message.open({
+          type: "error",
+          content:
+            error?.response?.data?.message || error.response.data.error.email,
+        });
       }
     },
     onSuccess: (data) => {
-      message.open({
-        type: "success",
-        content: "Thêm tài khoản khách hàng thành công",
-      });
-      nav("/admin/users/khachhang");
-
+      if (data) {
+        message.open({
+          type: "success",
+          content: "Thêm tài khoản khách hàng thành công",
+        });
+        nav("/admin/users/khachhang");
+      }
       // form.resetFields();
     },
-    onError: (error: any) => {
-      message.open({
-        type: "error",
-        content: error?.response?.data?.message || "Có lỗi xảy ra",
-      });
-    },
   });
-  const [isPending, setIsPending] = useState(false);
+  const [isPending] = useState(false);
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const data = {
       ...values,
       ngay_sinh: values.ngay_sinh
         ? (values.ngay_sinh as any).format("YYYY-MM-DD")
         : undefined,
-      gioi_tinh: "nam",
+      // gioi_tinh: "nam",
     };
     mutate.mutate(data as any);
+    console.log(data);
   };
   // const onChange: DatePickerProps["onChange"] = (dateString) => {
   //   console.log(dateString);
@@ -87,7 +79,7 @@ const UserskhachhangAdd = () => {
         </h1>
         <div>
           {" "}
-          <Link to="/admin/products/add" className="mr-1">
+          <Link to="/admin/users/khachhang" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg  py-1">
               Quay lại
             </Button>
@@ -160,19 +152,19 @@ const UserskhachhangAdd = () => {
                 >
                   <Radio.Group className="flex ">
                     <Radio
-                      value={1}
+                      value="1"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Nam
                     </Radio>
                     <Radio
-                      value={2}
+                      value="2"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Nữ
                     </Radio>
                     <Radio
-                      value={3}
+                      value="0"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Khác...

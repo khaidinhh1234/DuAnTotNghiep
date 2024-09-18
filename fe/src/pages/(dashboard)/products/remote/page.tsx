@@ -18,40 +18,6 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const data: DataType[] = [
-  {
-    key: "1",
-    anh_san_pham: "https://picsum.photos/id/10/300/300",
-    ten_san_pham: "John abc",
-    luot_xem: 32,
-    id_danh_muc: "áo sơ mi",
-
-    mo_ta_ngan: "New York No. 1 Lake Park",
-    noi_dung:
-      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
-  },
-  {
-    key: "2",
-    anh_san_pham: "https://picsum.photos/id/10/300/300",
-    ten_san_pham: "Jim Green",
-    id_danh_muc: "quần dài",
-    luot_xem: 42,
-    mo_ta_ngan: "London No. 1 Lake Park",
-    noi_dung:
-      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
-  },
-  {
-    key: "3",
-    anh_san_pham: "https://picsum.photos/id/10/300/300",
-    ten_san_pham: "Joe Black",
-    luot_xem: 389,
-    id_danh_muc: "quần đùi",
-    mo_ta_ngan: "Sidney No. 1 Lake Park",
-    noi_dung:
-      "Nàng sẽ ngay lập tức tăng điểm nữ tính mà vẫn vô cùng thoải mái cùng chiếc áo thun này. Sản phẩm được thiết kế với cổ rộng giúp tôn lên chiếc cổ thanh mảnh cùng xương quai xanh kiểu diễm. Dáng áo croptop cũng phù hợp để hack dáng hơn khi lên đồ. ",
-  },
-];
-
 const ProductsRemote: React.FC = () => {
   // const [searchText, setSearchText] = useState
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -206,12 +172,12 @@ const ProductsRemote: React.FC = () => {
             okText="Có "
             cancelText="Không"
           >
-            <Button className=" border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-              Xóa
+            <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
+            Xóa
             </Button>
           </Popconfirm>
-          <Button className="  border bg-black  rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-            Khôi phục
+          <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
+          Khôi phục
           </Button>
         </Space>
       ),
