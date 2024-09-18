@@ -183,17 +183,17 @@
 //   );
 // };
 
-import { Tabs, Button, Form, Select, Radio, Input, Table, Upload } from "antd";
+import { Tabs, Button, Form, Select, Radio, Input, Table, Upload, Modal } from "antd";
 import { useState } from "react";
-import { Loading3QuartersOutlined, UploadOutlined } from "@ant-design/icons"; 
+import { Loading3QuartersOutlined, UploadOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import TextArea from "antd/es/input/TextArea";
 import Checkbox from "antd/es/checkbox/Checkbox";
+import { DateTime } from 'luxon';
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 
-// Ánh xạ tên màu thành mã màu hex
 const colorMapping = {
   "Đỏ": "#FF0000",
   "Xanh": "#0000FF",
@@ -210,41 +210,20 @@ const ProductsAndVariants = () => {
   const [colors, setColors] = useState(initialColors);
   const [newSize, setNewSize] = useState("");
   const [newColor, setNewColor] = useState("");
-  const [selectedOption, setSelectedOption] = useState([]);
   const [variants, setVariants] = useState([]);
-  const [fileList, setFileList] = useState([]); // Thêm state cho fileList
-  
+  const [fileList, setFileList] = useState([]);
   const [form] = Form.useForm();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalType, setModalType] = useState(null);
 
-  const handleAddOption = (option) => {
-    if (!selectedOption.includes(option)) {
-      setSelectedOption([...selectedOption, option]);
-    }
+  const handleSelectAll = (type) => {
+    form.setFieldsValue({ [type]: type === "sizes" ? sizes : colors });
   };
 
-  const handleRemoveOption = (option) => {
-    setSelectedOption(selectedOption.filter((item) => item !== option));
-  };
-
-  const handleSelectAllSizes = () => {
-    form.setFieldsValue({ sizes: sizes });
-  };
-
-  const handleSelectAllColors = () => {
-    form.setFieldsValue({ colors: colors });
-  };
-
-  const handleAddSize = () => {
-    if (newSize && !sizes.includes(newSize)) {
-      setSizes([...sizes, newSize]);
-      setNewSize("");
-    }
-  };
-
-  const handleAddColor = () => {
-    if (newColor && !colors.includes(newColor)) {
-      setColors([...colors, newColor]);
-      setNewColor("");
+  const handleAddItem = (type, newItem, setItem) => {
+    if (newItem && !itemList.includes(newItem)) {
+      setItem([...itemList, newItem]);
+      setNewItem("");
     }
   };
 
@@ -252,48 +231,60 @@ const ProductsAndVariants = () => {
     const selectedSizes = form.getFieldValue("sizes");
     const selectedColors = form.getFieldValue("colors");
 
-    let newVariants = [];
-    selectedSizes.forEach((size) => {
-      selectedColors.forEach((color) => {
-        newVariants.push({
-          size,
-          color,
-          quantity: "",
-          price: "",
-          salePrice: "",
-          startDate: "",
-          endDate: "",
-          image: [],
-        });
-      });
-    });
+    const newVariants = selectedSizes.flatMap((size) =>
+      selectedColors.map((color) => ({
+        size,
+        color,
+        quantity: "",
+        price: "",
+        salePrice: "",
+        startDate: "",
+        endDate: "",
+        image: [],
+      }))
+    );
 
     setVariants(newVariants);
   };
 
   const handleUpdateVariant = (record, field, value) => {
-    const updatedVariants = variants.map((variant) =>
-      variant === record ? { ...variant, [field]: value } : variant
+    const formattedValue = (field === "startDate" || field === "endDate") 
+      ? DateTime.fromISO(value).toISO() 
+      : value;
+
+    setVariants((prevVariants) =>
+      prevVariants.map((variant) =>
+        variant === record ? { ...variant, [field]: formattedValue } : variant
+      )
     );
-    setVariants(updatedVariants);
   };
 
   const handleImageChange = (fileList, record) => {
-    const updatedVariants = variants.map((variant) =>
-      variant === record ? { ...variant, image: fileList } : variant
+    setVariants((prevVariants) =>
+      prevVariants.map((variant) =>
+        variant === record ? { ...variant, image: fileList } : variant
+      )
     );
-    setVariants(updatedVariants);
   };
 
-  const handleUpload = ({ fileList }) => {
-    setFileList(fileList);
+  const handleUpload = ({ fileList }) => setFileList(fileList);
+
+  const handleSubmit = (values) => console.log("Form values: ", values);
+
+  const showModal = (type) => {
+    setModalType(type);
+    setIsModalVisible(true);
   };
 
-  // Thêm hàm handleSubmit
-  const handleSubmit = (values) => {
-    console.log("Form values: ", values);
-    // Xử lý logic lưu sản phẩm tại đây
-  };
+  const handleOk = () => setIsModalVisible(false);
+  const handleCancel = () => setIsModalVisible(false);
+
+  const renderInput = (record, field, placeholder) => (
+    <Input
+      placeholder={placeholder}
+      onChange={(e) => handleUpdateVariant(record, field, e.target.value)}
+    />
+  );
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -309,9 +300,7 @@ const ProductsAndVariants = () => {
             <h1 className="font-semibold md:text-3xl">Thêm sản phẩm</h1>
             <div>
               <Link to="/admin/products" className="mr-1">
-                <Button className="ml-auto bg-black text-white rounded-lg py-1">
-                  Quay lại
-                </Button>
+                <Button className="ml-auto bg-black text-white rounded-lg py-1">Quay lại</Button>
               </Link>
             </div>
           </div>
@@ -320,13 +309,13 @@ const ProductsAndVariants = () => {
               <div className="bg-white px-4 rounded-xl py-5 shadow-lg max-w-6xl mx-10">
                 <Form
                   name="product"
-                  layout={"vertical"}
+                  layout="vertical"
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 24 }}
                   style={{ maxWidth: 1000 }}
                   className="mx-10 my-5"
                   autoComplete="off"
-                  onFinish={handleSubmit} // Sửa onFinish
+                  onFinish={handleSubmit}
                 >
                   <div className="grid grid-cols-2 gap-5">
                     <Form.Item
@@ -362,9 +351,9 @@ const ProductsAndVariants = () => {
                     <Form.Item label="Ảnh nổi bật" name="feature_image">
                       <Upload
                         listType="picture"
-                        fileList={fileList} // Sử dụng state fileList
+                        fileList={fileList}
                         onChange={handleUpload}
-                        beforeUpload={() => false} // Không upload tự động
+                        beforeUpload={() => false}
                       >
                         <Button icon={<UploadOutlined />}>Upload</Button>
                       </Upload>
@@ -394,247 +383,154 @@ const ProductsAndVariants = () => {
             </div>
           </div>
         </TabPane>
-          <TabPane tab="Biến thể" key="2">
-  <div className="flex items-center justify-between">
-    <h1 className="font-semibold md:text-3xl">Thêm biến thể</h1>
-    <div>
-      <Radio.Group
-        options={[
-          { label: "Thêm Size", value: "size" },
-          { label: "Thêm Màu", value: "color" },
-        ]}
-        onChange={(e) => handleAddOption(e.target.value)}
-        optionType="button"
-        buttonStyle="solid"
-      />
-    </div>
-  </div>
 
-  <div className="bg-white px-4 py-5 max-w-6xl mx-[calc(10px-10px)] shadow-lg border-none w-[calc(100%+40px)]">
-    <Form layout={"vertical"} form={form} className="mx-10 my-5" autoComplete="off">
-      <div className="flex justify-between gap-8">
-        {selectedOption.includes("size") && (
-          <div className="mb-5 w-1/2">
-            <h2 className="font-semibold">Chọn size</h2>
-            <Form.Item label="Size" name="sizes">
-              <Select
-                mode="multiple"
-                placeholder="Chọn size"
-                className="w-full"
-                style={{ border: "none", borderRadius: "0" }}
-              >
-                {sizes.map((size) => (
-                  <Option key={size} value={size}>
-                    {size}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
+        <TabPane tab="Biến thể" key="2">
+          <div className="flex items-center justify-between">
+            <h1 className="font-semibold md:text-3xl">Thêm biến thể</h1>
+            <div>
+              <Radio.Group
+                options={[
+                  { label: "Thêm Size", value: "size" },
+                  { label: "Thêm Màu", value: "color" },
+                ]}
+                onChange={(e) => showModal(e.target.value)}
+                optionType="button"
+                buttonStyle="solid"
+              />
+            </div>
+          </div>
 
-            <div className="flex items-center gap-4">
-              <Button onClick={handleSelectAllSizes} className="bg-blue-500 text-white rounded-lg py-1">
-                Chọn tất cả size
-              </Button>
+          <div className="bg-white px-4 py-5 max-w-6xl mx-[calc(10px-10px)] shadow-lg border-none w-[calc(100%+40px)]">
+            <Form layout="vertical" form={form} className="mx-10 my-5" autoComplete="off">
+              <Table
+                dataSource={variants}
+                columns={[
+                  {
+                    title: "Màu",
+                    dataIndex: "color",
+                    key: "color",
+                    render: (color) => (
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <div
+                          style={{
+                            backgroundColor: colorMapping[color],
+                            border: "1px solid black",
+                            width: "20px",
+                            height: "20px",
+                          }}
+                        />
+                        {color}
+                      </div>
+                    ),
+                  },
+                  { title: "Size", dataIndex: "size", key: "size" },
+                  { title: "Số lượng", dataIndex: "quantity", key: "quantity", render: (text, record) => renderInput(record, "quantity", "Nhập số lượng") },
+                  { title: "Giá bán", dataIndex: "price", key: "price", render: (text, record) => renderInput(record, "price", "Nhập giá bán") },
+                  { title: "Giá giảm", dataIndex: "salePrice", key: "salePrice", render: (text, record) => renderInput(record, "salePrice", "Nhập giá giảm") },
+                  {
+                    title: "Ngày bắt đầu",
+                    dataIndex: "startDate",
+                    key: "startDate",
+                    render: (text, record) => (
+                      <Input
+                        type="date"
+                        onChange={(e) => handleUpdateVariant(record, "startDate", e.target.value)}
+                      />
+                    ),
+                  },
+                  {
+                    title: "Ngày kết thúc",
+                    dataIndex: "endDate",
+                    key: "endDate",
+                    render: (text, record) => (
+                      <Input
+                        type="date"
+                        onChange={(e) => handleUpdateVariant(record, "endDate", e.target.value)}
+                      />
+                    ),
+                  },
+                  {
+                    title: "Hình ảnh",
+                    dataIndex: "image",
+                    key: "image",
+                    render: (text, record) => (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        <Upload
+                          className="custom-upload"
+                          listType="picture-card"
+                          fileList={record.image}
+                          onChange={({ fileList }) => {
+                            if (fileList.length <= 4) handleImageChange(fileList, record);
+                          }}
+                          beforeUpload={() => false}
+                          itemRender={(originNode, file) => (
+                            <div style={{ width: '80px', height: '80px', overflow: 'hidden', margin: '4px' }}>
+                              {originNode}
+                            </div>
+                          )}
+                        >
+                          {record.image.length < 4 && <Button icon={<UploadOutlined />}>Upload</Button>}
+                        </Upload>
+                      </div>
+                    ),
+                  }
+                ]}
+                pagination={{ pageSize: 5 }}
+              />
+              <Button onClick={handleSaveVariants}>Lưu biến thể</Button>
+            </Form>
+          </div>
+        </TabPane>
+      </Tabs>
 
+      <Modal
+        title={modalType === "size" ? "Chọn size" : "Chọn màu"}
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Form layout="vertical" form={form}>
+          {modalType === "size" ? (
+            <>
+              <Form.Item label="Size" name="sizes">
+                <Select mode="multiple" placeholder="Chọn size">
+                  {sizes.map((size) => (
+                    <Option key={size} value={size}>
+                      {size}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Button onClick={() => handleSelectAll("sizes")}>Chọn tất cả size</Button>
               <Input
                 value={newSize}
                 onChange={(e) => setNewSize(e.target.value)}
                 placeholder="Thêm size mới"
-                className="w-48"
               />
-              <Button onClick={handleAddSize} className="bg-green-500 text-white rounded-lg py-1">
-                Thêm Size
-              </Button>
-            </div>
-
-            <Button className="bg-black text-white rounded-lg py-1 mt-3" onClick={handleSaveVariants}>
-              Lưu Size
-            </Button>
-            <Button
-              onClick={() => handleRemoveOption("size")}
-              className="ml-2 text-white bg-red-500 rounded-lg py-1 mt-3"
-            >
-              Xóa Size
-            </Button>
-          </div>
-        )}
-
-        {selectedOption.includes("color") && (
-          <div className="mb-5 w-1/2">
-            <h2 className="font-semibold">Chọn màu</h2>
-            <Form.Item label="Màu sắc" name="colors">
-              <Select
-                mode="multiple"
-                placeholder="Chọn màu"
-                className="w-full"
-                style={{ border: "none", borderRadius: "0" }}
-              >
-                {colors.map((color) => (
-                  <Option key={color} value={color}>
-                    {color}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <div className="flex items-center gap-4">
-              <Button onClick={handleSelectAllColors} className="bg-blue-500 text-white rounded-lg py-1">
-                Chọn tất cả màu
-              </Button>
-
+              <Button onClick={() => handleAddItem("sizes", newSize, setNewSize)}>Thêm Size</Button>
+            </>
+          ) : (
+            <>
+              <Form.Item label="Màu sắc" name="colors">
+                <Select mode="multiple" placeholder="Chọn màu">
+                  {colors.map((color) => (
+                    <Option key={color} value={color}>
+                      {color}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Button onClick={() => handleSelectAll("colors")}>Chọn tất cả màu</Button>
               <Input
                 value={newColor}
                 onChange={(e) => setNewColor(e.target.value)}
                 placeholder="Thêm màu mới"
-                className="w-48"
               />
-              <Button onClick={handleAddColor} className="bg-green-500 text-white rounded-lg py-1">
-                Thêm Màu
-              </Button>
-            </div>
-
-            <Button className="bg-black text-white rounded-lg py-1 mt-3" onClick={handleSaveVariants}>
-              Lưu Màu
-            </Button>
-            <Button
-              onClick={() => handleRemoveOption("color")}
-              className="ml-2 text-white bg-red-500 rounded-lg py-1 mt-3"
-            >
-              Xóa Màu
-            </Button>
-          </div>
-        )}
-      </div>
-    </Form>
-  </div>
-
-  {/* Hiển thị bảng biến thể */}
-  <Table
-  dataSource={variants}
-  columns={[
-    {
-      title: "Màu",
-      dataIndex: "color",
-      key: "color",
-      render: (color) => (
-        <div
-          style={{
-            backgroundColor: colorMapping[color] || "#FFFFFF",
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
-          }}
-        ></div>
-      ),
-    },
-    {
-      title: "Kích cỡ",
-      dataIndex: "size",
-      key: "size",
-    },
-    {
-      title: "Số lượng",
-      dataIndex: "quantity",
-      key: "quantity",
-      render: (_, record) => (
-        <Input
-          value={record.quantity}
-          onChange={(e) => handleUpdateVariant(record, "quantity", e.target.value)}
-          style={{ width: "120px" }}
-        />
-      ),
-    },
-    {
-      title: "Giá bán",
-      dataIndex: "price",
-      key: "price",
-      render: (_, record) => (
-        <Input
-          value={record.price}
-          onChange={(e) => handleUpdateVariant(record, "price", e.target.value)}
-          style={{ width: "120px" }}
-        />
-      ),
-    },
-    {
-      title: "Giá khuyến mãi",
-      dataIndex: "salePrice",
-      key: "salePrice",
-      render: (_, record) => (
-        <Input
-          value={record.salePrice}
-          onChange={(e) => handleUpdateVariant(record, "salePrice", e.target.value)}
-          style={{ width: "120px" }}
-        />
-      ),
-    },
-    {
-      title: "Ngày bắt đầu",
-      dataIndex: "startDate",
-      key: "startDate",
-      render: (startDate, record) =>
-        record.salePrice ? (
-          <Input
-            type="date"
-            value={startDate}
-            onChange={(e) => handleUpdateVariant(record, "startDate", e.target.value)}
-            style={{ width: "120px" }}
-          />
-        ) : null,
-    },
-    {
-      title: "Ngày kết thúc",
-      dataIndex: "endDate",
-      key: "endDate",
-      render: (endDate, record) =>
-        record.salePrice ? (
-          <Input
-            type="date"
-            value={endDate}
-            onChange={(e) => handleUpdateVariant(record, "endDate", e.target.value)}
-            style={{ width: "120px" }}
-          />
-        ) : null,
-    },
-    {
-      title: "Ảnh",
-      dataIndex: "image",
-      key: "image",
-      width: 300,
-      render: (_, record) => (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: "5px",
-            whiteSpace: "nowrap",
-            padding: "5px 0",
-            alignItems: "center",
-          }}
-        >
-          <Upload
-            listType="picture-card"
-            fileList={record.image}
-            onChange={({ fileList }) => handleImageChange(fileList, record)}
-            maxCount={4}
-            showUploadList={{ showRemoveIcon: true }}
-          >
-            {record.image.length < 4 && (
-              <Button icon={<UploadOutlined />}>Tải lên</Button>
-            )}
-          </Upload>
-        </div>
-      ),
-    },
-  ]}
-  pagination={{ pageSize: 5 }}
-  style={{ borderRadius: "0", marginTop: "20px" }}
-/>
-
-</TabPane>
-
-
-      </Tabs>
+              <Button onClick={() => handleAddItem("colors", newColor, setNewColor)}>Thêm Màu</Button>
+            </>
+          )}
+        </Form>
+      </Modal>
     </main>
   );
 };

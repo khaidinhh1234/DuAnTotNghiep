@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\HangThanhVien;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -47,5 +48,16 @@ class DatabaseSeeder extends Seeder
         //     ]);
         // }
 
+        $hangThanhViens = [
+            ['ten_hang_thanh_vien' => 'Vàng', 'chi_tieu_toi_thieu' => '5000000'],
+            ['ten_hang_thanh_vien' => 'Bạc', 'chi_tieu_toi_thieu' => '1000000'],
+            ['ten_hang_thanh_vien' => 'Đồng', 'chi_tieu_toi_thieu' => '0'],
+        ];
+        foreach ($hangThanhViens as $hangThanhVien) {
+            HangThanhVien::query()->create([
+                'ten_hang_thanh_vien' => $hangThanhVien['ten_hang_thanh_vien'],
+                'chi_tieu_toi_thieu' => $hangThanhVien['chi_tieu_toi_thieu'],
+            ]);
+        }
     }
 }

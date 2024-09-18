@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
+use App\Http\Controllers\Admin\Api\BienTheMauSacController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -52,7 +53,9 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
-Route::middleware(['auth:sanctum', 'auth.checkrole'])
+
+//'auth:sanctum', 'auth.checkrole'
+Route::middleware([])
     ->prefix('admin')
     ->group(function () {
         // Danh muc
@@ -115,6 +118,7 @@ Route::middleware(['auth:sanctum', 'auth.checkrole'])
         ;
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class);
 
+
         // Thống kê
         //Thống kê doanh thu
         Route::get('/thong-ke/doanh-thu-ngay', [ThongKeDoanhThuController::class, 'doanhThuTheoNgay'])->name('thong-ke.doanh-thu-ngay');
@@ -123,4 +127,8 @@ Route::middleware(['auth:sanctum', 'auth.checkrole'])
         Route::get('/thong-ke/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy'])->name('thong-ke.doanh-thu-quy');
         Route::get('/thong-ke/doanh-thu-nam', [ThongKeDoanhThuController::class, 'doanhThuTheoNam'])->name('thong-ke.doanh-thu-nam');
 
+        // Màu sắc biến thể
+        Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem']);
+        Route::post('bienthemausac/thung-rac/{id}', [BienTheMauSacController::class, 'khoiPhucXoaMem']);
+        Route::apiResource('bienthemausac', BienTheMauSacController::class);
     });
