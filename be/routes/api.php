@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TaiKhoanController;
 use App\Http\Controllers\Admin\Api\TheController;
+use App\Http\Controllers\Admin\API\ThongKeDoanhThuController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
@@ -98,21 +99,33 @@ Route::middleware([])
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class);
 
         // Tài khoản
-        Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');;
-        Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');;
+        Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
+        ;
+        Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
+        ;
         Route::apiResource('taikhoan', TaiKhoanController::class);
 
         // Đơn hàng
         Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
-        Route::get('/donhang/{id}',  [DonHangController::class, 'show'])->name('donhang.show');
-        Route::put('/donhang/{id}/trang-thai-thanh-toan',  [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
+        Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
+        Route::put('/donhang/{id}/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
         Route::put('/donhang/{id}/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
 
         // Kích thước biến thể
-        Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');;
-        Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');;
+        Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');
+        ;
+        Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');
+        ;
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class);
 
+
+        // Thống kê
+        //Thống kê doanh thu
+        Route::get('/thong-ke/doanh-thu-ngay', [ThongKeDoanhThuController::class, 'doanhThuTheoNgay'])->name('thong-ke.doanh-thu-ngay');
+        Route::get('/thong-ke/doanh-thu-tuan', [ThongKeDoanhThuController::class, 'doanhThuTheoTuan'])->name('thong-ke.doanh-thu-tuan');
+        Route::get('/thong-ke/doanh-thu-thang', [ThongKeDoanhThuController::class, 'doanhThuTheoThang'])->name('thong-ke.doanh-thu-thang');
+        Route::get('/thong-ke/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy'])->name('thong-ke.doanh-thu-quy');
+        Route::get('/thong-ke/doanh-thu-nam', [ThongKeDoanhThuController::class, 'doanhThuTheoNam'])->name('thong-ke.doanh-thu-nam');
 
         // Màu sắc biến thể
         Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem']);

@@ -21,7 +21,7 @@ class User extends Authenticatable
 
     const TYPE_NAM = 1;
     const TYPE_NU = 2;
-    const TYPE_KHAC = 0;
+    const TYPE_KHAC = 3;
     protected $fillable = [
         'ho',
         'ten',
