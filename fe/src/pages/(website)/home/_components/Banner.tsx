@@ -173,7 +173,7 @@ const Banner = () => {
               </SwiperSlide>
             </Swiper>
           </div>
-          <div className="fixed bottom-10 right-10 z-20">
+          {/* <div className="fixed bottom-10 right-10 z-20">
             <p className="text-xl font-semibold text-white">
               <a href="">
                 <img
@@ -183,7 +183,7 @@ const Banner = () => {
                 />
               </a>
             </p>
-          </div>
+          </div> */}
         </div>
       </section>
     </div>
