@@ -18,6 +18,7 @@ use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\CaptchaController;
+use App\Http\Controllers\Client\Api\DanhGiaController;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +58,12 @@ Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']
 // Captcha
 Route::get('captcha', [CaptchaController::class, 'getCaptcha']);
 Route::post('captcha/validate', [CaptchaController::class, 'validateCaptcha']);
+
+// Đánh giá
+Route::get('sanpham/{sanpham}/danhgia', [DanhGiaController::class, 'danhSachDanhGia']);
+Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
+
+
 //'auth:sanctum', 'auth.checkrole'
 Route::middleware([])
     ->prefix('admin')
