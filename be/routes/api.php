@@ -86,8 +86,8 @@ Route::middleware([])
 
         //Vai trò
         Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
-        Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
-        Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
+        // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
+        // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
         Route::apiResource('vaitro', VaiTroController::class);
 
         // Thông tin website
