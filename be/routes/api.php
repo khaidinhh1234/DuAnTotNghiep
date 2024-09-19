@@ -17,6 +17,7 @@ use App\Http\Controllers\Client\Api\Auth\AuthController;
 use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
+use App\Http\Controllers\Client\Api\CaptchaController;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,7 +54,9 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
-
+// Captcha
+Route::get('captcha', [CaptchaController::class, 'getCaptcha']);
+Route::post('captcha/validate', [CaptchaController::class, 'validateCaptcha']);
 //'auth:sanctum', 'auth.checkrole'
 Route::middleware([])
     ->prefix('admin')
@@ -113,9 +116,7 @@ Route::middleware([])
 
         // Kích thước biến thể
         Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');
-        ;
         Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');
-        ;
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class);
 
 

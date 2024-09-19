@@ -31,7 +31,7 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-    public function doanhThuTheoTuan(Request $request)
+    public function doanhThuTheoTuan()
     {
         DB::beginTransaction();
         try {
@@ -50,7 +50,7 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-    public function doanhThuTheoThang(Request $request)
+    public function doanhThuTheoThang()
     {
         DB::beginTransaction();
         try {
@@ -69,8 +69,9 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-    public function doanhThuTheoQuy(Request $request)
+    public function doanhThuTheoQuy()
     {
+
         DB::beginTransaction();
         try {
             $currentQuarter = ceil(Carbon::now()->month / 3);
@@ -87,9 +88,20 @@ class ThongKeDoanhThuController extends Controller
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
+
+        // $currentQuarter = ceil(Carbon::now()->month / 3);
+        $startOfQuarter = Carbon::now()->firstOfQuarter();
+        $endOfQuarter = Carbon::now()->lastOfQuarter();
+
+        $doanhThu = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
+            ->sum('tong_tien_don_hang');
+
+        return response()->json(['doanh_thu' => $doanhThu], 200);
+
     }
 
-    public function doanhThuTheoNam(Request $request)
+    public function doanhThuTheoNam()
     {
         DB::beginTransaction();
         try {
