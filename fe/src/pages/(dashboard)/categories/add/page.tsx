@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
 import { ICategories } from "@/common/types/category";
 import instance from "@/configs/axios";
-import { Loading3QuartersOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, FormProps, Input, Select, message } from "antd";
+import { Button, Form, FormProps, Input, Select, Upload, message } from "antd";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const CategoriesAdd = () => {
@@ -15,7 +15,7 @@ const CategoriesAdd = () => {
     queryKey: ['allCategories'],
     queryFn: async () => {
       try {
-        const response = await instance.get('/danhmuc');
+        const response = await instance.get('/admin/danhmuc');
         return response.data;
       } catch (error) {
         throw new Error("Error fetching all categories");
@@ -35,8 +35,7 @@ const CategoriesAdd = () => {
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
       try {
-        // Ensure that 'cha_id' is properly sent to backend if it exists
-        const response = await instance.post(`/danhmuc`, category);
+        const response = await instance.post(`/admin/danhmuc`, category);
         return response.data;
       } catch (error: any) {
         throw new Error(error.response.data.message || "Error creating category");
@@ -56,6 +55,8 @@ const CategoriesAdd = () => {
     const categoryData: ICategories = {
       ...values,
       cha_id: values.category || null,  // Ensure that the parent category ID is correctly assigned
+      // If you need to upload the file to the server, handle it here
+      // image: values.imageFile ? values.imageFile.file.originFileObj : null,
     };
     mutate(categoryData);
   };
@@ -112,6 +113,16 @@ const CategoriesAdd = () => {
                     ))}
                   </Select>
                 </Form.Item>
+                <Form.Item
+                  label="Thêm ảnh"
+                  name="imageFile"
+                  valuePropName="fileList"
+                  getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
+                >
+                  <Upload listType="picture" maxCount={1} beforeUpload={() => false}>
+                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                  </Upload>
+                </Form.Item>
               </div>
               <Form.Item>
                 <Button
@@ -119,8 +130,6 @@ const CategoriesAdd = () => {
                   htmlType="submit"
                   className="px-3 py-2 bg-black text-white rounded-lg"
                 >
-                  {/* Uncomment the following lines if you want to show a loading spinner */}
-                  {/* {isLoading ? <Loading3QuartersOutlined className="animate-spin" /> : "Submit"} */}
                   Submit
                 </Button>
               </Form.Item>

@@ -26,4 +26,9 @@ class MaKhuyenMai extends Model
     {
         return $this->belongsToMany(SanPham::class, 'khuyen_mai_san_pham', 'ma_khuyen_mai_id', 'san_pham_id');
     }
+
+    public function hangThanhViens()
+    {
+        return $this->belongsToMany(HangThanhVien::class, 'ma_khuyen_mai_hang_thanh_vien', 'ma_khuyen_mai_id', 'hang_thanh_vien_id');
+    }
 }

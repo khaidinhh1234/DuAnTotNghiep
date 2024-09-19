@@ -23,10 +23,8 @@ const CategoriesAdmin: React.FC = () => {
     queryKey: ['danhmuc'],
     queryFn: async () => {
       try {
-        const response = await instance.get('/danhmuc');
+        const response = await instance.get('/admin/danhmuc');
         const categories = response.data;
-
-        // Create a map of category ID to category name for easy lookup
         const categoryMap = new Map<string, string>();
         categories.data.forEach((category: ICategories) => {
           categoryMap.set(category.id, category.ten_danh_muc);
@@ -50,17 +48,20 @@ const CategoriesAdmin: React.FC = () => {
     mutationFn: async (id: string | number) => {
       console.log(`Attempting to delete category with id: ${id}`);
       try {
-        await instance.delete(`/danhmuc/${id}`);
+        const response = await instance.delete(`/admin/danhmuc/${id}`);
+        if (response.data.status) {
+          return id; // Return the id for further actions
+        } else {
+          throw new Error(response.data.message || 'Failed to delete');
+        }
       } catch (error) {
         console.error("Error deleting category:", error);
-        throw new Error("Error deleting category");
+        throw error;
       }
     },
-    onSuccess: () => {
-      console.log("Successfully deleted category");
-      queryClient.invalidateQueries({
-        queryKey: ['danhmuc'],
-      });
+    onSuccess: (id) => {
+      console.log("Successfully deleted category with id:", id);
+      queryClient.invalidateQueries(['danhmuc']);
       toast.success("Xóa danh mục thành công");
     },
     onError: (error) => {
@@ -68,6 +69,7 @@ const CategoriesAdmin: React.FC = () => {
       toast.error("Xóa danh mục thất bại");
     },
   });
+  
 
   // if (isLoading) return <p>Loading...</p>; 
   // if (isError) return <p>Error: {isError.message}</p>;
@@ -164,21 +166,32 @@ const CategoriesAdmin: React.FC = () => {
     },
     {
       title: "Tên danh mục",
-      width: "25%",
+      width: "20%",
       key: "ten_danh_muc",
       dataIndex: "ten_danh_muc",
       ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a, b) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
     },
     {
-      title: "Đường dẫn",
-      width: "25%",
-      key: "duong_dan",
-      dataIndex: "duong_dan",
+      title: "Ảnh danh mục",
+      width: "15%",
+      key: "anh_danh_muc",
+      dataIndex: "anh_danh_muc",
+      render: (anh_danh_muc: string) => 
+        anh_danh_muc ? (
+          <img
+            src={anh_danh_muc}
+            alt="Ảnh danh mục"
+            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+          />
+        ) : (
+          <span>Ảnh không có</span>
+        )
     },
+    
     {
       title: "Danh mục cha",
-      width: "25%",
+      width: "20%",
       key: "cha_id",
       dataIndex: "cha_id",
       render: (text: string) => categoriesMap.get(text) || "không có",
@@ -215,6 +228,7 @@ const CategoriesAdmin: React.FC = () => {
       ),
     },
   ];
+  
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">

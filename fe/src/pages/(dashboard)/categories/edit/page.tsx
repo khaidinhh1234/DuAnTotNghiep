@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { ICategories } from "@/common/types/category";
 import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, Select, message } from "antd";
+import { Button, Form, Input, Select, Upload, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { UploadOutlined } from '@ant-design/icons';
 
 const CategoriesEdit = () => {
   const { id } = useParams();
@@ -13,11 +14,11 @@ const CategoriesEdit = () => {
   const nav = useNavigate();
   const [parentCategories, setParentCategories] = useState<ICategories[]>([]);
 
-  const { data, isError, isLoading, error } = useQuery({
+  const { data } = useQuery({
     queryKey: ['danhmuc', id],
     queryFn: async () => {
       try {
-        const response = await instance.get(`/danhmuc/${id}`);
+        const response = await instance.get(`/admin/danhmuc/${id}`);
         return response.data;
       } catch (error) {
         throw new Error("Lấy danh mục thất bại");
@@ -29,7 +30,7 @@ const CategoriesEdit = () => {
     queryKey: ['allCategories'],
     queryFn: async () => {
       try {
-        const response = await instance.get('/danhmuc');
+        const response = await instance.get('/admin/danhmuc');
         return response.data;
       } catch (error) {
         throw new Error("Error fetching all categories");
@@ -51,7 +52,7 @@ const CategoriesEdit = () => {
       console.log("Category Data:", data.data); 
       form.setFieldsValue({
         ten_danh_muc: data.data.ten_danh_muc,
-        cha_id: data.data.cha_id || null, // Chỉnh sửa để khớp với tên trong Form.Item
+        cha_id: data.data.cha_id || null, 
       });
     }
   }, [data, form]);
@@ -59,7 +60,7 @@ const CategoriesEdit = () => {
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
       try {
-        const response = await instance.put(`/danhmuc/${id}`, category);
+        const response = await instance.put(`/admin/danhmuc/${id}`, category);
         return response.data;
       } catch (error: any) {
         throw new Error(error.response.data.message || "Error updating category");
@@ -83,18 +84,17 @@ const CategoriesEdit = () => {
     mutate(categoryData);
   };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error: {error?.message}</p>;
+  
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục /<span className="font-semibold px-px"> Sửa danh mục</span>
+          Quản trị / Danh mục /<span className="font-semibold px-px"> Cập nhập danh mục</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Sửa danh mục</h1>
+        <h1 className="font-semibold md:text-3xl">Cập nhập danh mục: {data?.data.ten_danh_muc}</h1>
         <div>
           <Link to="/admin/categories" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">Quay lại</Button>
@@ -132,6 +132,16 @@ const CategoriesEdit = () => {
                       </Select.Option>
                     ))}
                   </Select>
+                </Form.Item>
+                <Form.Item
+                  label="Thêm ảnh"
+                  name="imageFile"
+                  valuePropName="fileList"
+                  getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
+                >
+                  <Upload listType="picture" maxCount={1} beforeUpload={() => false}>
+                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                  </Upload>
                 </Form.Item>
               </div>
               <Form.Item>
