@@ -222,4 +222,11 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+    public function danhSachVaiTro()
+    {
+        $allRole = VaiTro::query()->whereNot('ten_vai_tro', 'member')->get();
+        return response()->json([
+            'data' => $allRole
+        ], 200);
+    }
 }

@@ -85,7 +85,7 @@ Route::middleware([])
         Route::apiResource('the', TheController::class);
 
         //Vai trò
-        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen'])->name('vaitro.routes');
+        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
         Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
         Route::apiResource('vaitro', VaiTroController::class);
@@ -110,6 +110,7 @@ Route::middleware([])
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class);
 
         // Tài khoản
+        Route::get('taikhoan/roles', [TaiKhoanController::class, 'danhSachVaiTro']);
         Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
         Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
         Route::apiResource('taikhoan', TaiKhoanController::class);
