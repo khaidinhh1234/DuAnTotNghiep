@@ -51,7 +51,7 @@ class VaiTroController extends Controller
                 $quyen = Quyen::updateOrCreate([
                     'ten_quyen' => $ten_quyen
                 ]);
-                $vaiTro->quyen()->attach($quyen->id);
+                $vaiTro->quyens()->attach($quyen->id);
             }
 
             DB::commit();
@@ -114,7 +114,7 @@ class VaiTroController extends Controller
                 ]);
                 array_push($quyen_id, $quyen->id);
             }
-            $vaiTro->quyen()->sync($quyen_id);
+            $vaiTro->quyens()->sync($quyen_id);
             DB::commit();
             return response()->json([
                 'status' => true,
