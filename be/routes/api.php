@@ -83,7 +83,6 @@ Route::middleware([])
         Route::post('the/thung-rac/{id}', [TheController::class, 'khoiPhucThe'])->name('the.khoiphuc');
         Route::apiResource('the', TheController::class);
 
-
         //Vai trò
         Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
@@ -110,9 +109,7 @@ Route::middleware([])
 
         // Tài khoản
         Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
-        ;
         Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
-        ;
         Route::apiResource('taikhoan', TaiKhoanController::class);
 
         // Đơn hàng
@@ -125,7 +122,6 @@ Route::middleware([])
         Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');
         Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class);
-
 
         // Thống kê
         //Thống kê doanh thu
