@@ -184,6 +184,7 @@ class DanhMucController extends Controller
             }
 
             $danhMuc->delete();
+            DB::commit();
             return response()->json(
                 [
                     'status' => true,
@@ -193,6 +194,7 @@ class DanhMucController extends Controller
                 200
             );
         } catch (\Exception $exception) {
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
