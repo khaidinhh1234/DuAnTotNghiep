@@ -19,7 +19,7 @@ class DonHangChiTietSeeder extends Seeder
 
             if ($bienTheSanPham) {
                 $soLuong = rand(1, 10);
-                $gia = $bienTheSanPham->gia_ban;
+                $gia = $bienTheSanPham->gia_khuyen_mai;
                 $thanhTien = $soLuong * $gia;
 
                 // Kiểm tra xem bienTheMauSac có tồn tại không

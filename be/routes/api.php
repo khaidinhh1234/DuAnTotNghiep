@@ -127,7 +127,9 @@ Route::middleware([])
         Route::get('/thong-ke/doanh-thu-thang', [ThongKeDoanhThuController::class, 'doanhThuTheoThang'])->name('thong-ke.doanh-thu-thang');
         Route::get('/thong-ke/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy'])->name('thong-ke.doanh-thu-quy');
         Route::get('/thong-ke/doanh-thu-nam', [ThongKeDoanhThuController::class, 'doanhThuTheoNam'])->name('thong-ke.doanh-thu-nam');
-
+        Route::get('/thong-ke/doanh-thu-san-pham', [ThongKeDoanhThuController::class, 'doanhThuTheoSanPham'])->name('thong-ke.doanh-thu-san-pham');
+        Route::get('/thong-ke/doanh-thu-danh-muc', [ThongKeDoanhThuController::class, 'doanhThuTheoDanhMuc'])->name('thong-ke.doanh-thu-danh-muc');
+        ;
         // Màu sắc biến thể
         Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem']);
         Route::post('bienthemausac/thung-rac/{id}', [BienTheMauSacController::class, 'khoiPhucXoaMem']);
