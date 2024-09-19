@@ -11,12 +11,23 @@ class DanhGia extends Model
     use HasFactory, SoftDeletes;
     protected $fillable = [
         'user_id',
+        'san_pham_id',
         'so_sao',
         'noi_dung',
         'huu_ich',
     ];
+    public function sanPham()
+    {
+        return $this->belongsTo(SanPham::class, 'san_pham_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function anhDanhGias()
     {
-        return $this->hasMany(AnhDanhGia::class);
+        return $this->hasMany(AnhDanhGia::class, 'danh_gia_id');
     }
 }

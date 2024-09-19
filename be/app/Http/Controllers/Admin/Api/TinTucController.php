@@ -66,7 +66,7 @@ class TinTucController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Thêm mới tin tức thành công',
-                'data' => $validateTinTuc,
+                'data' => $tinTuc,
             ]);
         } catch (\Exception $exception) {
             DB::rollBack();

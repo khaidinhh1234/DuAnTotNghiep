@@ -1,4 +1,3 @@
-
 import { useLocalStorage } from "@/components/hook/useStoratge";
 
 import instance from "@/configs/axios";
@@ -148,7 +147,7 @@ const UsersAdminkhachhang: React.FC = () => {
     ),
     onFilter: (value, record) =>
       record[dataIndex]
-        .toString()
+        ?.toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
@@ -230,7 +229,7 @@ const UsersAdminkhachhang: React.FC = () => {
       width: "15%",
       ...getColumnSearchProps("so_dien_thoai"),
       sorter: (a: any, b: any) =>
-        a.so_dien_thoai.length - b.so_dien_thoai.length,
+        a.so_dien_thoai - b.so_dien_thoai,
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
@@ -239,7 +238,8 @@ const UsersAdminkhachhang: React.FC = () => {
       key: "dia_chi",
       width: "20%",
       ...getColumnSearchProps("dia_chi"),
-      sorter: (a: any, b: any) => a.dia_chi.length - b.dia_chi.length,
+      sorter: (a: any, b: any) =>
+        (a.dia_chi?.length || 0) - (b.dia_chi?.length || 0),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
@@ -247,9 +247,9 @@ const UsersAdminkhachhang: React.FC = () => {
       dataIndex: "gioi_tinh",
       key: "gioi_tinh",
       width: "10%",
-      ...getColumnSearchProps("gioi_tinh"),
-      sorter: (a: any, b: any) => a.gioi_tinh.length - b.gioi_tinh.length,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
+      // ...getColumnSearchProps("gioi_tinh"),
+      sorter: (a: any, b: any) => (a.gioi_tinh || 0) - (b.gioi_tinh || 0),
+      render: (text) => (text == 1 ? "Nam" : text == 2 ? "Nữ" : "Khác"),
     },
     {
       title: "Ngày sinh",
@@ -257,6 +257,7 @@ const UsersAdminkhachhang: React.FC = () => {
       key: "ngay_sinh",
       width: "15%",
       ...getColumnSearchProps("ngay_sinh"),
+      sorter: (a: any, b: any) => (a.ngay_sinh || 0) - (b.ngay_sinh || 0),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
 
