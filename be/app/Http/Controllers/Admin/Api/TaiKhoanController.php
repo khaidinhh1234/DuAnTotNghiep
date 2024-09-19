@@ -204,6 +204,8 @@ class TaiKhoanController extends Controller
             DB::beginTransaction();
             $taiKhoan = User::onlyTrashed()->findOrFail($id);
             $taiKhoan->restore();
+            $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+            $taiKhoan->vaiTros()->attach($member->id);
             DB::commit();
             return response()->json([
                 'success' => true,
