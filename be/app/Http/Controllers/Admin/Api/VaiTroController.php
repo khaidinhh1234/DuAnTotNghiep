@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateVaiTroRequest;
 use App\Models\Quyen;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
 class VaiTroController extends Controller
@@ -202,5 +203,20 @@ class VaiTroController extends Controller
                 'error' => $exception->getMessage()
             ], 500);
         }
+    }
+    public function danhSachQuyen()
+    {
+        $routeList = [];
+        $routeNames = Route::getRoutes();
+        foreach ($routeNames as $route) {
+            $name = $route->getName();
+            $pos = strpos($name, 'admin');
+            if ($pos !== false) {
+                array_push($routeList, $name);
+            }
+        }
+        return response()->json([
+            'data' => $routeList
+        ], 200);
     }
 }
