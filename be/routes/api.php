@@ -66,6 +66,7 @@ Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
 
 //'auth:sanctum', 'auth.checkrole'
 Route::middleware([])
+    ->name('admin.')
     ->prefix('admin')
     ->group(function () {
         // Danh muc
@@ -84,6 +85,7 @@ Route::middleware([])
         Route::apiResource('the', TheController::class);
 
         //Vai trò
+        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen'])->name('vaitro.routes');
         Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
         Route::apiResource('vaitro', VaiTroController::class);
@@ -134,7 +136,7 @@ Route::middleware([])
         Route::get('/thong-ke/doanh-thu-danh-muc', [ThongKeDoanhThuController::class, 'doanhThuTheoDanhMuc'])->name('thong-ke.doanh-thu-danh-muc');
 
         // Màu sắc biến thể
-        Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem']);
-        Route::post('bienthemausac/thung-rac/{id}', [BienTheMauSacController::class, 'khoiPhucXoaMem']);
+        Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem'])->name('bienthemausac.thungrac');
+        Route::post('bienthemausac/thung-rac/{id}', [BienTheMauSacController::class, 'khoiPhucXoaMem'])->name('bienthemausac.khoiphuc');
         Route::apiResource('bienthemausac', BienTheMauSacController::class);
     });
