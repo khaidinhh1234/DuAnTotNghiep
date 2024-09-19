@@ -142,7 +142,7 @@ class VaiTroController extends Controller
             DB::beginTransaction();
             $vaiTro = VaiTro::query()->findOrFail($id);
 
-            $vaiTro->quyen()->sync([]);
+            $vaiTro->quyens()->sync([]);
             $vaiTro->delete();
 
             DB::commit();
@@ -162,48 +162,48 @@ class VaiTroController extends Controller
         }
     }
 
-    public function danhSachVaiTroDaXoa()
-    {
-        try {
-            $vaiTro = VaiTro::onlyTrashed()->orderByDesc('deleted_at')->get();
+    // public function danhSachVaiTroDaXoa()
+    // {
+    //     try {
+    //         $vaiTro = VaiTro::onlyTrashed()->orderByDesc('deleted_at')->get();
 
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công.',
-                'data' => $vaiTro,
-            ], 200);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Lấy dữ liệu thất bại!',
-                'error' => $exception->getMessage()
-            ], 500);
-        }
-    }
-    public function khoiPhucVaiTro(string $id)
-    {
-        try {
-            DB::beginTransaction();
-            $vaiTro = VaiTro::onlyTrashed()->findOrFail($id);
-            $vaiTro->restore();
-            DB::commit();
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Khôi phục vai trò thành công',
-            ], 200);
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Khôi phục vai trò thất bại',
-                'error' => $exception->getMessage()
-            ], 500);
-        }
-    }
+    //         return response()->json([
+    //             'status' => true,
+    //             'status_code' => 200,
+    //             'message' => 'Lấy dữ liệu thành công.',
+    //             'data' => $vaiTro,
+    //         ], 200);
+    //     } catch (\Exception $exception) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'status_code' => 500,
+    //             'message' => 'Lấy dữ liệu thất bại!',
+    //             'error' => $exception->getMessage()
+    //         ], 500);
+    //     }
+    // }
+    // public function khoiPhucVaiTro(string $id)
+    // {
+    //     try {
+    //         DB::beginTransaction();
+    //         $vaiTro = VaiTro::onlyTrashed()->findOrFail($id);
+    //         $vaiTro->restore();
+    //         DB::commit();
+    //         return response()->json([
+    //             'status' => true,
+    //             'status_code' => 200,
+    //             'message' => 'Khôi phục vai trò thành công',
+    //         ], 200);
+    //     } catch (\Exception $exception) {
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'status' => false,
+    //             'status_code' => 500,
+    //             'message' => 'Khôi phục vai trò thất bại',
+    //             'error' => $exception->getMessage()
+    //         ], 500);
+    //     }
+    // }
     public function danhSachQuyen()
     {
         $routeList = [];
