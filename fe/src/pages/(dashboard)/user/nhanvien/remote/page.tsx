@@ -1,13 +1,12 @@
-import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import instance from "@/configs/axios";
+import { SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table } from "antd";
+import { Button, Image, Input, message, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import instance from "@/configs/axios";
-import { Tag } from "antd";
 
 interface DataType {
   key: React.Key;
@@ -67,18 +66,44 @@ const UsersRemoteNhanvien: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/taikhoan");
+      const res = await instance.get("/admin/taikhoan/thung-rac");
       return res.data;
     },
   });
   // (data?.data);
-  const user = data?.data.map((item: any) => {
-    return { ...item, key: item.id };
+  const user = data?.data
+    .filter((item: any) => item?.vai_tros?.length > 0)
+    .map((item: any, index: string) => {
+      if (item?.vai_tros?.length > 0) {
+        return {
+          ...item,
+          key: item.id,
+          index: index,
+        };
+      } else {
+        return false;
+      }
+    });
+  const queryClient = useQueryClient();
+  const mutate = useMutation({
+    mutationFn: async (id: number) => {
+      try {
+        const res = await instance.post(`/admin/taikhoan/thung-rac/${id}`);
+        message.open({
+          type: "success",
+          content: "Khôi phục thành công",
+        });
+        return res.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["productskey"],
+      });
+    },
   });
-
-  // const users = user.reverse();
-
-  // const [searchText, setSearchText] = useState
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
 
@@ -176,13 +201,20 @@ const UsersRemoteNhanvien: React.FC = () => {
     },
     {
       title: "Ảnh người dùng",
-      render: (record) => (
-        <img
-          src={record.anh_nguoi_dung}
-          alt=""
-          className="w-20 h-20 object-cover rounded-lg p-2 border"
-        />
-      ),
+      render: (record) =>
+        record.anh_nguoi_dung ? (
+          <Image
+            src={record.anh_nguoi_dung}
+            alt=""
+            className="w-20 h-20 object-cover rounded-lg p-2 border"
+          />
+        ) : (
+          <img
+            src="https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
+            alt=""
+            className="w-20 h-20 object-cover rounded-lg p-2 border"
+          />
+        ),
       className: "pl-10",
       width: "15%",
       key: "anh_nguoi_dung",
@@ -227,14 +259,16 @@ const UsersRemoteNhanvien: React.FC = () => {
       width: "20%",
       ...getColumnSearchProps("dia_chi"),
       sorter: (a: any, b: any) => a.dia_chi.length - b.dia_chi.length,
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Giới tính",
       dataIndex: "gioi_tinh",
       key: "gioi_tinh",
       width: "10%",
-      ...getColumnSearchProps("gioi_tinh"),
-      sorter: (a: any, b: any) => a.gioi_tinh.length - b.gioi_tinh.length,
+      // ...getColumnSearchProps("gioi_tinh"),
+      sorter: (a: any, b: any) => (a.gioi_tinh || 0) - (b.gioi_tinh || 0),
+      render: (text) => (text == 1 ? "Nam" : text == 2 ? "Nữ" : "Khác"),
     },
     {
       title: "Ngày sinh",
@@ -244,35 +278,17 @@ const UsersRemoteNhanvien: React.FC = () => {
 
       ...getColumnSearchProps("ngay_sinh"),
     },
-    {
-      title: "Vai trò",
-      render: (record) => (
-        // console.log(record),
-        <div>
-          {" "}
-          <Tag color="#11998e" className="rounded-xl font-bold">
-            Quản trị viên
-          </Tag>
-          <Tag color="#6a82fb" className="rounded-xl font-bold">
-            Nhân viên
-          </Tag>
-          <Tag color="#800080" className="rounded-xl font-bold">
-            Khách hàng
-          </Tag>
-        </div>
-      ),
-      key: "vai_tros",
-      width: "15%",
-      // ...getColumnSearchProps("vai_tros"),
-      sorter: (a: any, b: any) => a.vai_tros.length - b.vai_tros.length,
-    },
+
     {
       title: "Quản trị",
       key: "action",
       render: (_, record) => (
         <Space>
-          <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-            bỏ chặn
+          <Button
+            className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white"
+            onClick={() => mutate.mutate(Number(record.key))}
+          >
+            Khôi phục
           </Button>
         </Space>
       ),
@@ -291,7 +307,6 @@ const UsersRemoteNhanvien: React.FC = () => {
     }
   };
 
-  // const products = [...data].reverse();
   isError && <div>Đã xảy ra lỗi</div>;
   isLoading && <div>Đang tải dữ liệu...</div>;
   return (
@@ -306,7 +321,7 @@ const UsersRemoteNhanvien: React.FC = () => {
         <h1 className=" font-semibold md:text-3xl">Chặn tài khoản</h1>
         <div>
           {" "}
-          <Link to="/admin/users/nhanvien" className="mr-1">
+          <Link to="/admin/users" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg  py-1">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Quay lại
@@ -324,7 +339,7 @@ const UsersRemoteNhanvien: React.FC = () => {
             onKeyDown={handleKeyDown}
           />
         </div>
-        <Table columns={columns} dataSource={user} />;
+        <Table columns={columns} dataSource={user} />
       </div>
     </main>
   );
