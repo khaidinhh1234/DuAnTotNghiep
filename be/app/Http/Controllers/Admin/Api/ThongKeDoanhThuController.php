@@ -269,6 +269,78 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
+    public function sanPhamBanChayTheoThang(Request $request)
+    {
+        // Nhận tháng từ request hoặc sử dụng tháng hiện tại
+        $month = $request->input('month', Carbon::now()->month);
 
+        // Lấy danh sách đơn hàng với trạng thái 'Đã giao hàng thành công' trong tháng được chọn
+        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->whereMonth('created_at', $month)
+            ->pluck('id'); // Lấy danh sách id của các đơn hàng
+
+        // Lấy thống kê sản phẩm dựa trên đơn hàng chi tiết
+        $sanPhamStats = DonHangChiTiet::whereIn('don_hang_id', $donHangs)
+            ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+            ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
+            ->select(
+                'san_phams.ten_san_pham',
+                DB::raw('SUM(don_hang_chi_tiets.so_luong) as tong_so_luong'),
+                DB::raw('SUM(don_hang_chi_tiets.thanh_tien) as tong_doanh_thu'),
+                'bien_the_san_phams.gia_ban'
+            )
+            ->groupBy('san_phams.ten_san_pham', 'bien_the_san_phams.gia_ban')
+            ->orderBy('tong_so_luong', 'desc')
+            ->get();
+
+        // Sản phẩm bán chạy nhất (top 1)
+        $sanPhamBanChayNhat = $sanPhamStats->first();
+
+        // Sản phẩm ít được mua nhất (bottom 1)
+        $sanPhamItMuaNhat = $sanPhamStats->last();
+
+        return response()->json([
+            'san_pham_ban_chay_nhat' => $sanPhamBanChayNhat,
+            'san_pham_it_mua_nhat' => $sanPhamItMuaNhat,
+            'thang' => $month,
+        ]);
+    }
+
+    public function sanPhamBanChayTheoNam(Request $request)
+    {
+        // Nhận năm từ request hoặc sử dụng năm hiện tại
+        $year = $request->input('year', Carbon::now()->year);
+
+        // Lấy danh sách đơn hàng với trạng thái 'Đã giao hàng thành công' trong năm được chọn
+        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->whereYear('created_at', $year)
+            ->pluck('id'); // Lấy danh sách id của các đơn hàng
+
+        // Lấy thống kê sản phẩm dựa trên đơn hàng chi tiết
+        $sanPhamStats = DonHangChiTiet::whereIn('don_hang_id', $donHangs)
+            ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+            ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
+            ->select(
+                'san_phams.ten_san_pham',
+                DB::raw('SUM(don_hang_chi_tiets.so_luong) as tong_so_luong'),
+                DB::raw('SUM(don_hang_chi_tiets.thanh_tien) as tong_doanh_thu'),
+                'bien_the_san_phams.gia_ban'
+            )
+            ->groupBy('san_phams.ten_san_pham', 'bien_the_san_phams.gia_ban')
+            ->orderBy('tong_so_luong', 'desc')
+            ->get();
+
+        // Sản phẩm bán chạy nhất (top 1)
+        $sanPhamBanChayNhat = $sanPhamStats->first();
+
+        // Sản phẩm ít được mua nhất (bottom 1)
+        $sanPhamItMuaNhat = $sanPhamStats->last();
+
+        return response()->json([
+            'san_pham_ban_chay_nhat' => $sanPhamBanChayNhat,
+            'san_pham_it_mua_nhat' => $sanPhamItMuaNhat,
+            'nam' => $year,
+        ]);
+    }
 }
 
