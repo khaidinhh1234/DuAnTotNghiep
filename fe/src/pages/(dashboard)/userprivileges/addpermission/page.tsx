@@ -1,5 +1,5 @@
 import type { TreeDataNode, TreeProps } from "antd";
-import { Button, Card, Checkbox, Form, Input, Tree } from "antd";
+import { Button, Card, Checkbox, Form, Input, message, Tree } from "antd";
 import React, { useState } from "react";
 
 const treeData: TreeDataNode[] = [
@@ -98,19 +98,8 @@ const treeData: TreeDataNode[] = [
 const { TextArea } = Input;
 
 const PageAddPermission: React.FC = () => {
-  const onFinish = (values: any) => {
-    const permissionData = {
-      ...values,
-    };
-    console.log("Received values:", permissionData);
-    // Thực hiện logic gửi dữ liệu đến API hoặc server tại đây
-  };
-
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([
-    "0-0-0",
-    "0-0-1",
-  ]);
-  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>(["0-0-0"]);
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([""]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
@@ -119,19 +108,33 @@ const PageAddPermission: React.FC = () => {
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.
     // or, you can remove all expanded children keys.
     setExpandedKeys(expandedKeysValue);
+    console.log("onExpand", expandedKeysValue);
     setAutoExpandParent(false);
-  };
-
-  const onCheck: TreeProps["onCheck"] = (checkedKeysValue) => {
-    console.log("onCheck", checkedKeysValue);
-    setCheckedKeys(checkedKeysValue as React.Key[]);
   };
 
   const onSelect: TreeProps["onSelect"] = (selectedKeysValue, info) => {
     console.log("onSelect", info);
+    console.log("onSelect", selectedKeysValue);
     setSelectedKeys(selectedKeysValue);
   };
-
+  const onFinish = (values: any) => {
+    const permissionData = {
+      ...values,
+      ten_quyen: checkedKeys,
+    };
+    if (!permissionData.ten_quyen) {
+      permissionData.ten_quyen = [];
+      message.open({
+        type: "error",
+        content: "Vui lòng chọn quyền truy cập!",
+      });
+      return false;
+    }
+    return permissionData;
+    // console.log("Received values:", values);
+    console.log("Received values:", permissionData);
+    // Thực hiện logic gửi dữ liệu đến API hoặc server tại đây
+  };
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -141,20 +144,7 @@ const PageAddPermission: React.FC = () => {
       </div>
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">Vai trò</h1>
-        <div className="flex gap-2">
-          {/* <Link to="/admin/products/add" className="mr-1">
-          <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
-            <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
-            Thêm sản phẩm
-          </Button>
-        </Link>
-        <Link to="/admin/products/remote">
-          <Button className="bg-red-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-            <DeleteOutlined className="mr-1" />
-            Thùng rác
-          </Button>
-        </Link> */}
-        </div>
+        <div className="flex gap-2"></div>
       </div>
       <div className="bg-white p-5 w-full rounded-lg">
         <div className="w-full flex gap-20 mb-3">
@@ -174,11 +164,25 @@ const PageAddPermission: React.FC = () => {
               name="ten_vai_tro"
               rules={[
                 { required: true, message: "Vui lòng nhập tên vai trò!" },
+                {
+                  pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                  message: "Vui lòng nhập tên không chứa ký tự trắng!",
+                },
               ]}
             >
               <Input placeholder="Nhập tên quyền" />
             </Form.Item>
-            <Form.Item label="Mô tả" name="mo_ta">
+            <Form.Item
+              label="Mô tả"
+              name="mo_ta"
+              rules={[
+                { required: true, message: "Vui lòng nhập mô tả !" },
+                {
+                  pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                  message: "Vui lòng nhập mô tả không chứa ký tự trắng!",
+                },
+              ]}
+            >
               <TextArea placeholder="Nhập mô tả" rows={4} />
             </Form.Item>
             <Form.Item className="flex">
@@ -194,22 +198,23 @@ const PageAddPermission: React.FC = () => {
             </Form.Item>{" "}
           </div>
           <div className="w-[50%]">
-            <Form.Item
-              name="ten_quyen"
-              rules={[{ required: true, message: "Vui lòng chọn  quyền !" }]}
-            >
-              <Tree
-                checkable
-                onExpand={console.log(onExpand)}
-                expandedKeys={expandedKeys}
-                autoExpandParent={autoExpandParent}
-                onCheck={onCheck}
-                checkedKeys={checkedKeys}
-                onSelect={onSelect}
-                selectedKeys={selectedKeys}
-                treeData={treeData}
-              />
-            </Form.Item>{" "}
+            <Form.Item name="ten_quyen">
+              <Checkbox.Group value={checkedKeys}>
+                <Tree
+                  checkable
+                  onExpand={onExpand}
+                  expandedKeys={expandedKeys}
+                  autoExpandParent={autoExpandParent}
+                  onCheck={(checkedKeysValue) => {
+                    setCheckedKeys(checkedKeysValue as React.Key[]);
+                  }}
+                  checkedKeys={checkedKeys}
+                  onSelect={onSelect}
+                  selectedKeys={selectedKeys}
+                  treeData={treeData}
+                />
+              </Checkbox.Group>
+            </Form.Item>
           </div>
         </Form>
       </div>

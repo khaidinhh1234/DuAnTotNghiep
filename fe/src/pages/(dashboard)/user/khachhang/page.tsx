@@ -41,7 +41,7 @@ const UsersAdminkhachhang: React.FC = () => {
       return res.data;
     },
   });
-
+  console.log(data);
   const user = data?.data
     ?.filter((item: any) => item?.vai_tros?.length === 0)
     .map((item: any, index: number) => ({

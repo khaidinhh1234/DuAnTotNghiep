@@ -59,8 +59,16 @@ class TaiKhoanController extends Controller
             ]);
 
             if ($request->vai_tros == []) {
-                $member = VaiTro::query()->where('ten_vai_tro', 'member')->pluck('id');
-                $taiKhoan->vaiTros()->attach($member);
+                $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+                if ($member == []) {
+                    $member = VaiTro::updateOrCreate(
+                        [
+                            'ten_vai_tro' => 'member',
+                            'mo_ta' => 'Khách hàng'
+                        ]
+                    );
+                }
+                $taiKhoan->vaiTros()->attach($member->id);
             } else {
                 foreach ($request->vai_tros ?? [] as $vaiTro) {
                     $vaiTro_id = VaiTro::query()->where('ten_vai_tro', $vaiTro)->pluck('id');
@@ -121,16 +129,33 @@ class TaiKhoanController extends Controller
                 'ho' => $request->ho,
                 'ten' => $request->ten,
                 'anh_nguoi_dung' => $request->anh_nguoi_dung ?? 'https://i.pinimg.com/originals/f3/d1/ed/f3d1edf10d63c40e1fa06364176fa502.png',
+<<<<<<< HEAD
                 // 'email' => $request->email,
                 // 'password' => $request->password,
+=======
+>>>>>>> 512b88d60724f97b52eab33521f8f7cc4e3a3d0a
                 'so_dien_thoai' => $request->so_dien_thoai,
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,
                 'gioi_tinh' => $request->gioi_tinh,
             ]);
-            foreach ($request->vai_tros ?? [] as $vaiTro) {
-                $vaiTro = VaiTro::query()->where('ten_vai_tro', $vaiTro)->first();
-                array_push($vaiTro_id, $vaiTro->id);
+
+            if ($request->vai_tros == []) {
+                $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+                if ($member == []) {
+                    $member = VaiTro::updateOrCreate(
+                        [
+                            'ten_vai_tro' => 'member',
+                            'mo_ta' => 'Khách hàng'
+                        ]
+                    );
+                }
+                array_push($vaiTro_id, $member->id);
+            } else {
+                foreach ($request->vai_tros ?? [] as $vaiTro) {
+                    $vaiTro = VaiTro::query()->where('ten_vai_tro', $vaiTro)->first();
+                    array_push($vaiTro_id, $vaiTro->id);
+                }
             }
             $taiKhoan->vaiTros()->sync($vaiTro_id);
             DB::commit();
@@ -204,11 +229,13 @@ class TaiKhoanController extends Controller
             DB::beginTransaction();
             $taiKhoan = User::onlyTrashed()->findOrFail($id);
             $taiKhoan->restore();
+            $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+            $taiKhoan->vaiTros()->attach($member->id);
             DB::commit();
             return response()->json([
                 'success' => true,
                 'status_code' => 200,
-                'message' => 'Khôi phục vai trò thành công',
+                'message' => 'Khôi phục tài khoản thành công',
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -219,5 +246,12 @@ class TaiKhoanController extends Controller
                 'error' => $exception->getMessage()
             ], 500);
         }
+    }
+    public function danhSachVaiTro()
+    {
+        $allRole = VaiTro::query()->whereNot('ten_vai_tro', 'member')->get();
+        return response()->json([
+            'data' => $allRole
+        ], 200);
     }
 }

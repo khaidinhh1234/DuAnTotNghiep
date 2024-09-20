@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateVaiTroRequest;
 use App\Models\Quyen;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
 class VaiTroController extends Controller
@@ -50,7 +51,7 @@ class VaiTroController extends Controller
                 $quyen = Quyen::updateOrCreate([
                     'ten_quyen' => $ten_quyen
                 ]);
-                $vaiTro->quyen()->attach($quyen->id);
+                $vaiTro->quyens()->attach($quyen->id);
             }
 
             DB::commit();
@@ -113,7 +114,7 @@ class VaiTroController extends Controller
                 ]);
                 array_push($quyen_id, $quyen->id);
             }
-            $vaiTro->quyen()->sync($quyen_id);
+            $vaiTro->quyens()->sync($quyen_id);
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -141,7 +142,7 @@ class VaiTroController extends Controller
             DB::beginTransaction();
             $vaiTro = VaiTro::query()->findOrFail($id);
 
-            $vaiTro->quyen()->sync([]);
+            $vaiTro->quyens()->sync([]);
             $vaiTro->delete();
 
             DB::commit();
@@ -161,46 +162,61 @@ class VaiTroController extends Controller
         }
     }
 
-    public function danhSachVaiTroDaXoa()
-    {
-        try {
-            $vaiTro = VaiTro::onlyTrashed()->orderByDesc('deleted_at')->get();
+    // public function danhSachVaiTroDaXoa()
+    // {
+    //     try {
+    //         $vaiTro = VaiTro::onlyTrashed()->orderByDesc('deleted_at')->get();
 
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công.',
-                'data' => $vaiTro,
-            ], 200);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Lấy dữ liệu thất bại!',
-                'error' => $exception->getMessage()
-            ], 500);
-        }
-    }
-    public function khoiPhucVaiTro(string $id)
+    //         return response()->json([
+    //             'status' => true,
+    //             'status_code' => 200,
+    //             'message' => 'Lấy dữ liệu thành công.',
+    //             'data' => $vaiTro,
+    //         ], 200);
+    //     } catch (\Exception $exception) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'status_code' => 500,
+    //             'message' => 'Lấy dữ liệu thất bại!',
+    //             'error' => $exception->getMessage()
+    //         ], 500);
+    //     }
+    // }
+    // public function khoiPhucVaiTro(string $id)
+    // {
+    //     try {
+    //         DB::beginTransaction();
+    //         $vaiTro = VaiTro::onlyTrashed()->findOrFail($id);
+    //         $vaiTro->restore();
+    //         DB::commit();
+    //         return response()->json([
+    //             'status' => true,
+    //             'status_code' => 200,
+    //             'message' => 'Khôi phục vai trò thành công',
+    //         ], 200);
+    //     } catch (\Exception $exception) {
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'status' => false,
+    //             'status_code' => 500,
+    //             'message' => 'Khôi phục vai trò thất bại',
+    //             'error' => $exception->getMessage()
+    //         ], 500);
+    //     }
+    // }
+    public function danhSachQuyen()
     {
-        try {
-            DB::beginTransaction();
-            $vaiTro = VaiTro::onlyTrashed()->findOrFail($id);
-            $vaiTro->restore();
-            DB::commit();
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Khôi phục vai trò thành công',
-            ], 200);
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Khôi phục vai trò thất bại',
-                'error' => $exception->getMessage()
-            ], 500);
+        $routeList = [];
+        $routeNames = Route::getRoutes();
+        foreach ($routeNames as $route) {
+            $name = $route->getName();
+            $pos = strpos($name, 'admin');
+            if ($pos !== false) {
+                array_push($routeList, $name);
+            }
         }
+        return response()->json([
+            'data' => $routeList
+        ], 200);
     }
 }
