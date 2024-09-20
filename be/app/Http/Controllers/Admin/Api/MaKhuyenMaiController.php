@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Events\UserNotification;
 use App\Http\Controllers\Controller;
 use App\Models\MaKhuyenMai;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +18,7 @@ class MaKhuyenMaiController extends Controller
     public function index()
     {
         try {
-            $data = MaKhuyenMai::query()->with(['sanPhams','hangThanhViens'])->orderByDesc('id')->get();
+            $data = MaKhuyenMai::query()->with(['sanPhams', 'hangThanhViens'])->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -47,7 +49,7 @@ class MaKhuyenMaiController extends Controller
             'so_luong'            => 'required|integer',
             'giam_gia'            => 'required|numeric',
             'chi_tieu_thoi_thieu' => 'nullable|numeric',
-            'tong_giam_gia_toi_da'=> 'nullable|numeric',
+            'tong_giam_gia_toi_da' => 'nullable|numeric',
             'khuyen_mai_san_pham' => 'nullable|array',
             'hang_thanh_vien'     => 'required|array'
         ]);
@@ -91,7 +93,7 @@ class MaKhuyenMaiController extends Controller
     public function show(string $id)
     {
         try {
-            $maKhuyenMai = MaKhuyenMai::query()->with(['sanPhams','hangThanhViens'])->findOrFail($id);
+            $maKhuyenMai = MaKhuyenMai::query()->with(['sanPhams', 'hangThanhViens'])->findOrFail($id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -122,7 +124,7 @@ class MaKhuyenMaiController extends Controller
             'so_luong'            => 'required|integer',
             'giam_gia'            => 'required|numeric',
             'chi_tieu_thoi_thieu' => 'nullable|numeric',
-            'tong_giam_gia_toi_da'=> 'nullable|numeric',
+            'tong_giam_gia_toi_da' => 'nullable|numeric',
             'khuyen_mai_san_pham' => 'nullable|array',  // Cho phép null hoặc mảng
             'hang_thanh_vien'     => 'required|array'
         ]);
@@ -187,7 +189,8 @@ class MaKhuyenMaiController extends Controller
         }
     }
 
-    public function danhSachMaKhuyenMaiDaXoa(){
+    public function danhSachMaKhuyenMaiDaXoa()
+    {
         try {
             $maKhuyenMai = MaKhuyenMai::onlyTrashed()->orderByDesc('deleted_at')->get();
             return response()->json([
@@ -225,6 +228,41 @@ class MaKhuyenMaiController extends Controller
             ], 500);
         }
     }
+    public function guiThongBao(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'ma_code' => 'required|string|max:255'
+        ]);
 
+        if ($validator->failed()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
+        try {
+            DB::beginTransaction();
+            $users = User::query()->whereHas('vaiTros', function ($query) {
+                $query->where('ten_vai_tro', 'member');
+            })->get();
+            $maKhuyenMai = MaKhuyenMai::query()->where('ma_code', $request->ma_code)->first();
+            foreach ($users as $user) {
+                broadcast(new UserNotification($maKhuyenMai))->toOthers();
+            }
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Gửi thông báo thành công.'
+            ], 200);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi trong quá trình gửi thông báo',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 }
