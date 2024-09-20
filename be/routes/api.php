@@ -107,6 +107,7 @@ Route::middleware([])
         Route::apiResource('tintuc', TinTucController::class);
 
         // Mã khuyến mãi
+        Route::post('makhuyenmai/thongbao', [MaKhuyenMaiController::class, 'guiThongBao'])->name('makhuyenmai.thongbao');
         Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa'])->name('makhuyenmai.thungrac');
         Route::post('makhuyenmai/thung-rac/{id}', [MaKhuyenMaiController::class, 'khoiPhucMaKhuyenMai'])->name('mathungrac.khoiphuc');
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class);
