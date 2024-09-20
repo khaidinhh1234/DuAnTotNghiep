@@ -347,4 +347,42 @@ class SanPhamController extends Controller
             ], 500);
         }
     }
+
+    public function kichHoatSanPham(int $id){
+        try {
+            SanPham::query()->findOrFail($id)->update(['trang_thai' => 1]);
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Kích hoạt sản phẩm thành công',
+            ];
+            return response()->json($json, 200);
+        }catch (\Exception $exception) {
+            $json = [
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Kích hoạt sản phẩm thất bại',
+            ];
+            return response()->json($json, 500);
+            }
+    }
+
+    public function huyKichHoatSanPham(int $id){
+        try {
+            SanPham::query()->findOrFail($id)->update(['trang_thai' => 0]);
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Huỷ kích hoạt sản phẩm thành công',
+            ];
+            return response()->json($json, 200);
+        }catch (\Exception $exception) {
+            $json = [
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Huỷ kích hoạt sản phẩm thất bai',
+            ];
+            return response()->json($json, 500);
+            }
+    }
 }
