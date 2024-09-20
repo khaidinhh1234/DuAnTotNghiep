@@ -204,16 +204,71 @@ class VaiTroController extends Controller
     //         ], 500);
     //     }
     // }
+
+
     public function danhSachQuyen()
     {
+        function convertPermissionToText($permission)
+        {
+            $mapping = [
+                'index' => 'Danh sách',
+                'store' => 'Thêm',
+                'show' => 'Chi tiết',
+                'update' => 'Cập nhật',
+                'destroy' => 'Xóa',
+                'thungrac' => 'Thùng rác',
+                'khoiphuc' => 'Khôi phục',
+                'thongbao' => 'Thông báo',
+                'tttt' => 'Trạng thái thanh toán',
+                'ttdh' => 'Trạng thái đơn hàng',
+                'danhmuc' => 'danh mục',
+                'sanpham' => 'sản phẩm',
+                'the' => 'thẻ',
+                'vaitro' => 'vai trò',
+                'thongtinweb' => 'thông tin website',
+                'danhmuctintuc' => 'danh mục tin tức',
+                'tintuc' => 'tin tức',
+                'makhuyenmai' => 'mã khuyến mãi',
+                'taikhoan' => 'tài khoản',
+                'donhang' => 'đơn hàng',
+                'bienthekichthuoc' => 'biến thể kích thức',
+                'bienthemausac' => 'biến thể màu sắc',
+                'thong-ke' => 'Thống kê',
+                'doanh-thu-ngay' => 'doanh thu theo ngày',
+                'doanh-thu-tuan' => 'doanh thu theo tuần',
+                'doanh-thu-thang' => 'doanh thu theo tháng',
+                'doanh-thu-quy' => 'doanh thu theo quý',
+                'doanh-thu-nam' => 'doanh thu theo năm',
+                'doanh-thu-san-pham' => 'doanh thu theo sản phẩm',
+                'doanh-thu-danh-muc' => 'doanh thu theo danh mục',
+                'doanh-thu-so-sanh' => 'doanh thu so sánh',
+                'don-hang-theo-trang-thai' => 'doanh thu theo trạng thái đơn hàng',
+                'san-pham-ban-theo-thang' => 'doanh thu sản phẩm bán theo tháng',
+                'san-pham-ban-theo-nam' => 'doanh thu sản phẩm bán theo năm',
+            ];
+
+            $key = explode('.', $permission);
+            $lastKey = end($key);
+
+            if (isset($mapping[$lastKey])) {
+                return $mapping[$lastKey] . ' ' .  $mapping[$key[1]];
+            }
+            return $permission;
+        }
+
         $routeList = [];
         $routeNames = Route::getRoutes();
         foreach ($routeNames as $route) {
             $name = $route->getName();
             $pos = strpos($name, 'admin');
-            if ($pos !== false) {
-                array_push($routeList, $name);
+            $newText = convertPermissionToText($route->getName());
+            if ($pos !== false && $name !== 'admin.') {
+                array_push($routeList, [
+                    'name' => $newText,
+                    'key' => $name
+                ]);
             }
+            // $filteredPermissions = array_diff($routeList, ['admin.']);
         }
         return response()->json([
             'data' => $routeList
