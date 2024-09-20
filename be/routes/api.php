@@ -75,8 +75,10 @@ Route::middleware([])
         Route::apiResource('danhmuc', DanhMucController::class);
 
         // Sản phẩm
-        Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
-        Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
+        Route::post('sanpham/kich-hoat/{id}', [SanPhamController::class, 'kichHoatSanPham']);
+        Route::post('sanpham/huy-kich-hoat/{id}', [SanPhamController::class, 'huyKichHoatSanPham']);
+        Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa']);
+        Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham']);
         Route::apiResource('sanpham', SanPhamController::class);
 
         // Thẻ
