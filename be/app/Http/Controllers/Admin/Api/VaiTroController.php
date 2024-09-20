@@ -211,7 +211,7 @@ class VaiTroController extends Controller
         function convertPermissionToText($permission)
         {
             $mapping = [
-                'index' => 'Danh sách',
+                'index' => 'Quản lý',
                 'store' => 'Thêm',
                 'show' => 'Chi tiết',
                 'update' => 'Cập nhật',
@@ -257,18 +257,32 @@ class VaiTroController extends Controller
         }
 
         $routeList = [];
+        $routeListChildren = [];
         $routeNames = Route::getRoutes();
         foreach ($routeNames as $route) {
             $name = $route->getName();
             $pos = strpos($name, 'admin');
             $newText = convertPermissionToText($route->getName());
+            $key = explode('.', $name);
+            $index = end($key);
+
             if ($pos !== false && $name !== 'admin.') {
-                array_push($routeList, [
-                    'name' => $newText,
-                    'key' => $name
-                ]);
+                if ($index != 'index') {
+                    $children = [
+                        "title" => $newText,
+                        "key" => $name,
+                    ];
+                    array_push($routeListChildren, $children);
+                }
+                if ($index == 'index') {
+                    $result = [
+                        "title" => $newText,
+                        "key" => $name,
+                        "children" => $routeListChildren
+                    ];
+                    array_push($routeList, $result);
+                }
             }
-            // $filteredPermissions = array_diff($routeList, ['admin.']);
         }
         return response()->json([
             'data' => $routeList
