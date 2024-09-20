@@ -233,18 +233,18 @@ class VaiTroController extends Controller
                 'donhang' => 'đơn hàng',
                 'bienthekichthuoc' => 'biến thể kích thức',
                 'bienthemausac' => 'biến thể màu sắc',
-                'thong-ke' => 'Thống kê',
-                'doanh-thu-ngay' => 'doanh thu theo ngày',
-                'doanh-thu-tuan' => 'doanh thu theo tuần',
-                'doanh-thu-thang' => 'doanh thu theo tháng',
-                'doanh-thu-quy' => 'doanh thu theo quý',
-                'doanh-thu-nam' => 'doanh thu theo năm',
-                'doanh-thu-san-pham' => 'doanh thu theo sản phẩm',
-                'doanh-thu-danh-muc' => 'doanh thu theo danh mục',
-                'doanh-thu-so-sanh' => 'doanh thu so sánh',
-                'don-hang-theo-trang-thai' => 'doanh thu theo trạng thái đơn hàng',
-                'san-pham-ban-theo-thang' => 'doanh thu sản phẩm bán theo tháng',
-                'san-pham-ban-theo-nam' => 'doanh thu sản phẩm bán theo năm',
+                'thong-ke' => '',
+                'doanh-thu-ngay' => 'Doanh thu theo ngày',
+                'doanh-thu-tuan' => 'Doanh thu theo tuần',
+                'doanh-thu-thang' => 'Doanh thu theo tháng',
+                'doanh-thu-quy' => 'Doanh thu theo quý',
+                'doanh-thu-nam' => 'Doanh thu theo năm',
+                'doanh-thu-san-pham' => 'Doanh thu theo sản phẩm',
+                'doanh-thu-danh-muc' => 'Doanh thu theo danh mục',
+                'doanh-thu-so-sanh' => 'Doanh thu so sánh',
+                'don-hang-theo-trang-thai' => 'Doanh thu theo trạng thái đơn hàng',
+                'san-pham-ban-theo-thang' => 'Doanh thu sản phẩm bán theo tháng',
+                'san-pham-ban-theo-nam' => 'Doanh thu sản phẩm bán theo năm',
             ];
 
             $key = explode('.', $permission);
@@ -257,35 +257,39 @@ class VaiTroController extends Controller
         }
 
         $routeList = [];
-        $routeListChildren = [];
-        $routeNames = Route::getRoutes();
-        foreach ($routeNames as $route) {
+        $currentParent = null;
+
+        foreach (Route::getRoutes() as $route) {
             $name = $route->getName();
-            $pos = strpos($name, 'admin');
-            $newText = convertPermissionToText($route->getName());
+            if (strpos($name, 'admin') === false || $name === 'admin.') {
+                continue;
+            }
+
+            $newText = convertPermissionToText($name);
             $key = explode('.', $name);
             $index = end($key);
 
-            if ($pos !== false && $name !== 'admin.') {
-                if ($index != 'index') {
-                    $children = [
-                        "title" => $newText,
-                        "key" => $name,
-                    ];
-                    array_push($routeListChildren, $children);
+            if ($index === 'index' || $key[1] == 'thong-ke') {
+                if ($currentParent) {
+                    $routeList[] = $currentParent;
                 }
-                if ($index == 'index') {
-                    $result = [
+
+                $currentParent = [
+                    "title" => $newText,
+                    "key" => $name,
+                    "children" => []
+                ];
+            } else {
+
+                if ($currentParent) {
+                    $currentParent['children'][] = [
                         "title" => $newText,
                         "key" => $name,
-                        "children" => $routeListChildren
                     ];
-                    array_push($routeList, $result);
                 }
             }
         }
-        return response()->json([
-            'data' => $routeList
-        ], 200);
+
+        return response()->json(['data' => $routeList], 200);
     }
 }
