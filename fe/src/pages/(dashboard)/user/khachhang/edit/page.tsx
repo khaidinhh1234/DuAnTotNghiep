@@ -179,7 +179,7 @@ const UserskhachhangEdit = () => {
                       Nữ
                     </Radio>
                     <Radio
-                      value="3"
+                      value="0"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Khác...

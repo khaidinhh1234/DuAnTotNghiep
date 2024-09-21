@@ -1,4 +1,3 @@
-
 import ScrollToTop from "@/assets/js/scrolltotop";
 import ChangePassword from "@/pages/(auth)/ChangePassword/changepassword";
 
@@ -71,7 +70,6 @@ import UsersNhanvienAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
 import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
 import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
 import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
-
 
 const Router = () => {
   return (
@@ -176,7 +174,10 @@ const Router = () => {
 
           <Route path="ADmin/privilegeadmin" element={<PagePrivilegeAdmin />} />
           <Route path="add-admin" element={<PageAddAdmin />} />
-          <Route path="add-permission" element={<PageAddPermission />} />
+          <Route
+            path="ADmin/userprivileges/add-permission"
+            element={<PageAddPermission />}
+          />
           <Route
             path="Content"
             element={<Navigate to="/admin/Content/qlfooter" />}

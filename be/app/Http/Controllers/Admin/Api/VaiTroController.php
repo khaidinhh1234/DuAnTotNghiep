@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateVaiTroRequest;
 use App\Models\Quyen;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
 class VaiTroController extends Controller
@@ -50,7 +51,7 @@ class VaiTroController extends Controller
                 $quyen = Quyen::updateOrCreate([
                     'ten_quyen' => $ten_quyen
                 ]);
-                $vaiTro->quyen()->attach($quyen->id);
+                $vaiTro->quyens()->attach($quyen->id);
             }
 
             DB::commit();
@@ -113,7 +114,7 @@ class VaiTroController extends Controller
                 ]);
                 array_push($quyen_id, $quyen->id);
             }
-            $vaiTro->quyen()->sync($quyen_id);
+            $vaiTro->quyens()->sync($quyen_id);
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -141,7 +142,7 @@ class VaiTroController extends Controller
             DB::beginTransaction();
             $vaiTro = VaiTro::query()->findOrFail($id);
 
-            $vaiTro->quyen()->sync([]);
+            $vaiTro->quyens()->sync([]);
             $vaiTro->delete();
 
             DB::commit();
@@ -161,46 +162,134 @@ class VaiTroController extends Controller
         }
     }
 
-    public function danhSachVaiTroDaXoa()
-    {
-        try {
-            $vaiTro = VaiTro::onlyTrashed()->orderByDesc('deleted_at')->get();
+    // public function danhSachVaiTroDaXoa()
+    // {
+    //     try {
+    //         $vaiTro = VaiTro::onlyTrashed()->orderByDesc('deleted_at')->get();
 
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công.',
-                'data' => $vaiTro,
-            ], 200);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Lấy dữ liệu thất bại!',
-                'error' => $exception->getMessage()
-            ], 500);
-        }
-    }
-    public function khoiPhucVaiTro(string $id)
+    //         return response()->json([
+    //             'status' => true,
+    //             'status_code' => 200,
+    //             'message' => 'Lấy dữ liệu thành công.',
+    //             'data' => $vaiTro,
+    //         ], 200);
+    //     } catch (\Exception $exception) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'status_code' => 500,
+    //             'message' => 'Lấy dữ liệu thất bại!',
+    //             'error' => $exception->getMessage()
+    //         ], 500);
+    //     }
+    // }
+    // public function khoiPhucVaiTro(string $id)
+    // {
+    //     try {
+    //         DB::beginTransaction();
+    //         $vaiTro = VaiTro::onlyTrashed()->findOrFail($id);
+    //         $vaiTro->restore();
+    //         DB::commit();
+    //         return response()->json([
+    //             'status' => true,
+    //             'status_code' => 200,
+    //             'message' => 'Khôi phục vai trò thành công',
+    //         ], 200);
+    //     } catch (\Exception $exception) {
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'status' => false,
+    //             'status_code' => 500,
+    //             'message' => 'Khôi phục vai trò thất bại',
+    //             'error' => $exception->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+
+    public function danhSachQuyen()
     {
-        try {
-            DB::beginTransaction();
-            $vaiTro = VaiTro::onlyTrashed()->findOrFail($id);
-            $vaiTro->restore();
-            DB::commit();
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Khôi phục vai trò thành công',
-            ], 200);
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Khôi phục vai trò thất bại',
-                'error' => $exception->getMessage()
-            ], 500);
+        function convertPermissionToText($permission)
+        {
+            $mapping = [
+                'index' => 'Quản lý',
+                'store' => 'Thêm',
+                'show' => 'Chi tiết',
+                'update' => 'Cập nhật',
+                'destroy' => 'Xóa',
+                'thungrac' => 'Thùng rác',
+                'khoiphuc' => 'Khôi phục',
+                'thongbao' => 'Thông báo',
+                'tttt' => 'Trạng thái thanh toán',
+                'ttdh' => 'Trạng thái đơn hàng',
+                'danhmuc' => 'danh mục',
+                'sanpham' => 'sản phẩm',
+                'the' => 'thẻ',
+                'vaitro' => 'vai trò',
+                'thongtinweb' => 'thông tin website',
+                'danhmuctintuc' => 'danh mục tin tức',
+                'tintuc' => 'tin tức',
+                'makhuyenmai' => 'mã khuyến mãi',
+                'taikhoan' => 'tài khoản',
+                'donhang' => 'đơn hàng',
+                'bienthekichthuoc' => 'biến thể kích thức',
+                'bienthemausac' => 'biến thể màu sắc',
+                'thong-ke' => '',
+                'doanh-thu-ngay' => 'Doanh thu theo ngày',
+                'doanh-thu-tuan' => 'Doanh thu theo tuần',
+                'doanh-thu-thang' => 'Doanh thu theo tháng',
+                'doanh-thu-quy' => 'Doanh thu theo quý',
+                'doanh-thu-nam' => 'Doanh thu theo năm',
+                'doanh-thu-san-pham' => 'Doanh thu theo sản phẩm',
+                'doanh-thu-danh-muc' => 'Doanh thu theo danh mục',
+                'doanh-thu-so-sanh' => 'Doanh thu so sánh',
+                'don-hang-theo-trang-thai' => 'Doanh thu theo trạng thái đơn hàng',
+                'san-pham-ban-theo-thang' => 'Doanh thu sản phẩm bán theo tháng',
+                'san-pham-ban-theo-nam' => 'Doanh thu sản phẩm bán theo năm',
+            ];
+
+            $key = explode('.', $permission);
+            $lastKey = end($key);
+
+            if (isset($mapping[$lastKey])) {
+                return $mapping[$lastKey] . ' ' .  $mapping[$key[1]];
+            }
+            return $permission;
         }
+
+        $routeList = [];
+        $currentParent = null;
+
+        foreach (Route::getRoutes() as $route) {
+            $name = $route->getName();
+            if (strpos($name, 'admin') === false || $name === 'admin.') {
+                continue;
+            }
+
+            $newText = convertPermissionToText($name);
+            $key = explode('.', $name);
+            $index = end($key);
+
+            if ($index === 'index' || $key[1] == 'thong-ke') {
+                if ($currentParent) {
+                    $routeList[] = $currentParent;
+                }
+
+                $currentParent = [
+                    "title" => $newText,
+                    "key" => $name,
+                    "children" => []
+                ];
+            } else {
+
+                if ($currentParent) {
+                    $currentParent['children'][] = [
+                        "title" => $newText,
+                        "key" => $name,
+                    ];
+                }
+            }
+        }
+
+        return response()->json(['data' => $routeList], 200);
     }
 }
