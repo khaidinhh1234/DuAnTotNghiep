@@ -1,10 +1,17 @@
-import { useLocalStorage } from "@/components/hook/useStoratge";
-
 import instance from "@/configs/axios";
 import { SearchOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, Popconfirm, Space, Table, Tag } from "antd";
+import {
+  Button,
+  Image,
+  Input,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
+} from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
@@ -25,46 +32,8 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-// const data: DataType[] = [
-//   {
-//     key: "1",
-//     anh_nguoi_dung: "https://picsum.photos/id/10/300/300",
-//     ho: "Nguyen",
-//     ten: "Van A",
-//     email: "vana@example.com",
-//     so_dien_thoai: "0123456789",
-//     dia_chi: "123 Main St",
-//     gioi_tinh: "Nam",
-//     ngay_sinh: "1990-01-01",
-//     vai_tros: "Admin",
-//   },
-//   {
-//     key: "2",
-//     anh_nguoi_dung: "https://picsum.photos/id/11/300/300",
-//     ho: "Tran",
-//     ten: "Thi B",
-//     email: "thib@example.com",
-//     so_dien_thoai: "0987654321",
-//     dia_chi: "456 Elm St",
-//     gioi_tinh: "Nu",
-//     ngay_sinh: "1992-02-02",
-//     vai_tros: "User",
-//   },
-//   {
-//     key: "3",
-//     anh_nguoi_dung: "https://picsum.photos/id/12/300/300",
-//     ho: "Le",
-//     ten: "Van C",
-//     email: "vanc@example.com",
-//     so_dien_thoai: "0112233445",
-//     dia_chi: "789 Oak St",
-//     gioi_tinh: "Nam",
-//     ngay_sinh: "1988-03-03",
-//     vai_tros: "Moderator",
-//   },
-// ];
-
 const UsersAdminkhachhang: React.FC = () => {
+  const queryClient = useQueryClient();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
@@ -72,11 +41,37 @@ const UsersAdminkhachhang: React.FC = () => {
       return res.data;
     },
   });
+  console.log(data);
+  const user = data?.data
+    ?.filter((item: any) => item?.vai_tros?.length === 0)
+    .map((item: any, index: number) => ({
+      ...item,
+      key: item.id,
+      index: index,
+    }));
 
-  const user = data?.data.map((item: any, index: number) => {
-    return { ...item, key: item.id, index: index };
+  const mutate = useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        const res = await instance.delete(`/admin/taikhoan/${id}`);
+        message.open({
+          type: "success",
+          content: "Xóa thành công",
+        });
+        return res.data;
+      } catch (error) {
+        message.open({
+          type: "error",
+          content: "Xóa thất bại",
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["productskey"],
+      });
+    },
   });
-
   // const users = user.reverse();
 
   // const [searchText, setSearchText] = useState
@@ -228,8 +223,7 @@ const UsersAdminkhachhang: React.FC = () => {
       key: "so_dien_thoai",
       width: "15%",
       ...getColumnSearchProps("so_dien_thoai"),
-      sorter: (a: any, b: any) =>
-        a.so_dien_thoai - b.so_dien_thoai,
+      sorter: (a: any, b: any) => a.so_dien_thoai - b.so_dien_thoai,
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
@@ -271,6 +265,9 @@ const UsersAdminkhachhang: React.FC = () => {
             description="Bạn có chắc chắn muốn xóa không?"
             okText="Có"
             cancelText="Không"
+            onConfirm={() => {
+              mutate.mutate(String(record?.key));
+            }}
           >
             <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
               Chặn

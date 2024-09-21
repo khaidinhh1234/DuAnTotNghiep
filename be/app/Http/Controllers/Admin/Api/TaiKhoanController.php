@@ -129,6 +129,10 @@ class TaiKhoanController extends Controller
                 'ho' => $request->ho,
                 'ten' => $request->ten,
                 'anh_nguoi_dung' => $request->anh_nguoi_dung ?? 'https://i.pinimg.com/originals/f3/d1/ed/f3d1edf10d63c40e1fa06364176fa502.png',
+
+                // 'email' => $request->email,
+                // 'password' => $request->password,
+
                 'so_dien_thoai' => $request->so_dien_thoai,
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,
