@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tabs } from "antd";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -10,13 +10,13 @@ import instance from "@/configs/axios";
 import { ICategories } from "@/common/types/category";
 import { toast } from "react-toastify";
 
+const { TabPane } = Tabs;
+
 const CategoriesAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(
-    new Map()
-  );
+  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(new Map());
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
@@ -30,14 +30,14 @@ const CategoriesAdmin: React.FC = () => {
           categoryMap.set(category.id, category.ten_danh_muc);
         });
         setCategoriesMap(categoryMap);
-
-        return categories;
+        return categories; // Đảm bảo rằng categories.data chứa createdAt
       } catch (error) {
         console.error("Error fetching categories:", error);
         throw new Error("Error fetching categories");
       }
     },
   });
+
 
   const dataSource = data?.data.map((category: ICategories) => ({
     key: category.id,
@@ -46,11 +46,10 @@ const CategoriesAdmin: React.FC = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
-      console.log(`Attempting to delete category with id: ${id}`);
       try {
         const response = await instance.delete(`/admin/danhmuc/${id}`);
         if (response.data.status) {
-          return id; // Return the id for further actions
+          return id;
         } else {
           throw new Error(response.data.message || 'Failed to delete');
         }
@@ -60,7 +59,6 @@ const CategoriesAdmin: React.FC = () => {
       }
     },
     onSuccess: (id) => {
-      console.log("Successfully deleted category with id:", id);
       queryClient.invalidateQueries(['danhmuc']);
       toast.success("Xóa danh mục thành công");
     },
@@ -69,10 +67,6 @@ const CategoriesAdmin: React.FC = () => {
       toast.error("Xóa danh mục thất bại");
     },
   });
-  
-
-  // if (isLoading) return <p>Loading...</p>; 
-  // if (isError) return <p>Error: {isError.message}</p>;
 
   const handleSearch = (
     selectedKeys: string[],
@@ -170,14 +164,15 @@ const CategoriesAdmin: React.FC = () => {
       key: "ten_danh_muc",
       dataIndex: "ten_danh_muc",
       ...getColumnSearchProps("ten_danh_muc"),
-      sorter: (a, b) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
+      sorter: (a: any, b: any) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
+      render: (text) => (text ? text : "Chưa có dữ liệu")
     },
     {
       title: "Ảnh danh mục",
       width: "15%",
       key: "anh_danh_muc",
       dataIndex: "anh_danh_muc",
-      render: (anh_danh_muc: string) => 
+      render: (anh_danh_muc: string) =>
         anh_danh_muc ? (
           <img
             src={anh_danh_muc}
@@ -188,7 +183,6 @@ const CategoriesAdmin: React.FC = () => {
           <span>Ảnh không có</span>
         )
     },
-    
     {
       title: "Danh mục cha",
       width: "20%",
@@ -199,9 +193,9 @@ const CategoriesAdmin: React.FC = () => {
     {
       title: "Thời gian tạo",
       width: "15%",
-      key: "createdAt",
-      dataIndex: "createdAt",
-      render: (text) => (text ? new Date(text).toLocaleDateString() : "N/A"),
+      key: "created_at",
+      dataIndex: "created_at",
+      render: (text) => (text ? new Date(text).toLocaleDateString() : ""),
     },
     {
       title: "Quản trị",
@@ -228,7 +222,6 @@ const CategoriesAdmin: React.FC = () => {
       ),
     },
   ];
-  
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -254,16 +247,14 @@ const CategoriesAdmin: React.FC = () => {
           </Link>
         </div>
       </div>
-      <div className="flex">
-        <div className="w-1/2 pr-2">
-          <h2 className="text-xl font-semibold mb-4">Danh mục cha</h2>
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="Danh mục cha" key="1">
           <Table columns={columns} dataSource={dataSource.filter(category => !category.cha_id)} />
-        </div>
-        <div className="w-1/2 pl-2">
-          <h2 className="text-xl font-semibold mb-4">Danh mục con</h2>
+        </TabPane>
+        <TabPane tab="Danh mục con" key="2">
           <Table columns={columns} dataSource={dataSource.filter(category => category.cha_id)} />
-        </div>
-      </div>
+        </TabPane>
+      </Tabs>
     </main>
   );
 };

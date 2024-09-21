@@ -5,7 +5,7 @@ export interface ICategories {
     anh_danh_muc: string;
     duong_dan?: string;
     deletool?: boolean;
-    createdAt?: Date;
+    created_at?: Date;
     updatedAt?: Date;
     // children?: ICategories[];
 }

@@ -1,18 +1,20 @@
 import React from "react";
 import { Table, Button, Space } from "antd";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
-import { ICategories } from "@/common/types/category";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const CategoriesRemote: React.FC = () => {
-  const { id } = useParams()
+  const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
+  const { id } = useParams();
+
+  // Fetch danh mục đã xóa
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['danhmuc-remote'],
+    queryKey: ["danhmuc-remote"],
     queryFn: async () => {
       try {
-        const response = await instance.get('/admin/danhmuc/thung-rac');
+        const response = await instance.get("/admin/danhmuc/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching remote categories:", error);
@@ -21,24 +23,26 @@ const CategoriesRemote: React.FC = () => {
     },
   });
 
+  // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
-      await instance.patch(`/admin/danhmuc/thung-rac/${id}`);
+      await instance.post(`/admin/danhmuc/thung-rac/${id}`);
       toast.success("Khôi phục danh mục thành công");
-      // Refresh the data after restoring
-      QueryClient.invalidateQueries(['danhmuc-remote']);
+      // Refresh lại dữ liệu sau khi khôi phục
+      queryClient.invalidateQueries(["danhmuc-remote"]);
     } catch (error) {
       console.error("Error restoring category:", error);
       toast.error("Khôi phục danh mục thất bại");
     }
   };
 
+  // Xử lý xóa danh mục vĩnh viễn
   const handleDelete = async (id: string) => {
     try {
       await instance.delete(`/admin/danhmuc/${id}`);
       toast.success("Xóa danh mục vĩnh viễn thành công");
-      // Refresh the data after permanently deleting
-      queryClient.invalidateQueries(['danhmuc-remote']);
+      // Refresh lại dữ liệu sau khi xóa vĩnh viễn
+      queryClient.invalidateQueries(["danhmuc-remote"]);
     } catch (error) {
       console.error("Error deleting category:", error);
       toast.error("Xóa danh mục vĩnh viễn thất bại");
@@ -49,7 +53,7 @@ const CategoriesRemote: React.FC = () => {
     {
       title: "STT",
       key: "id",
-      dataIndex: "key",
+      dataIndex: "id", // Thay đổi dataIndex thành 'id' để đảm bảo tính duy nhất
     },
     {
       title: "Tên danh mục",
@@ -81,7 +85,7 @@ const CategoriesRemote: React.FC = () => {
     {
       title: "Quản trị",
       key: "action",
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <Space>
           <Button onClick={() => handleRestore(record.id)}>Khôi phục</Button>
           <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button>
@@ -108,6 +112,7 @@ const CategoriesRemote: React.FC = () => {
       <Table
         columns={columns}
         dataSource={data?.data || []}
+        rowKey="id" // Sử dụng id làm key để đảm bảo tính duy nhất
         pagination={{ pageSize: 10 }}
         loading={isLoading}
       />
