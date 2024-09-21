@@ -16,10 +16,6 @@ class CaptchaController extends Controller
     public function getCaptcha()
     {
         $captcha = Captcha::create();
-        if ($captcha instanceof Response) {
-            return $captcha;
-        }
-
         return response()->json([
             'captcha_key' => $captcha['key'],
             'captcha_image' => $captcha['img']
