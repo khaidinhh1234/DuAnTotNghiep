@@ -94,7 +94,8 @@ const UserPrivilegeAdmin = () => {
       return response.data;
     },
   });
-  // const vaitro = data?.data;
+  const vaitro = data?.data;
+  console.log(vaitro);
   const [filteredData, setFilteredData] = useState(data?.data);
 
   const onSearch = (value: string) => {

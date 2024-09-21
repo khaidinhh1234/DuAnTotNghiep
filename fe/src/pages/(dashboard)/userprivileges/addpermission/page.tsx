@@ -1,3 +1,5 @@
+import instance from "@/configs/axios";
+import { useQuery } from "@tanstack/react-query";
 import type { TreeDataNode, TreeProps } from "antd";
 import { Button, Card, Checkbox, Form, Input, message, Tree } from "antd";
 import React, { useState } from "react";
@@ -14,22 +16,22 @@ const treeData: TreeDataNode[] = [
   },
   {
     title: "Quản lý danh mục",
-    key: "categories",
+    key: "admin.danhmuc.index",
     children: [
-      { title: "Xóa danh mục", key: "delete-category" },
-      { title: "Thêm danh mục", key: "add-category" },
-      { title: "Cập nhật danh mục", key: "edit-category" },
+      { title: "Xóa người dùng", key: "admin.danhmuc.thungrac" },
+      { title: "Thêm người dùng", key: "admin.danhmuc.them" },
+      { title: "Cập nhật người dùng", key: "admin.danhmuc.edit" },
     ],
   },
-  {
-    title: "Quản lý người dùng",
-    key: "users",
-    children: [
-      { title: "Xóa người dùng", key: "delete-user" },
-      { title: "Thêm người dùng", key: "add-user" },
-      { title: "Cập nhật người dùng", key: "edit-user" },
-    ],
-  },
+  // {
+  //   title: "Quản lý người dùng",
+  //   key: "",
+  //   children: [
+  //     { title: "Xóa người dùng", key: "admin.danhmuc.thungrac" },
+  //     { title: "Thêm người dùng", key: "admin.danhmuc.them" },
+  //     { title: "Cập nhật người dùng", key: "admin.danhmuc.edit" },
+  //   ],
+  // },
   {
     title: "Quản lý đơn hàng",
     key: "orders",
@@ -98,6 +100,14 @@ const treeData: TreeDataNode[] = [
 const { TextArea } = Input;
 
 const PageAddPermission: React.FC = () => {
+  // const { data, isLoading, isError } = useQuery({
+  //   queryKey: ["permissions"],
+  //   queryFn: async () => {
+  //     const response = await instance.get("/admin/vaitro/routes");
+  //     return response.data;
+  //   },
+  // });
+  // console.log(data);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([""]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
@@ -122,6 +132,7 @@ const PageAddPermission: React.FC = () => {
       ...values,
       ten_quyen: checkedKeys,
     };
+    console.log(permissionData);
     if (!permissionData.ten_quyen) {
       permissionData.ten_quyen = [];
       message.open({
