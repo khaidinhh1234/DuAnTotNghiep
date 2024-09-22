@@ -91,14 +91,14 @@ Route::middleware([])
         Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate'])->name('thongtinweb.update');
 
         //Danh Mục Tin Tức
+        Route::apiResource('danhmuctintuc', DanhMucTinTucController::class);
         Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
         Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucTinTuc'])->name('danhmuctintuc.khoiphuc');
-        Route::apiResource('danhmuctintuc', DanhMucTinTucController::class);
 
         //Tin Tức
+        Route::apiResource('tintuc', TinTucController::class);
         Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa'])->name('tintuc.thungrac');
         Route::post('tintuc/thung-rac/{id}', [TinTucController::class, 'khoiPhucTinTuc'])->name('tintuc.khoiphuc');
-        Route::apiResource('tintuc', TinTucController::class);
 
         // Mã khuyến mãi
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class);
@@ -147,7 +147,7 @@ Route::middleware([])
 
         //Vai trò
         Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
+        Route::apiResource('vaitro', VaiTroController::class);
         // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
-        Route::apiResource('vaitro', VaiTroController::class);
     });
