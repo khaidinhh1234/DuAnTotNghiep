@@ -71,9 +71,10 @@ Route::middleware([])
     ->prefix('admin')
     ->group(function () {
         // Danh muc
-        Route::apiResource('danhmuc', DanhMucController::class);
+        Route::apiResource('danhmuc', DanhMucController::class)->except(['show']);
         Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa'])->name('danhmuc.thungrac');
         Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc'])->name('danhmuc.khoiphuc');
+        Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
 
         // Sản phẩm
         Route::apiResource('sanpham', SanPhamController::class);
@@ -92,14 +93,16 @@ Route::middleware([])
         Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate'])->name('thongtinweb.update');
 
         //Danh Mục Tin Tức
-        Route::apiResource('danhmuctintuc', DanhMucTinTucController::class);
+        Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
         Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
-        Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucTinTuc'])->name('danhmuctintuc.khoiphuc');
+        Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc'])->name('danhmuctintuc.khoiphuc');
+        Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
 
         //Tin Tức
-        Route::apiResource('tintuc', TinTucController::class);
+        Route::apiResource('tintuc', TinTucController::class)->except(['show']);
         Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa'])->name('tintuc.thungrac');
         Route::post('tintuc/thung-rac/{id}', [TinTucController::class, 'khoiPhucTinTuc'])->name('tintuc.khoiphuc');
+        Route::get('tintuc/{id}', [TinTucController::class, 'show'])->name('tintuc.show');
 
         // Mã khuyến mãi
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class);

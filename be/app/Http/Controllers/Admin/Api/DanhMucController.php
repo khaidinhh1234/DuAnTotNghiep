@@ -110,7 +110,7 @@ class DanhMucController extends Controller
 
     /**
      * Update the specified resource in storage.
-     */  
+     */
     public function update(Request $request, string $id)
     {
         try {
@@ -211,21 +211,19 @@ class DanhMucController extends Controller
     public function danhSachDanhMucDaXoa()
     {
         try {
-            $trashedDanhMucs = DanhMuc::onlyTrashed()->get();
-            return response()->json(
-                [
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => 'Lấy dữ liệu thành công',
-                    'data' => $trashedDanhMucs,
-                ],
-                200
-            );
+            $danhMucsDaXoa = DanhMuc::onlyTrashed()->get();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy danh sách danh mục đã xóa thành công',
+                'data' => $danhMucsDaXoa,
+            ], 200);
         } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Lấy dữ liệu không công',
+                'message' => 'Đã có lỗi xảy ra khi lấy danh sách danh mục đã xóa',
                 'error' => $exception->getMessage()
             ], 500);
         }

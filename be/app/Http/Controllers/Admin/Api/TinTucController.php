@@ -214,20 +214,17 @@ class TinTucController extends Controller
     public function danhSachTinTucDaXoa()
     {
         try {
-            DB::beginTransaction();
-            $trashedTinTucs = TinTuc::onlyTrashed()->get();
-            DB::commit();
+            $tinTucDaXoa = TinTuc::onlyTrashed()->get();
             return response()->json(
                 [
                     'status' => true,
                     'status_code' => 200,
                     'message' => 'Lấy dữ liệu thành công',
-                    'data' => $trashedTinTucs,
+                    'data' => $tinTucDaXoa,
                 ],
                 200
             );
         } catch (\Exception $exception) {
-            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -261,7 +258,7 @@ class TinTucController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Khôi phục Tin Tức không công',
+                'message' => 'Khôi phục Tin Tức không thành công',
                 'error' => $exception->getMessage()
             ], 500);
         }
