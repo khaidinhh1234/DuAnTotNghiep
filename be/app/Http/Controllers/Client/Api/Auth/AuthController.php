@@ -18,18 +18,27 @@ class AuthController extends Controller
     {
         // Tạo người dùng mới
         $user = User::create($request->all());
-        $member = VaiTro::query()->where('ten_vai_tro', 'member')->pluck('id');
-        $user->vaiTros()->attach($member);
+        $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+        if ($member == []) {
+            $member = VaiTro::create(
+                [
+                    'ten_vai_tro' => 'member',
+                    'mo_ta' => 'Khách hàng'
+                ]
+            );
+        }
+        $user->vaiTros()->attach($member->id);
+
         // Tạo token cho người dùng
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // $token = $user->createToken('auth_token')->plainTextToken;
 
         // Trả về phản hồi với token
         return response()->json([
             'status' => true,
             'status_code' => 200,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user,
+            // 'access_token' => $token,
+            // 'token_type' => 'Bearer',
+            'user' => $member,
         ], 200);
     }
 

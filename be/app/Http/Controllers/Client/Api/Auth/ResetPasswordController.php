@@ -60,7 +60,7 @@ class ResetPasswordController extends Controller
         $record = DB::table('password_reset_tokens')
             ->where('token', $request->token)
             ->first();
-        if (!$record || Carbon::parse($record->created_at)->addMinutes(15)->isPast()) {
+        if (!$record || Carbon::parse($record->created_at)->addMinutes(5)->isPast()) {
             return response()->json([
                 'status' => false,
                 'status_code' => 400,

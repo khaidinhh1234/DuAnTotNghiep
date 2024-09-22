@@ -110,7 +110,7 @@ class DanhMucController extends Controller
 
     /**
      * Update the specified resource in storage.
-     */
+     */  
     public function update(Request $request, string $id)
     {
         try {
@@ -184,6 +184,7 @@ class DanhMucController extends Controller
             }
 
             $danhMuc->delete();
+            DB::commit();
             return response()->json(
                 [
                     'status' => true,
@@ -193,6 +194,7 @@ class DanhMucController extends Controller
                 200
             );
         } catch (\Exception $exception) {
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -209,9 +211,7 @@ class DanhMucController extends Controller
     public function danhSachDanhMucDaXoa()
     {
         try {
-            DB::beginTransaction();
             $trashedDanhMucs = DanhMuc::onlyTrashed()->get();
-            DB::commit();
             return response()->json(
                 [
                     'status' => true,
@@ -222,7 +222,6 @@ class DanhMucController extends Controller
                 200
             );
         } catch (\Exception $exception) {
-            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,

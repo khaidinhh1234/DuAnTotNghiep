@@ -10,10 +10,10 @@ class AnhDanhGia extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'id_danh_gia',
+        'danh_gia_id',
         'anh_danh_gia'
     ];
     public function danhGia(){
-        return $this->belongsTo(DanhGia::class);
+        return $this->belongsTo(DanhGia::class, 'danh_gia_id');
     }
 }

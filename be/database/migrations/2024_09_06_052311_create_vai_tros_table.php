@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('ten_vai_tro', 100)->unique();
             $table->string('mo_ta')->nullable();
             $table->timestamps();
-            $table->softDeletes();
+            // $table->softDeletes();
         });
     }
 

@@ -1,12 +1,16 @@
 import { Loading3QuartersOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Form, Input, message, Radio } from "antd";
+import { Button, DatePicker, Form, Input, message, Radio, Select } from "antd";
 
 import { FormProps } from "antd";
 import { useState } from "react";
 
 import instance from "@/configs/axios";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
+
+// import type { SelectProps } from "antd";
+
+// const options: SelectProps["options"] = [];
 type FieldType = {
   ho?: string;
   ten?: string;
@@ -16,14 +20,31 @@ type FieldType = {
   dia_chi?: string;
   gioi_tinh?: string;
   ngay_sinh?: string;
+  vai_tros?: string[];
 };
 const UsersNhanvienAdd = () => {
-  // const [messageApi, contextHolder] = message.useMessage();
+  const { data } = useQuery({
+    queryKey: ["VAITRO"],
+    queryFn: async () => {
+      try {
+        const res = await instance.get("/admin/vaitro");
+        return res.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
+  const vaitro = data?.data.map((item: any) => {
+    return { label: item.ten_vai_tro, value: item.ten_vai_tro };
+  });
+  // const handleChange = (value: string) => {
+  //   console.log(value);
+  // };
   const nav = useNavigate();
   const mutate = useMutation({
     mutationFn: async (data) => {
       try {
-        const res = await instance.post("/taikhoan", data);
+        const res = await instance.post("/admin/taikhoan", data);
         return res.data;
       } catch (error) {
         throw error;
@@ -52,7 +73,6 @@ const UsersNhanvienAdd = () => {
       ngay_sinh: values.ngay_sinh
         ? (values.ngay_sinh as any).format("YYYY-MM-DD")
         : undefined,
-      gioi_tinh: "nam",
     };
     mutate.mutate(data as any);
   };
@@ -92,7 +112,7 @@ const UsersNhanvienAdd = () => {
             minHeight: 360,
           }}
         >
-          <div className="bg-white  px-4  rounded-xl py-5 shadow-lg max-w-7xl  mx-10">
+          <div className="bg-white  px-4  rounded-xl py-5 shadow-lg max-w-8xl  mx-10">
             <Form
               // form={form}
               name="basic"
@@ -105,208 +125,197 @@ const UsersNhanvienAdd = () => {
               onFinish={onFinish}
               autoComplete="off"
             >
-              <div className="grid grid-cols-4 gap-5 ">
-                <Form.Item
-                  label="Họ Nhân viên"
-                  name="ho"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Họ của Nhân viên bắt buộc phải nhập!",
-                    },
-                    {
-                      pattern: /^[^\s]+(\s+[^\s]+)*$/,
-                      message: "Vui lòng nhập họ không chứa ký tự trắng!",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Nhập Họ của Nhân viên" />
-                </Form.Item>
-                <Form.Item
-                  label="Tên của Nhân viên"
-                  name="ten"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Tên của Nhân viên bắt buộc phải nhập!",
-                    },
-                    {
-                      pattern: /^[^\s]+(\s+[^\s]+)*$/,
-                      message: "Vui lòng nhập tên không chứa ký tự trắng!",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Nhập tên của Nhân viên" />
-                </Form.Item>
-                <Form.Item
-                  label="Giới tính"
-                  name="gioi_tinh"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Giới tính bắt buộc phải nhập!",
-                    },
-                  ]}
-                  // initialValue={userGender} // Replace with dynamic value
-                >
-                  <Radio.Group className="flex ">
-                    <Radio
-                      value={1}
-                      className="flex flex-row items-end flex-nowrap"
+              <div className="flex">
+                <div className=" w-[80%]">
+                  <div className="grid grid-cols-3 gap-5 ">
+                    <Form.Item
+                      label="Họ Nhân viên"
+                      name="ho"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Họ của Nhân viên bắt buộc phải nhập!",
+                        },
+                        {
+                          pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                          message: "Vui lòng nhập họ không chứa ký tự trắng!",
+                        },
+                      ]}
                     >
-                      Nam
-                    </Radio>
-                    <Radio
-                      value={2}
-                      className="flex flex-row items-end flex-nowrap"
+                      <Input placeholder="Nhập Họ của Nhân viên" />
+                    </Form.Item>
+                    <Form.Item
+                      label="Tên của Nhân viên"
+                      name="ten"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Tên của Nhân viên bắt buộc phải nhập!",
+                        },
+                        {
+                          pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                          message: "Vui lòng nhập tên không chứa ký tự trắng!",
+                        },
+                      ]}
                     >
-                      Nữ
-                    </Radio>
-                    <Radio
-                      value={3}
-                      className="flex flex-row items-end flex-nowrap"
+                      <Input placeholder="Nhập tên của Nhân viên" />
+                    </Form.Item>
+                    <Form.Item
+                      label="Giới tính"
+                      name="gioi_tinh"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Giới tính bắt buộc phải nhập!",
+                        },
+                      ]}
+                      // initialValue={userGender} // Replace with dynamic value
                     >
-                      Khác...
-                    </Radio>
-                  </Radio.Group>
-                </Form.Item>
-              </div>
-              {/* <Form.Item label="Danh mục Tài khoản" name="category">
-                  <Select
-                    defaultValue="Vui long chon danh muc"
-                    className="w-[490px]"
-                    // onChange={handleChange}
-                    //   options={
-                    //     category?.map((item: ICategory) => ({
-                    //       value: item._id,
-                    //       label: item.name,
-                    //     })) || []
-                    //   }
-                  />
-                </Form.Item> */}
-              {/* <div className="grid grid-cols-2 gap-5">
-                <Form.Item
-                  label="Mô tả ngắn"
-                  name="description"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Tên Tài khoản bắt buộc phải nhập!",
-                    },
-                  ]}
-                >
-                  <TextArea rows={5} placeholder="Nhập mô tả Tài khoản" />
-                </Form.Item>
-                <Form.Item
-                  label="Nội dung"
-                  name="description"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Tên Tài khoản bắt buộc phải nhập!",
-                    },
-                  ]}
-                >
-                  <TextArea rows={5} placeholder="Nhập mô tả Tài khoản" />
-                </Form.Item>
-              </div> */}
-              <div className="grid grid-cols-3 gap-5">
-                <Form.Item
-                  label="Email"
-                  name="email"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Email bắt buộc phải nhập!",
-                    },
-                    {
-                      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message:
-                        "Email không hợp lệ! Vui lòng nhập đúng định dạng email.",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Nhập Email của Nhân viên " />
-                </Form.Item>{" "}
-                <Form.Item
-                  label="Số điện thoại"
-                  name="so_dien_thoai"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Số địện thoại  bắt buộc phải nhập!",
-                    },
-                    {
-                      pattern: /^[0-9]{10,11}$/,
-                      message:
-                        "Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Nhập số điện thoại của Nhân viên  " />
-                </Form.Item>
-                <Form.Item
-                  label="Ngày sinh"
-                  name="ngay_sinh"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Ngày sinh bắt buộc phải nhập!",
-                    },
-                    {
-                      validator: (_, value) => {
-                        if (!value) {
-                          return Promise.resolve();
-                        }
-                        const today = new Date();
-                        const birthDate = new Date(value);
-                        let age = today.getFullYear() - birthDate.getFullYear();
-                        if (age < 3) {
-                          return Promise.reject(
-                            new Error("Nhân viên yêu cầu độ tuổi phù hợp!")
-                          );
-                        }
-                        if (birthDate > today) {
-                          return Promise.reject(
-                            new Error(
-                              "Ngày sinh không được là ngày trong tương lai!"
-                            )
-                          );
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  <DatePicker />
-                </Form.Item>
-              </div>
-              <div className="grid grid-cols-6 gap-5">
-                <Form.Item
-                  label="Password"
-                  name="password"
-                  className="col-span-2"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Mật khẩu bắt buộc phải nhập!",
-                    },
+                      <Radio.Group className="flex ">
+                        <Radio
+                          value="1"
+                          className="flex flex-row items-end flex-nowrap"
+                        >
+                          Nam
+                        </Radio>
+                        <Radio
+                          value="2"
+                          className="flex flex-row items-end flex-nowrap"
+                        >
+                          Nữ
+                        </Radio>
+                        <Radio
+                          value="0"
+                          className="flex flex-row items-end flex-nowrap"
+                        >
+                          Khác...
+                        </Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </div>
 
-                    {
-                      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
-                      message: "Mật khẩu phải chứa ít nhất 1 chữ hoa và 1 số!",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Mật khẩu " />
-                </Form.Item>{" "}
-                <Form.Item
-                  label="Địa chỉ của Nhân viên"
-                  name="dia_chi"
-                  className="col-span-3"
-                >
-                  <Input placeholder="Nhập Địa chỉ của khác hàng" />
-                </Form.Item>{" "}
+                  <div className="grid grid-cols-3 gap-5">
+                    <Form.Item
+                      label="Email"
+                      name="email"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Email bắt buộc phải nhập!",
+                        },
+                        {
+                          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          message:
+                            "Email không hợp lệ! Vui lòng nhập đúng định dạng email.",
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Nhập Email của Nhân viên " />
+                    </Form.Item>{" "}
+                    <Form.Item
+                      label="Số điện thoại"
+                      name="so_dien_thoai"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Số địện thoại  bắt buộc phải nhập!",
+                        },
+                        {
+                          pattern: /^[0-9]{10,11}$/,
+                          message:
+                            "Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.",
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Nhập số điện thoại của Nhân viên  " />
+                    </Form.Item>
+                    <Form.Item
+                      label="Ngày sinh"
+                      name="ngay_sinh"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Ngày sinh bắt buộc phải nhập!",
+                        },
+                        {
+                          validator: (_, value) => {
+                            if (!value) {
+                              return Promise.resolve();
+                            }
+                            const today = new Date();
+                            const birthDate = new Date(value);
+                            let age =
+                              today.getFullYear() - birthDate.getFullYear();
+                            if (age < 3) {
+                              return Promise.reject(
+                                new Error("Nhân viên yêu cầu độ tuổi phù hợp!")
+                              );
+                            }
+                            if (birthDate > today) {
+                              return Promise.reject(
+                                new Error(
+                                  "Ngày sinh không được là ngày trong tương lai!"
+                                )
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker />
+                    </Form.Item>
+                  </div>
+                  <div className="grid grid-cols-6 gap-5">
+                    <Form.Item
+                      label="Password"
+                      name="password"
+                      className="col-span-2"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Mật khẩu bắt buộc phải nhập!",
+                        },
+
+                        {
+                          pattern:
+                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
+                          message:
+                            "Mật khẩu phải chứa ít nhất 1 chữ hoa và 1 số!",
+                        },
+                      ]}
+                    >
+                      <Input placeholder="Mật khẩu " />
+                    </Form.Item>{" "}
+                    <Form.Item
+                      label="Địa chỉ của Nhân viên"
+                      name="dia_chi"
+                      className="col-span-3"
+                    >
+                      <Input placeholder="Nhập Địa chỉ của khác hàng" />
+                    </Form.Item>{" "}
+                  </div>
+                </div>
+                <div className="w-[20%]">
+                  <Form.Item
+                    label="Vai trò"
+                    name="vai_tros"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vai trò bắt buộc phải nhập!",
+                      },
+                    ]}
+                    // initialValue={userGender} // Replace with dynamic value
+                  >
+                    <Select
+                      mode="tags"
+                      style={{ width: "100%" }}
+                      placeholder="Chọn vai trò"
+                      options={vaitro}
+                    />
+                  </Form.Item>
+                </div>{" "}
               </div>
               <Form.Item>
                 <button

@@ -19,7 +19,7 @@ type FieldType = {
   password?: string;
   so_dien_thoai?: string;
   dia_chi?: string;
-  gioi_tinh?: number;
+  gioi_tinh?: string;
   ngay_sinh?: any;
 };
 
@@ -36,18 +36,18 @@ const UserskhachhangEdit = () => {
     queryKey: ["USERID", id],
     queryFn: async () => {
       try {
-        const res = await instance.get(`/taikhoan/${id}`);
+        const res = await instance.get(`/admin/taikhoan/${id}`);
         return res.data;
       } catch (error) {
         throw error;
       }
     },
   });
-
+  console.log(user);
   const mutate = useMutation({
     mutationFn: async (data) => {
       try {
-        const res = await instance.put(`/taikhoan/${id}`, data);
+        const res = await instance.put(`/admin/taikhoan/${id}`, data);
         return res.data;
       } catch (error) {
         throw error;
@@ -167,19 +167,19 @@ const UserskhachhangEdit = () => {
                 >
                   <Radio.Group className="flex">
                     <Radio
-                      value={1}
+                      value="1"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Nam
                     </Radio>
                     <Radio
-                      value={2}
+                      value="2"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Nữ
                     </Radio>
                     <Radio
-                      value={3}
+                      value="0"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Khác...
@@ -189,20 +189,6 @@ const UserskhachhangEdit = () => {
               </div>
 
               <div className="grid grid-cols-3 gap-5">
-                <Form.Item
-                  label="Email"
-                  name="email"
-                  rules={[
-                    { required: true, message: "Email bắt buộc phải nhập!" },
-                    {
-                      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message:
-                        "Email không hợp lệ! Vui lòng nhập đúng định dạng email.",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Nhập Email của khách hàng" />
-                </Form.Item>
                 <Form.Item
                   label="Số điện thoại"
                   name="so_dien_thoai"
@@ -253,20 +239,6 @@ const UserskhachhangEdit = () => {
                 </Form.Item>
               </div>
               <div className="grid grid-cols-6 gap-5">
-                <Form.Item
-                  label="Password"
-                  name="password"
-                  className="col-span-2"
-                  rules={[
-                    { required: true, message: "Mật khẩu bắt buộc phải nhập!" },
-                    {
-                      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
-                      message: "Mật khẩu phải chứa ít nhất 1 chữ hoa và 1 số!",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Mật khẩu" />
-                </Form.Item>
                 <Form.Item
                   label="Địa chỉ của khách hàng"
                   name="dia_chi"
