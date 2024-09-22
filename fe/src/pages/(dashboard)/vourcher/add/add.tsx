@@ -13,9 +13,13 @@ import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
+import type { SelectProps } from "antd";
 
 const { Option } = Select;
-
+const options: SelectProps["options"] = [] as {
+  label: string;
+  value: string;
+}[];
 const AddVoucher = () => {
   const [form] = Form.useForm();
   const [voucherCode, setVoucherCode] = useState("");
@@ -38,27 +42,22 @@ const AddVoucher = () => {
   };
 
   const productList = [
-    { id: 1, name: "Áo Thun Nam" },
-    { id: 2, name: "Áo Sơ Mi Nam" },
-    { id: 3, name: "Áo Thun Nữ" },
-    { id: 4, name: "Áo Sơ Mi Nữ" },
-    { id: 5, name: "Điện thoại" },
-    { id: 6, name: "Laptop" },
+    { value: "Áo Thun Nam", label: "Áo Thun Nam" },
+    { value: "Áo Sơ Mi Nam", label: "Áo Sơ Mi Nam" },
+    { value: "Áo Thun Nữ", label: "Áo Thun Nữ" },
+    { value: "Áo Sơ Mi Nữ", label: "Áo Sơ Mi Nữ" },
+    { value: "Điện thoại", label: "Điện thoại" },
+    { value: "Laptop", label: "Laptop" },
   ];
 
-  const handleSelectAll = () => {
-    setSelectedProducts([]);
-    setIsAllSelected(true);
-    setSearchTerm("");
-  };
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
   const handleDeselectAll = () => {
-    setSelectedProducts([]);
+    setSelectedValues([]);
     setIsAllSelected(false);
-    setSearchTerm("");
   };
 
-  const handleProductChange = (value) => {
+  const handleProductChange = (value: any) => {
     if (isAllSelected) {
       if (value.length > 0) {
         setIsAllSelected(false);
@@ -76,7 +75,7 @@ const AddVoucher = () => {
     }
   };
 
-  const handleSearch = (value) => {
+  const handleSearch = (value: any) => {
     setSearchTerm(value);
   };
 
@@ -89,9 +88,19 @@ const AddVoucher = () => {
       : "Chọn sản phẩm";
   };
 
-  const filteredProducts = productList.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredProducts = productList.filter((product) =>
+  //   product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+  const handleSelectAll = () => {
+    const allValues = productList.map((option) => option.label);
+    setSelectedValues(allValues as any);
+    setIsAllSelected(true);
+  };
+  const handleChange = (value: string[]) => {
+    setSelectedValues(value);
+    setIsAllSelected(value.length === productList.length); // Cập nhật trạng thái chọn tất cả
+    console.log(`Selected: ${value}`);
+  };
   const tabItems = [
     {
       key: "1",
@@ -99,9 +108,9 @@ const AddVoucher = () => {
       children: (
         <div className="flex flex-col gap-6">
           <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Mô tả khuyến mãi</label>
+            <label className="w-1/4 font-semibold">Tên khuyến mãi</label>
             <Form.Item
-              name="discountType"
+              name="ten_khuyen_mai"
               initialValue=""
               rules={[
                 {
@@ -117,19 +126,27 @@ const AddVoucher = () => {
           <div className="flex items-center">
             <label className="w-1/4 font-semibold">Giá trị giảm giá:</label>
             <Form.Item
-              name="name"
+              name="gia_tri"
               initialValue=""
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng chọn Nhập giá trị giảm giá!",
+                  message: "Vui lòng nhập giá trị giảm giá!",
+                },
+                {
+                  validator: (_, value) =>
+                    value >= 0
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error("Giá trị giảm giá không được âm")
+                        ),
                 },
               ]}
               className="mb-0 w-3/4"
             >
               <InputNumber
                 className="w-full rounded-md"
-                placeholder="Nhập tên Giá trị khuyến mãi"
+                placeholder="Nhập giá trị giảm giá"
               />
             </Form.Item>
           </div>
@@ -137,7 +154,7 @@ const AddVoucher = () => {
           <div className="flex items-center">
             <label className="w-1/4 font-semibold">Kiểu giảm giá:</label>
             <Form.Item
-              name="discountType"
+              name="loai_khuyen_mai"
               initialValue="Flat Amount (₫)"
               rules={[
                 {
@@ -155,7 +172,7 @@ const AddVoucher = () => {
           </div>
 
           <div className="flex items-center mb-4">
-            <label className="w-1/4 font-semibold">{getSelectLabel()}</label>
+            <label className="w-1/4 font-semibold">Chọn sản phẩm</label>
             <Form.Item
               name="productDiscount"
               rules={[
@@ -168,13 +185,13 @@ const AddVoucher = () => {
             >
               <Select
                 mode="multiple"
-                placeholder="Chọn sản phẩm"
-                value={selectedProducts}
-                onChange={handleProductChange}
+                allowClear
                 style={{ width: "100%" }}
-                showSearch
-                filterOption={false}
+                placeholder="Please select"
+                value={selectedValues}
+                onChange={handleChange}
                 onSearch={handleSearch}
+                options={productList}
                 dropdownRender={(menu) => (
                   <div>
                     <Button
@@ -189,13 +206,7 @@ const AddVoucher = () => {
                     {menu}
                   </div>
                 )}
-              >
-                {filteredProducts.map((product) => (
-                  <Option key={product.id} value={product.id}>
-                    {product.name}
-                  </Option>
-                ))}
-              </Select>
+              />{" "}
             </Form.Item>
           </div>
 
@@ -213,7 +224,19 @@ const AddVoucher = () => {
             <label className="w-1/4 font-semibold">Ngày kết thúc:</label>
             <Form.Item
               name="endDate"
-              rules={[{ required: true, message: "Vui lòng chọn!" }]}
+              rules={[
+                { required: true, message: "Vui lòng chọn!" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || value.isAfter(getFieldValue("Date"))) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("Ngày kết thúc không được nhỏ hơn ngày bắt đầu")
+                    );
+                  },
+                }),
+              ]}
               className="mb-0 w-3/4"
             >
               <DatePicker className="w-full rounded-md" />

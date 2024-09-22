@@ -46,11 +46,7 @@ const menu = [
     path: "vouchers",
     icon: Package,
   },
-  {
-    name: "Đơn hàng",
-    path: "orders",
-    icon: ShoppingCart,
-  },
+
   {
     name: "Tài khoản",
     path: "users",
@@ -60,11 +56,7 @@ const menu = [
       { name: "Nhân viên ", path: "users/nhanvien" },
     ],
   },
-  {
-    name: "Hỗ Trợ khách hàng",
-    path: "suportuser",
-    icon: Users,
-  },
+
   {
     name: "Đánh giá",
     path: "/admin/evaluates",

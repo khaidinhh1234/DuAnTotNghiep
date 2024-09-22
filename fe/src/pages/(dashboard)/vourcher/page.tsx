@@ -142,7 +142,7 @@ const PromotionAdmin: React.FC = () => {
     current: 1,
     pageSize: 5,
   });
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const searchInput = useRef<InputRef>(null);
 
   const handleSearch = (
@@ -393,14 +393,14 @@ const PromotionAdmin: React.FC = () => {
   //   }
   // };
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedKeys: React.Key[]) => {
-      setSelectedRowKeys(selectedKeys);
-    },
-  };
+  // const rowSelection = {
+  //   selectedRowKeys,
+  //   onChange: (selectedKeys: React.Key[]) => {
+  //     setSelectedRowKeys(selectedKeys);
+  //   },
+  // };
 
-  const products = [...promotions].reverse();
+  // const products = [...promotions].reverse();
   function handleChange(_event: ChangeEvent<HTMLInputElement>): void {
     throw new Error("Function not implemented.");
   }
@@ -451,7 +451,6 @@ const PromotionAdmin: React.FC = () => {
           dataSource={promotions}
           onChange={handleTableChange}
           pagination={pagination}
-          rowSelection={rowSelection}
           rowKey="key"
           // title={() => (
           //   <Checkbox
