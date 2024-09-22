@@ -218,6 +218,8 @@ class VaiTroController extends Controller
                 'destroy' => 'Xóa',
                 'thungrac' => 'Thùng rác',
                 'khoiphuc' => 'Khôi phục',
+                'kichhoat'=>'Kích hoạt',
+                'huykichhoat'=>'Hủy kích hoạt',
                 'thongbao' => 'Thông báo',
                 'tttt' => 'Trạng thái thanh toán',
                 'ttdh' => 'Trạng thái đơn hàng',
@@ -269,7 +271,7 @@ class VaiTroController extends Controller
             $key = explode('.', $name);
             $index = end($key);
 
-            if ($index === 'index' || $key[1] == 'thong-ke') {
+            if( $index === 'index' || $key[1] == 'thong-ke') {
                 if ($currentParent) {
                     $routeList[] = $currentParent;
                 }
