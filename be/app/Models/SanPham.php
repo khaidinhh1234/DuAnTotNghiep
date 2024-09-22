@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class SanPham extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $fillable = [
         'danh_muc_id',
         'ten_san_pham',
         'anh_san_pham',
-        'ma_san_pham',
+        'anh_san_pham',
         'duong_dan',
         'mo_ta_ngan',
         'noi_dung',
