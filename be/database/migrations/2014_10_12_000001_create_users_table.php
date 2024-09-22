@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\HangThanhVien;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(HangThanhVien::class)->constrained();
             $table->string('ho', 30);
             $table->string('ten', 30);
             $table->string('anh_nguoi_dung')->nullable();
