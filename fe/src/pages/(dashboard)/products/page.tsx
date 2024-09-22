@@ -1,6 +1,9 @@
-
 import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  SearchOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import { Button, Input, Popconfirm, Space, Table, Switch, message } from "antd";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
@@ -46,11 +49,13 @@ const ProductsAdmin: React.FC = () => {
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: number }) => {
-      const res = await instance.patch(`/admin/sanpham/${id}`, { dang_hoat_dong: status });
+      const res = await instance.patch(`/admin/sanpham/${id}`, {
+        dang_hoat_dong: status,
+      });
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["sanpham"]);
+      queryClient.invalidateQueries({ queryKey: ["sanpham"] });
       message.success("Cập nhật trạng thái thành công");
     },
     onError: () => {
@@ -67,13 +72,16 @@ const ProductsAdmin: React.FC = () => {
     ...item,
     key: item.id,
     index,
-    ten_danh_muc: item.danh_muc ? item.danh_muc.ten_danh_muc : "Không có danh mục",
+    ten_danh_muc: item.danh_muc
+      ? item.danh_muc.ten_danh_muc
+      : "Không có danh mục",
     dang_hoat_dong: item.dang_hoat_dong || 0,
-    tongSoLuong: item.bien_the_san_pham?.reduce((total: number, variant: any) => {
-      return total + (variant.so_luong_bien_the || 0);
-    }, 0) || 0,
+    tongSoLuong:
+      item.bien_the_san_pham?.reduce((total: number, variant: any) => {
+        return total + (variant.so_luong_bien_the || 0);
+      }, 0) || 0,
   }));
-  
+
   console.log("data", data);
   console.log("sanpham", sanpham);
 
@@ -93,20 +101,31 @@ const ProductsAdmin: React.FC = () => {
   };
 
   const getColumnSearchProps = (dataIndex: DataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }: any) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
           placeholder={`Tìm ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
           style={{ marginBottom: 8, display: "block" }}
         />
         <Space>
           <Button
             type="primary"
-            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
             icon={<SearchOutlined />}
             size="small"
             style={{ width: 90 }}
@@ -127,7 +146,10 @@ const ProductsAdmin: React.FC = () => {
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value: any, record: any) =>
-      record[dataIndex]?.toString().toLowerCase().includes((value as string).toLowerCase()),
+      record[dataIndex]
+        ?.toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible: any) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
@@ -200,7 +222,7 @@ const ProductsAdmin: React.FC = () => {
     //   dataIndex: "mo_ta_ngan",
     //   key: "mo_ta_ngan",
     //   width: "15%",
-      
+
     // },
     {
       title: "Trạng thái",
@@ -217,7 +239,7 @@ const ProductsAdmin: React.FC = () => {
         />
       ),
     },
-    
+
     {
       title: "Quản trị",
       key: "action",
@@ -235,8 +257,7 @@ const ProductsAdmin: React.FC = () => {
             </Button>
           </Popconfirm>
           <Link to={`/admin/products/edit/${item.id}`}>
-
-          <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors">
+            <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors">
               Cập nhật
             </Button>
           </Link>
@@ -299,7 +320,11 @@ const ProductsAdmin: React.FC = () => {
             </Button>
           </div>
         ) : sanpham && sanpham.length > 0 ? (
-          <Table columns={columns} dataSource={sanpham} pagination={{ pageSize: 5 }} />
+          <Table
+            columns={columns}
+            dataSource={sanpham}
+            pagination={{ pageSize: 5 }}
+          />
         ) : (
           <div>Không có sản phẩm nào</div>
         )}
