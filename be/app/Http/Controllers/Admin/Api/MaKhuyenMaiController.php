@@ -228,6 +228,7 @@ class MaKhuyenMaiController extends Controller
             ], 500);
         }
     }
+
     public function guiThongBao(Request $request)
     {
         $validator = Validator::make($request->all(), [

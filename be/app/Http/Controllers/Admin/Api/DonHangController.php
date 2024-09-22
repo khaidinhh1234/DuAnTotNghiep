@@ -19,13 +19,11 @@ class DonHangController extends Controller
     public function index()
     {
         try {
-            // Lấy tất cả các đơn hàng cùng với chi tiết của chúng
-            // $donHangs = DonHang::with('chiTiets')->get();
             $donHangs = DonHang::get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'don_hangs' => $donHangs
+                'data' => $donHangs
             ]);
 
         } catch (Exception $e) {
@@ -41,11 +39,11 @@ class DonHangController extends Controller
     {
         try {
             $donHang = DonHang::with('chiTiets')->findOrFail($id);
-
             return response()->json([
-                // 'don_hang' => $donHang,
-                'chi_tiet_don_hang' => $donHang->chiTiets
-            ]);
+                'status' => true,
+                'status_code' => 200,
+                'data' => $donHang->chiTiets
+            ], 200);
 
         } catch (Exception $e) {
             return response()->json([
