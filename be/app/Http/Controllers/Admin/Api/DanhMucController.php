@@ -211,7 +211,6 @@ class DanhMucController extends Controller
     public function danhSachDanhMucDaXoa()
     {
         try {
-
             $danhMucsDaXoa = DanhMuc::onlyTrashed()->get();
 
             return response()->json([

@@ -104,7 +104,6 @@ Route::middleware([])
         Route::post('tintuc/thung-rac/{id}', [TinTucController::class, 'khoiPhucTinTuc'])->name('tintuc.khoiphuc');
         Route::get('tintuc/{id}', [TinTucController::class, 'show'])->name('tintuc.show');
 
-
         // Mã khuyến mãi
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class);
         Route::post('makhuyenmai/thongbao', [MaKhuyenMaiController::class, 'guiThongBao'])->name('makhuyenmai.thongbao');
@@ -155,7 +154,7 @@ Route::middleware([])
 
         //Vai trò
         Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
+        Route::apiResource('vaitro', VaiTroController::class);
         // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
-        Route::apiResource('vaitro', VaiTroController::class);
     });
