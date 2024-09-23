@@ -235,6 +235,7 @@ class VaiTroController extends Controller
                 'donhang' => 'đơn hàng',
                 'bienthekichthuoc' => 'biến thể kích thức',
                 'bienthemausac' => 'biến thể màu sắc',
+                'hangthanhvien' => 'Hạng thành viên',
                 'thong-ke' => '',
                 'doanh-thu-ngay' => 'Doanh thu theo ngày',
                 'doanh-thu-tuan' => 'Doanh thu theo tuần',

@@ -17,7 +17,18 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         // Tạo người dùng mới
-        $user = User::create($request->all());
+        $user = User::create([
+            'ho' => $request->ho,
+            'ten' => $request->ten,
+            'anh_nguoi_dung' => $request->anh_nguoi_dung,
+            'email' => $request->email,
+            'password' => $request->password,
+            'so_dien_thoai' => $request->so_dien_thoai,
+            'dia_chi' => $request->dia_chi,
+            'ngay_sinh' => $request->ngay_sinh,
+            'gioi_tinh' => $request->gioi_tinh,
+            'hang_thanh_vien_id' => 1
+        ]);
         $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
         if ($member == []) {
             $member = VaiTro::create(
@@ -29,16 +40,12 @@ class AuthController extends Controller
         }
         $user->vaiTros()->attach($member->id);
 
-        // Tạo token cho người dùng
-        // $token = $user->createToken('auth_token')->plainTextToken;
-
         // Trả về phản hồi với token
         return response()->json([
             'status' => true,
             'status_code' => 200,
-            // 'access_token' => $token,
-            // 'token_type' => 'Bearer',
-            'user' => $member,
+            'message' => 'Đăng ký thành công'
+            // 'user' => $user,
         ], 200);
     }
 
