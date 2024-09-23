@@ -13,7 +13,6 @@ class TinTuc extends Model
         'user_id',
         'danh_muc_tin_tuc_id',
         'tieu_de',
-        'anh_tin_tuc',
         'noi_dung',
         'duong_dan',
     ];
@@ -25,5 +24,9 @@ class TinTuc extends Model
     public function danhMucTinTuc()
     {
         return $this->belongsTo(DanhMucTinTuc::class, 'danh_muc_tin_tuc_id');
+    }
+    public function anhTinTucs()
+    {
+        return $this->hasMany(AnhTinTuc::class, 'tin_tuc_id');
     }
 }
