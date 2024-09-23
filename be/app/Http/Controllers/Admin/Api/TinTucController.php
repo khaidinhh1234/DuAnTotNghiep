@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AnhTinTuc;
 use App\Models\TinTuc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,11 @@ class TinTucController extends Controller
     public function index()
     {
         try {
-            $tinTucs = TinTuc::with('user', 'danhMucTinTuc')->get();
+            $tinTucs = TinTuc::with(
+                'user:id,ho,ten',
+                'danhMucTinTuc:id,ten_danh_muc_tin_tuc',
+                'anhTinTucs:id,tin_tuc_id,anh_tin_tuc')
+                ->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -47,19 +52,23 @@ class TinTucController extends Controller
                 'user_id' => 'required|exists:users,id',
                 'danh_muc_tin_tuc_id' => 'required|exists:danh_muc_tin_tucs,id',
                 'tieu_de' => 'required|unique:tin_tucs,tieu_de',
-                'anh_tin_tuc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'noi_dung' => 'required|string',
                 'duong_dan' => 'nullable',
+                'anh_tin_tuc.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-
-            if ($request->hasFile('anh_tin_tuc')) {
-                $pathFile = $request->file('anh_tin_tuc')->store('tin_tucs', 'public');
-                $validateTinTuc['anh_tin_tuc'] = Storage::url($pathFile);
-            }
-
             $validateTinTuc['duong_dan'] = Str::slug($validateTinTuc['tieu_de']);
             $tinTuc = TinTuc::create($validateTinTuc);
 
+            // Nếu có ảnh thì lưu ảnh
+            if ($request->hasFile('anh_tin_tuc')) {
+                foreach ($request->file('anh_tin_tuc') as $file) {
+                    $pathFile = $file->store('anh_tin_tuc', 'public');
+                    AnhTinTuc::create([
+                        'tin_tuc_id' => $tinTuc->id,
+                        'anh_tin_tuc' => Storage::url($pathFile),
+                    ]);
+                }
+            }
             DB::commit();
 
             return response()->json([

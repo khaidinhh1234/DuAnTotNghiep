@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\BienTheMauSacController;
+use App\Http\Controllers\Admin\Api\DanhGiaController as ApiDanhGiaController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -131,6 +132,9 @@ Route::middleware([])
         Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');
         Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');
         Route::get('bienthekichthuoc/{id}', [BienTheKichThuocController::class, 'show'])->name('bienthekichthuoc.show');
+
+        // Đánh giá
+        Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAdmin']);
 
         // Thống kê
         //Thống kê doanh thu
