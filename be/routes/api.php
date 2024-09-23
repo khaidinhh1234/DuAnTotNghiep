@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\BienTheMauSacController;
+use App\Http\Controllers\Admin\Api\DanhGiaController as ApiDanhGiaController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -139,6 +140,9 @@ Route::middleware([])
         // Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
         Route::get('hangthanhvien/thung-rac', [HangThanhVienController::class, 'danhSachHangThanhVienDaXoa'])->name('hangthanhvien.thungrac');
         Route::post('hangthanhvien/thung-rac/{id}', [HangThanhVienController::class, 'khoiPhucHangThanhVien'])->name('hangthanhvien.khoiphuc');
+
+        // Đánh giá
+        Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAdmin']);
 
         // Thống kê
         //Thống kê doanh thu
