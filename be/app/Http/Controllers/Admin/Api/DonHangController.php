@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateDonHangRequest;
 use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Models\DonHang;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -27,7 +28,6 @@ class DonHangController extends Controller
                 'status_code' => 200,
                 'data' => $donHangs
             ]);
-
         } catch (Exception $e) {
             return response()->json([
                 'status' => false,
@@ -37,6 +37,7 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+
     public function show($id)
     {
         try {
@@ -70,7 +71,6 @@ class DonHangController extends Controller
                     'tong_tien_san_pham' => $tongTienSanPham
                 ]
             ], 200);
-
         } catch (Exception $e) {
             return response()->json([
                 'status' => false,
@@ -101,7 +101,6 @@ class DonHangController extends Controller
                 'message' => 'Cập nhật trạng thái thanh toán thành công.',
                 'don_hang' => $donHang
             ]);
-
         } catch (Exception $exception) {
             DB::rollBack();
 
@@ -149,14 +148,26 @@ class DonHangController extends Controller
                 'error' => $exception->getMessage()
             ], 500);
         }
-
     }
 
-    public function export()
+  public function export()
     {
         // Tải xuống file Excel với tên 'donhang.xlsx'
         return Excel::download(new DonHangExport, 'donhang.xlsx');
     }
 
-}
+    public function inHoaDon(string $id)
+    {
+        $hoaDon = DonHang::query()->with('user', 'chiTiets')->findOrFail($id);
 
+        if ($hoaDon) {
+            $pdf = Pdf::loadView('hoadon.bill', compact('hoaDon'));
+            return $pdf->download('Hoadon' . $id . '.pdf');
+        }
+        return response()->json([
+            'status' => false,
+            'status_code' => 404,
+            'message' => 'Đã xảy ra lỗi khi in hóa đơn',
+        ], 404);
+    }
+}
