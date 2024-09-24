@@ -117,14 +117,15 @@ Route::middleware([])
 
         // Tài khoản
         Route::apiResource('taikhoan', TaiKhoanController::class)->except(['show']);
-        Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
         Route::get('taikhoan/roles', [TaiKhoanController::class, 'danhSachVaiTro']);
         Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
         Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
+        Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
 
         // Đơn hàng
         Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
+        Route::get('/donhang/{id}/bill', [DonHangController::class, 'inHoaDon'])->name('donhang.bill');
         Route::put('/donhang/{id}/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
         Route::put('/donhang/{id}/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
 
