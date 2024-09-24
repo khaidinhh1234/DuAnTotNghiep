@@ -74,7 +74,26 @@ class DanhMucTinTucController extends Controller
      */
     public function show(string $id)
     {
-        //
+
+        try {
+            $danhMucTinTuc = DanhMucTinTuc::findOrFail($id);
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $danhMucTinTuc,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh mục tin tức',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 
     /**

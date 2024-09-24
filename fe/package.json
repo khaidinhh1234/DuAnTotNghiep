@@ -74,6 +74,7 @@
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/react-highlight-words": "^0.20.0",
     "@types/react-slick": "^0.23.13",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "@vitejs/plugin-react": "^4.2.1",

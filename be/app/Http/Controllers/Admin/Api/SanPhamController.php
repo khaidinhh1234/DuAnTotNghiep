@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Exports\SanPhamExports;
 use App\Http\Controllers\Controller;
 use App\Models\AnhBienThe;
 use App\Models\BienTheSanPham;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SanPhamController extends Controller
 {
@@ -344,11 +346,13 @@ class SanPhamController extends Controller
                 'success' => false,
                 'status_code' => 500,
                 'message' => 'Khôi phục sản phẩm thất bại',
+                'error' => $exception->getMessage()
             ], 500);
         }
     }
 
-    public function kichHoatSanPham(int $id){
+    public function kichHoatSanPham(int $id)
+    {
         try {
             SanPham::query()->findOrFail($id)->update(['trang_thai' => 1]);
             $json = [
@@ -357,17 +361,19 @@ class SanPhamController extends Controller
                 'message' => 'Kích hoạt sản phẩm thành công',
             ];
             return response()->json($json, 200);
-        }catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             $json = [
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Kích hoạt sản phẩm thất bại',
+                'error' => $exception->getMessage()
             ];
             return response()->json($json, 500);
-            }
+        }
     }
 
-    public function huyKichHoatSanPham(int $id){
+    public function huyKichHoatSanPham(int $id)
+    {
         try {
             SanPham::query()->findOrFail($id)->update(['trang_thai' => 0]);
             $json = [
@@ -376,13 +382,19 @@ class SanPhamController extends Controller
                 'message' => 'Huỷ kích hoạt sản phẩm thành công',
             ];
             return response()->json($json, 200);
-        }catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             $json = [
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Huỷ kích hoạt sản phẩm thất bai',
+                'error' => $exception->getMessage()
             ];
             return response()->json($json, 500);
-            }
+        }
+    }
+
+    public function exportSanPham()
+    {
+        return Excel::download(new SanPhamExports, 'sanpham.xlsx');
     }
 }

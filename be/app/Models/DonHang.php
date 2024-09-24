@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 class DonHang extends Model
 {
     use HasFactory, SoftDeletes;
@@ -39,5 +40,9 @@ class DonHang extends Model
     public function chiTiets()
     {
         return $this->hasMany(DonHangChiTiet::class);
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }
