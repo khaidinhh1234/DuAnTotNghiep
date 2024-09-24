@@ -386,7 +386,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Button, Form, Select, Spin, message } from "antd";
 import { ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 import { uploadToCloudinary } from '@/configs/cloudinary';
@@ -426,6 +426,7 @@ const ProductsAndVariants: React.FC = () => {
   const [variantData, setVariantData] = useState<Variant[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [productFormData, setProductFormData] = useState<ProductFormData>({} as ProductFormData);
+  const navigate = useNavigate();
 
   // Queries
   const { data: categoriesData, isLoading: categoriesLoading } = useQuery<{ data: Category[] }>({
@@ -453,6 +454,8 @@ const ProductsAndVariants: React.FC = () => {
     onSuccess: () => {
       message.success("Sản phẩm đã được thêm thành công!");
       resetForm();
+      navigate("/admin/products");
+
     },
     onError: (error: any) => {
       handleAddProductError(error);
@@ -650,17 +653,20 @@ const ProductsAndVariants: React.FC = () => {
 
   return (
     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-semibold text-gray-800">
-            Thêm sản phẩm và biến thể
-          </h1>
+            <div className="flex items-center justify-between mt-5 left-5">
+        <h1 className="w-full text-3xl font-semibold text-gray-800 text-left">
+        Thêm sản phẩm và biến thể
+</h1>
+
           <Link to="/admin/products">
-            <Button icon={<ArrowLeftOutlined />} className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md">
+            <Button icon={<ArrowLeftOutlined />}   className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md ml-2.5"
+            >
               Quay lại
             </Button>
           </Link>
         </div>
+      <div className="container mx-auto px-6 py-8">
+  
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <ProductForm
@@ -753,8 +759,8 @@ const ProductsAndVariants: React.FC = () => {
             className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
             style={{
               marginTop: '-60px',
-              padding: '16px',
-              marginRight: '20px',
+              padding: '18px 30px',
+              marginRight: '190px',
             }}
             disabled={isSubmitting}
           >
