@@ -176,8 +176,8 @@ class SanPhamController extends Controller
             'bien_the.*.ngay_bat_dau_khuyen_mai' => 'nullable|date|required_if:bien_the.*.gia_khuyen_mai,!=,null',
             'bien_the.*.ngay_ket_thuc_khuyen_mai' => 'nullable|date|required_if:bien_the.*.gia_khuyen_mai,!=,null|after_or_equal:bien_the.*.ngay_bat_dau_khuyen_mai',
             'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.anh' => 'required|array',
-            'bien_the.*.anh.*' => 'required|string'
+            'bien_the.*.anh' => 'nullable|array',
+            'bien_the.*.anh.*' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
