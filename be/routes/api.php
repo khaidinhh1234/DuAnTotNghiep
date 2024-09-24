@@ -128,6 +128,7 @@ Route::middleware([])
         Route::put('/donhang/{id}/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
         Route::put('/donhang/{id}/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
 
+        Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
         // Kích thước biến thể
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class)->except(['show']);
         Route::get('bienthekichthuoc/{id}', [BienTheKichThuocController::class, 'show'])->name('bienthekichthuoc.show');
