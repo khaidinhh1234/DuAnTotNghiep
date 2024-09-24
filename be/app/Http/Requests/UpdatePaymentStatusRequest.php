@@ -24,6 +24,7 @@ class UpdatePaymentStatusRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'required|array',
             'trang_thai_thanh_toan' => 'required|in:chua_thanh_toan,da_thanh_toan,dang_xu_ly,da_huy',
         ];
     }
