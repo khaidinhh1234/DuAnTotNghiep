@@ -20,7 +20,7 @@ class DonHang extends Model
     const TTDH_DGH = 'Đang giao hàng';
     const TTDH_DGTC = 'Đã giao hàng thành công';
     const TTDH_DH = 'Đã hủy hàng';
-    const TTDH_CTT = 'Chờ thanh toán ';
+
 
     protected $fillable = [
         'user_id',
@@ -44,5 +44,14 @@ class DonHang extends Model
 
     public function user() {
         return $this->belongsTo(User::class);
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Tự động tạo mã đơn hàng khi tạo đơn hàng mới
+        static::creating(function ($donHang) {
+            $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
+        });
     }
 }

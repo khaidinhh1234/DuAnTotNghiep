@@ -81,25 +81,28 @@ class DonHangController extends Controller
         }
     }
     // Cập nhập trạng thái thanh toán
-    public function updatePaymentStatus(UpdatePaymentStatusRequest $request, $id)
+    public function updatePaymentStatus(UpdatePaymentStatusRequest $request)
     {
-        DB::beginTransaction();
+
 
         try {
-            $donHang = DonHang::findOrFail($id);
+            foreach ($request->id as $id) {
 
-            // Cập nhật trạng thái thanh toán bằng phương thức update()
-            $donHang->update([
-                'trang_thai_thanh_toan' => $request->trang_thai_thanh_toan
-            ]);
+                DB::beginTransaction();
+                $donHang = DonHang::findOrFail($id);
 
-            DB::commit();
+                // Cập nhật trạng thái thanh toán bằng phương thức update()
+                $donHang->update([
+                    'trang_thai_thanh_toan' => $request->trang_thai_thanh_toan
+                ]);
 
+                DB::commit();
+            }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Cập nhật trạng thái thanh toán thành công.',
-                'don_hang' => $donHang
+                // 'don_hang' => $donHang
             ]);
         } catch (Exception $exception) {
             DB::rollBack();
@@ -114,33 +117,33 @@ class DonHangController extends Controller
     }
 
     // Cập nhập trạng thái đơn hàng
-    public function capNhatTrangThaiDonHang(UpdateDonHangRequest $request, $id)
+    public function capNhatTrangThaiDonHang(UpdateDonHangRequest $request)
     {
         try {
             // Bắt đầu transaction
-            DB::beginTransaction();
+            foreach ($request->id as $id) {
+                DB::beginTransaction();
 
-            // Tìm đơn hàng theo ID
-            $donHang = DonHang::findOrFail($id);
+                // Tìm đơn hàng theo ID
+                $donHang = DonHang::findOrFail($id);
 
-            // Cập nhật trạng thái đơn hàng
-            $donHang->update([
-                'trang_thai_don_hang' => $request->input('trang_thai_don_hang'),
-            ]);
+                // Cập nhật trạng thái đơn hàng
+                $donHang->update([
+                    'trang_thai_don_hang' => $request->input('trang_thai_don_hang'),
+                ]);
 
-            // Lưu thay đổi
-            DB::commit();
-
+                // Lưu thay đổi
+                DB::commit();
+            }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Cập nhật trạng thái đơn hàng thành công.',
-                'data' => $donHang
+                // 'data' => $donHang
             ], 200);
         } catch (\Exception $exception) {
             // Rollback nếu có lỗi
             DB::rollBack();
-
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -150,7 +153,7 @@ class DonHangController extends Controller
         }
     }
 
-  public function export()
+    public function export()
     {
         // Tải xuống file Excel với tên 'donhang.xlsx'
         return Excel::download(new DonHangExport, 'donhang.xlsx');

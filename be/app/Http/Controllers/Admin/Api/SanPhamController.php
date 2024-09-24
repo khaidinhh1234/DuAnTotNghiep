@@ -302,7 +302,13 @@ class SanPhamController extends Controller
     public function danhSachSanPhamDaXoa()
     {
         try {
-            $sanPhamDaXoa = SanPham::onlyTrashed()->with(['danhMuc'])->orderBy('deleted_at', 'desc')->get();
+            $sanPhamDaXoa = SanPham::onlyTrashed()->with([
+            'danhMuc',
+                'bienTheSanPham.anhBienThe',
+                'bienTheSanPham.mauBienThe',
+                'bienTheSanPham.kichThuocBienThe',
+                'theSanPham'
+            ])->orderBy('deleted_at', 'desc')->get();
 
             return response()->json([
                 'success' => true,

@@ -100,10 +100,10 @@ Route::middleware([])
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
         Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
         Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
-        
+
         Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc'])->name('danhmuctintuc.khoiphuc');
         Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
-        
+
         //Tin Tức
         Route::apiResource('tintuc', TinTucController::class)->except(['show']);
         Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa'])->name('tintuc.thungrac');
@@ -111,6 +111,8 @@ Route::middleware([])
         Route::get('tintuc/{id}', [TinTucController::class, 'show'])->name('tintuc.show');
 
         // Mã khuyến mãi
+        Route::post('makhuyenmai/kich-hoat/{id}', [MaKhuyenMaiController::class, 'kichHoatMaKhuyenMai']);
+        Route::post('makhuyenmai/huy-kich-hoat/{id}', [MaKhuyenMaiController::class, 'huyKichMaKhuyenMai']);
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class)->except(['show']);
         Route::post('makhuyenmai/thongbao', [MaKhuyenMaiController::class, 'guiThongBao'])->name('makhuyenmai.thongbao');
         Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa'])->name('makhuyenmai.thungrac');
@@ -128,8 +130,8 @@ Route::middleware([])
         Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
         Route::get('/donhang/{id}/bill', [DonHangController::class, 'inHoaDon'])->name('donhang.bill');
-        Route::put('/donhang/{id}/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
-        Route::put('/donhang/{id}/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
+        Route::put('/donhang/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
+        Route::put('/donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
 
         Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
