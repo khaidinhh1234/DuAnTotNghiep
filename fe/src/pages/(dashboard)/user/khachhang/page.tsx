@@ -41,15 +41,20 @@ const UsersAdminkhachhang: React.FC = () => {
       return res.data;
     },
   });
-  console.log(data);
+  // console.log(data);
   const user = data?.data
-    ?.filter((item: any) => item?.vai_tros?.length === 0)
-    .map((item: any, index: number) => ({
-      ...item,
-      key: item.id,
-      index: index,
-    }));
-
+    ?.filter((item: any) =>
+      item?.vai_tros.some((item: any) => item.ten_vai_tro === "member")
+    )
+    .map((item: any, index: number) => {
+      // console.log(item);
+      return {
+        ...item,
+        key: item.id,
+        index: index,
+      };
+    });
+  // console.log(user);
   const mutate = useMutation({
     mutationFn: async (id: string) => {
       try {

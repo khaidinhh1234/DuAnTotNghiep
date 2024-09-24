@@ -71,12 +71,14 @@ import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
 import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
 import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
 import Showvaitro from "@/pages/(dashboard)/userprivileges/show/page";
-import Test from "@/pages/(dashboard)/test";
 import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
 import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
+
+import Test from "@/pages/(dashboard)/vourcher/test/test";
+
 
 const Router = () => {
   return (

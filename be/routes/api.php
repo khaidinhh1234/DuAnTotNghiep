@@ -77,22 +77,21 @@ Route::middleware([])
         Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa'])->name('danhmuc.thungrac');
         Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
         Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc'])->name('danhmuc.khoiphuc');
+        Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
 
         // Sản phẩm
         Route::get('sanpham/exports', [SanPhamController::class, 'exportSanPham']);
         Route::apiResource('sanpham', SanPhamController::class)->except(['show']);
-        Route::get('sanpham/{id}', [SanPhamController::class, 'show'])->name('sanpham.show');
         Route::post('sanpham/kich-hoat/{id}', [SanPhamController::class, 'kichHoatSanPham'])->name('sanpham.kichhoat');
         Route::post('sanpham/huy-kich-hoat/{id}', [SanPhamController::class, 'huyKichHoatSanPham'])->name('sanpham.huykichhoat');
         Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
         Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.kichhoat');
-
+        Route::get('sanpham/{id}', [SanPhamController::class, 'show'])->name('sanpham.show');
         // Thẻ
         Route::apiResource('the', TheController::class)->except(['show']);
-        Route::get('the/{id}', [TheController::class, 'show'])->name('the.show');
         Route::get('the/thung-rac', [TheController::class, 'danhSachTheDaXoa'])->name('the.thungrac');
         Route::post('the/thung-rac/{id}', [TheController::class, 'khoiPhucThe'])->name('the.khoiphuc');
-
+        Route::get('the/{id}', [TheController::class, 'show'])->name('the.show');
         // Thông tin website
         Route::get('thong-tin-web', [ThongTinWebController::class, 'index'])->name('thongtinweb.index');
         Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate'])->name('thongtinweb.update');
@@ -103,38 +102,42 @@ Route::middleware([])
         Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
         
         Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc'])->name('danhmuctintuc.khoiphuc');
-
+        Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
+        
         //Tin Tức
         Route::apiResource('tintuc', TinTucController::class)->except(['show']);
-        Route::get('tintuc/{id}', [TinTucController::class, 'show'])->name('tintuc.show');
         Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa'])->name('tintuc.thungrac');
         Route::post('tintuc/thung-rac/{id}', [TinTucController::class, 'khoiPhucTinTuc'])->name('tintuc.khoiphuc');
+        Route::get('tintuc/{id}', [TinTucController::class, 'show'])->name('tintuc.show');
 
         // Mã khuyến mãi
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class)->except(['show']);
-        Route::get('makhuyenmai/{id}', [MaKhuyenMaiController::class, 'show'])->name('makhuyenmai.show');
         Route::post('makhuyenmai/thongbao', [MaKhuyenMaiController::class, 'guiThongBao'])->name('makhuyenmai.thongbao');
         Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa'])->name('makhuyenmai.thungrac');
         Route::post('makhuyenmai/thung-rac/{id}', [MaKhuyenMaiController::class, 'khoiPhucMaKhuyenMai'])->name('makhuyenmai.khoiphuc');
+        Route::get('makhuyenmai/{id}', [MaKhuyenMaiController::class, 'show'])->name('makhuyenmai.show');
 
         // Tài khoản
         Route::apiResource('taikhoan', TaiKhoanController::class)->except(['show']);
-        Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
         Route::get('taikhoan/roles', [TaiKhoanController::class, 'danhSachVaiTro']);
         Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
         Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
+        Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
 
         // Đơn hàng
         Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
+        Route::get('/donhang/{id}/bill', [DonHangController::class, 'inHoaDon'])->name('donhang.bill');
         Route::put('/donhang/{id}/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
         Route::put('/donhang/{id}/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
+        Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
 
+        Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
         // Kích thước biến thể
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class)->except(['show']);
-        Route::get('bienthekichthuoc/{id}', [BienTheKichThuocController::class, 'show'])->name('bienthekichthuoc.show');
         Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');
         Route::post('bienthekichthuoc/thung-rac/{id}', [BienTheKichThuocController::class, 'khoiPhucXoaMem'])->name('bienthekichthuoc.khoiphuc');
+        Route::get('bienthekichthuoc/{id}', [BienTheKichThuocController::class, 'show'])->name('bienthekichthuoc.show');
 
         //Hạng thành viên
         Route::apiResource('hangthanhvien', HangThanhVienController::class)->except(['show']);
@@ -164,9 +167,9 @@ Route::middleware([])
 
         // Màu sắc biến thể
         Route::apiResource('bienthemausac', BienTheMauSacController::class)->except(['show']);
-        Route::get('bienthemausac/{id}', [BienTheMauSacController::class, 'show'])->name('bienthemausac.show');
         Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem'])->name('bienthemausac.thungrac');
         Route::post('bienthemausac/thung-rac/{id}', [BienTheMauSacController::class, 'khoiPhucXoaMem'])->name('bienthemausac.khoiphuc');
+        Route::get('bienthemausac/{id}', [BienTheMauSacController::class, 'show'])->name('bienthemausac.show');
 
         // Thống kê đánh giá
         Route::get('san-pham/{sanpham}/thong-ke-danh-gia', [ThongKeDanhGiaController::class, 'danhSachDanhGiaTheoSanPham']);

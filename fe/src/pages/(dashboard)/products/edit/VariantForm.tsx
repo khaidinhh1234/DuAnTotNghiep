@@ -1,35 +1,36 @@
-
-import React, { useState, useMemo } from "react";
-import { Table, InputNumber, DatePicker, Upload, Modal } from "antd";
+import React, { useState, useMemo, useCallback } from "react";
+import { Table, Input, DatePicker, Upload, Modal } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { UploadFile } from "antd/es/upload/interface";
 import '@/global.css'
 import { VariantFormProps, Variant, VariantPull } from "@/common/types/product";
 
-const VariantForm = ({ 
+const VariantForm: React.FC<VariantFormProps> = ({ 
   variants, 
   updateVariant, 
   handleRemoveImage, 
   handleImageChange,
   colorsData,
   sizesData
-}: VariantFormProps) => {
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
-  console.log("VariantForm received variants:", variants);
-  console.log("VariantForm received colorsData:", colorsData);
-  console.log("VariantForm received sizesData:", sizesData);
-  const handlePreview = async (file: UploadFile) => {
+}) => {
+  const [previewState, setPreviewState] = useState({
+    open: false,
+    image: '',
+    title: ''
+  });
+
+  const handlePreview = useCallback(async (file: UploadFile) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as File);
     }
 
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-    setPreviewTitle(file.name || (file.url && typeof file.url === 'string' ? file.url.substring(file.url.lastIndexOf('/') + 1) : 'Preview'));
-  };
+    setPreviewState({
+      open: true,
+      image: file.url || (file.preview as string),
+      title: file.name || (file.url && typeof file.url === 'string' ? file.url.substring(file.url.lastIndexOf('/') + 1) : 'Preview')
+    });
+  }, []);
 
   const getBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -40,44 +41,33 @@ const VariantForm = ({
     });
   };
 
-  const handleUpdate = (record: Variant, field: keyof Variant, value: any) => {
-
+  const handleUpdate = useCallback((record: Variant, field: keyof Variant, value: any) => {
     const update: VariantPull = { [field]: value };
     updateVariant({ ...record, ...update });
-  };
+  }, [updateVariant]);
 
   const columns = useMemo(() => [
     {
       title: 'Kích thước',
       dataIndex: 'kich_thuoc_id',
       key: 'kich_thuoc',
-      render: (sizeId: number) => {
-        const size = sizesData.find(s => Number(s.id) === sizeId);
-        return size ? size.kich_thuoc : 'Unknown size';
-      },
+      render: (sizeId: number) => sizesData.find(s => Number(s.id) === sizeId)?.kich_thuoc || 'Unknown size',
     },
     {
       title: 'Màu sắc',
       dataIndex: 'mau_sac_id',
       key: 'mau_sac',
-      render: (colorId: number) => {
-        const color = colorsData.find(c => Number(c.id) === colorId);
-        return color ? color.ten_mau_sac : 'Unknown color';
-      },
+      render: (colorId: number) => colorsData.find(c => Number(c.id) === colorId)?.ten_mau_sac || 'Unknown color',
     },
     {
       title: 'Giá bán',
       dataIndex: 'gia_ban',
       key: 'gia_ban',
       render: (text: string, record: Variant) => (
-        <InputNumber
-          value={Number(text)}
-          onChange={(value) => handleUpdate(record, 'gia_ban', value?.toString())}
-          className="rounded-md w-full"
-          min={0}
-          step={1000}
-          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-          parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+        <Input
+          value={text}
+          onChange={(e) => handleUpdate(record, 'gia_ban', e.target.value)}
+          className="rounded-md"
         />
       ),
     },
@@ -85,15 +75,12 @@ const VariantForm = ({
       title: 'Giá khuyến mãi',
       dataIndex: 'gia_khuyen_mai',
       key: 'gia_khuyen_mai',
+      width: 150,
       render: (text: string, record: Variant) => (
-        <InputNumber
-          value={Number(text)}
-          onChange={(value) => handleUpdate(record, 'gia_khuyen_mai', value?.toString())}
-          className="rounded-md w-full"
-          min={0}
-          step={1000}
-          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-          parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+        <Input
+          value={text}
+          onChange={(e) => handleUpdate(record, 'gia_khuyen_mai', e.target.value)}
+          className="rounded-md"
         />
       ),
     },
@@ -101,13 +88,12 @@ const VariantForm = ({
       title: 'Số lượng',
       dataIndex: 'so_luong_bien_the',
       key: 'so_luong_bien_the',
+      width: 150,
       render: (text: string, record: Variant) => (
-        <InputNumber
-          value={Number(text)}
-          onChange={(value) => handleUpdate(record, 'so_luong_bien_the', value?.toString())}
-          className="rounded-md w-full"
-          min={0}
-          step={1}
+        <Input
+          value={text}
+          onChange={(e) => handleUpdate(record, 'so_luong_bien_the', e.target.value)}
+          className="rounded-md"
         />
       ),
     },
@@ -115,6 +101,8 @@ const VariantForm = ({
       title: 'Ngày bắt đầu khuyến mãi',
       dataIndex: 'ngay_bat_dau_khuyen_mai',
       key: 'ngay_bat_dau_khuyen_mai',
+      width: 150,
+
       render: (text: string | null, record: Variant) => (
         <DatePicker
           value={text ? dayjs(text) : null}
@@ -129,15 +117,14 @@ const VariantForm = ({
       title: 'Ngày kết thúc khuyến mãi',
       dataIndex: 'ngay_ket_thuc_khuyen_mai',
       key: 'ngay_ket_thuc_khuyen_mai',
+      width: 150,
+
       render: (text: string | null, record: Variant) => (
         <DatePicker
           value={text ? dayjs(text) : null}
           onChange={(_, dateString) => handleUpdate(record, 'ngay_ket_thuc_khuyen_mai', dateString || null)}
           format="YYYY-MM-DD"
-          disabledDate={(current) => {
-            const startDate = record.ngay_bat_dau_khuyen_mai;
-            return startDate ? current.isBefore(dayjs(startDate)) : false;
-          }}
+          disabledDate={(current) => record.ngay_bat_dau_khuyen_mai ? current.isBefore(dayjs(record.ngay_bat_dau_khuyen_mai)) : false}
           className="rounded-md"
           placeholder="Chọn ngày kết thúc"
         />
@@ -147,7 +134,10 @@ const VariantForm = ({
       title: 'Ảnh biến thể',
       dataIndex: 'anh_bien_the',
       key: 'anh_bien_the',
+      width: 200,
       render: (_: any, record: Variant) => (
+        <div className="image-upload-container" style={{ minHeight: '102px' }}>
+
         <Upload
           listType="picture-card"
           fileList={record.anh_bien_the.map((img: any) => ({
@@ -162,17 +152,19 @@ const VariantForm = ({
           beforeUpload={() => false}
           accept="image/*"
           multiple
+          className="custom-upload"
         >
-          {record.anh_bien_the.length >= 8 ? null : (
+          {record.anh_bien_the.length < 8 && (
             <div>
               <PlusOutlined />
               <div style={{ marginTop: 8 }}>Tải ảnh lên</div>
             </div>
           )}
         </Upload>
+        </div>
       ),
     }
-  ], [handlePreview, handleRemoveImage, handleImageChange]);
+  ], [handlePreview, handleRemoveImage, handleImageChange, handleUpdate, colorsData, sizesData]);
 
   return (
     <>
@@ -184,12 +176,12 @@ const VariantForm = ({
         pagination={false}
       />
       <Modal
-        open={previewOpen}
-        title={previewTitle}
+        open={previewState.open}
+        title={previewState.title}
         footer={null}
-        onCancel={() => setPreviewOpen(false)}
+        onCancel={() => setPreviewState(prev => ({ ...prev, open: false }))}
       >
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        <img alt="example" style={{ width: '100%' }} src={previewState.image} />
       </Modal>
     </>
   );

@@ -10,139 +10,156 @@ import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import instance from "@/configs/axios";
 
 interface PromotionType {
   key: React.Key;
-  ten_khuyen_mai: string;
+  mo_ta: string;
+  so_luong: number;
   loai_khuyen_mai: string;
   gia_tri: number | string;
   ngay_bat_dau: string;
   ngay_ket_thuc: string;
   ma_code: string;
   trang_thai: string;
-  dieu_kien_ap_dung: number;
+
+  tong_giam_gia_toi_da: string;
   so_luot_su_dung: number;
   gioi_han_su_dung: number;
 }
 
-const promotions: PromotionType[] = [
-  {
-    key: "1",
-    ten_khuyen_mai: "Giảm giá 10% cho đơn hàng trên 500k",
-    loai_khuyen_mai: "phần trăm",
-    gia_tri: "10",
-    ma_code: "ID123456",
-    ngay_bat_dau: "2024-09-01",
-    ngay_ket_thuc: "2024-09-30",
-    trang_thai: "Đang hoạt động",
-    dieu_kien_ap_dung: 500000,
-    so_luot_su_dung: 15,
-    gioi_han_su_dung: 100,
-  },
-  {
-    key: "2",
-    ten_khuyen_mai: "Giảm 200k cho đơn hàng từ 1 triệu",
-    loai_khuyen_mai: "tiền ",
-    gia_tri: 200000,
-    ma_code: "ID123456456",
-    ngay_bat_dau: "2024-08-01",
-    ngay_ket_thuc: "2024-08-31",
-    trang_thai: "Đã hết hạn",
-    dieu_kien_ap_dung: 1000000,
-    so_luot_su_dung: 50,
-    gioi_han_su_dung: 50,
-  },
-  {
-    key: "3",
-    ten_khuyen_mai: "Giảm giá 15% cho đơn hàng trên 1 triệu",
-    loai_khuyen_mai: "phần trăm",
-    gia_tri: "15",
-    ma_code: "ID123456789",
-    ngay_bat_dau: "2024-10-01",
-    ngay_ket_thuc: "2024-10-31",
-    trang_thai: "Đang hoạt động",
-    dieu_kien_ap_dung: 1000000,
-    so_luot_su_dung: 25,
-    gioi_han_su_dung: 75,
-  },
-  {
-    key: "4",
-    ten_khuyen_mai: "Giảm 50k cho đơn hàng từ 500k",
-    loai_khuyen_mai: "tiền ",
-    gia_tri: 50000,
+// const promotions: PromotionType[] = [
+//   {
+//     key: "1",
+//     ten_khuyen_mai: "Giảm giá 10% cho đơn hàng trên 500k",
+//     loai_khuyen_mai: "phần trăm",
+//     gia_tri: "10",
+//     ma_code: "ID123456",
+//     ngay_bat_dau: "2024-09-01",
+//     ngay_ket_thuc: "2024-09-30",
+//     trang_thai: "Đang hoạt động",
+//     dieu_kien_ap_dung: 500000,
+//     so_luot_su_dung: 15,
+//     gioi_han_su_dung: 100,
+//   },
+//   {
+//     key: "2",
+//     ten_khuyen_mai: "Giảm 200k cho đơn hàng từ 1 triệu",
+//     loai_khuyen_mai: "tiền ",
+//     gia_tri: 200000,
+//     ma_code: "ID123456456",
+//     ngay_bat_dau: "2024-08-01",
+//     ngay_ket_thuc: "2024-08-31",
+//     trang_thai: "Đã hết hạn",
+//     dieu_kien_ap_dung: 1000000,
+//     so_luot_su_dung: 50,
+//     gioi_han_su_dung: 50,
+//   },
+//   {
+//     key: "3",
+//     ten_khuyen_mai: "Giảm giá 15% cho đơn hàng trên 1 triệu",
+//     loai_khuyen_mai: "phần trăm",
+//     gia_tri: "15",
+//     ma_code: "ID123456789",
+//     ngay_bat_dau: "2024-10-01",
+//     ngay_ket_thuc: "2024-10-31",
+//     trang_thai: "Đang hoạt động",
+//     dieu_kien_ap_dung: 1000000,
+//     so_luot_su_dung: 25,
+//     gioi_han_su_dung: 75,
+//   },
+//   {
+//     key: "4",
+//     ten_khuyen_mai: "Giảm 50k cho đơn hàng từ 500k",
+//     loai_khuyen_mai: "tiền ",
+//     gia_tri: 50000,
 
-    ma_code: "ID13456456",
-    ngay_bat_dau: "2024-07-01",
-    ngay_ket_thuc: "2024-07-31",
-    trang_thai: "Đang hoạt động",
-    dieu_kien_ap_dung: 500000,
-    so_luot_su_dung: 60,
-    gioi_han_su_dung: 100,
-  },
-  {
-    key: "5",
-    ten_khuyen_mai: "Giảm giá 5% cho tất cả sản phẩm",
-    ma_code: "ID123456",
-    loai_khuyen_mai: "phần trăm",
-    gia_tri: "5",
-    ngay_bat_dau: "2024-09-15",
-    ngay_ket_thuc: "2024-09-30",
-    trang_thai: "Đang hoạt động",
-    dieu_kien_ap_dung: 0,
-    so_luot_su_dung: 120,
-    gioi_han_su_dung: 300,
-  },
-  {
-    key: "6",
-    ten_khuyen_mai: "Giảm 100k cho đơn hàng từ 700k",
-    loai_khuyen_mai: "tiền",
-    gia_tri: 100000,
-    ma_code: "ID123456456",
-    ngay_bat_dau: "2024-08-15",
-    ngay_ket_thuc: "2024-09-15",
-    trang_thai: "Đang hoạt động",
-    dieu_kien_ap_dung: 700000,
-    so_luot_su_dung: 80,
-    gioi_han_su_dung: 150,
-  },
-  {
-    key: "7",
-    ten_khuyen_mai: "Tặng quà 50k cho đơn hàng từ 600k",
-    loai_khuyen_mai: "phần trăm",
-    gia_tri: 50000,
-    ma_code: "ID123456789",
-    ngay_bat_dau: "2024-08-01",
-    ngay_ket_thuc: "2024-09-01",
-    trang_thai: "Đang hoạt động",
-    dieu_kien_ap_dung: 600000,
-    so_luot_su_dung: 70,
-    gioi_han_su_dung: 100,
-  },
-  {
-    key: "8",
-    ten_khuyen_mai: "Giảm giá 20% cho đơn hàng trên 2 triệu",
-    loai_khuyen_mai: "phần trăm",
-    gia_tri: "20",
-    ma_code: "ID12566789",
-    ngay_bat_dau: "2024-09-01",
-    ngay_ket_thuc: "2024-10-01",
-    trang_thai: "Đang hoạt động",
-    dieu_kien_ap_dung: 2000000,
-    so_luot_su_dung: 90,
-    gioi_han_su_dung: 200,
-  },
-];
+//     ma_code: "ID13456456",
+//     ngay_bat_dau: "2024-07-01",
+//     ngay_ket_thuc: "2024-07-31",
+//     trang_thai: "Đang hoạt động",
+//     dieu_kien_ap_dung: 500000,
+//     so_luot_su_dung: 60,
+//     gioi_han_su_dung: 100,
+//   },
+//   {
+//     key: "5",
+//     ten_khuyen_mai: "Giảm giá 5% cho tất cả sản phẩm",
+//     ma_code: "ID123456",
+//     loai_khuyen_mai: "phần trăm",
+//     gia_tri: "5",
+//     ngay_bat_dau: "2024-09-15",
+//     ngay_ket_thuc: "2024-09-30",
+//     trang_thai: "Đang hoạt động",
+//     dieu_kien_ap_dung: 0,
+//     so_luot_su_dung: 120,
+//     gioi_han_su_dung: 300,
+//   },
+//   {
+//     key: "6",
+//     ten_khuyen_mai: "Giảm 100k cho đơn hàng từ 700k",
+//     loai_khuyen_mai: "tiền",
+//     gia_tri: 100000,
+//     ma_code: "ID123456456",
+//     ngay_bat_dau: "2024-08-15",
+//     ngay_ket_thuc: "2024-09-15",
+//     trang_thai: "Đang hoạt động",
+//     dieu_kien_ap_dung: 700000,
+//     so_luot_su_dung: 80,
+//     gioi_han_su_dung: 150,
+//   },
+//   {
+//     key: "7",
+//     ten_khuyen_mai: "Tặng quà 50k cho đơn hàng từ 600k",
+//     loai_khuyen_mai: "phần trăm",
+//     gia_tri: 50000,
+//     ma_code: "ID123456789",
+//     ngay_bat_dau: "2024-08-01",
+//     ngay_ket_thuc: "2024-09-01",
+//     trang_thai: "Đang hoạt động",
+//     dieu_kien_ap_dung: 600000,
+//     so_luot_su_dung: 70,
+//     gioi_han_su_dung: 100,
+//   },
+//   {
+//     key: "8",
+//     ten_khuyen_mai: "Giảm giá 20% cho đơn hàng trên 2 triệu",
+//     loai_khuyen_mai: "phần trăm",
+//     gia_tri: "20",
+//     ma_code: "ID12566789",
+//     ngay_bat_dau: "2024-09-01",
+//     ngay_ket_thuc: "2024-10-01",
+//     trang_thai: "Đang hoạt động",
+//     dieu_kien_ap_dung: 2000000,
+//     so_luot_su_dung: 90,
+//     gioi_han_su_dung: 200,
+//   },
+// ];
 
 type DataIndex = keyof PromotionType;
 
 const PromotionAdmin: React.FC = () => {
+  const {
+    data: voucher,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["VOUCHER_KEY"],
+    queryFn: async () => {
+      const response = await instance.get("/admin/makhuyenmai");
+
+      return response.data;
+    },
+  });
+  console.log(voucher);
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
   const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
   });
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const searchInput = useRef<InputRef>(null);
 
   const handleSearch = (
@@ -239,12 +256,11 @@ const PromotionAdmin: React.FC = () => {
       title: "Khuyến mãi",
       key: "khuyen_mai",
       width: "18%",
-      ...getColumnSearchProps("ten_khuyen_mai"), // Sử dụng tính năng tìm kiếm cho "Tên khuyến mãi"
-      sorter: (a: any, b: any) =>
-        a.ten_khuyen_mai.length - b.ten_khuyen_mai.length, // Sắp xếp theo độ dài tên khuyến mãi
+      ...getColumnSearchProps("mo_ta"), // Sử dụng tính năng tìm kiếm cho "Tên khuyến mãi"
+      sorter: (a: any, b: any) => a.mo_ta.length - b.mo_ta.length, // Sắp xếp theo độ dài tên khuyến mãi
       render: (record) => (
         <div>
-          <h5>{record.ten_khuyen_mai}</h5>
+          <h5>{record.mo_ta}</h5>
 
           <span className="text-gray-600 text-sm">Mã: {record.ma_code}</span>
         </div>
@@ -270,16 +286,14 @@ const PromotionAdmin: React.FC = () => {
       ),
     },
     {
-      title: "Lượt sử dụng",
-      key: "so_luot_su_dung",
-      ...getColumnSearchProps("so_luot_su_dung"),
+      title: "Số lượng",
+      key: "so_luong",
+      ...getColumnSearchProps("so_luong"),
 
       width: "15%",
       render: (record) => (
         <>
-          <span className="text-gray-600 text-md">
-            {record.so_luot_su_dung} / {record.gioi_han_su_dung}
-          </span>
+          <span className="text-gray-600 text-md">{record.so_luong}</span>
         </>
       ),
     },
@@ -298,35 +312,35 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Loại khuyến mãi",
       // dataIndex: "loai_khuyen_mai",
-      key: "loai_khuyen_mai",
+      key: "loai",
       width: "15%",
       render: (record) => (
         <Tag
-          color={record.loai_khuyen_mai === "phần trăm" ? "#155799" : "#1cb5e0"}
+          color={record.loai === "phần trăm" ? "#1cb5e0" : "#155799"}
           className="font-semibold px-2  rounded-lg"
         >
-          {record.loai_khuyen_mai}
+          {record.loai === "phan_tram" ? "phần trăm" : "tiền"}
         </Tag>
       ),
     },
     {
       title: "Chi tiết khuyến mãi",
 
-      key: "dieu_kien_ap_dung",
+      key: "tong_giam_gia_toi_da",
       width: "25%",
-      ...getColumnSearchProps("dieu_kien_ap_dung"),
+      ...getColumnSearchProps("tong_giam_gia_toi_da"),
       sorter: (a: any, b: any) =>
-        a.dieu_kien_ap_dung.length - b.dieu_kien_ap_dung.length,
+        a.tong_giam_gia_toi_da.length - b.tong_giam_gia_toi_da.length,
       render: (record) => (
         <div>
           <h5>
-            Mức giảm giá: {record.gia_tri.toLocaleString()}{" "}
-            {typeof record.gia_tri === "number" ? "VND" : "%"}
+            Mức giảm giá: {record.giam_gia}{" "}
+            {typeof record.giam_gia === "number" ? "VND" : "%"}
             <br />
-            {record.dieu_kien_ap_dung === 0
+            {record.tong_giam_gia_toi_da === 0
               ? "Áp dụng cho tất cả sản phẩm"
               : "   Giá trị đơn hàng tối thiểu  " +
-                record.dieu_kien_ap_dung.toLocaleString() +
+                record.tong_giam_gia_toi_da +
                 " VND"}
             {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
             VND */}
@@ -349,7 +363,7 @@ const PromotionAdmin: React.FC = () => {
           ) : (
             <CloseCircleOutlined />
           )}{" "}
-          {trang_thai}
+          hết hạn
         </Tag>
       ),
     },
@@ -359,27 +373,32 @@ const PromotionAdmin: React.FC = () => {
       key: "action",
       render: (_, record) => (
         <Space>
-          {record.trang_thai === "Đang hoạt động" ? (
-            <>
-              <Popconfirm
-                title="Chuyển vào thùng rác"
-                description="Bạn có chắc chắn muốn tắt không?"
-                okText="Có"
-                cancelText="Không"
-              >
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Tắt
-                </Button>
-              </Popconfirm>
+          {/* {record.trang_thai === "Đang hoạt động" ? ( */}
+          <>
+            <Popconfirm
+              title="Chuyển vào thùng rác"
+              description="Bạn có chắc chắn muốn tắt không?"
+              okText="Có"
+              cancelText="Không"
+            >
               <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                Cập nhật
-              </Button>{" "}
-            </>
-          ) : (
+                Tắt
+              </Button>
+            </Popconfirm>
             <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-              Xem
-            </Button>
-          )}
+              Cập nhật
+            </Button>{" "}
+          </>
+          {/* ) : (
+            <>
+              <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                Xem
+              </Button>{" "}
+              <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                kích hoạt
+              </Button>
+            </>
+          )} */}
         </Space>
       ),
     },
@@ -393,14 +412,14 @@ const PromotionAdmin: React.FC = () => {
   //   }
   // };
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedKeys: React.Key[]) => {
-      setSelectedRowKeys(selectedKeys);
-    },
-  };
+  // const rowSelection = {
+  //   selectedRowKeys,
+  //   onChange: (selectedKeys: React.Key[]) => {
+  //     setSelectedRowKeys(selectedKeys);
+  //   },
+  // };
 
-  const products = [...promotions].reverse();
+  // const products = [...promotions].reverse();
   function handleChange(_event: ChangeEvent<HTMLInputElement>): void {
     throw new Error("Function not implemented.");
   }
@@ -408,7 +427,8 @@ const PromotionAdmin: React.FC = () => {
   function handleKeyDown(_event: any): void {
     throw new Error("Function not implemented.");
   }
-
+  isError && <div>Error...</div>;
+  isLoading && <div>Loading...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -448,10 +468,9 @@ const PromotionAdmin: React.FC = () => {
         </div>
         <Table
           columns={columns}
-          dataSource={promotions}
+          dataSource={voucher?.data}
           onChange={handleTableChange}
-          pagination={pagination}
-          rowSelection={rowSelection}
+          // pagination={voucher?.data}
           rowKey="key"
           // title={() => (
           //   <Checkbox

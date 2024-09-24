@@ -69,6 +69,9 @@ export interface ProductFormData {
   ten_san_pham: string;
   mo_ta_san_pham: string;
   danh_muc_id: number;
+  mo_ta_ngan: string;
+  ma_san_pham: string;
+  noi_dung: string
   tags: number[];
   anh_san_pham: UploadFile[];
 
