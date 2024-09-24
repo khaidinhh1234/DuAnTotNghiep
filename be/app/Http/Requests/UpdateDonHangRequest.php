@@ -25,6 +25,7 @@ class UpdateDonHangRequest extends FormRequest
     public function rules()
     {
         return [
+            'id' => 'required|array',
             'trang_thai_don_hang' => 'required|in:Chờ thanh toán,Chờ xác nhận,Đã xác nhận,Đang xử lý,Đang giao hàng,Đã giao hàng thành công,Đã hủy hàng',
         ];
     }
