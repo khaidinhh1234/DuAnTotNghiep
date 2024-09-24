@@ -19,6 +19,10 @@ const UserPrivilegeAdmin = () => {
     mutationFn: async (id: number) => {
       try {
         const response = await instance.delete(`/admin/vaitro/${id}`);
+        message.open({
+          type: "success",
+          content: "Xóa vai trò thành côngcông!",
+        });
         return response.data;
       } catch (error) {
         message.open({
