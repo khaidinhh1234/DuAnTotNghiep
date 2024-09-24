@@ -291,7 +291,7 @@ const ProductsAdmin: React.FC = () => {
     }
   };
   isError && <div>Đã xảy ra lỗi</div>;
-  isLoading && <div>Đang tải dữ liệu...</div>;git
+  isLoading && <div>Đang tải dữ liệu...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
