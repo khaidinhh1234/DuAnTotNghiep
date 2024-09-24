@@ -26,10 +26,16 @@ return new class extends Migration {
             $table->string('ma_giam_gia')->nullable();
             $table->decimal('so_tien_giam_gia', 15, 2)->nullable();
             $table->enum('trang_thai_thanh_toan', [
-                'chua_thanh_toan',  // chưa thanh toán
-                'da_thanh_toan',    // đã thanh toán
-                'dang_xu_ly',       // đang xử lý
-                'da_huy'            // đã hủy
+                'Chưa thanh toán',  // chưa thanh toán
+                'Đã thanh toán',    // đã thanh toán
+                'Đang xử lý',       // đang xử lýS
+                'Đã hủy'            // đã hủy
+            ])->nullable();
+            $table->enum('trang_thai_van_chuyen', [
+                'Chờ xử lý',
+                'Chờ lấy hàng',
+                'Đang giao hàng',
+                'Giao hàng thành'
             ])->nullable();
             $table->string('duong_dan')->nullable();
             $table->timestamps();
