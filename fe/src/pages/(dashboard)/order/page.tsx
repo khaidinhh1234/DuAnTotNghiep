@@ -2,6 +2,7 @@ import instance from "@/configs/axios";
 import { useQuery } from "@tanstack/react-query";
 import {
   Button,
+  Input,
   Popconfirm,
   Popover,
   Space,
@@ -10,11 +11,13 @@ import {
   TableProps,
 } from "antd";
 import Detail from "./detail";
+import { useState } from "react";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
 
 interface DataType {
+  created_at: string | number | Date;
   id: number;
   user_id: number;
   ghi_chu: string;
@@ -51,6 +54,12 @@ const content = (
 // ];
 
 const OrderAdmin = () => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
   const { data, isLoading, isError } = useQuery({
     queryKey: ["ORDERS"],
     queryFn: async () => {
@@ -65,7 +74,15 @@ const OrderAdmin = () => {
     },
     {
       title: "Ngày tạo",
-      dataIndex: "created_at",
+      // dataIndex: "created_at",/
+      render: (_, record) => {
+        const date = new Date(record.created_at);
+        return (
+          <div>
+            {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
+          </div>
+        );
+      },
     },
     {
       title: "Khách hàng",
@@ -86,10 +103,10 @@ const OrderAdmin = () => {
               "font-bold text-[15px] " +
               (record.trang_thai_don_hang === "Chờ xử lý"
                 ? "text-blue-500"
-                : record.trang_thai_don_hang === "Chờ xác nhận"
-                  ? "text-orange-600"
+                : record.trang_thai_don_hang == "Chờ xác nhận"
+                  ? "text-yellow-300"
                   : record.trang_thai_don_hang === "Đã xác nhận"
-                    ? "text-orange-600"
+                    ? "text-orange-500"
                     : record.trang_thai_don_hang === "Thành công"
                       ? "text-green-500"
                       : "text-red-500")
@@ -136,28 +153,28 @@ const OrderAdmin = () => {
         return (
           <div
             className={
-              record.trang_thai_don_hang === "Chờ xử lý"
+              record.trang_thai_giao_hang === "Chờ xử lý"
                 ? "text-teal-600 font-bold text-[15px]"
-                : record.trang_thai_don_hang === "Chờ lấy hàng"
+                : record.trang_thai_giao_hang === "Chờ lấy hàng"
                   ? "text-teal-600 font-bold text-[15px]"
-                  : record.trang_thai_don_hang === "Đang giao hàng"
+                  : record.trang_thai_giao_hang === "Đang giao hàng"
                     ? "text-teal-600 font-bold text-[15px]"
-                    : record.trang_thai_don_hang === "Đang ship hàng"
+                    : record.trang_thai_giao_hang === "Đang ship hàng"
                       ? "text-purple-600 font-bold text-[15px]"
-                      : record.trang_thai_don_hang === "Giao thành công"
+                      : record.trang_thai_giao_hang === "Giao thành công"
                         ? "text-teal-600 font-bold text-[15px]"
                         : "text-red-500 font-bold text-[15px]" // Add a default case for the ternary operator
             }
           >
-            {record.trang_thai_don_hang === "Chờ xử lý"
+            {record.trang_thai_giao_hang === "Chờ xử lý"
               ? "Chờ xử lý"
-              : record.trang_thai_don_hang === "Chờ lấy hàng"
+              : record.trang_thai_giao_hang === "Chờ lấy hàng"
                 ? "Chờ lấy hàng"
-                : record.trang_thai_don_hang === "Đang giao hàng"
+                : record.trang_thai_giao_hang === "Đang giao hàng"
                   ? "Đang giao hàng"
-                  : record.trang_thai_don_hang === "Đang ship hàng"
+                  : record.trang_thai_giao_hang === "Đang ship hàng"
                     ? "Đang ship hàng"
-                    : record.trang_thai_don_hang === "Giao thành công"
+                    : record.trang_thai_giao_hang === "Giao thành công"
                       ? "Giao thành công"
                       : "Hủy"}
           </div>
@@ -212,6 +229,44 @@ const OrderAdmin = () => {
 
   const order = data?.data;
   console.log(order);
+
+  const rowSelection: TableRowSelection<DataType> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    selections: [
+      Table.SELECTION_ALL,
+      Table.SELECTION_INVERT,
+      Table.SELECTION_NONE,
+      {
+        key: "odd",
+        text: "Giao hàng loạt",
+        onSelect: (changeableRowKeys) => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+            if (index % 2 !== 0) {
+              return false;
+            }
+            return true;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+      {
+        key: "even",
+        text: "Hủy hàng loạt",
+        onSelect: (changeableRowKeys) => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+            if (index % 2 !== 0) {
+              return true;
+            }
+            return false;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+    ],
+  };
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error...</div>;
   return (
@@ -225,7 +280,21 @@ const OrderAdmin = () => {
         <h1 className="font-semibold md:text-3xl">Đơn hàng</h1>
       </div>
       <div>
-        <Table columns={columns} dataSource={order} />
+        {" "}
+        <div className="max-w-xs my-2">
+          <Input
+            placeholder="Tìm kiếm..."
+            size="large"
+            // value={searchText}
+            // onChange={(e) => setSearchText(e.target.value)}
+            // onKeyDown={handleKeyDown}
+          />
+        </div>
+        <Table
+          columns={columns}
+          rowSelection={rowSelection}
+          dataSource={order}
+        />
       </div>
     </main>
   );

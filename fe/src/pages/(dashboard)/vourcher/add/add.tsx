@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -20,6 +20,8 @@ const dateFormat = "DD/MM/YYYY";
 const weekFormat = "MM/DD";
 const monthFormat = "YYYY/MM";
 import dayjs from "dayjs";
+import { useQuery } from "@tanstack/react-query";
+import instance from "@/configs/axios";
 const { Option } = Select;
 const options: SelectProps["options"] = [] as {
   label: string;
@@ -27,11 +29,46 @@ const options: SelectProps["options"] = [] as {
 }[];
 const AddVoucher = () => {
   const [form] = Form.useForm();
-  const [voucherCode, setVoucherCode] = useState("");
+  // const [voucherCode, setVoucherCode] = useState(""); // Duplicate declaration removed
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [tabKey, setTabKey] = useState(true);
+  const productList = [
+    { value: "Áo Thun Nam", label: "Áo Thun Nam" },
+    { value: "Áo Sơ Mi Nam", label: "Áo Sơ Mi Nam" },
+    { value: "Áo Thun Nữ", label: "Áo Thun Nữ" },
+    { value: "Áo Sơ Mi Nữ", label: "Áo Sơ Mi Nữ" },
+    { value: "Điện thoại", label: "Điện thoại" },
+    { value: "Laptop", label: "Laptop" },
+  ];
+  const {
+    data: sanpham,
+    isLoading: sanphamLoading,
+    isError: sanphamError,
+  } = useQuery({
+    queryKey: ["sanpham"],
+    queryFn: async () => {
+      const response = await instance.get("/admin/sanpham");
+      return response.data;
+    },
+  });
+  console.log("sanpham", sanpham);
+  const {
+    data: hang,
+    isLoading: hangLoading,
+    isError: hangError,
+  } = useQuery({
+    queryKey: ["hang"],
+    queryFn: async () => {
+      const response = await instance.get("admin/hangthanhvien");
+      return response.data;
+    },
+  });
+  const data = hang?.data?.map((item: any) => ({
+    value: item.ten_hang_thanh_vien,
+    label: item.ten_hang_thanh_vien,
+  }));
   const handleSubmit = (values: any) => {
     const formattedEndDate = values.endDate
       ? DateTime.fromJSDate(values.endDate.toDate()).toFormat("dd/MM/yyyy")
@@ -41,20 +78,7 @@ const AddVoucher = () => {
     console.log("Form Values: ", formValues);
   };
 
-  const generateRandomCode = () => {
-    const randomCode = uuidv4().substring(0, 8).toUpperCase();
-    setVoucherCode(randomCode);
-    form.setFieldsValue({ code: randomCode });
-  };
-
-  const productList = [
-    { value: "Áo Thun Nam", label: "Áo Thun Nam" },
-    { value: "Áo Sơ Mi Nam", label: "Áo Sơ Mi Nam" },
-    { value: "Áo Thun Nữ", label: "Áo Thun Nữ" },
-    { value: "Áo Sơ Mi Nữ", label: "Áo Sơ Mi Nữ" },
-    { value: "Điện thoại", label: "Điện thoại" },
-    { value: "Laptop", label: "Laptop" },
-  ];
+  // Removed duplicate declaration of generateRandomCode
 
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
@@ -80,6 +104,7 @@ const AddVoucher = () => {
       setSearchTerm("");
     }
   };
+  const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
 
   const handleSearch = (value: any) => {
     setSearchTerm(value);
@@ -105,10 +130,31 @@ const AddVoucher = () => {
   const handleChange = (value: string[]) => {
     setSelectedValues(value);
     setIsAllSelected(value.length === productList.length); // Cập nhật trạng thái chọn tất cả
-    console.log(`Selected: ${value}`);
+    // console.log(`Selected: ${value}`);
+  };
+  const [voucherCode, setVoucherCode] = useState("");
+
+  // Hàm tạo mã khuyến mãi ngẫu nhiên
+  const generateRandomCode = () => {
+    const length = 8; // Độ dài mã khuyến mãi
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let randomCode = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomCode += characters.charAt(randomIndex);
+    }
+
+    setVoucherCode(randomCode); // Cập nhật voucherCode
   };
 
+  // Gọi hàm tạo mã ngẫu nhiên khi component được load
+  useEffect(() => {
+    generateRandomCode();
+  }, []);
   const [value, setValue] = useState("");
+  if (hangLoading) return <p>Loading...</p>;
+  if (hangError) return <p>error...</p>;
   return (
     <main className="relative flex flex-1 flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
@@ -135,28 +181,30 @@ const AddVoucher = () => {
             wrapperCol={{ span: 24 }}
             autoComplete="off"
           >
-            {/* <Form.Item
-              label="Mã khuyến mãi (CODE)"
-              name="code"
-              initialValue={voucherCode}
-              rules={[
-                { required: true, message: "Vui lòng nhập mã khuyến mãi!" },
-              ]}
-            >
-              <div className="flex items-center">
-                <Input
-                  value={voucherCode}
-                  readOnly
-                  className="rounded-md flex-1"
-                />
-                <Button
-                  onClick={generateRandomCode}
-                  className="ml-4 bg-blue-500 text-white hover:bg-blue-600"
-                >
-                  Tạo mã
-                </Button>
-              </div>
-            </Form.Item> */}
+            <div className="my-3 w-[50%]">
+              <Form.Item
+                name="code"
+                initialValue={voucherCode}
+                rules={[
+                  { required: true, message: "Vui lòng nhập mã khuyến mãi!" },
+                ]}
+              >
+                <div className="flex items-center ">
+                  <Input
+                    value={voucherCode}
+                    readOnly
+                    className="rounded-md flex-1 shadow-lg"
+                  />
+                  <Button
+                    onClick={generateRandomCode}
+                    className="ml-4 bg-blue-500 text-white hover:bg-blue-600"
+                  >
+                    Đổi mã
+                  </Button>
+                </div>
+              </Form.Item>
+            </div>
+
             <div className="bg-white p-8 shadow-lg rounded-lg">
               <div className="flex">
                 <div className=" w-[80%]">
@@ -178,24 +226,60 @@ const AddVoucher = () => {
                   </div>
                   <div className="flex items-center my-2">
                     <Form.Item
-                      label="Thời gian quy đổi
-"
-                      name="Date"
+                      label="Thời gian ngày bắt đầu"
+                      name="ngay_bat_dau"
                       rules={[
                         { required: true, message: "Bắt buộc phải điền!!" },
+                        () => ({
+                          validator(_, value) {
+                            if (!value || value.isAfter(dayjs())) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error(
+                                "Ngày phải lớn hơn hoặc bằng ngày hôm nay!"
+                              )
+                            );
+                          },
+                        }),
                       ]}
-                      className="mb-0 w-3/4"
+                      className="mb-0 w-[100%]"
                     >
-                      <RangePicker
-                        defaultValue={[
-                          dayjs("2024/09/23", dateFormat),
-                          dayjs("2024/09/23", dateFormat),
-                        ]}
-                        format={dateFormat}
+                      <DatePicker
+                        defaultValue={dayjs("01/01/2025", dateFormatList[0])}
+                        format={dateFormatList}
+                        className="w-[50%]"
+                      />
+                    </Form.Item>{" "}
+                    <Form.Item
+                      label="Thời gian quy đổi"
+                      name="ngay_ket_thuc"
+                      rules={[
+                        { required: true, message: "Bắt buộc phải điền!!" },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const ngay_bat_dau = getFieldValue("ngay_bat_dau");
+                            if (!value || value.isAfter(ngay_bat_dau)) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error(
+                                "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
+                              )
+                            );
+                          },
+                        }),
+                      ]}
+                      className="mb-0 w-[90%]"
+                    >
+                      <DatePicker
+                        defaultValue={dayjs("01/01/2025", dateFormatList[0])}
+                        format={dateFormatList}
+                        className="w-[60%]"
                       />
                     </Form.Item>
                   </div>
-                  <div className="flex items-center my-3">
+                  <div>
                     <Form.Item
                       label="Mã giảm giá áp dụng cho"
                       className="w-[100%] mb-4"
@@ -474,7 +558,25 @@ const AddVoucher = () => {
                       min={1}
                     />
                   </Form.Item>{" "}
-                  <div className="flex gap-2 mt-24">
+                  <Form.Item
+                    label="Hạng thành viên  (áp dụng )
+"
+                    name="hang_thanh_vien"
+                    initialValue=""
+                    rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
+                    className="mb-0 w-[150%]"
+                  >
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      style={{ width: "40%" }}
+                      placeholder="Please select"
+                      defaultValue={[""]}
+                      onChange={handleChange}
+                      options={data}
+                    />
+                  </Form.Item>{" "}
+                  <div className="flex gap-2 ">
                     <Form.Item className=" flex whitespace-nowrap">
                       <Button htmlType="submit">
                         <span className="text-sm">Hủy</span>
