@@ -2,6 +2,7 @@ import instance from "@/configs/axios";
 import { useQuery } from "@tanstack/react-query";
 import {
   Button,
+  Input,
   Popconfirm,
   Popover,
   Space,
@@ -10,6 +11,7 @@ import {
   TableProps,
 } from "antd";
 import Detail from "./detail";
+import { useState } from "react";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -51,6 +53,12 @@ const content = (
 // ];
 
 const OrderAdmin = () => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
   const { data, isLoading, isError } = useQuery({
     queryKey: ["ORDERS"],
     queryFn: async () => {
@@ -212,6 +220,44 @@ const OrderAdmin = () => {
 
   const order = data?.data;
   console.log(order);
+
+  const rowSelection: TableRowSelection<DataType> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    selections: [
+      Table.SELECTION_ALL,
+      Table.SELECTION_INVERT,
+      Table.SELECTION_NONE,
+      {
+        key: "odd",
+        text: "Giao hàng loạt",
+        onSelect: (changeableRowKeys) => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+            if (index % 2 !== 0) {
+              return false;
+            }
+            return true;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+      {
+        key: "even",
+        text: "Hủy hàng loạt",
+        onSelect: (changeableRowKeys) => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
+            if (index % 2 !== 0) {
+              return true;
+            }
+            return false;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+    ],
+  };
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error...</div>;
   return (
@@ -225,7 +271,21 @@ const OrderAdmin = () => {
         <h1 className="font-semibold md:text-3xl">Đơn hàng</h1>
       </div>
       <div>
-        <Table columns={columns} dataSource={order} />
+        {" "}
+        <div className="max-w-xs my-2">
+          <Input
+            placeholder="Tìm kiếm..."
+            size="large"
+            // value={searchText}
+            // onChange={(e) => setSearchText(e.target.value)}
+            // onKeyDown={handleKeyDown}
+          />
+        </div>
+        <Table
+          columns={columns}
+          rowSelection={rowSelection}
+          dataSource={order}
+        />
       </div>
     </main>
   );

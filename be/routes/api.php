@@ -75,6 +75,7 @@ Route::middleware([])
         // Danh muc
         Route::apiResource('danhmuc', DanhMucController::class)->except(['show']);
         Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa'])->name('danhmuc.thungrac');
+        Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
         Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc'])->name('danhmuc.khoiphuc');
         Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
 
@@ -98,6 +99,8 @@ Route::middleware([])
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
         Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
+        Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
+        
         Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc'])->name('danhmuctintuc.khoiphuc');
         Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
         
@@ -123,10 +126,13 @@ Route::middleware([])
 
         // Đơn hàng
         Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
+        Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
+        Route::get('/donhang/{id}/bill', [DonHangController::class, 'inHoaDon'])->name('donhang.bill');
         Route::put('/donhang/{id}/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
         Route::put('/donhang/{id}/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
 
+        Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
         // Kích thước biến thể
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class)->except(['show']);
         Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');

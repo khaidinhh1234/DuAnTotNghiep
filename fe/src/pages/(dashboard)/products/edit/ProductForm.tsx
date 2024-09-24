@@ -1,6 +1,6 @@
 
 import React, { useEffect } from "react";
-import { Form, Input, Select, Upload, Button, Checkbox } from "antd";
+import { Form, Input, Select, Upload, Button, } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import { UploadFile } from "antd/es/upload/interface";
 import { Category, Tag, ProductFormData } from "@/common/types/product";
@@ -51,14 +51,14 @@ const ProductForm = ({
         <Form.Item
           label="Tên sản phẩm"
           name="ten_san_pham"
-          // rules={[{ required: true, message: "Tên sản phẩm bắt buộc phải nhập!" }]}
+          rules={[{ required: true, message: "Tên sản phẩm bắt buộc phải nhập!" }]}
         >
           <Input placeholder="Nhập tên sản phẩm" />
         </Form.Item>
         <Form.Item 
           label="Danh mục sản phẩm" 
           name="danh_muc_id"
-          // rules={[{ required: true, message: 'Vui lòng chọn danh mục' }]}
+          rules={[{ required: true, message: 'Vui lòng chọn danh mục' }]}
         >
           <Select placeholder="Vui lòng chọn danh mục" className="w-full">
             {categoriesData && categoriesData.map((category) => (
@@ -72,14 +72,14 @@ const ProductForm = ({
         <Form.Item
           label="Mô tả ngắn"
           name="mo_ta_ngan"
-          // rules={[{ required: true, message: "Mô tả ngắn bắt buộc phải nhập!" }]}
+          rules={[{ required: true, message: "Mô tả ngắn bắt buộc phải nhập!" }]}
         >
           <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
         </Form.Item>
         <Form.Item
           label="Nội dung"
           name="noi_dung"
-          // rules={[{ required: true, message: "Nội dung sản phẩm bắt buộc phải nhập!" }]}
+          rules={[{ required: true, message: "Nội dung sản phẩm bắt buộc phải nhập!" }]}
         >
           <TextArea rows={5} placeholder="Nhập nội dung sản phẩm" />
         </Form.Item>
@@ -93,6 +93,7 @@ const ProductForm = ({
             ))}
           </Select>
         </Form.Item>
+        
         <Form.Item
           label="Mã sản phẩm"
           name="ma_san_pham"
@@ -109,10 +110,10 @@ const ProductForm = ({
           rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
         >
           <Upload
-            listType="picture"
-            fileList={fileList}
+          listType="picture"
+          fileList={fileList}
             onChange={({ fileList }) => setFileList(fileList)}
-            // beforeUpload={() => false}
+            beforeUpload={() => false}
             onPreview={() => {}}
           >
             <Button icon={<UploadOutlined />}>Upload</Button>

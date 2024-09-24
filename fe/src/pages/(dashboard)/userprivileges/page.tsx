@@ -104,12 +104,14 @@ const UserPrivilegeAdmin = () => {
       }
     },
   });
+  console.log("Data:", data);
   console.log("Fetching:", isFetching);
   const vaitro = data?.data
     .map((item: any) => {
       return { ...item, key: item.id };
     })
     .reverse();
+  console.log("vaitro", vaitro);
   // console.log(vaitro);
   const [filteredData, setFilteredData] = useState(vaitro);
 
@@ -157,7 +159,7 @@ const UserPrivilegeAdmin = () => {
       <div>
         <Table
           columns={columns}
-          dataSource={filteredData == undefined ? vaitro : filteredData}
+          dataSource={vaitro}
           pagination={pagination}
           onChange={handleTableChange}
         />

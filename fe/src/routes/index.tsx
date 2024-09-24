@@ -72,7 +72,13 @@ import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
 import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
 import Showvaitro from "@/pages/(dashboard)/userprivileges/show/page";
 import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
+import NewCategory from "@/pages/(dashboard)/newscategory/page";
+import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
+import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
+import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
+
 import Test from "@/pages/(dashboard)/vourcher/test/test";
+
 
 const Router = () => {
   return (
@@ -133,6 +139,11 @@ const Router = () => {
           <Route path="categories/remote" element={<CategoriesRemote />} />
           <Route path="orders" element={<OrderAdmin />} />
           <Route path="vouchers" element={<VoucherAdmin />} />
+          {/* danh mục tin tức */}
+          <Route path="newcategory" element={<NewCategory />} />
+          <Route path="newcategory/add" element={<NewCategoriesAdd />} />
+          <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
+          <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* Tài khoản */}
           <Route
             path="users"

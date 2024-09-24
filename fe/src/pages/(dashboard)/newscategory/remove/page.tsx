@@ -1,12 +1,12 @@
-import React from "react";
-import { Table, Button, Space } from "antd";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, Space, Table } from "antd";
+import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const CategoriesRemote: React.FC = () => {
-  const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
+const NewCategoriesRemote: React.FC = () => {
+  const queryClient = useQueryClient(); 
   const { id } = useParams();
 
   // Fetch danh mục đã xóa
@@ -14,7 +14,7 @@ const CategoriesRemote: React.FC = () => {
     queryKey: ["danhmuc-remote"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuc/thung-rac");
+        const response = await instance.get("/admin/danhmuctintuc/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching remote categories:", error);
@@ -26,7 +26,7 @@ const CategoriesRemote: React.FC = () => {
   // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
-      await instance.post(`/admin/danhmuc/thung-rac/${id}`);
+      await instance.post(`/admin/danhmuctintuc/thung-rac/${id}`);
       toast.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
       queryClient.invalidateQueries(["danhmuc-remote"]);
@@ -57,25 +57,8 @@ const CategoriesRemote: React.FC = () => {
     },
     {
       title: "Tên danh mục",
-      key: "ten_danh_muc",
-      dataIndex: "ten_danh_muc",
-    },
-    {
-      title: "Ảnh danh mục",
-      key: "anh_danh_muc",
-      dataIndex: "anh_danh_muc",
-      render: (anh_danh_muc: string) => (
-        <img
-          src={anh_danh_muc}
-          alt="Ảnh danh mục"
-          style={{ width: "50px", height: "50px", objectFit: "cover" }}
-        />
-      ),
-    },
-    {
-      title: "Danh mục cha",
-      key: "cha_id",
-      dataIndex: "cha_id",
+      key: "ten_danh_muc_tin_tuc",
+      dataIndex: "ten_danh_muc_tin_tuc",
     },
     {
       title: "Thời gian tạo",
@@ -103,7 +86,7 @@ const CategoriesRemote: React.FC = () => {
       </div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Danh mục đã xóa</h1>
-        <Link to="/admin/categories">
+        <Link to="/admin/newcategory">
           <Button className="bg-black text-white rounded-lg py-1">
             Quay lại
           </Button>
@@ -120,4 +103,4 @@ const CategoriesRemote: React.FC = () => {
   );
 };
 
-export default CategoriesRemote;
+export default NewCategoriesRemote;

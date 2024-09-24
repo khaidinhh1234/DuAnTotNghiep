@@ -1,65 +1,50 @@
-import React, { useRef, useState } from "react";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Tabs } from "antd";
-import type { InputRef, TableColumnsType } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
+import { Button, Input, InputRef, Table, TableColumnsType } from "antd";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Popconfirm, Space } from "antd";
+import { NewCategories } from "@/common/types/newcategory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
-import { ICategories } from "@/common/types/category";
+import { FilterDropdownProps } from "antd/es/table/interface";
+import Highlighter from "react-highlight-words";
 import { toast } from "react-toastify";
-const { TabPane } = Tabs;
 
-
-const CategoriesAdmin: React.FC = () => {
+const NewCategory = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(new Map());
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['danhmuc'],
+    queryKey: ["danhmuctintuc"],
     queryFn: async () => {
       try {
-        const response = await instance.get('/admin/danhmuc');
-        const categories = response.data;
-        const categoryMap = new Map<string, string>();
-        categories.data.forEach((category: ICategories) => {
-          categoryMap.set(category.id, category.ten_danh_muc);
-        });
-        setCategoriesMap(categoryMap);
-        return categories; // Đảm bảo rằng categories.data chứa createdAt
+        const response = await instance.get("/admin/danhmuctintuc");
+        return response.data;
       } catch (error) {
-        console.error("Error fetching categories:", error);
-        throw new Error("Error fetching categories");
+        throw new Error("Error fetching new categories");
       }
     },
   });
-
-
-  const dataSource = data?.data.map((category: ICategories) => ({
-    key: category.id,
-    ...category,
-  })) || [];
-
+  console.log(data);
+  const dataSource =
+    data?.data.map((newcategory: NewCategories) => ({
+      key: newcategory.id,
+      ...newcategory,
+    })) || [];
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.delete(`/admin/danhmuc/${id}`);
-        if (response.data.status) {
-          return id;
-        } else {
-          throw new Error(response.data.message || 'Failed to delete');
-        }
+        return await instance.delete(`/admin/danhmuctintuc/${id}`);
       } catch (error) {
-        console.error("Error deleting category:", error);
-        throw error;
+        throw new Error("Error");
       }
     },
     onSuccess: (id) => {
-      queryClient.invalidateQueries(['danhmuc']);
+      queryClient.invalidateQueries({
+        queryKey: ["danhmuctintuc"],
+      });
       toast.success("Xóa danh mục thành công");
     },
     onError: (error) => {
@@ -89,7 +74,7 @@ const CategoriesAdmin: React.FC = () => {
       selectedKeys,
       confirm,
       clearFilters,
-    }: any) => (
+    }: FilterDropdownProps) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
@@ -151,44 +136,30 @@ const CategoriesAdmin: React.FC = () => {
       ),
   });
 
-  const columns: TableColumnsType<ICategories> = [
+  // Define columns
+  const columns: TableColumnsType<NewCategories> = [
     {
       title: "STT",
       width: "10%",
       key: "id",
       dataIndex: "key",
     },
+    // {
+    //   title: "STT",
+    //   width: "10%",
+    //   key: "id",
+    //   dataIndex: "ten_danh_muc_tin_tucey",
+    //     // ...getColumnSearchProps("ten_danh_muc_tin_tuc"),
+    // },
     {
-      title: "Tên danh mục",
+      title: "Tên danh mục tin tức",
       width: "20%",
-      key: "ten_danh_muc",
-      dataIndex: "ten_danh_muc",
-      ...getColumnSearchProps("ten_danh_muc"),
-      sorter: (a: any, b: any) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
-      render: (text) => (text ? text : "Chưa có dữ liệu")
-    },
-    {
-      title: "Ảnh danh mục",
-      width: "15%",
-      key: "anh_danh_muc",
-      dataIndex: "anh_danh_muc",
-      render: (anh_danh_muc: string) =>
-        anh_danh_muc ? (
-          <img
-            src={anh_danh_muc}
-            alt="Ảnh danh mục"
-            style={{ width: "50px", height: "50px", objectFit: "cover" }}
-          />
-        ) : (
-          <span>Ảnh không có</span>
-        )
-    },
-    {
-      title: "Danh mục cha",
-      width: "20%",
-      key: "cha_id",
-      dataIndex: "cha_id",
-      render: (text: string) => categoriesMap.get(text) || "không có",
+      key: "ten_danh_muc_tin_tuc",
+      dataIndex: "ten_danh_muc_tin_tuc",
+
+      sorter: (a: any, b: any) =>
+        a.ten_danh_muc_tin_tuc.localeCompare(b.ten_danh_muc_tin_tuc),
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Thời gian tạo",
@@ -200,12 +171,12 @@ const CategoriesAdmin: React.FC = () => {
     {
       title: "Quản trị",
       key: "action",
-      render: (_, category) => (
+      render: (_, newcategory) => (
         <Space>
           <Popconfirm
             title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
-            onConfirm={() => mutate(category.id!)}
+            onConfirm={() => mutate(newcategory.id!)}
             okText="Có"
             cancelText="Không"
           >
@@ -213,7 +184,7 @@ const CategoriesAdmin: React.FC = () => {
               Xóa
             </Button>
           </Popconfirm>
-          <Link to={`/admin/categories/edit/${category.id}`}>
+          <Link to={`/admin/newcategory/edit/${newcategory.id}`}>
             <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
               Cập nhật
             </Button>
@@ -233,13 +204,13 @@ const CategoriesAdmin: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Danh mục</h1>
         <div>
-          <Link to="/admin/categories/add" className="mr-1">
+          <Link to="/admin/newcategory/add" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm
             </Button>
           </Link>
-          <Link to="/admin/categories/remote">
+          <Link to="/admin/newcategory/remote">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               <DeleteOutlined className="mr-1" />
               Thùng rác
@@ -247,16 +218,9 @@ const CategoriesAdmin: React.FC = () => {
           </Link>
         </div>
       </div>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Danh mục cha" key="1">
-          <Table columns={columns} dataSource={dataSource.filter(category => !category.cha_id)} />
-        </TabPane>
-        <TabPane tab="Danh mục con" key="2">
-          <Table columns={columns} dataSource={dataSource.filter(category => category.cha_id)} />
-        </TabPane>
-      </Tabs>
+      <Table columns={columns} dataSource={dataSource} loading={isLoading} />
     </main>
   );
 };
 
-export default CategoriesAdmin;
+export default NewCategory;

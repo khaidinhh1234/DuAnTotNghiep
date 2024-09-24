@@ -33,6 +33,10 @@ const menu = [
   {
     name: "Danh mục",
     path: "categories",
+    subMenu: [
+      { name: "Danh mục sản phẩm", path: "categories" },
+      { name: "Danh mục tin tức", path: "newcategory" },
+    ],
 
     icon: Package,
   },
