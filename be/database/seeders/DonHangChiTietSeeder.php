@@ -2,42 +2,37 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use App\Models\DonHang;
 use App\Models\BienTheSanPham;
-use App\Models\DonHangChiTiet;
 
 class DonHangChiTietSeeder extends Seeder
 {
     public function run()
     {
-        $donHangs = DonHang::all();
+        $data = [];
+        $now = Carbon::now();
+        $donHangs = DonHang::all()->pluck('id')->toArray(); // Lấy danh sách ID của bảng DonHang
+        $bienTheSanPhams = BienTheSanPham::all()->pluck('id')->toArray(); // Lấy danh sách ID của bảng BienTheSanPham
 
-        foreach ($donHangs as $donHang) {
-            $bienTheSanPham = BienTheSanPham::inRandomOrder()->first();
+        for ($i = 1; $i <= 10; $i++) {
+            $so_luong = rand(1, 5);
+            $gia = rand(100000, 500000); // Giá ngẫu nhiên từ 100,000 đến 500,000
+            $thanh_tien = $so_luong * $gia; // Tính thành tiền dựa trên số lượng và giá
 
-            if ($bienTheSanPham) {
-                $soLuong = rand(1, 10);
-                $gia = $bienTheSanPham->gia_khuyen_mai;
-                $thanhTien = $soLuong * $gia;
-
-                // Kiểm tra xem bienTheMauSac có tồn tại không
-                $tenMau = $bienTheSanPham->bienTheMauSac ? $bienTheSanPham->bienTheMauSac->ten_mau_sac : 'Không có màu';
-
-                // Kiểm tra xem bienTheKichThuoc có tồn tại không
-                $tenKichThuoc = $bienTheSanPham->bienTheKichThuoc ? $bienTheSanPham->bienTheKichThuoc->kich_thuoc : 'Không có kích thước';
-
-                DonHangChiTiet::create([
-                    'don_hang_id' => $donHang->id,
-                    'bien_the_san_pham_id' => $bienTheSanPham->id,
-                    'so_luong' => $soLuong,
-                    'gia' => $gia,
-                    'ten_mau_bien_the_san_pham' => $tenMau,  // Sử dụng tên màu đã kiểm tra
-                    'ten_kich_thuoc_bien_the_san_pham' => $tenKichThuoc,  // Sử dụng tên kích thước đã kiểm tra
-                    'thanh_tien' => $thanhTien,
-                ]);
-            }
+            $data[] = [
+                'don_hang_id' => $donHangs[array_rand($donHangs)],
+                'bien_the_san_pham_id' => $bienTheSanPhams[array_rand($bienTheSanPhams)],
+                'so_luong' => $so_luong,
+                'gia' => $gia,
+                'thanh_tien' => $thanh_tien,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
         }
+
+        DB::table('don_hang_chi_tiets')->insert($data);
     }
 }
