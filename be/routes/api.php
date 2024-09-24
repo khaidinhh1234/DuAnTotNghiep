@@ -100,10 +100,10 @@ Route::middleware([])
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
         Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
         Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
-        
+
         Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc'])->name('danhmuctintuc.khoiphuc');
         Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
-        
+
         //Tin Tức
         Route::apiResource('tintuc', TinTucController::class)->except(['show']);
         Route::get('tintuc/thung-rac', [TinTucController::class, 'danhSachTinTucDaXoa'])->name('tintuc.thungrac');
@@ -111,6 +111,8 @@ Route::middleware([])
         Route::get('tintuc/{id}', [TinTucController::class, 'show'])->name('tintuc.show');
 
         // Mã khuyến mãi
+        Route::post('makhuyenmai/kich-hoat/{id}', [MaKhuyenMaiController::class, 'kichHoatMaKhuyenMai']);
+        Route::post('makhuyenmai/huy-kich-hoat/{id}', [MaKhuyenMaiController::class, 'huyKichMaKhuyenMai']);
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class)->except(['show']);
         Route::post('makhuyenmai/thongbao', [MaKhuyenMaiController::class, 'guiThongBao'])->name('makhuyenmai.thongbao');
         Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa'])->name('makhuyenmai.thungrac');

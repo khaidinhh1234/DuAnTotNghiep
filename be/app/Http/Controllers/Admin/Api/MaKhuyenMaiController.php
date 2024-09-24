@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Api;
 use App\Events\UserNotification;
 use App\Http\Controllers\Controller;
 use App\Models\MaKhuyenMai;
+use App\Models\SanPham;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -264,6 +265,48 @@ class MaKhuyenMaiController extends Controller
                 'message' => 'Đã xảy ra lỗi trong quá trình gửi thông báo',
                 'error' => $exception->getMessage()
             ], 500);
+        }
+    }
+
+    public function kichHoatMaKhuyenMai($id)
+    {
+        try {
+            MaKhuyenMai::query()->findOrFail($id)->update(['trang_thai' => 1]);
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Kích hoạt mã khuyến mãi thành công',
+            ];
+            return response()->json($json, 200);
+        }catch (\Exception $exception) {
+            $json = [
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Kích hoạt mã khuyến mãi thất bại',
+                'error' => $exception->getMessage()
+            ];
+            return response()->json($json, 500);
+        }
+    }
+
+    public function huyKichHoatMaKhuyenMai($id)
+    {
+        try {
+            MaKhuyenMai::query()->findOrFail($id)->update(['trang_thai' => 0]);
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Huỷ kích hoạt mà khuyến mãi',
+            ];
+            return response()->json($json, 200);
+        }catch (\Exception $exception) {
+            $json = [
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Huỷ kích hoạt mà khuyến mãi',
+                'error' => $exception->getMessage()
+            ];
+            return response()->json($json, 500);
         }
     }
 }

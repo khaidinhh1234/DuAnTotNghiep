@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('so_luong')->default(1);
             $table->dateTime('ngay_bat_dau');
             $table->dateTime('ngay_ket_thuc')->nullable();
+            $table->boolean('trang_thai')->default(1);
             $table->unsignedDecimal('chi_tieu_toi_thieu', 10, 2)->nullable();
             $table->unsignedDecimal('tong_giam_gia_toi_da', 10, 2)->nullable();
             $table->timestamps();
