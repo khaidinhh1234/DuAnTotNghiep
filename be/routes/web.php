@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
@@ -40,3 +41,4 @@ Route::get('/test-email', function () {
 
     return 'Email sent';
 });
+

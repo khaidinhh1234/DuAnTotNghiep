@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Exports\DonHangExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateDonHangRequest;
 use App\Http\Requests\UpdateOrderStatusRequest;
@@ -11,6 +12,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DonHangController extends Controller
 {
@@ -20,7 +22,7 @@ class DonHangController extends Controller
     public function index()
     {
         try {
-            $donHangs = DonHang::get();
+            $donHangs = DonHang::with('chiTiets')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -39,11 +41,35 @@ class DonHangController extends Controller
     public function show($id)
     {
         try {
-            $donHang = DonHang::with('chiTiets')->findOrFail($id);
+            $donHang = DonHang::with([
+                'chiTiets.bienTheSanPham.sanPham', // Lấy sản phẩm từ biến thể
+                'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh sản phẩm
+            ])->findOrFail($id);
+
+
+            // Tính toán tổng số lượng và tổng tiền
+            $tongSoLuong = $donHang->chiTiets->sum('so_luong');
+            $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
+
+            // Chuẩn bị phản hồi với các thông tin đơn giản hơn
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'data' => $donHang->chiTiets
+                'data' => [
+                    'don_hang' => [
+                        'id' => $donHang->id,
+                        'ghi_chu' => $donHang->ghi_chu,
+                        'trang_thai_don_hang' => $donHang->trang_thai_don_hang,
+                        'phuong_thuc_thanh_toan' => $donHang->phuong_thuc_thanh_toan,
+                        'tong_tien_don_hang' => $donHang->tong_tien_don_hang,
+                        'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang,
+                        'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang,
+                        'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang,
+                    ],
+                    'chi_tiet_don_hang' => $donHang->chiTiets, // Trả về trực tiếp chi tiết đơn hàng đã thêm trường
+                    'tong_so_luong' => $tongSoLuong,
+                    'tong_tien_san_pham' => $tongTienSanPham
+                ]
             ], 200);
         } catch (Exception $e) {
             return response()->json([
@@ -54,7 +80,6 @@ class DonHangController extends Controller
             ], 404);
         }
     }
-
     // Cập nhập trạng thái thanh toán
     public function updatePaymentStatus(UpdatePaymentStatusRequest $request, $id)
     {
@@ -125,6 +150,12 @@ class DonHangController extends Controller
         }
     }
 
+  public function export()
+    {
+        // Tải xuống file Excel với tên 'donhang.xlsx'
+        return Excel::download(new DonHangExport, 'donhang.xlsx');
+    }
+
     public function inHoaDon(string $id)
     {
         $hoaDon = DonHang::query()->with('user', 'chiTiets')->findOrFail($id);
@@ -133,7 +164,6 @@ class DonHangController extends Controller
             $pdf = Pdf::loadView('hoadon.bill', compact('hoaDon'));
             return $pdf->download('Hoadon' . $id . '.pdf');
         }
-
         return response()->json([
             'status' => false,
             'status_code' => 404,
