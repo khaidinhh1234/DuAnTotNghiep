@@ -201,7 +201,7 @@ const NewCategory = () => {
               Thêm
             </Button>
           </Link>
-          <Link to="/admin/categories/remote">
+          <Link to="/admin/newcategory/remote">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               <DeleteOutlined className="mr-1" />
               Thùng rác

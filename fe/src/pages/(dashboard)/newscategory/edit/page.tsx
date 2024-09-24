@@ -2,31 +2,29 @@ import { ICategories } from "@/common/types/category";
 import { NewCategories } from "@/common/types/newcategory";
 import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, Spin } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 const NewCategoriesEdit = () => {
   const [form] = Form.useForm();
   const nav = useNavigate();
   const { id } = useParams();
-  const { data } = useQuery({
+  
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['danhmuctintuc', id],
     queryFn: async () => {
-        try {
-            const reponse = await instance.get(`/admin/danhmuctintuc/${id}`);
-            return reponse.data;
-        } catch (error) {
-            throw new Error("Lấy danh mục thất bại")
-        }
+        const response = await instance.get(`/admin/danhmuctintuc/${id}`);
+        return response.data;
     }
-  })
+  });
+
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
       const response = await instance.put(`/admin/danhmuctintuc/${id}`, category);
       return response.data;
     },
     onSuccess: () => {
-      message.success("Cập nhập danh mục thành công");
+      message.success("Cập nhật danh mục thành công");
       form.resetFields();
       nav('/admin/newcategory');
     },
@@ -34,23 +32,33 @@ const NewCategoriesEdit = () => {
       message.error(error.message);
     },
   });
-  const onFinish = (values : NewCategories) => {
-     mutate(values);
+
+  const onFinish = (values: NewCategories) => {
+    mutate(values);
   };
-  
+
+  // Nếu đang tải dữ liệu
+  if (isLoading) {
+    return <Spin />;
+  }
+
+  // Nếu có lỗi khi tải dữ liệu
+  if (isError) {
+    return <div>Lỗi khi lấy dữ liệu danh mục. Vui lòng thử lại sau.</div>;
+  }
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
           Quản trị / Danh mục tin tức / 
-          <span className="font-semibold px-px">Cập nhập danh mục tin tức</span>
+          <span className="font-semibold px-px">Cập nhật danh mục tin tức</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Cập nhập danh mục tin tức: {data?.data.ten_danh_muc_tin_tuc}</h1>
+        <h1 className="font-semibold md:text-3xl">Cập nhật danh mục tin tức: {data?.data.ten_danh_muc_tin_tuc}</h1>
         <div>
-          <Link to="/admin/categories" className="mr-1">
+          <Link to="/admin/newcategory" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               Quay lại
             </Button>
@@ -66,7 +74,7 @@ const NewCategoriesEdit = () => {
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 24 }}
-              initialValues={{ ...data?.data }}
+              initialValues={{ ...data?.data }} // Chỉ định giá trị khởi tạo khi dữ liệu đã được tải
               autoComplete="off"
               onFinish={onFinish}
             >
@@ -83,7 +91,7 @@ const NewCategoriesEdit = () => {
                   htmlType="submit"
                   className="px-3 py-2 bg-black text-white rounded-lg"
                 >
-                  Thêm
+                  Cập nhật
                 </Button>
               </Form.Item>
             </Form>

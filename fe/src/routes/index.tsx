@@ -76,6 +76,7 @@ import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
 import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
+import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 
 const Router = () => {
   return (
@@ -140,6 +141,7 @@ const Router = () => {
           <Route path="newcategory" element={<NewCategory />} />
           <Route path="newcategory/add" element={<NewCategoriesAdd />} />
           <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
+          <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* Tài khoản */}
           <Route
             path="users"

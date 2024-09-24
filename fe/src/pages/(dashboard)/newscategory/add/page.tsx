@@ -39,7 +39,7 @@ const NewCategoriesAdd = () => {
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">Thêm danh mục tin tức</h1>
         <div>
-          <Link to="/admin/categories" className="mr-1">
+          <Link to="/admin/newcategory" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               Quay lại
             </Button>

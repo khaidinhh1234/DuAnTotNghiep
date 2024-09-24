@@ -74,8 +74,8 @@ Route::middleware([])
     ->group(function () {
         // Danh muc
         Route::apiResource('danhmuc', DanhMucController::class)->except(['show']);
-        Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
         Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa'])->name('danhmuc.thungrac');
+        Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
         Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc'])->name('danhmuc.khoiphuc');
 
         // Sản phẩm
@@ -99,8 +99,9 @@ Route::middleware([])
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
-        Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
         Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
+        Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
+        
         Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc'])->name('danhmuctintuc.khoiphuc');
 
         //Tin Tức
