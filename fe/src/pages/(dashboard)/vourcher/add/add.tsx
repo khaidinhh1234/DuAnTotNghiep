@@ -8,13 +8,18 @@ import {
   Tabs,
   Button,
   Divider,
+  Radio,
 } from "antd";
 import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
 import type { SelectProps } from "antd";
-
+const { RangePicker } = DatePicker;
+const dateFormat = "DD/MM/YYYY";
+const weekFormat = "MM/DD";
+const monthFormat = "YYYY/MM";
+import dayjs from "dayjs";
 const { Option } = Select;
 const options: SelectProps["options"] = [] as {
   label: string;
@@ -26,6 +31,7 @@ const AddVoucher = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [tabKey, setTabKey] = useState(true);
   const handleSubmit = (values: any) => {
     const formattedEndDate = values.endDate
       ? DateTime.fromJSDate(values.endDate.toDate()).toFormat("dd/MM/yyyy")
@@ -88,226 +94,21 @@ const AddVoucher = () => {
       : "Chọn sản phẩm";
   };
 
-  // const filteredProducts = productList.filter((product) =>
-  //   product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
   const handleSelectAll = () => {
     const allValues = productList.map((option) => option.label);
     setSelectedValues(allValues as any);
     setIsAllSelected(true);
   };
+  const [max, setMax] = useState(479000);
+  const [voucher, setVoucher] = useState(26010);
+  const [phantram, setphantram] = useState(30);
   const handleChange = (value: string[]) => {
     setSelectedValues(value);
     setIsAllSelected(value.length === productList.length); // Cập nhật trạng thái chọn tất cả
     console.log(`Selected: ${value}`);
   };
-  const tabItems = [
-    {
-      key: "1",
-      label: "Giá trị khuyến mãi",
-      children: (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Tên khuyến mãi</label>
-            <Form.Item
-              name="ten_khuyen_mai"
-              initialValue=""
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn Nhập tên khuyễn mãi!",
-                },
-              ]}
-              className="mb-0 w-3/4"
-            >
-              <Input placeholder="Nhập tên khuyến mãi" />
-            </Form.Item>
-          </div>
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Giá trị giảm giá:</label>
-            <Form.Item
-              name="gia_tri"
-              initialValue=""
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập giá trị giảm giá!",
-                },
-                {
-                  validator: (_, value) =>
-                    value >= 0
-                      ? Promise.resolve()
-                      : Promise.reject(
-                          new Error("Giá trị giảm giá không được âm")
-                        ),
-                },
-              ]}
-              className="mb-0 w-3/4"
-            >
-              <InputNumber
-                className="w-full rounded-md"
-                placeholder="Nhập giá trị giảm giá"
-              />
-            </Form.Item>
-          </div>
 
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Kiểu giảm giá:</label>
-            <Form.Item
-              name="loai_khuyen_mai"
-              initialValue="Flat Amount (₫)"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn Chọn kiểu giảm giá!",
-                },
-              ]}
-              className="mb-0 w-3/4"
-            >
-              <Select className="w-full rounded-md">
-                <Option value="Flat Amount (₫)">Giảm giá tiền mặt (₫)</Option>
-                <Option value="Percentage">Giảm giá phần trăm</Option>
-              </Select>
-            </Form.Item>
-          </div>
-
-          <div className="flex items-center mb-4">
-            <label className="w-1/4 font-semibold">Chọn sản phẩm</label>
-            <Form.Item
-              name="productDiscount"
-              rules={[
-                {
-                  required: !isAllSelected && selectedProducts.length === 0,
-                  message: "Vui lòng chọn sản phẩm!",
-                },
-              ]}
-              className="mb-0 w-3/4"
-            >
-              <Select
-                mode="multiple"
-                allowClear
-                style={{ width: "100%" }}
-                placeholder="Please select"
-                value={selectedValues}
-                onChange={handleChange}
-                onSearch={handleSearch}
-                options={productList}
-                dropdownRender={(menu) => (
-                  <div>
-                    <Button
-                      type="link"
-                      onClick={
-                        isAllSelected ? handleDeselectAll : handleSelectAll
-                      }
-                    >
-                      {isAllSelected ? "Bỏ chọn tất cả" : "Chọn tất cả"}
-                    </Button>
-                    <Divider style={{ margin: "4px 0" }} />
-                    {menu}
-                  </div>
-                )}
-              />{" "}
-            </Form.Item>
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Ngày bắt đầu:</label>
-            <Form.Item
-              name="Date"
-              rules={[{ required: true, message: "Vui lòng chọn!" }]}
-              className="mb-0 w-3/4"
-            >
-              <DatePicker className="w-full rounded-md" />
-            </Form.Item>
-          </div>
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Ngày kết thúc:</label>
-            <Form.Item
-              name="endDate"
-              rules={[
-                { required: true, message: "Vui lòng chọn!" },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || value.isAfter(getFieldValue("Date"))) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Ngày kết thúc không được nhỏ hơn ngày bắt đầu")
-                    );
-                  },
-                }),
-              ]}
-              className="mb-0 w-3/4"
-            >
-              <DatePicker className="w-full rounded-md" />
-            </Form.Item>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "2",
-      label: "Yêu cầu sử dụng",
-      children: (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Chi tiêu tối thiểu:</label>
-            <Form.Item
-              name="minSpend"
-              initialValue=""
-              // rules={[{ required: true, message: 'Please input the minimum spend!' }]}
-              className="mb-0 w-3/4"
-            >
-              <InputNumber
-                className="w-full rounded-md"
-                placeholder="Nhập Chi tiêu tối thiểu"
-              />
-            </Form.Item>
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">Giảm giá tối đa:</label>
-            <Form.Item
-              name="usageLimit"
-              initialValue=""
-              rules={[{ required: true, message: "vui long Nhập!" }]}
-              className="mb-0 w-3/4"
-            >
-              <InputNumber
-                className="w-full rounded-md"
-                placeholder="Nhập giamr tối đa"
-              />
-            </Form.Item>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "3",
-      label: "Giới hạn khuyến mãi",
-      children: (
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center">
-            <label className="w-1/4 font-semibold">
-              Số lượng khuyến mãi tối đa:
-            </label>
-            <Form.Item
-              name="maxTotalUses"
-              initialValue=""
-              rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
-              className="mb-0 w-3/4"
-            >
-              <InputNumber
-                className="w-full rounded-md"
-                placeholder="Nhập số lượng"
-              />
-            </Form.Item>
-          </div>
-        </div>
-      ),
-    },
-  ];
-
+  const [value, setValue] = useState("");
   return (
     <main className="relative flex flex-1 flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
@@ -325,9 +126,16 @@ const AddVoucher = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row lg:gap-6 ">
-        <div className="bg-white p-8 shadow-lg rounded-lg w-full lg:w-[calc(100%+300px)]">
-          <Form form={form} onFinish={handleSubmit} layout="vertical">
-            <Form.Item
+        <div className=" w-full lg:w-[calc(100%+300px)] max-w-7xl">
+          <Form
+            form={form}
+            onFinish={handleSubmit}
+            layout="vertical"
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 24 }}
+            autoComplete="off"
+          >
+            {/* <Form.Item
               label="Mã khuyến mãi (CODE)"
               name="code"
               initialValue={voucherCode}
@@ -348,23 +156,350 @@ const AddVoucher = () => {
                   Tạo mã
                 </Button>
               </div>
-            </Form.Item>
+            </Form.Item> */}
+            <div className="bg-white p-8 shadow-lg rounded-lg">
+              <div className="flex">
+                <div className=" w-[80%]">
+                  <div className="flex flex-col-3 gap-6">
+                    <Form.Item
+                      label="Tên khuyến mãi"
+                      name="mo_ta"
+                      initialValue="Mã giảm giá khuyến mãi đặc biệt "
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng chọn Nhập tên khuyễn mãi!",
+                        },
+                      ]}
+                      className="mb-0 w-[50%]"
+                    >
+                      <Input placeholder="Nhập tên khuyến mãi" />
+                    </Form.Item>
+                  </div>
+                  <div className="flex items-center my-2">
+                    <Form.Item
+                      label="Thời gian quy đổi
+"
+                      name="Date"
+                      rules={[
+                        { required: true, message: "Bắt buộc phải điền!!" },
+                      ]}
+                      className="mb-0 w-3/4"
+                    >
+                      <RangePicker
+                        defaultValue={[
+                          dayjs("2024/09/23", dateFormat),
+                          dayjs("2024/09/23", dateFormat),
+                        ]}
+                        format={dateFormat}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="flex items-center my-3">
+                    <Form.Item
+                      label="Mã giảm giá áp dụng cho"
+                      className="w-[100%] mb-4"
+                    >
+                      <Radio.Group
+                        className="flex "
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                      >
+                        <Radio
+                          value=""
+                          className="flex flex-row items-end flex-nowrap"
+                        >
+                          Toàn gian hàng
+                        </Radio>
+                        <Radio
+                          value="1"
+                          className="flex flex-row items-end flex-nowrap "
+                        >
+                          Sản phẩm được chọn (danh sách sản phẩm sẽ được cập
+                          nhật sau khi thiết lập điều kiện giảm giá)
+                        </Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </div>{" "}
+                  {Number(value) === 1 ? (
+                    <div className="flex items-center mb-4">
+                      <label className="w-1/4 font-semibold">
+                        Chọn sản phẩm
+                      </label>
+                      <Form.Item
+                        name="productDiscount"
+                        rules={[
+                          {
+                            required: selectedValues.length === 0,
+                            message: "Vui lòng chọn sản phẩm!",
+                          },
+                        ]}
+                        className="mb-0 w-[200px]"
+                      >
+                        <Select
+                          mode="multiple"
+                          allowClear
+                          style={{ width: "100%" }}
+                          placeholder="Please select"
+                          value={selectedValues}
+                          onChange={handleChange}
+                          onSearch={handleSearch}
+                          options={productList}
+                          dropdownRender={(menu) => (
+                            <div>
+                              <Button
+                                type="link"
+                                onClick={
+                                  isAllSelected
+                                    ? handleDeselectAll
+                                    : handleSelectAll
+                                }
+                              >
+                                {isAllSelected
+                                  ? "Bỏ chọn tất cả"
+                                  : "Chọn tất cả"}
+                              </Button>
+                              <Divider style={{ margin: "4px 0" }} />
+                              {menu}
+                            </div>
+                          )}
+                        />{" "}
+                      </Form.Item>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="bg-white p-8 shadow-lg rounded-lg w-full my-5">
+              <h1>Voucher Thông Minh</h1>{" "}
+              <Form.Item className="flex items-center whitespace-nowrap">
+                <Button
+                  type="primary"
+                  disabled={tabKey}
+                  className={`mr-2 whitespace-nowrap ${tabKey ? "text-slate-400" : "text-white"}`}
+                  onClick={() => setTabKey(true)}
+                >
+                  <span className="text-sm">Áp dụng voucher thông minh</span>
+                </Button>
+                <p className="flex items-center whitespace-nowrap">
+                  Thông số được tạo bởi Smart AI. Mức độ hiệu quả hiện tại:{" "}
+                  <span
+                    className={`ml-1  font-semibold ${tabKey ? "text-green-500" : "text-red-500"}`}
+                  >
+                    {tabKey ? "Cao" : "Thấp"}
+                  </span>
+                </p>
+              </Form.Item>
+              <div className="flex gap-5 my-5">
+                <div
+                  className={`relative  border p-3 rounded-lg + ${tabKey ? "border-blue-600" : ""}`}
+                  onClick={() => setTabKey(true)}
+                >
+                  {tabKey && (
+                    <div className="absolute top-0 right-0">
+                      <div className="w-6 h-10 overflow-hidden">
+                        <div className="w-12 h-16 bg-blue-500 transform rotate-45 origin-bottom-left relative right-2 -top-[69px]">
+                          <span className="absolute bottom-[1px] right-[17px] -rotate-45 text-white text-xs font-bold">
+                            <i className="fa-solid fa-check"></i>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-            <Tabs defaultActiveKey="1" items={tabItems} className="mb-6" />
+                  <h3>Mã giảm giá cố định</h3>
+                  <div
+                    className={`grid grid-cols-5  px-3 py-5  rounded-lg 
+                     ${tabKey ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
+                  >
+                    <div className=" col-span-2 mx-auto pt-3">
+                      <img src="" alt="" className="w-10 h-10 " />
+                      <p>khaidinh</p>
+                    </div>
+                    <div className="col-span-3 leading-[15px]">
+                      <p className="font-bold text-2xl">
+                        {voucher ? voucher.toLocaleString() : 0} ₫
+                      </p>
+                      <p>
+                        Số tiền tối thiểu {max ? max?.toLocaleString() : 0} ₫{" "}
+                      </p>
+                      <span>Th09 23 24 - Th03 22 25</span>
+                    </div>
+                  </div>
+                </div>{" "}
+                <div
+                  className={`relative  border p-3 rounded-lg + ${tabKey == false ? "border-blue-600" : ""}`}
+                  onClick={() => setTabKey(false)}
+                >
+                  {tabKey == false && (
+                    <div className="absolute top-0 right-0">
+                      <div className="w-6 h-10 overflow-hidden">
+                        <div className="w-12 h-16 bg-blue-500 transform rotate-45 origin-bottom-left relative right-2 -top-[69px]">
+                          <span className="absolute bottom-[1px] right-[17px] -rotate-45 text-white text-xs font-bold">
+                            <i className="fa-solid fa-check"></i>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <h3>Giảm giá theo phần trăm</h3>
+                  <div
+                    className={`grid grid-cols-5  px-3 py-5 text-slate-900 rounded-lg  ${tabKey == false ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
+                  >
+                    <div className=" col-span-2 mx-auto pt-3">
+                      <img src="" alt="" className="w-10 h-10 " />
+                      <p>khaidinh</p>
+                    </div>
+                    <div className="col-span-3 leading-[15px]">
+                      <p className="font-bold text-2xl">
+                        {phantram ? phantram : 0}% tắt
+                      </p>
+                      <p>
+                        Số tiền tối thiểu {max ? max?.toLocaleString() : 0} ₫ ₫{" "}
+                      </p>
+                      <span>Th09 23 24 - Th03 22 25</span>
+                    </div>
+                  </div>
+                </div>{" "}
+              </div>
+              <div className="">
+                <label className="w-1/4 font-semibold">
+                  Thiết lập khuyến mãi:
+                </label>
+                <div className="grid grid-cols-2 w-[70%] gap-5">
+                  <Form.Item
+                    label="Nếu giá trị đơn hàng đạt tới
+"
+                    name="tong_giam_gia_toi_da"
+                    initialValue="479000"
+                    rules={[
+                      {
+                        required: true,
+                        message: " Bắt buộc phải điền!",
+                      },
+                    ]}
+                    className="mb-0 w-[150%]"
+                  >
+                    <InputNumber
+                      className="w-[60%] rounded-md"
+                      min={0}
+                      max={9999999999}
+                      onChange={(value) => setMax(value as any)}
+                      placeholder="Nhập giá trị đơn hàng đạt tớ"
+                    />
+                  </Form.Item>{" "}
+                  {tabKey && (
+                    <Form.Item
+                      label="Giảm giá"
+                      name="giam_gia"
+                      initialValue="26010"
+                      rules={[
+                        { required: true, message: "Bắt buộc phải điền!" },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const tong_giam_gia_toi_da = getFieldValue(
+                              "tong_giam_gia_toi_da"
+                            );
+                            if (
+                              value >= 0.1 * tong_giam_gia_toi_da &&
+                              value <= 0.5 * tong_giam_gia_toi_da
+                            ) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error(
+                                "Giá trị phải nhỏ hơn 50% và không nhỏ hơn 10%"
+                              )
+                            );
+                          },
+                        }),
+                      ]}
+                      className="mb-0 w-[150%]"
+                    >
+                      <InputNumber
+                        addonAfter="đ"
+                        defaultValue={26010}
+                        min={1}
+                        onChange={(value) => setVoucher(value as any)}
+                      />
+                    </Form.Item>
+                  )}{" "}
+                  {tabKey == false && (
+                    <Form.Item
+                      label="Giảm giá"
+                      name="giam_gia"
+                      initialValue="30"
+                      rules={[
+                        { required: true, message: "Bắt buộc phải điền!" },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const tong_giam_gia_toi_da = getFieldValue(
+                              "tong_giam_gia_toi_da"
+                            );
+                            if (value <= 0.5 * tong_giam_gia_toi_da) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error("Giá trị phải nhỏ hơn 50% ")
+                            );
+                          },
+                        }),
+                      ]}
+                      className="mb-0 w-[150%]"
+                    >
+                      <InputNumber
+                        addonAfter="%"
+                        defaultValue={30}
+                        min={0}
+                        max={50}
+                        onChange={(value) => setphantram(value as any)}
+                      />
+                    </Form.Item>
+                  )}
+                  <Form.Item
+                    label="Số lượng mã giảm giá
+"
+                    name="so_luong"
+                    initialValue=""
+                    rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
+                    className="mb-0 w-[150%]"
+                  >
+                    <InputNumber
+                      className="w-[60%] rounded-md"
+                      placeholder="Nhập số lượng"
+                      max={50}
+                      min={1}
+                    />
+                  </Form.Item>{" "}
+                  <div className="flex gap-2 mt-24">
+                    <Form.Item className=" flex whitespace-nowrap">
+                      <Button htmlType="submit">
+                        <span className="text-sm">Hủy</span>
+                      </Button>
+                    </Form.Item>
+                    <Form.Item className=" flex whitespace-nowrap">
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="w-[240px] bg-blue-500 text-white hover:bg-blue-600 py-2 rounded-md border-0 flex items-center gap-2"
+                      >
+                        <CheckOutlined className="text-white text-lg" />
+                        <span className="text-sm">
+                          Hoàn tất & Đăng khuyến mãi
+                        </span>
+                      </Button>
+                    </Form.Item>{" "}
+                  </div>
+                </div>{" "}
+              </div>
+            </div>
+            {/* <Tabs defaultActiveKey="1" items={tabItems} className="mb-6" /> */}
           </Form>
         </div>
       </div>
-
-      <Form.Item className="absolute bottom-2 right-14">
-        <Button
-          type="primary"
-          htmlType="submit"
-          className="w-[240px] bg-blue-500 text-white hover:bg-blue-600 py-2 rounded-md border-0 flex items-center gap-2"
-        >
-          <CheckOutlined className="text-white text-lg" />
-          <span className="text-sm">Hoàn tất & Đăng khuyến mãi</span>
-        </Button>
-      </Form.Item>
     </main>
   );
 };

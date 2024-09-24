@@ -37,8 +37,8 @@ const menu = [
     icon: Package,
   },
   {
-    name: "Kho sản phẩm",
-    path: "/admin/centralstocks",
+    name: "Đơn hàng",
+    path: "/admin/orders",
     icon: Package,
   },
   {
@@ -68,13 +68,13 @@ const menu = [
     icon: CheckCircle,
   },
   {
-    name: "Admin",
+    name: "Phân quyền",
     icon: CheckCircle,
-    path: "ADmin",
-    subMenu: [
-      { name: "Quản lý admin", path: "ADmin/privilegeadmin" },
-      { name: "Phân quyền", path: "ADmin/userprivileges" },
-    ],
+    path: "ADmin/userprivileges",
+    // subMenu: [
+    //   { name: "Quản lý admin", path: "ADmin/privilegeadmin" },
+    //   { name: "Phân quyền", path: "ADmin/userprivileges" },
+    // ],
   },
   {
     name: "Nội dung",

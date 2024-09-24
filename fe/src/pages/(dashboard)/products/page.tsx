@@ -18,6 +18,7 @@ interface DataType {
   key: React.Key;
   anh_san_pham: string;
   ten_san_pham: string;
+  ten_danh_muc: string;
   id_danh_muc: string;
   luot_xem: number;
   mo_ta_ngan: string;
@@ -229,9 +230,9 @@ const ProductsAdmin: React.FC = () => {
       dataIndex: "dang_hoat_dong",
       key: "dang_hoat_dong",
       width: "15%",
-      render: (text, item) => (
+      render: (item) => (
         <Switch
-          checked={item.trang_thai === 1}
+          checked={item.trang_thai === true}
           onChange={(checked) => handleStatusChange(checked, item.id)}
           checkedChildren="Hoạt động"
           unCheckedChildren="Không hoạt động"
