@@ -77,8 +77,7 @@ import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
 import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 
-import Test from "@/pages/(dashboard)/vourcher/test/test";
-
+import Test from "@/pages/(dashboard)/test";
 
 const Router = () => {
   return (
@@ -174,6 +173,8 @@ const Router = () => {
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
+          <Route path="revenues" element={<RevenueAdmin />} />
+          <Route path="test" element={<Test />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}

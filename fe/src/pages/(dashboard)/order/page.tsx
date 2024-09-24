@@ -17,6 +17,7 @@ type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
 
 interface DataType {
+  created_at: string | number | Date;
   id: number;
   user_id: number;
   ghi_chu: string;
@@ -73,7 +74,15 @@ const OrderAdmin = () => {
     },
     {
       title: "Ngày tạo",
-      dataIndex: "created_at",
+      // dataIndex: "created_at",/
+      render: (_, record) => {
+        const date = new Date(record.created_at);
+        return (
+          <div>
+            {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
+          </div>
+        );
+      },
     },
     {
       title: "Khách hàng",
@@ -94,10 +103,10 @@ const OrderAdmin = () => {
               "font-bold text-[15px] " +
               (record.trang_thai_don_hang === "Chờ xử lý"
                 ? "text-blue-500"
-                : record.trang_thai_don_hang === "Chờ xác nhận"
-                  ? "text-orange-600"
+                : record.trang_thai_don_hang == "Chờ xác nhận"
+                  ? "text-yellow-300"
                   : record.trang_thai_don_hang === "Đã xác nhận"
-                    ? "text-orange-600"
+                    ? "text-orange-500"
                     : record.trang_thai_don_hang === "Thành công"
                       ? "text-green-500"
                       : "text-red-500")
@@ -144,28 +153,28 @@ const OrderAdmin = () => {
         return (
           <div
             className={
-              record.trang_thai_don_hang === "Chờ xử lý"
+              record.trang_thai_giao_hang === "Chờ xử lý"
                 ? "text-teal-600 font-bold text-[15px]"
-                : record.trang_thai_don_hang === "Chờ lấy hàng"
+                : record.trang_thai_giao_hang === "Chờ lấy hàng"
                   ? "text-teal-600 font-bold text-[15px]"
-                  : record.trang_thai_don_hang === "Đang giao hàng"
+                  : record.trang_thai_giao_hang === "Đang giao hàng"
                     ? "text-teal-600 font-bold text-[15px]"
-                    : record.trang_thai_don_hang === "Đang ship hàng"
+                    : record.trang_thai_giao_hang === "Đang ship hàng"
                       ? "text-purple-600 font-bold text-[15px]"
-                      : record.trang_thai_don_hang === "Giao thành công"
+                      : record.trang_thai_giao_hang === "Giao thành công"
                         ? "text-teal-600 font-bold text-[15px]"
                         : "text-red-500 font-bold text-[15px]" // Add a default case for the ternary operator
             }
           >
-            {record.trang_thai_don_hang === "Chờ xử lý"
+            {record.trang_thai_giao_hang === "Chờ xử lý"
               ? "Chờ xử lý"
-              : record.trang_thai_don_hang === "Chờ lấy hàng"
+              : record.trang_thai_giao_hang === "Chờ lấy hàng"
                 ? "Chờ lấy hàng"
-                : record.trang_thai_don_hang === "Đang giao hàng"
+                : record.trang_thai_giao_hang === "Đang giao hàng"
                   ? "Đang giao hàng"
-                  : record.trang_thai_don_hang === "Đang ship hàng"
+                  : record.trang_thai_giao_hang === "Đang ship hàng"
                     ? "Đang ship hàng"
-                    : record.trang_thai_don_hang === "Giao thành công"
+                    : record.trang_thai_giao_hang === "Giao thành công"
                       ? "Giao thành công"
                       : "Hủy"}
           </div>
