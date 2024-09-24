@@ -9,8 +9,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 import { ICategories } from "@/common/types/category";
 import { toast } from "react-toastify";
-
 const { TabPane } = Tabs;
+
 
 const CategoriesAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
