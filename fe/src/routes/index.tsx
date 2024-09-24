@@ -25,9 +25,9 @@ import ProductsAdmin from "@/pages/(dashboard)/products/page";
 import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
 import RevenueAdmin from "@/pages/(dashboard)/revenue/page";
 import Suportuser from "@/pages/(dashboard)/suportuser/suportuser";
-import PageAddAdmin from "@/pages/(dashboard)/userprivileges/addAdmin/page";
+import PageAddAdmin from "@/pages/(dashboard)/admin/addAdmin/page";
 import PageAddPermission from "@/pages/(dashboard)/userprivileges/addpermission/page";
-import PagePrivilegeAdmin from "@/pages/(dashboard)/userprivileges/admin/page";
+import PagePrivilegeAdmin from "@/pages/(dashboard)/admin/page";
 import UserPrivilegeAdmin from "@/pages/(dashboard)/userprivileges/page";
 import AddVoucher from "@/pages/(dashboard)/vourcher/add/add";
 import VoucherAdmin from "@/pages/(dashboard)/vourcher/page";
@@ -70,8 +70,12 @@ import UsersNhanvienAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
 import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
 import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
 import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
+import Showvaitro from "@/pages/(dashboard)/userprivileges/show/page";
+import Test from "@/pages/(dashboard)/test";
+import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
+import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 
 const Router = () => {
   return (
@@ -135,7 +139,7 @@ const Router = () => {
           {/* danh mục tin tức */}
           <Route path="newcategory" element={<NewCategory />} />
           <Route path="newcategory/add" element={<NewCategoriesAdd />} />
-          <Route path="newcategory/edit/:id" element={<NewCategoriesAdd />} />
+          <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
           {/* Tài khoản */}
           <Route
             path="users"
@@ -147,12 +151,10 @@ const Router = () => {
             path="users/khachhang/edit/:id"
             element={<UserskhachhangEdit />}
           />
-
           <Route
             path="users/khachhang/remote"
             element={<UserskhachangRemote />}
           />
-
           <Route path="users/nhanvien" element={<UsersAdminNhanvien />} />
           <Route path="users/nhanvien/add" element={<UsersNhanvienAdd />} />
           <Route
@@ -163,27 +165,34 @@ const Router = () => {
             path="users/nhanvien/remote"
             element={<UsersRemoteNhanvien />}
           />
-
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
-
           <Route path="suportuser" element={<Suportuser />} />
-
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
           />
-
-          <Route path="ADmin/userprivileges" element={<UserPrivilegeAdmin />} />
-
-          <Route path="ADmin/privilegeadmin" element={<PagePrivilegeAdmin />} />
-          <Route path="add-admin" element={<PageAddAdmin />} />
+          //vai trò
+          <Route
+            path="ADmin/userprivileges"
+            element={<UserPrivilegeAdmin />}
+          />{" "}
           <Route
             path="ADmin/userprivileges/add-permission"
             element={<PageAddPermission />}
           />
+          <Route
+            path="ADmin/userprivileges/show/:id"
+            element={<Showvaitro />}
+          />
+          <Route
+            path="ADmin/userprivileges/edit-permission/:id"
+            element={<PageEditPermission />}
+          />
+          <Route path="ADmin/privilegeadmin" element={<PagePrivilegeAdmin />} />
+          <Route path="add-admin" element={<PageAddAdmin />} />
           <Route
             path="Content"
             element={<Navigate to="/admin/Content/qlfooter" />}
@@ -191,7 +200,7 @@ const Router = () => {
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
           <Route path="add-vocher" element={<AddVoucher />} />
-
+          <Route path="test" element={<Test />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
         <Route path="/login" element={<Login />} />

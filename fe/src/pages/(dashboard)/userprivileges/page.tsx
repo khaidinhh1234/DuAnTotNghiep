@@ -1,21 +1,11 @@
 import instance from "@/configs/axios";
 import { PlusOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
-import {
-  Button,
-  Input,
-  Space,
-  Table,
-  TableColumnsType,
-  TableProps,
-} from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, Input, message, Space, Table, TableColumnsType } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const { Search } = Input;
-
-type TableRowSelection<T extends object = object> =
-  TableProps<T>["rowSelection"];
 
 interface UserPrivilegeDataType {
   key: React.Key;
@@ -23,83 +13,104 @@ interface UserPrivilegeDataType {
   description: string;
 }
 
-const columns: TableColumnsType<UserPrivilegeDataType> = [
-  {
-    title: "Vai trò",
-    dataIndex: "ten_vai_tro",
-  },
-  {
-    title: "Mô tả vai trò",
-    dataIndex: "mo_ta",
-  },
-  {
-    title: "Hành động",
-    render: (_, record) => (
-      <Space>
-        <Button
-          className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors"
-          style={{ marginRight: 5 }}
-        >
-          Xem Quyền
-        </Button>
-
-        <Link to="">
-          <Button className="text-white bg-black rounded-lg hover:bg-orange-50 hover:text-black shadow-xl shadow-black/20  transition-colors hover:border-0">
-            Cập nhật
-          </Button>
-        </Link>
-      </Space>
-    ),
-  },
-];
-
-// const data: UserPrivilegeDataType[] = [
-//   {
-//     key: "1",
-//     privilege: "Quản lý tài khoản",
-//     description: "Có quyền truy cập và quản lý các tài khoản người dùng",
-//   },
-//   {
-//     key: "2",
-//     privilege: "Xem báo cáo",
-//     description: "Có thể xem các báo cáo thống kê",
-//   },
-//   {
-//     key: "3",
-//     privilege: "Quản lý sản phẩm",
-//     description: "Quản lý và cập nhật thông tin sản phẩm",
-//   },
-//   {
-//     key: "3",
-//     privilege: "Quản lý danh mục",
-//     description: "Quản lý và cập nhật thông tin sản phẩm",
-//   },
-//   {
-//     key: "3",
-//     privilege: "Quản lý bài viết",
-//     description: "Quản lý và cập nhật thông tin sản phẩm",
-//   },
-//   {
-//     key: "3",
-//     privilege: "Quản lý vận chuyển",
-//     description: "Quản lý và cập nhật thông tin sản phẩm",
-//   },
-// ];
-
 const UserPrivilegeAdmin = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["userPrivileges"],
-    queryFn: async () => {
-      const response = await instance.get("/admin/vaitro");
-      return response.data;
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async (id: number) => {
+      try {
+        const response = await instance.delete(`/admin/vaitro/${id}`);
+        return response.data;
+      } catch (error) {
+        message.open({
+          type: "error",
+          content: "Không thể xóa vai trò!",
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["VAITRO_KEY"],
+      });
     },
   });
-  const vaitro = data?.data;
-  console.log(vaitro);
-  const [filteredData, setFilteredData] = useState(data?.data);
+  const columns: TableColumnsType<UserPrivilegeDataType> = [
+    {
+      title: <div className="w-[40%] pl-8 ">Vai trò</div>,
+      dataIndex: "ten_vai_tro",
+      render: (text) => <div className="w-[40%] pl-8">{text}</div>,
+    },
+    {
+      title: "Mô tả vai trò",
+      dataIndex: "mo_ta",
+    },
+    {
+      title: "Hành động",
+      render: (_, record) => (
+        <Space>
+          {typeof record.key === "number" && record.key <= 3 ? (
+            <Link to={`show/${record.key}`}>
+              <Button className="text-white bg-black rounded-lg hover:bg-orange-50 hover:text-black shadow-xl shadow-black/20  transition-colors hover:border-0">
+                Xem Quyền
+              </Button>
+            </Link>
+          ) : (
+            <>
+              {" "}
+              <Button
+                className="text-white bg-black rounded-lg hover:bg-orange-50 hover:text-black shadow-xl shadow-black/20  transition-colors hover:border-0"
+                onClick={() => mutate(record.key as number)}
+              >
+                Xóa
+              </Button>
+              <Link to={`edit-permission/${record.key}`}>
+                <Button className="text-white bg-black rounded-lg hover:bg-orange-50 hover:text-black shadow-xl shadow-black/20  transition-colors hover:border-0">
+                  Cập nhật
+                </Button>
+              </Link>
+              <Link to={`show/${record.key}`}>
+                <Button className="text-white bg-black rounded-lg hover:bg-orange-50 hover:text-black shadow-xl shadow-black/20  transition-colors hover:border-0">
+                  Xem Quyền
+                </Button>
+              </Link>
+            </>
+          )}
+        </Space>
+      ),
+    },
+  ];
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 7,
+  });
+  const handleTableChange = (pagination: any) => {
+    setPagination(pagination);
+  };
+  // const queryClient = useQueryClient();
+  const { data, isLoading, isError, isFetching } = useQuery({
+    queryKey: ["VAITRO_KEY"],
+    queryFn: async () => {
+      try {
+        const response = await instance.get("/admin/vaitro");
+        return response.data;
+      } catch (error) {
+        message.open({
+          type: "error",
+          content: "Không thể lấy dữ liệu!",
+        });
+      }
+    },
+  });
+  console.log("Fetching:", isFetching);
+  const vaitro = data?.data
+    .map((item: any) => {
+      return { ...item, key: item.id };
+    })
+    .reverse();
+  // console.log(vaitro);
+  const [filteredData, setFilteredData] = useState(vaitro);
 
   const onSearch = (value: string) => {
-    const filtered = data?.data?.filter(
+    const filtered = vaitro?.filter(
       (item: any) =>
         item.ten_vai_tro.toLowerCase().includes(value.toLowerCase())
       // ||
@@ -108,11 +119,12 @@ const UserPrivilegeAdmin = () => {
     setFilteredData(filtered);
   };
 
-  const rowSelection: TableRowSelection<UserPrivilegeDataType> = {
-    onChange: (selectedRowKeys) => {
-      console.log("Selected Row Keys:", selectedRowKeys);
-    },
-  };
+  // const rowSelection: TableRowSelection<UserPrivilegeDataType> = {
+  //   onChange: (selectedRowKeys) => {
+  //     console.log("Selected Row Keys:", selectedRowKeys);
+  //   },
+  // };
+
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error...</div>;
   return (
@@ -141,8 +153,9 @@ const UserPrivilegeAdmin = () => {
       <div>
         <Table
           columns={columns}
-          dataSource={filteredData}
-          rowSelection={rowSelection}
+          dataSource={filteredData == undefined ? vaitro : filteredData}
+          pagination={pagination}
+          onChange={handleTableChange}
         />
       </div>
     </main>

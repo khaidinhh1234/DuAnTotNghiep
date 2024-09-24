@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaiKhoanRequest;
 use App\Http\Requests\UpdateTaiKhoanRequest;
+use App\Models\HangThanhVien;
 use App\Models\User;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class TaiKhoanController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = User::query()->with('vaiTros')->orderBy('id', 'desc')->get();
+            $data = User::query()->with('vaiTros', 'hangThanhVien')->orderBy('id', 'desc')->get();
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -56,6 +57,7 @@ class TaiKhoanController extends Controller
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,
                 'gioi_tinh' => $request->gioi_tinh,
+                'hang_thanh_vien_id' => 1
             ]);
 
             if ($request->vai_tros == []) {
@@ -99,7 +101,7 @@ class TaiKhoanController extends Controller
     public function show(string $id)
     {
         try {
-            $taiKhoan = User::query()->with('vaiTros')->findOrFail($id);
+            $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien')->findOrFail($id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -129,14 +131,11 @@ class TaiKhoanController extends Controller
                 'ho' => $request->ho,
                 'ten' => $request->ten,
                 'anh_nguoi_dung' => $request->anh_nguoi_dung ?? 'https://i.pinimg.com/originals/f3/d1/ed/f3d1edf10d63c40e1fa06364176fa502.png',
-
-                // 'email' => $request->email,
-                // 'password' => $request->password,
-
                 'so_dien_thoai' => $request->so_dien_thoai,
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,
                 'gioi_tinh' => $request->gioi_tinh,
+                'hang_thanh_vien_id' => $request->hang_thanh_vien_id
             ]);
 
             if ($request->vai_tros == []) {
@@ -222,6 +221,7 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+
     public function khoiPhucTaiKhoan(string $id)
     {
         try {
@@ -246,6 +246,7 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+
     public function danhSachVaiTro()
     {
         $allRole = VaiTro::query()->whereNot('ten_vai_tro', 'member')->get();

@@ -66,6 +66,7 @@ const NewCategoriesEdit = () => {
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 24 }}
+              initialValues={{ ...data?.data }}
               autoComplete="off"
               onFinish={onFinish}
             >

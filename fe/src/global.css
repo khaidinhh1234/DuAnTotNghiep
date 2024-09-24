@@ -32,6 +32,34 @@ input[id="numberInput"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+.custom-upload .ant-upload-list-item-container {
+  margin: 0 !important;  /* Xóa margin */
+  padding: 0 !important;  /* Xóa padding */
+  border: none !important;  /* Loại bỏ border nếu có */
+  width: 50px !important;  /* Đảm bảo kích thước đồng nhất với các ảnh */
+  height:50px !important;
+}
+
+.custom-upload .ant-upload-list-item {
+  margin: 0 !important;  /* Đảm bảo không có margin giữa các phần tử */
+  padding: 0 !important;  /* Xóa padding */
+  width: 50px !important;  /* Kích thước ảnh đã upload */
+  height: 50px !important;
+}
+
+.custom-upload .ant-upload-list-item img {
+  object-fit: cover;
+  width: 100% !important;  /* Đảm bảo ảnh vừa khít khung */
+  height: 100% !important;
+}
+
+.custom-upload .ant-upload {
+  width: 50px !important;  /* Kích thước của nút Upload */
+  height: 50px !important;
+  margin: 0 !important;  /* Xóa margin */
+  padding: 0 !important;  /* Xóa padding */
+}
+
 
 input[type="checkbox"] {
   appearance: none;
