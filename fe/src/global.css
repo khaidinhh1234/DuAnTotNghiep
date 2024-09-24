@@ -32,6 +32,42 @@ input[id="numberInput"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+.custom-switch.ant-switch {
+  background-color: #f0f0f0;
+  border-color: #d9d9d9;
+}
+
+.custom-switch.ant-switch:hover {
+  background-color: #e6e6e6;
+}
+
+.custom-switch.ant-switch.ant-switch-checked {
+  background-color: #1890ff;
+}
+
+.custom-switch.ant-switch.ant-switch-checked:hover {
+  background-color: #1890ff;
+}
+
+.custom-switch .ant-switch-handle::before {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-switch .ant-switch-inner {
+  color: #333;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.custom-switch.ant-switch-checked .ant-switch-inner {
+  color: white;
+}
+
+.custom-switch.ant-switch-loading .ant-switch-loading-icon {
+  color: #1890ff;
+}
+
 .custom-upload .ant-upload-list-item-container {
   margin: 0 !important;  /* Xóa margin */
   padding: 0 !important;  /* Xóa padding */
