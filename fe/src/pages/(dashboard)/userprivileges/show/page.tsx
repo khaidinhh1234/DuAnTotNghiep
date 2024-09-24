@@ -183,12 +183,6 @@ const Showvaitro: React.FC = () => {
                   Quay lại
                 </Button>
               </Link>
-              <Button
-                htmlType="submit"
-                className="text-white font-semibold bg-black hover:bg-black/50"
-              >
-                Lưu
-              </Button>
             </Form.Item>{" "}
           </div>
           <div className="w-[50%]">

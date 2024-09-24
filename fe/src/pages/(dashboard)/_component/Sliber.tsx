@@ -37,8 +37,8 @@ const menu = [
     icon: Package,
   },
   {
-    name: "Kho sản phẩm",
-    path: "/admin/centralstocks",
+    name: "Đơn hàng",
+    path: "/admin/orders",
     icon: Package,
   },
   {
@@ -46,11 +46,7 @@ const menu = [
     path: "vouchers",
     icon: Package,
   },
-  {
-    name: "Đơn hàng",
-    path: "orders",
-    icon: ShoppingCart,
-  },
+
   {
     name: "Tài khoản",
     path: "users",
@@ -60,11 +56,7 @@ const menu = [
       { name: "Nhân viên ", path: "users/nhanvien" },
     ],
   },
-  {
-    name: "Hỗ Trợ khách hàng",
-    path: "suportuser",
-    icon: Users,
-  },
+
   {
     name: "Đánh giá",
     path: "/admin/evaluates",
@@ -76,13 +68,13 @@ const menu = [
     icon: CheckCircle,
   },
   {
-    name: "Admin",
+    name: "Phân quyền",
     icon: CheckCircle,
-    path: "ADmin",
-    subMenu: [
-      { name: "Quản lý admin", path: "ADmin/privilegeadmin" },
-      { name: "Phân quyền", path: "ADmin/userprivileges" },
-    ],
+    path: "ADmin/userprivileges",
+    // subMenu: [
+    //   { name: "Quản lý admin", path: "ADmin/privilegeadmin" },
+    //   { name: "Phân quyền", path: "ADmin/userprivileges" },
+    // ],
   },
   {
     name: "Nội dung",
