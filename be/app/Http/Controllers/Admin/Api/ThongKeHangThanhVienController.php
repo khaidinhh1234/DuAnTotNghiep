@@ -63,4 +63,31 @@ class ThongKeHangThanhVienController extends Controller
 
         return response()->json($thongKe);
     }
+
+    public function thongKeKhachHangMoi(Request $request)
+    {
+        // Lấy tất cả khách hàng, nhóm theo tháng đăng ký
+        $khachHangMoi = User::with('hangThanhVien')
+            ->selectRaw('YEAR(created_at) as nam, MONTH(created_at) as thang, COUNT(*) as so_luong')
+            ->groupBy('nam', 'thang')
+            ->orderBy('nam', 'desc')
+            ->orderBy('thang', 'desc')
+            ->get();
+
+        // Thêm chi tiết khách hàng vào từng tháng
+        $thongKeChiTiet = $khachHangMoi->map(function ($item) {
+            $khachHangThangNay = User::whereYear('created_at', $item->nam)
+                ->whereMonth('created_at', $item->thang)
+                ->get(['ho', 'ten', 'email', 'so_dien_thoai', 'dia_chi', 'ngay_sinh', 'gioi_tinh', 'created_at']);
+
+            return [
+                'nam' => $item->nam,
+                'thang' => $item->thang,
+                'so_luong' => $item->so_luong,
+                'chi_tiet_khach_hang' => $khachHangThangNay
+            ];
+        });
+
+        return response()->json($thongKeChiTiet);
+    }
 }
