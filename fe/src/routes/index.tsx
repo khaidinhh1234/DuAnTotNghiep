@@ -77,13 +77,25 @@ import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
 import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 
+
 import Test from "@/pages/(dashboard)/test";
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
 import Tagsedit from "@/pages/(dashboard)/tags/edit/edit";
 
+
+// import Test from "@/pages/(dashboard)/vourcher/test/test";
+import Bienthe from "./../pages/(dashboard)/products/bienthe/bienthe";
+import Color from "@/pages/(dashboard)/products/bienthe/color";
+import Size from "@/pages/(dashboard)/products/bienthe/size";
+import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
+import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
+// import Test from "@/pages/(dashboard)/test";
+
 const Router = () => {
+// 
+
   return (
     <>
       {" "}
@@ -135,11 +147,24 @@ const Router = () => {
           <Route path="products/add" element={<ProductsAdd />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
+
           {/* Tag */}
           <Route path="products/tags" element={<Tags />} />
           <Route path="products/tags/add" element={<Tagsadd />} />
           <Route path="products/tags/edit/:id" element={<Tagsedit />} />
           <Route path="products/tags/remote" element={<TagsRemoteAdmin />} />
+
+          <Route path="products/bienthe" element={<Bienthe />} />
+          <Route path="products/bienthecolor/edit/:id" element={<Color />} />
+          <Route path="products/bienthesize/edit/:id" element={<Size />} />
+          <Route path="products/bienthe/remote" element={<Remotecolor />} />
+          <Route path="products/bienthe/remotesize" element={<Remotesize />} />
+
+
+
+
+
+
           {/* danh mục */}
           <Route path="categories" element={<CategoriesAdmin />} />
           <Route path="categories/add" element={<CategoriesAdd />} />
@@ -183,7 +208,7 @@ const Router = () => {
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          <Route path="test" element={<Test />} />
+          {/* <Route path="test" element={<Test />} /> */}
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
@@ -214,7 +239,7 @@ const Router = () => {
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
           <Route path="add-vocher" element={<AddVoucher />} />
-          <Route path="test" element={<Test />} />
+          {/* <Route path="test" element={<Test />} /> */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
         <Route path="/login" element={<Login />} />
