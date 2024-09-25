@@ -49,14 +49,15 @@ class DatabaseSeeder extends Seeder
         // }
 
         $hangThanhViens = [
-            ['ten_hang_thanh_vien' => 'Vàng', 'chi_tieu_toi_thieu' => '5000000'],
-            ['ten_hang_thanh_vien' => 'Bạc', 'chi_tieu_toi_thieu' => '1000000'],
-            ['ten_hang_thanh_vien' => 'Đồng', 'chi_tieu_toi_thieu' => '0'],
+            ['ten_hang_thanh_vien' => 'Vàng', 'chi_tieu_toi_thieu' => '5000000','chi_tieu_toi_da' => '10000000'],
+            ['ten_hang_thanh_vien' => 'Bạc', 'chi_tieu_toi_thieu' => '1000000','chi_tieu_toi_da' => '500000'],
+            ['ten_hang_thanh_vien' => 'Đồng', 'chi_tieu_toi_thieu' => '0', 'chi_tieu_toi_da' => '1000000'],
         ];
         foreach ($hangThanhViens as $hangThanhVien) {
             HangThanhVien::query()->create([
                 'ten_hang_thanh_vien' => $hangThanhVien['ten_hang_thanh_vien'],
                 'chi_tieu_toi_thieu' => $hangThanhVien['chi_tieu_toi_thieu'],
+                'chi_tieu_toi_da' => $hangThanhVien['chi_tieu_toi_da'],
             ]);
         }
     }
