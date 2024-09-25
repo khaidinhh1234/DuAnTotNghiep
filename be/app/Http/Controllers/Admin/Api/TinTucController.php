@@ -22,7 +22,6 @@ class TinTucController extends Controller
             $tinTucs = TinTuc::with(
                 'user:id,ho,ten',
                 'danhMucTinTuc:id,ten_danh_muc_tin_tuc',
-                'anhTinTucs:id,tin_tuc_id,anh_tin_tuc'
             )
                 ->get();
             return response()->json([
