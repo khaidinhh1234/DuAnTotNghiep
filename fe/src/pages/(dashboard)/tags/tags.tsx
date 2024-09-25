@@ -1,55 +1,74 @@
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, InputRef, Table, TableColumnsType } from "antd";
 import React, { useRef, useState } from "react";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Input, message, Popconfirm, Space, Table, Tabs } from "antd";
+import type { InputRef, TableColumnsType } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { Popconfirm, Space } from "antd";
-import { NewCategories } from "@/common/types/newcategory";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
-import { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
+import { ICategories } from "@/common/types/category";
 import { toast } from "react-toastify";
+const { TabPane } = Tabs;
 
-const NewCategory = () => {
+const TagsAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
+  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(
+    new Map()
+  );
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["danhmuctintuc"],
+    queryKey: ["tag"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuctintuc");
-        return response.data;
+        const response = await instance.get("/admin/the");
+        const tag = response.data;
+
+        return tag; // Đảm bảo rằng categories.data chứa createdAt
       } catch (error) {
-        throw new Error("Error fetching new categories");
+        console.error("Error fetching categories:", error);
+        throw new Error("Error fetching categories");
       }
     },
   });
-  // console.log(data);
+
   const dataSource =
-    data?.data.map((newcategory: NewCategories) => ({
-      key: newcategory.id,
-      ...newcategory,
+    data?.data.map((tag: ICategories, index: number) => ({
+      key: tag.id,
+      ...tag,
+      index: index + 1,
     })) || [];
+
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        return await instance.delete(`/admin/danhmuctintuc/${id}`);
+        const response = await instance.delete(`/admin/the/${id}`);
+        if (response.data.status) {
+          return id;
+        } else {
+          throw new Error(response.data.message || "Failed to delete");
+        }
       } catch (error) {
-        throw new Error("Error");
+        console.error("Error deleting category:", error);
+        throw error;
       }
     },
-    onSuccess: (id) => {
-      queryClient.invalidateQueries({
-        queryKey: ["danhmuctintuc"],
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tag"] });
+      message.open({
+        type: "success",
+        content: "Xóa danh mục thành công",
       });
-      toast.success("Xóa danh mục thành công");
     },
     onError: (error) => {
       console.error("Error deleting category:", error);
-      toast.error("Xóa danh mục thất bại");
+      message.open({
+        type: "error",
+        content: "Xóa danh mục thất bại",
+      });
     },
   });
 
@@ -74,7 +93,7 @@ const NewCategory = () => {
       selectedKeys,
       confirm,
       clearFilters,
-    }: FilterDropdownProps) => (
+    }: any) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
@@ -136,47 +155,32 @@ const NewCategory = () => {
       ),
   });
 
-  // Define columns
-  const columns: TableColumnsType<NewCategories> = [
+  const columns: TableColumnsType<ICategories> = [
     {
       title: "STT",
       width: "10%",
-      key: "id",
-      dataIndex: "key",
+      key: "index",
+      dataIndex: "index",
     },
-    // {
-    //   title: "STT",
-    //   width: "10%",
-    //   key: "id",
-    //   dataIndex: "ten_danh_muc_tin_tucey",
-    //     // ...getColumnSearchProps("ten_danh_muc_tin_tuc"),
-    // },
     {
-      title: "Tên danh mục tin tức",
-      width: "20%",
-      key: "ten_danh_muc_tin_tuc",
-      dataIndex: "ten_danh_muc_tin_tuc",
-
-      sorter: (a: any, b: any) =>
-        a.ten_danh_muc_tin_tuc.localeCompare(b.ten_danh_muc_tin_tuc),
+      title: "Tên Nhãn Dán",
+      width: "40%",
+      key: "ten_the",
+      dataIndex: "ten_the",
+      //   ...getColumnSearchProps("ten_danh_muc"),
+      sorter: (a: any, b: any) => a.ten_the.localeCompare(b.ten_the),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-    {
-      title: "Thời gian tạo",
-      width: "15%",
-      key: "created_at",
-      dataIndex: "created_at",
-      render: (text) => (text ? new Date(text).toLocaleDateString() : ""),
-    },
+
     {
       title: "Quản trị",
       key: "action",
-      render: (_, newcategory) => (
+      render: (_, tag) => (
         <Space>
           <Popconfirm
             title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
-            onConfirm={() => mutate(newcategory.id!)}
+            onConfirm={() => mutate(tag.id!)}
             okText="Có"
             cancelText="Không"
           >
@@ -184,7 +188,7 @@ const NewCategory = () => {
               Xóa
             </Button>
           </Popconfirm>
-          <Link to={`/admin/newcategory/edit/${newcategory.id}`}>
+          <Link to={`/admin/products/tags/edit/${tag.id}`}>
             <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
               Cập nhật
             </Button>
@@ -193,24 +197,26 @@ const NewCategory = () => {
       ),
     },
   ];
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error</div>;
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Danh mục</span>
+          Quản trị / <span className="font-semibold px-px">Nhãn dán</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Danh mục</h1>
+        <h1 className="font-semibold md:text-3xl">Nhãn dán</h1>
         <div>
-          <Link to="/admin/newcategory/add" className="mr-1">
+          <Link to="/admin/products/tags/add" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm
             </Button>
           </Link>
-          <Link to="/admin/newcategory/remote">
+          <Link to="/admin/products/tags/remote">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               <DeleteOutlined className="mr-1" />
               Thùng rác
@@ -218,9 +224,11 @@ const NewCategory = () => {
           </Link>
         </div>
       </div>
-      <Table columns={columns} dataSource={dataSource} loading={isLoading} />
+      <div className="max-w-4xl">
+        <Table columns={columns} dataSource={dataSource} />
+      </div>
     </main>
   );
 };
 
-export default NewCategory;
+export default TagsAdmin;

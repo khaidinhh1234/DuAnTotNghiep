@@ -78,6 +78,10 @@ import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 
 import Test from "@/pages/(dashboard)/test";
+import Tags from "@/pages/(dashboard)/tags/tags";
+import Tagsadd from "@/pages/(dashboard)/tags/add/add";
+import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
+import Tagsedit from "@/pages/(dashboard)/tags/edit/edit";
 
 const Router = () => {
   return (
@@ -131,6 +135,11 @@ const Router = () => {
           <Route path="products/add" element={<ProductsAdd />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
+          {/* Tag */}
+          <Route path="products/tags" element={<Tags />} />
+          <Route path="products/tags/add" element={<Tagsadd />} />
+          <Route path="products/tags/edit/:id" element={<Tagsedit />} />
+          <Route path="products/tags/remote" element={<TagsRemoteAdmin />} />
           {/* danh mục */}
           <Route path="categories" element={<CategoriesAdmin />} />
           <Route path="categories/add" element={<CategoriesAdd />} />

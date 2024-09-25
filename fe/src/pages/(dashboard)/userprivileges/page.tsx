@@ -131,7 +131,6 @@ const UserPrivilegeAdmin = () => {
   //   },
   // };
 
-  if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -162,6 +161,7 @@ const UserPrivilegeAdmin = () => {
           dataSource={vaitro}
           pagination={pagination}
           onChange={handleTableChange}
+          loading={isLoading}
         />
       </div>
     </main>

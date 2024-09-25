@@ -315,7 +315,7 @@ const UsersAdminNhanvien: React.FC = () => {
 
   // const products = [...data].reverse();
   isError && <div>Đã xảy ra lỗi</div>;
-  isLoading && <div>Đang tải dữ liệu...</div>;
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -342,7 +342,7 @@ const UsersAdminNhanvien: React.FC = () => {
         </div>
       </div>
       <div className=" ">
-        <Table columns={columns} dataSource={user} />
+        <Table columns={columns} dataSource={user} loading={isLoading} />
       </div>
     </main>
   );
