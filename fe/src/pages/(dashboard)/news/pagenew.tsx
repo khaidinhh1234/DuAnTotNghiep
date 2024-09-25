@@ -178,7 +178,7 @@ const PageNew: React.FC = () => {
     },
     {
         title: "Nội dung",
-        width: "20%",
+        width: "30%",
         key: "noi_dung",
         dataIndex: "noi_dung",
         render: (text) => (text? text : "Chưa có dữ liệu")
