@@ -169,6 +169,7 @@ Route::middleware([])
         Route::get('/thong-ke/san-pham-ban-theo-nam', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoNam'])->name('san-pham-ban-theo-nam.thong-ke');
         //Route Thống kê hạng thành viên
         Route::get('/thong-ke/khach-hang-theo-hang-thanh-vien', [ThongKeHangThanhVienController::class, 'thongKeKhachHangTheoHangThanhVien'])->name('khach-hang-theo-hang-thanh-vien');
+        Route::get('/thong-ke/khach-hang-moi', [ThongKeHangThanhVienController::class, 'thongKeKhachHangMoiTheoHangThanhVien'])->name('khach-hang-moi');
         // Màu sắc biến thể
         Route::apiResource('bienthemausac', BienTheMauSacController::class)->except(['show']);
         Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem'])->name('bienthemausac.thungrac');
