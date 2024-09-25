@@ -15,6 +15,8 @@ import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
 
+import PageAddAdmin from "@/pages/(dashboard)/admin/addAdmin/page";
+import PagePrivilegeAdmin from "@/pages/(dashboard)/admin/page";
 import { Dashboard } from "@/pages/(dashboard)/dashboard/page";
 import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
@@ -25,9 +27,7 @@ import ProductsAdmin from "@/pages/(dashboard)/products/page";
 import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
 import RevenueAdmin from "@/pages/(dashboard)/revenue/page";
 import Suportuser from "@/pages/(dashboard)/suportuser/suportuser";
-import PageAddAdmin from "@/pages/(dashboard)/admin/addAdmin/page";
 import PageAddPermission from "@/pages/(dashboard)/userprivileges/addpermission/page";
-import PagePrivilegeAdmin from "@/pages/(dashboard)/admin/page";
 import UserPrivilegeAdmin from "@/pages/(dashboard)/userprivileges/page";
 import AddVoucher from "@/pages/(dashboard)/vourcher/add/add";
 import VoucherAdmin from "@/pages/(dashboard)/vourcher/page";
@@ -61,22 +61,23 @@ import PageOur from "../pages/(website)/ourstory/pageOur";
 import Page from "./../pages/(website)/shop/shop";
 import PrivateRoute from "./PrivateRoute";
 
-import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
-import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
 import ErrorAuth from "@/pages/(auth)/ErrorAuth/changepassword";
-import UserskhachhangEdit from "@/pages/(dashboard)/user/khachhang/edit/page";
-import UsersAdminNhanvien from "@/pages/(dashboard)/user/nhanvien/page";
-import UsersNhanvienAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
-import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
-import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
-import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
-import Showvaitro from "@/pages/(dashboard)/userprivileges/show/page";
-import Test from "@/pages/(dashboard)/test";
-import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
-import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
 import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
+import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
+import Test from "@/pages/(dashboard)/test";
+import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
+import UserskhachhangEdit from "@/pages/(dashboard)/user/khachhang/edit/page";
+import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
+import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
+import UsersNhanvienAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
+import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
+import UsersAdminNhanvien from "@/pages/(dashboard)/user/nhanvien/page";
+import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
+import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
+import Showvaitro from "@/pages/(dashboard)/userprivileges/show/page";
+import PageNew from "@/pages/(dashboard)/news/pagenew";
 
 const Router = () => {
   return (
@@ -142,6 +143,8 @@ const Router = () => {
           <Route path="newcategory/add" element={<NewCategoriesAdd />} />
           <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
           <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
+          {/* tin tức */}
+          <Route path="news" element={<PageNew/>}/>
           {/* Tài khoản */}
           <Route
             path="users"

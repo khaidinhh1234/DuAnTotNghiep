@@ -75,6 +75,11 @@ const menu = [
     icon: CheckCircle,
   },
   {
+    name: "Tin tức",
+    path: "/admin/news",
+    icon: CheckCircle,
+  },
+  {
     name: "Doanh thu",
     path: "/admin/revenues",
     icon: CheckCircle,
