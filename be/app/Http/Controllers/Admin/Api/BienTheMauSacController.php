@@ -81,7 +81,23 @@ class BienTheMauSacController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $data = BienTheMauSac::findOrFail($id);
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $data
+            ];
+            return response()->json($json, 200);
+        } catch (\Exception $e) {
+            $json = [
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Lấy dữ liệu thất bại',
+            ];
+            return response()->json($json, 500);
+        }
     }
 
     /**
@@ -132,11 +148,21 @@ class BienTheMauSacController extends Controller
     {
         try {
             $bienTheMauSac = BienTheMauSac::find($id);
+
+            if ($bienTheMauSac->bienTheSanPhams()->exists()) {
+                $json = [
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Không thể xóa vì màu sắc này có biến thể sản phẩm.',
+                ];
+                return response()->json($json, 400);
+            }
+
             $bienTheMauSac->delete();
             $json = [
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Xóa dữ liệu thành công',
+                'message' => 'Xóa dữ liệu thành công',
             ];
             return response()->json($json, 200);
         } catch (\Exception $e) {
@@ -148,6 +174,7 @@ class BienTheMauSacController extends Controller
             return response()->json($json, 500);
         }
     }
+
 
     public function danhSachXoaMem(){
         try {
