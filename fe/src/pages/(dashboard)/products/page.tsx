@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from "react";
 import {
   DeleteOutlined,
@@ -9,7 +8,7 @@ import { Button, Input, Popconfirm, Space, Table, Switch, message } from "antd";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import '@/global.css'
+import "@/global.css";
 
 import instance from "@/configs/axios";
 import type { InputRef, TableColumnsType } from "antd";
@@ -70,7 +69,6 @@ const ProductsAdmin: React.FC = () => {
       message.error("Cập nhật trạng thái thất bại");
     },
   });
-  
 
   const handleStatusChange = (checked: boolean, product: any) => {
     const newStatus = checked ? 1 : 0;
@@ -83,11 +81,11 @@ const ProductsAdmin: React.FC = () => {
       if (response.data.status) {
         return id;
       } else {
-        throw new Error(response.data.message || 'Failed to delete');
+        throw new Error(response.data.message || "Failed to delete");
       }
     },
     onSuccess: (id) => {
-      queryClient.invalidateQueries(['sanpham']);
+      queryClient.invalidateQueries({ queryKey: ["sanpham"] });
       toast.success("Xóa sản phẩm thành công");
     },
     onError: (error) => {
@@ -253,9 +251,8 @@ const ProductsAdmin: React.FC = () => {
           onChange={(checked) => handleStatusChange(checked, item)}
           checkedChildren=""
           unCheckedChildren=""
-          loading={updateStatusMutation.isLoading}
+          // loading={updateStatusMutation.isLoading}
           className="custom-switch"
-
         />
       ),
     },
@@ -291,7 +288,7 @@ const ProductsAdmin: React.FC = () => {
     }
   };
   isError && <div>Đã xảy ra lỗi</div>;
-  isLoading && <div>Đang tải dữ liệu...</div>;git
+  isLoading && <div>Đang tải dữ liệu...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -316,24 +313,21 @@ const ProductsAdmin: React.FC = () => {
           </Link>
         </div>
       </div>
-        <div className="max-w-xs my-2">
-          <Input
-            placeholder="Tìm kiếm..."
-            size="large"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-     
-     
-          <Table
-            columns={columns}
-            dataSource={sanpham}
-            pagination={{ pageSize: 5 }}
-            
-          />
-   
+      <div className="max-w-xs my-2">
+        <Input
+          placeholder="Tìm kiếm..."
+          size="large"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+      </div>
+
+      <Table
+        columns={columns}
+        dataSource={sanpham}
+        pagination={{ pageSize: 5 }}
+      />
     </main>
   );
 };
