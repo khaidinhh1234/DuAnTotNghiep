@@ -42,18 +42,24 @@ class MaKhuyenMaiController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ma_code'             => 'required|string|max:255|unique:ma_khuyen_mais,ma_code',
-            'mo_ta'               => 'nullable|string',
-            'loai'                => 'required|string',
-            'ngay_bat_dau'        => 'required|date',
-            'ngay_ket_thuc'       => 'required|date',
-            'so_luong'            => 'required|integer',
-            'giam_gia'            => 'required|numeric',
-            'chi_tieu_thoi_thieu' => 'nullable|numeric',
-            'tong_giam_gia_toi_da' => 'nullable|numeric',
-            'khuyen_mai_san_pham' => 'nullable|array',
-            'hang_thanh_vien'     => 'required|array'
+            'ma_code'              => 'required|string|max:255|unique:ma_khuyen_mais,ma_code',
+            'mo_ta'                => 'nullable|string',
+            'loai'                 => 'required|string|in:phan_tram,tien_mat',
+            'ngay_bat_dau_suu_tam' => 'required|date|before_or_equal:ngay_bat_dau',
+            'ngay_bat_dau'         => 'required|date|before:ngay_ket_thuc',
+            'ngay_ket_thuc'        => 'required|date',
+            'so_luong'             => 'required|integer',
+            'giam_gia'             => 'required|numeric',
+            'chi_tieu_thoi_thieu'  => 'nullable|numeric',
+            'khuyen_mai_san_pham'  => 'nullable|array',
+            'hang_thanh_vien'      => 'required|array'
         ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if ($request->loai === 'phan_tram' && $request->giam_gia > 50) {
+                $validator->errors()->add('giam_gia', 'Giá trị giảm giá không được lớn hơn 50% nếu loại là phần trăm.');
+            }
+        });
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -117,18 +123,24 @@ class MaKhuyenMaiController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'ma_code'             => 'required|string|max:255|unique:ma_khuyen_mais,ma_code,' . $id,
-            'mo_ta'               => 'nullable|string',
-            'loai'                => 'required|string',
-            'ngay_bat_dau'        => 'required|date',
-            'ngay_ket_thuc'       => 'required|date',
-            'so_luong'            => 'required|integer',
-            'giam_gia'            => 'required|numeric',
-            'chi_tieu_thoi_thieu' => 'nullable|numeric',
-            'tong_giam_gia_toi_da' => 'nullable|numeric',
-            'khuyen_mai_san_pham' => 'nullable|array',  // Cho phép null hoặc mảng
-            'hang_thanh_vien'     => 'required|array'
+            'ma_code'              => 'required|string|max:255|unique:ma_khuyen_mais,ma_code',
+            'mo_ta'                => 'nullable|string',
+            'loai'                 => 'required|string|in:phan_tram,tien_mat',
+            'ngay_bat_dau_suu_tam' => 'required|date|before_or_equal:ngay_bat_dau',
+            'ngay_bat_dau'         => 'required|date|before:ngay_ket_thuc',
+            'ngay_ket_thuc'        => 'required|date',
+            'so_luong'             => 'required|integer',
+            'giam_gia'             => 'required|numeric',
+            'chi_tieu_thoi_thieu'  => 'nullable|numeric',
+            'khuyen_mai_san_pham'  => 'nullable|array',
+            'hang_thanh_vien'      => 'required|array'
         ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if ($request->loai === 'phan_tram' && $request->giam_gia > 50) {
+                $validator->errors()->add('giam_gia', 'Giá trị giảm giá không được lớn hơn 50% nếu loại là phần trăm.');
+            }
+        });
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);

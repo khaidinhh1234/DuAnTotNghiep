@@ -20,6 +20,7 @@ class MaKhuyenMai extends Model
         'ngay_ket_thuc',
         'chi_tieu_toi_thieu',
         'tong_giam_gia_toi_da',
+        'ngay_bat_dau_suu_tam',
     ];
 
     public function sanPhams()
