@@ -78,7 +78,23 @@ class BienTheKichThuocController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $bienTheKichThuoc = BienTheKichThuoc::find($id);
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $bienTheKichThuoc
+            ];
+            return response()->json($json, 200);
+        } catch (\Exception $e) {
+            $json = [
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Lấy dữ liệu thát bại',
+            ];
+            return response()->json($json, 500);
+        }
     }
 
     /**
@@ -129,15 +145,26 @@ class BienTheKichThuocController extends Controller
     {
         try {
             $bienTheKichThuoc = BienTheKichThuoc::find($id);
+
+            if ($bienTheKichThuoc->bienTheSanPhams()->exists()) {
+                $json = [
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Không thể xóa vì sản phẩm có biến thể này.',
+                ];
+                return response()->json($json, 400);
+            }
+
             $bienTheKichThuoc->delete();
             $json = [
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Xóa dữ liệu thành công',
+                'message' => 'Xóa dữ liệu thành công',
                 'data' => $bienTheKichThuoc
             ];
             return response()->json($json, 200);
         } catch (\Exception $e) {
+            // Xử lý lỗi
             $json = [
                 'status' => false,
                 'status_code' => 500,
@@ -146,6 +173,7 @@ class BienTheKichThuocController extends Controller
             return response()->json($json, 500);
         }
     }
+
 
     public function danhSachXoaMem()
     {
