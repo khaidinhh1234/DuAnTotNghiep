@@ -14,9 +14,10 @@ return new class extends Migration {
     {
         Schema::create('don_hangs', function (Blueprint $table) {
             $table->id();
+            $table->string('ma_don_hang')->unique();  // Thêm cột ma_don_hang và đảm bảo giá trị là unique
             $table->foreignIdFor(User::class)->constrained();
             $table->text('ghi_chu')->nullable();
-            $table->enum('trang_thai_don_hang', [DonHang::TTDH_CTT,DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL, DonHang::TTDH_DGH, DonHang::TTDH_DGTC, DonHang::TTDH_DH])->nullable();
+            $table->enum('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL, DonHang::TTDH_DGH, DonHang::TTDH_DGTC, DonHang::TTDH_DH])->nullable();
             $table->enum('phuong_thuc_thanh_toan', [DonHang::PTTT_TT, DonHang::PTTT_NH, DonHang::PTTT_MM])->nullable();
             $table->decimal('tong_tien_don_hang', 15, 2)->nullable();
             $table->string('ten_nguoi_dat_hang');
@@ -25,10 +26,16 @@ return new class extends Migration {
             $table->string('ma_giam_gia')->nullable();
             $table->decimal('so_tien_giam_gia', 15, 2)->nullable();
             $table->enum('trang_thai_thanh_toan', [
-                'chua_thanh_toan',  // chưa thanh toán
-                'da_thanh_toan',    // đã thanh toán
-                'dang_xu_ly',       // đang xử lý
-                'da_huy'            // đã hủy
+                'Chưa thanh toán',  // chưa thanh toán
+                'Đã thanh toán',    // đã thanh toán
+                'Đang xử lý',       // đang xử lýS
+                'Đã hủy'            // đã hủy
+            ])->nullable();
+            $table->enum('trang_thai_van_chuyen', [
+                'Chờ xử lý',
+                'Chờ lấy hàng',
+                'Đang giao hàng',
+                'Giao hàng thành'
             ])->nullable();
             $table->string('duong_dan')->nullable();
             $table->timestamps();

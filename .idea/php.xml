@@ -154,6 +154,7 @@
       <path value="$PROJECT_DIR$/be/vendor/masterminds/html5" />
       <path value="$PROJECT_DIR$/be/vendor/ezyang/htmlpurifier" />
       <path value="$PROJECT_DIR$/be/vendor/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/be/vendor/gregwar/captcha" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

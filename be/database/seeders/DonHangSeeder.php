@@ -40,6 +40,7 @@ class DonHangSeeder extends Seeder
                 'ma_giam_gia' => $faker->optional()->word(),
                 'so_tien_giam_gia' => $faker->optional()->randomFloat(2, 10000, 500000),
                 'trang_thai_thanh_toan' => $faker->randomElement(['chua_thanh_toan', 'da_thanh_toan', 'dang_xu_ly', 'da_huy']),
+                'ma_don_hang' => 'DH' . strtoupper(uniqid()), // Tạo mã đơn hàng ngẫu nhiên
             ]);
         }
     }

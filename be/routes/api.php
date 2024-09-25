@@ -13,14 +13,15 @@ use App\Http\Controllers\Admin\Api\TaiKhoanController;
 use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhGiaController;
 use App\Http\Controllers\Admin\API\ThongKeDoanhThuController;
+use App\Http\Controllers\Admin\Api\ThongKeHangThanhVienController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
 use App\Http\Controllers\Client\Api\Auth\AuthController;
+use App\Http\Controllers\Client\Api\Auth\CaptchaController;
 use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
-use App\Http\Controllers\Client\Api\CaptchaController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
@@ -59,8 +60,8 @@ Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenF
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 // Captcha
-Route::get('captcha', [CaptchaController::class, 'getCaptcha']);
-Route::post('captcha/validate', [CaptchaController::class, 'validateCaptcha']);
+Route::get('captcha', [CaptchaController::class, 'generateCaptcha']);
+Route::post('captcha/verify', [CaptchaController::class, 'verifyCaptcha']);
 
 // Đánh giá
 Route::get('sanpham/{sanpham}/danhgia', [DanhGiaController::class, 'danhSachDanhGia']);
@@ -165,8 +166,16 @@ Route::middleware([])
         // Route thống kê theo tháng
         Route::get('/thong-ke/san-pham-ban-theo-thang', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoThang'])->name('san-pham-ban-theo-thang.thong-ke');
         // Route thống kê theo năm
-        Route::get('/thong-ke/san-pham-ban-theo-nam', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoNam'])->name('san-pham-ban-theo-nam.thong-ke');
-
+        Route::get('/thong-ke/san-pham-ban-theo-nam', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoNam']);
+        // Thống kê số lượng tồn kho của từng sản phẩm
+        Route::get('/thong-ke/so-luong-ton-kho-cua-san-pham', [ThongKeDoanhThuController::class, 'soLuongTonKhoCuaSanPham']);
+        // Thống kê số lượng sản phẩm sắp hết hàng
+        Route::get('/thong-ke/so-luong-san-pham-sap-het-hang', [ThongKeDoanhThuController::class, 'soLuongSanPhamSapHetHang']);
+        //Route Thống kê hạng thành viên
+        Route::get('/thong-ke/khach-hang-theo-hang-thanh-vien', [ThongKeHangThanhVienController::class, 'thongKeKhachHangTheoHangThanhVien'])->name('khach-hang-theo-hang-thanh-vien');
+        Route::get('/thong-ke/khach-hang-moi-theo-hang', [ThongKeHangThanhVienController::class, 'thongKeKhachHangMoiTheoHangThanhVien'])->name('khach-hang-moi-theo-hang');
+        //Route thống kêkhách hàng mới
+        Route::get('/thong-ke/khach-hang-moi-theo-tung-thang',  [ThongKeHangThanhVienController::class, 'thongKeKhachHangMoi'])->name('khach-hang-moi-theo-tung-thang');
         // Màu sắc biến thể
         Route::apiResource('bienthemausac', BienTheMauSacController::class)->except(['show']);
         Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem'])->name('bienthemausac.thungrac');

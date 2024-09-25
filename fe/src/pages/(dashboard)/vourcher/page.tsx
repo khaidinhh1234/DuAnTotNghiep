@@ -23,7 +23,7 @@ interface PromotionType {
   ngay_ket_thuc: string;
   ma_code: string;
   trang_thai: string;
-
+  hang_thanh_viens: string;
   tong_giam_gia_toi_da: string;
   so_luot_su_dung: number;
   gioi_han_su_dung: number;
@@ -321,6 +321,28 @@ const PromotionAdmin: React.FC = () => {
         >
           {record.loai === "phan_tram" ? "phần trăm" : "tiền"}
         </Tag>
+      ),
+    },
+    {
+      title: "Hạng thành viên",
+      key: "hang_thanh_viens",
+      ...getColumnSearchProps("hang_thanh_viens"),
+
+      width: "15%",
+      render: (record) => (
+        <>
+          <span className="text-gray-600 text-md">
+            {record.hang_thanh_viens
+              .map((hang: any) =>
+                hang.ten_hang_thanh_vien === "Vàng"
+                  ? "Vàng"
+                  : hang.ten_hang_thanh_vien === "Bạc"
+                    ? "Bạc"
+                    : "Đồng"
+              )
+              .join(", ")}
+          </span>
+        </>
       ),
     },
     {

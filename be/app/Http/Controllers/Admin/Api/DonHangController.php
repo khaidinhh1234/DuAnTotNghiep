@@ -65,6 +65,8 @@ class DonHangController extends Controller
                         'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang,
                         'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang,
                         'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang,
+                        'trang_thai_thanh_toan' => $donHang->trang_thai_thanh_toan,
+                        'trang_thai_van_chuyen' => $donHang->trang_thai_van_chuyen
                     ],
                     'chi_tiet_don_hang' => $donHang->chiTiets, // Trả về trực tiếp chi tiết đơn hàng đã thêm trường
                     'tong_so_luong' => $tongSoLuong,
@@ -83,8 +85,6 @@ class DonHangController extends Controller
     // Cập nhập trạng thái thanh toán
     public function updatePaymentStatus(UpdatePaymentStatusRequest $request)
     {
-
-
         try {
             foreach ($request->id as $id) {
 

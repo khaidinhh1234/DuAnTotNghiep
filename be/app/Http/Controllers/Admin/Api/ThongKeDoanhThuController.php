@@ -7,6 +7,7 @@ use App\Models\BienTheSanPham;
 use App\Models\DanhMuc;
 use App\Models\DonHang;
 use App\Models\DonHangChiTiet;
+use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Exception;
@@ -342,5 +343,57 @@ class ThongKeDoanhThuController extends Controller
             'nam' => $year,
         ]);
     }
+
+    public function soLuongTonKhoCuaSanPham()
+    {
+        $products = SanPham::with(['bienTheSanPham' => function ($query) {
+            $query->select('san_pham_id', DB::raw('SUM(so_luong_bien_the) as total_quantity'))
+                ->groupBy('san_pham_id');
+        }])->get();
+
+        $result = $products->map(function ($product) {
+            $totalQuantity = $product->bienTheSanPham->isNotEmpty()
+                ? $product->bienTheSanPham->first()->total_quantity
+                : 0;
+
+            return [
+                'id' => $product->id,
+                'ten_san_pham' => $product->ten_san_pham,
+                'ma_san_pham' => $product->ma_san_pham,
+                'tong_so_luong_bien_the' => $totalQuantity
+            ];
+        });
+
+        return response()->json($result);
+    }
+    public function soLuongSanPhamSapHetHang()
+    {
+        $products = SanPham::with(['bienTheSanPham' => function ($query) {
+            $query->select('san_pham_id', DB::raw('SUM(so_luong_bien_the) as total_quantity'))
+                ->groupBy('san_pham_id');
+        }])->get();
+
+        $result = $products->filter(function ($product) {
+            $totalQuantity = $product->bienTheSanPham->isNotEmpty()
+                ? $product->bienTheSanPham->first()->total_quantity
+                : 0;
+
+            return $totalQuantity < 10;
+        })->map(function ($product) {
+            $totalQuantity = $product->bienTheSanPham->isNotEmpty()
+                ? $product->bienTheSanPham->first()->total_quantity
+                : 0;
+
+            return [
+                'id' => $product->id,
+                'ten_san_pham' => $product->ten_san_pham,
+                'ma_san_pham' => $product->ma_san_pham,
+                'tong_so_luong_bien_the' => $totalQuantity
+            ];
+        });
+
+        return response()->json($result);
+    }
+
 }
 

@@ -77,15 +77,16 @@ import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
 import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 
-import Test from "@/pages/(dashboard)/vourcher/test/test";
+// import Test from "@/pages/(dashboard)/vourcher/test/test";
 import Bienthe from "./../pages/(dashboard)/products/bienthe/bienthe";
 import Color from "@/pages/(dashboard)/products/bienthe/color";
 import Size from "@/pages/(dashboard)/products/bienthe/size";
 import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
 import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
-
-
+// import Test from "@/pages/(dashboard)/test";
 const Router = () => {
+// 
+
   return (
     <>
       {" "}
@@ -189,6 +190,8 @@ const Router = () => {
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
+          <Route path="revenues" element={<RevenueAdmin />} />
+          {/* <Route path="test" element={<Test />} /> */}
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
@@ -219,7 +222,7 @@ const Router = () => {
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
           <Route path="add-vocher" element={<AddVoucher />} />
-          <Route path="test" element={<Test />} />
+          {/* <Route path="test" element={<Test />} /> */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
         <Route path="/login" element={<Login />} />
