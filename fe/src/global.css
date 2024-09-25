@@ -32,6 +32,31 @@ input[id="numberInput"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+.rotated-header-table .ant-table-thead > tr > th {
+  height: 150px; /* Điều chỉnh giá trị này theo nhu cầu của bạn */
+  white-space: nowrap;
+  padding: 0 !important;
+}
+
+.rotated-header-table .ant-table-thead > tr > th > .ant-table-header-column {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: 50% 50%;
+  width: 30px; /* Điều chỉnh dựa trên nội dung của bạn */
+}
+
+.rotated-header-table .ant-table-thead > tr > th.ant-table-cell {
+  padding: 0 !important;
+}
+
+/* Thêm padding cho các ô dữ liệu để cân đối với tiêu đề xoay */
+.rotated-header-table .ant-table-tbody > tr > td {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
 .custom-switch.ant-switch {
   background-color: #f0f0f0;
   border-color: #d9d9d9;
