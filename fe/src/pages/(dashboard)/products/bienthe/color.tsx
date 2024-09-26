@@ -1,29 +1,38 @@
-import React, { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import { IColor } from "@/common/types/product";
 import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { SketchPicker } from 'react-color';
 
 const Color = () => {
   const { id } = useParams<{ id: string }>();
-  console.log(id); // Kiểm tra ID
-
   const [form] = Form.useForm();
   const nav = useNavigate();
+  const [color, setColor] = useState("#000000");
+  const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['color', id],
     queryFn: async () => {
       const response = await instance.get(`/admin/bienthemausac/${id}`);
-      console.log(data)
+      console.log("Raw API response:", response.data);
       return response.data;
     },
   });
 
   useEffect(() => {
-    if (data) {
-      form.setFieldsValue(data);
+    if (data && data.data) {
+      console.log("Setting form data:", data.data);
+      const colorData = data.data;
+      form.setFieldsValue({
+        ten_mau_sac: colorData.ten_mau_sac,
+        ma_mau_sac: colorData.ma_mau_sac
+      });
+      setColor(colorData.ma_mau_sac);
+      console.log("Color set to:", colorData.ma_mau_sac);
     }
   }, [data, form]);
 
@@ -42,10 +51,40 @@ const Color = () => {
   });
 
   const onFinish = (values: IColor) => {
-    updateMutation.mutate(values);
+    console.log("Form submitted with values:", values);
+    updateMutation.mutate({ ...values, ma_mau_sac: color });
+  };
+
+  const handleColorChange = (newColor: any) => {
+    console.log("Color changed to:", newColor.hex);
+    setColor(newColor.hex);
+    form.setFieldsValue({ ma_mau_sac: newColor.hex });
+  };
+
+  const handleClick = () => {
+    setDisplayColorPicker(!displayColorPicker);
+  };
+
+  const handleClose = () => {
+    setDisplayColorPicker(false);
   };
 
   if (isLoading) return <div>Đang tải...</div>;
+
+  console.log("Current color state:", color);
+
+  const popover: React.CSSProperties = {
+    position: 'absolute',
+    zIndex: 2,
+  };
+  
+  const cover: React.CSSProperties = {
+    position: 'fixed',
+    top: '0px',
+    right: '0px',
+    bottom: '0px',
+    left: '0px',
+  };
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -55,7 +94,7 @@ const Color = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Cập nhật màu sắc: {data?.ten_mau_sac}</h1>
+        <h1 className="font-semibold md:text-3xl">Cập nhật màu sắc: {data?.data?.ten_mau_sac}</h1>
         <div>
           <Link to="/admin/products/bienthe" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">Quay lại</Button>
@@ -69,7 +108,7 @@ const Color = () => {
               form={form}
               name="basic"
               layout="vertical"
-              initialValues={data }
+              initialValues={data?.data}
               onFinish={onFinish}
               autoComplete="off"
             >
@@ -83,14 +122,39 @@ const Color = () => {
               <Form.Item
                 label="Mã màu"
                 name="ma_mau_sac"
-                rules={[
-                    { required: true, message: 'Vui lòng nhập mã màu' },
-                    { 
-                      pattern: /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-                      message: 'Mã màu không hợp lệ. (ví dụ: #FF0000)'
-                    },
-                  ]}              >
-                <Input placeholder="Nhập mã màu" />
+                rules={[{ required: true, message: 'Vui lòng chọn màu' }]}
+              >
+                <div>
+                  <div 
+                    style={{
+                      padding: '5px',
+                      background: '#fff',
+                      borderRadius: '1px',
+                      boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+                      display: 'inline-block',
+                      cursor: 'pointer',
+                    }}
+                    onClick={handleClick}
+                  >
+                    <div style={{
+                      width: '26px',
+                      height: '26px',
+                      borderRadius: '2px',
+                      background: color,
+                    }} />
+                  </div>
+                  {displayColorPicker ? (
+                    <div style={popover}>
+                      <div style={cover} onClick={handleClose}/>
+                      <SketchPicker 
+                        color={color} 
+                        onChange={handleColorChange}
+                        onChangeComplete={(newColor) => console.log("Color picked:", newColor.hex)}
+                      />
+                    </div>
+                  ) : null}
+                  <span style={{ marginLeft: '10px' }}>{color}</span>
+                </div>
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit" className="px-3 py-2 bg-black text-white rounded-lg">

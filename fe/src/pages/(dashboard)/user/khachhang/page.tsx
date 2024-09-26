@@ -16,6 +16,14 @@ import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
+import { Alert, Flex, Spin } from "antd";
+const contentStyle: React.CSSProperties = {
+  padding: 50,
+  background: "rgba(0, 0, 0, 0.05)",
+  borderRadius: 4,
+};
+
+const content = <div style={contentStyle} />;
 
 interface DataType {
   key: React.Key;
@@ -301,8 +309,15 @@ const UsersAdminkhachhang: React.FC = () => {
   // };
 
   // const products = [...data].reverse();
-  isError && <div>Đã xảy ra lỗi</div>;
-  isLoading && <div>Đang tải dữ liệu...</div>;
+  isError && (
+    <div>
+      {" "}
+      <Spin tip="Loading" size="large">
+        {content}
+      </Spin>
+    </div>
+  );
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -329,7 +344,7 @@ const UsersAdminkhachhang: React.FC = () => {
         </div>
       </div>
       <div className=" ">
-        <Table columns={columns} dataSource={user} />
+        <Table columns={columns} dataSource={user} loading={isLoading} />
       </div>
     </main>
   );

@@ -69,15 +69,21 @@ const Size = () => {
               form={form}
               name="basic"
               layout="vertical"
-              initialValues={data }
+              initialValues={data?.data}
               onFinish={onFinish}
               autoComplete="off"
             >
               <Form.Item
                 label="kích thước "
                 name="kich_thuoc"
-                rules={[{ required: true, message: "Tên kích thước bắt buộc phải nhập!" }]}
-              >
+                rules={[
+                  { required: true, message: 'Vui lòng nhập tên kích thước' },
+                  { max: 50, message: 'Tên kích thước không được quá 50 ký tự' },
+                  {
+                    pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                    message: "Vui lòng nhập họ không chứa ký tự trắng!",
+                  },
+                ]}              >
                 <Input placeholder="Nhập kích thước" />
               </Form.Item>
           

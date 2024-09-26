@@ -14,7 +14,7 @@ import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
-import type { SelectProps } from "antd";
+import type { GetProps, SelectProps } from "antd";
 const { RangePicker } = DatePicker;
 const dateFormat = "DD/MM/YYYY";
 const weekFormat = "MM/DD";
@@ -32,109 +32,29 @@ const AddVoucher = () => {
   // const [voucherCode, setVoucherCode] = useState(""); // Duplicate declaration removed
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [isAllSelected2, setIsAllSelected2] = useState(false);
+
   const [tabKey, setTabKey] = useState(true);
-  const productList = [
-    { value: "Áo Thun Nam", label: "Áo Thun Nam" },
-    { value: "Áo Sơ Mi Nam", label: "Áo Sơ Mi Nam" },
-    { value: "Áo Thun Nữ", label: "Áo Thun Nữ" },
-    { value: "Áo Sơ Mi Nữ", label: "Áo Sơ Mi Nữ" },
-    { value: "Điện thoại", label: "Điện thoại" },
-    { value: "Laptop", label: "Laptop" },
-  ];
-  const {
-    data: sanpham,
-    isLoading: sanphamLoading,
-    isError: sanphamError,
-  } = useQuery({
-    queryKey: ["sanpham"],
-    queryFn: async () => {
-      const response = await instance.get("/admin/sanpham");
-      return response.data;
-    },
-  });
-  console.log("sanpham", sanpham);
-  const {
-    data: hang,
-    isLoading: hangLoading,
-    isError: hangError,
-  } = useQuery({
-    queryKey: ["hang"],
-    queryFn: async () => {
-      const response = await instance.get("admin/hangthanhvien");
-      return response.data;
-    },
-  });
-  const data = hang?.data?.map((item: any) => ({
-    value: item.ten_hang_thanh_vien,
-    label: item.ten_hang_thanh_vien,
-  }));
-  const handleSubmit = (values: any) => {
-    const formattedEndDate = values.endDate
-      ? DateTime.fromJSDate(values.endDate.toDate()).toFormat("dd/MM/yyyy")
-      : null;
-
-    const formValues = { ...values, endDate: formattedEndDate };
-    console.log("Form Values: ", formValues);
-  };
-
-  // Removed duplicate declaration of generateRandomCode
-
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
-
-  const handleDeselectAll = () => {
-    setSelectedValues([]);
-    setIsAllSelected(false);
-  };
-
-  const handleProductChange = (value: any) => {
-    if (isAllSelected) {
-      if (value.length > 0) {
-        setIsAllSelected(false);
-        setSelectedProducts(value);
-      }
-    } else {
-      if (value.length === productList.length) {
-        setIsAllSelected(true);
-      }
-      setSelectedProducts(value);
-    }
-
-    if (value.length > 0) {
-      setSearchTerm("");
-    }
-  };
-  const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
-
-  const handleSearch = (value: any) => {
-    setSearchTerm(value);
-  };
-
-  const getSelectLabel = () => {
-    if (isAllSelected) {
-      return "Tất cả sản phẩm";
-    }
-    return selectedProducts.length > 0
-      ? `Đã chọn ${selectedProducts.length} sản phẩm`
-      : "Chọn sản phẩm";
-  };
-
-  const handleSelectAll = () => {
-    const allValues = productList.map((option) => option.label);
-    setSelectedValues(allValues as any);
-    setIsAllSelected(true);
-  };
   const [max, setMax] = useState(479000);
   const [voucher, setVoucher] = useState(26010);
   const [phantram, setphantram] = useState(30);
-  const handleChange = (value: string[]) => {
-    setSelectedValues(value);
-    setIsAllSelected(value.length === productList.length); // Cập nhật trạng thái chọn tất cả
-    // console.log(`Selected: ${value}`);
-  };
   const [voucherCode, setVoucherCode] = useState("");
+  const [value, setValue] = useState("");
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const [selectedValues2, setSelectedValues2] = useState<string[]>([]);
 
-  // Hàm tạo mã khuyến mãi ngẫu nhiên
+  const [isAllSelected1, setIsAllSelected1] = useState(false);
+  const [rank, setrank] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  // const productList = [
+  //   { value: "Áo Thun Nam", label: "Áo Thun Nam" },
+  //   { value: "Áo Sơ Mi Nam", label: "Áo Sơ Mi Nam" },
+  //   { value: "Áo Thun Nữ", label: "Áo Thun Nữ" },
+  //   { value: "Áo Sơ Mi Nữ", label: "Áo Sơ Mi Nữ" },
+  //   { value: "Điện thoại", label: "Điện thoại" },
+  //   { value: "Laptop", label: "Laptop" },
+  // ];
+  //mã khuyến mãi
   const generateRandomCode = () => {
     const length = 8; // Độ dài mã khuyến mãi
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -147,12 +67,125 @@ const AddVoucher = () => {
 
     setVoucherCode(randomCode); // Cập nhật voucherCode
   };
+  //call api
+  const { data: sanpham } = useQuery({
+    queryKey: ["sanpham"],
+    queryFn: async () => {
+      const response = await instance.get("/admin/sanpham");
+      return response.data;
+    },
+  });
+  // console.log("sanpham", sanpham);
+  const sp = sanpham?.data?.map((item: any) => ({
+    value: item.ten_san_pham || item.id,
+    label: item.ten_san_pham || item.id,
+  }));
+  // console.log("sp", sp);
+  const {
+    data: hang,
+    isLoading: hangLoading,
+    isError: hangError,
+  } = useQuery({
+    queryKey: ["hang"],
+    queryFn: async () => {
+      const response = await instance.get("admin/hangthanhvien");
+      return response.data;
+    },
+  });
 
-  // Gọi hàm tạo mã ngẫu nhiên khi component được load
+  const data = hang?.data?.map((item: any) => ({
+    value: item.ten_hang_thanh_vien,
+    label: item.ten_hang_thanh_vien,
+  }));
+  // check date
+  const handleSubmit = (values: any) => {
+    const formattedEndDate = values.endDate
+      ? DateTime.fromJSDate(values.endDate.toDate()).toFormat("dd/MM/yyyy")
+      : null;
+
+    const formValues = { ...values, endDate: formattedEndDate };
+    console.log("Form Values: ", formValues);
+  };
+
+  // Removed duplicate declaration of generateRandomCode
+  // sảm phẩm
+  const handleDeselectAll = () => {
+    setSelectedValues([]);
+    setIsAllSelected(false);
+  };
+
+  const handleProductChange = (value: any) => {
+    if (isAllSelected) {
+      if (value.length > 0) {
+        setIsAllSelected(false);
+        setSelectedProducts(value);
+      }
+    } else {
+      if (value.length === sp.length) {
+        setIsAllSelected(true);
+      }
+      setSelectedProducts(value);
+    }
+
+    // if (value.length > 0) {
+    //   setSearchTerm("");
+    // }
+  };
+  const handleSelectAll = () => {
+    const allValues = sp.map((option: any) => option.label);
+    setSelectedValues(allValues as any);
+    setIsAllSelected(true);
+  };
+  const handleChange = (value: string[]) => {
+    setSelectedValues(value);
+    setIsAllSelected(value.length === sp.length); // Cập nhật trạng thái chọn tất cả
+    // console.log(`Selected: ${value}`);
+  };
+  const handleChange2 = (value: string[]) => {
+    setSelectedValues2(value);
+    setIsAllSelected2(value.length === data.length); // Cập nhật trạng thái chọn tất cả
+    // console.log(`Selected: ${value}`);
+  };
+  type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+  //danhmuc
+
+  const { data: danhmuc } = useQuery({
+    queryKey: ["danhmuc"],
+    queryFn: async () => {
+      const response = await instance.get("/admin/danhmuc");
+      return response.data;
+    },
+  });
+  // console.log("danhmuc", danhmuc);
+  const dm = danhmuc?.data?.map((item: any) => ({
+    value: item.ten_danh_muc || item.id,
+    label: item.ten_danh_muc || item.id,
+  }));
+
+  const [selectedValues1, setSelectedValues1] = useState<string[]>([]);
+
+  const handleDeselectAll1 = () => {
+    setSelectedValues1([]);
+    setIsAllSelected1(false);
+  };
+  const handleSearch1 = (value: any) => {
+    setSearchTerm(value);
+  };
+  const handleSelectAll1 = () => {
+    const allValues = dm.map((option: any) => option.label);
+    setSelectedValues1(allValues as any);
+    setIsAllSelected1(true);
+  };
+  const handleChange1 = (value: string[]) => {
+    setSelectedValues1(value);
+    setIsAllSelected1(value.length === dm.length); // Cập nhật trạng thái chọn tất cả
+    // console.log(`Selected: ${value}`);
+  };
+
   useEffect(() => {
     generateRandomCode();
   }, []);
-  const [value, setValue] = useState("");
+
   if (hangLoading) return <p>Loading...</p>;
   if (hangError) return <p>error...</p>;
   return (
@@ -185,9 +218,9 @@ const AddVoucher = () => {
               <Form.Item
                 name="code"
                 initialValue={voucherCode}
-                rules={[
-                  { required: true, message: "Vui lòng nhập mã khuyến mãi!" },
-                ]}
+                // rules={[
+                //   { required: true, message: "Vui lòng nhập mã khuyến mãi!" },
+                // ]}
               >
                 <div className="flex items-center ">
                   <Input
@@ -225,57 +258,111 @@ const AddVoucher = () => {
                     </Form.Item>
                   </div>
                   <div className="flex items-center my-2">
+                    {" "}
                     <Form.Item
-                      label="Thời gian ngày bắt đầu"
-                      name="ngay_bat_dau"
-                      rules={[
-                        { required: true, message: "Bắt buộc phải điền!!" },
-                        () => ({
-                          validator(_, value) {
-                            if (!value || value.isAfter(dayjs())) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              new Error(
-                                "Ngày phải lớn hơn hoặc bằng ngày hôm nay!"
-                              )
-                            );
-                          },
-                        }),
-                      ]}
-                      className="mb-0 w-[100%]"
-                    >
-                      <DatePicker
-                        defaultValue={dayjs("01/01/2025", dateFormatList[0])}
-                        format={dateFormatList}
-                        className="w-[50%]"
-                      />
-                    </Form.Item>{" "}
-                    <Form.Item
-                      label="Thời gian quy đổi"
+                      className="w-[50%] mb-4"
+                      label="Ngày bắt đầu"
                       name="ngay_ket_thuc"
                       rules={[
-                        { required: true, message: "Bắt buộc phải điền!!" },
+                        {
+                          required: true,
+                          message: "Bắt buộc phải điền!",
+                        },
+                        {
+                          validator: (_, value) =>
+                            value && value.isBefore(dayjs(), "day")
+                              ? Promise.reject(
+                                  new Error(
+                                    "Ngày bắt đầu không thấp hơn ngày hiện tại!"
+                                  )
+                                )
+                              : Promise.resolve(),
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        className="w-[60%] "
+                        disabledDate={(current) =>
+                          current && current < dayjs().startOf("day")
+                        }
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Ngày kết thúc"
+                      name="ngay_bat_dau"
+                      className="w-[100%] mb-4"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Bắt buộc phải điền!",
+                        },
                         ({ getFieldValue }) => ({
                           validator(_, value) {
-                            const ngay_bat_dau = getFieldValue("ngay_bat_dau");
-                            if (!value || value.isAfter(ngay_bat_dau)) {
+                            const startDate = getFieldValue(
+                              "ngay_khuyen_mai_bat_dau"
+                            );
+                            if (!value || !startDate) {
                               return Promise.resolve();
                             }
-                            return Promise.reject(
-                              new Error(
-                                "Ngày kết thúc phải lớn hơn ngày bắt đầu!"
-                              )
-                            );
+                            if (value.isBefore(startDate, "day")) {
+                              return Promise.reject(
+                                new Error(
+                                  "Ngày kết thúc không thấp hơn ngày bắt đầu!"
+                                )
+                              );
+                            }
+                            if (value.diff(startDate, "day") > 365) {
+                              return Promise.reject(
+                                new Error(" không quá 365 ngày!")
+                              );
+                            }
+                            return Promise.resolve();
                           },
                         }),
                       ]}
-                      className="mb-0 w-[90%]"
+                    >
+                      <DatePicker className="w-[40%]" />
+                    </Form.Item>
+                  </div>
+                  <div>
+                    <Form.Item
+                      label="Ngày bắt đầu sưu tầm"
+                      name="ngay_suu_tam"
+                      className="w-[100%] mb-4"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Bắt buộc phải điền!",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const startDate = getFieldValue(
+                              "ngay_khuyen_mai_bat_dau"
+                            );
+                            const endDate = getFieldValue("endDate");
+                            if (!value || !startDate || !endDate) {
+                              return Promise.resolve();
+                            }
+                            if (
+                              value.isBefore(startDate, "day") ||
+                              value.isAfter(endDate, "day")
+                            ) {
+                              return Promise.reject(
+                                new Error(
+                                  "Ngày bắt đầu sưu tầm phải nằm trong khoảng ngày khuyến mãi!"
+                                )
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
+                      ]}
                     >
                       <DatePicker
-                        defaultValue={dayjs("01/01/2025", dateFormatList[0])}
-                        format={dateFormatList}
-                        className="w-[60%]"
+                        className="w-[40%]"
+                        disabledDate={(current) =>
+                          current && current < dayjs().startOf("day")
+                        }
                       />
                     </Form.Item>
                   </div>
@@ -283,6 +370,7 @@ const AddVoucher = () => {
                     <Form.Item
                       label="Mã giảm giá áp dụng cho"
                       className="w-[100%] mb-4"
+                      name="khuyen_mai_san_pham"
                     >
                       <Radio.Group
                         className="flex "
@@ -296,6 +384,12 @@ const AddVoucher = () => {
                           Toàn gian hàng
                         </Radio>
                         <Radio
+                          value="2"
+                          className="flex flex-row items-end flex-nowrap "
+                        >
+                          Danh mục sản phẩm
+                        </Radio>
+                        <Radio
                           value="1"
                           className="flex flex-row items-end flex-nowrap "
                         >
@@ -303,56 +397,100 @@ const AddVoucher = () => {
                           nhật sau khi thiết lập điều kiện giảm giá)
                         </Radio>
                       </Radio.Group>
+                      {Number(value) === 1 ? (
+                        <div className="flex items-center my-4">
+                          <label className="w-1/4 font-semibold">
+                            Chọn sản phẩm
+                          </label>
+                          <div
+                            // rules={[
+                            //   {
+                            //     required: selectedValues.length === 0,
+                            //     message: "Vui lòng chọn sản phẩm!",
+                            //   },
+                            // ]}
+                            className="mb-0 w-[200px]"
+                          >
+                            <Select
+                              mode="multiple"
+                              allowClear
+                              style={{ width: "100%" }}
+                              placeholder="Please select"
+                              value={selectedValues}
+                              onChange={handleChange}
+                              // onSearch={handleSearch}
+                              options={sp}
+                              dropdownRender={(menu) => (
+                                <div>
+                                  <Button
+                                    type="link"
+                                    onClick={
+                                      isAllSelected
+                                        ? handleDeselectAll
+                                        : handleSelectAll
+                                    }
+                                  >
+                                    {isAllSelected
+                                      ? "Bỏ chọn tất cả"
+                                      : "Chọn tất cả"}
+                                  </Button>
+                                  <Divider style={{ margin: "4px 0" }} />
+                                  {menu}
+                                </div>
+                              )}
+                            />{" "}
+                          </div>
+                        </div>
+                      ) : Number(value) === 2 ? (
+                        <div className="flex items-center my-4">
+                          <label className="w-1/4 font-semibold">
+                            Chọn danh mục
+                          </label>
+                          <div
+                            // name="productDiscount"
+                            // rules={[
+                            //   {
+                            //     required: selectedValues1.length === 0,
+                            //     message: "Vui lòng chọn danh mục!",
+                            //   },
+                            // ]}
+                            className="mb-0 w-[200px]"
+                          >
+                            <Select
+                              mode="multiple"
+                              allowClear
+                              style={{ width: "100%" }}
+                              placeholder="Please select"
+                              value={selectedValues1}
+                              onChange={handleChange1}
+                              onSearch={handleSearch1}
+                              options={dm}
+                              dropdownRender={(menu) => (
+                                <div>
+                                  <Button
+                                    type="link"
+                                    onClick={
+                                      isAllSelected1
+                                        ? handleDeselectAll1
+                                        : handleSelectAll1
+                                    }
+                                  >
+                                    {isAllSelected1
+                                      ? "Bỏ chọn tất cả"
+                                      : "Chọn tất cả"}
+                                  </Button>
+                                  <Divider style={{ margin: "4px 0" }} />
+                                  {menu}
+                                </div>
+                              )}
+                            />{" "}
+                          </div>
+                        </div>
+                      ) : (
+                        ""
+                      )}{" "}
                     </Form.Item>
                   </div>{" "}
-                  {Number(value) === 1 ? (
-                    <div className="flex items-center mb-4">
-                      <label className="w-1/4 font-semibold">
-                        Chọn sản phẩm
-                      </label>
-                      <Form.Item
-                        name="productDiscount"
-                        rules={[
-                          {
-                            required: selectedValues.length === 0,
-                            message: "Vui lòng chọn sản phẩm!",
-                          },
-                        ]}
-                        className="mb-0 w-[200px]"
-                      >
-                        <Select
-                          mode="multiple"
-                          allowClear
-                          style={{ width: "100%" }}
-                          placeholder="Please select"
-                          value={selectedValues}
-                          onChange={handleChange}
-                          onSearch={handleSearch}
-                          options={productList}
-                          dropdownRender={(menu) => (
-                            <div>
-                              <Button
-                                type="link"
-                                onClick={
-                                  isAllSelected
-                                    ? handleDeselectAll
-                                    : handleSelectAll
-                                }
-                              >
-                                {isAllSelected
-                                  ? "Bỏ chọn tất cả"
-                                  : "Chọn tất cả"}
-                              </Button>
-                              <Divider style={{ margin: "4px 0" }} />
-                              {menu}
-                            </div>
-                          )}
-                        />{" "}
-                      </Form.Item>
-                    </div>
-                  ) : (
-                    ""
-                  )}
                 </div>
               </div>
             </div>
@@ -478,18 +616,17 @@ const AddVoucher = () => {
                   {tabKey && (
                     <Form.Item
                       label="Giảm giá"
-                      name="giam_gia"
+                      name="chi_tieu_toi_thieu"
                       initialValue="26010"
                       rules={[
                         { required: true, message: "Bắt buộc phải điền!" },
                         ({ getFieldValue }) => ({
                           validator(_, value) {
-                            const tong_giam_gia_toi_da = getFieldValue(
-                              "tong_giam_gia_toi_da"
-                            );
+                            const chi_tieu_toi_thieu =
+                              getFieldValue("chi_tieu_toi_thieu");
                             if (
-                              value >= 0.1 * tong_giam_gia_toi_da &&
-                              value <= 0.5 * tong_giam_gia_toi_da
+                              value >= 0.1 * chi_tieu_toi_thieu &&
+                              value <= 0.5 * chi_tieu_toi_thieu
                             ) {
                               return Promise.resolve();
                             }
@@ -520,10 +657,9 @@ const AddVoucher = () => {
                         { required: true, message: "Bắt buộc phải điền!" },
                         ({ getFieldValue }) => ({
                           validator(_, value) {
-                            const tong_giam_gia_toi_da = getFieldValue(
-                              "tong_giam_gia_toi_da"
-                            );
-                            if (value <= 0.5 * tong_giam_gia_toi_da) {
+                            const chi_tieu_toi_thieu =
+                              getFieldValue("chi_tieu_toi_thieu");
+                            if (value <= 0.5 * chi_tieu_toi_thieu) {
                               return Promise.resolve();
                             }
                             return Promise.reject(
@@ -562,7 +698,7 @@ const AddVoucher = () => {
                     label="Hạng thành viên  (áp dụng )
 "
                     name="hang_thanh_vien"
-                    initialValue=""
+                    initialValue={data[0]}
                     rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >
@@ -571,8 +707,9 @@ const AddVoucher = () => {
                       allowClear
                       style={{ width: "40%" }}
                       placeholder="Please select"
-                      defaultValue={[""]}
-                      onChange={handleChange}
+                      // defaultValue={data[0]}
+
+                      onChange={handleChange2}
                       options={data}
                     />
                   </Form.Item>{" "}

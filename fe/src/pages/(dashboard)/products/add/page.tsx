@@ -1,395 +1,10 @@
-
-// import React, { useState, useEffect, useCallback } from "react";
-// import { Button, Form, Select, Spin, message, Table } from "antd";
-// import { ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
-// import { Link } from "react-router-dom";
-// import { useQuery, useMutation } from "@tanstack/react-query";
-// import instance from "@/configs/axios";
-// import { uploadToCloudinary } from '@/configs/cloudinary';
-// import { RcFile, UploadFile } from "antd/es/upload";
-// import { Category, Size, Color, Tag, Variant, ProductFormData } from "@/common/types/product";
-// import ProductForm from "./ProductForm";
-// import VariantForm from "./VariantForm";
-
-// const { Option } = Select;
-
-// // API calls
-// const fetchData = async (endpoint: string): Promise<any> => {
-//   const response = await instance.get(`/admin/${endpoint}`);
-//   console.log(`${endpoint} data:`, response.data);
-//   return response.data;
-// };
-
-// const addProduct = async (productData: FormData): Promise<any> => {
-//   const response = await instance.post("/admin/sanpham", productData, {
-//     headers: { "Content-Type": "multipart/form-data" },
-//   });
-//   return response.data;
-// };
-
-// interface VariantType {
-//   type: 'color' | 'size';
-//   values: number[];
-// }
-
-// const ProductsAndVariants: React.FC = () => {
-//   const [variants, setVariants] = useState<VariantType[]>([]);
-//   const [fileList, setFileList] = useState<UploadFile[]>([]);
-//   const [form] = Form.useForm<ProductFormData>();
-//   const [variantData, setVariantData] = useState<Variant[]>([]);
-//   const [isSubmitting, setIsSubmitting] = useState(false);
-//   const [productFormData, setProductFormData] = useState<ProductFormData>({} as ProductFormData);
-
-//   // Queries
-//   const { data: categoriesData, isLoading: categoriesLoading } = useQuery<{ data: Category[] }>({
-//     queryKey: ["categories"],
-//     queryFn: () => fetchData("danhmuc"),
-//   });
-
-//   const { data: sizesData, isLoading: sizesLoading } = useQuery<{ data: Size[] }>({
-//     queryKey: ["sizes"],
-//     queryFn: () => fetchData("bienthekichthuoc"),
-//   });
-
-//   const { data: colorsData, isLoading: colorsLoading } = useQuery<{ data: Color[] }>({
-//     queryKey: ["colors"],
-//     queryFn: () => fetchData("bienthemausac"),
-//   });
-
-//   const { data: tagsData, isLoading: tagsLoading } = useQuery<{ data: Tag[] }>({
-//     queryKey: ["tags"],
-//     queryFn: () => fetchData("the"),
-//   });
-
-//   const addProductMutation = useMutation({
-//     mutationFn: addProduct,
-//     onSuccess: (data) => {
-//       console.log("Product added successfully:", data);
-//       message.success("Sản phẩm đã được thêm thành công!");
-//       form.resetFields();
-//       setFileList([]);
-//       setVariants([]);
-//       setVariantData([]);
-//       setIsSubmitting(false);
-//     },
-//     onError: (error: any) => {
-//       console.error("Error adding product:", error);
-//       if (error.response && error.response.data && error.response.data.errors) {
-//         const errorFields = Object.keys(error.response.data.errors);
-//         if (errorFields.length > 0) {
-//           const errorMessage = `Vui lòng kiểm tra lại các trường: ${errorFields.join(', ')}`;
-//           message.error(errorMessage);
-//         } else {
-//           message.error("Đã xảy ra lỗi khi thêm sản phẩm.");
-//         }
-//       } else {
-//         message.error("Đã xảy ra lỗi khi thêm sản phẩm.");
-//       }
-//       setIsSubmitting(false);
-//     },
-//   });
-
-//   const generateVariantData = useCallback(() => {
-//     const colorVariant = variants.find(v => v.type === 'color');
-//     const sizeVariant = variants.find(v => v.type === 'size');
-
-//     if (colorVariant && sizeVariant) {
-//       const newVariantData: Variant[] = [];
-//       colorVariant.values.forEach(colorId => {
-//         sizeVariant.values.forEach(sizeId => {
-//           newVariantData.push({
-//             id: `${colorId}-${sizeId}`,
-//             bien_the_mau_sac_id: colorId,
-//             bien_the_kich_thuoc_id: sizeId,
-//             gia_ban: '',
-//             gia_khuyen_mai: '',
-//             so_luong_bien_the: '',
-//             ngay_bat_dau_khuyen_mai: null,
-//             ngay_ket_thuc_khuyen_mai: null,
-//             anh_bien_the: [],
-//           });
-//         });
-//       });
-//       setVariantData(newVariantData);
-//     } else {
-//       setVariantData([]);
-//     }
-//   }, [variants]);
-
-//   useEffect(() => {
-//     generateVariantData();
-//   }, [generateVariantData]);
-
-//   if (categoriesLoading || sizesLoading || colorsLoading || tagsLoading) {
-//     return <Spin className="flex justify-center items-center h-screen" />;
-//   }
-
-//   if (!categoriesData || !sizesData || !colorsData || !tagsData) {
-//     return <div className="text-center text-red-500">Không thể tải dữ liệu. Vui lòng thử lại sau.</div>;
-//   }
-
-//   const addVariant = (value: 'color' | 'size') => {
-//     setVariants([...variants, { type: value, values: [] }]);
-//   };
-
-//   const removeVariant = (index: number) => {
-//     const newVariants = [...variants];
-//     newVariants.splice(index, 1);
-//     setVariants(newVariants);
-//   };
-
-//   const updateVariantValues = (index: number, values: number[]) => {
-//     const newVariants = [...variants];
-//     newVariants[index].values = values;
-//     setVariants(newVariants);
-//   };
-
-//   const handleProductFormValuesChange = (changedValues: any, allValues: ProductFormData) => {
-//     setProductFormData(allValues);
-//   };
-
-//   const handleRemoveImage = (file: UploadFile, record: Variant) => {
-//     const newFileList = record.anh_bien_the.filter((item) => item.uid !== file.uid);
-//     updateVariant({ ...record, anh_bien_the: newFileList });
-//   };
-
-//   const handleImageChange = (info: any, record: Variant) => {
-//     updateVariant({ ...record, anh_bien_the: info.fileList });
-//   };
-
-//   const handleSubmit = async () => {
-//     try {
-//       await form.validateFields();
-
-//       if (variantData.length === 0) {
-//         throw new Error('Vui lòng thêm ít nhất một biến thể sản phẩm.');
-//       }
-
-//       for (let index = 0; index < variantData.length; index++) {
-//         const variant = variantData[index];
-
-//         if (!variant.bien_the_kich_thuoc_id || !variant.bien_the_mau_sac_id) {
-//           throw new Error(`Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`);
-//         }
-
-//         const regularPrice = parseFloat(variant.gia_ban);
-//         const discountPrice = parseFloat(variant.gia_khuyen_mai);
-
-//         if (!regularPrice || isNaN(regularPrice)) {
-//           throw new Error(`Giá bán của biến thể ${index + 1} không hợp lệ.`);
-//         }
-
-//         if (!variant.so_luong_bien_the || isNaN(parseInt(variant.so_luong_bien_the))) {
-//           throw new Error(`Số lượng của biến thể ${index + 1} không hợp lệ.`);
-//         }
-//       }
-
-//       setIsSubmitting(true);
-
-//       const formData = new FormData();
-
-//       Object.entries(productFormData).forEach(([key, value]) => {
-//         if (key !== 'tags' && key !== 'sizes' && key !== 'colors') {
-//           formData.append(key, value as string);
-//         }
-//       });
-
-//       if (fileList.length > 0 && fileList[0].originFileObj) {
-//         try {
-//           const imageUrl = await uploadToCloudinary(fileList[0].originFileObj as RcFile);
-//           formData.append('anh_san_pham', imageUrl);
-//         } catch (error) {
-//           console.error('Error uploading product image:', error);
-//           message.error('Lỗi khi tải lên ảnh sản phẩm');
-//           return;
-//         }
-//       }
-
-//       (productFormData.tags || []).forEach((tagId: number, index: number) => {
-//         formData.append(`the[${index}]`, tagId.toString());
-//       });
-
-//       for (let index = 0; index < variantData.length; index++) {
-//         const variant = variantData[index];
-
-//         formData.append(`bien_the[${index}][kich_thuoc_id]`, variant.bien_the_kich_thuoc_id.toString());
-//         formData.append(`bien_the[${index}][mau_sac_id]`, variant.bien_the_mau_sac_id.toString());
-//         formData.append(`bien_the[${index}][gia_ban]`, variant.gia_ban);
-//         formData.append(`bien_the[${index}][gia_khuyen_mai]`, variant.gia_khuyen_mai);
-//         formData.append(`bien_the[${index}][so_luong_bien_the]`, variant.so_luong_bien_the);
-//         formData.append(`bien_the[${index}][ngay_bat_dau_khuyen_mai]`, variant.ngay_bat_dau_khuyen_mai || '');
-//         formData.append(`bien_the[${index}][ngay_ket_thuc_khuyen_mai]`, variant.ngay_ket_thuc_khuyen_mai || '');
-
-//         if (variant.anh_bien_the && variant.anh_bien_the.length > 0) {
-//           for (let imgIndex = 0; imgIndex < variant.anh_bien_the.length; imgIndex++) {
-//             const img = variant.anh_bien_the[imgIndex];
-//             if (img.originFileObj) {
-//               try {
-//                 const imageUrl = await uploadToCloudinary(img.originFileObj as RcFile);
-//                 formData.append(`bien_the[${index}][anh][${imgIndex}]`, imageUrl);
-//               } catch (error) {
-//                 console.error('Error uploading variant image:', error);
-//                 message.error('Lỗi khi tải lên ảnh biến thể');
-//                 return;
-//               }
-//             }
-//           }
-//         } else {
-//           formData.append(`bien_the[${index}][anh][]`, '');
-//         }
-//       }
-
-//       console.log("FormData contents:");
-//       for (let [key, value] of formData.entries()) {
-//         console.log(key, value);
-//       }
-
-//       addProductMutation.mutate(formData);
-//     } catch (error) {
-//       if (error instanceof Error) {
-//         message.error(error.message);
-//       } else {
-//         message.error('Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.');
-//       }
-//       setIsSubmitting(false);
-//     }
-//   };
-
-//   const updateVariant = (updatedVariant: Variant) => {
-//     setVariantData(prevData =>
-//       prevData.map(v => v.id === updatedVariant.id ? updatedVariant : v)
-//     );
-//   };
-
-//   return (
-//     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-//       <div className="container mx-auto px-6 py-8">
-//         <div className="flex items-center justify-between mb-6">
-//           <h1 className="text-3xl font-semibold text-gray-800">
-//             Thêm sản phẩm và biến thể
-//           </h1>
-//           <Link to="/admin/products">
-//             <Button icon={<ArrowLeftOutlined />} className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md">
-//               Quay lại
-//             </Button>
-//           </Link>
-//         </div>
-
-//         <div className="bg-white rounded-lg shadow-md p-6">
-//           <ProductForm
-//             form={form}
-//             fileList={fileList}
-//             setFileList={setFileList}
-//             categoriesData={categoriesData?.data || []}
-//             tagsData={tagsData?.data || []}
-//             onValuesChange={handleProductFormValuesChange}
-//           />
-
-//           <div className="mt-8">
-//             <h2 className="text-xl font-semibold mb-4">Giá bán, Kho hàng và Biến thể</h2>
-//             <p className="text-sm text-gray-600 mb-4">
-//               Tạo biến thể nếu sản phẩm có hơn một tùy chọn, ví dụ như về kích thước hay màu sắc.
-//             </p>
-//             <div className="mb-6">
-//               <Select
-//                 style={{ width: 120 }}
-//                 onSelect={addVariant}
-//                 placeholder="Chọn biến thể"
-//               >
-//                 <Option value="color">Màu sắc</Option>
-//                 <Option value="size">Kích thước</Option>
-//               </Select>
-//             </div>
-
-//             {variants.map((variant, index) => (
-//               <div key={index} className="mb-6 bg-gray-50 p-4 rounded-md">
-//                 <h3 className="text-lg font-medium mb-2 flex justify-between items-center">
-//                   Biến thể {variant.type === 'color' ? 'Màu sắc' : 'Kích thước'}
-//                   <button
-//                     className="text-gray-400 hover:text-gray-600"
-//                     onClick={() => removeVariant(index)}
-//                   >
-//                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-//                       <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-//                     </svg>
-//                   </button>
-//                 </h3>
-//                 <div className="mb-4">
-//                   <label className="block text-sm font-medium text-gray-700 mb-1">
-//                     {variant.type === 'color' ? 'Chọn màu sắc' : 'Chọn kích thước'}
-//                   </label>
-//                   <Select
-//                     mode="multiple"
-//                     style={{ width: '100%' }}
-//                     placeholder={`Chọn ${variant.type === 'color' ? 'màu sắc' : 'kích thước'}`}
-//                     onChange={(values) => updateVariantValues(index, values)}
-//                     value={variant.values}
-//                   >
-//                     {variant.type === 'color'
-//                       ? colorsData.data.map((color) => (
-//                         <Option key={color.id} value={color.id}>
-//                           <div className="flex items-center">
-//                             <div
-//                               className="w-4 h-4 rounded-full mr-2"
-//                               style={{ backgroundColor: color.ma_mau_sac }}
-//                             />
-//                             {color.ten_mau_sac}
-//                           </div>
-//                         </Option>
-//                       ))
-//                       : sizesData.data.map((size) => (
-//                         <Option key={size.id} value={size.id}>{size.kich_thuoc}</Option>
-//                       ))
-//                     }
-//                   </Select>
-//                 </div>
-//               </div>
-//             ))}
-//             <h3 className="text-lg font-medium mb-4">Giá bán & Kho hàng</h3>
-
-//             <VariantForm
-//               variants={variantData}
-//               updateVariant={updateVariant}
-//               handleRemoveImage={handleRemoveImage}
-//               handleImageChange={handleImageChange}
-//               colorsData={colorsData.data}
-//               sizesData={sizesData.data}
-//             />
-//           </div>
-//         </div>
-//       </div>
-//       <Form.Item className="mt-8">
-//         <div className="flex items-center justify-end">
-//           <Button
-//             type="primary"
-//             onClick={handleSubmit}
-//             className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
-//             style={{
-//               marginTop:'-60px',
-//               padding: '16px',
-//               marginRight: '20px',
-//             }}
-//             disabled={isSubmitting}
-//           >
-//            {isSubmitting && (
-//             <Spin indicator={<LoadingOutlined style={{ fontSize: 22, marginLeft: 10 }} spin />} />
-//           )} {isSubmitting ? 'Đang xử lý...' : 'Thêm sản phẩm'}
-//           </Button>
-          
-//         </div>
-//       </Form.Item>
-//     </main>
-//   );
-// };
-
-// export default ProductsAndVariants;
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Button, Form, Select, Spin, message } from "antd";
-import { ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import instance from "@/configs/axios";
-import { uploadToCloudinary } from '@/configs/cloudinary';
+import { uploadToCloudinary } from "@/configs/cloudinary";
 import { RcFile, UploadFile } from "antd/es/upload";
 import ProductForm from "./ProductForm";
 import VariantForm from "./VariantForm";
@@ -400,8 +15,8 @@ import {
   Tag,
   VariantType,
   Variant,
-  ProductFormData
-} from "@/common/types/product"
+  ProductFormData,
+} from "@/common/types/product";
 const { Option } = Select;
 
 // API calls
@@ -417,29 +32,35 @@ const addProduct = async (productData: FormData): Promise<any> => {
   return response.data;
 };
 
-
-
 const ProductsAndVariants: React.FC = () => {
   const [variants, setVariants] = useState<VariantType[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [form] = Form.useForm<ProductFormData>();
   const [variantData, setVariantData] = useState<Variant[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [productFormData, setProductFormData] = useState<ProductFormData>({} as ProductFormData);
+  const [productFormData, setProductFormData] = useState<ProductFormData>(
+    {} as ProductFormData
+  );
   const navigate = useNavigate();
 
   // Queries
-  const { data: categoriesData, isLoading: categoriesLoading } = useQuery<{ data: Category[] }>({
+  const { data: categoriesData, isLoading: categoriesLoading } = useQuery<{
+    data: Category[];
+  }>({
     queryKey: ["categories"],
     queryFn: () => fetchData("danhmuc"),
   });
 
-  const { data: sizesData, isLoading: sizesLoading } = useQuery<{ data: Size[] }>({
+  const { data: sizesData, isLoading: sizesLoading } = useQuery<{
+    data: Size[];
+  }>({
     queryKey: ["sizes"],
     queryFn: () => fetchData("bienthekichthuoc"),
   });
 
-  const { data: colorsData, isLoading: colorsLoading } = useQuery<{ data: Color[] }>({
+  const { data: colorsData, isLoading: colorsLoading } = useQuery<{
+    data: Color[];
+  }>({
     queryKey: ["colors"],
     queryFn: () => fetchData("bienthemausac"),
   });
@@ -455,7 +76,6 @@ const ProductsAndVariants: React.FC = () => {
       message.success("Sản phẩm đã được thêm thành công!");
       resetForm();
       navigate("/admin/products");
-
     },
     onError: (error: any) => {
       handleAddProductError(error);
@@ -463,18 +83,18 @@ const ProductsAndVariants: React.FC = () => {
   });
 
   const generateVariantData = useCallback(() => {
-    const colorVariant = variants.find(v => v.type === 'color');
-    const sizeVariant = variants.find(v => v.type === 'size');
+    const colorVariant = variants.find((v) => v.type === "color");
+    const sizeVariant = variants.find((v) => v.type === "size");
 
     if (colorVariant && sizeVariant) {
-      const newVariantData: Variant[] = colorVariant.values.flatMap(colorId =>
-        sizeVariant.values.map(sizeId => ({
+      const newVariantData: Variant[] = colorVariant.values.flatMap((colorId) =>
+        sizeVariant.values.map((sizeId) => ({
           id: `${colorId}-${sizeId}`,
           mau_sac_id: colorId,
           kich_thuoc_id: sizeId,
-          gia_ban: '',
-          gia_khuyen_mai: '',
-          so_luong_bien_the: '',
+          gia_ban: "",
+          gia_khuyen_mai: "",
+          so_luong_bien_the: "",
           ngay_bat_dau_khuyen_mai: null,
           ngay_ket_thuc_khuyen_mai: null,
           anh_bien_the: [],
@@ -490,8 +110,8 @@ const ProductsAndVariants: React.FC = () => {
     generateVariantData();
   }, [generateVariantData]);
 
-  const isLoading = useMemo(() => 
-    categoriesLoading || sizesLoading || colorsLoading || tagsLoading, 
+  const isLoading = useMemo(
+    () => categoriesLoading || sizesLoading || colorsLoading || tagsLoading,
     [categoriesLoading, sizesLoading, colorsLoading, tagsLoading]
   );
 
@@ -500,27 +120,39 @@ const ProductsAndVariants: React.FC = () => {
   }
 
   if (!categoriesData || !sizesData || !colorsData || !tagsData) {
-    return <div className="text-center text-red-500">Không thể tải dữ liệu. Vui lòng thử lại sau.</div>;
+    return (
+      <div className="text-center text-red-500">
+        Không thể tải dữ liệu. Vui lòng thử lại sau.
+      </div>
+    );
   }
 
-  const addVariant = (value: 'color' | 'size') => {
-    setVariants(prev => [...prev, { type: value, values: [] }]);
+  const addVariant = (value: "color" | "size") => {
+    setVariants((prev) => [...prev, { type: value, values: [] }]);
   };
 
   const removeVariant = (index: number) => {
-    setVariants(prev => prev.filter((_, i) => i !== index));
+    setVariants((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateVariantValues = (index: number, values: number[]) => {
-    setVariants(prev => prev.map((v, i) => i === index ? { ...v, values } : v));
+    setVariants((prev) =>
+      prev.map((v, i) => (i === index ? { ...v, values } : v))
+    );
   };
 
-  const handleProductFormValuesChange = (_: any, allValues: ProductFormData) => {
+  const handleProductFormValuesChange = (
+    _: any,
+    allValues: ProductFormData
+  ) => {
     setProductFormData(allValues);
   };
 
   const handleRemoveImage = (file: UploadFile, record: Variant) => {
-    updateVariant({ ...record, anh_bien_the: record.anh_bien_the.filter((item) => item.uid !== file.uid) });
+    updateVariant({
+      ...record,
+      anh_bien_the: record.anh_bien_the.filter((item) => item.uid !== file.uid),
+    });
   };
 
   const handleImageChange = (info: any, record: Variant) => {
@@ -540,8 +172,8 @@ const ProductsAndVariants: React.FC = () => {
   };
 
   const updateVariant = (updatedVariant: Variant) => {
-    setVariantData(prevData =>
-      prevData.map(v => v.id === updatedVariant.id ? updatedVariant : v)
+    setVariantData((prevData) =>
+      prevData.map((v) => (v.id === updatedVariant.id ? updatedVariant : v))
     );
   };
 
@@ -556,22 +188,27 @@ const ProductsAndVariants: React.FC = () => {
 
   const handleAddProductError = (error: any) => {
     console.error("Error adding product:", error);
-    const errorFields = error.response?.data?.errors ? Object.keys(error.response.data.errors) : [];
-    const errorMessage = errorFields.length > 0
-      ? `Vui lòng kiểm tra lại các trường: ${errorFields.join(', ')}`
-      : "Đã xảy ra lỗi khi thêm sản phẩm.";
+    const errorFields = error.response?.data?.errors
+      ? Object.keys(error.response.data.errors)
+      : [];
+    const errorMessage =
+      errorFields.length > 0
+        ? `Vui lòng kiểm tra lại các trường: ${errorFields.join(", ")}`
+        : "Đã xảy ra lỗi khi thêm sản phẩm.";
     message.error(errorMessage);
     setIsSubmitting(false);
   };
 
   const validateVariants = () => {
     if (variantData.length === 0) {
-      throw new Error('Vui lòng thêm ít nhất một biến thể sản phẩm.');
+      throw new Error("Vui lòng thêm ít nhất một biến thể sản phẩm.");
     }
 
     variantData.forEach((variant, index) => {
       if (!variant.kich_thuoc_id || !variant.mau_sac_id) {
-        throw new Error(`Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`);
+        throw new Error(
+          `Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`
+        );
       }
 
       const regularPrice = parseFloat(variant.gia_ban);
@@ -579,7 +216,10 @@ const ProductsAndVariants: React.FC = () => {
         throw new Error(`Giá bán của biến thể ${index + 1} không hợp lệ.`);
       }
 
-      if (!variant.so_luong_bien_the || isNaN(parseInt(variant.so_luong_bien_the))) {
+      if (
+        !variant.so_luong_bien_the ||
+        isNaN(parseInt(variant.so_luong_bien_the))
+      ) {
         throw new Error(`Số lượng của biến thể ${index + 1} không hợp lệ.`);
       }
     });
@@ -590,7 +230,7 @@ const ProductsAndVariants: React.FC = () => {
 
     // Add product form data
     Object.entries(productFormData).forEach(([key, value]) => {
-      if (key !== 'tags' && key !== 'sizes' && key !== 'colors') {
+      if (key !== "tags" && key !== "sizes" && key !== "colors") {
         formData.append(key, value as string);
       }
     });
@@ -598,11 +238,13 @@ const ProductsAndVariants: React.FC = () => {
     // Upload product image
     if (fileList.length > 0 && fileList[0].originFileObj) {
       try {
-        const imageUrl = await uploadToCloudinary(fileList[0].originFileObj as RcFile);
-        formData.append('anh_san_pham', imageUrl);
+        const imageUrl = await uploadToCloudinary(
+          fileList[0].originFileObj as RcFile
+        );
+        formData.append("anh_san_pham", imageUrl);
       } catch (error) {
-        console.error('Error uploading product image:', error);
-        throw new Error('Lỗi khi tải lên ảnh sản phẩm');
+        console.error("Error uploading product image:", error);
+        throw new Error("Lỗi khi tải lên ảnh sản phẩm");
       }
     }
 
@@ -615,27 +257,36 @@ const ProductsAndVariants: React.FC = () => {
     for (let index = 0; index < variantData.length; index++) {
       const variant = variantData[index];
       Object.entries(variant).forEach(([key, value]) => {
-        if (key !== 'anh_bien_the') {
-          formData.append(`bien_the[${index}][${key}]`, value?.toString() || '');
+        if (key !== "anh_bien_the") {
+          formData.append(
+            `bien_the[${index}][${key}]`,
+            value?.toString() || ""
+          );
         }
       });
 
       // Upload variant images
       if (variant.anh_bien_the && variant.anh_bien_the.length > 0) {
-        for (let imgIndex = 0; imgIndex < variant.anh_bien_the.length; imgIndex++) {
+        for (
+          let imgIndex = 0;
+          imgIndex < variant.anh_bien_the.length;
+          imgIndex++
+        ) {
           const img = variant.anh_bien_the[imgIndex];
           if (img.originFileObj) {
             try {
-              const imageUrl = await uploadToCloudinary(img.originFileObj as RcFile);
+              const imageUrl = await uploadToCloudinary(
+                img.originFileObj as RcFile
+              );
               formData.append(`bien_the[${index}][anh][${imgIndex}]`, imageUrl);
             } catch (error) {
-              console.error('Error uploading variant image:', error);
-              throw new Error('Lỗi khi tải lên ảnh biến thể');
+              console.error("Error uploading variant image:", error);
+              throw new Error("Lỗi khi tải lên ảnh biến thể");
             }
           }
         }
       } else {
-        formData.append(`bien_the[${index}][anh][]`, '');
+        formData.append(`bien_the[${index}][anh][]`, "");
       }
     }
 
@@ -646,28 +297,28 @@ const ProductsAndVariants: React.FC = () => {
     if (error instanceof Error) {
       message.error(error.message);
     } else {
-      message.error('Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.');
+      message.error("Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.");
     }
     setIsSubmitting(false);
   };
 
   return (
     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-            <div className="flex items-center justify-between mt-5 left-5">
+      <div className="flex items-center justify-between mt-5 left-5">
         <h1 className="w-full text-3xl font-semibold text-gray-800 text-left">
-        Thêm sản phẩm và biến thể
-</h1>
+          Thêm sản phẩm và biến thể
+        </h1>
 
-          <Link to="/admin/products">
-            <Button icon={<ArrowLeftOutlined />}   className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md ml-2.5"
-            >
-              Quay lại
-            </Button>
-          </Link>
-        </div>
+        <Link to="/admin/products">
+          <Button
+            icon={<ArrowLeftOutlined />}
+            className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md ml-2.5"
+          >
+            Quay lại
+          </Button>
+        </Link>
+      </div>
       <div className="container mx-auto px-6 py-8">
-  
-
         <div className="bg-white rounded-lg shadow-md p-6">
           <ProductForm
             form={form}
@@ -679,9 +330,12 @@ const ProductsAndVariants: React.FC = () => {
           />
 
           <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Giá bán, Kho hàng và Biến thể</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Giá bán, Kho hàng và Biến thể
+            </h2>
             <p className="text-sm text-gray-600 mb-4">
-              Tạo biến thể nếu sản phẩm có hơn một tùy chọn, ví dụ như về kích thước hay màu sắc.
+              Tạo biến thể nếu sản phẩm có hơn một tùy chọn, ví dụ như về kích
+              thước hay màu sắc.
             </p>
             <div className="mb-6">
               <Select
@@ -694,46 +348,58 @@ const ProductsAndVariants: React.FC = () => {
               </Select>
             </div>
 
-            {variants.map((variant, index) => (
+            {variants?.map((variant, index) => (
               <div key={index} className="mb-6 bg-gray-50 p-4 rounded-md">
                 <h3 className="text-lg font-medium mb-2 flex justify-between items-center">
-                  Biến thể {variant.type === 'color' ? 'Màu sắc' : 'Kích thước'}
+                  Biến thể {variant.type === "color" ? "Màu sắc" : "Kích thước"}
                   <button
                     className="text-gray-400 hover:text-gray-600"
                     onClick={() => removeVariant(index)}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </button>
                 </h3>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {variant.type === 'color' ? 'Chọn màu sắc' : 'Chọn kích thước'}
+                    {variant.type === "color"
+                      ? "Chọn màu sắc"
+                      : "Chọn kích thước"}
                   </label>
                   <Select
                     mode="multiple"
-                    style={{ width: '100%' }}
-                    placeholder={`Chọn ${variant.type === 'color' ? 'màu sắc' : 'kích thước'}`}
+                    style={{ width: "100%" }}
+                    placeholder={`Chọn ${variant.type === "color" ? "màu sắc" : "kích thước"}`}
                     onChange={(values) => updateVariantValues(index, values)}
                     value={variant.values}
                   >
-                    {variant.type === 'color'
+                    {variant.type === "color"
                       ? colorsData.data.map((color) => (
-                        <Option key={color.id} value={color.id}>
-                          <div className="flex items-center">
-                            <div
-                              className="w-4 h-4 rounded-full mr-2"
-                              style={{ backgroundColor: color.ma_mau_sac }}
-                            />
-                            {color.ten_mau_sac}
-                          </div>
-                        </Option>
-                      ))
+                          <Option key={color.id} value={color.id}>
+                            <div className="flex items-center">
+                              <div
+                                className="w-4 h-4 rounded-full mr-2"
+                                style={{ backgroundColor: color.ma_mau_sac }}
+                              />
+                              {color.ten_mau_sac}
+                            </div>
+                          </Option>
+                        ))
                       : sizesData.data.map((size) => (
-                        <Option key={size.id} value={size.id}>{size.kich_thuoc}</Option>
-                      ))
-                    }
+                          <Option key={size.id} value={size.id}>
+                            {size.kich_thuoc}
+                          </Option>
+                        ))}
                   </Select>
                 </div>
               </div>
@@ -758,15 +424,23 @@ const ProductsAndVariants: React.FC = () => {
             onClick={handleSubmit}
             className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
             style={{
-              marginTop: '-60px',
-              padding: '18px 30px',
-              marginRight: '190px',
+              marginTop: "-60px",
+              padding: "18px 30px",
+              marginRight: "190px",
             }}
             disabled={isSubmitting}
           >
             {isSubmitting && (
-              <Spin indicator={<LoadingOutlined style={{ fontSize: 22, marginLeft: 10 }} spin />} />
-            )} {isSubmitting ? 'Đang xử lý...' : 'Thêm sản phẩm'}
+              <Spin
+                indicator={
+                  <LoadingOutlined
+                    style={{ fontSize: 22, marginLeft: 10 }}
+                    spin
+                  />
+                }
+              />
+            )}{" "}
+            {isSubmitting ? "Đang xử lý..." : "Thêm sản phẩm"}
           </Button>
         </div>
       </Form.Item>
