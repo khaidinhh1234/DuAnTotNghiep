@@ -89,7 +89,7 @@ const AddVoucher = () => {
   };
   useEffect(() => {
     generateRandomCode();
-  }, [length]);
+  }, []);
   //call api
   const { data: sanpham } = useQuery({
     queryKey: ["sanpham"],
@@ -426,11 +426,11 @@ const AddVoucher = () => {
                       label="Mã giảm giá áp dụng cho"
                       className="w-[100%] mb-4"
                       name="khuyen_mai_san_pham"
-                      // initialValue={}
+                      initialValue={[]}
                     >
                       <Radio.Group
                         className="flex "
-                        value={0}
+                        value={value}
                         onChange={(e) => setValue(e.target.value)}
                       >
                         <Radio

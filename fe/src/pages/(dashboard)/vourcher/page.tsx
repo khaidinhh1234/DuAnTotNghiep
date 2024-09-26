@@ -352,11 +352,11 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Chi tiết khuyến mãi",
 
-      key: "chi_tieu_toi_thieu",
+      key: "gioi_han_su_dung",
       width: "25%",
-      ...getColumnSearchProps("chi_tieu_toi_thieu"),
+      ...getColumnSearchProps("gioi_han_su_dung"),
       sorter: (a: any, b: any) =>
-        a.chi_tieu_toi_thieu.length - b.chi_tieu_toi_thieu.length,
+        a.gioi_han_su_dung.length - b.gioi_han_su_dung.length,
       render: (record) => (
         console.log(record),
         (
@@ -372,8 +372,9 @@ const PromotionAdmin: React.FC = () => {
                   " VND"}
               {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
             VND */}
-          </h5>
-        </div>
+            </h5>
+          </div>
+        )
       ),
     },
     {
