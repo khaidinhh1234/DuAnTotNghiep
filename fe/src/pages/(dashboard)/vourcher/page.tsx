@@ -26,7 +26,7 @@ interface PromotionType {
   hang_thanh_viens: string;
   tong_giam_gia_toi_da: string;
   so_luot_su_dung: number;
-  gioi_han_su_dung: number;
+  chi_tieu_toi_thieu: number;
 }
 
 // const promotions: PromotionType[] = [
@@ -294,9 +294,9 @@ const PromotionAdmin: React.FC = () => {
       render: (record) => (
         <>
           <span
-            className={` font-medium text-md ${record.so_luong > 20 ? "text-gray-600" : record.so_luong > 5 ? "text-yellow-600" : "text-red-600"}`}
+            className={` font-medium text-md ${record.so_luong - record.so_luong_da_su_dung >= 20 ? "text-gray-600" : record.so_luong - record.so_luong_da_su_dung >= 5 ? "text-yellow-600" : "text-red-600"}`}
           >
-            {record.so_luong} Lượt
+            {record.so_luong_da_su_dung} / {record.so_luong}
           </span>
         </>
       ),
@@ -352,11 +352,11 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Chi tiết khuyến mãi",
 
-      key: "tong_giam_gia_toi_da",
+      key: "chi_tieu_toi_thieu",
       width: "25%",
-      ...getColumnSearchProps("tong_giam_gia_toi_da"),
+      ...getColumnSearchProps("chi_tieu_toi_thieu"),
       sorter: (a: any, b: any) =>
-        a.tong_giam_gia_toi_da.length - b.tong_giam_gia_toi_da.length,
+        a.chi_tieu_toi_thieu.length - b.chi_tieu_toi_thieu.length,
       render: (record) => (
         console.log(record),
         (
@@ -365,10 +365,10 @@ const PromotionAdmin: React.FC = () => {
               Mức giảm giá: {record.giam_gia}{" "}
               {record.loai === "tien_mat" ? "VND" : "%"}
               <br />
-              {record.tong_giam_gia_toi_da === 0
+              {record.gioi_han_su_dung === 0
                 ? "Áp dụng cho tất cả sản phẩm"
                 : "   Giá trị đơn hàng tối thiểu  " +
-                  record.tong_giam_gia_toi_da +
+                  record.gioi_han_su_dung +
                   " VND"}
               {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
             VND */}

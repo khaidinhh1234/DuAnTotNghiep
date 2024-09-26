@@ -56,7 +56,8 @@ class DanhGiaController extends Controller
             $validateDanhGia = $request->validate([
                 'user_id' => 'required|exists:users,id',
                 'san_pham_id' => 'required|exists:san_phams,id',
-                'so_sao' => 'required|integer|min:1|max:5',
+                'so_sao_san_pham' => 'required|integer|min:1|max:5',
+                'so_sao_dich_vu_van_chuyen' => 'required|integer|min:1|max:5',
                 'noi_dung' => 'nullable|string',
                 'huu_ich' => 'nullable|integer|min:0',
                 'anh_danh_gia.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',

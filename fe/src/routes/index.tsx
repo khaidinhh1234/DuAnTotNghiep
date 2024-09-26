@@ -67,6 +67,11 @@ import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 
+<<<<<<< HEAD
+=======
+// import Test from "@/pages/(dashboard)/test";
+
+>>>>>>> 2064d26ceaea608f306a57a14d085a8aef077832
 import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
 import UserskhachhangEdit from "@/pages/(dashboard)/user/khachhang/edit/page";
 import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
@@ -81,14 +86,17 @@ import PageNew from "@/pages/(dashboard)/news/pagenew";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 
+<<<<<<< HEAD
 
 
 import Test from "@/pages/(dashboard)/test";
+=======
+// import Test from "@/pages/(dashboard)/test";
+>>>>>>> 2064d26ceaea608f306a57a14d085a8aef077832
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
 import Tagsedit from "@/pages/(dashboard)/tags/edit/edit";
-
 
 // import Test from "@/pages/(dashboard)/vourcher/test/test";
 import Bienthe from "./../pages/(dashboard)/products/bienthe/bienthe";
@@ -96,11 +104,17 @@ import Color from "@/pages/(dashboard)/products/bienthe/color";
 import Size from "@/pages/(dashboard)/products/bienthe/size";
 import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
 import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
+<<<<<<< HEAD
 import ViewNew from "@/pages/(dashboard)/news/view/ViewNew";
 // import Test from "@/pages/(dashboard)/test";
+=======
+import Test from "@/pages/(dashboard)/test";
+// import Test from "@/pages/(dashboard)/test";
+
+>>>>>>> 2064d26ceaea608f306a57a14d085a8aef077832
 
 const Router = () => {
-// 
+  //
 
   return (
     <>
@@ -153,24 +167,16 @@ const Router = () => {
           <Route path="products/add" element={<ProductsAdd />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
-
           {/* Tag */}
           <Route path="products/tags" element={<Tags />} />
           <Route path="products/tags/add" element={<Tagsadd />} />
           <Route path="products/tags/edit/:id" element={<Tagsedit />} />
           <Route path="products/tags/remote" element={<TagsRemoteAdmin />} />
-
           <Route path="products/bienthe" element={<Bienthe />} />
           <Route path="products/bienthecolor/edit/:id" element={<Color />} />
           <Route path="products/bienthesize/edit/:id" element={<Size />} />
           <Route path="products/bienthe/remote" element={<Remotecolor />} />
           <Route path="products/bienthe/remotesize" element={<Remotesize />} />
-
-
-
-
-
-
           {/* danh mục */}
           <Route path="categories" element={<CategoriesAdmin />} />
           <Route path="categories/add" element={<CategoriesAdd />} />
@@ -184,10 +190,15 @@ const Router = () => {
           <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
           <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* tin tức */}
+
           <Route path="news" element={<PageNew/>}/>
           <Route path="news/add" element={<NewAdd/>}/>
           <Route path="news/edit/:id" element={<NewEdit/>}/>
+<<<<<<< HEAD
           <Route path="news/details/:id" element={<ViewNew/>}/>
+=======
+
+>>>>>>> 2064d26ceaea608f306a57a14d085a8aef077832
           {/* Tài khoản */}
           <Route
             path="users"
@@ -219,7 +230,7 @@ const Router = () => {
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          {/* <Route path="test" element={<Test />} /> */}
+          <Route path="test" element={<Test />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
