@@ -27,7 +27,7 @@ const menu = [
     icon: Package,
     subMenu: [
       { name: "Danh sách sản phẩm", path: "products/list" },
-      { name: "Biến thể", path: "products/add" },
+      { name: "Biến thể", path: "products/bienthe" },
       { name: "Quản lý nhãn dán", path: "products/tags" },
     ],
   },
