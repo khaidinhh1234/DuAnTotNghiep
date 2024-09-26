@@ -19,7 +19,7 @@ class MaKhuyenMaiController extends Controller
     public function index()
     {
         try {
-            $data = MaKhuyenMai::query()->with(['sanPhams', 'hangThanhViens'])->orderByDesc('id')->get();
+            $data = MaKhuyenMai::query()->with(['sanPhams', 'hangThanhViens','danhMucs'])->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -52,6 +52,7 @@ class MaKhuyenMaiController extends Controller
             'giam_gia'             => 'required|numeric',
             'chi_tieu_thoi_thieu'  => 'nullable|numeric',
             'khuyen_mai_san_pham'  => 'nullable|array',
+            'khuyen_mai_danh_muc'  => 'nullable|array',
             'hang_thanh_vien'      => 'required|array'
         ]);
 
@@ -67,15 +68,23 @@ class MaKhuyenMaiController extends Controller
 
         try {
             DB::beginTransaction();
-            $dataMaKhuyenMai = $request->except('khuyen_mai_san_pham');
+            $dataMaKhuyenMai = $request->except(['khuyen_mai_san_pham', 'khuyen_mai_danh_muc']);
             $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
+
             $dataKhuyenMaiSanPham = $request->khuyen_mai_san_pham;
-            if (empty($dataKhuyenMaiSanPham)) {
-                $sanPhamIds = DB::table('san_phams')->pluck('id')->toArray(); // Lấy danh sách id sản phẩm
-                $dataKhuyenMaiSanPham = $sanPhamIds;  // Gán toàn bộ sản phẩm vào khuyến mãi
+            $dataKhuyenMaiDanhMuc = $request->khuyen_mai_danh_muc;
+
+            if (!empty($dataKhuyenMaiDanhMuc)) {
+                $maKhuyenMai->danhMucs()->sync($dataKhuyenMaiDanhMuc);
+            } else {
+                if (empty($dataKhuyenMaiSanPham)) {
+                    $sanPhamIds = DB::table('san_phams')->pluck('id')->toArray(); // Lấy danh sách id sản phẩm
+                    $dataKhuyenMaiSanPham = $sanPhamIds;  // Gán toàn bộ sản phẩm vào khuyến mãi
+                }
+                $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
             }
-            $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
             $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
+
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -93,14 +102,13 @@ class MaKhuyenMaiController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
         try {
-            $maKhuyenMai = MaKhuyenMai::query()->with(['sanPhams', 'hangThanhViens'])->findOrFail($id);
+            $maKhuyenMai = MaKhuyenMai::query()->with(['sanPhams', 'hangThanhViens','danhMucs'])->findOrFail($id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -123,52 +131,25 @@ class MaKhuyenMaiController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'ma_code'              => 'required|string|max:255|unique:ma_khuyen_mais,ma_code',
             'mo_ta'                => 'nullable|string',
-            'loai'                 => 'required|string|in:phan_tram,tien_mat',
-            'ngay_bat_dau_suu_tam' => 'required|date|before_or_equal:ngay_bat_dau',
-            'ngay_bat_dau'         => 'required|date|before:ngay_ket_thuc',
-            'ngay_ket_thuc'        => 'required|date',
-            'so_luong'             => 'required|integer',
-            'giam_gia'             => 'required|numeric',
-            'chi_tieu_thoi_thieu'  => 'nullable|numeric',
-            'khuyen_mai_san_pham'  => 'nullable|array',
-            'hang_thanh_vien'      => 'required|array'
+            'so_luong'             => 'required|integer'
         ]);
-
-        $validator->after(function ($validator) use ($request) {
-            if ($request->loai === 'phan_tram' && $request->giam_gia > 50) {
-                $validator->errors()->add('giam_gia', 'Giá trị giảm giá không được lớn hơn 50% nếu loại là phần trăm.');
-            }
-        });
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
         try {
             DB::beginTransaction();
             $maKhuyenMai = MaKhuyenMai::findOrFail($id);
             $dataMaKhuyenMai = $request->except('khuyen_mai_san_pham');
             $maKhuyenMai->update($dataMaKhuyenMai);
 
-            $dataKhuyenMaiSanPham = $request->khuyen_mai_san_pham;
-
-            if (empty($dataKhuyenMaiSanPham)) {
-                $sanPhamIds = DB::table('san_phams')->pluck('id')->toArray(); // Lấy danh sách id sản phẩm
-                $dataKhuyenMaiSanPham = $sanPhamIds;  // Gán toàn bộ sản phẩm vào khuyến mãi
-            }
-
-            $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
-            $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
-            DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Đã cập nhật mã khuyến mãi thành công',
             ], 200);
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
