@@ -275,13 +275,7 @@ const AddVoucher = () => {
             autoComplete="off"
           >
             <div className="my-3 w-[50%]">
-              <Form.Item
-                name="ma_code"
-                initialValue={voucherCode}
-                rules={[
-                  { required: true, message: "Vui lòng nhập mã khuyến mãi!" },
-                ]}
-              >
+              <Form.Item name="ma_code" initialValue={voucherCode}>
                 <div className="flex items-center gap-2">
                   <Input
                     value={voucherCode}
