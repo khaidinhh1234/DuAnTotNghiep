@@ -12,7 +12,8 @@ class DanhGia extends Model
     protected $fillable = [
         'user_id',
         'san_pham_id',
-        'so_sao',
+        'so_sao_san_pham',
+        'so_sao_dich_vu_van_chuyen',
         'noi_dung',
         'huu_ich',
     ];
