@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Flex, Input, Table } from "antd";
+import { Button, Flex, Input, Popconfirm, Select, Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import instance from "@/configs/axios";
@@ -25,7 +25,24 @@ interface DataType {
   duong_dan: string;
   trang_thai_van_chuyen: string;
 }
-
+const datas = [
+  {
+    value: "1",
+    label: "Xác nhận đơn hàng",
+  },
+  {
+    value: "2",
+    label: "Hoàn tất đơn hàng",
+  },
+  {
+    value: "3",
+    label: "Xác nhận Thanh toán",
+  },
+  {
+    value: "4",
+    label: "Hủy đơn hàng",
+  },
+];
 const columns: TableColumnsType<DataType> = [
   {
     title: "Mã Đơn hàng",
@@ -198,6 +215,7 @@ const columns: TableColumnsType<DataType> = [
 const OrderAdmin: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
+  const [formcheck, setFormCheck] = useState(false);
   const { data, isLoading, isError } = useQuery({
     queryKey: ["ORDERS"],
     queryFn: async () => {
@@ -208,16 +226,17 @@ const OrderAdmin: React.FC = () => {
   const order: DataType[] | undefined = data?.data;
   // console.log(order);
   const start = () => {
-    setLoading(true);
+    setFormCheck(!formcheck);
+    // setLoading(true);
     // ajax request after empty completing
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
+    // setTimeout(() => {
+    // console.log("selectedRowKeys", selectedRowKeys);
+    // setLoading(false);
+    // }, 1000);
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    // console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -235,7 +254,9 @@ const OrderAdmin: React.FC = () => {
       key: i,
     })
   );
-
+  const handleChange = (value: string) => {
+    console.log(`selected ${value}`);
+  };
   const hasSelected = selectedRowKeys.length > 0;
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error...</div>;
@@ -261,15 +282,48 @@ const OrderAdmin: React.FC = () => {
           />
         </div>
         <Flex gap="middle" vertical>
-          <Flex align="center" gap="middle">
+          <Flex align="center" gap="middle" className="relative">
             <Button
               type="primary"
               onClick={start}
               disabled={!hasSelected}
               loading={loading}
+              className="text-white  "
             >
-              Reload
+              Thao tác
             </Button>
+            {formcheck && (
+              <>
+                <div className="bg-white absolute left-0 top-10 z-10 w-80 h-36 rounded-lg shadow-md p-3">
+                  <p>Cập nhật trạng thái đơn hàng theo:</p>
+                  <Select
+                    defaultValue={datas[0].label}
+                    style={{ width: "100%" }}
+                    onChange={handleChange}
+                    options={datas}
+                  />{" "}
+                  <br />
+                  <div className="my-5 flex justify-between">
+                    <Popconfirm
+                      title="Trạng thái "
+                      description="Bạn có chắc chắn muốn  cập nhật trạng thái đơn hàng này?"
+                      okText="Có "
+                      cancelText="Không"
+                    >
+                      <Button
+                        type="primary"
+                        className="bg-red-500  text-white hover:bg-red-700"
+                        // onClick={start}
+                        disabled={!hasSelected}
+                        loading={loading}
+                      >
+                        Xác nhận
+                      </Button>{" "}
+                    </Popconfirm>
+                  </div>
+                </div>
+              </>
+            )}
             {hasSelected ? `Đã chọn ${selectedRowKeys.length} đơn` : null}
           </Flex>
           <Table<DataType>
