@@ -7,8 +7,9 @@ use App\Models\HangThanhVien;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class ThongKeHangThanhVienController extends Controller
+class ThongKeKhachHangController extends Controller
 {
     public function thongKeKhachHangTheoHangThanhVien()
     {
@@ -89,5 +90,38 @@ class ThongKeHangThanhVienController extends Controller
         });
 
         return response()->json($thongKeChiTiet);
+    }
+    public function thongKeKhachHangQuayLaiTheoThang()
+    {
+        // Lấy danh sách các khách hàng quay lại theo từng tháng (nhóm theo tháng và user_id)
+        $khachHangQuayLaiTheoThang = DB::table('don_hangs')
+            ->select(
+                'user_id',
+                DB::raw('YEAR(created_at) as nam'),
+                DB::raw('MONTH(created_at) as thang'),
+                DB::raw('count(id) as so_luong_don_hang')
+            )
+            ->groupBy('user_id', 'nam', 'thang')
+            ->having('so_luong_don_hang', '>', 1)
+            ->get();
+
+        // Lấy thông tin chi tiết của các khách hàng quay lại trong từng tháng
+        $thongTinKhachHangTheoThang = [];
+        foreach ($khachHangQuayLaiTheoThang as $khachHang) {
+            $thongTin = DB::table('users')
+                ->where('id', $khachHang->user_id)
+                ->first(['ho', 'ten', 'email', 'so_dien_thoai', 'dia_chi', 'ngay_sinh', 'gioi_tinh']);
+
+            $thongTinKhachHangTheoThang[] = [
+                'nam' => $khachHang->nam,
+                'thang' => $khachHang->thang,
+                'so_luong_don_hang' => $khachHang->so_luong_don_hang,
+                'thong_tin_khach_hang' => $thongTin,
+            ];
+        }
+
+        return response()->json([
+            'khach_hang_quay_lai_theo_thang' => $thongTinKhachHangTheoThang
+        ]);
     }
 }

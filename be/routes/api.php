@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\Api\ThongKeDanhGiaController;
 use App\Http\Controllers\Admin\API\ThongKeDoanhThuController;
 use App\Http\Controllers\Admin\Api\ThongKeDonHangController;
 use App\Http\Controllers\Admin\Api\ThongKeHangThanhVienController;
+use App\Http\Controllers\Admin\Api\ThongKeKhachHangController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
@@ -173,11 +174,11 @@ Route::middleware([])
         // Thống kê số lượng sản phẩm sắp hết hàng
         Route::get('/thong-ke/so-luong-san-pham-sap-het-hang', [ThongKeDoanhThuController::class, 'soLuongSanPhamSapHetHang']);
         //Route Thống kê hạng thành viên
-        Route::get('/thong-ke/khach-hang-theo-hang-thanh-vien', [ThongKeHangThanhVienController::class, 'thongKeKhachHangTheoHangThanhVien'])->name('khach-hang-theo-hang-thanh-vien');
-        Route::get('/thong-ke/khach-hang-moi-theo-hang', [ThongKeHangThanhVienController::class, 'thongKeKhachHangMoiTheoHangThanhVien'])->name('khach-hang-moi-theo-hang');
+        Route::get('/thong-ke/khach-hang-theo-hang-thanh-vien', [ThongKeKhachHangController::class, 'thongKeKhachHangTheoHangThanhVien'])->name('khach-hang-theo-hang-thanh-vien');
+        Route::get('/thong-ke/khach-hang-moi-theo-hang', [ThongKeKhachHangController::class, 'thongKeKhachHangMoiTheoHangThanhVien'])->name('khach-hang-moi-theo-hang');
         //Route thống kêkhách hàng mới
-        Route::get('/thong-ke/khach-hang-moi-theo-tung-thang',  [ThongKeHangThanhVienController::class, 'thongKeKhachHangMoi'])->name('khach-hang-moi-theo-tung-thang');
-
+        Route::get('/thong-ke/khach-hang-moi-theo-tung-thang',  [ThongKeKhachHangController::class, 'thongKeKhachHangMoi'])->name('khach-hang-moi-theo-tung-thang');
+        Route::get('/thong-ke/khach-hang-quay-lai-theo-thang',  [ThongKeKhachHangController::class, 'thongKeKhachHangQuayLaiTheoThang'])->name('thong_ke.khach_hang_quay_lai-theo-thang');
         Route::get('/thong-ke/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai'])->name("don-hang-theo-trang-thai.thong-ke");
         Route::get('/thong-ke/hoan-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHoanHang'])->name('hoan-hang-theo-thang.thong-ke');
         Route::get('/thong-ke/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHangTheoThang'])->name('huy-hang-theo-thang.thong-ke');
