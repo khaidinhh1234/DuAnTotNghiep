@@ -76,3 +76,24 @@ export interface ProductFormData {
   anh_san_pham: UploadFile[];
 
 }
+export interface IColor {
+  id?: string;
+  ten_mau_sac: string;
+  ma_mau_sac: string;
+}
+
+export type ColorResponse = {
+  data: IColor;
+  message: string;
+  status: number;
+}
+
+export type ColorParams = {
+  id: string;
+}
+
+export type ColorFormValues = Omit<IColor, 'id'>;
+
+export type UpdateColorMutationFn = (values: ColorFormValues) => Promise<ColorResponse>;
+
+export type FetchColorQueryFn = () => Promise<ColorResponse>;

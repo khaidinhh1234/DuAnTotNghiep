@@ -293,7 +293,11 @@ const PromotionAdmin: React.FC = () => {
       width: "15%",
       render: (record) => (
         <>
-          <span className="text-gray-600 text-md">{record.so_luong}</span>
+          <span
+            className={` font-medium text-md ${record.so_luong > 20 ? "text-gray-600" : record.so_luong > 5 ? "text-yellow-600" : "text-red-600"}`}
+          >
+            {record.so_luong} Lượt
+          </span>
         </>
       ),
     },
@@ -354,20 +358,23 @@ const PromotionAdmin: React.FC = () => {
       sorter: (a: any, b: any) =>
         a.tong_giam_gia_toi_da.length - b.tong_giam_gia_toi_da.length,
       render: (record) => (
-        <div>
-          <h5>
-            Mức giảm giá: {record.giam_gia}{" "}
-            {typeof record.giam_gia === "number" ? "VND" : "%"}
-            <br />
-            {record.tong_giam_gia_toi_da === 0
-              ? "Áp dụng cho tất cả sản phẩm"
-              : "   Giá trị đơn hàng tối thiểu  " +
-                record.tong_giam_gia_toi_da +
-                " VND"}
-            {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
+        console.log(record),
+        (
+          <div>
+            <h5>
+              Mức giảm giá: {record.giam_gia}{" "}
+              {record.loai === "tien_mat" ? "VND" : "%"}
+              <br />
+              {record.tong_giam_gia_toi_da === 0
+                ? "Áp dụng cho tất cả sản phẩm"
+                : "   Giá trị đơn hàng tối thiểu  " +
+                  record.tong_giam_gia_toi_da +
+                  " VND"}
+              {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
             VND */}
-          </h5>
-        </div>
+            </h5>
+          </div>
+        )
       ),
     },
     {
@@ -375,17 +382,32 @@ const PromotionAdmin: React.FC = () => {
       dataIndex: "trang_thai",
       key: "trang_thai",
       width: "10%",
-      render: (trang_thai: string) => (
+      render: (trang_thai: number | string) => (
         <Tag
-          color={trang_thai === "Đang hoạt động" ? "#00a854" : "#f04134"}
-          className="font-semibold px-2  rounded-lg"
+          color={
+            trang_thai == 1
+              ? "#00a854"
+              : trang_thai == 2
+                ? "#f0cb35"
+                : "#f04134"
+          }
+          className="font-semibold px-2  rounded-lg "
         >
-          {trang_thai === "Đang hoạt động" ? (
+          {trang_thai == 1 ? (
             <CheckCircleOutlined />
+          ) : trang_thai == "" ? (
+            <CloseCircleOutlined />
           ) : (
             <CloseCircleOutlined />
-          )}{" "}
-          hết hạn
+          )}
+          <span>
+            {" "}
+            {trang_thai == 1
+              ? "hoạt động"
+              : trang_thai == 2
+                ? "Tạm ngừng"
+                : "hết hạn "}
+          </span>
         </Tag>
       ),
     },
@@ -393,34 +415,45 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Quản trị",
       key: "action",
-      render: (_, record) => (
+      render: (_, record: any) => (
         <Space>
           {/* {record.trang_thai === "Đang hoạt động" ? ( */}
           <>
-            <Popconfirm
-              title="Chuyển vào thùng rác"
-              description="Bạn có chắc chắn muốn tắt không?"
-              okText="Có"
-              cancelText="Không"
-            >
-              <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                Tắt
-              </Button>
-            </Popconfirm>
-            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-              Cập nhật
-            </Button>{" "}
+            {record.trang_thai == 1 && (
+              <>
+                <Popconfirm
+                  title="Chuyển vào thùng rác"
+                  description="Bạn có chắc chắn muốn tắt không?"
+                  okText="Có"
+                  cancelText="Không"
+                >
+                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                    Tắt
+                  </Button>
+                </Popconfirm>
+                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  Cập nhật
+                </Button>{" "}
+              </>
+            )}
+            {record.trang_thai == 2 && (
+              <>
+                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  Bật
+                </Button>
+                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  Xem
+                </Button>{" "}
+              </>
+            )}
+            {record.trang_thai == 0 && (
+              <>
+                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  Xem
+                </Button>{" "}
+              </>
+            )}
           </>
-          {/* ) : (
-            <>
-              <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                Xem
-              </Button>{" "}
-              <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                kích hoạt
-              </Button>
-            </>
-          )} */}
         </Space>
       ),
     },

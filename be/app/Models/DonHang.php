@@ -20,7 +20,7 @@ class DonHang extends Model
     const TTDH_DGH = 'Đang giao hàng';
     const TTDH_DGTC = 'Đã giao hàng thành công';
     const TTDH_DH = 'Đã hủy hàng';
-
+    const TTDH_HH = 'Hoàn hàng';
 
     protected $fillable = [
         'user_id',
@@ -43,7 +43,8 @@ class DonHang extends Model
         return $this->hasMany(DonHangChiTiet::class);
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
     protected static function boot()

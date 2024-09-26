@@ -11,22 +11,23 @@ import { ICategories } from "@/common/types/category";
 import { toast } from "react-toastify";
 const { TabPane } = Tabs;
 
-
 const CategoriesAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(new Map());
+  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(
+    new Map()
+  );
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['danhmuc'],
+    queryKey: ["danhmuc"],
     queryFn: async () => {
       try {
-        const response = await instance.get('/admin/danhmuc');
+        const response = await instance.get("/admin/danhmuc");
         const categories = response.data;
         const categoryMap = new Map<string, string>();
-        categories.data.forEach((category: ICategories) => {
+        categories.data.forEach((category: any) => {
           categoryMap.set(category.id, category.ten_danh_muc);
         });
         setCategoriesMap(categoryMap);
@@ -38,11 +39,11 @@ const CategoriesAdmin: React.FC = () => {
     },
   });
 
-
-  const dataSource = data?.data.map((category: ICategories) => ({
-    key: category.id,
-    ...category,
-  })) || [];
+  const dataSource =
+    data?.data.map((category: ICategories) => ({
+      key: category.id,
+      ...category,
+    })) || [];
 
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
@@ -51,7 +52,7 @@ const CategoriesAdmin: React.FC = () => {
         if (response.data.status) {
           return id;
         } else {
-          throw new Error(response.data.message || 'Failed to delete');
+          throw new Error(response.data.message || "Failed to delete");
         }
       } catch (error) {
         console.error("Error deleting category:", error);
@@ -59,7 +60,7 @@ const CategoriesAdmin: React.FC = () => {
       }
     },
     onSuccess: (id) => {
-      queryClient.invalidateQueries(['danhmuc']);
+      queryClient.invalidateQueries({ queryKey: ["danhmuc"] });
       toast.success("Xóa danh mục thành công");
     },
     onError: (error) => {
@@ -163,9 +164,9 @@ const CategoriesAdmin: React.FC = () => {
       width: "20%",
       key: "ten_danh_muc",
       dataIndex: "ten_danh_muc",
-      ...getColumnSearchProps("ten_danh_muc"),
+      // ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a: any, b: any) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
-      render: (text) => (text ? text : "Chưa có dữ liệu")
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Ảnh danh mục",
@@ -181,7 +182,7 @@ const CategoriesAdmin: React.FC = () => {
           />
         ) : (
           <span>Ảnh không có</span>
-        )
+        ),
     },
     {
       title: "Danh mục cha",
@@ -249,10 +250,16 @@ const CategoriesAdmin: React.FC = () => {
       </div>
       <Tabs defaultActiveKey="1">
         <TabPane tab="Danh mục cha" key="1">
-          <Table columns={columns} dataSource={dataSource.filter(category => !category.cha_id)} />
+          <Table
+            columns={columns}
+            dataSource={dataSource.filter((category: any) => !category.cha_id)}
+          />
         </TabPane>
         <TabPane tab="Danh mục con" key="2">
-          <Table columns={columns} dataSource={dataSource.filter(category => category.cha_id)} />
+          <Table
+            columns={columns}
+            dataSource={dataSource.filter((category: any) => category.cha_id)}
+          />
         </TabPane>
       </Tabs>
     </main>
