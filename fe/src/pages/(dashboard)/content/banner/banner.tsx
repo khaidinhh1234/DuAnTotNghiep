@@ -229,3 +229,238 @@ const BannerManagement = () => {
 };
 
 export default BannerManagement;
+// import React, { useEffect, useState } from 'react';
+// import instance from "@/configs/axios";
+
+// const BannerManagement = () => {
+//   const [banners, setBanners] = useState([]);
+
+//   // Fetch dữ liệu từ API khi component được mount
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const response = await instance.get('/admin/thong-tin-web');
+        
+//         // Kiểm tra nếu API trả về status là true
+//         if (response.data.status) {
+//           // Parse chuỗi JSON banner
+//           const bannerData = JSON.parse(response.data.data.banner);
+//           console.log(bannerData)
+//           setBanners(bannerData);  // Lưu vào state
+//         }
+//       } catch (error) {
+//         console.error('Lỗi khi lấy dữ liệu:', error);
+//       }
+//     };
+
+//     fetchData();
+//   }, []); // Mảng trống để đảm bảo chỉ chạy một lần khi component mount
+
+//   return (
+//     <div>
+//       <h1>Banners</h1>
+//       <div className="banner-list">
+//         {banners.map((banner) => (
+//           <div key={banner.id} className="banner-item" style={{ backgroundImage: `url(${banner.duong_dan})` }}>
+//             <h2 style={{ color: banner.mau_tieu_de_chinh }}>{banner.tieu_de_chinh}</h2>
+//             <p style={{ color: banner.mau_tieu_de_phu }}>{banner.tieu_de_phu}</p>
+//             <p style={{ color: banner.mau_van_ban_quang_cao }}>{banner.van_ban_quang_cao}</p>
+//             <button style={{ backgroundColor: banner.mau_nut }}>{banner.tieu_de_nut}</button>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default BannerManagement;
+// import React, { useState, useEffect } from 'react';
+// import { PlusOutlined } from '@ant-design/icons';
+// import { Button, Input, Table, Upload, Image, ColorPicker, Carousel, Empty } from 'antd';
+// import type { UploadFile, UploadProps } from 'antd';
+// import instance from "@/configs/axios";
+
+// const getBase64 = (file: File): Promise<string> =>
+//   new Promise((resolve, reject) => {
+//     const reader = new FileReader();
+//     reader.readAsDataURL(file);
+//     reader.onload = () => resolve(reader.result as string);
+//     reader.onerror = (error) => reject(error);
+//   });
+
+// const BannerManagement = () => {
+//   const [banners, setBanners] = useState([]);
+//   const [previewOpen, setPreviewOpen] = useState(false);
+//   const [previewImage, setPreviewImage] = useState('');
+//   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const response = await instance.get('/admin/thong-tin-web');
+        
+//         if (response.data.status) {
+//           const bannerData = JSON.parse(response.data.data.banner);
+//           console.log(bannerData);
+//           setBanners(bannerData);
+          
+//           // Convert banner images to fileList
+//           const newFileList = bannerData.map((banner, index) => ({
+//             uid: `-${index}`,
+//             name: `banner-${index}`,
+//             status: 'done',
+//             url: banner.duong_dan,
+//           }));
+//           setFileList(newFileList);
+//         }
+//       } catch (error) {
+//         console.error('Lỗi khi lấy dữ liệu:', error);
+//       }
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   const handlePreview = async (file: UploadFile) => {
+//     if (!file.url && !file.preview) {
+//       file.preview = await getBase64(file.originFileObj as File);
+//     }
+//     setPreviewImage(file.url || (file.preview as string));
+//     setPreviewOpen(true);
+//   };
+
+//   const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) =>
+//     setFileList(newFileList);
+
+//   const handleRemove = (file: UploadFile) => {
+//     if (fileList.length <= 3) {
+//       return false;
+//     }
+//     return true;
+//   };
+
+//   const uploadButton = (
+//     <button style={{ border: 0, background: 'none' }} type="button">
+//       <PlusOutlined />
+//       <div style={{ marginTop: 8 }}>Upload</div>
+//     </button>
+//   );
+
+//   return (
+//     <div className="p-4 grid grid-cols-2 gap-4">
+//       <div className="flex flex-col space-y-9">
+//         <div>
+//           <h2 className="text-xl font-semibold mb-2">Ảnh Banner</h2>
+//           <Upload
+//             action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+//             listType="picture-card"
+//             fileList={fileList}
+//             onPreview={handlePreview}
+//             onChange={handleChange}
+//             onRemove={handleRemove}
+//           >
+//             {fileList.length >= 4 ? null : uploadButton}
+//           </Upload>
+//           {previewImage && (
+//             <Image
+//               wrapperStyle={{ display: 'none' }}
+//               preview={{
+//                 visible: previewOpen,
+//                 onVisibleChange: (visible) => setPreviewOpen(visible),
+//                 afterOpenChange: (visible) => !visible && setPreviewImage(''),
+//               }}
+//               src={previewImage}
+//             />
+//           )}
+//         </div>
+
+//         <div>
+//           <h2 className="text-xl font-semibold mb-2">Nội dung banner</h2>
+//           <Table dataSource={banners} pagination={false}>
+//             <Table.Column title="Tiêu đề chính" dataIndex="tieu_de_chinh" key="tieu_de_chinh" />
+//             <Table.Column title="Tiêu đề phụ" dataIndex="tieu_de_phu" key="tieu_de_phu" />
+//             <Table.Column title="Văn bản quảng cáo" dataIndex="van_ban_quang_cao" key="van_ban_quang_cao" />
+//             <Table.Column title="Tiêu đề nút" dataIndex="tieu_de_nut" key="tieu_de_nut" />
+//           </Table>
+//         </div>
+//       </div>
+
+//       <div className="flex flex-col space-y-4">
+//         <div>
+//           <h2 className="text-xl font-semibold mb-2">Xem trước</h2>
+//           {banners.length > 0 ? (
+//             <Carousel autoplay>
+//               {banners.map((banner, index) => (
+//                 <div key={index}>
+//                   <div
+//                     style={{
+//                       padding: '10px',
+//                       borderRadius: '8px',
+//                       position: 'relative',
+//                       overflow: 'hidden',
+//                       height: '300px',
+//                       width: '100%',
+//                     }}
+//                   >
+//                     <img
+//                       src={banner.duong_dan}
+//                       alt={`Banner preview ${index}`}
+//                       style={{
+//                         position: 'absolute',
+//                         top: 0,
+//                         left: 0,
+//                         width: '100%',
+//                         height: '100%',
+//                         objectFit: 'cover',
+//                         zIndex: 0,
+//                       }}
+//                     />
+//                     <div className="absolute top-[100px] left-16">
+//                       <div className="mb-4">
+//                         <p
+//                           className="font-semibold text-sm mb-2"
+//                           style={{ color: banner.mau_tieu_de_chinh }}
+//                         >
+//                           {banner.tieu_de_chinh}
+//                         </p>
+//                         <p
+//                           className="text-xl font-bold mb-2 tracking-[1px]"
+//                           style={{ color: banner.mau_tieu_de_phu }}
+//                         >
+//                           {banner.tieu_de_phu}
+//                         </p>
+//                         <p
+//                           className="text-base font-medium uppercase"
+//                           style={{ color: banner.mau_van_ban_quang_cao }}
+//                         >
+//                           {banner.van_ban_quang_cao}
+//                         </p>
+//                       </div>
+//                       <div>
+//                         <button
+//                           className="px-4 py-2 rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium"
+//                           style={{ backgroundColor: banner.mau_nut, color: '#FFFFFF' }}
+//                         >
+//                           {banner.tieu_de_nut}
+//                           <i className="fa-solid fa-arrow-right ml-2"></i>
+//                         </button>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>
+//               ))}
+//             </Carousel>
+//           ) : (
+//             <div className="flex items-center justify-center h-full" style={{ marginTop: 40 }}>
+//               <Empty description="Không có dữ liệu" />
+//             </div>
+//           )}
+//         </div>
+//       </div>
+
+//       <Button className="col-span-2 mt-4">Lưu thay đổi</Button>
+//     </div>
+//   );
+// };
+
+// export default BannerManagement;

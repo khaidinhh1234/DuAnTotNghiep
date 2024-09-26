@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('ma_code')->unique();
             $table->string('mo_ta')->unique();
-            $table->string('giam_gia');
+            $table->unsignedInteger('giam_gia')->default(0);
             $table->enum('loai', ['phan_tram', 'tien_mat']);
             $table->unsignedInteger('so_luong_da_su_dung')->default(0);
             $table->unsignedInteger('so_luong')->default(1);
