@@ -60,7 +60,9 @@ class ThongTinWebController extends Controller
                 'link_tiktok' => 'nullable|string|max:255',
                 'banner' => 'nullable|array',
                 'banner.*.duong_dan_anh' => 'nullable|array', // Chấp nhận mảng đường dẫn ảnh
-                'banner.*.duong_dan_anh.*' => 'nullable|string|max:255', // Đường dẫn ảnh riêng lẻ
+                'banner.*.duong_dan_anh.*' => 'nullable|string|max:255', // Đường dẫn ảnh riêng lẻi
+                'banner.*.noi_dung' => 'nullable|array',
+                'banner.*.noi_dung.duong_dan' => 'nullable|string|max:255',
                 'banner.*.noi_dung.tieu_de_chinh' => 'nullable|string|max:255',
                 'banner.*.noi_dung.mau_tieu_de_chinh' => 'nullable|string|max:7',
                 'banner.*.noi_dung.tieu_de_phu' => 'nullable|string|max:255',
