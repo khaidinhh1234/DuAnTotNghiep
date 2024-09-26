@@ -40,10 +40,11 @@ const AddVoucher = () => {
   const [voucher, setVoucher] = useState(56010);
   const [phantram, setphantram] = useState(30);
   const [voucherCode, setVoucherCode] = useState("");
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(0);
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [selectedValues2, setSelectedValues2] = useState<string[]>([]);
   const [key, setkey] = useState<string[]>([]);
+  const [danhm, setdanhmuc] = useState<string[]>([]);
 
   const [isAllSelected1, setIsAllSelected1] = useState(false);
   const [rank, setrank] = useState([]);
@@ -134,13 +135,16 @@ const AddVoucher = () => {
           "yyyy/MM/dd"
         )
       : null;
-    const khuyenmai = key.map((item) => item.match(/\d+/g)?.join("") || null);
+    const san_phams = key.map((item) => item.match(/\d+/g)?.join("") || null);
+    const danh_mucs = danhm.map((item) => item.match(/\d+/g)?.join("") || null);
+
     const formValues = {
       ...values,
       ngay_bat_dau_suu_tam: suutam,
       ngay_ket_thuc: endDate,
       ngay_bat_dau: start,
-      khuyen_mai_san_pham: khuyenmai,
+      san_phams,
+      danh_mucs,
       loai: tabKey ? "tien_mat" : "phan_tram",
     };
     mutate(formValues);
@@ -202,7 +206,7 @@ const AddVoucher = () => {
   // console.log("danhmuc", danhmuc);
   const dm = danhmuc?.data?.map((item: any) => ({
     value: `${item.ten_danh_muc}  ${item.id}`,
-    label: item.ten_danh_muc || item.id,
+    label: item.ten_danh_muc,
   }));
 
   const [selectedValues1, setSelectedValues1] = useState<string[]>([]);
@@ -221,7 +225,7 @@ const AddVoucher = () => {
   };
   const handleChange1 = (value: string[]) => {
     console.log("value", value);
-    setkey(value);
+    setdanhmuc(value);
     setSelectedValues1(value);
     setIsAllSelected1(value.length === dm.length); // Cập nhật trạng thái chọn tất cả
     // console.log(`Selected: ${value}`);
@@ -430,7 +434,7 @@ const AddVoucher = () => {
                         onChange={(e) => setValue(e.target.value)}
                       >
                         <Radio
-                          value=""
+                          value={0}
                           onClick={() => handleReset()}
                           className="flex flex-row items-end flex-nowrap"
                         >
