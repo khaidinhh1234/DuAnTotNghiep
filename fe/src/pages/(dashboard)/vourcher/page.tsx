@@ -26,7 +26,7 @@ interface PromotionType {
   hang_thanh_viens: string;
   tong_giam_gia_toi_da: string;
   so_luot_su_dung: number;
-  gioi_han_su_dung: number;
+  chi_tieu_toi_thieu: number;
 }
 
 // const promotions: PromotionType[] = [
