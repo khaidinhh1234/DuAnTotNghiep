@@ -66,7 +66,9 @@ import NewCategoriesAdd from "@/pages/(dashboard)/newscategory/add/page";
 import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
+
 // import Test from "@/pages/(dashboard)/test";
+
 import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
 import UserskhachhangEdit from "@/pages/(dashboard)/user/khachhang/edit/page";
 import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
@@ -95,6 +97,7 @@ import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
 import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
 import Test from "@/pages/(dashboard)/test";
 // import Test from "@/pages/(dashboard)/test";
+
 
 const Router = () => {
   //
@@ -173,9 +176,11 @@ const Router = () => {
           <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
           <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* tin tức */}
-          <Route path="news" element={<PageNew />} />
-          <Route path="news/add" element={<NewAdd />} />
-          <Route path="news/edit/:id" element={<NewEdit />} />
+
+          <Route path="news" element={<PageNew/>}/>
+          <Route path="news/add" element={<NewAdd/>}/>
+          <Route path="news/edit/:id" element={<NewEdit/>}/>
+
           {/* Tài khoản */}
           <Route
             path="users"
