@@ -9,10 +9,11 @@ import {
   Button,
   Divider,
   Radio,
+  message,
 } from "antd";
 import { DateTime } from "luxon";
 import { v4 as uuidv4 } from "uuid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
 import type { GetProps, SelectProps } from "antd";
 const { RangePicker } = DatePicker;
@@ -20,7 +21,7 @@ const dateFormat = "DD/MM/YYYY";
 const weekFormat = "MM/DD";
 const monthFormat = "YYYY/MM";
 import dayjs from "dayjs";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 const { Option } = Select;
 const options: SelectProps["options"] = [] as {
@@ -36,30 +37,48 @@ const AddVoucher = () => {
 
   const [tabKey, setTabKey] = useState(true);
   const [max, setMax] = useState(479000);
-  const [voucher, setVoucher] = useState(26010);
+  const [voucher, setVoucher] = useState(56010);
   const [phantram, setphantram] = useState(30);
   const [voucherCode, setVoucherCode] = useState("");
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState();
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [selectedValues2, setSelectedValues2] = useState<string[]>([]);
+  const [key, setkey] = useState<string[]>([]);
 
   const [isAllSelected1, setIsAllSelected1] = useState(false);
   const [rank, setrank] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  // const productList = [
-  //   { value: "Áo Thun Nam", label: "Áo Thun Nam" },
-  //   { value: "Áo Sơ Mi Nam", label: "Áo Sơ Mi Nam" },
-  //   { value: "Áo Thun Nữ", label: "Áo Thun Nữ" },
-  //   { value: "Áo Sơ Mi Nữ", label: "Áo Sơ Mi Nữ" },
-  //   { value: "Điện thoại", label: "Điện thoại" },
-  //   { value: "Laptop", label: "Laptop" },
-  // ];
+  const nav = useNavigate();
+  const { mutate } = useMutation({
+    // mutationKey: "createVoucher",
+    mutationFn: async (values: any) => {
+      try {
+        const response = await instance.post("/admin/makhuyenmai", values);
+        nav("/admin/vouchers");
+
+        message.open({
+          type: "success",
+          content: "Thêm mới mã khuyến mãi thành công",
+        });
+
+        return response.data;
+      } catch (error: any) {
+        // console.log("error", error?.response?.data?.errors?.ma_code);
+        message.open({
+          type: "error",
+          content:
+            error?.response?.data?.errors?.ma_code?.[0] ||
+            "thêm mới mã khuyến mãi thất bại",
+        });
+      }
+    },
+  });
+
   //mã khuyến mãi
   const generateRandomCode = () => {
     const length = 8; // Độ dài mã khuyến mãi
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let randomCode = "";
-
     for (let i = 0; i < length; i++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
       randomCode += characters.charAt(randomIndex);
@@ -67,6 +86,9 @@ const AddVoucher = () => {
 
     setVoucherCode(randomCode); // Cập nhật voucherCode
   };
+  useEffect(() => {
+    generateRandomCode();
+  }, []);
   //call api
   const { data: sanpham } = useQuery({
     queryKey: ["sanpham"],
@@ -77,7 +99,7 @@ const AddVoucher = () => {
   });
   // console.log("sanpham", sanpham);
   const sp = sanpham?.data?.map((item: any) => ({
-    value: item.ten_san_pham || item.id,
+    value: `${item.ten_san_pham}  ${item.id}`,
     label: item.ten_san_pham || item.id,
   }));
   // console.log("sp", sp);
@@ -94,17 +116,35 @@ const AddVoucher = () => {
   });
 
   const data = hang?.data?.map((item: any) => ({
-    value: item.ten_hang_thanh_vien,
+    value: item.id,
     label: item.ten_hang_thanh_vien,
   }));
   // check date
   const handleSubmit = (values: any) => {
-    const formattedEndDate = values.endDate
-      ? DateTime.fromJSDate(values.endDate.toDate()).toFormat("dd/MM/yyyy")
+    const endDate = values.ngay_ket_thuc
+      ? DateTime.fromJSDate(values.ngay_ket_thuc.toDate()).toFormat(
+          "yyyy/MM/dd"
+        )
       : null;
-
-    const formValues = { ...values, endDate: formattedEndDate };
-    console.log("Form Values: ", formValues);
+    const start = values.ngay_bat_dau
+      ? DateTime.fromJSDate(values.ngay_bat_dau.toDate()).toFormat("yyyy/MM/dd")
+      : null;
+    const suutam = values.ngay_bat_dau_suu_tam
+      ? DateTime.fromJSDate(values.ngay_bat_dau_suu_tam.toDate()).toFormat(
+          "yyyy/MM/dd"
+        )
+      : null;
+    const khuyenmai = key.map((item) => item.match(/\d+/g)?.join("") || null);
+    const formValues = {
+      ...values,
+      ngay_bat_dau_suu_tam: suutam,
+      ngay_ket_thuc: endDate,
+      ngay_bat_dau: start,
+      khuyen_mai_san_pham: khuyenmai,
+      loai: tabKey ? "tien_mat" : "phan_tram",
+    };
+    mutate(formValues);
+    console.log("formValues", formValues);
   };
 
   // Removed duplicate declaration of generateRandomCode
@@ -137,11 +177,14 @@ const AddVoucher = () => {
     setIsAllSelected(true);
   };
   const handleChange = (value: string[]) => {
+    console.log("value", value);
+    setkey(value);
     setSelectedValues(value);
     setIsAllSelected(value.length === sp.length); // Cập nhật trạng thái chọn tất cả
     // console.log(`Selected: ${value}`);
   };
   const handleChange2 = (value: string[]) => {
+    // console.log("value1", value);
     setSelectedValues2(value);
     setIsAllSelected2(value.length === data.length); // Cập nhật trạng thái chọn tất cả
     // console.log(`Selected: ${value}`);
@@ -158,7 +201,7 @@ const AddVoucher = () => {
   });
   // console.log("danhmuc", danhmuc);
   const dm = danhmuc?.data?.map((item: any) => ({
-    value: item.ten_danh_muc || item.id,
+    value: `${item.ten_danh_muc}  ${item.id}`,
     label: item.ten_danh_muc || item.id,
   }));
 
@@ -177,11 +220,28 @@ const AddVoucher = () => {
     setIsAllSelected1(true);
   };
   const handleChange1 = (value: string[]) => {
+    console.log("value", value);
+    setkey(value);
     setSelectedValues1(value);
     setIsAllSelected1(value.length === dm.length); // Cập nhật trạng thái chọn tất cả
     // console.log(`Selected: ${value}`);
   };
 
+  //reset
+  const handleReset = () => {
+    setSelectedValues([]);
+    setIsAllSelected(false);
+    setSelectedValues1([]);
+    setIsAllSelected1(false);
+  };
+  const handleResetdm = () => {
+    setSelectedValues([]);
+    setIsAllSelected(false);
+  };
+  const handleResetsp = () => {
+    setSelectedValues1([]);
+    setIsAllSelected1(false);
+  };
   useEffect(() => {
     generateRandomCode();
   }, []);
@@ -216,24 +276,19 @@ const AddVoucher = () => {
           >
             <div className="my-3 w-[50%]">
               <Form.Item
-                name="code"
+                name="ma_code"
                 initialValue={voucherCode}
-                // rules={[
-                //   { required: true, message: "Vui lòng nhập mã khuyến mãi!" },
-                // ]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập mã khuyến mãi!" },
+                ]}
               >
-                <div className="flex items-center ">
+                <div className="flex items-center gap-2">
                   <Input
                     value={voucherCode}
                     readOnly
                     className="rounded-md flex-1 shadow-lg"
                   />
-                  <Button
-                    onClick={generateRandomCode}
-                    className="ml-4 bg-blue-500 text-white hover:bg-blue-600"
-                  >
-                    Đổi mã
-                  </Button>
+                  <Button onClick={generateRandomCode}>Đổi mã</Button>
                 </div>
               </Form.Item>
             </div>
@@ -262,22 +317,28 @@ const AddVoucher = () => {
                     <Form.Item
                       className="w-[50%] mb-4"
                       label="Ngày bắt đầu"
-                      name="ngay_ket_thuc"
+                      name="ngay_bat_dau"
                       rules={[
                         {
                           required: true,
                           message: "Bắt buộc phải điền!",
                         },
-                        {
-                          validator: (_, value) =>
-                            value && value.isBefore(dayjs(), "day")
-                              ? Promise.reject(
-                                  new Error(
-                                    "Ngày bắt đầu không thấp hơn ngày hiện tại!"
-                                  )
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const endDate = getFieldValue("ngay_ket_thuc");
+                            if (!value || !endDate) {
+                              return Promise.resolve();
+                            }
+                            if (value.isSame(endDate, "day")) {
+                              return Promise.reject(
+                                new Error(
+                                  "Ngày bắt đầu không được bằng ngày kết thúc!"
                                 )
-                              : Promise.resolve(),
-                        },
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
                       ]}
                     >
                       <DatePicker
@@ -289,7 +350,7 @@ const AddVoucher = () => {
                     </Form.Item>
                     <Form.Item
                       label="Ngày kết thúc"
-                      name="ngay_bat_dau"
+                      name="ngay_ket_thuc"
                       className="w-[100%] mb-4"
                       rules={[
                         {
@@ -298,9 +359,7 @@ const AddVoucher = () => {
                         },
                         ({ getFieldValue }) => ({
                           validator(_, value) {
-                            const startDate = getFieldValue(
-                              "ngay_khuyen_mai_bat_dau"
-                            );
+                            const startDate = getFieldValue("ngay_bat_dau");
                             if (!value || !startDate) {
                               return Promise.resolve();
                             }
@@ -327,7 +386,7 @@ const AddVoucher = () => {
                   <div>
                     <Form.Item
                       label="Ngày bắt đầu sưu tầm"
-                      name="ngay_suu_tam"
+                      name="ngay_bat_dau_suu_tam"
                       className="w-[100%] mb-4"
                       rules={[
                         {
@@ -336,10 +395,8 @@ const AddVoucher = () => {
                         },
                         ({ getFieldValue }) => ({
                           validator(_, value) {
-                            const startDate = getFieldValue(
-                              "ngay_khuyen_mai_bat_dau"
-                            );
-                            const endDate = getFieldValue("endDate");
+                            const startDate = getFieldValue("ngay_bat_dau");
+                            const endDate = getFieldValue("ngay_ket_thuc");
                             if (!value || !startDate || !endDate) {
                               return Promise.resolve();
                             }
@@ -371,6 +428,7 @@ const AddVoucher = () => {
                       label="Mã giảm giá áp dụng cho"
                       className="w-[100%] mb-4"
                       name="khuyen_mai_san_pham"
+                      initialValue={[]}
                     >
                       <Radio.Group
                         className="flex "
@@ -379,18 +437,21 @@ const AddVoucher = () => {
                       >
                         <Radio
                           value=""
+                          onClick={() => handleReset()}
                           className="flex flex-row items-end flex-nowrap"
                         >
                           Toàn gian hàng
                         </Radio>
                         <Radio
-                          value="2"
+                          value={2}
                           className="flex flex-row items-end flex-nowrap "
+                          onClick={() => handleResetdm()}
                         >
                           Danh mục sản phẩm
                         </Radio>
                         <Radio
-                          value="1"
+                          value={1}
+                          onClick={() => handleResetsp()}
                           className="flex flex-row items-end flex-nowrap "
                         >
                           Sản phẩm được chọn (danh sách sản phẩm sẽ được cập
@@ -580,7 +641,7 @@ const AddVoucher = () => {
                         {phantram ? phantram : 0}% tắt
                       </p>
                       <p>
-                        Số tiền tối thiểu {max ? max?.toLocaleString() : 0} ₫ ₫{" "}
+                        Số tiền tối thiểu {max ? max?.toLocaleString() : 0} ₫{" "}
                       </p>
                       <span>Th09 23 24 - Th03 22 25</span>
                     </div>
@@ -595,8 +656,8 @@ const AddVoucher = () => {
                   <Form.Item
                     label="Nếu giá trị đơn hàng đạt tới
 "
-                    name="tong_giam_gia_toi_da"
-                    initialValue="479000"
+                    name="chi_tieu_toi_thieu"
+                    initialValue={479000}
                     rules={[
                       {
                         required: true,
@@ -616,14 +677,24 @@ const AddVoucher = () => {
                   {tabKey && (
                     <Form.Item
                       label="Giảm giá"
-                      name="chi_tieu_toi_thieu"
-                      initialValue="26010"
+                      name="giam_gia"
+                      initialValue="56010"
                       rules={[
                         { required: true, message: "Bắt buộc phải điền!" },
                         ({ getFieldValue }) => ({
                           validator(_, value) {
                             const chi_tieu_toi_thieu =
                               getFieldValue("chi_tieu_toi_thieu");
+                            if (chi_tieu_toi_thieu === 0) {
+                              if (value >= 15000 && value <= 30000) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error(
+                                  "Giá trị phải nằm trong khoảng 15,000 đến 30,000 đồng khi chi tiêu tối thiểu là 0 đồng"
+                                )
+                              );
+                            }
                             if (
                               value >= 0.1 * chi_tieu_toi_thieu &&
                               value <= 0.5 * chi_tieu_toi_thieu
@@ -632,7 +703,7 @@ const AddVoucher = () => {
                             }
                             return Promise.reject(
                               new Error(
-                                "Giá trị phải nhỏ hơn 50% và không nhỏ hơn 10%"
+                                "Giá trị phải nhỏ hơn 50% và lớn hơn 10% của chi tiêu tối thiểu"
                               )
                             );
                           },
@@ -642,7 +713,7 @@ const AddVoucher = () => {
                     >
                       <InputNumber
                         addonAfter="đ"
-                        defaultValue={26010}
+                        defaultValue={56010}
                         min={1}
                         onChange={(value) => setVoucher(value as any)}
                       />
@@ -652,18 +723,23 @@ const AddVoucher = () => {
                     <Form.Item
                       label="Giảm giá"
                       name="giam_gia"
-                      initialValue="30"
+                      initialValue={30}
                       rules={[
                         { required: true, message: "Bắt buộc phải điền!" },
                         ({ getFieldValue }) => ({
                           validator(_, value) {
                             const chi_tieu_toi_thieu =
                               getFieldValue("chi_tieu_toi_thieu");
-                            if (value <= 0.5 * chi_tieu_toi_thieu) {
+                            if (
+                              value > 0 &&
+                              value <= 0.5 * chi_tieu_toi_thieu
+                            ) {
                               return Promise.resolve();
                             }
                             return Promise.reject(
-                              new Error("Giá trị phải nhỏ hơn 50% ")
+                              new Error(
+                                "Giảm giá phải lớn hơn 0% và không quá 50%"
+                              )
                             );
                           },
                         }),
@@ -673,9 +749,15 @@ const AddVoucher = () => {
                       <InputNumber
                         addonAfter="%"
                         defaultValue={30}
-                        min={0}
+                        min={1}
                         max={50}
-                        onChange={(value) => setphantram(value as any)}
+                        onChange={(value: any) => {
+                          if (value > 50) {
+                            setphantram(50);
+                          } else {
+                            setphantram(value as any);
+                          }
+                        }}
                       />
                     </Form.Item>
                   )}
@@ -683,7 +765,7 @@ const AddVoucher = () => {
                     label="Số lượng mã giảm giá
 "
                     name="so_luong"
-                    initialValue=""
+                    initialValue={10}
                     rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >
@@ -698,7 +780,6 @@ const AddVoucher = () => {
                     label="Hạng thành viên  (áp dụng )
 "
                     name="hang_thanh_vien"
-                    initialValue={data[0]}
                     rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >
@@ -708,7 +789,6 @@ const AddVoucher = () => {
                       style={{ width: "40%" }}
                       placeholder="Please select"
                       // defaultValue={data[0]}
-
                       onChange={handleChange2}
                       options={data}
                     />

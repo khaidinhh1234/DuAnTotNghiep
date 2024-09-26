@@ -352,11 +352,11 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Chi tiết khuyến mãi",
 
-      key: "tong_giam_gia_toi_da",
+      key: "gioi_han_su_dung",
       width: "25%",
-      ...getColumnSearchProps("tong_giam_gia_toi_da"),
+      ...getColumnSearchProps("gioi_han_su_dung"),
       sorter: (a: any, b: any) =>
-        a.tong_giam_gia_toi_da.length - b.tong_giam_gia_toi_da.length,
+        a.gioi_han_su_dung.length - b.gioi_han_su_dung.length,
       render: (record) => (
         console.log(record),
         (
@@ -365,10 +365,10 @@ const PromotionAdmin: React.FC = () => {
               Mức giảm giá: {record.giam_gia}{" "}
               {record.loai === "tien_mat" ? "VND" : "%"}
               <br />
-              {record.tong_giam_gia_toi_da === 0
+              {record.gioi_han_su_dung === 0
                 ? "Áp dụng cho tất cả sản phẩm"
                 : "   Giá trị đơn hàng tối thiểu  " +
-                  record.tong_giam_gia_toi_da +
+                  record.gioi_han_su_dung +
                   " VND"}
               {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
             VND */}
