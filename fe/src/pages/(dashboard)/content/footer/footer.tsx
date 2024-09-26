@@ -194,9 +194,10 @@ const Contents = () => {
                       }}
                       src={previewImage}
                     />
-                  )}
-                  <div style={{ marginTop: '10px' }}>
+                  )}  
+                  <div style={{ marginTop: '17px' }}>
                     <h2 className="text-xl font-semibold mb-2">Liên kết mạng xã hội</h2>
+                    <br />
                     <Table
                       dataSource={socialLinks}
                       pagination={false}
