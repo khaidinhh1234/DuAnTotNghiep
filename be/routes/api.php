@@ -180,6 +180,8 @@ Route::middleware([])
 
         Route::get('/thong-ke/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai'])->name("don-hang-theo-trang-thai.thong-ke");
         Route::get('/thong-ke/hoan-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHoanHang'])->name('hoan-hang-theo-thang.thong-ke');
+        Route::get('/thong-ke/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHangTheoThang'])->name('huy-hang-theo-thang.thong-ke');
+
         // Màu sắc biến thể
         Route::apiResource('bienthemausac', BienTheMauSacController::class)->except(['show']);
         Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem'])->name('bienthemausac.thungrac');

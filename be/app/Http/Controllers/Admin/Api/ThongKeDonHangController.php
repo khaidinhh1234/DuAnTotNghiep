@@ -51,6 +51,56 @@ class ThongKeDonHangController extends Controller
 
         return response()->json($thongKeChiTiet);
     }
+    public function thongKeHuyHangTheoThang()
+{
+    // Truy vấn các đơn hàng bị hủy theo từng tháng
+    $thongKeHuyHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
+        ->select(
+            DB::raw('MONTH(created_at) as thang'),
+            DB::raw('YEAR(created_at) as nam'),
+            DB::raw('COUNT(id) as so_luong_don_huy')
+        )
+        ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
+        ->with(['chiTiets.bienTheSanPham.sanPham'])
+        ->get();
+
+    // Mảng kết quả cuối cùng
+    $thongKeSanPhamHuy = [];
+
+    // Duyệt qua từng tháng để lấy thông tin sản phẩm bị hủy
+    foreach ($thongKeHuyHang as $thongKe) {
+        $donHangsTrongThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
+            ->whereYear('created_at', $thongKe->nam)
+            ->whereMonth('created_at', $thongKe->thang)
+            ->with(['chiTiets.bienTheSanPham.sanPham'])
+            ->get();
+
+        $sanPhamTrongThang = [];
+
+        // Duyệt qua từng đơn hàng trong tháng đó
+        foreach ($donHangsTrongThang as $donHang) {
+            foreach ($donHang->chiTiets as $chiTiet) {
+                $sanPham = $chiTiet->bienTheSanPham->sanPham;
+                $sanPhamTrongThang[] = [
+                    'ten_san_pham' => $sanPham->ten_san_pham,
+                    'so_luong_huy' => $chiTiet->so_luong,
+                    'gia' => $chiTiet->gia,
+                    'thanh_tien' => $chiTiet->thanh_tien
+                ];
+            }
+        }
+
+        // Thêm dữ liệu vào mảng kết quả
+        $thongKeSanPhamHuy[] = [
+            'thang' => $thongKe->thang,
+            'nam' => $thongKe->nam,
+            'so_luong_don_huy' => $thongKe->so_luong_don_huy,
+            'san_pham_huy' => $sanPhamTrongThang
+        ];
+    }
+
+    return $thongKeSanPhamHuy;
+}
     public function thongKeDonHangTheoTrangThai(Request $request)
     {
         try {
