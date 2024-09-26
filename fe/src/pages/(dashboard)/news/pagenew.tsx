@@ -1,30 +1,29 @@
-import { ICategories } from "@/common/types/category";
 import { INew } from "@/common/types/new";
 import instance from "@/configs/axios";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tabs } from "antd";
+import { Button, Input, Popconfirm, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 
 const PageNew: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
   const queryClient = useQueryClient();
+  const navigate = useNavigate(); // Hook để chuyển hướng đến trang chi tiết
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['tintuc'],
+    queryKey: ["tintuc"],
     queryFn: async () => {
       try {
-        const response = await instance.get('/admin/tintuc');
+        const response = await instance.get("/admin/tintuc");
         const news = response.data;
-        return news; 
+        return news;
       } catch (error) {
         console.error("Error fetching news:", error);
         throw new Error("Error fetching categories");
@@ -32,14 +31,15 @@ const PageNew: React.FC = () => {
     },
   });
 
-
-  const dataSource = data?.data.map((newsItem: INew) => ({
-    key: newsItem.id,
-    ...newsItem,
-    user_id: newsItem.user?.ten || "Chưa có dữ liệu", 
-    danh_muc_tin_tuc_id: newsItem.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu",
-})) || [];
-console.log(dataSource)
+  const dataSource =
+    data?.data.map((newsItem: INew) => ({
+      key: newsItem.id,
+      ...newsItem,
+      user_id: newsItem.user?.ten || "Chưa có dữ liệu",
+      danh_muc_tin_tuc_id:
+        newsItem.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu",
+    })) || [];
+  console.log(dataSource);
 
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
@@ -48,7 +48,7 @@ console.log(dataSource)
         if (response.data.status) {
           return id;
         } else {
-          throw new Error(response.data.message || 'Failed to delete');
+          throw new Error(response.data.message || "Failed to delete");
         }
       } catch (error) {
         console.error("Error deleting category:", error);
@@ -56,7 +56,7 @@ console.log(dataSource)
       }
     },
     onSuccess: (id) => {
-      queryClient.invalidateQueries(['tintuc']);
+      queryClient.invalidateQueries(["tintuc"]);
       toast.success("Xóa tin tức thành công");
     },
     onError: (error) => {
@@ -156,34 +156,26 @@ console.log(dataSource)
       dataIndex: "key",
     },
     {
-        title: "Tác giả",
-        width: "10%",
-        key: "user_id",
-        dataIndex: "user_id",
-        render: (text) => (text? text : "Chưa có dữ liệu")
+      title: "Tác giả",
+      width: "10%",
+      key: "user_id",
+      dataIndex: "user_id",
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
-        title: "Danh mục tin tức",
-        width: "10%",
-        key: "danh_muc_tin_tuc_id",
-        dataIndex: "danh_muc_tin_tuc_id",
-        render: (text) => (text? text : "Chưa có dữ liệu")
+      title: "Danh mục tin tức",
+      width: "10%",
+      key: "danh_muc_tin_tuc_id",
+      dataIndex: "danh_muc_tin_tuc_id",
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Tiêu đề",
       width: "15%",
       key: "tieu_de",
       dataIndex: "tieu_de",
-    //   ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a: any, b: any) => a.tieu_de.localeCompare(b.tieu_de),
-      render: (text) => (text ? text : "Chưa có dữ liệu")
-    },
-    {
-        title: "Nội dung",
-        width: "30%",
-        key: "noi_dung",
-        dataIndex: "noi_dung",
-        render: (text) => (text? text : "Chưa có dữ liệu")
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Thời gian tạo",
@@ -197,6 +189,14 @@ console.log(dataSource)
       key: "action",
       render: (_, news) => (
         <Space>
+          {/* Nút "Xem chi tiết" */}
+          <Button
+            className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white"
+            onClick={() => navigate(`/admin/news/details/${news.id}`)}
+          >
+            Xem chi tiết
+          </Button>
+
           <Popconfirm
             title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
@@ -208,6 +208,7 @@ console.log(dataSource)
               Xóa
             </Button>
           </Popconfirm>
+
           <Link to={`/admin/news/edit/${news.id}`}>
             <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
               Cập nhật
@@ -222,11 +223,11 @@ console.log(dataSource)
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Danh mục</span>
+          Quản trị / <span className="font-semibold px-px">Tin tức</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Danh mục</h1>
+        <h1 className="font-semibold md:text-3xl">Tin tức</h1>
         <div>
           <Link to="/admin/news/add" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
