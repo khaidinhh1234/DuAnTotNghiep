@@ -43,7 +43,7 @@ const PageAddPermission: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["userPrivileges"],
+        queryKey: ["VAITRO_KEY"],
       });
     },
   });

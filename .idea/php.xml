@@ -133,6 +133,28 @@
       <path value="$PROJECT_DIR$/be/vendor/mews/captcha" />
       <path value="$PROJECT_DIR$/be/vendor/intervention/image" />
       <path value="$PROJECT_DIR$/be/vendor/intervention/gif" />
+      <path value="$PROJECT_DIR$/be/vendor/laravel/ui" />
+      <path value="$PROJECT_DIR$/be/vendor/psr/cache" />
+      <path value="$PROJECT_DIR$/be/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/be/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/be/vendor/doctrine/deprecations" />
+      <path value="$PROJECT_DIR$/be/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/be/vendor/pusher/pusher-php-server" />
+      <path value="$PROJECT_DIR$/be/vendor/dompdf/dompdf" />
+      <path value="$PROJECT_DIR$/be/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/be/vendor/dompdf/php-svg-lib" />
+      <path value="$PROJECT_DIR$/be/vendor/dompdf/php-font-lib" />
+      <path value="$PROJECT_DIR$/be/vendor/maennchen/zipstream-php" />
+      <path value="$PROJECT_DIR$/be/vendor/maatwebsite/excel" />
+      <path value="$PROJECT_DIR$/be/vendor/barryvdh/laravel-dompdf" />
+      <path value="$PROJECT_DIR$/be/vendor/paragonie/sodium_compat" />
+      <path value="$PROJECT_DIR$/be/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/be/vendor/markbaker/matrix" />
+      <path value="$PROJECT_DIR$/be/vendor/markbaker/complex" />
+      <path value="$PROJECT_DIR$/be/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/be/vendor/ezyang/htmlpurifier" />
+      <path value="$PROJECT_DIR$/be/vendor/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/be/vendor/gregwar/captcha" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

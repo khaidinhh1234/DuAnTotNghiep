@@ -1,16 +1,15 @@
-import React, { useRef, useState } from "react";
+import { ICategories } from "@/common/types/category";
+import { INew } from "@/common/types/new";
+import instance from "@/configs/axios";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Tabs } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Tabs } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
-import { ICategories } from "@/common/types/category";
 import { toast } from "react-toastify";
-import { INew } from "@/common/types/new";
-const { TabPane } = Tabs;
 
 
 const PageNew: React.FC = () => {
@@ -24,25 +23,28 @@ const PageNew: React.FC = () => {
     queryFn: async () => {
       try {
         const response = await instance.get('/admin/tintuc');
-        const categories = response.data;
-        return categories; // Đảm bảo rằng categories.data chứa createdAt
+        const news = response.data;
+        return news; 
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching news:", error);
         throw new Error("Error fetching categories");
       }
     },
   });
 
 
-  const dataSource = data?.data.map((category: ICategories) => ({
-    key: category.id,
-    ...category,
-  })) || [];
+  const dataSource = data?.data.map((newsItem: INew) => ({
+    key: newsItem.id,
+    ...newsItem,
+    user_id: newsItem.user?.ten || "Chưa có dữ liệu", 
+    danh_muc_tin_tuc_id: newsItem.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu",
+})) || [];
+console.log(dataSource)
 
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.delete(`/admin/danhmuc/${id}`);
+        const response = await instance.delete(`/admin/tintuc/${id}`);
         if (response.data.status) {
           return id;
         } else {
@@ -54,12 +56,12 @@ const PageNew: React.FC = () => {
       }
     },
     onSuccess: (id) => {
-      queryClient.invalidateQueries(['danhmuc']);
-      toast.success("Xóa danh mục thành công");
+      queryClient.invalidateQueries(['tintuc']);
+      toast.success("Xóa tin tức thành công");
     },
     onError: (error) => {
       console.error("Error deleting category:", error);
-      toast.error("Xóa danh mục thất bại");
+      toast.error("Xóa tin tức thất bại");
     },
   });
 
@@ -193,12 +195,12 @@ const PageNew: React.FC = () => {
     {
       title: "Quản trị",
       key: "action",
-      render: (_, category) => (
+      render: (_, news) => (
         <Space>
           <Popconfirm
             title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
-            onConfirm={() => mutate(category.id!)}
+            onConfirm={() => mutate(news.id!)}
             okText="Có"
             cancelText="Không"
           >
@@ -206,7 +208,7 @@ const PageNew: React.FC = () => {
               Xóa
             </Button>
           </Popconfirm>
-          <Link to={`/admin/categories/edit/${category.id}`}>
+          <Link to={`/admin/news/edit/${news.id}`}>
             <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
               Cập nhật
             </Button>
@@ -226,13 +228,13 @@ const PageNew: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Danh mục</h1>
         <div>
-          <Link to="/admin/categories/add" className="mr-1">
+          <Link to="/admin/news/add" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm
             </Button>
           </Link>
-          <Link to="/admin/categories/remote">
+          <Link to="/admin/news/remote">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               <DeleteOutlined className="mr-1" />
               Thùng rác

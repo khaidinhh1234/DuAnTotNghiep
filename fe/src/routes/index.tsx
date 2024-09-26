@@ -75,9 +75,12 @@ import UsersNhanvienAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
 import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
 import UsersAdminNhanvien from "@/pages/(dashboard)/user/nhanvien/page";
 import UsersRemoteNhanvien from "@/pages/(dashboard)/user/nhanvien/remote/page";
-import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
 import Showvaitro from "@/pages/(dashboard)/userprivileges/show/page";
+import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
 import PageNew from "@/pages/(dashboard)/news/pagenew";
+import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
+import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
+
 
 const Router = () => {
   return (
@@ -145,6 +148,8 @@ const Router = () => {
           <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* tin tức */}
           <Route path="news" element={<PageNew/>}/>
+          <Route path="news/add" element={<NewAdd/>}/>
+          <Route path="news/edit/:id" element={<NewEdit/>}/>
           {/* Tài khoản */}
           <Route
             path="users"
@@ -175,6 +180,8 @@ const Router = () => {
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
+          <Route path="revenues" element={<RevenueAdmin />} />
+          <Route path="test" element={<Test />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}

@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { Layout, Row, Col, Input, Table, Typography, Button, Upload, Image } from 'antd';
-import { FacebookOutlined, InstagramOutlined, TwitterOutlined, TikTokOutlined, PlusOutlined } from '@ant-design/icons';
+
+import React, { useState, useEffect } from 'react';
+import { Layout, Row, Col, Input, Table, Typography, Upload, Image, message, Button, Form } from 'antd';
+import { FacebookOutlined, InstagramOutlined, TikTokOutlined, PlusOutlined, YoutubeOutlined } from '@ant-design/icons';
+import instance from "@/configs/axios";
 import 'antd/dist/reset.css';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { uploadToCloudinary } from '@/configs/cloudinary';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -15,40 +19,74 @@ const getBase64 = (file: File): Promise<string> =>
   });
 
 const Contents = () => {
-  const [contactData, setContactData] = useState([
-    { key: 'website', value: '' },
-    { key: 'Tên công ty', value: '' },
-    { key: 'Địa chỉ', value: '' },
-    { key: 'email', value: '' },
-    { key: 'Điện thoại đặt hàng', value: '' },
-    { key: 'điện thoại khiếu nại', value: '' },
-  ]);
+  const [form] = Form.useForm();
+  const queryClient = useQueryClient();
+  const [localWebsiteInfo, setLocalWebsiteInfo] = useState<any>(null);
+  const [originalBanner, setOriginalBanner] = useState<any>(null);
 
-  const [socialLinks, setSocialLinks] = useState({
-    facebook: '',
-    instagram: '',
-    twitter: '',
-    tiktok: ''
+  const { data: apiResponse, isLoading, error } = useQuery({
+    queryKey: ['websiteInfo'],
+    queryFn: async () => {
+      const response = await instance.get('/admin/thong-tin-web');
+      console.log('Raw API Response:', response.data);
+      return response.data;
+    }
   });
 
-  const [fileList, setFileList] = useState([]);
+  useEffect(() => {
+    if (apiResponse?.data) {
+      setLocalWebsiteInfo(apiResponse.data);
+      setOriginalBanner(apiResponse.data.banner);
+      form.setFieldsValue(apiResponse.data);
+    }
+  }, [apiResponse, form]);
+
+  const updateWebsiteInfo = useMutation({
+    mutationFn: (updatedInfo: any) => {
+      const bannerArray = Array.isArray(originalBanner) ? originalBanner : (originalBanner ? [originalBanner] : []);
+      
+      const dataToSend = {
+        ...updatedInfo,
+        banner: bannerArray
+      };
+      return instance.post('/admin/thong-tin-web', dataToSend);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['websiteInfo'] });
+      message.success('Thông tin đã được cập nhật thành công');
+    },
+    onError: (error: any) => {
+      message.error('Có lỗi xảy ra khi cập nhật thông tin');
+      console.error('Error updating website info:', error);
+    },
+  });
+
+  const [fileList, setFileList] = useState<any[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
 
+  useEffect(() => {
+    if (localWebsiteInfo && localWebsiteInfo.logo_website) {
+      setFileList([
+        {
+          uid: '-1',
+          name: 'logo.png',
+          status: 'done',
+          url: localWebsiteInfo.logo_website,
+        },
+      ]);
+    }
+  }, [localWebsiteInfo]);
+
   const handleInputChange = (key: string, value: string) => {
-    setContactData(prev =>
-      prev.map(item => (item.key === key ? { ...item, value } : item))
-    );
+    setLocalWebsiteInfo((prev: any) => ({ ...prev, [key]: value }));
+    form.setFieldsValue({ [key]: value });
   };
 
   const handleSocialLinkChange = (platform: string, value: string) => {
-    setSocialLinks(prev => ({ ...prev, [platform]: value }));
-  };
-
-  const handleSave = () => {
-    console.log('Đã lưu thông tin liên hệ:', contactData);
-    console.log('Đã lưu liên kết mạng xã hội:', socialLinks);
-    // Handle save operation here
+    const key = `link_${platform.toLowerCase()}`;
+    setLocalWebsiteInfo((prev: any) => ({ ...prev, [key]: value }));
+    form.setFieldsValue({ [key]: value });
   };
 
   const handlePreview = async (file: any) => {
@@ -59,7 +97,31 @@ const Contents = () => {
     setPreviewOpen(true);
   };
 
-  const handleChange = ({ fileList: newFileList }: { fileList: any[] }) => setFileList(newFileList);
+  const handleChange = async ({ file, fileList: newFileList }: { file: any, fileList: any[] }) => {
+    setFileList(newFileList);
+
+    if (file.status === 'done') {
+      try {
+        const cloudinaryUrl = await uploadToCloudinary(file.originFileObj);
+        setLocalWebsiteInfo((prev: any) => ({ ...prev, logo_website: cloudinaryUrl }));
+        form.setFieldsValue({ logo_website: cloudinaryUrl });
+        message.success('Logo đã được tải lên thành công');
+      } catch (error) {
+        message.error('Không thể tải lên logo');
+        console.error('Lỗi khi tải lên:', error);
+      }
+    }
+  };
+
+  const handleUpdate = () => {
+    form.validateFields()
+      .then(values => {
+        updateWebsiteInfo.mutate(values);
+      })
+      .catch(info => {
+        console.log('Validate Failed:', info);
+      });
+  };
 
   const uploadButton = (
     <div style={{ border: 0, background: 'none', textAlign: 'center' }}>
@@ -68,96 +130,141 @@ const Contents = () => {
     </div>
   );
 
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>An error occurred: {(error as Error).message}</div>;
+  if (!localWebsiteInfo) return <div>No data available</div>;
+
+  const contactData = [
+    { key: 'ten_website', label: 'Tên Website', value: localWebsiteInfo.ten_website || '' },
+    { key: 'ten_doanh_nghiep', label: 'Tên Doanh Nghiệp', value: localWebsiteInfo.ten_doanh_nghiep || '' },
+    { key: 'dia_chi', label: 'Địa Chỉ', value: localWebsiteInfo.dia_chi || '' },
+    { key: 'email', label: 'Email', value: localWebsiteInfo.email || '' },
+    { key: 'so_dien_thoai_dat_hang', label: 'SĐT Đặt Hàng', value: localWebsiteInfo.so_dien_thoai_dat_hang || '' },
+    { key: 'so_dien_thoai_khieu_nai', label: 'SĐT Khiếu Nại', value: localWebsiteInfo.so_dien_thoai_khieu_nai || '' },
+    { key: 'cau_noi', label: 'Câu Nói', value: localWebsiteInfo.cau_noi || '' },
+  ];
+
+  const socialLinks = [
+    { platform: 'Facebook', icon: <FacebookOutlined />, value: localWebsiteInfo.link_facebook || '' },
+    { platform: 'Instagram', icon: <InstagramOutlined />, value: localWebsiteInfo.link_instagram || '' },
+    { platform: 'Youtube', icon: <YoutubeOutlined />, value: localWebsiteInfo.link_youtube || '' },
+    { platform: 'TikTok', icon: <TikTokOutlined />, value: localWebsiteInfo.link_tiktok || '' },
+    { platform: 'Zalo', icon: <TikTokOutlined />, value: localWebsiteInfo.link_zalo || '' },
+  ];
+
   return (
     <Layout>
       <Content style={{ padding: '0 50px', marginTop: '20px' }}>
-        <Title level={2}>Quản lý thông tin</Title>
-        <Row gutter={16}>
-          <Col span={8}>
-            <div className="flex flex-col space-y-4">
-              <h2 className="text-xl font-semibold mb-2">Logo</h2>
-              <Upload
-                action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                listType="picture-card"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}
-              >
-                {fileList.length >= 1 ? null : uploadButton}
-              </Upload>
-              {previewImage && (
-                <Image
-                  preview={{
-                    visible: previewOpen,
-                    onVisibleChange: (visible) => setPreviewOpen(visible),
-                  }}
-                  src={previewImage}
-                />
-              )}
-              <div style={{ marginTop: '10px' }}>
-                <h2 className="text-xl font-semibold mb-2">Liên kết mạng xã hội</h2>
-                <Table
-                  dataSource={[
-                    { platform: 'Facebook', icon: <FacebookOutlined />, value: socialLinks.facebook },
-                    { platform: 'Instagram', icon: <InstagramOutlined />, value: socialLinks.instagram },
-                    { platform: 'Twitter', icon: <TwitterOutlined />, value: socialLinks.twitter },
-                    { platform: 'TikTok', icon: <TikTokOutlined />, value: socialLinks.tiktok }
-                  ]}
-                  pagination={false}
-                  rowKey="platform"
-                >
-                  <Table.Column title="Mạng xã hội" dataIndex="platform" key="platform" />
-                  <Table.Column
-                    title="Liên kết"
-                    dataIndex="value"
-                    key="value"
-                    render={(text: string, record: any) => (
-                      <Input
-                        prefix={record.icon}
-                        value={text}
-                        onChange={(e) => handleSocialLinkChange(record.platform.toLowerCase(), e.target.value)}
-                        placeholder={`Nhập liên kết ${record.platform}`}
-                      />
-                    )}
-                  />
-                </Table>
-              </div>
-            </div>
-          </Col>
-
-          <Col span={16}>
-            <div className="flex flex-col space-y-4">
-              <h2 className="text-xl font-semibold mb-2">Thông tin liên hệ</h2>
-              <Table
-                dataSource={contactData}
-                pagination={false}
-                rowKey="key"
-              >
-                <Table.Column title="Chỉ số" dataIndex="key" key="key" />
-                <Table.Column
-                  title="Giá trị"
-                  dataIndex="value"
-                  key="value"
-                  render={(text: string, record: any) => (
-                    <Input
-                      defaultValue={text}
-                      onChange={(e) => handleInputChange(record.key, e.target.value)}
-                      placeholder={`Nhập ${record.key}`}
-                      
+        <div style={{ border: '1px solid #f0f0f0', padding: '20px', borderRadius: '8px' }}>
+          <Title level={2}>Quản lý thông tin</Title>
+          <Form form={form} layout="vertical">
+            <Row gutter={16}>
+              <Col span={8}>
+                <div className="flex flex-col space-y-4">
+                  <h2 className="text-xl font-semibold mb-2">Logo</h2>
+                  <Form.Item
+                    name="logo_website"
+                    rules={[{ required: true, message: 'Vui lòng tải lên logo' }]}
+                  >
+                    <Upload
+                      listType="picture-card"
+                      fileList={fileList}
+                      onPreview={handlePreview}
+                      onChange={handleChange}
+                      customRequest={async ({ file, onSuccess }) => {
+                        try {
+                          const cloudinaryUrl = await uploadToCloudinary(file as File);
+                          setLocalWebsiteInfo((prev: any) => ({ ...prev, logo_website: cloudinaryUrl }));
+                          form.setFieldsValue({ logo_website: cloudinaryUrl });
+                          onSuccess?.("Ok");
+                        } catch (error) {
+                          message.error('Không thể tải lên logo');
+                          console.error('Lỗi khi tải lên:', error);
+                        }
+                      }}
+                    >
+                      {fileList.length >= 1 ? null : uploadButton}
+                    </Upload>
+                  </Form.Item>
+                  {previewImage && (
+                    <Image
+                      preview={{
+                        visible: previewOpen,
+                        onVisibleChange: (visible) => setPreviewOpen(visible),
+                      }}
+                      src={previewImage}
                     />
                   )}
-                />
-                
-              </Table>
-            </div>
-          </Col>
-        </Row>
-        <Button
-          onClick={handleSave}
-          style={{ width: '100%', margin: '30px 0px' }}
-        >
-          Lưu thay đổi
-        </Button>
+                  <div style={{ marginTop: '10px' }}>
+                    <h2 className="text-xl font-semibold mb-2">Liên kết mạng xã hội</h2>
+                    <Table
+                      dataSource={socialLinks}
+                      pagination={false}
+                      rowKey="platform"
+                    >
+                      <Table.Column title="Mạng xã hội" dataIndex="platform" key="platform" />
+                      <Table.Column
+                        title="Liên kết"
+                        dataIndex="value"
+                        key="value"
+                        render={(text: string, record: any) => (
+                          <Form.Item
+                            name={`link_${record.platform.toLowerCase()}`}
+                            rules={[{ required: true, message: `Vui lòng nhập liên kết ${record.platform}` }]}
+                          >
+                            <Input
+                              prefix={record.icon}
+                              onChange={(e) => handleSocialLinkChange(record.platform, e.target.value)}
+                              placeholder={`Nhập liên kết ${record.platform}`}
+                            />
+                          </Form.Item>
+                        )}
+                      />
+                    </Table>
+                  </div>
+                </div>
+              </Col>
+
+              <Col span={16}>
+                <div className="flex flex-col space-y-4">
+                  <h2 className="text-xl font-semibold mb-2">Thông tin liên hệ</h2>
+                  <Table
+                    dataSource={contactData}
+                    pagination={false}
+                    rowKey="key"
+                  >
+                    <Table.Column title="Chỉ số" dataIndex="label" key="label" />
+                    <Table.Column
+                      title="Giá trị"
+                      dataIndex="value"
+                      key="value"
+                      render={(text: string, record: any) => (
+                        <Form.Item
+                          name={record.key}
+                          rules={[
+                            { required: true, message: `Vui lòng nhập ${record.label}` },
+                            record.key.includes('so_dien_thoai') ? 
+                              { pattern: /^[0-9]+$/, message: 'Vui lòng chỉ nhập số' } : 
+                              {}
+                          ]}
+                        >
+                          <Input
+                            onChange={(e) => handleInputChange(record.key, e.target.value)}
+                            placeholder={`Nhập ${record.label}`}
+                          />
+                        </Form.Item>
+                      )}
+                    />
+                  </Table>
+                </div>
+              </Col>
+            </Row>
+            <Button  onClick={handleUpdate}           style={{ width: '100%', margin: '30px 0px' }}
+            >
+              Cập nhật thông tin
+            </Button>
+          </Form>
+        </div>
       </Content>
     </Layout>
   );

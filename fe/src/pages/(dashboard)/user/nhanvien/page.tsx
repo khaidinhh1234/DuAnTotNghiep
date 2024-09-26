@@ -65,20 +65,16 @@ const UsersAdminNhanvien: React.FC = () => {
   });
 
   const user = data?.data
-    .filter((item: any) => item?.vai_tros?.length > 0)
-    .map((item: any, index: string) => {
-      if (item?.vai_tros?.length > 0) {
-        return {
-          ...item,
-          key: item.id,
-          index: index,
-        };
-      } else {
-        return false;
-      }
-    });
+    ?.filter((item: any) =>
+      item?.vai_tros.some((role: any) => role.ten_vai_tro !== "member")
+    )
+    .map((item: any, index: string) => ({
+      ...item,
+      key: item.id,
+      index: index,
+    }));
 
-  // const users = user.reverse();
+  // console.log(user);
 
   // const [searchText, setSearchText] = useState
   const [searchedColumn, setSearchedColumn] = useState("");
