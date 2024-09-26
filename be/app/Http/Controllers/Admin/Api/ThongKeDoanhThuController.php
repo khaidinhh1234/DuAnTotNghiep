@@ -234,40 +234,6 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-    public function thongKeDonHangTheoTrangThai(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-
-            // Thống kê số lượng đơn hàng theo từng trạng thái
-            $soLuongChoXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->count();
-            $soLuongDaXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXH)->count();
-            $soLuongDangXuLy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
-            $soLuongDangGiaoHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGH)->count();
-            $soLuongDaGiaoHangThanhCong = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)->count();
-            $soLuongDaHuyHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)->count();
-            $soLuongChoThanhToan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CTT)->count();
-
-            DB::commit();
-
-            // Trả về kết quả thống kê qua API
-            return response()->json([
-                'so_luong_don_hang' => [
-                    'cho_xac_nhan' => $soLuongChoXacNhan,
-                    'da_xac_nhan' => $soLuongDaXacNhan,
-                    'dang_xu_ly' => $soLuongDangXuLy,
-                    'dang_giao_hang' => $soLuongDangGiaoHang,
-                    'da_giao_hang_thanh_cong' => $soLuongDaGiaoHangThanhCong,
-                    'da_huy_hang' => $soLuongDaHuyHang,
-                    'cho_thanh_toan' => $soLuongChoThanhToan,
-                ]
-            ], 200);
-
-        } catch (Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Đã xảy ra lỗi trong quá trình xử lý dữ liệu.'], 500);
-        }
-    }
 
     public function sanPhamBanChayTheoThang(Request $request)
     {
