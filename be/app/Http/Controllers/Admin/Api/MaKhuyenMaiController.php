@@ -43,7 +43,7 @@ class MaKhuyenMaiController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'ma_code'              => 'required|string|max:255|unique:ma_khuyen_mais,ma_code',
-            'mo_ta'                => 'nullable|string',
+            'mo_ta'                => 'string|unique:ma_khuyen_mais,mo_ta',
             'loai'                 => 'required|string|in:phan_tram,tien_mat',
             'ngay_bat_dau_suu_tam' => 'required|date|before_or_equal:ngay_bat_dau',
             'ngay_bat_dau'         => 'required|date|before:ngay_ket_thuc',

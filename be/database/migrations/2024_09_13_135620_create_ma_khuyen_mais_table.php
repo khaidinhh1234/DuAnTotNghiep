@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('ma_khuyen_mais', function (Blueprint $table) {
             $table->id();
             $table->string('ma_code')->unique();
-            $table->string('mo_ta');
+            $table->string('mo_ta')->unique();
             $table->string('giam_gia');
             $table->enum('loai', ['phan_tram', 'tien_mat']);
             $table->unsignedInteger('so_luong_da_su_dung')->default(0);
             $table->unsignedInteger('so_luong')->default(1);
             $table->dateTime('ngay_bat_dau_suu_tam');
             $table->dateTime('ngay_bat_dau');
-            $table->dateTime('ngay_ket_thuc')->nullable();
+            $table->dateTime('ngay_ket_thuc');
             $table->boolean('trang_thai')->default(1);
             $table->unsignedDecimal('chi_tieu_toi_thieu', 10, 2)->nullable();
             $table->timestamps();
