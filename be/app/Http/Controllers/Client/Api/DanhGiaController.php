@@ -25,7 +25,11 @@ class DanhGiaController extends Controller
             ])
                 ->where('san_pham_id', $sanpham->id)
                 ->orderBy('created_at', 'desc')
-                ->get();
+                ->get()
+                ->map(function ($danhGia) {
+                    $danhGia->tong_so_sao = ($danhGia->so_sao_san_pham + $danhGia->so_sao_dich_vu_van_chuyen) / 2;
+                    return $danhGia;
+                });
 
             return response()->json([
                 'status' => true,
