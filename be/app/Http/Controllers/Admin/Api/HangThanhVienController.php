@@ -40,6 +40,7 @@ class HangThanhVienController extends Controller
     {
         $vadidateHangThanhVien = Validator::make($request->all(), [
             'ten_hang_thanh_vien' => 'required|unique:hang_thanh_viens',
+            'anh_hang_thanh_vien' => 'required|image',
             'chi_tieu_toi_thieu' => 'required|numeric',
             'chi_tieu_toi_da' => 'required|numeric',
             'ngay_bat_dau' => 'nullable',
@@ -101,6 +102,7 @@ class HangThanhVienController extends Controller
     {
         $vadidateHangThanhVien = Validator::make($request->all(), [
             'ten_hang_thanh_vien' => 'required|unique:hang_thanh_viens,id,' . $id,
+            'anh_hang_thanh_vien' => 'required|image',
             'chi_tieu_toi_thieu' => 'required|integer',
             'chi_tieu_toi_da' => 'required|integer',
             'ngay_bat_dau' => 'nullable',
@@ -155,7 +157,8 @@ class HangThanhVienController extends Controller
         }
     }
 
-    public function danhSachHangThanhVienDaXoa(){
+    public function danhSachHangThanhVienDaXoa()
+    {
         try {
             $hangThanhVien = HangThanhVien::onlyTrashed()->orderByDesc('deleted_at')->get();
             return response()->json([
