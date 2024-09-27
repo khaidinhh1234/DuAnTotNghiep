@@ -81,6 +81,7 @@ import PageNew from "@/pages/(dashboard)/news/pagenew";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 
+
 // import Test from "@/pages/(dashboard)/test";
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
@@ -94,6 +95,16 @@ import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
 import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
 
 import ViewNew from "@/pages/(dashboard)/news/view/ViewNew";
+import Rank from "@/pages/(dashboard)/user/hangthanhvien/page";
+import MemberRankForm from "@/pages/(dashboard)/user/hangthanhvien/add/page";
+import Remoterank from "@/pages/(dashboard)/user/hangthanhvien/remote.tsx/remote";
+// import Test from "@/pages/(dashboard)/test";
+
+// import Test from "@/pages/(dashboard)/test";
+// import Test from "@/pages/(dashboard)/test";
+
+import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
+// import Test from "@/pages/(dashboard)/test";
 import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
 import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
@@ -182,16 +193,23 @@ const Router = () => {
           <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
           <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* tin tức */}
+
           <Route path="news" element={<PageNew />} />
           <Route path="news/add" element={<NewAdd />} />
           <Route path="news/edit/:id" element={<NewEdit />} />
           <Route path="news/remote" element={<RemoteNew />} />
           <Route path="news/details/:id" element={<ViewNew />} />
+
           {/* Tài khoản */}
           <Route
             path="users"
             element={<Navigate to="/admin/users/khachhang" />}
           />
+         <Route path="users/rank" element={<Rank />} />
+         <Route path="users/rankadd" element={<MemberRankForm />} />
+         <Route path="users/remoterank" element={<Remoterank />} />
+
+
           <Route path="users/khachhang" element={<UsersAdminkhachhang />} />
           <Route path="users/khachhang/add" element={<UserskhachhangAdd />} />
           <Route
