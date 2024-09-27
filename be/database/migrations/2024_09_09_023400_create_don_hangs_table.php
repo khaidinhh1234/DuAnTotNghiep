@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string('dia_chi_nguoi_dat_hang');
             $table->string('ma_giam_gia')->nullable();
             $table->decimal('so_tien_giam_gia', 15, 2)->nullable();
+            $table->date('ngay_giao_hang_thanh_cong')->nullable();
             $table->enum('trang_thai_thanh_toan', [
                 'Chưa thanh toán',  // chưa thanh toán
                 'Đã thanh toán',    // đã thanh toán
