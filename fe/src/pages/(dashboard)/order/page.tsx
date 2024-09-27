@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button, Flex, Input, Popconfirm, Select, Table } from "antd";
+import { Button, Flex, Input, message, Popconfirm, Select, Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 import Detail from "./detail";
 
@@ -220,18 +220,34 @@ const OrderAdmin: React.FC = () => {
     },
   });
   const order: DataType[] | undefined = data?.data;
-
+  // console.log("order", order);
+  const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {
-      const response = await instance.put(
-        "admin/donhang/1/trang-thai-don-hang",
-        {
-          trang_thai_don_hang: trangthai,
-          id: data,
-        }
-      );
+      const trangthais =
+        trangthai === "1"
+          ? "Đã xác nhận"
+          : trangthai === "2"
+            ? "Đang xử lý"
+            : trangthai === "3"
+              ? "Đã giao hàng thành công"
+              : "Đã hủy hàng";
+
+      const response = await instance.put("admin/donhang/trang-thai-don-hang", {
+        trang_thai_don_hang: trangthais,
+        id: data,
+      });
+      start();
+      message.open({
+        type: "success",
+        content: "Cập nhật trạng thái đơn hàng thành công",
+      });
+      return response.data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["ORDERS"],
+      });
       setLoading(false);
     },
     onError: () => {
@@ -330,7 +346,6 @@ const OrderAdmin: React.FC = () => {
                       className="bg-red-500 text-white hover:bg-red-700"
                       disabled={!hasSelected}
                       loading={loading}
-                      onClick={start}
                     >
                       Xác nhận
                     </Button>

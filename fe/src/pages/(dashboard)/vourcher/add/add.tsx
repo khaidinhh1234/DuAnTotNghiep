@@ -5,33 +5,23 @@ import {
   InputNumber,
   Select,
   DatePicker,
-  Tabs,
   Button,
   Divider,
   Radio,
   message,
 } from "antd";
 import { DateTime } from "luxon";
-import { v4 as uuidv4 } from "uuid";
+
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
-import type { GetProps, SelectProps } from "antd";
-const { RangePicker } = DatePicker;
-const dateFormat = "DD/MM/YYYY";
-const weekFormat = "MM/DD";
-const monthFormat = "YYYY/MM";
+
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import instance from "@/configs/axios";
-const { Option } = Select;
-const options: SelectProps["options"] = [] as {
-  label: string;
-  value: string;
-}[];
+
 const AddVoucher = () => {
   const [form] = Form.useForm();
   // const [voucherCode, setVoucherCode] = useState(""); // Duplicate declaration removed
-  const [selectedProducts, setSelectedProducts] = useState([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isAllSelected2, setIsAllSelected2] = useState(false);
 
@@ -47,7 +37,6 @@ const AddVoucher = () => {
   const [danhm, setdanhmuc] = useState<string[]>([]);
 
   const [isAllSelected1, setIsAllSelected1] = useState(false);
-  const [rank, setrank] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const nav = useNavigate();
   const { mutate } = useMutation({
@@ -64,12 +53,18 @@ const AddVoucher = () => {
 
         return response.data;
       } catch (error: any) {
-        // console.log("error", error?.response?.data?.errors?.ma_code);
+        // console.log("error", error);
+
         message.open({
           type: "error",
-          content:
-            error?.response?.data?.errors?.ma_code?.[0] ||
-            "thêm mới mã khuyến mãi thất bại",
+          content: error?.response?.data?.errors?.mo_ta
+            ? "tên khuyến mãi đã tồn tại."
+            : error?.response?.data?.errors?.ma_code?.[0]
+              ? error?.response?.data?.errors?.ma_code?.[0]
+              : error?.response?.data?.errors?.loai?.[0] == "phan_tram" ||
+                  error?.response?.data?.errors?.giam_gia?.[0]
+                ? "Giảm giá phải lớn hơn 0% và không quá 50%"
+                : "Có lỗi xảy ra",
         });
       }
     },
@@ -146,9 +141,10 @@ const AddVoucher = () => {
       san_phams,
       danh_mucs,
       loai: tabKey ? "tien_mat" : "phan_tram",
+      ma_code: voucherCode,
     };
     mutate(formValues);
-    console.log("formValues", formValues);
+    // console.log("formValues", formValues);
   };
 
   // Removed duplicate declaration of generateRandomCode
@@ -158,23 +154,23 @@ const AddVoucher = () => {
     setIsAllSelected(false);
   };
 
-  const handleProductChange = (value: any) => {
-    if (isAllSelected) {
-      if (value.length > 0) {
-        setIsAllSelected(false);
-        setSelectedProducts(value);
-      }
-    } else {
-      if (value.length === sp.length) {
-        setIsAllSelected(true);
-      }
-      setSelectedProducts(value);
-    }
+  // const handleProductChange = (value: any) => {
+  //   if (isAllSelected) {
+  //     if (value.length > 0) {
+  //       setIsAllSelected(false);
+  //       setSelectedProducts(value);
+  //     }
+  //   } else {
+  //     if (value.length === sp.length) {
+  //       setIsAllSelected(true);
+  //     }
+  //     setSelectedProducts(value);
+  //   }
 
-    // if (value.length > 0) {
-    //   setSearchTerm("");
-    // }
-  };
+  //   // if (value.length > 0) {
+  //   //   setSearchTerm("");
+  //   // }
+  // };
   const handleSelectAll = () => {
     const allValues = sp.map((option: any) => option.label);
     setSelectedValues(allValues as any);
@@ -193,7 +189,7 @@ const AddVoucher = () => {
     setIsAllSelected2(value.length === data.length); // Cập nhật trạng thái chọn tất cả
     // console.log(`Selected: ${value}`);
   };
-  type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+
   //danhmuc
 
   const { data: danhmuc } = useQuery({
@@ -249,7 +245,6 @@ const AddVoucher = () => {
   useEffect(() => {
     generateRandomCode();
   }, []);
-
   if (hangLoading) return <p>Loading...</p>;
   if (hangError) return <p>error...</p>;
   return (
@@ -284,7 +279,10 @@ const AddVoucher = () => {
             autoComplete="off"
           >
             <div className="my-3 w-[50%]">
-              <Form.Item name="ma_code" initialValue={voucherCode}>
+              <Form.Item
+                name="ma_code"
+                initialValue={voucherCode ? voucherCode : generateRandomCode}
+              >
                 <div className="flex items-center gap-2">
                   <Input
                     value={voucherCode}
@@ -798,9 +796,11 @@ const AddVoucher = () => {
                   </Form.Item>{" "}
                   <div className="flex gap-2 ">
                     <Form.Item className=" flex whitespace-nowrap">
-                      <Button htmlType="submit">
-                        <span className="text-sm">Hủy</span>
-                      </Button>
+                      <Link to="/admin/vouchers">
+                        <Button htmlType="submit">
+                          <span className="text-sm">Hủy</span>
+                        </Button>
+                      </Link>
                     </Form.Item>
                     <Form.Item className=" flex whitespace-nowrap">
                       <Button
