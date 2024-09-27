@@ -28,7 +28,7 @@ return new class extends Migration {
             $table->enum('trang_thai_thanh_toan', [
                 'Chưa thanh toán',  // chưa thanh toán
                 'Đã thanh toán',    // đã thanh toán
-                'Đang xử lý',       // đang xử lýS
+                'Đang xử lý',       // đang xử lý
                 'Đã hủy'            // đã hủy
             ])->nullable();
             $table->enum('trang_thai_van_chuyen', [
