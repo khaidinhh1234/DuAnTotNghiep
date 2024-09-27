@@ -42,18 +42,18 @@ class MaKhuyenMaiController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'ma_code'              => 'required|string|max:255|unique:ma_khuyen_mais,ma_code',
-            'mo_ta'                => 'string|unique:ma_khuyen_mais,mo_ta',
-            'loai'                 => 'required|string|in:phan_tram,tien_mat',
+            'ma_code' => 'required|string|max:255|unique:ma_khuyen_mais,ma_code',
+            'mo_ta' => 'string|unique:ma_khuyen_mais,mo_ta',
+            'loai' => 'required|string|in:phan_tram,tien_mat',
             'ngay_bat_dau_suu_tam' => 'required|date',
-            'ngay_bat_dau'         => 'required|date|before:ngay_ket_thuc',
-            'ngay_ket_thuc'        => 'required|date',
-            'so_luong'             => 'required|integer',
-            'giam_gia'             => 'required|numeric',
-            'chi_tieu_thoi_thieu'  => 'nullable|numeric',
-            'khuyen_mai_san_pham'  => 'nullable|array',
-            'khuyen_mai_danh_muc'  => 'nullable|array',
-            'hang_thanh_vien'      => 'required|array'
+            'ngay_bat_dau' => 'required|date|before:ngay_ket_thuc',
+            'ngay_ket_thuc' => 'required|date',
+            'so_luong' => 'required|integer',
+            'giam_gia' => 'required|numeric',
+            'chi_tieu_thoi_thieu' => 'nullable|numeric',
+            'khuyen_mai_san_pham' => 'nullable|array',
+            'khuyen_mai_danh_muc' => 'nullable|array',
+            'hang_thanh_vien' => 'required|array'
         ]);
 
         $validator->after(function ($validator) use ($request) {
@@ -135,7 +135,7 @@ class MaKhuyenMaiController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'mo_ta'    => 'nullable|string',
+            'mo_ta' => 'nullable|string',
             'so_luong' => 'required|integer'
         ]);
 
@@ -311,7 +311,6 @@ class MaKhuyenMaiController extends Controller
     }
 
 
-
     public function guiThongBao(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -349,4 +348,5 @@ class MaKhuyenMaiController extends Controller
             ], 500);
         }
     }
+}
 
