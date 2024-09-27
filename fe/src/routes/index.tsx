@@ -67,11 +67,7 @@ import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 
-<<<<<<< HEAD
-=======
 // import Test from "@/pages/(dashboard)/test";
-
->>>>>>> 2064d26ceaea608f306a57a14d085a8aef077832
 import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
 import UserskhachhangEdit from "@/pages/(dashboard)/user/khachhang/edit/page";
 import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
@@ -86,13 +82,10 @@ import PageNew from "@/pages/(dashboard)/news/pagenew";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 
-<<<<<<< HEAD
 
 
 import Test from "@/pages/(dashboard)/test";
-=======
 // import Test from "@/pages/(dashboard)/test";
->>>>>>> 2064d26ceaea608f306a57a14d085a8aef077832
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
@@ -104,14 +97,16 @@ import Color from "@/pages/(dashboard)/products/bienthe/color";
 import Size from "@/pages/(dashboard)/products/bienthe/size";
 import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
 import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
-<<<<<<< HEAD
+
 import ViewNew from "@/pages/(dashboard)/news/view/ViewNew";
-// import Test from "@/pages/(dashboard)/test";
-=======
-import Test from "@/pages/(dashboard)/test";
+import Rank from "@/pages/(dashboard)/user/hangthanhvien/page";
+import MemberRankForm from "@/pages/(dashboard)/user/hangthanhvien/add/page";
+import Remoterank from "@/pages/(dashboard)/user/hangthanhvien/remote.tsx/remote";
 // import Test from "@/pages/(dashboard)/test";
 
->>>>>>> 2064d26ceaea608f306a57a14d085a8aef077832
+// import Test from "@/pages/(dashboard)/test";
+// import Test from "@/pages/(dashboard)/test";
+
 
 const Router = () => {
   //
@@ -194,16 +189,20 @@ const Router = () => {
           <Route path="news" element={<PageNew/>}/>
           <Route path="news/add" element={<NewAdd/>}/>
           <Route path="news/edit/:id" element={<NewEdit/>}/>
-<<<<<<< HEAD
-          <Route path="news/details/:id" element={<ViewNew/>}/>
-=======
 
->>>>>>> 2064d26ceaea608f306a57a14d085a8aef077832
+          <Route path="news/details/:id" element={<ViewNew/>}/>
+
+
           {/* Tài khoản */}
           <Route
             path="users"
             element={<Navigate to="/admin/users/khachhang" />}
           />
+         <Route path="users/rank" element={<Rank />} />
+         <Route path="users/rankadd" element={<MemberRankForm />} />
+         <Route path="users/remoterank" element={<Remoterank />} />
+
+
           <Route path="users/khachhang" element={<UsersAdminkhachhang />} />
           <Route path="users/khachhang/add" element={<UserskhachhangAdd />} />
           <Route

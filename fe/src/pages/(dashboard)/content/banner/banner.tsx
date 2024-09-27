@@ -673,6 +673,22 @@ const BannerManagement: React.FC = () => {
     setPreviewOpen(true);
   };
 
+  // const handleChange: UploadProps['onChange'] = async ({ fileList: newFileList }) => {
+  //   const updatedFileList = await Promise.all(newFileList.map(async (file) => {
+  //     if (file.originFileObj && !file.url) {
+  //       try {
+  //         const cloudinaryUrl = await uploadToCloudinary(file.originFileObj);
+  //         return { ...file, status: 'done', url: cloudinaryUrl };
+  //       } catch (error) {
+  //         console.error("Error uploading to Cloudinary:", error);
+  //         return { ...file, status: 'error' };
+  //       }
+  //     }
+  //     return file;
+  //   }));
+
+  //   setFileList(updatedFileList);
+  // };
   const handleChange: UploadProps['onChange'] = async ({ fileList: newFileList }) => {
     const updatedFileList = await Promise.all(newFileList.map(async (file) => {
       if (file.originFileObj && !file.url) {
@@ -681,15 +697,16 @@ const BannerManagement: React.FC = () => {
           return { ...file, status: 'done', url: cloudinaryUrl };
         } catch (error) {
           console.error("Error uploading to Cloudinary:", error);
+          message.error("Failed to upload image");
           return { ...file, status: 'error' };
         }
       }
       return file;
     }));
-
+  
     setFileList(updatedFileList);
   };
-
+  
   const handleTextChange = (key: string, newValue: string) => {
     setBannerTextData(prevData =>
       prevData.map(item =>
@@ -730,11 +747,30 @@ const BannerManagement: React.FC = () => {
     },
   });
 
+  // const handleSave = () => {
+  //   if (!bannerData) return;
+
+  //   const newBannerData: BannerData = {
+  //     duong_dan_anh: fileList.map(file => file.url || ''),
+  //     noi_dung: {
+  //       mau_nut: accentColor,
+  //       tieu_de_nut: bannerTextData[3].value,
+  //       tieu_de_phu: bannerTextData[1].value,
+  //       tieu_de_chinh: bannerTextData[0].value,
+  //       mau_tieu_de_phu: bannerTextData[1].color,
+  //       mau_tieu_de_chinh: bannerTextData[0].color,
+  //       van_ban_quang_cao: bannerTextData[2].value,
+  //       mau_van_ban_quang_cao: bannerTextData[2].color,
+  //     },
+  //   };
+
+  //   mutation.mutate([newBannerData]);
+  // };
   const handleSave = () => {
     if (!bannerData) return;
-
+  
     const newBannerData: BannerData = {
-      duong_dan_anh: fileList.map(file => file.url || ''),
+      duong_dan_anh: fileList.map(file => file.url || '').filter(url => url !== ''),
       noi_dung: {
         mau_nut: accentColor,
         tieu_de_nut: bannerTextData[3].value,
@@ -746,10 +782,15 @@ const BannerManagement: React.FC = () => {
         mau_van_ban_quang_cao: bannerTextData[2].color,
       },
     };
-
+  
+    // Kiểm tra nếu chỉ có một URL, gửi dưới dạng chuỗi
+    if (newBannerData.duong_dan_anh.length === 1) {
+      newBannerData.duong_dan_anh = newBannerData.duong_dan_anh[0];
+    }
+  
     mutation.mutate([newBannerData]);
   };
-
+  
   if (isLoading || !bannerData) return <div>Loading...</div>;
   if (isError) return <div>Error loading banner data</div>;
 
