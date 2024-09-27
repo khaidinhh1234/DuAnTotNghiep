@@ -58,17 +58,18 @@ class ThongTinWebController extends Controller
             'link_zalo' => 'nullable|string|max:255',
             'link_instagram' => 'nullable|string|max:255',
             'link_tiktok' => 'nullable|string|max:255',
-            'banner' => 'nullable|array', // Mảng chứa đường dẫn ảnh banner
-            'banner.*' => 'nullable|string|max:255', // Đường dẫn ảnh của từng banner
-            'noi_dung_banner.duong_dan' => 'nullable|string|max:255',
-            'noi_dung_banner.tieu_de_chinh' => 'nullable|string|max:255',
-            'noi_dung_banner.mau_tieu_de_chinh' => 'nullable|string|max:7',
-            'noi_dung_banner.tieu_de_phu' => 'nullable|string|max:255',
-            'noi_dung_banner.mau_tieu_de_phu' => 'nullable|string|max:7',
-            'noi_dung_banner.van_ban_quang_cao' => 'nullable|string|max:255',
-            'noi_dung_banner.mau_van_ban_quang_cao' => 'nullable|string|max:7',
-            'noi_dung_banner.tieu_de_nut' => 'nullable|string|max:255',
-            'noi_dung_banner.mau_nut' => 'nullable|string|max:7',
+            'banner' => 'nullable|array', // Mảng banner
+            'banner.*.duong_dan_anh' => 'nullable|array', // Mảng đường dẫn ảnh
+            'banner.*.noi_dung.duong_dan' => 'nullable|string|max:255',
+            'banner.*.noi_dung.tieu_de_chinh' => 'nullable|string|max:255',
+            'banner.*.noi_dung.mau_tieu_de_chinh' => 'nullable|string|max:7',
+            'banner.*.noi_dung.tieu_de_phu' => 'nullable|string|max:255',
+            'banner.*.noi_dung.mau_tieu_de_phu' => 'nullable|string|max:7',
+            'banner.*.noi_dung.van_ban_quang_cao' => 'nullable|string|max:255',
+            'banner.*.noi_dung.mau_van_ban_quang_cao' => 'nullable|string|max:7',
+            'banner.*.noi_dung.tieu_de_nut' => 'nullable|string|max:255',
+            'banner.*.noi_dung.mau_nut' => 'nullable|string|max:7',
+            'noi_dung_banner' => 'nullable|array', // Mảng nội dung banner
         ]);
 
         if ($validator->fails()) {
@@ -81,8 +82,16 @@ class ThongTinWebController extends Controller
         try {
             $data = $request->all();
 
-
             if (isset($data['banner'])) {
+                foreach ($data['banner'] as &$banner) {
+                    if (isset($banner['duong_dan_anh'])) {
+                        $banner['duong_dan_anh'] = json_encode($banner['duong_dan_anh']);
+                    }
+
+                    if (isset($banner['noi_dung'])) {
+                        $banner['noi_dung'] = json_encode($banner['noi_dung']);
+                    }
+                }
                 $data['banner'] = json_encode($data['banner']);
             }
 
@@ -114,6 +123,7 @@ class ThongTinWebController extends Controller
             ], 500);
         }
     }
+
 
 
 }
