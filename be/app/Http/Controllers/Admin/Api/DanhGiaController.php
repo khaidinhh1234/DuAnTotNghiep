@@ -13,7 +13,7 @@ class DanhGiaController extends Controller
      * Display a listing of the resource.
      */
 
-    public function danhSachDanhGiaSanPham(SanPham $sanpham)
+    public function DanhGiaTheoSanPham(SanPham $sanpham)
     {
         try {
             $danhGias = DanhGia::with([
@@ -56,10 +56,15 @@ class DanhGiaController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+            $danhGias->transform(function ($danhGia) {
+                $danhGia->tong_so_sao_trung_binh = ($danhGia->so_sao_san_pham + $danhGia->so_sao_dich_vu_van_chuyen) / 2;
+                return $danhGia;
+            });
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Danh sách tất cả đánh giá',
+                'message' => 'Danh sách tất cả đánh giá với tổng số sao',
                 'data' => $danhGias
             ]);
         } catch (\Exception $exception) {
@@ -71,5 +76,4 @@ class DanhGiaController extends Controller
             ], 500);
         }
     }
-
 }
