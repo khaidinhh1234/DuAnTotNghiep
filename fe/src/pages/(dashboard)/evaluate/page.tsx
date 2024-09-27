@@ -1,87 +1,60 @@
 import { IEvaluate } from "@/common/types/evaluate";
+import instance from "@/configs/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Input, Popconfirm, Rate, Space, Table } from "antd";
+import { Button, Input, Popconfirm, Rate, Space, Table, TableColumnsType, Modal, Select } from "antd";
 import { useState } from "react";
 
-// Dữ liệu giả
-const fakeEvaluateData: IEvaluate[] = [
-  {
-    id: 1,
-    user_id: 101,
-    san_pham_id: 1001,
-    so_sao_san_pham: 5,
-    so_sao_dich_vu_van_chuyen: 4,
-    noi_dung: "Sản phẩm rất tốt, chất lượng cao",
-    trang_thai: true,
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-  {
-    id: 2,
-    user_id: 102,
-    san_pham_id: 1002,
-    so_sao_san_pham: 3,
-    so_sao_dich_vu_van_chuyen: 3,
-    noi_dung: "Sản phẩm tạm ổn nhưng giao hàng chậm",
-    trang_thai: false,
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-];
-
-// Lấy dữ liệu giả
-const fetchEvaluateData = async (): Promise<IEvaluate[]> => {
-  return new Promise<IEvaluate[]>((resolve) => {
-    setTimeout(() => {
-      resolve(fakeEvaluateData);
-    }, 500);
-  });
-};
-
-// Gửi phản hồi lên API
-const sendReply = async ({ id, reply }: { id: number; reply: string }) => {
-  console.log(`Gửi phản hồi cho đánh giá ID: ${id}, Phản hồi: ${reply}`);
-  // Gửi dữ liệu lên server để lưu phản hồi
-  // await instance.post(`/admin/sanpham/danhgia/${id}/phanhoi`, { reply });
-};
-
 const EvaluateAdmin = () => {
-  const { data = [], isLoading, isError } = useQuery<IEvaluate[]>({
-    queryKey: ["danhgia"],
-    queryFn: fetchEvaluateData,
+  const queryClient = useQueryClient();
+  const { Option } = Select;
+
+  // Query data
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['danhgiasanpham'],
+    queryFn: async () => {
+      const response = await instance.get(`/admin/danhsachdanhgia`);
+      return response.data;
+    },
   });
 
-  const queryClient = useQueryClient();
+  // Mutation for sending replies
   const mutation = useMutation({
-    mutationFn: async (data) => {
-      // Your mutation logic here, e.g., API call
-      const response = await fetch('/api/endpoint', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.json();
+    mutationFn: async (data: { id: number, reply: string }) => {
+      const response = await instance.post(`/admin/danhsachdanhgia/reply`, data);
+      return response.data;
     },
     onSuccess: () => {
-      // Invalidate and refetch
+      queryClient.invalidateQueries(['danhgiasanpham']);
     },
     onError: (error) => {
       console.error('Error:', error);
     },
   });
 
+  // State management
   const [reply, setReply] = useState<{ [key: number]: string }>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentEvaluate, setCurrentEvaluate] = useState<IEvaluate | null>(null);
+  const [filter, setFilter] = useState({ product: "", star: "", user: "" });
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+  // Modal functions
+  const showModal = (record: IEvaluate) => {
+    setCurrentEvaluate(record);
+    setIsModalOpen(true);
+  };
 
-  if (isError) {
-    return <p>Đã xảy ra lỗi khi tải dữ liệu.</p>;
-  }
+  const handleOk = () => {
+    if (currentEvaluate && reply[currentEvaluate.id]) {
+      mutation.mutate({ id: currentEvaluate.id, reply: reply[currentEvaluate.id] });
+    }
+    setIsModalOpen(false);
+  };
 
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  // Handlers
   const handleReplyChange = (id: number, value: string) => {
     setReply((prev) => ({
       ...prev,
@@ -89,101 +62,102 @@ const EvaluateAdmin = () => {
     }));
   };
 
-  const handleSendReply = (id: number) => {
-    if (reply[id]) {
-      mutation.mutate({ id, reply: reply[id] });
-    }
+  const handleFilterChange = (key: string, value: string) => {
+    setFilter((prev) => ({ ...prev, [key]: value }));
   };
 
-  const columns = [
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Đã xảy ra lỗi khi tải dữ liệu.</p>;
+
+  // Data processing
+  const dataSource = data?.data.map((evaluate: IEvaluate) => ({
+    key: evaluate.id,
+    ...evaluate,
+    user_id: evaluate.user?.ten || "Chưa có dữ liệu",
+    san_pham_id: evaluate.san_pham?.ten_san_pham || "Chưa có dữ liệu",
+  })) || [];
+
+  const columns: TableColumnsType<IEvaluate> = [
+    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "Người dùng", key: "user_id", dataIndex: "user_id" },
+    { title: "Sản phẩm", key: "san_pham_id", dataIndex: "san_pham_id" },
+    { title: "Chất lượng sản phẩm", key: "chat_luong_san_pham", dataIndex: "chat_luong_san_pham" },
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
+      title: "Nội dung", key: "mo_ta", render: (record: IEvaluate) => (
+        <ExpandableContent content={record.mo_ta} />
+      ),
     },
     {
-      title: "Người dùng",
-      key: "user_id",
-      render: (record: IEvaluate) => `User ${record.user_id}`,
-    },
-    {
-      title: "Sản phẩm",
-      key: "san_pham_id",
-      render: (record: IEvaluate) => `Sản phẩm ${record.san_pham_id}`,
-    },
-    {
-      title: "Nội dung",
-      key: "noi_dung",
-      render: (record: IEvaluate) => (
+      title: "Chất lượng", key: "chat_luong", render: (record: IEvaluate) => (
         <div>
-          <p>{record.noi_dung}</p>
-          <Space direction="vertical">
-            <Input.TextArea
-              rows={3}
-              value={reply[record.id] || ""}
-              onChange={(e) => handleReplyChange(record.id, e.target.value)}
-              placeholder="Nhập phản hồi của bạn..."
-            />
-            <Button
-              type="primary"
-              onClick={() => handleSendReply(record.id)}
-              disabled={!reply[record.id]}
-            >
-              Gửi phản hồi
-            </Button>
-          </Space>
+          <div><span>Sản phẩm: </span><Rate disabled value={record.so_sao_san_pham} /></div>
+          <div><span>Vận chuyển: </span><Rate disabled value={record.so_sao_dich_vu_van_chuyen} /></div>
         </div>
       ),
     },
     {
-      title: "Chất lượng",
-      key: "chat_luong",
-      render: (record: IEvaluate) => (
-        <div>
-          <div>
-            <span>Sản phẩm: </span>
-            <Rate disabled value={record.so_sao_san_pham} />
-          </div>
-          <div>
-            <span>Vận chuyển: </span>
-            <Rate disabled value={record.so_sao_dich_vu_van_chuyen} />
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Hành động",
-      key: "hanh_dong",
-      render: (_, record: IEvaluate) => (
+      title: "Hành động", key: "hanh_dong", render: (_, record: IEvaluate) => (
         <Space>
-          <Button type="primary">Duyệt</Button>
-          <Popconfirm
-            title="Bạn có chắc muốn ẩn đánh giá này không?"
-            onConfirm={() => console.log("Ẩn đánh giá:", record.id)}
-          >
-            <Button type="default" danger>
-              Ẩn
-            </Button>
+          <Button type="primary" onClick={() => showModal(record)}>Phản hồi</Button>
+          <Popconfirm title="Bạn có chắc muốn ẩn đánh giá này không?" onConfirm={() => console.log("Ẩn đánh giá:", record.id)}>
+            <Button type="default" danger>Ẩn</Button>
           </Popconfirm>
         </Space>
       ),
     },
   ];
 
+  // Filter options
+  const Filters = () => (
+    <div className="flex gap-4 mb-4">
+      <Select placeholder="Chọn sản phẩm" style={{ width: 200 }} onChange={(value) => handleFilterChange('product', value)}>
+        <Option value="">Tất cả sản phẩm</Option>
+        <Option value="sanpham1">Sản phẩm 1</Option>
+        <Option value="sanpham2">Sản phẩm 2</Option>
+      </Select>
+      <Select placeholder="Số sao" style={{ width: 200 }} onChange={(value) => handleFilterChange('star', value)}>
+        <Option value="">Tất cả</Option>
+        <Option value="5">5 sao</Option>
+        <Option value="4">4 sao</Option>
+        <Option value="3">3 sao</Option>
+      </Select>
+      <Input placeholder="Tìm kiếm người dùng" style={{ width: 200 }} onChange={(e) => handleFilterChange('user', e.target.value)} />
+    </div>
+  );
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="flex items-center">
-        <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold">Đánh giá</span>
-        </h1>
-      </div>
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">Đánh giá sản phẩm</h1>
       </div>
-      <div>
-        <Table columns={columns} dataSource={data} rowKey="id" />
-      </div>
+      <Filters />
+      <Table 
+        columns={columns} 
+        dataSource={dataSource} 
+        pagination={{ pageSize: 10 }} 
+      />
+      <Modal title="Phản hồi đánh giá" visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Input.TextArea
+          rows={4}
+          value={currentEvaluate ? reply[currentEvaluate.id] || "" : ""}
+          onChange={(e) => currentEvaluate && handleReplyChange(currentEvaluate.id, e.target.value)}
+          placeholder="Nhập phản hồi..."
+        />
+      </Modal>
     </main>
+  );
+};
+
+// Expandable content component for long text
+const ExpandableContent = ({ content }: { content: string }) => {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div>
+      {expanded ? content : `${content.substring(0, 100)}...`}
+      <Button type="link" onClick={() => setExpanded(!expanded)}>
+        {expanded ? "Thu gọn" : "Xem thêm"}
+      </Button>
+    </div>
   );
 };
 
