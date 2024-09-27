@@ -14,7 +14,8 @@ class DanhGia extends Model
         'san_pham_id',
         'so_sao_san_pham',
         'so_sao_dich_vu_van_chuyen',
-        'noi_dung',
+        'chat_luong_san_pham',
+        'mo_ta',
         'huu_ich',
     ];
     public function sanPham()
