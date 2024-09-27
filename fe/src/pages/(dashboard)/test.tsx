@@ -1,16 +1,97 @@
-const TestAbc = () => {
-  const banner =
-    '[{"noi_dung": {"mau_nut": "#ff9800", "tieu_de_nut": "Mua ngay", "tieu_de_phu": "Tất cả phải đi", "tieu_de_chinh": "Giảm giá thanh lý", "mau_tieu_de_phu": "#4d2e2e", "mau_tieu_de_chinh": "#9c27b0", "van_ban_quang_cao": "Giảm giá lớn cho tất cả các mặt hàng. Mua ngay trước khi hết hàng!", "mau_van_ban_quang_cao": "#df0e0e"}, "duong_dan_anh": "[\\"https:\\\\/\\\\/res.cloudinary.com\\\\/dpundwxg1\\\\/image\\\\/upload\\\\/v1727379398\\\\/sg-11134201-7rdwe-lyvntmy2ws1y41_fgsroa.webp\\",\\"https:\\\\/\\\\/res.cloudinary.com\\\\/dpundwxg1\\\\/image\\\\/upload\\\\/v1727379401\\\\/vn-11134207-7r98o-lz75rnbaok9t5d_cpbeqs.webp\\",\\"https:\\\\/\\\\/res.cloudinary.com\\\\/dpundwxg1\\\\/image\\\\/upload\\\\/v1727379414\\\\/f348423053687486bb654b7b0f56ee4c_udvvz6.webp\\",\\"https:\\\\/\\\\/res.cloudinary.com\\\\/dpundwxg1\\\\/image\\\\/upload\\\\/v1727379439\\\\/sg-11134201-7rdwe-lyvntmy2ws1y41_pjvrmf.webp\\"]"}]';
-  const banners = JSON.parse(banner);
+import { Bar, BarChart, Rectangle, XAxis } from "recharts";
 
-  // Bước 2: Chuyển đổi chuỗi đường dẫn ảnh thành mảng
-  const imageUrls = JSON.parse(banners[0].duong_dan_anh);
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
 
-  // Kiểm tra kết quả
-  console.log(banners[0].noi_dung.tieu_de_chinh); // "Giảm giá thanh lý"
-  console.log(imageUrls); // Mảng các đường dẫn ảnh
-  return;
-  <></>;
-};
-
-export default TestAbc;
+export default function Component() {
+  return (
+    <Card className="max-w-xs">
+      <CardHeader className="p-4 pb-0">
+        <CardTitle>Walking Distance</CardTitle>
+        <CardDescription>
+          Over the last 7 days, your distance walked and run was 12.5 miles per
+          day.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-row items-baseline gap-4 p-4 pt-0">
+        <div className="flex items-baseline gap-1 text-3xl font-bold tabular-nums leading-none">
+          12.5
+          <span className="text-sm font-normal text-muted-foreground">
+            miles/day
+          </span>
+        </div>
+        <ChartContainer
+          config={{
+            steps: {
+              label: "Steps",
+              color: "hsl(var(--chart-1))",
+            },
+          }}
+          className="ml-auto w-[72px]"
+        >
+          <BarChart
+            accessibilityLayer
+            margin={{
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            }}
+            data={[
+              {
+                date: "2024-01-01",
+                steps: 2000,
+              },
+              {
+                date: "2024-01-02",
+                steps: 2100,
+              },
+              {
+                date: "2024-01-03",
+                steps: 2200,
+              },
+              {
+                date: "2024-01-04",
+                steps: 1300,
+              },
+              {
+                date: "2024-01-05",
+                steps: 1400,
+              },
+              {
+                date: "2024-01-06",
+                steps: 2500,
+              },
+              {
+                date: "2024-01-07",
+                steps: 1600,
+              },
+            ]}
+          >
+            <Bar
+              dataKey="steps"
+              fill="var(--color-steps)"
+              radius={2}
+              fillOpacity={0.2}
+              activeIndex={6}
+              activeBar={<Rectangle fillOpacity={0.8} />}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={4}
+              hide
+            />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}

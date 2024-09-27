@@ -48,7 +48,7 @@ const VoucherAdmin: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       try {
-        const response = await instance.put(
+        const response = await instance.post(
           `/admin/makhuyenmai/huy-kich-hoat/${data.id}`,
           { ...data, trang_thai: 0 }
         );
