@@ -44,47 +44,47 @@ class TinTucController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    try {
-        DB::beginTransaction();
-        $validatedTinTuc = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'danh_muc_tin_tuc_id' => 'required|exists:danh_muc_tin_tucs,id',
-            'tieu_de' => 'required|unique:tin_tucs,tieu_de|max:255',
-            'anh_tin_tuc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'noi_dung' => 'required|string',
-            'duong_dan' => 'nullable',
-        ]);
+    {
+        try {
+            DB::beginTransaction();
+            $validatedTinTuc = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'danh_muc_tin_tuc_id' => 'required|exists:danh_muc_tin_tucs,id',
+                'tieu_de' => 'required|unique:tin_tucs,tieu_de|max:255',
+                'anh_tin_tuc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'noi_dung' => 'required|string',
+                'duong_dan' => 'nullable',
+            ]);
 
-        if ($request->hasFile('anh_tin_tuc')) {
-            if (!Storage::exists('public/tin_tucs')) {
-                Storage::makeDirectory('public/tin_tucs');
+            if ($request->hasFile('anh_tin_tuc')) {
+                if (!Storage::exists('public/tin_tucs')) {
+                    Storage::makeDirectory('public/tin_tucs');
+                }
+                $pathFile = $request->file('anh_tin_tuc')->store('tin_tucs', 'public');
+                $validatedTinTuc['anh_tin_tuc'] = Storage::url($pathFile);
             }
-            $pathFile = $request->file('anh_tin_tuc')->store('tin_tucs', 'public');
-            $validatedTinTuc['anh_tin_tuc'] = Storage::url($pathFile);
+
+            $validatedTinTuc['duong_dan'] = Str::slug($validatedTinTuc['tieu_de']);
+            $tinTuc = TinTuc::create($validatedTinTuc);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Thêm mới tin tức thành công',
+                'data' => $tinTuc,
+            ]);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi thêm mới dữ liệu',
+                'error' => $exception->getMessage(),
+            ], 500);
         }
-
-        $validatedTinTuc['duong_dan'] = Str::slug($validatedTinTuc['tieu_de']);
-        $tinTuc = TinTuc::create($validatedTinTuc);
-
-        DB::commit();
-
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => 'Thêm mới tin tức thành công',
-            'data' => $tinTuc,
-        ]);
-    } catch (\Exception $exception) {
-        DB::rollBack();
-        return response()->json([
-            'status' => false,
-            'status_code' => 500,
-            'message' => 'Đã có lỗi xảy ra khi thêm mới dữ liệu',
-            'error' => $exception->getMessage(),
-        ], 500);
     }
-}
 
     /**
      * Display the specified resource.
@@ -220,7 +220,10 @@ class TinTucController extends Controller
     public function danhSachTinTucDaXoa()
     {
         try {
-            $tinTucDaXoa = TinTuc::onlyTrashed()->get();
+            $tinTucDaXoa = TinTuc::onlyTrashed()->with(
+                'user:id,ho,ten',
+                'danhMucTinTuc:id,ten_danh_muc_tin_tuc',
+            )->get();
             return response()->json(
                 [
                     'status' => true,

@@ -6,11 +6,11 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, message, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 
 interface PromotionType {
@@ -31,7 +31,7 @@ interface PromotionType {
 
 type DataIndex = keyof PromotionType;
 
-const PromotionAdmin: React.FC = () => {
+const VoucherAdmin: React.FC = () => {
   const {
     data: voucher,
     isLoading,
@@ -44,7 +44,24 @@ const PromotionAdmin: React.FC = () => {
       return response.data;
     },
   });
-  // console.log(voucher);
+
+  const { mutate } = useMutation({
+    mutationFn: async (data: any) => {
+      try {
+        const response = await instance.put(
+          `/admin/makhuyenmai/huy-kich-hoat/${data.id}`,
+          { ...data, trang_thai: 0 }
+        );
+        message.open({
+          type: "success",
+          content: "Tắt khuyến mãi thành công",
+        });
+        return response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
   const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({
@@ -315,15 +332,21 @@ const PromotionAdmin: React.FC = () => {
                   title=" Bạn có muốn tắt không?"
                   description="Bạn có chắc chắn muốn tắt không?"
                   okText="Có"
+                  onConfirm={() => {
+                    mutate(record);
+                  }}
                   cancelText="Không"
                 >
                   <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
                     Tắt
                   </Button>
                 </Popconfirm>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Cập nhật
-                </Button>{" "}
+                <Link to={`/admin/vouchers/edit/${record.id}`}>
+                  {" "}
+                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                    Cập nhật
+                  </Button>{" "}
+                </Link>
               </>
             )}
             {record.trang_thai == 2 && (
@@ -331,16 +354,21 @@ const PromotionAdmin: React.FC = () => {
                 <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
                   Bật
                 </Button>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Xem
-                </Button>{" "}
+                <Link to={`/admin/vouchers/show/${record.id}`}>
+                  {" "}
+                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                    Xem
+                  </Button>{" "}
+                </Link>
               </>
             )}
             {record.trang_thai == 0 && (
               <>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Xem
-                </Button>{" "}
+                <Link to={`/admin/vouchers/show/${record.id}`}>
+                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                    Xem
+                  </Button>{" "}
+                </Link>
               </>
             )}
           </>
@@ -425,4 +453,4 @@ const PromotionAdmin: React.FC = () => {
   );
 };
 
-export default PromotionAdmin;
+export default VoucherAdmin;

@@ -81,6 +81,7 @@ import PageNew from "@/pages/(dashboard)/news/pagenew";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 
+// import Test from "@/pages/(dashboard)/test";
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
@@ -91,9 +92,13 @@ import Color from "@/pages/(dashboard)/products/bienthe/color";
 import Size from "@/pages/(dashboard)/products/bienthe/size";
 import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
 import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
+
 import ViewNew from "@/pages/(dashboard)/news/view/ViewNew";
+import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
+import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
+import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
 // import Test from "@/pages/(dashboard)/test";
-// import TestAbc from "@/pages/(dashboard)/test";
+// import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
 const Router = () => {
   //
@@ -164,8 +169,13 @@ const Router = () => {
           <Route path="categories/add" element={<CategoriesAdd />} />
           <Route path="categories/edit/:id" element={<CategoriesEdit />} />
           <Route path="categories/remote" element={<CategoriesRemote />} />
+          {/* đơn hàng */}
           <Route path="orders" element={<OrderAdmin />} />
-          <Route path="vouchers" element={<VoucherAdmin />} />
+          {/* khuyến mãi */}
+          <Route path="vouchers" element={<VoucherAdmin />} />{" "}
+          <Route path="add-vocher" element={<AddVoucher />} />
+          <Route path="vouchers/show/:id" element={<ShowVoucher />} />
+          <Route path="vouchers/edit/:id" element={<EditVoucher />} />
           {/* danh mục tin tức */}
           <Route path="newcategory" element={<NewCategory />} />
           <Route path="newcategory/add" element={<NewCategoriesAdd />} />
@@ -175,6 +185,7 @@ const Router = () => {
           <Route path="news" element={<PageNew />} />
           <Route path="news/add" element={<NewAdd />} />
           <Route path="news/edit/:id" element={<NewEdit />} />
+          <Route path="news/remote" element={<RemoteNew />} />
           <Route path="news/details/:id" element={<ViewNew />} />
           {/* Tài khoản */}
           <Route
@@ -237,7 +248,6 @@ const Router = () => {
           />
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
-          <Route path="add-vocher" element={<AddVoucher />} />
           {/* <Route path="test" element={<Test />} /> */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
