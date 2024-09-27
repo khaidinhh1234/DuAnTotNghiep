@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AnhDanhGia;
 use App\Models\DanhGia;
 use App\Models\SanPham;
-use App\Services\OpenAIService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -16,13 +15,6 @@ class DanhGiaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $openAIService;
-
-    public function __construct(OpenAIService $openAIService)
-    {
-        $this->openAIService = $openAIService;
-    }
-
     public function danhSachDanhGia(SanPham $sanpham)
     {
         try {
@@ -75,31 +67,25 @@ class DanhGiaController extends Controller
                 'huu_ich' => 'nullable|integer|min:0',
                 'anh_danh_gia.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-
-            if (!$this->openAIService->filterReview($request->noi_dung) == 'This review contains inappropriate content') {
-                $danhGia = DanhGia::create($validateDanhGia);
-                $mess = 'Đánh giá mới đã được tạo thành công';
-            }
-
-            $mess = 'Đánh giá mới đã được tạo thành công';
+            $danhGia = DanhGia::create($validateDanhGia);
 
             // Nếu có ảnh thì lưu ảnh
-            // if ($request->hasFile('anh_danh_gia')) {
-            //     foreach ($request->file('anh_danh_gia') as $file) {
-            //         $pathFile = $file->store('anh_danh_gia', 'public');
-            //         AnhDanhGia::create([
-            //             'danh_gia_id' => $danhGia->id,
-            //             'anh_danh_gia' => Storage::url($pathFile),
-            //         ]);
-            //     }
-            // }
+            if ($request->hasFile('anh_danh_gia')) {
+                foreach ($request->file('anh_danh_gia') as $file) {
+                    $pathFile = $file->store('anh_danh_gia', 'public');
+                    AnhDanhGia::create([
+                        'danh_gia_id' => $danhGia->id,
+                        'anh_danh_gia' => Storage::url($pathFile),
+                    ]);
+                }
+            }
 
             DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => $mess,
-                'data' => $danhGia
+                'message' => 'Đánh giá mới đã được tạo thành công',
+                'data' => $danhGia,
             ]);
         } catch (\Exception $exception) {
             DB::rollBack();
