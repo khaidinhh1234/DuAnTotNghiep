@@ -151,7 +151,8 @@ Route::middleware([])
         Route::post('hangthanhvien/thung-rac/{id}', [HangThanhVienController::class, 'khoiPhucHangThanhVien'])->name('hangthanhvien.khoiphuc');
 
         // Đánh giá
-        Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAdmin']);
+        Route::get('danhsachdanhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAll']);
+        Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaSanPham']);
 
         // Thống kê
         //Thống kê doanh thu

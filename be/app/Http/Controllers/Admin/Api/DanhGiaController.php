@@ -13,7 +13,7 @@ class DanhGiaController extends Controller
      * Display a listing of the resource.
      */
 
-    public function danhSachDanhGiaAdmin(SanPham $sanpham)
+    public function danhSachDanhGiaSanPham(SanPham $sanpham)
     {
         try {
             $danhGias = DanhGia::with([
@@ -44,4 +44,32 @@ class DanhGiaController extends Controller
             ], 500);
         }
     }
+
+    public function danhSachDanhGiaAll()
+    {
+        try {
+            $danhGias = DanhGia::with([
+                'sanPham:id,ten_san_pham,anh_san_pham',
+                'anhDanhGias:id,anh_danh_gia,danh_gia_id',
+                'user:id,ho,ten,email'
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Danh sách tất cả đánh giá',
+                'data' => $danhGias
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh sách đánh giá',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
 }
