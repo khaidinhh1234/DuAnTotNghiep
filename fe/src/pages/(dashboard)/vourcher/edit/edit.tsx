@@ -1,41 +1,38 @@
-import React, { useEffect, useState } from "react";
+import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
+import type { GetProps } from "antd";
 import {
+  Button,
+  DatePicker,
+  Divider,
   Form,
   Input,
   InputNumber,
-  Select,
-  DatePicker,
-  Tabs,
-  Button,
-  Divider,
   Radio,
+  Select,
   message,
 } from "antd";
 import { DateTime } from "luxon";
-import { v4 as uuidv4 } from "uuid";
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
-import type { GetProps, SelectProps } from "antd";
-const { RangePicker } = DatePicker;
-const dateFormat = "DD/MM/YYYY";
-const weekFormat = "MM/DD";
-const monthFormat = "YYYY/MM";
-import dayjs from "dayjs";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 import instance from "@/configs/axios";
-const { Option } = Select;
-const options: SelectProps["options"] = [] as {
-  label: string;
-  value: string;
-}[];
-const AddVoucher = () => {
+import { useMutation, useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+// const { Option } = Select;
+// const options: SelectProps["options"] = [] as {
+//   label: string;
+//   value: string;
+// }[];
+const EditVoucher = () => {
   const [form] = Form.useForm();
+  const { id } = useParams();
+
   // const [voucherCode, setVoucherCode] = useState(""); // Duplicate declaration removed
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isAllSelected2, setIsAllSelected2] = useState(false);
 
-  const [tabKey, setTabKey] = useState(true);
+  const [tabKey, setTabKey] = useState<boolean | undefined>(undefined);
   const [max, setMax] = useState(479000);
   const [voucher, setVoucher] = useState(56010);
   const [phantram, setphantram] = useState(30);
@@ -50,16 +47,32 @@ const AddVoucher = () => {
   const [rank, setrank] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const nav = useNavigate();
+
+  const { data: voucherid } = useQuery({
+    queryKey: ["voucherid", id],
+    queryFn: async () => {
+      const response = await instance.get(`/admin/makhuyenmai/${id}`);
+
+      return response.data;
+    },
+  });
+  const hang_thanh_viens = voucherid?.data?.hang_thanh_viens.map(
+    (item: any) => ({
+      value: item.ten_hang_thanh_vien,
+      label: item.ten_hang_thanh_vien,
+    })
+  );
+  // console.log("hang_thanh_viens", hang_thanh_viens);
   const { mutate } = useMutation({
     // mutationKey: "createVoucher",
     mutationFn: async (values: any) => {
       try {
-        const response = await instance.post("/admin/makhuyenmai", values);
+        const response = await instance.put("/admin/makhuyenmai/" + id, values);
         nav("/admin/vouchers");
 
         message.open({
           type: "success",
-          content: "Thêm mới mã khuyến mãi thành công",
+          content: "Cập nhật mã khuyến mãi thành công",
         });
 
         return response.data;
@@ -69,27 +82,27 @@ const AddVoucher = () => {
           type: "error",
           content:
             error?.response?.data?.errors?.ma_code?.[0] ||
-            "thêm mới mã khuyến mãi thất bại",
+            "Cập nhật mã khuyến mãi thất bại",
         });
       }
     },
   });
 
   //mã khuyến mãi
-  const generateRandomCode = () => {
-    const length = 8; // Độ dài mã khuyến mãi
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let randomCode = "";
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      randomCode += characters.charAt(randomIndex);
-    }
+  // const generateRandomCode = () => {
+  //   const length = 8; // Độ dài mã khuyến mãi
+  //   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  //   let randomCode = "";
+  //   for (let i = 0; i < length; i++) {
+  //     const randomIndex = Math.floor(Math.random() * characters.length);
+  //     randomCode += characters.charAt(randomIndex);
+  //   }
 
-    setVoucherCode(randomCode); // Cập nhật voucherCode
-  };
-  useEffect(() => {
-    generateRandomCode();
-  }, []);
+  //   setVoucherCode(randomCode); // Cập nhật voucherCode
+  // };
+  // useEffect(() => {
+  //   generateRandomCode();
+  // }, []);
   //call api
   const { data: sanpham } = useQuery({
     queryKey: ["sanpham"],
@@ -148,11 +161,9 @@ const AddVoucher = () => {
       loai: tabKey ? "tien_mat" : "phan_tram",
     };
     mutate(formValues);
-    console.log("formValues", formValues);
+    // console.log("formValues", formValues);
   };
 
-  // Removed duplicate declaration of generateRandomCode
-  // sảm phẩm
   const handleDeselectAll = () => {
     setSelectedValues([]);
     setIsAllSelected(false);
@@ -247,22 +258,20 @@ const AddVoucher = () => {
     setIsAllSelected1(false);
   };
   useEffect(() => {
-    generateRandomCode();
+    // generateRandomCode();
+    setTabKey(voucherid?.data?.loai == "tien_mat");
   }, []);
-
+  // console.log("voucherid", tabKey);
   if (hangLoading) return <p>Loading...</p>;
   if (hangError) return <p>error...</p>;
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="flex items-center">
-        <h1 className="md:text-base">
-          Quản trị / Khuyến mãi /{" "}
-          <span className="font-semibold px-px"> Tạo mã khuyến mãi mới</span>
-        </h1>
-      </div>
+    <main className="relative flex flex-1 flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Tạo mã khuyến mãi mới</h1>
-
+        <h1 className="md:text-base">
+          <span className="font-semibold">
+            Cập nhật voucher : {voucherid?.data?.ma_code}
+          </span>
+        </h1>
         <div className="flex gap-2 ml-auto">
           <Link to="/admin/vouchers">
             <Button className="bg-[rgb(37,150,190)] text-white rounded-lg py-1 hover:bg-[rgb(37,150,190,0.8)] flex items-center gap-2">
@@ -281,17 +290,24 @@ const AddVoucher = () => {
             layout="vertical"
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 24 }}
-            autoComplete="off"
+            initialValues={{
+              ...voucherid?.data,
+              ngay_bat_dau: dayjs(voucherid?.data?.ngay_bat_dau),
+              ngay_ket_thuc: dayjs(voucherid?.data?.ngay_ket_thuc),
+              ngay_bat_dau_suu_tam: dayjs(
+                voucherid?.data?.ngay_bat_dau_suu_tam
+              ),
+            }}
           >
             <div className="my-3 w-[50%]">
               <Form.Item name="ma_code" initialValue={voucherCode}>
                 <div className="flex items-center gap-2">
                   <Input
-                    value={voucherCode}
+                    value={voucherid?.data?.ma_code}
                     readOnly
-                    className="rounded-md flex-1 shadow-lg"
+                    disabled
+                    className="rounded-md flex-1 shadow-lg 	cursor-default"
                   />
-                  <Button onClick={generateRandomCode}>Đổi mã</Button>
                 </div>
               </Form.Item>
             </div>
@@ -303,16 +319,15 @@ const AddVoucher = () => {
                     <Form.Item
                       label="Tên khuyến mãi"
                       name="mo_ta"
-                      initialValue="Mã giảm giá khuyến mãi đặc biệt "
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng chọn Nhập tên khuyễn mãi!",
-                        },
-                      ]}
-                      className="mb-0 w-[50%]"
+                      className="mb-0 w-[50%] "
                     >
-                      <Input placeholder="Nhập tên khuyến mãi" />
+                      <Input
+                        placeholder="Nhập tên khuyến mãi"
+                        readOnly
+                        disabled
+                        className="cursor-default"
+                        value={voucherid?.data?.mo_ta}
+                      />
                     </Form.Item>
                   </div>
                   <div className="flex items-center my-2">
@@ -345,7 +360,9 @@ const AddVoucher = () => {
                       ]}
                     >
                       <DatePicker
-                        className="w-[60%] "
+                        className="w-[60%] cursor-default"
+                        readOnly
+                        disabled
                         disabledDate={(current) =>
                           current && current < dayjs().startOf("day")
                         }
@@ -383,7 +400,11 @@ const AddVoucher = () => {
                         }),
                       ]}
                     >
-                      <DatePicker className="w-[40%]" />
+                      <DatePicker
+                        className="w-[40%] cursor-default"
+                        readOnly
+                        disabled
+                      />
                     </Form.Item>
                   </div>
                   <div>
@@ -419,7 +440,9 @@ const AddVoucher = () => {
                       ]}
                     >
                       <DatePicker
-                        className="w-[40%]"
+                        className="w-[40%] cursor-default"
+                        readOnly
+                        disabled
                         disabledDate={(current) =>
                           current && current < dayjs().startOf("day")
                         }
@@ -435,27 +458,37 @@ const AddVoucher = () => {
                     >
                       <Radio.Group
                         className="flex "
-                        value={value}
+                        value={
+                          voucherid?.data?.san_phams.length === 0 &&
+                          voucherid?.data?.danh_mucs.length === 0
+                            ? 0
+                            : voucherid?.data?.san_phams.length > 0
+                              ? 1
+                              : 2
+                        }
                         onChange={(e) => setValue(e.target.value)}
                       >
                         <Radio
                           value={0}
+                          disabled
                           onClick={() => handleReset()}
-                          className="flex flex-row items-end flex-nowrap"
+                          className="flex flex-row items-end flex-nowrap cursor-default"
                         >
                           Toàn gian hàng
                         </Radio>
                         <Radio
                           value={2}
-                          className="flex flex-row items-end flex-nowrap "
+                          disabled
+                          className="flex flex-row items-end flex-nowrap cursor-default"
                           onClick={() => handleResetdm()}
                         >
                           Danh mục sản phẩm
                         </Radio>
                         <Radio
                           value={1}
+                          disabled
                           onClick={() => handleResetsp()}
-                          className="flex flex-row items-end flex-nowrap "
+                          className="flex flex-row items-end flex-nowrap cursor-default"
                         >
                           Sản phẩm được chọn (danh sách sản phẩm sẽ được cập
                           nhật sau khi thiết lập điều kiện giảm giá)
@@ -563,9 +596,9 @@ const AddVoucher = () => {
               <Form.Item className="flex items-center whitespace-nowrap">
                 <Button
                   type="primary"
-                  disabled={tabKey}
-                  className={`mr-2 whitespace-nowrap ${tabKey ? "text-slate-400" : "text-white"}`}
-                  onClick={() => setTabKey(true)}
+                  disabled
+                  className={`mr-2 whitespace-nowrap text-slate-400 `}
+                  // onClick={() => setTabKey(true)}
                 >
                   <span className="text-sm">Áp dụng voucher thông minh</span>
                 </Button>
@@ -580,13 +613,13 @@ const AddVoucher = () => {
               </Form.Item>
               <div className="flex gap-5 my-5">
                 <div
-                  className={`relative  border p-3 rounded-lg + ${tabKey ? "border-blue-600" : ""}`}
-                  onClick={() => setTabKey(true)}
+                  className={`relative  border p-3 rounded-lg + ${tabKey ? "border-slate-600" : ""}`}
+                  // onClick={() => console.log(voucherid?.data?.loai)}
                 >
                   {tabKey && (
                     <div className="absolute top-0 right-0">
                       <div className="w-6 h-10 overflow-hidden">
-                        <div className="w-12 h-16 bg-blue-500 transform rotate-45 origin-bottom-left relative right-2 -top-[69px]">
+                        <div className="w-12 h-16 bg-slate-500 transform rotate-45 origin-bottom-left relative right-2 -top-[69px]">
                           <span className="absolute bottom-[1px] right-[17px] -rotate-45 text-white text-xs font-bold">
                             <i className="fa-solid fa-check"></i>
                           </span>
@@ -598,7 +631,7 @@ const AddVoucher = () => {
                   <h3>Mã giảm giá cố định</h3>
                   <div
                     className={`grid grid-cols-5  px-3 py-5  rounded-lg 
-                     ${tabKey ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
+                     ${tabKey ? "bg-slate-200 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
                       <img src="" alt="" className="w-10 h-10 " />
@@ -606,23 +639,27 @@ const AddVoucher = () => {
                     </div>
                     <div className="col-span-3 leading-[15px]">
                       <p className="font-bold text-2xl">
-                        {voucher ? voucher.toLocaleString() : 0} ₫
+                        {voucherid?.data?.giam_gia < 100
+                          ? 56010
+                          : voucherid?.data?.giam_gia}
+                        ₫
                       </p>
                       <p>
-                        Số tiền tối thiểu {max ? max?.toLocaleString() : 0} ₫{" "}
+                        Số tiền tối thiểu{" "}
+                        {voucherid?.data?.chi_tieu_toi_thieu.toLocaleString()} ₫{" "}
                       </p>
                       <span>Th09 23 24 - Th03 22 25</span>
                     </div>
                   </div>
                 </div>{" "}
                 <div
-                  className={`relative  border p-3 rounded-lg + ${tabKey == false ? "border-blue-600" : ""}`}
-                  onClick={() => setTabKey(false)}
+                  className={`relative  border p-3 rounded-lg + ${tabKey == false ? "border-slate-600" : ""}`}
+                  // onClick={() => setTabKey(false)}
                 >
                   {tabKey == false && (
                     <div className="absolute top-0 right-0">
                       <div className="w-6 h-10 overflow-hidden">
-                        <div className="w-12 h-16 bg-blue-500 transform rotate-45 origin-bottom-left relative right-2 -top-[69px]">
+                        <div className="w-12 h-16 bg-slate-500 transform rotate-45 origin-bottom-left relative right-2 -top-[69px]">
                           <span className="absolute bottom-[1px] right-[17px] -rotate-45 text-white text-xs font-bold">
                             <i className="fa-solid fa-check"></i>
                           </span>
@@ -641,10 +678,14 @@ const AddVoucher = () => {
                     </div>
                     <div className="col-span-3 leading-[15px]">
                       <p className="font-bold text-2xl">
-                        {phantram ? phantram : 0}% tắt
+                        {voucherid?.data?.giam_gia > 100
+                          ? 30
+                          : voucherid?.data?.giam_gia}
+                        % tắt
                       </p>
                       <p>
-                        Số tiền tối thiểu {max ? max?.toLocaleString() : 0} ₫{" "}
+                        Số tiền tối thiểu{" "}
+                        {voucherid?.data?.chi_tieu_toi_thieu.toLocaleString()} ₫{" "}
                       </p>
                       <span>Th09 23 24 - Th03 22 25</span>
                     </div>
@@ -660,7 +701,7 @@ const AddVoucher = () => {
                     label="Nếu giá trị đơn hàng đạt tới
 "
                     name="chi_tieu_toi_thieu"
-                    initialValue={479000}
+                    initialValue={voucherid?.data?.chi_tieu_toi_thieu}
                     rules={[
                       {
                         required: true,
@@ -672,6 +713,9 @@ const AddVoucher = () => {
                     <InputNumber
                       className="w-[60%] rounded-md"
                       min={0}
+                      readOnly
+                      disabled
+                      value={voucherid?.data?.chi_tieu_toi_thieu}
                       max={9999999999}
                       onChange={(value) => setMax(value as any)}
                       placeholder="Nhập giá trị đơn hàng đạt tớ"
@@ -681,7 +725,7 @@ const AddVoucher = () => {
                     <Form.Item
                       label="Giảm giá"
                       name="giam_gia"
-                      initialValue="56010"
+                      initialValue={voucherid?.data?.giam_gia}
                       rules={[
                         { required: true, message: "Bắt buộc phải điền!" },
                         ({ getFieldValue }) => ({
@@ -716,7 +760,9 @@ const AddVoucher = () => {
                     >
                       <InputNumber
                         addonAfter="đ"
-                        defaultValue={56010}
+                        readOnly
+                        disabled
+                        defaultValue={voucherid?.data?.giam_gia}
                         min={1}
                         onChange={(value) => setVoucher(value as any)}
                       />
@@ -726,7 +772,7 @@ const AddVoucher = () => {
                     <Form.Item
                       label="Giảm giá"
                       name="giam_gia"
-                      initialValue={30}
+                      initialValue={voucherid?.data?.giam_gia}
                       rules={[
                         { required: true, message: "Bắt buộc phải điền!" },
                         ({ getFieldValue }) => ({
@@ -751,7 +797,8 @@ const AddVoucher = () => {
                     >
                       <InputNumber
                         addonAfter="%"
-                        defaultValue={30}
+                        defaultValue={voucherid?.data?.giam_gia}
+                        disabled
                         min={1}
                         max={50}
                         onChange={(value: any) => {
@@ -768,7 +815,7 @@ const AddVoucher = () => {
                     label="Số lượng mã giảm giá
 "
                     name="so_luong"
-                    initialValue={10}
+                    initialValue={voucherid?.data?.so_luong}
                     rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >
@@ -776,14 +823,15 @@ const AddVoucher = () => {
                       className="w-[60%] rounded-md"
                       placeholder="Nhập số lượng"
                       max={50}
-                      min={1}
+                      min={voucherid?.data?.so_luong}
                     />
                   </Form.Item>{" "}
                   <Form.Item
                     label="Hạng thành viên  (áp dụng )
 "
                     name="hang_thanh_vien"
-                    rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
+                    initialValue={voucherid?.data?.hang_thanh_vien}
+                    // rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >
                     <Select
@@ -791,7 +839,8 @@ const AddVoucher = () => {
                       allowClear
                       style={{ width: "40%" }}
                       placeholder="Please select"
-                      // defaultValue={data[0]}
+                      disabled
+                      defaultValue={hang_thanh_viens}
                       onChange={handleChange2}
                       options={data}
                     />
@@ -826,4 +875,4 @@ const AddVoucher = () => {
   );
 };
 
-export default AddVoucher;
+export default EditVoucher;
