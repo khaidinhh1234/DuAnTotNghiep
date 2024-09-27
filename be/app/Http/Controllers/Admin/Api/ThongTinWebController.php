@@ -74,6 +74,7 @@ class ThongTinWebController extends Controller
             'banner.*.noi_dung.mau_nut' => 'nullable|string|max:7',
         ]);
 
+
         // Trả về lỗi nếu validate không thành công
         if ($validator->fails()) {
             return response()->json([

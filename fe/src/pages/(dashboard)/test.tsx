@@ -1,89 +1,16 @@
-import instance from "@/configs/axios";
-import { useQuery } from "@tanstack/react-query";
-import type { SelectProps } from "antd";
-import { Button, Divider, Form, Select } from "antd";
-import { useState } from "react";
-const options: SelectProps["options"] = [] as {
-  label: string;
-  value: string;
-}[];
-export default function App() {
-  // const [voucherCode, setVoucherCode] = useState(""); // Duplicate declaration removed
-  const [isAllSelected1, setIsAllSelected1] = useState(false);
+const TestAbc = () => {
+  const banner =
+    '[{"noi_dung": {"mau_nut": "#ff9800", "tieu_de_nut": "Mua ngay", "tieu_de_phu": "Tất cả phải đi", "tieu_de_chinh": "Giảm giá thanh lý", "mau_tieu_de_phu": "#4d2e2e", "mau_tieu_de_chinh": "#9c27b0", "van_ban_quang_cao": "Giảm giá lớn cho tất cả các mặt hàng. Mua ngay trước khi hết hàng!", "mau_van_ban_quang_cao": "#df0e0e"}, "duong_dan_anh": "[\\"https:\\\\/\\\\/res.cloudinary.com\\\\/dpundwxg1\\\\/image\\\\/upload\\\\/v1727379398\\\\/sg-11134201-7rdwe-lyvntmy2ws1y41_fgsroa.webp\\",\\"https:\\\\/\\\\/res.cloudinary.com\\\\/dpundwxg1\\\\/image\\\\/upload\\\\/v1727379401\\\\/vn-11134207-7r98o-lz75rnbaok9t5d_cpbeqs.webp\\",\\"https:\\\\/\\\\/res.cloudinary.com\\\\/dpundwxg1\\\\/image\\\\/upload\\\\/v1727379414\\\\/f348423053687486bb654b7b0f56ee4c_udvvz6.webp\\",\\"https:\\\\/\\\\/res.cloudinary.com\\\\/dpundwxg1\\\\/image\\\\/upload\\\\/v1727379439\\\\/sg-11134201-7rdwe-lyvntmy2ws1y41_pjvrmf.webp\\"]"}]';
+  const banners = JSON.parse(banner);
 
-  const [searchTerm, setSearchTerm] = useState("");
+  // Bước 2: Chuyển đổi chuỗi đường dẫn ảnh thành mảng
+  const imageUrls = JSON.parse(banners[0].duong_dan_anh);
 
-  const { data: danhmuc } = useQuery({
-    queryKey: ["danhmuc"],
-    queryFn: async () => {
-      const response = await instance.get("/admin/danhmuc");
-      return response.data;
-    },
-  });
-  // console.log("danhmuc", danhmuc);
-  const dm = danhmuc?.data?.map((item: any) => ({
-    value: item.ten_danh_muc || item.id,
-    label: item.ten_danh_muc || item.id,
-  }));
+  // Kiểm tra kết quả
+  console.log(banners[0].noi_dung.tieu_de_chinh); // "Giảm giá thanh lý"
+  console.log(imageUrls); // Mảng các đường dẫn ảnh
+  return;
+  <></>;
+};
 
-  const [selectedValues1, setSelectedValues1] = useState<string[]>([]);
-
-  const handleDeselectAll1 = () => {
-    setSelectedValues1([]);
-    setIsAllSelected1(false);
-  };
-  const handleSearch1 = (value: any) => {
-    setSearchTerm(value);
-  };
-  const handleSelectAll1 = () => {
-    const allValues = dm.map((option: any) => option.label);
-    setSelectedValues1(allValues as any);
-    setIsAllSelected1(true);
-  };
-  const handleChange1 = (value: string[]) => {
-    setSelectedValues1(value);
-    setIsAllSelected1(value.length === dm.length); // Cập nhật trạng thái chọn tất cả
-    // console.log(`Selected: ${value}`);
-  };
-
-  // Gọi hàm tạo mã ngẫu nhiên khi component được load
-
-  return (
-    <div className="flex items-center mb-4">
-      <label className="w-1/4 font-semibold">Chọn danh mục</label>
-      <Form.Item
-        name="productDiscount"
-        rules={[
-          {
-            required: selectedValues1.length === 0,
-            message: "Vui lòng chọn sản phẩm!",
-          },
-        ]}
-        className="mb-0 w-[200px]"
-      >
-        <Select
-          mode="multiple"
-          allowClear
-          style={{ width: "100%" }}
-          placeholder="Please select"
-          value={selectedValues1}
-          onChange={handleChange1}
-          onSearch={handleSearch1}
-          options={dm}
-          dropdownRender={(menu) => (
-            <div>
-              <Button
-                type="link"
-                onClick={isAllSelected1 ? handleDeselectAll1 : handleSelectAll1}
-              >
-                {isAllSelected1 ? "Bỏ chọn tất cả" : "Chọn tất cả"}
-              </Button>
-              <Divider style={{ margin: "4px 0" }} />
-              {menu}
-            </div>
-          )}
-        />{" "}
-      </Form.Item>
-    </div>
-  );
-}
+export default TestAbc;

@@ -248,6 +248,8 @@ class VaiTroController extends Controller
                 'don-hang-theo-trang-thai' => 'Doanh thu theo trạng thái đơn hàng',
                 'san-pham-ban-theo-thang' => 'Doanh thu sản phẩm bán theo tháng',
                 'san-pham-ban-theo-nam' => 'Doanh thu sản phẩm bán theo năm',
+                'hoan-hang-theo-thang' => 'Doanh thu theo trạng thái hoàn hàng',
+                'huy-hang-theo-thang' => 'Doanh thu theo trạng thái hủy hàng',
             ];
 
             $key = explode('.', $permission);

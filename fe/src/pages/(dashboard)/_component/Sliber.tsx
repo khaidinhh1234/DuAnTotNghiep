@@ -59,12 +59,19 @@ const menu = [
     subMenu: [
       { name: "Khách hàng", path: "users/khachhang" },
       { name: "Nhân viên ", path: "users/nhanvien" },
+      { name: "Hạng thành viên ", path: "users/rank" },
+
     ],
   },
 
   {
     name: "Đánh giá",
     path: "/admin/evaluates",
+    icon: CheckCircle,
+  },
+  {
+    name: "Tin tức",
+    path: "/admin/news",
     icon: CheckCircle,
   },
   {

@@ -25,7 +25,11 @@ class DanhGiaController extends Controller
             ])
                 ->where('san_pham_id', $sanpham->id)
                 ->orderBy('created_at', 'desc')
-                ->get();
+                ->get()
+                ->map(function ($danhGia) {
+                    $danhGia->tong_so_sao = ($danhGia->so_sao_san_pham + $danhGia->so_sao_dich_vu_van_chuyen) / 2;
+                    return $danhGia;
+                });
 
             return response()->json([
                 'status' => true,
@@ -56,8 +60,10 @@ class DanhGiaController extends Controller
             $validateDanhGia = $request->validate([
                 'user_id' => 'required|exists:users,id',
                 'san_pham_id' => 'required|exists:san_phams,id',
-                'so_sao' => 'required|integer|min:1|max:5',
-                'noi_dung' => 'nullable|string',
+                'so_sao_san_pham' => 'required|integer|min:1|max:5',
+                'so_sao_dich_vu_van_chuyen' => 'required|integer|min:1|max:5',
+                'chat_luong_san_pham' => 'nullable|string',
+                'mo_ta' => 'nullable|string',
                 'huu_ich' => 'nullable|integer|min:0',
                 'anh_danh_gia.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
