@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(DanhMuc::class)->nullable()->constrained()->onDelete('set null');
             $table->string('ten_san_pham')->unique();
-            $table->string(column: 'anh_san_pham')->nullable();
+            $table->string('anh_san_pham')->nullable();
             $table->string('ma_san_pham')->unique();
             $table->string('duong_dan');
             $table->string('mo_ta_ngan')->nullable();

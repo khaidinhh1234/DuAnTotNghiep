@@ -127,18 +127,26 @@ class DonHangController extends Controller
                 // Tìm đơn hàng theo ID
                 $donHang = DonHang::findOrFail($id);
 
-                // Cập nhật trạng thái đơn hàng
-                $donHang->update([
-                    'trang_thai_don_hang' => $request->input('trang_thai_don_hang'),
-                ]);
-
+                if ($donHang->trang_thai_van_chuyen == 'Đang giao hàng'
+                && $donHang->trang_thai_van_chuyen == 'Giao hàng thành'
+                && $donHang->trang_thai_don_hang == DonHang::TTDH_DGH
+                && $donHang->trang_thai_don_hang == DonHang::TTDH_DGTC
+                && $request->trang_thai_don_hang == DonHang::TTDH_DH) {
+                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                }else{
+                    // Cập nhật trạng thái đơn hàng
+                    $donHang->update([
+                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
+                    ]);
+                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                }
                 // Lưu thay đổi
                 DB::commit();
             }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Cập nhật trạng thái đơn hàng thành công.',
+                'message' => $mess,
                 // 'data' => $donHang
             ], 200);
         } catch (\Exception $exception) {

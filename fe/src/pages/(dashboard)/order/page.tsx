@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Flex, Input, Popconfirm, Select, Table } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 import Detail from "./detail";
 
@@ -46,7 +46,7 @@ const datas = [
 const columns: TableColumnsType<DataType> = [
   {
     title: "Mã Đơn hàng",
-    dataIndex: "id",
+    dataIndex: "ma_don_hang",
   },
   {
     title: "Ngày tạo",
@@ -77,26 +77,30 @@ const columns: TableColumnsType<DataType> = [
         <div
           className={
             "font-bold text-[15px] " +
-            (record.trang_thai_don_hang === "Chờ xử lý"
-              ? "text-blue-500"
-              : record.trang_thai_don_hang == "Chờ xác nhận"
-                ? "text-yellow-300"
-                : record.trang_thai_don_hang === "Đã xác nhận"
-                  ? "text-orange-500"
-                  : record.trang_thai_don_hang === "Thành công"
-                    ? "text-green-500"
-                    : "text-red-500")
+            (record.trang_thai_don_hang === "Chờ xác nhận"
+              ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
+              : record.trang_thai_don_hang === "Đã xác nhận"
+                ? "text-orange-500" // Đã xác nhận: màu cam đậm
+                : record.trang_thai_don_hang === "Đang xử lý"
+                  ? "text-blue-500" // Đang xử lý: màu xanh dương
+                  : record.trang_thai_don_hang === "Đang giao hàng"
+                    ? "text-purple-500" // Đang giao hàng: màu tím
+                    : record.trang_thai_don_hang === "Đã giao hàng thành công"
+                      ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
+                      : "text-red-500") // Các trạng thái khác: màu đỏ
           }
         >
-          {record.trang_thai_don_hang === "Chờ xử lý"
-            ? "Chờ xử lý"
-            : record.trang_thai_don_hang === "Chờ xác nhận"
-              ? "Chờ xác nhận"
-              : record.trang_thai_don_hang === "Đã xác nhận"
-                ? "Đã xác nhận"
-                : record.trang_thai_don_hang === "Thành công"
-                  ? "Thành công"
-                  : "Hủy"}
+          {record.trang_thai_don_hang === "Chờ xác nhận"
+            ? "Chờ xác nhận"
+            : record.trang_thai_don_hang === "Đã xác nhận"
+              ? "Đã xác nhận"
+              : record.trang_thai_don_hang === "Đang xử lý"
+                ? "Đang xử lý"
+                : record.trang_thai_don_hang === "Đang giao hàng"
+                  ? "Đang giao hàng"
+                  : record.trang_thai_don_hang === "Đã giao hàng thành công"
+                    ? "Giao Thành công"
+                    : "Hủy"}
         </div>
       );
     },
@@ -107,14 +111,14 @@ const columns: TableColumnsType<DataType> = [
       return (
         <div
           className={
-            record.trang_thai_thanh_toan === "Thành công"
+            record.trang_thai_thanh_toan === "Đã thanh toán"
               ? "text-green-500 font-bold text-[15px]"
               : record.trang_thai_thanh_toan === "Chờ xử lý"
                 ? "text-blue-500 font-bold text-[15px]"
                 : "text-yellow-500 font-bold text-[15px]"
           }
         >
-          {record.trang_thai_thanh_toan === "Thành công"
+          {record.trang_thai_thanh_toan === "Đã thanh toán"
             ? "Đã thanh toán"
             : record.trang_thai_thanh_toan === "Chờ xử lý"
               ? "Chờ xử lý"
@@ -130,16 +134,14 @@ const columns: TableColumnsType<DataType> = [
         <div
           className={
             record.trang_thai_van_chuyen === "Chờ xử lý"
-              ? "text-teal-600 font-bold text-[15px]"
+              ? "text-orange-500 font-bold text-[15px]"
               : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-                ? "text-teal-600 font-bold text-[15px]"
+                ? "text-blue-500 font-bold text-[15px]"
                 : record.trang_thai_van_chuyen === "Đang giao hàng"
-                  ? "text-teal-600 font-bold text-[15px]"
-                  : record.trang_thai_van_chuyen === "Đang ship hàng"
-                    ? "text-purple-600 font-bold text-[15px]"
-                    : record.trang_thai_van_chuyen === "Giao thành công"
-                      ? "text-teal-600 font-bold text-[15px]"
-                      : "text-red-500 font-bold text-[15px]" // Add a default case for the ternary operator
+                  ? "text-green-500 font-bold text-[15px]"
+                  : record.trang_thai_van_chuyen === "Giao hàng thành công"
+                    ? "text-teal-500 font-bold text-[15px]"
+                    : "text-red-500 font-bold text-[15px]" // Trạng thái khác
           }
         >
           {record.trang_thai_van_chuyen === "Chờ xử lý"
@@ -148,11 +150,9 @@ const columns: TableColumnsType<DataType> = [
               ? "Chờ lấy hàng"
               : record.trang_thai_van_chuyen === "Đang giao hàng"
                 ? "Đang giao hàng"
-                : record.trang_thai_van_chuyen === "Đang ship hàng"
-                  ? "Đang ship hàng"
-                  : record.trang_thai_van_chuyen === "Giao thành công"
-                    ? "Giao thành công"
-                    : "Hủy"}
+                : record.trang_thai_van_chuyen === "Giao hàng thành công"
+                  ? "Giao hàng thành công"
+                  : "Hủy"}
         </div>
       );
     },
@@ -163,14 +163,18 @@ const columns: TableColumnsType<DataType> = [
       return (
         <div
           className={
-            record.trang_thai_don_hang === "Thành công"
-              ? "text-green-500 font-bold text-[15px]"
-              : "text-yellow-500 font-bold text-[15px]"
+            record.trang_thai_thanh_toan === "Chưa thanh toán"
+              ? "text-red-500 font-bold text-[15px]" // Màu đỏ cho "Chưa thanh toán"
+              : record.trang_thai_thanh_toan === "Đã thanh toán"
+                ? "text-green-500 font-bold text-[15px]" // Màu xanh lá cho "Đã thanh toán"
+                : "text-gray-500 font-bold text-[15px]" // Màu xám cho các trạng thái khác
           }
         >
-          {record.trang_thai_don_hang === "Thành công"
-            ? "Đã Nhận"
-            : "Chưa Nhận"}
+          {record.trang_thai_thanh_toan === "Chưa thanh toán"
+            ? "Chưa Nhận"
+            : record.trang_thai_thanh_toan === "Đã thanh toán"
+              ? "Đã Nhận"
+              : "Không thu tiền"}
         </div>
       );
     },
@@ -203,17 +207,9 @@ const columns: TableColumnsType<DataType> = [
   // },
 ];
 
-// const dataSource = Array.from<DataType>({ length: 46 }).map<DataType>(
-//   (_, i) => ({
-//     key: i,
-//     name: `Edward King ${i}`,
-//     age: 32,
-//     address: `London, Park Lane no. ${i}`,
-//   })
-// );
-
 const OrderAdmin: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [trangthai, setTrangThai] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [formcheck, setFormCheck] = useState(false);
   const { data, isLoading, isError } = useQuery({
@@ -224,7 +220,25 @@ const OrderAdmin: React.FC = () => {
     },
   });
   const order: DataType[] | undefined = data?.data;
-  // console.log(order);
+
+  const { mutate } = useMutation({
+    mutationFn: async (data: React.Key[]) => {
+      const response = await instance.put(
+        "admin/donhang/1/trang-thai-don-hang",
+        {
+          trang_thai_don_hang: trangthai,
+          id: data,
+        }
+      );
+    },
+    onSuccess: () => {
+      setLoading(false);
+    },
+    onError: () => {
+      setLoading;
+    },
+  });
+
   const start = () => {
     setFormCheck(!formcheck);
     // setLoading(true);
@@ -255,7 +269,7 @@ const OrderAdmin: React.FC = () => {
     })
   );
   const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+    setTrangThai(value);
   };
   const hasSelected = selectedRowKeys.length > 0;
   if (isLoading) return <div>Loading...</div>;
@@ -288,42 +302,43 @@ const OrderAdmin: React.FC = () => {
               onClick={start}
               disabled={!hasSelected}
               loading={loading}
-              className="text-white  "
+              className="text-white"
             >
               Thao tác
             </Button>
+
             {formcheck && (
-              <>
-                <div className="bg-white absolute left-0 top-10 z-10 w-80 h-36 rounded-lg shadow-md p-3">
-                  <p>Cập nhật trạng thái đơn hàng theo:</p>
-                  <Select
-                    defaultValue={datas[0].label}
-                    style={{ width: "100%" }}
-                    onChange={handleChange}
-                    options={datas}
-                  />{" "}
-                  <br />
-                  <div className="my-5 flex justify-between">
-                    <Popconfirm
-                      title="Trạng thái "
-                      description="Bạn có chắc chắn muốn  cập nhật trạng thái đơn hàng này?"
-                      okText="Có "
-                      cancelText="Không"
+              <div className="bg-white absolute left-0 top-10 z-10 w-80 h-36 rounded-lg shadow-md p-3">
+                <p>Cập nhật trạng thái đơn hàng theo:</p>
+                <Select
+                  defaultValue={datas[0].label}
+                  style={{ width: "100%" }}
+                  onChange={handleChange}
+                  options={datas}
+                />
+                <br />
+                <div className="my-5 flex justify-between">
+                  <Popconfirm
+                    title="Trạng thái"
+                    description="Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng này?"
+                    okText="Có"
+                    onConfirm={() => mutate(selectedRowKeys)}
+                    cancelText="Không"
+                  >
+                    <Button
+                      type="primary"
+                      className="bg-red-500 text-white hover:bg-red-700"
+                      disabled={!hasSelected}
+                      loading={loading}
+                      onClick={start}
                     >
-                      <Button
-                        type="primary"
-                        className="bg-red-500  text-white hover:bg-red-700"
-                        // onClick={start}
-                        disabled={!hasSelected}
-                        loading={loading}
-                      >
-                        Xác nhận
-                      </Button>{" "}
-                    </Popconfirm>
-                  </div>
+                      Xác nhận
+                    </Button>
+                  </Popconfirm>
                 </div>
-              </>
+              </div>
             )}
+
             {hasSelected ? `Đã chọn ${selectedRowKeys.length} đơn` : null}
           </Flex>
           <Table<DataType>
