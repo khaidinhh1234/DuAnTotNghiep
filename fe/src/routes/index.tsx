@@ -6,7 +6,6 @@ import ForgotPassword from "@/pages/(auth)/ForgotPassword/ForgotPassword";
 import Login from "@/pages/(auth)/login/login";
 import LoginSuccessfull from "@/pages/(auth)/LoginSuccessfull/LoginSuccessfull";
 import Register from "@/pages/(auth)/register/register";
-import AnalyticsAdmin from "@/pages/(dashboard)/analytics/page";
 import CategoriesAdd from "@/pages/(dashboard)/categories/add/page";
 import CategoriesEdit from "@/pages/(dashboard)/categories/edit/page";
 import CategoriesAdmin from "@/pages/(dashboard)/categories/page";
@@ -103,11 +102,11 @@ import Remoterank from "@/pages/(dashboard)/user/hangthanhvien/remote.tsx/remote
 // import Test from "@/pages/(dashboard)/test";
 // import Test from "@/pages/(dashboard)/test";
 
-import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 // import Test from "@/pages/(dashboard)/test";
 import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
 import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
+import { AnalyticsAdmin } from "@/pages/(dashboard)/analytics/page";
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
