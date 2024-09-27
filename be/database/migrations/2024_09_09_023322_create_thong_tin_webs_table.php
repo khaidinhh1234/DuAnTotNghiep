@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('so_dien_thoai_khieu_nai', 15);
             $table->text('cau_noi')->nullable();
             $table->json('banner');
+            $table->json('noi_dung_banner');
             $table->string('link_facebook')->nullable();
             $table->string('link_youtube')->nullable();
             $table->string('link_zalo')->nullable();
