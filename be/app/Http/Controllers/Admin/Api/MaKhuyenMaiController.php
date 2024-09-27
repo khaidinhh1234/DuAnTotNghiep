@@ -135,7 +135,6 @@ class MaKhuyenMaiController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'mo_ta' => 'nullable|string',
             'so_luong' => 'required|integer'
         ]);
 
