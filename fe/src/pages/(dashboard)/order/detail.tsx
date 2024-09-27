@@ -13,19 +13,19 @@ const Detail = ({ record }: any) => {
       return response.data;
     },
   });
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  const orderId = data?.data;
-  const products = orderId?.chi_tiet_don_hang?.map((item: any) => {
+  const products = data?.data?.chi_tiet_don_hang?.map((item: any) => {
     return {
       ...item,
     };
   });
-  console.log(products);
+
+  // console.log(products);
   const handleCancel = () => {
     setOpen(false);
   };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       {" "}
@@ -94,9 +94,9 @@ const Detail = ({ record }: any) => {
                   </thead>
                   <tbody>
                     {products?.map((item: any, index: number) => (
-                      <tr key={index}>
+                      <tr key={index} className="my-5">
                         <td>
-                          <div className="flex gap-5 items-center  w-[50%]">
+                          <div className="flex gap-5 items-center  w-[50%] my-2">
                             <img
                               src={
                                 item?.bien_the_san_pham?.san_pham?.anh_san_pham
@@ -113,10 +113,24 @@ const Detail = ({ record }: any) => {
                               </h1>
                               <div className="flex gap-2">
                                 <p className="text-base">
-                                  Màu : <span> Vàng</span>
+                                  Màu :{" "}
+                                  <span>
+                                    {" "}
+                                    {
+                                      item?.bien_the_san_pham
+                                        ?.bien_the_mau_sac_id
+                                    }
+                                  </span>
                                 </p>
                                 <p className="text-base">
-                                  Size : <span>XL</span>
+                                  Size :{" "}
+                                  <span>
+                                    {" "}
+                                    {
+                                      item?.bien_the_san_pham
+                                        ?.bien_the_mau_sac_id
+                                    }
+                                  </span>
                                 </p>
                               </div>
                             </div>
@@ -124,13 +138,23 @@ const Detail = ({ record }: any) => {
                         </td>
                         <td className="text-center w-30 font-semibold  w-[20%]">
                           {" "}
-                          1
+                          {item?.so_luong}
                         </td>
                         <td className="text-center w-[20%] font-semibold  ">
-                          100.000.000 VND
+                          {(item?.bien_the_san_pham?.gia_khuyen_mai
+                            ? item?.bien_the_san_pham?.gia_khuyen_mai
+                            : item?.bien_the_san_pham?.gia_ban
+                          ).toLocaleString()}{" "}
+                          VNĐ
                         </td>
                         <td className="text-center w-[35%] font-semibold">
-                          100.000.000 VND
+                          {(
+                            (item?.bien_the_san_pham?.gia_khuyen_mai
+                              ? item?.bien_the_san_pham?.gia_khuyen_mai
+                              : item?.bien_the_san_pham?.gia_ban) *
+                            item?.so_luong
+                          ).toLocaleString()}{" "}
+                          VNĐ
                         </td>
                       </tr>
                     ))}
@@ -139,13 +163,13 @@ const Detail = ({ record }: any) => {
                 <div className="grid grid-cols-2 gap-5 my-5">
                   <div>
                     <div className="flex justify-between">
-                      <p>Kho lấy hàng</p> <span> Hà Nội</span>
+                      <p>Lấy hàng</p> <span> Hà Nội</span>
                     </div>
                     <div className="flex justify-between">
                       <p>Mã Vận chuyển</p> <span> 100023874</span>
                     </div>
                     <div className="flex justify-between">
-                      <p>Nhà Vận chuyển</p> <span> Hà Nội</span>
+                      <p>Nhà vận chuyển</p> <span> Hà Nội</span>
                     </div>
                   </div>{" "}
                   <div>
@@ -179,7 +203,7 @@ const Detail = ({ record }: any) => {
                     Số lượng sản phẩm :{" "}
                   </h1>
                   <p className="text-base font-semibold">
-                    <span>76</span> sản phẩm
+                    <span>{data?.data?.tong_so_luong}</span> sản phẩm
                   </p>
                 </div>
                 <div className="flex justify-between">
