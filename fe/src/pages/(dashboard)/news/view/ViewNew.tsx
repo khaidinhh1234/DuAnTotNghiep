@@ -33,7 +33,7 @@ const ViewNew: React.FC = () => {
       </div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Chi tiết</h1>
-        <Link to="/admin/newcategory">
+        <Link to="/admin/news">
           <Button className="bg-black text-white rounded-lg py-1">
             Quay lại
           </Button>

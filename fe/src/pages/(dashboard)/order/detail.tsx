@@ -16,15 +16,13 @@ const Detail = ({ record }: any) => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  const orderId = data.data;
-  const vm = orderId?.chi_tiet_don_hang?.map((item: any) => {
+  const orderId = data?.data;
+  const products = orderId?.chi_tiet_don_hang?.map((item: any) => {
     return {
       ...item,
     };
   });
-
-  const img = vm[0]?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh;
-  // console.log(record);
+  console.log(products);
   const handleCancel = () => {
     setOpen(false);
   };
@@ -95,36 +93,47 @@ const Detail = ({ record }: any) => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>
-                        <div className="flex gap-5 items-center  w-[50%]">
-                          <img src={img} alt={img} className="w-20 h-20" />
-                          <div>
-                            <h1 className=" font-bold truncate w-40">
-                              Phần Chi tiết các thông tin sản phẩm
-                            </h1>
-                            <div className="flex gap-2">
-                              <p className="text-base">
-                                Màu : <span> Vàng</span>
-                              </p>
-                              <p className="text-base">
-                                Size : <span>XL</span>
-                              </p>
+                    {products?.map((item: any, index: number) => (
+                      <tr key={index}>
+                        <td>
+                          <div className="flex gap-5 items-center  w-[50%]">
+                            <img
+                              src={
+                                item?.bien_the_san_pham?.san_pham?.anh_san_pham
+                              }
+                              alt={""}
+                              className="w-20 h-20"
+                            />
+                            <div>
+                              <h1 className=" font-bold truncate w-40">
+                                {
+                                  item?.bien_the_san_pham?.san_pham
+                                    ?.ten_san_pham
+                                }
+                              </h1>
+                              <div className="flex gap-2">
+                                <p className="text-base">
+                                  Màu : <span> Vàng</span>
+                                </p>
+                                <p className="text-base">
+                                  Size : <span>XL</span>
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="text-center w-30 font-semibold  w-[20%]">
-                        {" "}
-                        1
-                      </td>
-                      <td className="text-center w-[20%] font-semibold  ">
-                        100.000.000 VND
-                      </td>
-                      <td className="text-center w-[35%] font-semibold">
-                        100.000.000 VND
-                      </td>
-                    </tr>
+                        </td>
+                        <td className="text-center w-30 font-semibold  w-[20%]">
+                          {" "}
+                          1
+                        </td>
+                        <td className="text-center w-[20%] font-semibold  ">
+                          100.000.000 VND
+                        </td>
+                        <td className="text-center w-[35%] font-semibold">
+                          100.000.000 VND
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
                 <div className="grid grid-cols-2 gap-5 my-5">
