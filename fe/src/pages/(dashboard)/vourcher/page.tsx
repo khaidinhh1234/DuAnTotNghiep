@@ -26,7 +26,7 @@ interface PromotionType {
   hang_thanh_viens: string;
   tong_giam_gia_toi_da: string;
   so_luot_su_dung: number;
-  chi_tieu_toi_thieu: number;
+  gioi_han_su_dung: number;
 }
 
 // const promotions: PromotionType[] = [
@@ -352,11 +352,11 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Chi tiết khuyến mãi",
 
-      key: "chi_tieu_toi_thieu",
+      key: "gioi_han_su_dung",
       width: "25%",
-      ...getColumnSearchProps("chi_tieu_toi_thieu"),
+      ...getColumnSearchProps("gioi_han_su_dung"),
       sorter: (a: any, b: any) =>
-        a.chi_tieu_toi_thieu.length - b.chi_tieu_toi_thieu.length,
+        a.gioi_han_su_dung.length - b.gioi_han_su_dung.length,
       render: (record) => (
         console.log(record),
         (

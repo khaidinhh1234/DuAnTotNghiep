@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import instance from '@/configs/axios';
 import { Spin, Typography, Button, Card, Divider } from 'antd';
@@ -25,8 +25,22 @@ const ViewNew: React.FC = () => {
   const { tieu_de, user, danh_muc_tin_tuc, noi_dung, created_at } = data.data;
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <Card bordered={false} style={{ borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+        <div className="flex items-center">
+        <h1 className="md:text-base">
+          Quản trị / <span className="font-semibold px-px">Tin tức</span>
+        </h1>
+      </div>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="font-semibold md:text-3xl">Chi tiết</h1>
+        <Link to="/admin/newcategory">
+          <Button className="bg-black text-white rounded-lg py-1">
+            Quay lại
+          </Button>
+        </Link>
+      </div>
+      <div style={{ padding: 14, minHeight: 360 }}>
+        <div className="bg-white px-4 rounded-xl py-5 shadow-lg max-w-7xl">
         <Title level={2} style={{ color: '#1890ff' }}>{tieu_de}</Title>
         <Text strong style={{ color: '#555' }}>Tác giả: {user?.ten || 'Chưa có dữ liệu'}</Text>
         <br />
@@ -41,16 +55,9 @@ const ViewNew: React.FC = () => {
           dangerouslySetInnerHTML={{ __html: noi_dung }}
         />
         <Divider />
-        <Button 
-          type="primary" 
-          size="large" 
-          onClick={() => navigate('/admin/news')} 
-          style={{ borderRadius: '4px', float: 'right' }}
-        >
-          Quay lại
-        </Button>
-      </Card>
-    </div>
+        </div>
+      </div>
+    </main>
   );
 };
 
