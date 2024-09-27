@@ -67,6 +67,7 @@ import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 
+
 import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
 import UserskhachhangEdit from "@/pages/(dashboard)/user/khachhang/edit/page";
 import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
@@ -81,7 +82,11 @@ import PageNew from "@/pages/(dashboard)/news/pagenew";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 
+
 import Test from "@/pages/(dashboard)/test";
+
+// import Test from "@/pages/(dashboard)/test";
+
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
@@ -93,8 +98,12 @@ import Color from "@/pages/(dashboard)/products/bienthe/color";
 import Size from "@/pages/(dashboard)/products/bienthe/size";
 import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
 import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
+
 import ViewNew from "@/pages/(dashboard)/news/view/ViewNew";
+import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 // import Test from "@/pages/(dashboard)/test";
+
+
 
 const Router = () => {
   //
@@ -173,10 +182,14 @@ const Router = () => {
           <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
           <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* tin tức */}
-          <Route path="news" element={<PageNew />} />
-          <Route path="news/add" element={<NewAdd />} />
-          <Route path="news/edit/:id" element={<NewEdit />} />
-          <Route path="news/details/:id" element={<ViewNew />} />
+
+          <Route path="news" element={<PageNew/>}/>
+          <Route path="news/add" element={<NewAdd/>}/>
+          <Route path="news/edit/:id" element={<NewEdit/>}/>
+          <Route path="news/remote" element={<RemoteNew/>}/>
+
+          <Route path="news/details/:id" element={<ViewNew/>}/>
+
           {/* Tài khoản */}
           <Route
             path="users"
