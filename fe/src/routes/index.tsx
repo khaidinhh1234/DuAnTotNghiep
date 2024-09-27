@@ -81,13 +81,11 @@ import PageNew from "@/pages/(dashboard)/news/pagenew";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 
-import Test from "@/pages/(dashboard)/test";
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
 import Tagsedit from "@/pages/(dashboard)/tags/edit/edit";
 
-// import Test from "@/pages/(dashboard)/vourcher/test/test";
 import Bienthe from "./../pages/(dashboard)/products/bienthe/bienthe";
 import Color from "@/pages/(dashboard)/products/bienthe/color";
 import Size from "@/pages/(dashboard)/products/bienthe/size";
@@ -95,6 +93,7 @@ import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
 import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
 import ViewNew from "@/pages/(dashboard)/news/view/ViewNew";
 // import Test from "@/pages/(dashboard)/test";
+// import TestAbc from "@/pages/(dashboard)/test";
 
 const Router = () => {
   //
@@ -208,7 +207,7 @@ const Router = () => {
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          <Route path="test" element={<Test />} />
+          {/* <Route path="test" element={<TestAbc />} /> */}
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}

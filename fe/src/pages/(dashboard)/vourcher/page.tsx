@@ -26,116 +26,8 @@ interface PromotionType {
   hang_thanh_viens: string;
   tong_giam_gia_toi_da: string;
   so_luot_su_dung: number;
-  gioi_han_su_dung: number;
+  chi_tieu_toi_thieu: number;
 }
-
-// const promotions: PromotionType[] = [
-//   {
-//     key: "1",
-//     ten_khuyen_mai: "Giảm giá 10% cho đơn hàng trên 500k",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "10",
-//     ma_code: "ID123456",
-//     ngay_bat_dau: "2024-09-01",
-//     ngay_ket_thuc: "2024-09-30",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 500000,
-//     so_luot_su_dung: 15,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "2",
-//     ten_khuyen_mai: "Giảm 200k cho đơn hàng từ 1 triệu",
-//     loai_khuyen_mai: "tiền ",
-//     gia_tri: 200000,
-//     ma_code: "ID123456456",
-//     ngay_bat_dau: "2024-08-01",
-//     ngay_ket_thuc: "2024-08-31",
-//     trang_thai: "Đã hết hạn",
-//     dieu_kien_ap_dung: 1000000,
-//     so_luot_su_dung: 50,
-//     gioi_han_su_dung: 50,
-//   },
-//   {
-//     key: "3",
-//     ten_khuyen_mai: "Giảm giá 15% cho đơn hàng trên 1 triệu",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "15",
-//     ma_code: "ID123456789",
-//     ngay_bat_dau: "2024-10-01",
-//     ngay_ket_thuc: "2024-10-31",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 1000000,
-//     so_luot_su_dung: 25,
-//     gioi_han_su_dung: 75,
-//   },
-//   {
-//     key: "4",
-//     ten_khuyen_mai: "Giảm 50k cho đơn hàng từ 500k",
-//     loai_khuyen_mai: "tiền ",
-//     gia_tri: 50000,
-
-//     ma_code: "ID13456456",
-//     ngay_bat_dau: "2024-07-01",
-//     ngay_ket_thuc: "2024-07-31",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 500000,
-//     so_luot_su_dung: 60,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "5",
-//     ten_khuyen_mai: "Giảm giá 5% cho tất cả sản phẩm",
-//     ma_code: "ID123456",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "5",
-//     ngay_bat_dau: "2024-09-15",
-//     ngay_ket_thuc: "2024-09-30",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 0,
-//     so_luot_su_dung: 120,
-//     gioi_han_su_dung: 300,
-//   },
-//   {
-//     key: "6",
-//     ten_khuyen_mai: "Giảm 100k cho đơn hàng từ 700k",
-//     loai_khuyen_mai: "tiền",
-//     gia_tri: 100000,
-//     ma_code: "ID123456456",
-//     ngay_bat_dau: "2024-08-15",
-//     ngay_ket_thuc: "2024-09-15",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 700000,
-//     so_luot_su_dung: 80,
-//     gioi_han_su_dung: 150,
-//   },
-//   {
-//     key: "7",
-//     ten_khuyen_mai: "Tặng quà 50k cho đơn hàng từ 600k",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: 50000,
-//     ma_code: "ID123456789",
-//     ngay_bat_dau: "2024-08-01",
-//     ngay_ket_thuc: "2024-09-01",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 600000,
-//     so_luot_su_dung: 70,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "8",
-//     ten_khuyen_mai: "Giảm giá 20% cho đơn hàng trên 2 triệu",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "20",
-//     ma_code: "ID12566789",
-//     ngay_bat_dau: "2024-09-01",
-//     ngay_ket_thuc: "2024-10-01",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 2000000,
-//     so_luot_su_dung: 90,
-//     gioi_han_su_dung: 200,
-//   },
-// ];
 
 type DataIndex = keyof PromotionType;
 
@@ -152,7 +44,7 @@ const PromotionAdmin: React.FC = () => {
       return response.data;
     },
   });
-  console.log(voucher);
+  // console.log(voucher);
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
   const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({
@@ -352,29 +244,27 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Chi tiết khuyến mãi",
 
-      key: "gioi_han_su_dung",
+      key: " chi_tieu_toi_thieu",
       width: "25%",
-      ...getColumnSearchProps("gioi_han_su_dung"),
+      // ...getColumnSearchProps(" chi_tieu_toi_thieu"),
       sorter: (a: any, b: any) =>
-        a.gioi_han_su_dung.length - b.gioi_han_su_dung.length,
+        a.chi_tieu_toi_thieu.length - b.chi_tieu_toi_thieu.length,
       render: (record) => (
-        console.log(record),
-        (
-          <div>
-            <h5>
-              Mức giảm giá: {record.giam_gia}{" "}
-              {record.loai === "tien_mat" ? "VND" : "%"}
-              <br />
-              {record.gioi_han_su_dung === 0
-                ? "Áp dụng cho tất cả sản phẩm"
-                : "   Giá trị đơn hàng tối thiểu  " +
-                  record.gioi_han_su_dung +
-                  " VND"}
-              {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
+        // console.log(record),
+        <div>
+          <h5>
+            Mức giảm giá: {record.giam_gia.toLocaleString()}{" "}
+            {record.loai === "tien_mat" ? "VNĐ" : "%"}
+            <br />
+            {record.chi_tieu_toi_thieu === 0
+              ? "Áp dụng cho tất cả sản phẩm"
+              : "   Giá trị đơn hàng tối thiểu  " +
+                record.chi_tieu_toi_thieu.toLocaleString() +
+                " VNĐ"}
+            {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
             VND */}
-            </h5>
-          </div>
-        )
+          </h5>
+        </div>
       ),
     },
     {
@@ -422,7 +312,7 @@ const PromotionAdmin: React.FC = () => {
             {record.trang_thai == 1 && (
               <>
                 <Popconfirm
-                  title="Chuyển vào thùng rác"
+                  title=" Bạn có muốn tắt không?"
                   description="Bạn có chắc chắn muốn tắt không?"
                   okText="Có"
                   cancelText="Không"
@@ -499,13 +389,6 @@ const PromotionAdmin: React.FC = () => {
             <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm khuyến mãi
-            </Button>
-          </Link>
-
-          <Link to="remote">
-            <Button className="bg-red-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-              <DeleteOutlined className="mr-1" />
-              Thùng rác
             </Button>
           </Link>
         </div>
