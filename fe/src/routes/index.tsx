@@ -114,7 +114,7 @@ import Remoterank from "@/pages/(dashboard)/user/hangthanhvien/remote.tsx/remote
 
 import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 // import Test from "@/pages/(dashboard)/test";
-import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
+// import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 // import Test from "@/pages/(dashboard)/test";
 
 
