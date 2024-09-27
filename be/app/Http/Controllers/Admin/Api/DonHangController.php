@@ -129,26 +129,29 @@ class DonHangController extends Controller
                 $donHang = DonHang::findOrFail($id);
 
                 if (
-                    $donHang->trang_thai_van_chuyen == 'Đang giao hàng'
-                    && $donHang->trang_thai_van_chuyen == 'Giao hàng thành'
-                    && $donHang->trang_thai_don_hang == DonHang::TTDH_DGH
-                    && $donHang->trang_thai_don_hang == DonHang::TTDH_DGTC
-                    && $donHang->trang_thai_don_hang == DonHang::TTDH_DH
-                    && $request->trang_thai_don_hang == DonHang::TTDH_DH
+                    $donHang->trang_thai_van_chuyen != 'Đang giao hàng'
+                    || $donHang->trang_thai_van_chuyen != 'Giao hàng thành'
+                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGH
+                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGTC
+                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DH
+                    && $request->trang_thai_don_hang != DonHang::TTDH_DH
                 ) {
-                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
-                } else if (
-                    $donHang->trang_thai_van_chuyen == 'Giao hàng thành'
-                    && $donHang->trang_thai_don_hang == DonHang::TTDH_DGTC
-                    && $request->trang_thai_don_hang == DonHang::TTDH_HH
-                    && Carbon::parse($donHang->ngay_giao_hang_thanh_cong)->addDay(7)->isPast()
-                ) {
-                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
-                } else {
-                    // Cập nhật trạng thái đơn hàng
                     $donHang->update([
                         'trang_thai_don_hang' => $request->trang_thai_don_hang,
                     ]);
+                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                } else if (
+                    $donHang->trang_thai_van_chuyen != 'Giao hàng thành'
+                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGTC
+                    && $request->trang_thai_don_hang != DonHang::TTDH_HH
+                    && !Carbon::parse($donHang->ngay_giao_hang_thanh_cong)->addDay(7)->isPast()
+                ) {
+                    $donHang->update([
+                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
+                    ]);
+                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                } else {
+                    // Cập nhật trạng thái đơn hàng
                     $mess = 'Cập nhật trạng thái đơn hàng thành công.';
                 }
                 // Lưu thay đổi
@@ -158,7 +161,7 @@ class DonHangController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => $mess,
-                // 'data' => $donHang
+                'data' => $donHang
             ], 200);
         } catch (\Exception $exception) {
             // Rollback nếu có lỗi

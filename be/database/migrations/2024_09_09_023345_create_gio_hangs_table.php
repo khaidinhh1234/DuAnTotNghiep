@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('gio_hangs', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
-            $table->decimal('tong_tien_gio_hang', 15, 2)->nullable();
+            $table->integer('tong_tien_gio_hang')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

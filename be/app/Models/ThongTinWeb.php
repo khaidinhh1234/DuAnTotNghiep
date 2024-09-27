@@ -27,4 +27,9 @@ class ThongTinWeb extends Model
         'link_instagram',
         'link_tiktok',
         ];
+
+
+        protected $casts = [
+            'banner' => 'array'
+        ];
 }
