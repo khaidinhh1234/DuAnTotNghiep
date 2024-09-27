@@ -127,7 +127,9 @@ class DonHangController extends Controller
                 // Tìm đơn hàng theo ID
                 $donHang = DonHang::findOrFail($id);
 
-                if (!$donHang->trang_thai_van_chuyen == 'Đang giao hàng' && !$request->trang_thai_don_hang == DonHang::TTDH_DH) {
+                if ($donHang->trang_thai_van_chuyen == 'Đang giao hàng' && $request->trang_thai_don_hang == DonHang::TTDH_DH) {
+                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                }else{
                     // Cập nhật trạng thái đơn hàng
                     $donHang->update([
                         'trang_thai_don_hang' => $request->trang_thai_don_hang,
