@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('hang_thanh_viens', function (Blueprint $table) {
             $table->id();
             $table->string('ten_hang_thanh_vien');
+            $table->string('anh_hang_thanh_vien');
             $table->integer('chi_tieu_toi_thieu');
             $table->integer('chi_tieu_toi_da');
             $table->date('ngay_bat_dau')->nullable();
