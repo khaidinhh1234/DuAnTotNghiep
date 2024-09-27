@@ -19,7 +19,10 @@ class MaKhuyenMaiController extends Controller
     public function index()
     {
         try {
-            $data = MaKhuyenMai::query()->with(['sanPhams', 'hangThanhViens','danhMucs'])->orderByDesc('id')->get();
+            $data = MaKhuyenMai::with(['sanPhams', 'hangThanhViens', 'danhMucs'])
+                ->orderByDesc('id')
+                ->get();
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -36,9 +39,6 @@ class MaKhuyenMaiController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -68,6 +68,7 @@ class MaKhuyenMaiController extends Controller
 
         try {
             DB::beginTransaction();
+
             $dataMaKhuyenMai = $request->except(['khuyen_mai_san_pham', 'khuyen_mai_danh_muc']);
             $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
 
@@ -78,14 +79,16 @@ class MaKhuyenMaiController extends Controller
                 $maKhuyenMai->danhMucs()->sync($dataKhuyenMaiDanhMuc);
             } else {
                 if (empty($dataKhuyenMaiSanPham)) {
-                    $sanPhamIds = DB::table('san_phams')->pluck('id')->toArray(); // Lấy danh sách id sản phẩm
-                    $dataKhuyenMaiSanPham = $sanPhamIds;  // Gán toàn bộ sản phẩm vào khuyến mãi
+                    $sanPhamIds = DB::table('san_phams')->pluck('id')->toArray();
+                    $dataKhuyenMaiSanPham = $sanPhamIds;
                 }
                 $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
             }
+
             $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
 
             DB::commit();
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -102,67 +105,85 @@ class MaKhuyenMaiController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         try {
-            $maKhuyenMai = MaKhuyenMai::query()->with(['sanPhams', 'hangThanhViens','danhMucs'])->findOrFail($id);
+            $maKhuyenMai = MaKhuyenMai::with(['sanPhams', 'hangThanhViens', 'danhMucs'])->findOrFail($id);
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu mã khuyến mãi thành công',
                 'data' => $maKhuyenMai
             ], 200);
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'status' => false,
                 'status_code' => 404,
                 'message' => 'Không tìm thấy mã khuyến mãi',
                 'error' => $e->getMessage()
             ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Lỗi xảy ra khi lấy dữ liệu',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'mo_ta'                => 'nullable|string',
-            'so_luong'             => 'required|integer'
+            'mo_ta'    => 'nullable|string',
+            'so_luong' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+
         try {
             DB::beginTransaction();
+
             $maKhuyenMai = MaKhuyenMai::findOrFail($id);
             $dataMaKhuyenMai = $request->except('khuyen_mai_san_pham');
-            $maKhuyenMai->update($dataMaKhuyenMai);
+
+            if (!$maKhuyenMai->update($dataMaKhuyenMai)) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 500,
+                    'message' => 'Cập nhật mã khuyến mãi không thành công',
+                ], 500);
+            }
+
+            DB::commit();
 
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Đã cập nhật mã khuyến mãi thành công',
             ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy mã khuyến mãi',
+                'error' => $e->getMessage(),
+            ], 404);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi trong quá trình cập nhật dữ liệu',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         try {
@@ -173,6 +194,13 @@ class MaKhuyenMaiController extends Controller
                 'status_code' => 200,
                 'message' => 'Xóa mềm mã khuyến mãi thành công',
             ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy mã khuyến mãi',
+                'error' => $e->getMessage()
+            ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -188,14 +216,14 @@ class MaKhuyenMaiController extends Controller
         try {
             $maKhuyenMai = MaKhuyenMai::onlyTrashed()->orderByDesc('deleted_at')->get();
             return response()->json([
-                'success' => true,
+                'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công',
                 'data' => $maKhuyenMai,
             ], 200);
         } catch (\Exception $exception) {
             return response()->json([
-                'success' => false,
+                'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi khi lấy dữ liệu',
                 'error' => $exception->getMessage()
@@ -209,19 +237,80 @@ class MaKhuyenMaiController extends Controller
             $maKhuyenMai = MaKhuyenMai::withTrashed()->findOrFail($id);
             $maKhuyenMai->restore();
             return response()->json([
-                'success' => true,
+                'status' => true,
                 'status_code' => 200,
                 'message' => 'Khôi phục thành công',
             ], 200);
-        } catch (\Exception $exception) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
-                'success' => false,
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy mã khuyến mãi',
+                'error' => $e->getMessage()
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi',
-                'error' => $exception->getMessage()
+                'error' => $e->getMessage()
             ], 500);
         }
     }
+
+    public function kichHoatMaKhuyenMai($id)
+    {
+        try {
+            MaKhuyenMai::findOrFail($id)->update(['trang_thai' => 1]);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Kích hoạt mã khuyến mãi thành công',
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy mã khuyến mãi',
+                'error' => $e->getMessage(),
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Kích hoạt mã khuyến mãi thất bại',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function huyKichHoatMaKhuyenMai($id)
+    {
+        try {
+            MaKhuyenMai::findOrFail($id)->update(['trang_thai' => 0]);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Hủy kích hoạt mã khuyến mãi thành công',
+            ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy mã khuyến mãi',
+                'error' => $e->getMessage(),
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Hủy kích hoạt mã khuyến mãi thất bại',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 
     public function guiThongBao(Request $request)
     {
@@ -258,48 +347,6 @@ class MaKhuyenMaiController extends Controller
                 'message' => 'Đã xảy ra lỗi trong quá trình gửi thông báo',
                 'error' => $exception->getMessage()
             ], 500);
-        }
-    }
-
-    public function kichHoatMaKhuyenMai($id)
-    {
-        try {
-            MaKhuyenMai::query()->findOrFail($id)->update(['trang_thai' => 1]);
-            $json = [
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Kích hoạt mã khuyến mãi thành công',
-            ];
-            return response()->json($json, 200);
-        }catch (\Exception $exception) {
-            $json = [
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Kích hoạt mã khuyến mãi thất bại',
-                'error' => $exception->getMessage()
-            ];
-            return response()->json($json, 500);
-        }
-    }
-
-    public function huyKichHoatMaKhuyenMai($id)
-    {
-        try {
-            MaKhuyenMai::query()->findOrFail($id)->update(['trang_thai' => 0]);
-            $json = [
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Huỷ kích hoạt mà khuyến mãi',
-            ];
-            return response()->json($json, 200);
-        }catch (\Exception $exception) {
-            $json = [
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Huỷ kích hoạt mà khuyến mãi',
-                'error' => $exception->getMessage()
-            ];
-            return response()->json($json, 500);
         }
     }
 }
