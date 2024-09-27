@@ -92,9 +92,9 @@ console.log( 'toan',dataSource)
           >
             <Button type="primary">Khôi phục</Button>
           </Popconfirm>
-          <Button type="default" onClick={() => navigate(`/admin/tintuc/${record.key}`)}>
+          {/* <Button type="default" onClick={() => navigate(`/admin/news/details/${record.key}`)}>
             Chi tiết
-          </Button>
+          </Button> */}
         </Space>
       ),
     },

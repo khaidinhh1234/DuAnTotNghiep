@@ -18,6 +18,7 @@ class DanhGiaController extends Controller
         try {
             $danhGias = DanhGia::with([
                 'sanPham:id,ten_san_pham,anh_san_pham',
+                'anhDanhGias:id,anh_danh_gia,danh_gia_id',
                 'user:id,ho,ten,email'
             ])
                 ->where('san_pham_id', $sanpham->id)
