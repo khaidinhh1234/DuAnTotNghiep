@@ -44,7 +44,6 @@ class ThongTinWebController extends Controller
      */
     public function storeOrUpdate(Request $request)
     {
-        // Validate dữ liệu đầu vào
         $validator = Validator::make($request->all(), [
             'ten_website' => 'nullable|string|max:255',
             'logo_website' => 'nullable|string|max:255',
@@ -59,23 +58,19 @@ class ThongTinWebController extends Controller
             'link_zalo' => 'nullable|string|max:255',
             'link_instagram' => 'nullable|string|max:255',
             'link_tiktok' => 'nullable|string|max:255',
-            'banner' => 'nullable|array',
-            'banner.*.duong_dan_anh' => 'nullable|array', // Mảng đường dẫn ảnh
-            'banner.*.duong_dan_anh.*' => 'nullable|string|max:255', // Đường dẫn ảnh riêng lẻ
-            'banner.*.noi_dung' => 'nullable|array',
-            'banner.*.noi_dung.duong_dan' => 'nullable|string|max:255',
-            'banner.*.noi_dung.tieu_de_chinh' => 'nullable|string|max:255',
-            'banner.*.noi_dung.mau_tieu_de_chinh' => 'nullable|string|max:7',
-            'banner.*.noi_dung.tieu_de_phu' => 'nullable|string|max:255',
-            'banner.*.noi_dung.mau_tieu_de_phu' => 'nullable|string|max:7',
-            'banner.*.noi_dung.van_ban_quang_cao' => 'nullable|string|max:255',
-            'banner.*.noi_dung.mau_van_ban_quang_cao' => 'nullable|string|max:7',
-            'banner.*.noi_dung.tieu_de_nut' => 'nullable|string|max:255',
-            'banner.*.noi_dung.mau_nut' => 'nullable|string|max:7',
+            'banner' => 'nullable|array', // Mảng chứa đường dẫn ảnh banner
+            'banner.*' => 'nullable|string|max:255', // Đường dẫn ảnh của từng banner
+            'noi_dung_banner.duong_dan' => 'nullable|string|max:255',
+            'noi_dung_banner.tieu_de_chinh' => 'nullable|string|max:255',
+            'noi_dung_banner.mau_tieu_de_chinh' => 'nullable|string|max:7',
+            'noi_dung_banner.tieu_de_phu' => 'nullable|string|max:255',
+            'noi_dung_banner.mau_tieu_de_phu' => 'nullable|string|max:7',
+            'noi_dung_banner.van_ban_quang_cao' => 'nullable|string|max:255',
+            'noi_dung_banner.mau_van_ban_quang_cao' => 'nullable|string|max:7',
+            'noi_dung_banner.tieu_de_nut' => 'nullable|string|max:255',
+            'noi_dung_banner.mau_nut' => 'nullable|string|max:7',
         ]);
 
-
-        // Trả về lỗi nếu validate không thành công
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -84,26 +79,23 @@ class ThongTinWebController extends Controller
         }
 
         try {
-            // Xử lý dữ liệu banner
             $data = $request->all();
+
+
             if (isset($data['banner'])) {
-                foreach ($data['banner'] as &$banner) {
-                    // Convert mảng đường dẫn ảnh thành chuỗi JSON để dễ lưu trữ
-                    if (isset($banner['duong_dan_anh'])) {
-                        $banner['duong_dan_anh'] = json_encode($banner['duong_dan_anh']);
-                    }
-                }
+                $data['banner'] = json_encode($data['banner']);
             }
 
-            // Kiểm tra nếu đã có bản ghi trong cơ sở dữ liệu
+            if (isset($data['noi_dung_banner'])) {
+                $data['noi_dung_banner'] = json_encode($data['noi_dung_banner']);
+            }
+
             $thongTinWeb = ThongTinWeb::first();
 
             if ($thongTinWeb) {
-                // Nếu có, cập nhật bản ghi
                 $thongTinWeb->update($data);
                 $message = 'Cập nhật dữ liệu thành công';
             } else {
-                // Nếu không có, tạo mới bản ghi
                 $thongTinWeb = ThongTinWeb::create($data);
                 $message = 'Thêm dữ liệu thành công';
             }
@@ -122,4 +114,6 @@ class ThongTinWebController extends Controller
             ], 500);
         }
     }
+
+
 }
