@@ -120,29 +120,38 @@ class ThongKeDoanhThuController extends Controller
         return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
     }
 }
-    public function doanhThuTheoQuy()
-    {
+public function doanhThuTheoQuy()
+{
+    try {
+        DB::beginTransaction();
 
+        // Doanh thu theo từng quý trong năm
+        $doanhThuTheoQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->selectRaw('QUARTER(created_at) as quy, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_quy')
+            ->groupBy('quy', 'nam')
+            ->orderBy('nam', 'asc')
+            ->orderBy('quy', 'asc')
+            ->get();
 
-        try {
-            DB::beginTransaction();
-            $currentQuarter = ceil(Carbon::now()->month / 3);
-            $startOfQuarter = Carbon::now()->firstOfQuarter();
-            $endOfQuarter = Carbon::now()->lastOfQuarter();
+        // Doanh thu theo từng tháng trong từng quý
+        $doanhThuTheoThangTrongQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->selectRaw('MONTH(created_at) as thang, QUARTER(created_at) as quy, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_thang')
+            ->groupBy('thang', 'quy', 'nam')
+            ->orderBy('nam', 'asc')
+            ->orderBy('quy', 'asc')
+            ->orderBy('thang', 'asc')
+            ->get();
 
-            $doanhThu = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-                ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
-                ->sum('tong_tien_don_hang');
-
-            DB::commit();
-            return response()->json(['doanh_thu' => $doanhThu], 200);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
-        }
-
-
+        DB::commit();
+        return response()->json([
+            'doanh_thu_theo_quy' => $doanhThuTheoQuy,
+            'doanh_thu_theo_thang_trong_quy' => $doanhThuTheoThangTrongQuy
+        ], 200);
+    } catch (Exception $e) {
+        DB::rollBack();
+        return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
     }
+}
 
     public function doanhThuTheoNam()
     {
