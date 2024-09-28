@@ -54,26 +54,72 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
+
+
+    // public function doanhThuTheoThang()
+    // {
+    //     try {
+    //         DB::beginTransaction();
+    //         $startOfMonth = Carbon::now()->startOfMonth();
+    //         $endOfMonth = Carbon::now()->endOfMonth();
+
+    //         // Tổng doanh thu của cả tháng
+    //         $doanhThuThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+    //             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+    //             ->sum('tong_tien_don_hang');
+
+    //         // Doanh thu theo từng ngày
+    //         $doanhThuTheoNgay = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+    //             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+    //             ->selectRaw('DATE(created_at) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+    //             ->groupBy('ngay')
+    //             ->orderBy('ngay', 'asc')
+    //             ->get();
+
+    //         DB::commit();
+    //         return response()->json([
+    //             'doanh_thu_thang' => $doanhThuThang,
+    //             'doanh_thu_theo_ngay' => $doanhThuTheoNgay
+    //         ], 200);
+    //     } catch (Exception $e) {
+    //         DB::rollBack();
+    //         return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+    //     }
+    // }
+
+
     public function doanhThuTheoThang()
-    {
+{
+    try {
+        DB::beginTransaction();
 
-        try {
-            DB::beginTransaction();
-            $startOfMonth = Carbon::now()->startOfMonth();
-            $endOfMonth = Carbon::now()->endOfMonth();
+        // Doanh thu theo từng tháng trong năm
+        $doanhThuTheoThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->selectRaw('MONTH(created_at) as thang, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_thang')
+            ->groupBy('thang', 'nam')
+            ->orderBy('nam', 'asc')
+            ->orderBy('thang', 'asc')
+            ->get();
 
-            $doanhThu = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
-                ->sum('tong_tien_don_hang');
+        // Doanh thu theo từng ngày trong từng tháng
+        $doanhThuTheoNgayTrongThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->selectRaw('DATE(created_at) as ngay, MONTH(created_at) as thang, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_ngay')
+            ->groupBy('ngay', 'thang', 'nam')
+            ->orderBy('nam', 'asc')
+            ->orderBy('thang', 'asc')
+            ->orderBy('ngay', 'asc')
+            ->get();
 
-            DB::commit();
-            return response()->json(['doanh_thu' => $doanhThu], 200);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
-        }
+        DB::commit();
+        return response()->json([
+            'doanh_thu_theo_thang' => $doanhThuTheoThang,
+            'doanh_thu_theo_ngay_trong_thang' => $doanhThuTheoNgayTrongThang
+        ], 200);
+    } catch (Exception $e) {
+        DB::rollBack();
+        return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
     }
-
+}
     public function doanhThuTheoQuy()
     {
 
@@ -312,10 +358,12 @@ class ThongKeDoanhThuController extends Controller
 
     public function soLuongTonKhoCuaSanPham()
     {
-        $products = SanPham::with(['bienTheSanPham' => function ($query) {
-            $query->select('san_pham_id', DB::raw('SUM(so_luong_bien_the) as total_quantity'))
-                ->groupBy('san_pham_id');
-        }])->get();
+        $products = SanPham::with([
+            'bienTheSanPham' => function ($query) {
+                $query->select('san_pham_id', DB::raw('SUM(so_luong_bien_the) as total_quantity'))
+                    ->groupBy('san_pham_id');
+            }
+        ])->get();
 
         $result = $products->map(function ($product) {
             $totalQuantity = $product->bienTheSanPham->isNotEmpty()
@@ -334,10 +382,12 @@ class ThongKeDoanhThuController extends Controller
     }
     public function soLuongSanPhamSapHetHang()
     {
-        $products = SanPham::with(['bienTheSanPham' => function ($query) {
-            $query->select('san_pham_id', DB::raw('SUM(so_luong_bien_the) as total_quantity'))
-                ->groupBy('san_pham_id');
-        }])->get();
+        $products = SanPham::with([
+            'bienTheSanPham' => function ($query) {
+                $query->select('san_pham_id', DB::raw('SUM(so_luong_bien_the) as total_quantity'))
+                    ->groupBy('san_pham_id');
+            }
+        ])->get();
 
         $result = $products->filter(function ($product) {
             $totalQuantity = $product->bienTheSanPham->isNotEmpty()
