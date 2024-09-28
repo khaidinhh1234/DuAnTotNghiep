@@ -1,7 +1,7 @@
 
 import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, message, Popconfirm, Space, Table, Tabs } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import { Button, Input, message, Space, Table, Tabs } from "antd";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
