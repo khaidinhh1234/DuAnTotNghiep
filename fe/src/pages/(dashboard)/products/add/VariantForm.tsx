@@ -1,14 +1,13 @@
-
 // import React, { useState } from "react";
 // import { Table, Input, DatePicker, Upload, Modal } from "antd";
 // import { PlusOutlined } from '@ant-design/icons';
 // import dayjs, { Dayjs } from 'dayjs';import { VariantFormProps, Variant, VariantPull } from "@/common/types/product";
 // import '@/global.css'
 
-// const VariantForm: React.FC<VariantFormProps> = ({ 
-//   variants, 
-//   updateVariant, 
-//   handleRemoveImage, 
+// const VariantForm: React.FC<VariantFormProps> = ({
+//   variants,
+//   updateVariant,
+//   handleRemoveImage,
 //   handleImageChange,
 //   colorsData,
 //   sizesData
@@ -151,10 +150,10 @@
 
 //   return (
 //     <>
-//     <Table 
-//         dataSource={variants} 
-//         columns={columns} 
-//         rowKey="id" 
+//     <Table
+//         dataSource={variants}
+//         columns={columns}
+//         rowKey="id"
 //         className="bg-white rounded-lg shadow-md"
 //         pagination={false}
 //       />
@@ -357,23 +356,30 @@
 // export default VariantForm;
 import React, { useState } from "react";
 import { Table, Input, DatePicker, Upload, Modal } from "antd";
-import { PlusOutlined } from '@ant-design/icons';
-import dayjs, { Dayjs } from 'dayjs';
+import { PlusOutlined } from "@ant-design/icons";
+import dayjs, { Dayjs } from "dayjs";
 import { UploadFile } from "antd/es/upload/interface";
-import '@/global.css'
+import "@/global.css";
 import { VariantFormProps, Variant, VariantPull } from "@/common/types/product";
 
+<<<<<<< HEAD
 const VariantForm: React.FC<VariantFormProps> = ({ 
   variants, 
   updateVariant, 
   handleRemoveImage, 
+=======
+const VariantForm: React.FC<VariantFormProps> = ({
+  variants,
+  updateVariant,
+  handleRemoveImage,
+>>>>>>> c284993e1b3549aded708185e38ee04181a422a1
   handleImageChange,
   colorsData,
-  sizesData
+  sizesData,
 }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -382,7 +388,9 @@ const VariantForm: React.FC<VariantFormProps> = ({
 
     setPreviewImage(file.url || (file.preview as string));
     setPreviewOpen(true);
-    setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
+    setPreviewTitle(
+      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+    );
   };
 
   const getBase64 = (file: File): Promise<string> => {
@@ -390,7 +398,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
+      reader.onerror = (error) => reject(error);
     });
   };
 
@@ -401,42 +409,43 @@ const VariantForm: React.FC<VariantFormProps> = ({
 
   const columns = [
     {
-      title: 'Kích thước',
-      dataIndex: 'kich_thuoc_id',
-      key: 'kich_thuoc',
+      title: "Kích thước",
+      dataIndex: "kich_thuoc_id",
+      key: "kich_thuoc",
       render: (sizeId: number) => {
-        const size = sizesData.find(s => Number(s.id) === sizeId);
-        return size ? size.kich_thuoc : '';
+        const size = sizesData.find((s) => Number(s.id) === sizeId);
+        return size ? size.kich_thuoc : "";
       },
     },
     {
-      title: 'Màu sắc',
-      dataIndex: 'mau_sac_id',
-      key: 'mau_sac',
+      title: "Màu sắc",
+      dataIndex: "mau_sac_id",
+      key: "mau_sac",
       render: (colorId: number) => {
-        const color = colorsData.find(c => Number(c.id) === colorId);
-        return color ? color.ten_mau_sac : '';
+        const color = colorsData.find((c) => Number(c.id) === colorId);
+        return color ? color.ten_mau_sac : "";
       },
     },
     {
-      title: 'Giá bán',
-      dataIndex: 'gia_ban',
-      key: 'gia_ban',
+      title: "Giá bán",
+      dataIndex: "gia_ban",
+      key: "gia_ban",
       render: (text: string, record: Variant) => (
         <Input
           value={text}
-          onChange={(e) => handleUpdate(record, 'gia_ban', e.target.value)}
+          onChange={(e) => handleUpdate(record, "gia_ban", e.target.value)}
           className="rounded-md"
         />
       ),
     },
     {
-      title: 'Giá khuyến mãi',
-      dataIndex: 'gia_khuyen_mai',
-      key: 'gia_khuyen_mai',
+      title: "Giá khuyến mãi",
+      dataIndex: "gia_khuyen_mai",
+      key: "gia_khuyen_mai",
       render: (text: string, record: Variant) => (
         <Input
           value={text}
+<<<<<<< HEAD
           onChange={(e) => {
             const newValue = e.target.value;
             handleUpdate(record, 'gia_khuyen_mai', newValue);
@@ -446,30 +455,39 @@ const VariantForm: React.FC<VariantFormProps> = ({
               handleUpdate(record, 'ngay_ket_thuc_khuyen_mai', null);
             }
           }}
+=======
+          onChange={(e) =>
+            handleUpdate(record, "gia_khuyen_mai", e.target.value)
+          }
+>>>>>>> c284993e1b3549aded708185e38ee04181a422a1
           className="rounded-md"
         />
       ),
     },
     {
-      title: 'Số lượng',
-      dataIndex: 'so_luong_bien_the',
-      key: 'so_luong_bien_the',
+      title: "Số lượng",
+      dataIndex: "so_luong_bien_the",
+      key: "so_luong_bien_the",
       render: (text: string, record: Variant) => (
         <Input
           value={text}
-          onChange={(e) => handleUpdate(record, 'so_luong_bien_the', e.target.value)}
+          onChange={(e) =>
+            handleUpdate(record, "so_luong_bien_the", e.target.value)
+          }
           className="rounded-md"
         />
       ),
     },
     {
-      title: 'Ngày bắt đầu khuyến mãi',
-      dataIndex: 'ngay_bat_dau_khuyen_mai',
-      key: 'ngay_bat_dau_khuyen_mai',
+      title: "Ngày bắt đầu khuyến mãi",
+      dataIndex: "ngay_bat_dau_khuyen_mai",
+      key: "ngay_bat_dau_khuyen_mai",
       render: (text: string | null, record: Variant) => (
         <DatePicker
           value={text ? dayjs(text) : null}
-          onChange={(_, dateString) => handleUpdate(record, 'ngay_bat_dau_khuyen_mai', dateString || null)}
+          onChange={(_, dateString) =>
+            handleUpdate(record, "ngay_bat_dau_khuyen_mai", dateString || null)
+          }
           format="YYYY-MM-DD"
           className="rounded-md"
           disabled={!record.gia_khuyen_mai}
@@ -477,13 +495,15 @@ const VariantForm: React.FC<VariantFormProps> = ({
       ),
     },
     {
-      title: 'Ngày kết thúc khuyến mãi',
-      dataIndex: 'ngay_ket_thuc_khuyen_mai',
-      key: 'ngay_ket_thuc_khuyen_mai',
+      title: "Ngày kết thúc khuyến mãi",
+      dataIndex: "ngay_ket_thuc_khuyen_mai",
+      key: "ngay_ket_thuc_khuyen_mai",
       render: (text: string | null, record: Variant) => (
         <DatePicker
           value={text ? dayjs(text) : null}
-          onChange={(_, dateString) => handleUpdate(record, 'ngay_ket_thuc_khuyen_mai', dateString || null)}
+          onChange={(_, dateString) =>
+            handleUpdate(record, "ngay_ket_thuc_khuyen_mai", dateString || null)
+          }
           format="YYYY-MM-DD"
           disabledDate={(current: Dayjs) => {
             const startDate = record.ngay_bat_dau_khuyen_mai;
@@ -495,9 +515,9 @@ const VariantForm: React.FC<VariantFormProps> = ({
       ),
     },
     {
-      title: 'Ảnh biến thể',
-      dataIndex: 'anh_bien_the',
-      key: 'anh_bien_the',
+      title: "Ảnh biến thể",
+      dataIndex: "anh_bien_the",
+      key: "anh_bien_the",
       render: (_: any, record: Variant) => (
         <Upload
           listType="picture-card"
@@ -516,15 +536,15 @@ const VariantForm: React.FC<VariantFormProps> = ({
           )}
         </Upload>
       ),
-    }
+    },
   ];
 
   return (
     <>
-      <Table 
-        dataSource={variants} 
-        columns={columns} 
-        rowKey="id" 
+      <Table
+        dataSource={variants}
+        columns={columns}
+        rowKey="id"
         className="bg-white rounded-lg shadow-md"
         pagination={false}
       />
@@ -534,7 +554,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
         footer={null}
         onCancel={() => setPreviewOpen(false)}
       >
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        <img alt="example" style={{ width: "100%" }} src={previewImage} />
       </Modal>
     </>
   );

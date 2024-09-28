@@ -1,5 +1,12 @@
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, InputRef, Table, TableColumnsType } from "antd";
+import {
+  Button,
+  Input,
+  InputRef,
+  message,
+  Table,
+  TableColumnsType,
+} from "antd";
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Popconfirm, Space } from "antd";
@@ -36,20 +43,24 @@ const NewCategory = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        return await instance.delete(`/admin/danhmuctintuc/${id}`);
+        const res = await instance.delete(`/admin/danhmuctintuc/${id}`);
+        message.open({
+          type: "success",
+          content: "Xóa danh mục thành công",
+        });
+        return res.data;
       } catch (error) {
+        message.open({
+          type: "error",
+          content: "Xóa danh mục thất bại",
+        });
         throw new Error("Error");
       }
     },
-    onSuccess: (id) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["danhmuctintuc"],
       });
-      toast.success("Xóa danh mục thành công");
-    },
-    onError: (error) => {
-      console.error("Error deleting category:", error);
-      toast.error("Xóa danh mục thất bại");
     },
   });
 
@@ -140,7 +151,7 @@ const NewCategory = () => {
   const columns: TableColumnsType<NewCategories> = [
     {
       title: "STT",
-      width: "10%",
+      width: "20%",
       key: "id",
       dataIndex: "key",
     },
@@ -153,7 +164,7 @@ const NewCategory = () => {
     // },
     {
       title: "Tên danh mục tin tức",
-      width: "20%",
+      width: "25%",
       key: "ten_danh_muc_tin_tuc",
       dataIndex: "ten_danh_muc_tin_tuc",
 
@@ -163,7 +174,7 @@ const NewCategory = () => {
     },
     {
       title: "Thời gian tạo",
-      width: "15%",
+      width: "20%",
       key: "created_at",
       dataIndex: "created_at",
       render: (text) => (text ? new Date(text).toLocaleDateString() : ""),
@@ -218,7 +229,9 @@ const NewCategory = () => {
           </Link>
         </div>
       </div>
-      <Table columns={columns} dataSource={dataSource} loading={isLoading} />
+      <div className="max-w-5xl">
+        <Table columns={columns} dataSource={dataSource} loading={isLoading} />
+      </div>
     </main>
   );
 };

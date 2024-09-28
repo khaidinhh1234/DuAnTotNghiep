@@ -20,7 +20,11 @@ const TagsAdmin: React.FC = () => {
   );
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: tags,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["tag"],
     queryFn: async () => {
       try {
@@ -35,13 +39,12 @@ const TagsAdmin: React.FC = () => {
     },
   });
 
-  const dataSource =
-    data?.data.map((tag: ICategories, index: number) => ({
-      key: tag.id,
-      ...tag,
-      index: index + 1,
-    })) || [];
-
+  const dataSource = tags?.data?.map((tag: any, index: number) => ({
+    key: tag.id,
+    ...tag,
+    index: index + 1,
+  }));
+  // console.log(tags);
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
@@ -225,7 +228,7 @@ const TagsAdmin: React.FC = () => {
         </div>
       </div>
       <div className="max-w-4xl">
-        <Table columns={columns} dataSource={dataSource} />
+        <Table columns={columns} dataSource={dataSource ? dataSource : []} />
       </div>
     </main>
   );

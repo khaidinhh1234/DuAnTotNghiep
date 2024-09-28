@@ -33,8 +33,8 @@ const Tagsedit = () => {
       return response.data;
     },
     onSuccess: () => {
-      message.success("Thêm nhãn dán thành công");
-      form.resetFields();
+      message.success("Cập nhật nhãn dán thành công");
+      // form.resetFields();
       nav("/admin/products/tags");
     },
     onError: (error) => {
@@ -49,8 +49,8 @@ const Tagsedit = () => {
     mutate(data);
     // console.log(values);
   };
-  const tagId = tagid?.data;
-  console.log(tagid);
+  const tagId = tagid?.data.ten_the;
+  console.log(tagid?.data?.ten_the);
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error</p>;
   return (
@@ -63,11 +63,11 @@ const Tagsedit = () => {
       </div>
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">
-          Cập nhật nhãn dán
+          Cập nhật nhãn dán :{tagId ? tagId : ""}
           {/* Cập nhật nhãn dán :{tagId.ten_the ? tagId?.ten_the : ""} */}
         </h1>
         <div>
-          <Link to="/admin/categories" className="mr-1">
+          <Link to="/admin/products/tags" className="mr-1">
             <Button className="ml-auto bg-black text-white rounded-lg py-1">
               Quay lại
             </Button>
@@ -83,8 +83,7 @@ const Tagsedit = () => {
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 24 }}
-              autoComplete="off"
-              // initialValues={{ ...tagid.data }}
+              initialValues={{ ...tagId }}
               onFinish={onFinish}
             >
               <Form.Item
@@ -101,7 +100,10 @@ const Tagsedit = () => {
                   },
                 ]}
               >
-                <Input placeholder="Nhập tên nhãn dán" />
+                <Input
+                  placeholder="Nhập tên nhãn dán"
+                  // value={tagid?.data.ten_the}
+                />
               </Form.Item>
 
               <Form.Item>

@@ -80,7 +80,6 @@ import PageNew from "@/pages/(dashboard)/news/pagenew";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 
-// import Test from "@/pages/(dashboard)/test";
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
@@ -96,12 +95,6 @@ import ViewNew from "@/pages/(dashboard)/news/view/ViewNew";
 import Rank from "@/pages/(dashboard)/user/hangthanhvien/page";
 import MemberRankForm from "@/pages/(dashboard)/user/hangthanhvien/add/page";
 import Remoterank from "@/pages/(dashboard)/user/hangthanhvien/remote.tsx/remote";
-// import Test from "@/pages/(dashboard)/test";
-
-// import Test from "@/pages/(dashboard)/test";
-// import Test from "@/pages/(dashboard)/test";
-
-// import Test from "@/pages/(dashboard)/test";
 
 // import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 
@@ -109,7 +102,11 @@ import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
 import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
 import { AnalyticsAdmin } from "@/pages/(dashboard)/analytics/page";
+<<<<<<< HEAD
 import MemberRank from "@/pages/(dashboard)/user/hangthanhvien/edit/page";
+=======
+import Component from "@/pages/(dashboard)/test";
+>>>>>>> c284993e1b3549aded708185e38ee04181a422a1
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
@@ -237,7 +234,7 @@ const Router = () => {
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          {/* <Route path="test" element={<Component />} /> */}
+          <Route path="test" element={<Component />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}

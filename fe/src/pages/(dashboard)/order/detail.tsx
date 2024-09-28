@@ -141,19 +141,16 @@ const Detail = ({ record }: any) => {
                           {item?.so_luong}
                         </td>
                         <td className="text-center w-[20%] font-semibold  ">
-                          {(item?.bien_the_san_pham?.gia_khuyen_mai
+                          {item?.bien_the_san_pham?.gia_khuyen_mai
                             ? item?.bien_the_san_pham?.gia_khuyen_mai
-                            : item?.bien_the_san_pham?.gia_ban
-                          ).toLocaleString()}{" "}
+                            : item?.bien_the_san_pham?.gia_ban}{" "}
                           VNĐ
                         </td>
                         <td className="text-center w-[35%] font-semibold">
-                          {(
-                            (item?.bien_the_san_pham?.gia_khuyen_mai
-                              ? item?.bien_the_san_pham?.gia_khuyen_mai
-                              : item?.bien_the_san_pham?.gia_ban) *
-                            item?.so_luong
-                          ).toLocaleString()}{" "}
+                          {(item?.bien_the_san_pham?.gia_khuyen_mai
+                            ? item?.bien_the_san_pham?.gia_khuyen_mai
+                            : item?.bien_the_san_pham?.gia_ban) *
+                            item?.so_luong}{" "}
                           VNĐ
                         </td>
                       </tr>

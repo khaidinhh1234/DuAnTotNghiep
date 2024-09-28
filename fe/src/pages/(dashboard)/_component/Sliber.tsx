@@ -60,7 +60,6 @@ const menu = [
       { name: "Khách hàng", path: "users/khachhang" },
       { name: "Nhân viên ", path: "users/nhanvien" },
       { name: "Hạng thành viên ", path: "users/rank" },
-
     ],
   },
 
@@ -139,7 +138,7 @@ const SlidebarProduct = () => {
             <span className="sr-only">Toggle notifications</span>
           </Button>
         </div>
-        <div className="flex-1 mt-3">
+        <div className="flex-1 mt-3 mb-[100%]">
           {menu?.map((item, index) => (
             <div key={index}>
               <nav
@@ -183,7 +182,7 @@ const SlidebarProduct = () => {
             </div>
           ))}
         </div>
-        <div className="mt-auto p-4  ">
+        {/* <div className="mt-auto p-4  ">
           <Card x-chunk="dashboard-02-chunk-0">
             <CardHeader className="p-2 pt-0 md:p-4">
               <CardTitle>Upgrade to Pro</CardTitle>
@@ -198,7 +197,7 @@ const SlidebarProduct = () => {
               </Button>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
       </div>
     </div>
   );

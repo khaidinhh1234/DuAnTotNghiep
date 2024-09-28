@@ -1,32 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Activity,
-  ArrowUpRight,
-  CreditCard,
-  DollarSign,
-  Users,
-} from "lucide-react";
+import { Activity, CreditCard, Users } from "lucide-react";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Chart1 from "./chart1/chart1";
+import Chart5 from "./chart5/chart5";
 export function AnalyticsAdmin() {
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -40,13 +17,13 @@ export function AnalyticsAdmin() {
           <h1 className=" font-semibold md:text-3xl">Thống kê </h1>
         </div>
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          <Card x-chunk="dashboard-01-chunk-0 " className="bg-white">
-            <Chart1 />
-          </Card>
+          {/* <Card x-chunk="dashboard-01-chunk-0 " className="bg-white"> */}
+          <Chart1 />
+          {/* </Card> */}
           <Card x-chunk="dashboard-01-chunk-1" className="bg-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Đăng ký</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xl font-bold">Đăng ký</CardTitle>
+              <Users className="h-6 w-6 text-muted-foreground " />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">+2350</div>
@@ -57,8 +34,8 @@ export function AnalyticsAdmin() {
           </Card>
           <Card x-chunk="dashboard-01-chunk-2" className="bg-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Bán hàng</CardTitle>
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xl font-bold">Bán hàng</CardTitle>
+              <CreditCard className="h-6 w-6 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">+12,234</div>
@@ -69,10 +46,10 @@ export function AnalyticsAdmin() {
           </Card>
           <Card x-chunk="dashboard-01-chunk-3" className="bg-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-xl font-bold">
                 Hoạt động hiện tại
               </CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              <Activity className="h-6 w-6 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">+573</div>
@@ -87,140 +64,19 @@ export function AnalyticsAdmin() {
             className="xl:col-span-2 bg-white"
             x-chunk="dashboard-01-chunk-4"
           >
-            <CardHeader className="flex flex-row items-center">
+            <CardHeader className="flex flex-row items-center ">
               <div className="grid gap-2">
-                <CardTitle>Giao dịch</CardTitle>
-                <CardDescription>
-                  Các giao dịch gần đây từ cửa hàng của bạn.
-                </CardDescription>
+                <CardTitle>Tổng quan</CardTitle>
               </div>
-              <Button asChild size="sm" className="ml-auto gap-1">
-                <Link to="#">
+              {/* <Button asChild size="sm" className="ml-auto gap-1"> */}
+              {/* <Link to="#">
                   Xem tất cả
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </Button>
+                  <ArrowUpRight className="h-6 w-6" />
+                </Link> */}
+              {/* </Button> */}
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Khách hàng</TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Loại
-                    </TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Trạng thái
-                    </TableHead>
-                    <TableHead className="hidden xl:table-column">
-                      Ngày
-                    </TableHead>
-                    <TableHead className="text-right">Số tiền</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Bán hàng
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Đã duyệt
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-23
-                    </TableCell>
-                    <TableCell className="text-right">$250.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Olivia Smith</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        olivia@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Hoàn tiền
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Từ chối
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-24
-                    </TableCell>
-                    <TableCell className="text-right">$150.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Noah Williams</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        noah@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Đăng ký
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Đã duyệt
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-25
-                    </TableCell>
-                    <TableCell className="text-right">$350.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Emma Brown</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        emma@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Bán hàng
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Đã duyệt
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-26
-                    </TableCell>
-                    <TableCell className="text-right">$450.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      Bán hàng
-                    </TableCell>
-                    <TableCell className="hidden xl:table-column">
-                      <Badge className="text-xs" variant="outline">
-                        Đã duyệt
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
-                      2023-06-27
-                    </TableCell>
-                    <TableCell className="text-right">$550.00</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <Chart5 />
             </CardContent>
           </Card>
           <Card x-chunk="dashboard-01-chunk-5" className="bg-white">
@@ -241,7 +97,7 @@ export function AnalyticsAdmin() {
                     olivia.martin@email.com
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
+                <div className="ml-auto font-medium">+199,000 VNĐ</div>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -256,7 +112,7 @@ export function AnalyticsAdmin() {
                     jackson.lee@email.com
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$39.00</div>
+                <div className="ml-auto font-medium">+39.000 VNĐ</div>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -271,7 +127,7 @@ export function AnalyticsAdmin() {
                     isabella.nguyen@email.com
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$299.00</div>
+                <div className="ml-auto font-medium">+299.000 VNĐ</div>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -286,7 +142,7 @@ export function AnalyticsAdmin() {
                     will@email.com
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$99.00</div>
+                <div className="ml-auto font-medium">+99.000 VNĐ</div>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -301,7 +157,7 @@ export function AnalyticsAdmin() {
                     sofia.davis@email.com
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$39.00</div>
+                <div className="ml-auto font-medium">+39.000 VNĐ</div>
               </div>
             </CardContent>
           </Card>
