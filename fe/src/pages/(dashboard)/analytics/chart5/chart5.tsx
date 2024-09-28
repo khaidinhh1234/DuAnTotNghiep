@@ -2,7 +2,7 @@ import React from "react";
 import Chart from "react-apexcharts";
 import { Card } from "antd";
 
-const Component: React.FC = () => {
+const Chart5: React.FC = () => {
   const tuyChonBieuDo = {
     chart: {
       type: "bar" as "bar",
@@ -27,31 +27,46 @@ const Component: React.FC = () => {
       bar: {
         horizontal: false,
         columnWidth: "50%",
+        borderRadius: 5,
+        borderRadiusApplication: "end" as "end", // Làm tròn phần trên của cột
       },
     },
     dataLabels: {
       enabled: false,
     },
     colors: ["#000000"], // Đặt màu cột là màu đen
+    tooltip: {
+      y: {
+        formatter: (val: number) => {
+          return val.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          });
+        },
+      },
+    },
   };
 
   const chuoiDuLieu = [
     {
       name: "Doanh số",
-      data: [90, 10, 45, 50, 49, 60, 70, 80, 90, 100, 110, 120],
+      data: [
+        90000, 10000, 45000, 50000, 39000, 60000, 70000, 80000, 50000, 100000,
+        70000, 120000,
+      ],
     },
   ];
 
   return (
-    <Card title="Biểu đồ cột">
+    <Card>
       <Chart
         options={tuyChonBieuDo}
         series={chuoiDuLieu}
         type="bar"
-        height={350}
+        height={450}
       />
     </Card>
   );
 };
 
-export default Component;
+export default Chart5;

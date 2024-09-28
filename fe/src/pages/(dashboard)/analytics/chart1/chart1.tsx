@@ -11,20 +11,22 @@ import { ChartContainer } from "@/components/ui/chart";
 
 export default function Chart1() {
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-white">
       <CardHeader className="p-4 pb-0">
-        <CardTitle>Walking Distance</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl">Tổng doanh thu </CardTitle>
+        {/* <CardDescription>
           Over the last 7 days, your distance walked and run was 12.5 miles per
           day.
-        </CardDescription>
+        </CardDescription> */}
       </CardHeader>
-      <CardContent className="flex flex-row items-baseline gap-4 p-4 pt-0">
-        <div className="flex items-baseline gap-1 text-3xl font-bold tabular-nums leading-none">
-          12.5
-          <span className="text-sm font-normal text-muted-foreground">
-            miles/day
-          </span>
+      <CardContent className="flex gap-4 p-4 pt-0">
+        <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
+          <div>
+            12.500.000.00 <br />
+            <span className="text-sm font-normal text-muted-foreground">
+              +20,1% so với tháng trước
+            </span>
+          </div>{" "}
         </div>
         <ChartContainer
           config={{
