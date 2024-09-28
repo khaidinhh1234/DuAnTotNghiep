@@ -85,18 +85,18 @@ class ThongTinWebController extends Controller
             if (isset($data['banner'])) {
                 foreach ($data['banner'] as &$banner) {
                     if (isset($banner['duong_dan_anh'])) {
-                        $banner['duong_dan_anh'] = json_encode($banner['duong_dan_anh']);
+                        $banner['duong_dan_anh'] = array_map('trim', $banner['duong_dan_anh']); // Xóa khoảng trắng thừa
                     }
 
                     if (isset($banner['noi_dung'])) {
-                        $banner['noi_dung'] = json_encode($banner['noi_dung']);
+                        $banner['noi_dung'] = $banner['noi_dung'];
                     }
                 }
-                $data['banner'] = json_encode($data['banner']);
+                $data['banner'] = $data['banner'];
             }
 
             if (isset($data['noi_dung_banner'])) {
-                $data['noi_dung_banner'] = json_encode($data['noi_dung_banner']);
+                $data['noi_dung_banner'] = $data['noi_dung_banner'];
             }
 
             $thongTinWeb = ThongTinWeb::first();
@@ -123,7 +123,4 @@ class ThongTinWebController extends Controller
             ], 500);
         }
     }
-
-
-
 }
