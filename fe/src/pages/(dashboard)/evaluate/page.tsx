@@ -8,7 +8,7 @@ const EvaluateAdmin = () => {
   const queryClient = useQueryClient();
   const { Option } = Select;
 
-  // Query data
+  // Query to fetch data from API
   const { data, isLoading, isError } = useQuery({
     queryKey: ['danhgiasanpham'],
     queryFn: async () => {
@@ -17,27 +17,27 @@ const EvaluateAdmin = () => {
     },
   });
 
-  // Mutation for sending replies
+  // Mutation to send replies to API
   const mutation = useMutation({
     mutationFn: async (data: { id: number, reply: string }) => {
       const response = await instance.post(`/admin/danhsachdanhgia/reply`, data);
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['danhgiasanpham']);
+      queryClient.invalidateQueries(['danhgiasanpham']);  // Invalidate cache to refetch data
     },
     onError: (error) => {
       console.error('Error:', error);
     },
   });
 
-  // State management
+  // State management for modal and replies
   const [reply, setReply] = useState<{ [key: number]: string }>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEvaluate, setCurrentEvaluate] = useState<IEvaluate | null>(null);
   const [filter, setFilter] = useState({ product: "", star: "", user: "" });
 
-  // Modal functions
+  // Functions to handle modal behavior
   const showModal = (record: IEvaluate) => {
     setCurrentEvaluate(record);
     setIsModalOpen(true);
@@ -54,7 +54,7 @@ const EvaluateAdmin = () => {
     setIsModalOpen(false);
   };
 
-  // Handlers
+  // Function to update reply state
   const handleReplyChange = (id: number, value: string) => {
     setReply((prev) => ({
       ...prev,
@@ -66,10 +66,11 @@ const EvaluateAdmin = () => {
     setFilter((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Loading and error handling
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Đã xảy ra lỗi khi tải dữ liệu.</p>;
 
-  // Data processing
+  // Prepare data for the table
   const dataSource = data?.data.map((evaluate: IEvaluate) => ({
     key: evaluate.id,
     ...evaluate,
@@ -77,18 +78,27 @@ const EvaluateAdmin = () => {
     san_pham_id: evaluate.san_pham?.ten_san_pham || "Chưa có dữ liệu",
   })) || [];
 
+  // Define columns for the table
   const columns: TableColumnsType<IEvaluate> = [
     { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Người dùng", key: "user_id", dataIndex: "user_id" },
-    { title: "Sản phẩm", key: "san_pham_id", dataIndex: "san_pham_id" },
-    { title: "Chất lượng sản phẩm", key: "chat_luong_san_pham", dataIndex: "chat_luong_san_pham" },
     {
-      title: "Nội dung", key: "mo_ta", render: (record: IEvaluate) => (
-        <ExpandableContent content={record.mo_ta} />
+      title: "Nội dung", 
+      key: "mo_ta", 
+      render: (record: IEvaluate) => (
+        <ExpandableContent content={`${record.user?.ten || "Người dùng ẩn"}: ${record.mo_ta}`} />
       ),
     },
     {
-      title: "Chất lượng", key: "chat_luong", render: (record: IEvaluate) => (
+      title: "Chất lượng sản phẩm", 
+      key: "chat_luong_san_pham", 
+      render: (record: IEvaluate) => (
+        <ExpandableContent content={`${record.san_pham?.ten_san_pham || "Sản phẩm ẩn"}: ${record.chat_luong_san_pham}`} />
+      ),
+    },
+    {
+      title: "Chất lượng", 
+      key: "chat_luong", 
+      render: (record: IEvaluate) => (
         <div>
           <div><span>Sản phẩm: </span><Rate disabled value={record.so_sao_san_pham} /></div>
           <div><span>Vận chuyển: </span><Rate disabled value={record.so_sao_dich_vu_van_chuyen} /></div>
@@ -96,7 +106,9 @@ const EvaluateAdmin = () => {
       ),
     },
     {
-      title: "Hành động", key: "hanh_dong", render: (_, record: IEvaluate) => (
+      title: "Hành động", 
+      key: "hanh_dong", 
+      render: (_, record: IEvaluate) => (
         <Space>
           <Button type="primary" onClick={() => showModal(record)}>Phản hồi</Button>
           <Popconfirm title="Bạn có chắc muốn ẩn đánh giá này không?" onConfirm={() => console.log("Ẩn đánh giá:", record.id)}>
@@ -107,7 +119,7 @@ const EvaluateAdmin = () => {
     },
   ];
 
-  // Filter options
+  // Filter component
   const Filters = () => (
     <div className="flex gap-4 mb-4">
       <Select placeholder="Chọn sản phẩm" style={{ width: 200 }} onChange={(value) => handleFilterChange('product', value)}>
@@ -131,34 +143,31 @@ const EvaluateAdmin = () => {
         <h1 className="font-semibold md:text-3xl">Đánh giá sản phẩm</h1>
       </div>
       <Filters />
-      <Table 
-        columns={columns} 
-        dataSource={dataSource} 
-        pagination={{ pageSize: 10 }} 
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        pagination={{ pageSize: 10 }}
       />
-      <Modal title="Phản hồi đánh giá" visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <Input.TextArea
-          rows={4}
-          value={currentEvaluate ? reply[currentEvaluate.id] || "" : ""}
-          onChange={(e) => currentEvaluate && handleReplyChange(currentEvaluate.id, e.target.value)}
-          placeholder="Nhập phản hồi..."
-        />
+      <Modal title="Phản hồi đánh giá" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        {currentEvaluate && (
+          <div className="flex flex-col gap-2">
+            <p><strong>Đánh giá của khách hàng:</strong> {currentEvaluate.mo_ta}</p>
+            <Input.TextArea
+              rows={4}
+              value={reply[currentEvaluate.id] || ""}
+              onChange={(e) => handleReplyChange(currentEvaluate.id, e.target.value)}
+              placeholder="Nhập phản hồi"
+            />
+          </div>
+        )}
       </Modal>
     </main>
   );
 };
 
-// Expandable content component for long text
-const ExpandableContent = ({ content }: { content: string }) => {
-  const [expanded, setExpanded] = useState(false);
-  return (
-    <div>
-      {expanded ? content : `${content.substring(0, 100)}...`}
-      <Button type="link" onClick={() => setExpanded(!expanded)}>
-        {expanded ? "Thu gọn" : "Xem thêm"}
-      </Button>
-    </div>
-  );
-};
+// ExpandableContent component definition
+const ExpandableContent = ({ content }: { content: string }): JSX.Element => (
+  <div>{content}</div>
+);
 
 export default EvaluateAdmin;
