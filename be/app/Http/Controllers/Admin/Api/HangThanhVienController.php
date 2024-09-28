@@ -75,25 +75,25 @@ class HangThanhVienController extends Controller
     /**
      * Display the specified resource.
      */
-    // public function show(string $id)
-    // {
-    //     try {
-    //         $hangThanhVien = HangThanhVien::query()->findOrFail($id);
-    //         return response()->json([
-    //             'status' => true,
-    //             'status_code' => 200,
-    //             'message' => 'Lấy dữ liệu hạng thành viên thành công',
-    //             'data' => $hangThanhVien
-    //         ], 200);
-    //     } catch (\Exception $exception) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'status_code' => 404,
-    //             'message' => 'Không tìm thấy hạng thành viên',
-    //             'error' => $exception->getMessage()
-    //         ], 404);
-    //     }
-    // }
+    public function show(string $id)
+    {
+        try {
+            $hangThanhVien = HangThanhVien::query()->findOrFail($id);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu hạng thành viên thành công',
+                'data' => $hangThanhVien
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy hạng thành viên',
+                'error' => $exception->getMessage()
+            ], 404);
+        }
+    }
 
     /**
      * Update the specified resource in storage.
