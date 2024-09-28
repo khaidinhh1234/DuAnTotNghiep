@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AnhDanhGia;
 use App\Models\DanhGia;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class DanhGiaController extends Controller
 {
@@ -53,8 +56,8 @@ class DanhGiaController extends Controller
                 'anhDanhGias:id,anh_danh_gia,danh_gia_id',
                 'user:id,ho,ten,email'
             ])
-            ->orderBy('created_at', 'desc')
-            ->get();
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             $danhGias->transform(function ($danhGia) {
                 $danhGia->tong_so_sao_trung_binh = ($danhGia->so_sao_san_pham + $danhGia->so_sao_dich_vu_van_chuyen) / 2;
@@ -73,6 +76,37 @@ class DanhGiaController extends Controller
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi lấy danh sách đánh giá',
                 'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function phanHoiDanhGia(Request $request, DanhGia $danhgia)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validateDanhGia = $request->validate([
+                'phan_hoi' => 'nullable|string',
+            ]);
+            $danhgia->update($validateDanhGia);
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Đánh giá đã được cập nhật thành công',
+                'data' => $danhgia,
+            ]);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi cập nhật đánh giá',
+                'error' => $exception->getMessage(),
             ], 500);
         }
     }
