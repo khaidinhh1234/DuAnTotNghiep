@@ -20,11 +20,14 @@ class ThongTinWeb extends Model
         'so_dien_thoai_khieu_nai',
         'cau_noi',
         'banner',
-        'noi_dung_banner',
         'link_facebook',
         'link_youtube',
         'link_zalo',
         'link_instagram',
         'link_tiktok',
         ];
+
+    protected $casts = [
+        'banner' => 'array'
+    ];
 }
