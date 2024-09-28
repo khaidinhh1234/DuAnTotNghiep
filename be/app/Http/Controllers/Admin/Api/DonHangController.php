@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Models\DonHang;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -127,19 +128,40 @@ class DonHangController extends Controller
                 // Tìm đơn hàng theo ID
                 $donHang = DonHang::findOrFail($id);
 
-                // Cập nhật trạng thái đơn hàng
-                $donHang->update([
-                    'trang_thai_don_hang' => $request->input('trang_thai_don_hang'),
-                ]);
-
+                if (
+                    $donHang->trang_thai_van_chuyen != 'Đang giao hàng'
+                    || $donHang->trang_thai_van_chuyen != 'Giao hàng thành'
+                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGH
+                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGTC
+                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DH
+                    && $request->trang_thai_don_hang != DonHang::TTDH_DH
+                ) {
+                    $donHang->update([
+                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
+                    ]);
+                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                } else if (
+                    $donHang->trang_thai_van_chuyen != 'Giao hàng thành'
+                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGTC
+                    && $request->trang_thai_don_hang != DonHang::TTDH_HH
+                    && !Carbon::parse($donHang->ngay_giao_hang_thanh_cong)->addDay(7)->isPast()
+                ) {
+                    $donHang->update([
+                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
+                    ]);
+                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                } else {
+                    // Cập nhật trạng thái đơn hàng
+                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                }
                 // Lưu thay đổi
                 DB::commit();
             }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Cập nhật trạng thái đơn hàng thành công.',
-                // 'data' => $donHang
+                'message' => $mess,
+                'data' => $donHang
             ], 200);
         } catch (\Exception $exception) {
             // Rollback nếu có lỗi

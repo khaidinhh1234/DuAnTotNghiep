@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gio_hangs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(User::class)->constrained();
-            $table->integer('tong_tien_gio_hang')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table('don_hangs', function (Blueprint $table) {
+            $table->date('ngay_giao_hang_thanh_cong')->nullable();
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gio_hangs');
+        Schema::table('don_hangs', function (Blueprint $table) {
+            $table->drop('ngay_giao_hang_thanh_cong');
+        });
     }
 };

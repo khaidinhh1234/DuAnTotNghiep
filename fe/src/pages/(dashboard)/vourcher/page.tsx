@@ -10,7 +10,7 @@ import { Button, Input, message, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 
 interface PromotionType {
@@ -44,24 +44,51 @@ const VoucherAdmin: React.FC = () => {
       return response.data;
     },
   });
-
+  const queryClient = useQueryClient();
   const { mutate } = useMutation({
-    mutationFn: async (data: any) => {
-      try {
-        const response = await instance.put(
-          `/admin/makhuyenmai/huy-kich-hoat/${data.id}`,
-          { ...data, trang_thai: 0 }
-        );
-        message.open({
-          type: "success",
-          content: "Tắt khuyến mãi thành công",
-        });
-        return response.data;
-      } catch (error) {
-        console.log(error);
+    mutationFn: async ({ record, action }: any) => {
+      if (action === "Tắt") {
+        try {
+          const response = await instance.post(
+            `/admin/makhuyenmai/huy-kich-hoat/${record.id}`,
+            { ...record, trang_thai: 0 }
+          );
+          message.open({
+            type: "success",
+            content: "Tắt khuyến mãi thành công",
+          });
+          return response.data;
+        } catch (error) {
+          message.open({
+            type: "error",
+            content: "Tắt khuyến mãi không thành công",
+          });
+        }
+      }
+      if (action === "Bật") {
+        try {
+          const response = await instance.post(
+            `/admin/makhuyenmai/kich-hoat/${record.id}`,
+            { ...record, trang_thai: 1 }
+          );
+          message.open({
+            type: "success",
+            content: "Bật khuyến mãi thành công",
+          });
+          return response.data;
+        } catch (error) {
+          message.open({
+            type: "error",
+            content: "Bật khuyến mãi không thành công",
+          });
+        }
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["VOUCHER_KEY"] });
+    },
   });
+
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
   const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({
@@ -294,7 +321,7 @@ const VoucherAdmin: React.FC = () => {
           color={
             trang_thai == 1
               ? "#00a854"
-              : trang_thai == 2
+              : trang_thai == 0
                 ? "#f0cb35"
                 : "#f04134"
           }
@@ -311,7 +338,7 @@ const VoucherAdmin: React.FC = () => {
             {" "}
             {trang_thai == 1
               ? "hoạt động"
-              : trang_thai == 2
+              : trang_thai == 0
                 ? "Tạm ngừng"
                 : "hết hạn "}
           </span>
@@ -333,7 +360,7 @@ const VoucherAdmin: React.FC = () => {
                   description="Bạn có chắc chắn muốn tắt không?"
                   okText="Có"
                   onConfirm={() => {
-                    mutate(record);
+                    mutate({ record, action: "Tắt" });
                   }}
                   cancelText="Không"
                 >
@@ -349,9 +376,12 @@ const VoucherAdmin: React.FC = () => {
                 </Link>
               </>
             )}
-            {record.trang_thai == 2 && (
+            {record.trang_thai == 0 && (
               <>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                <Button
+                  onClick={() => mutate({ record, action: "Bật" })}
+                  className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white"
+                >
                   Bật
                 </Button>
                 <Link to={`/admin/vouchers/show/${record.id}`}>
@@ -362,7 +392,7 @@ const VoucherAdmin: React.FC = () => {
                 </Link>
               </>
             )}
-            {record.trang_thai == 0 && (
+            {record.trang_thai == 2 && (
               <>
                 <Link to={`/admin/vouchers/show/${record.id}`}>
                   <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">

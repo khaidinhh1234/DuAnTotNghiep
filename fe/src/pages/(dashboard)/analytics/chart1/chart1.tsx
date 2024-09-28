@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 
-export default function Component() {
+export default function Chart1() {
   return (
-    <Card className="max-w-xs">
+    <Card className="w-full">
       <CardHeader className="p-4 pb-0">
         <CardTitle>Walking Distance</CardTitle>
         <CardDescription>

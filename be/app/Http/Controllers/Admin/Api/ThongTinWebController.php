@@ -123,10 +123,4 @@ class ThongTinWebController extends Controller
             ], 500);
         }
     }
-
-
-
-
-
-
 }

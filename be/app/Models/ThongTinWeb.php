@@ -30,4 +30,5 @@ class ThongTinWeb extends Model
     protected $casts = [
         'banner' => 'array'
     ];
+
 }
