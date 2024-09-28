@@ -25,18 +25,8 @@ return new class extends Migration {
             $table->string('dia_chi_nguoi_dat_hang');
             $table->string('ma_giam_gia')->nullable();
             $table->integer('so_tien_giam_gia')->nullable();
-            $table->enum('trang_thai_thanh_toan', [
-                'Chưa thanh toán',  // chưa thanh toán
-                'Đã thanh toán',    // đã thanh toán
-                'Đang xử lý',       // đang xử lý
-                'Đã hủy'            // đã hủy
-            ])->nullable();
-            $table->enum('trang_thai_van_chuyen', [
-                'Chờ xử lý',
-                'Chờ lấy hàng',
-                'Đang giao hàng',
-                'Giao hàng thành'
-            ])->nullable();
+            $table->enum('trang_thai_thanh_toan', [DonHang::TTTT_CTT, DonHang::TTTT_DTT, DonHang::TTTT_DXL, DonHang::TTTT_DH])->nullable();
+            $table->enum('trang_thai_van_chuyen', [DonHang::TTVC_CXT, DonHang::TTVC_CLH, DonHang::TTVC_DGH, DonHang::TTVC_GHTC])->nullable();
             $table->string('duong_dan')->nullable();
             $table->timestamps();
             $table->softDeletes();
