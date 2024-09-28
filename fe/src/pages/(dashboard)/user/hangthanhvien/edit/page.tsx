@@ -1,76 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, InputNumber, Upload, Button, Typography, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import instance from "@/configs/axios";
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import instance from '@/configs/axios';
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const { Title } = Typography;
 
-const MemberRank = () => {
+const MemberRankEdit = () => {
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState('');
-    const { id } = useParams(); // Get the id from the URL if editing
-    const navigate = useNavigate();
-    const queryClient = useQueryClient();
+    const nav = useNavigate();
+    const { id } = useParams();
 
-    // Fetch existing data if editing
-    const { data: existingRank, isLoading } = useQuery({
-        queryKey: ['memberRank', id],
+    const { data: tagid, isLoading, isError } = useQuery({
+        queryKey: ["tag"],
         queryFn: async () => {
-            if (id) {
-                const response = await instance.get(`/admin/hangthanhvien/${id}`);
+            try {
+                const response = await instance.post(`/admin/hangthanhvien/${id}`);
                 return response.data;
+            } catch (error) {
+                console.error("Error fetching member rank:", error);
+                throw new Error("Error fetching member rank");
             }
-            return null;
         },
-        enabled: !!id,
     });
 
-    // Update form fields when existing data is loaded
-    React.useEffect(() => {
-        if (existingRank) {
+    useEffect(() => {
+        if (tagid) {
             form.setFieldsValue({
-                rankName: existingRank.ten_hang_thanh_vien,
-                minSpend: existingRank.chi_tieu_toi_thieu,
-                maxSpend: existingRank.chi_tieu_toi_da,
+                rankName: tagid.ten_hang_thanh_vien,
+                minSpend: tagid.chi_tieu_toi_thieu,
+                maxSpend: tagid.chi_tieu_toi_da,
             });
-            setImageUrl(existingRank.hinh_anh);
+            setImageUrl(tagid.anh_hang_thanh_vien);
         }
-    }, [existingRank, form]);
+    }, [tagid, form]);
 
-    const mutation = useMutation({
-        mutationFn: (values) => {
-            const formData = new FormData();
-            formData.append('ten_hang_thanh_vien', values.rankName);
-            formData.append('chi_tieu_toi_thieu', values.minSpend);
-            formData.append('chi_tieu_toi_da', values.maxSpend);
-            if (values.rankImage) {
-                formData.append('hinh_anh', values.rankImage);
-            }
-
-            if (id) {
-                return instance.put(`/admin/hangthanhvien/${id}`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
-            } else {
-                return instance.post('/admin/hangthanhvien', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
-            }
+    const { mutate } = useMutation({
+        mutationFn: async (data) => {
+            const response = await instance.put(`/admin/hangthanhvien/${id}`, data);
+            return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['memberRanks']);
-            message.success(id ? 'Cập nhật thành công!' : 'Tạo mới thành công!');
-            navigate('/admin/users/rank');
+            message.success("Cập nhật hạng thành viên thành công");
+            nav("/admin/users/rank");
         },
         onError: (error) => {
-            message.error('Có lỗi xảy ra: ' + error.message);
+            message.error(error.message);
         },
     });
 
     const onFinish = (values) => {
-        mutation.mutate(values);
+        const data = {
+            ten_hang_thanh_vien: values.rankName,
+            chi_tieu_toi_thieu: values.minSpend,
+            chi_tieu_toi_da: values.maxSpend,
+            anh_hang_thanh_vien: imageUrl,
+        };
+        mutate(data);
     };
 
     const validateUpload = (file) => {
@@ -105,9 +93,8 @@ const MemberRank = () => {
         }, 0);
     };
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error loading data</div>;
 
     return (
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -119,9 +106,7 @@ const MemberRank = () => {
             </div>
 
             <div className="flex items-center justify-between">
-                <h1 className="font-semibold md:text-3xl">
-                    {id ? 'Chỉnh sửa hạng thành viên' : 'Thêm hạng thành viên'}
-                </h1>
+                <h1 className="font-semibold md:text-3xl">Chỉnh sửa hạng thành viên</h1>
                 <div>
                     <Link to="/admin/users/rank" className="mr-1">
                         <Button className="ml-auto bg-black text-white rounded-lg py-1">
@@ -132,9 +117,7 @@ const MemberRank = () => {
             </div>
 
             <div className="max-w-2xl ml-5 mt-6 p-6 bg-white shadow-md rounded-lg">
-                <Title level={3} className="mb-4">
-                    {id ? 'Chỉnh sửa hạng thành viên' : 'Tạo hạng thành viên mới'}
-                </Title>
+                <Title level={3} className="mb-4">Chỉnh sửa hạng thành viên</Title>
                 <hr />
                 <br />
                 <Form
@@ -209,14 +192,10 @@ const MemberRank = () => {
                         </Form.Item>
                     </div>
                     <div className="flex justify-start space-x-1 mt-6">
-                        <Button 
-                            type="primary" 
-                            size="middle" 
-                            htmlType="submit"
+                        <Button type="primary" size="middle" htmlType="submit"
                             className="px-8 py-3 bg-black text-white rounded-lg"
-                            loading={mutation.isLoading}
                         >
-                            {id ? 'Cập nhật' : 'Tạo mới'}
+                            Cập nhật
                         </Button>
                     </div>
                 </Form>
@@ -225,4 +204,4 @@ const MemberRank = () => {
     );
 };
 
-export default MemberRank;
+export default MemberRankEdit;
