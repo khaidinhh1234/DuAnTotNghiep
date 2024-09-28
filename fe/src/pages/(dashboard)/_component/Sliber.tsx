@@ -1,19 +1,18 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Bell, Home, Package, ShoppingCart, Users } from "lucide-react";
-import { useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useEffect } from "react";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
-import { CheckCircle, LineChart, Package2, AlignJustify } from "lucide-react";
+import {
+  AlignJustify,
+  Bell,
+  CheckCircle,
+  Home,
+  LineChart,
+  Package,
+  Package2,
+  Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 
 const menu = [
   {

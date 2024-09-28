@@ -193,18 +193,6 @@ const columns: TableColumnsType<DataType> = [
       );
     },
   },
-
-  // {
-  //   title: "Quản trị",
-  //   key: "action",
-  //   render: (_, record) => (
-  //     <Space>
-  //       <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-  //         Cập nhật
-  //       </Button>
-  //     </Space>
-  //   ),
-  // },
 ];
 
 const OrderAdmin: React.FC = () => {
@@ -224,28 +212,41 @@ const OrderAdmin: React.FC = () => {
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {
-      const trangthais =
-        trangthai === "1"
-          ? "Đã xác nhận"
-          : trangthai === "2"
-            ? "Đang xử lý"
-            : trangthai === "3"
-              ? "Đã giao hàng thành công"
-              : "Đã hủy hàng";
+      try {
+        const trangthais =
+          trangthai === "1"
+            ? "Đã xác nhận"
+            : trangthai === "2"
+              ? "Đang xử lý"
+              : trangthai === "3"
+                ? "Đã giao hàng thành công"
+                : "Đã hủy hàng";
 
-      const response = await instance.post(
-        "admin/donhang/trang-thai-don-hang",
-        {
-          trang_thai_don_hang: trangthais,
-          id: data,
+        const response = await instance.put(
+          "admin/donhang/trang-thai-don-hang",
+          {
+            trang_thai_don_hang: trangthais,
+            id: data,
+          }
+        );
+        const error = response.data.message;
+        start();
+        if (error === "Cập nhật trạng thái đơn hàng thành công") {
+          message.open({
+            type: "success",
+            content: error,
+          });
+        } else {
+          message.open({
+            type: "error",
+            content: error,
+          });
         }
-      );
-      start();
-      message.open({
-        type: "success",
-        content: "Cập nhật trạng thái đơn hàng thành công",
-      });
-      return response.data;
+        return response.data;
+      } catch (error: any) {
+        console.error(error.message);
+        throw new Error(error.message);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -253,8 +254,13 @@ const OrderAdmin: React.FC = () => {
       });
       setLoading(false);
     },
-    onError: () => {
-      setLoading;
+    onError: (error: any) => {
+      console.error("Error updating order:", error.message);
+      message.open({
+        type: "error",
+        content: `Cập nhật trạng thái đơn hàng thất bại: ${error.message}`,
+      });
+      setLoading(false);
     },
   });
 
@@ -270,6 +276,9 @@ const OrderAdmin: React.FC = () => {
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     // console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    // const id = newSelectedRowKeys.map((item) => {
+    //   return Number(item) + 1;
+    // });
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -284,7 +293,7 @@ const OrderAdmin: React.FC = () => {
   const dataSource: OrderData[] | undefined = order?.map(
     (item: DataType, i: number): OrderData => ({
       ...item,
-      key: i,
+      key: i + 1,
     })
   );
   const handleChange = (value: string) => {
