@@ -89,18 +89,9 @@ class DanhGiaController extends Controller
             DB::beginTransaction();
 
             $validateDanhGia = $request->validate([
-                'so_sao_san_pham' => 'nullable|integer|min:1|max:5',
-                'so_sao_dich_vu_van_chuyen' => 'nullable|integer|min:1|max:5',
-                'chat_luong_san_pham' => 'nullable|string',
-                'mo_ta' => 'nullable|string',
                 'phan_hoi' => 'nullable|string',
-                'huu_ich' => 'nullable|integer|min:0',
-                'anh_danh_gia.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-
             $danhgia->update($validateDanhGia);
-
-
             DB::commit();
 
             return response()->json([
