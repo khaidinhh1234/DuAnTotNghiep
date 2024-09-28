@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignIdFor(GioHang::class)->constrained();
             $table->foreignIdFor(BienTheSanPham::class)->constrained();
             $table->integer('so_luong')->nullable();
-            $table->decimal('gia')->nullable();
-            $table->decimal('tong_tien_gio_hang_chi_tiet', 15, 2)->nullable();
+            $table->integer('gia')->nullable();
+            $table->integer('tong_tien_gio_hang_chi_tiet')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

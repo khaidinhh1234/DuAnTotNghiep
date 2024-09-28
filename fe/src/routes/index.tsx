@@ -80,7 +80,6 @@ import PageNew from "@/pages/(dashboard)/news/pagenew";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 
-
 // import Test from "@/pages/(dashboard)/test";
 import Tags from "@/pages/(dashboard)/tags/tags";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
@@ -103,6 +102,9 @@ import Remoterank from "@/pages/(dashboard)/user/hangthanhvien/remote.tsx/remote
 // import Test from "@/pages/(dashboard)/test";
 
 // import Test from "@/pages/(dashboard)/test";
+
+// import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
+
 import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
 import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
@@ -192,23 +194,19 @@ const Router = () => {
           <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
           <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* tin tức */}
-
           <Route path="news" element={<PageNew />} />
           <Route path="news/add" element={<NewAdd />} />
           <Route path="news/edit/:id" element={<NewEdit />} />
           <Route path="news/remote" element={<RemoteNew />} />
           <Route path="news/details/:id" element={<ViewNew />} />
-
           {/* Tài khoản */}
           <Route
             path="users"
             element={<Navigate to="/admin/users/khachhang" />}
           />
-         <Route path="users/rank" element={<Rank />} />
-         <Route path="users/rankadd" element={<MemberRankForm />} />
-         <Route path="users/remoterank" element={<Remoterank />} />
-
-
+          <Route path="users/rank" element={<Rank />} />
+          <Route path="users/rankadd" element={<MemberRankForm />} />
+          <Route path="users/remoterank" element={<Remoterank />} />
           <Route path="users/khachhang" element={<UsersAdminkhachhang />} />
           <Route path="users/khachhang/add" element={<UserskhachhangAdd />} />
           <Route
@@ -229,13 +227,14 @@ const Router = () => {
             path="users/nhanvien/remote"
             element={<UsersRemoteNhanvien />}
           />
+          {/* Thống kê */}
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="evaluates" element={<EvaluateAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          {/* <Route path="test" element={<TestAbc />} /> */}
+          {/* <Route path="test" element={<Component />} /> */}
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
@@ -265,7 +264,6 @@ const Router = () => {
           />
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
-          {/* <Route path="test" element={<Test />} /> */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>{" "}
         <Route path="/login" element={<Login />} />
