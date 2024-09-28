@@ -69,7 +69,8 @@ const ProductsAndVariants: React.FC = () => {
     queryKey: ["tags"],
     queryFn: () => fetchData("the"),
   });
-
+  // const st = tagsData?.data.map((tag) => tag.ten_the);
+  // console.log(tagsData);
   const addProductMutation = useMutation({
     mutationFn: addProduct,
     onSuccess: () => {
@@ -85,7 +86,7 @@ const ProductsAndVariants: React.FC = () => {
   const generateVariantData = useCallback(() => {
     const colorVariant = variants.find((v) => v.type === "color");
     const sizeVariant = variants.find((v) => v.type === "size");
-
+    // console.log(colorVariant, sizeVariant);
     if (colorVariant && sizeVariant) {
       const newVariantData: Variant[] = colorVariant.values.flatMap((colorId) =>
         sizeVariant.values.map((sizeId) => ({
@@ -128,7 +129,18 @@ const ProductsAndVariants: React.FC = () => {
   }
 
   const addVariant = (value: "color" | "size") => {
-    setVariants((prev) => [...prev, { type: value, values: [] }]);
+    setVariants((prev) => {
+      // Kiểm tra xem biến thể đã tồn tại chưa
+      const variantExists = prev.some((v) => v.type === value);
+
+      // Nếu biến thể chưa tồn tại, thêm vào, nếu không thì không làm gì
+      if (!variantExists) {
+        return [...prev, { type: value, values: [] }];
+      }
+
+      // Nếu đã tồn tại, giữ nguyên mảng cũ
+      return prev;
+    });
   };
 
   const removeVariant = (index: number) => {
@@ -172,6 +184,7 @@ const ProductsAndVariants: React.FC = () => {
   };
 
   const updateVariant = (updatedVariant: Variant) => {
+    console.log(updatedVariant);
     setVariantData((prevData) =>
       prevData.map((v) => (v.id === updatedVariant.id ? updatedVariant : v))
     );
@@ -301,6 +314,22 @@ const ProductsAndVariants: React.FC = () => {
     }
     setIsSubmitting(false);
   };
+
+  const [SPCode, setSPCode] = useState("");
+  const generateRandomCode = () => {
+    const length = 8;
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let randomCode = "";
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomCode += characters.charAt(randomIndex);
+    }
+
+    setSPCode("SP-" + randomCode);
+  };
+  useEffect(() => {
+    generateRandomCode();
+  }, []);
 
   return (
     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">

@@ -41,6 +41,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
         name="ten_san_pham"
         rules={[
           { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
+          {
+            pattern: /^[^\s]+(\s+[^\s]+)*$/,
+            message: "Vui lòng không chứa ký tự trắng!",
+          },
         ]}
       >
         <Input placeholder="Nhập tên sản phẩm" />
@@ -65,7 +69,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
       <Form.Item
         label="Mô tả ngắn"
         name="mo_ta_ngan"
-        rules={[{ required: true, message: "Mô tả ngắn bắt buộc phải nhập!" }]}
+        rules={[
+          { required: true, message: "Mô tả ngắn bắt buộc phải nhập!" },
+          {
+            pattern: /^[^\s]+(\s+[^\s]+)*$/,
+            message: "Vui lòng không chứa ký tự trắng!",
+          },
+        ]}
       >
         <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
       </Form.Item>
@@ -76,7 +86,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Select mode="multiple" className="w-full" placeholder="Chọn tags">
           {tagsData &&
             tagsData.map((tag) => (
-              <Option key={tag.id} value={tag.id}>
+              <Option key={tag.id} value={tag.ten_the + tag.id}>
                 {tag.ten_the}
               </Option>
             ))}
@@ -92,7 +102,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
     </div>
 
     <div className="grid grid-cols-2 gap-5">
-      <Form.Item label="Ảnh nổi bật" name="feature_image">
+      <Form.Item
+        label="Ảnh nổi bật"
+        name="feature_image"
+        rules={[{ required: true, message: "Ảnh nổi bật bắt buộc phải nhập!" }]}
+      >
         <Upload
           listType="picture"
           fileList={fileList}
@@ -123,46 +137,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
           apiKey="4co2z7i0ky0nmudlm5lsoetsvp6g3u4110d77s2cq143a9in"
           init={{
             plugins: [
-              // Core editing features
-              "anchor",
-              "autolink",
-              "charmap",
-              "codesample",
-              "emoticons",
-              "image",
-              "link",
-              "lists",
-              "media",
-              "searchreplace",
-              "table",
-              "visualblocks",
-              "wordcount",
-              // Your account includes a free trial of TinyMCE premium features
-              // Try the most popular premium features until Oct 9, 2024:
-              "checklist",
-              "mediaembed",
-              "casechange",
-              "export",
-              "formatpainter",
-              "pageembed",
-              "a11ychecker",
-              "tinymcespellchecker",
-              "permanentpen",
-              "powerpaste",
-              "advtable",
-              "advcode",
-              "editimage",
-              "advtemplate",
-              "ai",
-              "mentions",
-              "tinycomments",
-              "tableofcontents",
-              "footnotes",
-              "mergetags",
-              "autocorrect",
-              "typography",
-              "inlinecss",
-              "markdown",
+              "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
+              "checklist mediaembed casechange export formatpainter pageembed a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
             ],
             toolbar:
               "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
@@ -172,12 +148,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
               { value: "First.Name", title: "First Name" },
               { value: "Email", title: "Email" },
             ],
-            ai_request: (request: any, respondWith: any) =>
-              respondWith.string(() =>
-                Promise.reject("See docs to implement AI Assistant")
-              ),
+            setup: (editor) => {
+              editor.on("Change", () => {
+                form.setFieldsValue({ noi_dung: editor.getContent() });
+              });
+            },
           }}
-          initialValue="Chào mừng bạn đến với Glow clowthing!"
+          initialValue="Chào mừng bạn đến với Glow clothing!"
         />
       </Form.Item>
     </div>

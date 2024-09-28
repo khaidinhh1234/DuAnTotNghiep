@@ -32,12 +32,12 @@ const PageNew: React.FC = () => {
   });
 
   const dataSource =
-    data?.data.map((newsItem: INew) => ({
+    data?.data.map((newsItem: any) => ({
       key: newsItem.id,
       ...newsItem,
       user_id: newsItem.user?.ten || "Chưa có dữ liệu",
       danh_muc_tin_tuc_id:
-        newsItem.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu",
+        newsItem?.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu",
     })) || [];
   console.log(dataSource);
 
@@ -55,8 +55,8 @@ const PageNew: React.FC = () => {
         throw error;
       }
     },
-    onSuccess: (id) => {
-      queryClient.invalidateQueries(["tintuc"]);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tintuc"] });
       toast.success("Xóa tin tức thành công");
     },
     onError: (error) => {
@@ -218,7 +218,8 @@ const PageNew: React.FC = () => {
       ),
     },
   ];
-
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -243,7 +244,7 @@ const PageNew: React.FC = () => {
           </Link>
         </div>
       </div>
-          <Table columns={columns} dataSource={dataSource} />
+      <Table columns={columns} dataSource={dataSource} />
     </main>
   );
 };
