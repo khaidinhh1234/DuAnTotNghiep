@@ -7,7 +7,6 @@ import { UploadFile } from "antd/es/upload/interface";
 import "@/global.css";
 import { VariantFormProps, Variant, VariantPull } from "@/common/types/product";
 
-
 const VariantForm: React.FC<VariantFormProps> = ({
   variants,
   updateVariant,
