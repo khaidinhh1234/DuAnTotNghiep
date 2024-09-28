@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class DonHang extends Model
 {
     use HasFactory, SoftDeletes;
-
+    // Phương thức thanh toán
     const PTTT_TT = 'Thanh toán khi nhận hàng';
     const PTTT_MM = 'Thanh toán qua Momo';
     const PTTT_NH = 'Thanh toán qua ngân hàng';
+    //Cập nhật trạng thái đơn hàng
     const TTDH_CXH = 'Chờ xác nhận';
     const TTDH_DXH = 'Đã xác nhận';
     const TTDH_DXL = 'Đang xử lý';
@@ -21,6 +22,16 @@ class DonHang extends Model
     const TTDH_DGTC = 'Đã giao hàng thành công';
     const TTDH_DH = 'Đã hủy hàng';
     const TTDH_HH = 'Hoàn hàng';
+    //Cập nhật trạng thái thanh toán
+    const TTTT_CTT = 'Chưa thanh toán';
+    const TTTT_DTT = 'Đã thanh toán';
+    const TTTT_DXL = 'Đang xử lý';
+    const TTTT_DH = 'Đã hủy';
+    //Cập nhật trạng thái vận chuyển
+    const TTVC_CXT = 'Chờ xử lý';
+    const TTVC_CLH = 'Chờ lấy hàng';
+    const TTVC_DGH = 'Đang giao hàng';
+    const TTVC_GHTC = 'Giao hàng thành công';
 
     protected $fillable = [
         'user_id',

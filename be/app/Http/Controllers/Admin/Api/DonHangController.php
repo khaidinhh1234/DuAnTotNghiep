@@ -124,7 +124,6 @@ class DonHangController extends Controller
                     'tong_tien_san_pham' => $tongTienSanPham
                 ]
             ], 200);
-
         } catch (Exception $e) {
             return response()->json([
                 'status' => false,
@@ -180,32 +179,39 @@ class DonHangController extends Controller
                 // Tìm đơn hàng theo ID
                 $donHang = DonHang::findOrFail($id);
 
-                if (
-                    $donHang->trang_thai_van_chuyen != 'Đang giao hàng'
-                    || $donHang->trang_thai_van_chuyen != 'Giao hàng thành'
-                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGH
-                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGTC
-                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DH
-                    && $request->trang_thai_don_hang != DonHang::TTDH_DH
-                ) {
-                    $donHang->update([
-                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
-                    ]);
-                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
-                } else if (
-                    $donHang->trang_thai_van_chuyen != 'Giao hàng thành'
-                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGTC
-                    && $request->trang_thai_don_hang != DonHang::TTDH_HH
-                    && !Carbon::parse($donHang->ngay_giao_hang_thanh_cong)->addDay(7)->isPast()
-                ) {
-                    $donHang->update([
-                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
-                    ]);
-                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
-                } else {
-                    // Cập nhật trạng thái đơn hàng
-                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                if ($donHang->trang_thai_don_hang === DonHang::TTDH_DGH || $donHang->trang_thai_don_hang === DonHang::TTDH_DGTC) {
+                    if ($request->trang_thai_don_hang === DonHang::TTDH_DH) {
+                        $mess = 'Không thể hủy đơn hàng khi đơn hàng đang được giao hoặc đã giao thành công.';
+                    }
+
+                    if ($donHang->trang_thai_don_hang === DonHang::TTDH_DGTC && $request->trang_thai_don_hang === DonHang::TTDH_HH) {
+                        $donHang->update([
+                            'trang_thai_don_hang' => $request->trang_thai_don_hang,
+                        ]);
+                        $mess = "Cập nhật trạng thái hoàn hàng thành công";
+                    }
                 }
+
+                $validTransitions = [
+                    DonHang::TTDH_CXH => [DonHang::TTDH_DXH, DonHang::TTDH_DH],
+                    DonHang::TTDH_DXH => [DonHang::TTDH_DXL, DonHang::TTDH_DH],
+                    DonHang::TTDH_DXL => [DonHang::TTDH_DGH, DonHang::TTDH_DH],
+                    DonHang::TTDH_DGH => [DonHang::TTDH_DGTC],
+                    DonHang::TTDH_DGTC => [DonHang::TTDH_HH]
+                ];
+
+                if (
+                    !isset($validTransitions[$donHang->trang_thai_don_hang])
+                    || !in_array($request->trang_thai_don_hang, $validTransitions[$donHang->trang_thai_don_hang])
+                ) {
+                    $mess = 'Không thể cập nhật trạng thái ngược lại hoặc trạng thái không hợp lệ.';
+                } else {
+                    $donHang->update([
+                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
+                    ]);
+                    $mess = "Cập nhật trạng thái thành công";
+                }
+
                 // Lưu thay đổi
                 DB::commit();
             }
@@ -216,7 +222,6 @@ class DonHangController extends Controller
                 'data' => $donHang
             ], 200);
         } catch (\Exception $exception) {
-            // Rollback nếu có lỗi
             DB::rollBack();
             return response()->json([
                 'status' => false,
