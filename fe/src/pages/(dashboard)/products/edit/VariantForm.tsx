@@ -79,7 +79,9 @@ const VariantForm: React.FC<VariantFormProps> = ({
       render: (text: string, record: Variant) => (
         <Input
           value={text}
-          onChange={(e) => handleUpdate(record, 'gia_khuyen_mai', e.target.value)}
+          onChange={(e) => handleUpdate(record, 'gia_khuyen_mai', e.target.value)
+            
+          }
           className="rounded-md"
         />
       ),
@@ -136,7 +138,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
       key: 'anh_bien_the',
       width: 200,
       render: (_: any, record: Variant) => (
-        <div className="image-upload-container" style={{ minHeight: '102px' }}>
+        // <div className="image-upload-container" style={{ minHeight: '102px' }}>
 
         <Upload
           listType="picture-card"
@@ -157,11 +159,11 @@ const VariantForm: React.FC<VariantFormProps> = ({
           {record.anh_bien_the.length < 8 && (
             <div>
               <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Tải ảnh lên</div>
+              <div style={{ marginTop:8 }}></div>
             </div>
           )}
         </Upload>
-        </div>
+        // </div>
       ),
     }
   ], [handlePreview, handleRemoveImage, handleImageChange, handleUpdate, colorsData, sizesData]);

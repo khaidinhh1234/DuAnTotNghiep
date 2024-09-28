@@ -109,6 +109,7 @@ import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
 import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
 import { AnalyticsAdmin } from "@/pages/(dashboard)/analytics/page";
+import MemberRank from "@/pages/(dashboard)/user/hangthanhvien/edit/page";
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
@@ -207,6 +208,8 @@ const Router = () => {
           <Route path="users/rank" element={<Rank />} />
           <Route path="users/rankadd" element={<MemberRankForm />} />
           <Route path="users/remoterank" element={<Remoterank />} />
+          <Route path="users/rank/edit/:id" element={<MemberRank />} />
+
           <Route path="users/khachhang" element={<UsersAdminkhachhang />} />
           <Route path="users/khachhang/add" element={<UserskhachhangAdd />} />
           <Route

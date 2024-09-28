@@ -273,26 +273,39 @@ const EditProductsAndVariants: React.FC = () => {
     setIsSubmitting(false);
   };
   
+
   const validateVariants = () => {
     if (variantData.length === 0) {
-      throw new Error('Vui lòng thêm ít nhất một biến thể sản phẩm.');
+      throw new Error("Vui lòng thêm ít nhất một biến thể sản phẩm.");
     }
-
+  
     variantData.forEach((variant, index) => {
       if (!variant.kich_thuoc_id || !variant.mau_sac_id) {
-        throw new Error(`Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`);
+        throw new Error(
+          `Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`
+        );
       }
-
+  
       const regularPrice = parseFloat(variant.gia_ban);
-      if (!regularPrice || isNaN(regularPrice)) {
-        throw new Error(`Giá bán của biến thể ${index + 1} không hợp lệ.`);
+      if (isNaN(regularPrice) || (regularPrice !== 0 && regularPrice < 1000)) {
+        throw new Error(`Giá bán của biến thể ${index + 1} phải bằng 0 hoặc lớn hơn hoặc bằng 1000.`);
       }
-
-      if (!variant.so_luong_bien_the || isNaN(parseInt(variant.so_luong_bien_the))) {
-        throw new Error(`Số lượng của biến thể ${index + 1} không hợp lệ.`);
+  
+      if (variant.gia_khuyen_mai !== undefined) {
+        const promotionalPrice = parseFloat(variant.gia_khuyen_mai);
+       
+        if (promotionalPrice > regularPrice) {
+          throw new Error(`Giá khuyến mãi của biến thể ${index + 1} không thể lớn hơn giá bán.`);
+        }
+      }
+ 
+      const quantity = parseInt(variant.so_luong_bien_the);
+      if (isNaN(quantity) || quantity <= 0) {
+        throw new Error(`Số lượng của biến thể ${index + 1} phải là số nguyên dương.`);
       }
     });
   };
+  
 
   const prepareFormData = async () => {
     const formData = new FormData();
