@@ -9,7 +9,7 @@ const EvaluateAdmin = () => {
   const queryClient = useQueryClient();
   const { id } = useParams();
   
-  // Query to fetch data from API
+  // Query to fetch evaluations
   const { data, isLoading, isError } = useQuery({
     queryKey: ['danhgiasanpham'],
     queryFn: async () => {
@@ -20,8 +20,8 @@ const EvaluateAdmin = () => {
 
   // Mutation to send replies to API
   const mutation = useMutation({
-    mutationFn: async (id: number | string) => {
-      const response = await instance.post(`/admin/danhsachdanhgia/${id}`);
+    mutationFn: async ({ id, phan_hoi }: { id: number | string, phan_hoi: string }) => {
+      const response = await instance.post(`/admin/danhsachdanhgia/${id}`, { phan_hoi });
       return response.data;
     },
     onSuccess: () => {
@@ -43,18 +43,19 @@ const EvaluateAdmin = () => {
       console.error('Error hiding review:', error);
     },
   });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEvaluate, setCurrentEvaluate] = useState<IEvaluate | null>(null);
+  const [phan_hoi, setphan_hoi] = useState<{ [key: number]: string }>({});
 
-  // Functions to handle modal behavior
   const showModal = (record: IEvaluate) => {
     setCurrentEvaluate(record);
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
-    if (currentEvaluate && reply[currentEvaluate.id]) {
-      mutation.mutate({ id: currentEvaluate.id, reply: reply[currentEvaluate.id] });
+    if (currentEvaluate && phan_hoi[currentEvaluate.id]) {
+      mutation.mutate({ id: currentEvaluate.id, phan_hoi: phan_hoi[currentEvaluate.id] });
     }
     setIsModalOpen(false);
   };
@@ -63,18 +64,16 @@ const EvaluateAdmin = () => {
     setIsModalOpen(false);
   };
 
-  const handleReplyChange = (id: number, value: string) => {
-    setReply((prev) => ({
+  const handlephan_hoiChange = (id: number, value: string) => {
+    setphan_hoi((prev) => ({
       ...prev,
       [id]: value,
     }));
   };
 
-  // Loading and error handling
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Đã xảy ra lỗi khi tải dữ liệu.</p>;
 
-  // Prepare data for the table
   const dataSource = data?.data.map((evaluate: IEvaluate) => ({
     key: evaluate.id,
     ...evaluate,
@@ -82,7 +81,6 @@ const EvaluateAdmin = () => {
     san_pham_id: evaluate.san_pham?.ten_san_pham || "Chưa có dữ liệu",
   })) || [];
 
-  // Define columns for the table
   const columns: TableColumnsType<IEvaluate> = [
     { title: "ID", dataIndex: "id", key: "id" },
     {
@@ -90,10 +88,12 @@ const EvaluateAdmin = () => {
       key: "mo_ta",
       render: (record: IEvaluate) => (
         <div>
-          {record.reply ? `Phản hồi: ${record.reply}` : `${record.user?.ten || "Người dùng ẩn"}: ${record.mo_ta}`}
+          <p>{record.user?.ten || "Người dùng ẩn"}: {record.mo_ta}</p>
+          {record.phan_hoi && <p><strong>Trả lời:</strong> {record.phan_hoi}</p>}
         </div>
       ),
     },
+    
     {
       title: "Chất lượng sản phẩm",
       key: "chat_luong_san_pham",
@@ -103,11 +103,12 @@ const EvaluateAdmin = () => {
     },
     {
       title: "Chất lượng",
+      width: "20%",
       key: "chat_luong",
       render: (record: IEvaluate) => (
         <div>
-          <div><span>Sản phẩm: </span><Rate disabled value={record.so_sao_san_pham} /></div>
-          <div><span>Vận chuyển: </span><Rate disabled value={record.so_sao_dich_vu_van_chuyen} /></div>
+          <div className="flex justify-between"><span>Sản phẩm: </span><Rate disabled value={record.so_sao_san_pham} /></div>
+          <div className="flex justify-between"><span>Vận chuyển: </span><Rate disabled value={record.so_sao_dich_vu_van_chuyen} /></div>
         </div>
       ),
     },
@@ -116,9 +117,9 @@ const EvaluateAdmin = () => {
       key: "hanh_dong",
       render: (_, record: IEvaluate) => (
         <Space>
-          <Button type="primary" onClick={() => showModal(record)} disabled={!!record.phan_hoi}>Phản hồi</Button>
+          <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white" onClick={() => showModal(record)} disabled={!!record.phan_hoi}>Trả lời</Button>
           <Popconfirm title="Bạn có chắc muốn ẩn đánh giá này không?" onConfirm={() => hideEvaluate.mutate(record.id)}>
-            <Button type="default" danger>Ẩn</Button>
+            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white" >Ẩn</Button>
           </Popconfirm>
         </Space>
       ),
@@ -141,10 +142,10 @@ const EvaluateAdmin = () => {
             <p><strong>Đánh giá của khách hàng:</strong> {currentEvaluate.mo_ta}</p>
             <Input.TextArea
               rows={4}
-              value={reply[currentEvaluate.id] || ""}
-              onChange={(e) => handleReplyChange(currentEvaluate.id, e.target.value)}
+              value={phan_hoi[currentEvaluate.id] || ""}
+              onChange={(e) => handlephan_hoiChange(currentEvaluate.id, e.target.value)}
               placeholder="Nhập phản hồi"
-              disabled={!!currentEvaluate.phan_hoi} // Disable if there's already a reply
+              disabled={!!currentEvaluate.phan_hoi}
             />
           </div>
         )}

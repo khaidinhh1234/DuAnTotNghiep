@@ -181,29 +181,25 @@ class DonHangController extends Controller
                 $donHang = DonHang::findOrFail($id);
 
                 if (
-                    $donHang->trang_thai_van_chuyen != 'Đang giao hàng'
-                    || $donHang->trang_thai_van_chuyen != 'Giao hàng thành'
-                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGH
-                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGTC
-                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DH
-                    && $request->trang_thai_don_hang != DonHang::TTDH_DH
+                    ($donHang->trang_thai_don_hang == Donhang::TTDH_DGH || $donHang->trang_thai_don_hang == DonHang::TTDH_DGTC)
+                    || ($donHang->trang_thai_van_chuyen == DonHang::TTVC_DGH || $donHang->trang_thai_van_chuyen == DonHang::TTVC_GHTC)
                 ) {
-                    $donHang->update([
-                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
-                    ]);
-                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                    if ($request->trang_thai_don_hang == DonHang::TTDH_DH){
+                        $mess = 'Không thể hủy đơn hàng khi đơn hàng đang được giao hoặc đã giao thành công.';
+                    }
                 } else if (
-                    $donHang->trang_thai_van_chuyen != 'Giao hàng thành'
-                    && $donHang->trang_thai_don_hang != DonHang::TTDH_DGTC
-                    && $request->trang_thai_don_hang != DonHang::TTDH_HH
-                    && !Carbon::parse($donHang->ngay_giao_hang_thanh_cong)->addDay(7)->isPast()
+                    $donHang->trang_thai_van_chuyen == DonHang::TTVC_GHTC
+                    || $donHang->trang_thai_don_hang == DonHang::TTDH_DGTC
                 ) {
-                    $donHang->update([
-                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
-                    ]);
-                    $mess = 'Cập nhật trạng thái đơn hàng thành công.';
+                    if($request->trang_thai_don_hang == DonHang::TTDH_HH){
+
+                    }
+                    $mess = 'Hoàn hàng';
                 } else {
                     // Cập nhật trạng thái đơn hàng
+                    $donHang->update([
+                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
+                    ]);
                     $mess = 'Cập nhật trạng thái đơn hàng thành công.';
                 }
                 // Lưu thay đổi
