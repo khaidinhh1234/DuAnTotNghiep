@@ -233,10 +233,13 @@ const OrderAdmin: React.FC = () => {
               ? "Đã giao hàng thành công"
               : "Đã hủy hàng";
 
-      const response = await instance.put("admin/donhang/trang-thai-don-hang", {
-        trang_thai_don_hang: trangthais,
-        id: data,
-      });
+      const response = await instance.post(
+        "admin/donhang/trang-thai-don-hang",
+        {
+          trang_thai_don_hang: trangthais,
+          id: data,
+        }
+      );
       start();
       message.open({
         type: "success",

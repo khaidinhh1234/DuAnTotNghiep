@@ -484,18 +484,6 @@ const AddVoucher = () => {
                               options={sp}
                               dropdownRender={(menu) => (
                                 <div>
-                                  <Button
-                                    type="link"
-                                    onClick={
-                                      isAllSelected
-                                        ? handleDeselectAll
-                                        : handleSelectAll
-                                    }
-                                  >
-                                    {isAllSelected
-                                      ? "Bỏ chọn tất cả"
-                                      : "Chọn tất cả"}
-                                  </Button>
                                   <Divider style={{ margin: "4px 0" }} />
                                   {menu}
                                 </div>
@@ -529,18 +517,6 @@ const AddVoucher = () => {
                               options={dm}
                               dropdownRender={(menu) => (
                                 <div>
-                                  <Button
-                                    type="link"
-                                    onClick={
-                                      isAllSelected1
-                                        ? handleDeselectAll1
-                                        : handleSelectAll1
-                                    }
-                                  >
-                                    {isAllSelected1
-                                      ? "Bỏ chọn tất cả"
-                                      : "Chọn tất cả"}
-                                  </Button>
                                   <Divider style={{ margin: "4px 0" }} />
                                   {menu}
                                 </div>
