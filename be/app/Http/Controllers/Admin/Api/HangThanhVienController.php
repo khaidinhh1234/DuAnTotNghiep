@@ -40,7 +40,7 @@ class HangThanhVienController extends Controller
     {
         $vadidateHangThanhVien = Validator::make($request->all(), [
             'ten_hang_thanh_vien' => 'required|unique:hang_thanh_viens',
-            'anh_hang_thanh_vien' => 'required|image',
+            'anh_hang_thanh_vien' => 'required',
             'chi_tieu_toi_thieu' => 'required|numeric',
             'chi_tieu_toi_da' => 'required|numeric',
             'ngay_bat_dau' => 'nullable',
