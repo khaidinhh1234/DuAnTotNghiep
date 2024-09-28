@@ -163,24 +163,29 @@ const Rank: React.FC = () => {
   });
 
   const columns: TableColumnsType<DataType> = [
-    // {
-    //   title: "STT",
-    //   key: "stt",
-    //   render: (text, item, index) => index + 1,
-    //   width: "5%",
-    // },
     {
-      title: "Ảnh sản phẩm",
-      render: (item) => (
-        <img
-          src={item.anh_san_pham || "https://via.placeholder.com/150"}
-          alt="product"
-          className="w-24 h-24 object-cover rounded-lg p-2 border"
-        />
+      title: "STT",
+      key: "stt",
+      render: (text, item, index) => index + 1,
+      width: "5%",
+    },
+    {
+      title: "Hạng thành viên",
+      render: (record: any) => (
+        <div className="flex items-center">
+          <img
+            src={record.anh_hang_thanh_vien || "https://via.placeholder.com/24"}
+            alt="member rank"
+            className="w-12 h-12 object-cover rounded-none mr-2"
+          />
+          <span className="text-sm font-medium capitalize">
+            {record.ten_hang_thanh_vien || "Chưa có hạng"}
+          </span>
+        </div>
       ),
-      className: "pl-12",
-      width: "30%",
-      key: "anh_san_pham",
+      className: "pl-4",
+      width: "20%",
+      key: "hang_thanh_vien",
     },
     {
         title: "Chi tiêu",
@@ -216,7 +221,7 @@ const Rank: React.FC = () => {
               Xóa
             </Button>
           </Popconfirm>
-          <Link to={`/admin/products/edit/${item.id}`}>
+          <Link to={`/admin/users/rank/edit/${item.id}`}>
             <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors">
               Cập nhật
             </Button>
