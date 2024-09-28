@@ -102,11 +102,8 @@ import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
 import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
 import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
 import { AnalyticsAdmin } from "@/pages/(dashboard)/analytics/page";
-<<<<<<< HEAD
 import MemberRank from "@/pages/(dashboard)/user/hangthanhvien/edit/page";
-=======
 import Component from "@/pages/(dashboard)/test";
->>>>>>> c284993e1b3549aded708185e38ee04181a422a1
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
