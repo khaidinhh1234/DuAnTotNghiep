@@ -305,6 +305,12 @@ const UserskhachhangAdd = () => {
                   label="Địa chỉ của khách hàng"
                   name="dia_chi"
                   className="col-span-3"
+                  rules={[
+                    {
+                      pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                      message: "Vui lòng nhập họ không chứa ký tự trắng!",
+                    },
+                  ]}
                 >
                   <Input placeholder="Nhập Địa chỉ của khác hàng" />
                 </Form.Item>{" "}
