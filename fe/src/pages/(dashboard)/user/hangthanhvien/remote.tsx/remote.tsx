@@ -44,35 +44,35 @@ const Remoterank: React.FC = () => {
       index: index + 1,
     })) || [];
 
-  const { mutate } = useMutation({
-    mutationFn: async (id: string | number) => {
+    // const { mutate } = useMutation({
+    //   mutationFn: async (id: string | number) => {
+    //     const response = await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
+    //     return response.data;
+    //   },
+    //   onSuccess: (data) => {
+    //     if (data.status) {
+    //       message.success("Khôi phục thành công");
+    //       queryClient.invalidateQueries({ queryKey: ["rank"] });
+    //     } else {
+    //       message.error(data.message || "Failed to restore rank");
+    //     }
+    //   },
+    //   onError: (error) => {
+    //     console.error("Error restoring category:", error);
+    //     message.error("Xóa danh mục thất bại");
+    //   },
+    // });
+    const handleRestore = async (id: string | number) => {
       try {
-        const response = await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
-        if (response.data.status) {
-          message.open({
-            type: "success",
-            content: "Khôi phục thành công",
-          });
-          return id;
-        } else {
-          throw new Error(response.data.message || "Failed to delete");
-        }
+        await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
+        message.success("Khôi phục danh mục thành công", 3); 
+        queryClient.invalidateQueries({ queryKey: ["rank"] });
       } catch (error) {
-        console.error("Error deleting category:", error);
-        throw error;
+        console.error("Error restoring category:", error);
+        message.error("Khôi phục danh mục thất bại", 3); 
       }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["rank"] });
-    },
-    onError: (error) => {
-      console.error("Error deleting category:", error);
-      message.open({
-        type: "error",
-        content: "Xóa danh mục thất bại",
-      });
-    },
-  });
+    };
+    
 
   const handleSearch = (
     selectedKeys: string[],
@@ -204,7 +204,7 @@ const Remoterank: React.FC = () => {
         <Space>
           <Button
             className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white"
-            onClick={() => mutate(record.id)}
+            onClick={() => handleRestore(record.id)}
           >
             Khôi phục
           </Button>
