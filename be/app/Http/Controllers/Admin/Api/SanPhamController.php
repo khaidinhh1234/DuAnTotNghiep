@@ -53,7 +53,7 @@ class SanPhamController extends Controller
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
-            'the' => 'required|array',
+            'the' => 'nullable|array',
             'the.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
@@ -171,7 +171,7 @@ class SanPhamController extends Controller
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
-            'the' => 'required|array',
+            'the' => 'nullable|array',
             'the.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
@@ -184,8 +184,6 @@ class SanPhamController extends Controller
             'bien_the.*.anh' => 'required|array',
             'bien_the.*.anh.*' => 'required|string'
         ]);
-
-
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
