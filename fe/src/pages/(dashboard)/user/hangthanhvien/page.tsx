@@ -27,6 +27,8 @@ interface DataType {
   noi_dung: string;
   trang_thai: number;
   tongSoLuong: number;
+  chi_tieu_toi_thieu: number;
+  chi_tieu_toi_da: number;
 }
 
 export interface Category {
@@ -51,9 +53,6 @@ const Rank: React.FC = () => {
     },
   });
 
-
-
-
   const deleteMutation = useMutation({
     mutationFn: async (id: string | number) => {
       const response = await instance.delete(`/admin/hangthanhvien/${id}`);
@@ -76,7 +75,6 @@ const Rank: React.FC = () => {
   const rank = data?.data.map((item: any, index: number) => ({
     ...item,
     key: item.id,
-   
   }));
 
   const handleSearch = (
@@ -188,22 +186,24 @@ const Rank: React.FC = () => {
       key: "hang_thanh_vien",
     },
     {
-        title: "Chi tiêu",
-        dataIndex: "",
-        key: "chi_tieu",
-        width: "30%",
-        ...getColumnSearchProps("chi_tieu"),
-        sorter: (a, b) =>
-          a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu || a.chi_tieu_toi_da - b.chi_tieu_toi_da,
-        render: (text, record) => {
-          const formatCurrency = (value) => 
-            new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
-      
-          return `${formatCurrency(record.chi_tieu_toi_thieu)} - ${formatCurrency(record.chi_tieu_toi_da)}`;
-        },
+      title: "Chi tiêu",
+      dataIndex: "",
+      key: "chi_tieu",
+      width: "30%",
+      // ...getColumnSearchProps("chi_tieu"),
+      sorter: (a, b) =>
+        a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu ||
+        a.chi_tieu_toi_da - b.chi_tieu_toi_da,
+      render: (text, record) => {
+        const formatCurrency = (value: number): string =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value);
+
+        return `${formatCurrency(record.chi_tieu_toi_thieu)} - ${formatCurrency(record.chi_tieu_toi_da)}`;
       },
-      
-      
+    },
 
     {
       title: "Quản trị",
@@ -239,10 +239,11 @@ const Rank: React.FC = () => {
   isError && <div>Đã xảy ra lỗi</div>;
   isLoading && <div>Đang tải dữ liệu...</div>;
   return (
-<main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">hạng thành viên</span>
+          Quản trị /{" "}
+          <span className="font-semibold px-px">hạng thành viên</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">

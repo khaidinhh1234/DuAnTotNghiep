@@ -191,12 +191,12 @@ const NewCategory = () => {
             okText="Có"
             cancelText="Không"
           >
-            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Xóa
             </Button>
           </Popconfirm>
           <Link to={`/admin/newcategory/edit/${newcategory.id}`}>
-            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
             </Button>
           </Link>
@@ -214,15 +214,15 @@ const NewCategory = () => {
       </div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Danh mục</h1>
-        <div>
+        <div className="flex">
           <Link to="/admin/newcategory/add" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm
             </Button>
           </Link>
           <Link to="/admin/newcategory/remote">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
               <DeleteOutlined className="mr-1" />
               Thùng rác
             </Button>

@@ -248,19 +248,12 @@ const ColorManagement: React.FC = () => {
             onConfirm={() => deleteMutation.mutate(item.id)}
           >
             {/* <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors"> */}
-            <Button
-              type="primary"
-              className="px-3 py-2 bg-black text-white rounded-lg"
-            >
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Xóa
             </Button>
           </Popconfirm>
           <Link to={`/admin/products/bienthecolor/edit/${item.id}`}>
-            {/* <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors"> */}
-            <Button
-              type="primary"
-              className="px-3 py-2 bg-black text-white rounded-lg"
-            >
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
             </Button>
           </Link>
@@ -349,7 +342,7 @@ const ColorManagement: React.FC = () => {
             type="primary"
             htmlType="submit"
             className="px-3 py-2 bg-black text-white rounded-lg"
-            loading={addColorMutation.isLoading}
+            // loading={addColorMutation.isLoading}
           >
             Thêm màu
           </Button>

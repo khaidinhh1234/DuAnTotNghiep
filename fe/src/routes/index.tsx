@@ -85,11 +85,11 @@ import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
 import Tagsedit from "@/pages/(dashboard)/tags/edit/edit";
 
-import Bienthe from "./../pages/(dashboard)/products/bienthe/bienthe";
-import Color from "@/pages/(dashboard)/products/bienthe/color";
-import Size from "@/pages/(dashboard)/products/bienthe/size";
-import Remotecolor from "@/pages/(dashboard)/products/bienthe/remote";
-import Remotesize from "@/pages/(dashboard)/products/bienthe/remotesize";
+import Bienthe from "../pages/(dashboard)/bienthe/bienthe";
+import Color from "@/pages/(dashboard)/bienthe/color";
+import Size from "@/pages/(dashboard)/bienthe/size";
+import Remotecolor from "@/pages/(dashboard)/bienthe/remote";
+import Remotesize from "@/pages/(dashboard)/bienthe/remotesize";
 
 import ViewNew from "@/pages/(dashboard)/news/view/ViewNew";
 import Rank from "@/pages/(dashboard)/user/hangthanhvien/page";
@@ -167,6 +167,7 @@ const Router = () => {
           <Route path="products/tags/add" element={<Tagsadd />} />
           <Route path="products/tags/edit/:id" element={<Tagsedit />} />
           <Route path="products/tags/remote" element={<TagsRemoteAdmin />} />
+          {/* Biến thể */}
           <Route path="products/bienthe" element={<Bienthe />} />
           <Route path="products/bienthecolor/edit/:id" element={<Color />} />
           <Route path="products/bienthesize/edit/:id" element={<Size />} />
@@ -199,12 +200,7 @@ const Router = () => {
           <Route
             path="users"
             element={<Navigate to="/admin/users/khachhang" />}
-          />
-          <Route path="users/rank" element={<Rank />} />
-          <Route path="users/rankadd" element={<MemberRankForm />} />
-          <Route path="users/remoterank" element={<Remoterank />} />
-          <Route path="users/rank/edit/:id" element={<MemberRank />} />
-
+          />{" "}
           <Route path="users/khachhang" element={<UsersAdminkhachhang />} />
           <Route path="users/khachhang/add" element={<UserskhachhangAdd />} />
           <Route
@@ -225,6 +221,10 @@ const Router = () => {
             path="users/nhanvien/remote"
             element={<UsersRemoteNhanvien />}
           />
+          <Route path="users/rank" element={<Rank />} />
+          <Route path="users/rankadd" element={<MemberRankForm />} />
+          <Route path="users/remoterank" element={<Remoterank />} />
+          <Route path="users/rank/edit/:id" element={<MemberRank />} />
           {/* Thống kê */}
           <Route path="analytics" element={<AnalyticsAdmin />} />
           <Route path="centralstocks" element={<CentralStock />} />
@@ -237,7 +237,7 @@ const Router = () => {
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
           />
-          //vai trò
+          {/* //vai trò */}
           <Route
             path="ADmin/userprivileges"
             element={<UserPrivilegeAdmin />}
