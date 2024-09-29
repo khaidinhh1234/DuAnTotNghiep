@@ -69,6 +69,9 @@ Route::post('captcha/verify', [CaptchaController::class, 'verifyCaptcha']);
 Route::get('sanpham/{sanpham}/danhgia', [DanhGiaController::class, 'danhSachDanhGia']);
 Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
 
+// Trang chủ
+Route::get('trangchu', [\App\Http\Controllers\Client\Api\TrangChuController::class, 'index']);
+
 
 //'auth:sanctum', 'auth.checkrole'
 Route::middleware([])
