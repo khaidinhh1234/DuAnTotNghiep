@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Button, Form, Select, Spin, message } from "antd";
-import { ArrowLeftOutlined, LoadingOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  DeleteOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import instance from "@/configs/axios";
@@ -216,34 +220,39 @@ const ProductsAndVariants: React.FC = () => {
     if (variantData.length === 0) {
       throw new Error("Vui lòng thêm ít nhất một biến thể sản phẩm.");
     }
-  
+
     variantData.forEach((variant, index) => {
       if (!variant.kich_thuoc_id || !variant.mau_sac_id) {
         throw new Error(
           `Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`
         );
       }
-  
+
       const regularPrice = parseFloat(variant.gia_ban);
       if (isNaN(regularPrice) || (regularPrice !== 0 && regularPrice < 1000)) {
-        throw new Error(`Giá bán của biến thể ${index + 1} phải bằng 0 hoặc lớn hơn hoặc bằng 1000.`);
+        throw new Error(
+          `Giá bán của biến thể ${index + 1} phải bằng 0 hoặc lớn hơn hoặc bằng 1000.`
+        );
       }
-  
+
       if (variant.gia_khuyen_mai !== undefined) {
         const promotionalPrice = parseFloat(variant.gia_khuyen_mai);
-       
+
         if (promotionalPrice > regularPrice) {
-          throw new Error(`Giá khuyến mãi của biến thể ${index + 1} không thể lớn hơn giá bán.`);
+          throw new Error(
+            `Giá khuyến mãi của biến thể ${index + 1} không thể lớn hơn giá bán.`
+          );
         }
       }
- 
+
       const quantity = parseInt(variant.so_luong_bien_the);
       if (isNaN(quantity) || quantity <= 0) {
-        throw new Error(`Số lượng của biến thể ${index + 1} phải là số nguyên dương.`);
+        throw new Error(
+          `Số lượng của biến thể ${index + 1} phải là số nguyên dương.`
+        );
       }
     });
   };
-  
 
   const prepareFormData = async () => {
     const formData = new FormData();
@@ -339,22 +348,23 @@ const ProductsAndVariants: React.FC = () => {
   }, []);
 
   return (
-    <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-      <div className="flex items-center justify-between mt-5 left-5">
-        <h1 className="w-full text-3xl font-semibold text-gray-800 text-left">
-          Thêm sản phẩm và biến thể
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <div className="flex items-center">
+        <h1 className="md:text-base">
+          Quản trị / <span className="font-semibold">Sản phẩm</span>
         </h1>
-
-        <Link to="/admin/products">
-          <Button
-            icon={<ArrowLeftOutlined />}
-            className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md ml-2.5"
-          >
-            Quay lại
-          </Button>
-        </Link>
       </div>
-      <div className="container mx-auto px-6 py-8">
+      <div className="flex items-center justify-between">
+        <h1 className="font-semibold md:text-3xl">Sản phẩm</h1>
+        <div className="flex gap-2">
+          <Link to="/admin/products/remote">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+              quay lại
+            </Button>
+          </Link>
+        </div>
+      </div>
+      <div className="max-w-8xl mx-5 px-5 py-8">
         <div className="bg-white rounded-lg shadow-md p-6">
           <ProductForm
             form={form}
@@ -364,8 +374,7 @@ const ProductsAndVariants: React.FC = () => {
             tagsData={tagsData?.data || []}
             onValuesChange={handleProductFormValuesChange}
           />
-
-          <div className="mt-8">
+          <div className="mt-8 px-10">
             <h2 className="text-xl font-semibold mb-4">
               Giá bán, Kho hàng và Biến thể
             </h2>
@@ -451,35 +460,35 @@ const ProductsAndVariants: React.FC = () => {
               sizesData={sizesData.data}
             />
           </div>
-        </div>
-      </div>
-      <Form.Item className="mt-8">
-        <div className="flex items-center justify-end">
-          <Button
-            type="primary"
-            onClick={handleSubmit}
-            className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
-            style={{
-              marginTop: "-60px",
-              padding: "18px 30px",
-              marginRight: "190px",
-            }}
-            disabled={isSubmitting}
-          >
-            {isSubmitting && (
-              <Spin
-                indicator={
-                  <LoadingOutlined
-                    style={{ fontSize: 22, marginLeft: 10 }}
-                    spin
+          <Form.Item className="mt-8 px-10">
+            <div className="flex items-center gap-2">
+              <Button className="py-[18px] px-10">Hủy</Button>
+              <Button
+                type="primary"
+                onClick={handleSubmit}
+                className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
+                style={{
+                  padding: "18px 30px",
+                  marginRight: "190px",
+                }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting && (
+                  <Spin
+                    indicator={
+                      <LoadingOutlined
+                        style={{ fontSize: 22, marginLeft: 10 }}
+                        spin
+                      />
+                    }
                   />
-                }
-              />
-            )}{" "}
-            {isSubmitting ? "Đang xử lý..." : "Thêm sản phẩm"}
-          </Button>
-        </div>
-      </Form.Item>
+                )}{" "}
+                {isSubmitting ? "Đang xử lý..." : "Thêm sản phẩm"}
+              </Button>
+            </div>
+          </Form.Item>{" "}
+        </div>{" "}
+      </div>
     </main>
   );
 };

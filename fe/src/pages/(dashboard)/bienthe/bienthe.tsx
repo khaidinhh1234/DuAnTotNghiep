@@ -1,4 +1,3 @@
-
 // import React, { useRef, useState } from "react";
 // import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 // import { Button, Input, Popconfirm, Space, Table, Switch, Form, Modal, InputRef } from "antd";
@@ -115,8 +114,6 @@
 //       ),
 //   });
 
-
-
 //   const columnsLeft: ColumnsType<DataType> = [
 //     {
 //       title: "STT",
@@ -212,15 +209,15 @@
 //           <Table columns={columnsLeft} dataSource={[]} pagination={{ pageSize: 5 }} className="equal-width-table" />
 //           <div className="mt-4 flex space-x-2">
 //             <Form.Item className="flex-2 mb-0">
-//               <Input 
-//                 placeholder="Tên màu" 
+//               <Input
+//                 placeholder="Tên màu"
 //                 value={tenMau}
 //                 onChange={(e) => setTenMau(e.target.value)}
 //               />
 //             </Form.Item>
 //             <Form.Item className="flex-2 mb-0">
-//               <Input 
-//                 placeholder="Mã màu" 
+//               <Input
+//                 placeholder="Mã màu"
 //                 value={maMau}
 //                 onChange={(e) => setMaMau(e.target.value)}
 //               />
@@ -232,8 +229,8 @@
 //           <Table columns={columnsRight} dataSource={[]} pagination={{ pageSize: 5 }} className="equal-width-table" />
 //           <div className="mt-4 flex space-x-2">
 //             <Form.Item className="flex-grow mb-0">
-//               <Input 
-//                 placeholder="Tên size" 
+//               <Input
+//                 placeholder="Tên size"
 //                 value={tenSize}
 //                 onChange={(e) => setTenSize(e.target.value)}
 //               />
@@ -266,21 +263,20 @@ const Bienthe: React.FC = () => {
         <h1 className="font-semibold md:text-3xl">Sản phẩm</h1>
         <div className="flex gap-2">
           <Link to="/admin/products/bienthe/remote">
-            <Button className="bg-red-500 text-white rounded-lg"><DeleteOutlined />màu</Button>
+            <Button className="bg-gradient-to-r  from-red-500 to-orange-400 text-white rounded-lg">
+              <DeleteOutlined />
+              màu
+            </Button>
           </Link>
           <Link to="/admin/products/bienthe/remotesize">
-            <Button className="bg-red-500 text-white rounded-lg"><DeleteOutlined />kích thước</Button>
+            <Button className="bg-gradient-to-r  from-red-500 to-orange-400 text-white rounded-lg">
+              <DeleteOutlined />
+              kích thước
+            </Button>
           </Link>
         </div>
       </div>
-      <div className="max-w-xs my-2">
-        <Input 
-          placeholder="Tìm kiếm..." 
-          size="large" 
-          value={searchText} 
-          onChange={(e) => setSearchText(e.target.value)} 
-        />
-      </div>
+
       <div className="flex space-x-4">
         <div className="w-1/2">
           <ColorTable />

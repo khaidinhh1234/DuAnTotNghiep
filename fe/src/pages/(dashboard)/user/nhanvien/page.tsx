@@ -287,12 +287,12 @@ const UsersAdminNhanvien: React.FC = () => {
               mutate.mutate(record?.key.toString());
             }}
           >
-            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Chặn
             </Button>
           </Popconfirm>
           <Link to={`/admin/users/nhanvien/edit/${record.key}`}>
-            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Chỉnh sửa
             </Button>
           </Link>
@@ -328,7 +328,7 @@ const UsersAdminNhanvien: React.FC = () => {
         <div className="flex">
           {" "}
           <Link to="/admin/users/nhanvien/add" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm
             </Button>

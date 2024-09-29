@@ -1,17 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
-import { Form, Input, InputNumber, Upload, Button, Typography, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Form, Input, InputNumber, Upload, Button, Typography, message, Modal } from 'antd';
+import { UploadOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import instance from '@/configs/axios';
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { uploadToCloudinary } from '@/configs/cloudinary'; // Đảm bảo đường dẫn này chính xác
+import { uploadToCloudinary } from '@/configs/cloudinary';
 
 const { Title } = Typography;
 
 const MemberRankEdit = () => {
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState('');
+    const [previewVisible, setPreviewVisible] = useState(false);
     const nav = useNavigate();
     const { id } = useParams();
 
@@ -93,6 +94,15 @@ const MemberRankEdit = () => {
         }
     };
 
+    const handlePreview = () => {
+        setPreviewVisible(true);
+    };
+
+    const handleDelete = () => {
+        setImageUrl('');
+        form.setFieldsValue({ anh_hang_thanh_vien: '' });
+    };
+
     if (isLoading) return <div>Loading...</div>;
     if (isError) return <div>Error loading data</div>;
 
@@ -149,7 +159,13 @@ const MemberRankEdit = () => {
                             customRequest={({ onSuccess }) => setTimeout(() => onSuccess("ok"), 0)}
                         >
                             {imageUrl ? (
-                                <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
+                                <div className="relative group">
+                                    <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
+                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <EyeOutlined className="text-white text-2xl mx-2 cursor-pointer" onClick={handlePreview} />
+                                        <DeleteOutlined className="text-white text-2xl mx-2 cursor-pointer" onClick={handleDelete} />
+                                    </div>
+                                </div>
                             ) : (
                                 <div>
                                     <UploadOutlined />
@@ -200,6 +216,14 @@ const MemberRankEdit = () => {
                     </div>
                 </Form>
             </div>
+
+            <Modal
+                visible={previewVisible}
+                footer={null}
+                onCancel={() => setPreviewVisible(false)}
+            >
+                <img alt="preview" style={{ width: '100%' }} src={imageUrl} />
+            </Modal>
         </main>
     );
 };
