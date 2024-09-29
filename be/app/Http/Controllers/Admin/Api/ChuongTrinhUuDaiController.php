@@ -81,7 +81,7 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 422);
             }
             $dataUuDai = $request->except('san_pham');
-            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']);
+            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']).'-'.Carbon::now()->timestamp;
             DB::beginTransaction();
             $uuDai = ChuongTrinhUuDai::create($dataUuDai);
             $uuDai->sanPhams()->sync($request->san_pham);
@@ -120,7 +120,6 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 404);
             }
 
-            // Kiểm tra xem chương trình đã bắt đầu chưa
             $ngayBatDau = Carbon::parse($uuDai->ngay_bat_dau);
             $ngayHienTai = Carbon::now();
 
@@ -154,7 +153,7 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 422);
             }
             $dataUuDai = $request->except('san_pham');
-            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']);
+            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']).'-'.Carbon::now()->timestamp;
             DB::beginTransaction();
             $uuDai->update($dataUuDai);
             $uuDai->sanPhams()->sync($request->san_pham);
