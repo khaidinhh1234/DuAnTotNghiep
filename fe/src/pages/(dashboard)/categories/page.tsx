@@ -241,20 +241,18 @@ const CategoriesAdmin: React.FC = () => {
       ),
     },
   ];
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-between">
-        <Spin></Spin>
-      </div>
-    );
+
   if (isError)
     return (
-      <>
-        <div>
-          <p>Error</p>
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
         </div>
-      </>
+      </div>
     );
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">

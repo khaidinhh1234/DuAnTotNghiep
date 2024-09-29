@@ -64,11 +64,11 @@ const Rank: React.FC = () => {
     },
     onSuccess: (id) => {
       queryClient.invalidateQueries({ queryKey: ["rank"] });
-      toast.success("Xóa sản phẩm thành công");
+      message.success("Xóa sản phẩm thành công");
     },
     onError: (error) => {
       console.error("Error deleting product:", error);
-      toast.error("Xóa sản phẩm thất bại");
+      message.error("Xóa sản phẩm thất bại");
     },
   });
 
@@ -217,12 +217,12 @@ const Rank: React.FC = () => {
             cancelText="Không"
             onConfirm={() => deleteMutation.mutate(item.id)}
           >
-            <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Xóa
             </Button>
           </Popconfirm>
           <Link to={`/admin/users/rank/edit/${item.id}`}>
-            <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors">
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
             </Button>
           </Link>
@@ -248,15 +248,15 @@ const Rank: React.FC = () => {
       </div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Hạng thành viên</h1>
-        <div>
+        <div className="flex">
           <Link to="/admin/users/rankadd" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm
             </Button>
           </Link>
           <Link to="/admin/users/remoterank">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
               <DeleteOutlined className="mr-1" />
               Thùng rác
             </Button>
