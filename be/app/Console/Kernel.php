@@ -13,6 +13,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('update:product-variants-price')->daily();
+
+        $schedule->command('promo:update-status')->daily();
+
     }
 
 
