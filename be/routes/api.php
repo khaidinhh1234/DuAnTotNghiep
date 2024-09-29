@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\BienTheMauSacController;
+use App\Http\Controllers\Admin\Api\ChuongTrinhUuDaiController;
 use App\Http\Controllers\Admin\Api\DanhGiaController as ApiDanhGiaController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
@@ -203,4 +204,8 @@ Route::middleware([])
         Route::apiResource('vaitro', VaiTroController::class);
         // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
+
+        // Chương trình ưu đãi
+        Route::get('chuongtrinhuudai/thung-rac', [ChuongTrinhUuDaiController::class, 'danhSachXoaMem'])->name('chuongtrinhuudai.thungrac');
+        Route::apiResource('chuongtrinhuudai', ChuongTrinhUuDaiController::class);
     });
