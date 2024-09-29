@@ -7,6 +7,7 @@ use App\Models\ChuongTrinhUuDai;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -18,7 +19,7 @@ class ChuongTrinhUuDaiController extends Controller
     public function index()
     {
         try {
-            $uuDai = ChuongTrinhUuDai::first();
+            $uuDai = ChuongTrinhUuDai::query()->with('sanPhams')->first();
 
             if ($uuDai) {
                 return response()->json([
@@ -60,7 +61,6 @@ class ChuongTrinhUuDaiController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'ten_uu_dai' => 'required|string|max:255',
-                'duong_dan' => 'required|string|unique:chuong_trinh_uu_dais',
                 'duong_dan_anh' => 'required|string',
                 'ngay_hien_thi' => 'required|date|before_or_equal:ngay_bat_dau',
                 'mo_ta' => 'required|string',
@@ -80,9 +80,12 @@ class ChuongTrinhUuDaiController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-
-            $uuDai = ChuongTrinhUuDai::create($request->all());
+            $dataUuDai = $request->except('san_pham');
+            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']);
+            DB::beginTransaction();
+            $uuDai = ChuongTrinhUuDai::create($dataUuDai);
             $uuDai->sanPhams()->sync($request->san_pham);
+            DB::commit();
 
             return response()->json([
                 'status' => true,
@@ -91,6 +94,7 @@ class ChuongTrinhUuDaiController extends Controller
                 'data' => $uuDai,
             ], 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -130,7 +134,6 @@ class ChuongTrinhUuDaiController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'ten_uu_dai' => 'required|string|max:255',
-                'duong_dan' => 'required|string|unique:chuong_trinh_uu_dais,duong_dan,' . $uuDai->id,
                 'duong_dan_anh' => 'required|string',
                 'ngay_hien_thi' => 'required|date|before_or_equal:ngay_bat_dau',
                 'mo_ta' => 'required|string',
@@ -150,10 +153,12 @@ class ChuongTrinhUuDaiController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-
-            $uuDai->update($request->all());
+            $dataUuDai = $request->except('san_pham');
+            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']);
+            DB::beginTransaction();
+            $uuDai->update($dataUuDai);
             $uuDai->sanPhams()->sync($request->san_pham);
-
+            DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
