@@ -14,6 +14,7 @@ export interface ProductFormProps {
   categoriesData: Category[];
   tagsData: Tag[];
   onValuesChange: (changedValues: any, allValues: any) => void;
+  setData: any;
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({
@@ -23,6 +24,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   categoriesData,
   tagsData,
   onValuesChange,
+  setData,
 }) => (
   <Form
     form={form}
@@ -86,7 +88,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Select mode="multiple" className="w-full" placeholder="Chọn tags">
           {tagsData &&
             tagsData.map((tag) => (
-              <Option key={tag.id} value={tag.ten_the + tag.id}>
+              <Option key={tag.id} value={tag.id}>
                 {tag.ten_the}
               </Option>
             ))}
@@ -150,12 +152,19 @@ const ProductForm: React.FC<ProductFormProps> = ({
             ],
             setup: (editor) => {
               editor.on("Change", () => {
-                form.setFieldsValue({ noi_dung: editor.getContent() });
+                const content = editor.getContent();
+                // console.log("Editor content:", content); // Một chuỗi HTML hoặc JSON đã được stringify
+                setData(content);
+                // value = { content };
+                form.setFieldsValue({
+                  noi_dung: String(content),
+                  // Chuyển đổi đối tượng thành chuỗi JSON nếu cần
+                });
               });
             },
           }}
-          initialValue="Chào mừng bạn đến với Glow clothing!"
         />
+        {/* <TextArea rows={5} placeholder="Nhập nội dung sản phẩm" /> */}
       </Form.Item>
     </div>
   </Form>
