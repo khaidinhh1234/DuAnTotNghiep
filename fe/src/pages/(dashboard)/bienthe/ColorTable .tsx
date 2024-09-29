@@ -9,6 +9,7 @@ import {
   Form,
   InputRef,
   message,
+  Spin,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Highlighter from "react-highlight-words";
@@ -262,9 +263,6 @@ const ColorManagement: React.FC = () => {
     },
   ];
 
-  if (isError) return <div>Đã xảy ra lỗi</div>;
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
-
   const popover: React.CSSProperties = {
     position: "absolute",
     zIndex: 2,
@@ -278,6 +276,16 @@ const ColorManagement: React.FC = () => {
     left: "0px",
   };
 
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
   return (
     <>
       <Form
@@ -354,6 +362,7 @@ const ColorManagement: React.FC = () => {
         dataSource={colorData}
         pagination={{ pageSize: 5 }}
         className="equal-width-table"
+        loading={isLoading}
       />
     </>
   );

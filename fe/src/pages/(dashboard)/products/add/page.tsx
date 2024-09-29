@@ -350,33 +350,18 @@ const ProductsAndVariants: React.FC = () => {
     setIsSubmitting(false);
   };
 
-  // const [SPCode, setSPCode] = useState("");
-  // const generateRandomCode = () => {
-  //   const length = 8;
-  //   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  //   let randomCode = "";
-  //   for (let i = 0; i < length; i++) {
-  //     const randomIndex = Math.floor(Math.random() * characters.length);
-  //     randomCode += characters.charAt(randomIndex);
-  //   }
-
-  //   setSPCode("SP-" + randomCode);
-  // };
-  // useEffect(() => {
-  //   generateRandomCode();
-  // }, []);
-
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold">Sản phẩm</span>
+          Quản trị / Sản phẩm /{" "}
+          <span className="font-semibold">Thêm sản phẩm </span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Sản phẩm</h1>
+        <h1 className="font-semibold md:text-3xl">Thêm sản phẩm </h1>
         <div className="flex gap-2">
-          <Link to="/admin/products/remote">
+          <Link to="/admin/products">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               quay lại
             </Button>
@@ -482,7 +467,9 @@ const ProductsAndVariants: React.FC = () => {
           </div>
           <Form.Item className="mt-8 px-10">
             <div className="flex items-center gap-2">
-              <Button className="py-[18px] px-10">Hủy</Button>
+              <Link to="/admin/products">
+                <Button className="py-[18px] px-10">Hủy</Button>{" "}
+              </Link>
               <Button
                 type="primary"
                 onClick={handleSubmit}

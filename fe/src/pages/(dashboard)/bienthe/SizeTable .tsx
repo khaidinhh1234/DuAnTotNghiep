@@ -9,6 +9,7 @@ import {
   InputRef,
   Popconfirm,
   message,
+  Spin,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Highlighter from "react-highlight-words";
@@ -227,8 +228,16 @@ const SizeManagement: React.FC = () => {
     },
   ];
 
-  if (isError) return <div>Đã xảy ra lỗi</div>;
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>
@@ -262,6 +271,7 @@ const SizeManagement: React.FC = () => {
         dataSource={sizes}
         pagination={{ pageSize: 5 }}
         className="equal-width-table"
+        loading={isLoading}
       />
     </>
   );

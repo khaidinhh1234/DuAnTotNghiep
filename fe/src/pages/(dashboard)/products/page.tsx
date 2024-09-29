@@ -1,19 +1,23 @@
-import React, { useRef, useState } from "react";
+import "@/global.css";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  DeleteOutlined,
-  SearchOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Switch, message } from "antd";
+  Button,
+  Input,
+  Popconfirm,
+  Space,
+  Spin,
+  Switch,
+  Table,
+  message,
+} from "antd";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import "@/global.css";
 
 import instance from "@/configs/axios";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import { toast } from "react-toastify";
 
 interface DataType {
   id: any;
@@ -43,7 +47,7 @@ const ProductsAdmin: React.FC = () => {
   const searchInput = useRef<InputRef>(null);
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["sanpham"],
     queryFn: async () => {
       const res = await instance.get("/admin/sanpham");
@@ -89,13 +93,19 @@ const ProductsAdmin: React.FC = () => {
         throw new Error(response.data.message || "Failed to delete");
       }
     },
-    onSuccess: (id) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham"] });
-      toast.success("Xóa sản phẩm thành công");
+      message.open({
+        type: "success",
+        content: "Xóa sản phẩm thành công",
+      });
     },
     onError: (error) => {
       console.error("Error deleting product:", error);
-      toast.error("Xóa sản phẩm thất bại");
+      message.open({
+        type: "error",
+        content: "Xóa sản phẩm thất bại",
+      });
     },
   });
 
@@ -199,8 +209,9 @@ const ProductsAdmin: React.FC = () => {
   const columns: TableColumnsType<DataType> = [
     {
       title: "STT",
-      key: "stt",
-      render: (text, item, index) => index + 1,
+      key: "id",
+      className: "pl-5",
+      render: (item) => <p className="ml-2">{item.index + 1}</p>,
       width: "5%",
     },
     {
@@ -293,8 +304,16 @@ const ProductsAdmin: React.FC = () => {
       console.log(searchText);
     }
   };
-  isError && <div>Đã xảy ra lỗi</div>;
-  isLoading && <div>Đang tải dữ liệu...</div>;
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -303,7 +322,7 @@ const ProductsAdmin: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Sản phẩm</h1>
+        <h1 className="font-semibold md:text-3xl">Danh sách sản phẩm</h1>
         <div className="flex gap-2">
           <Link to="/admin/products/add" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
@@ -333,6 +352,7 @@ const ProductsAdmin: React.FC = () => {
         columns={columns}
         dataSource={sanpham}
         pagination={{ pageSize: 5 }}
+        loading={isLoading}
       />
     </main>
   );
