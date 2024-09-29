@@ -262,7 +262,7 @@ const ProductsAdmin: React.FC = () => {
       render: (_, item) => (
         <Space>
           <Popconfirm
-            title="Xóa sản phẩm"
+            title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
             okText="Có"
             cancelText="Không"
