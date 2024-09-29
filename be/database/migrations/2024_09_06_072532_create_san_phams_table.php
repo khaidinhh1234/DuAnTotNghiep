@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('duong_dan');
             $table->string('mo_ta_ngan')->nullable();
             $table->text('noi_dung')->nullable();
+            $table->string('gia_tri_uu_dai')->nullable();
             $table->integer('luot_xem')->default(0);
             $table->boolean('trang_thai')->default(1);
             $table->timestamps();
