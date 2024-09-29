@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button, Space, message } from "antd";
+import { Table, Button, Space, message, Spin } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 import { Link, useParams } from "react-router-dom";
@@ -13,7 +13,9 @@ const Remotesize: React.FC = () => {
     queryKey: ["size"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/bienthekichthuoc/thung-rac");
+        const response = await instance.get(
+          "/admin/bienthekichthuoc/thung-rac"
+        );
         return response.data;
       } catch (error) {
         console.error("Error fetching remote :", error);
@@ -28,8 +30,8 @@ const Remotesize: React.FC = () => {
       await instance.post(`/admin/bienthekichthuoc/thung-rac/${id}`);
       message.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
-      queryClient.invalidateQueries(["size"]);
-    } catch (error) {       
+      queryClient.invalidateQueries({ queryKey: ["size"] });
+    } catch (error) {
       console.error("Error restoring category:", error);
       message.error("Khôi phục danh mục thất bại");
     }
@@ -52,7 +54,7 @@ const Remotesize: React.FC = () => {
     {
       title: "STT",
       key: "id",
-      dataIndex: "id", 
+      dataIndex: "id",
     },
     {
       title: "Tên kích thước",
@@ -71,29 +73,41 @@ const Remotesize: React.FC = () => {
       ),
     },
   ];
-
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Thùng rác</span>
+          Quản trị / Sản phẩm / Biến thể /
+          <span className="font-semibold px-px">Thùng rác</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">biến thể kích thước</h1>
+        <h1 className="font-semibold md:text-3xl">Biến thể kích thước</h1>
         <Link to="/admin/products/bienthe">
-          <Button className="bg-black text-white rounded-lg py-1">
+          <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
             Quay lại
           </Button>
         </Link>
       </div>
-      <Table
-        columns={columns}
-        dataSource={data?.data || []}
-        rowKey="id"
-        pagination={{ pageSize: 10 }}
-        loading={isLoading}
-      />
+      <div className="max-w-5xl">
+        <Table
+          columns={columns}
+          dataSource={data?.data || []}
+          rowKey="id"
+          pagination={{ pageSize: 10 }}
+          loading={isLoading}
+        />
+      </div>
     </main>
   );
 };

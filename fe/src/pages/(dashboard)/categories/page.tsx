@@ -1,6 +1,16 @@
 import React, { useRef, useState } from "react";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Tabs } from "antd";
+import {
+  Button,
+  Input,
+  message,
+  Popconfirm,
+  Skeleton,
+  Space,
+  Spin,
+  Table,
+  Tabs,
+} from "antd";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -8,7 +18,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 import { ICategories } from "@/common/types/category";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 const { TabPane } = Tabs;
 
 const CategoriesAdmin: React.FC = () => {
@@ -59,13 +69,21 @@ const CategoriesAdmin: React.FC = () => {
         throw error;
       }
     },
-    onSuccess: (id) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["danhmuc"] });
-      toast.success("Xóa danh mục thành công");
+
+      message.open({
+        type: "success",
+        content: "Xóa danh mục thành công",
+      });
     },
     onError: (error) => {
       console.error("Error deleting category:", error);
-      toast.error("Xóa danh mục thất bại");
+
+      message.open({
+        type: "error",
+        content: "Xóa danh mục thất bại",
+      });
     },
   });
 
@@ -223,7 +241,20 @@ const CategoriesAdmin: React.FC = () => {
       ),
     },
   ];
-
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-between">
+        <Spin></Spin>
+      </div>
+    );
+  if (isError)
+    return (
+      <>
+        <div>
+          <p>Error</p>
+        </div>
+      </>
+    );
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -253,12 +284,14 @@ const CategoriesAdmin: React.FC = () => {
           <Table
             columns={columns}
             dataSource={dataSource.filter((category: any) => !category.cha_id)}
+            loading={isLoading}
           />
         </TabPane>
         <TabPane tab="Danh mục con" key="2">
           <Table
             columns={columns}
             dataSource={dataSource.filter((category: any) => category.cha_id)}
+            loading={isLoading}
           />
         </TabPane>
       </Tabs>

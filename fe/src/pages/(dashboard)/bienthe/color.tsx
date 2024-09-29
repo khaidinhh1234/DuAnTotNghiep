@@ -1,11 +1,10 @@
-
 import React, { useEffect, useState } from "react";
 import { IColor } from "@/common/types/product";
 import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, Spin } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { SketchPicker } from 'react-color';
+import { SketchPicker } from "react-color";
 
 const Color = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,8 +13,8 @@ const Color = () => {
   const [color, setColor] = useState("#000000");
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['color', id],
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["color", id],
     queryFn: async () => {
       const response = await instance.get(`/admin/bienthemausac/${id}`);
       console.log("Raw API response:", response.data);
@@ -29,7 +28,7 @@ const Color = () => {
       const colorData = data.data;
       form.setFieldsValue({
         ten_mau_sac: colorData.ten_mau_sac,
-        ma_mau_sac: colorData.ma_mau_sac
+        ma_mau_sac: colorData.ma_mau_sac,
       });
       setColor(colorData.ma_mau_sac);
       console.log("Color set to:", colorData.ma_mau_sac);
@@ -43,9 +42,9 @@ const Color = () => {
     },
     onSuccess: () => {
       message.success("Cập nhật màu sắc thành công");
-      nav('/admin/products/bienthe');
+      nav("/admin/products/bienthe");
     },
-    onError: (error) => {
+    onError: () => {
       message.error("Cập nhật màu sắc thất bại");
     },
   });
@@ -69,35 +68,48 @@ const Color = () => {
     setDisplayColorPicker(false);
   };
 
-  if (isLoading) return <div>Đang tải...</div>;
-
   console.log("Current color state:", color);
 
   const popover: React.CSSProperties = {
-    position: 'absolute',
+    position: "absolute",
     zIndex: 2,
   };
-  
-  const cover: React.CSSProperties = {
-    position: 'fixed',
-    top: '0px',
-    right: '0px',
-    bottom: '0px',
-    left: '0px',
-  };
 
+  const cover: React.CSSProperties = {
+    position: "fixed",
+    top: "0px",
+    right: "0px",
+    bottom: "0px",
+    left: "0px",
+  };
+  if (isLoading)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
+  if (isError) return <div>Error</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục /<span className="font-semibold px-px"> Cập nhật màu sắc</span>
+          Quản trị / Danh mục /
+          <span className="font-semibold px-px"> Cập nhật màu sắc</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Cập nhật màu sắc: {data?.data?.ten_mau_sac}</h1>
+        <h1 className="font-semibold md:text-3xl">
+          Cập nhật màu sắc: {data?.data?.ten_mau_sac}
+        </h1>
         <div>
           <Link to="/admin/products/bienthe" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">Quay lại</Button>
+            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+              Quay lại
+            </Button>
           </Link>
         </div>
       </div>
@@ -115,49 +127,59 @@ const Color = () => {
               <Form.Item
                 label="Tên màu"
                 name="ten_mau_sac"
-                rules={[{ required: true, message: "Tên màu bắt buộc phải nhập!" }]}
+                rules={[
+                  { required: true, message: "Tên màu bắt buộc phải nhập!" },
+                ]}
               >
                 <Input placeholder="Nhập tên màu" />
               </Form.Item>
               <Form.Item
                 label="Mã màu"
                 name="ma_mau_sac"
-                rules={[{ required: true, message: 'Vui lòng chọn màu' }]}
+                rules={[{ required: true, message: "Vui lòng chọn màu" }]}
               >
                 <div>
-                  <div 
+                  <div
                     style={{
-                      padding: '5px',
-                      background: '#fff',
-                      borderRadius: '1px',
-                      boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-                      display: 'inline-block',
-                      cursor: 'pointer',
+                      padding: "5px",
+                      background: "#fff",
+                      borderRadius: "1px",
+                      boxShadow: "0 0 0 1px rgba(0,0,0,.1)",
+                      display: "inline-block",
+                      cursor: "pointer",
                     }}
                     onClick={handleClick}
                   >
-                    <div style={{
-                      width: '26px',
-                      height: '26px',
-                      borderRadius: '2px',
-                      background: color,
-                    }} />
+                    <div
+                      style={{
+                        width: "26px",
+                        height: "26px",
+                        borderRadius: "2px",
+                        background: color,
+                      }}
+                    />
                   </div>
                   {displayColorPicker ? (
                     <div style={popover}>
-                      <div style={cover} onClick={handleClose}/>
-                      <SketchPicker 
-                        color={color} 
+                      <div style={cover} onClick={handleClose} />
+                      <SketchPicker
+                        color={color}
                         onChange={handleColorChange}
-                        onChangeComplete={(newColor) => console.log("Color picked:", newColor.hex)}
+                        onChangeComplete={(newColor) =>
+                          console.log("Color picked:", newColor.hex)
+                        }
                       />
                     </div>
                   ) : null}
-                  <span style={{ marginLeft: '10px' }}>{color}</span>
+                  <span style={{ marginLeft: "10px" }}>{color}</span>
                 </div>
               </Form.Item>
               <Form.Item>
-                <Button type="primary" htmlType="submit" className="px-3 py-2 bg-black text-white rounded-lg">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="px-3 py-2 bg-black text-white rounded-lg"
+                >
                   Cập nhật
                 </Button>
               </Form.Item>

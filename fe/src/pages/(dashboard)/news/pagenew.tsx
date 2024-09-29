@@ -3,7 +3,7 @@ import instance from "@/configs/axios";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
-import { Button, Input, Popconfirm, Space, Table } from "antd";
+import { Button, Input, message, Popconfirm, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
@@ -39,7 +39,7 @@ const PageNew: React.FC = () => {
       danh_muc_tin_tuc_id:
         newsItem?.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu",
     })) || [];
-  console.log(dataSource);
+  // console.log(dataSource);
 
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
@@ -57,11 +57,11 @@ const PageNew: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tintuc"] });
-      toast.success("Xóa tin tức thành công");
+      message.success("Xóa tin tức thành công");
     },
     onError: (error) => {
       console.error("Error deleting category:", error);
-      toast.error("Xóa tin tức thất bại");
+      message.error("Xóa tin tức thất bại");
     },
   });
 
@@ -244,7 +244,7 @@ const PageNew: React.FC = () => {
           </Link>
         </div>
       </div>
-      <Table columns={columns} dataSource={dataSource} />
+      <Table columns={columns} dataSource={dataSource} loading={isLoading} />
     </main>
   );
 };
