@@ -9,6 +9,7 @@ import {
   message,
   Popconfirm,
   Space,
+  Spin,
   Table,
   Tag,
 } from "antd";
@@ -302,18 +303,17 @@ const UsersAdminNhanvien: React.FC = () => {
   ];
   const [searchText, setSearchText] = useState("");
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setSearchText(e.target.value);
-  // };
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
 
-  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //   if (e.key === "Enter") {
-  //     console.log(searchText);
-  //     // Thực hiện hành động tìm kiếm tại đây
-  //   }
-  // };
-
-  // const products = [...data].reverse();
   isError && <div>Đã xảy ra lỗi</div>;
 
   return (
@@ -333,12 +333,6 @@ const UsersAdminNhanvien: React.FC = () => {
               Thêm
             </Button>
           </Link>
-          {/* <Link to="/admin/users/nhanvien/remote">
-            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
-          
-              Chặn
-            </Button>
-          </Link> */}
         </div>
       </div>
       <div className=" ">
