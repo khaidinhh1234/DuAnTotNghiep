@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Button, Form, Select, Spin, message } from "antd";
+import { Button, Form, Select, Skeleton, Spin, message } from "antd";
 import {
   ArrowLeftOutlined,
   DeleteOutlined,
@@ -29,19 +29,14 @@ const fetchData = async (endpoint: string): Promise<any> => {
   return response.data;
 };
 
-const addProduct = async (productData: FormData): Promise<any> => {
-  const response = await instance.post("/admin/sanpham", productData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return response.data;
-};
-
 const ProductsAndVariants: React.FC = () => {
   const [variants, setVariants] = useState<VariantType[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [form] = Form.useForm<ProductFormData>();
   const [variantData, setVariantData] = useState<Variant[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [data, setData] = useState<any>([]);
+  console.log(data);
   const [productFormData, setProductFormData] = useState<ProductFormData>(
     {} as ProductFormData
   );
@@ -76,7 +71,19 @@ const ProductsAndVariants: React.FC = () => {
   // const st = tagsData?.data.map((tag) => tag.ten_the);
   // console.log(tagsData);
   const addProductMutation = useMutation({
-    mutationFn: addProduct,
+    mutationFn: async (productData: any) => {
+      console.log(productData);
+      // const datas = productData.map((item: any) => {
+      //   return { ...item, noi_dung: data };
+      // });
+      try {
+        const response = await instance.post("/admin/sanpham", productData);
+        return response.data;
+      } catch (error) {
+        console.error("Error adding product:", error);
+        throw new Error("Lỗi khi thêm sản phẩm");
+      }
+    },
     onSuccess: () => {
       message.success("Sản phẩm đã được thêm thành công!");
       resetForm();
@@ -121,7 +128,16 @@ const ProductsAndVariants: React.FC = () => {
   );
 
   if (isLoading) {
-    return <Spin className="flex justify-center items-center h-screen" />;
+    return (
+      <>
+        {" "}
+        <Spin
+          tip="Loading"
+          size="large"
+          className="flex justify-center items-center h-screen mx-10"
+        />
+      </>
+    );
   }
 
   if (!categoriesData || !sizesData || !colorsData || !tagsData) {
@@ -161,7 +177,9 @@ const ProductsAndVariants: React.FC = () => {
     _: any,
     allValues: ProductFormData
   ) => {
-    setProductFormData(allValues);
+    const add = { ...allValues, noi_dung: data };
+
+    setProductFormData(add);
   };
 
   const handleRemoveImage = (file: UploadFile, record: Variant) => {
@@ -181,6 +199,8 @@ const ProductsAndVariants: React.FC = () => {
       validateVariants();
       setIsSubmitting(true);
       const formData = await prepareFormData();
+      console.log(formData);
+
       addProductMutation.mutate(formData);
     } catch (error) {
       handleSubmitError(error);
@@ -188,7 +208,6 @@ const ProductsAndVariants: React.FC = () => {
   };
 
   const updateVariant = (updatedVariant: Variant) => {
-    console.log(updatedVariant);
     setVariantData((prevData) =>
       prevData.map((v) => (v.id === updatedVariant.id ? updatedVariant : v))
     );
@@ -204,7 +223,7 @@ const ProductsAndVariants: React.FC = () => {
   };
 
   const handleAddProductError = (error: any) => {
-    console.error("Error adding product:", error);
+    // console.error("Error adding product:", error);
     const errorFields = error.response?.data?.errors
       ? Object.keys(error.response.data.errors)
       : [];
@@ -331,21 +350,21 @@ const ProductsAndVariants: React.FC = () => {
     setIsSubmitting(false);
   };
 
-  const [SPCode, setSPCode] = useState("");
-  const generateRandomCode = () => {
-    const length = 8;
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let randomCode = "";
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      randomCode += characters.charAt(randomIndex);
-    }
+  // const [SPCode, setSPCode] = useState("");
+  // const generateRandomCode = () => {
+  //   const length = 8;
+  //   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  //   let randomCode = "";
+  //   for (let i = 0; i < length; i++) {
+  //     const randomIndex = Math.floor(Math.random() * characters.length);
+  //     randomCode += characters.charAt(randomIndex);
+  //   }
 
-    setSPCode("SP-" + randomCode);
-  };
-  useEffect(() => {
-    generateRandomCode();
-  }, []);
+  //   setSPCode("SP-" + randomCode);
+  // };
+  // useEffect(() => {
+  //   generateRandomCode();
+  // }, []);
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -373,6 +392,7 @@ const ProductsAndVariants: React.FC = () => {
             categoriesData={categoriesData?.data || []}
             tagsData={tagsData?.data || []}
             onValuesChange={handleProductFormValuesChange}
+            setData={setData}
           />
           <div className="mt-8 px-10">
             <h2 className="text-xl font-semibold mb-4">
