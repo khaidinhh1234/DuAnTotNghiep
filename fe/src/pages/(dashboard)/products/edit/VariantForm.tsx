@@ -168,10 +168,10 @@ const VariantForm: React.FC<VariantFormProps> = ({
         key: "anh_bien_the",
         width: 200,
         render: (_: any, record: Variant) => (
-          <div
-            className="image-upload-container"
-            style={{ minHeight: "102px" }}
-          >
+          // <div
+          //   className="image-upload-container"
+          //   style={{ minHeight: "102px" }}
+          // >
             <Upload
               listType="picture-card"
               fileList={record.anh_bien_the.map((img: any) => ({
@@ -195,7 +195,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
                 </div>
               )}
             </Upload>
-          </div>
+          // </div>
         ),
       },
     ],

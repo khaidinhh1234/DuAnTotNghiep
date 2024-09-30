@@ -52,12 +52,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     // return $tenQuyen;
 })->name('user');
 
-
-
-
-
-
-
 Route::middleware([])
     ->name('client.')
     ->prefix('client')
@@ -76,6 +70,7 @@ Route::middleware([])
         //Client Sản Phẩm
         // lấy ra danh mục cha
         Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
+      
         //Lọc sản phẩm theo danh mục
         Route::post('/loc-san-pham-theo-danh-muc', [TrangSanPhamController::class, 'locSanPhamTheoDanhMuc']);
 
@@ -84,6 +79,12 @@ Route::middleware([])
 
         // lọc theo màu sắc
         Route::post('/loc-san-pham-theo-mau-sac', [TrangSanPhamController::class, 'laySanPhamTheoMauSac']);
+
+        // lấy ra kích thước
+        Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc']);
+      
+        // lọc theo kích thước
+        Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc']);
 
         // Captcha
         Route::get('captcha', [CaptchaController::class, 'generateCaptcha']);
