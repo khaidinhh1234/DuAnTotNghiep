@@ -77,10 +77,10 @@ Route::middleware([])
     ->prefix('client')
     ->group(function () {
         //Client Sản Phẩm
-        //Lọc sản phẩm theo danh mục
+      // lấy ra danh mục cha
         Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha'])->name('danh-muc-cha');
-
-        Route::post('/loc-san-pham-theo-danh-muc', action: [TrangSanPhamController::class, 'locSanPhamTheoDanhMuc'])->name('loc-san-pham-theo-danh-muc');
+ //Lọc sản phẩm theo danh mục
+        Route::post('/loc-san-pham-theo-danh-muc', [TrangSanPhamController::class, 'locSanPhamTheoDanhMuc'])->name('loc-san-pham-theo-danh-muc');
 
     });
 
