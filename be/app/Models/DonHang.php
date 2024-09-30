@@ -18,9 +18,10 @@ class DonHang extends Model
     const TTDH_CXH = 'Chờ xác nhận';
     const TTDH_DXH = 'Đã xác nhận';
     const TTDH_DXL = 'Đang xử lý';
+    const TTDH_DH = 'Đã hủy hàng';
     const TTDH_DGH = 'Đang giao hàng';
     const TTDH_DGTC = 'Đã giao hàng thành công';
-    const TTDH_DH = 'Đã hủy hàng';
+
     const TTDH_HH = 'Hoàn hàng';
     //Cập nhật trạng thái thanh toán
     const TTTT_CTT = 'Chưa thanh toán';
