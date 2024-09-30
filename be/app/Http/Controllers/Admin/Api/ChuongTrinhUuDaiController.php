@@ -81,7 +81,7 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 422);
             }
             $dataUuDai = $request->except('san_pham');
-            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']).'-'.Carbon::now()->timestamp;
+            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']) . '-' . Carbon::now()->timestamp;
             DB::beginTransaction();
             $uuDai = ChuongTrinhUuDai::create($dataUuDai);
             $uuDai->sanPhams()->sync($request->san_pham);
@@ -153,7 +153,7 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 422);
             }
             $dataUuDai = $request->except('san_pham');
-            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']).'-'.Carbon::now()->timestamp;
+            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']) . '-' . Carbon::now()->timestamp;
             DB::beginTransaction();
             $uuDai->update($dataUuDai);
             $uuDai->sanPhams()->sync($request->san_pham);
@@ -215,7 +215,8 @@ class ChuongTrinhUuDaiController extends Controller
     }
 
 
-    public function danhSachXoaMem(){
+    public function danhSachXoaMem()
+    {
         try {
             $data = ChuongTrinhUuDai::onlyTrashed()->get();
             return response()->json([
@@ -230,6 +231,33 @@ class ChuongTrinhUuDaiController extends Controller
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi lọc dữ liệu',
                 'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function khoiPhucXoaMem(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $danhMuc = ChuongTrinhUuDai::onlyTrashed()->findOrFail($id);
+            $danhMuc->restore();
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Khôi phục thành công',
+                    'data' => $danhMuc,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Khôi phục thất bại',
+                'error' => $exception->getMessage()
             ], 500);
         }
     }
