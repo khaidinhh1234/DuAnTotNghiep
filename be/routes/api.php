@@ -185,7 +185,7 @@ Route::middleware([])
         // Đánh giá
         Route::get('danhsachdanhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAll']);
         Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'DanhGiaTheoSanPham']);
-        Route::post('danhsachdanhgia/{danhgia}', [ApiDanhGiaController::class, 'phanHoiDanhGia']);
+        Route::patch('danhsachdanhgia/{danhgia}', [ApiDanhGiaController::class, 'phanHoiDanhGia']);
 
         // Thống kê
         //Thống kê doanh thu
