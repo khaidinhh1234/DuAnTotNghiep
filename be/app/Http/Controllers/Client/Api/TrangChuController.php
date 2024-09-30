@@ -31,7 +31,7 @@ class TrangChuController extends Controller
 
         $now = Carbon::now();
 
-        $sanPhamDangKhuyenMai = BienTheSanPham::with('sanPham')
+        $sanPhamDangKhuyenMai = SanPham::with('bienTheSanPham')
         ->whereNotNull('gia_khuyen_mai')
             ->where('ngay_bat_dau_khuyen_mai', '<=', $now)
             ->where('ngay_ket_thuc_khuyen_mai', '>=', $now)
