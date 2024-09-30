@@ -72,7 +72,7 @@ const ProductForm = ({
         </Form.Item>
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1ad gap-5">
         <Form.Item
           label="Mô tả ngắn"
           name="mo_ta_ngan"
@@ -82,7 +82,7 @@ const ProductForm = ({
         >
           <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="Nội dung"
           name="noi_dung"
           rules={[
@@ -93,7 +93,7 @@ const ProductForm = ({
           ]}
         >
           <TextArea rows={5} placeholder="Nhập nội dung sản phẩm" />
-        </Form.Item>
+        </Form.Item> */}
       </div>
 
       <div className="grid grid-cols-2 gap-5">

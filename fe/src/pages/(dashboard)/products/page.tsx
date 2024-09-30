@@ -95,6 +95,7 @@ const ProductsAdmin: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham"] });
+
       message.open({
         type: "success",
         content: "Xóa sản phẩm thành công",

@@ -2,9 +2,8 @@ import React, { useRef, useState } from "react";
 import {
   DeleteOutlined,
   SearchOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Switch, message } from "antd";
+import { Button, Input, Popconfirm, Space, Table, message } from "antd";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -13,7 +12,6 @@ import "@/global.css";
 import instance from "@/configs/axios";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import { toast } from "react-toastify";
 
 interface DataType {
   id: any;
