@@ -8,12 +8,8 @@ const Tagsedit = () => {
   const [form] = Form.useForm();
   const nav = useNavigate();
   const { id } = useParams();
-  const {
-    data: tagid,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["tag"],
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["tag", id],
     queryFn: async () => {
       try {
         const response = await instance.get("/admin/the/" + id);
@@ -49,8 +45,8 @@ const Tagsedit = () => {
     mutate(data);
     // console.log(values);
   };
-  const tagId = tagid?.data.ten_the;
-  console.log(tagid?.data?.ten_the);
+  // const tagId = tagid?.data.ten_the;
+  // console.log(tagid?.data?.ten_the);
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error</p>;
   return (
@@ -63,7 +59,7 @@ const Tagsedit = () => {
       </div>
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">
-          Cập nhật nhãn dán :{tagId ? tagId : ""}
+          Cập nhật nhãn dán :{data?.data?.ten_the ? data?.data?.ten_the : ""}
           {/* Cập nhật nhãn dán :{tagId.ten_the ? tagId?.ten_the : ""} */}
         </h1>
         <div>
@@ -83,7 +79,7 @@ const Tagsedit = () => {
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 24 }}
-              initialValues={{ ...tagId }}
+              initialValues={{ ...data?.data }}
               onFinish={onFinish}
             >
               <Form.Item
