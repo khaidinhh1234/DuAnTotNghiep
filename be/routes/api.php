@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\BienTheMauSacController;
+use App\Http\Controllers\Admin\Api\ChuongTrinhUuDaiController;
 use App\Http\Controllers\Admin\Api\DanhGiaController as ApiDanhGiaController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
@@ -71,7 +72,8 @@ Route::post('captcha/verify', [CaptchaController::class, 'verifyCaptcha']);
 Route::get('sanpham/{sanpham}/danhgia', [DanhGiaController::class, 'danhSachDanhGia']);
 Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
 
-//'auth:sanctum', 'auth.checkrole'
+
+
 Route::middleware([])
     ->name('client.')
     ->prefix('client')
@@ -83,6 +85,11 @@ Route::middleware([])
         Route::post('/loc-san-pham-theo-danh-muc', action: [TrangSanPhamController::class, 'locSanPhamTheoDanhMuc'])->name('loc-san-pham-theo-danh-muc');
 
     });
+
+// Trang chủ
+Route::get('trangchu', [\App\Http\Controllers\Client\Api\TrangChuController::class, 'index']);
+
+
 
 //'auth:sanctum', 'auth.checkrole'
 Route::middleware([])
@@ -104,11 +111,13 @@ Route::middleware([])
         Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
         Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.kichhoat');
         Route::get('sanpham/{id}', [SanPhamController::class, 'show'])->name('sanpham.show');
+
         // Thẻ
         Route::apiResource('the', TheController::class)->except(['show']);
         Route::get('the/thung-rac', [TheController::class, 'danhSachTheDaXoa'])->name('the.thungrac');
         Route::post('the/thung-rac/{id}', [TheController::class, 'khoiPhucThe'])->name('the.khoiphuc');
         Route::get('the/{id}', [TheController::class, 'show'])->name('the.show');
+
         // Thông tin website
         Route::get('thong-tin-web', [ThongTinWebController::class, 'index'])->name('thongtinweb.index');
         Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate'])->name('thongtinweb.update');
@@ -117,7 +126,6 @@ Route::middleware([])
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
         Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
         Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
-
         Route::post('danhmuctintuc/thung-rac/{id}', [DanhMucTinTucController::class, 'khoiPhucDanhMucTinTuc'])->name('danhmuctintuc.khoiphuc');
         Route::get('danhmuctintuc/{id}', [DanhMucTinTucController::class, 'show'])->name('danhmuctintuc.show');
 
@@ -129,7 +137,7 @@ Route::middleware([])
 
         // Mã khuyến mãi
         Route::post('makhuyenmai/kich-hoat/{id}', [MaKhuyenMaiController::class, 'kichHoatMaKhuyenMai']);
-        Route::post('makhuyenmai/huy-kich-hoat/{id}', [MaKhuyenMaiController::class, 'huyKichMaKhuyenMai']);
+        Route::post('makhuyenmai/huy-kich-hoat/{id}', [MaKhuyenMaiController::class, 'huyKichHoatMaKhuyenMai']);
         Route::apiResource('makhuyenmai', MaKhuyenMaiController::class)->except(['show']);
         Route::post('makhuyenmai/thongbao', [MaKhuyenMaiController::class, 'guiThongBao'])->name('makhuyenmai.thongbao');
         Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa'])->name('makhuyenmai.thungrac');
@@ -160,12 +168,14 @@ Route::middleware([])
 
         //Hạng thành viên
         Route::apiResource('hangthanhvien', HangThanhVienController::class)->except(['show']);
-        // Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
         Route::get('hangthanhvien/thung-rac', [HangThanhVienController::class, 'danhSachHangThanhVienDaXoa'])->name('hangthanhvien.thungrac');
         Route::post('hangthanhvien/thung-rac/{id}', [HangThanhVienController::class, 'khoiPhucHangThanhVien'])->name('hangthanhvien.khoiphuc');
+        Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
 
         // Đánh giá
-        Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAdmin']);
+        Route::get('danhsachdanhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAll']);
+        Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'DanhGiaTheoSanPham']);
+        Route::post('danhsachdanhgia/{danhgia}', [ApiDanhGiaController::class, 'phanHoiDanhGia']);
 
         // Thống kê
         //Thống kê doanh thu
@@ -211,4 +221,8 @@ Route::middleware([])
         Route::apiResource('vaitro', VaiTroController::class);
         // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
+
+        // Chương trình ưu đãi
+        Route::get('chuongtrinhuudai/thung-rac', [ChuongTrinhUuDaiController::class, 'danhSachXoaMem'])->name('chuongtrinhuudai.thungrac');
+        Route::apiResource('chuongtrinhuudai', ChuongTrinhUuDaiController::class);
     });

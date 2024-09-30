@@ -53,19 +53,21 @@ class SanPhamController extends Controller
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
-            'the' => 'required|array',
+            'the' => 'nullable|array',
             'the.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
             'bien_the.*.gia_ban' => 'required|numeric',
             'bien_the.*.gia_khuyen_mai' => 'nullable|numeric|lt:bien_the.*.gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
-            'bien_the.*.ngay_bat_dau_khuyen_mai' => 'nullable|date|required_if:bien_the.*.gia_khuyen_mai,!=,null',
-            'bien_the.*.ngay_ket_thuc_khuyen_mai' => 'nullable|date|required_if:bien_the.*.gia_khuyen_mai,!=,null|after_or_equal:bien_the.*.ngay_bat_dau_khuyen_mai',
+            'bien_the.*.ngay_bat_dau_khuyen_mai' => 'nullable|date', // Không yêu cầu bắt buộc nhập
+            'bien_the.*.ngay_ket_thuc_khuyen_mai' => 'nullable|date|after_or_equal:bien_the.*.ngay_bat_dau_khuyen_mai', // Không yêu cầu bắt buộc nhập
             'bien_the.*.so_luong_bien_the' => 'required|integer',
             'bien_the.*.anh' => 'required|array',
             'bien_the.*.anh.*' => 'required|string'
         ]);
+
+
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -169,17 +171,18 @@ class SanPhamController extends Controller
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
-            'the' => 'required|array',
+            'the' => 'nullable|array',
+            'the.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
             'bien_the.*.gia_ban' => 'required|numeric',
             'bien_the.*.gia_khuyen_mai' => 'nullable|numeric|lt:bien_the.*.gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
-            'bien_the.*.ngay_bat_dau_khuyen_mai' => 'nullable|date|required_if:bien_the.*.gia_khuyen_mai,!=,null',
-            'bien_the.*.ngay_ket_thuc_khuyen_mai' => 'nullable|date|required_if:bien_the.*.gia_khuyen_mai,!=,null|after_or_equal:bien_the.*.ngay_bat_dau_khuyen_mai',
+            'bien_the.*.ngay_bat_dau_khuyen_mai' => 'nullable|date', // Không yêu cầu bắt buộc nhập
+            'bien_the.*.ngay_ket_thuc_khuyen_mai' => 'nullable|date|after_or_equal:bien_the.*.ngay_bat_dau_khuyen_mai', // Không yêu cầu bắt buộc nhập
             'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.anh' => 'nullable|array',
-            'bien_the.*.anh.*' => 'nullable|string'
+            'bien_the.*.anh' => 'required|array',
+            'bien_the.*.anh.*' => 'required|string'
         ]);
 
         if ($validator->fails()) {

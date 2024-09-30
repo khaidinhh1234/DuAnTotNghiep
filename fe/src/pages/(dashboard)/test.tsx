@@ -1,264 +1,57 @@
-import React, { useState } from "react";
-import { Button, Flex, Table } from "antd";
-import type { TableColumnsType, TableProps } from "antd";
-import { useQuery } from "@tanstack/react-query";
-import instance from "@/configs/axios";
-import Detail from "./order/detail";
+import React from "react";
+import Chart from "react-apexcharts";
+import { Card } from "antd";
 
-type TableRowSelection<T extends object = object> =
-  TableProps<T>["rowSelection"];
-
-interface DataType {
-  created_at: string | number | Date;
-  id: number;
-  user_id: number;
-  ghi_chu: string;
-  trang_thai_don_hang: string;
-  phuong_thuc_thanh_toan: string;
-  tong_tien_don_hang: string;
-  ten_nguoi_dat_hang: string;
-  so_dien_thoai_nguoi_dat_hang: string;
-  dia_chi_nguoi_dat_hang: string;
-  ma_giam_gia: string;
-  so_tien_giam_gia: string;
-  trang_thai_thanh_toan: string;
-  duong_dan: string;
-  trang_thai_van_chuyen: string;
-}
-
-const columns: TableColumnsType<DataType> = [
-  {
-    title: "Mã Đơn hàng",
-    dataIndex: "id",
-  },
-  {
-    title: "Ngày tạo",
-    // dataIndex: "created_at",/
-    render: (_, record) => {
-      const date = new Date(record.created_at);
-      return (
-        <div>
-          {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
-        </div>
-      );
+const Component: React.FC = () => {
+  const tuyChonBieuDo = {
+    chart: {
+      type: "bar" as "bar",
     },
-  },
-  {
-    title: "Khách hàng",
-    dataIndex: "ten_nguoi_dat_hang",
-  },
-  {
-    title: "Sản phẩm",
-    dataIndex: "products",
-    render: (_, record) => <Detail record={record} />,
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "trang_thai_don_hang",
-    render: (_, record) => {
-      return (
-        <div
-          className={
-            "font-bold text-[15px] " +
-            (record.trang_thai_don_hang === "Chờ xử lý"
-              ? "text-blue-500"
-              : record.trang_thai_don_hang == "Chờ xác nhận"
-                ? "text-yellow-300"
-                : record.trang_thai_don_hang === "Đã xác nhận"
-                  ? "text-orange-500"
-                  : record.trang_thai_don_hang === "Thành công"
-                    ? "text-green-500"
-                    : "text-red-500")
-          }
-        >
-          {record.trang_thai_don_hang === "Chờ xử lý"
-            ? "Chờ xử lý"
-            : record.trang_thai_don_hang === "Chờ xác nhận"
-              ? "Chờ xác nhận"
-              : record.trang_thai_don_hang === "Đã xác nhận"
-                ? "Đã xác nhận"
-                : record.trang_thai_don_hang === "Thành công"
-                  ? "Thành công"
-                  : "Hủy"}
-        </div>
-      );
+    xaxis: {
+      categories: [
+        "Tháng 1",
+        "Tháng 2",
+        "Tháng 3",
+        "Tháng 4",
+        "Tháng 5",
+        "Tháng 6",
+        "Tháng 7",
+        "Tháng 8",
+        "Tháng 9",
+        "Tháng 10",
+        "Tháng 11",
+        "Tháng 12",
+      ],
     },
-  },
-  {
-    title: "Thanh toán",
-    render: (_, record) => {
-      return (
-        <div
-          className={
-            record.trang_thai_thanh_toan === "Thành công"
-              ? "text-green-500 font-bold text-[15px]"
-              : record.trang_thai_thanh_toan === "Chờ xử lý"
-                ? "text-blue-500 font-bold text-[15px]"
-                : "text-yellow-500 font-bold text-[15px]"
-          }
-        >
-          {record.trang_thai_thanh_toan === "Thành công"
-            ? "Đã thanh toán"
-            : record.trang_thai_thanh_toan === "Chờ xử lý"
-              ? "Chờ xử lý"
-              : "Chưa thanh toán"}
-        </div>
-      );
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: "50%",
+      },
     },
-  },
-  {
-    title: "Giao hàng",
-    render: (_, record) => {
-      return (
-        <div
-          className={
-            record.trang_thai_van_chuyen === "Chờ xử lý"
-              ? "text-teal-600 font-bold text-[15px]"
-              : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-                ? "text-teal-600 font-bold text-[15px]"
-                : record.trang_thai_van_chuyen === "Đang giao hàng"
-                  ? "text-teal-600 font-bold text-[15px]"
-                  : record.trang_thai_van_chuyen === "Đang ship hàng"
-                    ? "text-purple-600 font-bold text-[15px]"
-                    : record.trang_thai_van_chuyen === "Giao thành công"
-                      ? "text-teal-600 font-bold text-[15px]"
-                      : "text-red-500 font-bold text-[15px]" // Add a default case for the ternary operator
-          }
-        >
-          {record.trang_thai_van_chuyen === "Chờ xử lý"
-            ? "Chờ xử lý"
-            : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-              ? "Chờ lấy hàng"
-              : record.trang_thai_van_chuyen === "Đang giao hàng"
-                ? "Đang giao hàng"
-                : record.trang_thai_van_chuyen === "Đang ship hàng"
-                  ? "Đang ship hàng"
-                  : record.trang_thai_van_chuyen === "Giao thành công"
-                    ? "Giao thành công"
-                    : "Hủy"}
-        </div>
-      );
+    dataLabels: {
+      enabled: false,
     },
-  },
-  {
-    title: "COD",
-    render: (_, record) => {
-      return (
-        <div
-          className={
-            record.trang_thai_don_hang === "Thành công"
-              ? "text-green-500 font-bold text-[15px]"
-              : "text-yellow-500 font-bold text-[15px]"
-          }
-        >
-          {record.trang_thai_don_hang === "Thành công"
-            ? "Đã Nhận"
-            : "Chưa Nhận"}
-        </div>
-      );
-    },
-  },
-  {
-    title: "Tổng tiền",
-    dataIndex: " tong_tien_don_hang",
-    render: (_, record) => {
-      return (
-        <div>
-          {new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          }).format(Number(record.tong_tien_don_hang))}
-        </div>
-      );
-    },
-  },
-
-  // {
-  //   title: "Quản trị",
-  //   key: "action",
-  //   render: (_, record) => (
-  //     <Space>
-  //       <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-  //         Cập nhật
-  //       </Button>
-  //     </Space>
-  //   ),
-  // },
-];
-
-// const dataSource = Array.from<DataType>({ length: 46 }).map<DataType>(
-//   (_, i) => ({
-//     key: i,
-//     name: `Edward King ${i}`,
-//     age: 32,
-//     address: `London, Park Lane no. ${i}`,
-//   })
-// );
-
-const Test: React.FC = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [loading, setLoading] = useState(false);
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["ORDERS"],
-    queryFn: async () => {
-      const response = await instance.get("/admin/donhang");
-      return response.data;
-    },
-  });
-  const order: DataType[] | undefined = data?.data;
-  console.log(order);
-  const start = () => {
-    setLoading(true);
-    // ajax request after empty completing
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
+    colors: ["#000000"], // Đặt màu cột là màu đen
   };
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
+  const chuoiDuLieu = [
+    {
+      name: "Doanh số",
+      data: [90, 10, 45, 50, 49, 60, 70, 80, 90, 100, 110, 120],
+    },
+  ];
 
-  const rowSelection: TableRowSelection<DataType> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  interface OrderData extends DataType {
-    key: React.Key;
-  }
-
-  const dataSource: OrderData[] | undefined = order?.map(
-    (item: DataType, i: number): OrderData => ({
-      ...item,
-      key: i,
-    })
-  );
-
-  const hasSelected = selectedRowKeys.length > 0;
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error...</div>;
   return (
-    <Flex gap="middle" vertical>
-      <Flex align="center" gap="middle">
-        <Button
-          type="primary"
-          onClick={start}
-          disabled={!hasSelected}
-          loading={loading}
-        >
-          Reload
-        </Button>
-        {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
-      </Flex>
-      <Table<DataType>
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={dataSource}
+    <Card title="Biểu đồ cột">
+      <Chart
+        options={tuyChonBieuDo}
+        series={chuoiDuLieu}
+        type="bar"
+        height={350}
       />
-    </Flex>
+    </Card>
   );
 };
 
-export default Test;
+export default Component;

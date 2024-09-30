@@ -6,11 +6,11 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Input, message, Popconfirm, Space, Table, Tag } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 
 interface PromotionType {
@@ -26,120 +26,12 @@ interface PromotionType {
   hang_thanh_viens: string;
   tong_giam_gia_toi_da: string;
   so_luot_su_dung: number;
-  gioi_han_su_dung: number;
+  chi_tieu_toi_thieu: number;
 }
-
-// const promotions: PromotionType[] = [
-//   {
-//     key: "1",
-//     ten_khuyen_mai: "Giảm giá 10% cho đơn hàng trên 500k",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "10",
-//     ma_code: "ID123456",
-//     ngay_bat_dau: "2024-09-01",
-//     ngay_ket_thuc: "2024-09-30",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 500000,
-//     so_luot_su_dung: 15,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "2",
-//     ten_khuyen_mai: "Giảm 200k cho đơn hàng từ 1 triệu",
-//     loai_khuyen_mai: "tiền ",
-//     gia_tri: 200000,
-//     ma_code: "ID123456456",
-//     ngay_bat_dau: "2024-08-01",
-//     ngay_ket_thuc: "2024-08-31",
-//     trang_thai: "Đã hết hạn",
-//     dieu_kien_ap_dung: 1000000,
-//     so_luot_su_dung: 50,
-//     gioi_han_su_dung: 50,
-//   },
-//   {
-//     key: "3",
-//     ten_khuyen_mai: "Giảm giá 15% cho đơn hàng trên 1 triệu",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "15",
-//     ma_code: "ID123456789",
-//     ngay_bat_dau: "2024-10-01",
-//     ngay_ket_thuc: "2024-10-31",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 1000000,
-//     so_luot_su_dung: 25,
-//     gioi_han_su_dung: 75,
-//   },
-//   {
-//     key: "4",
-//     ten_khuyen_mai: "Giảm 50k cho đơn hàng từ 500k",
-//     loai_khuyen_mai: "tiền ",
-//     gia_tri: 50000,
-
-//     ma_code: "ID13456456",
-//     ngay_bat_dau: "2024-07-01",
-//     ngay_ket_thuc: "2024-07-31",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 500000,
-//     so_luot_su_dung: 60,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "5",
-//     ten_khuyen_mai: "Giảm giá 5% cho tất cả sản phẩm",
-//     ma_code: "ID123456",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "5",
-//     ngay_bat_dau: "2024-09-15",
-//     ngay_ket_thuc: "2024-09-30",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 0,
-//     so_luot_su_dung: 120,
-//     gioi_han_su_dung: 300,
-//   },
-//   {
-//     key: "6",
-//     ten_khuyen_mai: "Giảm 100k cho đơn hàng từ 700k",
-//     loai_khuyen_mai: "tiền",
-//     gia_tri: 100000,
-//     ma_code: "ID123456456",
-//     ngay_bat_dau: "2024-08-15",
-//     ngay_ket_thuc: "2024-09-15",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 700000,
-//     so_luot_su_dung: 80,
-//     gioi_han_su_dung: 150,
-//   },
-//   {
-//     key: "7",
-//     ten_khuyen_mai: "Tặng quà 50k cho đơn hàng từ 600k",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: 50000,
-//     ma_code: "ID123456789",
-//     ngay_bat_dau: "2024-08-01",
-//     ngay_ket_thuc: "2024-09-01",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 600000,
-//     so_luot_su_dung: 70,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "8",
-//     ten_khuyen_mai: "Giảm giá 20% cho đơn hàng trên 2 triệu",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "20",
-//     ma_code: "ID12566789",
-//     ngay_bat_dau: "2024-09-01",
-//     ngay_ket_thuc: "2024-10-01",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 2000000,
-//     so_luot_su_dung: 90,
-//     gioi_han_su_dung: 200,
-//   },
-// ];
 
 type DataIndex = keyof PromotionType;
 
-const PromotionAdmin: React.FC = () => {
+const VoucherAdmin: React.FC = () => {
   const {
     data: voucher,
     isLoading,
@@ -152,7 +44,51 @@ const PromotionAdmin: React.FC = () => {
       return response.data;
     },
   });
-  console.log(voucher);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async ({ record, action }: any) => {
+      if (action === "Tắt") {
+        try {
+          const response = await instance.post(
+            `/admin/makhuyenmai/huy-kich-hoat/${record.id}`,
+            { ...record, trang_thai: 0 }
+          );
+          message.open({
+            type: "success",
+            content: "Tắt khuyến mãi thành công",
+          });
+          return response.data;
+        } catch (error) {
+          message.open({
+            type: "error",
+            content: "Tắt khuyến mãi không thành công",
+          });
+        }
+      }
+      if (action === "Bật") {
+        try {
+          const response = await instance.post(
+            `/admin/makhuyenmai/kich-hoat/${record.id}`,
+            { ...record, trang_thai: 1 }
+          );
+          message.open({
+            type: "success",
+            content: "Bật khuyến mãi thành công",
+          });
+          return response.data;
+        } catch (error) {
+          message.open({
+            type: "error",
+            content: "Bật khuyến mãi không thành công",
+          });
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["VOUCHER_KEY"] });
+    },
+  });
+
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
   const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({
@@ -352,29 +288,27 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Chi tiết khuyến mãi",
 
-      key: "gioi_han_su_dung",
+      key: " chi_tieu_toi_thieu",
       width: "25%",
-      ...getColumnSearchProps("gioi_han_su_dung"),
+      // ...getColumnSearchProps(" chi_tieu_toi_thieu"),
       sorter: (a: any, b: any) =>
-        a.gioi_han_su_dung.length - b.gioi_han_su_dung.length,
+        a.chi_tieu_toi_thieu.length - b.chi_tieu_toi_thieu.length,
       render: (record) => (
-        console.log(record),
-        (
-          <div>
-            <h5>
-              Mức giảm giá: {record.giam_gia}{" "}
-              {record.loai === "tien_mat" ? "VND" : "%"}
-              <br />
-              {record.gioi_han_su_dung === 0
-                ? "Áp dụng cho tất cả sản phẩm"
-                : "   Giá trị đơn hàng tối thiểu  " +
-                  record.gioi_han_su_dung +
-                  " VND"}
-              {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
+        // console.log(record),
+        <div>
+          <h5>
+            Mức giảm giá: {record.giam_gia.toLocaleString()}{" "}
+            {record.loai === "tien_mat" ? "VNĐ" : "%"}
+            <br />
+            {record.chi_tieu_toi_thieu === 0
+              ? "Áp dụng cho tất cả sản phẩm"
+              : "   Giá trị đơn hàng tối thiểu  " +
+                record.chi_tieu_toi_thieu.toLocaleString() +
+                " VNĐ"}
+            {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
             VND */}
-            </h5>
-          </div>
-        )
+          </h5>
+        </div>
       ),
     },
     {
@@ -387,7 +321,7 @@ const PromotionAdmin: React.FC = () => {
           color={
             trang_thai == 1
               ? "#00a854"
-              : trang_thai == 2
+              : trang_thai == 0
                 ? "#f0cb35"
                 : "#f04134"
           }
@@ -404,7 +338,7 @@ const PromotionAdmin: React.FC = () => {
             {" "}
             {trang_thai == 1
               ? "hoạt động"
-              : trang_thai == 2
+              : trang_thai == 0
                 ? "Tạm ngừng"
                 : "hết hạn "}
           </span>
@@ -422,35 +356,49 @@ const PromotionAdmin: React.FC = () => {
             {record.trang_thai == 1 && (
               <>
                 <Popconfirm
-                  title="Chuyển vào thùng rác"
+                  title=" Bạn có muốn tắt không?"
                   description="Bạn có chắc chắn muốn tắt không?"
                   okText="Có"
+                  onConfirm={() => {
+                    mutate({ record, action: "Tắt" });
+                  }}
                   cancelText="Không"
                 >
-                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  <Button className="bg-gradient-to-l from-red-500  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
                     Tắt
                   </Button>
                 </Popconfirm>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Cập nhật
-                </Button>{" "}
-              </>
-            )}
-            {record.trang_thai == 2 && (
-              <>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Bật
-                </Button>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Xem
-                </Button>{" "}
+                <Link to={`/admin/vouchers/edit/${record.id}`}>
+                  {" "}
+                  <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+                    Cập nhật
+                  </Button>{" "}
+                </Link>
               </>
             )}
             {record.trang_thai == 0 && (
               <>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Xem
-                </Button>{" "}
+                <Button
+                  onClick={() => mutate({ record, action: "Bật" })}
+                  className=" bg-gradient-to-l from-green-700 to-green-600 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+                >
+                  Bật
+                </Button>
+                <Link to={`/admin/vouchers/show/${record.id}`}>
+                  {" "}
+                  <Button className=" bg-gradient-to-l from-sky-600 to-cyan-600 text-white hover:from-sky-500 hover:to-cyan-500 border border-green-300 font-bold">
+                    Xem
+                  </Button>{" "}
+                </Link>
+              </>
+            )}
+            {record.trang_thai == 2 && (
+              <>
+                <Link to={`/admin/vouchers/show/${record.id}`}>
+                  <Button className=" bg-gradient-to-l from-sky-600 to-cyan-600 text-white hover:from-sky-500 hover:to-cyan-500 border border-green-300 font-bold">
+                    Xem
+                  </Button>{" "}
+                </Link>
               </>
             )}
           </>
@@ -496,16 +444,9 @@ const PromotionAdmin: React.FC = () => {
 
         <div className="flex gap-2">
           <Link to="/admin/add-vocher">
-            <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm khuyến mãi
-            </Button>
-          </Link>
-
-          <Link to="remote">
-            <Button className="bg-red-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-              <DeleteOutlined className="mr-1" />
-              Thùng rác
             </Button>
           </Link>
         </div>
@@ -542,4 +483,4 @@ const PromotionAdmin: React.FC = () => {
   );
 };
 
-export default PromotionAdmin;
+export default VoucherAdmin;

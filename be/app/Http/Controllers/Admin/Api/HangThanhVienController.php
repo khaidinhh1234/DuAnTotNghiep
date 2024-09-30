@@ -40,6 +40,7 @@ class HangThanhVienController extends Controller
     {
         $vadidateHangThanhVien = Validator::make($request->all(), [
             'ten_hang_thanh_vien' => 'required|unique:hang_thanh_viens',
+            'anh_hang_thanh_vien' => 'required',
             'chi_tieu_toi_thieu' => 'required|numeric',
             'chi_tieu_toi_da' => 'required|numeric',
             'ngay_bat_dau' => 'nullable',
@@ -74,25 +75,25 @@ class HangThanhVienController extends Controller
     /**
      * Display the specified resource.
      */
-    // public function show(string $id)
-    // {
-    //     try {
-    //         $hangThanhVien = HangThanhVien::query()->findOrFail($id);
-    //         return response()->json([
-    //             'status' => true,
-    //             'status_code' => 200,
-    //             'message' => 'Lấy dữ liệu hạng thành viên thành công',
-    //             'data' => $hangThanhVien
-    //         ], 200);
-    //     } catch (\Exception $exception) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'status_code' => 404,
-    //             'message' => 'Không tìm thấy hạng thành viên',
-    //             'error' => $exception->getMessage()
-    //         ], 404);
-    //     }
-    // }
+    public function show(string $id)
+    {
+        try {
+            $hangThanhVien = HangThanhVien::query()->findOrFail($id);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu hạng thành viên thành công',
+                'data' => $hangThanhVien
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy hạng thành viên',
+                'error' => $exception->getMessage()
+            ], 404);
+        }
+    }
 
     /**
      * Update the specified resource in storage.
@@ -101,6 +102,7 @@ class HangThanhVienController extends Controller
     {
         $vadidateHangThanhVien = Validator::make($request->all(), [
             'ten_hang_thanh_vien' => 'required|unique:hang_thanh_viens,id,' . $id,
+            'anh_hang_thanh_vien' => 'required',
             'chi_tieu_toi_thieu' => 'required|integer',
             'chi_tieu_toi_da' => 'required|integer',
             'ngay_bat_dau' => 'nullable',
@@ -155,7 +157,8 @@ class HangThanhVienController extends Controller
         }
     }
 
-    public function danhSachHangThanhVienDaXoa(){
+    public function danhSachHangThanhVienDaXoa()
+    {
         try {
             $hangThanhVien = HangThanhVien::onlyTrashed()->orderByDesc('deleted_at')->get();
             return response()->json([

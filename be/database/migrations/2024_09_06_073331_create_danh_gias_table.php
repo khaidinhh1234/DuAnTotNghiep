@@ -19,7 +19,9 @@ return new class extends Migration
             $table->foreignIdFor(SanPham::class)->constrained();
             $table->integer('so_sao_san_pham')->nullable();
             $table->integer('so_sao_dich_vu_van_chuyen')->nullable();
-            $table->text('noi_dung')->nullable();
+            $table->text('chat_luong_san_pham')->nullable();
+            $table->text('mo_ta')->nullable();
+            $table->text('phan_hoi')->nullable();
             $table->integer('huu_ich')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -9,6 +9,7 @@ import {
   Form,
   InputRef,
   message,
+  Spin,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Highlighter from "react-highlight-words";
@@ -248,19 +249,12 @@ const ColorManagement: React.FC = () => {
             onConfirm={() => deleteMutation.mutate(item.id)}
           >
             {/* <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors"> */}
-            <Button
-              type="primary"
-              className="px-3 py-2 bg-black text-white rounded-lg"
-            >
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Xóa
             </Button>
           </Popconfirm>
           <Link to={`/admin/products/bienthecolor/edit/${item.id}`}>
-            {/* <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors"> */}
-            <Button
-              type="primary"
-              className="px-3 py-2 bg-black text-white rounded-lg"
-            >
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
             </Button>
           </Link>
@@ -268,9 +262,6 @@ const ColorManagement: React.FC = () => {
       ),
     },
   ];
-
-  if (isError) return <div>Đã xảy ra lỗi</div>;
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
 
   const popover: React.CSSProperties = {
     position: "absolute",
@@ -285,6 +276,16 @@ const ColorManagement: React.FC = () => {
     left: "0px",
   };
 
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
   return (
     <>
       <Form
@@ -349,7 +350,7 @@ const ColorManagement: React.FC = () => {
             type="primary"
             htmlType="submit"
             className="px-3 py-2 bg-black text-white rounded-lg"
-            loading={addColorMutation.isLoading}
+            // loading={addColorMutation.isLoading}
           >
             Thêm màu
           </Button>
@@ -361,6 +362,7 @@ const ColorManagement: React.FC = () => {
         dataSource={colorData}
         pagination={{ pageSize: 5 }}
         className="equal-width-table"
+        loading={isLoading}
       />
     </>
   );

@@ -1,19 +1,23 @@
-import React, { useRef, useState } from "react";
+import "@/global.css";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  DeleteOutlined,
-  SearchOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Switch, message } from "antd";
+  Button,
+  Input,
+  Popconfirm,
+  Space,
+  Spin,
+  Switch,
+  Table,
+  message,
+} from "antd";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import "@/global.css";
 
 import instance from "@/configs/axios";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import { toast } from "react-toastify";
 
 interface DataType {
   id: any;
@@ -43,37 +47,42 @@ const ProductsAdmin: React.FC = () => {
   const searchInput = useRef<InputRef>(null);
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["sanpham"],
     queryFn: async () => {
       const res = await instance.get("/admin/sanpham");
       return res.data;
     },
   });
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: number }) => {
-      if (status === 1) {
-        // Change this line to use the correct endpoint for activating products
-        const res = await instance.post(`/admin/sanpham/kich-hoat/${id}`);
-        return res.data;
-      } else {
-        const res = await instance.post(`/admin/sanpham/huy-kich-hoat/${id}`);
-        return res.data;
+  const { mutate } = useMutation({
+    mutationFn: async ({ checked, data }: { checked: boolean; data: any }) => {
+      try {
+        // console.log(checked, data);
+        const id = data.id;
+        if (checked) {
+          const res = await instance.post(`/admin/sanpham/kich-hoat/${id}`);
+          message.success("kích hoạt thành công");
+
+          return res.data;
+        } else {
+          const res = await instance.post(`/admin/sanpham/huy-kich-hoat/${id}`);
+          message.success("Hủy kích hoạt thành công");
+          return res.data;
+        }
+      } catch (error: any) {
+        message.error("Cập nhật trạng thái thất bại");
       }
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham"] });
-      message.success("Cập nhật trạng thái thành công");
-    },
-    onError: () => {
-      message.error("Cập nhật trạng thái thất bại");
     },
   });
 
-  const handleStatusChange = (checked: boolean, product: any) => {
-    const newStatus = checked ? 1 : 0;
-    updateStatusMutation.mutate({ id: product.id, status: newStatus });
-  };
+  // const handleStatusChange = (checked: boolean, product: any) => {
+  //   const newStatus = checked ? 1 : 0;
+  //   updateStatusMutation.mutate({ id: product.id, status: newStatus });
+  // };
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string | number) => {
@@ -84,13 +93,19 @@ const ProductsAdmin: React.FC = () => {
         throw new Error(response.data.message || "Failed to delete");
       }
     },
-    onSuccess: (id) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham"] });
-      toast.success("Xóa sản phẩm thành công");
+      message.open({
+        type: "success",
+        content: "Xóa sản phẩm thành công",
+      });
     },
     onError: (error) => {
       console.error("Error deleting product:", error);
-      toast.error("Xóa sản phẩm thất bại");
+      message.open({
+        type: "error",
+        content: "Xóa sản phẩm thất bại",
+      });
     },
   });
 
@@ -194,8 +209,9 @@ const ProductsAdmin: React.FC = () => {
   const columns: TableColumnsType<DataType> = [
     {
       title: "STT",
-      key: "stt",
-      render: (text, item, index) => index + 1,
+      key: "id",
+      className: "pl-5",
+      render: (item) => <p className="ml-2">{item.index + 1}</p>,
       width: "5%",
     },
     {
@@ -246,13 +262,14 @@ const ProductsAdmin: React.FC = () => {
       key: "trang_thai",
       width: "15%",
       render: (_, item) => (
+        // console.log(item.trang_thai),
         <Switch
-          checked={item.trang_thai === 1}
-          onChange={(checked) => handleStatusChange(checked, item)}
+          checked={item.trang_thai === 1 ? true : false}
+          onChange={(checked) => mutate({ checked, data: item })}
           checkedChildren=""
           unCheckedChildren=""
           // loading={updateStatusMutation.isLoading}
-          className="custom-switch"
+          className={` custom-switch`}
         />
       ),
     },
@@ -262,18 +279,18 @@ const ProductsAdmin: React.FC = () => {
       render: (_, item) => (
         <Space>
           <Popconfirm
-            title="Xóa sản phẩm"
+            title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
             okText="Có"
             cancelText="Không"
             onConfirm={() => deleteMutation.mutate(item.id)}
           >
-            <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Xóa
             </Button>
           </Popconfirm>
           <Link to={`/admin/products/edit/${item.id}`}>
-            <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors">
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
             </Button>
           </Link>
@@ -287,8 +304,16 @@ const ProductsAdmin: React.FC = () => {
       console.log(searchText);
     }
   };
-  isError && <div>Đã xảy ra lỗi</div>;
-  isLoading && <div>Đang tải dữ liệu...</div>;
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -297,16 +322,16 @@ const ProductsAdmin: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Sản phẩm</h1>
+        <h1 className="font-semibold md:text-3xl">Danh sách sản phẩm</h1>
         <div className="flex gap-2">
           <Link to="/admin/products/add" className="mr-1">
-            <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm sản phẩm
             </Button>
           </Link>
           <Link to="/admin/products/remote">
-            <Button className="bg-red-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
+            <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
               <DeleteOutlined className="mr-1" />
               Thùng rác
             </Button>
@@ -327,6 +352,7 @@ const ProductsAdmin: React.FC = () => {
         columns={columns}
         dataSource={sanpham}
         pagination={{ pageSize: 5 }}
+        loading={isLoading}
       />
     </main>
   );
