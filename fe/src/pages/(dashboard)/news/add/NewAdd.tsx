@@ -11,49 +11,6 @@ const NewAdd = () => {
   const nav = useNavigate();
   const [form] = Form.useForm();
 
-<<<<<<< HEAD
-
-    const { data, error, isLoading } = useQuery({
-        queryKey: ['danhmuctintuc', 'taikhoan'],
-        queryFn: async () => {
-            try {
-                const [categoryResponse, userResponse] = await Promise.all([
-                    instance.get(`/admin/danhmuctintuc`),
-                    instance.get(`/admin/taikhoan`)
-                ]);
-
-                return {
-                    categories: categoryResponse.data.data,
-                    users: userResponse.data.data
-                };
-            } catch (error) {
-                console.error(error);
-                return { categories: [], users: [] };
-            }
-        },
-    });
-
-    const { mutate } = useMutation({
-        mutationFn: async (news: INew) => {
-            const response = await instance.post(`/admin/tintuc`, news);
-            return response.data;
-        },
-        onSuccess: () => {
-            message.success("Thêm tin tức thành công");
-            form.resetFields();
-            nav('/admin/news');
-        },
-        onError: (error) => {
-            message.error(error.message);
-        },
-    });
-
- 
-    const onFinish = (values: any) => {
-        const categoryData: INew = {
-            ...values,
-            user_id: values.user_id
-=======
   // Fetch categories and users
   const { data, error, isLoading } = useQuery({
     queryKey: ["danhmuctintuc", "taikhoan"],
@@ -67,7 +24,6 @@ const NewAdd = () => {
         return {
           categories: categoryResponse.data.data,
           users: userResponse.data.data,
->>>>>>> f91cab5017b391d0ae11b2aac273879d81b38712
         };
       } catch (error) {
         console.error(error);
@@ -101,16 +57,11 @@ const NewAdd = () => {
     mutate(categoryData);
   };
 
-<<<<<<< HEAD
-    if (isLoading) {
-        return <div>Đang tải...</div>;
-    }
-=======
+
   // Handle loading and error states
   if (isLoading) {
     return <div>Đang tải...</div>;
   }
->>>>>>> f91cab5017b391d0ae11b2aac273879d81b38712
 
   if (error) {
     return <div>Có lỗi xảy ra khi tải dữ liệu</div>;
