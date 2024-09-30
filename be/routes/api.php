@@ -70,8 +70,8 @@ Route::middleware([])
         //Client Sản Phẩm
         // lấy ra danh mục cha
         Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
-      
-        //Lọc sản phẩm theo danh mục
+
+        // Lọc sản phẩm theo danh mục
         Route::post('/loc-san-pham-theo-danh-muc', [TrangSanPhamController::class, 'locSanPhamTheoDanhMuc']);
 
         // lấy ra màu sắc
@@ -82,9 +82,11 @@ Route::middleware([])
 
         // lấy ra kích thước
         Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc']);
-      
+
         // lọc theo kích thước
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc']);
+
+        //Client Chi tiết sản phẩm
 
         // Captcha
         Route::get('captcha', [CaptchaController::class, 'generateCaptcha']);
@@ -118,7 +120,7 @@ Route::middleware([])
         Route::post('sanpham/kich-hoat/{id}', [SanPhamController::class, 'kichHoatSanPham'])->name('sanpham.kichhoat');
         Route::post('sanpham/huy-kich-hoat/{id}', [SanPhamController::class, 'huyKichHoatSanPham'])->name('sanpham.huykichhoat');
         Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
-        Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.kichhoat');
+        Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
         Route::get('sanpham/{id}', [SanPhamController::class, 'show'])->name('sanpham.show');
 
         // Kích thước biến thể
