@@ -57,6 +57,7 @@ const NewAdd = () => {
     mutate(categoryData);
   };
 
+
   // Handle loading and error states
   if (isLoading) {
     return <div>Đang tải...</div>;

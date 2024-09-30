@@ -1,10 +1,26 @@
-import React, { useState } from "react";
-import { Button, Flex, Input, message, Popconfirm, Select, Table } from "antd";
-import type { TableColumnsType, TableProps } from "antd";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
+import { SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type {
+  InputRef,
+  TableColumnsType,
+  TableColumnType,
+  TableProps,
+} from "antd";
+import {
+  Button,
+  Flex,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+} from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useEffect, useRef, useState } from "react";
+import Highlighter from "react-highlight-words";
 import Detail from "./detail";
-
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
 
@@ -43,159 +59,297 @@ const datas = [
     label: "Hủy đơn hàng",
   },
 ];
-const columns: TableColumnsType<DataType> = [
-  {
-    title: "Mã Đơn hàng",
-    dataIndex: "ma_don_hang",
-  },
-  {
-    title: "Ngày tạo",
-    // dataIndex: "created_at",/
-    render: (_, record) => {
-      const date = new Date(record.created_at);
-      return (
-        <div>
-          {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
-        </div>
-      );
-    },
-  },
-  {
-    title: "Khách hàng",
-    dataIndex: "ten_nguoi_dat_hang",
-  },
-  {
-    title: "Sản phẩm",
-    dataIndex: "products",
-    render: (_, record) => <Detail record={record} />,
-  },
-  {
-    title: "Trạng thái",
-    dataIndex: "trang_thai_don_hang",
-    render: (_, record) => {
-      return (
-        <div
-          className={
-            "font-bold text-[15px] " +
-            (record.trang_thai_don_hang === "Chờ xác nhận"
-              ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
-              : record.trang_thai_don_hang === "Đã xác nhận"
-                ? "text-orange-500" // Đã xác nhận: màu cam đậm
-                : record.trang_thai_don_hang === "Đang xử lý"
-                  ? "text-blue-500" // Đang xử lý: màu xanh dương
-                  : record.trang_thai_don_hang === "Đang giao hàng"
-                    ? "text-purple-500" // Đang giao hàng: màu tím
-                    : record.trang_thai_don_hang === "Đã giao hàng thành công"
-                      ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
-                      : "text-red-500") // Các trạng thái khác: màu đỏ
-          }
-        >
-          {record.trang_thai_don_hang === "Chờ xác nhận"
-            ? "Chờ xác nhận"
-            : record.trang_thai_don_hang === "Đã xác nhận"
-              ? "Đã xác nhận"
-              : record.trang_thai_don_hang === "Đang xử lý"
-                ? "Đang xử lý"
-                : record.trang_thai_don_hang === "Đang giao hàng"
-                  ? "Đang giao hàng"
-                  : record.trang_thai_don_hang === "Đã giao hàng thành công"
-                    ? "Giao Thành công"
-                    : "Hủy"}
-        </div>
-      );
-    },
-  },
-  {
-    title: "Thanh toán",
-    render: (_, record) => {
-      return (
-        <div
-          className={
-            record.trang_thai_thanh_toan === "Đã thanh toán"
-              ? "text-green-500 font-bold text-[15px]"
-              : record.trang_thai_thanh_toan === "Chờ xử lý"
-                ? "text-blue-500 font-bold text-[15px]"
-                : "text-yellow-500 font-bold text-[15px]"
-          }
-        >
-          {record.trang_thai_thanh_toan === "Đã thanh toán"
-            ? "Đã thanh toán"
-            : record.trang_thai_thanh_toan === "Chờ xử lý"
-              ? "Chờ xử lý"
-              : "Chưa thanh toán"}
-        </div>
-      );
-    },
-  },
-  {
-    title: "Giao hàng",
-    render: (_, record) => {
-      return (
-        <div
-          className={
-            record.trang_thai_van_chuyen === "Chờ xử lý"
-              ? "text-orange-500 font-bold text-[15px]"
-              : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-                ? "text-blue-500 font-bold text-[15px]"
-                : record.trang_thai_van_chuyen === "Đang giao hàng"
-                  ? "text-green-500 font-bold text-[15px]"
-                  : record.trang_thai_van_chuyen === "Giao hàng thành công"
-                    ? "text-teal-500 font-bold text-[15px]"
-                    : "text-red-500 font-bold text-[15px]" // Trạng thái khác
-          }
-        >
-          {record.trang_thai_van_chuyen === "Chờ xử lý"
-            ? "Chờ xử lý"
-            : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-              ? "Chờ lấy hàng"
-              : record.trang_thai_van_chuyen === "Đang giao hàng"
-                ? "Đang giao hàng"
-                : record.trang_thai_van_chuyen === "Giao hàng thành công"
-                  ? "Giao hàng thành công"
-                  : "Hủy"}
-        </div>
-      );
-    },
-  },
-  {
-    title: "COD",
-    render: (_, record) => {
-      return (
-        <div
-          className={
-            record.trang_thai_thanh_toan === "Chưa thanh toán"
-              ? "text-red-500 font-bold text-[15px]" // Màu đỏ cho "Chưa thanh toán"
-              : record.trang_thai_thanh_toan === "Đã thanh toán"
-                ? "text-green-500 font-bold text-[15px]" // Màu xanh lá cho "Đã thanh toán"
-                : "text-gray-500 font-bold text-[15px]" // Màu xám cho các trạng thái khác
-          }
-        >
-          {record.trang_thai_thanh_toan === "Chưa thanh toán"
-            ? "Chưa Nhận"
-            : record.trang_thai_thanh_toan === "Đã thanh toán"
-              ? "Đã Nhận"
-              : "Không thu tiền"}
-        </div>
-      );
-    },
-  },
-  {
-    title: "Tổng tiền",
-    dataIndex: " tong_tien_don_hang",
-    render: (_, record) => {
-      return (
-        <div>
-          {new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          }).format(Number(record.tong_tien_don_hang))}
-        </div>
-      );
-    },
-  },
-];
-
+type DataIndex = keyof any;
 const OrderAdmin: React.FC = () => {
+  const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
+  const [searchText, setSearchText] = useState("");
+
+  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const searchInput = useRef<InputRef>(null);
+
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps["confirm"],
+    dataIndex: DataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
+  };
+
+  const getColumnSearchProps = (
+    dataIndex: DataIndex
+  ): TableColumnType<any> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${String(dataIndex)}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Tìm kiếm
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: "Mã Đơn hàng",
+      dataIndex: "ma_don_hang",
+      ...getColumnSearchProps("ma_don_hang"),
+      onFilter: (value, record: any) => record.ma_don_hang.indexOf(value) === 0,
+      sorter: (a: any, b: any) => a.ma_don_hang.length - b.ma_don_hang.length,
+    },
+    {
+      title: "Ngày tạo",
+      ...getColumnSearchProps("created_at"),
+      sorter: (a: any, b: any) => a.created_at - b.created_at,
+      onFilter: (value: boolean | React.Key, record: any) =>
+        new Date(record.created_at)
+          .toLocaleDateString("vi-VN")
+          .includes(String(value)) ||
+        new Date(record.created_at)
+          .toLocaleDateString("vi-VN")
+          .includes(String(value)), // Tìm
+
+      // dataIndex: "created_at",/
+      render: (_, record) => {
+        const date = new Date(record.created_at);
+        return (
+          <div>
+            {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Khách hàng",
+      ...getColumnSearchProps("ten_nguoi_dat_hang"),
+      sorter: (a: any, b: any) =>
+        a.ten_nguoi_dat_hang.localeCompare(b.ten_nguoi_dat_hang),
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.ten_nguoi_dat_hang
+          .toLowerCase()
+          .includes(String(value).toLowerCase()),
+
+      dataIndex: "ten_nguoi_dat_hang",
+    },
+    {
+      title: "Sản phẩm",
+      dataIndex: "products",
+      render: (_, record) => <Detail record={record} />,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "trang_thai_don_hang",
+      ...getColumnSearchProps("trang_thai_don_hang"),
+      sorter: (a: any, b: any) =>
+        a.trang_thai_don_hang.localeCompare(b.trang_thai_don_hang),
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.trang_thai_don_hang
+          .toLowerCase()
+          .includes(String(value).toLowerCase()),
+
+      render: (_, record) => {
+        return (
+          <div
+            className={
+              "font-bold text-[15px] " +
+              (record.trang_thai_don_hang === "Chờ xác nhận"
+                ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
+                : record.trang_thai_don_hang === "Đã xác nhận"
+                  ? "text-orange-500" // Đã xác nhận: màu cam đậm
+                  : record.trang_thai_don_hang === "Đang xử lý"
+                    ? "text-blue-500" // Đang xử lý: màu xanh dương
+                    : record.trang_thai_don_hang === "Đang giao hàng"
+                      ? "text-purple-500" // Đang giao hàng: màu tím
+                      : record.trang_thai_don_hang === "Đã giao hàng thành công"
+                        ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
+                        : "text-red-500") // Các trạng thái khác: màu đỏ
+            }
+          >
+            {record.trang_thai_don_hang === "Chờ xác nhận"
+              ? "Chờ xác nhận"
+              : record.trang_thai_don_hang === "Đã xác nhận"
+                ? "Đã xác nhận"
+                : record.trang_thai_don_hang === "Đang xử lý"
+                  ? "Đang xử lý"
+                  : record.trang_thai_don_hang === "Đang giao hàng"
+                    ? "Đang giao hàng"
+                    : record.trang_thai_don_hang === "Đã giao hàng thành công"
+                      ? "Giao Thành công"
+                      : "Hủy"}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Thanh toán",
+      dataIndex: "trang_thai_thanh_toan",
+      ...getColumnSearchProps("trang_thai_thanh_toan"),
+      sorter: (a: any, b: any) =>
+        a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.trang_thai_thanh_toan
+          .toLowerCase()
+          .includes(String(value).toLowerCase()),
+
+      render: (_, record) => {
+        return (
+          <div
+            className={
+              record.trang_thai_thanh_toan === "Đã thanh toán"
+                ? "text-green-500 font-bold text-[15px]"
+                : record.trang_thai_thanh_toan === "Chờ xử lý"
+                  ? "text-blue-500 font-bold text-[15px]"
+                  : "text-yellow-500 font-bold text-[15px]"
+            }
+          >
+            {record.trang_thai_thanh_toan === "Đã thanh toán"
+              ? "Đã thanh toán"
+              : record.trang_thai_thanh_toan === "Chờ xử lý"
+                ? "Chờ xử lý"
+                : "Chưa thanh toán"}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Giao hàng",
+      dataIndex: "trang_thai_van_chuyen",
+      ...getColumnSearchProps("trang_thai_van_chuyen"),
+      sorter: (a: any, b: any) =>
+        a.trang_thai_van_chuyen.localeCompare(b.trang_thai_van_chuyen),
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.trang_thai_van_chuyen
+          .toLowerCase()
+          .includes(String(value).toLowerCase()),
+
+      render: (_, record) => {
+        return (
+          <div
+            className={
+              record.trang_thai_van_chuyen === "Chờ xử lý"
+                ? "text-orange-500 font-bold text-[15px]"
+                : record.trang_thai_van_chuyen === "Chờ lấy hàng"
+                  ? "text-blue-500 font-bold text-[15px]"
+                  : record.trang_thai_van_chuyen === "Đang giao hàng"
+                    ? "text-green-500 font-bold text-[15px]"
+                    : record.trang_thai_van_chuyen === "Giao hàng thành công"
+                      ? "text-teal-500 font-bold text-[15px]"
+                      : "text-red-500 font-bold text-[15px]" // Trạng thái khác
+            }
+          >
+            {record.trang_thai_van_chuyen === "Chờ xử lý"
+              ? "Chờ xử lý"
+              : record.trang_thai_van_chuyen === "Chờ lấy hàng"
+                ? "Chờ lấy hàng"
+                : record.trang_thai_van_chuyen === "Đang giao hàng"
+                  ? "Đang giao hàng"
+                  : record.trang_thai_van_chuyen === "Giao hàng thành công"
+                    ? "Giao hàng thành công"
+                    : "Hủy"}
+          </div>
+        );
+      },
+    },
+    {
+      title: "COD",
+      render: (_, record) => {
+        return (
+          <div
+            className={
+              record.trang_thai_thanh_toan === "Chưa thanh toán"
+                ? "text-red-500 font-bold text-[15px]" // Màu đỏ cho "Chưa thanh toán"
+                : record.trang_thai_thanh_toan === "Đã thanh toán"
+                  ? "text-green-500 font-bold text-[15px]" // Màu xanh lá cho "Đã thanh toán"
+                  : "text-gray-500 font-bold text-[15px]" // Màu xám cho các trạng thái khác
+            }
+          >
+            {record.trang_thai_thanh_toan === "Chưa thanh toán"
+              ? "Chưa Nhận"
+              : record.trang_thai_thanh_toan === "Đã thanh toán"
+                ? "Đã Nhận"
+                : "Không thu tiền"}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Tổng tiền",
+      dataIndex: " tong_tien_don_hang",
+      render: (_, record) => {
+        return (
+          <div>
+            {new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(Number(record.tong_tien_don_hang))}
+          </div>
+        );
+      },
+    },
+  ];
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [trangthai, setTrangThai] = useState<string>();
   const [loading, setLoading] = useState(false);
@@ -290,7 +444,42 @@ const OrderAdmin: React.FC = () => {
     key: React.Key;
   }
 
-  const dataSource: OrderData[] | undefined = order?.map(
+  const [filteredData, setFilteredData] = useState<DataType[]>([]);
+
+  // Cập nhật dữ liệu khi nhận được từ API
+  useEffect(() => {
+    if (order) {
+      setFilteredData(order);
+    }
+  }, [order]);
+
+  // Hàm xử lý tìm kiếm
+  const handleSearchChange = (e: any) => {
+    const value = e.target.value;
+    setSearchText(value);
+    // console.log(value);
+    if (value) {
+      const filtered = order?.filter(
+        (item: any) =>
+          item.ten_nguoi_dat_hang.toLowerCase().includes(value.toLowerCase()) ||
+          item.ma_don_hang.toLowerCase().includes(value.toLowerCase()) ||
+          item.trang_thai_don_hang
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          item.trang_thai_thanh_toan
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          item.trang_thai_van_chuyen.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredData(filtered || []);
+    } else {
+      if (order) {
+        setFilteredData(order); // Reset to original order data if search is empty
+      }
+    }
+  };
+
+  const dataSource: OrderData[] | undefined = filteredData?.map(
     (item: DataType, i: number): OrderData => ({
       ...item,
       key: i + 1,
@@ -318,9 +507,9 @@ const OrderAdmin: React.FC = () => {
           <Input
             placeholder="Tìm kiếm..."
             size="large"
-            // value={searchText}
-            // onChange={(e) => setSearchText(e.target.value)}
-            // onKeyDown={handleKeyDown}
+            value={searchText}
+            onChange={handleSearchChange}
+            style={{ marginBottom: 16, maxWidth: 300 }}
           />
         </div>
         <Flex gap="middle" vertical>

@@ -12,9 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('update:product-variants-price')->daily();
         $schedule->command('promo:update-status')->daily();
         $schedule->command('chuongtrinh:delete-expired')->daily();
+        $schedule->command('sanpham:cap-nhat-giam-gia-soc')->hourly();
+        $schedule->command('sanpham:cap-nhat-hang-moi')->daily();
     }
 
 

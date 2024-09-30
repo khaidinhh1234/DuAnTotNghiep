@@ -36,7 +36,7 @@ const EditVoucher = () => {
   const [max, setMax] = useState(479000);
   const [voucher, setVoucher] = useState(56010);
   const [phantram, setphantram] = useState(30);
-  const [voucherCode, setVoucherCode] = useState("");
+  const [voucherCode] = useState("");
   const [value, setValue] = useState(0);
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [selectedValues2, setSelectedValues2] = useState<string[]>([]);
@@ -44,7 +44,7 @@ const EditVoucher = () => {
   const [danhm, setdanhmuc] = useState<string[]>([]);
 
   const [isAllSelected1, setIsAllSelected1] = useState(false);
-  const [rank, setrank] = useState([]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const nav = useNavigate();
 
@@ -261,7 +261,7 @@ const EditVoucher = () => {
     // generateRandomCode();
     setTabKey(voucherid?.data?.loai == "tien_mat");
   }, []);
-  // console.log("voucherid", tabKey);
+  console.log("voucherid", tabKey);
   if (hangLoading) return <p>Loading...</p>;
   if (hangError) return <p>error...</p>;
   return (
@@ -653,7 +653,7 @@ const EditVoucher = () => {
                   </div>
                 </div>{" "}
                 <div
-                  className={`relative  border p-3 rounded-lg + ${tabKey == false ? "border-slate-600" : ""}`}
+                  className={`relative  border p-3 rounded-lg + ${tabKey === false ? "border-slate-600" : ""}`}
                   // onClick={() => setTabKey(false)}
                 >
                   {tabKey == false && (
@@ -670,7 +670,7 @@ const EditVoucher = () => {
 
                   <h3>Giảm giá theo phần trăm</h3>
                   <div
-                    className={`grid grid-cols-5  px-3 py-5 text-slate-900 rounded-lg  ${tabKey == false ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
+                    className={`grid grid-cols-5  px-3 py-5 text-slate-900 rounded-lg  ${tabKey === false ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
                       <img src="" alt="" className="w-10 h-10 " />
