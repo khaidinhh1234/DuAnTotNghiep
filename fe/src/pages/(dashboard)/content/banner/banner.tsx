@@ -737,6 +737,7 @@ interface BannerData {
     van_ban_quang_cao: string;
     mau_van_ban_quang_cao: string;
     duong_dan: string;
+    mau_tieu_de_nut: string;
   };
   duong_dan_anh: string[];
 }
@@ -805,7 +806,7 @@ const BannerManagement: React.FC = () => {
         { key: 'Tiêu đề chính', value: bannerData.noi_dung.tieu_de_chinh || '', color: bannerData.noi_dung.mau_tieu_de_chinh || '' },
         { key: 'tiêu đề phụ', value: bannerData.noi_dung.tieu_de_phu || '', color: bannerData.noi_dung.mau_tieu_de_phu || '' },
         { key: 'văn bản quảng cáo', value: bannerData.noi_dung.van_ban_quang_cao || '', color: bannerData.noi_dung.mau_van_ban_quang_cao || '' },
-        { key: 'tiêu đề nút', value: bannerData.noi_dung.tieu_de_nut || '', color: bannerData.noi_dung.mau_nut || '' },
+        { key: 'tiêu đề nút', value: bannerData.noi_dung.tieu_de_nut || '', color: bannerData.noi_dung.mau_tieu_de_nut || '' },
         { key: 'đường dẫn', value: bannerData.noi_dung.duong_dan || '' },
       ]);
       setAccentColor(bannerData.noi_dung.mau_nut || '#000000');
@@ -899,6 +900,7 @@ const BannerManagement: React.FC = () => {
         mau_tieu_de_chinh: bannerTextData[0].color,
         van_ban_quang_cao: bannerTextData[2].value,
         mau_van_ban_quang_cao: bannerTextData[2].color,
+        mau_tieu_de_nut: bannerTextData[3].color,
         duong_dan: bannerTextData[4].value,
       },
     };

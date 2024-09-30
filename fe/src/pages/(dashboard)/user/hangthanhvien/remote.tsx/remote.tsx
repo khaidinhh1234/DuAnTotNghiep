@@ -1,20 +1,20 @@
+
 import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, message, Popconfirm, Space, Table, Tabs } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import { Button, Input, message, Space, Table } from "antd";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
-import { toast } from "react-toastify";
 
-interface ICategories {
+interface IMemberRank {
   id: string | number;
-  anh_san_pham?: string;
+  ten_hang_thanh_vien: string;
+  anh_hang_thanh_vien: string;
   chi_tieu_toi_thieu: number;
   chi_tieu_toi_da: number;
-  // Add other properties as needed
 }
 
 const Remoterank: React.FC = () => {
@@ -37,42 +37,41 @@ const Remoterank: React.FC = () => {
   });
 
   const dataSource =
-    data?.data.map((record: any, index: number) => ({
+    data?.data.map((record: IMemberRank, index: number) => ({
       key: record.id,
       ...record,
       index: index + 1,
     })) || [];
 
-    const { mutate } = useMutation({
-        mutationFn: async (id: string | number) => {
-          try {
-            const response = await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
-            if (response.data.status) {
-              message.open({
-                type: "success",
-                content: "Khôi phục thành công",
-              });
-              return id;
-            } else {
-              throw new Error(response.data.message || "Failed to delete");
-            }
-          } catch (error) {
-            console.error("Error deleting category:", error);
-            throw error;
-          }
-        },
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["rank"] });
-        },
-        onError: (error) => {
-          console.error("Error deleting category:", error);
-          message.open({
-            type: "error",
-            content: "Xóa danh mục thất bại",
-          });
-        },
-      });
-      
+    // const { mutate } = useMutation({
+    //   mutationFn: async (id: string | number) => {
+    //     const response = await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
+    //     return response.data;
+    //   },
+    //   onSuccess: (data) => {
+    //     if (data.status) {
+    //       message.success("Khôi phục thành công");
+    //       queryClient.invalidateQueries({ queryKey: ["rank"] });
+    //     } else {
+    //       message.error(data.message || "Failed to restore rank");
+    //     }
+    //   },
+    //   onError: (error) => {
+    //     console.error("Error restoring category:", error);
+    //     message.error("Xóa danh mục thất bại");
+    //   },
+    // });
+    const handleRestore = async (id: string | number) => {
+      try {
+        await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
+        message.success("Khôi phục danh mục thành công", 3); 
+        queryClient.invalidateQueries({ queryKey: ["rank"] });
+      } catch (error) {
+        console.error("Error restoring category:", error);
+        message.error("Khôi phục danh mục thất bại", 3); 
+      }
+    };
+    
 
   const handleSearch = (
     selectedKeys: string[],
@@ -134,8 +133,8 @@ const Remoterank: React.FC = () => {
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
-    onFilter: (value: string | number | boolean, record: ICategories) =>
-      record[dataIndex]
+    onFilter: (value: string | number | boolean, record: IMemberRank) =>
+      record[dataIndex as keyof IMemberRank]
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
@@ -157,7 +156,7 @@ const Remoterank: React.FC = () => {
       ),
   });
 
-  const columns: TableColumnsType<ICategories> = [
+  const columns: TableColumnsType<IMemberRank> = [
     {
       title: "STT",
       width: "10%",
@@ -165,27 +164,32 @@ const Remoterank: React.FC = () => {
       dataIndex: "index",
     },
     {
-      title: "Ảnh sản phẩm",
-      render: (record: ICategories) => (
-        <img
-          src={record.anh_san_pham || "https://via.placeholder.com/150"}
-          alt="product"
-          className="w-24 h-24 object-cover rounded-lg p-2 border"
-        />
+      title: "Hạng thành viên",
+      render: (record: IMemberRank) => (
+        <div className="flex items-center">
+          <img
+            src={record.anh_hang_thanh_vien || "https://via.placeholder.com/24"}
+            alt="member rank"
+            className="w-6 h-6 object-cover rounded-full mr-2"
+          />
+          <span className="text-sm font-medium capitalize">
+            {record.ten_hang_thanh_vien || "Chưa có hạng"}
+          </span>
+        </div>
       ),
-      className: "pl-12",
-      width: "30%",
-      key: "anh_san_pham",
+      className: "pl-4",
+      width: "20%",
+      key: "hang_thanh_vien",
     },
     {
       title: "Chi tiêu",
       dataIndex: "",
       key: "chi_tieu",
       width: "30%",
-      ...getColumnSearchProps("chi_tieu"),
-      sorter: (a: ICategories, b: ICategories) =>
+      ...getColumnSearchProps("chi_tieu_toi_thieu"),
+      sorter: (a: IMemberRank, b: IMemberRank) =>
         a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu || a.chi_tieu_toi_da - b.chi_tieu_toi_da,
-      render: (text: string, record: ICategories) => {
+      render: (text: string, record: IMemberRank) => {
         const formatCurrency = (value: number) => 
           new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     
@@ -199,7 +203,7 @@ const Remoterank: React.FC = () => {
         <Space>
           <Button
             className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white"
-            onClick={() => mutate(record.id)}
+            onClick={() => handleRestore(record.id)}
           >
             Khôi phục
           </Button>
