@@ -13,24 +13,28 @@ class TrangSanPhamController extends Controller
 {
     public function danhMucCha(Request $request)
     {
-        DB::beginTransaction();  // Bắt đầu transaction
         try {
+            // Bắt đầu transaction
+            DB::beginTransaction();
             // Lấy danh mục có cha_id là null
             $danhMucCha = DanhMuc::query()->whereNull('cha_id')->get();
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
             return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công.',
                 'danhMucCha' => $danhMucCha,
-            ]);
-
+            ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
             DB::rollBack();
-
             // Trả về lỗi
             return response()->json([
-                'message' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dự liệu.',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -38,72 +42,88 @@ class TrangSanPhamController extends Controller
 
     public function locSanPhamTheoDanhMuc(Request $request)
     {
-        DB::beginTransaction();  // Bắt đầu transaction
         try {
-            // Lấy id danh mục cha từ request (truyền qua POST)
-            $danhMucChaId = $request->cha_id;
+            // Bắt đầu transaction
+            DB::beginTransaction();
+            $mangDanhMuc = [];
+            foreach ($request->id as $id) {
+                // Lấy id danh mục cha từ request (truyền qua POST)
+                $danhMucChaId = $id;
 
-            // Lấy thông tin danh mục cha và các danh mục con
-            $danhMucCha = DanhMuc::with(['children'])
-                ->where('id', $danhMucChaId)
-                ->firstOrFail();
+                // Lấy thông tin danh mục cha và các danh mục con
+                $danhMucCha = DanhMuc::with(['children'])->findOrFail($danhMucChaId);
 
-            // Lấy tất cả sản phẩm thuộc các danh mục con
-            $sanPhams = SanPham::whereHas('danhMuc', function ($query) use ($danhMucChaId) {
-                $query->where('cha_id', $danhMucChaId);  // Điều kiện lọc các danh mục con của danh mục cha
-            })
-                ->with([
-                    'bienTheSanPham' => function ($query) {
-                        // Lấy các biến thể sản phẩm để có giá bán và giá khuyến mãi
-                        $query->select('san_pham_id', 'gia_ban', 'gia_khuyen_mai', 'ngay_bat_dau_khuyen_mai', 'ngay_ket_thuc_khuyen_mai');
-                    }
-                ])
-                ->paginate(10);  // Phân trang 10 sản phẩm mỗi trang
+                // Lấy tất cả sản phẩm thuộc các danh mục con
+                $sanPhams = SanPham::whereHas('danhMuc', function ($query) use ($danhMucChaId) {
+                    $query->where('cha_id', $danhMucChaId);  // Điều kiện lọc các danh mục con của danh mục cha
+                })
+                    ->with([
+                        'bienTheSanPham' => function ($query) {
+                            // Lấy các biến thể sản phẩm để có giá bán và giá khuyến mãi
+                            $query->select('san_pham_id', 'gia_ban', 'gia_khuyen_mai', 'ngay_bat_dau_khuyen_mai', 'ngay_ket_thuc_khuyen_mai');
+                        }
+                    ])
+                    ->paginate(10);  // Phân trang 10 sản phẩm mỗi trang
+                array_push($mangDanhMuc, $danhMucCha);
+            }
+
 
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
             // Trả về dữ liệu danh mục và sản phẩm
             return response()->json([
-                'danhMucCha' => $danhMucCha,
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công.',
+                'danhMucCha' => $mangDanhMuc,
                 'sanPhams' => $sanPhams
-            ]);
-
+            ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
             DB::rollBack();
 
             // Trả về lỗi
             return response()->json([
+                'status' => false,
+                'status_code' => 500,
                 'message' => 'Có lỗi xảy ra, vui lòng thử lại!',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
+
     public function mauSac(Request $request)
     {
-        DB::beginTransaction();  // Bắt đầu transaction
         try {
+            // Bắt đầu transaction
+            DB::beginTransaction();
+
             // Lấy tất cả màu sắc
             $mauSac = BienTheMauSac::query()->get();
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
             return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công.',
                 'mauSac' => $mauSac
-            ]);
-
+            ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
             DB::rollBack();
 
             // Trả về lỗi
             return response()->json([
+                'status' => false,
+                'status_code' => 500,
                 'message' => 'Có lỗi xảy ra, vui lòng thử lại!',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
+
     public function laySanPhamTheoMauSac(Request $request)
     {
         try {
@@ -115,6 +135,8 @@ class TrangSanPhamController extends Controller
             // Kiểm tra nếu mã màu không tồn tại
             if (!$mauSacId) {
                 return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
                     'message' => 'Màu sắc không hợp lệ.',
                     'data' => $mauSacId
                 ], 400);
@@ -135,14 +157,19 @@ class TrangSanPhamController extends Controller
 
             // Trả về danh sách sản phẩm
             return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công.',
                 'data' => $sanPhams
             ], 200);
-
         } catch (\Exception $e) {
             // Rollback nếu có lỗi xảy ra
             DB::rollBack();
             return response()->json([
-                'message' => 'Đã xảy ra lỗi: ' . $e->getMessage()
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
