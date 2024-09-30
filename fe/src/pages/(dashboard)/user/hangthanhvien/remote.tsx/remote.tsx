@@ -1,7 +1,6 @@
-
 import React, { useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, message, Space, Table } from "antd";
+import { Button, Input, message, Space, Spin, Table } from "antd";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -43,35 +42,34 @@ const Remoterank: React.FC = () => {
       index: index + 1,
     })) || [];
 
-    // const { mutate } = useMutation({
-    //   mutationFn: async (id: string | number) => {
-    //     const response = await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
-    //     return response.data;
-    //   },
-    //   onSuccess: (data) => {
-    //     if (data.status) {
-    //       message.success("Khôi phục thành công");
-    //       queryClient.invalidateQueries({ queryKey: ["rank"] });
-    //     } else {
-    //       message.error(data.message || "Failed to restore rank");
-    //     }
-    //   },
-    //   onError: (error) => {
-    //     console.error("Error restoring category:", error);
-    //     message.error("Xóa danh mục thất bại");
-    //   },
-    // });
-    const handleRestore = async (id: string | number) => {
-      try {
-        await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
-        message.success("Khôi phục danh mục thành công", 3); 
-        queryClient.invalidateQueries({ queryKey: ["rank"] });
-      } catch (error) {
-        console.error("Error restoring category:", error);
-        message.error("Khôi phục danh mục thất bại", 3); 
-      }
-    };
-    
+  // const { mutate } = useMutation({
+  //   mutationFn: async (id: string | number) => {
+  //     const response = await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
+  //     return response.data;
+  //   },
+  //   onSuccess: (data) => {
+  //     if (data.status) {
+  //       message.success("Khôi phục thành công");
+  //       queryClient.invalidateQueries({ queryKey: ["rank"] });
+  //     } else {
+  //       message.error(data.message || "Failed to restore rank");
+  //     }
+  //   },
+  //   onError: (error) => {
+  //     console.error("Error restoring category:", error);
+  //     message.error("Xóa danh mục thất bại");
+  //   },
+  // });
+  const handleRestore = async (id: string | number) => {
+    try {
+      await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
+      message.success("Khôi phục danh mục thành công", 3);
+      queryClient.invalidateQueries({ queryKey: ["rank"] });
+    } catch (error) {
+      console.error("Error restoring category:", error);
+      message.error("Khôi phục danh mục thất bại", 3);
+    }
+  };
 
   const handleSearch = (
     selectedKeys: string[],
@@ -135,7 +133,7 @@ const Remoterank: React.FC = () => {
     ),
     onFilter: (value: string | number | boolean, record: IMemberRank) =>
       record[dataIndex as keyof IMemberRank]
-        .toString()
+        ?.toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible: boolean) => {
@@ -165,6 +163,12 @@ const Remoterank: React.FC = () => {
     },
     {
       title: "Hạng thành viên",
+      key: "hang_thanh_vien",
+      width: "20%",
+      sorter: (a: IMemberRank, b: IMemberRank) =>
+        (a.ten_hang_thanh_vien || "").localeCompare(
+          b.ten_hang_thanh_vien || ""
+        ),
       render: (record: IMemberRank) => (
         <div className="flex items-center">
           <img
@@ -178,21 +182,24 @@ const Remoterank: React.FC = () => {
         </div>
       ),
       className: "pl-4",
-      width: "20%",
-      key: "hang_thanh_vien",
     },
+
     {
       title: "Chi tiêu",
       dataIndex: "",
       key: "chi_tieu",
       width: "30%",
-      ...getColumnSearchProps("chi_tieu_toi_thieu"),
+
       sorter: (a: IMemberRank, b: IMemberRank) =>
-        a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu || a.chi_tieu_toi_da - b.chi_tieu_toi_da,
-      render: (text: string, record: IMemberRank) => {
-        const formatCurrency = (value: number) => 
-          new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
-    
+        a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu ||
+        a.chi_tieu_toi_da - b.chi_tieu_toi_da,
+      render: (_text: string, record: IMemberRank) => {
+        const formatCurrency = (value: number) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value);
+
         return `${formatCurrency(record.chi_tieu_toi_thieu)} - ${formatCurrency(record.chi_tieu_toi_da)}`;
       },
     },
@@ -202,7 +209,7 @@ const Remoterank: React.FC = () => {
       render: (_, record) => (
         <Space>
           <Button
-            className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white"
+            className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
             onClick={() => handleRestore(record.id)}
           >
             Khôi phục
@@ -212,8 +219,16 @@ const Remoterank: React.FC = () => {
     },
   ];
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -226,14 +241,14 @@ const Remoterank: React.FC = () => {
         <h1 className="font-semibold md:text-3xl">Thùng rác</h1>
         <div>
           <Link to="/admin/users/rank">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>
         </div>
       </div>
       <div className="max-w-4xl">
-        <Table columns={columns} dataSource={dataSource} />
+        <Table columns={columns} dataSource={dataSource} loading={isLoading} />
       </div>
     </main>
   );

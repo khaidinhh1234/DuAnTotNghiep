@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -6,7 +6,16 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, message, Popconfirm, Space, Table, Tag } from "antd";
+import {
+  Button,
+  Input,
+  message,
+  Popconfirm,
+  Space,
+  Spin,
+  Table,
+  Tag,
+} from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
@@ -44,6 +53,7 @@ const VoucherAdmin: React.FC = () => {
       return response.data;
     },
   });
+  // console.log(voucher);
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async ({ record, action }: any) => {
@@ -88,9 +98,45 @@ const VoucherAdmin: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["VOUCHER_KEY"] });
     },
   });
+  const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState<PromotionType[]>([]);
+
+  // Cập nhật dữ liệu khi nhận được từ API
+  useEffect(() => {
+    if (voucher?.data) {
+      setFilteredData(voucher?.data);
+    }
+  }, [voucher]);
+
+  // Hàm xử lý tìm kiếm
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchText(value);
+    // console.log(value);
+    if (value) {
+      const filtered = voucher?.data?.filter(
+        (item: PromotionType) =>
+          // Tìm kiếm trong các trường mong muốn
+          item.mo_ta.toLowerCase().includes((value as string).toLowerCase()) ||
+          item.ma_code
+            .toLowerCase()
+            .includes((value as string).toLowerCase()) ||
+          (item.hang_thanh_viens &&
+            Array.isArray(item.hang_thanh_viens) &&
+            item.hang_thanh_viens
+              .map((hang: any) => hang.toLowerCase())
+              .join(", ")
+              .includes((value as string).toLowerCase()))
+      ); // Bạn có thể thêm các trường khác nếu cần
+
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(voucher?.data);
+    }
+  };
 
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
-  const [searchText, setSearchText] = useState("");
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
@@ -149,7 +195,7 @@ const VoucherAdmin: React.FC = () => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            Tìm kiếm
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -190,10 +236,13 @@ const VoucherAdmin: React.FC = () => {
   const columns: TableColumnsType<PromotionType> = [
     {
       title: "Khuyến mãi",
-      key: "khuyen_mai",
+      key: "ma_code",
       width: "18%",
-      ...getColumnSearchProps("mo_ta"), // Sử dụng tính năng tìm kiếm cho "Tên khuyến mãi"
-      sorter: (a: any, b: any) => a.mo_ta.length - b.mo_ta.length, // Sắp xếp theo độ dài tên khuyến mãi
+      ...getColumnSearchProps("mo_ta"), // Sử dụng tính năng tìm kiếm cho "mo_ta"
+      onFilter: (value: boolean | React.Key, record: PromotionType) =>
+        record.mo_ta.toLowerCase().includes(String(value).toLowerCase()) ||
+        record.ma_code.toLowerCase().includes(String(value).toLowerCase()),
+      sorter: (a: any, b: any) => a.ma_code.localeCompare(b.ma_code),
       render: (record) => (
         <div>
           <h5>{record.mo_ta}</h5>
@@ -203,11 +252,19 @@ const VoucherAdmin: React.FC = () => {
       ),
     },
     {
-      title: "	Thời gian thu thập - Thời gian quy đổi",
+      title: "Thời gian thu thập - Thời gian quy đổi",
       key: "ngay_bat_dau",
       width: "20%",
       ...getColumnSearchProps("ngay_bat_dau"),
-      sorter: (a: any, b: any) => a.ngay_bat_dau - b.ngay_bat_dau,
+      onFilter: (value: boolean | React.Key, record: any) =>
+        new Date(record.ngay_bat_dau)
+          .toLocaleDateString("vi-VN")
+          .includes(String(value)) ||
+        new Date(record.ngay_ket_thuc)
+          .toLocaleDateString("vi-VN")
+          .includes(String(value)), // Tìm kiếm trong cả ngay_bat_dau và ngay_ket_thuc
+      sorter: (a: any, b: any) =>
+        new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(), // Sắp xếp theo thời gian
       render: (record) => (
         <>
           <span>
@@ -221,10 +278,15 @@ const VoucherAdmin: React.FC = () => {
         </>
       ),
     },
+
     {
       title: "Số lượng",
       key: "so_luong",
       ...getColumnSearchProps("so_luong"),
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.so_luong.toString().includes(String(value)) ||
+        record.so_luong_da_su_dung.toString().includes(String(value)), // Tìm kiếm trong cả so_luong và so_luong_da_su_dung
+      sorter: (a: any, b: any) => a.so_luong - b.so_luong, // Sắp xếp theo số
 
       width: "15%",
       render: (record) => (
@@ -254,6 +316,7 @@ const VoucherAdmin: React.FC = () => {
       // dataIndex: "loai_khuyen_mai",
       key: "loai",
       width: "15%",
+      sorter: (a: any, b: any) => a.loai.localeCompare(b.loai),
       render: (record) => (
         <Tag
           color={record.loai === "phần trăm" ? "#1cb5e0" : "#155799"}
@@ -267,7 +330,19 @@ const VoucherAdmin: React.FC = () => {
       title: "Hạng thành viên",
       key: "hang_thanh_viens",
       ...getColumnSearchProps("hang_thanh_viens"),
-
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.hang_thanh_viens
+          .map((hang: any) =>
+            hang.ten_hang_thanh_vien === "Vàng"
+              ? "Vàng"
+              : hang.ten_hang_thanh_vien === "Bạc"
+                ? "Bạc"
+                : "Đồng"
+          )
+          .join(", ")
+          .includes(String(value)), // Tìm kiếm trong cả hang_thanh_viens
+      sorter: (a: any, b: any) =>
+        a.hang_thanh_viens.length - b.hang_thanh_viens.length,
       width: "15%",
       render: (record) => (
         <>
@@ -290,9 +365,20 @@ const VoucherAdmin: React.FC = () => {
 
       key: " chi_tieu_toi_thieu",
       width: "25%",
-      // ...getColumnSearchProps(" chi_tieu_toi_thieu"),
-      sorter: (a: any, b: any) =>
-        a.chi_tieu_toi_thieu.length - b.chi_tieu_toi_thieu.length,
+      ...getColumnSearchProps("chi_tieu_toi_thieu"),
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.chi_tieu_toi_thieu
+          .map((chi_tieu_toi_thieu: any) =>
+            chi_tieu_toi_thieu === 0
+              ? "Áp dụng cho tất cả sản phẩm"
+              : "   Giá trị đơn hàng tối thiểu  " +
+                chi_tieu_toi_thieu.toLocaleString() +
+                " VNĐ"
+          )
+          .join(", ")
+          .includes(String(value)), // Tìm kiếm trong cả chi_tieu_toi_thieu
+      sorter: (a: any, b: any) => a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu,
+
       render: (record) => (
         // console.log(record),
         <div>
@@ -316,6 +402,18 @@ const VoucherAdmin: React.FC = () => {
       dataIndex: "trang_thai",
       key: "trang_thai",
       width: "10%",
+      sorter: (a: any, b: any) => a.trang_thai - b.trang_thai,
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.trang_thai
+          .map((trang_thai: any) =>
+            trang_thai === 1
+              ? "Đang hoạt động"
+              : trang_thai === 0
+                ? "Tạm ngừng"
+                : "Hết hạn"
+          )
+          .join(", ")
+          .includes(String(value)), // Tìm kiếm trong cả trang_thai
       render: (trang_thai: number | string) => (
         <Tag
           color={
@@ -407,31 +505,17 @@ const VoucherAdmin: React.FC = () => {
     },
   ];
 
-  // const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.checked) {
-  //     setSelectedRowKeys(promotions.map(p => p.key));
-  //   } else {
-  //     setSelectedRowKeys([]);
-  //   }
-  // };
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
 
-  // const rowSelection = {
-  //   selectedRowKeys,
-  //   onChange: (selectedKeys: React.Key[]) => {
-  //     setSelectedRowKeys(selectedKeys);
-  //   },
-  // };
-
-  // const products = [...promotions].reverse();
-  function handleChange(_event: ChangeEvent<HTMLInputElement>): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleKeyDown(_event: any): void {
-    throw new Error("Function not implemented.");
-  }
-  isError && <div>Error...</div>;
-  isLoading && <div>Loading...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -458,25 +542,16 @@ const VoucherAdmin: React.FC = () => {
             placeholder="Tìm kiếm..."
             size="large"
             value={searchText}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
+            onChange={handleSearchChange}
+            style={{ marginBottom: 16, maxWidth: 300 }}
           />
         </div>
         <Table
           columns={columns}
-          dataSource={voucher?.data}
+          dataSource={filteredData}
           onChange={handleTableChange}
-          // pagination={voucher?.data}
           rowKey="key"
-          // title={() => (
-          //   <Checkbox
-          //     indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < promotions.length}
-          //     onChange={handleSelectAllChange}
-          //     checked={selectedRowKeys.length === promotions.length}
-          //   >
-          //     Chọn tất cả
-          //   </Checkbox>
-          // )}
+          loading={isLoading}
         />
       </div>
     </main>

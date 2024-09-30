@@ -1,4 +1,3 @@
-
 import instance from "@/configs/axios";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,7 +7,6 @@ import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link, useNavigate } from "react-router-dom";
-
 
 interface DataType {
   key: React.Key;
@@ -65,10 +63,7 @@ const ProductsRemote: React.FC = () => {
       await instance.post(`/admin/sanpham/thung-rac/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["sanpham-remote"]);
-      message.success("Khôi phục sản phẩm thành công");
-      navigate("/admin/products");
-
+      queryClient.invalidateQueries({ queryKey: ["sanpham-remote"] });
 
       message.open({
         type: "success",
@@ -77,7 +72,6 @@ const ProductsRemote: React.FC = () => {
       navigate("/admin/products");
     },
     onError: () => {
-
       message.open({
         type: "error",
         content: "Khôi phục sản phẩm thất bại",
@@ -90,7 +84,6 @@ const ProductsRemote: React.FC = () => {
       await instance.delete(`/admin/sanpham/${id}`);
     },
     onSuccess: () => {
-
       queryClient.invalidateQueries({ queryKey: ["sanpham-remote"] });
       message.open({
         type: "success",

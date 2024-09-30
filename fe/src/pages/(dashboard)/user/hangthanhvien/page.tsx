@@ -1,8 +1,5 @@
 import React, { useRef, useState } from "react";
-import {
-  DeleteOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Popconfirm, Space, Table, message } from "antd";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
@@ -15,6 +12,7 @@ import type { FilterDropdownProps } from "antd/es/table/interface";
 
 interface DataType {
   id: any;
+  stt: number;
   key: React.Key;
   anh_san_pham: string;
   ten_san_pham: string;
@@ -27,6 +25,7 @@ interface DataType {
   tongSoLuong: number;
   chi_tieu_toi_thieu: number;
   chi_tieu_toi_da: number;
+  ten_hang_thanh_vien: string;
 }
 
 export interface Category {
@@ -43,7 +42,7 @@ const Rank: React.FC = () => {
   const searchInput = useRef<InputRef>(null);
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["rank"],
     queryFn: async () => {
       const res = await instance.get("/admin/hangthanhvien");
@@ -60,7 +59,7 @@ const Rank: React.FC = () => {
         throw new Error(response.data.message || "Failed to delete");
       }
     },
-    onSuccess: (id) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rank"] });
       message.success("Xóa sản phẩm thành công");
     },
@@ -72,7 +71,7 @@ const Rank: React.FC = () => {
 
   const rank = data?.data.map((item: any, index: number) => ({
     ...item,
-    key: item.id,
+    key: index,
   }));
 
   const handleSearch = (
@@ -162,11 +161,17 @@ const Rank: React.FC = () => {
     {
       title: "STT",
       key: "stt",
-      render: (text, item, index) => index + 1,
+
+      render: (item) => item.key + 1,
       width: "5%",
     },
     {
       title: "Hạng thành viên",
+
+      ...getColumnSearchProps("ten_hang_thanh_vien"),
+      sorter: (a, b) =>
+        a.ten_hang_thanh_vien.localeCompare(b.ten_hang_thanh_vien),
+
       render: (record: any) => (
         <div className="flex items-center">
           <img

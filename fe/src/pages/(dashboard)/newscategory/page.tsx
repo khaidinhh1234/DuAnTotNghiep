@@ -1,21 +1,21 @@
+import { NewCategories } from "@/common/types/newcategory";
+import instance from "@/configs/axios";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Input,
   InputRef,
   message,
+  Popconfirm,
+  Space,
   Table,
   TableColumnsType,
 } from "antd";
-import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { Popconfirm, Space } from "antd";
-import { NewCategories } from "@/common/types/newcategory";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
 import { FilterDropdownProps } from "antd/es/table/interface";
+import { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const NewCategory = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
@@ -23,7 +23,7 @@ const NewCategory = () => {
   const [searchText, setSearchText] = useState<string>("");
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["danhmuctintuc"],
     queryFn: async () => {
       try {
