@@ -23,7 +23,7 @@ return new class extends Migration
             $table->dateTime('ngay_bat_dau');
             $table->dateTime('ngay_ket_thuc');
             $table->boolean('trang_thai')->default(1);
-            $table->integer('chi_tieu_toi_thieu', 10, 2)->nullable();
+            $table->integer('chi_tieu_toi_thieu')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
