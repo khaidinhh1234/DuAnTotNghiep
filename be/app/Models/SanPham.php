@@ -19,7 +19,8 @@ class SanPham extends Model
         'mo_ta_ngan',
         'noi_dung',
         'luot_xem',
-        'trang_thai'
+        'trang_thai',
+        'gia_tri_uu_dai'
 
     ];
 
@@ -40,5 +41,10 @@ class SanPham extends Model
     public function danhGias()
     {
         return $this->hasMany(DanhGia::class, 'san_pham_id');
+    }
+
+    public function chuongTrinhKhuyenMais()
+    {
+        return $this->belongsToMany(ChuongTrinhUuDai::class, 'chuong_trinh_san_pham', 'san_pham_id', 'chuong_trinh_khuyen_mai_id');
     }
 }

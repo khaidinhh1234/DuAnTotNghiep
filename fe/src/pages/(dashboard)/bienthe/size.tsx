@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { IColor } from "@/common/types/product";
 import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, Spin } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 const Size = () => {
@@ -12,11 +12,11 @@ const Size = () => {
   const [form] = Form.useForm();
   const nav = useNavigate();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['size', id],
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["size", id],
     queryFn: async () => {
       const response = await instance.get(`/admin/bienthekichthuoc/${id}`);
-      console.log(data)
+      console.log(data);
       return response.data;
     },
   });
@@ -29,14 +29,17 @@ const Size = () => {
 
   const updateMutation = useMutation({
     mutationFn: async (values: IColor) => {
-      const response = await instance.put(`/admin/bienthekichthuoc/${id}`, values);
+      const response = await instance.put(
+        `/admin/bienthekichthuoc/${id}`,
+        values
+      );
       return response.data;
     },
     onSuccess: () => {
       message.success("Cập nhật màu sắc thành công");
-      nav('/admin/products/bienthe');
+      nav("/admin/products/bienthe");
     },
-    onError: (error) => {
+    onError: () => {
       message.error("Cập nhật màu sắc thất bại");
     },
   });
@@ -45,20 +48,35 @@ const Size = () => {
     updateMutation.mutate(values);
   };
 
-  if (isLoading) return <div>Đang tải...</div>;
+  if (isLoading)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
+  if (isError) return <div>Error</div>;
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục /<span className="font-semibold px-px"> Cập nhật kích thướcc</span>
+          Quản trị / Danh mục /
+          <span className="font-semibold px-px"> Cập nhật kích thướcc</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Cập nhật : {data?.kich_thuoc}</h1>
+        <h1 className="font-semibold md:text-3xl">
+          Cập nhật : {data?.kich_thuoc}
+        </h1>
         <div>
           <Link to="/admin/products/bienthe" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">Quay lại</Button>
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+              Quay lại
+            </Button>
           </Link>
         </div>
       </div>
@@ -77,18 +95,26 @@ const Size = () => {
                 label="kích thước "
                 name="kich_thuoc"
                 rules={[
-                  { required: true, message: 'Vui lòng nhập tên kích thước' },
-                  { max: 50, message: 'Tên kích thước không được quá 50 ký tự' },
+                  { required: true, message: "Vui lòng nhập tên kích thước" },
+                  {
+                    max: 50,
+                    message: "Tên kích thước không được quá 50 ký tự",
+                  },
                   {
                     pattern: /^[^\s]+(\s+[^\s]+)*$/,
                     message: "Vui lòng nhập họ không chứa ký tự trắng!",
                   },
-                ]}              >
+                ]}
+              >
                 <Input placeholder="Nhập kích thước" />
               </Form.Item>
-          
+
               <Form.Item>
-                <Button type="primary" htmlType="submit" className="px-3 py-2 bg-black text-white rounded-lg">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="px-3 py-2 bg-black text-white rounded-lg"
+                >
                   Cập nhật
                 </Button>
               </Form.Item>

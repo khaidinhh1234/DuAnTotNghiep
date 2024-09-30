@@ -1,13 +1,14 @@
 
-import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import instance from "@/configs/axios";
+import { SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, message } from "antd";
+import { Button, Input, message, Popconfirm, Space, Spin, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+
 
 interface DataType {
   key: React.Key;
@@ -15,13 +16,13 @@ interface DataType {
   anh_san_pham: string;
   ten_san_pham: string;
   id_danh_muc: string;
+  ten_danh_muc: string;
   luot_xem: number;
   mo_ta_ngan: string;
   noi_dung: string;
 }
 
 type DataIndex = keyof DataType;
-
 
 const ProductsRemote: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -68,9 +69,19 @@ const ProductsRemote: React.FC = () => {
       message.success("Khôi phục sản phẩm thành công");
       navigate("/admin/products");
 
+
+      message.open({
+        type: "success",
+        content: "Khôi phục sản phẩm thành công",
+      });
+      navigate("/admin/products");
     },
     onError: () => {
-      message.error("Khôi phục sản phẩm thất bại");
+
+      message.open({
+        type: "error",
+        content: "Khôi phục sản phẩm thất bại",
+      });
     },
   });
 
@@ -79,11 +90,18 @@ const ProductsRemote: React.FC = () => {
       await instance.delete(`/admin/sanpham/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["sanpham-remote"]);
-      message.success("Xóa sản phẩm vĩnh viễn thành công");
+
+      queryClient.invalidateQueries({ queryKey: ["sanpham-remote"] });
+      message.open({
+        type: "success",
+        content: "Xóa sản phẩm vĩnh viễn thành công",
+      });
     },
     onError: () => {
-      message.error("Xóa sản phẩm vĩnh viễn thất bại");
+      message.open({
+        type: "error",
+        content: "Xóa sản phẩm vĩnh viễn thất bại",
+      });
     },
   });
 
@@ -118,7 +136,6 @@ const ProductsRemote: React.FC = () => {
       selectedKeys,
       confirm,
       clearFilters,
-      close,
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
@@ -212,19 +229,19 @@ const ProductsRemote: React.FC = () => {
       sorter: (a, b) => a.ten_danh_muc.length - b.ten_danh_muc.length,
     },
     {
-        title: "Kho",
-        dataIndex: "tongSoLuong",
-        key: "tongSoLuong",
-        width: "15%",
-        render: (text) => {
-          return text ? (
-            `${text.toLocaleString()} `
-          ) : (
-            <span style={{ color: "#ff5555" }}>Hết hàng</span>
-          );
-        },
+      title: "Kho",
+      dataIndex: "tongSoLuong",
+      key: "tongSoLuong",
+      width: "15%",
+      render: (text) => {
+        return text ? (
+          `${text.toLocaleString()} `
+        ) : (
+          <span style={{ color: "#ff5555" }}>Hết hàng</span>
+        );
       },
- 
+    },
+
     {
       title: "Quản trị",
       key: "action",
@@ -262,7 +279,16 @@ const ProductsRemote: React.FC = () => {
       // Perform search action here
     }
   };
-
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -276,7 +302,7 @@ const ProductsRemote: React.FC = () => {
         <div>
           {" "}
           <Link to="/admin/products">
-            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>

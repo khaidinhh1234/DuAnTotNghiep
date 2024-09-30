@@ -158,7 +158,7 @@
 //     allValues: ProductFormData
 //   ) => {
 //     setProductFormData(allValues);
-    
+
 //   };
 
 //   const handleRemoveImage = (file: UploadFile, record: Variant) => {
@@ -217,34 +217,34 @@
 //     if (variantData.length === 0) {
 //       throw new Error("Vui lòng thêm ít nhất một biến thể sản phẩm.");
 //     }
-  
+
 //     variantData.forEach((variant, index) => {
 //       if (!variant.kich_thuoc_id || !variant.mau_sac_id) {
 //         throw new Error(
 //           `Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`
 //         );
 //       }
-  
+
 //       const regularPrice = parseFloat(variant.gia_ban);
 //       if (isNaN(regularPrice) || (regularPrice !== 0 && regularPrice < 1000)) {
 //         throw new Error(`Giá bán của biến thể ${index + 1} phải bằng 0 hoặc lớn hơn hoặc bằng 1000.`);
 //       }
-  
+
 //       if (variant.gia_khuyen_mai !== undefined) {
 //         const promotionalPrice = parseFloat(variant.gia_khuyen_mai);
-       
+
 //         if (promotionalPrice > regularPrice) {
 //           throw new Error(`Giá khuyến mãi của biến thể ${index + 1} không thể lớn hơn giá bán.`);
 //         }
 //       }
- 
+
 //       const quantity = parseInt(variant.so_luong_bien_the);
 //       if (isNaN(quantity) || quantity <= 0) {
 //         throw new Error(`Số lượng của biến thể ${index + 1} phải là số nguyên dương.`);
 //       }
 //     });
 //   };
-  
+
 
 //   const prepareFormData = async () => {
 //     const formData = new FormData();
@@ -487,8 +487,11 @@
 
 // export default ProductsAndVariants;
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Button, Form, Select, Spin, message } from "antd";
-import { ArrowLeftOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Button, Form, Select, Skeleton, Spin, message } from "antd";
+import {
+
+  LoadingOutlined,
+} from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import instance from "@/configs/axios";
@@ -514,21 +517,18 @@ const fetchData = async (endpoint: string): Promise<any> => {
   return response.data;
 };
 
-const addProduct = async (productData: FormData): Promise<any> => {
-  const response = await instance.post("/admin/sanpham", productData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return response.data;
-};
-
 const ProductsAndVariants: React.FC = () => {
   const [variants, setVariants] = useState<VariantType[]>([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [form] = Form.useForm<ProductFormData>();
   const [variantData, setVariantData] = useState<Variant[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [productFormData, setProductFormData] = useState<ProductFormData>({} as ProductFormData);
   const [productCode, setProductCode] = useState("");
+  const [data, setData] = useState<any>([]);
+  console.log(data);
+  const [productFormData, setProductFormData] = useState<ProductFormData>(
+    {} as ProductFormData
+  );
   const navigate = useNavigate();
 
   // Queries
@@ -553,7 +553,19 @@ const ProductsAndVariants: React.FC = () => {
   });
 
   const addProductMutation = useMutation({
-    mutationFn: addProduct,
+    mutationFn: async (productData: any) => {
+      console.log(productData);
+      // const datas = productData.map((item: any) => {
+      //   return { ...item, noi_dung: data };
+      // });
+      try {
+        const response = await instance.post("/admin/sanpham", productData);
+        return response.data;
+      } catch (error) {
+        console.error("Error adding product:", error);
+        throw new Error("Lỗi khi thêm sản phẩm");
+      }
+    },
     onSuccess: () => {
       message.success("Sản phẩm đã được thêm thành công!");
       resetForm();
@@ -595,6 +607,7 @@ const ProductsAndVariants: React.FC = () => {
 
 
 
+
   const generateRandomProductCode = useCallback(() => {
     const prefix = "SP-";
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -604,14 +617,39 @@ const ProductsAndVariants: React.FC = () => {
     }
     return result;
   }, []);
-  useEffect(() => {
-    setProductCode(generateRandomProductCode());
-  }, [generateRandomProductCode]);
+
+  const handleGenerateCode = useCallback(() => {
+    const newCode = generateRandomProductCode();
+    setProductCode(newCode);
+    form.setFieldsValue({ ma_san_pham: newCode });
+  }, [generateRandomProductCode, form]);
 
   const isLoading = useMemo(
     () => categoriesLoading || sizesLoading || colorsLoading || tagsLoading,
     [categoriesLoading, sizesLoading, colorsLoading, tagsLoading]
   );
+
+
+  if (isLoading) {
+    return (
+      <>
+        {" "}
+        <Spin
+          tip="Loading"
+          size="large"
+          className="flex justify-center items-center h-screen mx-10"
+        />
+      </>
+    );
+  }
+
+  if (!categoriesData || !sizesData || !colorsData || !tagsData) {
+    return (
+      <div className="text-center text-red-500">
+        Không thể tải dữ liệu. Vui lòng thử lại sau.
+      </div>
+    );
+  }
 
   const addVariant = (value: "color" | "size") => {
     setVariants((prev) => {
@@ -637,7 +675,9 @@ const ProductsAndVariants: React.FC = () => {
     _: any,
     allValues: ProductFormData
   ) => {
-    setProductFormData(allValues);
+    const add = { ...allValues, noi_dung: data };
+
+    setProductFormData(add);
   };
 
   const handleRemoveImage = (file: UploadFile, record: Variant) => {
@@ -657,6 +697,8 @@ const ProductsAndVariants: React.FC = () => {
       validateVariants();
       setIsSubmitting(true);
       const formData = await prepareFormData();
+      console.log(formData);
+
       addProductMutation.mutate(formData);
     } catch (error) {
       handleSubmitError(error);
@@ -678,7 +720,7 @@ const ProductsAndVariants: React.FC = () => {
   };
 
   const handleAddProductError = (error: any) => {
-    console.error("Error adding product:", error);
+    // console.error("Error adding product:", error);
     const errorFields = error.response?.data?.errors
       ? Object.keys(error.response.data.errors)
       : [];
@@ -694,30 +736,36 @@ const ProductsAndVariants: React.FC = () => {
     if (variantData.length === 0) {
       throw new Error("Vui lòng thêm ít nhất một biến thể sản phẩm.");
     }
-  
+
     variantData.forEach((variant, index) => {
       if (!variant.kich_thuoc_id || !variant.mau_sac_id) {
         throw new Error(
           `Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`
         );
       }
-  
+
       const regularPrice = parseFloat(variant.gia_ban);
       if (isNaN(regularPrice) || (regularPrice !== 0 && regularPrice < 1000)) {
-        throw new Error(`Giá bán của biến thể ${index + 1} phải bằng 0 hoặc lớn hơn hoặc bằng 1000.`);
+        throw new Error(
+          `Giá bán của biến thể ${index + 1} phải bằng 0 hoặc lớn hơn hoặc bằng 1000.`
+        );
       }
-  
+
       if (variant.gia_khuyen_mai !== undefined) {
         const promotionalPrice = parseFloat(variant.gia_khuyen_mai);
-       
+
         if (promotionalPrice > regularPrice) {
-          throw new Error(`Giá khuyến mãi của biến thể ${index + 1} không thể lớn hơn giá bán.`);
+          throw new Error(
+            `Giá khuyến mãi của biến thể ${index + 1} không thể lớn hơn giá bán.`
+          );
         }
       }
- 
+
       const quantity = parseInt(variant.so_luong_bien_the);
       if (isNaN(quantity) || quantity <= 0) {
-        throw new Error(`Số lượng của biến thể ${index + 1} phải là số nguyên dương.`);
+        throw new Error(
+          `Số lượng của biến thể ${index + 1} phải là số nguyên dương.`
+        );
       }
     });
   };
@@ -809,35 +857,39 @@ const ProductsAndVariants: React.FC = () => {
   }
 
   return (
-    <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-      <div className="flex items-center justify-between mt-5 left-5">
-        <h1 className="w-full text-3xl font-semibold text-gray-800 text-left">
-          Thêm sản phẩm và biến thể
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <div className="flex items-center">
+        <h1 className="md:text-base">
+          Quản trị / Sản phẩm /{" "}
+          <span className="font-semibold">Thêm sản phẩm </span>
         </h1>
-
-        <Link to="/admin/products">
-          <Button
-            icon={<ArrowLeftOutlined />}
-            className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md ml-2.5"
-          >
-            Quay lại
-          </Button>
-        </Link>
       </div>
-      <div className="container mx-auto px-6 py-8">
+      <div className="flex items-center justify-between">
+        <h1 className="font-semibold md:text-3xl">Thêm sản phẩm </h1>
+        <div className="flex gap-2">
+          <Link to="/admin/products">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+              quay lại
+            </Button>
+          </Link>
+        </div>
+      </div>
+      <div className="max-w-8xl mx-5 px-5 py-8">
         <div className="bg-white rounded-lg shadow-md p-6">
           <ProductForm
             form={form}
             fileList={fileList}
             setFileList={setFileList}
             categoriesData={categoriesData?.data || []}
-           tagsData={tagsData?.data || []}
-onValuesChange={handleProductFormValuesChange}
-productCode={productCode}
+            tagsData={tagsData?.data || []}
+            onValuesChange={handleProductFormValuesChange}
+            productCode={productCode}
+            onGenerateCode={handleGenerateCode}
 
+
+            setData={setData}
           />
-
-          <div className="mt-8">
+          <div className="mt-8 px-10">
             <h2 className="text-xl font-semibold mb-4">
               Giá bán, Kho hàng và Biến thể
             </h2>
@@ -893,21 +945,21 @@ productCode={productCode}
                   >
                     {variant.type === "color"
                       ? colorsData.data.map((color) => (
-                          <Option key={color.id} value={color.id}>
-                            <div className="flex items-center">
-                              <div
-                                className="w-4 h-4 rounded-full mr-2"
-                                style={{ backgroundColor: color.ma_mau_sac }}
-                              />
-                              {color.ten_mau_sac}
-                            </div>
-                          </Option>
-                        ))
+                        <Option key={color.id} value={color.id}>
+                          <div className="flex items-center">
+                            <div
+                              className="w-4 h-4 rounded-full mr-2"
+                              style={{ backgroundColor: color.ma_mau_sac }}
+                            />
+                            {color.ten_mau_sac}
+                          </div>
+                        </Option>
+                      ))
                       : sizesData.data.map((size) => (
-                          <Option key={size.id} value={size.id}>
-                            {size.kich_thuoc}
-                          </Option>
-                        ))}
+                        <Option key={size.id} value={size.id}>
+                          {size.kich_thuoc}
+                        </Option>
+                      ))}
                   </Select>
                 </div>
               </div>
@@ -923,35 +975,37 @@ productCode={productCode}
               sizesData={sizesData.data}
             />
           </div>
-        </div>
-      </div>
-      <Form.Item className="mt-8">
-        <div className="flex items-center justify-end">
-          <Button
-            type="primary"
-            onClick={handleSubmit}
-            className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
-            style={{
-              marginTop: "-60px",
-              padding: "18px 30px",
-              marginRight: "190px",
-            }}
-            disabled={isSubmitting}
-          >
-            {isSubmitting && (
-              <Spin
-                indicator={
-                  <LoadingOutlined
-                    style={{ fontSize: 22, marginLeft: 10 }}
-                    spin
+          <Form.Item className="mt-8 px-10">
+            <div className="flex items-center gap-2">
+              <Link to="/admin/products">
+                <Button className="py-[18px] px-10">Hủy</Button>{" "}
+              </Link>
+              <Button
+                type="primary"
+                onClick={handleSubmit}
+                className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
+                style={{
+                  padding: "18px 30px",
+                  marginRight: "190px",
+                }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting && (
+                  <Spin
+                    indicator={
+                      <LoadingOutlined
+                        style={{ fontSize: 22, marginLeft: 10 }}
+                        spin
+                      />
+                    }
                   />
-                }
-              />
-            )}{" "}
-            {isSubmitting ? "Đang xử lý..." : "Thêm sản phẩm"}
-          </Button>
-        </div>
-      </Form.Item>
+                )}{" "}
+                {isSubmitting ? "Đang xử lý..." : "Thêm sản phẩm"}
+              </Button>
+            </div>
+          </Form.Item>{" "}
+        </div>{" "}
+      </div>
     </main>
   );
 };
