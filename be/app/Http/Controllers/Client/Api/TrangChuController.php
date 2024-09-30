@@ -35,6 +35,7 @@ class TrangChuController extends Controller
         ->whereNotNull('gia_khuyen_mai')
             ->where('ngay_bat_dau_khuyen_mai', '<=', $now)
             ->where('ngay_ket_thuc_khuyen_mai', '>=', $now)
+            ->where('gia_tri_uu_dai', '>', 0)
             ->get();
 
         return response()->json([
