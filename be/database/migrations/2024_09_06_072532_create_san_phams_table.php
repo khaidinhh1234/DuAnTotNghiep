@@ -29,7 +29,7 @@ return new class extends Migration
             $table->integer('luot_xem')->default(0);
             $table->boolean('trang_thai')->default(1);
             $table->boolean('giam_gia_soc')->default(0);
-            $table->boolean('hang_moi')->default(0);
+            $table->boolean('hang_moi')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });
