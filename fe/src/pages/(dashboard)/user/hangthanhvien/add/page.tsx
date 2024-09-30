@@ -32,14 +32,14 @@ const MemberRankForm: React.FC = () => {
 
   const addMemberRankMutation = useMutation({
     mutationFn: async (newRank: MemberRank) => {
-      // Kiểm tra tên trùng
-      const isNameExist = existingRanks.some(
-        (rank: MemberRank) => rank.ten_hang_thanh_vien.toLowerCase() === newRank.ten_hang_thanh_vien.toLowerCase()
-      );
+      // // Kiểm tra tên trùng
+      // const isNameExist = existingRanks.some(
+      //   (rank: MemberRank) => rank.ten_hang_thanh_vien.toLowerCase() === newRank.ten_hang_thanh_vien.toLowerCase()
+      // );
 
-      if (isNameExist) {
-        throw new Error('Tên hạng thành viên đã tồn tại');
-      }
+      // if (isNameExist) {
+      //   throw new Error('Tên hạng thành viên đã tồn tại');
+      // }
 
       if (fileList.length > 0 && fileList[0].originFileObj) {
         const cloudinaryUrl = await uploadToCloudinary(fileList[0].originFileObj);
