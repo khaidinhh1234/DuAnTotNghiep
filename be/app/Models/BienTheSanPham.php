@@ -13,17 +13,9 @@ class BienTheSanPham extends Model
         'san_pham_id',
         'bien_the_mau_sac_id',
         'bien_the_kich_thuoc_id',
-        'gia_ban',
-        'gia_khuyen_mai',
         'so_luong_bien_the',
-        'ngay_bat_dau_khuyen_mai',
-        'ngay_ket_thuc_khuyen_mai',
     ];
 
-    protected $dates = [
-        'ngay_bat_dau_khuyen_mai',
-        'ngay_ket_thuc_khuyen_mai',
-    ];
     public function sanPham()
     {
         return $this->belongsTo(SanPham::class);

@@ -16,11 +16,17 @@ class SanPham extends Model
         'anh_san_pham',
         'ma_san_pham',
         'duong_dan',
+        'gia_ban',
+        'gia_khuyen_mai',
+        'ngay_bat_dau_khuyen_mai',
+        'ngay_ket_thuc_khuyen_mai',
         'mo_ta_ngan',
         'noi_dung',
         'luot_xem',
-        'trang_thai'
-
+        'trang_thai',
+        'gia_tri_uu_dai',
+        'giam_gia_soc',
+        'hang_moi'
     ];
 
     public function danhMuc()
@@ -40,5 +46,10 @@ class SanPham extends Model
     public function danhGias()
     {
         return $this->hasMany(DanhGia::class, 'san_pham_id');
+    }
+
+    public function chuongTrinhKhuyenMais()
+    {
+        return $this->belongsToMany(ChuongTrinhUuDai::class, 'chuong_trinh_san_pham', 'san_pham_id', 'chuong_trinh_khuyen_mai_id');
     }
 }

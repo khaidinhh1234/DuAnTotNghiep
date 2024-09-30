@@ -1,14 +1,13 @@
 
 import React, { useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, message, Space, Table, Tabs } from "antd";
+import { Button, Input, message, Space, Table } from "antd";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
-import { toast } from "react-toastify";
 
 interface IMemberRank {
   id: string | number;

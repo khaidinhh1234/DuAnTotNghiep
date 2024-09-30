@@ -364,13 +364,13 @@ const VoucherAdmin: React.FC = () => {
                   }}
                   cancelText="Không"
                 >
-                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  <Button className="bg-gradient-to-l from-red-500  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
                     Tắt
                   </Button>
                 </Popconfirm>
                 <Link to={`/admin/vouchers/edit/${record.id}`}>
                   {" "}
-                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
                     Cập nhật
                   </Button>{" "}
                 </Link>
@@ -380,13 +380,13 @@ const VoucherAdmin: React.FC = () => {
               <>
                 <Button
                   onClick={() => mutate({ record, action: "Bật" })}
-                  className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white"
+                  className=" bg-gradient-to-l from-green-700 to-green-600 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
                 >
                   Bật
                 </Button>
                 <Link to={`/admin/vouchers/show/${record.id}`}>
                   {" "}
-                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  <Button className=" bg-gradient-to-l from-sky-600 to-cyan-600 text-white hover:from-sky-500 hover:to-cyan-500 border border-green-300 font-bold">
                     Xem
                   </Button>{" "}
                 </Link>
@@ -395,7 +395,7 @@ const VoucherAdmin: React.FC = () => {
             {record.trang_thai == 2 && (
               <>
                 <Link to={`/admin/vouchers/show/${record.id}`}>
-                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  <Button className=" bg-gradient-to-l from-sky-600 to-cyan-600 text-white hover:from-sky-500 hover:to-cyan-500 border border-green-300 font-bold">
                     Xem
                   </Button>{" "}
                 </Link>
@@ -444,7 +444,7 @@ const VoucherAdmin: React.FC = () => {
 
         <div className="flex gap-2">
           <Link to="/admin/add-vocher">
-            <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm khuyến mãi
             </Button>

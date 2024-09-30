@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input, Select, Upload, Button, Checkbox } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {  SyncOutlined, UploadOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
 import { Category, Tag } from "@/common/types/product";
 const { Option } = Select;
@@ -14,6 +14,10 @@ export interface ProductFormProps {
   categoriesData: Category[];
   tagsData: Tag[];
   onValuesChange: (changedValues: any, allValues: any) => void;
+  productCode: string;
+  onGenerateCode: () => void;
+
+  setData: any;
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({
@@ -23,6 +27,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
   categoriesData,
   tagsData,
   onValuesChange,
+  productCode,
+  setData,
+  onGenerateCode,
+
 }) => (
   <Form
     form={form}
@@ -30,7 +38,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     layout="vertical"
     labelCol={{ span: 8 }}
     wrapperCol={{ span: 24 }}
-    style={{ maxWidth: 1000 }}
+    style={{ maxWidth: "100%" }}
     className="mx-10 my-5"
     autoComplete="off"
     onValuesChange={onValuesChange}
@@ -82,22 +90,46 @@ const ProductForm: React.FC<ProductFormProps> = ({
     </div>
 
     <div className="grid grid-cols-2 gap-5">
-      <Form.Item label="Chọn tags" name="tags">
+      {/* <Form.Item label="Chọn tags" name="tags">
         <Select mode="multiple" className="w-full" placeholder="Chọn tags">
           {tagsData &&
             tagsData.map((tag) => (
-              <Option key={tag.id} value={tag.ten_the + tag.id}>
+              <Option key={tag.id} value={tag.id}>
                 {tag.ten_the}
               </Option>
             ))}
         </Select>
-      </Form.Item>
+      </Form.Item> */}
+      <Form.Item label="Chọn tags" name="tags">
+  <Select mode="multiple" className="w-full" placeholder="Chọn tags">
+    {tagsData &&
+      tagsData.map((tag) => (
+        <Option key={tag.id} value={tag.id}>  
+          {tag.ten_the}
+        </Option>
+      ))}
+  </Select>
+</Form.Item>
       <Form.Item
         label="Mã sản phẩm"
         name="ma_san_pham"
         rules={[{ required: true, message: "Mã sản phẩm bắt buộc phải nhập!" }]}
+        initialValue={productCode}
       >
-        <Input placeholder="Nhập mã sản phẩm" />
+        <Input 
+          className="border-none focus:ring-0"
+          readOnly 
+          addonAfter={
+            <Button 
+              icon={<       SyncOutlined spin 
+                />} 
+              onClick={(e) => {
+                e.preventDefault();
+                onGenerateCode();
+              }}
+            />
+          }
+        />
       </Form.Item>
     </div>
 
@@ -150,12 +182,20 @@ const ProductForm: React.FC<ProductFormProps> = ({
             ],
             setup: (editor) => {
               editor.on("Change", () => {
-                form.setFieldsValue({ noi_dung: editor.getContent() });
+                const content = editor.getContent();
+                // console.log("Editor content:", content); // Một chuỗi HTML hoặc JSON đã được stringify
+                setData(content);
+                // value = { content };
+                form.setFieldsValue({
+                  noi_dung: String(content),
+                  // Chuyển đổi đối tượng thành chuỗi JSON nếu cần
+                });
               });
             },
           }}
           initialValue="Chào mừng bạn đến với Glow clothing!"
         />
+        {/* <TextArea rows={5} placeholder="Nhập nội dung sản phẩm" /> */}
       </Form.Item>
     </div>
   </Form>

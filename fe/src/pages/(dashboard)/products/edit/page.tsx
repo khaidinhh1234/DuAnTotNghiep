@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button, Form, Select, Spin, message } from "antd";
-import { ArrowLeftOutlined, LoadingOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
-import { uploadToCloudinary } from '@/configs/cloudinary';
+import { uploadToCloudinary } from "@/configs/cloudinary";
 import { RcFile, UploadChangeParam, UploadFile } from "antd/es/upload";
 import ProductForm from "./ProductForm";
 import VariantForm from "./VariantForm";
@@ -14,7 +14,7 @@ import {
   Color,
   Tag,
   Variant,
-  ProductFormData
+  ProductFormData,
 } from "@/common/types/product";
 
 const { Option } = Select;
@@ -29,11 +29,18 @@ const fetchProduct = async (id: string): Promise<any> => {
   return response.data;
 };
 
-const updateProduct = async ({ id, productData }: { id: string, productData: FormData }): Promise<any> => {
+const updateProduct = async ({
+  id,
+  productData,
+}: {
+  id: string;
+  productData: FormData;
+}): Promise<any> => {
   console.log("Sending update request for product ID:", id);
   const plainObject = Object.fromEntries(productData.entries());
-    if (plainObject.the) plainObject.the = JSON.parse(plainObject.the as string);
-  if (plainObject.bien_the) plainObject.bien_the = JSON.parse(plainObject.bien_the as string);
+  if (plainObject.the) plainObject.the = JSON.parse(plainObject.the as string);
+  if (plainObject.bien_the)
+    plainObject.bien_the = JSON.parse(plainObject.bien_the as string);
 
   const response = await instance.put(`/admin/sanpham/${id}`, plainObject, {
     headers: { "Content-Type": "application/json" },
@@ -48,10 +55,12 @@ const EditProductsAndVariants: React.FC = () => {
   const queryClient = useQueryClient();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [form] = Form.useForm();
-  
+
   const [variantData, setVariantData] = useState<Variant[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [productFormData, setProductFormData] = useState<ProductFormData>({} as ProductFormData);
+  const [productFormData, setProductFormData] = useState<ProductFormData>(
+    {} as ProductFormData
+  );
   const [selectedColors, setSelectedColors] = useState<number[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,7 +86,7 @@ const EditProductsAndVariants: React.FC = () => {
     queryFn: () => fetchData("the"),
   });
 
-  const { data: productData,  } = useQuery({
+  const { data: productData } = useQuery({
     queryKey: ["product", id],
     queryFn: () => fetchProduct(id!),
     enabled: !!id,
@@ -106,7 +115,7 @@ const EditProductsAndVariants: React.FC = () => {
         tags: productData.data.the_san_pham.map((tag: any) => tag.id),
         ma_san_pham: productData.data.ma_san_pham,
         anh_san_pham: productData.data.anh_san_pham,
-        mo_ta_san_pham: ""
+        mo_ta_san_pham: "",
       };
 
       form.setFieldsValue(formData);
@@ -115,15 +124,18 @@ const EditProductsAndVariants: React.FC = () => {
       if (productData.data.anh_san_pham) {
         setFileList([
           {
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
+            uid: "-1",
+            name: "image.png",
+            status: "done",
             url: productData.data.anh_san_pham,
           },
         ]);
       }
 
-      if (productData.data.bien_the_san_pham && productData.data.bien_the_san_pham.length > 0) {
+      if (
+        productData.data.bien_the_san_pham &&
+        productData.data.bien_the_san_pham.length > 0
+      ) {
         const colors = new Set<number>();
         const sizes = new Set<number>();
 
@@ -131,28 +143,33 @@ const EditProductsAndVariants: React.FC = () => {
           if (v.mau_sac_id) colors.add(Number(v.mau_sac_id));
           if (v.kich_thuoc_id) sizes.add(Number(v.kich_thuoc_id));
           if (v.bien_the_mau_sac_id) colors.add(Number(v.bien_the_mau_sac_id));
-          if (v.bien_the_kich_thuoc_id) sizes.add(Number(v.bien_the_kich_thuoc_id));
+          if (v.bien_the_kich_thuoc_id)
+            sizes.add(Number(v.bien_the_kich_thuoc_id));
         });
 
         setSelectedColors(Array.from(colors));
         setSelectedSizes(Array.from(sizes));
 
-        const newVariantData = productData.data.bien_the_san_pham.map((v: any) => ({
-          id: `${v.bien_the_mau_sac_id || v.mau_sac_id}-${v.bien_the_kich_thuoc_id || v.kich_thuoc_id}`,
-          mau_sac_id: Number(v.bien_the_mau_sac_id || v.mau_sac_id),
-          kich_thuoc_id: Number(v.bien_the_kich_thuoc_id || v.kich_thuoc_id),
-          gia_ban: v.gia_ban,
-          gia_khuyen_mai: v.gia_khuyen_mai,
-          so_luong_bien_the: v.so_luong_bien_the,
-          ngay_bat_dau_khuyen_mai: v.ngay_bat_dau_khuyen_mai,
-          ngay_ket_thuc_khuyen_mai: v.ngay_ket_thuc_khuyen_mai,
-          anh_bien_the: v.anh_bien_the ? v.anh_bien_the.map((img: any) => ({
-            uid: img.id.toString(),
-            name: `image-${img.id}.png`,
-            status: 'done',
-            url: img.duong_dan_anh,
-          })) : [],
-        }));
+        const newVariantData = productData.data.bien_the_san_pham.map(
+          (v: any) => ({
+            id: `${v.bien_the_mau_sac_id || v.mau_sac_id}-${v.bien_the_kich_thuoc_id || v.kich_thuoc_id}`,
+            mau_sac_id: Number(v.bien_the_mau_sac_id || v.mau_sac_id),
+            kich_thuoc_id: Number(v.bien_the_kich_thuoc_id || v.kich_thuoc_id),
+            gia_ban: v.gia_ban,
+            gia_khuyen_mai: v.gia_khuyen_mai,
+            so_luong_bien_the: v.so_luong_bien_the,
+            ngay_bat_dau_khuyen_mai: v.ngay_bat_dau_khuyen_mai,
+            ngay_ket_thuc_khuyen_mai: v.ngay_ket_thuc_khuyen_mai,
+            anh_bien_the: v.anh_bien_the
+              ? v.anh_bien_the.map((img: any) => ({
+                  uid: img.id.toString(),
+                  name: `image-${img.id}.png`,
+                  status: "done",
+                  url: img.duong_dan_anh,
+                }))
+              : [],
+          })
+        );
         setVariantData(newVariantData);
       }
 
@@ -162,10 +179,14 @@ const EditProductsAndVariants: React.FC = () => {
 
   useEffect(() => {
     const newVariants = generateVariants(selectedColors, selectedSizes);
-    setVariantData(prevVariants => {
-      const mergedVariants = newVariants.map(newVariant => {
-        const existingVariant = prevVariants.find(v => v.id === newVariant.id);
-        return existingVariant ? { ...newVariant, ...existingVariant } : newVariant;
+    setVariantData((prevVariants) => {
+      const mergedVariants = newVariants.map((newVariant) => {
+        const existingVariant = prevVariants.find(
+          (v) => v.id === newVariant.id
+        );
+        return existingVariant
+          ? { ...newVariant, ...existingVariant }
+          : newVariant;
       });
       return mergedVariants;
     });
@@ -183,47 +204,61 @@ const EditProductsAndVariants: React.FC = () => {
     };
   }, [id, queryClient, form]);
 
-  const generateVariants = useCallback((colors: number[], sizes: number[]): Variant[] => {
-    const newVariants: Variant[] = [];
-    colors.forEach(colorId => {
-      sizes.forEach(sizeId => {
-        const id = `${colorId}-${sizeId}`;
-        newVariants.push({
-          id,
-          mau_sac_id: colorId,
-          kich_thuoc_id: sizeId,
-          gia_ban: '',
-          gia_khuyen_mai: '',
-          so_luong_bien_the: '',
-          ngay_bat_dau_khuyen_mai: null,
-          ngay_ket_thuc_khuyen_mai: null,
-          anh_bien_the: [],
+  const generateVariants = useCallback(
+    (colors: number[], sizes: number[]): Variant[] => {
+      const newVariants: Variant[] = [];
+      colors.forEach((colorId) => {
+        sizes.forEach((sizeId) => {
+          const id = `${colorId}-${sizeId}`;
+          newVariants.push({
+            id,
+            mau_sac_id: colorId,
+            kich_thuoc_id: sizeId,
+            gia_ban: "",
+            gia_khuyen_mai: "",
+            so_luong_bien_the: "",
+            ngay_bat_dau_khuyen_mai: null,
+            ngay_ket_thuc_khuyen_mai: null,
+            anh_bien_the: [],
+          });
         });
       });
-    });
-    return newVariants;
-  }, []);
+      return newVariants;
+    },
+    []
+  );
 
-  const handleProductFormValuesChange = (_: any, allValues: ProductFormData) => {
+  const handleProductFormValuesChange = (
+    _: any,
+    allValues: ProductFormData
+  ) => {
     console.log("Form values changed:", allValues);
     setProductFormData(allValues);
   };
 
   const handleRemoveImage = (file: UploadFile, record: Variant) => {
-    updateVariant({ ...record, anh_bien_the: record.anh_bien_the.filter((item) => item.uid !== file.uid) });
+    updateVariant({
+      ...record,
+      anh_bien_the: record.anh_bien_the.filter((item) => item.uid !== file.uid),
+    });
   };
 
-  const handleImageChange = (info: UploadChangeParam<UploadFile<any>>, variant: Variant) => {
+  const handleImageChange = (
+    info: UploadChangeParam<UploadFile<any>>,
+    variant: Variant
+  ) => {
     const { fileList } = info;
     const updatedVariant = {
       ...variant,
-      anh_bien_the: fileList.map(file => ({
+      anh_bien_the: fileList.map((file) => ({
         uid: file.uid,
         name: file.name,
         status: file.status,
-        url: file.url || (file.originFileObj ? URL.createObjectURL(file.originFileObj) : ''),
-        originFileObj: file.originFileObj
-      }))
+        url:
+          file.url ||
+          (file.originFileObj ? URL.createObjectURL(file.originFileObj) : ""),
+        originFileObj: file.originFileObj,
+      })),
     };
     updateVariant(updatedVariant);
   };
@@ -238,17 +273,17 @@ const EditProductsAndVariants: React.FC = () => {
       console.log("Variant Data before submission:", variantData);
       const formData = await prepareFormData();
       console.log("FormData prepared successfully");
-      
+
       updateProductMutation.mutate({ id: id!, productData: formData });
     } catch (error) {
       console.error("Error in handleSubmit:", error);
       handleSubmitError(error);
     }
   };
-  
+
   const updateVariant = (updatedVariant: Variant) => {
-    setVariantData(prevData =>
-      prevData.map(v => v.id === updatedVariant.id ? updatedVariant : v)
+    setVariantData((prevData) =>
+      prevData.map((v) => (v.id === updatedVariant.id ? updatedVariant : v))
     );
   };
 
@@ -258,102 +293,117 @@ const EditProductsAndVariants: React.FC = () => {
       const errorMessages = Object.entries(error.response.data.errors)
         .map(([field, messages]) => {
           if (Array.isArray(messages)) {
-            return `${field}: ${messages.join(', ')}`;
-          } else if (typeof messages === 'string') {
+            return `${field}: ${messages.join(", ")}`;
+          } else if (typeof messages === "string") {
             return `${field}: ${messages}`;
           } else {
             return `${field}: Unknown error`;
           }
         })
-        .join('\n');
+        .join("\n");
       message.error(`Lỗi cập nhật sản phẩm:\n${errorMessages}`);
     } else {
       message.error("Đã xảy ra lỗi khi cập nhật sản phẩm.");
     }
     setIsSubmitting(false);
   };
-  
 
   const validateVariants = () => {
     if (variantData.length === 0) {
       throw new Error("Vui lòng thêm ít nhất một biến thể sản phẩm.");
     }
-  
+
     variantData.forEach((variant, index) => {
       if (!variant.kich_thuoc_id || !variant.mau_sac_id) {
         throw new Error(
           `Thiếu kích thước hoặc màu sắc cho biến thể ${index + 1}.`
         );
       }
-  
+
       const regularPrice = parseFloat(variant.gia_ban);
       if (isNaN(regularPrice) || (regularPrice !== 0 && regularPrice < 1000)) {
-        throw new Error(`Giá bán của biến thể ${index + 1} phải bằng 0 hoặc lớn hơn hoặc bằng 1000.`);
+        throw new Error(
+          `Giá bán của biến thể ${index + 1} phải bằng 0 hoặc lớn hơn hoặc bằng 1000.`
+        );
       }
-  
+
       if (variant.gia_khuyen_mai !== undefined) {
         const promotionalPrice = parseFloat(variant.gia_khuyen_mai);
-       
+
         if (promotionalPrice > regularPrice) {
-          throw new Error(`Giá khuyến mãi của biến thể ${index + 1} không thể lớn hơn giá bán.`);
+          throw new Error(
+            `Giá khuyến mãi của biến thể ${index + 1} không thể lớn hơn giá bán.`
+          );
         }
       }
- 
+
       const quantity = parseInt(variant.so_luong_bien_the);
       if (isNaN(quantity) || quantity <= 0) {
-        throw new Error(`Số lượng của biến thể ${index + 1} phải là số nguyên dương.`);
+        throw new Error(
+          `Số lượng của biến thể ${index + 1} phải là số nguyên dương.`
+        );
       }
     });
   };
-  
 
   const prepareFormData = async () => {
     const formData = new FormData();
-    formData.append('ten_san_pham', productFormData.ten_san_pham || '');
-    formData.append('danh_muc_id', productFormData.danh_muc_id?.toString() || '');
-    formData.append('mo_ta_ngan', productFormData.mo_ta_ngan || '');
-    formData.append('noi_dung', productFormData.noi_dung || '');
-    formData.append('ma_san_pham', productFormData.ma_san_pham || '');
-    formData.append('the', JSON.stringify(productFormData.tags || []));
+    formData.append("ten_san_pham", productFormData.ten_san_pham || "");
+    formData.append(
+      "danh_muc_id",
+      productFormData.danh_muc_id?.toString() || ""
+    );
+    formData.append("mo_ta_ngan", productFormData.mo_ta_ngan || "");
+    formData.append("noi_dung", productFormData.noi_dung || "");
+    formData.append("ma_san_pham", productFormData.ma_san_pham || "");
+    formData.append("the", JSON.stringify(productFormData.tags || []));
 
     if (fileList.length > 0 && fileList[0].originFileObj) {
       try {
-        const imageUrl = await uploadToCloudinary(fileList[0].originFileObj as RcFile);
-        formData.append('anh_san_pham', imageUrl);
+        const imageUrl = await uploadToCloudinary(
+          fileList[0].originFileObj as RcFile
+        );
+        formData.append("anh_san_pham", imageUrl);
       } catch (error) {
-        console.error('Error uploading product image:', error);
-        throw new Error('Lỗi khi tải lên ảnh sản phẩm');
+        console.error("Error uploading product image:", error);
+        throw new Error("Lỗi khi tải lên ảnh sản phẩm");
       }
     } else if (productData.data.anh_san_pham && fileList.length > 0) {
-      formData.append('anh_san_pham', productData.data.anh_san_pham);
+      formData.append("anh_san_pham", productData.data.anh_san_pham);
     } else {
-      formData.append('anh_san_pham', '');
+      formData.append("anh_san_pham", "");
     }
 
     if (variantData.length > 0) {
-      const variantsWithImages = await Promise.all(variantData.map(async (variant) => {
-        const variantImages = await Promise.all(variant.anh_bien_the.map(async (image) => {
-          if (image.originFileObj) {
-            try {
-              const imageUrl = await uploadToCloudinary(image.originFileObj as RcFile);
-              return imageUrl;
-            } catch (error) {
-              console.error('Error uploading variant image:', error);
-              return null;
-            }
-          }
-          return image.url;
-        }));
+      const variantsWithImages = await Promise.all(
+        variantData.map(async (variant) => {
+          const variantImages = await Promise.all(
+            variant.anh_bien_the.map(async (image) => {
+              if (image.originFileObj) {
+                try {
+                  const imageUrl = await uploadToCloudinary(
+                    image.originFileObj as RcFile
+                  );
+                  return imageUrl;
+                } catch (error) {
+                  console.error("Error uploading variant image:", error);
+                  return null;
+                }
+              }
+              return image.url;
+            })
+          );
 
-        return {
-          ...variant,
-          anh: variantImages.filter(Boolean),
-        };
-      }));
+          return {
+            ...variant,
+            anh: variantImages.filter(Boolean),
+          };
+        })
+      );
 
-      formData.append('bien_the', JSON.stringify(variantsWithImages));
+      formData.append("bien_the", JSON.stringify(variantsWithImages));
     } else {
-      throw new Error('Vui lòng thêm ít nhất một biến thể sản phẩm');
+      throw new Error("Vui lòng thêm ít nhất một biến thể sản phẩm");
     }
 
     for (let [key, value] of formData.entries()) {
@@ -367,34 +417,48 @@ const EditProductsAndVariants: React.FC = () => {
     if (error instanceof Error) {
       message.error(error.message);
     } else {
-      message.error('Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.');
+      message.error("Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.");
     }
     setIsSubmitting(false);
   };
 
-  if (isLoading || !id || !productData || !categoriesData || !sizesData || !colorsData || !tagsData) {
+  if (
+    isLoading ||
+    !id ||
+    !productData ||
+    !categoriesData ||
+    !sizesData ||
+    !colorsData ||
+    !tagsData
+  ) {
     return <Spin className="flex justify-center items-center h-screen" />;
   }
 
   return (
-    <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-   <div className="flex items-center justify-between mt-5 left-5 px-5">
-  <h1 className="w-full text-3xl font-semibold text-gray-800 text-left mr-5">
-    Thêm sản phẩm và biến thể
-  </h1>
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <div className="flex items-center">
+        <h1 className="md:text-base">
+          Quản trị / Sản phẩm /{" "}
+          <span className="font-semibold">Cập nhật sản phẩm </span>
+        </h1>
+      </div>
+      <div className="flex items-center justify-between">
+        <h1 className="font-semibold md:text-3xl">
+          Cập nhật sản phẩm:{" "}
+          {productData?.data?.ten_san_pham
+            ? productData.data.ten_san_pham
+            : "Chưa cập nhật tên sản phẩm"}
+        </h1>
+        <div className="flex gap-2">
+          <Link to="/admin/products">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+              quay lại
+            </Button>
+          </Link>
+        </div>
+      </div>
 
-  <Link to="/admin/products">
-    <Button
-      icon={<ArrowLeftOutlined />}
-      className="flex items-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md px-5"
-    >
-      Quay lại
-    </Button>
-  </Link>
-</div>
-
-      <div className="container mx-auto px-6 py-8">
-
+      <div className="max-w-8xl mx-5 px-5 py-8">
         <div className="bg-white rounded-lg shadow-md p-6">
           <ProductForm
             form={form}
@@ -405,10 +469,11 @@ const EditProductsAndVariants: React.FC = () => {
             onValuesChange={handleProductFormValuesChange}
             initialValues={productData?.data}
           />
+          <div className="mt-8 px-10">
+            <h2 className="text-xl font-semibold mb-4">
+              Giá bán, Kho hàng và Biến thể
+            </h2>
 
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Giá bán, Kho hàng và Biến thể</h2>
-            
             <div className="mb-6 bg-gray-50 p-4 rounded-md">
               <h3 className="text-lg font-medium mb-2">Biến thể Màu sắc</h3>
               <div className="mb-4">
@@ -417,7 +482,7 @@ const EditProductsAndVariants: React.FC = () => {
                 </label>
                 <Select
                   mode="multiple"
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                   value={selectedColors}
                   onChange={(values) => setSelectedColors(values as number[])}
                 >
@@ -444,12 +509,14 @@ const EditProductsAndVariants: React.FC = () => {
                 </label>
                 <Select
                   mode="multiple"
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                   value={selectedSizes}
                   onChange={(values) => setSelectedSizes(values as number[])}
                 >
                   {sizesData.data.map((size) => (
-                    <Option key={size.id} value={size.id}>{size.kich_thuoc}</Option>
+                    <Option key={size.id} value={size.id}>
+                      {size.kich_thuoc}
+                    </Option>
                   ))}
                 </Select>
               </div>
@@ -466,27 +533,37 @@ const EditProductsAndVariants: React.FC = () => {
               sizesData={sizesData.data}
             />
           </div>
+          <Form.Item className="mt-8 px-10">
+            <div className="flex items-center justify-start gap-2">
+              <Link to="/admin/products">
+                <Button className="py-[18px] px-10">Hủy</Button>
+              </Link>
+              <Button
+                type="primary"
+                onClick={handleSubmit}
+                className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
+                style={{
+                  padding: "18px 30px",
+                  marginRight: "190px",
+                }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting && (
+                  <Spin
+                    indicator={
+                      <LoadingOutlined
+                        style={{ fontSize: 20, marginLeft: 5 }}
+                        spin
+                      />
+                    }
+                  />
+                )}{" "}
+                {isSubmitting ? "Đang xử lý..." : "Cập nhật sản phẩm"}
+              </Button>
+            </div>
+          </Form.Item>{" "}
         </div>
       </div>
-      <Form.Item className="mt-8">
-        <div className="flex items-center justify-end">
-          <Button
-            type="primary"
-            onClick={handleSubmit}
-            className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
-            style={{
-              marginTop: '-60px',
-              padding: '18px 30px',
-              marginRight: '190px',
-            }}
-            disabled={isSubmitting}
-          >
-            {isSubmitting && (
-              <Spin indicator={<LoadingOutlined style={{ fontSize: 20, marginLeft: 5 }} spin />} />
-            )} {isSubmitting ? 'Đang xử lý...' : 'Cập nhật sản phẩm'}
-          </Button>
-        </div>
-      </Form.Item>
     </main>
   );
 };
