@@ -26,6 +26,8 @@ use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
+use App\Http\Controllers\Client\Api\SanPhamController as ApiSanPhamController;
+use App\Http\Controllers\Client\Api\TrangSanPhamController;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -70,8 +72,23 @@ Route::post('captcha/verify', [CaptchaController::class, 'verifyCaptcha']);
 Route::get('sanpham/{sanpham}/danhgia', [DanhGiaController::class, 'danhSachDanhGia']);
 Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
 
+
+
+Route::middleware([])
+    ->name('client.')
+    ->prefix('client')
+    ->group(function () {
+        //Client Sản Phẩm
+        //Lọc sản phẩm theo danh mục
+        Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha'])->name('danh-muc-cha');
+
+        Route::post('/loc-san-pham-theo-danh-muc', action: [TrangSanPhamController::class, 'locSanPhamTheoDanhMuc'])->name('loc-san-pham-theo-danh-muc');
+
+    });
+
 // Trang chủ
 Route::get('trangchu', [\App\Http\Controllers\Client\Api\TrangChuController::class, 'index']);
+
 
 
 //'auth:sanctum', 'auth.checkrole'
