@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BienTheKichThuoc;
 use App\Models\BienTheMauSac;
 use App\Models\DanhMuc;
 use App\Models\SanPham;
@@ -146,4 +147,73 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
+    public function kichThuoc(Request $request)
+    {
+        DB::beginTransaction();  // Bắt đầu transaction
+        try {
+            // Lấy tất cả màu sắc
+            $kichThuoc = BienTheKichThuoc::query()->get();
+            // Commit transaction nếu mọi thứ thành công
+            DB::commit();
+
+            return response()->json([
+                'kichThuoc' => $kichThuoc
+            ]);
+
+        } catch (\Exception $e) {
+            // Rollback nếu có lỗi
+            DB::rollBack();
+
+            // Trả về lỗi
+            return response()->json([
+                'message' => 'Có lỗi xảy ra, vui lòng thử lại!',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // public function laySanPhamTheoKichThuoc(Request $request)
+    // {
+    //     // Bắt đầu transaction
+    //     DB::beginTransaction();
+
+    //     try {
+    //         // Nhận mã kích thước từ request
+    //         $kichThuocId = $request->kich_thuoc_id; // Lấy trực tiếp từ request
+
+    //         // Kiểm tra nếu mã kích thước không tồn tại
+    //         if (!$kichThuocId) {
+    //             return response()->json([
+    //                 'message' => 'Kích thước không hợp lệ.'
+    //             ], 400);
+    //         }
+
+    //         // Lấy danh sách sản phẩm theo kích thước
+    //         $sanPhams = SanPham::whereHas('bienTheSanPham', function ($query) use ($kichThuocId) {
+    //             $query->where('bien_the_kich_thuoc_id', $kichThuocId);
+    //         })
+    //             ->with([
+    //                 'bienTheSanPham' => function ($query) {
+    //                     $query->with('anhBienThe');
+    //                 }
+    //             ])
+    //             ->paginate(10);
+
+    //         // Commit transaction sau khi xử lý xong
+    //         DB::commit();
+
+    //         // Trả về danh sách sản phẩm
+    //         return response()->json([
+    //             'data' => $sanPhams
+    //         ], 200);
+
+    //     } catch (\Exception $e) {
+    //         // Rollback nếu có lỗi xảy ra
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'message' => 'Đã xảy ra lỗi: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 }
