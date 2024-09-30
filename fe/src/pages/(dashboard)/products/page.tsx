@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import {
   DeleteOutlined,
   SearchOutlined,
-  ReloadOutlined,
+  
 } from "@ant-design/icons";
 import { Button, Input, Popconfirm, Space, Table, Switch, message } from "antd";
 import Highlighter from "react-highlight-words";
@@ -13,7 +13,6 @@ import "@/global.css";
 import instance from "@/configs/axios";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import { toast } from "react-toastify";
 
 interface DataType {
   id: any;
@@ -86,11 +85,11 @@ const ProductsAdmin: React.FC = () => {
     },
     onSuccess: (id) => {
       queryClient.invalidateQueries({ queryKey: ["sanpham"] });
-      toast.success("Xóa sản phẩm thành công");
+      message.success("Xóa sản phẩm thành công");
     },
     onError: (error) => {
       console.error("Error deleting product:", error);
-      toast.error("Xóa sản phẩm thất bại");
+      message.error("Xóa sản phẩm thất bại");
     },
   });
 
