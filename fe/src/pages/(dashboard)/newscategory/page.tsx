@@ -34,7 +34,6 @@ const NewCategory = () => {
       }
     },
   });
-  // console.log(data);
   const dataSource =
     data?.data.map((newcategory: NewCategories) => ({
       key: newcategory.id,

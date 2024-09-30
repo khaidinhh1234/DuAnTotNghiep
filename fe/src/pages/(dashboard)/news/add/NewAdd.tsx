@@ -11,7 +11,7 @@ const NewAdd = () => {
     const nav = useNavigate();
     const [form] = Form.useForm();
 
-    // Fetch categories and users
+
     const { data, error, isLoading } = useQuery({
         queryKey: ['danhmuctintuc', 'taikhoan'],
         queryFn: async () => {
@@ -32,7 +32,6 @@ const NewAdd = () => {
         },
     });
 
-    // Mutation for adding news
     const { mutate } = useMutation({
         mutationFn: async (news: INew) => {
             const response = await instance.post(`/admin/tintuc`, news);
@@ -48,7 +47,7 @@ const NewAdd = () => {
         },
     });
 
-    // Handle form submission
+ 
     const onFinish = (values: any) => {
         const categoryData: INew = {
             ...values,
@@ -57,7 +56,6 @@ const NewAdd = () => {
         mutate(categoryData);
     };
 
-    // Handle loading and error states
     if (isLoading) {
         return <div>Đang tải...</div>;
     }
