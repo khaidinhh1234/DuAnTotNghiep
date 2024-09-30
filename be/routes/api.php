@@ -220,11 +220,11 @@ Route::middleware([])
             // Route thống kê theo tháng
             Route::get('/san-pham-ban-theo-thang', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoThang'])->name('san-pham-ban-theo-thang.thong-ke');
             // Route thống kê theo năm
-            Route::get('/san-pham-ban-theo-nam', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoNam']);
+            Route::get('/san-pham-ban-theo-nam', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoNam'])->name('san-pham-ban-theo-nam.thong-ke');
             // Thống kê số lượng tồn kho của từng sản phẩm
-            Route::get('/so-luong-ton-kho-cua-san-pham', [ThongKeDoanhThuController::class, 'soLuongTonKhoCuaSanPham']);
+            Route::get('/so-luong-ton-kho-cua-san-pham', [ThongKeDoanhThuController::class, 'soLuongTonKhoCuaSanPham'])->name('so-luong-ton-kho-cua-san-pham.thong-ke');
             // Thống kê số lượng sản phẩm sắp hết hàng
-            Route::get('/so-luong-san-pham-sap-het-hang', [ThongKeDoanhThuController::class, 'soLuongSanPhamSapHetHang']);
+            Route::get('/so-luong-san-pham-sap-het-hang', [ThongKeDoanhThuController::class, 'soLuongSanPhamSapHetHang'])->name('so-luong-san-pham-sap-het-hang.thong-ke');
             //Route Thống kê hạng thành viên
             Route::get('/khach-hang-theo-hang-thanh-vien', [ThongKeKhachHangController::class, 'thongKeKhachHangTheoHangThanhVien'])->name('khach-hang-theo-hang-thanh-vien.thong-ke');
             Route::get('/khach-hang-moi-theo-hang', [ThongKeKhachHangController::class, 'thongKeKhachHangMoiTheoHangThanhVien'])->name('khach-hang-moi-theo-hang.thong-ke');

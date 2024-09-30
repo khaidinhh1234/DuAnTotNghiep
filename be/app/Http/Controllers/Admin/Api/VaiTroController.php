@@ -257,6 +257,8 @@ class VaiTroController extends Controller
                 'khach-hang-moi-theo-hang' => 'Khách hàng mới theo hạng thành viên',
                 'khach-hang-moi-theo-tung-thang' => 'Khách hàng mới theo từng tháng',
                 'khach-hang-quay-lai-theo-thang' => 'Khách hàng quay lại theo tháng',
+                'so-luong-ton-kho-cua-san-pham' => 'Số lượng tồn kho của sản phẩm',
+                'so-luong-san-pham-sap-het-hang' => 'Số lượng sản phẩm sắp hết hàng',
                 'thong-ke-danh-gia' => 'Đánh giá'
             ];
 
