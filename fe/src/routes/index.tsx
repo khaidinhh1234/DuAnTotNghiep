@@ -91,6 +91,7 @@ import { AnalyticsAdmin } from "@/pages/(dashboard)/analytics/page";
 import MemberRank from "@/pages/(dashboard)/user/hangthanhvien/edit/page";
 
 import Component from "@/pages/(dashboard)/test";
+import PageTransport from "@/pages/(dashboard)/transport/page";
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
@@ -225,7 +226,13 @@ const Router = () => {
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
           />
+<<<<<<< HEAD
+          {/* vận chuyển */}
+          <Route path="transport" element={<PageTransport/>}/>
+          //vai trò
+=======
           {/* //vai trò */}
+>>>>>>> f91cab5017b391d0ae11b2aac273879d81b38712
           <Route
             path="ADmin/userprivileges"
             element={<UserPrivilegeAdmin />}
