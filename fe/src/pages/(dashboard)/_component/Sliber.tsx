@@ -78,6 +78,11 @@ const menu = [
     icon: CheckCircle,
   },
   {
+    name: "Vận chuyển",
+    path: "/admin/transport",
+    icon: CheckCircle,
+  },
+  {
     name: "Phân quyền",
     icon: CheckCircle,
     path: "ADmin/userprivileges",
