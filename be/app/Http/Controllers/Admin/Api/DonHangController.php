@@ -79,7 +79,7 @@ class DonHangController extends Controller
                     'don_hang' => $donHang,
                     'chi_tiet_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
-                    'tong_tien_san_pham' => $tongTienSanPham
+                    'tong_thanh_tien_san_pham' => $tongTienSanPham
                 ]
             ], 200);
         } catch (Exception $e) {
