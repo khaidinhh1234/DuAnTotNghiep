@@ -6,6 +6,7 @@ use App\Models\DanhMuc;
 use App\Models\SanPham;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class SanPhamSeeder extends Seeder
 {
@@ -14,20 +15,21 @@ class SanPhamSeeder extends Seeder
      */
     public function run()
     {
-        $sanPhams = [
-            ['ten_san_pham' => 'Áo thun', 'ma_san_pham' => 'AO001', 'duong_dan' => 'ao-thun', 'mo_ta_ngan' => 'Áo thun chất lượng cao', 'anh_san_pham' => 'ao-thun.jpg'],
-            ['ten_san_pham' => 'Quần jean', 'ma_san_pham' => 'QJ001', 'duong_dan' => 'quan-jean', 'mo_ta_ngan' => 'Quần jean phong cách', 'anh_san_pham' => 'quan-jean.jpg'],
-            ['ten_san_pham' => 'Váy dài', 'ma_san_pham' => 'VD001', 'duong_dan' => 'vay-dai', 'mo_ta_ngan' => 'Váy dài sang trọng', 'anh_san_pham' => 'vay-dai.jpg'],
-        ];
+        $danhMucs = DanhMuc::all();
 
-        foreach ($sanPhams as $sanPham) {
+        for ($i = 1; $i <= 10; $i++) {
             SanPham::create([
-                'ten_san_pham' => $sanPham['ten_san_pham'],
-                'ma_san_pham' => $sanPham['ma_san_pham'],
-                'duong_dan' => $sanPham['duong_dan'],
-                'mo_ta_ngan' => $sanPham['mo_ta_ngan'],
-                'danh_muc_id' => DanhMuc::inRandomOrder()->first()->id,
-                'anh_san_pham' => $sanPham['anh_san_pham'],
+                'ten_san_pham' => 'Sản Phẩm ' . $i,
+                'anh_san_pham' => 'path_to_image_' . $i . '.jpg',
+                'ma_san_pham' => 'SP' . $i,
+                'duong_dan' => 'san-pham-' . $i,
+                'gia_ban' => rand(10000, 50000),
+                'gia_khuyen_mai' => rand(5000, 30000),
+                'ngay_bat_dau_khuyen_mai' => now(),
+                'ngay_ket_thuc_khuyen_mai' => now()->addDays(10),
+                'mo_ta_ngan' => 'Mô tả ngắn cho sản phẩm ' . $i,
+                'noi_dung' => 'Nội dung cho sản phẩm ' . $i,
+                'danh_muc_id' => $danhMucs->random()->id,
             ]);
         }
     }

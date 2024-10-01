@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\HangThanhVien;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,22 +15,16 @@ class HangThanhVienSeeder extends Seeder
      */
     public function run()
     {
-        $data = [];
-        $now = Carbon::now();
-
         for ($i = 1; $i <= 10; $i++) {
-            $data[] = [
+            HangThanhVien::create([
                 'ten_hang_thanh_vien' => 'Hạng Thành Viên ' . $i,
-                'chi_tieu_toi_thieu' => rand(1000, 5000),
-                'chi_tieu_toi_da' => rand(5000, 10000),
-                'ngay_bat_dau' => $now->subDays(rand(1, 30)),
-                'ngay_ket_thuc' => $now->addDays(rand(30, 365)),
-                'mo_ta' => 'Mô tả về hạng thành viên ' . $i,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+                'anh_hang_thanh_vien' => 'path_to_image/hang_thanh_vien_' . $i . '.jpg', // Thay đổi đường dẫn ảnh nếu cần
+                'chi_tieu_toi_thieu' => rand(1000, 5000) * $i, // Giá trị ngẫu nhiên
+                'chi_tieu_toi_da' => rand(5000, 10000) * $i, // Giá trị ngẫu nhiên
+                'ngay_bat_dau' => Carbon::now()->subMonths(rand(1, 12)), // Ngày bắt đầu ngẫu nhiên từ 1-12 tháng trước
+                'ngay_ket_thuc' => Carbon::now()->addMonths(rand(1, 12)), // Ngày kết thúc ngẫu nhiên từ 1-12 tháng sau
+                'mo_ta' => 'Mô tả cho hạng thành viên ' . $i,
+            ]);
         }
-
-        DB::table('hang_thanh_viens')->insert($data);
     }
 }
