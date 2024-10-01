@@ -1,7 +1,16 @@
-
 import React, { useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table, Form, InputRef, Popconfirm, message } from "antd";
+import {
+  Button,
+  Input,
+  Space,
+  Table,
+  Form,
+  InputRef,
+  Popconfirm,
+  message,
+  Spin,
+} from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Highlighter from "react-highlight-words";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -44,11 +53,11 @@ const SizeManagement: React.FC = () => {
       if (response.data.status) {
         return id;
       } else {
-        throw new Error(response.data.message || 'Failed to delete');
+        throw new Error(response.data.message || "Failed to delete");
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['size']);
+      queryClient.invalidateQueries({ queryKey: ["size"] });
       message.success("Xóa kích thước thành công");
     },
     onError: (error) => {
@@ -61,21 +70,22 @@ const SizeManagement: React.FC = () => {
     mutationFn: async (newSize: { kich_thuoc: string }) => {
       // Check if the size already exists
       const existingSize = sizes.find(
-        (size) => size.kich_thuoc.toLowerCase() === newSize.kich_thuoc.toLowerCase()
+        (size: any) =>
+          size.kich_thuoc.toLowerCase() === newSize.kich_thuoc.toLowerCase()
       );
       if (existingSize) {
-        throw new Error('Kích thước đã tồn tại');
+        throw new Error("Kích thước đã tồn tại");
       }
 
       const response = await instance.post("/admin/bienthekichthuoc", newSize);
       if (response.data.status) {
         return response.data;
       } else {
-        throw new Error(response.data.message || 'Failed to add size');
+        throw new Error(response.data.message || "Failed to add size");
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['size']);
+      queryClient.invalidateQueries({ queryKey: ["size"] });
       message.success("Thêm kích thước thành công");
       form.resetFields();
     },
@@ -90,7 +100,6 @@ const SizeManagement: React.FC = () => {
       addSizeMutation.mutate({ kich_thuoc: values.tensize });
     });
   };
-
 
   const handleSearch = (
     selectedKeys: string[],
@@ -153,10 +162,7 @@ const SizeManagement: React.FC = () => {
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
     onFilter: (value: string, record: SizeDataType) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: (visible: boolean) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
@@ -188,6 +194,11 @@ const SizeManagement: React.FC = () => {
       key: "kich_thuoc",
       width: "50%",
       ...getColumnSearchProps("kich_thuoc"),
+      onFilter: (value: boolean | React.Key, record: SizeDataType) =>
+        record.kich_thuoc
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase()),
     },
     {
       title: "Quản trị",
@@ -195,22 +206,20 @@ const SizeManagement: React.FC = () => {
       render: (_, item) => (
         <Space>
           <Popconfirm
-            title="Xóa kích thước"
+            title="chuyển vào thùng rác?"
             description="Bạn có chắc chắn muốn xóa không?"
             okText="Có"
             cancelText="Không"
             onConfirm={() => deleteMutation.mutate(item.id)}
           >
             {/* <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors"> */}
-            <Button type="primary"           className="px-3 py-2 bg-black text-white rounded-lg" >
-
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Xóa
             </Button>
           </Popconfirm>
           <Link to={`/admin/products/bienthesize/edit/${item.id}`}>
             {/* <Button className="bg-white text-orange-500 border border-orange-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 shadow-md transition-colors"> */}
-            <Button type="primary"           className="px-3 py-2 bg-black text-white rounded-lg" >
-
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
             </Button>
           </Link>
@@ -219,30 +228,51 @@ const SizeManagement: React.FC = () => {
     },
   ];
 
-  if (isError) return <div>Đã xảy ra lỗi</div>;
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
 
   return (
-    <>      <Form form={form} className="mt-4 flex space-x-2">
-    <Form.Item
-      className="flex-grow mb-0"
-      name="tensize"
-      rules={[
-        { required: true, message: 'Vui lòng nhập tên kích thước' },
-        { max: 50, message: 'Tên kích thước không được quá 50 ký tự' },
-        {
-          pattern: /^[^\s]+(\s+[^\s]+)*$/,
-          message: "Vui lòng nhập họ không chứa ký tự trắng!",
-        },
-      ]}
-    >
-      <Input placeholder="Tên kích thước" />
-    </Form.Item>
-    <Button type="primary"           className="px-3 py-2 bg-black text-white rounded-lg" 
-onClick={handleAddSize}>Thêm size</Button>
-  </Form> <br />
-      <Table columns={columns} dataSource={sizes} pagination={{ pageSize: 5 }} className="equal-width-table" />
-
+    <>
+      {" "}
+      <Form form={form} className="mt-4 flex space-x-2">
+        <Form.Item
+          className="flex-grow mb-0"
+          name="tensize"
+          rules={[
+            { required: true, message: "Vui lòng nhập tên kích thước" },
+            { max: 50, message: "Tên kích thước không được quá 50 ký tự" },
+            {
+              pattern: /^[^\s]+(\s+[^\s]+)*$/,
+              message: "Vui lòng nhập họ không chứa ký tự trắng!",
+            },
+          ]}
+        >
+          <Input placeholder="Tên kích thước" />
+        </Form.Item>
+        <Button
+          type="primary"
+          className="px-3 py-2 bg-black text-white rounded-lg"
+          onClick={handleAddSize}
+        >
+          Thêm size
+        </Button>
+      </Form>{" "}
+      <br />
+      <Table
+        columns={columns}
+        dataSource={sizes}
+        pagination={{ pageSize: 5 }}
+        className="equal-width-table"
+        loading={isLoading}
+      />
     </>
   );
 };

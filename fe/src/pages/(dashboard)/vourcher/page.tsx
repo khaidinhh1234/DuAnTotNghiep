@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -6,11 +6,20 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, Popconfirm, Space, Table, Tag } from "antd";
+import {
+  Button,
+  Input,
+  message,
+  Popconfirm,
+  Space,
+  Spin,
+  Table,
+  Tag,
+} from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 
 interface PromotionType {
@@ -26,120 +35,12 @@ interface PromotionType {
   hang_thanh_viens: string;
   tong_giam_gia_toi_da: string;
   so_luot_su_dung: number;
-  gioi_han_su_dung: number;
+  chi_tieu_toi_thieu: number;
 }
-
-// const promotions: PromotionType[] = [
-//   {
-//     key: "1",
-//     ten_khuyen_mai: "Giảm giá 10% cho đơn hàng trên 500k",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "10",
-//     ma_code: "ID123456",
-//     ngay_bat_dau: "2024-09-01",
-//     ngay_ket_thuc: "2024-09-30",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 500000,
-//     so_luot_su_dung: 15,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "2",
-//     ten_khuyen_mai: "Giảm 200k cho đơn hàng từ 1 triệu",
-//     loai_khuyen_mai: "tiền ",
-//     gia_tri: 200000,
-//     ma_code: "ID123456456",
-//     ngay_bat_dau: "2024-08-01",
-//     ngay_ket_thuc: "2024-08-31",
-//     trang_thai: "Đã hết hạn",
-//     dieu_kien_ap_dung: 1000000,
-//     so_luot_su_dung: 50,
-//     gioi_han_su_dung: 50,
-//   },
-//   {
-//     key: "3",
-//     ten_khuyen_mai: "Giảm giá 15% cho đơn hàng trên 1 triệu",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "15",
-//     ma_code: "ID123456789",
-//     ngay_bat_dau: "2024-10-01",
-//     ngay_ket_thuc: "2024-10-31",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 1000000,
-//     so_luot_su_dung: 25,
-//     gioi_han_su_dung: 75,
-//   },
-//   {
-//     key: "4",
-//     ten_khuyen_mai: "Giảm 50k cho đơn hàng từ 500k",
-//     loai_khuyen_mai: "tiền ",
-//     gia_tri: 50000,
-
-//     ma_code: "ID13456456",
-//     ngay_bat_dau: "2024-07-01",
-//     ngay_ket_thuc: "2024-07-31",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 500000,
-//     so_luot_su_dung: 60,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "5",
-//     ten_khuyen_mai: "Giảm giá 5% cho tất cả sản phẩm",
-//     ma_code: "ID123456",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "5",
-//     ngay_bat_dau: "2024-09-15",
-//     ngay_ket_thuc: "2024-09-30",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 0,
-//     so_luot_su_dung: 120,
-//     gioi_han_su_dung: 300,
-//   },
-//   {
-//     key: "6",
-//     ten_khuyen_mai: "Giảm 100k cho đơn hàng từ 700k",
-//     loai_khuyen_mai: "tiền",
-//     gia_tri: 100000,
-//     ma_code: "ID123456456",
-//     ngay_bat_dau: "2024-08-15",
-//     ngay_ket_thuc: "2024-09-15",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 700000,
-//     so_luot_su_dung: 80,
-//     gioi_han_su_dung: 150,
-//   },
-//   {
-//     key: "7",
-//     ten_khuyen_mai: "Tặng quà 50k cho đơn hàng từ 600k",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: 50000,
-//     ma_code: "ID123456789",
-//     ngay_bat_dau: "2024-08-01",
-//     ngay_ket_thuc: "2024-09-01",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 600000,
-//     so_luot_su_dung: 70,
-//     gioi_han_su_dung: 100,
-//   },
-//   {
-//     key: "8",
-//     ten_khuyen_mai: "Giảm giá 20% cho đơn hàng trên 2 triệu",
-//     loai_khuyen_mai: "phần trăm",
-//     gia_tri: "20",
-//     ma_code: "ID12566789",
-//     ngay_bat_dau: "2024-09-01",
-//     ngay_ket_thuc: "2024-10-01",
-//     trang_thai: "Đang hoạt động",
-//     dieu_kien_ap_dung: 2000000,
-//     so_luot_su_dung: 90,
-//     gioi_han_su_dung: 200,
-//   },
-// ];
 
 type DataIndex = keyof PromotionType;
 
-const PromotionAdmin: React.FC = () => {
+const VoucherAdmin: React.FC = () => {
   const {
     data: voucher,
     isLoading,
@@ -152,9 +53,90 @@ const PromotionAdmin: React.FC = () => {
       return response.data;
     },
   });
-  console.log(voucher);
-  const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
+  // console.log(voucher);
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async ({ record, action }: any) => {
+      if (action === "Tắt") {
+        try {
+          const response = await instance.post(
+            `/admin/makhuyenmai/huy-kich-hoat/${record.id}`,
+            { ...record, trang_thai: 0 }
+          );
+          message.open({
+            type: "success",
+            content: "Tắt khuyến mãi thành công",
+          });
+          return response.data;
+        } catch (error) {
+          message.open({
+            type: "error",
+            content: "Tắt khuyến mãi không thành công",
+          });
+        }
+      }
+      if (action === "Bật") {
+        try {
+          const response = await instance.post(
+            `/admin/makhuyenmai/kich-hoat/${record.id}`,
+            { ...record, trang_thai: 1 }
+          );
+          message.open({
+            type: "success",
+            content: "Bật khuyến mãi thành công",
+          });
+          return response.data;
+        } catch (error) {
+          message.open({
+            type: "error",
+            content: "Bật khuyến mãi không thành công",
+          });
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["VOUCHER_KEY"] });
+    },
+  });
   const [searchText, setSearchText] = useState("");
+  const [filteredData, setFilteredData] = useState<PromotionType[]>([]);
+
+  // Cập nhật dữ liệu khi nhận được từ API
+  useEffect(() => {
+    if (voucher?.data) {
+      setFilteredData(voucher?.data);
+    }
+  }, [voucher]);
+
+  // Hàm xử lý tìm kiếm
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchText(value);
+    // console.log(value);
+    if (value) {
+      const filtered = voucher?.data?.filter(
+        (item: PromotionType) =>
+          // Tìm kiếm trong các trường mong muốn
+          item.mo_ta.toLowerCase().includes((value as string).toLowerCase()) ||
+          item.ma_code
+            .toLowerCase()
+            .includes((value as string).toLowerCase()) ||
+          (item.hang_thanh_viens &&
+            Array.isArray(item.hang_thanh_viens) &&
+            item.hang_thanh_viens
+              .map((hang: any) => hang.toLowerCase())
+              .join(", ")
+              .includes((value as string).toLowerCase()))
+      ); // Bạn có thể thêm các trường khác nếu cần
+
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(voucher?.data);
+    }
+  };
+
+  const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
@@ -213,7 +195,7 @@ const PromotionAdmin: React.FC = () => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            Tìm kiếm
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -254,10 +236,13 @@ const PromotionAdmin: React.FC = () => {
   const columns: TableColumnsType<PromotionType> = [
     {
       title: "Khuyến mãi",
-      key: "khuyen_mai",
+      key: "ma_code",
       width: "18%",
-      ...getColumnSearchProps("mo_ta"), // Sử dụng tính năng tìm kiếm cho "Tên khuyến mãi"
-      sorter: (a: any, b: any) => a.mo_ta.length - b.mo_ta.length, // Sắp xếp theo độ dài tên khuyến mãi
+      ...getColumnSearchProps("mo_ta"), // Sử dụng tính năng tìm kiếm cho "mo_ta"
+      onFilter: (value: boolean | React.Key, record: PromotionType) =>
+        record.mo_ta.toLowerCase().includes(String(value).toLowerCase()) ||
+        record.ma_code.toLowerCase().includes(String(value).toLowerCase()),
+      sorter: (a: any, b: any) => a.ma_code.localeCompare(b.ma_code),
       render: (record) => (
         <div>
           <h5>{record.mo_ta}</h5>
@@ -267,11 +252,19 @@ const PromotionAdmin: React.FC = () => {
       ),
     },
     {
-      title: "	Thời gian thu thập - Thời gian quy đổi",
+      title: "Thời gian thu thập - Thời gian quy đổi",
       key: "ngay_bat_dau",
       width: "20%",
       ...getColumnSearchProps("ngay_bat_dau"),
-      sorter: (a: any, b: any) => a.ngay_bat_dau - b.ngay_bat_dau,
+      onFilter: (value: boolean | React.Key, record: any) =>
+        new Date(record.ngay_bat_dau)
+          .toLocaleDateString("vi-VN")
+          .includes(String(value)) ||
+        new Date(record.ngay_ket_thuc)
+          .toLocaleDateString("vi-VN")
+          .includes(String(value)), // Tìm kiếm trong cả ngay_bat_dau và ngay_ket_thuc
+      sorter: (a: any, b: any) =>
+        new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(), // Sắp xếp theo thời gian
       render: (record) => (
         <>
           <span>
@@ -285,10 +278,15 @@ const PromotionAdmin: React.FC = () => {
         </>
       ),
     },
+
     {
       title: "Số lượng",
       key: "so_luong",
       ...getColumnSearchProps("so_luong"),
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.so_luong.toString().includes(String(value)) ||
+        record.so_luong_da_su_dung.toString().includes(String(value)), // Tìm kiếm trong cả so_luong và so_luong_da_su_dung
+      sorter: (a: any, b: any) => a.so_luong - b.so_luong, // Sắp xếp theo số
 
       width: "15%",
       render: (record) => (
@@ -318,6 +316,7 @@ const PromotionAdmin: React.FC = () => {
       // dataIndex: "loai_khuyen_mai",
       key: "loai",
       width: "15%",
+      sorter: (a: any, b: any) => a.loai.localeCompare(b.loai),
       render: (record) => (
         <Tag
           color={record.loai === "phần trăm" ? "#1cb5e0" : "#155799"}
@@ -331,7 +330,19 @@ const PromotionAdmin: React.FC = () => {
       title: "Hạng thành viên",
       key: "hang_thanh_viens",
       ...getColumnSearchProps("hang_thanh_viens"),
-
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.hang_thanh_viens
+          .map((hang: any) =>
+            hang.ten_hang_thanh_vien === "Vàng"
+              ? "Vàng"
+              : hang.ten_hang_thanh_vien === "Bạc"
+                ? "Bạc"
+                : "Đồng"
+          )
+          .join(", ")
+          .includes(String(value)), // Tìm kiếm trong cả hang_thanh_viens
+      sorter: (a: any, b: any) =>
+        a.hang_thanh_viens.length - b.hang_thanh_viens.length,
       width: "15%",
       render: (record) => (
         <>
@@ -352,29 +363,38 @@ const PromotionAdmin: React.FC = () => {
     {
       title: "Chi tiết khuyến mãi",
 
-      key: "gioi_han_su_dung",
+      key: " chi_tieu_toi_thieu",
       width: "25%",
-      ...getColumnSearchProps("gioi_han_su_dung"),
-      sorter: (a: any, b: any) =>
-        a.gioi_han_su_dung.length - b.gioi_han_su_dung.length,
+      ...getColumnSearchProps("chi_tieu_toi_thieu"),
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.chi_tieu_toi_thieu
+          .map((chi_tieu_toi_thieu: any) =>
+            chi_tieu_toi_thieu === 0
+              ? "Áp dụng cho tất cả sản phẩm"
+              : "   Giá trị đơn hàng tối thiểu  " +
+                chi_tieu_toi_thieu.toLocaleString() +
+                " VNĐ"
+          )
+          .join(", ")
+          .includes(String(value)), // Tìm kiếm trong cả chi_tieu_toi_thieu
+      sorter: (a: any, b: any) => a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu,
+
       render: (record) => (
-        console.log(record),
-        (
-          <div>
-            <h5>
-              Mức giảm giá: {record.giam_gia}{" "}
-              {record.loai === "tien_mat" ? "VND" : "%"}
-              <br />
-              {record.gioi_han_su_dung === 0
-                ? "Áp dụng cho tất cả sản phẩm"
-                : "   Giá trị đơn hàng tối thiểu  " +
-                  record.gioi_han_su_dung +
-                  " VND"}
-              {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
+        // console.log(record),
+        <div>
+          <h5>
+            Mức giảm giá: {record.giam_gia.toLocaleString()}{" "}
+            {record.loai === "tien_mat" ? "VNĐ" : "%"}
+            <br />
+            {record.chi_tieu_toi_thieu === 0
+              ? "Áp dụng cho tất cả sản phẩm"
+              : "   Giá trị đơn hàng tối thiểu  " +
+                record.chi_tieu_toi_thieu.toLocaleString() +
+                " VNĐ"}
+            {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
             VND */}
-            </h5>
-          </div>
-        )
+          </h5>
+        </div>
       ),
     },
     {
@@ -382,12 +402,24 @@ const PromotionAdmin: React.FC = () => {
       dataIndex: "trang_thai",
       key: "trang_thai",
       width: "10%",
+      sorter: (a: any, b: any) => a.trang_thai - b.trang_thai,
+      onFilter: (value: boolean | React.Key, record: any) =>
+        record.trang_thai
+          .map((trang_thai: any) =>
+            trang_thai === 1
+              ? "Đang hoạt động"
+              : trang_thai === 0
+                ? "Tạm ngừng"
+                : "Hết hạn"
+          )
+          .join(", ")
+          .includes(String(value)), // Tìm kiếm trong cả trang_thai
       render: (trang_thai: number | string) => (
         <Tag
           color={
             trang_thai == 1
               ? "#00a854"
-              : trang_thai == 2
+              : trang_thai == 0
                 ? "#f0cb35"
                 : "#f04134"
           }
@@ -404,7 +436,7 @@ const PromotionAdmin: React.FC = () => {
             {" "}
             {trang_thai == 1
               ? "hoạt động"
-              : trang_thai == 2
+              : trang_thai == 0
                 ? "Tạm ngừng"
                 : "hết hạn "}
           </span>
@@ -422,35 +454,49 @@ const PromotionAdmin: React.FC = () => {
             {record.trang_thai == 1 && (
               <>
                 <Popconfirm
-                  title="Chuyển vào thùng rác"
+                  title=" Bạn có muốn tắt không?"
                   description="Bạn có chắc chắn muốn tắt không?"
                   okText="Có"
+                  onConfirm={() => {
+                    mutate({ record, action: "Tắt" });
+                  }}
                   cancelText="Không"
                 >
-                  <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+                  <Button className="bg-gradient-to-l from-red-500  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
                     Tắt
                   </Button>
                 </Popconfirm>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Cập nhật
-                </Button>{" "}
-              </>
-            )}
-            {record.trang_thai == 2 && (
-              <>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Bật
-                </Button>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Xem
-                </Button>{" "}
+                <Link to={`/admin/vouchers/edit/${record.id}`}>
+                  {" "}
+                  <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+                    Cập nhật
+                  </Button>{" "}
+                </Link>
               </>
             )}
             {record.trang_thai == 0 && (
               <>
-                <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
-                  Xem
-                </Button>{" "}
+                <Button
+                  onClick={() => mutate({ record, action: "Bật" })}
+                  className=" bg-gradient-to-l from-green-700 to-green-600 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+                >
+                  Bật
+                </Button>
+                <Link to={`/admin/vouchers/show/${record.id}`}>
+                  {" "}
+                  <Button className=" bg-gradient-to-l from-sky-600 to-cyan-600 text-white hover:from-sky-500 hover:to-cyan-500 border border-green-300 font-bold">
+                    Xem
+                  </Button>{" "}
+                </Link>
+              </>
+            )}
+            {record.trang_thai == 2 && (
+              <>
+                <Link to={`/admin/vouchers/show/${record.id}`}>
+                  <Button className=" bg-gradient-to-l from-sky-600 to-cyan-600 text-white hover:from-sky-500 hover:to-cyan-500 border border-green-300 font-bold">
+                    Xem
+                  </Button>{" "}
+                </Link>
               </>
             )}
           </>
@@ -459,31 +505,17 @@ const PromotionAdmin: React.FC = () => {
     },
   ];
 
-  // const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.checked) {
-  //     setSelectedRowKeys(promotions.map(p => p.key));
-  //   } else {
-  //     setSelectedRowKeys([]);
-  //   }
-  // };
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
 
-  // const rowSelection = {
-  //   selectedRowKeys,
-  //   onChange: (selectedKeys: React.Key[]) => {
-  //     setSelectedRowKeys(selectedKeys);
-  //   },
-  // };
-
-  // const products = [...promotions].reverse();
-  function handleChange(_event: ChangeEvent<HTMLInputElement>): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleKeyDown(_event: any): void {
-    throw new Error("Function not implemented.");
-  }
-  isError && <div>Error...</div>;
-  isLoading && <div>Loading...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -496,16 +528,9 @@ const PromotionAdmin: React.FC = () => {
 
         <div className="flex gap-2">
           <Link to="/admin/add-vocher">
-            <Button className="bg-blue-500 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm khuyến mãi
-            </Button>
-          </Link>
-
-          <Link to="remote">
-            <Button className="bg-red-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-              <DeleteOutlined className="mr-1" />
-              Thùng rác
             </Button>
           </Link>
         </div>
@@ -517,29 +542,20 @@ const PromotionAdmin: React.FC = () => {
             placeholder="Tìm kiếm..."
             size="large"
             value={searchText}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
+            onChange={handleSearchChange}
+            style={{ marginBottom: 16, maxWidth: 300 }}
           />
         </div>
         <Table
           columns={columns}
-          dataSource={voucher?.data}
+          dataSource={filteredData}
           onChange={handleTableChange}
-          // pagination={voucher?.data}
           rowKey="key"
-          // title={() => (
-          //   <Checkbox
-          //     indeterminate={selectedRowKeys.length > 0 && selectedRowKeys.length < promotions.length}
-          //     onChange={handleSelectAllChange}
-          //     checked={selectedRowKeys.length === promotions.length}
-          //   >
-          //     Chọn tất cả
-          //   </Checkbox>
-          // )}
+          loading={isLoading}
         />
       </div>
     </main>
   );
 };
 
-export default PromotionAdmin;
+export default VoucherAdmin;

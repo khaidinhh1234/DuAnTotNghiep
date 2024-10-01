@@ -19,24 +19,14 @@ return new class extends Migration {
             $table->text('ghi_chu')->nullable();
             $table->enum('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL, DonHang::TTDH_DGH, DonHang::TTDH_DGTC, DonHang::TTDH_DH, DonHang::TTDH_HH])->nullable();
             $table->enum('phuong_thuc_thanh_toan', [DonHang::PTTT_TT, DonHang::PTTT_NH, DonHang::PTTT_MM])->nullable();
-            $table->decimal('tong_tien_don_hang', 15, 2)->nullable();
+            $table->integer('tong_tien_don_hang')->nullable();
             $table->string('ten_nguoi_dat_hang');
             $table->string('so_dien_thoai_nguoi_dat_hang');
             $table->string('dia_chi_nguoi_dat_hang');
             $table->string('ma_giam_gia')->nullable();
-            $table->decimal('so_tien_giam_gia', 15, 2)->nullable();
-            $table->enum('trang_thai_thanh_toan', [
-                'Chưa thanh toán',  // chưa thanh toán
-                'Đã thanh toán',    // đã thanh toán
-                'Đang xử lý',       // đang xử lýS
-                'Đã hủy'            // đã hủy
-            ])->nullable();
-            $table->enum('trang_thai_van_chuyen', [
-                'Chờ xử lý',
-                'Chờ lấy hàng',
-                'Đang giao hàng',
-                'Giao hàng thành'
-            ])->nullable();
+            $table->integer('so_tien_giam_gia')->nullable();
+            $table->enum('trang_thai_thanh_toan', [DonHang::TTTT_CTT, DonHang::TTTT_DTT, DonHang::TTTT_DXL, DonHang::TTTT_DH])->nullable();
+            $table->enum('trang_thai_van_chuyen', [DonHang::TTVC_CXT, DonHang::TTVC_CLH, DonHang::TTVC_DGH, DonHang::TTVC_GHTC])->nullable();
             $table->string('duong_dan')->nullable();
             $table->timestamps();
             $table->softDeletes();

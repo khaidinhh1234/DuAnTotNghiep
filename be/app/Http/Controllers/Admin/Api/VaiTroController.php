@@ -218,8 +218,8 @@ class VaiTroController extends Controller
                 'destroy' => 'Xóa',
                 'thungrac' => 'Thùng rác',
                 'khoiphuc' => 'Khôi phục',
-                'kichhoat'=>'Kích hoạt',
-                'huykichhoat'=>'Hủy kích hoạt',
+                'kichhoat' => 'Kích hoạt',
+                'huykichhoat' => 'Hủy kích hoạt',
                 'thongbao' => 'Thông báo',
                 'tttt' => 'Trạng thái thanh toán',
                 'ttdh' => 'Trạng thái đơn hàng',
@@ -227,17 +227,20 @@ class VaiTroController extends Controller
                 'sanpham' => 'sản phẩm',
                 'the' => 'thẻ',
                 'vaitro' => 'vai trò',
+                'chuongtrinhuudai' => 'chương trình ưu đãi',
                 'thongtinweb' => 'thông tin website',
                 'danhmuctintuc' => 'danh mục tin tức',
                 'tintuc' => 'tin tức',
+                'bill' => 'Hóa đơn',
+                'export' => 'Xuất file',
                 'makhuyenmai' => 'mã khuyến mãi',
                 'taikhoan' => 'tài khoản',
                 'donhang' => 'đơn hàng',
                 'bienthekichthuoc' => 'biến thể kích thức',
                 'bienthemausac' => 'biến thể màu sắc',
-                'hangthanhvien' => 'Hạng thành viên',
+                'hangthanhvien' => 'hạng thành viên',
                 'thong-ke' => '',
-                'doanh-thu-ngay' => 'Doanh thu theo ngày',
+                'doanh-thu-ngay' => 'Quản lý thống kê',
                 'doanh-thu-tuan' => 'Doanh thu theo tuần',
                 'doanh-thu-thang' => 'Doanh thu theo tháng',
                 'doanh-thu-quy' => 'Doanh thu theo quý',
@@ -250,6 +253,13 @@ class VaiTroController extends Controller
                 'san-pham-ban-theo-nam' => 'Doanh thu sản phẩm bán theo năm',
                 'hoan-hang-theo-thang' => 'Doanh thu theo trạng thái hoàn hàng',
                 'huy-hang-theo-thang' => 'Doanh thu theo trạng thái hủy hàng',
+                'khach-hang-theo-hang-thanh-vien' => 'Khách hàng theo hạng thành viên',
+                'khach-hang-moi-theo-hang' => 'Khách hàng mới theo hạng thành viên',
+                'khach-hang-moi-theo-tung-thang' => 'Khách hàng mới theo từng tháng',
+                'khach-hang-quay-lai-theo-thang' => 'Khách hàng quay lại theo tháng',
+                'so-luong-ton-kho-cua-san-pham' => 'Số lượng tồn kho của sản phẩm',
+                'so-luong-san-pham-sap-het-hang' => 'Số lượng sản phẩm sắp hết hàng',
+                'thong-ke-danh-gia' => 'Đánh giá'
             ];
 
             $key = explode('.', $permission);
@@ -266,7 +276,9 @@ class VaiTroController extends Controller
 
         foreach (Route::getRoutes() as $route) {
             $name = $route->getName();
-            if (strpos($name, 'admin') === false || $name === 'admin.') {
+
+            // Kiểm tra nếu route không có tên hoặc không chứa 'admin'
+            if (!$name || strpos($name, 'admin') === false || $name === 'admin.') {
                 continue;
             }
 
@@ -274,7 +286,8 @@ class VaiTroController extends Controller
             $key = explode('.', $name);
             $index = end($key);
 
-            if( $index === 'index' || $key[1] == 'thong-ke') {
+            // Kiểm tra điều kiện tạo parent
+            if ($index === 'index' || (isset($key[1]) && $key[1] == 'thong-ke')) {
                 if ($currentParent) {
                     $routeList[] = $currentParent;
                 }
@@ -285,7 +298,7 @@ class VaiTroController extends Controller
                     "children" => []
                 ];
             } else {
-
+                // Nếu không phải route parent, thêm vào children
                 if ($currentParent) {
                     $currentParent['children'][] = [
                         "title" => $newText,
@@ -293,6 +306,11 @@ class VaiTroController extends Controller
                     ];
                 }
             }
+        }
+
+        // Đảm bảo parent cuối cùng cũng được thêm vào
+        if ($currentParent) {
+            $routeList[] = $currentParent;
         }
 
         return response()->json(['data' => $routeList], 200);

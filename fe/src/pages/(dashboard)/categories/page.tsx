@@ -1,6 +1,16 @@
 import React, { useRef, useState } from "react";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Tabs } from "antd";
+import {
+  Button,
+  Input,
+  message,
+  Popconfirm,
+  Skeleton,
+  Space,
+  Spin,
+  Table,
+  Tabs,
+} from "antd";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
@@ -8,7 +18,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/axios";
 import { ICategories } from "@/common/types/category";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 const { TabPane } = Tabs;
 
 const CategoriesAdmin: React.FC = () => {
@@ -59,13 +69,21 @@ const CategoriesAdmin: React.FC = () => {
         throw error;
       }
     },
-    onSuccess: (id) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["danhmuc"] });
-      toast.success("Xóa danh mục thành công");
+
+      message.open({
+        type: "success",
+        content: "Xóa danh mục thành công",
+      });
     },
     onError: (error) => {
       console.error("Error deleting category:", error);
-      toast.error("Xóa danh mục thất bại");
+
+      message.open({
+        type: "error",
+        content: "Xóa danh mục thất bại",
+      });
     },
   });
 
@@ -210,12 +228,12 @@ const CategoriesAdmin: React.FC = () => {
             okText="Có"
             cancelText="Không"
           >
-            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Xóa
             </Button>
           </Popconfirm>
           <Link to={`/admin/categories/edit/${category.id}`}>
-            <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white">
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
             </Button>
           </Link>
@@ -223,6 +241,17 @@ const CategoriesAdmin: React.FC = () => {
       ),
     },
   ];
+
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -233,15 +262,15 @@ const CategoriesAdmin: React.FC = () => {
       </div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Danh mục</h1>
-        <div>
+        <div className="flex">
           <Link to="/admin/categories/add" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm
             </Button>
           </Link>
           <Link to="/admin/categories/remote">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
               <DeleteOutlined className="mr-1" />
               Thùng rác
             </Button>
@@ -253,12 +282,14 @@ const CategoriesAdmin: React.FC = () => {
           <Table
             columns={columns}
             dataSource={dataSource.filter((category: any) => !category.cha_id)}
+            loading={isLoading}
           />
         </TabPane>
         <TabPane tab="Danh mục con" key="2">
           <Table
             columns={columns}
             dataSource={dataSource.filter((category: any) => category.cha_id)}
+            loading={isLoading}
           />
         </TabPane>
       </Tabs>

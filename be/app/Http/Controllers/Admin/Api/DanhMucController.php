@@ -49,7 +49,7 @@ class DanhMucController extends Controller
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
                 'cha_id' => 'nullable',
-                'anh_danh_muc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'anh_danh_muc' => 'nullable',
                 'duong_dan' => 'nullable',
 
             ]);
@@ -118,7 +118,7 @@ class DanhMucController extends Controller
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|unique:danh_mucs,ten_danh_muc,' . $id . '|max:255',
                 'cha_id' => 'nullable',
-                'anh_danh_muc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'anh_danh_muc' => 'nullable',
                 'duong_dan' => 'nullable',
 
             ]);

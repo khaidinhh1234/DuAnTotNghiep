@@ -87,7 +87,7 @@ const CategoriesRemote: React.FC = () => {
       key: "action",
       render: (_: any, record: any) => (
         <Space>
-          <Button onClick={() => handleRestore(record.id)}>Khôi phục</Button>
+          <Button className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white" onClick={() => handleRestore(record.id)}>Khôi phục</Button>
           {/* <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button> */}
         </Space>
       ),

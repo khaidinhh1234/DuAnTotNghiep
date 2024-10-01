@@ -17,22 +17,21 @@ const NewCategoriesAdd = () => {
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
       form.resetFields();
-      nav('/admin/newcategory');
+      nav("/admin/newcategory");
     },
     onError: (error) => {
       message.error(error.message);
     },
   });
-  const onFinish = (values : NewCategories) => {
-     mutate(values);
+  const onFinish = (values: any) => {
+    mutate(values);
   };
-  
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục tin tức / 
+          Quản trị / Danh mục tin tức /
           <span className="font-semibold px-px"> Thêm danh mục tin tức</span>
         </h1>
       </div>
@@ -40,7 +39,7 @@ const NewCategoriesAdd = () => {
         <h1 className="font-semibold md:text-3xl">Thêm danh mục tin tức</h1>
         <div>
           <Link to="/admin/newcategory" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>
@@ -61,7 +60,16 @@ const NewCategoriesAdd = () => {
               <Form.Item
                 label="Tên danh mục tin tức"
                 name="ten_danh_muc_tin_tuc"
-                rules={[{ required: true, message: "Tên danh mục bắt buộc phải nhập!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Tên danh mục bắt buộc phải nhập!",
+                  },
+                  {
+                    pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                    message: "Vui lòng  không chứa ký tự trắng!",
+                  },
+                ]}
               >
                 <Input placeholder="Nhập tên danh mục tin tức" />
               </Form.Item>

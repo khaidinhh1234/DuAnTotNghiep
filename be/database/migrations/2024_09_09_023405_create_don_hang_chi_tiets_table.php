@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignIdFor(DonHang::class)->constrained();
             $table->foreignIdFor(BienTheSanPham::class)->constrained();
             $table->bigInteger('so_luong');
-            $table->decimal('gia', 15, 2);
-            $table->decimal('thanh_tien', 15, 2);
+            $table->integer('gia');
+            $table->integer('thanh_tien');
             $table->timestamps();
             $table->softDeletes();
         });

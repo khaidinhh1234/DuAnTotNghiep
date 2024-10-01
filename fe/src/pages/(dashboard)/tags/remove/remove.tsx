@@ -1,23 +1,19 @@
-import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, message, Popconfirm, Space, Table, Tabs } from "antd";
+import { ICategories } from "@/common/types/category";
+import instance from "@/configs/axios";
+import { SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
+import { Button, Input, message, Space, Spin, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
-import { ICategories } from "@/common/types/category";
-import { toast } from "react-toastify";
-const { TabPane } = Tabs;
 
 const TagsRemoteAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(
-    new Map()
-  );
+
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
@@ -178,7 +174,7 @@ const TagsRemoteAdmin: React.FC = () => {
       render: (_, tag) => (
         <Space>
           <Button
-            className="border bg-black rounded-lg hover:bg-white hover:shadow-black shadow-md hover:text-black text-white"
+            className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
             onClick={() => mutate(tag.id!)}
           >
             Khôi phục
@@ -187,9 +183,16 @@ const TagsRemoteAdmin: React.FC = () => {
       ),
     },
   ];
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;
-
+  if (isError)
+    return (
+      <div>
+        <div className="flex items-center justify-center  mt-[250px]">
+          <div className=" ">
+            <Spin size="large" />
+          </div>
+        </div>
+      </div>
+    );
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -201,14 +204,14 @@ const TagsRemoteAdmin: React.FC = () => {
         <h1 className="font-semibold md:text-3xl">Thùng rác</h1>
         <div>
           <Link to="/admin/products/tags">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>
         </div>
       </div>
       <div className="max-w-4xl">
-        <Table columns={columns} dataSource={dataSource} />
+        <Table columns={columns} dataSource={dataSource} loading={isLoading} />
       </div>
     </main>
   );
