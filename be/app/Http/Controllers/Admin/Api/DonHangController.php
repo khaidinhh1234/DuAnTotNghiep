@@ -44,6 +44,8 @@ class DonHangController extends Controller
         try {
             $donHang = DonHang::with([
                 'chiTiets.bienTheSanPham.sanPham', // Lấy sản phẩm từ biến thể
+                'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
+                'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
                 'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
             ])->findOrFail($id);
 
@@ -77,7 +79,7 @@ class DonHangController extends Controller
                     'don_hang' => $donHang,
                     'chi_tiet_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
-                    'tong_tien_san_pham' => $tongTienSanPham
+                    'tong_thanh_tien_san_pham' => $tongTienSanPham
                 ]
             ], 200);
         } catch (Exception $e) {
