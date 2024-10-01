@@ -17,17 +17,14 @@ class BienTheSanPhamSeeder extends Seeder
     public function run()
     {
         $sanPhams = SanPham::all();
+        $mauSacs = BienTheMauSac::all();
+        $kichThuocs = BienTheKichThuoc::all();
 
-        foreach ($sanPhams as $sanPham) {
-            $bienTheMauSac = BienTheMauSac::inRandomOrder()->first();
-            $bienTheKichThuoc = BienTheKichThuoc::inRandomOrder()->first();
-
+        for ($i = 1; $i <= 10; $i++) {
             BienTheSanPham::create([
-                'san_pham_id' => $sanPham->id,
-                'bien_the_mau_sac_id' => $bienTheMauSac->id,
-                'bien_the_kich_thuoc_id' => $bienTheKichThuoc->id,
-                'gia_ban' => rand(100000, 500000),
-                'gia_khuyen_mai' => rand(50000, 100000),
+                'san_pham_id' => $sanPhams->random()->id,
+                'bien_the_mau_sac_id' => $mauSacs->random()->id,
+                'bien_the_kich_thuoc_id' => $kichThuocs->random()->id,
                 'so_luong_bien_the' => rand(10, 100),
             ]);
         }
