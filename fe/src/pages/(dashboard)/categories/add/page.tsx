@@ -161,7 +161,7 @@ const CategoriesAdd = () => {
       setParentCategories(filteredCategories);
     }
   }, [allCategoriesData]);
-
+// hello my fen
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
       const response = await instance.post(`/admin/danhmuc`, category);
@@ -207,7 +207,7 @@ const CategoriesAdd = () => {
         <h1 className="font-semibold md:text-3xl">Thêm danh mục</h1>
         <div>
           <Link to="/admin/categories" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>
@@ -228,7 +228,16 @@ const CategoriesAdd = () => {
               <Form.Item
                 label="Tên danh mục"
                 name="ten_danh_muc"
-                rules={[{ required: true, message: "Tên danh mục bắt buộc phải nhập!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Tên danh mục bắt buộc phải nhập!",
+                  },
+                  {
+                    pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                    message: "Vui lòng  không chứa ký tự trắng!",
+                  },
+                ]}
               >
                 <Input placeholder="Nhập tên danh mục" />
               </Form.Item>
@@ -260,9 +269,9 @@ const CategoriesAdd = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="px-3 py-2 bg-black text-white rounded-lg"
+                  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 >
-                  Thêm
+                  Thêm danh mục
                 </Button>
               </Form.Item>
             </Form>

@@ -208,11 +208,11 @@ const NewCategory = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Danh mục</span>
+          Quản trị / <span className="font-semibold px-px">Danh mục tin tức</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Danh mục</h1>
+        <h1 className="font-semibold md:text-3xl">Danh sách danh mục tin tức</h1>
         <div className="flex">
           <Link to="/admin/newcategory/add" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">

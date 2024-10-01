@@ -79,7 +79,7 @@ const NewCategoriesEdit = () => {
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 24 }}
-              initialValues={{ ...data?.data }} // Chỉ định giá trị khởi tạo khi dữ liệu đã được tải
+              initialValues={{ ...data?.data }}
               autoComplete="off"
               onFinish={onFinish}
             >
@@ -103,9 +103,9 @@ const NewCategoriesEdit = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="px-3 py-2 bg-black text-white rounded-lg"
+                  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 >
-                  Cập nhật
+                  Cập nhật danh mục tin tức
                 </Button>
               </Form.Item>
             </Form>
