@@ -22,8 +22,7 @@ class TinTucController extends Controller
             $tinTucs = TinTuc::with(
                 'user:id,ho,ten',
                 'danhMucTinTuc:id,ten_danh_muc_tin_tuc',
-            )
-                ->get();
+            )->orderBy('created_at', 'desc')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

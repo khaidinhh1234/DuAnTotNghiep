@@ -74,4 +74,13 @@ class User extends Authenticatable
     {
         return $this->belongsTo(HangThanhVien::class);
     }
+
+    public function lienHe()
+    {
+        return $this->hasMany(LienHe::class, 'tai_khoan_lien_he_id');
+    }
+    public function lienHesPhuTrach()
+    {
+        return $this->hasMany(LienHe::class, 'nguoi_phu_trach_id');
+    }
 }
