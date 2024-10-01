@@ -78,6 +78,14 @@ Route::middleware([])
         Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
 
         // lọc theo màu sắc
+
+        Route::post('/loc-san-pham-theo-mau-sac', [TrangSanPhamController::class, 'laySanPhamTheoMauSac'])->name('loc-theo-mau-sac');
+         // lấy ra màu sắc
+         Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
+          // lọc theo màu sắc
+        Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc'])->name('loc-theo-kich-thuoc');
+        Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
+
         Route::post('/loc-san-pham-theo-mau-sac', [TrangSanPhamController::class, 'laySanPhamTheoMauSac']);
 
         // lấy ra kích thước
@@ -87,6 +95,7 @@ Route::middleware([])
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc']);
 
         //Client Chi tiết sản phẩm
+
 
         // Captcha
         Route::get('captcha', [CaptchaController::class, 'generateCaptcha']);

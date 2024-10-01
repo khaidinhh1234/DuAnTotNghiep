@@ -243,4 +243,6 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
+
 }
