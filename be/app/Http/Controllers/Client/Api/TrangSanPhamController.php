@@ -187,7 +187,6 @@ class TrangSanPhamController extends Controller
             return response()->json([
                 'kichThuoc' => $kichThuoc
             ]);
-
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
             DB::rollBack();
@@ -234,7 +233,6 @@ class TrangSanPhamController extends Controller
             return response()->json([
                 'data' => $sanPhams
             ], 200);
-
         } catch (\Exception $e) {
             // Rollback nếu có lỗi xảy ra
             DB::rollBack();
@@ -243,23 +241,24 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
     public function locSanPham(Request $request)
     {
         DB::beginTransaction();  // Bắt đầu transaction
 
         try {
             // Lấy các tham số lọc từ request
-            $danhMucIds = $request->danh_muc_ids;
-            $mauSacIds = $request->mau_sac_ids;
-            $kichThuocIds = $request->kich_thuoc_ids;
-            $giaDuoi = $request->gia_duoi;
-            $giaTren = $request->gia_tren;
+            $danhMucIds = $request->danh_muc_ids ?? [];
+            $mauSacIds = $request->mau_sac_ids ?? [];
+            $kichThuocIds = $request->kich_thuoc_ids ?? [];
+            $giaDuoi = $request->gia_duoi ?? null;
+            $giaTren = $request->gia_tren ?? null;
 
             // Tạo query
             $query = SanPham::query();
 
             // Lọc theo danh mục cha và con
-            if ($danhMucIds && is_array($danhMucIds)) {
+            if (!empty($danhMucIds) && is_array($danhMucIds)) {
                 $query->whereHas('danhMuc', function ($query) use ($danhMucIds) {
                     $query
                         ->whereIn('id', $danhMucIds)
@@ -268,21 +267,21 @@ class TrangSanPhamController extends Controller
             }
 
             // Lọc theo màu sắc sản phẩm
-            if ($mauSacIds && is_array($mauSacIds)) {
+            if (!empty($mauSacIds) && is_array($mauSacIds)) {
                 $query->whereHas('bienTheSanPham', function ($query) use ($mauSacIds) {
                     $query->whereIn('bien_the_mau_sac_id', $mauSacIds);
                 });
             }
 
             // Lọc theo kích thước sản phẩm
-            if ($kichThuocIds && is_array($kichThuocIds)) {
+            if (!empty($kichThuocIds) && is_array($kichThuocIds)) {
                 $query->whereHas('bienTheSanPham', function ($query) use ($kichThuocIds) {
                     $query->whereIn('bien_the_kich_thuoc_id', $kichThuocIds);
                 });
             }
 
             // Lọc theo khoảng giá
-            if ($giaDuoi && $giaTren) {
+            if (!is_null($giaDuoi) && !is_null($giaTren)) {
                 $query->whereBetween('gia_ban', [$giaDuoi, $giaTren]);
             }
 
@@ -303,7 +302,6 @@ class TrangSanPhamController extends Controller
                 'message' => 'Lấy dữ liệu thành công.',
                 'data' => $sanPhams
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();  // Rollback nếu có lỗi xảy ra
 
