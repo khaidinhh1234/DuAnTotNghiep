@@ -53,20 +53,18 @@ class SanPhamController extends Controller
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
-            'gia_ban' => 'required|integer',
-            'gia_khuyen_mai' => 'nullable|integer|lt:gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
-            'ngay_bat_dau_khuyen_mai' => 'nullable|date', // Không yêu cầu bắt buộc nhập
-            'ngay_ket_thuc_khuyen_mai' => 'nullable|date|after_or_equal:ngay_bat_dau_khuyen_mai', // Không yêu cầu bắt buộc nhập
+            'gia_tot' => 'nullable|boolean',
             'the' => 'nullable|array',
             'the.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
             'bien_the.*.so_luong_bien_the' => 'required|integer',
+            'bien_the.*.gia_ban' => 'required|integer',
+            'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
             'bien_the.*.anh' => 'required|array',
             'bien_the.*.anh.*' => 'required|string'
         ]);
-
 
 
         if ($validator->fails()) {
@@ -78,7 +76,6 @@ class SanPhamController extends Controller
         $dataSanPham['duong_dan'] = Str::slug($dataSanPham['ten_san_pham']);
         $theSanPham = $request->the;
         $bienTheSanPhamTmp = $request->bien_the;
-
         $bienTheSanPham = [];
 
         foreach ($bienTheSanPhamTmp as $value) {
@@ -87,6 +84,8 @@ class SanPhamController extends Controller
                     'bien_the_mau_sac_id' => $value['mau_sac_id'],
                     'bien_the_kich_thuoc_id' => $value['kich_thuoc_id'],
                     'so_luong_bien_the' => $value['so_luong_bien_the'],
+                    'gia_ban' => $value['gia_ban'],
+                    'gia_khuyen_mai' => $value['gia_khuyen_mai'],
                     'anh' => $value['anh'] ?? [],
                 ];
             }
@@ -167,16 +166,15 @@ class SanPhamController extends Controller
             'mo_ta_ngan' => 'required|string|max:255',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
-            'gia_ban' => 'required|integer',
-            'gia_khuyen_mai' => 'nullable|integer|lt:gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
-            'ngay_bat_dau_khuyen_mai' => 'nullable|date', // Không yêu cầu bắt buộc nhập
-            'ngay_ket_thuc_khuyen_mai' => 'nullable|date|after_or_equal:ngay_bat_dau_khuyen_mai', // Không yêu cầu bắt buộc nhập
+            'gia_tot' => 'nullable|boolean',
             'the' => 'nullable|array',
             'the.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
             'bien_the.*.so_luong_bien_the' => 'required|integer',
+            'bien_the.*.gia_ban' => 'required|integer',
+            'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
             'bien_the.*.anh' => 'required|array',
             'bien_the.*.anh.*' => 'required|string'
         ]);
@@ -200,6 +198,8 @@ class SanPhamController extends Controller
                     'bien_the_mau_sac_id' => $value['mau_sac_id'],
                     'bien_the_kich_thuoc_id' => $value['kich_thuoc_id'],
                     'so_luong_bien_the' => $value['so_luong_bien_the'],
+                    'gia_ban' => $value['gia_ban'],
+                    'gia_khuyen_mai' => $value['gia_khuyen_mai'],
                     'anh' => $value['anh'] ?? [],
                 ];
             }

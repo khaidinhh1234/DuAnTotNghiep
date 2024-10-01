@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreignIdFor(BienTheMauSac::class)->constrained();
             $table->foreignIdFor(BienTheKichThuoc::class)->constrained();
             $table->integer('so_luong_bien_the')->nullable();
+            $table->integer('gia_ban');
+            $table->integer('gia_khuyen_mai')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
