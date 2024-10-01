@@ -25,6 +25,7 @@ class TrangChuController extends Controller
             'bienTheSanPham.anhBienThe',
             'bienTheSanPham.mauBienThe',
             'bienTheSanPham.kichThuocBienThe',
+            'chuongTrinhKhuyenMais'
         ])->orderByDesc('id')->take(8)->get();
 
         $dataDanhGiaKhachHang = DanhGia::query()->whereIn('so_sao_san_pham', [4, 5])->orderByDesc('id')->take(8)->get();
