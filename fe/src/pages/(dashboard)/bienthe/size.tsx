@@ -64,13 +64,13 @@ const Size = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục /
+          Quản trị /Biến thể kích thước /
           <span className="font-semibold px-px"> Cập nhật kích thướcc</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">
-          Cập nhật : {data?.kich_thuoc}
+          Cập nhật : {data?.data?.kich_thuoc}
         </h1>
         <div>
           <Link to="/admin/products/bienthe" className="mr-1">
@@ -113,8 +113,8 @@ const Size = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="px-3 py-2 bg-black text-white rounded-lg"
-                >
+                  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+                  >
                   Cập nhật
                 </Button>
               </Form.Item>
