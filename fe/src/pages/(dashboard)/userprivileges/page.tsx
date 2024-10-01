@@ -21,7 +21,7 @@ const UserPrivilegeAdmin = () => {
         const response = await instance.delete(`/admin/vaitro/${id}`);
         message.open({
           type: "success",
-          content: "Xóa vai trò thành côngcông!",
+          content: "Xóa vai trò thành công!",
         });
         return response.data;
       } catch (error) {

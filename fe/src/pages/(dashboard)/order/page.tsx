@@ -392,7 +392,7 @@ const OrderAdmin: React.FC = () => {
           });
         } else {
           message.open({
-            type: "error",
+            type: "success",
             content: error,
           });
         }
