@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input, Select, Upload, Button, Checkbox } from "antd";
-import {  SyncOutlined, UploadOutlined } from "@ant-design/icons";
+import { SyncOutlined, UploadOutlined } from "@ant-design/icons";
 import { UploadFile } from "antd/es/upload/interface";
 import { Category, Tag } from "@/common/types/product";
 const { Option } = Select;
@@ -30,7 +30,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
   productCode,
   setData,
   onGenerateCode,
-
 }) => (
   <Form
     form={form}
@@ -101,28 +100,27 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </Select>
       </Form.Item> */}
       <Form.Item label="Chọn tags" name="tags">
-  <Select mode="multiple" className="w-full" placeholder="Chọn tags">
-    {tagsData &&
-      tagsData.map((tag) => (
-        <Option key={tag.id} value={tag.id}>  
-          {tag.ten_the}
-        </Option>
-      ))}
-  </Select>
-</Form.Item>
+        <Select mode="multiple" className="w-full" placeholder="Chọn tags">
+          {tagsData &&
+            tagsData.map((tag) => (
+              <Option key={tag.id} value={tag.id}>
+                {tag.ten_the}
+              </Option>
+            ))}
+        </Select>
+      </Form.Item>
       <Form.Item
         label="Mã sản phẩm"
         name="ma_san_pham"
         rules={[{ required: true, message: "Mã sản phẩm bắt buộc phải nhập!" }]}
         initialValue={productCode}
       >
-        <Input 
+        <Input
           className="border-none focus:ring-0"
-          readOnly 
+          readOnly
           addonAfter={
-            <Button 
-              icon={<       SyncOutlined spin 
-                />} 
+            <Button
+              icon={<SyncOutlined spin />}
               onClick={(e) => {
                 e.preventDefault();
                 onGenerateCode();
@@ -193,7 +191,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
               });
             },
           }}
-          initialValue="Chào mừng bạn đến với Glow clothing!"
+          // initialValue="Chào mừng bạn đến với Glow clothing!"
         />
         {/* <TextArea rows={5} placeholder="Nhập nội dung sản phẩm" /> */}
       </Form.Item>

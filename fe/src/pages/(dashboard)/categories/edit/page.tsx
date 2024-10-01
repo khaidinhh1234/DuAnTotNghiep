@@ -97,7 +97,7 @@ const CategoriesEdit = () => {
         <h1 className="font-semibold md:text-3xl">Cập nhập danh mục: {data?.data.ten_danh_muc}</h1>
         <div>
           <Link to="/admin/categories" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">Quay lại</Button>
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"  >Quay lại</Button>
           </Link>
         </div>
       </div>
@@ -145,8 +145,8 @@ const CategoriesEdit = () => {
                 </Form.Item>
               </div>
               <Form.Item>
-                <Button type="primary" htmlType="submit" className="px-3 py-2 bg-black text-white rounded-lg">
-                  Submit
+                <Button type="primary" htmlType="submit" className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+                  Cập nhập danh mục
                 </Button>
               </Form.Item>
             </Form>

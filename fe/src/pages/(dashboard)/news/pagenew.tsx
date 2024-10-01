@@ -186,6 +186,7 @@ const PageNew: React.FC = () => {
     },
     {
       title: "Quản trị",
+      width: "40%",
       key: "action",
       render: (_, news) => (
         <Space>
@@ -228,7 +229,7 @@ const PageNew: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Tin tức</h1>
+        <h1 className="font-semibold md:text-3xl">Danh sách tin tức</h1>
         <div className="flex">
           <Link to="/admin/news/add" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">

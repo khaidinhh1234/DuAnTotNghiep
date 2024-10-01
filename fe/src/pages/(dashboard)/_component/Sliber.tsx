@@ -130,17 +130,13 @@ const SlidebarProduct = () => {
   };
 
   return (
-    <div className=" border-r bg-muted/40 md:block bg-[#f3f2f2] h-auto">
-      <div className="flex  max-h-fit flex-col gap-2 m-5 rounded-xl border bg-white ">
-        <div className="flex h-14 items-center border-b px-4  lg:px-6">
+    <div className=" sticky top-0 border-r bg-muted/40 md:block bg-[#f3f2f2]  py-2">
+      <div className="flex max-h-[900px] flex-col gap-2 m-5 rounded-xl border bg-white py-5">
+        <div className="flex h-14 items-center border-b px-4  lg:px-6 ">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <Package2 className="h-6 w-6" />
             <span className="">GLOW</span>
           </Link>
-          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-            <Bell className="h-4 w-4" />
-            <span className="sr-only">Toggle notifications</span>
-          </Button>
         </div>
         <div className="flex-1 mt-3 mb-[100%]">
           {menu?.map((item, index) => (
