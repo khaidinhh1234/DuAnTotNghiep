@@ -29,12 +29,12 @@ class BienTheSanPham extends Model
 
     public function mauBienThe()
     {
-        return $this->belongsTo(BienTheMauSac::class);
+        return $this->belongsTo(BienTheMauSac::class, 'bien_the_mau_sac_id', 'id');
     }
 
     public function kichThuocBienThe()
     {
-        return $this->belongsTo(BienTheKichThuoc::class);
+        return $this->belongsTo(BienTheKichThuoc::class,'bien_the_kich_thuoc_id', 'id');
     }
     public function chiTiets()
     {
