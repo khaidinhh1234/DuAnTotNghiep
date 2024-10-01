@@ -186,6 +186,7 @@ const PageNew: React.FC = () => {
     },
     {
       title: "Quản trị",
+      width: "40%",
       key: "action",
       render: (_, news) => (
         <Space>

@@ -17,6 +17,7 @@ import { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
+type DataIndex = keyof NewCategories;
 const NewCategory = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
@@ -35,9 +36,10 @@ const NewCategory = () => {
     },
   });
   const dataSource =
-    data?.data.map((newcategory: NewCategories) => ({
+    data?.data.map((newcategory: NewCategories, index: number) => ({
       key: newcategory.id,
       ...newcategory,
+      index: index + 1,
     })) || [];
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
@@ -66,7 +68,7 @@ const NewCategory = () => {
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
-    dataIndex: string
+    dataIndex: DataIndex
   ) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -78,18 +80,18 @@ const NewCategory = () => {
     setSearchText("");
   };
 
-  const getColumnSearchProps = (dataIndex: string) => ({
+  const getColumnSearchProps = (dataIndex: DataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
       clearFilters,
-    }: FilterDropdownProps) => (
+    }: any) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0] as string}
+          placeholder={`Tìm ${dataIndex}`}
+          value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
@@ -108,7 +110,7 @@ const NewCategory = () => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            Tìm kiếm
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -123,17 +125,17 @@ const NewCategory = () => {
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
-    onFilter: (value: string | number | boolean, record: any) =>
+    onFilter: (value: any, record: any) =>
       record[dataIndex]
-        .toString()
+        ?.toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible: boolean) => {
+    onFilterDropdownOpenChange: (visible: any) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    render: (text: string) =>
+    render: (text: any) =>
       searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
@@ -166,7 +168,7 @@ const NewCategory = () => {
       width: "25%",
       key: "ten_danh_muc_tin_tuc",
       dataIndex: "ten_danh_muc_tin_tuc",
-
+      ...getColumnSearchProps("ten_danh_muc_tin_tuc"),
       sorter: (a: any, b: any) =>
         a.ten_danh_muc_tin_tuc.localeCompare(b.ten_danh_muc_tin_tuc),
       render: (text) => (text ? text : "Chưa có dữ liệu"),

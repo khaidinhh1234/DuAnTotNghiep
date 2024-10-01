@@ -21,6 +21,7 @@ import { ICategories } from "@/common/types/category";
 // import { toast } from "react-toastify";
 const { TabPane } = Tabs;
 
+type DataIndex = keyof ICategories;
 const CategoriesAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
@@ -90,7 +91,7 @@ const CategoriesAdmin: React.FC = () => {
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
-    dataIndex: string
+    dataIndex: DataIndex
   ) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -102,7 +103,7 @@ const CategoriesAdmin: React.FC = () => {
     setSearchText("");
   };
 
-  const getColumnSearchProps = (dataIndex: string) => ({
+  const getColumnSearchProps = (dataIndex: DataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -112,8 +113,8 @@ const CategoriesAdmin: React.FC = () => {
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0] as string}
+          placeholder={`Tìm ${dataIndex}`}
+          value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
@@ -132,7 +133,7 @@ const CategoriesAdmin: React.FC = () => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            Tìm kiếm
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -147,17 +148,17 @@ const CategoriesAdmin: React.FC = () => {
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
-    onFilter: (value: string | number | boolean, record: any) =>
+    onFilter: (value: any, record: any) =>
       record[dataIndex]
-        .toString()
+        ?.toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible: boolean) => {
+    onFilterDropdownOpenChange: (visible: any) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    render: (text: string) =>
+    render: (text: any) =>
       searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
@@ -182,7 +183,7 @@ const CategoriesAdmin: React.FC = () => {
       width: "20%",
       key: "ten_danh_muc",
       dataIndex: "ten_danh_muc",
-      // ...getColumnSearchProps("ten_danh_muc"),
+      ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a: any, b: any) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
@@ -207,6 +208,14 @@ const CategoriesAdmin: React.FC = () => {
       width: "20%",
       key: "cha_id",
       dataIndex: "cha_id",
+      ...getColumnSearchProps("cha_id"),
+      onFilter: (value: any | React.Key, record: ICategories) =>
+        categoriesMap
+      .get(record.cha_id!)
+      ?.toLowerCase() 
+      .includes((value as string).toLowerCase()) || false, 
+
+      sorter: (a: any, b: any) => a.cha_id.localeCompare(b.cha_id),
       render: (text: string) => categoriesMap.get(text) || "không có",
     },
     {
