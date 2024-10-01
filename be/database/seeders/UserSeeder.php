@@ -15,22 +15,20 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create();
+        $hangThanhViens = HangThanhVien::all();
 
-        for ($i = 0; $i < 10; $i++) { // Tạo 10 người dùng
+        for ($i = 1; $i <= 10; $i++) {
             User::create([
-                'hang_thanh_vien_id' => HangThanhVien::inRandomOrder()->first()->id, // Lấy hạng thành viên ngẫu nhiên
-                'ho' => $faker->lastName(),
-                'ten' => $faker->firstName(),
-                'anh_nguoi_dung' => $faker->optional()->imageUrl(200, 200, 'people', true, 'User'), // Tạo ảnh ngẫu nhiên
-                'email' => $faker->unique()->safeEmail(),
-                'password' => bcrypt('password'), // Mật khẩu mặc định
-                'so_dien_thoai' => Str::limit($faker->phoneNumber(), 15, ''),
-                'dia_chi' => $faker->address(),
-                'ngay_sinh' => $faker->date(),
-                'gioi_tinh' => $faker->randomElement([User::TYPE_NAM, User::TYPE_NU, User::TYPE_KHAC]),
-                'email_verified_at' => now(),
-                'remember_token' => Str::random(10),
+                'ho' => 'Họ ' . $i,
+                'ten' => 'Tên ' . $i,
+                'anh_nguoi_dung' => 'path_to_user_image_' . $i . '.jpg',
+                'email' => 'user' . $i . '@example.com',
+                'password' => bcrypt('password'),
+                'so_dien_thoai' => '012345678' . $i,
+                'dia_chi' => 'Địa chỉ ' . $i,
+                'ngay_sinh' => now()->subYears(rand(20, 40)),
+                'gioi_tinh' => User::TYPE_NAM,
+                'hang_thanh_vien_id' => $hangThanhViens->random()->id,
             ]);
         }
     }
