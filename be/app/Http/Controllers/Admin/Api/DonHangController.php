@@ -44,6 +44,8 @@ class DonHangController extends Controller
         try {
             $donHang = DonHang::with([
                 'chiTiets.bienTheSanPham.sanPham', // Lấy sản phẩm từ biến thể
+                'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
+                'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
                 'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
             ])->findOrFail($id);
 
