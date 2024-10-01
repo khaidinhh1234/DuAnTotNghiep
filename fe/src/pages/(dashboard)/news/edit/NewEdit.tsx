@@ -93,7 +93,7 @@ const NewEdit = () => {
                 <h1 className="font-semibold md:text-3xl">Cập nhật tin tức: {newsData?.data.tieu_de}</h1>
                 <div>
                     <Link to="/admin/news" className="mr-1">
-                        <Button className="ml-auto bg-black text-white rounded-lg py-1">
+                        <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
                             Quay lại
                         </Button>
                     </Link>

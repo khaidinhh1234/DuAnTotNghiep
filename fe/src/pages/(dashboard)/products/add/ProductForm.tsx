@@ -193,7 +193,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
               });
             },
           }}
-          initialValue="Chào mừng bạn đến với Glow clothing!"
+          // initialValue="Chào mừng bạn đến với Glow clothing!"
         />
         {/* <TextArea rows={5} placeholder="Nhập nội dung sản phẩm" /> */}
       </Form.Item>
