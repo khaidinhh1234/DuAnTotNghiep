@@ -114,7 +114,7 @@ console.log( 'toan',dataSource)
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Danh mục đã xóa</h1>
         <Link to="/admin/news">
-          <Button className="bg-black text-white rounded-lg py-1">
+          <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
             Quay lại
           </Button>
         </Link>

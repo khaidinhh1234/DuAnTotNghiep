@@ -1,9 +1,11 @@
 import { IEvaluate } from "@/common/types/evaluate";
 import instance from "@/configs/axios";
+import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Input,
+  InputRef,
   Modal,
   Popconfirm,
   Rate,
@@ -11,13 +13,18 @@ import {
   Table,
   TableColumnsType,
 } from "antd";
-import { useState } from "react";
+import { FilterDropdownProps } from "antd/es/table/interface";
+import { useRef, useState } from "react";
+import Highlighter from "react-highlight-words";
 import { useParams } from "react-router-dom";
 
+type DataIndex = keyof IEvaluate;
 const EvaluateAdmin = () => {
   const queryClient = useQueryClient();
   const { id } = useParams();
-
+  const [searchedColumn, setSearchedColumn] = useState<string>("");
+  const searchInput = useRef<InputRef>(null);
+  const [searchText, setSearchText] = useState<string>("");
   // Query to fetch evaluations
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
@@ -92,7 +99,88 @@ const EvaluateAdmin = () => {
       [id]: value,
     }));
   };
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps["confirm"],
+    dataIndex: DataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
 
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
+  };
+
+  const getColumnSearchProps = (dataIndex: DataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }: any) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Tìm ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Tìm kiếm
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+    onFilter: (value: any, record: any) =>
+      record[dataIndex]
+        ?.toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible: any) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text: any) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Đã xảy ra lỗi khi tải dữ liệu.</p>;
 
@@ -109,6 +197,8 @@ const EvaluateAdmin = () => {
     {
       title: "Nội dung",
       key: "mo_ta",
+      sorter: (a: any, b: any) =>
+        a.mo_ta?.localeCompare(b.mo_ta) || 0, 
       render: (record: IEvaluate) => (
         <div>
           <p>
@@ -126,10 +216,14 @@ const EvaluateAdmin = () => {
     {
       title: "Chất lượng sản phẩm",
       key: "chat_luong_san_pham",
+      ...getColumnSearchProps("san_pham_id"), // Sử dụng `san_pham_id` để tìm kiếm
+      sorter: (a: any, b: any) =>
+        a.san_pham?.ten_san_pham?.localeCompare(b.san_pham?.ten_san_pham) || 0, // So sánh `ten_san_pham`
       render: (record: IEvaluate) => (
         <div>
-          {record.san_pham?.ten_san_pham || "Sản phẩm ẩn"}:{" "}
-          {record.chat_luong_san_pham}
+          {record.san_pham?.ten_san_pham || "Sản phẩm ẩn"} <br />
+          {record.san_pham?.anh_san_pham || "Ảnh phản hồi ẩn"}
+          {/* {record.chat_luong_san_pham} */}
         </div>
       ),
     },

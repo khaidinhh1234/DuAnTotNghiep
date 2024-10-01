@@ -16,7 +16,7 @@ class DanhMucTinTucController extends Controller
     public function index()
     {
         try {
-            $danhMucTinTucs = DanhMucTinTuc::all();
+            $danhMucTinTucs = DanhMucTinTuc::orderBy('created_at', 'desc')->get();
             return response()->json(
                 [
                     'status' => true,

@@ -25,6 +25,7 @@ use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
+use App\Http\Controllers\Client\Api\LienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
 use Illuminate\Http\Request;
@@ -104,6 +105,9 @@ Route::middleware([])
         // Đánh giá
         Route::get('sanpham/{sanpham}/danhgia', [DanhGiaController::class, 'danhSachDanhGia']);
         Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
+
+        // Liên hệ
+        Route::post('lienhe', [LienHeController::class, 'lienHe']);
     });
 
 // Trang chủ
