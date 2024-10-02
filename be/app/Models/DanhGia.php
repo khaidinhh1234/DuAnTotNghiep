@@ -33,4 +33,8 @@ class DanhGia extends Model
     {
         return $this->hasMany(AnhDanhGia::class, 'danh_gia_id');
     }
+    public function donhang()
+    {
+        return $this->hasOne(DonHang::class, 'don_hang_id');
+    }
 }

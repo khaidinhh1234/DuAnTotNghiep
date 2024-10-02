@@ -60,6 +60,10 @@ class DonHang extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function danhgia()
+    {
+        return $this->hasOne(DanhGia::class);
+    }
     protected static function boot()
     {
         parent::boot();
