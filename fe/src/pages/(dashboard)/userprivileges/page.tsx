@@ -21,7 +21,7 @@ const UserPrivilegeAdmin = () => {
         const response = await instance.delete(`/admin/vaitro/${id}`);
         message.open({
           type: "success",
-          content: "Xóa vai trò thành côngcông!",
+          content: "Xóa vai trò thành công!",
         });
         return response.data;
       } catch (error) {
@@ -160,7 +160,8 @@ const UserPrivilegeAdmin = () => {
         <Table
           columns={columns}
           dataSource={vaitro}
-          pagination={pagination}
+          pagination={{ pageSize: 10, className: "my-5" }}
+          rowKey="id"
           onChange={handleTableChange}
           loading={isLoading}
         />

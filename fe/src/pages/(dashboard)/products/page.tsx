@@ -216,7 +216,7 @@ const ProductsAdmin: React.FC = () => {
       width: "5%",
     },
     {
-      title: "Ảnh sản phẩm",
+      title: "Sản phẩm",
       render: (item) => (
         <img
           src={item.anh_san_pham || "https://via.placeholder.com/150"}
@@ -316,7 +316,7 @@ const ProductsAdmin: React.FC = () => {
       </div>
     );
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 ">
       <div className="flex items-center">
         <h1 className="md:text-base">
           Quản trị / <span className="font-semibold">Sản phẩm</span>
@@ -352,7 +352,7 @@ const ProductsAdmin: React.FC = () => {
       <Table
         columns={columns}
         dataSource={sanpham}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 5, className: "my-5" }}
         loading={isLoading}
       />
     </main>

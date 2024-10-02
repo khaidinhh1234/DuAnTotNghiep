@@ -212,7 +212,14 @@ const ColorManagement: React.FC = () => {
       width: "30%",
       // ...getColumnSearchProps("ten_mau_sac"),
       sorter: (a, b) => a.ten_mau_sac.localeCompare(b.ten_mau_sac),
+      ...getColumnSearchProps("ten_mau_sac"),
+      onFilter: (value: boolean | React.Key, record: ColorData) =>
+        record.ten_mau_sac
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase()),
     },
+    
     {
       title: "Mã màu",
       dataIndex: "ma_mau_sac",
@@ -349,7 +356,7 @@ const ColorManagement: React.FC = () => {
           <Button
             type="primary"
             htmlType="submit"
-            className="px-3 py-2 bg-black text-white rounded-lg"
+     className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
             // loading={addColorMutation.isLoading}
           >
             Thêm màu
@@ -360,7 +367,7 @@ const ColorManagement: React.FC = () => {
       <Table
         columns={columns}
         dataSource={colorData}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 5, className: "my-5" }}
         className="equal-width-table"
         loading={isLoading}
       />

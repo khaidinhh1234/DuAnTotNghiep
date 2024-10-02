@@ -71,7 +71,8 @@ const Remotecolor: React.FC = () => {
       key: "action",
       render: (_: any, record: any) => (
         <Space>
-          <Button onClick={() => handleRestore(record.id)}>Khôi phục</Button>
+          <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold" 
+          onClick={() => handleRestore(record.id)}>Khôi phục</Button>
           {/* <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button> */}
         </Space>
       ),
@@ -96,20 +97,22 @@ const Remotecolor: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Biến thể màu sắc</h1>
+        <h1 className="font-semibold md:text-3xl">Thùng rác</h1>
         <Link to="/admin/products/bienthe">
           <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
             Quay lại
           </Button>
         </Link>
       </div>
+      <div className="max-w-5xl">
       <Table
         columns={columns}
         dataSource={data?.data || []}
         rowKey="id"
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, className: "my-5" }}
         loading={isLoading}
       />
+      </div>
     </main>
   );
 };

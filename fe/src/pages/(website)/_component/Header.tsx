@@ -128,7 +128,6 @@ const Header = () => {
               <button
                 onClick={() => {
                   setMenu(!menu);
-                  console.log(menu);
                 }}
               >
                 <i className="fa-solid fa-bars text-2xl"></i>

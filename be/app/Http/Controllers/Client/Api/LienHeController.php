@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Client\Api;
 
+use App\Events\SendMail;
 use App\Http\Controllers\Controller;
-use App\Mail\ContactEmail;
 use App\Models\LienHe;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 class LienHeController extends Controller
 {
@@ -15,32 +15,33 @@ class LienHeController extends Controller
     {
         try {
             $validateLienHe = $request->validate([
-                'ten_lien_he' => 'required|string|max:255',
-                'email_lien_he' => 'required|email|max:255',
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
                 'noi_dung_lien_he' => 'required',
                 'sdt_lien_he' => 'nullable|string|max:20',
                 'loai_lien_he' => 'nullable|string',
                 'trang_thai_lien_he' => 'nullable|string',
-                'nguoi_phu_trach_id' => 'nullable|integer'
             ]);
 
-            $lienhe = LienHe::create([
-                'tai_khoan_lien_he_id' => auth()->id(),
-                'ten_lien_he' => $request->ten_lien_he,
-                'sdt_lien_he' => $request->sdt_lien_he,
-                'email_lien_he' => $request->email_lien_he,
-                'noi_dung_lien_he' => $request->noi_dung_lien_he,
-                'loai_lien_he' => $request->loai_lien_he,
-                'trang_thai_lien_he' => $request->trang_thai_lien_he,
-                'nguoi_phu_trach_id' => $request->nguoi_phu_trach_id,
-            ]);
-            Mail::to('chiduc1611@gmail.com')->send(new ContactEmail($lienhe));
 
+            if (Auth::guard('api')->check()) {
+                $validateLienHe['user_id'] = Auth::guard('api')->id();
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 401,
+                    'message' => 'Không thể gửi liên hệ',
+                    'data' => Auth::check()
+                ], 401);
+            }
+
+            $lienhe = LienHe::create($validateLienHe);
+            event(new SendMail( $lienhe->email, $lienhe->name, 'contact'));
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Gửi liên hệ thành công',
-                'data' => $validateLienHe
+                'data' => $lienhe
             ]);
         } catch (\Exception $exception) {
 

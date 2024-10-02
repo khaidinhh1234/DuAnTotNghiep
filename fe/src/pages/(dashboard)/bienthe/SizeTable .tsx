@@ -193,6 +193,7 @@ const SizeManagement: React.FC = () => {
       dataIndex: "kich_thuoc",
       key: "kich_thuoc",
       width: "50%",
+      sorter: (a, b) => a.kich_thuoc.localeCompare(b.kich_thuoc),
       ...getColumnSearchProps("kich_thuoc"),
       onFilter: (value: boolean | React.Key, record: SizeDataType) =>
         record.kich_thuoc
@@ -259,7 +260,7 @@ const SizeManagement: React.FC = () => {
         </Form.Item>
         <Button
           type="primary"
-          className="px-3 py-2 bg-black text-white rounded-lg"
+   className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
           onClick={handleAddSize}
         >
           Thêm size
@@ -269,7 +270,7 @@ const SizeManagement: React.FC = () => {
       <Table
         columns={columns}
         dataSource={sizes}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 5, className: "my-5" }}
         className="equal-width-table"
         loading={isLoading}
       />

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { TreeProps } from "antd";
 import { Button, Checkbox, Form, Input, message, Tree } from "antd";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const { TextArea } = Input;
 
@@ -17,10 +17,11 @@ const PageAddPermission: React.FC = () => {
       return response.data;
     },
   });
+  // console.log("data", data);
   const vaitro = data?.data.map((item: any) => {
-    return { ...item, key: item.id };
+    return { ...item };
   });
-
+  // console.log("vaitro", vaitro);
   const { mutate } = useMutation({
     mutationFn: async (values: any) => {
       try {
@@ -139,12 +140,14 @@ const PageAddPermission: React.FC = () => {
               <TextArea placeholder="Nhập mô tả" rows={4} />
             </Form.Item>
             <Form.Item className="flex">
-              <Button htmlType="submit" className="font-semibold mx-2">
-                Quay lại
-              </Button>
+              <Link to={"/admin/ADmin/userprivileges"}>
+                <Button htmlType="submit" className="font-semibold mx-2">
+                  Quay lại
+                </Button>
+              </Link>
               <Button
                 htmlType="submit"
-                className="text-white font-semibold bg-black hover:bg-black/50"
+                className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
               >
                 Lưu
               </Button>

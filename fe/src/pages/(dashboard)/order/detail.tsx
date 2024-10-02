@@ -1,11 +1,11 @@
 import instance from "@/configs/axios";
-import { useQuery } from "@tanstack/react-query";
-import { Button, Modal } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, message, Modal } from "antd";
 import { useState } from "react";
 
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
-
+  const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["ORDER_DETAIL", record.id],
     queryFn: async () => {
@@ -13,16 +13,60 @@ const Detail = ({ record }: any) => {
       return response.data;
     },
   });
-  const products = data?.data?.chi_tiet_don_hang?.map((item: any) => {
+  const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
     };
   });
 
-  // console.log(products);
+  const donhang = data?.data;
+  // console.log("data", donhang);
+  // console.log("data", products);
+
   const handleCancel = () => {
     setOpen(false);
   };
+
+  const { mutate } = useMutation({
+    mutationFn: async ({ id, action }: any) => {
+      console.log("data", id, action);
+
+      try {
+        const response = await instance.put(
+          "admin/donhang/trang-thai-don-hang",
+          {
+            trang_thai_don_hang: action,
+            id: [id],
+          }
+        );
+        const error = response.data.message;
+
+        if (error === "Cập nhật trạng thái đơn hàng thành công") {
+          message.open({
+            type: "success",
+            content: error,
+          });
+        } else {
+          message.open({
+            type: "success",
+            content: error,
+          });
+        }
+        return response.data;
+      } catch (error) {
+        message.open({
+          type: "error",
+          content: "Không thể cập nhật trạng thái đơn hàng!",
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["ORDERS"],
+      });
+    },
+  });
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -47,9 +91,9 @@ const Detail = ({ record }: any) => {
               <div className="">
                 <h4 className="text-lg font-bold">
                   Đơn Hàng:{" "}
-                  <span className="text-blue-500">{record.ma_don_hang}</span>
+                  <span className="text-blue-500">{record?.ma_don_hang}</span>
                 </h4>
-                <p className="text-base">Ngày tạo :{record.created_at}</p>
+                <p className="text-base">Ngày tạo : {record?.created_at}</p>
               </div>{" "}
               <div
                 className={`font-bold text-[15px] ${
@@ -141,17 +185,10 @@ const Detail = ({ record }: any) => {
                           {item?.so_luong}
                         </td>
                         <td className="text-center w-[20%] font-semibold  ">
-                          {item?.bien_the_san_pham?.gia_khuyen_mai
-                            ? item?.bien_the_san_pham?.gia_khuyen_mai
-                            : item?.bien_the_san_pham?.gia_ban}{" "}
-                          VNĐ
+                          {(item?.gia).toLocaleString()} VNĐ
                         </td>
                         <td className="text-center w-[35%] font-semibold">
-                          {(item?.bien_the_san_pham?.gia_khuyen_mai
-                            ? item?.bien_the_san_pham?.gia_khuyen_mai
-                            : item?.bien_the_san_pham?.gia_ban) *
-                            item?.so_luong}{" "}
-                          VNĐ
+                          {(item?.thanh_tien).toLocaleString()} VNĐ
                         </td>
                       </tr>
                     ))}
@@ -206,13 +243,24 @@ const Detail = ({ record }: any) => {
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
-                    <span>10093456</span> VNĐ
+                    <span>
+                      {
+                        data?.data?.tong_tien_san_pham
+                        // .toLocaleString()
+                      }
+                    </span>{" "}
+                    VNĐ
                   </p>
                 </div>
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Giảm giá</h1>
                   <p className="text-base font-semibold">
-                    <span>34</span> %
+                    -{" "}
+                    <span>
+                      {data?.data?.gia_khuyen_mai
+                        ? data?.data?.gia_khuyen_mai
+                        : "1.029.007"}
+                    </span>
                   </p>
                 </div>
                 <div className="flex justify-between">
@@ -224,9 +272,15 @@ const Detail = ({ record }: any) => {
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">
                     Tổng giá trị đơn hàng <br />
-                    <p className="text-gray-600 font-normal">tiền mặt</p>
                   </h1>
-                  <p className="text-lg font-bold">1000000 VNĐ</p>
+                  <p className="text-lg font-bold">
+                    {" "}
+                    {
+                      record?.tong_tien_don_hang + 20000
+                      // .toLocaleString()
+                    }{" "}
+                    VNĐ
+                  </p>
                 </div>
               </div>
             </div>
@@ -238,13 +292,23 @@ const Detail = ({ record }: any) => {
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
                 {record.trang_thai_don_hang === "Chờ xác nhận" ? (
-                  <button className="w-full py-2 border bg-blue-950 rounded-lg text-white hover:bg-blue-700">
+                  <button
+                    className="w-full py-2 border bg-blue-950 rounded-lg text-white hover:bg-blue-700"
+                    onClick={() =>
+                      mutate({ id: record.id, action: "Đã xác nhận" })
+                    }
+                  >
                     Xác nhận đơn hàng
                   </button>
                 ) : record.trang_thai_don_hang === "Đã xác nhận" ? (
-                  <span className="font-bold text-green-500">
+                  <button
+                    className="w-full py-2 border bg-green-500 rounded-lg text-white hover:bg-green-400"
+                    onClick={() =>
+                      mutate({ id: record.id, action: "Đang xử lý" })
+                    }
+                  >
                     Đơn hàng đã xác nhận
-                  </span>
+                  </button>
                 ) : record.trang_thai_don_hang === "Đang xử lý" ? (
                   <span className="font-bold text-yellow-500">
                     Đơn hàng đang xử lý
@@ -255,9 +319,14 @@ const Detail = ({ record }: any) => {
                   </span>
                 ) : record.trang_thai_don_hang === "Đã giao hàng thành công" ? (
                   <div className="flex gap-2">
-                    <button className="w-full py-2 border bg-green-600 rounded-lg text-white hover:bg-green-500">
+                    <span
+                      className="font-bold text-green-500"
+                      // onClick={() =>
+                      //   mutate({ id: record.id, action: "Hoàn thành" })
+                      // }
+                    >
                       Xác nhận đơn hàng
-                    </button>
+                    </span>
                   </div>
                 ) : (
                   <button className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-400">
