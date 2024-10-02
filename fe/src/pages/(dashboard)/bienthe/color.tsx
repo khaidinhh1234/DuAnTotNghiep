@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { IColor } from "@/common/types/product";
-import instance from "@/configs/axios";
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message, Spin } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { SketchPicker } from "react-color";
+import instance from "@/configs/admin";
 
 const Color = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,7 +17,7 @@ const Color = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["color", id],
     queryFn: async () => {
-      const response = await instance.get(`/admin/bienthemausac/${id}`);
+      const response = await instance.get(`/bienthemausac/${id}`);
       console.log("Raw API response:", response.data);
       return response.data;
     },
