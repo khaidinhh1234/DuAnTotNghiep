@@ -167,7 +167,7 @@ const BannerManagement: React.FC = () => {
       })
     );
 
-    setFileList(updatedFileList);
+    setFileList(updatedFileList as UploadFile[]);
   };
 
   const handleTextChange = (key: string, newValue: string) => {
@@ -178,7 +178,7 @@ const BannerManagement: React.FC = () => {
     );
   };
 
-  const handleRemove = (file: UploadFile) => {
+  const handleRemove = (_file: UploadFile) => {
     return fileList.length > 3;
   };
 
@@ -203,7 +203,7 @@ const BannerManagement: React.FC = () => {
     onError: (error: any) => {
       if (error.response && error.response.data && error.response.data.errors) {
         const errorMessages = Object.values(error.response.data.errors).flat();
-        errorMessages.forEach((msg: string) => message.error(msg));
+        errorMessages.forEach((msg) => message.error(msg as string));
       } else {
         message.error("Failed to update banner");
       }
@@ -222,10 +222,10 @@ const BannerManagement: React.FC = () => {
         tieu_de_nut: bannerTextData[3].value,
         tieu_de_phu: bannerTextData[1].value,
         tieu_de_chinh: bannerTextData[0].value,
-        mau_tieu_de_phu: bannerTextData[1].color,
-        mau_tieu_de_chinh: bannerTextData[0].color,
+        mau_tieu_de_phu: bannerTextData[1].color || "",
+        mau_tieu_de_chinh: bannerTextData[0].color || "",
         van_ban_quang_cao: bannerTextData[2].value,
-        mau_van_ban_quang_cao: bannerTextData[2].color,
+        mau_van_ban_quang_cao: bannerTextData[2].color || "",
         mau_tieu_de_nut: bannerTextData[3].color || "",
         duong_dan: bannerTextData[4].value,
       },
@@ -325,7 +325,7 @@ const BannerManagement: React.FC = () => {
             <Table.Column
               title="Color"
               key="color"
-              render={(text, record: any) =>
+              render={(_text, record: any) =>
                 record.key !== "đường dẫn" ? (
                   <ColorPicker
                     value={record.color}
