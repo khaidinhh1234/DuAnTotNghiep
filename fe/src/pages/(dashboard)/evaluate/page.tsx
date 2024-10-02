@@ -1,5 +1,6 @@
 import { IEvaluate } from "@/common/types/evaluate";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -29,7 +30,7 @@ const EvaluateAdmin = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
     queryFn: async () => {
-      const response = await instance.get(`/admin/danhsachdanhgia`);
+      const response = await instance.get(`/danhsachdanhgia`);
       return response.data;
     },
   });
@@ -43,7 +44,7 @@ const EvaluateAdmin = () => {
       id: number | string;
       phan_hoi: string;
     }) => {
-      const response = await instance.post(`/admin/danhsachdanhgia/${id}`, {
+      const response = await instance.post(`/danhsachdanhgia/${id}`, {
         phan_hoi,
       });
       return response.data;
@@ -58,7 +59,7 @@ const EvaluateAdmin = () => {
 
   const hideEvaluate = useMutation({
     mutationFn: async (id: number) => {
-      await instance.delete(`/admin/danhsachdanhgia/${id}`);
+      await instance.delete(`/danhsachdanhgia/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["danhgiasanpham"] });
@@ -197,8 +198,7 @@ const EvaluateAdmin = () => {
     {
       title: "Nội dung",
       key: "mo_ta",
-      sorter: (a: any, b: any) =>
-        a.mo_ta?.localeCompare(b.mo_ta) || 0, 
+      sorter: (a: any, b: any) => a.mo_ta?.localeCompare(b.mo_ta) || 0,
       render: (record: IEvaluate) => (
         <div>
           <p>
@@ -271,13 +271,18 @@ const EvaluateAdmin = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <div className="flex items-center">
+        <h1 className="md:text-base">
+          Quản trị / <span className="font-semibold px-px">Đánh giá</span>
+        </h1>
+      </div>
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">Đánh giá sản phẩm</h1>
       </div>
       <Table
         columns={columns}
         dataSource={dataSource}
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, className: "my-5" }}
       />
       <Modal
         title="Phản hồi đánh giá"

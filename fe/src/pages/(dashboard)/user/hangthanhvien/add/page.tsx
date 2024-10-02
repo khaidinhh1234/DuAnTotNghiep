@@ -1,13 +1,13 @@
 
 
-import React, { useState } from 'react';
-import { Form, Input, InputNumber, Upload, Button, Typography, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import instance from "@/configs/axios";
-import { RcFile, UploadFile, UploadProps } from 'antd/es/upload';
+import instance from '@/configs/admin';
 import { uploadToCloudinary } from '@/configs/cloudinary';
+import { UploadOutlined } from '@ant-design/icons';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button, Form, Input, InputNumber, Typography, Upload, message } from 'antd';
+import { RcFile, UploadFile, UploadProps } from 'antd/es/upload';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const { Title } = Typography;
 
@@ -27,7 +27,7 @@ const MemberRankForm: React.FC = () => {
   // Query để lấy danh sách hạng thành viên hiện có
   const { data: existingRanks = [] } = useQuery<MemberRank[]>({
     queryKey: ['memberRanks'],
-    queryFn: () => instance.get('admin/hangthanhvien').then(res => res.data),
+    queryFn: () => instance.get('/hangthanhvien').then(res => res.data),
   });
 
   const addMemberRankMutation = useMutation({
@@ -45,7 +45,7 @@ const MemberRankForm: React.FC = () => {
         const cloudinaryUrl = await uploadToCloudinary(fileList[0].originFileObj);
         newRank.anh_hang_thanh_vien = cloudinaryUrl;
       }
-      return instance.post('admin/hangthanhvien', newRank);
+      return instance.post('/hangthanhvien', newRank);
     },
     onSuccess: () => {
       message.success('Thêm hạng thành viên thành công');

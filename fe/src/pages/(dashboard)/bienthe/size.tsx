@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { IColor } from "@/common/types/product";
-import instance from "@/configs/axios";
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message, Spin } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import instance from "@/configs/admin";
 
 const Size = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,7 +16,7 @@ const Size = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["size", id],
     queryFn: async () => {
-      const response = await instance.get(`/admin/bienthekichthuoc/${id}`);
+      const response = await instance.get(`/bienthekichthuoc/${id}`);
       console.log(data);
       return response.data;
     },
@@ -29,15 +30,12 @@ const Size = () => {
 
   const updateMutation = useMutation({
     mutationFn: async (values: IColor) => {
-      const response = await instance.put(
-        `/admin/bienthekichthuoc/${id}`,
-        values
-      );
+      const response = await instance.put(`/bienthekichthuoc/${id}`, values);
       return response.data;
     },
     onSuccess: () => {
       message.success("Cập nhật màu sắc thành công");
-      nav("/admin/products/bienthe");
+      nav("/products/bienthe");
     },
     onError: () => {
       message.error("Cập nhật màu sắc thất bại");
@@ -114,7 +112,7 @@ const Size = () => {
                   type="primary"
                   htmlType="submit"
                   className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
-                  >
+                >
                   Cập nhật
                 </Button>
               </Form.Item>

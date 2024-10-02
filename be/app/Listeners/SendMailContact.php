@@ -6,10 +6,9 @@ use App\Events\SendMail;
 use App\Models\LienHe;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
-class SendMailForgotPassword implements ShouldQueue
+class SendMailContact implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -24,13 +23,13 @@ class SendMailForgotPassword implements ShouldQueue
      */
     public function handle(SendMail $event): void
     {
-        if ($event->condition == 'forgot-password') {
+        if ($event->condition === 'contact') {
             $email = $event->email;
-            $token = DB::table('password_reset_tokens')->where('email', $email)->first()->token;
             $name = $event->name;
-            Mail::send('emails.password-reset', compact('token', 'name'), function ($message) use ($email) {
+            $noidung = LienHe::query()->where('email', $email)->first()->noi_dung_lien_he;
+            Mail::send('emails.contact', compact('name', 'noidung', 'email'), function ($message) use ($email) {
                 $message->to($email);
-                $message->subject('Thông báo đặt lại mật khẩu');
+                $message->subject('Thông báo liên hệ');
             });
         }
     }

@@ -1,12 +1,12 @@
-import React, { useRef, useState } from "react";
+import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, message, Space, Spin, Table } from "antd";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
+import { Button, Input, message, Space, Spin, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
 
 interface IMemberRank {
   id: string | number;
@@ -26,7 +26,7 @@ const Remoterank: React.FC = () => {
     queryKey: ["rank"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/hangthanhvien/thung-rac");
+        const response = await instance.get("/hangthanhvien/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching :", error);
@@ -62,7 +62,7 @@ const Remoterank: React.FC = () => {
   // });
   const handleRestore = async (id: string | number) => {
     try {
-      await instance.post(`/admin/hangthanhvien/thung-rac/${id}`);
+      await instance.post(`/hangthanhvien/thung-rac/${id}`);
       message.success("Khôi phục danh mục thành công", 3);
       queryClient.invalidateQueries({ queryKey: ["rank"] });
     } catch (error) {
@@ -248,7 +248,13 @@ const Remoterank: React.FC = () => {
         </div>
       </div>
       <div className="max-w-4xl">
-        <Table columns={columns} dataSource={dataSource} loading={isLoading} />
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          loading={isLoading}
+          pagination={{ pageSize: 10, className: "my-5" }}
+          rowKey="id"
+        />
       </div>
     </main>
   );

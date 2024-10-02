@@ -1,5 +1,5 @@
-import instance from "@/configs/axios";
-import { PlusOutlined } from "@ant-design/icons";
+
+import instance from "@/configs/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Input, message, Space, Table, TableColumnsType } from "antd";
 import { useState } from "react";
@@ -18,7 +18,7 @@ const UserPrivilegeAdmin = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: number) => {
       try {
-        const response = await instance.delete(`/admin/vaitro/${id}`);
+        const response = await instance.delete(`/vaitro/${id}`);
         message.open({
           type: "success",
           content: "Xóa vai trò thành công!",
@@ -94,7 +94,7 @@ const UserPrivilegeAdmin = () => {
     queryKey: ["VAITRO_KEY"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/vaitro");
+        const response = await instance.get("/vaitro");
         return response.data;
       } catch (error) {
         message.open({
@@ -160,7 +160,8 @@ const UserPrivilegeAdmin = () => {
         <Table
           columns={columns}
           dataSource={vaitro}
-          pagination={pagination}
+          pagination={{ pageSize: 10, className: "my-5" }}
+          rowKey="id"
           onChange={handleTableChange}
           loading={isLoading}
         />

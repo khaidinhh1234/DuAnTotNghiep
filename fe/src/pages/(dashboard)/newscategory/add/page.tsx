@@ -1,6 +1,7 @@
 import { ICategories } from "@/common/types/category";
 import { NewCategories } from "@/common/types/newcategory";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { useMutation } from "@tanstack/react-query";
 import { Button, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,7 +12,7 @@ const NewCategoriesAdd = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
-      const response = await instance.post(`/admin/danhmuctintuc`, category);
+      const response = await instance.post(`/danhmuctintuc`, category);
       return response.data;
     },
     onSuccess: () => {

@@ -6,9 +6,10 @@ import { Link } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import "@/global.css";
 
-import instance from "@/configs/axios";
+
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import instance from "@/configs/admin";
 
 interface DataType {
   id: any;
@@ -45,14 +46,14 @@ const Rank: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["rank"],
     queryFn: async () => {
-      const res = await instance.get("/admin/hangthanhvien");
+      const res = await instance.get("/hangthanhvien");
       return res.data;
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string | number) => {
-      const response = await instance.delete(`/admin/hangthanhvien/${id}`);
+      const response = await instance.delete(`/hangthanhvien/${id}`);
       if (response.data.status) {
         return id;
       } else {
@@ -267,7 +268,12 @@ const Rank: React.FC = () => {
         </div>
       </div>
       <div className="max-w-4xl">
-        <Table columns={columns} dataSource={rank} />
+        <Table
+          columns={columns}
+          dataSource={rank}
+          pagination={{ pageSize: 10, className: "my-5" }}
+          rowKey="id"
+        />
       </div>
     </main>
   );

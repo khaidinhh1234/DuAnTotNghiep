@@ -42,7 +42,13 @@ const menu = [
   },
   {
     name: "Đơn hàng",
-    path: "/admin/orders",
+    path: "orders",
+    subMenu: [
+      { name: "Tổng quan", path: "orders/transport" },
+      { name: "Danh sách đơn hàng", path: "orders/list" },
+
+      { name: "Vận chuyển", path: "orders/uncomfirmedorder" },
+    ],
     icon: Package,
   },
   {

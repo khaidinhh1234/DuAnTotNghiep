@@ -1,5 +1,6 @@
 import { NewCategories } from "@/common/types/newcategory";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -28,7 +29,7 @@ const NewCategory = () => {
     queryKey: ["danhmuctintuc"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuctintuc");
+        const response = await instance.get("/danhmuctintuc");
         return response.data;
       } catch (error) {
         throw new Error("Error fetching new categories");
@@ -44,7 +45,7 @@ const NewCategory = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const res = await instance.delete(`/admin/danhmuctintuc/${id}`);
+        const res = await instance.delete(`/danhmuctintuc/${id}`);
         message.open({
           type: "success",
           content: "Xóa danh mục thành công",
@@ -210,11 +211,14 @@ const NewCategory = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Danh mục tin tức</span>
+          Quản trị /{" "}
+          <span className="font-semibold px-px">Danh mục tin tức</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Danh sách danh mục tin tức</h1>
+        <h1 className="font-semibold md:text-3xl">
+          Danh sách danh mục tin tức
+        </h1>
         <div className="flex">
           <Link to="/admin/newcategory/add" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
@@ -231,7 +235,12 @@ const NewCategory = () => {
         </div>
       </div>
       <div className="max-w-5xl">
-        <Table columns={columns} dataSource={dataSource} loading={isLoading} />
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          loading={isLoading}
+          pagination={{ pageSize: 10, className: "my-5" }}
+        />
       </div>
     </main>
   );

@@ -4,9 +4,9 @@ import { Button, DatePicker, Form, Input, message, Radio, Select } from "antd";
 import { FormProps } from "antd";
 import { useState } from "react";
 
-import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
+import instance from "@/configs/admin";
 
 // import type { SelectProps } from "antd";
 
@@ -27,7 +27,7 @@ const UsersNhanvienAdd = () => {
     queryKey: ["VAITRO"],
     queryFn: async () => {
       try {
-        const res = await instance.get("/admin/vaitro");
+        const res = await instance.get("/vaitro");
         return res.data;
       } catch (error) {
         console.log(error);
@@ -44,7 +44,7 @@ const UsersNhanvienAdd = () => {
   const mutate = useMutation({
     mutationFn: async (data) => {
       try {
-        const res = await instance.post("/admin/taikhoan", data);
+        const res = await instance.post("/taikhoan", data);
         return res.data;
       } catch (error) {
         throw error;

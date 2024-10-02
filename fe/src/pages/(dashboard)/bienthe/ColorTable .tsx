@@ -14,9 +14,10 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import Highlighter from "react-highlight-words";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+
 import { Link } from "react-router-dom";
 import { SketchPicker } from "react-color";
+import instance from "@/configs/admin";
 
 interface ColorData {
   id: string;
@@ -40,7 +41,7 @@ const ColorManagement: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["colors"],
     queryFn: async () => {
-      const res = await instance.get("/admin/bienthemausac");
+      const res = await instance.get("/bienthemausac");
       return res.data;
     },
   });
@@ -53,7 +54,7 @@ const ColorManagement: React.FC = () => {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string | number) =>
-      instance.delete(`/admin/bienthemausac/${id}`),
+      instance.delete(`/bienthemausac/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["colors"] });
       message.success("Xóa màu sắc thành công");
@@ -65,7 +66,7 @@ const ColorManagement: React.FC = () => {
 
   const addColorMutation = useMutation({
     mutationFn: (newColor: { ten_mau_sac: string; ma_mau_sac: string }) =>
-      instance.post("/admin/bienthemausac", newColor),
+      instance.post("/bienthemausac", newColor),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["colors"] });
 
@@ -219,7 +220,7 @@ const ColorManagement: React.FC = () => {
           .toLowerCase()
           .includes(value.toString().toLowerCase()),
     },
-    
+
     {
       title: "Mã màu",
       dataIndex: "ma_mau_sac",
@@ -356,7 +357,7 @@ const ColorManagement: React.FC = () => {
           <Button
             type="primary"
             htmlType="submit"
-     className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+            className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
             // loading={addColorMutation.isLoading}
           >
             Thêm màu
@@ -367,7 +368,7 @@ const ColorManagement: React.FC = () => {
       <Table
         columns={columns}
         dataSource={colorData}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 5, className: "my-5" }}
         className="equal-width-table"
         loading={isLoading}
       />

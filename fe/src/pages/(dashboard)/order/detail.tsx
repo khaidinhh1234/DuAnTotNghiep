@@ -1,4 +1,4 @@
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, message, Modal } from "antd";
 import { useState } from "react";
@@ -9,7 +9,7 @@ const Detail = ({ record }: any) => {
   const { data, isLoading } = useQuery({
     queryKey: ["ORDER_DETAIL", record.id],
     queryFn: async () => {
-      const response = await instance.get(`/admin/donhang/${record.id}`);
+      const response = await instance.get(`/donhang/${record.id}`);
       return response.data;
     },
   });
@@ -32,13 +32,10 @@ const Detail = ({ record }: any) => {
       console.log("data", id, action);
 
       try {
-        const response = await instance.put(
-          "admin/donhang/trang-thai-don-hang",
-          {
-            trang_thai_don_hang: action,
-            id: [id],
-          }
-        );
+        const response = await instance.put("/donhang/trang-thai-don-hang", {
+          trang_thai_don_hang: action,
+          id: [id],
+        });
         const error = response.data.message;
 
         if (error === "Cập nhật trạng thái đơn hàng thành công") {
@@ -244,7 +241,10 @@ const Detail = ({ record }: any) => {
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {(data?.data?.tong_tien_san_pham).toLocaleString()}
+                      {
+                        data?.data?.tong_tien_san_pham
+                        // .toLocaleString()
+                      }
                     </span>{" "}
                     VNĐ
                   </p>
@@ -272,7 +272,11 @@ const Detail = ({ record }: any) => {
                   </h1>
                   <p className="text-lg font-bold">
                     {" "}
-                    {(record?.tong_tien_don_hang + 20000).toLocaleString()} VNĐ
+                    {
+                      record?.tong_tien_don_hang + 20000
+                      // .toLocaleString()
+                    }{" "}
+                    VNĐ
                   </p>
                 </div>
               </div>

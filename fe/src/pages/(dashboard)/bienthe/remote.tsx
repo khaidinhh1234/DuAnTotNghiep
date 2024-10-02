@@ -1,8 +1,9 @@
 import React from "react";
 import { Table, Button, Space, message, Spin } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+
 import { Link, useParams } from "react-router-dom";
+import instance from "@/configs/admin";
 
 const Remotecolor: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
@@ -13,7 +14,7 @@ const Remotecolor: React.FC = () => {
     queryKey: ["color"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/bienthemausac/thung-rac");
+        const response = await instance.get("/bienthemausac/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching remote :", error);
@@ -25,7 +26,7 @@ const Remotecolor: React.FC = () => {
   // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
-      await instance.post(`/admin/bienthemausac/thung-rac/${id}`);
+      await instance.post(`/bienthemausac/thung-rac/${id}`);
       message.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
       queryClient.invalidateQueries({ queryKey: ["color"] });
@@ -71,8 +72,12 @@ const Remotecolor: React.FC = () => {
       key: "action",
       render: (_: any, record: any) => (
         <Space>
-          <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold" 
-          onClick={() => handleRestore(record.id)}>Khôi phục</Button>
+          <Button
+            className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+            onClick={() => handleRestore(record.id)}
+          >
+            Khôi phục
+          </Button>
           {/* <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button> */}
         </Space>
       ),
@@ -105,13 +110,13 @@ const Remotecolor: React.FC = () => {
         </Link>
       </div>
       <div className="max-w-5xl">
-      <Table
-        columns={columns}
-        dataSource={data?.data || []}
-        rowKey="id"
-        pagination={{ pageSize: 10 }}
-        loading={isLoading}
-      />
+        <Table
+          columns={columns}
+          dataSource={data?.data || []}
+          rowKey="id"
+          pagination={{ pageSize: 10, className: "my-5" }}
+          loading={isLoading}
+        />
       </div>
     </main>
   );
