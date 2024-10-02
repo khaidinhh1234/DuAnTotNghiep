@@ -27,7 +27,7 @@ class DonHangController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'data' => $donHangs
-            ],200);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -37,61 +37,6 @@ class DonHangController extends Controller
             ], 500);
         }
     }
-
-    // public function show($id)
-    // {
-    //     try {
-    //         $donHang = DonHang::with([
-    //             'danhGia',
-    //             'chiTiets.bienTheSanPham.sanPham', // Lấy sản phẩm từ biến thể
-    //             'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
-    //             'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
-    //             'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
-
-    //         ])->findOrFail($id);
-
-    //         // Tính toán tổng số lượng và tổng tiền
-    //         $tongSoLuong = $donHang->chiTiets->sum('so_luong');
-    //         $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
-
-    //         // Chuẩn bị dữ liệu đơn hàng chi tiết với tên sản phẩm, ảnh, số lượng và giá
-    //         $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
-    //             // Lấy các đường dẫn ảnh biến thể từ bảng anh_bien_thes
-    //             $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
-
-    //             // Lấy ảnh sản phẩm (giả sử có một trường duong_dan_anh trong bảng san_phams)
-    //             $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
-
-    //             return [
-    //                 'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
-    //                 'anh_san_pham' => $anhSanPham, // Ảnh sản phẩm
-    //                 'anh_bien_the' => $anhBienThe, // Ảnh biến thể
-    //                 'so_luong' => $chiTiet->so_luong,
-    //                 'gia' => $chiTiet->gia,
-    //                 'thanh_tien' => $chiTiet->thanh_tien,
-    //             ];
-    //         });
-
-    //         // Chuẩn bị phản hồi với đầy đủ thông tin
-    //         return response()->json([
-    //             'status' => true,
-    //             'status_code' => 200,
-    //             'data' => [
-    //                 'don_hang' => $donHang,
-    //                 'chi_tiet_don_hang' => $chiTietDonHang,
-    //                 'tong_so_luong' => $tongSoLuong,
-    //                 'tong_thanh_tien_san_pham' => $tongTienSanPham
-    //             ]
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'status_code' => 404,
-    //             'message' => 'Không tìm thấy đơn hàng.',
-    //             'error' => $e->getMessage()
-    //         ], 404);
-    //     }
-    // }
 
     public function show($id)
     {
@@ -183,7 +128,7 @@ class DonHangController extends Controller
                 'status_code' => 200,
                 'message' => 'Cập nhật trạng thái thanh toán thành công.',
                 // 'don_hang' => $donHang
-            ],200);
+            ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
 
@@ -238,21 +183,21 @@ class DonHangController extends Controller
                         'trang_thai_don_hang' => $request->trang_thai_don_hang,
                     ]);
 
-                    if($donHang->trang_thai_don_hang === DonHang::TTDH_DXH && $donHang->phuong_thuc_thanh_toan === DonHang::PTTT_TT){
-                        VanChuyen::create([
+                    if ($donHang->trang_thai_don_hang === DonHang::TTDH_DXL) {
+                        $vanChuyenData = [
                             'don_hang_id' => $donHang->id,
                             'ngay_tao' => Carbon::now(),
                             'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
-                            'cod' => VanChuyen::TTCOD_KT
-                        ]);
-                    }else{
-                        VanChuyen::create([
-                            'don_hang_id' => $donHang->id,
-                            'ngay_tao' => Carbon::now(),
-                            'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
-                            'cod' => VanChuyen::TTCOD_CN,
-                            'tien_cod' => $donHang->tong_tien_don_hang
-                        ]);
+                        ];
+
+                        if ($donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT) {
+                            $vanChuyenData['cod'] = VanChuyen::TTCOD_KT;
+                        } else {
+                            $vanChuyenData['cod'] = VanChuyen::TTCOD_CN;
+                            $vanChuyenData['tien_cod'] = $donHang->tong_tien_don_hang + 20000;
+                        }
+
+                        VanChuyen::create($vanChuyenData);
                     }
                     $mess = "Cập nhật trạng thái đơn hàng thành công";
                 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DonHang;
 use App\Models\VanChuyen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,6 +54,17 @@ class VanChuyenController extends Controller
                             'trang_thai_van_chuyen' => $validate['trang_thai_van_chuyen'],
                         ]
                     );
+                    $trangThaiDonHangMap = [
+                        VanChuyen::TTVC_DGH => DonHang::TTDH_DGH,
+                        VanChuyen::TTVC_GHTC => DonHang::TTDH_DGTC,
+                        VanChuyen::TTVC_GHTB => DonHang::TTDH_GHTB,
+                    ];
+
+                    if (isset($trangThaiDonHangMap[$vanChuyen->trang_thai_van_chuyen])) {
+                        $vanChuyen->donHang()->update([
+                            'trang_thai_don_hang' => $trangThaiDonHangMap[$vanChuyen->trang_thai_van_chuyen]
+                        ]);
+                    }
                     $mess = 'Cập nhật trạng thái vận chuyển thành công';
                 }
                 DB::commit();
