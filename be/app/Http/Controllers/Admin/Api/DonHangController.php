@@ -147,7 +147,7 @@ class DonHangController extends Controller
                 'status_code' => 200,
                 'data' => [
                     'don_hang' => $donHang,
-                    'chi_tiet_don_hang' => $chiTietDonHang,
+                    'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
