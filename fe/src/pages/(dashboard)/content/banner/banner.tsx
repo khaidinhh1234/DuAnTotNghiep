@@ -1,11 +1,21 @@
-
-import React, { useState, useEffect } from 'react';
-import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Button, Input, Table, Upload, Image, ColorPicker, Carousel, Empty, message, Spin } from 'antd';
-import type { UploadFile, UploadProps } from 'antd';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import instance from "@/configs/axios";
-import { uploadToCloudinary } from '@/configs/cloudinary';
+import React, { useState, useEffect } from "react";
+import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Input,
+  Table,
+  Upload,
+  Image,
+  ColorPicker,
+  Carousel,
+  Empty,
+  message,
+  Spin,
+} from "antd";
+import type { UploadFile, UploadProps } from "antd";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { uploadToCloudinary } from "@/configs/cloudinary";
+import instance from "@/configs/admin";
 
 interface BannerData {
   noi_dung: {
@@ -34,23 +44,27 @@ interface ApiResponse {
 const BannerManagement: React.FC = () => {
   const queryClient = useQueryClient();
 
-  const { data: apiResponse, isLoading, isError } = useQuery<ApiResponse>({
-    queryKey: ['bannerData'],
+  const {
+    data: apiResponse,
+    isLoading,
+    isError,
+  } = useQuery<ApiResponse>({
+    queryKey: ["bannerData"],
     queryFn: async () => {
-      console.log('Starting API call');
+      console.log("Starting API call");
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
-        const response = await instance.get('/admin/thong-tin-web', {
-          signal: controller.signal
+        const response = await instance.get("/thong-tin-web", {
+          signal: controller.signal,
         });
         clearTimeout(timeoutId);
-        console.log('API response:', response.data);
+        console.log("API response:", response.data);
         return response.data;
-      } catch (error) {
-        console.error('API call failed:', error);
-        if (error.name === 'AbortError') {
-          console.error('Request timed out');
+      } catch (error: any) {
+        console.error("API call failed:", error);
+        if (error.name === "AbortError") {
+          console.error("Request timed out");
         }
         throw error;
       }
@@ -59,45 +73,70 @@ const BannerManagement: React.FC = () => {
 
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
   const [bannerTextData, setBannerTextData] = useState([
-    { key: 'Tiêu đề chính', value: '', color: '' },
-    { key: 'tiêu đề phụ', value: '', color: '' },
-    { key: 'văn bản quảng cáo', value: '', color: '' },
-    { key: 'tiêu đề nút', value: '', color: '' },
-    { key: 'đường dẫn', value: '' },
+    { key: "Tiêu đề chính", value: "", color: "" },
+    { key: "tiêu đề phụ", value: "", color: "" },
+    { key: "văn bản quảng cáo", value: "", color: "" },
+    { key: "tiêu đề nút", value: "", color: "" },
+    { key: "đường dẫn", value: "" },
   ]);
 
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
+  const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [accentColor, setAccentColor] = useState('#000000');
-  const [uploadingFiles, setUploadingFiles] = useState<{ [key: string]: boolean }>({});
+  const [accentColor, setAccentColor] = useState("#000000");
+  const [uploadingFiles, setUploadingFiles] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   useEffect(() => {
-    if (apiResponse && apiResponse.data && apiResponse.data.banner && apiResponse.data.banner.length > 0) {
-      console.log('Setting banner data');
+    if (
+      apiResponse &&
+      apiResponse.data &&
+      apiResponse.data.banner &&
+      apiResponse.data.banner.length > 0
+    ) {
+      console.log("Setting banner data");
       setBannerData(apiResponse.data.banner[0]);
     } else {
-      console.log('No banner data in response');
+      console.log("No banner data in response");
     }
   }, [apiResponse]);
 
   useEffect(() => {
     if (bannerData) {
       setBannerTextData([
-        { key: 'Tiêu đề chính', value: bannerData.noi_dung.tieu_de_chinh || '', color: bannerData.noi_dung.mau_tieu_de_chinh || '' },
-        { key: 'tiêu đề phụ', value: bannerData.noi_dung.tieu_de_phu || '', color: bannerData.noi_dung.mau_tieu_de_phu || '' },
-        { key: 'văn bản quảng cáo', value: bannerData.noi_dung.van_ban_quang_cao || '', color: bannerData.noi_dung.mau_van_ban_quang_cao || '' },
-        { key: 'tiêu đề nút', value: bannerData.noi_dung.tieu_de_nut || '', color: bannerData.noi_dung.mau_tieu_de_nut || '' },
-        { key: 'đường dẫn', value: bannerData.noi_dung.duong_dan || '' },
+        {
+          key: "Tiêu đề chính",
+          value: bannerData.noi_dung.tieu_de_chinh || "",
+          color: bannerData.noi_dung.mau_tieu_de_chinh || "",
+        },
+        {
+          key: "tiêu đề phụ",
+          value: bannerData.noi_dung.tieu_de_phu || "",
+          color: bannerData.noi_dung.mau_tieu_de_phu || "",
+        },
+        {
+          key: "văn bản quảng cáo",
+          value: bannerData.noi_dung.van_ban_quang_cao || "",
+          color: bannerData.noi_dung.mau_van_ban_quang_cao || "",
+        },
+        {
+          key: "tiêu đề nút",
+          value: bannerData.noi_dung.tieu_de_nut || "",
+          color: bannerData.noi_dung.mau_tieu_de_nut || "",
+        },
+        { key: "đường dẫn", value: bannerData.noi_dung.duong_dan || "" },
       ]);
-      setAccentColor(bannerData.noi_dung.mau_nut || '#000000');
-      
-      setFileList(bannerData.duong_dan_anh.map((url, index) => ({
-        uid: `-${index}`,
-        name: `image-${index}`,
-        status: 'done',
-        url: url,
-      })));
+      setAccentColor(bannerData.noi_dung.mau_nut || "#000000");
+
+      setFileList(
+        bannerData.duong_dan_anh.map((url, index) => ({
+          uid: `-${index}`,
+          name: `image-${index}`,
+          status: "done",
+          url: url,
+        }))
+      );
     }
   }, [bannerData]);
 
@@ -106,30 +145,34 @@ const BannerManagement: React.FC = () => {
     setPreviewOpen(true);
   };
 
-  const handleChange: UploadProps['onChange'] = async ({ fileList: newFileList }) => {
-    const updatedFileList = await Promise.all(newFileList.map(async (file) => {
-      if (file.originFileObj && !file.url && !uploadingFiles[file.uid]) {
-        setUploadingFiles(prev => ({ ...prev, [file.uid]: true }));
-        try {
-          const cloudinaryUrl = await uploadToCloudinary(file.originFileObj);
-          return { ...file, status: 'done', url: cloudinaryUrl };
-        } catch (error) {
-          console.error("Error uploading to Cloudinary:", error);
-          message.error("Failed to upload image");
-          return { ...file, status: 'error' };
-        } finally {
-          setUploadingFiles(prev => ({ ...prev, [file.uid]: false }));
+  const handleChange: UploadProps["onChange"] = async ({
+    fileList: newFileList,
+  }) => {
+    const updatedFileList = await Promise.all(
+      newFileList.map(async (file) => {
+        if (file.originFileObj && !file.url && !uploadingFiles[file.uid]) {
+          setUploadingFiles((prev) => ({ ...prev, [file.uid]: true }));
+          try {
+            const cloudinaryUrl = await uploadToCloudinary(file.originFileObj);
+            return { ...file, status: "done", url: cloudinaryUrl };
+          } catch (error) {
+            console.error("Error uploading to Cloudinary:", error);
+            message.error("Failed to upload image");
+            return { ...file, status: "error" };
+          } finally {
+            setUploadingFiles((prev) => ({ ...prev, [file.uid]: false }));
+          }
         }
-      }
-      return file;
-    }));
-  
+        return file;
+      })
+    );
+
     setFileList(updatedFileList);
   };
 
   const handleTextChange = (key: string, newValue: string) => {
-    setBannerTextData(prevData =>
-      prevData.map(item =>
+    setBannerTextData((prevData) =>
+      prevData.map((item) =>
         item.key === key ? { ...item, value: newValue } : item
       )
     );
@@ -140,8 +183,8 @@ const BannerManagement: React.FC = () => {
   };
 
   const handleColorChange = (key: string, newColor: string) => {
-    setBannerTextData(prevData =>
-      prevData.map(item =>
+    setBannerTextData((prevData) =>
+      prevData.map((item) =>
         item.key === key ? { ...item, color: newColor } : item
       )
     );
@@ -149,29 +192,31 @@ const BannerManagement: React.FC = () => {
 
   const mutation = useMutation({
     mutationFn: (newBannerData: BannerData[]) => {
-      return instance.post('/admin/thong-tin-web', { 
-        banner: newBannerData
+      return instance.post("/thong-tin-web", {
+        banner: newBannerData,
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bannerData'] });
-      message.success('Banner updated successfully');
+      queryClient.invalidateQueries({ queryKey: ["bannerData"] });
+      message.success("Banner updated successfully");
     },
     onError: (error: any) => {
       if (error.response && error.response.data && error.response.data.errors) {
         const errorMessages = Object.values(error.response.data.errors).flat();
         errorMessages.forEach((msg: string) => message.error(msg));
       } else {
-        message.error('Failed to update banner');
+        message.error("Failed to update banner");
       }
     },
   });
 
   const handleSave = () => {
     if (!bannerData) return;
-  
+
     const newBannerData: BannerData = {
-      duong_dan_anh: fileList.map(file => file.url || '').filter(url => url !== ''),
+      duong_dan_anh: fileList
+        .map((file) => file.url || "")
+        .filter((url) => url !== ""),
       noi_dung: {
         mau_nut: accentColor,
         tieu_de_nut: bannerTextData[3].value,
@@ -181,31 +226,33 @@ const BannerManagement: React.FC = () => {
         mau_tieu_de_chinh: bannerTextData[0].color,
         van_ban_quang_cao: bannerTextData[2].value,
         mau_van_ban_quang_cao: bannerTextData[2].color,
-        mau_tieu_de_nut: bannerTextData[3].color || '',
+        mau_tieu_de_nut: bannerTextData[3].color || "",
         duong_dan: bannerTextData[4].value,
       },
     };
-  
+
     mutation.mutate([newBannerData]);
   };
 
   if (isLoading) {
-    console.log('Still loading...');
-    return <Spin tip="Loading...">
-      <div className="content" />
-    </Spin>;
+    console.log("Still loading...");
+    return (
+      <Spin tip="Loading...">
+        <div className="content" />
+      </Spin>
+    );
   }
   if (isError) {
-    console.log('Error occurred');
+    console.log("Error occurred");
     return <div>Error loading banner data. Please try again later.</div>;
   }
   if (!bannerData) {
-    console.log('No banner data');
+    console.log("No banner data");
     return <div>No banner data available. Please add some data.</div>;
   }
 
   const uploadButton = (
-    <button style={{ border: 0, background: 'none' }} type="button">
+    <button style={{ border: 0, background: "none" }} type="button">
       <PlusOutlined />
       <div style={{ marginTop: 8 }}>Upload</div>
     </button>
@@ -214,13 +261,14 @@ const BannerManagement: React.FC = () => {
   return (
     <div className="p-4 grid grid-cols-2 gap-4">
       <div className="flex flex-col space-y-9">
-    <h1 className="md:text-base">
-      Quản trị / <span className="font-semibold px-px">Thông tin website</span>
-    </h1>
+        <h1 className="md:text-base">
+          Quản trị /{" "}
+          <span className="font-semibold px-px">Thông tin website</span>
+        </h1>
 
-  <div className="flex items-center justify-between mb-4">
-    <h1 className="font-semibold md:text-3xl">Thông tin banner</h1>
-  </div>  
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="font-semibold md:text-3xl">Thông tin banner</h1>
+        </div>
         <div>
           <h2 className="text-xl font-semibold mb-2">Ảnh Banner</h2>
           <Upload
@@ -234,7 +282,11 @@ const BannerManagement: React.FC = () => {
               if (uploadingFiles[file.uid]) {
                 return (
                   <div className="ant-upload-list-item-container">
-                    <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+                    <Spin
+                      indicator={
+                        <LoadingOutlined style={{ fontSize: 24 }} spin />
+                      }
+                    />
                   </div>
                 );
               }
@@ -245,7 +297,7 @@ const BannerManagement: React.FC = () => {
           </Upload>
           {previewImage && (
             <Image
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               src={previewImage}
               preview={{
                 visible: previewOpen,
@@ -273,26 +325,31 @@ const BannerManagement: React.FC = () => {
             <Table.Column
               title="Color"
               key="color"
-              render={(text, record: any) => (
-                record.key !== 'đường dẫn' ? (
+              render={(text, record: any) =>
+                record.key !== "đường dẫn" ? (
                   <ColorPicker
                     value={record.color}
-                    onChange={(color) => handleColorChange(record.key, color.toHexString())}
+                    onChange={(color) =>
+                      handleColorChange(record.key, color.toHexString())
+                    }
                   />
                 ) : null
-              )}
+              }
             />
           </Table>
         </div>
       </div>
 
       <div className="flex flex-col space-y-4 mt-40">
-      <div>
+        <div>
           <h2 className="text-xl font-semibold mb-2">Màu Banner</h2>
           <div className="flex space-x-4">
             <div>
               <p>Màu button</p>
-              <ColorPicker value={accentColor} onChange={(color) => setAccentColor(color.toHexString())} />
+              <ColorPicker
+                value={accentColor}
+                onChange={(color) => setAccentColor(color.toHexString())}
+              />
             </div>
           </div>
         </div>
@@ -305,24 +362,24 @@ const BannerManagement: React.FC = () => {
                 <div key={index}>
                   <div
                     style={{
-                      padding: '10px',
-                      borderRadius: '8px',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      height: '300px',
-                      width: '100%',
+                      padding: "10px",
+                      borderRadius: "8px",
+                      position: "relative",
+                      overflow: "hidden",
+                      height: "300px",
+                      width: "100%",
                     }}
                   >
                     <img
-                      src={file.url || ''}
+                      src={file.url || ""}
                       alt={`Banner preview ${index}`}
                       style={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: 0,
                         left: 0,
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
                         zIndex: 0,
                       }}
                     />
@@ -350,7 +407,10 @@ const BannerManagement: React.FC = () => {
                       <div>
                         <button
                           className="px-4 py-2 rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium"
-                          style={{ backgroundColor: accentColor, color: bannerTextData[3].color }}
+                          style={{
+                            backgroundColor: accentColor,
+                            color: bannerTextData[3].color,
+                          }}
                         >
                           {bannerTextData[3].value}
                           <i className="fa-solid fa-arrow-right ml-2"></i>
@@ -362,7 +422,10 @@ const BannerManagement: React.FC = () => {
               ))}
             </Carousel>
           ) : (
-            <div className="flex items-center justify-center h-full" style={{ marginTop: 40 }}>
+            <div
+              className="flex items-center justify-center h-full"
+              style={{ marginTop: 40 }}
+            >
               <Empty description="Không có dữ liệu" />
             </div>
           )}
@@ -370,12 +433,13 @@ const BannerManagement: React.FC = () => {
       </div>
 
       <div className="mt-4 flex justify-start">
-  <Button 
-className="  bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-2 hover:bg-blue-600 shadow-md transition-colors"    onClick={handleSave}
-  >
-    Lưu thay đổi
-  </Button>
-</div>
+        <Button
+          className="  bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-2 hover:bg-blue-600 shadow-md transition-colors"
+          onClick={handleSave}
+        >
+          Lưu thay đổi
+        </Button>
+      </div>
     </div>
   );
 };

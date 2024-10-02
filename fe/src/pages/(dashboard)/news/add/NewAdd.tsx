@@ -1,5 +1,5 @@
 import { INew } from "@/common/types/new";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Editor } from "@tinymce/tinymce-react";
 import { Button, Form, Input, message, Select } from "antd";
@@ -17,8 +17,8 @@ const NewAdd = () => {
     queryFn: async () => {
       try {
         const [categoryResponse, userResponse] = await Promise.all([
-          instance.get(`/admin/danhmuctintuc`),
-          instance.get(`/admin/taikhoan`),
+          instance.get(`/danhmuctintuc`),
+          instance.get(`/taikhoan`),
         ]);
 
         return {
@@ -35,7 +35,7 @@ const NewAdd = () => {
   // Mutation for adding news
   const { mutate } = useMutation({
     mutationFn: async (news: INew) => {
-      const response = await instance.post(`/admin/tintuc`, news);
+      const response = await instance.post(`/tintuc`, news);
       return response.data;
     },
     onSuccess: () => {
@@ -56,7 +56,6 @@ const NewAdd = () => {
     };
     mutate(categoryData);
   };
-
 
   // Handle loading and error states
   if (isLoading) {
@@ -190,7 +189,7 @@ const NewAdd = () => {
                     initialValue="Chào mừng bạn đến với Glow clothing!"
                   />
                 </Form.Item>
-              </div>  
+              </div>
               <Form.Item>
                 <Button
                   type="primary"

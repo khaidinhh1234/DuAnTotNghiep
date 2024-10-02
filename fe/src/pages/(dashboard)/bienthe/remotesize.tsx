@@ -1,8 +1,9 @@
 import React from "react";
 import { Table, Button, Space, message, Spin } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+
 import { Link, useParams } from "react-router-dom";
+import instance from "@/configs/admin";
 
 const Remotesize: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
@@ -13,9 +14,7 @@ const Remotesize: React.FC = () => {
     queryKey: ["size"],
     queryFn: async () => {
       try {
-        const response = await instance.get(
-          "/admin/bienthekichthuoc/thung-rac"
-        );
+        const response = await instance.get("/bienthekichthuoc/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching remote :", error);
@@ -27,7 +26,7 @@ const Remotesize: React.FC = () => {
   // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
-      await instance.post(`/admin/bienthekichthuoc/thung-rac/${id}`);
+      await instance.post(`/bienthekichthuoc/thung-rac/${id}`);
       message.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
       queryClient.invalidateQueries({ queryKey: ["size"] });
@@ -67,8 +66,12 @@ const Remotesize: React.FC = () => {
       key: "action",
       render: (_: any, record: any) => (
         <Space>
-          <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
-          onClick={() => handleRestore(record.id)}>Khôi phục</Button>
+          <Button
+            className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+            onClick={() => handleRestore(record.id)}
+          >
+            Khôi phục
+          </Button>
           {/* <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button> */}
         </Space>
       ),

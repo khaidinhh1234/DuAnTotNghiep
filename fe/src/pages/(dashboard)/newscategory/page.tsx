@@ -1,5 +1,6 @@
 import { NewCategories } from "@/common/types/newcategory";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -28,7 +29,7 @@ const NewCategory = () => {
     queryKey: ["danhmuctintuc"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuctintuc");
+        const response = await instance.get("/danhmuctintuc");
         return response.data;
       } catch (error) {
         throw new Error("Error fetching new categories");
@@ -44,7 +45,7 @@ const NewCategory = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const res = await instance.delete(`/admin/danhmuctintuc/${id}`);
+        const res = await instance.delete(`/danhmuctintuc/${id}`);
         message.open({
           type: "success",
           content: "Xóa danh mục thành công",

@@ -56,7 +56,7 @@
 //     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
 //       <div className="flex items-center">
 //         <h1 className="md:text-base">
-//           Quản trị / Danh mục / 
+//           Quản trị / Danh mục /
 //           <span className="font-semibold px-px"> Thêm danh mục</span>
 //         </h1>
 //       </div>
@@ -132,7 +132,8 @@
 
 // export default CategoriesAdd;
 import { ICategories } from "@/common/types/category";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -146,9 +147,9 @@ const CategoriesAdd = () => {
   const [parentCategories, setParentCategories] = useState<ICategories[]>([]);
 
   const { data: allCategoriesData } = useQuery({
-    queryKey: ['allCategories'],
+    queryKey: ["allCategories"],
     queryFn: async () => {
-      const response = await instance.get('/admin/danhmuc');
+      const response = await instance.get("/danhmuc");
       return response.data;
     },
   });
@@ -161,16 +162,16 @@ const CategoriesAdd = () => {
       setParentCategories(filteredCategories);
     }
   }, [allCategoriesData]);
-// hello my fen
+  // hello my fen
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
-      const response = await instance.post(`/admin/danhmuc`, category);
+      const response = await instance.post(`/danhmuc`, category);
       return response.data;
     },
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
       form.resetFields();
-      nav('/admin/categories');
+      nav("/admin/categories");
     },
     onError: (error) => {
       message.error(error.message);
@@ -199,7 +200,7 @@ const CategoriesAdd = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục / 
+          Quản trị / Danh mục /
           <span className="font-semibold px-px"> Thêm danh mục</span>
         </h1>
       </div>
@@ -247,7 +248,7 @@ const CategoriesAdd = () => {
                 rules={[{ required: false }]}
               >
                 <Select placeholder="Chọn danh mục cha" allowClear>
-                  {parentCategories.map(category => (
+                  {parentCategories.map((category) => (
                     <Select.Option key={category.id} value={category.id}>
                       {category.ten_danh_muc}
                     </Select.Option>
@@ -258,10 +259,14 @@ const CategoriesAdd = () => {
                 label="Thêm ảnh"
                 name="imageFile"
                 valuePropName="fileList"
-                getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
                 rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
               >
-                <Upload listType="picture" maxCount={1} beforeUpload={() => false}>
+                <Upload
+                  listType="picture"
+                  maxCount={1}
+                  beforeUpload={() => false}
+                >
                   <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
                 </Upload>
               </Form.Item>

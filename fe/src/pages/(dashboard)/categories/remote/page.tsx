@@ -1,9 +1,10 @@
 import React from "react";
 import { Table, Button, Space } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import instance from "@/configs/admin";
 
 const CategoriesRemote: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
@@ -14,7 +15,7 @@ const CategoriesRemote: React.FC = () => {
     queryKey: ["danhmuc-remote"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuc/thung-rac");
+        const response = await instance.get("/danhmuc/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching remote categories:", error);
@@ -26,7 +27,7 @@ const CategoriesRemote: React.FC = () => {
   // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
-      await instance.post(`/admin/danhmuc/thung-rac/${id}`);
+      await instance.post(`/danhmuc/thung-rac/${id}`);
       toast.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
       queryClient.invalidateQueries({ queryKey: ["danhmuc-remote"] });

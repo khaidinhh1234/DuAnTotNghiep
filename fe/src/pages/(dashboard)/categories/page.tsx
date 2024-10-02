@@ -16,8 +16,9 @@ import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+
 import { ICategories } from "@/common/types/category";
+import instance from "@/configs/admin";
 // import { toast } from "react-toastify";
 const { TabPane } = Tabs;
 
@@ -35,7 +36,7 @@ const CategoriesAdmin: React.FC = () => {
     queryKey: ["danhmuc"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuc");
+        const response = await instance.get("/danhmuc");
         const categories = response.data;
         const categoryMap = new Map<string, string>();
         categories.data.forEach((category: any) => {

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { ICategories } from "@/common/types/category";
-import instance from "@/configs/axios";
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, Select, Upload, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined } from "@ant-design/icons";
+import instance from "@/configs/admin";
 
 const CategoriesEdit = () => {
   const { id } = useParams();
@@ -15,10 +16,10 @@ const CategoriesEdit = () => {
   const [parentCategories, setParentCategories] = useState<ICategories[]>([]);
 
   const { data } = useQuery({
-    queryKey: ['danhmuc', id],
+    queryKey: ["danhmuc", id],
     queryFn: async () => {
       try {
-        const response = await instance.get(`/admin/danhmuc/${id}`);
+        const response = await instance.get(`/danhmuc/${id}`);
         return response.data;
       } catch (error) {
         throw new Error("Lấy danh mục thất bại");
@@ -27,10 +28,10 @@ const CategoriesEdit = () => {
   });
 
   const { data: allCategoriesData, error: fetchError } = useQuery({
-    queryKey: ['allCategories'],
+    queryKey: ["allCategories"],
     queryFn: async () => {
       try {
-        const response = await instance.get('/admin/danhmuc');
+        const response = await instance.get("/danhmuc");
         return response.data;
       } catch (error) {
         throw new Error("Error fetching all categories");
@@ -49,10 +50,10 @@ const CategoriesEdit = () => {
 
   useEffect(() => {
     if (data) {
-      console.log("Category Data:", data.data); 
+      console.log("Category Data:", data.data);
       form.setFieldsValue({
         ten_danh_muc: data.data.ten_danh_muc,
-        cha_id: data.data.cha_id || null, 
+        cha_id: data.data.cha_id || null,
       });
     }
   }, [data, form]);
@@ -60,16 +61,18 @@ const CategoriesEdit = () => {
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
       try {
-        const response = await instance.put(`/admin/danhmuc/${id}`, category);
+        const response = await instance.put(`/danhmuc/${id}`, category);
         return response.data;
       } catch (error: any) {
-        throw new Error(error.response.data.message || "Error updating category");
+        throw new Error(
+          error.response.data.message || "Error updating category"
+        );
       }
     },
     onSuccess: () => {
       message.success("Sửa danh mục thành công");
       form.resetFields();
-      nav('/admin/categories');
+      nav("/admin/categories");
     },
     onError: (error) => {
       message.error(error.message);
@@ -84,20 +87,23 @@ const CategoriesEdit = () => {
     mutate(categoryData);
   };
 
-  
-
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục /<span className="font-semibold px-px"> Cập nhập danh mục</span>
+          Quản trị / Danh mục /
+          <span className="font-semibold px-px"> Cập nhập danh mục</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Cập nhập danh mục: {data?.data.ten_danh_muc}</h1>
+        <h1 className="font-semibold md:text-3xl">
+          Cập nhập danh mục: {data?.data.ten_danh_muc}
+        </h1>
         <div>
           <Link to="/admin/categories" className="mr-1">
-            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"  >Quay lại</Button>
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+              Quay lại
+            </Button>
           </Link>
         </div>
       </div>
@@ -120,7 +126,12 @@ const CategoriesEdit = () => {
                 <Form.Item
                   label="Tên danh mục"
                   name="ten_danh_muc"
-                  rules={[{ required: true, message: "Tên danh mục bắt buộc phải nhập!" }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Tên danh mục bắt buộc phải nhập!",
+                    },
+                  ]}
                 >
                   <Input placeholder="Nhập tên danh mục" />
                 </Form.Item>
@@ -137,15 +148,25 @@ const CategoriesEdit = () => {
                   label="Thêm ảnh"
                   name="imageFile"
                   valuePropName="fileList"
-                  getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
+                  getValueFromEvent={(e) =>
+                    Array.isArray(e) ? e : e?.fileList
+                  }
                 >
-                  <Upload listType="picture" maxCount={1} beforeUpload={() => false}>
+                  <Upload
+                    listType="picture"
+                    maxCount={1}
+                    beforeUpload={() => false}
+                  >
                     <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
                   </Upload>
                 </Form.Item>
               </div>
               <Form.Item>
-                <Button type="primary" htmlType="submit" className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+                >
                   Cập nhập danh mục
                 </Button>
               </Form.Item>

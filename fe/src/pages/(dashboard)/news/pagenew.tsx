@@ -1,5 +1,6 @@
 import { INew } from "@/common/types/new";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
@@ -20,7 +21,7 @@ const PageNew: React.FC = () => {
     queryKey: ["tintuc"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/tintuc");
+        const response = await instance.get("/tintuc");
         const news = response.data;
         return news;
       } catch (error) {
@@ -43,7 +44,7 @@ const PageNew: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.delete(`/admin/tintuc/${id}`);
+        const response = await instance.delete(`/tintuc/${id}`);
         if (response.data.status) {
           return id;
         } else {

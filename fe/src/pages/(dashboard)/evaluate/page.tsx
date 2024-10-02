@@ -1,5 +1,6 @@
 import { IEvaluate } from "@/common/types/evaluate";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -29,7 +30,7 @@ const EvaluateAdmin = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
     queryFn: async () => {
-      const response = await instance.get(`/admin/danhsachdanhgia`);
+      const response = await instance.get(`/danhsachdanhgia`);
       return response.data;
     },
   });
@@ -43,7 +44,7 @@ const EvaluateAdmin = () => {
       id: number | string;
       phan_hoi: string;
     }) => {
-      const response = await instance.post(`/admin/danhsachdanhgia/${id}`, {
+      const response = await instance.post(`/danhsachdanhgia/${id}`, {
         phan_hoi,
       });
       return response.data;
@@ -58,7 +59,7 @@ const EvaluateAdmin = () => {
 
   const hideEvaluate = useMutation({
     mutationFn: async (id: number) => {
-      await instance.delete(`/admin/danhsachdanhgia/${id}`);
+      await instance.delete(`/danhsachdanhgia/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["danhgiasanpham"] });
