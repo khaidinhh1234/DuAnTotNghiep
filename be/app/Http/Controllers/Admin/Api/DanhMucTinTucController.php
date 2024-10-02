@@ -68,4 +68,65 @@ class DanhMucTinTucController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+
+        try {
+            $danhMucTinTuc = DanhMucTinTuc::findOrFail($id);
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $danhMucTinTuc,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh mục tin tức',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $validateDanhMucTinTuc = $request->validate([
+                'ten_danh_muc_tin_tuc' => 'required|string|max:255',
+            ]);
+            $danhMucTinTuc = DanhMucTinTuc::findOrFail($id);
+            $validateDanhMucTinTuc['duong_dan'] = Str::slug($validateDanhMucTinTuc['ten_danh_muc_tin_tuc']);
+            $danhMucTinTuc->update($validateDanhMucTinTuc);
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục tin tức đã được Cập nhập thành công',
+                    'data' => $danhMucTinTuc,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi Cập nhập danh mục tin tức',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 }
