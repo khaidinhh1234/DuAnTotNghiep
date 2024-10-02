@@ -135,9 +135,9 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            <PrivateRoute>
-              <LayoutAdmin />
-            </PrivateRoute>
+            // <PrivateRoute>
+            <LayoutAdmin />
+            // </PrivateRoute>
           }
         >
           <Route path="dashboard" element={<Dashboard />} />
