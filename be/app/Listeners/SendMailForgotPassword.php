@@ -24,12 +24,14 @@ class SendMailForgotPassword implements ShouldQueue
      */
     public function handle(SendMail $event): void
     {
-        $email = $event->email;
-        $token = DB::table('password_reset_tokens')->where('email', $email)->first()->token;
-        $name = $event->name;
-        Mail::send('emails.password-reset', compact('token', 'name'), function ($message) use ($email) {
-            $message->to($email);
-            $message->subject('Thông báo đặt lại mật khẩu');
-        });
+        if ($event->condition == 'forgot-password') {
+            $email = $event->email;
+            $token = DB::table('password_reset_tokens')->where('email', $email)->first()->token;
+            $name = $event->name;
+            Mail::send('emails.password-reset', compact('token', 'name'), function ($message) use ($email) {
+                $message->to($email);
+                $message->subject('Thông báo đặt lại mật khẩu');
+            });
+        }
     }
 }
