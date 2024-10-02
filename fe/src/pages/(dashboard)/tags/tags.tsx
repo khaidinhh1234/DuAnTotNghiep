@@ -1,5 +1,5 @@
 import { ICategories } from "@/common/types/category";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
@@ -24,7 +24,7 @@ const TagsAdmin: React.FC = () => {
     queryKey: ["tag"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/the");
+        const response = await instance.get("/the");
         const tag = response.data;
 
         return tag; // Đảm bảo rằng categories.data chứa createdAt
@@ -44,7 +44,7 @@ const TagsAdmin: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.delete(`/admin/the/${id}`);
+        const response = await instance.delete(`/the/${id}`);
         if (response.data.status) {
           return id;
         } else {

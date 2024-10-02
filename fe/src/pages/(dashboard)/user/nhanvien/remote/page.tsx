@@ -1,4 +1,5 @@
-import instance from "@/configs/axios";
+
+import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -66,7 +67,7 @@ const UsersRemoteNhanvien: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/admin/taikhoan/thung-rac");
+      const res = await instance.get("/taikhoan/thung-rac");
       return res.data;
     },
   });
@@ -88,7 +89,7 @@ const UsersRemoteNhanvien: React.FC = () => {
   const mutate = useMutation({
     mutationFn: async (id: number) => {
       try {
-        const res = await instance.post(`/admin/taikhoan/thung-rac/${id}`);
+        const res = await instance.post(`/taikhoan/thung-rac/${id}`);
         message.open({
           type: "success",
           content: "Khôi phục thành công",

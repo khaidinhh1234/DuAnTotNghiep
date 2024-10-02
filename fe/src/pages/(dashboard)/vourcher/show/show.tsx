@@ -15,9 +15,9 @@ import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import instance from "@/configs/admin";
 // const { Option } = Select;
 // const options: SelectProps["options"] = [] as {
 //   label: string;
@@ -51,7 +51,7 @@ const ShowVoucher = () => {
   const { data: voucherid } = useQuery({
     queryKey: ["voucherid", id],
     queryFn: async () => {
-      const response = await instance.get(`/admin/makhuyenmai/${id}`);
+      const response = await instance.get(`/makhuyenmai/${id}`);
 
       return response.data;
     },
@@ -67,7 +67,7 @@ const ShowVoucher = () => {
     // mutationKey: "createVoucher",
     mutationFn: async (values: any) => {
       try {
-        const response = await instance.post("/admin/makhuyenmai", values);
+        const response = await instance.post("/makhuyenmai", values);
         nav("/admin/vouchers");
 
         message.open({
@@ -107,7 +107,7 @@ const ShowVoucher = () => {
   const { data: sanpham } = useQuery({
     queryKey: ["sanpham"],
     queryFn: async () => {
-      const response = await instance.get("/admin/sanpham");
+      const response = await instance.get("/sanpham");
       return response.data;
     },
   });
@@ -124,7 +124,7 @@ const ShowVoucher = () => {
   } = useQuery({
     queryKey: ["hang"],
     queryFn: async () => {
-      const response = await instance.get("admin/hangthanhvien");
+      const response = await instance.get("/hangthanhvien");
       return response.data;
     },
   });
@@ -210,7 +210,7 @@ const ShowVoucher = () => {
   const { data: danhmuc } = useQuery({
     queryKey: ["danhmuc"],
     queryFn: async () => {
-      const response = await instance.get("/admin/danhmuc");
+      const response = await instance.get("/danhmuc");
       return response.data;
     },
   });

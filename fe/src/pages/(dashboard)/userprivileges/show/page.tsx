@@ -1,8 +1,8 @@
-import instance from "@/configs/axios";
+
+import instance from "@/configs/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { TreeProps } from "antd";
 import { Button, Checkbox, Form, Input, message, Tree } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 const { TextArea } = Input;
@@ -14,7 +14,7 @@ const Showvaitro: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["permissions"],
     queryFn: async () => {
-      const response = await instance.get("/admin/vaitro/routes");
+      const response = await instance.get("/vaitro/routes");
       return response.data;
     },
   });
@@ -31,7 +31,7 @@ const Showvaitro: React.FC = () => {
     queryKey: ["userPrivilegesID", id],
     queryFn: async () => {
       try {
-        const response = await instance.get(`/admin/vaitro/${id}`);
+        const response = await instance.get(`/vaitro/${id}`);
         return response.data;
       } catch (error) {
         console.log(error);
@@ -46,7 +46,7 @@ const Showvaitro: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (values: any) => {
       try {
-        const response = await instance.post("/admin/vaitro", values);
+        const response = await instance.post("/vaitro", values);
         message.open({
           type: "success",
           content: "Thêm mới vai trò thành công!",

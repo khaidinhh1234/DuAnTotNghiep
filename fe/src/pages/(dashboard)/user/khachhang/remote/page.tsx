@@ -1,13 +1,13 @@
-import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import instance from "@/configs/admin";
+import { SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Image, Input, message, Popconfirm, Space, Table } from "antd";
+import { Button, Image, Input, message, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
-import { Tag } from "antd";
+
 
 interface DataType {
   key: React.Key;
@@ -28,7 +28,7 @@ const UserskhachangRemote: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/admin/taikhoan/thung-rac");
+      const res = await instance.get("/taikhoan/thung-rac");
       return res.data;
     },
   });
@@ -42,7 +42,7 @@ const UserskhachangRemote: React.FC = () => {
   const mutate = useMutation({
     mutationFn: async (id: number) => {
       try {
-        const res = await instance.post(`/admin/taikhoan/thung-rac/${id}`);
+        const res = await instance.post(`/taikhoan/thung-rac/${id}`);
         message.open({
           type: "success",
           content: "Khôi phục thành công",
