@@ -61,9 +61,9 @@ class DonHang extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function danhGia()
+    public function danhGias()
     {
-        return $this->hasOne(DanhGia::class);
+        return $this->hasMany(DanhGia::class, 'don_hang_id');
     }
 
     protected static function boot()
