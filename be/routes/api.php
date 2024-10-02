@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\Api\ThongKeKhachHangController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
+use App\Http\Controllers\Admin\Api\VanChuyenController;
 use App\Http\Controllers\Client\Api\Auth\AuthController;
 use App\Http\Controllers\Client\Api\Auth\CaptchaController;
 use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
@@ -80,10 +81,9 @@ Route::middleware([])
         Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
 
         // lọc theo màu sắc
-
-        Route::post('/loc-san-pham-theo-mau-sac', [TrangSanPhamController::class, 'laySanPhamTheoMauSac'])->name('loc-theo-mau-sac');
-        // lấy ra màu sắc
+        Route::post('/loc-san-pham-theo-mau-sac', [TrangSanPhamController::class, 'laySanPhamTheoMauSac'])->name('loc-theo-mau-sac');        // lấy ra màu sắc
         Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
+
         // lọc theo màu sắc
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc'])->name('loc-theo-kich-thuoc');
         Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
@@ -97,8 +97,6 @@ Route::middleware([])
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc']);
 
         //Client Chi tiết sản phẩm
-
-
         // Captcha
         Route::get('captcha', [CaptchaController::class, 'generateCaptcha']);
         Route::post('captcha/verify', [CaptchaController::class, 'verifyCaptcha']);
@@ -164,6 +162,10 @@ Route::middleware([])
         Route::put('/donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
 
+        //Vận chuyển
+        Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
+        Route::post('/vanchuyen', [VanChuyenController::class, 'capNhatTrangThaiDonHang'])->name('vanchuyen.ttvc');
+
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
         Route::get('danhmuctintuc/thung-rac', [DanhMucTinTucController::class, 'danhSachDanhMucTinTucDaXoa'])->name('danhmuctintuc.thungrac');
@@ -219,11 +221,12 @@ Route::middleware([])
         //Thống kê doanh thu
         Route::prefix('thong-ke')->group(function () {
             Route::get('/doanh-thu-ngay', [ThongKeDoanhThuController::class, 'doanhThuTheoNgay'])->name('thong-ke.doanh-thu-ngay');
-            Route::get('/doanh-thu-tuan', [ThongKeDoanhThuController::class, 'doanhThuTheoTuan'])->name('doanh-thu-tuan.thong-ke');
-            Route::get('/doanh-thu-thang', [ThongKeDoanhThuController::class, 'doanhThuTheoThang'])->name('doanh-thu-thang.thong-ke');
-            Route::get('/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy'])->name('doanh-thu-quy.thong-ke');
-            Route::get('/doanh-thu-nam', [ThongKeDoanhThuController::class, 'doanhThuTheoNam'])->name('doanh-thu-nam.thong-ke.thong-ke');
+            Route::post('/doanh-thu-tuan', [ThongKeDoanhThuController::class, 'doanhThuTheoTuan'])->name('doanh-thu-tuan.thong-ke');
+            Route::post('/doanh-thu-thang', [ThongKeDoanhThuController::class, 'doanhThuTheoThang'])->name('doanh-thu-thang.thong-ke');
+            Route::post('/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy'])->name('doanh-thu-quy.thong-ke');
+            Route::post('/doanh-thu-nam', [ThongKeDoanhThuController::class, 'doanhThuTheoNam'])->name('doanh-thu-nam.thong-ke.thong-ke');
             Route::get('/doanh-thu-san-pham', [ThongKeDoanhThuController::class, 'doanhThuTheoSanPham'])->name('doanh-thu-san-pham.thong-ke');
+            Route::post('/doanh-thu-tung-san-pham', [ThongKeDoanhThuController::class, 'doanhThuTheoTungSanPham'])->name('doanh-thu-tung-san-pham.thong-ke');
             Route::get('/doanh-thu-danh-muc', [ThongKeDoanhThuController::class, 'doanhThuTheoDanhMuc'])->name('doanh-thu-danh-muc.thong-ke');
             Route::get('/doanh-thu-so-sanh', [ThongKeDoanhThuController::class, 'soSanhDoanhThu'])->name("doanh-thu-so-sanh.thong-ke");
             // Route thống kê theo tháng

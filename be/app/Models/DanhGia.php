@@ -36,8 +36,7 @@ class DanhGia extends Model
     }
 
     public function donHang()
-
     {
-        return $this->hasOne(DonHang::class, 'don_hang_id');
+        return $this->belongsTo(DonHang::class, 'don_hang_id');
     }
 }

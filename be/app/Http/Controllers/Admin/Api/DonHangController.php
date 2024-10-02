@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Admin\Api;
 use App\Exports\DonHangExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateDonHangRequest;
-use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Models\DonHang;
+use App\Models\VanChuyen;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Exception;
+
 use Maatwebsite\Excel\Facades\Excel;
 
 class DonHangController extends Controller
@@ -28,8 +27,8 @@ class DonHangController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'data' => $donHangs
-            ]);
-        } catch (Exception $e) {
+            ],200);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -39,6 +38,61 @@ class DonHangController extends Controller
         }
     }
 
+    // public function show($id)
+    // {
+    //     try {
+    //         $donHang = DonHang::with([
+    //             'danhGia',
+    //             'chiTiets.bienTheSanPham.sanPham', // Lấy sản phẩm từ biến thể
+    //             'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
+    //             'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
+    //             'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
+
+    //         ])->findOrFail($id);
+
+    //         // Tính toán tổng số lượng và tổng tiền
+    //         $tongSoLuong = $donHang->chiTiets->sum('so_luong');
+    //         $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
+
+    //         // Chuẩn bị dữ liệu đơn hàng chi tiết với tên sản phẩm, ảnh, số lượng và giá
+    //         $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
+    //             // Lấy các đường dẫn ảnh biến thể từ bảng anh_bien_thes
+    //             $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
+
+    //             // Lấy ảnh sản phẩm (giả sử có một trường duong_dan_anh trong bảng san_phams)
+    //             $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
+
+    //             return [
+    //                 'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
+    //                 'anh_san_pham' => $anhSanPham, // Ảnh sản phẩm
+    //                 'anh_bien_the' => $anhBienThe, // Ảnh biến thể
+    //                 'so_luong' => $chiTiet->so_luong,
+    //                 'gia' => $chiTiet->gia,
+    //                 'thanh_tien' => $chiTiet->thanh_tien,
+    //             ];
+    //         });
+
+    //         // Chuẩn bị phản hồi với đầy đủ thông tin
+    //         return response()->json([
+    //             'status' => true,
+    //             'status_code' => 200,
+    //             'data' => [
+    //                 'don_hang' => $donHang,
+    //                 'chi_tiet_don_hang' => $chiTietDonHang,
+    //                 'tong_so_luong' => $tongSoLuong,
+    //                 'tong_thanh_tien_san_pham' => $tongTienSanPham
+    //             ]
+    //         ], 200);
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'status_code' => 404,
+    //             'message' => 'Không tìm thấy đơn hàng.',
+    //             'error' => $e->getMessage()
+    //         ], 404);
+    //     }
+    // }
+
     public function show($id)
     {
         try {
@@ -47,6 +101,7 @@ class DonHangController extends Controller
                 'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
                 'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
                 'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
+                'danhGias.user' // Lấy đánh giá của đơn hàng
             ])->findOrFail($id);
 
             // Tính toán tổng số lượng và tổng tiền
@@ -71,18 +126,33 @@ class DonHangController extends Controller
                 ];
             });
 
+            // Lấy đánh giá của đơn hàng
+            $danhGiaDonHang = $donHang->danhGia;
+            $danhGiaData = null;
+            if ($danhGiaDonHang) {
+                $danhGiaData = [
+                    'so_sao_san_pham' => $danhGiaDonHang->so_sao_san_pham,
+                    'so_sao_dich_vu_van_chuyen' => $danhGiaDonHang->so_sao_dich_vu_van_chuyen,
+                    'chat_luong_san_pham' => $danhGiaDonHang->chat_luong_san_pham,
+                    'mo_ta' => $danhGiaDonHang->mo_ta,
+                    'phan_hoi' => $danhGiaDonHang->phan_hoi,
+                    'huu_ich' => $danhGiaDonHang->huu_ich
+                ];
+            }
+
             // Chuẩn bị phản hồi với đầy đủ thông tin
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'data' => [
                     'don_hang' => $donHang,
-                    'chi_tiet_don_hang' => $chiTietDonHang,
+                    'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
-                    'tong_thanh_tien_san_pham' => $tongTienSanPham
+                    'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'danh_gia' => $danhGiaData // Thông tin đánh giá
                 ]
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'status_code' => 404,
@@ -113,8 +183,8 @@ class DonHangController extends Controller
                 'status_code' => 200,
                 'message' => 'Cập nhật trạng thái thanh toán thành công.',
                 // 'don_hang' => $donHang
-            ]);
-        } catch (Exception $exception) {
+            ],200);
+        } catch (\Exception $exception) {
             DB::rollBack();
 
             return response()->json([
@@ -167,7 +237,24 @@ class DonHangController extends Controller
                     $donHang->update([
                         'trang_thai_don_hang' => $request->trang_thai_don_hang,
                     ]);
-                    $mess = "Cập nhật trạng thái thành công";
+
+                    if($donHang->trang_thai_don_hang === DonHang::TTDH_DXH && $donHang->phuong_thuc_thanh_toan === DonHang::PTTT_TT){
+                        VanChuyen::create([
+                            'don_hang_id' => $donHang->id,
+                            'ngay_tao' => Carbon::now(),
+                            'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
+                            'cod' => VanChuyen::TTCOD_KT
+                        ]);
+                    }else{
+                        VanChuyen::create([
+                            'don_hang_id' => $donHang->id,
+                            'ngay_tao' => Carbon::now(),
+                            'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
+                            'cod' => VanChuyen::TTCOD_CN,
+                            'tien_cod' => $donHang->tong_tien_don_hang
+                        ]);
+                    }
+                    $mess = "Cập nhật trạng thái đơn hàng thành công";
                 }
 
                 // Lưu thay đổi

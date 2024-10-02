@@ -133,6 +133,7 @@ class DanhMucTinTucController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy(string $id)
     {
         try {
@@ -163,9 +164,11 @@ class DanhMucTinTucController extends Controller
             ], 500);
         }
     }
+
     /**
      * Display a listing of trashed resources.
      */
+
     public function danhSachDanhMucTinTucDaXoa()
     {
         try {
@@ -192,6 +195,7 @@ class DanhMucTinTucController extends Controller
     /**
      * Restore the specified trashed resource.
      */
+
     public function khoiPhucDanhMucTinTuc(string $id)
     {
         try {
@@ -218,4 +222,5 @@ class DanhMucTinTucController extends Controller
             ], 500);
         }
     }
+
 }

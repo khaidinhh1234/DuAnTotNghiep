@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->string('ma_giam_gia')->nullable();
             $table->integer('so_tien_giam_gia')->nullable();
             $table->enum('trang_thai_thanh_toan', [DonHang::TTTT_CTT, DonHang::TTTT_DTT, DonHang::TTTT_DXL, DonHang::TTTT_DH])->nullable();
-            $table->enum('trang_thai_van_chuyen', [DonHang::TTVC_CXT, DonHang::TTVC_CLH, DonHang::TTVC_DGH, DonHang::TTVC_GHTC])->nullable();
+            // $table->enum('trang_thai_van_chuyen', [DonHang::TTVC_CXT, DonHang::TTVC_CLH, DonHang::TTVC_DGH, DonHang::TTVC_GHTC])->nullable();
             $table->string('duong_dan')->nullable();
             $table->timestamps();
             $table->softDeletes();
