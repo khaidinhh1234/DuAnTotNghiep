@@ -156,4 +156,51 @@ class DanhMucController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $danhMuc = DanhMuc::findOrFail($id);
+
+            if ($danhMuc->children()->exists()) {
+                return response()->json(['error' => 'Không thể xóa danh mục này vì vẫn còn danh mục con.'], 422);
+            }
+
+
+            if ($danhMuc->anh_danh_muc) {
+                $fileName = basename($danhMuc->anh_danh_muc);
+                $filePath = public_path('storage/danh_mucs/' . $fileName);
+
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                } else {
+                    Log::error('File không tồn tại: ' . $filePath);
+                }
+            }
+
+            $danhMuc->delete();
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục đã được xóa',
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi xóa danh mục',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
 }
