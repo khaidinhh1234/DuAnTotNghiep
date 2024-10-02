@@ -86,16 +86,6 @@ const TableUncomfirmedOrder: React.FC = () => {
       dataIndex: "ten_nguoi_dat_hang",
       key: "ten_nguoi_dat_hang",
     },
-    // {
-    //   title: "Số điện thoại",
-    //   dataIndex: "so_dien_thoai_nguoi_dat_hang",
-    //   key: "so_dien_thoai_nguoi_dat_hang",
-    // },
-    // {
-    //   title: "Địa chỉ giao hàng",
-    //   dataIndex: "dia_chi_nguoi_dat_hang",
-    //   key: "dia_chi_nguoi_dat_hang",
-    // },
     {
       title: "Thanh toán",
       dataIndex: "phuong_thuc_thanh_toan",
