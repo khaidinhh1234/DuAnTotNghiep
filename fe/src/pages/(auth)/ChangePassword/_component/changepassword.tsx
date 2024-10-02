@@ -1,4 +1,3 @@
-import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -6,6 +5,7 @@ import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePassword } from "@/common/validations/auth";
 import { Skeleton } from "antd";
+import instance from "@/configs/auth";
 type IUser = {
   password: string;
   password_confirmation: string;
