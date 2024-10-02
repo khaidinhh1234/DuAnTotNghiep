@@ -18,11 +18,11 @@ class SendMail
      * Create a new event instance.
      */
     public $email;
-    public $token;
+    // public $token;
     public $name;
-    public function __construct($email, $name, $token)
+    public function __construct($email, $name)
     {
-        $this->token = $token;
+        // $this->token = $token;
         $this->email = $email;
         $this->name = $name;
     }
