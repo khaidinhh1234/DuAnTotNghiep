@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Admin\Api;
 use App\Exports\DonHangExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateDonHangRequest;
-use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Models\DonHang;
+use App\Models\VanChuyen;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Exception;
+
 use Maatwebsite\Excel\Facades\Excel;
 
 class DonHangController extends Controller
@@ -28,8 +27,8 @@ class DonHangController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'data' => $donHangs
-            ]);
-        } catch (Exception $e) {
+            ],200);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -153,7 +152,7 @@ class DonHangController extends Controller
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
                 ]
             ], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'status_code' => 404,
@@ -184,8 +183,8 @@ class DonHangController extends Controller
                 'status_code' => 200,
                 'message' => 'Cập nhật trạng thái thanh toán thành công.',
                 // 'don_hang' => $donHang
-            ]);
-        } catch (Exception $exception) {
+            ],200);
+        } catch (\Exception $exception) {
             DB::rollBack();
 
             return response()->json([
@@ -238,7 +237,24 @@ class DonHangController extends Controller
                     $donHang->update([
                         'trang_thai_don_hang' => $request->trang_thai_don_hang,
                     ]);
-                    $mess = "Cập nhật trạng thái thành công";
+
+                    if($donHang->trang_thai_don_hang === DonHang::TTDH_DXH && $donHang->phuong_thuc_thanh_toan === DonHang::PTTT_TT){
+                        VanChuyen::create([
+                            'don_hang_id' => $donHang->id,
+                            'ngay_tao' => Carbon::now(),
+                            'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
+                            'cod' => VanChuyen::TTCOD_KT
+                        ]);
+                    }else{
+                        VanChuyen::create([
+                            'don_hang_id' => $donHang->id,
+                            'ngay_tao' => Carbon::now(),
+                            'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
+                            'cod' => VanChuyen::TTCOD_CN,
+                            'tien_cod' => $donHang->tong_tien_don_hang
+                        ]);
+                    }
+                    $mess = "Cập nhật trạng thái đơn hàng thành công";
                 }
 
                 // Lưu thay đổi
