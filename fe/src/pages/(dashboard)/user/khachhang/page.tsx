@@ -1,4 +1,4 @@
-import instance from "@/configs/axios";
+
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -17,6 +17,7 @@ import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { Alert, Flex, Spin } from "antd";
+import instance from "@/configs/admin";
 const contentStyle: React.CSSProperties = {
   padding: 50,
   background: "rgba(0, 0, 0, 0.05)",
@@ -45,7 +46,7 @@ const UsersAdminkhachhang: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/admin/taikhoan");
+      const res = await instance.get("/taikhoan");
       return res.data;
     },
   });
@@ -66,7 +67,7 @@ const UsersAdminkhachhang: React.FC = () => {
   const mutate = useMutation({
     mutationFn: async (id: string) => {
       try {
-        const res = await instance.delete(`/admin/taikhoan/${id}`);
+        const res = await instance.delete(`/taikhoan/${id}`);
         message.open({
           type: "success",
           content: "Xóa thành công",

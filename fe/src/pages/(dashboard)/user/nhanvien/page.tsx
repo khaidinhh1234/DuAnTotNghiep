@@ -1,4 +1,5 @@
-import instance from "@/configs/axios";
+
+import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -38,7 +39,7 @@ const UsersAdminNhanvien: React.FC = () => {
   const mutate = useMutation({
     mutationFn: async (id: string) => {
       try {
-        const res = await instance.delete(`/admin/taikhoan/${id}`);
+        const res = await instance.delete(`/taikhoan/${id}`);
         message.open({
           type: "success",
           content: "Xóa thành công",
@@ -60,7 +61,7 @@ const UsersAdminNhanvien: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/admin/taikhoan");
+      const res = await instance.get("/taikhoan");
       return res.data;
     },
   });

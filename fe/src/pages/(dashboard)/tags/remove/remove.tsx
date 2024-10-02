@@ -1,5 +1,5 @@
 import { ICategories } from "@/common/types/category";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
@@ -20,7 +20,7 @@ const TagsRemoteAdmin: React.FC = () => {
     queryKey: ["tag"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/the");
+        const response = await instance.get("/the");
         const tag = response.data;
 
         return tag; // Đảm bảo rằng categories.data chứa createdAt
@@ -41,7 +41,7 @@ const TagsRemoteAdmin: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.post(`/admin/the/thung-rac/${id}`);
+        const response = await instance.post(`/the/thung-rac/${id}`);
         if (response.data.status) {
           message.open({
             type: "success",

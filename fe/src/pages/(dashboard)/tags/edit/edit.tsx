@@ -1,5 +1,4 @@
-import { ICategories } from "@/common/types/category";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -12,7 +11,7 @@ const Tagsedit = () => {
     queryKey: ["tag", id],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/the/" + id);
+        const response = await instance.get("/the/" + id);
         const tag = response.data;
 
         return tag; // Đảm bảo rằng categories.data chứa createdAt
@@ -25,7 +24,7 @@ const Tagsedit = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
-      const response = await instance.put(`/admin/the/` + id, data);
+      const response = await instance.put(`/the/` + id, data);
       return response.data;
     },
     onSuccess: () => {

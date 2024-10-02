@@ -1,5 +1,4 @@
-import { ICategories } from "@/common/types/category";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,7 +9,7 @@ const Tagsadd = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
-      const response = await instance.post(`/admin/the`, data);
+      const response = await instance.post(`/the`, data);
       return response.data;
     },
     onSuccess: () => {

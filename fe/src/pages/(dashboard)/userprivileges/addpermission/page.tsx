@@ -1,4 +1,5 @@
-import instance from "@/configs/axios";
+
+import instance from "@/configs/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { TreeProps } from "antd";
 import { Button, Checkbox, Form, Input, message, Tree } from "antd";
@@ -13,7 +14,7 @@ const PageAddPermission: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["permissions"],
     queryFn: async () => {
-      const response = await instance.get("/admin/vaitro/routes");
+      const response = await instance.get("/vaitro/routes");
       return response.data;
     },
   });
@@ -25,7 +26,7 @@ const PageAddPermission: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (values: any) => {
       try {
-        const response = await instance.post("/admin/vaitro", values);
+        const response = await instance.post("/vaitro", values);
         message.open({
           type: "success",
           content: "Thêm mới vai trò thành công!",

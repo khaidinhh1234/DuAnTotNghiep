@@ -494,7 +494,6 @@ import {
 } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import instance from "@/configs/axios";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { RcFile, UploadFile } from "antd/es/upload";
 import ProductForm from "./ProductForm";
@@ -508,12 +507,13 @@ import {
   Variant,
   ProductFormData,
 } from "@/common/types/product";
+import instance from "@/configs/admin";
 
 const { Option } = Select;
 
 // API calls
 const fetchData = async (endpoint: string): Promise<any> => {
-  const response = await instance.get(`/admin/${endpoint}`);
+  const response = await instance.get(`/${endpoint}`);
   return response.data;
 };
 
@@ -559,7 +559,7 @@ const ProductsAndVariants: React.FC = () => {
       //   return { ...item, noi_dung: data };
       // });
       try {
-        const response = await instance.post("/admin/sanpham", productData);
+        const response = await instance.post("/sanpham", productData);
         return response.data;
       } catch (error) {
         console.error("Error adding product:", error);

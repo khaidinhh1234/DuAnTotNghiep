@@ -1,4 +1,5 @@
-import instance from "@/configs/axios";
+
+import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -33,7 +34,7 @@ const ProductsRemote: React.FC = () => {
     queryKey: ["sanpham-remote"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/sanpham/thung-rac");
+        const response = await instance.get("/sanpham/thung-rac");
         console.log("Fetched data:", response.data); // In ra dữ liệu sau khi lấy được
 
         return response.data;
@@ -60,7 +61,7 @@ const ProductsRemote: React.FC = () => {
 
   const restoreMutation = useMutation({
     mutationFn: async (id: string) => {
-      await instance.post(`/admin/sanpham/thung-rac/${id}`);
+      await instance.post(`/sanpham/thung-rac/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham-remote"] });

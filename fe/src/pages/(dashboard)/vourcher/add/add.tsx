@@ -17,7 +17,7 @@ import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
 
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 
 const AddVoucher = () => {
   const [form] = Form.useForm();
@@ -43,7 +43,7 @@ const AddVoucher = () => {
     // mutationKey: "createVoucher",
     mutationFn: async (values: any) => {
       try {
-        const response = await instance.post("/admin/makhuyenmai", values);
+        const response = await instance.post("/makhuyenmai", values);
         nav("/admin/vouchers");
 
         message.open({
@@ -89,7 +89,7 @@ const AddVoucher = () => {
   const { data: sanpham } = useQuery({
     queryKey: ["sanpham"],
     queryFn: async () => {
-      const response = await instance.get("/admin/sanpham");
+      const response = await instance.get("/sanpham");
       return response.data;
     },
   });
@@ -106,7 +106,7 @@ const AddVoucher = () => {
   } = useQuery({
     queryKey: ["hang"],
     queryFn: async () => {
-      const response = await instance.get("admin/hangthanhvien");
+      const response = await instance.get("/hangthanhvien");
       return response.data;
     },
   });
@@ -195,7 +195,7 @@ const AddVoucher = () => {
   const { data: danhmuc } = useQuery({
     queryKey: ["danhmuc"],
     queryFn: async () => {
-      const response = await instance.get("/admin/danhmuc");
+      const response = await instance.get("/danhmuc");
       return response.data;
     },
   });

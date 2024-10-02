@@ -1,5 +1,6 @@
-import instance from "@/configs/axios";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import instance from "@/configs/admin";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Checkbox, Form, Input, message, Tree } from "antd";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -12,7 +13,7 @@ const PageEditPermission: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["permissions"],
     queryFn: async () => {
-      const response = await instance.get("/admin/vaitro/routes");
+      const response = await instance.get("/vaitro/routes");
       return response.data;
     },
   });
@@ -29,7 +30,7 @@ const PageEditPermission: React.FC = () => {
     queryKey: ["userPrivilegesID", id],
     queryFn: async () => {
       try {
-        const response = await instance.get(`/admin/vaitro/${id}`);
+        const response = await instance.get(`/vaitro/${id}`);
         return response.data;
       } catch (error) {
         console.log(error);
@@ -44,7 +45,7 @@ const PageEditPermission: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (values: any) => {
       try {
-        const response = await instance.put("/admin/vaitro/" + id, values);
+        const response = await instance.put("/vaitro/" + id, values);
         message.open({
           type: "success",
           content: "Cập nhật vai trò thành công!",

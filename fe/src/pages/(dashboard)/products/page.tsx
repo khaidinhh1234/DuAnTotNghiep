@@ -15,9 +15,9 @@ import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
-import instance from "@/configs/axios";
 import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import instance from "@/configs/admin";
 
 interface DataType {
   id: any;
@@ -50,7 +50,7 @@ const ProductsAdmin: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["sanpham"],
     queryFn: async () => {
-      const res = await instance.get("/admin/sanpham");
+      const res = await instance.get("/sanpham");
       return res.data;
     },
   });
@@ -60,12 +60,12 @@ const ProductsAdmin: React.FC = () => {
         // console.log(checked, data);
         const id = data.id;
         if (checked) {
-          const res = await instance.post(`/admin/sanpham/kich-hoat/${id}`);
+          const res = await instance.post(`/sanpham/kich-hoat/${id}`);
           message.success("kích hoạt thành công");
 
           return res.data;
         } else {
-          const res = await instance.post(`/admin/sanpham/huy-kich-hoat/${id}`);
+          const res = await instance.post(`/sanpham/huy-kich-hoat/${id}`);
           message.success("Hủy kích hoạt thành công");
           return res.data;
         }
