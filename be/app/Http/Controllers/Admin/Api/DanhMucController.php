@@ -203,4 +203,57 @@ class DanhMucController extends Controller
         }
     }
 
+    /**
+     * Display a listing of trashed resources.
+     */
+    public function danhSachDanhMucDaXoa()
+    {
+        try {
+            $danhMucsDaXoa = DanhMuc::onlyTrashed()->get();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy danh sách danh mục đã xóa thành công',
+                'data' => $danhMucsDaXoa,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh sách danh mục đã xóa',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Restore the specified trashed resource.
+     */
+    public function khoiPhucDanhMuc(string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $danhMuc = DanhMuc::onlyTrashed()->findOrFail($id);
+            $danhMuc->restore();
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Khôi phục Danh Mục thành công',
+                    'data' => $danhMuc,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Khôi phục Danh Mục không công',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 }
