@@ -243,66 +243,66 @@ class ThongKeDoanhThuController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
     }
-    // public function doanhThuTheoTungSanPham(Request $request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
+    public function doanhThuTheoTungSanPham(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    //         // Lấy dữ liệu từ request
-    //         $tenSanPham = $request->ten_san_pham;
-    //         $maSanPham = $request->ma_san_pham;
+            // Lấy dữ liệu từ request
+            $tenSanPham = $request->ten_san_pham;
+            $maSanPham = $request->ma_san_pham;
 
-    //         // Kiểm tra đầu vào: yêu cầu có tên sản phẩm hoặc mã sản phẩm
-    //         if (!$tenSanPham && !$maSanPham) {
-    //             return response()->json(['error' => 'Vui lòng cung cấp tên hoặc mã sản phẩm'], 400);
-    //         }
+            // Kiểm tra đầu vào: yêu cầu có tên sản phẩm hoặc mã sản phẩm
+            if (!$tenSanPham && !$maSanPham) {
+                return response()->json(['error' => 'Vui lòng cung cấp tên hoặc mã sản phẩm'], 400);
+            }
 
-    //         // Lấy thông tin sản phẩm dựa trên tên hoặc mã sản phẩm
-    //         $sanPham = SanPham::when($tenSanPham, function ($query, $tenSanPham) {
-    //                             return $query->where('ten_san_pham', $tenSanPham);
-    //                         })
-    //                         ->when($maSanPham, function ($query, $maSanPham) {
-    //                             return $query->where('ma_san_pham', $maSanPham);
-    //                         })
-    //                         ->first();
+            // Lấy thông tin sản phẩm dựa trên tên hoặc mã sản phẩm
+            $sanPham = SanPham::when($tenSanPham, function ($query, $tenSanPham) {
+                                return $query->where('ten_san_pham', $tenSanPham);
+                            })
+                            ->when($maSanPham, function ($query, $maSanPham) {
+                                return $query->where('ma_san_pham', $maSanPham);
+                            })
+                            ->first();
 
-    //         // Nếu không tìm thấy sản phẩm
-    //         if (!$sanPham) {
-    //             return response()->json(['error' => 'Không tìm thấy sản phẩm'], 404);
-    //         }
+            // Nếu không tìm thấy sản phẩm
+            if (!$sanPham) {
+                return response()->json(['error' => 'Không tìm thấy sản phẩm'], 404);
+            }
 
-    //         // Doanh thu của sản phẩm theo năm
-    //         $doanhThuTheoNam = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
-    //             ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
-    //             ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
-    //             ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->selectRaw('YEAR(don_hangs.created_at) as nam, SUM(don_hang_chi_tiets.so_luong * don_hang_chi_tiets.gia) as doanh_thu_nam')
-    //             ->groupBy('nam')
-    //             ->orderBy('nam', 'asc')
-    //             ->get();
+            // Doanh thu của sản phẩm theo năm
+            $doanhThuTheoNam = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+                ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+                ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->selectRaw('YEAR(don_hangs.created_at) as nam, SUM(don_hang_chi_tiets.so_luong * don_hang_chi_tiets.gia) as doanh_thu_nam')
+                ->groupBy('nam')
+                ->orderBy('nam', 'asc')
+                ->get();
 
-    //         // Doanh thu của sản phẩm theo tháng hiện tại
-    //         $currentYear = Carbon::now()->year;
-    //         $currentMonth = Carbon::now()->month;
-    //         $doanhThuTheoThang = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
-    //             ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
-    //             ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
-    //             ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereYear('don_hangs.created_at', $currentYear)
-    //             ->whereMonth('don_hangs.created_at', $currentMonth)
-    //             ->selectRaw('SUM(don_hang_chi_tiets.so_luong * don_hang_chi_tiets.gia) as doanh_thu_thang')
-    //             ->first();
-    //         DB::commit();
-    //         return response()->json([
-    //             'san_pham' => $sanPham,
-    //             'doanh_thu_theo_nam' => $doanhThuTheoNam,
-    //             'doanh_thu_thang_hien_tai' => $doanhThuTheoThang->doanh_thu_thang ?? 0
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
-    //     }
-    // }
+            // Doanh thu của sản phẩm theo tháng hiện tại
+            $currentYear = Carbon::now()->year;
+            $currentMonth = Carbon::now()->month;
+            $doanhThuTheoThang = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+                ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+                ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereYear('don_hangs.created_at', $currentYear)
+                ->whereMonth('don_hangs.created_at', $currentMonth)
+                ->selectRaw('SUM(don_hang_chi_tiets.so_luong * don_hang_chi_tiets.gia) as doanh_thu_thang')
+                ->first();
+            DB::commit();
+            return response()->json([
+                'san_pham' => $sanPham,
+                'doanh_thu_theo_nam' => $doanhThuTheoNam,
+                'doanh_thu_thang_hien_tai' => $doanhThuTheoThang->doanh_thu_thang ?? 0
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+        }
+    }
         public function doanhThuTheoDanhMuc(Request $request)
     {
 
