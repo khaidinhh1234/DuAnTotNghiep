@@ -107,4 +107,53 @@ class DanhMucController extends Controller
         }
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $validateDanhMuc = $request->validate([
+                'ten_danh_muc' => 'required|unique:danh_mucs,ten_danh_muc,' . $id . '|max:255',
+                'cha_id' => 'nullable',
+                'anh_danh_muc' => 'nullable',
+                'duong_dan' => 'nullable',
+
+            ]);
+
+            $danhMuc = DanhMuc::findOrFail($id);
+
+            if ($request->hasFile('anh_danh_muc')) {
+                if ($danhMuc->anh_danh_muc) {
+                    Storage::delete('public/' . basename($danhMuc->anh_danh_muc));
+                }
+                $pathFile = $request->file('anh_danh_muc')->store('danh_mucs', 'public');
+                $validateDanhMuc['anh_danh_muc'] = Storage::url($pathFile);
+            } else {
+                $validateDanhMuc['anh_danh_muc'] = $danhMuc->anh_danh_muc;
+            }
+
+            $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
+            $danhMuc->update($validateDanhMuc);
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục đã được cập nhập thành công',
+                    'data' => $danhMuc,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi cập nhập danh mục',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 }
