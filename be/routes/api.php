@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\Api\ThongKeKhachHangController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
+use App\Http\Controllers\Admin\Api\VanChuyenController;
 use App\Http\Controllers\Client\Api\Auth\AuthController;
 use App\Http\Controllers\Client\Api\Auth\CaptchaController;
 use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
@@ -80,10 +81,9 @@ Route::middleware([])
         Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
 
         // lọc theo màu sắc
-
-        Route::post('/loc-san-pham-theo-mau-sac', [TrangSanPhamController::class, 'laySanPhamTheoMauSac'])->name('loc-theo-mau-sac');
-        // lấy ra màu sắc
+        Route::post('/loc-san-pham-theo-mau-sac', [TrangSanPhamController::class, 'laySanPhamTheoMauSac'])->name('loc-theo-mau-sac');        // lấy ra màu sắc
         Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
+
         // lọc theo màu sắc
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc'])->name('loc-theo-kich-thuoc');
         Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
@@ -97,8 +97,6 @@ Route::middleware([])
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc']);
 
         //Client Chi tiết sản phẩm
-
-
         // Captcha
         Route::get('captcha', [CaptchaController::class, 'generateCaptcha']);
         Route::post('captcha/verify', [CaptchaController::class, 'verifyCaptcha']);
@@ -163,6 +161,10 @@ Route::middleware([])
         Route::put('/donhang/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
         Route::put('/donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
+
+        //Vận chuyển
+        Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
+        Route::post('/vanchuyen', [VanChuyenController::class, 'capNhatTrangThaiDonHang'])->name('vanchuyen.ttvc');
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
