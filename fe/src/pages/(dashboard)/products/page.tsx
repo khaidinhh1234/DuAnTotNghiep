@@ -277,8 +277,15 @@ const ProductsAdmin: React.FC = () => {
     {
       title: "Quản trị",
       key: "action",
+      className: "text-center",
       render: (_, item) => (
         <Space>
+          {" "}
+          <Link to={`/admin/products/edit/${item.id}`}>
+            <Button className=" bg-gradient-to-l from-cyan-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+              Xem
+            </Button>
+          </Link>{" "}
           <Popconfirm
             title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
@@ -286,7 +293,7 @@ const ProductsAdmin: React.FC = () => {
             cancelText="Không"
             onConfirm={() => deleteMutation.mutate(item.id)}
           >
-            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300 ">
               Xóa
             </Button>
           </Popconfirm>
@@ -294,7 +301,7 @@ const ProductsAdmin: React.FC = () => {
             <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
             </Button>
-          </Link>
+          </Link>{" "}
         </Space>
       ),
     },

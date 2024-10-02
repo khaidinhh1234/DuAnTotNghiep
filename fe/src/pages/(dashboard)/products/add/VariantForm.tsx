@@ -201,7 +201,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
       dataIndex: "ngay_bat_dau_khuyen_mai",
       key: "ngay_bat_dau_khuyen_mai",
       render: (text: string | null, record: Variant) => (
-        <Form.Item name="ngay_bat_dau_khuyen_mai">
+        <Form.Item name={`ngay_bat_dau_khuyen_mai`}>
           <DatePicker
             value={text ? dayjs(text) : null}
             onChange={(_, dateString) =>
@@ -212,7 +212,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
               )
             }
             format="YYYY-MM-DD"
-            className="rounded-md mt-5"
+            className="rounded-md "
             disabled={!record.gia_khuyen_mai}
             disabledDate={(current) =>
               current && current < dayjs().startOf("day")
@@ -226,7 +226,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
       dataIndex: "ngay_ket_thuc_khuyen_mai",
       key: "ngay_ket_thuc_khuyen_mai",
       render: (text: string | null, record: Variant) => (
-        <Form.Item name="ngay_ket_thuc_khuyen_mai">
+        <Form.Item name={`ngay_ket_thuc_khuyen_mai`}>
           <DatePicker
             value={text ? dayjs(text) : null}
             onChange={(_, dateString) =>
@@ -241,7 +241,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
               const startDate = record.ngay_bat_dau_khuyen_mai;
               return startDate ? current.isBefore(dayjs(startDate)) : false;
             }}
-            className="rounded-md mt-5"
+            className="rounded-md "
             disabled={!record.gia_khuyen_mai}
           />
         </Form.Item>
@@ -273,21 +273,23 @@ const VariantForm: React.FC<VariantFormProps> = ({
 
   return (
     <>
-      <Table
-        dataSource={variants}
-        columns={columns}
-        rowKey="id"
-        className="bg-white rounded-lg shadow-md "
-        pagination={false}
-      />
-      <Modal
-        open={previewOpen}
-        title={previewTitle}
-        footer={null}
-        onCancel={() => setPreviewOpen(false)}
-      >
-        <img alt="example" style={{ width: "100%" }} src={previewImage} />
-      </Modal>
+      <Form>
+        <Table
+          dataSource={variants}
+          columns={columns}
+          rowKey="id"
+          className="bg-white rounded-lg shadow-md "
+          pagination={false}
+        />
+        <Modal
+          open={previewOpen}
+          title={previewTitle}
+          footer={null}
+          onCancel={() => setPreviewOpen(false)}
+        >
+          <img alt="example" style={{ width: "100%" }} src={previewImage} />
+        </Modal>
+      </Form>
     </>
   );
 };

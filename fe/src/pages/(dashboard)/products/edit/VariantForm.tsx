@@ -172,29 +172,29 @@ const VariantForm: React.FC<VariantFormProps> = ({
           //   className="image-upload-container"
           //   style={{ minHeight: "102px" }}
           // >
-            <Upload
-              listType="picture-card"
-              fileList={record.anh_bien_the.map((img: any) => ({
-                uid: img.id || `${record.id}-${Math.random()}`,
-                name: img.name || "image.png",
-                status: "done",
-                url: img.duong_dan_anh || img.url,
-              }))}
-              onPreview={handlePreview}
-              onRemove={(file) => handleRemoveImage(file, record)}
-              onChange={(info) => handleImageChange(info, record)}
-              beforeUpload={() => false}
-              accept="image/*"
-              multiple
-              className="custom-upload"
-            >
-              {record.anh_bien_the.length < 8 && (
-                <div>
-                  <PlusOutlined />
-                  {/* <div style={{ marginTop: 8 }}>Tải ảnh lên</div> */}
-                </div>
-              )}
-            </Upload>
+          <Upload
+            listType="picture-card"
+            fileList={record.anh_bien_the.map((img: any) => ({
+              uid: img.id || `${record.id}-${Math.random()}`,
+              name: img.name || "image.png",
+              status: "done",
+              url: img.duong_dan_anh || img.url,
+            }))}
+            onPreview={handlePreview}
+            onRemove={(file) => handleRemoveImage(file, record)}
+            onChange={(info) => handleImageChange(info, record)}
+            beforeUpload={() => false}
+            accept="image/*"
+            multiple
+            className="custom-upload"
+          >
+            {record.anh_bien_the.length < 8 && (
+              <div>
+                <PlusOutlined />
+                {/* <div style={{ marginTop: 8 }}>Tải ảnh lên</div> */}
+              </div>
+            )}
+          </Upload>
           // </div>
         ),
       },

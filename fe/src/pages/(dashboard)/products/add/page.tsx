@@ -127,12 +127,14 @@ const ProductsAndVariants: React.FC = () => {
         Math.floor(Math.random() * characters.length)
       );
     }
+    console.log(result);
     return result;
   }, []);
 
   const handleGenerateCode = useCallback(() => {
     const newCode = generateRandomProductCode();
     setProductCode(newCode);
+    console.log(newCode);
     form.setFieldsValue({ ma_san_pham: newCode });
   }, [generateRandomProductCode, form]);
 
@@ -424,7 +426,7 @@ const ProductsAndVariants: React.FC = () => {
                     onClick={() => removeVariant(index)}
                   >
                     <svg
-                      xmlns="http://www.w3.org/                      2000/svg"
+                      xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
                       viewBox="0 0 20 20"
                       fill="currentColor"
