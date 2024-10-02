@@ -24,8 +24,8 @@ class LienHeController extends Controller
             ]);
 
 
-            if (Auth::check()) {
-                $validateLienHe['user_id'] = Auth::id();
+            if (Auth::guard('api')->check()) {
+                $validateLienHe['user_id'] = Auth::guard('api')->id();
             } else {
                 return response()->json([
                     'status' => false,
