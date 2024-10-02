@@ -82,14 +82,13 @@ class DanhMucController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
         try {
-            // Tìm danh mục theo ID hoặc trả về lỗi 404 nếu không tìm thấy
+
             $danhMuc = DanhMuc::with('parent')->findOrFail($id);
 
             return response()->json([
@@ -171,7 +170,7 @@ class DanhMucController extends Controller
                 return response()->json(['error' => 'Không thể xóa danh mục này vì vẫn còn danh mục con.'], 422);
             }
 
-            // Kiểm tra và xóa file ảnh nếu có
+
             if ($danhMuc->anh_danh_muc) {
                 $fileName = basename($danhMuc->anh_danh_muc);
                 $filePath = public_path('storage/danh_mucs/' . $fileName);
@@ -203,7 +202,6 @@ class DanhMucController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * Display a listing of trashed resources.

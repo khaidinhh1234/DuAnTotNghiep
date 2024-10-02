@@ -34,20 +34,58 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-    public function doanhThuTheoTuan()
+    public function doanhThuTheoTuan(Request $request)
     {
-
         try {
             DB::beginTransaction();
-            $startOfWeek = Carbon::now()->startOfWeek();
-            $endOfWeek = Carbon::now()->endOfWeek();
 
-            $doanhThu = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            // Lấy tuần và tháng từ request
+            $tuan = $request->tuan;
+            $thang = $request->thang;
+            $nam = $request->nam;
+
+            // Kiểm tra dữ liệu đầu vào
+            if (!$tuan || !$thang || !$nam) {
+                return response()->json(['error' => 'Vui lòng cung cấp tuần, tháng và năm'], 400);
+            }
+
+            // Xác định thời gian bắt đầu và kết thúc của tháng
+            $startOfMonth = Carbon::create($nam, $thang)->startOfMonth();
+            $endOfMonth = Carbon::create($nam, $thang)->endOfMonth();
+
+            // Lấy tuần bắt đầu từ tuần 1
+            $startOfWeek = $startOfMonth->copy()->addWeeks($tuan - 1)->startOfWeek();
+            $endOfWeek = $startOfMonth->copy()->addWeeks($tuan - 1)->endOfWeek();
+
+            // Đảm bảo tuần nằm trong phạm vi của tháng
+            if ($startOfWeek->greaterThan($endOfMonth)) {
+                return response()->json(['error' => 'Tuần không hợp lệ'], 400);
+            }
+
+            // Nếu tuần vượt quá tháng, điều chỉnh ngày cuối cùng của tuần
+            if ($endOfWeek->greaterThan($endOfMonth)) {
+                $endOfWeek = $endOfMonth;
+            }
+
+            // Tổng doanh thu của tuần đã chọn
+            $doanhThuTheoTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
                 ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
                 ->sum('tong_tien_don_hang');
 
+            // Doanh thu theo từng ngày trong tuần
+            $doanhThuTheoNgayTrongTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+                ->selectRaw('DATE(created_at) as ngay, SUM(tong_tien_don_hang) as doanh_thu_ngay')
+                ->groupBy('ngay')
+                ->orderBy('ngay', 'asc')
+                ->get();
+
             DB::commit();
-            return response()->json(['doanh_thu' => $doanhThu], 200);
+
+            return response()->json([
+                'doanh_thu_tuan' => $doanhThuTheoTuan,
+                'doanh_thu_theo_ngay_trong_tuan' => $doanhThuTheoNgayTrongTuan
+            ], 200);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
@@ -55,139 +93,131 @@ class ThongKeDoanhThuController extends Controller
     }
 
 
+    public function doanhThuTheoThang(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    // public function doanhThuTheoThang()
-    // {
-    //     try {
-    //         DB::beginTransaction();
-    //         $startOfMonth = Carbon::now()->startOfMonth();
-    //         $endOfMonth = Carbon::now()->endOfMonth();
+            // Lấy thông tin tháng và năm từ request
+            $thang = $request->thang;
+            $nam = $request->nam;
 
-    //         // Tổng doanh thu của cả tháng
-    //         $doanhThuThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
-    //             ->sum('tong_tien_don_hang');
+            // Xác định ngày bắt đầu và kết thúc của tháng
+            $startOfMonth = Carbon::create($nam, $thang)->startOfMonth();
+            $endOfMonth = Carbon::create($nam, $thang)->endOfMonth();
 
-    //         // Doanh thu theo từng ngày
-    //         $doanhThuTheoNgay = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
-    //             ->selectRaw('DATE(created_at) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
-    //             ->groupBy('ngay')
-    //             ->orderBy('ngay', 'asc')
-    //             ->get();
+            // Tổng doanh thu của tháng đã chọn
+            $doanhThuThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                ->sum('tong_tien_don_hang');
 
-    //         DB::commit();
-    //         return response()->json([
-    //             'doanh_thu_thang' => $doanhThuThang,
-    //             'doanh_thu_theo_ngay' => $doanhThuTheoNgay
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
-    //     }
-    // }
+            // Doanh thu theo từng tuần trong tháng
+            $doanhThuTheoTuanTrongThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                ->selectRaw('WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAYOFMONTH(created_at)-1 DAY), 1) + 1 as tuan, SUM(tong_tien_don_hang) as doanh_thu_tuan')
+                ->groupBy('tuan')
+                ->orderBy('tuan', 'asc')
+                ->get();
 
-
-    public function doanhThuTheoThang()
-{
-    try {
-        DB::beginTransaction();
-
-        // Doanh thu theo từng tháng trong năm
-        $doanhThuTheoThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-            ->selectRaw('MONTH(created_at) as thang, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_thang')
-            ->groupBy('thang', 'nam')
-            ->orderBy('nam', 'asc')
-            ->orderBy('thang', 'asc')
-            ->get();
-
-        // Doanh thu theo từng ngày trong từng tháng
-        $doanhThuTheoNgayTrongThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-            ->selectRaw('DATE(created_at) as ngay, MONTH(created_at) as thang, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_ngay')
-            ->groupBy('ngay', 'thang', 'nam')
-            ->orderBy('nam', 'asc')
-            ->orderBy('thang', 'asc')
-            ->orderBy('ngay', 'asc')
-            ->get();
-
-        DB::commit();
-        return response()->json([
-            'doanh_thu_theo_thang' => $doanhThuTheoThang,
-            'doanh_thu_theo_ngay_trong_thang' => $doanhThuTheoNgayTrongThang
-        ], 200);
-    } catch (Exception $e) {
-        DB::rollBack();
-        return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+            DB::commit();
+            return response()->json([
+                'doanh_thu_thang' => $doanhThuThang,
+                'doanh_thu_theo_tuan_trong_thang' => $doanhThuTheoTuanTrongThang
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+        }
     }
-}
-public function doanhThuTheoQuy()
-{
-    try {
-        DB::beginTransaction();
 
-        // Doanh thu theo từng quý trong năm
-        $doanhThuTheoQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-            ->selectRaw('QUARTER(created_at) as quy, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_quy')
-            ->groupBy('quy', 'nam')
-            ->orderBy('nam', 'asc')
-            ->orderBy('quy', 'asc')
-            ->get();
+    public function doanhThuTheoQuy(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-        // Doanh thu theo từng tháng trong từng quý
-        $doanhThuTheoThangTrongQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-            ->selectRaw('MONTH(created_at) as thang, QUARTER(created_at) as quy, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_thang')
-            ->groupBy('thang', 'quy', 'nam')
-            ->orderBy('nam', 'asc')
-            ->orderBy('quy', 'asc')
-            ->orderBy('thang', 'asc')
-            ->get();
+            // Lấy quý và năm từ request
+            $quy = $request->quy;
+            $nam = $request->nam;
 
-        DB::commit();
-        return response()->json([
-            'doanh_thu_theo_quy' => $doanhThuTheoQuy,
-            'doanh_thu_theo_thang_trong_quy' => $doanhThuTheoThangTrongQuy
-        ], 200);
-    } catch (Exception $e) {
-        DB::rollBack();
-        return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+            // Kiểm tra dữ liệu đầu vào
+            if (!$quy || !$nam || $quy < 1 || $quy > 4) {
+                return response()->json(['error' => 'Vui lòng cung cấp quý hợp lệ (1-4) và năm'], 400);
+            }
+
+            // Xác định tháng bắt đầu và kết thúc của quý
+            $thangBatDau = ($quy - 1) * 3 + 1;
+            $thangKetThuc = $thangBatDau + 2;
+
+            // Thời gian bắt đầu và kết thúc của quý
+            $startOfQuarter = Carbon::create($nam, $thangBatDau)->startOfMonth();
+            $endOfQuarter = Carbon::create($nam, $thangKetThuc)->endOfMonth();
+
+            // Tổng doanh thu của quý đã chọn
+            $doanhThuTheoQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
+                ->sum('tong_tien_don_hang');
+
+            // Doanh thu theo từng tháng trong quý
+            $doanhThuTheoThangTrongQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
+                ->selectRaw('MONTH(created_at) as thang, SUM(tong_tien_don_hang) as doanh_thu_thang')
+                ->groupBy('thang')
+                ->orderBy('thang', 'asc')
+                ->get();
+
+            DB::commit();
+
+            return response()->json([
+                'doanh_thu_quy' => $doanhThuTheoQuy,
+                'doanh_thu_theo_thang_trong_quy' => $doanhThuTheoThangTrongQuy
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+        }
     }
-}
 
-public function doanhThuTheoNam()
-{
-    try {
-        DB::beginTransaction();
+    public function doanhThuTheoNam(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-        $currentYear = Carbon::now()->year;
-        $fiveYearsAgo = Carbon::now()->subYears(5)->startOfYear();
+            // Lấy năm từ request
+            $nam = $request->nam;
 
-        // Doanh thu theo từng năm trong 5 năm trở lại đây
-        $doanhThuTheoNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-            ->whereBetween('created_at', [$fiveYearsAgo, Carbon::now()->endOfYear()])
-            ->selectRaw('YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_nam')
-            ->groupBy('nam')
-            ->orderBy('nam', 'asc')
-            ->get();
+            // Kiểm tra dữ liệu đầu vào
+            if (!$nam) {
+                return response()->json(['error' => 'Vui lòng cung cấp năm'], 400);
+            }
 
-        // Doanh thu theo từng tháng trong mỗi năm
-        $doanhThuTheoThangTrongNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-            ->whereBetween('created_at', [$fiveYearsAgo, Carbon::now()->endOfYear()])
-            ->selectRaw('MONTH(created_at) as thang, YEAR(created_at) as nam, SUM(tong_tien_don_hang) as doanh_thu_thang')
-            ->groupBy('thang', 'nam')
-            ->orderBy('nam', 'asc')
-            ->orderBy('thang', 'asc')
-            ->get();
+            // Thời gian bắt đầu và kết thúc của năm
+            $startOfYear = Carbon::create($nam)->startOfYear();
+            $endOfYear = Carbon::create($nam)->endOfYear();
 
-        DB::commit();
-        return response()->json([
-            'doanh_thu_theo_nam' => $doanhThuTheoNam,
-            'doanh_thu_theo_thang_trong_nam' => $doanhThuTheoThangTrongNam
-        ], 200);
-    } catch (Exception $e) {
-        DB::rollBack();
-        return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+            // Tổng doanh thu của năm đã chọn
+            $doanhThuTheoNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfYear, $endOfYear])
+                ->sum('tong_tien_don_hang');
+
+            // Doanh thu theo từng quý trong năm
+            $doanhThuTheoQuyTrongNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfYear, $endOfYear])
+                ->selectRaw('QUARTER(created_at) as quy, SUM(tong_tien_don_hang) as doanh_thu_quy')
+                ->groupBy('quy')
+                ->orderBy('quy', 'asc')
+                ->get();
+
+            DB::commit();
+
+            return response()->json([
+                'doanh_thu_nam' => $doanhThuTheoNam,
+                'doanh_thu_theo_quy_trong_nam' => $doanhThuTheoQuyTrongNam
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+        }
     }
-}
 
     public function doanhThuTheoSanPham(Request $request)
     {
@@ -213,8 +243,67 @@ public function doanhThuTheoNam()
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
     }
+    public function doanhThuTheoTungSanPham(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    public function doanhThuTheoDanhMuc(Request $request)
+            // Lấy dữ liệu từ request
+            $tenSanPham = $request->ten_san_pham;
+            $maSanPham = $request->ma_san_pham;
+
+            // Kiểm tra đầu vào: yêu cầu có tên sản phẩm hoặc mã sản phẩm
+            if (!$tenSanPham && !$maSanPham) {
+                return response()->json(['error' => 'Vui lòng cung cấp tên hoặc mã sản phẩm'], 400);
+            }
+
+            // Lấy thông tin sản phẩm dựa trên tên hoặc mã sản phẩm
+            $sanPham = SanPham::when($tenSanPham, function ($query, $tenSanPham) {
+                                return $query->where('ten_san_pham', $tenSanPham);
+                            })
+                            ->when($maSanPham, function ($query, $maSanPham) {
+                                return $query->where('ma_san_pham', $maSanPham);
+                            })
+                            ->first();
+
+            // Nếu không tìm thấy sản phẩm
+            if (!$sanPham) {
+                return response()->json(['error' => 'Không tìm thấy sản phẩm'], 404);
+            }
+
+            // Doanh thu của sản phẩm theo năm
+            $doanhThuTheoNam = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+                ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+                ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->selectRaw('YEAR(don_hangs.created_at) as nam, SUM(don_hang_chi_tiets.so_luong * don_hang_chi_tiets.gia) as doanh_thu_nam')
+                ->groupBy('nam')
+                ->orderBy('nam', 'asc')
+                ->get();
+
+            // Doanh thu của sản phẩm theo tháng hiện tại
+            $currentYear = Carbon::now()->year;
+            $currentMonth = Carbon::now()->month;
+            $doanhThuTheoThang = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+                ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+                ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereYear('don_hangs.created_at', $currentYear)
+                ->whereMonth('don_hangs.created_at', $currentMonth)
+                ->selectRaw('SUM(don_hang_chi_tiets.so_luong * don_hang_chi_tiets.gia) as doanh_thu_thang')
+                ->first();
+            DB::commit();
+            return response()->json([
+                'san_pham' => $sanPham,
+                'doanh_thu_theo_nam' => $doanhThuTheoNam,
+                'doanh_thu_thang_hien_tai' => $doanhThuTheoThang->doanh_thu_thang ?? 0
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+        }
+    }
+        public function doanhThuTheoDanhMuc(Request $request)
     {
 
         try {

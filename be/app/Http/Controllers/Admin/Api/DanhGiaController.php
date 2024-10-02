@@ -83,6 +83,7 @@ class DanhGiaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function phanHoiDanhGia(Request $request, DanhGia $danhgia)
     {
         try {

@@ -36,7 +36,9 @@ class LienHeController extends Controller
             }
 
             $lienhe = LienHe::create($validateLienHe);
+
             event(new SendMail( $lienhe->email, $lienhe->name, 'contact'));
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
