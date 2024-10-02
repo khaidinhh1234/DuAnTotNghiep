@@ -39,48 +39,48 @@ class DanhMucController extends Controller
         }
     }
 
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
-    // public function store(Request $request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
-    //         $validateDanhMuc = $request->validate([
-    //             'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
-    //             'cha_id' => 'nullable',
-    //             'anh_danh_muc' => 'nullable',
-    //             'duong_dan' => 'nullable',
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $validateDanhMuc = $request->validate([
+                'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
+                'cha_id' => 'nullable',
+                'anh_danh_muc' => 'nullable',
+                'duong_dan' => 'nullable',
 
-    //         ]);
+            ]);
 
-    //         if ($request->hasFile('anh_danh_muc')) {
-    //             $pathFile = $request->file('anh_danh_muc')->store('danh_mucs', 'public');
-    //             $validateDanhMuc['anh_danh_muc'] = Storage::url($pathFile);
-    //         }
+            if ($request->hasFile('anh_danh_muc')) {
+                $pathFile = $request->file('anh_danh_muc')->store('danh_mucs', 'public');
+                $validateDanhMuc['anh_danh_muc'] = Storage::url($pathFile);
+            }
 
-    //         $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
-    //         $danhMuc = DanhMuc::create($validateDanhMuc);
-    //         DB::commit();
-    //         return response()->json(
-    //             [
-    //                 'status' => true,
-    //                 'status_code' => 200,
-    //                 'message' => 'Danh mục đã được thêm thành công',
-    //                 'data' => $danhMuc,
-    //             ],
-    //             200
-    //         );
-    //     } catch (\Exception $exception) {
-    //         DB::rollBack();
-    //         return response()->json([
-    //             'status' => false,
-    //             'status_code' => 500,
-    //             'message' => 'Đã có lỗi xảy ra khi thêm danh mục',
-    //             'error' => $exception->getMessage()
-    //         ], 500);
-    //     }
-    // }
+            $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
+            $danhMuc = DanhMuc::create($validateDanhMuc);
+            DB::commit();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Danh mục đã được thêm thành công',
+                    'data' => $danhMuc,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi thêm danh mục',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 
 
     // /**
