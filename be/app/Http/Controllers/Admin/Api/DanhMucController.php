@@ -13,31 +13,31 @@ use Illuminate\Support\Str;
 
 class DanhMucController extends Controller
 {
-    // /**
-    //  * Display a listing of the resource.
-    //  */
-    // public function index()
-    // {
-    //     try {
-    //         $danhMucs = DanhMuc::with('parent')->orderBy('created_at', 'desc')->get();
-    //         return response()->json(
-    //             [
-    //                 'status' => true,
-    //                 'status_code' => 200,
-    //                 'message' => 'Lấy dữ liệu thành công',
-    //                 'data' => $danhMucs,
-    //             ],
-    //             200
-    //         );
-    //     } catch (\Exception $exception) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'status_code' => 500,
-    //             'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
-    //             'error' => $exception->getMessage()
-    //         ], 500);
-    //     }
-    // }
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        try {
+            $danhMucs = DanhMuc::with('parent')->orderBy('created_at', 'desc')->get();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $danhMucs,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 
     // /**
     //  * Store a newly created resource in storage.
