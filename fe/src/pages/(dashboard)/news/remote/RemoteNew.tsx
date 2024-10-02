@@ -1,5 +1,6 @@
 import { INew } from "@/common/types/new";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm, Space, Table, TableColumnsType } from "antd";
 import React from "react";
@@ -15,7 +16,7 @@ const RemoteNew: React.FC = () => {
     queryKey: ["tintuc-da-xoa"], // Đặt tên queryKey riêng biệt
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/tintuc/thung-rac");
+        const response = await instance.get("/tintuc/thung-rac");
         console.log("Remote news data:", response.data); // Log phản hồi
         return response.data;
       } catch (error) {
@@ -28,7 +29,7 @@ const RemoteNew: React.FC = () => {
   // Xử lý khôi phục danh mục
   const handleRestore = async (id: number) => {
     try {
-      await instance.post(`/admin/tintuc/thung-rac/${id}`);
+      await instance.post(`/tintuc/thung-rac/${id}`);
       toast.success("Khôi phục tin tức thành công");
       queryClient.invalidateQueries({ queryKey: ["tintuc-da-xoa"] }); // Invalidate query sau khi khôi phục
     } catch (error) {

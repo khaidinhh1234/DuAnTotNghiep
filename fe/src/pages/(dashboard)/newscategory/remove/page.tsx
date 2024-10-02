@@ -1,4 +1,4 @@
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Space, Table } from "antd";
 import React from "react";
@@ -14,7 +14,7 @@ const NewCategoriesRemote: React.FC = () => {
     queryKey: ["danhmuc-remote"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuctintuc/thung-rac");
+        const response = await instance.get("/danhmuctintuc/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching remote categories:", error);
@@ -26,7 +26,7 @@ const NewCategoriesRemote: React.FC = () => {
   // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
-      await instance.post(`/admin/danhmuctintuc/thung-rac/${id}`);
+      await instance.post(`/danhmuctintuc/thung-rac/${id}`);
       toast.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
       queryClient.invalidateQueries({ queryKey: ["danhmuc-remote"] });

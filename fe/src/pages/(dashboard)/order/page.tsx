@@ -1,4 +1,3 @@
-import instance from "@/configs/axios";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
@@ -21,6 +20,7 @@ import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import Detail from "./detail";
+import instance from "@/configs/admin";
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
 
@@ -357,7 +357,7 @@ const OrderAdmin: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["ORDERS"],
     queryFn: async () => {
-      const response = await instance.get("/admin/donhang");
+      const response = await instance.get("/donhang");
       return response.data;
     },
   });
