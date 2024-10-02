@@ -34,63 +34,63 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-    // public function doanhThuTheoTuan(Request $request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
+    public function doanhThuTheoTuan(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    //         // Lấy tuần và tháng từ request
-    //         $tuan = $request->tuan;
-    //         $thang = $request->thang;
-    //         $nam = $request->nam;
+            // Lấy tuần và tháng từ request
+            $tuan = $request->tuan;
+            $thang = $request->thang;
+            $nam = $request->nam;
 
-    //         // Kiểm tra dữ liệu đầu vào
-    //         if (!$tuan || !$thang || !$nam) {
-    //             return response()->json(['error' => 'Vui lòng cung cấp tuần, tháng và năm'], 400);
-    //         }
+            // Kiểm tra dữ liệu đầu vào
+            if (!$tuan || !$thang || !$nam) {
+                return response()->json(['error' => 'Vui lòng cung cấp tuần, tháng và năm'], 400);
+            }
 
-    //         // Xác định thời gian bắt đầu và kết thúc của tháng
-    //         $startOfMonth = Carbon::create($nam, $thang)->startOfMonth();
-    //         $endOfMonth = Carbon::create($nam, $thang)->endOfMonth();
+            // Xác định thời gian bắt đầu và kết thúc của tháng
+            $startOfMonth = Carbon::create($nam, $thang)->startOfMonth();
+            $endOfMonth = Carbon::create($nam, $thang)->endOfMonth();
 
-    //         // Lấy tuần bắt đầu từ tuần 1
-    //         $startOfWeek = $startOfMonth->copy()->addWeeks($tuan - 1)->startOfWeek();
-    //         $endOfWeek = $startOfMonth->copy()->addWeeks($tuan - 1)->endOfWeek();
+            // Lấy tuần bắt đầu từ tuần 1
+            $startOfWeek = $startOfMonth->copy()->addWeeks($tuan - 1)->startOfWeek();
+            $endOfWeek = $startOfMonth->copy()->addWeeks($tuan - 1)->endOfWeek();
 
-    //         // Đảm bảo tuần nằm trong phạm vi của tháng
-    //         if ($startOfWeek->greaterThan($endOfMonth)) {
-    //             return response()->json(['error' => 'Tuần không hợp lệ'], 400);
-    //         }
+            // Đảm bảo tuần nằm trong phạm vi của tháng
+            if ($startOfWeek->greaterThan($endOfMonth)) {
+                return response()->json(['error' => 'Tuần không hợp lệ'], 400);
+            }
 
-    //         // Nếu tuần vượt quá tháng, điều chỉnh ngày cuối cùng của tuần
-    //         if ($endOfWeek->greaterThan($endOfMonth)) {
-    //             $endOfWeek = $endOfMonth;
-    //         }
+            // Nếu tuần vượt quá tháng, điều chỉnh ngày cuối cùng của tuần
+            if ($endOfWeek->greaterThan($endOfMonth)) {
+                $endOfWeek = $endOfMonth;
+            }
 
-    //         // Tổng doanh thu của tuần đã chọn
-    //         $doanhThuTheoTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
-    //             ->sum('tong_tien_don_hang');
+            // Tổng doanh thu của tuần đã chọn
+            $doanhThuTheoTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+                ->sum('tong_tien_don_hang');
 
-    //         // Doanh thu theo từng ngày trong tuần
-    //         $doanhThuTheoNgayTrongTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
-    //             ->selectRaw('DATE(created_at) as ngay, SUM(tong_tien_don_hang) as doanh_thu_ngay')
-    //             ->groupBy('ngay')
-    //             ->orderBy('ngay', 'asc')
-    //             ->get();
+            // Doanh thu theo từng ngày trong tuần
+            $doanhThuTheoNgayTrongTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+                ->selectRaw('DATE(created_at) as ngay, SUM(tong_tien_don_hang) as doanh_thu_ngay')
+                ->groupBy('ngay')
+                ->orderBy('ngay', 'asc')
+                ->get();
 
-    //         DB::commit();
+            DB::commit();
 
-    //         return response()->json([
-    //             'doanh_thu_tuan' => $doanhThuTheoTuan,
-    //             'doanh_thu_theo_ngay_trong_tuan' => $doanhThuTheoNgayTrongTuan
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
-    //     }
-    // }
+            return response()->json([
+                'doanh_thu_tuan' => $doanhThuTheoTuan,
+                'doanh_thu_theo_ngay_trong_tuan' => $doanhThuTheoNgayTrongTuan
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+        }
+    }
 
 
     // public function doanhThuTheoThang(Request $request)
