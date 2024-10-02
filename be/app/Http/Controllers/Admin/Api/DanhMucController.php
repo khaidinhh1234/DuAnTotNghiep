@@ -83,30 +83,30 @@ class DanhMucController extends Controller
     }
 
 
-    // /**
-    //  * Display the specified resource.
-    //  */
-    // public function show(string $id)
-    // {
-    //     try {
-    //         // Tìm danh mục theo ID hoặc trả về lỗi 404 nếu không tìm thấy
-    //         $danhMuc = DanhMuc::with('parent')->findOrFail($id);
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        try {
+            // Tìm danh mục theo ID hoặc trả về lỗi 404 nếu không tìm thấy
+            $danhMuc = DanhMuc::with('parent')->findOrFail($id);
 
-    //         return response()->json([
-    //             'status' => true,
-    //             'status_code' => 200,
-    //             'message' => 'Lấy dữ liệu thành công',
-    //             'data' => $danhMuc,
-    //         ], 200);
-    //     } catch (\Exception $exception) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'status_code' => 500,
-    //             'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
-    //             'error' => $exception->getMessage()
-    //         ], 500);
-    //     }
-    // }
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $danhMuc,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 
     // /**
     //  * Update the specified resource in storage.
