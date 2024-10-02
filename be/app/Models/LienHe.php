@@ -10,23 +10,22 @@ class LienHe extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tai_khoan_lien_he_id',
-        'ten_lien_he',
+        'user_id',
+        'name',
         'sdt_lien_he',
-        'email_lien_he',
+        'email',
         'noi_dung_lien_he',
         'loai_lien_he',
-        'nguoi_phu_trach_id'
-
+        // 'nguoi_phu_trach_id'
     ];
 
     public function taiKhoanLienHe()
     {
-        return $this->belongsTo(User::class, 'tai_khoan_lien_he_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function nguoiPhuTrach()
-    {
-        return $this->belongsTo(User::class, 'nguoi_phu_trach_id');
-    }
+    // public function nguoiPhuTrach()
+    // {
+    //     return $this->belongsTo(User::class, 'nguoi_phu_trach_id');
+    // }
 }
