@@ -99,6 +99,18 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+    // $sanPhams = $query->with([
+    //     'bienTheSanPham' => function ($query) {
+    //         $query->with([
+    //             'anhBienThe',
+    //             'mauBienThe' => function($mauQuery) {
+    //                 $mauQuery->select('id', 'ten_mau_sac', 'ma_mau_sac');
+    //             }
+    //         ]);
+    //     }
+    // ])
+    //     ->select('ten_san_pham', 'gia_tri_uu_dai', 'luot_xem', 'anh_san_pham')
+    //     ->paginate(10);  // Phân trang, mỗi trang 10 sản phẩm
     public function locSanPham(Request $request)
     {
         DB::beginTransaction();  // Bắt đầu transaction
@@ -136,19 +148,21 @@ class TrangSanPhamController extends Controller
                     $query->whereIn('bien_the_kich_thuoc_id', $kichThuocIds);
                 });
             }
-
             // Lọc theo khoảng giá
             if (!is_null($giaDuoi) && !is_null($giaTren)) {
-                $query->whereBetween('gia_ban', [$giaDuoi, $giaTren]);
+                $query->whereHas('bienTheSanPham', function ($query) use ($giaDuoi, $giaTren) {
+                    $query->whereBetween('gia_ban', [$giaDuoi, $giaTren]);
+                });
             }
 
             // Lấy dữ liệu sản phẩm với thông tin biến thể sản phẩm và ảnh biến thể
             $sanPhams = $query->with([
                 'bienTheSanPham' => function ($query) {
-                    $query->with(['anhBienThe', 'mauBienThe']);  // Lấy ảnh và thông tin màu
+                    $query->with(['anhBienThe', 'mauBienThe', 'kichThuocBienThe']);  // Lấy ảnh và thông tin màu
                 }
             ])
-                ->paginate(10);  // Phân trang, mỗi trang 10 sản phẩm
+                // ->select('gia_tri_uu_dai', 'luot_xem')
+                ->paginate(10);
 
             DB::commit();  // Commit transaction
 
@@ -170,4 +184,5 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
 }
