@@ -172,7 +172,16 @@ const Router = () => {
           <Route path="newcategory/edit/:id" element={<NewCategoriesEdit />} />
           <Route path="newcategory/remote" element={<NewCategoriesRemote />} />
           {/* đơn hàng */}
-          <Route path="orders" element={<OrderAdmin />} />
+          <Route
+            path="orders"
+            element={<Navigate to="/admin/orders/transport" />}
+          />
+          <Route path="orders/list" element={<OrderAdmin />} />
+          <Route path="orders/transport" element={<PageTransport />} />
+          <Route
+            path="orders/uncomfirmedorder"
+            element={<TableUncomfirmedOrder />}
+          />
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
           <Route path="add-vocher" element={<AddVoucher />} />
@@ -229,10 +238,12 @@ const Router = () => {
           />
           {/* vận chuyển */}
           <Route path="transport" element={<PageTransport />} />
-          <Route path="transport/uncomfirmedorder" element={<TableUncomfirmedOrder />} />
+          <Route
+            path="transport/uncomfirmedorder"
+            element={<TableUncomfirmedOrder />}
+          />
           //vai trò
           {/* //vai trò */}
-
           <Route
             path="ADmin/userprivileges"
             element={<UserPrivilegeAdmin />}

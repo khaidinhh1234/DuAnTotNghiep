@@ -223,7 +223,12 @@ const RevenueAdmin: React.FC = () => {
         </Card>
       </div>
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <Table columns={columns} dataSource={filteredData} rowKey="key" />
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="key"
+          pagination={{ pageSize: 10, className: "my-5" }}
+        />
       </div>
     </main>
   );

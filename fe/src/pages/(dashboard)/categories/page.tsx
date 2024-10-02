@@ -211,9 +211,9 @@ const CategoriesAdmin: React.FC = () => {
       ...getColumnSearchProps("cha_id"),
       onFilter: (value: any | React.Key, record: ICategories) =>
         categoriesMap
-      .get(record.cha_id!)
-      ?.toLowerCase() 
-      .includes((value as string).toLowerCase()) || false, 
+          .get(record.cha_id!)
+          ?.toLowerCase()
+          .includes((value as string).toLowerCase()) || false,
 
       sorter: (a: any, b: any) => a.cha_id.localeCompare(b.cha_id),
       render: (text: string) => categoriesMap.get(text) || "không có",
@@ -299,6 +299,7 @@ const CategoriesAdmin: React.FC = () => {
             columns={columns}
             dataSource={dataSource.filter((category: any) => category.cha_id)}
             loading={isLoading}
+            pagination={{ pageSize: 5, className: "my-5" }}
           />
         </TabPane>
       </Tabs>

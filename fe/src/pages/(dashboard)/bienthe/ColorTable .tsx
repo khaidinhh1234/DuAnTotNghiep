@@ -360,7 +360,7 @@ const ColorManagement: React.FC = () => {
       <Table
         columns={columns}
         dataSource={colorData}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 5, className: "my-5" }}
         className="equal-width-table"
         loading={isLoading}
       />

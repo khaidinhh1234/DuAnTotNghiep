@@ -104,7 +104,7 @@ const Remotesize: React.FC = () => {
           columns={columns}
           dataSource={data?.data || []}
           rowKey="id"
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 10, className: "my-5" }}
           loading={isLoading}
         />
       </div>

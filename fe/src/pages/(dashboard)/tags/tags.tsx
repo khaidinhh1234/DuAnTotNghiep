@@ -236,6 +236,7 @@ const TagsAdmin: React.FC = () => {
           columns={columns}
           dataSource={dataSource ? dataSource : []}
           loading={isLoading}
+          pagination={{ pageSize: 10, className: "my-5" }}
         />
       </div>
     </main>
