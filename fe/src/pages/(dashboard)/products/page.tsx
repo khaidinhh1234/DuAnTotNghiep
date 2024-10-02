@@ -11,7 +11,7 @@ import {
   Table,
   message,
 } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
@@ -112,7 +112,7 @@ const ProductsAdmin: React.FC = () => {
 
   const sanpham = data?.data.map((item: any, index: number) => ({
     ...item,
-    key: item.id,
+    key: item.key || item.id,
     index,
     ten_danh_muc: item.danh_muc
       ? item.danh_muc.ten_danh_muc
@@ -217,25 +217,31 @@ const ProductsAdmin: React.FC = () => {
     },
     {
       title: "Sản phẩm",
-      render: (item) => (
-        <img
-          src={item.anh_san_pham || "https://via.placeholder.com/150"}
-          alt="product"
-          className="w-24 h-24 object-cover rounded-lg p-2 border"
-        />
-      ),
-      className: "pl-12",
-      width: "15%",
-      key: "anh_san_pham",
-    },
-    {
-      title: "Tên sản phẩm",
-      dataIndex: "ten_san_pham",
       key: "ten_san_pham",
-      width: "15%",
-      ...getColumnSearchProps("ten_san_pham"),
-      sorter: (a, b) => a.ten_san_pham.localeCompare(b.ten_san_pham),
+      render: (item: any) => (
+        <div className="flex items-center gap-5 p-2 bg-slate-100 shadow-md rounded-lg hover:bg-slate-300 hover:shadow-2xl transition duration-300 cursor-pointer">
+          <div className="border rounded-lg overflow-hidden">
+            <img
+              src={item.anh_san_pham || "https://via.placeholder.com/150"}
+              alt="product"
+              className="w-20 h-20 object-cover"
+            />
+          </div>
+          <div>
+            <p className="text-[16px] text-gray-800 font-bold">
+              {item.ten_san_pham}
+            </p>
+            <p className="text-xs text-gray-500 truncate w-40">
+              {item.mo_ta_ngan}
+            </p>
+          </div>
+        </div>
+      ),
+      width: "25%",
+
+      sorter: (a, b) => a.ten_san_pham.localeCompare(b.ten_san_pham), // Sắp xếp theo tên sản phẩm
     },
+
     {
       title: "Danh mục",
       dataIndex: "ten_danh_muc",
@@ -281,11 +287,11 @@ const ProductsAdmin: React.FC = () => {
       render: (_, item) => (
         <Space>
           {" "}
-          <Link to={`/admin/products/edit/${item.id}`}>
+          {/* <Link to={`/admin/products/edit/${item.id}`}>
             <Button className=" bg-gradient-to-l from-cyan-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Xem
             </Button>
-          </Link>{" "}
+          </Link>{" "} */}
           <Popconfirm
             title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
@@ -306,12 +312,39 @@ const ProductsAdmin: React.FC = () => {
       ),
     },
   ];
+  console.log(sanpham);
+  const products: DataType[] | undefined = data?.data;
+  const [filteredData, setFilteredData] = useState<DataType[]>([]);
+
+  // Cập nhật dữ liệu khi nhận được từ API
+  useEffect(() => {
+    if (sanpham) {
+      setFilteredData(sanpham);
+    }
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      console.log(searchText);
+    const value = searchText;
+
+    setSearchText(value);
+    // console.log(value);
+    if (value) {
+      const filtered = sanpham?.filter(
+        (item: any) =>
+          item.ten_san_pham.toLowerCase().includes(value.toLowerCase()) ||
+          item.danh_muc.ten_danh_muc
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          item.mo_ta_ngan.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredData(filtered || []);
+    } else {
+      if (sanpham) {
+        setFilteredData(sanpham); // Reset to original order data if search is empty
+      }
     }
   };
+
   if (isError)
     return (
       <div>
@@ -358,7 +391,7 @@ const ProductsAdmin: React.FC = () => {
 
       <Table
         columns={columns}
-        dataSource={sanpham}
+        dataSource={filteredData}
         pagination={{ pageSize: 5, className: "my-5" }}
         loading={isLoading}
       />
