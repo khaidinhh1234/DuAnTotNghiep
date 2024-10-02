@@ -33,7 +33,7 @@ class ForgotPasswordController extends Controller
             ]);
 
             // Gửi email với link reset
-            event(new SendMail($user->email, $name));
+            event(new SendMail($user->email, $name, 'forgot-password'));
 
             return response()->json([
                 'status' => true,
