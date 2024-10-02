@@ -130,52 +130,52 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-    // public function doanhThuTheoQuy(Request $request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
+    public function doanhThuTheoQuy(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    //         // Lấy quý và năm từ request
-    //         $quy = $request->quy;
-    //         $nam = $request->nam;
+            // Lấy quý và năm từ request
+            $quy = $request->quy;
+            $nam = $request->nam;
 
-    //         // Kiểm tra dữ liệu đầu vào
-    //         if (!$quy || !$nam || $quy < 1 || $quy > 4) {
-    //             return response()->json(['error' => 'Vui lòng cung cấp quý hợp lệ (1-4) và năm'], 400);
-    //         }
+            // Kiểm tra dữ liệu đầu vào
+            if (!$quy || !$nam || $quy < 1 || $quy > 4) {
+                return response()->json(['error' => 'Vui lòng cung cấp quý hợp lệ (1-4) và năm'], 400);
+            }
 
-    //         // Xác định tháng bắt đầu và kết thúc của quý
-    //         $thangBatDau = ($quy - 1) * 3 + 1;
-    //         $thangKetThuc = $thangBatDau + 2;
+            // Xác định tháng bắt đầu và kết thúc của quý
+            $thangBatDau = ($quy - 1) * 3 + 1;
+            $thangKetThuc = $thangBatDau + 2;
 
-    //         // Thời gian bắt đầu và kết thúc của quý
-    //         $startOfQuarter = Carbon::create($nam, $thangBatDau)->startOfMonth();
-    //         $endOfQuarter = Carbon::create($nam, $thangKetThuc)->endOfMonth();
+            // Thời gian bắt đầu và kết thúc của quý
+            $startOfQuarter = Carbon::create($nam, $thangBatDau)->startOfMonth();
+            $endOfQuarter = Carbon::create($nam, $thangKetThuc)->endOfMonth();
 
-    //         // Tổng doanh thu của quý đã chọn
-    //         $doanhThuTheoQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
-    //             ->sum('tong_tien_don_hang');
+            // Tổng doanh thu của quý đã chọn
+            $doanhThuTheoQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
+                ->sum('tong_tien_don_hang');
 
-    //         // Doanh thu theo từng tháng trong quý
-    //         $doanhThuTheoThangTrongQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
-    //             ->selectRaw('MONTH(created_at) as thang, SUM(tong_tien_don_hang) as doanh_thu_thang')
-    //             ->groupBy('thang')
-    //             ->orderBy('thang', 'asc')
-    //             ->get();
+            // Doanh thu theo từng tháng trong quý
+            $doanhThuTheoThangTrongQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
+                ->selectRaw('MONTH(created_at) as thang, SUM(tong_tien_don_hang) as doanh_thu_thang')
+                ->groupBy('thang')
+                ->orderBy('thang', 'asc')
+                ->get();
 
-    //         DB::commit();
+            DB::commit();
 
-    //         return response()->json([
-    //             'doanh_thu_quy' => $doanhThuTheoQuy,
-    //             'doanh_thu_theo_thang_trong_quy' => $doanhThuTheoThangTrongQuy
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
-    //     }
-    // }
+            return response()->json([
+                'doanh_thu_quy' => $doanhThuTheoQuy,
+                'doanh_thu_theo_thang_trong_quy' => $doanhThuTheoThangTrongQuy
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+        }
+    }
 
     // public function doanhThuTheoNam(Request $request)
     // {
