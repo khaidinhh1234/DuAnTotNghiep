@@ -168,6 +168,12 @@ const TagsAdmin: React.FC = () => {
       dataIndex: "ten_the",
       //   ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a: any, b: any) => a.ten_the.localeCompare(b.ten_the),
+      ...getColumnSearchProps("ten_the"),
+      onFilter: (value: boolean | React.Key, record: ICategories) =>
+        record.ten_the
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase()),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
 

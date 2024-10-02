@@ -67,7 +67,8 @@ const Remotesize: React.FC = () => {
       key: "action",
       render: (_: any, record: any) => (
         <Space>
-          <Button onClick={() => handleRestore(record.id)}>Khôi phục</Button>
+          <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+          onClick={() => handleRestore(record.id)}>Khôi phục</Button>
           {/* <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button> */}
         </Space>
       ),

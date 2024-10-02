@@ -60,7 +60,7 @@ class DonHang extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function danhgia()
+    public function danhGia()
     {
         return $this->hasOne(DanhGia::class);
     }

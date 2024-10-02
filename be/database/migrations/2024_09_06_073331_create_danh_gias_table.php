@@ -1,6 +1,7 @@
 <?php
 
-use App\Models\DanhGia;
+
+use App\Models\DonHang;
 use App\Models\SanPham;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(SanPham::class)->constrained();
-            $table->foreignIdFor(DanhGia::class)->constrained();
+            $table->foreignIdFor(DonHang::class)->constrained();
             $table->integer('so_sao_san_pham')->nullable();
             $table->integer('so_sao_dich_vu_van_chuyen')->nullable();
             $table->text('chat_luong_san_pham')->nullable();
