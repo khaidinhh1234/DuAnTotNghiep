@@ -334,7 +334,13 @@ const UsersAdminNhanvien: React.FC = () => {
         </div>
       </div>
       <div className=" ">
-        <Table columns={columns} dataSource={user} loading={isLoading} />
+        <Table
+          columns={columns}
+          dataSource={user}
+          loading={isLoading}
+          pagination={{ pageSize: 10, className: "my-5" }}
+          rowKey="key"
+        />
       </div>
     </main>
   );

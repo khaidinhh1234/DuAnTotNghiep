@@ -160,7 +160,8 @@ const UserPrivilegeAdmin = () => {
         <Table
           columns={columns}
           dataSource={vaitro}
-          pagination={pagination}
+          pagination={{ pageSize: 10, className: "my-5" }}
+          rowKey="id"
           onChange={handleTableChange}
           loading={isLoading}
         />

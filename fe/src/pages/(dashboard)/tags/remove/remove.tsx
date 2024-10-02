@@ -211,7 +211,13 @@ const TagsRemoteAdmin: React.FC = () => {
         </div>
       </div>
       <div className="max-w-4xl">
-        <Table columns={columns} dataSource={dataSource} loading={isLoading} />
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          loading={isLoading}
+          pagination={{ pageSize: 10, className: "my-5" }}
+          rowKey="id"
+        />
       </div>
     </main>
   );

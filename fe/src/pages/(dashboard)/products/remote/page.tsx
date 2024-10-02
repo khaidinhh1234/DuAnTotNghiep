@@ -316,6 +316,7 @@ const ProductsRemote: React.FC = () => {
           dataSource={sanpham}
           loading={isLoading}
           rowKey="id"
+          pagination={{ pageSize: 10, className: "my-5" }}
         />
       </div>
     </main>

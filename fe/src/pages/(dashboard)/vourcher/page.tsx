@@ -551,6 +551,7 @@ const VoucherAdmin: React.FC = () => {
           dataSource={filteredData}
           onChange={handleTableChange}
           rowKey="key"
+          pagination={{ pageSize: 10, className: "my-5" }}
           loading={isLoading}
         />
       </div>

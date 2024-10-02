@@ -296,7 +296,12 @@ const UserskhachangRemote: React.FC = () => {
             onKeyDown={handleKeyDown}
           />
         </div>
-        <Table columns={columns} dataSource={user} />;
+        <Table
+          columns={columns}
+          dataSource={user}
+          pagination={{ pageSize: 10, className: "my-5" }}
+        />
+        ;
       </div>
     </main>
   );

@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const NewCategoriesRemote: React.FC = () => {
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
   const { id } = useParams();
 
   // Fetch danh mục đã xóa
@@ -29,8 +29,8 @@ const NewCategoriesRemote: React.FC = () => {
       await instance.post(`/admin/danhmuctintuc/thung-rac/${id}`);
       toast.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
-      queryClient.invalidateQueries(["danhmuc-remote"]);
-    } catch (error) {       
+      queryClient.invalidateQueries({ queryKey: ["danhmuc-remote"] });
+    } catch (error) {
       console.error("Error restoring category:", error);
       toast.error("Khôi phục danh mục thất bại");
     }
@@ -53,7 +53,7 @@ const NewCategoriesRemote: React.FC = () => {
     {
       title: "STT",
       key: "id",
-      dataIndex: "id", 
+      dataIndex: "id",
     },
     {
       title: "Tên danh mục",
@@ -96,7 +96,7 @@ const NewCategoriesRemote: React.FC = () => {
         columns={columns}
         dataSource={data?.data || []}
         rowKey="id"
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, className: "my-5" }}
         loading={isLoading}
       />
     </main>
