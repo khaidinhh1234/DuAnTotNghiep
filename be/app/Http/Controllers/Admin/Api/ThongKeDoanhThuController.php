@@ -177,47 +177,47 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-    // public function doanhThuTheoNam(Request $request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
+    public function doanhThuTheoNam(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    //         // Lấy năm từ request
-    //         $nam = $request->nam;
+            // Lấy năm từ request
+            $nam = $request->nam;
 
-    //         // Kiểm tra dữ liệu đầu vào
-    //         if (!$nam) {
-    //             return response()->json(['error' => 'Vui lòng cung cấp năm'], 400);
-    //         }
+            // Kiểm tra dữ liệu đầu vào
+            if (!$nam) {
+                return response()->json(['error' => 'Vui lòng cung cấp năm'], 400);
+            }
 
-    //         // Thời gian bắt đầu và kết thúc của năm
-    //         $startOfYear = Carbon::create($nam)->startOfYear();
-    //         $endOfYear = Carbon::create($nam)->endOfYear();
+            // Thời gian bắt đầu và kết thúc của năm
+            $startOfYear = Carbon::create($nam)->startOfYear();
+            $endOfYear = Carbon::create($nam)->endOfYear();
 
-    //         // Tổng doanh thu của năm đã chọn
-    //         $doanhThuTheoNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereBetween('created_at', [$startOfYear, $endOfYear])
-    //             ->sum('tong_tien_don_hang');
+            // Tổng doanh thu của năm đã chọn
+            $doanhThuTheoNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfYear, $endOfYear])
+                ->sum('tong_tien_don_hang');
 
-    //         // Doanh thu theo từng quý trong năm
-    //         $doanhThuTheoQuyTrongNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-    //             ->whereBetween('created_at', [$startOfYear, $endOfYear])
-    //             ->selectRaw('QUARTER(created_at) as quy, SUM(tong_tien_don_hang) as doanh_thu_quy')
-    //             ->groupBy('quy')
-    //             ->orderBy('quy', 'asc')
-    //             ->get();
+            // Doanh thu theo từng quý trong năm
+            $doanhThuTheoQuyTrongNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereBetween('created_at', [$startOfYear, $endOfYear])
+                ->selectRaw('QUARTER(created_at) as quy, SUM(tong_tien_don_hang) as doanh_thu_quy')
+                ->groupBy('quy')
+                ->orderBy('quy', 'asc')
+                ->get();
 
-    //         DB::commit();
+            DB::commit();
 
-    //         return response()->json([
-    //             'doanh_thu_nam' => $doanhThuTheoNam,
-    //             'doanh_thu_theo_quy_trong_nam' => $doanhThuTheoQuyTrongNam
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         DB::rollBack();
-    //         return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
-    //     }
-    // }
+            return response()->json([
+                'doanh_thu_nam' => $doanhThuTheoNam,
+                'doanh_thu_theo_quy_trong_nam' => $doanhThuTheoQuyTrongNam
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+        }
+    }
 
     public function doanhThuTheoSanPham(Request $request)
     {
