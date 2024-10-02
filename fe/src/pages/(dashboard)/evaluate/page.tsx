@@ -197,8 +197,7 @@ const EvaluateAdmin = () => {
     {
       title: "Nội dung",
       key: "mo_ta",
-      sorter: (a: any, b: any) =>
-        a.mo_ta?.localeCompare(b.mo_ta) || 0, 
+      sorter: (a: any, b: any) => a.mo_ta?.localeCompare(b.mo_ta) || 0,
       render: (record: IEvaluate) => (
         <div>
           <p>
@@ -277,7 +276,7 @@ const EvaluateAdmin = () => {
       <Table
         columns={columns}
         dataSource={dataSource}
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, className: "my-5" }}
       />
       <Modal
         title="Phản hồi đánh giá"

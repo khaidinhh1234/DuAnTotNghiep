@@ -561,6 +561,8 @@ const OrderAdmin: React.FC = () => {
             rowSelection={rowSelection}
             columns={columns}
             dataSource={dataSource}
+            loading={isLoading}
+            pagination={{ pageSize: 10, className: "my-5" }}
           />
         </Flex>
       </div>

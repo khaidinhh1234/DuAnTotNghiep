@@ -17,7 +17,7 @@ const RemoteNew: React.FC = () => {
       try {
         const response = await instance.get("/admin/tintuc/thung-rac");
         console.log("Remote news data:", response.data); // Log phản hồi
-        return response.data; 
+        return response.data;
       } catch (error) {
         console.error("Error fetching remote news:", error);
         throw new Error("Error fetching remote news");
@@ -30,7 +30,7 @@ const RemoteNew: React.FC = () => {
     try {
       await instance.post(`/admin/tintuc/thung-rac/${id}`);
       toast.success("Khôi phục tin tức thành công");
-      queryClient.invalidateQueries(["tintuc-da-xoa"]); // Invalidate query sau khi khôi phục
+      queryClient.invalidateQueries({ queryKey: ["tintuc-da-xoa"] }); // Invalidate query sau khi khôi phục
     } catch (error) {
       console.error("Error restoring news:", error);
       toast.error("Khôi phục tin tức thất bại");
@@ -38,13 +38,15 @@ const RemoteNew: React.FC = () => {
   };
 
   // Tính toán dataSource từ data
-  const dataSource = data?.data.map((newsItem: INew) => ({
-    key: newsItem.id,
-    ...newsItem,
-    user_id: newsItem.user?.ten || "Chưa có dữ liệu", // Kiểm tra user
-    danh_muc_tin_tuc_id: newsItem.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu", // Kiểm tra danh mục
-  })) || [];
-console.log( 'toan',dataSource)
+  const dataSource =
+    data?.data.map((newsItem: any) => ({
+      key: newsItem.id,
+      ...newsItem,
+      user_id: newsItem.user?.ten || "Chưa có dữ liệu", // Kiểm tra user
+      danh_muc_tin_tuc_id:
+        newsItem.danh_muc_tin_tuc_id?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu", // Kiểm tra danh mục
+    })) || [];
+  console.log("toan", dataSource);
   const columns: TableColumnsType<INew> = [
     {
       title: "STT",
@@ -103,7 +105,6 @@ console.log( 'toan',dataSource)
   if (isLoading) return <p>Đang tải dữ liệu...</p>;
   if (isError) return <p>Đã có lỗi xảy ra khi tải dữ liệu.</p>;
 
-
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -123,7 +124,7 @@ console.log( 'toan',dataSource)
         columns={columns}
         dataSource={dataSource}
         rowKey="key"
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, className: "my-5" }}
         loading={isLoading}
       />
     </main>

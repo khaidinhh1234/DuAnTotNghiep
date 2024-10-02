@@ -244,7 +244,10 @@ const Detail = ({ record }: any) => {
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {(data?.data?.tong_tien_san_pham).toLocaleString()}
+                      {
+                        data?.data?.tong_tien_san_pham
+                        // .toLocaleString()
+                      }
                     </span>{" "}
                     VNĐ
                   </p>
@@ -272,7 +275,11 @@ const Detail = ({ record }: any) => {
                   </h1>
                   <p className="text-lg font-bold">
                     {" "}
-                    {(record?.tong_tien_don_hang + 20000).toLocaleString()} VNĐ
+                    {
+                      record?.tong_tien_don_hang + 20000
+                      // .toLocaleString()
+                    }{" "}
+                    VNĐ
                   </p>
                 </div>
               </div>
