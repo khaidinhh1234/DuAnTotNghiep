@@ -313,7 +313,7 @@ const ProductsAdmin: React.FC = () => {
     },
   ];
   console.log(sanpham);
-  const products: DataType[] | undefined = data?.data;
+
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
 
   // Cập nhật dữ liệu khi nhận được từ API
@@ -323,7 +323,7 @@ const ProductsAdmin: React.FC = () => {
     }
   }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (_e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = searchText;
 
     setSearchText(value);
