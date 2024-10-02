@@ -20,7 +20,7 @@ import type { FilterDropdownProps } from "antd/es/table/interface";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 
 interface PromotionType {
   key: React.Key;
@@ -48,7 +48,7 @@ const VoucherAdmin: React.FC = () => {
   } = useQuery({
     queryKey: ["VOUCHER_KEY"],
     queryFn: async () => {
-      const response = await instance.get("/admin/makhuyenmai");
+      const response = await instance.get("/makhuyenmai");
 
       return response.data;
     },
@@ -60,7 +60,7 @@ const VoucherAdmin: React.FC = () => {
       if (action === "Tắt") {
         try {
           const response = await instance.post(
-            `/admin/makhuyenmai/huy-kich-hoat/${record.id}`,
+            `/makhuyenmai/huy-kich-hoat/${record.id}`,
             { ...record, trang_thai: 0 }
           );
           message.open({
@@ -78,7 +78,7 @@ const VoucherAdmin: React.FC = () => {
       if (action === "Bật") {
         try {
           const response = await instance.post(
-            `/admin/makhuyenmai/kich-hoat/${record.id}`,
+            `/makhuyenmai/kich-hoat/${record.id}`,
             { ...record, trang_thai: 1 }
           );
           message.open({
@@ -551,6 +551,7 @@ const VoucherAdmin: React.FC = () => {
           dataSource={filteredData}
           onChange={handleTableChange}
           rowKey="key"
+          pagination={{ pageSize: 10, className: "my-5" }}
           loading={isLoading}
         />
       </div>

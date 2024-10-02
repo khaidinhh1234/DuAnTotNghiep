@@ -1,6 +1,6 @@
 import { ICategories } from "@/common/types/category";
+import instance from "@/configs/admin";
 
-import instance from "@/configs/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message, Spin } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -13,17 +13,14 @@ const NewCategoriesEdit = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhmuctintuc", id],
     queryFn: async () => {
-      const response = await instance.get(`/admin/danhmuctintuc/${id}`);
+      const response = await instance.get(`/danhmuctintuc/${id}`);
       return response.data;
     },
   });
 
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
-      const response = await instance.put(
-        `/admin/danhmuctintuc/${id}`,
-        category
-      );
+      const response = await instance.put(`/danhmuctintuc/${id}`, category);
       return response.data;
     },
     onSuccess: () => {

@@ -14,8 +14,9 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import Highlighter from "react-highlight-words";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+
 import { Link } from "react-router-dom";
+import instance from "@/configs/admin";
 
 interface SizeDataType {
   key: string;
@@ -36,7 +37,7 @@ const SizeManagement: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["size"],
     queryFn: async () => {
-      const res = await instance.get("/admin/bienthekichthuoc");
+      const res = await instance.get("/bienthekichthuoc");
       return res.data;
     },
   });
@@ -49,7 +50,7 @@ const SizeManagement: React.FC = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string | number) => {
-      const response = await instance.delete(`/admin/bienthekichthuoc/${id}`);
+      const response = await instance.delete(`/bienthekichthuoc/${id}`);
       if (response.data.status) {
         return id;
       } else {
@@ -77,7 +78,7 @@ const SizeManagement: React.FC = () => {
         throw new Error("Kích thước đã tồn tại");
       }
 
-      const response = await instance.post("/admin/bienthekichthuoc", newSize);
+      const response = await instance.post("/bienthekichthuoc", newSize);
       if (response.data.status) {
         return response.data;
       } else {
@@ -260,7 +261,7 @@ const SizeManagement: React.FC = () => {
         </Form.Item>
         <Button
           type="primary"
-   className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+          className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
           onClick={handleAddSize}
         >
           Thêm size
@@ -270,7 +271,7 @@ const SizeManagement: React.FC = () => {
       <Table
         columns={columns}
         dataSource={sizes}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 5, className: "my-5" }}
         className="equal-width-table"
         loading={isLoading}
       />

@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input, InputNumber, Upload, Button, Typography, message, Modal } from 'antd';
 import { UploadOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import instance from '@/configs/axios';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { uploadToCloudinary } from '@/configs/cloudinary';
+import instance from '@/configs/admin';
 
 const { Title } = Typography;
 
@@ -20,7 +20,7 @@ const MemberRankEdit = () => {
         queryKey: ["tag", id],
         queryFn: async () => {
             try {
-                const response = await instance.get(`/admin/hangthanhvien/${id}`);
+                const response = await instance.get(`/hangthanhvien/${id}`);
                 return response.data;
             } catch (error) {
                 console.error("Error fetching member rank:", error);
@@ -43,7 +43,7 @@ const MemberRankEdit = () => {
 
     const { mutate } = useMutation({
         mutationFn: async (data) => {
-            const response = await instance.put(`/admin/hangthanhvien/${id}`, data);
+            const response = await instance.put(`/hangthanhvien/${id}`, data);
             return response.data;
         },
         onSuccess: () => {
@@ -55,7 +55,7 @@ const MemberRankEdit = () => {
         },
     });
 
-    const onFinish = (values) => {
+    const onFinish = (values: any) => {
         const data = {
             ten_hang_thanh_vien: values.rankName,
             chi_tieu_toi_thieu: values.minSpend,

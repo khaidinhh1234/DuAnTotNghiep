@@ -53,21 +53,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     // return $tenQuyen;
 })->name('user');
 
+// Auth
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth:sanctum');
+
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
+Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
+
 Route::middleware([])
     ->name('client.')
     ->prefix('client')
     ->group(function () {
-
-        // Auth
-        Route::post('/register', [AuthController::class, 'register']);
-        Route::post('/login', [AuthController::class, 'login']);
-        Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-        Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth:sanctum');
-
-        Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
-        Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
-        Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
-
+        // Trang chủ
+        Route::get('trangchu', [TrangChuController::class, 'index']);
         //Client Sản Phẩm
         // lấy ra danh mục cha
         Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
@@ -81,9 +82,9 @@ Route::middleware([])
         // lọc theo màu sắc
 
         Route::post('/loc-san-pham-theo-mau-sac', [TrangSanPhamController::class, 'laySanPhamTheoMauSac'])->name('loc-theo-mau-sac');
-         // lấy ra màu sắc
-         Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
-          // lọc theo màu sắc
+        // lấy ra màu sắc
+        Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
+        // lọc theo màu sắc
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc'])->name('loc-theo-kich-thuoc');
         Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
 
@@ -109,11 +110,6 @@ Route::middleware([])
         // Liên hệ
         Route::post('lienhe', [LienHeController::class, 'lienHe']);
     });
-
-// Trang chủ
-Route::get('trangchu', [TrangChuController::class, 'index']);
-
-
 
 //'auth:sanctum', 'auth.checkrole'
 Route::middleware([])

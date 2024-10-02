@@ -1,4 +1,5 @@
-import instance from "@/configs/axios";
+
+import instance from "@/configs/admin";
 import { Loading3QuartersOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -36,7 +37,7 @@ const UsersnhanvienEdit = () => {
     queryKey: ["USERID", id],
     queryFn: async () => {
       try {
-        const res = await instance.get(`/admin/taikhoan/${id}`);
+        const res = await instance.get(`/taikhoan/${id}`);
         return res.data;
       } catch (error) {
         throw error;
@@ -47,7 +48,7 @@ const UsersnhanvienEdit = () => {
   const mutate = useMutation({
     mutationFn: async (data) => {
       try {
-        const res = await instance.put(`/admin/taikhoan/${id}`, data);
+        const res = await instance.put(`/taikhoan/${id}`, data);
         return res.data;
       } catch (error) {
         throw error;

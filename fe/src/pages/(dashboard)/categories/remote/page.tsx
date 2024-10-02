@@ -1,9 +1,10 @@
 import React from "react";
 import { Table, Button, Space } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
+
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import instance from "@/configs/admin";
 
 const CategoriesRemote: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
@@ -14,7 +15,7 @@ const CategoriesRemote: React.FC = () => {
     queryKey: ["danhmuc-remote"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuc/thung-rac");
+        const response = await instance.get("/danhmuc/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching remote categories:", error);
@@ -26,11 +27,11 @@ const CategoriesRemote: React.FC = () => {
   // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
-      await instance.post(`/admin/danhmuc/thung-rac/${id}`);
+      await instance.post(`/danhmuc/thung-rac/${id}`);
       toast.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
-      queryClient.invalidateQueries(["danhmuc-remote"]);
-    } catch (error) {       
+      queryClient.invalidateQueries({ queryKey: ["danhmuc-remote"] });
+    } catch (error) {
       console.error("Error restoring category:", error);
       toast.error("Khôi phục danh mục thất bại");
     }
@@ -53,7 +54,7 @@ const CategoriesRemote: React.FC = () => {
     {
       title: "STT",
       key: "id",
-      dataIndex: "id", 
+      dataIndex: "id",
     },
     {
       title: "Tên danh mục",
@@ -87,7 +88,12 @@ const CategoriesRemote: React.FC = () => {
       key: "action",
       render: (_: any, record: any) => (
         <Space>
-          <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold" onClick={() => handleRestore(record.id)}>Khôi phục</Button>
+          <Button
+            className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+            onClick={() => handleRestore(record.id)}
+          >
+            Khôi phục
+          </Button>
           {/* <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button> */}
         </Space>
       ),
@@ -113,7 +119,7 @@ const CategoriesRemote: React.FC = () => {
         columns={columns}
         dataSource={data?.data || []}
         rowKey="id"
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, className: "my-5" }}
         loading={isLoading}
       />
     </main>

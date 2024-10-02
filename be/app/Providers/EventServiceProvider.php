@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\SendMail;
+use App\Listeners\SendMailContact;
 use App\Listeners\SendMailForgotPassword;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -22,6 +23,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         SendMail::class => [
             SendMailForgotPassword::class,
+            SendMailContact::class
         ]
     ];
 

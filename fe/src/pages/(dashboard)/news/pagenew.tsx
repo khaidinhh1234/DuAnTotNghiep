@@ -1,5 +1,6 @@
 import { INew } from "@/common/types/new";
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
+
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
@@ -8,8 +9,7 @@ import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-
+type DataIndex = keyof INew;
 const PageNew: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
@@ -21,7 +21,7 @@ const PageNew: React.FC = () => {
     queryKey: ["tintuc"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/tintuc");
+        const response = await instance.get("/tintuc");
         const news = response.data;
         return news;
       } catch (error) {
@@ -44,7 +44,7 @@ const PageNew: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.delete(`/admin/tintuc/${id}`);
+        const response = await instance.delete(`/tintuc/${id}`);
         if (response.data.status) {
           return id;
         } else {
@@ -68,7 +68,7 @@ const PageNew: React.FC = () => {
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
-    dataIndex: string
+    dataIndex: DataIndex
   ) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -80,7 +80,7 @@ const PageNew: React.FC = () => {
     setSearchText("");
   };
 
-  const getColumnSearchProps = (dataIndex: string) => ({
+  const getColumnSearchProps = (dataIndex: DataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -90,8 +90,8 @@ const PageNew: React.FC = () => {
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0] as string}
+          placeholder={`Tìm ${dataIndex}`}
+          value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
@@ -110,7 +110,7 @@ const PageNew: React.FC = () => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            Tìm kiếm
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -125,17 +125,17 @@ const PageNew: React.FC = () => {
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
-    onFilter: (value: string | number | boolean, record: any) =>
+    onFilter: (value: any, record: any) =>
       record[dataIndex]
-        .toString()
+        ?.toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible: boolean) => {
+    onFilterDropdownOpenChange: (visible: any) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    render: (text: string) =>
+    render: (text: any) =>
       searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
@@ -167,6 +167,7 @@ const PageNew: React.FC = () => {
       width: "10%",
       key: "danh_muc_tin_tuc_id",
       dataIndex: "danh_muc_tin_tuc_id",
+      ...getColumnSearchProps("danh_muc_tin_tuc_id"),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
@@ -174,6 +175,7 @@ const PageNew: React.FC = () => {
       width: "15%",
       key: "tieu_de",
       dataIndex: "tieu_de",
+      ...getColumnSearchProps("tieu_de"),
       sorter: (a: any, b: any) => a.tieu_de.localeCompare(b.tieu_de),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
@@ -245,7 +247,12 @@ const PageNew: React.FC = () => {
           </Link>
         </div>
       </div>
-      <Table columns={columns} dataSource={dataSource} loading={isLoading} />
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={isLoading}
+        pagination={{ pageSize: 10, className: "my-5" }}
+      />
     </main>
   );
 };

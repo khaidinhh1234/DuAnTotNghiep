@@ -1,7 +1,7 @@
 import { IUser } from "@/common/types/user";
 import { registerSchema } from "@/common/validations/auth";
+import instance from "@/configs/auth";
 
-import instance from "@/configs/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 

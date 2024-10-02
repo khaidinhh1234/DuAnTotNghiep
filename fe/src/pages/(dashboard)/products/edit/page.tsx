@@ -3,7 +3,6 @@ import { Button, Form, Select, Spin, message } from "antd";
 import { ArrowLeftOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/axios";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { RcFile, UploadChangeParam, UploadFile } from "antd/es/upload";
 import ProductForm from "./ProductForm";
@@ -16,16 +15,17 @@ import {
   Variant,
   ProductFormData,
 } from "@/common/types/product";
+import instance from "@/configs/admin";
 
 const { Option } = Select;
 
 const fetchData = async (endpoint: string): Promise<any> => {
-  const response = await instance.get(`/admin/${endpoint}`);
+  const response = await instance.get(`/${endpoint}`);
   return response.data;
 };
 
 const fetchProduct = async (id: string): Promise<any> => {
-  const response = await instance.get(`/admin/sanpham/${id}`);
+  const response = await instance.get(`/sanpham/${id}`);
   return response.data;
 };
 
@@ -42,7 +42,7 @@ const updateProduct = async ({
   if (plainObject.bien_the)
     plainObject.bien_the = JSON.parse(plainObject.bien_the as string);
 
-  const response = await instance.put(`/admin/sanpham/${id}`, plainObject, {
+  const response = await instance.put(`/sanpham/${id}`, plainObject, {
     headers: { "Content-Type": "application/json" },
   });
   console.log("Update response:", response);

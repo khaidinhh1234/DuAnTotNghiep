@@ -1,4 +1,4 @@
-import instance from "@/configs/axios";
+import instance from "@/configs/admin";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Space, Table } from "antd";
 import React from "react";
@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const NewCategoriesRemote: React.FC = () => {
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
   const { id } = useParams();
 
   // Fetch danh mục đã xóa
@@ -14,7 +14,7 @@ const NewCategoriesRemote: React.FC = () => {
     queryKey: ["danhmuc-remote"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/admin/danhmuctintuc/thung-rac");
+        const response = await instance.get("/danhmuctintuc/thung-rac");
         return response.data;
       } catch (error) {
         console.error("Error fetching remote categories:", error);
@@ -26,11 +26,11 @@ const NewCategoriesRemote: React.FC = () => {
   // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
-      await instance.post(`/admin/danhmuctintuc/thung-rac/${id}`);
+      await instance.post(`/danhmuctintuc/thung-rac/${id}`);
       toast.success("Khôi phục danh mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
-      queryClient.invalidateQueries(["danhmuc-remote"]);
-    } catch (error) {       
+      queryClient.invalidateQueries({ queryKey: ["danhmuc-remote"] });
+    } catch (error) {
       console.error("Error restoring category:", error);
       toast.error("Khôi phục danh mục thất bại");
     }
@@ -53,7 +53,7 @@ const NewCategoriesRemote: React.FC = () => {
     {
       title: "STT",
       key: "id",
-      dataIndex: "id", 
+      dataIndex: "id",
     },
     {
       title: "Tên danh mục",
@@ -96,7 +96,7 @@ const NewCategoriesRemote: React.FC = () => {
         columns={columns}
         dataSource={data?.data || []}
         rowKey="id"
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 10, className: "my-5" }}
         loading={isLoading}
       />
     </main>
