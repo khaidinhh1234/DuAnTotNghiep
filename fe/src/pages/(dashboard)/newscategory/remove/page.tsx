@@ -23,7 +23,6 @@ const NewCategoriesRemote: React.FC = () => {
     },
   });
 
-  // Xử lý khôi phục danh mục
   const handleRestore = async (id: string) => {
     try {
       await instance.post(`/danhmuctintuc/thung-rac/${id}`);
@@ -35,19 +34,6 @@ const NewCategoriesRemote: React.FC = () => {
       toast.error("Khôi phục danh mục thất bại");
     }
   };
-
-  // Xử lý xóa danh mục vĩnh viễn
-  // const handleDelete = async (id: string) => {
-  //   try {
-  //     await instance.delete(`/admin/danhmuc/${id}`);
-  //     toast.success("Xóa danh mục vĩnh viễn thành công");
-  //     // Refresh lại dữ liệu sau khi xóa vĩnh viễn
-  //     queryClient.invalidateQueries(["danhmuc-remote"]);
-  //   } catch (error) {
-  //     console.error("Error deleting category:", error);
-  //     toast.error("Xóa danh mục vĩnh viễn thất bại");
-  //   }
-  // };
 
   const columns = [
     {
@@ -71,7 +57,6 @@ const NewCategoriesRemote: React.FC = () => {
       render: (_: any, record: any) => (
         <Space>
           <Button onClick={() => handleRestore(record.id)}>Khôi phục</Button>
-          {/* <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button> */}
         </Space>
       ),
     },

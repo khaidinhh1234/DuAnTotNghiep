@@ -32,9 +32,10 @@ const PageNew: React.FC = () => {
   });
 
   const dataSource =
-    data?.data.map((newsItem: any) => ({
+    data?.data.map((newsItem: any, index: number) => ({
       key: newsItem.id,
       ...newsItem,
+      index: index + 1,
       user_id: newsItem.user?.ten || "Chưa có dữ liệu",
       danh_muc_tin_tuc_id:
         newsItem?.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu",
@@ -153,7 +154,7 @@ const PageNew: React.FC = () => {
       title: "STT",
       width: "10%",
       key: "id",
-      dataIndex: "key",
+      dataIndex: "index",
     },
     {
       title: "Tác giả",
