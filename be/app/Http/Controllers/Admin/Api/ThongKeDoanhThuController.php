@@ -27,84 +27,97 @@ class ThongKeDoanhThuController extends Controller
         // Khởi tạo mảng chứa doanh thu
         $doanhThu = [
             'tong_doanh_thu' => 0,
-            'theo_quy' => ['quy' => [], 'doanh_thu' => []],
-            'theo_thang' => ['thang' => [], 'doanh_thu' => []],
-            'theo_tuan' => ['tuan' => [], 'doanh_thu' => []],
-            'theo_ngay' => ['ngay' => [], 'doanh_thu' => []]
+            'theo_nam' => ['quy' => [], 'doanh_thu' => []],
+            'theo_quy' => ['thang' => [], 'doanh_thu' => []],
+            'theo_thang' => ['tuan' => [], 'doanh_thu' => []],
+            'theo_tuan' => ['ngay' => [], 'doanh_thu' => []],
+            'theo_ngay' => ['ngay' => [], 'doanh_thu' => []],
         ];
 
         // Truy vấn đơn hàng thành công
         $query = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC);
 
-        // Nếu có chọn năm, tính tổng doanh thu của năm đó và theo từng quý
+        // Nếu có chọn năm, lấy dữ liệu theo năm
         if ($nam) {
             $query->whereYear('ngay_giao_hang_thanh_cong', $nam);
             $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
 
-            // Doanh thu theo từng quý
-            for ($i = 1; $i <= 4; $i++) {
-                $doanhThuTheoQuy = $query->whereRaw('QUARTER(ngay_giao_hang_thanh_cong) = ?', [$i])
-                    ->sum('tong_tien_don_hang');
-                $doanhThu['theo_quy']['quy'][] = $i;
-                $doanhThu['theo_quy']['doanh_thu'][] = $doanhThuTheoQuy;
+            // Nếu không có quý, tháng, tuần hoặc ngày, tính doanh thu theo từng quý của năm
+            if (!$quy && !$thang && !$tuan && !$ngay) {
+                for ($i = 1; $i <= 4; $i++) {
+                    $doanhThuTheoQuy = $query->whereRaw('QUARTER(ngay_giao_hang_thanh_cong) = ?', [$i])
+                        ->sum('tong_tien_don_hang');
+                    $doanhThu['theo_nam']['quy'][] = $i;
+                    $doanhThu['theo_nam']['doanh_thu'][] = $doanhThuTheoQuy;
+                }
+                return response()->json($doanhThu);
             }
         }
 
-        // Nếu có chọn quý, tính tổng doanh thu của quý đó và theo từng tháng
+        // Nếu có chọn quý, lấy dữ liệu theo quý và không xét tiếp nếu không có tháng
         if ($quy && $nam) {
             $query->whereRaw('QUARTER(ngay_giao_hang_thanh_cong) = ?', [$quy]);
-
             $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
 
-            // Doanh thu theo từng tháng của quý
-            $startMonth = ($quy - 1) * 3 + 1;
-            for ($i = $startMonth; $i < $startMonth + 3; $i++) {
-                $doanhThuTheoThang = $query->whereMonth('ngay_giao_hang_thanh_cong', $i)
-                    ->sum('tong_tien_don_hang');
-                $doanhThu['theo_thang']['thang'][] = $i;
-                $doanhThu['theo_thang']['doanh_thu'][] = $doanhThuTheoThang;
+            // Nếu không có tháng, tuần hoặc ngày, tính doanh thu theo từng tháng của quý
+            if (!$thang && !$tuan && !$ngay) {
+                $startMonth = ($quy - 1) * 3 + 1;
+                for ($i = $startMonth; $i < $startMonth + 3; $i++) {
+                    $doanhThuTheoThang = $query->whereMonth('ngay_giao_hang_thanh_cong', $i)
+                        ->sum('tong_tien_don_hang');
+                    $doanhThu['theo_quy']['thang'][] = $i;
+                    $doanhThu['theo_quy']['doanh_thu'][] = $doanhThuTheoThang;
+                }
+                return response()->json($doanhThu);
             }
         }
 
-        // Nếu có chọn tháng, tính tổng doanh thu của tháng đó và theo từng tuần
-        if ($thang && $nam) {
+        // Nếu có chọn tháng, lấy dữ liệu theo tháng và quý
+        if ($thang && $nam && $quy) {
             $query->whereMonth('ngay_giao_hang_thanh_cong', $thang);
-
             $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
 
-            // Doanh thu theo từng tuần của tháng
-            for ($i = 1; $i <= 4; $i++) {
-                $doanhThuTheoTuan = $query->whereRaw('WEEK(ngay_giao_hang_thanh_cong, 1) = ?', [$i])
-                    ->sum('tong_tien_don_hang');
-                $doanhThu['theo_tuan']['tuan'][] = $i;
-                $doanhThu['theo_tuan']['doanh_thu'][] = $doanhThuTheoTuan;
+            // Nếu không có tuần hoặc ngày, tính doanh thu theo từng tuần của tháng
+            if (!$tuan && !$ngay) {
+                for ($i = 1; $i <= 4; $i++) {
+                    $doanhThuTheoTuan = $query->whereRaw('WEEK(ngay_giao_hang_thanh_cong, 1) = ?', [$i])
+                        ->sum('tong_tien_don_hang');
+                    $doanhThu['theo_thang']['tuan'][] = $i;
+                    $doanhThu['theo_thang']['doanh_thu'][] = $doanhThuTheoTuan;
+                }
+                return response()->json($doanhThu);
             }
         }
 
-        // Nếu có chọn tuần, tính tổng doanh thu của tuần đó và theo từng ngày
-        if ($tuan && $nam && $thang) {
+        // Nếu có chọn tuần, lấy dữ liệu theo tuần và không xét tiếp nếu không có ngày
+        if ($tuan && $nam && $thang && $quy) {
             $query->whereRaw('WEEK(ngay_giao_hang_thanh_cong, 1) = ?', [$tuan]);
-
             $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
 
-            // Doanh thu theo từng ngày của tuần
-            for ($i = 1; $i <= 7; $i++) {
-                $doanhThuTheoNgay = $query->whereDay('ngay_giao_hang_thanh_cong', $i)
-                    ->sum('tong_tien_don_hang');
-                $doanhThu['theo_ngay']['ngay'][] = $i;
-                $doanhThu['theo_ngay']['doanh_thu'][] = $doanhThuTheoNgay;
+            // Nếu không có ngày, tính doanh thu theo từng ngày của tuần
+            if (!$ngay) {
+                for ($i = 1; $i <= 7; $i++) {
+                    $doanhThuTheoNgay = $query->whereDay('ngay_giao_hang_thanh_cong', $i)
+                        ->sum('tong_tien_don_hang');
+                    $doanhThu['theo_tuan']['ngay'][] = $i;
+                    $doanhThu['theo_tuan']['doanh_thu'][] = $doanhThuTheoNgay;
+                }
+                return response()->json($doanhThu);
             }
         }
 
-        // Nếu có chọn ngày, tính tổng doanh thu của ngày đó
-        if ($ngay && $nam && $thang && $tuan) {
+        // Nếu có chọn ngày, chỉ lấy dữ liệu theo ngày
+        if ($ngay && $nam && $thang && $tuan && $quy) {
             $query->whereDay('ngay_giao_hang_thanh_cong', $ngay);
             $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
+            $doanhThu['theo_ngay']['ngay'][] = $ngay;
+            $doanhThu['theo_ngay']['doanh_thu'][] = $doanhThu['tong_doanh_thu'];
         }
 
-        // Trả về kết quả
+        // Trả về kết quả doanh thu cuối cùng
         return response()->json($doanhThu);
     }
+
 
 
     public function doanhThuTheoNgay(Request $request)
