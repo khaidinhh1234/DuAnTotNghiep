@@ -152,8 +152,6 @@ class ThongKeDoanhThuController extends Controller
         }
     }
 
-
-
     public function doanhThuTheoQuy(Request $request)
     {
         try {
@@ -189,17 +187,28 @@ class ThongKeDoanhThuController extends Controller
                 ->orderBy('thang', 'asc')
                 ->get();
 
+            // Tạo hai mảng 'thang' và 'doanh_thu_thang'
+            $thang = [];
+            $doanh_thu_thang = [];
+
+            foreach ($doanhThuTheoThangTrongQuy as $item) {
+                $thang[] = $item->thang; // Lấy giá trị tháng
+                $doanh_thu_thang[] = (float)$item->doanh_thu_thang; // Ép kiểu doanh thu theo tháng thành số thực
+            }
+
             DB::commit();
 
             return response()->json([
-                'doanh_thu_quy' => $doanhThuTheoQuy,
-                'doanh_thu_theo_thang_trong_quy' => $doanhThuTheoThangTrongQuy
+                'doanh_thu_quy' => (float)$doanhThuTheoQuy, // Ép kiểu doanh thu quý thành số thực
+                'thang' => $thang, // Trả về mảng 'thang'
+                'doanh_thu_thang' => $doanh_thu_thang // Trả về mảng 'doanh_thu_thang'
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
     }
+
 
     public function doanhThuTheoNam(Request $request)
     {
@@ -231,17 +240,28 @@ class ThongKeDoanhThuController extends Controller
                 ->orderBy('quy', 'asc')
                 ->get();
 
+            // Tạo hai mảng 'quy' và 'doanh_thu_quy'
+            $quy = [];
+            $doanh_thu_quy = [];
+
+            foreach ($doanhThuTheoQuyTrongNam as $item) {
+                $quy[] = $item->quy; // Lấy giá trị quý
+                $doanh_thu_quy[] = (float)$item->doanh_thu_quy; // Ép kiểu doanh thu theo quý thành số thực
+            }
+
             DB::commit();
 
             return response()->json([
-                'doanh_thu_nam' => $doanhThuTheoNam,
-                'doanh_thu_theo_quy_trong_nam' => $doanhThuTheoQuyTrongNam
+                'doanh_thu_nam' => (float)$doanhThuTheoNam, // Ép kiểu doanh thu năm thành số thực
+                'quy' => $quy, // Trả về mảng 'quy'
+                'doanh_thu_quy' => $doanh_thu_quy // Trả về mảng 'doanh_thu_quy'
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
     }
+
 
     public function doanhThuTheoSanPham(Request $request)
     {
@@ -319,8 +339,8 @@ class ThongKeDoanhThuController extends Controller
             DB::commit();
             return response()->json([
                 'san_pham' => $sanPham,
-                'doanh_thu_theo_nam' => $doanhThuTheoNam,
-                'doanh_thu_thang_hien_tai' => $doanhThuTheoThang->doanh_thu_thang ?? 0
+                'doanh_thu_theo_nam' => (float)$doanhThuTheoNam,
+                'doanh_thu_thang_hien_tai' => (float)$doanhThuTheoThang->doanh_thu_thang ?? 0
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
