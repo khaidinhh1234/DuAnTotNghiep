@@ -76,44 +76,48 @@ const SiderComponent: React.FC = () => {
   };
 
   return (
-    <Layout className="min-h-screen flex">
+    <Layout className="min-h-screen flex ">
       <Sider
         width={320}
-        className="bg-white text-black border-r border-gray-300 "
-        style={{ position: "relative", overflow: "auto" }}
+        className="bg-white text-black  overflow-y-auto  h-[900px] "
+        style={{ position: "relative" }}
       >
         {/* Sticky logo section */}
-        <div className="sticky top-0 z-10 flex h-[60px] items-center border-b border-gray-300 px-4 lg:px-6 bg-white ">
+        {/* <div className="sticky top-0 z-10 flex h-[60px] items-center border-b border-gray-300 px-4 lg:px-6 bg-white ">
           <Link
             to="/"
-            className="flex items-center gap-2 font-semibold text-black"
+            className="flex items-center gap-2 font-bold text-black text-xl "
           >
             <Package className="h-6 w-6" />
-            <span>GLOW</span>
+            <span>GLOW CLOTHING</span>
           </Link>
-          <Button size="small" className="ml-auto h-8 w-8">
-            <span className="sr-only">Toggle notifications</span>
-          </Button>
-        </div>
+        </div> */}
 
         {/* Menu items */}
         <Menu
           defaultSelectedKeys={["1"]}
           mode="inline"
           onClick={handleMenuClick}
-          className=" text-black mt-10 py-5 text-base"
+          className=" text-black py-5  font-semibold text-base"
         >
           {items.map((item: any) =>
             item.children ? (
-              <SubMenu key={item.key} icon={item.icon} title={item.label}>
+              <SubMenu
+                key={item.key}
+                icon={item.icon}
+                title={item.label}
+                className="my-3"
+              >
                 {item.children.map((child: any) => (
                   <Menu.Item key={child.key} icon={child.icon}>
-                    <Link to={child.path}>{child.label}</Link>
+                    <Link to={child.path} className="">
+                      {child.label}
+                    </Link>
                   </Menu.Item>
                 ))}
               </SubMenu>
             ) : (
-              <Menu.Item key={item.key} icon={item.icon}>
+              <Menu.Item key={item.key} icon={item.icon} className="my-3">
                 <Link to={item.path}>{item.label}</Link>
               </Menu.Item>
             )
