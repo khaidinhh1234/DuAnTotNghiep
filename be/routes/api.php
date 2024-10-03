@@ -152,7 +152,6 @@ Route::middleware([])
         Route::get('danhsachdanhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAll']);
         Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'DanhGiaTheoSanPham']);
         Route::post('danhsachdanhgia/{danhgia}', [ApiDanhGiaController::class, 'phanHoiDanhGia']);
-        Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
 
         // Đơn hàng
         Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
@@ -160,6 +159,7 @@ Route::middleware([])
         Route::get('/donhang/{id}/bill', [DonHangController::class, 'inHoaDon'])->name('donhang.bill');
         Route::put('/donhang/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
         Route::put('/donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
+        Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
 
         //Vận chuyển
