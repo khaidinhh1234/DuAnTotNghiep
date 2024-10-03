@@ -64,9 +64,7 @@ const DetailTransport = ({ record }: any) => {
     },
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  
   return (
     <div>
       {" "}
