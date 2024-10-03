@@ -6,6 +6,21 @@ import { useState } from "react";
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const formatDate = (dateString: any) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
+
   const { data, isLoading } = useQuery({
     queryKey: ["ORDER_DETAIL", record.id],
     queryFn: async () => {
@@ -19,7 +34,7 @@ const Detail = ({ record }: any) => {
     };
   });
 
-  const donhang = data?.data;
+  // const donhang = data?.data;
   // console.log("data", donhang);
   // console.log("data", products);
 
@@ -64,9 +79,9 @@ const Detail = ({ record }: any) => {
     },
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
   return (
     <div>
       {" "}
@@ -90,7 +105,12 @@ const Detail = ({ record }: any) => {
                   Đơn Hàng:{" "}
                   <span className="text-blue-500">{record?.ma_don_hang}</span>
                 </h4>
-                <p className="text-base">Ngày tạo : {record?.created_at}</p>
+                <p className="text-base">
+                  Ngày tạo:{" "}
+                  <span className="font-medium">
+                    {formatDate(record?.created_at)}
+                  </span>
+                </p>{" "}
               </div>{" "}
               <div
                 className={`font-bold text-[15px] ${
@@ -158,8 +178,8 @@ const Detail = ({ record }: any) => {
                                   <span>
                                     {" "}
                                     {
-                                      item?.bien_the_san_pham
-                                        ?.bien_the_mau_sac_id
+                                      item?.bien_the_san_pham?.mau_bien_the
+                                        ?.ten_mau_sac
                                     }
                                   </span>
                                 </p>
@@ -169,7 +189,7 @@ const Detail = ({ record }: any) => {
                                     {" "}
                                     {
                                       item?.bien_the_san_pham
-                                        ?.bien_the_mau_sac_id
+                                        ?.kich_thuoc_bien_the?.kich_thuoc
                                     }
                                   </span>
                                 </p>
@@ -272,10 +292,9 @@ const Detail = ({ record }: any) => {
                   </h1>
                   <p className="text-lg font-bold">
                     {" "}
-                    {
-                      record?.tong_tien_don_hang + 20000
-                      // .toLocaleString()
-                    }{" "}
+                    {(record?.tong_tien_don_hang + 20000).toLocaleString(
+                      "vi-VN"
+                    )}{" "}
                     VNĐ
                   </p>
                 </div>
@@ -304,31 +323,24 @@ const Detail = ({ record }: any) => {
                       mutate({ id: record.id, action: "Đang xử lý" })
                     }
                   >
-                    Đơn hàng đã xác nhận
+                    Hoàn tất đơn hàng
                   </button>
                 ) : record.trang_thai_don_hang === "Đang xử lý" ? (
-                  <span className="font-bold text-yellow-500">
-                    Đơn hàng đang xử lý
+                  <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
+                    Chờ lấy hàng
                   </span>
                 ) : record.trang_thai_don_hang === "Đang giao hàng" ? (
-                  <span className="font-bold text-purple-500">
+                  <span className="w-full py-1 px-2 text-base font-medium text-purple-500 border-b-2 border-purple-500 hover:text-purple-600 hover:border-purple-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     Đang giao hàng
                   </span>
                 ) : record.trang_thai_don_hang === "Đã giao hàng thành công" ? (
-                  <div className="flex gap-2">
-                    <span
-                      className="font-bold text-green-500"
-                      // onClick={() =>
-                      //   mutate({ id: record.id, action: "Hoàn thành" })
-                      // }
-                    >
-                      Xác nhận đơn hàng
-                    </span>
-                  </div>
+                  <span className="w-full py-1 px-2 text-base font-medium text-green-500 border-b-2 border-green-500 hover:text-green-600 hover:border-green-600 transition-all duration-300 ease-in-out cursor-default text-center">
+                    Giao hàng thành công
+                  </span>
                 ) : (
-                  <button className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-400">
-                    Hủy đơn
-                  </button>
+                  <span className="w-full py-1 px-2 text-base font-medium text-red-500 border-b-2 border-red-500 hover:text-red-600 hover:border-red-600 transition-all duration-300 ease-in-out cursor-default text-center">
+                    Hủy đơn hàng
+                  </span>
                 )}
               </div>
             </div>{" "}

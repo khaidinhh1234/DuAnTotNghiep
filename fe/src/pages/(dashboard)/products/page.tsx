@@ -86,7 +86,7 @@ const ProductsAdmin: React.FC = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string | number) => {
-      const response = await instance.delete(`/admin/sanpham/${id}`);
+      const response = await instance.delete(`/sanpham/${id}`);
       if (response.data.status) {
         return id;
       } else {
