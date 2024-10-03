@@ -86,7 +86,7 @@ const ProductsAdmin: React.FC = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string | number) => {
-      const response = await instance.delete(`/admin/sanpham/${id}`);
+      const response = await instance.delete(`/sanpham/${id}`);
       if (response.data.status) {
         return id;
       } else {
@@ -313,7 +313,7 @@ const ProductsAdmin: React.FC = () => {
     },
   ];
   console.log(sanpham);
-
+const product = data?.data
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
 
   // Cập nhật dữ liệu khi nhận được từ API
@@ -321,7 +321,7 @@ const ProductsAdmin: React.FC = () => {
     if (sanpham) {
       setFilteredData(sanpham);
     }
-  }, []);
+  }, [product]);
 
   const handleKeyDown = (_e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = searchText;
