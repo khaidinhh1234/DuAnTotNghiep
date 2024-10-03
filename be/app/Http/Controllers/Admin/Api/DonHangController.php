@@ -39,61 +39,6 @@ class DonHangController extends Controller
         }
     }
 
-    // public function show($id)
-    // {
-    //     try {
-    //         $donHang = DonHang::with([
-    //             'danhGia',
-    //             'chiTiets.bienTheSanPham.sanPham', // Lấy sản phẩm từ biến thể
-    //             'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
-    //             'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
-    //             'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
-
-    //         ])->findOrFail($id);
-
-    //         // Tính toán tổng số lượng và tổng tiền
-    //         $tongSoLuong = $donHang->chiTiets->sum('so_luong');
-    //         $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
-
-    //         // Chuẩn bị dữ liệu đơn hàng chi tiết với tên sản phẩm, ảnh, số lượng và giá
-    //         $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
-    //             // Lấy các đường dẫn ảnh biến thể từ bảng anh_bien_thes
-    //             $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
-
-    //             // Lấy ảnh sản phẩm (giả sử có một trường duong_dan_anh trong bảng san_phams)
-    //             $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
-
-    //             return [
-    //                 'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
-    //                 'anh_san_pham' => $anhSanPham, // Ảnh sản phẩm
-    //                 'anh_bien_the' => $anhBienThe, // Ảnh biến thể
-    //                 'so_luong' => $chiTiet->so_luong,
-    //                 'gia' => $chiTiet->gia,
-    //                 'thanh_tien' => $chiTiet->thanh_tien,
-    //             ];
-    //         });
-
-    //         // Chuẩn bị phản hồi với đầy đủ thông tin
-    //         return response()->json([
-    //             'status' => true,
-    //             'status_code' => 200,
-    //             'data' => [
-    //                 'don_hang' => $donHang,
-    //                 'chi_tiet_don_hang' => $chiTietDonHang,
-    //                 'tong_so_luong' => $tongSoLuong,
-    //                 'tong_thanh_tien_san_pham' => $tongTienSanPham
-    //             ]
-    //         ], 200);
-    //     } catch (Exception $e) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'status_code' => 404,
-    //             'message' => 'Không tìm thấy đơn hàng.',
-    //             'error' => $e->getMessage()
-    //         ], 404);
-    //     }
-    // }
-
     public function show($id)
     {
         try {
