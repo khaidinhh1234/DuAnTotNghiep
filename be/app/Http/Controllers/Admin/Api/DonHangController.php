@@ -194,7 +194,7 @@ class DonHangController extends Controller
                             $vanChuyenData['cod'] = VanChuyen::TTCOD_KT;
                         } else {
                             $vanChuyenData['cod'] = VanChuyen::TTCOD_CN;
-                            $vanChuyenData['tien_cod'] = $donHang->tong_tien_don_hang + 20000;
+                            $vanChuyenData['tien_cod'] = $donHang->tong_tien_don_hang;
                         }
 
                         VanChuyen::create($vanChuyenData);
