@@ -6,6 +6,7 @@ import { useState } from "react";
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -17,6 +18,7 @@ const Detail = ({ record }: any) => {
 
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
+
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
@@ -106,12 +108,14 @@ const Detail = ({ record }: any) => {
                   <span className="text-blue-500">{record?.ma_don_hang}</span>
                 </h4>
                 <p className="text-base">
+
                   Ngày tạo:{" "}
                   <span className="font-medium">
                     {formatDate(record?.created_at)}
                   </span>
                 </p>{" "}
               </div>{" "}
+
               <div
                 className={`font-bold text-[15px] ${
                   record.trang_thai_don_hang === "Chờ xác nhận"
@@ -179,7 +183,9 @@ const Detail = ({ record }: any) => {
                                     {" "}
                                     {
                                       item?.bien_the_san_pham?.mau_bien_the
+
                                         ?.ten_mau_sac
+
                                     }
                                   </span>
                                 </p>
@@ -188,8 +194,10 @@ const Detail = ({ record }: any) => {
                                   <span>
                                     {" "}
                                     {
+
                                       item?.bien_the_san_pham
                                         ?.kich_thuoc_bien_the?.kich_thuoc
+
                                     }
                                   </span>
                                 </p>
@@ -277,6 +285,7 @@ const Detail = ({ record }: any) => {
                       {data?.data?.gia_khuyen_mai
                         ? data?.data?.gia_khuyen_mai
                         : "1.029.007"}
+                        
                     </span>
                   </p>
                 </div>
@@ -290,13 +299,15 @@ const Detail = ({ record }: any) => {
                   <h1 className="text-lg font-semibold">
                     Tổng giá trị đơn hàng <br />
                   </h1>
-                  <p className="text-lg font-bold">
+                    <p className="text-lg font-bold">
                     {" "}
+
                     {(record?.tong_tien_don_hang + 20000).toLocaleString(
                       "vi-VN"
                     )}{" "}
+
                     VNĐ
-                  </p>
+                    </p>
                 </div>
               </div>
             </div>
@@ -306,6 +317,7 @@ const Detail = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg">Xác nhận đơn hàng </h5>
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
+
               <div className="flex flex-col gap-2">
                 {record.trang_thai_don_hang === "Chờ xác nhận" ? (
                   <button
@@ -343,6 +355,7 @@ const Detail = ({ record }: any) => {
                   </span>
                 )}
               </div>
+
             </div>{" "}
             <div className=" bg-slate-100 p-5 border rounded-lg my-2">
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
