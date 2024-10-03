@@ -312,8 +312,9 @@ const ProductsAdmin: React.FC = () => {
       ),
     },
   ];
-  console.log(sanpham);
-const product = data?.data
+
+  const products = data?.data;
+
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
 
   // Cập nhật dữ liệu khi nhận được từ API
@@ -321,7 +322,9 @@ const product = data?.data
     if (sanpham) {
       setFilteredData(sanpham);
     }
-  }, [product]);
+
+  }, [products]);
+
 
   const handleKeyDown = (_e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = searchText;
@@ -331,11 +334,11 @@ const product = data?.data
     if (value) {
       const filtered = sanpham?.filter(
         (item: any) =>
-          item.ten_san_pham.toLowerCase().includes(value.toLowerCase()) ||
-          item.danh_muc.ten_danh_muc
+          item?.ten_san_pham?.toLowerCase().includes(value.toLowerCase()) ||
+          item?.danh_muc?.ten_danh_muc
             .toLowerCase()
             .includes(value.toLowerCase()) ||
-          item.mo_ta_ngan.toLowerCase().includes(value.toLowerCase())
+          item?.mo_ta_ngan?.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredData(filtered || []);
     } else {
