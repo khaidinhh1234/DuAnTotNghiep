@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Table, Input, DatePicker, Upload, Modal } from "antd";
+import { Table, Input, DatePicker, Upload, Modal, Form } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import { UploadFile } from "antd/es/upload/interface";
@@ -18,7 +17,12 @@ const VariantForm: React.FC<VariantFormProps> = ({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
-
+  const formatNumber = (value: string) => {
+    // Chỉ giữ lại các ký tự số
+    const cleanedValue = value.replace(/\D/g, "");
+    // Thêm dấu phẩy vào số
+    return cleanedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj as File);
@@ -69,11 +73,32 @@ const VariantForm: React.FC<VariantFormProps> = ({
       dataIndex: "gia_ban",
       key: "gia_ban",
       render: (text: string, record: Variant) => (
-        <Input
-          value={text}
-          onChange={(e) => handleUpdate(record, "gia_ban", e.target.value)}
-          className="rounded-md"
-        />
+        <Form.Item
+          name={`gia_ban_${record.id}`} // Tên duy nhất cho mỗi biến thể
+          hasFeedback
+          validateStatus={
+            text && (isNaN(Number(text)) || Number(text) < 1) ? "error" : ""
+          } // Chỉ kiểm tra nếu có giá trị nhập
+          help={
+            text === undefined || text === ""
+              ? "" // Không báo lỗi khi chưa nhập
+              : isNaN(Number(text))
+                ? "Giá bán phải là số!"
+                : Number(text) < 1
+                  ? "Giá bán phải lớn hơn 0!"
+                  : ""
+          }
+          initialValue="0" // Gán giá trị mặc định là 0
+          rules={[{ required: true, message: "Giá bán bắt buộc phải nhập!" }]}
+          validateTrigger="onBlur"
+        >
+          <Input
+            value={text ? formatNumber(text) : formatNumber("0")}
+            placeholder="Giá bán sản phẩm " // Định dạng giá trị mặc định là 0
+            onChange={(e) => handleUpdate(record, "gia_ban", e.target.value)}
+            className="rounded-md mt-5"
+          />
+        </Form.Item>
       ),
     },
     {
@@ -81,28 +106,94 @@ const VariantForm: React.FC<VariantFormProps> = ({
       dataIndex: "gia_khuyen_mai",
       key: "gia_khuyen_mai",
       render: (text: string, record: Variant) => (
-        <Input
-          value={text}
-
-          onChange={(e) =>
-            handleUpdate(record, "gia_khuyen_mai", e.target.value)
+        <Form.Item
+          name={`gia_khuyen_mai_${record.id}`} // Tên duy nhất cho mỗi biến thể
+          hasFeedback
+          validateStatus={
+            text && isNaN(Number(text))
+              ? "error"
+              : Number(record.gia_ban) > 0 &&
+                  (Number(text) < Number(record.gia_ban) * 0.5 ||
+                    Number(text) >= Number(record.gia_ban))
+                ? "error"
+                : ""
           }
-          className="rounded-md"
-        />
+          help={
+            text === undefined || text === ""
+              ? ""
+              : isNaN(Number(text))
+                ? "Bắt buộc phải là số!"
+                : Number(record.gia_ban) > 0 &&
+                    Number(text) < Number(record.gia_ban) * 0.5
+                  ? "Bắt buộc nhỏ hơn 50% giá bán!"
+                  : Number(record.gia_ban) > 0 &&
+                      Number(text) >= Number(record.gia_ban)
+                    ? "Bắt buộc phải nhỏ hơn giá bán"
+                    : ""
+          }
+          initialValue="0"
+          className="rounded-md w-40"
+          rules={[{ required: true, message: "Bắt buộc phải nhập!" }]}
+          validateTrigger="onBlur"
+        >
+          <Input
+            value={text ? formatNumber(text) : formatNumber("0")}
+            placeholder="Giá khuyến mãi sản phẩm"
+            onChange={(e) =>
+              handleUpdate(record, "gia_khuyen_mai", e.target.value)
+            }
+            className="rounded-md mt-5"
+          />
+        </Form.Item>
       ),
     },
+
     {
       title: "Số lượng",
       dataIndex: "so_luong_bien_the",
       key: "so_luong_bien_the",
       render: (text: string, record: Variant) => (
-        <Input
-          value={text}
-          onChange={(e) =>
-            handleUpdate(record, "so_luong_bien_the", e.target.value)
+        <Form.Item
+          name={`so_luong_bien_the_${record.id}`} // Tên duy nhất cho mỗi biến thể
+          hasFeedback
+          validateStatus={
+            text !== "" &&
+            (isNaN(Number(text)) || Number(text) < 0 || Number(text) > 100000)
+              ? "error"
+              : ""
           }
-          className="rounded-md"
-        />
+          help={
+            text === ""
+              ? "" // Thông báo khi trường rỗng
+              : isNaN(Number(text))
+                ? "Bắt buộc phải là số!"
+                : Number(text) < 0
+                  ? "Số lượng không được âm!"
+                  : Number(text) > 100000
+                    ? "Số lượng không được lớn hơn 100000!"
+                    : ""
+          }
+          initialValue="0"
+          className="rounded-md w-40"
+          rules={[
+            { required: true, message: "Bắt buộc phải nhập!" },
+            {
+              type: "number",
+              min: 100000,
+              message: "Số lượng không được nhỏ hơn 100000!",
+            },
+          ]}
+          validateTrigger="onBlur"
+        >
+          <Input
+            placeholder="Số lượng biến thể"
+            className="rounded-md mt-5"
+            // Đảm bảo người dùng chỉ nhập số
+            onChange={(e) =>
+              handleUpdate(record, "so_luong_bien_the", e.target.value)
+            } // Cập nhật giá trị
+          />
+        </Form.Item>
       ),
     },
     {
@@ -110,15 +201,24 @@ const VariantForm: React.FC<VariantFormProps> = ({
       dataIndex: "ngay_bat_dau_khuyen_mai",
       key: "ngay_bat_dau_khuyen_mai",
       render: (text: string | null, record: Variant) => (
-        <DatePicker
-          value={text ? dayjs(text) : null}
-          onChange={(_, dateString) =>
-            handleUpdate(record, "ngay_bat_dau_khuyen_mai", dateString || null)
-          }
-          format="YYYY-MM-DD"
-          className="rounded-md"
-          disabled={!record.gia_khuyen_mai}
-        />
+        <Form.Item name={`ngay_bat_dau_khuyen_mai`}>
+          <DatePicker
+            value={text ? dayjs(text) : null}
+            onChange={(_, dateString) =>
+              handleUpdate(
+                record,
+                "ngay_bat_dau_khuyen_mai",
+                dateString || null
+              )
+            }
+            format="YYYY-MM-DD"
+            className="rounded-md "
+            disabled={!record.gia_khuyen_mai}
+            disabledDate={(current) =>
+              current && current < dayjs().startOf("day")
+            }
+          />
+        </Form.Item>
       ),
     },
     {
@@ -126,19 +226,25 @@ const VariantForm: React.FC<VariantFormProps> = ({
       dataIndex: "ngay_ket_thuc_khuyen_mai",
       key: "ngay_ket_thuc_khuyen_mai",
       render: (text: string | null, record: Variant) => (
-        <DatePicker
-          value={text ? dayjs(text) : null}
-          onChange={(_, dateString) =>
-            handleUpdate(record, "ngay_ket_thuc_khuyen_mai", dateString || null)
-          }
-          format="YYYY-MM-DD"
-          disabledDate={(current: Dayjs) => {
-            const startDate = record.ngay_bat_dau_khuyen_mai;
-            return startDate ? current.isBefore(dayjs(startDate)) : false;
-          }}
-          className="rounded-md"
-          disabled={!record.gia_khuyen_mai}
-        />
+        <Form.Item name={`ngay_ket_thuc_khuyen_mai`}>
+          <DatePicker
+            value={text ? dayjs(text) : null}
+            onChange={(_, dateString) =>
+              handleUpdate(
+                record,
+                "ngay_ket_thuc_khuyen_mai",
+                dateString || null
+              )
+            }
+            format="YYYY-MM-DD"
+            disabledDate={(current: Dayjs) => {
+              const startDate = record.ngay_bat_dau_khuyen_mai;
+              return startDate ? current.isBefore(dayjs(startDate)) : false;
+            }}
+            className="rounded-md "
+            disabled={!record.gia_khuyen_mai}
+          />
+        </Form.Item>
       ),
     },
     {
@@ -153,12 +259,11 @@ const VariantForm: React.FC<VariantFormProps> = ({
           onRemove={(file) => handleRemoveImage(file, record)}
           onChange={(info) => handleImageChange(info, record)}
           beforeUpload={() => false}
-          className="custom-upload"
+          className={`custom-upload   ${record.anh_bien_the.length >= 3 ? "w-[200px]" : "w-auto"}`}
         >
-          {record.anh_bien_the.length >= 8 ? null : (
+          {record.anh_bien_the.length >= 5 ? null : (
             <div>
               <PlusOutlined />
-              <div style={{ marginTop: 8 }}></div>
             </div>
           )}
         </Upload>
@@ -168,21 +273,23 @@ const VariantForm: React.FC<VariantFormProps> = ({
 
   return (
     <>
-      <Table
-        dataSource={variants}
-        columns={columns}
-        rowKey="id"
-        className="bg-white rounded-lg shadow-md"
-        pagination={false}
-      />
-      <Modal
-        open={previewOpen}
-        title={previewTitle}
-        footer={null}
-        onCancel={() => setPreviewOpen(false)}
-      >
-        <img alt="example" style={{ width: "100%" }} src={previewImage} />
-      </Modal>
+      <Form>
+        <Table
+          dataSource={variants}
+          columns={columns}
+          rowKey="id"
+          className="bg-white rounded-lg shadow-md "
+          pagination={false}
+        />
+        <Modal
+          open={previewOpen}
+          title={previewTitle}
+          footer={null}
+          onCancel={() => setPreviewOpen(false)}
+        >
+          <img alt="example" style={{ width: "100%" }} src={previewImage} />
+        </Modal>
+      </Form>
     </>
   );
 };

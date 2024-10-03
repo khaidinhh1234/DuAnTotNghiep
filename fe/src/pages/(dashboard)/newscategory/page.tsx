@@ -149,13 +149,13 @@ const NewCategory = () => {
       ),
   });
 
-  // Define columns
+
   const columns: TableColumnsType<NewCategories> = [
     {
       title: "STT",
       width: "20%",
       key: "id",
-      dataIndex: "key",
+      dataIndex: "index",
     },
     // {
     //   title: "STT",

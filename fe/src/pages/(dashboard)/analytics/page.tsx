@@ -4,6 +4,9 @@ import { Activity, CreditCard, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Chart1 from "./chart1/chart1";
 import Chart5 from "./chart5/chart5";
+import Chart2 from "./chart2/chart2";
+import Chart3 from "./chart3/chart3";
+import Chart4 from "./chart4/chart4";
 export function AnalyticsAdmin() {
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -77,6 +80,7 @@ export function AnalyticsAdmin() {
             </CardHeader>
             <CardContent>
               <Chart5 />
+              <Chart2 />
             </CardContent>
           </Card>
           <Card x-chunk="dashboard-01-chunk-5" className="bg-white">
@@ -163,6 +167,8 @@ export function AnalyticsAdmin() {
           </Card>
         </div>
       </main>
+      <Chart3 />
+      {/* <Chart4 /> */}
     </div>
   );
 }

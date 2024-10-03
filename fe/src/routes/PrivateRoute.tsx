@@ -1,4 +1,4 @@
-import instance from "@/configs/axios";
+import instance from "@/configs/auth";
 import { type ReactElement } from "react";
 import { Navigate } from "react-router";
 
