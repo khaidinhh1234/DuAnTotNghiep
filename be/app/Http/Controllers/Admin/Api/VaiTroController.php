@@ -238,7 +238,7 @@ class VaiTroController extends Controller
                 'taikhoan' => 'tài khoản',
                 'donhang' => 'đơn hàng',
                 'vanchuyen' => 'vận chuyển',
-                'bienthekichthuoc' => 'biến thể kích thức',
+                'bienthekichthuoc' => 'biến thể kích thước',
                 'bienthemausac' => 'biến thể màu sắc',
                 'hangthanhvien' => 'hạng thành viên',
                 'thong-ke' => '',
@@ -261,16 +261,14 @@ class VaiTroController extends Controller
                 'khach-hang-quay-lai-theo-thang' => 'Khách hàng quay lại theo tháng',
                 'so-luong-ton-kho-cua-san-pham' => 'Số lượng tồn kho của sản phẩm',
                 'so-luong-san-pham-sap-het-hang' => 'Số lượng sản phẩm sắp hết hàng',
+                'doanh-thu-tung-san-pham' => 'Doanh thu từng sản phẩm',
                 'thong-ke-danh-gia' => 'Đánh giá'
             ];
 
             $key = explode('.', $permission);
             $lastKey = end($key);
 
-            if (isset($mapping[$lastKey])) {
-                return $mapping[$lastKey] . ' ' .  $mapping[$key[1]];
-            }
-            return $permission;
+            return isset($mapping[$lastKey]) ? $mapping[$lastKey] . ' ' .  $mapping[$key[1]] : $permission;
         }
 
         $routeList = [];
@@ -279,7 +277,6 @@ class VaiTroController extends Controller
         foreach (Route::getRoutes() as $route) {
             $name = $route->getName();
 
-            // Kiểm tra nếu route không có tên hoặc không chứa 'admin'
             if (!$name || strpos($name, 'admin') === false || $name === 'admin.') {
                 continue;
             }
@@ -288,7 +285,6 @@ class VaiTroController extends Controller
             $key = explode('.', $name);
             $index = end($key);
 
-            // Kiểm tra điều kiện tạo parent
             if ($index === 'index' || (isset($key[1]) && $key[1] == 'thong-ke')) {
                 if ($currentParent) {
                     $routeList[] = $currentParent;
@@ -300,7 +296,6 @@ class VaiTroController extends Controller
                     "children" => []
                 ];
             } else {
-                // Nếu không phải route parent, thêm vào children
                 if ($currentParent) {
                     $currentParent['children'][] = [
                         "title" => $newText,
@@ -310,11 +305,12 @@ class VaiTroController extends Controller
             }
         }
 
-        // Đảm bảo parent cuối cùng cũng được thêm vào
         if ($currentParent) {
             $routeList[] = $currentParent;
         }
 
-        return response()->json(['data' => $routeList], 200);
+        return response()->json([
+            'data' => $routeList
+        ], 200);
     }
 }

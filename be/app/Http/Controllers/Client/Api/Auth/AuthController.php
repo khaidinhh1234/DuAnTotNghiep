@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Client\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Models\HangThanhVien;
 use App\Models\User;
 use App\Models\VaiTro;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,6 +18,17 @@ class AuthController extends Controller
     // Đăng ký người dùng mới
     public function register(RegisterRequest $request)
     {
+        //Lấy ra hạng thành viên thấp nhất
+        $hangThanhVien = HangThanhVien::query()->where('chi_tieu_toi_thieu', 0)->first();
+        if ($hangThanhVien == []) {
+            $hangThanhVien = HangThanhVien::create([
+                'ten_hang_thanh_vien' => 'Đồng',
+                'anh_hang_thanh_vien' => '',
+                'chi_tieu_toi_thieu' => 0,
+                'chi_tieu_toi_da' => 500000,
+                'mo_ta' => 'Rank đồng'
+            ]);
+        }
         // Tạo người dùng mới
         $user = User::create([
             'ho' => $request->ho,
@@ -27,13 +40,13 @@ class AuthController extends Controller
             'dia_chi' => $request->dia_chi,
             'ngay_sinh' => $request->ngay_sinh,
             'gioi_tinh' => $request->gioi_tinh,
-            'hang_thanh_vien_id' => 1
+            'hang_thanh_vien_id' => $hangThanhVien->id
         ]);
-        $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+        $member = VaiTro::query()->where('ten_vai_tro', 'Khách hàng')->first();
         if ($member == []) {
             $member = VaiTro::create(
                 [
-                    'ten_vai_tro' => 'member',
+                    'ten_vai_tro' => 'Khách hàng',
                     'mo_ta' => 'Khách hàng'
                 ]
             );
