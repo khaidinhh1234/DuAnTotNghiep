@@ -39,7 +39,7 @@
     "@tinymce/tinymce-react": "^5.1.1",
     "@types/lodash": "^4.17.0",
     "@types/react-color": "^3.0.12",
-    "antd": "^5.19.3",
+    "antd": "^5.21.2",
     "apexcharts": "^3.53.0",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",

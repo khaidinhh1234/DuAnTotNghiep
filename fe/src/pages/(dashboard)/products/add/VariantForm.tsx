@@ -113,8 +113,8 @@ const VariantForm: React.FC<VariantFormProps> = ({
             text && isNaN(Number(text))
               ? "error"
               : Number(record.gia_ban) > 0 &&
-                  (Number(text) < Number(record.gia_ban) * 0.5 ||
-                    Number(text) >= Number(record.gia_ban))
+                (Number(text) < Number(record.gia_ban) * 0.5 ||
+                  Number(text) >= Number(record.gia_ban))
                 ? "error"
                 : ""
           }
@@ -124,10 +124,10 @@ const VariantForm: React.FC<VariantFormProps> = ({
               : isNaN(Number(text))
                 ? "Bắt buộc phải là số!"
                 : Number(record.gia_ban) > 0 &&
-                    Number(text) < Number(record.gia_ban) * 0.5
+                  Number(text) < Number(record.gia_ban) * 0.5
                   ? "Bắt buộc nhỏ hơn 50% giá bán!"
                   : Number(record.gia_ban) > 0 &&
-                      Number(text) >= Number(record.gia_ban)
+                    Number(text) >= Number(record.gia_ban)
                     ? "Bắt buộc phải nhỏ hơn giá bán"
                     : ""
           }
@@ -158,7 +158,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
           hasFeedback
           validateStatus={
             text !== "" &&
-            (isNaN(Number(text)) || Number(text) < 0 || Number(text) > 100000)
+              (isNaN(Number(text)) || Number(text) < 0 || Number(text) > 100000)
               ? "error"
               : ""
           }
@@ -212,7 +212,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
               )
             }
             format="YYYY-MM-DD"
-            className="rounded-md "
+            className="rounded-md mt-5"
             disabled={!record.gia_khuyen_mai}
             disabledDate={(current) =>
               current && current < dayjs().startOf("day")
@@ -241,7 +241,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
               const startDate = record.ngay_bat_dau_khuyen_mai;
               return startDate ? current.isBefore(dayjs(startDate)) : false;
             }}
-            className="rounded-md "
+            className="rounded-md mt-5"
             disabled={!record.gia_khuyen_mai}
           />
         </Form.Item>
