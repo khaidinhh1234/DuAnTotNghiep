@@ -15,6 +15,98 @@ use Illuminate\Support\Facades\DB;
 
 class ThongKeDoanhThuController extends Controller
 {
+    public function thongKeDoanhThuTuanTu(Request $request)
+    {
+        // Lấy tham số từ request: năm, quý, tháng, tuần, ngày
+        $nam = $request->nam;
+        $quy = $request->quy;
+        $thang = $request->thang;
+        $tuan = $request->tuan;
+        $ngay = $request->ngay;
+
+        // Khởi tạo mảng chứa doanh thu
+        $doanhThu = [
+            'tong_doanh_thu' => 0,
+            'theo_quy' => ['quy' => [], 'doanh_thu' => []],
+            'theo_thang' => ['thang' => [], 'doanh_thu' => []],
+            'theo_tuan' => ['tuan' => [], 'doanh_thu' => []],
+            'theo_ngay' => ['ngay' => [], 'doanh_thu' => []]
+        ];
+
+        // Truy vấn đơn hàng thành công
+        $query = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC);
+
+        // Nếu có chọn năm, tính tổng doanh thu của năm đó và theo từng quý
+        if ($nam) {
+            $query->whereYear('ngay_giao_hang_thanh_cong', $nam);
+            $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
+
+            // Doanh thu theo từng quý
+            for ($i = 1; $i <= 4; $i++) {
+                $doanhThuTheoQuy = $query->whereRaw('QUARTER(ngay_giao_hang_thanh_cong) = ?', [$i])
+                    ->sum('tong_tien_don_hang');
+                $doanhThu['theo_quy']['quy'][] = $i;
+                $doanhThu['theo_quy']['doanh_thu'][] = $doanhThuTheoQuy;
+            }
+        }
+
+        // Nếu có chọn quý, tính tổng doanh thu của quý đó và theo từng tháng
+        if ($quy && $nam) {
+            $query->whereRaw('QUARTER(ngay_giao_hang_thanh_cong) = ?', [$quy]);
+
+            $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
+
+            // Doanh thu theo từng tháng của quý
+            $startMonth = ($quy - 1) * 3 + 1;
+            for ($i = $startMonth; $i < $startMonth + 3; $i++) {
+                $doanhThuTheoThang = $query->whereMonth('ngay_giao_hang_thanh_cong', $i)
+                    ->sum('tong_tien_don_hang');
+                $doanhThu['theo_thang']['thang'][] = $i;
+                $doanhThu['theo_thang']['doanh_thu'][] = $doanhThuTheoThang;
+            }
+        }
+
+        // Nếu có chọn tháng, tính tổng doanh thu của tháng đó và theo từng tuần
+        if ($thang && $nam) {
+            $query->whereMonth('ngay_giao_hang_thanh_cong', $thang);
+
+            $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
+
+            // Doanh thu theo từng tuần của tháng
+            for ($i = 1; $i <= 4; $i++) {
+                $doanhThuTheoTuan = $query->whereRaw('WEEK(ngay_giao_hang_thanh_cong, 1) = ?', [$i])
+                    ->sum('tong_tien_don_hang');
+                $doanhThu['theo_tuan']['tuan'][] = $i;
+                $doanhThu['theo_tuan']['doanh_thu'][] = $doanhThuTheoTuan;
+            }
+        }
+
+        // Nếu có chọn tuần, tính tổng doanh thu của tuần đó và theo từng ngày
+        if ($tuan && $nam && $thang) {
+            $query->whereRaw('WEEK(ngay_giao_hang_thanh_cong, 1) = ?', [$tuan]);
+
+            $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
+
+            // Doanh thu theo từng ngày của tuần
+            for ($i = 1; $i <= 7; $i++) {
+                $doanhThuTheoNgay = $query->whereDay('ngay_giao_hang_thanh_cong', $i)
+                    ->sum('tong_tien_don_hang');
+                $doanhThu['theo_ngay']['ngay'][] = $i;
+                $doanhThu['theo_ngay']['doanh_thu'][] = $doanhThuTheoNgay;
+            }
+        }
+
+        // Nếu có chọn ngày, tính tổng doanh thu của ngày đó
+        if ($ngay && $nam && $thang && $tuan) {
+            $query->whereDay('ngay_giao_hang_thanh_cong', $ngay);
+            $doanhThu['tong_doanh_thu'] = $query->sum('tong_tien_don_hang');
+        }
+
+        // Trả về kết quả
+        return response()->json($doanhThu);
+    }
+
+
     public function doanhThuTheoNgay(Request $request)
     {
 
@@ -193,13 +285,13 @@ class ThongKeDoanhThuController extends Controller
 
             foreach ($doanhThuTheoThangTrongQuy as $item) {
                 $thang[] = $item->thang; // Lấy giá trị tháng
-                $doanh_thu_thang[] = (float)$item->doanh_thu_thang; // Ép kiểu doanh thu theo tháng thành số thực
+                $doanh_thu_thang[] = (float) $item->doanh_thu_thang; // Ép kiểu doanh thu theo tháng thành số thực
             }
 
             DB::commit();
 
             return response()->json([
-                'doanh_thu_quy' => (float)$doanhThuTheoQuy, // Ép kiểu doanh thu quý thành số thực
+                'doanh_thu_quy' => (float) $doanhThuTheoQuy, // Ép kiểu doanh thu quý thành số thực
                 'thang' => $thang, // Trả về mảng 'thang'
                 'doanh_thu_thang' => $doanh_thu_thang // Trả về mảng 'doanh_thu_thang'
             ], 200);
@@ -246,13 +338,13 @@ class ThongKeDoanhThuController extends Controller
 
             foreach ($doanhThuTheoQuyTrongNam as $item) {
                 $quy[] = $item->quy; // Lấy giá trị quý
-                $doanh_thu_quy[] = (float)$item->doanh_thu_quy; // Ép kiểu doanh thu theo quý thành số thực
+                $doanh_thu_quy[] = (float) $item->doanh_thu_quy; // Ép kiểu doanh thu theo quý thành số thực
             }
 
             DB::commit();
 
             return response()->json([
-                'doanh_thu_nam' => (float)$doanhThuTheoNam, // Ép kiểu doanh thu năm thành số thực
+                'doanh_thu_nam' => (float) $doanhThuTheoNam, // Ép kiểu doanh thu năm thành số thực
                 'quy' => $quy, // Trả về mảng 'quy'
                 'doanh_thu_quy' => $doanh_thu_quy // Trả về mảng 'doanh_thu_quy'
             ], 200);
@@ -339,8 +431,8 @@ class ThongKeDoanhThuController extends Controller
             DB::commit();
             return response()->json([
                 'san_pham' => $sanPham,
-                'doanh_thu_theo_nam' => (float)$doanhThuTheoNam,
-                'doanh_thu_thang_hien_tai' => (float)$doanhThuTheoThang->doanh_thu_thang ?? 0
+                'doanh_thu_theo_nam' => (float) $doanhThuTheoNam,
+                'doanh_thu_thang_hien_tai' => (float) $doanhThuTheoThang->doanh_thu_thang ?? 0
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
