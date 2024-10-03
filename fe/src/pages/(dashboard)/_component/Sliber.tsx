@@ -44,10 +44,18 @@ const items: MenuItem[] = [
     getItem("Danh mục sản phẩm", "5", null, "/admin/categories"),
     getItem("Danh mục tin tức", "6", null, "/admin/newcategory"),
   ]),
+<<<<<<< HEAD
+  getItem('Đơn hàng', 'sub3', <Package />, '', [
+    getItem('Tổng quan', '7', null, '/admin/orders/transport'),
+    getItem('Danh sách đơn hàng', '8', null, '/admin/orders/list'),
+    getItem('Vận chuyển', '9', null, '/admin/orders/uncomfirmedorder'),
+    getItem('Thu hộ', '19', null, '/admin/orders/collect'),
+=======
   getItem("Đơn hàng", "sub3", <Package />, "", [
     getItem("Tổng quan", "7", null, "/admin/orders/transport"),
     getItem("Danh sách đơn hàng", "8", null, "/admin/orders/list"),
     getItem("Vận chuyển", "9", null, "/admin/orders/uncomfirmedorder"),
+>>>>>>> 311208c3b23d74b7893be0090e7403ed44d4b7e4
   ]),
   getItem("Khuyến mãi", "10", <Package />, "/admin/vouchers"),
   getItem("Tài khoản", "sub4", <Package />, "", [

@@ -93,6 +93,7 @@ import Component from "@/pages/(dashboard)/test";
 import PageTransport from "@/pages/(dashboard)/transport/page";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
+import Collect from "@/pages/(dashboard)/transport/collect/Collect";
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
@@ -182,6 +183,7 @@ const Router = () => {
             path="orders/uncomfirmedorder"
             element={<TableUncomfirmedOrder />}
           />
+          <Route path="orders/collect" element={<Collect/>}/>
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
           <Route path="add-vocher" element={<AddVoucher />} />
@@ -242,6 +244,7 @@ const Router = () => {
             path="transport/uncomfirmedorder"
             element={<TableUncomfirmedOrder />}
           />
+          
           //vai trò
           {/* //vai trò */}
           <Route
