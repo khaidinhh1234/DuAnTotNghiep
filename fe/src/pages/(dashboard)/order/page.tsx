@@ -51,7 +51,7 @@ const datas = [
     label: "Hoàn tất đơn hàng",
   },
   {
-    value: "4",
+    value: "3",
     label: "Hủy đơn hàng",
   },
 ];
@@ -224,7 +224,7 @@ const OrderAdmin: React.FC = () => {
               : record.trang_thai_don_hang === "Đã xác nhận"
                 ? "Đã xác nhận"
                 : record.trang_thai_don_hang === "Đang xử lý"
-                  ? "Đang xử lý"
+                  ? "Chờ lấy hàng"
                   : record.trang_thai_don_hang === "Đang giao hàng"
                     ? "Đang giao hàng"
                     : record.trang_thai_don_hang === "Đã giao hàng thành công"
@@ -341,7 +341,7 @@ const OrderAdmin: React.FC = () => {
       },
     },
     {
-      title: "Quản chị",
+      title: "Quản trị",
       dataIndex: "products",
       render: (_, record) => <Detail record={record} />,
     },
@@ -363,23 +363,21 @@ const OrderAdmin: React.FC = () => {
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {
+      console.log("data", data);
       try {
         const trangthais =
-          trangthai === "1"
+          trangthai == "1"
             ? "Đã xác nhận"
-            : trangthai === "2"
+            : trangthai == "2"
               ? "Đang xử lý"
-              : trangthai === "3"
+              : trangthai == "3"
                 ? "Đã giao hàng thành công"
                 : "Đã hủy hàng";
 
-        const response = await instance.put(
-          "donhang/trang-thai-don-hang",
-          {
-            trang_thai_don_hang: trangthais,
-            id: data,
-          }
-        );
+        const response = await instance.put("donhang/trang-thai-don-hang", {
+          trang_thai_don_hang: trangthais,
+          id: data,
+        });
         const error = response.data.message;
         start();
         if (error === "Cập nhật trạng thái đơn hàng thành công") {
@@ -426,10 +424,15 @@ const OrderAdmin: React.FC = () => {
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    // console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    // const id = newSelectedRowKeys.map((item) => {
-    //   return Number(item) + 1;
+    // const data = order?.filter((item) => {
+    //   console.log("item", item?.id);
     // });
+    // console.log("selectedRowKeys changed: ", data);
+    // const id = newSelectedRowKeys.map((item) => {
+    //   console.log("item", item);
+    // });
+    // console.log("id", id);
+    // console.log("id", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 

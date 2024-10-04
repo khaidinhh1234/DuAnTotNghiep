@@ -136,10 +136,11 @@ class SanPhamController extends Controller
         try {
             $sanPham = SanPham::with([
                 'danhMuc',
+                'danhGias.user',
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
-                'theSanPham'
+                'theSanPham',
             ])->findOrFail($id);
 
             return response()->json([
