@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChuongTrinhUuDai;
 use App\Models\MaKhuyenMai;
 use Illuminate\Http\Request;
 
@@ -24,9 +25,60 @@ class KhuyenMaiController extends Controller
         ]);
     }
 
-    public function danhSachSanPhamChuongTrinhUuDai()
+    public function danhSachSanPhamChuongTrinhUuDai($slug)
     {
+        $chuongTrinh = ChuongTrinhUuDai::query()
+            ->with(['sanPhams.bienTheSanPham'])
+            ->where('duong_dan', $slug)
+            ->first();
 
+        if (!$chuongTrinh) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy chương trình ưu đãi.'
+            ], 404);
+        }
+
+        if ($chuongTrinh->sanPhams->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không có sản phẩm nào trong chương trình ưu đãi.'
+            ], 404);
+        }
+
+        foreach ($chuongTrinh->sanPhams as $sanPham) {
+            if ($sanPham->bienTheSanPham->isEmpty()) {
+                continue;
+            }
+
+            foreach ($sanPham->bienTheSanPham as $bienThe) {
+                if (!is_null($bienThe->gia_khuyen_mai)) {
+                    if ($chuongTrinh->loai == 'phan_tram') {
+                        $bienThe->gia_khuyen_mai -= ($bienThe->gia_khuyen_mai * $chuongTrinh->gia_tri_uu_dai / 100);
+                    } elseif ($chuongTrinh->loai == 'tien') {
+                        $bienThe->gia_khuyen_mai = max(0, $bienThe->gia_khuyen_mai - $chuongTrinh->gia_tri_uu_dai);
+                    }
+                } else {
+                    if ($chuongTrinh->loai == 'phan_tram') {
+                        $bienThe->gia_khuyen_mai = $bienThe->gia_ban - ($bienThe->gia_ban * $chuongTrinh->gia_tri_uu_dai / 100);
+                    } elseif ($chuongTrinh->loai == 'tien') {
+                        $bienThe->gia_khuyen_mai = max(0, $bienThe->gia_ban - $chuongTrinh->gia_tri_uu_dai);
+                    }
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $chuongTrinh
+        ]);
     }
+
+
+
+
+
+
+
 
 }
