@@ -93,6 +93,7 @@ import Component from "@/pages/(dashboard)/test";
 import PageTransport from "@/pages/(dashboard)/transport/page";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
+import Detail from "@/pages/(dashboard)/products/detail/page";
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
@@ -150,6 +151,9 @@ const Router = () => {
           <Route path="products/add" element={<ProductsAdd />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
+         {/* Biến thể */}
+         <Route path="products/detaile" element={<Detail />} />
+
           {/* Biến thể */}
           <Route path="products/bienthe" element={<Bienthe />} />
           <Route path="products/bienthecolor/edit/:id" element={<Color />} />

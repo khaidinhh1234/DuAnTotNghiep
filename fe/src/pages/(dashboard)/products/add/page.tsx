@@ -32,7 +32,6 @@ const ProductsAndVariants: React.FC = () => {
   const [form] = Form.useForm<ProductFormData>();
   const [variantData, setVariantData] = useState<Variant[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [productCode, setProductCode] = useState("");
   const [data, setData] = useState<any>([]);
   // console.log(data);
   const [productFormData, setProductFormData] = useState<ProductFormData>(
@@ -117,26 +116,6 @@ const ProductsAndVariants: React.FC = () => {
   useEffect(() => {
     generateVariantData();
   }, [generateVariantData]);
-
-  const generateRandomProductCode = useCallback(() => {
-    const prefix = "SP-";
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let result = prefix;
-    for (let i = 0; i < 8; i++) {
-      result += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
-    }
-    console.log(result);
-    return result;
-  }, []);
-
-  const handleGenerateCode = useCallback(() => {
-    const newCode = generateRandomProductCode();
-    setProductCode(newCode);
-    console.log(newCode);
-    form.setFieldsValue({ ma_san_pham: newCode });
-  }, [generateRandomProductCode, form]);
 
   const isLoading = useMemo(
     () => categoriesLoading || sizesLoading || colorsLoading || tagsLoading,
@@ -394,8 +373,6 @@ const ProductsAndVariants: React.FC = () => {
             categoriesData={categoriesData?.data || []}
             tagsData={tagsData?.data || []}
             onValuesChange={handleProductFormValuesChange}
-            productCode={productCode}
-            onGenerateCode={handleGenerateCode}
             setData={setData}
           />
           <div className="mt-8 px-10">
