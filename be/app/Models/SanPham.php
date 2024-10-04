@@ -44,8 +44,12 @@ class SanPham extends Model
         return $this->hasMany(DanhGia::class, 'san_pham_id');
     }
 
-    public function chuongTrinhKhuyenMais()
+    public function chuongTrinhUuDais()
     {
-        return $this->belongsToMany(ChuongTrinhUuDai::class, 'chuong_trinh_san_pham', 'san_pham_id', 'chuong_trinh_khuyen_mai_id');
+        return $this->belongsToMany(ChuongTrinhUuDai::class, 'chuong_trinh_san_pham', 'san_pham_id', 'chuong_trinh_uu_dai_id');
+    }
+
+    public function khachHangYeuThich(){
+        return $this->belongsToMany(User::class,  'san_pham_yeu_thich', 'san_pham_id', 'user_id');
     }
 }
