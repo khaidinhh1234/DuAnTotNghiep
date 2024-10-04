@@ -1,4 +1,3 @@
-
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -290,6 +289,11 @@ const UsersAdminkhachhang: React.FC = () => {
           <Link to={`/admin/users/khachhang/edit/${record.key}`}>
             <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Chỉnh sửa
+            </Button>
+          </Link>
+          <Link to={`show/${record.key}`}>
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+              xem
             </Button>
           </Link>
         </Space>

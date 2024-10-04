@@ -8,9 +8,9 @@ const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
-    queryKey: ["ORDER_DetailTransport", record.id],
+    queryKey: ["vanchuyen-chitiet", record.id],
     queryFn: async () => {
-      const response = await instance.get(`/donhang/${record.id}`);
+      const response = await instance.get(`/vanchuyen/${record.id}`);
       return response.data;
     },
   });
@@ -33,13 +33,13 @@ const DetailTransport = ({ record }: any) => {
       console.log("data", id, action);
 
       try {
-        const response = await instance.put("/donhang/trang-thai-don-hang", {
-          trang_thai_don_hang: action,
+        const response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
+          trang_thai_van_chuyen: action,
           id: [id],
         });
         const error = response.data.message;
 
-        if (error === "Cập nhật trạng thái đơn hàng thành công") {
+        if (error === "Cập nhật trạng thái vận chuyển thành công") {
           message.open({
             type: "success",
             content: error,
@@ -54,13 +54,13 @@ const DetailTransport = ({ record }: any) => {
       } catch (error) {
         message.open({
           type: "error",
-          content: "Không thể cập nhật trạng thái đơn hàng!",
+          content: "Không thể cập nhật trạng thái vận chuyển!",
         });
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["ORDERS"],
+        queryKey: ["vanchuyen"],
       });
     },
   });
@@ -79,7 +79,7 @@ const DetailTransport = ({ record }: any) => {
         footer={null}
         onCancel={handleCancel}
       >
-        <h1 className="text-3xl font-bold">Chi tiết đơn hàng </h1>
+        <h1 className="text-3xl font-bold">Chi tiết đơn hàng</h1>
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-9">
             {" "}
@@ -233,7 +233,7 @@ const DetailTransport = ({ record }: any) => {
                     Số lượng sản phẩm :{" "}
                   </h1>
                   <p className="text-base font-semibold">
-                    <span>{data?.data?.tong_so_luong}</span> sản phẩm
+                    <span>{data?.data?.don_hang_id}</span> sản phẩm
                   </p>
                 </div>
                 <div className="flex justify-between">
@@ -241,7 +241,7 @@ const DetailTransport = ({ record }: any) => {
                   <p className="text-base font-semibold">
                     <span>
                       {
-                        data?.data?.tong_tien_san_pham
+                        data?.data?.cod
                         // .toLocaleString()
                       }
                     </span>{" "}
@@ -272,7 +272,7 @@ const DetailTransport = ({ record }: any) => {
                   <p className="text-lg font-bold">
                     {" "}
                     {
-                      record?.tong_tien_don_hang + 20000
+                      record?.tien_cod + 20000
                       // .toLocaleString()
                     }{" "}
                     VNĐ
