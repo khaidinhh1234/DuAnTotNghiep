@@ -172,31 +172,6 @@ const TableUncomfirmedOrder: React.FC = () => {
       },
     },
     {
-      title: "Thanh toán",
-      dataIndex: "trang_thai_thanh_toan",
-      key: "trang_thai_thanh_toan",
-      sorter: (a, b) => a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
-      render: (_, record) => {
-        return (
-          <div
-            className={
-              record.trang_thai_thanh_toan === "Đã thanh toán"
-                ? "text-green-500 font-bold text-[15px]"
-                : record.trang_thai_thanh_toan === "Chờ xử lý"
-                  ? "text-blue-500 font-bold text-[15px]"
-                  : "text-yellow-500 font-bold text-[15px]"
-            }
-          >
-            {record.trang_thai_thanh_toan === "Đã thanh toán"
-              ? "Đã thanh toán"
-              : record.trang_thai_thanh_toan === "Chờ xử lý"
-                ? "Chờ xử lý"
-                : "Chưa thanh toán"}
-          </div>
-        );
-      },
-    },
-    {
       title: "Trạng thái giao hàng",
       dataIndex: "trang_thai_van_chuyen",
       key: "trang_thai_van_chuyen",
@@ -230,6 +205,32 @@ const TableUncomfirmedOrder: React.FC = () => {
         );
       },
     },
+    {
+      title: "Thanh toán",
+      dataIndex: "trang_thai_thanh_toan",
+      key: "trang_thai_thanh_toan",
+      sorter: (a, b) => a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
+      render: (_, record) => {
+        return (
+          <div
+            className={
+              record.trang_thai_thanh_toan === "Đã thanh toán"
+                ? "text-green-500 font-bold text-[15px]"
+                : record.trang_thai_thanh_toan === "Chờ xử lý"
+                  ? "text-blue-500 font-bold text-[15px]"
+                  : "text-yellow-500 font-bold text-[15px]"
+            }
+          >
+            {record.trang_thai_thanh_toan === "Đã thanh toán"
+              ? "Đã thanh toán"
+              : record.trang_thai_thanh_toan === "Chờ xử lý"
+                ? "Chờ xử lý"
+                : "Chưa thanh toán"}
+          </div>
+        );
+      },
+    },
+    
 
     {
       title: "Tổng tiền",

@@ -214,9 +214,12 @@ const OrderAdmin: React.FC = () => {
                     ? "text-blue-500" // Đang xử lý: màu xanh dương
                     : record.trang_thai_don_hang === "Đang giao hàng"
                       ? "text-purple-500" // Đang giao hàng: màu tím
-                      : record.trang_thai_don_hang === "Đã giao hàng thành công"
+                      : record.trang_thai_don_hang === "Giao hàng thành công"
                         ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
-                        : "text-red-500") // Các trạng thái khác: màu đỏ
+                        : record.trang_thai_don_hang === "Hủy hàng"
+                         ? "text-red-500" // Hủy đơn hàng: màu đ��
+                         : "text-green-500 "
+              )
             }
           >
             {record.trang_thai_don_hang === "Chờ xác nhận"
@@ -227,9 +230,14 @@ const OrderAdmin: React.FC = () => {
                   ? "Chờ lấy hàng"
                   : record.trang_thai_don_hang === "Đang giao hàng"
                     ? "Đang giao hàng"
-                    : record.trang_thai_don_hang === "Đã giao hàng thành công"
-                      ? "Giao Thành công"
-                      : "Hủy"}
+                    : record.trang_thai_don_hang === "Giao hàng thành công"
+                      ? "Đã giao hàng thành công"
+                  
+                      : record.trang_thai_don_hang === "Hủy hàng"
+                        ? "Hủy hàng"
+                        : "Hủy hàng"
+                      }
+                      
           </div>
         );
       },
