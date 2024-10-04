@@ -74,9 +74,10 @@ class KhuyenMaiController extends Controller
         ]);
     }
 
+    public function maKhuyenMaiHangThanhVien()
+    {
 
-
-
+    }
 
 
 
