@@ -1,6 +1,6 @@
 import instance from "@/configs/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Modal } from "antd";
+import { Button, message, Modal, Rate } from "antd";
 import { useState } from "react";
 
 const Detail = ({ record }: any) => {
@@ -29,23 +29,32 @@ const Detail = ({ record }: any) => {
       return response.data;
     },
   });
+  // const { data: vanchuyen, isLoading } = useQuery({
+  //   queryKey: ["vanchuyen"],
+  //   queryFn: async () => {
+  //     const response = await instance.get("/vanchuyen");
+  //     return response.data;
+  //   },
+  // });
+
   const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
     };
   });
-  console.log(record, "toan");
+  // console.log(record, "toan");
   // const donhang = data?.data;
-  // console.log("data", donhang);
-  // console.log("data", products);
+  console.log("data", data?.data?.don_hang?.danh_gias);
 
+  // console.log("data", products);
+  // console.log(vanchuyen, "vanchuyen");
   const handleCancel = () => {
     setOpen(false);
   };
 
   const { mutate } = useMutation({
     mutationFn: async ({ id, action }: any) => {
-      console.log("data", id, action);
+      // console.log("data", id, action);
 
       try {
         const response = await instance.put("/donhang/trang-thai-don-hang", {
@@ -231,58 +240,64 @@ const Detail = ({ record }: any) => {
                     ))}
                   </tbody>
                 </table>
-                <div className="grid grid-cols-2 gap-5 my-5">
-                  <div>
-                    <div className="flex justify-between">
-                      <p>Lấy hàng</p> <span> Hà Nội</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <p>Mã Vận chuyển</p> <span> 100023874</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <p>Nhà vận chuyển</p> <span> Hà Nội</span>
-                    </div>
-                  </div>{" "}
-                  <div>
-                    <div className="flex justify-between">
-                      <p>Trạng thái vận chuyển</p>{" "}
-                      <span
-                        className={`   ${
-                          record.trang_thai_don_hang == "Chờ xác nhận"
-                            ? "bg-blue-500"
-                            : record.trang_thai_don_hang == "Đã xác nhận"
-                              ? "bg-green-500"
-                              : record.trang_thai_don_hang == "Đang xử lý"
-                                ? "bg-yellow-500"
-                                : record.trang_thai_don_hang == "Đang giao hàng"
-                                  ? "bg-purple-500"
-                                  : record.trang_thai_don_hang ==
-                                      "Giao hàng thành công"
-                                    ? "bg-green-500"
-                                    : "bg-red-500"
-                        }
+                {record?.trang_thai_don_hang !== "Đã xác nhận" &&
+                  record?.trang_thai_don_hang !== "Hủy hàng" &&
+                  record?.trang_thai_don_hang !== "Chờ xử lý" && (
+                    <div className="grid grid-cols-2 gap-5 my-5">
+                      <div>
+                        <div className="flex justify-between">
+                          <p>Lấy hàng</p> <span> Hà Nội</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>Mã Vận chuyển</p> <span> 100023874</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>Nhà vận chuyển</p> <span> Hà Nội</span>
+                        </div>
+                      </div>{" "}
+                      <div>
+                        <div className="flex justify-between">
+                          <p>Trạng thái vận chuyển</p>{" "}
+                          <span
+                            className={`   ${
+                              record.trang_thai_don_hang == "Chờ xác nhận"
+                                ? "bg-blue-500"
+                                : record.trang_thai_don_hang == "Đã xác nhận"
+                                  ? "bg-green-500"
+                                  : record.trang_thai_don_hang == "Đang xử lý"
+                                    ? "bg-yellow-500"
+                                    : record.trang_thai_don_hang ==
+                                        "Đang giao hàng"
+                                      ? "bg-purple-500"
+                                      : record.trang_thai_don_hang ==
+                                          "Giao hàng thành công"
+                                        ? "bg-green-500"
+                                        : "bg-red-500"
+                            }
                         } text-white px-2 font-bold rounded-lg h-6`}
-                      >
-                        {" "}
-                        {record.trang_thai_don_hang == "Chờ xác nhận"
-                          ? "Chờ xác nhận"
-                          : record.trang_thai_don_hang == "Đã xác nhận"
-                            ? "Chuẩn bị giao"
-                            : record.trang_thai_don_hang == "Đang xử lý"
-                              ? "Chờ lấy hàng"
-                              : record.trang_thai_don_hang == "Đang giao hàng"
-                                ? "Đang giao hàng"
-                                : record.trang_thai_don_hang ==
-                                    "Giao hàng thành công"
-                                  ? "Giao hàng thành công"
-                                  : "Đã hủy"}
-                      </span>
+                          >
+                            {" "}
+                            {record.trang_thai_don_hang == "Chờ xác nhận"
+                              ? "Chờ xác nhận"
+                              : record.trang_thai_don_hang == "Đã xác nhận"
+                                ? "Chuẩn bị giao"
+                                : record.trang_thai_don_hang == "Đang xử lý"
+                                  ? "Chờ lấy hàng"
+                                  : record.trang_thai_don_hang ==
+                                      "Đang giao hàng"
+                                    ? "Đang giao hàng"
+                                    : record.trang_thai_don_hang ==
+                                        "Giao hàng thành công"
+                                      ? "Giao hàng thành công"
+                                      : "Đã hủy"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <p>Tổng khối lượng</p> <span> 0.00kg</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <p>Tổng khối lượng</p> <span> 0.00kg</span>
-                    </div>
-                  </div>
-                </div>
+                  )}
               </div>
             </div>
             <div className="px-5">
@@ -413,13 +428,62 @@ const Detail = ({ record }: any) => {
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
               <h5 className="text-black my-2">{record.ten_nguoi_dat_hang}</h5>
-              <p>
-                Số điện thoại :{" "}
-                <span>{record.so_dien_thoai_nguoi_dat_hang}</span>
+              <p className="text-blue-800 font-semibold">
+                Số điện thoại :
+                <span className="text-black font-medium">
+                  {record.so_dien_thoai_nguoi_dat_hang}
+                </span>
               </p>
               <h5 className="text-blue-800">
-                Địa chỉ Giao hàng: <span>{record?.dia_chi_nguoi_dat_hang}</span>
+                Địa chỉ Giao hàng: <br />
+                <span className="text-black">
+                  {record?.dia_chi_nguoi_dat_hang}
+                </span>
               </h5>
+              <p className="text-blue-800 font-semibold">
+                Ghi chú của khách hàng : <br />
+                <span className="text-black">
+                  {record?.ghi_chu ? record?.ghi_chu : "Không có ghi chú"}
+                </span>
+              </p>
+            </div>
+            <div className="bg-slate-100 p-5 border rounded-lg my-2 shadow-md">
+              <h5 className="text-blue-800 text-lg font-semibold mb-1">
+                Đánh giá của khách hàng
+              </h5>{" "}
+              {record.trang_thai_don_hang === "Giao hàng thành công" && (
+                <>
+                  {data?.data?.don_hang?.danh_gias?.map(
+                    (item: any, index: number) => (
+                      <div className="h-40" key={index}>
+                        <div className="flex items-center">
+                          <div className="">
+                            <img
+                              src={item?.user?.anh_nguoi_dung}
+                              alt=""
+                              className="w-12 h-12 rounded-full object-cover border-2 border-blue-800"
+                            />
+                          </div>
+                          <div className="pt-2">
+                            <div className=" scale-75 ">
+                              {" "}
+                              <h5 className="text-blue-800 text-xl font-medium">
+                                {item?.user?.ho} {item?.user?.ten}
+                              </h5>
+                              {/* Giảm kích thước sao bằng scale-50 */}
+                              <Rate disabled defaultValue={2} />
+                            </div>
+                          </div>
+                        </div>{" "}
+                        <div className="text-blue-800 mx-4">
+                          <p> {item?.mo_ta}</p>
+                        </div>
+                        <button>Trả lời</button>
+                      </div>
+                    )
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>

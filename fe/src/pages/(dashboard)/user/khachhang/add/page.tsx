@@ -4,7 +4,6 @@ import { Button, DatePicker, Form, Input, message, Radio } from "antd";
 import { FormProps } from "antd";
 import { useState } from "react";
 
-
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import instance from "@/configs/admin";
@@ -22,9 +21,10 @@ const UserskhachhangAdd = () => {
   // const [messageApi, contextHolder] = message.useMessage();
   const nav = useNavigate();
   const mutate = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: any) => {
+      const datas = { ...data, vai_tros: ["Khách hàng"] };
       try {
-        const res = await instance.post("/taikhoan", data);
+        const res = await instance.post("/taikhoan", datas);
         return res.data;
       } catch (error: any) {
         console.log(error.response.data.error.email);
@@ -56,7 +56,7 @@ const UserskhachhangAdd = () => {
       // gioi_tinh: "nam",
     };
     mutate.mutate(data as any);
-    console.log(data);
+    // console.log(data);
   };
   // const onChange: DatePickerProps["onChange"] = (dateString) => {
   //   console.log(dateString);

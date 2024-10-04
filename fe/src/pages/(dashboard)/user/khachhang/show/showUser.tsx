@@ -19,6 +19,7 @@ const ShowUser = () => {
   });
   const user = data?.data?.tai_khoan;
   console.log(user);
+  const trangthai = data?.data;
   const phantram =
     ((35450000 - user?.hang_thanh_vien?.chi_tieu_toi_thieu) /
       (user?.hang_thanh_vien?.chi_tieu_toi_da -
@@ -43,19 +44,19 @@ const ShowUser = () => {
         <div className="flex justify-between max-w-[1350px] py-5 px-5 border-b ">
           <div className="text-2xl font-bold">
             <i className="fa-regular fa-cart-shopping text-gray-500 "></i>{" "}
-            <span className="px-2">29 </span>
+            <span className="px-2">{trangthai?.so_luong_don_hang}</span>
             <br />
             <span className="text-gray-500 text-lg"> Đơn hàng</span>
           </div>
           <div className="text-2xl font-bold">
             <i className="fa-regular fa-star text-gray-500 "></i>
-            <span className="px-2">100 </span>
+            <span className="px-2">{trangthai?.so_luong_don_hang} </span>
             <br />
             <span className="text-gray-500 text-lg">Đánh giá</span>
           </div>
           <div className="text-2xl font-bold">
             <i className="fa-regular fa-heart text-gray-500"></i>
-            <span className="px-2">1.093 </span>
+            <span className="px-2">{trangthai?.so_luong_yeu_thich}</span>
             <br />
             <span className="text-gray-500 text-lg"> Yêu thích </span>
           </div>

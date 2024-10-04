@@ -72,7 +72,7 @@ export default function Chart1() {
               },
               {
                 date: "2024-01-07",
-                steps: 1600,
+                steps: 3600,
               },
             ]}
           >

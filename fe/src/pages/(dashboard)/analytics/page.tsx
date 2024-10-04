@@ -167,7 +167,7 @@ export function AnalyticsAdmin() {
           </Card>
         </div>
       </main>
-      <Chart3 />
+      {/* <Chart3 /> */}
       {/* <Chart4 /> */}
     </div>
   );
