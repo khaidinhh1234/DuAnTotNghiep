@@ -22,7 +22,7 @@ const Detail = ({ record }: any) => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["ORDER_DETAIL", record.id],
     queryFn: async () => {
       const response = await instance.get(`/donhang/${record.id}`);
@@ -34,10 +34,10 @@ const Detail = ({ record }: any) => {
       ...item,
     };
   });
-  console.log(record, "toan");
+
   // const donhang = data?.data;
-  // console.log("data", donhang);
-  // console.log("data", products);
+  console.log("data", data);
+  console.log("data", products);
 
   const handleCancel = () => {
     setOpen(false);
@@ -300,10 +300,7 @@ const Detail = ({ record }: any) => {
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {
-                        data?.data?.tong_tien_san_pham
-                        // .toLocaleString()
-                      }
+                      {(products?.thanh_tien ?? 0).toLocaleString("vi-VN")}
                     </span>{" "}
                     VNĐ
                   </p>
@@ -349,41 +346,15 @@ const Detail = ({ record }: any) => {
               <div className="flex flex-col gap-2">
                 {record.trang_thai_don_hang === "Chờ xác nhận" ? (
                   <>
-                    <button
-                      className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Đã xác nhận" })
-                      }
-                    >
+                    <span className="w-full py-1 px-2 text-base font-medium text-blue-500 border-b-2 border-blue-500 hover:text-blue-600 hover:border-blue-600 transition-all duration-300 ease-in-out cursor-default text-center ">
                       Xác nhận đơn hàng
-                    </button>{" "}
-                    <button
-                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Hủy hàng" })
-                      }
-                    >
-                      Hủy
-                    </button>
+                    </span>
                   </>
                 ) : record.trang_thai_don_hang === "Đã xác nhận" ? (
                   <>
-                    <button
-                      className="w-full py-2 border bg-green-500 rounded-lg text-white hover:bg-green-400"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Đang xử lý" })
-                      }
-                    >
+                    <span className="w-full py-1 px-2 text-base font-medium text-green-500 border-b-2 border-green-500 hover:text-green-600 hover:border-green-600 transition-all duration-300 ease-in-out cursor-default text-center ">
                       Hoàn tất đơn hàng
-                    </button>{" "}
-                    <button
-                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Hủy hàng" })
-                      }
-                    >
-                      Hủy
-                    </button>
+                    </span>
                   </>
                 ) : record.trang_thai_don_hang === "Đang xử lý" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
@@ -399,7 +370,7 @@ const Detail = ({ record }: any) => {
                   </span>
                 ) : (
                   <span className="w-full py-1 px-2 text-base font-medium text-red-500 border-b-2 border-red-500 hover:text-red-600 hover:border-red-600 transition-all duration-300 ease-in-out cursor-default text-center">
-                    Hủy đơn hàng
+                    Đã hủy đơn hàng
                   </span>
                 )}
               </div>

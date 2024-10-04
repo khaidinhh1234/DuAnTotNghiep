@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('khach_hang_id')->constrained('users');
             $table->foreignId('nhan_vien_id')->constrained('users');
-            $table->enum('trang_thai',['hoan_thanh','chua_hoan_thanh','dang_ho_tro','dang_tiep_nhan'])->default(0);
+            $table->enum('trang_thai',['hoan_thanh','chua_hoan_thanh','dang_ho_tro','dang_tiep_nhan'])->default('chua_hoan_thanh');
             $table->timestamps();
         });
     }
