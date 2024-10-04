@@ -28,6 +28,36 @@ class VanChuyenController extends Controller
             ], 500);
         }
     }
+
+    public function show($id)
+    {
+        try {
+            $vanChuyen = VanChuyen::query()->with([
+                'donHang.chiTiets'
+            ])->findOrFail($id);
+
+            // Tính toán tổng số lượng và tổng tiền
+            $tongSoLuong = $vanChuyen->donHang->chiTiets->sum('so_luong');
+            $tongTienSanPham = $vanChuyen->donHang->chiTiets->sum('thanh_tien');
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'van_chuyen' => $vanChuyen,
+                    'tong_so_luong' => $tongSoLuong,
+                    'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                ]
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy chi tiết vận chuyển.',
+                'error' => $exception->getMessage()
+            ], 404);
+        }
+    }
     public function capNhatTrangThaiVanChuyen(Request $request)
     {
         try {

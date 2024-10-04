@@ -218,6 +218,8 @@ export interface ProductFormProps {
   tagsData: Tag[];
   onValuesChange: (changedValues: any, allValues: any) => void;
   initialValues?: ProductFormData;
+    setData: any;
+
 }
 
 const ProductForm = ({
@@ -228,6 +230,8 @@ const ProductForm = ({
   tagsData,
   onValuesChange,
   initialValues,
+    setData,
+
 }: ProductFormProps) => {
   const [productCode, setProductCode] = useState("");
 
@@ -309,7 +313,6 @@ const ProductForm = ({
           </Select>
         </Form.Item>
       </div>
-
       <div className="grid grid-cols-1 gap-5">
         <Form.Item
           label="Mô tả ngắn"
@@ -358,7 +361,7 @@ const ProductForm = ({
       <div className="grid grid-cols-2 gap-5">
         <Form.Item
           label="Ảnh nổi bật"
-          name="anh_san_pham"
+          name="feature_image"
           rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
         >
           <Upload
@@ -374,43 +377,45 @@ const ProductForm = ({
       </div>
 
       <div className="grid grid-cols-1 gap-5">
-        <Form.Item
-          label="Nội dung"
-          name="noi_dung"
-          rules={[
-            {
-              required: true,
-              message: "Nội dung tin tức bắt buộc phải nhập!",
-            },
-          ]}
-        >
-          <Editor
-            apiKey="4co2z7i0ky0nmudlm5lsoetsvp6g3u4110d77s2cq143a9in"
-            init={{
-              plugins: [
-                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
-                "checklist mediaembed casechange export formatpainter pageembed a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
-              ],
-              toolbar:
-                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
-              tinycomments_mode: "embedded",
-              tinycomments_author: "Author name",
-              mergetags_list: [
-                { value: "First.Name", title: "First Name" },
-                { value: "Email", title: "Email" },
-              ],
-              setup: (editor: any) => {
-                editor.on("Change", () => {
-                  form.setFieldsValue({ noi_dung: editor.getContent() });
+       <Form.Item
+        label="Nội dung"
+        name="noi_dung"
+        rules={[
+          { required: true, message: "Nội dung sản phẩm bắt buộc phải nhập!" },
+        ]}
+      >
+        <Editor
+          apiKey="4co2z7i0ky0nmudlm5lsoetsvp6g3u4110d77s2cq143a9in"
+          init={{
+            plugins: [
+              "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
+              "checklist mediaembed casechange export formatpainter pageembed a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+            ],
+            toolbar:
+              "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+            tinycomments_mode: "embedded",
+            tinycomments_author: "Author name",
+            mergetags_list: [
+              { value: "First.Name", title: "First Name" },
+              { value: "Email", title: "Email" },
+            ],
+            setup: (editor) => {
+              editor.on("Change", () => {
+                const content = editor.getContent();
+                // console.log("Editor content:", content); // Một chuỗi HTML hoặc JSON đã được stringify
+                setData(content);
+                // value = { content };
+                form.setFieldsValue({
+                  noi_dung: String(content),
+                  // Chuyển đổi đối tượng thành chuỗi JSON nếu cần
                 });
-              },
-            }}
-            initialValue={
-              initialValues?.noi_dung || "Chào mừng bạn đến với Glow clothing!"
-            }
-          />
-        </Form.Item>
-      </div>
+              });
+            },
+          }}
+        />
+        {/* <TextArea rows={5} placeholder="Nhập nội dung sản phẩm" /> */}
+      </Form.Item>
+</div>
     </Form>
   );
 };

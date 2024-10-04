@@ -109,7 +109,19 @@ const Header = () => {
         </SheetContent>
       </Sheet>
       <div className="w-full flex-1">
-        <form></form>
+        <form>
+          {" "}
+          <div className="sticky top-0 z-10 flex h-[60px] items-center border-b border-gray-300 px-4 lg:px-6 bg-white ">
+            <Link
+              to="/"
+              className="flex items-center gap-2 font-bold text-black text-xl "
+            >
+              <Package className="h-6 w-6" />
+              {/* <i class="fa-sharp fa-solid fa-g text-black"></i> */}
+              <span>GLOW CLOTHING</span>
+            </Link>
+          </div>
+        </form>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
