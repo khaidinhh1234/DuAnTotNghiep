@@ -15,6 +15,8 @@ export interface ProductFormProps {
   tagsData: Tag[];
   onValuesChange: (changedValues: any, allValues: any) => void;
   initialValues?: ProductFormData;
+  setData: any;
+
 }
 
 const ProductForm = ({

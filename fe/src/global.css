@@ -32,6 +32,7 @@ input[id="numberInput"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 .rotated-header-table .ant-table-thead > tr > th {
   height: 150px; /* Điều chỉnh giá trị này theo nhu cầu của bạn */
   white-space: nowrap;

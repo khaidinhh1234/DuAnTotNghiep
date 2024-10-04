@@ -373,7 +373,6 @@ const ProductsAndVariants: React.FC = () => {
             categoriesData={categoriesData?.data || []}
             tagsData={tagsData?.data || []}
             onValuesChange={handleProductFormValuesChange}
-      
             setData={setData}
           />
           <div className="mt-8 px-10">

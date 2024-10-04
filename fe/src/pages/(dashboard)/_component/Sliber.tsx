@@ -49,7 +49,6 @@ const items: MenuItem[] = [
     getItem('Danh sách đơn hàng', '8', null, '/admin/orders/list'),
     getItem('Vận chuyển', '9', null, '/admin/orders/uncomfirmedorder'),
     getItem('Thu hộ', '19', null, '/admin/orders/collect'),
-
   ]),
   getItem("Tin tức", "20", <Package />, "/admin/news"),
   getItem("Khuyến mãi", "10", <Package />, "/admin/vouchers"),

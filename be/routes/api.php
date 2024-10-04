@@ -26,6 +26,7 @@ use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
+use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\LienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
@@ -70,6 +71,9 @@ Route::middleware([])
     ->group(function () {
         // Trang chủ
         Route::get('trangchu', [TrangChuController::class, 'index']);
+
+        Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'danhSachSanPhamChuongTrinhUuDai']);
+
         //Client Sản Phẩm
         // lấy ra danh mục cha
         Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
@@ -129,6 +133,7 @@ Route::middleware([])
         Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
         Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
         Route::get('sanpham/{id}', [SanPhamController::class, 'show'])->name('sanpham.show');
+        Route::get('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich']);
 
         // Kích thước biến thể
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class)->except(['show']);

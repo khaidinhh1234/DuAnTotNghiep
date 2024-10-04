@@ -25,19 +25,23 @@ class TrangChuController extends Controller
             'bienTheSanPham.anhBienThe',
             'bienTheSanPham.mauBienThe',
             'bienTheSanPham.kichThuocBienThe',
-            'chuongTrinhKhuyenMais'
-        ])->orderByDesc('id')->take(8)->get();
+            'chuongTrinhUuDais'
+        ])
+            ->orderByDesc('id')
+            ->where('trang_thai', 1)
+            ->take(8)
+            ->get()
+            ->map(function ($sanPham) {
+                // Kiểm tra nếu sản phẩm có chương trình ưu đãi
+                $sanPham->trong_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
+                    ? 'Sản phẩm đang trong chương trình ưu đãi'
+                    : null;
+
+                return $sanPham;
+            });
+
 
         $dataDanhGiaKhachHang = DanhGia::query()->whereIn('so_sao_san_pham', [4, 5])->orderByDesc('id')->take(8)->get();
-
-        $now = Carbon::now();
-
-        $sanPhamDangKhuyenMai = SanPham::with('bienTheSanPham')
-        ->whereNotNull('gia_khuyen_mai')
-            ->where('ngay_bat_dau_khuyen_mai', '<=', $now)
-            ->where('ngay_ket_thuc_khuyen_mai', '>=', $now)
-            ->where('gia_tri_uu_dai', '>', 0)
-            ->get();
 
         return response()->json([
             'status' => true,
@@ -47,7 +51,6 @@ class TrangChuController extends Controller
             'chuong_trinh_uu_dai' => $dataChuongTrinhUuDai,
             'danh_sach_san_pham_moi' => $dataDanhSachSanPhamMoi,
             'danh_gia_khach_hang' => $dataDanhGiaKhachHang,
-            'san_pham_dang_khuyen_mai' => $sanPhamDangKhuyenMai
         ], 200);
     }
 }

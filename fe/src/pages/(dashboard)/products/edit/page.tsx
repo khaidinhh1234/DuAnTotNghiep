@@ -64,6 +64,8 @@ const EditProductsAndVariants: React.FC = () => {
   const [selectedColors, setSelectedColors] = useState<number[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<any>([]);
+
 
   // Queries
   const { data: categoriesData } = useQuery<{ data: Category[] }>({
@@ -468,6 +470,8 @@ const EditProductsAndVariants: React.FC = () => {
             tagsData={tagsData?.data || []}
             onValuesChange={handleProductFormValuesChange}
             initialValues={productData?.data}
+            setData={setData}
+
           />
           <div className="mt-8 px-10">
             <h2 className="text-xl font-semibold mb-4">

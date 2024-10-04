@@ -22,7 +22,7 @@ const Detail = ({ record }: any) => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["ORDER_DETAIL", record.id],
     queryFn: async () => {
       const response = await instance.get(`/donhang/${record.id}`);
@@ -34,7 +34,7 @@ const Detail = ({ record }: any) => {
       ...item,
     };
   });
-
+  console.log(record, "toan");
   // const donhang = data?.data;
   // console.log("data", donhang);
   // console.log("data", products);
