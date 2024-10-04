@@ -4,6 +4,7 @@ import { Button, message, Modal } from "antd";
 import { useState } from "react";
 
 const DetailTransport = ({ record }: any) => {
+  console.log(record,"hubbgybyhuy");
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
