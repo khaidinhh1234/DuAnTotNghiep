@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ho_so_ho_tro', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('phong_hop_tac_id')->constrained('phong_hop_tac');
+            $table->foreignId('phong_ho_tro_id')->constrained('phong_ho_tro');
             $table->text('mo_ta'); // Mô tả hồ sơ
             $table->timestamps();
         });
