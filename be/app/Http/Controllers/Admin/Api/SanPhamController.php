@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\AnhBienThe;
 use App\Models\BienTheSanPham;
 use App\Models\SanPham;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -299,7 +301,7 @@ class SanPhamController extends Controller
     {
         try {
             $sanPhamDaXoa = SanPham::onlyTrashed()->with([
-            'danhMuc',
+                'danhMuc',
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
@@ -398,5 +400,41 @@ class SanPhamController extends Controller
     public function exportSanPham()
     {
         return Excel::download(new SanPhamExports, 'sanpham.xlsx');
+    }
+
+    public function sanPhamYeuThich($id)
+    {
+        try {
+            if (Auth::guard('api')->check()) {
+                $user = User::findOrFail(Auth::guard('api')->id());
+                if (!$user->sanPhamYeuThich()->where('san_pham_id', $id)->exists()) {
+                    $user->sanPhamYeuThich()->attach($id);
+                    $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
+                    $status = true;
+                    $status_code = 200;
+                } else {
+                    $mess = 'Sản phẩm đã có trong danh sách yêu thích';
+                    $status = false;
+                    $status_code = 409;
+                }
+                return response()->json([
+                    'status' => $status,
+                    'status_code' => $status_code,
+                    'mess' => $mess,
+                ], $status_code);
+            }else{
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 401,
+                    'mess' => 'Vui lòng đăng nhập để thêm sản phẩm yêu thích',
+                ], 401);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'mess' => $exception->getMessage(),
+            ], 500);
+        }
     }
 }

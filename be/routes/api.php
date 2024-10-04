@@ -129,6 +129,7 @@ Route::middleware([])
         Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
         Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
         Route::get('sanpham/{id}', [SanPhamController::class, 'show'])->name('sanpham.show');
+        Route::get('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich']);
 
         // Kích thước biến thể
         Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class)->except(['show']);

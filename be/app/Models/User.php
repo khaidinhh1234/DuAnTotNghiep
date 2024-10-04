@@ -80,7 +80,8 @@ class User extends Authenticatable
         return $this->hasMany(DanhGia::class, 'user_id', 'id');
     }
 
-    public function donHangs(){
+    public function donHangs()
+    {
         return $this->hasMany(DonHang::class, 'user_id', 'id');
     }
 
@@ -91,5 +92,10 @@ class User extends Authenticatable
     public function lienHesPhuTrach()
     {
         return $this->hasMany(LienHe::class, 'nguoi_phu_trach_id');
+    }
+
+    public function sanPhamYeuThich()
+    {
+        return $this->belongsToMany(SanPham::class, 'san_pham_yeu_thich', 'user_id', 'san_pham_id');
     }
 }

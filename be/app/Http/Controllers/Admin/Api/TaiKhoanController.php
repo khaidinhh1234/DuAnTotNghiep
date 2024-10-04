@@ -114,11 +114,12 @@ class TaiKhoanController extends Controller
     public function show(string $id)
     {
         try {
-            $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs')->findOrFail($id);
+            $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs', 'sanPhamYeuThich')->findOrFail($id);
             $data = [
                 'tai_khoan' => $taiKhoan,
                 'so_luong_danh_gia' => count($taiKhoan->danhGias),
                 'so_luong_don_hang' => count($taiKhoan->donHangs),
+                'so_luong_yeu_thich' => count($taiKhoan->sanPhamYeuThich)
             ];
             return response()->json([
                 'status' => true,
