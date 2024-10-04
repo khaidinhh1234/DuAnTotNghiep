@@ -114,12 +114,17 @@ class TaiKhoanController extends Controller
     public function show(string $id)
     {
         try {
-            $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien')->findOrFail($id);
+            $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs')->findOrFail($id);
+            $data = [
+                'tai_khoan' => $taiKhoan,
+                'so_luong_danh_gia' => count($taiKhoan->danhGias),
+                'so_luong_don_hang' => count($taiKhoan->donHangs),
+            ];
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'data' => $taiKhoan
+                'data' => $data
             ], 200);
         } catch (\Exception $exception) {
             return response()->json([
