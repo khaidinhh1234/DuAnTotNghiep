@@ -43,26 +43,29 @@ const ShowUser = () => {
         </div>
         <div className="grid grid-cols-6 gap-1 mt-5">
           <div className="bg-white text-center pt-10 col-span-2 ">
-            <img
-              src="https://res.cloudinary.com/dpypwbeis/image/upload/v1727972418/Screenshot_2024-10-03_230710-transformed_siyn1o.png"
-              alt="Avatar"
-              className="w-36 h-36 rounded-full border-2 border-gray-300 mx-auto"
-            />
+            <div className="w-40 h-40 mx-auto">
+              {" "}
+              <img
+                src="https://res.cloudinary.com/dpypwbeis/image/upload/v1727982513/Screenshot_2024-10-04_020816_x05bgn.png"
+                alt="Avatar"
+                className="w-36 h-36  rounded-full border-2 border-gray-300 "
+              />
+            </div>
             <div className="flex-grow my-5">
               <h2 className="text-3xl font-semibold text-gray-700">
-                Nguyễn Thị Hồng
+                Khổng Tấn Lợi
               </h2>
 
               <p className="text-black font-bold">
                 Email:{" "}
                 <span className="text-gray-500 font-semibold">
-                  khíoai@gmail.com
+                  taloiancut@gmail.com
                 </span>
               </p>
               <p className="text-black font-bold">
                 Địa chỉ giao hàng:{" "}
                 <span className="text-gray-500 font-semibold">
-                  123, Đường 3/2, Quận 10
+                  Cao Phong ,Sông Lô, Vĩnh Phúc
                 </span>
               </p>
             </div>
@@ -80,10 +83,16 @@ const ShowUser = () => {
                   <strong>Ngày sinh:</strong> 23/02/2004
                 </p>
                 <p className="my-10">
-                  <strong>Giới tính:</strong> <span>Nữ</span>
+                  <strong>Giới tính:</strong> <span>Nam</span>
                 </p>
                 <p className="my-10">
-                  <strong>Vai trò:</strong> <span>Quản trị viên</span>
+                  <strong>Vai trò:</strong>{" "}
+                  <span className="px-3 py-1 bg-blue-500 font-bold text-white rounded-md">
+                    Quản trị viên
+                  </span>{" "}
+                  <span className="px-3 py-1 bg-blue-500 font-bold text-white rounded-md">
+                    Nhân viên bán hàng
+                  </span>
                 </p>
                 <p>
                   <strong>Trạng thái:</strong> <span>Hoạt động</span>
@@ -181,6 +190,89 @@ const ShowUser = () => {
               </div>
             </div> */}
           </div>
+        </div>
+        <div className="shadow-inner bg-gray-100 p-10 mt-10 rounded-lg mx-10">
+          <h3 className="text-2xl font-bold">Danh sách đơn hàng</h3>
+          <table className="min-w-full w-full ">
+            <tbody>
+              <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
+                <td className="py-5">
+                  <strong className="text-gray-500">Mã đơn hàng:</strong>
+                  <p className="text-gray-600 font-bold my-2">#UDGFFKLJF</p>
+                </td>
+                <td className="p-5">
+                  <strong className="text-gray-500">Ngày đặt hàng:</strong>
+                  <p className="text-gray-600 font-bold my-2">12/12/2021</p>
+                </td>
+                <td className="p-5">
+                  <strong className="text-gray-500">Đơn giá:</strong>
+                  <p className="text-gray-600 font-bold my-2">100.000 VNĐ</p>
+                </td>
+                <td className="p-5">
+                  <strong className="text-gray-500">Trạng thái:</strong>
+                  <p className="text-green-500 font-bold my-2">
+                    Đang giao hàng
+                  </p>
+                </td>
+                <td className="p-5">
+                  <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
+                    Xem chi tiết
+                  </button>
+                </td>
+              </tr>
+              <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
+                <td className="py-5">
+                  <strong className="text-gray-500">Mã đơn hàng:</strong>
+                  <p className="text-gray-600 font-bold my-2">#UDGFFKLJF</p>
+                </td>
+                <td className="p-5">
+                  <strong className="text-gray-500">Ngày đặt hàng:</strong>
+                  <p className="text-gray-600 font-bold my-2">12/12/2021</p>
+                </td>
+                <td className="p-5">
+                  <strong className="text-gray-500">Đơn giá:</strong>
+                  <p className="text-gray-600 font-bold my-2">100.000 VNĐ</p>
+                </td>
+                <td className="p-5">
+                  <strong className="text-gray-500">Trạng thái:</strong>
+                  <p className="text-green-500 font-bold my-2">
+                    Đang giao hàng
+                  </p>
+                </td>
+                <td className="p-5">
+                  <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
+                    Xem chi tiết
+                  </button>
+                </td>
+              </tr>{" "}
+              <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
+                <td className="py-5 w-[15%]">
+                  <strong className="text-gray-500">Mã đơn hàng:</strong>
+                  <p className="text-gray-600 font-bold my-2">#UDGFFKLJF</p>
+                </td>
+                <td className="p-5 w-[25%]">
+                  <strong className="text-gray-500">Ngày đặt hàng:</strong>
+                  <p className="text-gray-600 font-bold my-2">12/12/2021</p>
+                </td>
+                <td className="p-5 w-[25%]">
+                  <strong className="text-gray-500">Đơn giá:</strong>
+                  <p className="text-gray-600 font-bold my-2">100.000 VNĐ</p>
+                </td>
+                <td className="p-5">
+                  <strong className="text-gray-500">Trạng thái:</strong>
+                  <p className="text-green-500 font-bold my-2">
+                    Đang giao hàng
+                  </p>
+                </td>
+                <td className="p-5">
+                  <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
+                    Xem chi tiết
+                  </button>
+                </td>
+              </tr>
+              {/* Các hàng khác */}
+            </tbody>
+          </table>
         </div>
       </div>
     </main>
