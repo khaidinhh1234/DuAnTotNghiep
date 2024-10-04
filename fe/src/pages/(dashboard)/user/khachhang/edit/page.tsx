@@ -1,4 +1,3 @@
-
 import instance from "@/configs/admin";
 import { Loading3QuartersOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -29,11 +28,7 @@ const UserskhachhangEdit = () => {
   const [form] = Form.useForm();
   const { id } = useParams();
 
-  const {
-    data: user,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["USERID", id],
     queryFn: async () => {
       try {
@@ -44,7 +39,7 @@ const UserskhachhangEdit = () => {
       }
     },
   });
-  console.log(user);
+  const user = data?.data?.tai_khoan;
   const mutate = useMutation({
     mutationFn: async (data) => {
       try {
@@ -93,7 +88,7 @@ const UserskhachhangEdit = () => {
       </div>
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">
-          Cập nhật Tài khoản{user?.data?.email ? `: ${user.data.email}` : ""}
+          Cập nhật Tài khoản{user?.email ? `: ${user?.email}` : ""}
         </h1>
         <div>
           <Link to="/admin/users/khachhang" className="mr-1">
@@ -116,9 +111,9 @@ const UserskhachhangEdit = () => {
               className="mx-10 my-5"
               onFinish={onFinish}
               initialValues={{
-                ...user.data,
-                ngay_sinh: user.data.ngay_sinh
-                  ? moment(user.data.ngay_sinh)
+                ...user,
+                ngay_sinh: user?.ngay_sinh
+                  ? moment(user?.ngay_sinh)
                   : undefined,
               }}
               autoComplete="off"

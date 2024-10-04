@@ -47,6 +47,19 @@ class TaiKhoanController extends Controller
     {
         try {
             DB::beginTransaction();
+
+            //Lấy ra hạng thành viên thấp nhất
+            $hangThanhVien = HangThanhVien::query()->where('chi_tieu_toi_thieu', 0)->first();
+            if ($hangThanhVien == []) {
+                $hangThanhVien = HangThanhVien::create([
+                    'ten_hang_thanh_vien' => 'Đồng',
+                    'anh_hang_thanh_vien' => '',
+                    'chi_tieu_toi_thieu' => 0,
+                    'chi_tieu_toi_da' => 500000,
+                    'mo_ta' => 'Rank đồng'
+                ]);
+            }
+
             $taiKhoan = User::create([
                 'ho' => $request->ho,
                 'ten' => $request->ten,
@@ -57,15 +70,15 @@ class TaiKhoanController extends Controller
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,
                 'gioi_tinh' => $request->gioi_tinh,
-                'hang_thanh_vien_id' => 1
+                'hang_thanh_vien_id' => $hangThanhVien->id
             ]);
 
             if ($request->vai_tros == []) {
-                $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+                $member = VaiTro::query()->where('ten_vai_tro', operator: 'Khách hàng')->first();
                 if ($member == []) {
                     $member = VaiTro::updateOrCreate(
                         [
-                            'ten_vai_tro' => 'member',
+                            'ten_vai_tro' => 'Khách hàng',
                             'mo_ta' => 'Khách hàng'
                         ]
                     );
@@ -101,12 +114,17 @@ class TaiKhoanController extends Controller
     public function show(string $id)
     {
         try {
-            $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien')->findOrFail($id);
+            $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs')->findOrFail($id);
+            $data = [
+                'tai_khoan' => $taiKhoan,
+                'so_luong_danh_gia' => count($taiKhoan->danhGias),
+                'so_luong_don_hang' => count($taiKhoan->donHangs),
+            ];
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'data' => $taiKhoan
+                'data' => $data
             ], 200);
         } catch (\Exception $exception) {
             return response()->json([
@@ -139,11 +157,11 @@ class TaiKhoanController extends Controller
             ]);
 
             if ($request->vai_tros == []) {
-                $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+                $member = VaiTro::query()->where('ten_vai_tro', 'Khách hàng')->first();
                 if ($member == []) {
                     $member = VaiTro::updateOrCreate(
                         [
-                            'ten_vai_tro' => 'member',
+                            'ten_vai_tro' => 'Khách hàng',
                             'mo_ta' => 'Khách hàng'
                         ]
                     );
