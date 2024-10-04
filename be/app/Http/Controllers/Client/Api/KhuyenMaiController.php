@@ -77,6 +77,11 @@ class KhuyenMaiController extends Controller
     public function maKhuyenMaiHangThanhVien()
     {
 
+        $data = MaKhuyenMai::query()->with('hangThanhViens')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
     }
 
 
