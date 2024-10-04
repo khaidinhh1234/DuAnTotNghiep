@@ -115,8 +115,10 @@ class TaiKhoanController extends Controller
     {
         try {
             $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs', 'sanPhamYeuThich')->findOrFail($id);
+            $tongTienDonhangThanhCong = $taiKhoan->donHangs()->where('trang_thai_don_hang', 'Giao hàng thành công')->where('trang_thai_thanh_toan', 'Đã thanh toán')->sum('tong_tien_don_hang');
             $data = [
                 'tai_khoan' => $taiKhoan,
+                'tong_tien_don_hang' => (int)$tongTienDonhangThanhCong,
                 'so_luong_danh_gia' => count($taiKhoan->danhGias),
                 'so_luong_don_hang' => count($taiKhoan->donHangs),
                 'so_luong_yeu_thich' => count($taiKhoan->sanPhamYeuThich)
