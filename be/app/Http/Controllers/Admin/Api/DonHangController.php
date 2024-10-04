@@ -46,7 +46,8 @@ class DonHangController extends Controller
                 'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
                 'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
                 'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
-                'danhGias.user' // Lấy đánh giá của đơn hàng
+                'danhGias.user', // Lấy đánh giá của đơn hàng
+                'vanChuyen'
             ])->findOrFail($id);
 
             // Tính toán tổng số lượng và tổng tiền
