@@ -34,7 +34,7 @@ const Detail = ({ record }: any) => {
       ...item,
     };
   });
-
+console.log(record, "toan")
   // const donhang = data?.data;
   // console.log("data", donhang);
   // console.log("data", products);
