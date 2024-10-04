@@ -93,7 +93,9 @@ import Component from "@/pages/(dashboard)/test";
 import PageTransport from "@/pages/(dashboard)/transport/page";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
+import ShowUser from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import Collect from "@/pages/(dashboard)/transport/collect/Collect";
+
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 
@@ -203,7 +205,8 @@ const Router = () => {
           <Route
             path="users/khachhang/remote"
             element={<UserskhachangRemote />}
-          />
+          />{" "}
+          <Route path="users/khachhang/show/:id" element={<ShowUser />} />
           {/* tài khoản Nhân viên */}
           <Route path="users/nhanvien" element={<UsersAdminNhanvien />} />
           <Route path="users/nhanvien/add" element={<UsersNhanvienAdd />} />

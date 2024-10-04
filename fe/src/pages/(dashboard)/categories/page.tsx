@@ -55,7 +55,7 @@ const CategoriesAdmin: React.FC = () => {
     data?.data.map((category: ICategories, index: number) => ({
       key: category.id,
       ...category,
-      index: index + 1
+      index: index + 1,
     })) || [];
 
   const { mutate } = useMutation({
@@ -225,7 +225,8 @@ const CategoriesAdmin: React.FC = () => {
       width: "15%",
       key: "created_at",
       dataIndex: "created_at",
-      sorter: (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      sorter: (a: any, b: any) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       render: (text) => (text ? new Date(text).toLocaleDateString() : ""),
     },
     {
