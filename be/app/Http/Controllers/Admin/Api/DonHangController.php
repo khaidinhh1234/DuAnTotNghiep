@@ -284,24 +284,22 @@ class DonHangController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'data' => [
-                    [
-                        'tong_don_cho_xac_nhan' => $donChoXacNhan,
-                        'tong_tien' => $tongTienDonChoXacNhan
-                    ],
-                    [
-                        'tong_don_cho_thanh_toan' => $donChoThanhToan,
-                        'tong_tien' => $tongTienChuaTT
-                    ],
-                    [
-                        'tong_don_chua_giao_hang' => $donChuaGiaoHang,
-                        'tong_tien' => $tongTienDonChuaGiao
-                    ],
-                    [
-                        'tong_don_hoan_hang' => $donHoanHang,
-                        'tong_tien' => $tongTienHoan
-                    ]
+                'choXacNhan' => [
+                    'tong_don_cho_xac_nhan' => $donChoXacNhan,
+                    'tong_tien' => $tongTienDonChoXacNhan
                 ],
+                'choThanhToan' =>   [
+                    'tong_don_cho_thanh_toan' => $donChoThanhToan,
+                    'tong_tien' => $tongTienChuaTT
+                ],
+                'chuaGiaoHang' =>  [
+                    'tong_don_chua_giao_hang' => $donChuaGiaoHang,
+                    'tong_tien' => $tongTienDonChuaGiao
+                ],
+                'donHoanHang' =>   [
+                    'tong_don_hoan_hang' => $donHoanHang,
+                    'tong_tien' => $tongTienHoan
+                ]
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
