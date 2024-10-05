@@ -19,11 +19,12 @@ class ThongKeDoanhThuController extends Controller
     public function thongKeDoanhThuTuanTu(Request $request)
     {
         // Lấy tham số từ request: năm, quý, tháng, tuần
-        $nam = $request->nam;
-        $quy = $request->quy;
-        $thang = $request->thang;
-        $tuan = $request->tuan;
+        $nam = (int) $request->nam;
+        $quy = (int) $request->quy;
+        $thang = (int) $request->thang;
+        $tuan = (int) $request->tuan;
 
+        // Khởi tạo cấu trúc doanh thu
         $doanhThu = [
             'theo_nam' => ['quy' => [], 'doanh_thu' => []],
             'theo_quy' => ['thang' => [], 'doanh_thu' => []],
@@ -31,7 +32,7 @@ class ThongKeDoanhThuController extends Controller
             'theo_tuan' => ['ngay' => [], 'doanh_thu' => []],
         ];
 
-        // Nếu không có tham số nào
+        // Nếu không có tham số nào, mặc định lấy theo tuần hiện tại
         if (empty($nam) && empty($quy) && empty($thang) && empty($tuan)) {
             $now = now();
             $nam = $now->year;
@@ -39,17 +40,16 @@ class ThongKeDoanhThuController extends Controller
             $quy = ceil($thang / 3);
             $tuan = $now->weekOfYear;
 
-            // Tính khoảng time đầu cuối tuần
+            // Tính khoảng thời gian đầu cuối tuần
             $startOfWeek = $now->startOfWeek()->toDateString();
             $endOfWeek = $now->endOfWeek()->toDateString();
 
+            // Tính tổng doanh thu theo tuần
             $tongDoanhThuTuan = (float) DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
                 ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
                 ->sum('tong_tien_don_hang');
 
-            $doanhThu['tong_doanh_thu_tuan'] = $tongDoanhThuTuan;
-
-            //Sử dụng For thống kê doanh thu 7 ngày của tuần
+            // Thống kê doanh thu 7 ngày trong tuần
             for ($i = 1; $i <= 7; $i++) {
                 $ngayTrongTuan = now()->setISODate($nam, $tuan, $i)->toDateString();
                 $doanhThuTheoNgay = (float) DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
@@ -60,17 +60,18 @@ class ThongKeDoanhThuController extends Controller
                 $doanhThu['theo_tuan']['doanh_thu'][] = $doanhThuTheoNgay;
             }
 
-            return response()->json($doanhThu);
+            return response()->json(['tong_doanh_thu_tuan' => $tongDoanhThuTuan] + $doanhThu);
         }
 
+        // Query chung cho doanh thu
         $query = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC);
 
+        // Nếu có chọn năm
         if ($nam) {
             $query->whereYear('created_at', $nam);
             $tongDoanhThuNam = (float) $query->sum('tong_tien_don_hang');
-            $doanhThu['tong_doanh_thu_nam'] = $tongDoanhThuNam;
 
-            // Nếu không có quý, tháng, tuần, tính doanh thu theo từng quý của năm
+            // Nếu không có quý, tháng, tuần, chỉ trả về doanh thu theo năm
             if (!$quy && !$thang && !$tuan) {
                 for ($i = 1; $i <= 4; $i++) {
                     $doanhThuTheoQuy = (float) $query->whereRaw('QUARTER(created_at) = ?', [$i])
@@ -86,9 +87,8 @@ class ThongKeDoanhThuController extends Controller
         if ($quy && $nam) {
             $query->whereRaw('QUARTER(created_at) = ?', [$quy]);
             $tongDoanhThuQuy = (float) $query->sum('tong_tien_don_hang');
-            $doanhThu['tong_doanh_thu_quy'] = $tongDoanhThuQuy;
 
-            // Nếu không có tháng, tuần, tính doanh thu theo từng tháng của quý
+            // Nếu không có tháng, tuần, chỉ trả về doanh thu theo quý
             if (!$thang && !$tuan) {
                 $startMonth = ($quy - 1) * 3 + 1;
                 for ($i = $startMonth; $i < $startMonth + 3; $i++) {
@@ -105,13 +105,11 @@ class ThongKeDoanhThuController extends Controller
         if ($thang && $nam && $quy) {
             $query->whereMonth('created_at', $thang);
             $tongDoanhThuThang = (float) $query->sum('tong_tien_don_hang');
-            $doanhThu['tong_doanh_thu_thang'] = $tongDoanhThuThang;
 
-            // Nếu không có tuần, tính doanh thu theo từng tuần của tháng
+            // Nếu không có tuần, chỉ trả về doanh thu theo tháng
             if (!$tuan) {
                 $startOfMonth = now()->setDate($nam, $thang, 1)->startOfMonth();
                 $endOfMonth = now()->setDate($nam, $thang, 1)->endOfMonth();
-
                 $weeksInMonth = (int) ceil($endOfMonth->day / 7);
 
                 for ($i = 1; $i <= $weeksInMonth; $i++) {
@@ -150,6 +148,7 @@ class ThongKeDoanhThuController extends Controller
 
         return response()->json($doanhThu);
     }
+
 
 
 
