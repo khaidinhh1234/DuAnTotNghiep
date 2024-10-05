@@ -55,6 +55,7 @@ class DatabaseSeeder extends Seeder
         ];
         foreach ($hangThanhViens as $hangThanhVien) {
             HangThanhVien::query()->create([
+                'anh_hang_thanh_vien' => $hangThanhVien['anh_hang_thanh_vien'],
                 'ten_hang_thanh_vien' => $hangThanhVien['ten_hang_thanh_vien'],
                 'chi_tieu_toi_thieu' => $hangThanhVien['chi_tieu_toi_thieu'],
                 'chi_tieu_toi_da' => $hangThanhVien['chi_tieu_toi_da'],
