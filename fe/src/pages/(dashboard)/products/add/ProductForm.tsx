@@ -380,7 +380,7 @@ const ProductForm = ({
        <Form.Item
         label="Nội dung"
         name="noi_dung"
-        rules={[
+        rules={[  
           { required: true, message: "Nội dung sản phẩm bắt buộc phải nhập!" },
         ]}
       >
