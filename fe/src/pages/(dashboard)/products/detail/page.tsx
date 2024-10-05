@@ -197,13 +197,13 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
   const getStockStatus = (variant: ProductVariant) => {
     if (variant.so_luong_bien_the > 0) {
       return (
-        <span style={{ fontSize: "20px" }}>
-          kho: {variant.so_luong_bien_the}
+        <span style={{ fontSize: "16px" }}>
+          Số lượng sản phẩm: {variant.so_luong_bien_the}
         </span>
       );
     } else {
       return (
-        <span style={{ fontSize: "18px" }}>
+        <span style={{ fontSize: "16px" }}>
           Hết hàng
         </span>
       );
@@ -333,7 +333,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                   </div>
                 </div> */}
 
-                <div className="lg:col-span-6 col-span-12 mb-6">
+                {/* <div className="lg:col-span-6 col-span-12 mb-6">
                   <div className="bg-[#FAFAFB] w-full h-[400px] inline-flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
                     <Swiper
                       style={
@@ -413,7 +413,67 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                       ))}
                     </Swiper>
                   </div>
-                </div>
+                </div> */}
+    <div className="lg:col-span-6 col-span-12 mb-6">
+  <div className="bg-[#FAFAFB] w-full h-[600px] mb-4 rounded-2xl shadow shadow-zinc-300/60 overflow-hidden">
+    <Swiper
+      style={{
+        "--swiper-navigation-color": "#000000",
+        "--swiper-pagination-color": "#000000",
+      } as React.CSSProperties}
+      centeredSlides={true}
+      autoplay={{
+        delay: 2500,
+        disableOnInteraction: false,
+      }}
+      pagination={{
+        clickable: true,
+      }}
+      navigation={true}
+      thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
+      modules={[Autoplay, Pagination, Navigation, Thumbs, FreeMode]}
+      className="mySwiper2 w-full h-full swiper-with-hover"
+      loop={true}
+      spaceBetween={10}
+    >
+      {allImages.map((image, index) => (
+        <SwiperSlide key={index} className="flex items-center justify-center">
+          <img
+            src={image}
+            alt=""
+            onClick={() => handlePreview(image)}
+            className="w-full h-600px object-contain"
+          />
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </div>
+  <div className="w-full mx-auto">
+    <Swiper
+      onSwiper={(swiperInstance) => setThumbsSwiper(swiperInstance as any)}
+      loop={true}
+      spaceBetween={16}
+      slidesPerView={4}
+      freeMode={true}
+      watchSlidesProgress={true}
+      modules={[FreeMode, Navigation, Thumbs]}
+      className="mySwiper1"
+    >
+      {allImages.map((image, index) => (
+        <SwiperSlide key={index}>
+          <div className="aspect-square bg-[#F4F4F4] rounded-lg border border-[#F4F4F4] overflow-hidden">
+            <img
+              src={image}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  </div>
+</div>
+
                 <div className="lg:col-span-6 col-span-12 px-4 w-full">
                   <div className="product_detail_name">
                     <div className="flex justify-between mb-2">
@@ -433,7 +493,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                       <span className="px-2 text-[#A4A1AA] text-sm">
                         {averageRating}{" "}
                         <span className="px-[2px]">
-                          ({product.danh_gias.length} Reviews)
+                          ({product.danh_gias.length} đánh giá)
                         </span>
                       </span>
                     </div>
@@ -494,41 +554,54 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                       ))}
                     </div>
                   </div>
-                  <p style={{ marginTop: "10px" }}>
+                  <p style={{ marginTop: "20px" }}>
   {selectedVariant && getStockStatus(selectedVariant)}
 </p>
 
-                    
-                  {/* <div className="mt-8 flex gap-3">
-                    <div className="border rounded-lg border-black w-24 h-10 flex justify-center items-center shadow-md">
-                      <button className="py-1 pr-2">
-                        <i className="fa-solid fa-minus" />
-                      </button>
-                      <input
-                        type="number"
-                        id="numberInput"
-                        defaultValue={1}
-                        min={1}
-                        maxLength={2}
-                        className="w-8 h-8 border-0 focus:ring-0 focus:outline-none text-center"
-                      />
-                      <button className="py-1 pl-2">
-                        <i className="fa-solid fa-plus" />
-                      </button>
-                    </div>
-                    <button className="btn-black w-[200px] h-10 rounded-lg text-sm">
-                      Add to Cart
-                    </button>
-                    <button
-                      onClick={handleClickHeart}
-                      className={`border border-black w-10 h-10 rounded-lg flex items-center justify-center shadow-md ${isHeart ? "bg-red-600" : ""}`}
-                    >
-                      <i
-                        className={`fa-regular fa-heart text-xl ${isHeart ? "text-white" : "text-red-600"}`}
-                      />
-                    </button>
-                  </div> */}
+        
+                                <div className="space-y-4">
+  <div className="flex items-center space-x-2">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8h18M3 16h18M4 12h16" />
+    </svg>
+    <span className="text-gray-700 font-medium">Miễn phí vận chuyển:</span>
+    <span>Đơn hàng từ 498k</span>
+  </div>
+
+  <div className="flex items-center space-x-2">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3M8 21v-6m8-6v6m0 0v6m-8-6h8" />
+    </svg>
+    <span className="text-gray-700 font-medium">Giao hàng:</span>
+    <span>Từ 3 - 5 ngày trên cả nước</span>
+  </div>
+
+  <div className="flex items-center space-x-2">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7v7a2 2 0 002 2h2V7h-2a2 2 0 00-2-2H5a2 2 0 00-2 2v7a2 2 0 002 2h2V7H5z" />
+    </svg>
+    <span className="text-gray-700 font-medium">Miễn phí đổi trả:</span>
+    <span>Tại 267+ cửa hàng trong 15 ngày</span>
+  </div>
+
+  <div className="flex items-center space-x-2">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6H20M4 12h16m-7 6h7" />
+    </svg>
+    <span className="text-gray-700 font-medium">Sử dụng mã giảm giá:</span>
+    <span>Ở bước thanh toán</span>
+  </div>
+
+  <div className="flex items-center space-x-2">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12v2m0-8v2m4 4h-8" />
+    </svg>
+    <span className="text-gray-700 font-medium">Thông tin bảo mật và mã hoá</span>
+  </div>
+</div>
                 </div>
+  
+
               </div>
             </div>
           </section>
