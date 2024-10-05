@@ -263,55 +263,53 @@ class DonHangController extends Controller
     }
 
     public function layThongTinDon()
-{
-    try {
-        // Đơn hàng chưa xác nhận
-        $donChoXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->count();
-        $tongTienDonChoXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->sum('tong_tien_don_hang') ?? 0;
+    {
+        try {
+            // Đơn hàng chưa xác nhận
+            $donChoXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->count();
+            $tongTienDonChoXacNhan = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->sum('tong_tien_don_hang') ?? 0;
 
-        // Đơn hàng chưa thanh toán
-        $donChoThanhToan = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->count();
-        $tongTienChuaTT = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->sum('tong_tien_don_hang') ?? 0;
+            // Đơn hàng chưa thanh toán
+            $donChoThanhToan = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->count();
+            $tongTienChuaTT = (int) DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->sum('tong_tien_don_hang') ?? 0;
 
-        // Đơn hàng chưa giao hàng
-        $donChuaGiaoHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
-        $tongTienDonChuaGiao = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->sum('tong_tien_don_hang') ?? 0;
+            // Đơn hàng chưa giao hàng
+            $donChuaGiaoHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
+            $tongTienDonChuaGiao = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->sum('tong_tien_don_hang') ?? 0;
 
-        // Đơn hàng hoàn hàng
-        $donHoanHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
-        $tongTienHoan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->sum('tong_tien_don_hang') ?? 0;
+            // Đơn hàng hoàn hàng
+            $donHoanHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
+            $tongTienHoan = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->sum('tong_tien_don_hang') ?? 0;
 
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'data' => [
-                [
-                    'Tổng đơn hàng chưa xác nhận' => $donChoXacNhan,
-                    'Tổng tiền chờ xác nhận' => $tongTienDonChoXacNhan
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    [
+                        'tong_don_cho_xac_nhan' => $donChoXacNhan,
+                        'tong_tien' => $tongTienDonChoXacNhan
+                    ],
+                    [
+                        'tong_don_cho_thanh_toan' => $donChoThanhToan,
+                        'tong_tien' => $tongTienChuaTT
+                    ],
+                    [
+                        'tong_don_chua_giao_hang' => $donChuaGiaoHang,
+                        'tong_tien' => $tongTienDonChuaGiao
+                    ],
+                    [
+                        'tong_don_hoan_hang' => $donHoanHang,
+                        'tong_tien' => $tongTienHoan
+                    ]
                 ],
-                [
-                    'Tổng đơn chờ thanh toán' => $donChoThanhToan,
-                    'Tổng tiền chưa thanh toán' => $tongTienChuaTT
-                ],
-                [
-                    'Tổng đơn chưa giao hàng' => $donChuaGiaoHang,
-                    'Tổng tiền đơn chưa giao' => $tongTienDonChuaGiao
-                ],
-                [
-                    'Tổng đơn đã hoàn hàng' => $donHoanHang,
-                    'Tổng tiền hoàn' => $tongTienHoan
-                ]
-            ],
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'status_code' => 500,
-            'message' => 'Đã xảy ra lỗi khi lấy thông tin đơn hàng.',
-            'error' => $e->getMessage()
-        ], 500);
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy thông tin đơn hàng.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
-
-
 }
