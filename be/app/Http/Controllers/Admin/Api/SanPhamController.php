@@ -486,6 +486,17 @@ class SanPhamController extends Controller
         return response()->json(['message' => 'Cập nhật thẻ thành công cho các sản phẩm'], 200);
     }
 
+    public function bulkRestore(Request $request)
+    {
+        $validatedData = $request->validate([
+            'san_phams' => 'required|array',
+            'san_phams.*' => 'required|exists:san_phams,id',
+        ]);
+
+        SanPham::whereIn('id', $validatedData['san_phams'])->restore();
+
+        return response()->json(['message' => 'Khôi phục thành công cho các sản phẩm'], 200);
+    }
 
 
 }
