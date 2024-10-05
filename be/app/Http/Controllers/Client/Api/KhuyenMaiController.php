@@ -84,6 +84,23 @@ class KhuyenMaiController extends Controller
         ]);
     }
 
+    public function suDungMaKhuyenMai($maCode)
+    {
+        $maKhuyenMai = MaKhuyenMai::where('ma_code', $maCode)->firstOrFail();
+
+        if ($maKhuyenMai->trang_thai == 0) {
+            return response()->json(['message' => 'Mã khuyến mãi này đã hết hạn sử dụng.'], 400);
+        }
+
+        $maKhuyenMai->increment('so_luong_da_su_dung');
+
+        if ($maKhuyenMai->so_luong_da_su_dung >= $maKhuyenMai->so_luong) {
+            $maKhuyenMai->update(['trang_thai' => 0]);
+        }
+
+        return response()->json(['message' => 'Mã khuyến mãi đã được áp dụng thành công.']);
+    }
+
 
 
 
