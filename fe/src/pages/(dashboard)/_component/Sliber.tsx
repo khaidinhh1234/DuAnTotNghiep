@@ -9,6 +9,7 @@ import {
   Package,
   ShoppingCart,
   Star,
+  Tag,
   User
 } from "lucide-react";
 import React from "react";
@@ -52,6 +53,7 @@ const items: MenuItem[] = [
     getItem('Vận chuyển', '9', null, '/admin/orders/uncomfirmedorder'),
     // getItem('Thu hộ', '19', null, '/admin/orders/collect'),
   ]),
+  getItem("Mã khuyến mại", "21", <Tag />, "/admin/vouchers"),
   getItem("Tin tức", "20", <Newspaper />, "/admin/news"), 
   getItem("Tài khoản", "sub4", <User />, "", [
     getItem("Khách hàng", "11", null, "/admin/users/khachhang"),
