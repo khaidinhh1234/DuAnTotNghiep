@@ -1,4 +1,3 @@
-
 import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -68,7 +67,7 @@ const UsersAdminNhanvien: React.FC = () => {
 
   const user = data?.data
     ?.filter((item: any) =>
-      item?.vai_tros.some((role: any) => role.ten_vai_tro !== "member")
+      item?.vai_tros.some((role: any) => role.ten_vai_tro !== "Khách hàng")
     )
     .map((item: any, index: string) => ({
       ...item,
@@ -296,6 +295,11 @@ const UsersAdminNhanvien: React.FC = () => {
           <Link to={`/admin/users/nhanvien/edit/${record.key}`}>
             <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Chỉnh sửa
+            </Button>
+          </Link>{" "}
+          <Link to={`show/${record.key}`}>
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+              xem
             </Button>
           </Link>
         </Space>

@@ -49,10 +49,10 @@ const UsersAdminkhachhang: React.FC = () => {
       return res.data;
     },
   });
-  // console.log(data);
+  console.log(data);
   const user = data?.data
     ?.filter((item: any) =>
-      item?.vai_tros.some((item: any) => item.ten_vai_tro === "member")
+      item?.vai_tros?.some((item: any) => item?.ten_vai_tro === "Khách hàng")
     )
     .map((item: any, index: number) => {
       // console.log(item);
@@ -62,7 +62,7 @@ const UsersAdminkhachhang: React.FC = () => {
         index: index,
       };
     });
-  // console.log(user);
+  console.log(user);
   const mutate = useMutation({
     mutationFn: async (id: string) => {
       try {
