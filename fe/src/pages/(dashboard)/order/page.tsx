@@ -179,15 +179,16 @@ const OrderAdmin: React.FC = () => {
     },
     {
       title: "Khách hàng",
-      ...getColumnSearchProps("ten_nguoi_dat_hang"),
-      sorter: (a: any, b: any) =>
-        a.ten_nguoi_dat_hang.localeCompare(b.ten_nguoi_dat_hang),
-      onFilter: (value: boolean | React.Key, record: any) =>
-        record.ten_nguoi_dat_hang
-          .toLowerCase()
-          .includes(String(value).toLowerCase()),
-
-      dataIndex: "ten_nguoi_dat_hang",
+      render: (_, record: any) => {
+        console.log(record?.user?.ho);
+        return (
+          <div>
+            {record.ten_nguoi_dat_hang
+              ? record.ten_nguoi_dat_hang
+              : `${record?.user?.ho} ${record?.user?.ten}`}
+          </div>
+        );
+      },
     },
 
     {
@@ -217,9 +218,8 @@ const OrderAdmin: React.FC = () => {
                       : record.trang_thai_don_hang === "Giao hàng thành công"
                         ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
                         : record.trang_thai_don_hang === "Hủy hàng"
-                         ? "text-red-500" // Hủy đơn hàng: màu đ��
-                         : "text-green-500 "
-              )
+                          ? "text-red-500" // Hủy đơn hàng: màu đ��
+                          : "text-green-500 ")
             }
           >
             {record.trang_thai_don_hang === "Chờ xác nhận"
@@ -232,12 +232,9 @@ const OrderAdmin: React.FC = () => {
                     ? "Đang giao hàng"
                     : record.trang_thai_don_hang === "Giao hàng thành công"
                       ? "Đã giao hàng thành công"
-                  
                       : record.trang_thai_don_hang === "Hủy hàng"
                         ? "Hủy hàng"
-                        : "Hủy hàng"
-                      }
-                      
+                        : "Hủy hàng"}
           </div>
         );
       },
@@ -367,7 +364,7 @@ const OrderAdmin: React.FC = () => {
     },
   });
   const order: DataType[] | undefined = data?.data;
-  // console.log("order", order);
+  console.log("order", order);
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {

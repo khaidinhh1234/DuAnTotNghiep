@@ -44,7 +44,7 @@ const Detail = ({ record }: any) => {
   });
   // console.log(record, "toan");
   // const donhang = data?.data;
-  console.log("data", data?.data?.don_hang?.danh_gias);
+  const thongtin = data?.data.thong_tin;
 
   // console.log("data", products);
   // console.log(vanchuyen, "vanchuyen");
@@ -295,6 +295,9 @@ const Detail = ({ record }: any) => {
                         <div className="flex justify-between">
                           <p>Tổng khối lượng</p> <span> 0.00kg</span>
                         </div>
+                        <div className="flex justify-between">
+                          <p>Tiền thu hộ</p> <span> {}</span>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -315,9 +318,10 @@ const Detail = ({ record }: any) => {
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {
-                        data?.data?.tong_tien_san_pham
-                        // .toLocaleString()
+                      {data?.data?.tong_thanh_tien_san_pham.toLocaleString(
+                        "vi-VN"
+                      )
+                      // .toLocaleString()
                       }
                     </span>{" "}
                     VNĐ
@@ -328,9 +332,12 @@ const Detail = ({ record }: any) => {
                   <p className="text-base font-semibold">
                     -{" "}
                     <span>
-                      {data?.data?.gia_khuyen_mai
-                        ? data?.data?.gia_khuyen_mai
-                        : "1.029.007"}
+                      {data?.data?.don_hang?.so_tien_giam_gia
+                        ? data?.data?.don_hang?.so_tien_giam_gia.toLocaleString(
+                            "vi-VN"
+                          )
+                        : 0}{" "}
+                      VNĐ
                     </span>
                   </p>
                 </div>
@@ -423,21 +430,32 @@ const Detail = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
               <hr />
               <h5 className="text-blue-600 my-2">
-                {record.ten_nguoi_dat_hang}
+                {record.ten_nguoi_dat_hang
+                  ? record.ten_nguoi_dat_hang
+                  : thongtin.ho + " " + thongtin.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
-              <h5 className="text-black my-2">{record.ten_nguoi_dat_hang}</h5>
+              <h5 className="text-black my-2">
+                {" "}
+                {record.ten_nguoi_dat_hang
+                  ? record.ten_nguoi_dat_hang
+                  : thongtin.ho + " " + thongtin.ten}
+              </h5>
               <p className="text-blue-800 font-semibold">
                 Số điện thoại :
                 <span className="text-black font-medium">
-                  {record.so_dien_thoai_nguoi_dat_hang}
+                  {record.so_dien_thoai_nguoi_dat_hang
+                    ? record.so_dien_thoai_nguoi_dat_hang
+                    : thongtin.so_dien_thoai}
                 </span>
               </p>
               <h5 className="text-blue-800">
                 Địa chỉ Giao hàng: <br />
                 <span className="text-black">
-                  {record?.dia_chi_nguoi_dat_hang}
+                  {record?.dia_chi_nguoi_dat_hang
+                    ? record?.dia_chi_nguoi_dat_hang
+                    : thongtin.dia_chi}
                 </span>
               </h5>
               <p className="text-blue-800 font-semibold">
@@ -478,7 +496,8 @@ const Detail = ({ record }: any) => {
                         <div className="text-blue-800 mx-4">
                           <p> {item?.mo_ta}</p>
                         </div>
-                        <button>Trả lời</button>
+                        <button className="mx-2">Trả lời</button>
+                        <button>Ẩn</button>
                       </div>
                     )
                   )}
