@@ -201,4 +201,33 @@ class VanChuyenController extends Controller
         }
     }
 
+    public function giaoHangThanhCong()
+    {
+        try {
+            $giaoHangThanhCongs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTC)->count();
+            $tongTiens = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTC)
+                ->with('donHang')
+                ->get()
+                ->sum(function ($vanChuyen) {
+                    return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
+                });
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'Tổng đơn giao hàng thành công' => $giaoHangThanhCongs,
+                    'Tổng tiền' => $tongTiens
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng chưa xác thực.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

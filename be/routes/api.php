@@ -181,6 +181,7 @@ Route::middleware([])
         Route::get('cho-lay-hang', [VanChuyenController::class, 'choLayHang']);
         Route::get('dang-giao-hang', [VanChuyenController::class, 'dangGiaoHang']);
         Route::get('giao-hang-that-bai', [VanChuyenController::class, 'giaoHangThatBai']);
+        Route::get('giao-hang-thanh-cong', [VanChuyenController::class, 'giaoHangThanhCong']);
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
