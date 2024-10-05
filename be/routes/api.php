@@ -26,6 +26,7 @@ use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
+use App\Http\Controllers\Client\Api\DonHangClientController;
 use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\LienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
@@ -111,6 +112,10 @@ Route::middleware([])
 
         // Liên hệ
         Route::post('lienhe', [LienHeController::class, 'lienHe']);
+
+        //Thanh toán
+        //Thanh toán Momo
+        Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
 //'auth:sanctum', 'auth.checkrole'
@@ -169,7 +174,7 @@ Route::middleware([])
 
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
-        Route::get('/vanchuyen/{id}',[VanChuyenController::class, 'show'])->name('vanchuyen.show');
+        Route::get('/vanchuyen/{id}', [VanChuyenController::class, 'show'])->name('vanchuyen.show');
         Route::put('/vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
 
         //Danh Mục Tin Tức
