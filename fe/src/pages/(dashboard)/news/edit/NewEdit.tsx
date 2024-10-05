@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Form, Input, Select, Button, message } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -13,7 +13,9 @@ const NewEdit = () => {
   const nav = useNavigate();
   const [form] = Form.useForm();
   const { id } = useParams();
+  const [editorContent, setEditorContent] = useState("");
 
+  // Fetch danh mục tin tức và tài khoản
   const {
     data: categoriesAndUsers,
     error: fetchError,
@@ -37,6 +39,7 @@ const NewEdit = () => {
     },
   });
 
+  // Fetch dữ liệu tin tức
   const {
     data: newsData,
     error: newsError,
@@ -53,25 +56,38 @@ const NewEdit = () => {
     },
   });
 
+  // Mutation để cập nhật dữ liệu
   const { mutate } = useMutation({
     mutationFn: async (news: INew) => {
       return await instance.put(`/tintuc/${id}`, news);
     },
     onSuccess: () => {
-      message.success("Thao tác thành công");
+      message.success("Cập nhật tin tức thành công");
       form.resetFields();
       nav("/admin/news");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       message.error(error.message);
     },
   });
 
+  // Hàm cập nhật nội dung từ Editor
+  const updateContent = useCallback((content: string) => {
+    setEditorContent(content);
+    form.setFieldsValue({
+      noi_dung: content,
+    });
+  }, [form]);
+
+  // Hàm xử lý khi submit form
   const onFinish = (values: any) => {
     const newsData: INew = {
       ...values,
-      user_id: values.user_id, // Ghi nhận user_id từ form
+      user_id: values.user_id,
+      noi_dung: editorContent,
     };
+
+    console.log("Dữ liệu gửi đi:", newsData);
     mutate(newsData);
   };
 
@@ -94,6 +110,14 @@ const NewEdit = () => {
   if (!newsData) {
     return <div>Không tìm thấy dữ liệu tin tức.</div>;
   }
+
+  // Cập nhật nội dung form khi nhận được newsData mới
+  useEffect(() => {
+    if (newsData) {
+      form.setFieldsValue(newsData.data);
+      setEditorContent(newsData.data.noi_dung); // Cập nhật nội dung editor
+    }
+  }, [newsData, form]);
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -125,7 +149,7 @@ const NewEdit = () => {
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
               style={{ maxWidth: 1000 }}
-              initialValues={newsData.data} // Cập nhật cách lấy dữ liệu khởi tạo
+              initialValues={newsData.data}
               className="mx-10 my-5"
               autoComplete="off"
               onFinish={onFinish}
@@ -134,9 +158,7 @@ const NewEdit = () => {
                 <Form.Item
                   label="Tiêu đề"
                   name="tieu_de"
-                  rules={[
-                    { required: true, message: "Tiêu đề bắt buộc phải nhập!" },
-                  ]}
+                  rules={[{ required: true, message: "Tiêu đề bắt buộc phải nhập!" }]}
                 >
                   <Input placeholder="Nhập tiêu đề tin tức" />
                 </Form.Item>
@@ -146,16 +168,10 @@ const NewEdit = () => {
                 <Form.Item
                   label="Tài khoản"
                   name="user_id"
-                  rules={[
-                    { required: true, message: "Vui lòng chọn tài khoản" },
-                  ]}
+                  rules={[{ required: true, message: "Vui lòng chọn tài khoản" }]}
                 >
-                  <Select
-                    placeholder="Vui lòng chọn tài khoản"
-                    className="w-full"
-                  >
-                    {Array.isArray(categoriesAndUsers?.users) &&
-                    categoriesAndUsers.users.length > 0 ? (
+                  <Select placeholder="Vui lòng chọn tài khoản" className="w-full">
+                    {Array.isArray(categoriesAndUsers?.users) && categoriesAndUsers.users.length > 0 ? (
                       categoriesAndUsers.users.map((user: any) => (
                         <Option key={user.id} value={user.id}>
                           {user.ho} {user.ten}
@@ -173,8 +189,7 @@ const NewEdit = () => {
                 rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
               >
                 <Select placeholder="Vui lòng chọn danh mục" className="w-full">
-                  {Array.isArray(categoriesAndUsers?.categories) &&
-                  categoriesAndUsers.categories.length > 0 ? (
+                  {Array.isArray(categoriesAndUsers?.categories) && categoriesAndUsers.categories.length > 0 ? (
                     categoriesAndUsers.categories.map((newcategory: any) => (
                       <Option key={newcategory.id} value={newcategory.id}>
                         {newcategory.ten_danh_muc_tin_tuc}
@@ -189,12 +204,7 @@ const NewEdit = () => {
                 <Form.Item
                   label="Nội dung"
                   name="noi_dung"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Nội dung tin tức bắt buộc phải nhập!",
-                    },
-                  ]}
+                  rules={[{ required: true, message: "Nội dung tin tức bắt buộc phải nhập!" }]}
                 >
                   <Editor
                     apiKey="4co2z7i0ky0nmudlm5lsoetsvp6g3u4110d77s2cq143a9in"
@@ -211,31 +221,14 @@ const NewEdit = () => {
                         { value: "First.Name", title: "First Name" },
                         { value: "Email", title: "Email" },
                       ],
-                      setup: (editor) => {
-                        const updateContent = () => {
-                          const content = editor.getContent();
-                          form.setFieldsValue({
-                            noi_dung: content || "", // Cập nhật nội dung hoặc đặt chuỗi rỗng khi không có nội dung
-                          });
-                        };
-
-                        // Cập nhật nội dung khi có thay đổi
-                        editor.on("Change", updateContent);
-
-                        // Cập nhật khi người dùng thoát khỏi trường soạn thảo
-                        editor.on("Blur", updateContent);
-                      },
                     }}
-                   
+                    onEditorChange={(content) => updateContent(content)}
+                    value={editorContent} // Đặt giá trị cho editorContent
                   />
                 </Form.Item>
               </div>
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="px-3 py-2 bg-black text-white rounded-lg"
-                >
+              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button type="primary" htmlType="submit">
                   Cập nhật
                 </Button>
               </Form.Item>
