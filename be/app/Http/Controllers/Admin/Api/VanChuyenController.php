@@ -158,20 +158,20 @@ class VanChuyenController extends Controller
                 'status_code' => 200,
                 'data' => [
                     [
-                        'Tổng đơn chờ lấy hàng' => $choLayHangs,
-                        'Tổng tiền' => $tongTienChoLayHangs
+                        'tong_don_cho_lay_hang' => $choLayHangs,
+                        'tong_tien' => $tongTienChoLayHangs
                     ],
                     [
-                        'Tổng đơn đang giao hàng' => $dangGiaoHangs,
-                        'Tổng tiền' => $tongTienDangGiaoHangs
+                        'tong_don_dang_giao_hang' => $dangGiaoHangs,
+                        'tong_tien' => $tongTienDangGiaoHangs
                     ],
                     [
-                        'Tổng đơn giao hàng không thành công' => $giaoHangThatBais,
-                        'Tổng tiền' => $tongTienGiaoHangThatBais
+                        'tong_don_giao_hang_that_bai' => $giaoHangThatBais,
+                        'tong_tien' => $tongTienGiaoHangThatBais
                     ],
                     [
-                        'Tổng đơn giao hàng thành công' => $giaoHangThanhCongs,
-                        'Tổng tiền' => $tongTienGiaoHangThanhCongs
+                        'tong_don_giao_hang_thanh_cong' => $giaoHangThanhCongs,
+                        'tong_tien' => $tongTienGiaoHangThanhCongs
                     ]
                 ],
             ], 200);
