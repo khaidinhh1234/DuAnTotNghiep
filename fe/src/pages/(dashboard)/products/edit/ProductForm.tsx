@@ -349,14 +349,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 { value: "Email", title: "Email" },
               ],
             }}
+            // onEditorChange={(content) => {
+            //   // Cập nhật nội dung ngay khi có sự thay đổi
+            //   setData(content);
+            //   form.setFieldsValue({
+            //     noi_dung: content, // Cập nhật giá trị cho trường noi_dung
+            //   });
+            // }}
+            // value={form.getFieldValue("noi_dung")} // Đảm bảo giá trị đồng bộ với form
             onEditorChange={(content, editor) => {
-              // Cập nhật nội dung ngay khi có sự thay đổi
-              setData(content);
-              form.setFieldsValue({
-                noi_dung: content, // Cập nhật giá trị cho trường noi_dung
-              });
+              updateContent(content);
             }}
-            value={form.getFieldValue("noi_dung")} // Đảm bảo giá trị đồng bộ với form
           />
         </Form.Item>
       </div>
