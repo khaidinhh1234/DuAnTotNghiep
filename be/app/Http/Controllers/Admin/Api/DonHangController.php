@@ -304,4 +304,26 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+
+    public function donChuaGiaoHang() {
+        try {
+            $donChuaGiaoHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
+            $tongTienDonChuaGiaos = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->sum('tong_tien_don_hang');
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'Tổng đơn chưa giao hàng' => $donChuaGiaoHangs,
+                    'Tổng tiền đơn chưa giao'=> $tongTienDonChuaGiaos
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng chưa xác thực.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
