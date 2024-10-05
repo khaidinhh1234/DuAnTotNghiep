@@ -184,6 +184,7 @@ Route::middleware([])
         Route::get('cho-xac-nhan', [DonHangController::class, 'donChoXacNhan']);
         Route::get('cho-thanh-toan', [DonHangController::class,'donChuaThanhToan']);
         Route::get('don-chua-giao-hang', [DonHangController::class, 'donChuaGiaoHang']);
+        Route::get('don-hoan-hang', [DonHangController::class, 'donHoanHang']);
 
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
