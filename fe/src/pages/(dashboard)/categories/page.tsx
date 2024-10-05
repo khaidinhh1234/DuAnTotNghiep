@@ -51,10 +51,9 @@ const CategoriesAdmin: React.FC = () => {
   });
 
   const dataSource =
-    data?.data.map((category: ICategories, index: number) => ({
+    data?.data.map((category: ICategories) => ({
       key: category.id,
       ...category,
-      index: index + 1,
     })) || [];
 
   const { mutate } = useMutation({
@@ -177,7 +176,7 @@ const CategoriesAdmin: React.FC = () => {
       title: "STT",
       width: "10%",
       key: "id",
-      dataIndex: "index",
+      dataIndex: "id",
     },
     {
       title: "Tên danh mục",

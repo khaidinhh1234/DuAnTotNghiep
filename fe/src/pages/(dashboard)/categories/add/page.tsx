@@ -11,8 +11,6 @@ const CategoriesAdd = () => {
   const [form] = Form.useForm();
   const nav = useNavigate();
   const [allCategories, setAllCategories] = useState<ICategories[]>([]);
-
-  // Fetch all categories
   const { data: allCategoriesData } = useQuery({
     queryKey: ["allCategories"],
     queryFn: async () => {
@@ -23,7 +21,6 @@ const CategoriesAdd = () => {
 
   useEffect(() => {
     if (allCategoriesData) {
-      // Set all categories without filtering
       setAllCategories(allCategoriesData.data);
     }
   }, [allCategoriesData]);
