@@ -144,6 +144,10 @@ const UserskhachhangEdit = () => {
                       message: "Tên của khách hàng bắt buộc phải nhập!",
                     },
                     {
+                      pattern: /^[A-Z].*$/,
+                      message: "Chữ cái đầu tiên phải viết hoa!",
+                    },
+                    {
                       pattern: /^[^\s]+(\s+[^\s]+)*$/,
                       message: "Vui lòng nhập tên không chứa ký tự trắng!",
                     },
