@@ -218,19 +218,21 @@ const ProductForm: React.FC<ProductFormProps> = ({
       console.log("Setting initial values in ProductForm:", initialValues);
       form.setFieldsValue({
         ...initialValues,
-        noi_dung: initialValues.noi_dung || '',
+        noi_dung: initialValues.noi_dung || "",
       });
     }
   }, [initialValues, form]);
-  
 
-  const updateContent = useCallback((content: string) => {
-    setData(content);
-    form.setFieldsValue({
-      noi_dung: content,
-    });
-  }, [form, setData]);
-  
+  const updateContent = useCallback(
+    (content: string) => {
+      setData(content);
+      form.setFieldsValue({
+        noi_dung: content,
+      });
+    },
+    [form, setData]
+  );
+
   return (
     <Form
       form={form}
@@ -244,12 +246,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
       onValuesChange={onValuesChange}
       initialValues={initialValues}
     >
-    <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-2 gap-5">
         <Form.Item
           label="Tên sản phẩm"
           name="ten_san_pham"
           rules={[
             { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
+            {
+              pattern: /^[A-Z].*$/,
+              message: "Chữ cái đầu tiên phải viết hoa!",
+            },
           ]}
         >
           <Input placeholder="Nhập tên sản phẩm" />
@@ -295,19 +301,18 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </Form.Item>
 
         <Form.Item
-  label="Mã sản phẩm"
-  name="ma_san_pham"
-  rules={[
-    { required: true, message: "Mã sản phẩm bắt buộc phải nhập!" },
-  ]}
->
-  <Input 
-    placeholder="Nhập mã sản phẩm" 
-    disabled={true} 
-    style={{ backgroundColor: '#f5f5f5', color: '#666' }}
-  />
-</Form.Item>
-
+          label="Mã sản phẩm"
+          name="ma_san_pham"
+          rules={[
+            { required: true, message: "Mã sản phẩm bắt buộc phải nhập!" },
+          ]}
+        >
+          <Input
+            placeholder="Nhập mã sản phẩm"
+            disabled={true}
+            style={{ backgroundColor: "#f5f5f5", color: "#666" }}
+          />
+        </Form.Item>
       </div>
 
       <div className="grid grid-cols-2 gap-5">

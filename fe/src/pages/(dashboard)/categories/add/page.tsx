@@ -49,8 +49,8 @@ const CategoriesAdd = () => {
 
       const categoryData: ICategories = {
         ...values,
-        cha_id: values.category || null, 
-        anh_danh_muc: imageUrl, 
+        cha_id: values.category || null,
+        anh_danh_muc: imageUrl,
       };
       mutate(categoryData);
     } catch (error) {
@@ -62,7 +62,8 @@ const CategoriesAdd = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục /<span className="font-semibold px-px"> Thêm danh mục</span>
+          Quản trị / Danh mục /
+          <span className="font-semibold px-px"> Thêm danh mục</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
@@ -98,6 +99,10 @@ const CategoriesAdd = () => {
                   {
                     pattern: /^[^\s]+(\s+[^\s]+)*$/,
                     message: "Vui lòng không chứa ký tự trắng!",
+                  },
+                  {
+                    pattern: /^[A-Z].*$/,
+                    message: "Chữ cái đầu tiên phải viết hoa!",
                   },
                 ]}
               >

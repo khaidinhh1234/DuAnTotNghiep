@@ -64,87 +64,139 @@ const PageTransport = () => {
             <Option value="tuantruoc">Tuần trước</Option>
           </Select>
         </Col>
-        <Col>
-          <Checkbox onChange={handleAutoUpdateChange}>
-            Cập nhật liên tục <InfoCircleOutlined />
-          </Checkbox>
-        </Col>
       </Row>
 
-      {/* Phần nội dung chính */}
-      <div style={{ marginTop: 20 }}>
-        {/* Đơn hàng */}
-        <Row gutter={[16, 16]}>
-          <Col span={24}>
-            <Title level={4}>Đơn hàng</Title>
-          </Col>
-          <Col span={8}>
-            {renderCard(
-              "Đơn chưa xác thực",
-              "0",
-              "0",
-              "black",
-              false,
-              "/admin/orders/uncomfirmedorder"
-            )}
-          </Col>
-          <Col span={8}>
-            {renderCard(
-              "Chờ thanh toán",
-              "1",
-              "1,300,000",
-              "black",
-              false,
-              "#"
-            )}
-          </Col>
-          <Col span={8}>
-            {renderCard(
-              "Chưa giao hàng",
-              "2",
-              "1,526,000",
-              "black",
-              false,
-              "#"
-            )}
-          </Col>
-        </Row>
+      <div>
+        <div style={{ marginTop: 20 }}>
+          {/* Đơn hàng */}
+          <div className="bg-white  px-7 py-7 rounded-lg my-5">
+            <div className="flex items-center ">
+              <h1 className=" font-semibold md:text-2xl">
+                <i className="fa-regular fa-cart-shopping text-[#63E6BE] mr-3"></i>
+                Đơn hàng{" "}
+              </h1>
+            </div>
+            <div className="grid grid-cols-3 gap-10">
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Đơn chưa xác nhận
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-blue-600">
+                  0
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 0 đ</span>
+              </div>
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Chờ thanh toán
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-blue-600">
+                  1
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 10,023,000 đ</span>
+              </div>
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Chưa giao hàng
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-blue-600">
+                  2
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 1,420,023đ</span>
+              </div>
+            </div>
+          </div>
 
-        {/* Giao hàng */}
-        <Row gutter={[16, 16]} style={{ marginTop: 20 }}>
-          <Col span={24}>
-            <Title level={4}>Giao hàng</Title>
-          </Col>
-          <Col span={8}>
-            {renderCard("Chờ lấy hàng", "0", "0", "black", false, "#")}
-          </Col>
-          <Col span={8}>
-            {renderCard("Đang giao hàng", "0", "0", "black", false, "#")}
-          </Col>
-          <Col span={8}>
-            {renderCard("Không gặp khách", "0 đơn", "0", "red", true, "#")}
-          </Col>
-        </Row>
+          {/* Giao hàng */}
+          <div className="bg-white  px-7 py-7 rounded-lg my-5">
+            <div className="flex items-center ">
+              <h1 className=" font-semibold md:text-2xl">
+                <i
+                  className="fa-regular fa-truck mr-3"
+                  style={{ color: "#ffae00" }}
+                ></i>
+                Giao hàng
+              </h1>
+            </div>
+            <div className="grid grid-cols-3 gap-10">
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Chờ lấy hàng
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-blue-600">
+                  0
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 0 đ</span>
+              </div>
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Đang giao hàng
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-blue-600">
+                  1
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 10,023,000 đ</span>
+              </div>
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Giao hàng thất bại
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-red-600">
+                  2
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 1,420,023đ</span>
+              </div>
+            </div>
+          </div>
 
-        {/* Hoàn hàng */}
-        <Row gutter={[16, 16]} style={{ marginTop: 20 }}>
-          <Col span={24}>
-            <Title level={4}>Hoàn hàng</Title>
-          </Col>
-          <Col span={8}>
-            {renderCard("Chờ chuyển hoàn", "0", "0", "black", false, "#")}
-          </Col>
-          <Col span={8}>
-            {renderCard(
-              "Đã chuyển hoàn, chưa nhập kho",
-              "0",
-              "0",
-              "black",
-              false,
-              "#"
-            )}
-          </Col>
-        </Row>
+          {/* Hoàn hàng */}
+          <div className="bg-white  px-7 py-7 rounded-lg my-5 ">
+            <div className="flex items-center ">
+              <h1 className=" font-semibold md:text-2xl">
+                <i className="fa-regular fa-cart-shopping text-[#63E6BE] mr-3"></i>
+                Đơn hàng{" "}
+              </h1>
+            </div>
+            <div className="grid grid-cols-3 gap-10">
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Đơn chưa xác nhận
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-blue-600">
+                  0
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 0 đ</span>
+              </div>
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Chờ thanh toán
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-blue-600">
+                  1
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 10,023,000 đ</span>
+              </div>
+              <div className="col-span-1 border p-3 text-center rounded-lg">
+                <h3 className="text-lg font-semibold text-slate-700">
+                  Chưa giao hàng
+                </h3>
+                <span className="text-2xl font-semibold py-1 text-blue-600">
+                  2
+                </span>
+                <br />
+                <span className="text-xl text-slate-600"> 1,420,023đ</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

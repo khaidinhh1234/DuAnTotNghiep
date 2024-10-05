@@ -117,6 +117,10 @@ const UserskhachhangAdd = () => {
                       message: "Họ của khách hàng bắt buộc phải nhập!",
                     },
                     {
+                      pattern: /^[A-Z].*$/,
+                      message: "Chữ cái đầu tiên phải viết hoa!",
+                    },
+                    {
                       pattern: /^[^\s]+(\s+[^\s]+)*$/,
                       message: "Vui lòng nhập họ không chứa ký tự trắng!",
                     },
@@ -131,6 +135,10 @@ const UserskhachhangAdd = () => {
                     {
                       required: true,
                       message: "Tên của khách hàng bắt buộc phải nhập!",
+                    },
+                    {
+                      pattern: /^[A-Z].*$/,
+                      message: "Chữ cái đầu tiên phải viết hoa!",
                     },
                     {
                       pattern: /^[^\s]+(\s+[^\s]+)*$/,
@@ -319,7 +327,7 @@ const UserskhachhangAdd = () => {
               <Form.Item>
                 <button
                   type="submit"
-                   className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+                  className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 >
                   {isPending ? (
                     <>

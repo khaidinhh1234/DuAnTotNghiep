@@ -99,6 +99,10 @@ const Size = () => {
                     message: "Tên kích thước không được quá 50 ký tự",
                   },
                   {
+                    pattern: /^[A-Z].*$/,
+                    message: "Chữ cái  phải viết hoa!",
+                  },
+                  {
                     pattern: /^[^\s]+(\s+[^\s]+)*$/,
                     message: "Vui lòng nhập họ không chứa ký tự trắng!",
                   },
