@@ -166,6 +166,7 @@ Route::middleware([])
         Route::put('/donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
         Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
+        Route::get('cho-xac-nhan', [DonHangController::class, 'donChoXacNhan'])->name('cho-xac-nhan');
 
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
