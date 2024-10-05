@@ -1,12 +1,17 @@
+import { IEvaluate } from "@/common/types/evaluate";
 import instance from "@/configs/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Modal, Rate } from "antd";
+import { Button, Input, message, Modal, Rate } from "antd";
 import { useState } from "react";
 
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentEvaluate, setCurrentEvaluate] = useState<IEvaluate | null>(
+    null
+  );
+  const [phan_hoi, setphan_hoi] = useState<{ [key: number]: string }>({});
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -36,7 +41,33 @@ const Detail = ({ record }: any) => {
   //     return response.data;
   //   },
   // });
-
+  // const { data: danhgia  } = useQuery({
+  //   queryKey: ["danhgiasanpham"],
+  //   queryFn: async () => {
+  //     const response = await instance.get(`/danhsachdanhgia`);
+  //     return response.data;
+  //   },
+  // });
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      phan_hoi,
+    }: {
+      id: number | string;
+      phan_hoi: string;
+    }) => {
+      const response = await instance.post(`/danhsachdanhgia/${id}`, {
+        phan_hoi,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ORDER_DETAIL"] });
+    },
+    onError: (error) => {
+      console.error("Error:", error);
+    },
+  });
   const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
@@ -92,6 +123,31 @@ const Detail = ({ record }: any) => {
   // if (isLoading) {
   //   return <div>Loading...</div>;
   // }
+
+  const showModal = (record: IEvaluate) => {
+    setCurrentEvaluate(record);
+    setIsModalOpen(true);
+  };
+  const handlephan_hoiChange = (id: number, value: string) => {
+    setphan_hoi((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+  const handleOk = () => {
+    if (currentEvaluate && phan_hoi[currentEvaluate.id as number]) {
+      mutation.mutate({
+        id: currentEvaluate.id,
+        phan_hoi: phan_hoi[currentEvaluate.id as number],
+      });
+    }
+    setIsModalOpen(false);
+  };
+
+  const handleCancel2 = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
       {" "}
@@ -123,36 +179,34 @@ const Detail = ({ record }: any) => {
                 </p>{" "}
               </div>{" "}
               <div
-                className={`font-bold text-[15px] ${
-                  record.trang_thai_don_hang === "Chờ xác nhận"
-                    ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
-                    : record.trang_thai_don_hang === "Đã xác nhận"
-                      ? "text-orange-500" // Đã xác nhận: màu cam đậm
-                      : record.trang_thai_don_hang === "Đang xử lý"
-                        ? "text-blue-500" // Đang xử lý: màu xanh dương
-                        : record.trang_thai_don_hang === "Đang giao hàng"
-                          ? "text-purple-500" // Đang giao hàng: màu tím
-                          : record.trang_thai_don_hang ===
-                              "Đã giao hàng thành công"
-                            ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
-                            : "text-red-500" // Các trạng thái khác: màu đỏ
-                }`}
+                className={`font-bold text-[15px] ${record.trang_thai_don_hang === "Chờ xác nhận"
+                  ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
+                  : record.trang_thai_don_hang === "Đã xác nhận"
+                    ? "text-orange-500" // Đã xác nhận: màu cam đậm
+                    : record.trang_thai_don_hang === "Đang xử lý"
+                      ? "text-blue-500" // Đang xử lý: màu xanh dương
+                      : record.trang_thai_don_hang === "Đang giao hàng"
+                        ? "text-purple-500" // Đang giao hàng: màu tím
+                        : record.trang_thai_don_hang ===
+                          "Đã giao hàng thành công"
+                          ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
+                          : "text-red-500" // Các trạng thái khác: màu đỏ
+                  }`}
               >
                 <div
-                  className={`${
-                    record.trang_thai_don_hang === "Chờ xác nhận"
-                      ? "bg-blue-400" // Chờ xác nhận: màu vàng nhạt
-                      : record.trang_thai_don_hang === "Đã xác nhận"
-                        ? "bg-green-500" // Đã xác nhận: màu cam đậm
-                        : record.trang_thai_don_hang === "Đang xử lý"
-                          ? "bg-yellow-500" // Đang xử lý: màu xanh dương
-                          : record.trang_thai_don_hang === "Đang giao hàng"
-                            ? "bg-purple-500" // Đang giao hàng: màu tím
-                            : record.trang_thai_don_hang ===
-                                "Giao hàng thành công"
-                              ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
-                              : "bg-red-500" // Các trạng thái khác: màu đỏ
-                  } text-white px-2 py-1 font-bold rounded-lg`}
+                  className={`${record.trang_thai_don_hang === "Chờ xác nhận"
+                    ? "bg-blue-400" // Chờ xác nhận: màu vàng nhạt
+                    : record.trang_thai_don_hang === "Đã xác nhận"
+                      ? "bg-green-500" // Đã xác nhận: màu cam đậm
+                      : record.trang_thai_don_hang === "Đang xử lý"
+                        ? "bg-yellow-500" // Đang xử lý: màu xanh dương
+                        : record.trang_thai_don_hang === "Đang giao hàng"
+                          ? "bg-purple-500" // Đang giao hàng: màu tím
+                          : record.trang_thai_don_hang ===
+                            "Giao hàng thành công"
+                            ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
+                            : "bg-red-500" // Các trạng thái khác: màu đỏ
+                    } text-white px-2 py-1 font-bold rounded-lg`}
                 >
                   {record.trang_thai_don_hang === "Chờ xác nhận"
                     ? "Chờ xác nhận" // Chờ xác nhận: màu vàng nhạt
@@ -163,7 +217,7 @@ const Detail = ({ record }: any) => {
                         : record.trang_thai_don_hang === "Đang giao hàng"
                           ? "Đang giao hàng" // Đang giao hàng: màu tím
                           : record.trang_thai_don_hang ===
-                              "Giao hàng thành công"
+                            "Giao hàng thành công"
                             ? "Giao hàng thành công" // Đã giao hàng thành công: màu xanh lá
                             : "Đã hủy"}
                 </div>
@@ -259,21 +313,20 @@ const Detail = ({ record }: any) => {
                         <div className="flex justify-between">
                           <p>Trạng thái vận chuyển</p>{" "}
                           <span
-                            className={`   ${
-                              record.trang_thai_don_hang == "Chờ xác nhận"
-                                ? "bg-blue-500"
-                                : record.trang_thai_don_hang == "Đã xác nhận"
-                                  ? "bg-green-500"
-                                  : record.trang_thai_don_hang == "Đang xử lý"
-                                    ? "bg-yellow-500"
+                            className={`   ${record.trang_thai_don_hang == "Chờ xác nhận"
+                              ? "bg-blue-500"
+                              : record.trang_thai_don_hang == "Đã xác nhận"
+                                ? "bg-green-500"
+                                : record.trang_thai_don_hang == "Đang xử lý"
+                                  ? "bg-yellow-500"
+                                  : record.trang_thai_don_hang ==
+                                    "Đang giao hàng"
+                                    ? "bg-purple-500"
                                     : record.trang_thai_don_hang ==
-                                        "Đang giao hàng"
-                                      ? "bg-purple-500"
-                                      : record.trang_thai_don_hang ==
-                                          "Giao hàng thành công"
-                                        ? "bg-green-500"
-                                        : "bg-red-500"
-                            }
+                                      "Giao hàng thành công"
+                                      ? "bg-green-500"
+                                      : "bg-red-500"
+                              }
                         } text-white px-2 font-bold rounded-lg h-6`}
                           >
                             {" "}
@@ -284,10 +337,10 @@ const Detail = ({ record }: any) => {
                                 : record.trang_thai_don_hang == "Đang xử lý"
                                   ? "Chờ lấy hàng"
                                   : record.trang_thai_don_hang ==
-                                      "Đang giao hàng"
+                                    "Đang giao hàng"
                                     ? "Đang giao hàng"
                                     : record.trang_thai_don_hang ==
-                                        "Giao hàng thành công"
+                                      "Giao hàng thành công"
                                       ? "Giao hàng thành công"
                                       : "Đã hủy"}
                           </span>
@@ -296,7 +349,7 @@ const Detail = ({ record }: any) => {
                           <p>Tổng khối lượng</p> <span> 0.00kg</span>
                         </div>
                         <div className="flex justify-between">
-                          <p>Tiền thu hộ</p> <span> {}</span>
+                          <p>Tiền thu hộ</p> <span> { }</span>
                         </div>
                       </div>
                     </div>
@@ -321,7 +374,7 @@ const Detail = ({ record }: any) => {
                       {data?.data?.tong_thanh_tien_san_pham.toLocaleString(
                         "vi-VN"
                       )
-                      // .toLocaleString()
+                        // .toLocaleString()
                       }
                     </span>{" "}
                     VNĐ
@@ -334,8 +387,8 @@ const Detail = ({ record }: any) => {
                     <span>
                       {data?.data?.don_hang?.so_tien_giam_gia
                         ? data?.data?.don_hang?.so_tien_giam_gia.toLocaleString(
-                            "vi-VN"
-                          )
+                          "vi-VN"
+                        )
                         : 0}{" "}
                       VNĐ
                     </span>
@@ -468,44 +521,88 @@ const Detail = ({ record }: any) => {
             <div className="bg-slate-100 p-5 border rounded-lg my-2 shadow-md">
               <h5 className="text-blue-800 text-lg font-semibold mb-1">
                 Đánh giá của khách hàng
-              </h5>{" "}
+              </h5>
               {record.trang_thai_don_hang === "Giao hàng thành công" && (
                 <>
-                  {data?.data?.don_hang?.danh_gias?.map(
-                    (item: any, index: number) => (
-                      <div className="h-40" key={index}>
-                        <div className="flex items-center">
-                          <div className="">
-                            <img
-                              src={item?.user?.anh_nguoi_dung}
-                              alt=""
-                              className="w-12 h-12 rounded-full object-cover border-2 border-blue-800"
-                            />
-                          </div>
+                  {data?.data?.don_hang?.danh_gias?.length > 0 ? (
+                    data.data.don_hang.danh_gias.map((item: any, index: number) => (
+                      <div className="my-4" key={index}>
+                        <div className="flex items-center mb-2">
+                          <img
+                            src={item?.user?.anh_nguoi_dung || "/default-avatar.png"}
+                            alt={`${item?.user?.ho} ${item?.user?.ten}`}
+                            className="w-12 h-12 rounded-full object-cover border-2 border-blue-800 mr-3"
+                          />
                           <div className="pt-2">
-                            <div className=" scale-75 ">
-                              {" "}
-                              <h5 className="text-blue-800 text-xl font-medium">
-                                {item?.user?.ho} {item?.user?.ten}
-                              </h5>
-                              {/* Giảm kích thước sao bằng scale-50 */}
-                              <Rate disabled defaultValue={2} />
-                            </div>
+                            <h5 className="text-blue-800 text-xl font-medium">
+                              {item?.user?.ho} {item?.user?.ten}
+                            </h5>
+                            {/* Giảm kích thước sao bằng scale-50 */}
+                            <Rate disabled defaultValue={2} />
                           </div>
-                        </div>{" "}
-                        <div className="text-blue-800 mx-4">
-                          <p> {item?.mo_ta}</p>
                         </div>
-                        <button className="mx-2">Trả lời</button>
-                        <button>Ẩn</button>
+                        <div className="text-blue-800 mx-4 mb-2">
+                          <p>
+                            <strong></strong> {item?.mo_ta || "Không có đánh giá."}
+                          </p>
+                          {item?.phan_hoi && (
+                            <p>
+                              <strong>Trả lời:</strong> {item?.phan_hoi}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex">
+                          <button
+                            onClick={() => showModal(record)}
+                            disabled={!!item.phan_hoi}
+                            className={`px-4 py-2 rounded transition-colors duration-300 ${
+                              !!item.phan_hoi ? '  text-black cursor-not-allowed' : ' text-blue-500 font-bold'
+                          }`}
+                          >
+                            {!!item.phan_hoi ? 'Đã phản hồi' : 'Phản hồi'}
+                          </button>
+                          <button className="mx-2 px-4 text-blue-500 ">
+                            Ẩn
+                          </button>
+                        </div>
                       </div>
-                    )
+                    ))
+                  ) : (
+                    <p className="text-blue-800">Chưa có đánh giá nào.</p>
                   )}
                 </>
               )}
+              <Modal
+                title="Phản hồi đánh giá"
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel2}
+              >
+                {currentEvaluate && (
+                  <div className="flex flex-col gap-2">
+                    <p>
+                      <strong>Đánh giá của khách hàng:</strong> {currentEvaluate.mo_ta}
+                    </p>
+                    <Input.TextArea
+                      rows={4}
+                      value={phan_hoi[currentEvaluate.id as number] || ""}
+                      onChange={(e) =>
+                        handlephan_hoiChange(
+                          currentEvaluate.id as number,
+                          e.target.value
+                        )
+                      }
+                      placeholder="Nhập phản hồi"
+                      disabled={!!currentEvaluate.phan_hoi}
+                    />
+                  </div>
+                )}
+              </Modal>
             </div>
+
           </div>
         </div>
+
       </Modal>
     </div>
   );
