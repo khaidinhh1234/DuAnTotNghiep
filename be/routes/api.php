@@ -126,6 +126,8 @@ Route::middleware([])
         Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
 
         // Sản phẩm
+        Route::delete('sanphams', [SanPhamController::class, 'bulkDelete']);
+        Route::patch('sanpham/trang-thai-nhieu-san-pham', [SanPhamController::class, 'updateStatus']);
         Route::get('sanpham/exports', [SanPhamController::class, 'exportSanPham']);
         Route::apiResource('sanpham', SanPhamController::class)->except(['show']);
         Route::post('sanpham/kich-hoat/{id}', [SanPhamController::class, 'kichHoatSanPham'])->name('sanpham.kichhoat');
