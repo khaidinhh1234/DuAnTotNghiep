@@ -144,27 +144,48 @@ class ThongKeDoanhThuController extends Controller
             }
         }
 
-        // Nếu có chọn tuần, lấy dữ liệu theo tuần và chi tiết theo ngày trong tuần
-        if ($tuan && $nam) {
-            $startOfWeek = now()->setISODate($nam, $tuan)->startOfWeek()->toDateString();
-            $endOfWeek = now()->setISODate($nam, $tuan)->endOfWeek()->toDateString();
+        if ($tuan && $nam && $thang && $quy) {
+            // Lấy ngày đầu tiên và cuối cùng của tháng được chọn
+            $startOfMonth = now()->setDate($nam, $thang, 1)->startOfMonth();
+            $endOfMonth = now()->setDate($nam, $thang, 1)->endOfMonth();
 
-            // Lấy tổng doanh thu trong tuần
-            $tongDoanhThuTuan = (float) $query->whereBetween('created_at', [$startOfWeek, $endOfWeek])->sum('tong_tien_don_hang');
+            // Lấy ngày bắt đầu và kết thúc của tuần trong tháng được chọn
+            $startOfWeek = $startOfMonth->copy()->addWeeks($tuan - 1)->startOfWeek()->toDateString();
+            $endOfWeek = $startOfMonth->copy()->addWeeks($tuan - 1)->endOfWeek()->toDateString();
 
-            // Khởi tạo mảng doanh thu cho từng ngày trong tuần
+            // Đảm bảo ngày bắt đầu và kết thúc tuần nằm trong phạm vi của tháng
+            if ($startOfWeek < $startOfMonth->toDateString()) {
+                $startOfWeek = $startOfMonth->toDateString();
+            }
+
+            if ($endOfWeek > $endOfMonth->toDateString()) {
+                $endOfWeek = $endOfMonth->toDateString();
+            }
+
+            // Lọc dữ liệu theo khoảng thời gian đã xác định
+            $queryClone = clone $query; // Tạo bản sao của query để không ảnh hưởng tới các truy vấn khác
+            $queryClone->whereBetween('created_at', [$startOfWeek, $endOfWeek]);
+            $tongDoanhThuTuan = (float) $queryClone->sum('tong_tien_don_hang');
+
+            // Thống kê doanh thu chi tiết từng ngày trong tuần
             $doanhThu['theo_tuan'] = [
                 'ngay' => [],
                 'doanh_thu' => []
             ];
 
-            // Thống kê doanh thu chi tiết từng ngày trong tuần
-            for ($i = 1; $i <= 7; $i++) {
-                $ngayTrongTuan = now()->setISODate($nam, $tuan, $i)->toDateString();
-                $doanhThuTheoNgay = (float) $query->whereDate('created_at', $ngayTrongTuan)
-                    ->sum('tong_tien_don_hang');
+            for ($i = 0; $i < 7; $i++) {
+                $ngayTrongTuan = now()->setDate($nam, $thang, 1)->addWeeks($tuan - 1)->startOfWeek()->addDays($i)->toDateString();
 
-                // Thêm ngày và doanh thu vào mảng
+                // Chỉ thống kê doanh thu nếu ngày đó nằm trong khoảng thời gian của tuần trong tháng
+                if ($ngayTrongTuan >= $startOfWeek && $ngayTrongTuan <= $endOfWeek) {
+                    // Tạo query clone mới cho từng ngày
+                    $queryNgay = clone $query; // Clone lại query ban đầu
+                    $doanhThuTheoNgay = (float) $queryNgay->whereDate('created_at', $ngayTrongTuan)
+                        ->sum('tong_tien_don_hang');
+                } else {
+                    $doanhThuTheoNgay = 0;
+                }
+
                 $doanhThu['theo_tuan']['ngay'][] = $ngayTrongTuan;
                 $doanhThu['theo_tuan']['doanh_thu'][] = $doanhThuTheoNgay;
             }
@@ -178,7 +199,7 @@ class ThongKeDoanhThuController extends Controller
     }
 
 
-    public function doanhThuTheoNgay(Request $request)
+   public function doanhThuTheoNgay(Request $request)
     {
 
         try {
