@@ -1,21 +1,20 @@
-import React, { useRef, useState } from "react";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { InputRef, TableColumnsType } from "antd";
 import {
   Button,
   Input,
   message,
   Popconfirm,
-  Skeleton,
   Space,
   Spin,
   Table,
-  Tabs,
+  Tabs
 } from "antd";
-import type { InputRef, TableColumnsType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { ICategories } from "@/common/types/category";
 import instance from "@/configs/admin";
@@ -52,10 +51,9 @@ const CategoriesAdmin: React.FC = () => {
   });
 
   const dataSource =
-    data?.data.map((category: ICategories, index: number) => ({
+    data?.data.map((category: ICategories) => ({
       key: category.id,
       ...category,
-      index: index + 1,
     })) || [];
 
   const { mutate } = useMutation({
@@ -178,7 +176,7 @@ const CategoriesAdmin: React.FC = () => {
       title: "STT",
       width: "10%",
       key: "id",
-      dataIndex: "index",
+      dataIndex: "id",
     },
     {
       title: "Tên danh mục",

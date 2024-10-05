@@ -1,30 +1,21 @@
 import { Layout, Menu, MenuProps } from "antd";
-import { Footer } from "antd/es/layout/layout";
 import {
   AlignJustify,
   BarChart,
-  CheckCircle,
-  FileText,
   Folder,
-  Grid,
   Home,
-  Image,
-  Layers,
-  LineChart,
-  List,
-  ListChecks,
   Lock,
   Newspaper,
   Package,
-  PieChart,
-  Shield,
   ShoppingCart,
   Star,
+
   Tag,
   Truck,
   User,
   UserCheck,
   Users,
+
 } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\MaKhuyenMai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class KhuyenMaiController extends Controller
 {
@@ -74,17 +75,24 @@ class KhuyenMaiController extends Controller
         ]);
     }
 
-    public function maKhuyenMaiHangThanhVien()
+    public function layMaKhuyenMaiTheoHangThanhVien()
     {
+        $user = Auth::user();
 
-        $data = MaKhuyenMai::query()->with('hangThanhViens')->get();
-        return response()->json([
-            'status' => true,
-            'data' => $data
-        ]);
+        $hangThanhVien = $user->hangThanhVien;
+
+        $maKhuyenMais = MaKhuyenMai::whereHas('hangThanhViens', function ($query) use ($hangThanhVien) {
+            $query->where('hang_thanh_vien_id', $hangThanhVien->id);
+        })
+            ->where('trang_thai', 1)
+            ->where('ngay_bat_dau', '<=', now())
+            ->where('ngay_ket_thuc', '>=', now())
+            ->get();
+
+        return response()->json($maKhuyenMais);
     }
 
-    public function suDungMaKhuyenMai($maCode)
+    public function thuThapMaKhuyenMai($maCode)
     {
         $maKhuyenMai = MaKhuyenMai::where('ma_code', $maCode)->firstOrFail();
 
