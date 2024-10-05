@@ -179,6 +179,7 @@ Route::middleware([])
         Route::get('/vanchuyen/{id}',[VanChuyenController::class, 'show'])->name('vanchuyen.show');
         Route::put('/vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
         Route::get('cho-lay-hang', [VanChuyenController::class, 'choLayHang']);
+        Route::get('dang-giao-hang', [VanChuyenController::class, 'dangGiaoHang']);
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
