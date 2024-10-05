@@ -9,7 +9,13 @@ import {
   Package,
   ShoppingCart,
   Star,
-  User
+
+  Tag,
+  Truck,
+  User,
+  UserCheck,
+  Users,
+
 } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -37,36 +43,37 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem("Trang chủ", "1", <Home />, "/admin/dashboard"),
+  getItem("Danh mục", "sub2", <Folder />, "", [
+    getItem("Danh mục sản phẩm", "5", null, "/admin/categories"),
+    getItem("Danh mục tin tức", "6", null, "/admin/newcategory"),
+  ]),
   getItem("Sản phẩm", "sub1", <Package />, "", [
     getItem("Danh sách sản phẩm", "2", null, "/admin/products/list"),
     getItem("Biến thể", "3", null, "/admin/products/bienthe"),
     getItem("Quản lý nhãn dán", "4", null, "/admin/products/tags"),
   ]),
-  getItem("Danh mục", "sub2", <Folder />, "", [
-    getItem("Danh mục sản phẩm", "5", null, "/admin/categories"),
-    getItem("Danh mục tin tức", "6", null, "/admin/newcategory"),
-  ]),
+
   getItem("Đơn hàng", "sub3", <ShoppingCart />, "", [
-    getItem('Tổng quan', '7', null, '/admin/orders/transport'),
-    getItem('Danh sách đơn hàng', '8', null, '/admin/orders/list'),
-    getItem('Vận chuyển', '9', null, '/admin/orders/uncomfirmedorder'),
+    getItem("Tổng quan", "7", null, "/admin/orders/transport"),
+    getItem("Danh sách đơn hàng", "8", null, "/admin/orders/list"),
+    getItem("Vận chuyển", "9", null, "/admin/orders/uncomfirmedorder"),
     // getItem('Thu hộ', '19', null, '/admin/orders/collect'),
   ]),
-  getItem("Tin tức", "20", <Newspaper />, "/admin/news"), 
+  getItem("Đánh giá", "14", <Star />, "/admin/evaluates"),
+  getItem("Tin tức", "20", <Newspaper />, "/admin/news"),
   getItem("Tài khoản", "sub4", <User />, "", [
     getItem("Khách hàng", "11", null, "/admin/users/khachhang"),
     getItem("Nhân viên", "12", null, "/admin/users/nhanvien"),
     getItem("Hạng thành viên", "13", null, "/admin/users/rank"),
   ]),
-  getItem("Đánh giá", "14", <Star />, "/admin/evaluates"), 
-  getItem("Phân quyền", "15", <Lock />, "/admin/ADmin/userprivileges"), 
+
+  getItem("Phân quyền", "15", <Lock />, "/admin/ADmin/userprivileges"),
   getItem("Nội dung", "sub5", <AlignJustify />, "", [
     getItem("Footer", "16", null, "/admin/Content/qlfooter"),
     getItem("Banner", "17", null, "/admin/Content/qlbanner"),
   ]),
-  getItem("Thống kê", "18", <BarChart />, "/admin/analytics"), 
+  getItem("Thống kê", "18", <BarChart />, "/admin/analytics"),
 ];
-
 
 const SiderComponent: React.FC = () => {
   const navigate = useNavigate();
