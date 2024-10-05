@@ -9,13 +9,8 @@ import {
   Package,
   ShoppingCart,
   Star,
-
   Tag,
-  Truck,
-  User,
-  UserCheck,
-  Users,
-
+  User
 } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -59,8 +54,8 @@ const items: MenuItem[] = [
     getItem("Vận chuyển", "9", null, "/admin/orders/uncomfirmedorder"),
     // getItem('Thu hộ', '19', null, '/admin/orders/collect'),
   ]),
-  getItem("Đánh giá", "14", <Star />, "/admin/evaluates"),
-  getItem("Tin tức", "20", <Newspaper />, "/admin/news"),
+  getItem("Mã khuyến mại", "21", <Tag />, "/admin/vouchers"),
+  getItem("Tin tức", "20", <Newspaper />, "/admin/news"), 
   getItem("Tài khoản", "sub4", <User />, "", [
     getItem("Khách hàng", "11", null, "/admin/users/khachhang"),
     getItem("Nhân viên", "12", null, "/admin/users/nhanvien"),
