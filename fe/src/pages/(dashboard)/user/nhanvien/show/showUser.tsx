@@ -4,7 +4,7 @@ import { Progress } from "antd";
 import { Link, useParams } from "react-router-dom";
 import Detail from "../detail";
 
-const ShowNhanvien = () => {
+const ShowUser = () => {
   const { id } = useParams();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["USERID", id],
@@ -18,7 +18,6 @@ const ShowNhanvien = () => {
     },
   });
   const user = data?.data?.tai_khoan;
-  console.log(user);
   const trangthai = data?.data;
   // console.log(trangthai);
 
@@ -98,7 +97,7 @@ const ShowNhanvien = () => {
                 </span>
               </p>
 
-              <Link to={`/admin/users/nhanvien/edit/${user?.id}`}>
+              <Link to={`/admin/users/khachhang/edit/${user?.id}`}>
                 <button className=" mx-auto flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition duration-200">
                   <div>
                     <i
@@ -155,21 +154,16 @@ const ShowNhanvien = () => {
                 </h2>
                 <div className="w-60 mx-auto">
                   <img
-                    src={
-                      user?.hang_thanh_vien?.anh_hang_thanh_vien
-                        ? user?.hang_thanh_vien?.anh_hang_thanh_vien
-                        : "https://via.placeholder.com/150"
-                    }
+                    src={user?.hang_thanh_vien?.anh_hang_thanh_vien}
                     alt={user?.hang_thanh_vien?.anh_hang_thanh_vien}
                     className="w-full  "
                   />
                 </div>
-                <p className="flex justify-center items-center gap-3 ">
+                <p className="flex justify-center items-center gap-3 ml-10">
                   <p className="pt-4">
-                    {(user?.hang_thanh_vien?.chi_tieu_toi_thieu
-                      ? user?.hang_thanh_vien?.chi_tieu_toi_thieu
-                      : 0
-                    ).toLocaleString("vi-VN")}{" "}
+                    {(user?.hang_thanh_vien?.chi_tieu_toi_thieu).toLocaleString(
+                      "vi-VN"
+                    )}{" "}
                   </p>
                   <div className="w-40">
                     <Progress
@@ -185,9 +179,9 @@ const ShowNhanvien = () => {
                     />
                   </div>{" "}
                   <p className="pt-4">
-                    {user?.hang_thanh_vien?.chi_tieu_toi_da
-                      ? user?.hang_thanh_vien?.chi_tieu_toi_da
-                      : 0}{" "}
+                    {(user?.hang_thanh_vien?.chi_tieu_toi_da).toLocaleString(
+                      "vi-VN"
+                    )}{" "}
                   </p>
                 </p>
               </div>
@@ -268,4 +262,4 @@ const ShowNhanvien = () => {
   );
 };
 
-export default ShowNhanvien;
+export default ShowUser;

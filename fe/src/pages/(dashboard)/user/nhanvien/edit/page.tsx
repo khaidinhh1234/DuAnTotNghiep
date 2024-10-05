@@ -9,6 +9,7 @@ import {
   Input,
   message,
   Radio,
+  Select,
 } from "antd";
 import moment from "moment";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -39,6 +40,29 @@ const UsersnhanvienEdit = () => {
       }
     },
   });
+  const { data: vaitroid } = useQuery({
+    queryKey: ["VAITRO"],
+    queryFn: async () => {
+      try {
+        const res = await instance.get("/vaitro");
+        return res.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
+  const phanquyen =
+    vaitroid?.data
+      .filter((item: any) => item.ten_vai_tro !== "Khách hàng") // Lọc ra vai trò không phải là "Khách hàng"
+      .map((item: any) => ({
+        label: item.ten_vai_tro,
+        value: item.ten_vai_tro,
+      })) || [];
+  console.log(data?.data?.tai_khoan?.vai_tros);
+  const vaitro =
+    data?.data?.tai_khoan?.vai_tros?.map((item: any) => item?.ten_vai_tro) ||
+    [];
+  console.log(vaitro);
   const user = data?.data?.tai_khoan;
   const mutate = useMutation({
     mutationFn: async (data) => {
@@ -184,7 +208,7 @@ const UsersnhanvienEdit = () => {
                 </Form.Item>
               </div>
 
-              <div className="grid grid-cols-3 gap-5">
+              <div className="grid grid-cols-4 gap-5">
                 <Form.Item
                   label="Số điện thoại"
                   name="so_dien_thoai"
@@ -231,8 +255,28 @@ const UsersnhanvienEdit = () => {
                     },
                   ]}
                 >
-                  <DatePicker />
+                  <DatePicker className="w-full" />
                 </Form.Item>
+                <Form>
+                  <Form.Item
+                    label="Vai trò"
+                    name="vai_tros"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vai trò bắt buộc phải nhập!",
+                      },
+                    ]}
+                  >
+                    <Select
+                      mode="tags" // Chế độ chọn nhiều
+                      style={{ width: "100%" }}
+                      defaultValue={vaitro}
+                      placeholder="Chọn vai trò"
+                      options={phanquyen} // Sử dụng danh sách vai trò
+                    />
+                  </Form.Item>
+                </Form>
               </div>
               <div className="grid grid-cols-6 gap-5">
                 <Form.Item
