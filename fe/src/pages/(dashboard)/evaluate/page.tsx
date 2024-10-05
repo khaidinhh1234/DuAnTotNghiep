@@ -79,7 +79,6 @@ const EvaluateAdmin = () => {
     setCurrentEvaluate(record);
     setIsModalOpen(true);
   };
-
   const handleOk = () => {
     if (currentEvaluate && phan_hoi[currentEvaluate.id as number]) {
       mutation.mutate({
