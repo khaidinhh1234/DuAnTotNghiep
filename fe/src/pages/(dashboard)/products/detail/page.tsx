@@ -183,18 +183,19 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
   const getStockStatus = (variant: ProductVariant) => {
     if (variant.so_luong_bien_the > 0) {
       return (
-        <span className="bg-[#3CD139]/10 text-xs px-2 py-1 text-[#3CD139] rounded-sm">
-          Còn hàng ({variant.so_luong_bien_the})
+        <span style={{ fontSize: "20px" }}>
+          kho: {variant.so_luong_bien_the}
         </span>
       );
     } else {
       return (
-        <span className="bg-[#FF0000]/10 text-xs px-2 py-1 text-[#FF0000] rounded-sm">
+        <span style={{ fontSize: "18px" }}>
           Hết hàng
         </span>
       );
     }
   };
+  
 
 
   if (isLoading) return <div>Loading...</div>;
@@ -351,8 +352,6 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                   <div className="product_detail_name">
                     <div className="flex justify-between mb-2">
                       <h3 className="font-bold text-2xl">{product.ten_san_pham}</h3>
-                      <p>     {selectedVariant && getStockStatus(selectedVariant)}
-                      </p>
                     
                     </div>
                     <h4 className="mb-3 text-xl font-normal">
@@ -406,8 +405,12 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                       ))}
                     </div>
                   </div>
+                  <p style={{ marginTop: "10px" }}>
+  {selectedVariant && getStockStatus(selectedVariant)}
+</p>
 
-                  <div className="mt-8 flex gap-3">
+                    
+                  {/* <div className="mt-8 flex gap-3">
                     <div className="border rounded-lg border-black w-24 h-10 flex justify-center items-center shadow-md">
                       <button className="py-1 pr-2">
                         <i className="fa-solid fa-minus" />
@@ -435,7 +438,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                         className={`fa-regular fa-heart text-xl ${isHeart ? "text-white" : "text-red-600"}`}
                       />
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

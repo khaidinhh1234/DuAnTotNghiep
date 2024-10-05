@@ -32,6 +32,7 @@ const fetchProduct = async (id: string): Promise<any> => {
 const updateProduct = async ({
   id,
   productData,
+  
 }: {
   id: string;
   productData: FormData;
@@ -67,6 +68,7 @@ const EditProductsAndVariants: React.FC = () => {
   const [data, setData] = useState<any>([]);
 
 
+
   // Queries
   const { data: categoriesData } = useQuery<{ data: Category[] }>({
     queryKey: ["categories"],
@@ -98,6 +100,7 @@ const EditProductsAndVariants: React.FC = () => {
 
   const updateProductMutation = useMutation({
     mutationFn: updateProduct,
+    
     onSuccess: () => {
       message.success("Sản phẩm đã được cập nhật thành công!");
       navigate("/admin/products");
@@ -234,8 +237,9 @@ const EditProductsAndVariants: React.FC = () => {
     _: any,
     allValues: ProductFormData
   ) => {
-    console.log("Form values changed:", allValues);
-    setProductFormData(allValues);
+    const add = { ...allValues, noi_dung: data };
+
+    setProductFormData(add);
   };
 
   const handleRemoveImage = (file: UploadFile, record: Variant) => {
