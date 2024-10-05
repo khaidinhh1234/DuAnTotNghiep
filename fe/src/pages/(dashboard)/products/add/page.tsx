@@ -359,7 +359,7 @@ const ProductsAndVariants: React.FC = () => {
         <div className="flex gap-2">
           <Link to="/admin/products">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
-              quay lại
+              Quay lại
             </Button>
           </Link>
         </div>
@@ -469,7 +469,7 @@ const ProductsAndVariants: React.FC = () => {
               <Button
                 type="primary"
                 onClick={handleSubmit}
-                className="px-3 py-1 bg-black text-white rounded-lg flex items-center"
+                className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 style={{
                   padding: "18px 30px",
                   marginRight: "190px",

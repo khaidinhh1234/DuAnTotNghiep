@@ -27,7 +27,7 @@ const TagsAdmin: React.FC = () => {
         const response = await instance.get("/the");
         const tag = response.data;
 
-        return tag; // Đảm bảo rằng categories.data chứa createdAt
+        return tag; 
       } catch (error) {
         console.error("Error fetching categories:", error);
         throw new Error("Error fetching categories");
@@ -59,14 +59,14 @@ const TagsAdmin: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["tag"] });
       message.open({
         type: "success",
-        content: "Xóa danh mục thành công",
+        content: "Xóa thẻ thành công",
       });
     },
     onError: (error) => {
       console.error("Error deleting category:", error);
       message.open({
         type: "error",
-        content: "Xóa danh mục thất bại",
+        content: "Xóa thẻ  thất bại",
       });
     },
   });

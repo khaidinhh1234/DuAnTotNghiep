@@ -27,12 +27,12 @@ const Remotesize: React.FC = () => {
   const handleRestore = async (id: string) => {
     try {
       await instance.post(`/bienthekichthuoc/thung-rac/${id}`);
-      message.success("Khôi phục danh mục thành công");
+      message.success("Khôi kích thước sản phẩm mục thành công");
       // Refresh lại dữ liệu sau khi khôi phục
       queryClient.invalidateQueries({ queryKey: ["size"] });
     } catch (error) {
       console.error("Error restoring category:", error);
-      message.error("Khôi phục danh mục thất bại");
+      message.error("Khôi phục kích thước sản phẩm thất bại");
     }
   };
 

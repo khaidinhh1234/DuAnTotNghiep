@@ -22,7 +22,7 @@ class DonHangController extends Controller
     public function index()
     {
         try {
-            $donHangs = DonHang::with('chiTiets')->get();
+            $donHangs = DonHang::with('chiTiets', 'user')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -46,7 +46,9 @@ class DonHangController extends Controller
                 'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
                 'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
                 'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
-                'danhGias.user' // Lấy đánh giá của đơn hàng
+                'danhGias.user', // Lấy đánh giá của đơn hàng
+                'vanChuyen',
+                // 'user'
             ])->findOrFail($id);
 
             // Tính toán tổng số lượng và tổng tiền
@@ -85,11 +87,28 @@ class DonHangController extends Controller
                 ];
             }
 
+            //Thong tin user
+
+            if (
+                $donHang->ten_nguoi_dat_hang == ""
+                && $donHang->so_dien_thoai_nguoi_dat_hang == ""
+                && $donHang->dia_chi_nguoi_dat_hang == ""
+            ) {
+                $thongTin = $donHang->user;
+            } else {
+                $thongTin = [
+                    'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang === "" ? ($donHang->user->ho . " " . $donHang->user->ten) : $donHang->ten_nguoi_dat_hang,
+                    'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang === "" ? $donHang->user->so_dien_thoai : $donHang->so_dien_thoai_nguoi_dat_hang,
+                    'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang === "" ? $donHang->user->dia_chi : $donHang->dia_chi_nguoi_dat_hang
+                ];
+            }
+
             // Chuẩn bị phản hồi với đầy đủ thông tin
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'data' => [
+                    'thong_tin' => $thongTin,
                     'don_hang' => $donHang,
                     'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
