@@ -342,6 +342,52 @@ const VariantForm: React.FC<VariantFormProps> = ({
         </Form.Item>
       ),
     },
+    // {
+    //   title: "Giá khuyến mãi",
+    //   dataIndex: "gia_khuyen_mai",
+    //   key: "gia_khuyen_mai",
+    //   render: (text: string | number, record: Variant) => (
+    //     <Form.Item
+    //       name={`gia_khuyen_mai_${record.id}`}
+    //       hasFeedback
+    //       validateStatus={
+    //         text && isNaN(Number(text))
+    //           ? "error"
+    //           : Number(record.gia_ban) > 0 &&
+    //             (Number(text) < Number(record.gia_ban) * 0.5 ||
+    //               Number(text) >= Number(record.gia_ban))
+    //             ? "error"
+    //             : ""
+    //       }
+    //       help={
+    //         text === undefined || text === ""
+    //           ? ""
+    //           : isNaN(Number(text))
+    //             ? "Bắt buộc phải là số!"
+    //             : Number(record.gia_ban) > 0 &&
+    //               Number(text) < Number(record.gia_ban) * 0.5
+    //               ? "Bắt buộc nhỏ hơn 50% giá bán!"
+    //               : Number(record.gia_ban) > 0 &&
+    //                 Number(text) >= Number(record.gia_ban)
+    //                 ? "Bắt buộc phải nhỏ hơn giá bán"
+    //                 : ""
+    //       }
+    //       initialValue={record.gia_khuyen_mai}
+    //       className="rounded-md w-40"
+    //       rules={[{ required: true, message: "Bắt buộc phải nhập!" }]}
+    //       validateTrigger="onBlur"
+    //     >
+    //       <Input
+    //         value={formatNumber(record.gia_khuyen_mai)}
+    //         placeholder="Giá khuyến mãi sản phẩm"
+    //         onChange={(e) =>
+    //           handleUpdate(record, "gia_khuyen_mai", e.target.value)
+    //         }
+    //         className="rounded-md mt-5"
+    //       />
+    //     </Form.Item>
+    //   ),
+    // },
     {
       title: "Giá khuyến mãi",
       dataIndex: "gia_khuyen_mai",
@@ -351,30 +397,45 @@ const VariantForm: React.FC<VariantFormProps> = ({
           name={`gia_khuyen_mai_${record.id}`}
           hasFeedback
           validateStatus={
-            text && isNaN(Number(text))
-              ? "error"
-              : Number(record.gia_ban) > 0 &&
-                (Number(text) < Number(record.gia_ban) * 0.5 ||
-                  Number(text) >= Number(record.gia_ban))
+            text === 0 || Number(text) === 0
+              ? ""
+              : text && isNaN(Number(text))
                 ? "error"
-                : ""
+                : Number(record.gia_ban) > 0 &&
+                  (Number(text) < Number(record.gia_ban) * 0.5 ||
+                    Number(text) >= Number(record.gia_ban))
+                  ? "error"
+                  : ""
           }
           help={
-            text === undefined || text === ""
+            text === 0 || Number(text) === 0
               ? ""
-              : isNaN(Number(text))
-                ? "Bắt buộc phải là số!"
-                : Number(record.gia_ban) > 0 &&
-                  Number(text) < Number(record.gia_ban) * 0.5
-                  ? "Bắt buộc nhỏ hơn 50% giá bán!"
+              : text === undefined || text === ""
+                ? ""
+                : isNaN(Number(text))
+                  ? "Bắt buộc phải là số!"
                   : Number(record.gia_ban) > 0 &&
-                    Number(text) >= Number(record.gia_ban)
-                    ? "Bắt buộc phải nhỏ hơn giá bán"
-                    : ""
+                    Number(text) < Number(record.gia_ban) * 0.5
+                    ? "Bắt buộc nhỏ hơn 50% giá bán!"
+                    : Number(record.gia_ban) > 0 &&
+                      Number(text) >= Number(record.gia_ban)
+                      ? "Bắt buộc phải nhỏ hơn giá bán"
+                      : ""
           }
           initialValue={record.gia_khuyen_mai}
           className="rounded-md w-40"
-          rules={[{ required: true, message: "Bắt buộc phải nhập!" }]}
+          rules={[
+            { 
+              required: true, 
+              message: "Bắt buộc phải nhập!",
+              validator: (_, value) => {
+                if (value === 0 || Number(value) === 0 || value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject("Bắt buộc phải nhập!");
+              }
+            }
+          ]}
           validateTrigger="onBlur"
         >
           <Input
@@ -388,6 +449,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
         </Form.Item>
       ),
     },
+    
     {
       title: "Số lượng",
       dataIndex: "so_luong_bien_the",

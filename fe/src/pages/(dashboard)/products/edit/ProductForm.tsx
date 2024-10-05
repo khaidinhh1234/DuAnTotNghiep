@@ -295,14 +295,19 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </Form.Item>
 
         <Form.Item
-          label="Mã sản phẩm"
-          name="ma_san_pham"
-          rules={[
-            { required: true, message: "Mã sản phẩm bắt buộc phải nhập!" },
-          ]}
-        >
-          <Input placeholder="Nhập mã sản phẩm" />
-        </Form.Item>
+  label="Mã sản phẩm"
+  name="ma_san_pham"
+  rules={[
+    { required: true, message: "Mã sản phẩm bắt buộc phải nhập!" },
+  ]}
+>
+  <Input 
+    placeholder="Nhập mã sản phẩm" 
+    disabled={true} 
+    style={{ backgroundColor: '#f5f5f5', color: '#666' }}
+  />
+</Form.Item>
+
       </div>
 
       <div className="grid grid-cols-2 gap-5">

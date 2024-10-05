@@ -110,16 +110,16 @@ const VariantForm: React.FC<VariantFormProps> = ({
           name={`gia_khuyen_mai_${record.id}`} // Tên duy nhất cho mỗi biến thể
           hasFeedback
           validateStatus={
-            text && isNaN(Number(text))
+            text && text !== "0" && isNaN(Number(text))
               ? "error"
-              : Number(record.gia_ban) > 0 &&
+              : text && text !== "0" && Number(record.gia_ban) > 0 &&
                 (Number(text) < Number(record.gia_ban) * 0.5 ||
                   Number(text) >= Number(record.gia_ban))
                 ? "error"
                 : ""
           }
           help={
-            text === undefined || text === ""
+            text === undefined || text === "" || text === "0"
               ? ""
               : isNaN(Number(text))
                 ? "Bắt buộc phải là số!"
@@ -147,6 +147,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
         </Form.Item>
       ),
     },
+    
 
     {
       title: "Số lượng",
