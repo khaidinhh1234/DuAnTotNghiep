@@ -1,5 +1,6 @@
 // const allImages = [product.anh_san_pham, ...variantImages].filter(Boolean);
-{/* <div className="lg:col-span-6 col-span-12 mb-6">
+{
+  /* <div className="lg:col-span-6 col-span-12 mb-6">
 <div className="bg-[#FAFAFB] w-full h-[400px] inline-flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
   <Swiper
     style={{
@@ -55,20 +56,28 @@
     ))}
   </Swiper>
 </div>
-</div> */}
+</div> */
+}
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode, Navigation, Pagination, Thumbs } from "swiper/modules";
-import type { Swiper as SwiperType } from 'swiper';
-import instance from '@/configs/admin';
-import { Button, Modal, Image, Rate } from 'antd';
+import React, { useState, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  Autoplay,
+  FreeMode,
+  Navigation,
+  Pagination,
+  Thumbs,
+} from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+import instance from "@/configs/admin";
+import { Button, Modal, Image, Rate } from "antd";
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/free-mode';
-import 'swiper/css/navigation';
-import 'swiper/css/thumbs';import 'swiper/css/pagination';
+import "swiper/css";
+import "swiper/css/free-mode";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
+import "swiper/css/pagination";
 interface ProductDetailProps {
   item: {
     id: number;
@@ -125,13 +134,13 @@ interface Product {
   danh_gias: Review[];
 }
 
-const Detail: React.FC<ProductDetailProps> = ({ item }) => {
+const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
+  const [previewImage, setPreviewImage] = useState("");
   const [isHeart, setIsHeart] = useState(false);
   const [expandedResponses, setExpandedResponses] = useState<number[]>([]);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -145,14 +154,19 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
 
   const averageRating = useMemo(() => {
     if (!data || !data.data || data.data.danh_gias.length === 0) return 0;
-    const totalStars = data.data.danh_gias.reduce((sum, review) => sum + review.so_sao_san_pham, 0);
+    const totalStars = data.data.danh_gias.reduce(
+      (sum, review) => sum + review.so_sao_san_pham,
+      0
+    );
     return (totalStars / data.data.danh_gias.length).toFixed(1);
   }, [data]);
 
   useEffect(() => {
     if (data && data.data.bien_the_san_pham.length > 0) {
       setSelectedColor(data.data.bien_the_san_pham[0].mau_bien_the.ma_mau_sac);
-      setSelectedSize(data.data.bien_the_san_pham[0].kich_thuoc_bien_the.kich_thuoc);
+      setSelectedSize(
+        data.data.bien_the_san_pham[0].kich_thuoc_bien_the.kich_thuoc
+      );
     }
   }, [data]);
 
@@ -170,9 +184,9 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
   };
 
   const toggleResponse = (reviewId: number) => {
-    setExpandedResponses(prev =>
+    setExpandedResponses((prev) =>
       prev.includes(reviewId)
-        ? prev.filter(id => id !== reviewId)
+        ? prev.filter((id) => id !== reviewId)
         : [...prev, reviewId]
     );
   };
@@ -196,31 +210,58 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
     }
   };
 
-
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {(error as Error).message}</div>;
   if (!data || !data.data) return <div>No product data available</div>;
 
   const product = data.data;
 
-  const uniqueColors = Array.from(new Set(product.bien_the_san_pham.map(variant => variant.mau_bien_the.ma_mau_sac)));
+  const uniqueColors = Array.from(
+    new Set(
+      product.bien_the_san_pham.map(
+        (variant) => variant.mau_bien_the.ma_mau_sac
+      )
+    )
+  );
   const sizesForSelectedColor = product.bien_the_san_pham
-    .filter(variant => variant.mau_bien_the.ma_mau_sac === selectedColor)
-    .map(variant => variant.kich_thuoc_bien_the.kich_thuoc);
+    .filter((variant) => variant.mau_bien_the.ma_mau_sac === selectedColor)
+    .map((variant) => variant.kich_thuoc_bien_the.kich_thuoc);
 
   const selectedVariant = product.bien_the_san_pham.find(
-    variant => variant.mau_bien_the.ma_mau_sac === selectedColor && variant.kich_thuoc_bien_the.kich_thuoc === selectedSize
+    (variant) =>
+      variant.mau_bien_the.ma_mau_sac === selectedColor &&
+      variant.kich_thuoc_bien_the.kich_thuoc === selectedSize
   );
 
-  const variantImages = selectedVariant ? selectedVariant.anh_bien_the.map(img => img.duong_dan_anh) : [];
+  const variantImages = selectedVariant
+    ? selectedVariant.anh_bien_the.map((img) => img.duong_dan_anh)
+    : [];
   const allImages = [product.anh_san_pham, ...variantImages].filter(Boolean);
 
   return (
     <div>
-      <p onClick={() => setOpen(true)} className="cursor-pointer"
-      >
-        {item.ten_san_pham}
-      </p>
+      <div onClick={() => setOpen(true)} className="cursor-pointer">
+        <div className="flex gap-5 p-2 bg-slate-100 shadow-md rounded-lg hover:bg-slate-300 hover:shadow-2xl transition duration-300 cursor-pointer">
+          <div className="border rounded-lg overflow-hidden">
+            <img
+              src={item.anh_san_pham || "https://via.placeholder.com/150"}
+              alt="product"
+              className="w-20 h-20 object-cover"
+            />
+          </div>
+
+          <div className="">
+            {/* Text tên sản phẩm */}
+            <p className="text-lg font-bold truncate w-40">
+              {item.ten_san_pham}
+            </p>
+            {/* Giảm khoảng cách giữa tên sản phẩm và mô tả */}
+            <p className=" text-xs text-gray-500 truncate w-40">
+              {item.mo_ta_ngan}
+            </p>
+          </div>
+        </div>
+      </div>
 
       <Modal
         centered
@@ -294,10 +335,12 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                 <div className="lg:col-span-6 col-span-12 mb-6">
                   <div className="bg-[#FAFAFB] w-full h-[400px] inline-flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
                     <Swiper
-                      style={{
-                        "--swiper-navigation-color": "#000000",
-                        "--swiper-pagination-color": "#000000",
-                      } as React.CSSProperties}
+                      style={
+                        {
+                          "--swiper-navigation-color": "#000000",
+                          "--swiper-pagination-color": "#000000",
+                        } as React.CSSProperties
+                      }
                       centeredSlides={true}
                       autoplay={{
                         delay: 2500,
@@ -307,18 +350,32 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                         clickable: true,
                       }}
                       navigation={true}
-                      thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
-                      modules={[Autoplay, Pagination, Navigation, Thumbs, FreeMode]}
+                      thumbs={
+                        thumbsSwiper ? { swiper: thumbsSwiper } : undefined
+                      }
+                      modules={[
+                        Autoplay,
+                        Pagination,
+                        Navigation,
+                        Thumbs,
+                        FreeMode,
+                      ]}
                       className="mySwiper2 w-full swiper-with-hover"
                       loop={true}
                       spaceBetween={10}
                     >
                       {allImages.map((image, index) => (
-      <SwiperSlide key={index}>                                  <img
+                        <SwiperSlide key={index}>
+                          {" "}
+                          <img
                             src={image}
                             alt=""
                             onClick={() => handlePreview(image)}
-                            style={{ cursor: "pointer", maxHeight: "100%", width: "auto" }}
+                            style={{
+                              cursor: "pointer",
+                              maxHeight: "100%",
+                              width: "auto",
+                            }}
                           />
                         </SwiperSlide>
                       ))}
@@ -338,9 +395,18 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                       className="mySwiper1"
                     >
                       {allImages.map((image, index) => (
-      <SwiperSlide key={index} >
-                                  <div className="w-[full] h-[full] bg-[#F4F4F4] rounded-lg border border-[#F4F4F4] flex justify-center items-center">
-                            <img src={image} alt="" style={{ cursor: "pointer", maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+                        <SwiperSlide key={index}>
+                          <div className="w-[full] h-[full] bg-[#F4F4F4] rounded-lg border border-[#F4F4F4] flex justify-center items-center">
+                            <img
+                              src={image}
+                              alt=""
+                              style={{
+                                cursor: "pointer",
+                                maxWidth: "100%",
+                                maxHeight: "100%",
+                                objectFit: "contain",
+                              }}
+                            />
                           </div>
                         </SwiperSlide>
                       ))}
@@ -350,18 +416,28 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                 <div className="lg:col-span-6 col-span-12 px-4 w-full">
                   <div className="product_detail_name">
                     <div className="flex justify-between mb-2">
-                      <h3 className="font-bold text-2xl">{product.ten_san_pham}</h3>
-                      <p>     {selectedVariant && getStockStatus(selectedVariant)}
+                      <h3 className="font-bold text-2xl">
+                        {product.ten_san_pham}
+                      </h3>
+                      <p>
+                        {" "}
+                        {selectedVariant && getStockStatus(selectedVariant)}
                       </p>
-                    
                     </div>
                     <h4 className="mb-3 text-xl font-normal">
                       {product.mo_ta_ngan}
                     </h4>
                     <div className="stars_reviews flex mb-3">
-                      <Rate disabled defaultValue={Number(averageRating)} allowHalf />
+                      <Rate
+                        disabled
+                        defaultValue={Number(averageRating)}
+                        allowHalf
+                      />
                       <span className="px-2 text-[#A4A1AA] text-sm">
-                        {averageRating} <span className="px-[2px]">({product.danh_gias.length} Reviews)</span>
+                        {averageRating}{" "}
+                        <span className="px-[2px]">
+                          ({product.danh_gias.length} Reviews)
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -370,11 +446,26 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                     <div className="mb-4 text-lg font-medium">
                       {selectedVariant.gia_khuyen_mai ? (
                         <>
-                          <del className="text-[#A4A1AA]">{selectedVariant.gia_ban.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</del>
-                          <span className="ml-2">{selectedVariant.gia_khuyen_mai.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
+                          <del className="text-[#A4A1AA]">
+                            {selectedVariant.gia_ban.toLocaleString("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            })}
+                          </del>
+                          <span className="ml-2">
+                            {selectedVariant.gia_khuyen_mai.toLocaleString(
+                              "vi-VN",
+                              { style: "currency", currency: "VND" }
+                            )}
+                          </span>
                         </>
                       ) : (
-                        <span>{selectedVariant.gia_ban.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
+                        <span>
+                          {selectedVariant.gia_ban.toLocaleString("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          })}
+                        </span>
                       )}
                     </div>
                   )}
@@ -455,13 +546,14 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
               </div>
             </div>
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${isDescriptionExpanded ? '' : 'line-clamp-3'
-                }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${
+                isDescriptionExpanded ? "" : "line-clamp-3"
+              }`}
               dangerouslySetInnerHTML={{ __html: product.noi_dung }}
             />
             <div className="flex justify-center">
               <Button onClick={toggleDescription} className="mb-4">
-                {isDescriptionExpanded ? 'Thu gọn' : 'Xem thêm'}
+                {isDescriptionExpanded ? "Thu gọn" : "Xem thêm"}
               </Button>
             </div>
 
@@ -481,21 +573,31 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-500">
-                              {review.user.ho[0]}{review.user.ten[0]}
+                              {review.user.ho[0]}
+                              {review.user.ten[0]}
                             </div>
                           )}
                         </div>
                         <div>
                           <h4 className="font-medium">{`${review.user.ho} ${review.user.ten}`}</h4>
                           <div className="flex items-center">
-                            <Rate disabled defaultValue={review.so_sao_san_pham} />
+                            <Rate
+                              disabled
+                              defaultValue={review.so_sao_san_pham}
+                            />
                             <span className="ml-2 text-xs text-gray-500">
-                              {review.created_at ? new Date(review.created_at).toLocaleDateString() : 'N/A'}
+                              {review.created_at
+                                ? new Date(
+                                    review.created_at
+                                  ).toLocaleDateString()
+                                : "N/A"}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <p className="text-gray-700 font-medium mb-1">{review.chat_luong_san_pham}</p>
+                      <p className="text-gray-700 font-medium mb-1">
+                        {review.chat_luong_san_pham}
+                      </p>
                       <p className="text-gray-600 text-sm">{review.mo_ta}</p>
                       {review.phan_hoi && (
                         <div className="mt-2">
@@ -503,12 +605,18 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
                             onClick={() => toggleResponse(review.id)}
                             className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                           >
-                            {expandedResponses.includes(review.id) ? "Ẩn phản hồi" : "Xem phản hồi từ shop"}
+                            {expandedResponses.includes(review.id)
+                              ? "Ẩn phản hồi"
+                              : "Xem phản hồi từ shop"}
                           </button>
                           {expandedResponses.includes(review.id) && (
                             <div className="mt-2 pl-4 border-l-2 border-gray-300">
-                              <p className="text-sm font-medium">Phản hồi từ shop:</p>
-                              <p className="text-sm text-gray-600">{review.phan_hoi}</p>
+                              <p className="text-sm font-medium">
+                                Phản hồi từ shop:
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {review.phan_hoi}
+                              </p>
                             </div>
                           )}
                         </div>
@@ -524,7 +632,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }) => {
         </div>
       </Modal>
       <Image
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         src={previewImage}
         preview={{
           visible: previewOpen,

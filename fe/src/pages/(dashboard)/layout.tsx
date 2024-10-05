@@ -17,7 +17,7 @@ export function LayoutAdmin() {
         {/* Header và Main Content */}
         <div className="ml-[220px] lg:ml-[320px] flex flex-col bg-[#f3f3f3]">
           {/* Main Content */}
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 h-screen">
             <Outlet />
           </div>
         </div>
