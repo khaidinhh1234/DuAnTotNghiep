@@ -70,10 +70,22 @@ class MaKhuyenMaiController extends Controller
             DB::beginTransaction();
 
             $dataMaKhuyenMai = $request->except(['khuyen_mai_san_pham', 'khuyen_mai_danh_muc']);
-            $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
-
             $dataKhuyenMaiSanPham = $request->khuyen_mai_san_pham;
             $dataKhuyenMaiDanhMuc = $request->khuyen_mai_danh_muc;
+
+            if (!empty($dataKhuyenMaiSanPham)) {
+                $sanPhamNames = DB::table('san_phams')->whereIn('id', $dataKhuyenMaiSanPham)->pluck('ten_san_pham')->toArray();
+                $apDungText = 'Áp dụng cho sản phẩm: ' . implode(', ', $sanPhamNames);
+            } elseif (!empty($dataKhuyenMaiDanhMuc)) {
+                $danhMucNames = DB::table('danh_mucs')->whereIn('id', $dataKhuyenMaiDanhMuc)->pluck('ten_danh_muc')->toArray();
+                $apDungText = 'Áp dụng cho danh mục: ' . implode(', ', $danhMucNames);
+            } else {
+                $apDungText = 'Áp dụng cho tất cả sản phẩm';
+            }
+
+            $dataMaKhuyenMai['ap_dung'] = $apDungText;
+
+            $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
 
             if (!empty($dataKhuyenMaiDanhMuc)) {
                 $maKhuyenMai->danhMucs()->sync($dataKhuyenMaiDanhMuc);
@@ -104,6 +116,7 @@ class MaKhuyenMaiController extends Controller
             ], 500);
         }
     }
+
 
     public function show(string $id)
     {
