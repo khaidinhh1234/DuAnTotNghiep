@@ -170,14 +170,15 @@ Route::middleware([])
         Route::put('/donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
         Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
-        Route::get('cho-xac-nhan', [DonHangController::class, 'donChoXacNhan'])->name('cho-xac-nhan');
-        Route::get('cho-thanh-toan', [DonHangController::class,'donChuaThanhToan'])->name('cho-thanh-toan');
-        Route::get('don-chua-giao-hang', [DonHangController::class, 'donChuaGiaoHang'])->name('don-chua-giao-hang');
+        Route::get('cho-xac-nhan', [DonHangController::class, 'donChoXacNhan']);
+        Route::get('cho-thanh-toan', [DonHangController::class,'donChuaThanhToan']);
+        Route::get('don-chua-giao-hang', [DonHangController::class, 'donChuaGiaoHang']);
 
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
         Route::get('/vanchuyen/{id}',[VanChuyenController::class, 'show'])->name('vanchuyen.show');
         Route::put('/vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
+        Route::get('cho-lay-hang', [VanChuyenController::class, 'choLayHang']);
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
