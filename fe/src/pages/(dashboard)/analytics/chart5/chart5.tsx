@@ -18,7 +18,7 @@ const Chart5 = () => {
         <CardTitle>Bán hàng gần đây</CardTitle>
       </CardHeader>
       {data?.map((item: any, index: number) => (
-        <CardContent className="grid gap-8  p-4 rounded-lg " key={index}>
+        <CardContent className="grid gap-8  py-4 px-6 rounded-lg " key={index}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14">
