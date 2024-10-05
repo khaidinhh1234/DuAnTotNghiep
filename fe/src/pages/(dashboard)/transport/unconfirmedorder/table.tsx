@@ -148,7 +148,7 @@ const TableUncomfirmedOrder: React.FC = () => {
     (item: Transport, index: number): TransportData => ({
       key: item.id,
       ...item,
-      index: index + 1,
+      // index: index + 1,
       don_hang_id: item.don_hang?.ma_don_hang || "Chưa có dữ liệu",
     })
   );

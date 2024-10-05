@@ -282,7 +282,7 @@ const DetailTransport = ({ record }: any) => {
                   <p className="text-base font-semibold">
                     <span>
                       {
-                        data?.data?.tong_tien_san_pham
+                        data?.data?.cod
                         // .toLocaleString()
                       }
                     </span>{" "}
@@ -312,7 +312,7 @@ const DetailTransport = ({ record }: any) => {
                   </h1>
                   <p className="text-lg font-bold">
                     {" "}
-                    {(record?.tong_tien_don_hang + 20000).toLocaleString(
+                    {(record?.tien_cod + 20000).toLocaleString(
                       "vi-VN"
                     )}{" "}
                     VNĐ
@@ -373,7 +373,7 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-800">
                 Địa chỉ Giao hàng: <span>{record?.dia_chi_nguoi_dat_hang}</span>
               </h5>
-            </div>
+            </div>  
           </div>
         </div>
       </Modal>

@@ -63,11 +63,11 @@ const Remoterank: React.FC = () => {
   const handleRestore = async (id: string | number) => {
     try {
       await instance.post(`/hangthanhvien/thung-rac/${id}`);
-      message.success("Khôi phục danh mục thành công", 3);
+      message.success("Khôi phục hạng thành viên thành công", 3);
       queryClient.invalidateQueries({ queryKey: ["rank"] });
     } catch (error) {
       console.error("Error restoring category:", error);
-      message.error("Khôi phục danh mục thất bại", 3);
+      message.error("Khôi phục hạng thành viên thất bại", 3);
     }
   };
 

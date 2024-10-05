@@ -9,7 +9,7 @@ const Remotecolor: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
   const { id } = useParams();
 
-  // Fetch danh mục đã xóa
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["color"],
     queryFn: async () => {
@@ -23,16 +23,16 @@ const Remotecolor: React.FC = () => {
     },
   });
 
-  // Xử lý khôi phục danh mục
+  
   const handleRestore = async (id: string) => {
     try {
       await instance.post(`/bienthemausac/thung-rac/${id}`);
-      message.success("Khôi phục danh mục thành công");
+      message.success("Khôi phục màu sản phẩm thành công");
       // Refresh lại dữ liệu sau khi khôi phục
       queryClient.invalidateQueries({ queryKey: ["color"] });
     } catch (error) {
       console.error("Error restoring category:", error);
-      message.error("Khôi phục danh mục thất bại");
+      message.error("Khôi phục màu sản phẩm thất bại");
     }
   };
 

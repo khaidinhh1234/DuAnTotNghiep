@@ -220,31 +220,31 @@ const ProductsAdmin: React.FC = () => {
       title: "Sản phẩm",
       key: "ten_san_pham",
       render: (item: any) => (
-        <div className="flex items-center gap-5 p-2 bg-slate-100 shadow-md rounded-lg hover:bg-slate-300 hover:shadow-2xl transition duration-300 cursor-pointer">
-        <div className="border rounded-lg overflow-hidden">
-          <img
-            src={item.anh_san_pham || "https://via.placeholder.com/150"}
-            alt="product"
-            className="w-20 h-20 object-cover"
-          />
+        <div className="flex gap-5 p-2 bg-slate-100 shadow-md rounded-lg hover:bg-slate-300 hover:shadow-2xl transition duration-300 cursor-pointer">
+          <div className="border rounded-lg overflow-hidden">
+            <img
+              src={item.anh_san_pham || "https://via.placeholder.com/150"}
+              alt="product"
+              className="w-20 h-20 object-cover"
+            />
+          </div>
+          
+          <div className="flex flex-col items-center">
+            {/* Text tên sản phẩm */}
+            <Detail item={item} />
+            
+            {/* Giảm khoảng cách giữa tên sản phẩm và mô tả */}
+            <p className="mt-0.5 text-xs text-gray-500 truncate">
+              {item.mo_ta_ngan}
+            </p>
+          </div>
         </div>
-        
-        <div className="flex flex-col items-center gap-1">
-          {/* Text tên sản phẩm */}
-          <Detail item={item} />
-      
-          {/* Text mô tả ngắn */}
-          <p className="text-xs text-gray-500 truncate w-40 text-center">
-            {item.mo_ta_ngan}
-          </p>
-        </div>
-      </div>
-      
       ),
       width: "25%",
-
+    
       sorter: (a, b) => a.ten_san_pham.localeCompare(b.ten_san_pham), // Sắp xếp theo tên sản phẩm
-    },
+    }
+    ,
 
     {
       title: "Danh mục",

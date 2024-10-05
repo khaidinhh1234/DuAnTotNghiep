@@ -62,11 +62,11 @@ const Rank: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rank"] });
-      message.success("Xóa sản phẩm thành công");
+      message.success("Xóa hạng của thành viên thành công");
     },
     onError: (error) => {
       console.error("Error deleting product:", error);
-      message.error("Xóa sản phẩm thất bại");
+      message.error("Xóa hạng của thành viên thất bại");
     },
   });
 
@@ -75,7 +75,7 @@ const Rank: React.FC = () => {
     key: index,
   }));
 
-  const handleSearch = (
+  const handleSearch = (      
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
     dataIndex: DataIndex
