@@ -212,17 +212,21 @@ const NewEdit = () => {
                         { value: "Email", title: "Email" },
                       ],
                       setup: (editor) => {
-                        editor.on("Change", () => {
+                        const updateContent = () => {
+                          const content = editor.getContent();
                           form.setFieldsValue({
-                            noi_dung: editor.getContent(),
+                            noi_dung: content || "", // Cập nhật nội dung hoặc đặt chuỗi rỗng khi không có nội dung
                           });
-                        });
+                        };
+
+                        // Cập nhật nội dung khi có thay đổi
+                        editor.on("Change", updateContent);
+
+                        // Cập nhật khi người dùng thoát khỏi trường soạn thảo
+                        editor.on("Blur", updateContent);
                       },
                     }}
-                    initialValue={
-                      newsData.data.noi_dung ||
-                      "Chào mừng bạn đến với Glow clothing!"
-                    }
+                   
                   />
                 </Form.Item>
               </div>
