@@ -63,7 +63,7 @@ const Tagsedit = () => {
         </h1>
         <div>
           <Link to="/admin/products/tags" className="mr-1">
-            <Button  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>
@@ -90,6 +90,10 @@ const Tagsedit = () => {
                     message: "Tên nhãn dán bắt buộc phải nhập!",
                   },
                   {
+                    pattern: /^[A-Z].*$/,
+                    message: "Chữ cái đầu tiên phải viết hoa!",
+                  },
+                  {
                     pattern: /^[^\s]+(\s+[^\s]+)*$/,
                     message: "Vui lòng nhập chứa ký tự trắng!",
                   },
@@ -105,7 +109,7 @@ const Tagsedit = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-               className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+                  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 >
                   Thêm
                 </Button>

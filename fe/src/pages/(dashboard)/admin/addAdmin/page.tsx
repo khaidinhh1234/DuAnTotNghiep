@@ -28,7 +28,13 @@ const PageAddAdmin: React.FC = () => {
           <Form.Item
             label="Họ tên"
             name="fullname"
-            rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập họ tên!" },
+              {
+                pattern: /^[A-Z].*$/,
+                message: "Chữ cái đầu tiên phải viết hoa!",
+              },
+            ]}
           >
             <Input placeholder="Nhập họ tên" />
           </Form.Item>
