@@ -1,17 +1,32 @@
 import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, DatePicker, Flex, Input, message, Popconfirm, Select, Space, Table, TableColumnsType, TableProps, Tabs } from "antd";
+import {
+  Button,
+  DatePicker,
+  Flex,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+  TableColumnsType,
+  TableProps,
+  Tabs,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DetailTransport from "./DetailTransport";
 
-type TableRowSelection<T extends object = object> = TableProps<T>["rowSelection"];
+type TableRowSelection<T extends object = object> =
+  TableProps<T>["rowSelection"];
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 interface TransportData extends Transport {
   key: React.Key;
+  index: number;
 }
 
 interface Transport {
@@ -137,7 +152,6 @@ const TableUncomfirmedOrder: React.FC = () => {
       don_hang_id: item.don_hang?.ma_don_hang || "Chưa có dữ liệu",
     })
   );
-  
 
   const handleChange = (value: string) => {
     setTrangThai(value);
@@ -148,7 +162,6 @@ const TableUncomfirmedOrder: React.FC = () => {
       title: "Mã vận chuyển",
       dataIndex: "ma_van_chuyen",
       key: "ma_van_chuyen",
-      
     },
     {
       title: "Mã đơn hàng",
@@ -160,7 +173,8 @@ const TableUncomfirmedOrder: React.FC = () => {
       title: "Ngày tạo",
       dataIndex: "created_at",
       key: "created_at",
-      sorter: (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      sorter: (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
       render: (_, record) => {
         const date = new Date(record.created_at);
         return (
@@ -199,8 +213,9 @@ const TableUncomfirmedOrder: React.FC = () => {
       title: "Thanh toán",
       dataIndex: "trang_thai_thanh_toan",
       key: "trang_thai_thanh_toan",
-      sorter: (a, b) => a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
-      render: (_, record) => {
+      sorter: (a: any, b: any) =>
+        a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
+      render: (_, record: any) => {
         return (
           <div
             className={
@@ -248,8 +263,7 @@ const TableUncomfirmedOrder: React.FC = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị /
-          <span className="font-semibold px-px"> Vận chuyển</span>
+          Quản trị /<span className="font-semibold px-px"> Vận chuyển</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
@@ -331,7 +345,6 @@ const TableUncomfirmedOrder: React.FC = () => {
             pagination={{ pageSize: 10, className: "my-5" }}
           />
         </Flex>
-
       </div>
     </main>
   );

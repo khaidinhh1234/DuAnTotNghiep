@@ -61,9 +61,9 @@ const CategoriesAdmin: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.delete(`/admin/danhmuc/${id}`);
+        const response = await instance.delete(`/danhmuc/${id}`);
         if (response.data.status) {
-          return id;
+          return id;  
         } else {
           throw new Error(response.data.message || "Failed to delete");
         }

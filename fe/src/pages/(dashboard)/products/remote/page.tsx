@@ -248,13 +248,13 @@ const ProductsRemote: React.FC = () => {
             cancelText="Không"
             onConfirm={() => handleDelete(record.id)}
           >
-            <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
+            {/* <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
               Xóa vĩnh viễn
-            </Button>
+            </Button> */}
           </Popconfirm>
           <Button
             onClick={() => handleRestore(record.id)}
-            className="bg-white text-green-500 border border-green-500 rounded-lg hover:bg-green-50 hover:text-green-600 shadow-md transition-colors"
+            className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
           >
             Khôi phục
           </Button>
