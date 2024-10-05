@@ -20,7 +20,6 @@ class SanPham extends Model
         'noi_dung',
         'luot_xem',
         'trang_thai',
-        'gia_tri_uu_dai',
         'gia_tot',
         'hang_moi'
     ];

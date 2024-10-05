@@ -8,6 +8,7 @@ use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -192,11 +193,24 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 404);
             }
 
-            $sanPhams = SanPham::where('gia_tri_uu_dai', $uuDai->gia_tri_uu_dai)->get();
+            $sanPhams = $uuDai->sanPhams()->get();
+
             foreach ($sanPhams as $sanPham) {
-                $sanPham->gia_tri_uu_dai = null;
-                $sanPham->save();
+                $bienTheSanPhams = $sanPham->bienTheSanPham()->get();
+
+                foreach ($bienTheSanPhams as $bienTheSanPham) {
+                    $bienTheSanPham->gia_khuyen_mai_tam_thoi = null;
+
+                    try {
+                        $bienTheSanPham->save();
+                    } catch (\Exception $e) {
+                        // Log lỗi khi lưu biến thể sản phẩm
+                        Log::error('Lỗi khi lưu biến thể ID: ' . $bienTheSanPham->id . ' - ' . $e->getMessage());
+                    }
+                }
             }
+
+            // Xóa chương trình ưu đãi sau khi đã cập nhật tất cả biến thể
             $uuDai->delete();
 
             return response()->json([
@@ -204,7 +218,9 @@ class ChuongTrinhUuDaiController extends Controller
                 'status_code' => 200,
                 'message' => 'Xóa chương trình ưu đãi thành công',
             ], 200);
+
         } catch (\Exception $e) {
+            // Bắt lỗi và trả về phản hồi nếu có lỗi xảy ra
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -213,6 +229,7 @@ class ChuongTrinhUuDaiController extends Controller
             ], 500);
         }
     }
+
 
 
     public function danhSachXoaMem()

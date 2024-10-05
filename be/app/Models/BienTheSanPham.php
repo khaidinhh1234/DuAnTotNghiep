@@ -16,6 +16,7 @@ class BienTheSanPham extends Model
         'so_luong_bien_the',
         'gia_ban',
         'gia_khuyen_mai',
+        'gia_khuyen_mai_tam_thoi',
     ];
 
     public function sanPham()
