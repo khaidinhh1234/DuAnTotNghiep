@@ -373,6 +373,12 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-800">
                 Địa chỉ Giao hàng: <span>{record?.dia_chi_nguoi_dat_hang}</span>
               </h5>
+              <p className="text-blue-800 font-semibold">
+                Ghi chú của khách hàng : <br />
+                <span className="text-black">
+                  {record?.ghi_chu ? record?.ghi_chu : "Không có ghi chú"}
+                </span>
+              </p>
             </div>  
           </div>
         </div>
