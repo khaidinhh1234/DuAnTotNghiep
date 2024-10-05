@@ -204,7 +204,7 @@ const ProductForm = ({
                 { value: "Email", title: "Email" },
               ],
             }}
-            onEditorChange={(content, editor) => {
+            onEditorChange={(content) => {
               updateContent(content);
             }}
           />
