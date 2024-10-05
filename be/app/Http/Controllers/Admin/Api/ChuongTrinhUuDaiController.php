@@ -81,11 +81,16 @@ class ChuongTrinhUuDaiController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
+
             $dataUuDai = $request->except('san_pham');
             $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']) . '-' . Carbon::now()->timestamp;
+
             DB::beginTransaction();
             $uuDai = ChuongTrinhUuDai::create($dataUuDai);
             $uuDai->sanPhams()->sync($request->san_pham);
+
+            $this->updateTemporaryPromotionPrices($uuDai);
+
             DB::commit();
 
             return response()->json([
@@ -104,6 +109,50 @@ class ChuongTrinhUuDaiController extends Controller
             ], 500);
         }
     }
+
+    private function updateTemporaryPromotionPrices($uuDai)
+    {
+        $sanPhams = $uuDai->sanPhams()->with('bienTheSanPham')->get();
+
+        foreach ($sanPhams as $sanPham) {
+            Log::info('Cập nhật giá khuyến mãi tạm thời cho sản phẩm ID: ' . $sanPham->id);
+            $bienTheSanPhams = $sanPham->bienTheSanPham;
+
+            foreach ($bienTheSanPhams as $bienTheSanPham) {
+                $currentPromotionPrice = $bienTheSanPham->gia_khuyen_mai ?? null;
+                $originalPrice = $bienTheSanPham->gia_ban;
+
+                if ($originalPrice === null) {
+                    Log::warning('Biến thể không có giá bán: ID ' . $bienTheSanPham->id);
+                    continue;
+                }
+
+                if ($currentPromotionPrice !== null) {
+                    if ($uuDai->loai == 'tien') {
+                        $bienTheSanPham->gia_khuyen_mai_tam_thoi = max(0, $currentPromotionPrice - $uuDai->gia_tri_uu_dai);
+                    } elseif ($uuDai->loai == 'phan_tram') {
+                        $discountAmount = ($currentPromotionPrice * $uuDai->gia_tri_uu_dai) / 100;
+                        $bienTheSanPham->gia_khuyen_mai_tam_thoi = max(0, $currentPromotionPrice - $discountAmount);
+                    }
+                } else {
+                    $bienTheSanPham->gia_khuyen_mai_tam_thoi = $originalPrice;
+
+                    Log::info('Không có giá khuyến mãi, sử dụng giá bán: ' . $bienTheSanPham->gia_khuyen_mai_tam_thoi);
+                }
+
+                Log::info('Cập nhật giá khuyến mãi tạm thời cho biến thể ID: ' . $bienTheSanPham->id . ', Giá khuyến mãi tạm thời: ' . $bienTheSanPham->gia_khuyen_mai_tam_thoi);
+
+                try {
+                    $bienTheSanPham->save();
+                    Log::info('Lưu thành công biến thể ID: ' . $bienTheSanPham->id);
+                } catch (\Exception $e) {
+                    Log::error('Lỗi khi lưu biến thể ID: ' . $bienTheSanPham->id . ' - ' . $e->getMessage());
+                }
+            }
+        }
+    }
+
+
 
     /**
      * Update the existing resource in storage.
