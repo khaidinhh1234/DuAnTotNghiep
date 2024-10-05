@@ -437,4 +437,34 @@ class SanPhamController extends Controller
             ], 500);
         }
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $validatedData = $request->validate([
+            'san_phams' => 'required|array',
+            'san_phams.*' => 'required|exists:san_phams,id',
+        ]);
+
+        SanPham::whereIn('id', $validatedData['san_phams'])->delete();
+
+        return response()->json(['message' => 'Xóa thành công'], 200);
+    }
+
+
+    public function updateStatus(Request $request)
+    {
+        $validatedData = $request->validate([
+            'san_phams' => 'required|array',
+            'san_phams.*' => 'required|exists:san_phams,id',
+            'trang_thai' => 'required|boolean',
+        ]);
+
+        SanPham::whereIn('id', $validatedData['san_phams'])->update(['trang_thai' => $validatedData['trang_thai']]);
+
+        return response()->json(['message' => 'Cập nhật trạng thái thành công'], 200);
+    }
+
+
+
+
 }
