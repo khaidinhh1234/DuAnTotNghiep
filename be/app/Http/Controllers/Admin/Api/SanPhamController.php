@@ -464,6 +464,27 @@ class SanPhamController extends Controller
         return response()->json(['message' => 'Cập nhật trạng thái thành công'], 200);
     }
 
+    public function bulkUpdateTags(Request $request)
+    {
+        $validatedData = $request->validate([
+            'san_phams' => 'required|array',
+            'san_phams.*' => 'required|exists:san_phams,id',
+            'thes' => 'required|array',
+            'thes.*' => 'required|exists:thes,id',
+        ]);
+
+        foreach ($validatedData['san_phams'] as $sanPhamId) {
+            $sanPham = SanPham::find($sanPhamId);
+
+            if (!$sanPham) {
+                return response()->json(['message' => "Sản phẩm với ID $sanPhamId không tìm thấy"], 404);
+            }
+
+            $sanPham->theSanPham()->sync($validatedData['thes']);
+        }
+
+        return response()->json(['message' => 'Cập nhật thẻ thành công cho các sản phẩm'], 200);
+    }
 
 
 
