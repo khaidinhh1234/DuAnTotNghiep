@@ -26,6 +26,7 @@ use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
+use App\Http\Controllers\Client\Api\GioHangController;
 use App\Http\Controllers\Client\Api\DonHangClientController;
 use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\LienHeController;
@@ -113,6 +114,11 @@ Route::middleware([])
         // Liên hệ
         Route::post('lienhe', [LienHeController::class, 'lienHe']);
 
+        // Giỏ hàng
+        Route::get('/gio-hang', [GioHangController::class, 'index']);
+        Route::post('/gio-hang', [GioHangController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
+        Route::put('/gio-hang/{id}', [GioHangController::class, 'update']); // Cập nhật giỏ hàng
+        Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
         //Thanh toán
         //Thanh toán Momo
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
