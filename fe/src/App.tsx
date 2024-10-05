@@ -6,7 +6,6 @@ import { ToastContainer, toast } from "react-toastify";
 import Router from "./routes";
 import "react-toastify/dist/ReactToastify.css"; // Đảm bảo thêm phần này để Toast hoạt động
 
-// Extend the Window interface to include Pusher
 declare global {
   interface Window {
     Pusher: typeof Pusher;
@@ -23,21 +22,23 @@ function App() {
     // Khởi tạo Laravel Echo
     const echo = new Echo({
       broadcaster: "pusher",
-      key: "1c8e95dbe744a942b3f8", // Thay bằng khóa Pusher của bạn
+      key: "ec6b4203ba3ec544f8ae", // Thay bằng khóa Pusher của bạn
       cluster: "ap1", // Thay bằng cluster Pusher của bạn
       encrypted: true,
     });
 
-    // Lắng nghe sự kiện từ kênh "notifications"
-    echo.channel("thongbao").listen("UserNotification", (event: any) => {
-      console.log("Notification received:", event.message);
-      setNotifications((prevNotifications) => [
-        ...prevNotifications,
-        event.message,
-      ]);
+    echo.channel("ma-khuyen-mai").listen("MaKhuyenMaiCreated", (event: any) => {
+      console.log("Notification received:", event.mo_ta);
 
       // Hiển thị thông báo sử dụng Toast
-      toast(event.message);
+        // Hiển thị thông báo toast với thông tin từ event
+        const toastMessage = `${event.mo_ta} - ${event.hang_thanh_vien_ids}`;
+        toast(toastMessage);
+
+// Thêm thông báo alert
+        const alertMessage = `Mã khuyến mãi mới: ${event.mo_ta} - ${event.hang_thanh_vien_ids}`;
+        alert(alertMessage);
+
     });
 
     // Cleanup khi component bị hủy
@@ -47,17 +48,21 @@ function App() {
   }, []);
 
   return (
-    <>
-      <Router />
-      <Toaster />
-      <ToastContainer />
-      {/* Nếu cần, bạn có thể hiển thị danh sách thông báo nhận được */}
-      <ul>
-        {notifications.map((notification, index) => (
-          <li key={index}>{notification}</li>
-        ))}
-      </ul>
-    </>
+      <>
+        <Router />
+        <Toaster />
+        <ToastContainer />
+
+        {/* Hiển thị danh sách thông báo nhận được */}
+        <ul>
+          {notifications.length > 0 && (
+              <h3>Thông báo:</h3>
+          )}
+          {notifications.map((notification, index) => (
+              <li key={index}>{notification}</li>
+          ))}
+        </ul>
+      </>
   );
 }
 
