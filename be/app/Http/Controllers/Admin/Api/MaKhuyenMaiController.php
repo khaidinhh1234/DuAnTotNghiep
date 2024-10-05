@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Events\MaKhuyenMaiCreated;
 use App\Events\UserNotification;
+use App\Events\VoucherCreated;
 use App\Http\Controllers\Controller;
 use App\Models\MaKhuyenMai;
 use App\Models\SanPham;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -47,7 +50,7 @@ class MaKhuyenMaiController extends Controller
             'loai' => 'required|string|in:phan_tram,tien_mat',
             'ngay_bat_dau_suu_tam' => 'required|date',
             'ngay_bat_dau' => 'required|date|before:ngay_ket_thuc',
-            'ngay_ket_thuc' => 'required|date',
+            'ngay_ket_thuc' => 'required|date|after:ngay_bat_dau',
             'so_luong' => 'required|integer',
             'giam_gia' => 'required|numeric',
             'chi_tieu_thoi_thieu' => 'nullable|numeric',
@@ -70,11 +73,32 @@ class MaKhuyenMaiController extends Controller
             DB::beginTransaction();
 
             $dataMaKhuyenMai = $request->except(['khuyen_mai_san_pham', 'khuyen_mai_danh_muc']);
-            $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
-
             $dataKhuyenMaiSanPham = $request->khuyen_mai_san_pham;
             $dataKhuyenMaiDanhMuc = $request->khuyen_mai_danh_muc;
 
+            if (!empty($dataKhuyenMaiSanPham)) {
+                $sanPhamNames = DB::table('san_phams')->whereIn('id', $dataKhuyenMaiSanPham)->pluck('ten_san_pham')->toArray();
+                $apDungText = 'Áp dụng cho sản phẩm: ' . implode(', ', $sanPhamNames);
+            } elseif (!empty($dataKhuyenMaiDanhMuc)) {
+                $danhMucNames = DB::table('danh_mucs')->whereIn('id', $dataKhuyenMaiDanhMuc)->pluck('ten_danh_muc')->toArray();
+                $apDungText = 'Áp dụng cho danh mục: ' . implode(', ', $danhMucNames);
+            } else {
+                $apDungText = 'Áp dụng cho tất cả sản phẩm';
+            }
+
+            $dataMaKhuyenMai['ap_dung'] = $apDungText;
+
+            $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
+
+            $now = Carbon::now();
+            $ngayBatDauSuuTam = Carbon::parse($request->ngay_bat_dau_suu_tam);
+            $ngayKetThuc = Carbon::parse($request->ngay_ket_thuc);
+
+//            if (($now->isToday() || $now->isPast()) && $ngayKetThuc->isFuture()) {
+                broadcast(new MaKhuyenMaiCreated($maKhuyenMai, $request->hang_thanh_vien))->toOthers();
+//            }
+
+            // Gán sản phẩm và danh mục cho mã khuyến mãi
             if (!empty($dataKhuyenMaiDanhMuc)) {
                 $maKhuyenMai->danhMucs()->sync($dataKhuyenMaiDanhMuc);
             } else {
@@ -85,6 +109,7 @@ class MaKhuyenMaiController extends Controller
                 $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
             }
 
+            // Gán hạng thành viên cho mã khuyến mãi
             $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
 
             DB::commit();
@@ -104,6 +129,9 @@ class MaKhuyenMaiController extends Controller
             ], 500);
         }
     }
+
+
+
 
     public function show(string $id)
     {

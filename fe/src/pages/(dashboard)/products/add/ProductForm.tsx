@@ -79,6 +79,7 @@
 //     });
 //   }, [form, setData]);
 
+<<<<<<< HEAD
 //   return (
 //     <Form
 //       form={form}
@@ -128,6 +129,61 @@
 //           <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
 //         </Form.Item>
 //       </div>
+=======
+  return (
+    <Form
+      form={form}
+      name="product"
+      layout="vertical"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 24 }}
+      style={{ maxWidth: "100%" }}
+      className="mx-10 my-5"
+      autoComplete="off"
+      onValuesChange={handleValuesChange}
+      initialValues={initialValues}
+    >
+      <div className="grid grid-cols-2 gap-5">
+        <Form.Item
+          label="Tên sản phẩm"
+          name="ten_san_pham"
+          rules={[
+            { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
+            {
+              pattern: /^[A-Z].*$/,
+              message: "Chữ cái đầu tiên phải viết hoa!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập tên sản phẩm" />
+        </Form.Item>
+        <Form.Item
+          label="Danh mục sản phẩm"
+          name="danh_muc_id"
+          rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
+        >
+          <Select placeholder="Vui lòng chọn danh mục" className="w-full">
+            {categoriesData &&
+              categoriesData.map((category) => (
+                <Option key={category.id} value={category.id}>
+                  {category.ten_danh_muc}
+                </Option>
+              ))}
+          </Select>
+        </Form.Item>
+      </div>
+      <div className="grid grid-cols-1 gap-5">
+        <Form.Item
+          label="Mô tả ngắn"
+          name="mo_ta_ngan"
+          rules={[
+            { required: true, message: "Mô tả ngắn bắt buộc phải nhập!" },
+          ]}
+        >
+          <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
+        </Form.Item>
+      </div>
+>>>>>>> eb64740761c1e6c93b634d21556d03c1ae603f7c
 
 //       <div className="grid grid-cols-2 gap-5">
 //         <Form.Item label="Chọn tags" name="tags">

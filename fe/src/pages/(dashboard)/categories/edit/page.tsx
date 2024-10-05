@@ -9,7 +9,7 @@ import instance from "@/configs/admin";
 
 const CategoriesEdit = () => {
   const { id } = useParams();
-  console.log(id); // Kiểm tra ID
+  // console.log(id); // Kiểm tra ID
 
   const [form] = Form.useForm();
   const nav = useNavigate();
@@ -130,6 +130,11 @@ const CategoriesEdit = () => {
                     {
                       required: true,
                       message: "Tên danh mục bắt buộc phải nhập!",
+                    },
+
+                    {
+                      pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                      message: "Vui lòng không chứa ký tự trắng!",
                     },
                   ]}
                 >

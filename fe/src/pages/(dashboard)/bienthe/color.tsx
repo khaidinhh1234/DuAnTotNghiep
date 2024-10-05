@@ -108,8 +108,7 @@ const Color = () => {
         </h1>
         <div>
           <Link to="/admin/products/bienthe" className="mr-1">
-            <Button      className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
-            >
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>
@@ -131,6 +130,10 @@ const Color = () => {
                 name="ten_mau_sac"
                 rules={[
                   { required: true, message: "Tên màu bắt buộc phải nhập!" },
+                  {
+                    pattern: /^[A-Z].*$/,
+                    message: "Chữ cái đầu tiên phải viết hoa!",
+                  },
                 ]}
               >
                 <Input placeholder="Nhập tên màu" />
@@ -181,7 +184,7 @@ const Color = () => {
                   type="primary"
                   htmlType="submit"
                   className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
-                  >
+                >
                   Cập nhật
                 </Button>
               </Form.Item>

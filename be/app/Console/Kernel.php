@@ -16,7 +16,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('chuongtrinh:delete-expired')->daily();
         $schedule->command('sanpham:cap-nhat-hang-moi')->daily();
         $schedule->command('khuyenmai:update-gia-tam-thoi')->hourly();
-
     }
 
 

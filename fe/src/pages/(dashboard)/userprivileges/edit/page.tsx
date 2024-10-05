@@ -1,4 +1,3 @@
-
 import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Checkbox, Form, Input, message, Tree } from "antd";
@@ -131,6 +130,10 @@ const PageEditPermission: React.FC = () => {
               name="ten_vai_tro"
               rules={[
                 { required: true, message: "Vui lòng nhập tên vai trò!" },
+                {
+                  pattern: /^[A-Z].*$/,
+                  message: "Chữ cái đầu tiên phải viết hoa!",
+                },
                 {
                   pattern: /^[^\s]+(\s+[^\s]+)*$/,
                   message: "Vui lòng nhập tên không chứa khoảng trắng!",

@@ -26,6 +26,7 @@ use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
+use App\Http\Controllers\Client\Api\GioHangController;
 use App\Http\Controllers\Client\Api\DonHangClientController;
 use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\LienHeController;
@@ -113,6 +114,11 @@ Route::middleware([])
         // Liên hệ
         Route::post('lienhe', [LienHeController::class, 'lienHe']);
 
+        // Giỏ hàng
+        Route::get('/gio-hang', [GioHangController::class, 'index']);
+        Route::post('/gio-hang', [GioHangController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
+        Route::put('/gio-hang/{id}', [GioHangController::class, 'update']); // Cập nhật giỏ hàng
+        Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
         //Thanh toán
         //Thanh toán Momo
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
@@ -175,18 +181,14 @@ Route::middleware([])
         Route::put('/donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
         Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
-        Route::get('cho-xac-nhan', [DonHangController::class, 'donChoXacNhan']);
-        Route::get('cho-thanh-toan', [DonHangController::class,'donChuaThanhToan']);
-        Route::get('don-chua-giao-hang', [DonHangController::class, 'donChuaGiaoHang']);
+        Route::get('lay-thong-tin-don', [DonHangController::class, 'layThongTinDon']);
+
 
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
         Route::get('/vanchuyen/{id}', [VanChuyenController::class, 'show'])->name('vanchuyen.show');
         Route::put('/vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
-        Route::get('cho-lay-hang', [VanChuyenController::class, 'choLayHang']);
-        Route::get('dang-giao-hang', [VanChuyenController::class, 'dangGiaoHang']);
-        Route::get('giao-hang-that-bai', [VanChuyenController::class, 'giaoHangThatBai']);
-        Route::get('giao-hang-thanh-cong', [VanChuyenController::class, 'giaoHangThanhCong']);
+        Route::get('lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen']);
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);

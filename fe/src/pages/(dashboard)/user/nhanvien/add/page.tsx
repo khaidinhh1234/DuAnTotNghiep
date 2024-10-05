@@ -37,6 +37,7 @@ const UsersNhanvienAdd = () => {
   const vaitro = data?.data.map((item: any) => {
     return { label: item.ten_vai_tro, value: item.ten_vai_tro };
   });
+
   // const handleChange = (value: string) => {
   //   console.log(value);
   // };
@@ -151,6 +152,10 @@ const UsersNhanvienAdd = () => {
                         {
                           required: true,
                           message: "Tên của Nhân viên bắt buộc phải nhập!",
+                        },
+                        {
+                          pattern: /^[A-Z].*$/,
+                          message: "Chữ cái đầu tiên phải viết hoa!",
                         },
                         {
                           pattern: /^[^\s]+(\s+[^\s]+)*$/,

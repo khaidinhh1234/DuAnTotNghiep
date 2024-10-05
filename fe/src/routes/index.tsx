@@ -96,6 +96,7 @@ import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorde
 import Detail from "@/pages/(dashboard)/products/detail/page";
 import ShowUser from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import Collect from "@/pages/(dashboard)/transport/collect/Collect";
+import ShowNhanvien from "@/pages/(dashboard)/user/khachhang/show/showUser";
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
@@ -154,12 +155,11 @@ const Router = () => {
           <Route path="products/add" element={<ProductsAdd />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
-         {/* Biến thể */}
-         <Route path="products/detaile" element={<Detail item={{
-            id: 0
-          }} />} />
-g
           {/* Biến thể */}
+          {/* <Route path="products/detaile" element={<Detail item={{
+            id: 0
+          }} />} /> */}
+          g{/* Biến thể */}
           <Route path="products/bienthe" element={<Bienthe />} />
           <Route path="products/bienthecolor/edit/:id" element={<Color />} />
           <Route path="products/bienthesize/edit/:id" element={<Size />} />
@@ -191,7 +191,7 @@ g
             path="orders/uncomfirmedorder"
             element={<TableUncomfirmedOrder />}
           />
-          <Route path="orders/collect" element={<Collect/>}/>
+          <Route path="orders/collect" element={<Collect />} />
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
           <Route path="add-vocher" element={<AddVoucher />} />
@@ -220,6 +220,7 @@ g
             path="users/nhanvien/edit/:id"
             element={<UsersnhanvienEdit />}
           />
+          <Route path="users/nhanvien/show/:id" element={<ShowNhanvien />} />
           <Route
             path="users/nhanvien/remote"
             element={<UsersRemoteNhanvien />}
@@ -253,7 +254,6 @@ g
             path="transport/uncomfirmedorder"
             element={<TableUncomfirmedOrder />}
           />
-          
           //vai trò
           {/* //vai trò */}
           <Route

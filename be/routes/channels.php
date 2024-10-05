@@ -20,3 +20,8 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('thongbao', function(){
     return true;
 });
+
+Broadcast::channel('ma-khuyen-mai', function () {
+    return true; // Tất cả người dùng đều có quyền truy cập vào kênh này
+});
+

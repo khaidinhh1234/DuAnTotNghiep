@@ -485,7 +485,7 @@ const Detail = ({ record }: any) => {
               <h5 className="text-blue-600 my-2">
                 {record.ten_nguoi_dat_hang
                   ? record.ten_nguoi_dat_hang
-                  : thongtin.ho + " " + thongtin.ten}
+                  : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
@@ -493,14 +493,14 @@ const Detail = ({ record }: any) => {
                 {" "}
                 {record.ten_nguoi_dat_hang
                   ? record.ten_nguoi_dat_hang
-                  : thongtin.ho + " " + thongtin.ten}
+                  : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <p className="text-blue-800 font-semibold">
                 Số điện thoại :
                 <span className="text-black font-medium">
                   {record.so_dien_thoai_nguoi_dat_hang
                     ? record.so_dien_thoai_nguoi_dat_hang
-                    : thongtin.so_dien_thoai}
+                    : thongtin?.so_dien_thoai}
                 </span>
               </p>
               <h5 className="text-blue-800">
@@ -508,7 +508,7 @@ const Detail = ({ record }: any) => {
                 <span className="text-black">
                   {record?.dia_chi_nguoi_dat_hang
                     ? record?.dia_chi_nguoi_dat_hang
-                    : thongtin.dia_chi}
+                    : thongtin?.dia_chi}
                 </span>
               </h5>
               <p className="text-blue-800 font-semibold">

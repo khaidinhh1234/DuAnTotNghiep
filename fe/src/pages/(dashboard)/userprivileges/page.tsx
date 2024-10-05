@@ -1,4 +1,3 @@
-
 import instance from "@/configs/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Input, message, Space, Table, TableColumnsType } from "antd";
@@ -41,11 +40,13 @@ const UserPrivilegeAdmin = () => {
     {
       title: <div className="w-[40%] pl-8 ">Vai trò</div>,
       dataIndex: "ten_vai_tro",
-      render: (text) => <div className="w-[40%] pl-8">{text}</div>,
+      render: (text) => <div className="w-[50%] pl-8">{text}</div>,
     },
     {
-      title: "Mô tả vai trò",
-      dataIndex: "mo_ta",
+      title: <div className="w-[40%] pl-8 ">Mô tả vai trò</div>,
+      render: (_, record: any) => (
+        <div className="w-[50%] pl-8">{record?.mo_ta}</div>
+      ),
     },
     {
       title: "Hành động",

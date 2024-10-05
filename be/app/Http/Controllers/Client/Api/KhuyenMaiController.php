@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\MaKhuyenMai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class KhuyenMaiController extends Controller
 {
@@ -74,14 +75,38 @@ class KhuyenMaiController extends Controller
         ]);
     }
 
-    public function maKhuyenMaiHangThanhVien()
+    public function layMaKhuyenMaiTheoHangThanhVien()
     {
+        $user = Auth::user();
 
-        $data = MaKhuyenMai::query()->with('hangThanhViens')->get();
-        return response()->json([
-            'status' => true,
-            'data' => $data
-        ]);
+        $hangThanhVien = $user->hangThanhVien;
+
+        $maKhuyenMais = MaKhuyenMai::whereHas('hangThanhViens', function ($query) use ($hangThanhVien) {
+            $query->where('hang_thanh_vien_id', $hangThanhVien->id);
+        })
+            ->where('trang_thai', 1)
+            ->where('ngay_bat_dau', '<=', now())
+            ->where('ngay_ket_thuc', '>=', now())
+            ->get();
+
+        return response()->json($maKhuyenMais);
+    }
+
+    public function thuThapMaKhuyenMai($maCode)
+    {
+        $maKhuyenMai = MaKhuyenMai::where('ma_code', $maCode)->firstOrFail();
+
+        if ($maKhuyenMai->trang_thai == 0) {
+            return response()->json(['message' => 'Mã khuyến mãi này đã hết hạn sử dụng.'], 400);
+        }
+
+        $maKhuyenMai->increment('so_luong_da_su_dung');
+
+        if ($maKhuyenMai->so_luong_da_su_dung >= $maKhuyenMai->so_luong) {
+            $maKhuyenMai->update(['trang_thai' => 0]);
+        }
+
+        return response()->json(['message' => 'Mã khuyến mãi đã được áp dụng thành công.']);
     }
 
 

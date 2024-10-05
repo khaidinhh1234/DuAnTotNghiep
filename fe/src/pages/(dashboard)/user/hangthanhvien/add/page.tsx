@@ -142,6 +142,10 @@ const MemberRankForm: React.FC = () => {
             label="Tên hạng thành viên"
             rules={[
               { required: true, message: 'Vui lòng nhập tên hạng thành viên' },
+              {
+                pattern: /^[A-Z].*$/,
+                message: "Chữ cái đầu tiên phải viết hoa!",
+              },
             ]}
           >
             <Input placeholder="Diamond" />
