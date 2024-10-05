@@ -145,11 +145,11 @@ const TableUncomfirmedOrder: React.FC = () => {
   }, [transport, activeTab]);
 
   const dataSource: TransportData[] = (filteredData ?? []).map(
-    (item: Transport, index: number): TransportData => ({
+    (item: any): TransportData => ({
       key: item.id,
       ...item,
-      // index: index + 1,
       don_hang_id: item.don_hang?.ma_don_hang || "Chưa có dữ liệu",
+      trang_thai_thanh_toan: item.don_hang?.trang_thai_thanh_toan || "Chưa có dữ liệu",
     })
   );
 
