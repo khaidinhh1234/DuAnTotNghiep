@@ -27,6 +27,7 @@ use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
 use App\Http\Controllers\Client\Api\GioHangController;
+use App\Http\Controllers\Client\Api\DonHangClientController;
 use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\LienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
@@ -118,6 +119,9 @@ Route::middleware([])
         Route::post('/gio-hang', [GioHangController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
         Route::put('/gio-hang/{id}', [GioHangController::class, 'update']); // Cập nhật giỏ hàng
         Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+        //Thanh toán
+        //Thanh toán Momo
+        Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
 //'auth:sanctum', 'auth.checkrole'
@@ -183,11 +187,12 @@ Route::middleware([])
 
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
-        Route::get('/vanchuyen/{id}',[VanChuyenController::class, 'show'])->name('vanchuyen.show');
+        Route::get('/vanchuyen/{id}', [VanChuyenController::class, 'show'])->name('vanchuyen.show');
         Route::put('/vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
         Route::get('cho-lay-hang', [VanChuyenController::class, 'choLayHang']);
         Route::get('dang-giao-hang', [VanChuyenController::class, 'dangGiaoHang']);
         Route::get('giao-hang-that-bai', [VanChuyenController::class, 'giaoHangThatBai']);
+        Route::get('giao-hang-thanh-cong', [VanChuyenController::class, 'giaoHangThanhCong']);
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);

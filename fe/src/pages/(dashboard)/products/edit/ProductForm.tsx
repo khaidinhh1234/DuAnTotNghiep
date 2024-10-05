@@ -295,14 +295,19 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </Form.Item>
 
         <Form.Item
-          label="Mã sản phẩm"
-          name="ma_san_pham"
-          rules={[
-            { required: true, message: "Mã sản phẩm bắt buộc phải nhập!" },
-          ]}
-        >
-          <Input placeholder="Nhập mã sản phẩm" />
-        </Form.Item>
+  label="Mã sản phẩm"
+  name="ma_san_pham"
+  rules={[
+    { required: true, message: "Mã sản phẩm bắt buộc phải nhập!" },
+  ]}
+>
+  <Input 
+    placeholder="Nhập mã sản phẩm" 
+    disabled={true} 
+    style={{ backgroundColor: '#f5f5f5', color: '#666' }}
+  />
+</Form.Item>
+
       </div>
 
       <div className="grid grid-cols-2 gap-5">
@@ -349,14 +354,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 { value: "Email", title: "Email" },
               ],
             }}
+            // onEditorChange={(content) => {
+            //   // Cập nhật nội dung ngay khi có sự thay đổi
+            //   setData(content);
+            //   form.setFieldsValue({
+            //     noi_dung: content, // Cập nhật giá trị cho trường noi_dung
+            //   });
+            // }}
+            // value={form.getFieldValue("noi_dung")} // Đảm bảo giá trị đồng bộ với form
             onEditorChange={(content, editor) => {
-              // Cập nhật nội dung ngay khi có sự thay đổi
-              setData(content);
-              form.setFieldsValue({
-                noi_dung: content, // Cập nhật giá trị cho trường noi_dung
-              });
+              updateContent(content);
             }}
-            value={form.getFieldValue("noi_dung")} // Đảm bảo giá trị đồng bộ với form
           />
         </Form.Item>
       </div>

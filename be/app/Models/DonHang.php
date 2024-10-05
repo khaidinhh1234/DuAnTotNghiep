@@ -28,8 +28,6 @@ class DonHang extends Model
     // Trạng thái thanh toán
     const TTTT_CTT = 'Chưa thanh toán';
     const TTTT_DTT = 'Đã thanh toán';
-    const TTTT_DXL = 'Đang xử lý';
-    const TTTT_DH = 'Đã hủy';
 
     protected $fillable = [
         'user_id',
