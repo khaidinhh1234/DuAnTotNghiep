@@ -2,12 +2,60 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Activity, CreditCard, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectProps } from "antd";
 import Chart1 from "./chart1/chart1";
-import Chart5 from "./chart5/chart5";
 import Chart2 from "./chart2/chart2";
 import Chart3 from "./chart3/chart3";
-import Chart4 from "./chart4/chart4";
+import Chart5 from "./chart5/chart5";
+type SelectCommonPlacement = SelectProps["placement"];
 export function AnalyticsAdmin() {
+  const currentYear = new Date().getFullYear();
+
+  // Tạo danh sách năm (10 năm từ năm hiện tại)
+  const generateYearOptions = (currentYear: any, numberOfYears: any) => {
+    const yearOptions = [];
+    for (let i = 0; i < numberOfYears; i++) {
+      yearOptions.push({ value: currentYear - i, label: currentYear - i });
+    }
+    return yearOptions;
+  };
+
+  // Tạo danh sách quý (4 quý)
+  const quarterOptions = [
+    { value: "Q1", label: "Quý 1" },
+    { value: "Q2", label: "Quý 2" },
+    { value: "Q3", label: "Quý 3" },
+    { value: "Q4", label: "Quý 4" },
+  ];
+
+  // Tạo danh sách tháng (12 tháng)
+  const monthOptions = Array.from({ length: 12 }, (v, i) => ({
+    value: i + 1,
+    label: `Tháng ${i + 1}`,
+  }));
+
+  // Tạo danh sách tuần (giả sử tuần từ 1 đến 5)
+  const weekOptions = Array.from({ length: 5 }, (v, i) => ({
+    value: i + 1,
+    label: `Tuần ${i + 1}`,
+  }));
+
+  // Hàm xử lý khi thay đổi giá trị của Select
+  const handleYearChange = (value: any) => {
+    console.log(`Selected year: ${value}`);
+  };
+
+  const handleQuarterChange = (value: any) => {
+    console.log(`Selected quarter: ${value}`);
+  };
+
+  const handleMonthChange = (value: any) => {
+    console.log(`Selected month: ${value}`);
+  };
+
+  const handleWeekChange = (value: any) => {
+    console.log(`Selected week: ${value}`);
+  };
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -67,16 +115,43 @@ export function AnalyticsAdmin() {
             className="xl:col-span-2 bg-white"
             x-chunk="dashboard-01-chunk-4"
           >
-            <CardHeader className="flex flex-row items-center ">
-              <div className="grid gap-2">
-                <CardTitle>Tổng quan</CardTitle>
+            <CardHeader className="grid grid-cols-12 mt-5">
+              <div className="col-span-5">
+                <CardTitle>Tổng quan doanh thu</CardTitle>
               </div>
-              {/* <Button asChild size="sm" className="ml-auto gap-1"> */}
-              {/* <Link to="#">
-                  Xem tất cả
-                  <ArrowUpRight className="h-6 w-6" />
-                </Link> */}
-              {/* </Button> */}
+              <div className="col-span-7">
+                {/* Select Năm */}
+                <Select
+                  defaultValue={currentYear}
+                  style={{ width: 120, marginRight: 10 }}
+                  onChange={handleYearChange}
+                  options={generateYearOptions(currentYear, 10)} // Lấy 10 năm từ hiện tại
+                />
+
+                {/* Select Quý */}
+                <Select
+                  defaultValue="Q1"
+                  style={{ width: 120, marginRight: 10 }}
+                  onChange={handleQuarterChange}
+                  options={quarterOptions} // Quý 1 đến quý 4
+                />
+
+                {/* Select Tháng */}
+                <Select
+                  defaultValue={1}
+                  style={{ width: 120, marginRight: 10 }}
+                  onChange={handleMonthChange}
+                  options={monthOptions} // Tháng 1 đến tháng 12
+                />
+
+                {/* Select Tuần */}
+                <Select
+                  defaultValue={1}
+                  style={{ width: 120, marginRight: 10 }}
+                  onChange={handleWeekChange}
+                  options={weekOptions} // Tuần 1 đến tuần 5
+                />
+              </div>
             </CardHeader>
             <CardContent>
               <Chart5 />
