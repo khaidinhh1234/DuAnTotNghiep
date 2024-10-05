@@ -1,6 +1,32 @@
+import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
 import { Progress } from "antd";
+import { Link, useParams } from "react-router-dom";
+import Detail from "../detail";
 
 const ShowUser = () => {
+  const { id } = useParams();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["USERID", id],
+    queryFn: async () => {
+      try {
+        const res = await instance.get(`/taikhoan/${id}`);
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
+  const user = data?.data?.tai_khoan;
+  console.log(user);
+  const trangthai = data?.data;
+  const phantram =
+    ((35450000 - user?.hang_thanh_vien?.chi_tieu_toi_thieu) /
+      (user?.hang_thanh_vien?.chi_tieu_toi_da -
+        user?.hang_thanh_vien?.chi_tieu_toi_thieu)) *
+    100;
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -18,56 +44,62 @@ const ShowUser = () => {
         <div className="flex justify-between max-w-[1350px] py-5 px-5 border-b ">
           <div className="text-2xl font-bold">
             <i className="fa-regular fa-cart-shopping text-gray-500 "></i>{" "}
-            <span className="px-2">29 </span>
+            <span className="px-2">{trangthai?.so_luong_don_hang}</span>
             <br />
-            <span className="text-gray-500 text-xl"> Đơn hàng</span>
+            <span className="text-gray-500 text-lg"> Đơn hàng</span>
           </div>
           <div className="text-2xl font-bold">
             <i className="fa-regular fa-star text-gray-500 "></i>
-            <span className="px-2">100 </span>
+            <span className="px-2">{trangthai?.so_luong_don_hang} </span>
             <br />
-            <span className="text-gray-500 text-xl">Đánh giá</span>
+            <span className="text-gray-500 text-lg">Đánh giá</span>
           </div>
           <div className="text-2xl font-bold">
             <i className="fa-regular fa-heart text-gray-500"></i>
-            <span className="px-2">1.093 </span>
+            <span className="px-2">{trangthai?.so_luong_yeu_thich}</span>
             <br />
-            <span className="text-gray-500 text-xl"> Yêu thích </span>
+            <span className="text-gray-500 text-lg"> Yêu thích </span>
           </div>
           <div className="text-2xl font-bold text-gray-500">
             <i className="fa-solid fa-rotate-reverse"></i>
             <span className="px-2">0 </span>
             <br />
-            <span className="text-gray-500 text-xl"> Trả hàng</span>
+            <span className="text-gray-500 text-lg"> Trả hàng</span>
           </div>
         </div>
         <div className="grid grid-cols-6 gap-1 mt-5">
-          <div className="bg-white text-center pt-10 col-span-2 ">
+          <div className="bg-white text-center pt-10 col-span-2 mx-auto">
             <div className="w-40 h-40 mx-auto">
-              {" "}
               <img
-                src="https://res.cloudinary.com/dpypwbeis/image/upload/v1727982513/Screenshot_2024-10-04_020816_x05bgn.png"
+                src={user?.anh_nguoi_dung}
                 alt="Avatar"
-                className="w-36 h-36  rounded-full border-2 border-gray-300 "
+                className="w-36 h-36 rounded-full border-2 border-gray-300 object-cover mx-auto"
               />
             </div>
+
             <div className="flex-grow my-5">
               <h2 className="text-3xl font-semibold text-gray-700">
-                Khổng Tấn Lợi
+                {user?.ho} {user?.ten}
               </h2>
 
               <p className="text-black font-bold">
                 Email:{" "}
                 <span className="text-gray-500 font-semibold">
-                  taloiancut@gmail.com
+                  {user?.email}
                 </span>
               </p>
               <p className="text-black font-bold">
                 Địa chỉ giao hàng:{" "}
                 <span className="text-gray-500 font-semibold">
-                  Cao Phong ,Sông Lô, Vĩnh Phúc
+                  {user?.dia_chi}
                 </span>
               </p>
+
+              <Link to={`/admin/users/khachhang/edit/${user?.id}`}>
+                <button className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition duration-200">
+                  Cập nhật
+                </button>
+              </Link>
             </div>
           </div>
           <div className="col-span-4">
@@ -77,44 +109,57 @@ const ShowUser = () => {
                   Thông tin cá nhân
                 </h3>
                 <p className="my-10">
-                  <strong>Số điện thoại:</strong> <span>0263 281 480</span>
+                  <strong>Số điện thoại:</strong>{" "}
+                  <span>{user?.so_dien_thoai}</span>
                 </p>
                 <p className="my-10">
-                  <strong>Ngày sinh:</strong> 23/02/2004
+                  <strong>Ngày sinh: </strong>
+                  {new Date(user?.ngay_sinh).toLocaleDateString("vi-VN")}
                 </p>
                 <p className="my-10">
-                  <strong>Giới tính:</strong> <span>Nam</span>
+                  <strong>Giới tính:</strong>{" "}
+                  <span>
+                    {user?.gioi_tinh === "1"
+                      ? "Nam"
+                      : user?.gioi_tinh == "2"
+                        ? "Nữ"
+                        : "Khác"}
+                  </span>
                 </p>
                 <p className="my-10">
                   <strong>Vai trò:</strong>{" "}
-                  <span className="px-3 py-1 bg-blue-500 font-bold text-white rounded-md">
-                    Quản trị viên
-                  </span>{" "}
-                  <span className="px-3 py-1 bg-blue-500 font-bold text-white rounded-md">
-                    Nhân viên bán hàng
-                  </span>
+                  {user?.vai_tros?.map((role: any) => (
+                    <span className="px-3 py-1 bg-blue-500 font-bold text-white rounded-md mx-1">
+                      {role?.ten_vai_tro}
+                    </span>
+                  ))}
                 </p>
                 <p>
-                  <strong>Trạng thái:</strong> <span>Hoạt động</span>
+                  <strong>Trạng thái:</strong>{" "}
+                  <span>{user?.deleted_at ? "Chặn" : "Hoạt động"}</span>
                 </p>
               </div>
               <div className="col-span-2 text-center">
                 <h3 className=" text-gray-400 text-lg">Hạng thành viên</h3>
                 <h2 className="text-center text-2xl font-bold">
-                  Khách hàng VIP
+                  {user?.hang_thanh_vien?.ten_hang_thanh_vien}
                 </h2>
                 <div className="w-60 mx-auto">
                   <img
-                    src="https://res.cloudinary.com/dpypwbeis/image/upload/v1727977025/4235_bdhhkj.png"
-                    alt=""
+                    src={user?.hang_thanh_vien?.anh_hang_thanh_vien}
+                    alt={user?.hang_thanh_vien?.anh_hang_thanh_vien}
                     className="w-full  "
                   />
                 </div>
                 <p className="flex justify-center items-center gap-3 ">
-                  <p className="pt-4">20M </p>
+                  <p className="pt-4">
+                    {(user?.hang_thanh_vien?.chi_tieu_toi_thieu).toLocaleString(
+                      "vi-VN"
+                    )}{" "}
+                  </p>
                   <div className="w-40">
                     <Progress
-                      percent={70}
+                      percent={phantram}
                       strokeColor={{
                         "0%": "#6dd5ed",
                         "100%": "#00bfff", // Màu chuyển tiếp
@@ -125,151 +170,81 @@ const ShowUser = () => {
                       style={{ borderRadius: "25px" }} // Đường viền tròn
                     />
                   </div>{" "}
-                  <p className="pt-4">50M </p>
+                  <p className="pt-4">
+                    {(user?.hang_thanh_vien?.chi_tieu_toi_da).toLocaleString(
+                      "vi-VN"
+                    )}{" "}
+                  </p>
                 </p>
               </div>
             </div>
-            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-100 rounded-lg p-4 mb-4">
-              <p className="flex justify-center items-center gap-3">
-                <div className="w-28">
-                  <Progress
-                    percent={70}
-                    strokeColor={{
-                      "0%": "#6dd5ed",
-                      "100%": "#00bfff", // Màu chuyển tiếp
-                    }}
-                    trailColor="#333"
-                    strokeWidth={10}
-                    showInfo={true} // Hiện thị tỷ lệ
-                    format={(percent) => `${percent}%`} // Định dạng hiển thị
-                    style={{ borderRadius: "25px" }} // Đường viền tròn
-                  />
-                </div>
-                <span>Đồng</span>
-              </p>
-              <div>
-                <h3 className="font-semibold text-gray-800">
-                  Notifications Type
-                </h3>
-                <p>
-                  <strong>Emergency:</strong> 8/11
-                </p>
-                <p>
-                  <strong>Helps:</strong> 4/5
-                </p>
-                <p>
-                  <strong>Number Report:</strong> 5/9{" "}
-                  <a href="#" className="text-blue-500">
-                    View
-                  </a>
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-800">Settings</h3>
-                <p>
-                  <strong>Language:</strong> Tiếng Việt{" "}
-                  <a href="#" className="text-blue-500">
-                    Change
-                  </a>
-                </p>
-                <div className="flex items-center">
-                  <label className="mr-2">Get Notifications:</label>
-                  <input
-                    type="checkbox"
-                    className="form-checkbox"
-                    defaultChecked
-                  />
-                </div>
-                <div className="flex items-center">
-                  <label className="mr-2">Send to Family:</label>
-                  <input type="checkbox" className="form-checkbox" />
-                </div>
-                <p>
-                  <strong>Range Get Notifications:</strong> 5 km
-                </p>
-              </div>
-            </div> */}
           </div>
         </div>
         <div className="shadow-inner bg-gray-100 p-10 mt-10 rounded-lg mx-10">
           <h3 className="text-2xl font-bold">Danh sách đơn hàng</h3>
           <table className="min-w-full w-full ">
             <tbody>
-              <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
-                <td className="py-5">
-                  <strong className="text-gray-500">Mã đơn hàng:</strong>
-                  <p className="text-gray-600 font-bold my-2">#UDGFFKLJF</p>
-                </td>
-                <td className="p-5">
-                  <strong className="text-gray-500">Ngày đặt hàng:</strong>
-                  <p className="text-gray-600 font-bold my-2">12/12/2021</p>
-                </td>
-                <td className="p-5">
-                  <strong className="text-gray-500">Đơn giá:</strong>
-                  <p className="text-gray-600 font-bold my-2">100.000 VNĐ</p>
-                </td>
-                <td className="p-5">
-                  <strong className="text-gray-500">Trạng thái:</strong>
-                  <p className="text-green-500 font-bold my-2">
-                    Đang giao hàng
-                  </p>
-                </td>
-                <td className="p-5">
-                  <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
-                    Xem chi tiết
-                  </button>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
-                <td className="py-5">
-                  <strong className="text-gray-500">Mã đơn hàng:</strong>
-                  <p className="text-gray-600 font-bold my-2">#UDGFFKLJF</p>
-                </td>
-                <td className="p-5">
-                  <strong className="text-gray-500">Ngày đặt hàng:</strong>
-                  <p className="text-gray-600 font-bold my-2">12/12/2021</p>
-                </td>
-                <td className="p-5">
-                  <strong className="text-gray-500">Đơn giá:</strong>
-                  <p className="text-gray-600 font-bold my-2">100.000 VNĐ</p>
-                </td>
-                <td className="p-5">
-                  <strong className="text-gray-500">Trạng thái:</strong>
-                  <p className="text-green-500 font-bold my-2">
-                    Đang giao hàng
-                  </p>
-                </td>
-                <td className="p-5">
-                  <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
-                    Xem chi tiết
-                  </button>
-                </td>
-              </tr>{" "}
-              <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
-                <td className="py-5 w-[15%]">
-                  <strong className="text-gray-500">Mã đơn hàng:</strong>
-                  <p className="text-gray-600 font-bold my-2">#UDGFFKLJF</p>
-                </td>
-                <td className="p-5 w-[25%]">
-                  <strong className="text-gray-500">Ngày đặt hàng:</strong>
-                  <p className="text-gray-600 font-bold my-2">12/12/2021</p>
-                </td>
-                <td className="p-5 w-[25%]">
-                  <strong className="text-gray-500">Đơn giá:</strong>
-                  <p className="text-gray-600 font-bold my-2">100.000 VNĐ</p>
-                </td>
-                <td className="p-5">
-                  <strong className="text-gray-500">Trạng thái:</strong>
-                  <p className="text-green-500 font-bold my-2">
-                    Đang giao hàng
-                  </p>
-                </td>
-                <td className="p-5">
-                  <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
-                    Xem chi tiết
-                  </button>
-                </td>
-              </tr>
+              {user?.don_hangs?.map((don_hang: any) => (
+                <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
+                  <td className="py-5">
+                    <strong className="text-gray-500">Mã đơn hàng:</strong>
+                    <p className="text-gray-600 font-bold my-2">
+                      {don_hang?.ma_don_hang}
+                    </p>
+                  </td>
+                  <td className="p-5">
+                    <strong className="text-gray-500">Ngày đặt hàng:</strong>
+                    <p className="text-gray-600 font-bold my-2">
+                      {new Date(don_hang?.created_at).toLocaleDateString(
+                        "vi-VN",
+                        {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        }
+                      )}
+                    </p>
+                  </td>
+
+                  <td className="p-5">
+                    <strong className="text-gray-500">Đơn giá:</strong>
+                    <p className="text-gray-600 font-bold my-2">
+                      {don_hang?.tong_tien_don_hang.toLocaleString("vi-VN")} VNĐ
+                    </p>
+                  </td>
+                  <td className="p-5">
+                    <strong className="text-gray-500">Trạng thái:</strong>
+                    <p
+                      className={`font-bold my-2 ${
+                        don_hang?.trang_thai_don_hang === "Chờ xác nhận"
+                          ? "text-yellow-500"
+                          : don_hang?.trang_thai_don_hang === "Đã xác nhận"
+                            ? "text-blue-500"
+                            : don_hang?.trang_thai_don_hang === "Đang xử lý"
+                              ? "text-orange-500"
+                              : don_hang?.trang_thai_don_hang ===
+                                  "Đang giao hàng"
+                                ? "text-purple-500"
+                                : don_hang?.trang_thai_don_hang ===
+                                    "Đã giao hàng thành công"
+                                  ? "text-green-500"
+                                  : don_hang?.trang_thai_don_hang === "Hủy hàng"
+                                    ? "text-red-500"
+                                    : ""
+                      }`}
+                    >
+                      {don_hang?.trang_thai_don_hang}
+                    </p>
+                  </td>
+                  <td className="p-5">
+                    {/* <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
+                        Xem chi tiết
+                      </button> */}
+                    <Detail record={don_hang} />
+                  </td>
+                </tr>
+              ))}
+
               {/* Các hàng khác */}
             </tbody>
           </table>

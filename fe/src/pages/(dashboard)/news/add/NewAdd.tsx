@@ -3,6 +3,7 @@ import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Editor } from "@tinymce/tinymce-react";
 import { Button, Form, Input, message, Select } from "antd";
+import { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const { Option } = Select;
@@ -10,6 +11,7 @@ const { Option } = Select;
 const NewAdd = () => {
   const nav = useNavigate();
   const [form] = Form.useForm();
+  const [editorContent, setEditorContent] = useState(""); // Lưu nội dung của Editor
 
   // Fetch categories and users
   const { data, error, isLoading } = useQuery({
@@ -48,10 +50,18 @@ const NewAdd = () => {
     },
   });
 
+  const updateContent = useCallback((content: string) => {
+    setEditorContent(content); // Chỉ lưu trữ nội dung
+    form.setFieldsValue({
+      noi_dung: content,
+    });
+  }, [form]);
+
   // Handle form submission
   const onFinish = (values: any) => {
     const categoryData: INew = {
       ...values,
+      noi_dung: editorContent, 
       user_id: values.user_id,
     };
     mutate(categoryData);
@@ -102,9 +112,7 @@ const NewAdd = () => {
                 <Form.Item
                   label="Tiêu đề"
                   name="tieu_de"
-                  rules={[
-                    { required: true, message: "Tiêu đề bắt buộc phải nhập!" },
-                  ]}
+                  rules={[{ required: true, message: "Tiêu đề bắt buộc phải nhập!" }]}
                 >
                   <Input placeholder="Nhập tiêu đề tin tức" />
                 </Form.Item>
@@ -114,14 +122,9 @@ const NewAdd = () => {
                 <Form.Item
                   label="Tài khoản"
                   name="user_id"
-                  rules={[
-                    { required: true, message: "Vui lòng chọn tài khoản" },
-                  ]}
+                  rules={[{ required: true, message: "Vui lòng chọn tài khoản" }]}
                 >
-                  <Select
-                    placeholder="Vui lòng chọn tài khoản"
-                    className="w-full"
-                  >
+                  <Select placeholder="Vui lòng chọn tài khoản" className="w-full">
                     {Array.isArray(data?.users) && data.users.length > 0 ? (
                       data.users.map((user: any) => (
                         <Option key={user.id} value={user.id}>
@@ -134,14 +137,14 @@ const NewAdd = () => {
                   </Select>
                 </Form.Item>
               </div>
+
               <Form.Item
                 label="Danh mục tin tức"
                 name="danh_muc_tin_tuc_id"
                 rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
               >
                 <Select placeholder="Vui lòng chọn danh mục" className="w-full">
-                  {Array.isArray(data?.categories) &&
-                  data.categories.length > 0 ? (
+                  {Array.isArray(data?.categories) && data.categories.length > 0 ? (
                     data.categories.map((newcategory: any) => (
                       <Option key={newcategory.id} value={newcategory.id}>
                         {newcategory.ten_danh_muc_tin_tuc}
@@ -152,16 +155,12 @@ const NewAdd = () => {
                   )}
                 </Select>
               </Form.Item>
+
               <div className="grid grid-cols-1 gap-5">
                 <Form.Item
                   label="Nội dung"
                   name="noi_dung"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Nội dung sản phẩm bắt buộc phải nhập!",
-                    },
-                  ]}
+                  rules={[{ required: true, message: "Nội dung bắt buộc phải nhập!" }]}
                 >
                   <Editor
                     apiKey="4co2z7i0ky0nmudlm5lsoetsvp6g3u4110d77s2cq143a9in"
@@ -178,23 +177,17 @@ const NewAdd = () => {
                         { value: "First.Name", title: "First Name" },
                         { value: "Email", title: "Email" },
                       ],
-                      setup: (editor) => {
-                        editor.on("Change", () => {
-                          form.setFieldsValue({
-                            noi_dung: editor.getContent(),
-                          });
-                        });
-                      },
                     }}
-                    initialValue="Chào mừng bạn đến với Glow clothing!"
+                    onEditorChange={(content) => updateContent(content)}
                   />
                 </Form.Item>
               </div>
+
               <Form.Item>
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+                  className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 >
                   Thêm tin tức
                 </Button>

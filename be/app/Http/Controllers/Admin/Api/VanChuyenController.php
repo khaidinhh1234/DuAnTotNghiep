@@ -113,4 +113,92 @@ class VanChuyenController extends Controller
             ]);
         }
     }
+
+    public function choLayHang()
+    {
+        try {
+            $choLayHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_CXL)->count();
+            $tongTiens = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_CXL)
+                ->with('donHang')
+                ->get()
+                ->sum(function ($vanChuyen) {
+                    return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
+                });
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'Tổng đơn chờ lấy hàng' => $choLayHangs,
+                    'Tổng tiền' => $tongTiens
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng chưa xác thực.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function dangGiaoHang()
+    {
+        try {
+            $dangGiaoHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_DGH)->count();
+            $tongTiens = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_DGH)
+                ->with('donHang')
+                ->get()
+                ->sum(function ($vanChuyen) {
+                    return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
+                });
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'Tổng đơn đang giao hàng' => $dangGiaoHangs,
+                    'Tổng tiền' => $tongTiens
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng chưa xác thực.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function giaoHangThatBai()
+    {
+        try {
+            $giaoHangThatBais = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTB)->count();
+            $tongTiens = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTB)
+                ->with('donHang')
+                ->get()
+                ->sum(function ($vanChuyen) {
+                    return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
+                });
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'Tổng đơn đang giao không thành công' => $giaoHangThatBais,
+                    'Tổng tiền' => $tongTiens
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng chưa xác thực.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

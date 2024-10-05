@@ -26,6 +26,7 @@ use App\Http\Controllers\Client\Api\Auth\ChangePasswordController;
 use App\Http\Controllers\Client\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Client\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Client\Api\DanhGiaController;
+use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\LienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
@@ -70,6 +71,9 @@ Route::middleware([])
     ->group(function () {
         // Trang chủ
         Route::get('trangchu', [TrangChuController::class, 'index']);
+
+        Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'danhSachSanPhamChuongTrinhUuDai']);
+
         //Client Sản Phẩm
         // lấy ra danh mục cha
         Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
@@ -122,6 +126,10 @@ Route::middleware([])
         Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
 
         // Sản phẩm
+        Route::patch('sanphams/khoi-phuc-xoa-mem-nhieu-san-pham', [SanPhamController::class, 'bulkRestore'])->name('sanphams.bulk-restore');
+        Route::delete('sanphams', [SanPhamController::class, 'bulkDelete']);
+        Route::patch('sanpham/trang-thai-nhieu-san-pham', [SanPhamController::class, 'updateStatus']);
+        Route::patch('sanphams/cap-nhat-nhieu-san-pham-the', [SanPhamController::class, 'bulkUpdateTags'])->name('sanphams.update-tags');
         Route::get('sanpham/exports', [SanPhamController::class, 'exportSanPham']);
         Route::apiResource('sanpham', SanPhamController::class)->except(['show']);
         Route::post('sanpham/kich-hoat/{id}', [SanPhamController::class, 'kichHoatSanPham'])->name('sanpham.kichhoat');
@@ -162,11 +170,17 @@ Route::middleware([])
         Route::put('/donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
         Route::get('export-donhang', [DonHangController::class, 'export'])->name('donhang.export');
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
+        Route::get('cho-xac-nhan', [DonHangController::class, 'donChoXacNhan']);
+        Route::get('cho-thanh-toan', [DonHangController::class,'donChuaThanhToan']);
+        Route::get('don-chua-giao-hang', [DonHangController::class, 'donChuaGiaoHang']);
 
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
         Route::get('/vanchuyen/{id}',[VanChuyenController::class, 'show'])->name('vanchuyen.show');
         Route::put('/vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
+        Route::get('cho-lay-hang', [VanChuyenController::class, 'choLayHang']);
+        Route::get('dang-giao-hang', [VanChuyenController::class, 'dangGiaoHang']);
+        Route::get('giao-hang-that-bai', [VanChuyenController::class, 'giaoHangThatBai']);
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
@@ -249,6 +263,8 @@ Route::middleware([])
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai'])->name("don-hang-theo-trang-thai.thong-ke");
             Route::get('/hoan-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHoanHang'])->name('hoan-hang-theo-thang.thong-ke');
             Route::get('/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHangTheoThang'])->name('huy-hang-theo-thang.thong-ke');
+            Route::get('/top5-khach-hang-gan-day',  [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
+
             // Thống kê đánh giá
             Route::get('/{sanpham}/thong-ke-danh-gia', [ThongKeDanhGiaController::class, 'danhSachDanhGiaTheoSanPham'])->name('thong-ke-danh-gia.thong-ke');
         });

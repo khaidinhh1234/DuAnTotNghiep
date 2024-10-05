@@ -1,11 +1,23 @@
 import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, DatePicker, Flex, Input, message, Popconfirm, Select, Space, Table, TableColumnsType, TableProps } from "antd";
+import {
+  Button,
+  DatePicker,
+  Flex,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+  Space,
+  Table,
+  TableColumnsType,
+  TableProps,
+  Tabs,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DetailTransport from "./DetailTransport";
-
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -14,6 +26,7 @@ const { RangePicker } = DatePicker;
 
 interface TransportData extends Transport {
   key: React.Key;
+  index: number;
 }
 
 interface Transport {
@@ -27,45 +40,34 @@ interface Transport {
   tien_cod: number;
   anh_xac_thuc: string;
 }
+
 const datas = [
-  {
-    value: "1",
-    label: "Đang giao hàng",
-  },
-  {
-    value: "2",
-    label: "Giao hàng thành công",
-  },
-  {
-    value: "3",
-    label: "Giao hàng thất bại",
-  },
+  { value: "1", label: "Đang giao hàng" },
+  { value: "2", label: "Giao hàng thành công" },
+  { value: "3", label: "Giao hàng thất bại" },
 ];
+
 const TableUncomfirmedOrder: React.FC = () => {
   const queryClient = useQueryClient();
   const [trangthai, setTrangThai] = useState<string>();
   const [filteredData, setFilteredData] = useState<Transport[]>([]);
   const [formcheck, setFormCheck] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const hasSelected = selectedRowKeys.length > 0;
   const [loading, setLoading] = useState(false);
-
+  const [activeTab, setActiveTab] = useState<string>("Tất cả");
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    // console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    // const id = newSelectedRowKeys.map((item) => {
-    //   return Number(item) + 1;
-    // });
     setSelectedRowKeys(newSelectedRowKeys);
   };
+
   const rowSelection: TableRowSelection<Transport> = {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {
-      console.log(data)
       try {
-        const trangthais =  
+        const trangthais =
           trangthai === "1"
             ? "Đang giao hàng"
             : trangthai === "2"
@@ -74,13 +76,10 @@ const TableUncomfirmedOrder: React.FC = () => {
                 ? "Giao hàng thất bại"
                 : "Không rõ";
 
-        const response = await instance.put(
-          "vanchuyen/trang-thai-van-chuyen",
-          {
-            trang_thai_van_chuyen: trangthais,
-            id: data,
-          }
-        );
+        const response = await instance.put("vanchuyen/trang-thai-van-chuyen", {
+          trang_thai_van_chuyen: trangthais,
+          id: data,
+        });
         const error = response.data.message;
         start();
         if (error === "Cập nhật trạng thái đơn hàng thành công") {
@@ -115,39 +114,53 @@ const TableUncomfirmedOrder: React.FC = () => {
       setLoading(false);
     },
   });
-  const { data, isLoading, isError } = useQuery({
+
+  const { data, isLoading } = useQuery({
     queryKey: ["vanchuyen"],
     queryFn: async () => {
       const response = await instance.get("/vanchuyen");
       return response.data;
     },
   });
+
   const start = () => {
     setFormCheck(!formcheck);
   };
+
   const transport: Transport[] | undefined = data?.data;
 
   useEffect(() => {
     if (transport) {
-      setFilteredData(transport);
+      // Nếu tab "Tất cả" được chọn, hiển thị tất cả dữ liệu mà không lọc
+      if (activeTab === "Tất cả") {
+        setFilteredData(transport);
+      } else {
+        // Lọc dữ liệu theo trạng thái của tab đang được chọn
+        const filtered = transport.filter(
+          (item) => item.trang_thai_van_chuyen === activeTab
+        );
+        setFilteredData(filtered);
+      }
     }
-  }, [transport]);
+  }, [transport, activeTab]);
 
-  const dataSource: TransportData[] | undefined = filteredData?.map(
-    (item: Transport, index: number): TransportData => ({
+  const dataSource: TransportData[] = (filteredData ?? []).map(
+    (item: any): TransportData => ({
       key: item.id,
       ...item,
       don_hang_id: item.don_hang?.ma_don_hang || "Chưa có dữ liệu",
-      // index: index + 1,
+      trang_thai_thanh_toan: item.don_hang?.trang_thai_thanh_toan || "Chưa có dữ liệu",
     })
   );
+
   const handleChange = (value: string) => {
     setTrangThai(value);
   };
+  const hasSelected = selectedRowKeys.length > 0;
   const columns: TableColumnsType<Transport> = [
     {
       title: "Mã vận chuyển",
-      dataIndex: "ma_van_chuyen", // Sửa lại cho khớp với dữ liệu thực tế
+      dataIndex: "ma_van_chuyen",
       key: "ma_van_chuyen",
     },
     {
@@ -160,7 +173,8 @@ const TableUncomfirmedOrder: React.FC = () => {
       title: "Ngày tạo",
       dataIndex: "created_at",
       key: "created_at",
-      sorter: (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      sorter: (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
       render: (_, record) => {
         const date = new Date(record.created_at);
         return (
@@ -171,11 +185,37 @@ const TableUncomfirmedOrder: React.FC = () => {
       },
     },
     {
+      title: "Trạng thái giao hàng",
+      dataIndex: "trang_thai_van_chuyen",
+      key: "trang_thai_van_chuyen",
+      render: (_, record) => {
+        return (
+          <div
+            className={
+              "font-bold text-[15px] " +
+              (record.trang_thai_van_chuyen === "Chờ xử lý"
+                ? "text-yellow-400"
+                : record.trang_thai_van_chuyen === "Đang giao hàng"
+                  ? "text-orange-500"
+                  : record.trang_thai_van_chuyen === "Giao hàng thành công"
+                    ? "text-blue-500"
+                    : record.trang_thai_van_chuyen === "Giao hàng thất bại"
+                      ? "text-red-500"
+                      : "text-gray-500")
+            }
+          >
+            {record.trang_thai_van_chuyen}
+          </div>
+        );
+      },
+    },
+    {
       title: "Thanh toán",
       dataIndex: "trang_thai_thanh_toan",
       key: "trang_thai_thanh_toan",
-      sorter: (a, b) => a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
-      render: (_, record) => {
+      sorter: (a: any, b: any) =>
+        a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
+      render: (_, record: any) => {
         return (
           <div
             className={
@@ -196,41 +236,6 @@ const TableUncomfirmedOrder: React.FC = () => {
       },
     },
     {
-      title: "Trạng thái giao hàng",
-      dataIndex: "trang_thai_van_chuyen",
-      key: "trang_thai_van_chuyen",
-      sorter: (a, b) => a.trang_thai_van_chuyen.localeCompare(b.trang_thai_van_chuyen),
-      render: (_, record) => {
-        return (
-          <div
-            className={
-              "font-bold text-[15px] " +
-              (record.trang_thai_van_chuyen === "Chờ xử lý"
-                ? "text-yellow-400"
-                : record.trang_thai_van_chuyen === "Đang giao hàng"
-                  ? "text-orange-500"
-                  : record.trang_thai_van_chuyen === "Giao hàng thành công"
-                    ? "text-blue-500"
-                    : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-                      ? "text-red-500"
-                      : "text-gray-500") // Các giá trị khác hiển thị màu xám
-            }
-          >
-            {record.trang_thai_van_chuyen === "Chờ xử lý"
-              ? "Chờ xử lý"
-              : record.trang_thai_van_chuyen === "Đang giao hàng"
-                ? "Đang giao hàng"
-                : record.trang_thai_van_chuyen === "Giao hàng thành công"
-                  ? "Giao hàng thành công"
-                  : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-                    ? "Giao hàng thất bại"
-                    : "Trạng thái không xác định"} {/* Trạng thái khác */}
-          </div>
-        );
-      },
-    },
-
-    {
       title: "Tổng tiền",
       dataIndex: "tien_cod",
       key: "tien_cod",
@@ -246,13 +251,23 @@ const TableUncomfirmedOrder: React.FC = () => {
     },
   ];
 
+  // Tabs để lọc dữ liệu theo trạng thái
+  const tabItems = [
+    { label: "Đơn vận chuyển", key: "Tất cả" },
+    { label: "Chờ xử lý", key: "Chờ xử lý" },
+    { label: "Đang giao hàng", key: "Đang giao hàng" },
+    { label: "Giao hàng thành công", key: "Giao hàng thành công" },
+  ];
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Vận chuyển /{" "}
-          <span className="font-semibold px-px">Chưa xác nhận đơn hàng</span>
+          Quản trị /<span className="font-semibold px-px"> Vận chuyển</span>
         </h1>
+      </div>
+      <div className="flex items-center justify-between">
+        <h1 className="font-semibold md:text-3xl">Vận chuyển</h1>
       </div>
       {/* <div className="flex items-center justify-between">
         <div>
@@ -268,15 +283,15 @@ const TableUncomfirmedOrder: React.FC = () => {
         <div style={{ marginBottom: 16 }}>
           <Space>
             <Input placeholder="Tìm kiếm" prefix={<SearchOutlined />} />
-            <Select defaultValue="Tất cả đơn hàng" style={{ width: 200 }}>
-              <Option value="tatca">Tất cả đơn hàng</Option>
-              <Option value="choxuly">Chờ xử lý</Option>
-              <Option value="cholayhang">Chờ lấy hàng</Option>
-              <Option value="danggiaohang">Đang giao hàng</Option>
-              <Option value="giaohangthanhcong">Giao hàng thành công</Option>
-            </Select>
+
             <RangePicker />
           </Space>
+          <Tabs
+            defaultActiveKey="Tất cả"
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key)}
+            items={tabItems}
+          />
         </div>
         <Flex gap="middle" vertical>
           <Flex align="center" gap="middle" className="relative">
@@ -320,8 +335,7 @@ const TableUncomfirmedOrder: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {hasSelected ? `Đã chọn ${selectedRowKeys.length} đơn` : null}
+            {hasSelected ? `Đã chọn ${selectedRowKeys.length} đơn` : ""}
           </Flex>
           <Table<Transport>
             rowSelection={rowSelection}
@@ -331,7 +345,6 @@ const TableUncomfirmedOrder: React.FC = () => {
             pagination={{ pageSize: 10, className: "my-5" }}
           />
         </Flex>
-
       </div>
     </main>
   );

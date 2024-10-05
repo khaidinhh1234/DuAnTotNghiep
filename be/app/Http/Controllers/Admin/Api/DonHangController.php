@@ -22,7 +22,7 @@ class DonHangController extends Controller
     public function index()
     {
         try {
-            $donHangs = DonHang::with('chiTiets')->get();
+            $donHangs = DonHang::with('chiTiets', 'user')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -46,7 +46,9 @@ class DonHangController extends Controller
                 'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
                 'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
                 'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
-                'danhGias.user' // Lấy đánh giá của đơn hàng
+                'danhGias.user', // Lấy đánh giá của đơn hàng
+                'vanChuyen',
+                // 'user'
             ])->findOrFail($id);
 
             // Tính toán tổng số lượng và tổng tiền
@@ -85,11 +87,28 @@ class DonHangController extends Controller
                 ];
             }
 
+            //Thong tin user
+
+            if (
+                $donHang->ten_nguoi_dat_hang == ""
+                && $donHang->so_dien_thoai_nguoi_dat_hang == ""
+                && $donHang->dia_chi_nguoi_dat_hang == ""
+            ) {
+                $thongTin = $donHang->user;
+            } else {
+                $thongTin = [
+                    'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang === "" ? ($donHang->user->ho . " " . $donHang->user->ten) : $donHang->ten_nguoi_dat_hang,
+                    'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang === "" ? $donHang->user->so_dien_thoai : $donHang->so_dien_thoai_nguoi_dat_hang,
+                    'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang === "" ? $donHang->user->dia_chi : $donHang->dia_chi_nguoi_dat_hang
+                ];
+            }
+
             // Chuẩn bị phản hồi với đầy đủ thông tin
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'data' => [
+                    'thong_tin' => $thongTin,
                     'don_hang' => $donHang,
                     'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
@@ -241,5 +260,72 @@ class DonHangController extends Controller
             'status_code' => 404,
             'message' => 'Đã xảy ra lỗi khi in hóa đơn',
         ], 404);
+    }
+
+    public function donChoXacNhan()
+    {
+        try {
+            $donChoXacNhans = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->count();
+            $tongTienDonChoXacNhans = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->sum('tong_tien_don_hang');
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'Tổng đơn hàng chưa xác thực' => $donChoXacNhans,
+                    'Tổng tiền chờ xác nhận'=> $tongTienDonChoXacNhans
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng chưa xác thực.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function donChuaThanhToan() {
+        try {
+            $donChoThanhToans = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->count();
+            $tongTienChuaTTs = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->sum('tong_tien_don_hang');
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'Tổng đơn chờ thanh toán' => $donChoThanhToans,
+                    'Tổng tiền chưa thanh toán'=> $tongTienChuaTTs
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng chưa xác thực.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function donChuaGiaoHang() {
+        try {
+            $donChuaGiaoHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
+            $tongTienDonChuaGiaos = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->sum('tong_tien_don_hang');
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => [
+                    'Tổng đơn chưa giao hàng' => $donChuaGiaoHangs,
+                    'Tổng tiền đơn chưa giao'=> $tongTienDonChuaGiaos
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng chưa xác thực.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

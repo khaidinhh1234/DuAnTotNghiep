@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ho_so_ho_tro', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('phong_ho_tro_id')->constrained('phong_ho_tro');
-            $table->text('mo_ta'); // Mô tả hồ sơ
-            $table->timestamps();
+        Schema::table('san_phams', function (Blueprint $table) {
+            $table->dropColumn('gia_tri_uu_dai');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ho_so_ho_tro');
+        Schema::table('san_phams', function (Blueprint $table) {
+            $table->integer('gia_tri_uu_dai');
+        });
     }
 };

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('tin_nhan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('phong_hop_tac_id')->constrained('phong_hop_tac');
-            $table->foreignId('nguoi_gui_id')->constrained('users');
+            $table->foreignId('phong_ho_tro_id')->constrained('phong_ho_tro');
+            $table->foreignId('nguoig_ui_id')->constrained('users');
             $table->text('noi_dung')->nullable();
             $table->string('hinh_anh')->nullable();
             $table->boolean('da_doc')->default(0); // Trạng thái đã đọc (0: chưa đọc, 1: đã đọc)

@@ -20,10 +20,10 @@ const TagsRemoteAdmin: React.FC = () => {
     queryKey: ["tag"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/the");
+        const response = await instance.get("/the/thung-rac");
         const tag = response.data;
 
-        return tag; // Đảm bảo rằng categories.data chứa createdAt
+        return tag; 
       } catch (error) {
         console.error("Error fetching categories:", error);
         throw new Error("Error fetching categories");
