@@ -1,19 +1,17 @@
 import { Layout, Menu } from "antd";
 import {
   AlignJustify,
-  BarChart,
   Folder,
-  Home,
   Lock,
+  Mail,
   Newspaper,
   Package,
   ShoppingCart,
   Tag,
-  User,
+  User
 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import EvaluateAdmin from "../evaluate/page";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -76,9 +74,15 @@ const SiderComponent: React.FC = () => {
           <Menu.Item key="/admin/news" icon={<Newspaper />}>
             Tin tức
           </Menu.Item>
+
           <Menu.Item key="/admin/evaluates" icon={<Newspaper />}>
             Đánh giá
           </Menu.Item>
+
+          <Menu.Item key="/admin/support" icon={<Mail />}>
+            Liên hệ
+          </Menu.Item>
+
           <Menu.Item key="/admin/ADmin/userprivileges" icon={<Lock />}>
             Phân quyền
           </Menu.Item>
