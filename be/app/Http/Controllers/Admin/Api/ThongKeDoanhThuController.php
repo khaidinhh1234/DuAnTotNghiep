@@ -73,6 +73,14 @@ class ThongKeDoanhThuController extends Controller
 
             // Nếu không có quý, tháng, tuần, chỉ trả về doanh thu theo năm
             if (!$quy && !$thang && !$tuan) {
+                // Mảng ánh xạ tên quý
+                $tenQuy = [
+                    1 => 'Quý 1',
+                    2 => 'Quý 2',
+                    3 => 'Quý 3',
+                    4 => 'Quý 4',
+                ];
+
                 for ($i = 1; $i <= 4; $i++) {
                     // Clone lại query gốc để đảm bảo không bị thay đổi trong mỗi lần lặp
                     $queryClone = clone $query;
@@ -81,12 +89,15 @@ class ThongKeDoanhThuController extends Controller
                     $doanhThuTheoQuy = (float) $queryClone->whereRaw('QUARTER(created_at) = ?', [$i])
                         ->sum('tong_tien_don_hang');
 
-                    $doanhThu['theo_nam']['quy'][] = $i;
+                    // Thêm tên quý vào dữ liệu
+                    $doanhThu['theo_nam']['quy'][] = $tenQuy[$i]; // Lấy tên quý từ mảng
                     $doanhThu['theo_nam']['doanh_thu'][] = $doanhThuTheoQuy;
                 }
+
                 return response()->json(['tong_doanh_thu_nam' => $tongDoanhThuNam] + $doanhThu);
             }
         }
+
 
         // Nếu có chọn quý
         if ($quy && $nam) {
@@ -109,9 +120,9 @@ class ThongKeDoanhThuController extends Controller
                     ->get();
 
                 // Khởi tạo mảng để chứa doanh thu theo tháng
-                // $doanhThu['theo_quy']['thang'] = [];
+                $doanhThu['theo_quy']['thang'] = [];
                 $doanhThu['theo_quy']['doanh_thu'] = [];
-                $doanhThu['theo_quy']['ten_thang'] = []; // Mảng để chứa tên tháng
+                // $doanhThu['theo_quy']['ten_thang'] = []; // Mảng để chứa tên tháng
 
                 // Mảng ánh xạ giữa số tháng và tên tháng
                 $tenThang = [
@@ -135,7 +146,7 @@ class ThongKeDoanhThuController extends Controller
                     $doanhThuTheoThang = (float) ($monthsData->where('thang', $i)->first()->doanh_thu_thang ?? 0);
                     // $doanhThu['theo_quy']['thang'][] = $i;
                     $doanhThu['theo_quy']['doanh_thu'][] = $doanhThuTheoThang;
-                    $doanhThu['theo_quy']['ten_thang'][] = $tenThang[$i]; // Thêm tên tháng vào mảng
+                    $doanhThu['theo_quy']['thang'][] = $tenThang[$i]; // Thêm tên tháng vào mảng
                 }
 
                 // Trả về tổng doanh thu của quý và doanh thu theo từng tháng
@@ -155,9 +166,8 @@ class ThongKeDoanhThuController extends Controller
                 $endOfMonth = now()->setDate($nam, $thang, 1)->endOfMonth();
 
                 // Khởi tạo mảng doanh thu theo tuần
-                // $doanhThu['theo_thang']['tuan'] = [];
+                $doanhThu['theo_thang']['tuan'] = [];
                 $doanhThu['theo_thang']['doanh_thu'] = [];
-                $doanhThu['theo_thang']['ten_tuan'] = []; // Mảng để chứa tên tuần
 
                 // Lấy doanh thu chia theo tuần
                 $weeksData = $query->clone()
@@ -176,7 +186,7 @@ class ThongKeDoanhThuController extends Controller
                 for ($i = $currentWeek; $i <= $endWeek; $i++) {
                     // $doanhThu['theo_thang']['tuan'][] = $i - $currentWeek + 1; // Số tuần
                     $doanhThu['theo_thang']['doanh_thu'][] = (float) $weekMap->get($i, 0); // Doanh thu
-                    $doanhThu['theo_thang']['ten_tuan'][] = 'Tuần ' . ($i - $currentWeek + 1); // Thêm tên tuần
+                    $doanhThu['theo_thang']['tuan'][] = 'Tuần ' . ($i - $currentWeek + 1); // Thêm tên tuần
                 }
 
                 // Kiểm tra nếu tổng doanh thu của các tuần không khớp với tổng doanh thu tháng
@@ -184,7 +194,7 @@ class ThongKeDoanhThuController extends Controller
                 if ($tongDoanhThuTuan != $tongDoanhThuThang) {
                     // $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra';
                     $doanhThu['theo_thang']['doanh_thu'][] = (float) ($tongDoanhThuThang - $tongDoanhThuTuan); // Ép kiểu về float
-                    $doanhThu['theo_thang']['ten_tuan'][] = 'Tổng kiểm tra'; // Thêm tên cho tổng kiểm tra
+                    $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra'; // Thêm tên cho tổng kiểm tra
                 }
 
                 // Trả về tổng doanh thu của tháng và doanh thu theo từng tuần
