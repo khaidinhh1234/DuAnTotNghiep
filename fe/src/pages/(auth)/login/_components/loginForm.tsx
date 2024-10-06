@@ -24,6 +24,7 @@ const LoginForm = () => {
       const { data } = await instance.post("/login", user);
 
       localStorage.setItem("user", JSON.stringify(data));
+      // console.log(data);
       localStorage.setItem("accessToken", data.accessToken);
       nav("/");
     },
