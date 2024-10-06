@@ -114,7 +114,6 @@ class ThongTinWebController extends Controller
                 'data' => $thongTinWeb,
                 'message' => $message
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
