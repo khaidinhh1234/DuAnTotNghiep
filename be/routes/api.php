@@ -272,7 +272,9 @@ Route::middleware([])
             Route::get('/hoan-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHoanHang'])->name('hoan-hang-theo-thang.thong-ke');
             Route::get('/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHangTheoThang'])->name('huy-hang-theo-thang.thong-ke');
             Route::get('/top5-khach-hang-gan-day',  [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
-
+            Route::get('/so-sanh-don-hang-thang', [ThongKeDonHangController::class, 'soSanhDonHangThang'])->name('soSanhDonHangThang');
+            Route::get('/so-sanh-khach-hang-register', [ThongKeKhachHangController::class, 'soSanhKhachHangRegister'])->name('soSanhKhachHangRegister');
+            Route::get('/so-sanh-khach-hang-block', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock'])->name('soSanhKhachHangBlock');
             // Thống kê đánh giá
             Route::get('/{sanpham}/thong-ke-danh-gia', [ThongKeDanhGiaController::class, 'danhSachDanhGiaTheoSanPham'])->name('thong-ke-danh-gia.thong-ke');
         });

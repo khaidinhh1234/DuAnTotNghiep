@@ -38,9 +38,12 @@ const SiderComponent: React.FC = () => {
           onClick={handleMenuClick}
           className="text-black py-5 font-semibold text-base space-y-4"
         >
-          <Menu.Item key="/admin/dashboard" icon={<Home />}>
-            Trang chủ
-          </Menu.Item>
+          <SubMenu key="sub2" icon={<Package />} title="Thống kê">
+            <Menu.Item key="/admin/dashboard/list">Tổng quan</Menu.Item>
+            <Menu.Item key="/admin/dashboard/doanhthu">Doanh thu</Menu.Item>
+            <Menu.Item key="/admin/dashboard/sanpham">Sản phẩm</Menu.Item>
+            <Menu.Item key="/admin/dashboard/taikhoan">Tài khoản</Menu.Item>
+          </SubMenu>
           <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
             <Menu.Item key="/admin/products/list">Danh sách sản phẩm</Menu.Item>
             <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
