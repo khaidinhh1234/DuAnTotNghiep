@@ -143,9 +143,9 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            <PrivateRoute>
+            // <PrivateRoute>
               <LayoutAdmin />
-            </PrivateRoute>
+            // </PrivateRoute>
           }
         >
           <Route path="dashboard/list" element={<Dashboard />} />
@@ -165,7 +165,7 @@ const Router = () => {
           {/* <Route path="products/detaile" element={<Detail item={{
             id: 0
           }} />} /> */}
-          g{/* Biến thể */}
+          {/* Biến thể */}
           <Route path="products/bienthe" element={<Bienthe />} />
           <Route path="products/bienthecolor/edit/:id" element={<Color />} />
           <Route path="products/bienthesize/edit/:id" element={<Size />} />
