@@ -9,6 +9,7 @@ use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class DanhGiaController extends Controller
 {
@@ -58,7 +59,6 @@ class DanhGiaController extends Controller
         try {
             DB::beginTransaction();
             $validateDanhGia = $request->validate([
-                'user_id' => 'required|exists:users,id',
                 'san_pham_id' => 'required|exists:san_phams,id',
                 'don_hang_id' => 'required|exists:don_hangs,id',
                 'so_sao_san_pham' => 'required|integer|min:1|max:5',
@@ -69,18 +69,9 @@ class DanhGiaController extends Controller
                 'huu_ich' => 'nullable|integer|min:0',
                 'anh_danh_gia.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
+            
+            $validateDanhGia['user_id'] = Auth::guard('api')->id();
             $danhGia = DanhGia::create($validateDanhGia);
-
-
-            if ($request->hasFile('anh_danh_gia')) {
-                foreach ($request->file('anh_danh_gia') as $file) {
-                    $pathFile = $file->store('anh_danh_gia', 'public');
-                    AnhDanhGia::create([
-                        'danh_gia_id' => $danhGia->id,
-                        'anh_danh_gia' => Storage::url($pathFile),
-                    ]);
-                }
-            }
 
             DB::commit();
             return response()->json([
