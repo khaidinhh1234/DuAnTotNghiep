@@ -51,7 +51,7 @@ const ViewNew: React.FC = () => {
         </Link>
       </div>
       <div style={{ padding: 14, minHeight: 360 }}>
-        <div className="bg-white px-4 rounded-xl py-5 shadow-lg max-w-7xl">
+        {/* <div className="bg-white px-4 rounded-xl py-5 shadow-lg max-w-7xl"> */}
           <Title level={2} style={{ color: "#1890ff" }}>
             {tieu_de}
           </Title>
@@ -82,7 +82,7 @@ const ViewNew: React.FC = () => {
             dangerouslySetInnerHTML={{ __html: noi_dung }}
           />
           <Divider />
-        </div>
+        {/* </div> */}
       </div>
     </main>
   );
