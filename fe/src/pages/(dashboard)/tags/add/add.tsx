@@ -13,7 +13,7 @@ const Tagsadd = () => {
       return response.data;
     },
     onSuccess: () => {
-      message.success("Thêm nhãn dán thành công");
+      message.success("Thêm thẻ đính kèm thành công");
       form.resetFields();
       nav("/admin/products/tags");
     },
@@ -34,12 +34,12 @@ const Tagsadd = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Nhãn dán /
-          <span className="font-semibold px-px"> Thêm nhãn dán</span>
+          Quản trị / thẻ đính kèm /
+          <span className="font-semibold px-px"> Thêm thẻ đính kèm</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Thêm nhãn dán</h1>
+        <h1 className="font-semibold md:text-3xl">Thêm thẻ đính kèm</h1>
         <div>
           <Link to="/admin/products/tags" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
@@ -61,12 +61,12 @@ const Tagsadd = () => {
               onFinish={onFinish}
             >
               <Form.Item
-                label="Tên nhãn dán"
+                label="Tên thẻ đính kèm"
                 name="ten_the"
                 rules={[
                   {
                     required: true,
-                    message: "Tên nhãn dán bắt buộc phải nhập!",
+                    message: "Tên thẻ đính kèm bắt buộc phải nhập!",
                   },
 
                   {
@@ -75,7 +75,7 @@ const Tagsadd = () => {
                   },
                 ]}
               >
-                <Input placeholder="Nhập tên nhãn dán" />
+                <Input placeholder="Nhập tên thẻ đính kèm" />
               </Form.Item>
 
               <Form.Item>
