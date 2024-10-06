@@ -118,10 +118,7 @@ const PageAddPermission: React.FC = () => {
               name="ten_vai_tro"
               rules={[
                 { required: true, message: "Vui lòng nhập tên vai trò!" },
-                {
-                  pattern: /^[A-Z].*$/,
-                  message: "Chữ cái đầu tiên phải viết hoa!",
-                },
+
                 {
                   pattern: /^[^\s]+(\s+[^\s]+)*$/,
                   message: "Vui lòng nhập tên không chứa ký tự trắng!",
@@ -135,10 +132,6 @@ const PageAddPermission: React.FC = () => {
               name="mo_ta"
               rules={[
                 { required: true, message: "Vui lòng nhập mô tả !" },
-                {
-                  pattern: /^[A-Z].*$/,
-                  message: "Chữ cái đầu tiên phải viết hoa!",
-                },
 
                 {
                   pattern: /^[^\s]+(\s+[^\s]+)*$/,

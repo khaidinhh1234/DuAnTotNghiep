@@ -88,10 +88,7 @@ const NewCategoriesEdit = () => {
                     required: true,
                     message: "Tên danh mục bắt buộc phải nhập!",
                   },
-                  {
-                    pattern: /^[A-Z].*$/,
-                    message: "Chữ cái đầu tiên phải viết hoa!",
-                  },
+
                   {
                     pattern: /^[^\s]+(\s+[^\s]+)*$/,
                     message: "Vui lòng  không chứa ký tự trắng!",

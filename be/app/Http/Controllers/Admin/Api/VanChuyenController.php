@@ -156,24 +156,22 @@ class VanChuyenController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'data' => [
-                    [
-                        'Tổng đơn chờ lấy hàng' => $choLayHangs,
-                        'Tổng tiền' => $tongTienChoLayHangs
-                    ],
-                    [
-                        'Tổng đơn đang giao hàng' => $dangGiaoHangs,
-                        'Tổng tiền' => $tongTienDangGiaoHangs
-                    ],
-                    [
-                        'Tổng đơn giao hàng không thành công' => $giaoHangThatBais,
-                        'Tổng tiền' => $tongTienGiaoHangThatBais
-                    ],
-                    [
-                        'Tổng đơn giao hàng thành công' => $giaoHangThanhCongs,
-                        'Tổng tiền' => $tongTienGiaoHangThanhCongs
-                    ]
+                'choLayHang' => [
+                    'tong_don_cho_lay_hang' => $choLayHangs,
+                    'tong_tien' => $tongTienChoLayHangs
                 ],
+                'donDangGiao' => [
+                    'tong_don_dang_giao_hang' => $dangGiaoHangs,
+                    'tong_tien' => $tongTienDangGiaoHangs
+                ],
+                'giaoThatBai' => [
+                    'tong_don_giao_hang_that_bai' => $giaoHangThatBais,
+                    'tong_tien' => $tongTienGiaoHangThatBais
+                ],
+                'giaoThanhCong' => [
+                    'tong_don_giao_hang_thanh_cong' => $giaoHangThanhCongs,
+                    'tong_tien' => $tongTienGiaoHangThanhCongs
+                ]
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -184,6 +182,4 @@ class VanChuyenController extends Controller
             ], 500);
         }
     }
-
-
 }

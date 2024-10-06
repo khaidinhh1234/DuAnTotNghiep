@@ -93,7 +93,7 @@ import Component from "@/pages/(dashboard)/test";
 import PageTransport from "@/pages/(dashboard)/transport/page";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
-import Detail from "@/pages/(dashboard)/products/detail/page";
+// import Detail from "@/pages/(dashboard)/products/detail/page";
 import ShowUser from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import Collect from "@/pages/(dashboard)/transport/collect/Collect";
 import ShowNhanvien from "@/pages/(dashboard)/user/khachhang/show/showUser";
