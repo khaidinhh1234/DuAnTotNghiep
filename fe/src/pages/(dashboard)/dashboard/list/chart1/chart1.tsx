@@ -8,8 +8,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
+import { useQuery } from "@tanstack/react-query";
+import instance from "@/configs/admin";
 
 export default function Chart1() {
+  const { data } = useQuery({
+    queryKey: ["thongkesdf"],
+    queryFn: async () => {
+      const res = await instance.get("thong-ke/doanh-thu-so-sanh");
+      return res.data;
+    },
+  });
+  // console.log(data);
   return (
     <Card className="w-full bg-white">
       <CardHeader className="p-4 pb-0">
@@ -22,9 +32,9 @@ export default function Chart1() {
       <CardContent className="flex gap-4 p-4 pt-0">
         <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
           <div>
-            12.500.000.00 <br />
+            {data?.doanh_thu_thang_hien_tai.toLocaleString("vi-VN")} <br />
             <span className="text-sm font-normal text-muted-foreground">
-              +20,1% so với tháng trước
+              +{data?.chenh_lech_phan_tram}% so với tháng trước
             </span>
           </div>{" "}
         </div>

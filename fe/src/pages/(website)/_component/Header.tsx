@@ -15,6 +15,7 @@ const Header = () => {
   );
   // console.log("member", member);
   // console.log("phanquyen", phanquyen);
+  localStorage.removeItem("user");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
