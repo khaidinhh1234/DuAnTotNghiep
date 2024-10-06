@@ -53,7 +53,7 @@ const SiderComponent: React.FC = () => {
           <SubMenu key="sub2" icon={<Package />} title="Sản phẩm" >
             <Menu.Item key="/admin/products/list">Danh sách sản phẩm</Menu.Item>
             <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
-            <Menu.Item key="/admin/products/tags">Quản lý nhãn dán</Menu.Item>
+            <Menu.Item key="/admin/products/tags">Quản lý thẻ đính kèm</Menu.Item>
           </SubMenu>
 
           {/* Đơn hàng */}
@@ -92,9 +92,9 @@ const SiderComponent: React.FC = () => {
           </SubMenu>
 
           {/* Thống kê */}
-          <Menu.Item key="/admin/analytics" icon={<BarChart />}>
+          {/* <Menu.Item key="/admin/analytics" icon={<BarChart />}>
             Thống kê
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu>
       </Sider>
     </Layout>
