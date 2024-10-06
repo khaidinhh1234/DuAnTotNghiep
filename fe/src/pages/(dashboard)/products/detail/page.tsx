@@ -93,8 +93,7 @@ interface ProductVariant {
 
   mau_bien_the: {
     ma_mau_sac: string;
-    ten_mau: string;
-  };
+    ten_mau_sac:string;  };
   kich_thuoc_bien_the: {
     kich_thuoc: string;
   };
@@ -132,11 +131,12 @@ interface Product {
   anh_san_pham: string;
   bien_the_san_pham: ProductVariant[];
   danh_gias: Review[];
+  the_san_pham: Array<{ id: number; ten_the: string }>;
 }
 
 const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor ] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -144,6 +144,9 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
   const [isHeart, setIsHeart] = useState(false);
   const [expandedResponses, setExpandedResponses] = useState<number[]>([]);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [selectedColorName, setSelectedColorName] = useState<string | null>(null);
+
+
   const { data, isLoading, error } = useQuery<{ data: Product }>({
     queryKey: ["PRODUCT_DETAIL", item.id],
     queryFn: async () => {
@@ -163,10 +166,10 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
 
   useEffect(() => {
     if (data && data.data.bien_the_san_pham.length > 0) {
-      setSelectedColor(data.data.bien_the_san_pham[0].mau_bien_the.ma_mau_sac);
-      setSelectedSize(
-        data.data.bien_the_san_pham[0].kich_thuoc_bien_the.kich_thuoc
-      );
+      const firstVariant = data.data.bien_the_san_pham[0];
+      setSelectedColor(firstVariant.mau_bien_the.ma_mau_sac);
+      setSelectedSize(firstVariant.kich_thuoc_bien_the.kich_thuoc);
+      setSelectedColorName(firstVariant.mau_bien_the.ten_mau_sac);
     }
   }, [data]);
 
@@ -197,14 +200,15 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
   const getStockStatus = (variant: ProductVariant) => {
     if (variant.so_luong_bien_the > 0) {
       return (
-        <span style={{ fontSize: "16px" }}>
-          Số lượng sản phẩm: {variant.so_luong_bien_the}
+<span style={{ fontSize: "18px" }}>
+<strong>Số lượng: </strong>
+{variant.so_luong_bien_the}
         </span>
       );
     } else {
       return (
-        <span style={{ fontSize: "16px" }}>
-          Hết hàng
+<span style={{ fontSize: "16px", fontWeight: "bold" }}>
+Hết hàng
         </span>
       );
     }
@@ -277,8 +281,8 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
           <section className="mb-8">
             <div className="container pb-8">
               <div className="md:px-8 px-4 pt-3 grid grid-cols-12 gap-3 w-full justify-center">
-                {/* <div className="lg:col-span-6 col-span-12 mb-6">
-                  <div className="bg-[#FAFAFB] w-full h-[400px] inline-flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
+                <div className="lg:col-span-6 col-span-12 mb-6">
+                  <div className="bg-[#FAFAFB] w-full h-[600px] inline-flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
                     <Swiper
                       style={{
                         "--swiper-navigation-color": "#000000",
@@ -305,8 +309,8 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                             src={image}
                             alt=""
                             onClick={() => handlePreview(image)}
-                            style={{ cursor: "pointer", maxHeight: "100%", width: "auto", objectFit: "contain" }}
-                          />
+                            className="w-full h-600px object-contain"
+                            />
                         </SwiperSlide>
                       ))}
                     </Swiper>
@@ -324,167 +328,35 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                     >
                       {variantImages.map((image, index) => (
                         <SwiperSlide key={index}>
-                          <div className="w-[60px] h-[60px] bg-[#F4F4F4] rounded-lg border border-[#F4F4F4] flex justify-center items-center">
-                            <img src={image} alt="" style={{ cursor: "pointer", maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
-                          </div>
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
-                  </div>
-                </div> */}
-
-                {/* <div className="lg:col-span-6 col-span-12 mb-6">
-                  <div className="bg-[#FAFAFB] w-full h-[400px] inline-flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
-                    <Swiper
-                      style={
-                        {
-                          "--swiper-navigation-color": "#000000",
-                          "--swiper-pagination-color": "#000000",
-                        } as React.CSSProperties
-                      }
-                      centeredSlides={true}
-                      autoplay={{
-                        delay: 2500,
-                        disableOnInteraction: false,
-                      }}
-                      pagination={{
-                        clickable: true,
-                      }}
-                      navigation={true}
-                      thumbs={
-                        thumbsSwiper ? { swiper: thumbsSwiper } : undefined
-                      }
-                      modules={[
-                        Autoplay,
-                        Pagination,
-                        Navigation,
-                        Thumbs,
-                        FreeMode,
-                      ]}
-                      className="mySwiper2 w-full swiper-with-hover"
-                      loop={true}
-                      spaceBetween={10}
-                    >
-                      {allImages.map((image, index) => (
-                        <SwiperSlide key={index}>
-                          {" "}
-                          <img
-                            src={image}
-                            alt=""
-                            onClick={() => handlePreview(image)}
-                            style={{
-                              cursor: "pointer",
-                              maxHeight: "100%",
-                              width: "auto",
-                            }}
-                          />
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
-                  </div>
-                  <div className="w-full mx-auto">
-                    <Swiper
-                      onSwiper={(swiperInstance) =>
-                        setThumbsSwiper(swiperInstance as any)
-                      }
-                      loop={true}
-                      spaceBetween={16}
-                      slidesPerView={4}
-                      freeMode={true}
-                      watchSlidesProgress={true}
-                      modules={[FreeMode, Navigation, Thumbs]}
-                      className="mySwiper1"
-                    >
-                      {allImages.map((image, index) => (
-                        <SwiperSlide key={index}>
-                          <div className="w-[full] h-[full] bg-[#F4F4F4] rounded-lg border border-[#F4F4F4] flex justify-center items-center">
-                            <img
-                              src={image}
-                              alt=""
-                              style={{
-                                cursor: "pointer",
-                                maxWidth: "100%",
-                                maxHeight: "100%",
-                                objectFit: "contain",
-                              }}
-                            />
-                          </div>
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
-                  </div>
-                </div> */}
-    <div className="lg:col-span-6 col-span-12 mb-6">
-  <div className="bg-[#FAFAFB] w-full h-[600px] mb-4 rounded-2xl shadow shadow-zinc-300/60 overflow-hidden">
-    <Swiper
-      style={{
-        "--swiper-navigation-color": "#000000",
-        "--swiper-pagination-color": "#000000",
-      } as React.CSSProperties}
-      centeredSlides={true}
-      autoplay={{
-        delay: 2500,
-        disableOnInteraction: false,
-      }}
-      pagination={{
-        clickable: true,
-      }}
-      navigation={true}
-      thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
-      modules={[Autoplay, Pagination, Navigation, Thumbs, FreeMode]}
-      className="mySwiper2 w-full h-full swiper-with-hover"
-      loop={true}
-      spaceBetween={10}
-    >
-      {allImages.map((image, index) => (
-        <SwiperSlide key={index} className="flex items-center justify-center">
-          <img
-            src={image}
-            alt=""
-            onClick={() => handlePreview(image)}
-            className="w-full h-600px object-contain"
-          />
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  </div>
-  <div className="w-full mx-auto">
-    <Swiper
-      onSwiper={(swiperInstance) => setThumbsSwiper(swiperInstance as any)}
-      loop={true}
-      spaceBetween={16}
-      slidesPerView={4}
-      freeMode={true}
-      watchSlidesProgress={true}
-      modules={[FreeMode, Navigation, Thumbs]}
-      className="mySwiper1"
-    >
-      {allImages.map((image, index) => (
-        <SwiperSlide key={index}>
           <div className="aspect-square bg-[#F4F4F4] rounded-lg border border-[#F4F4F4] overflow-hidden">
-            <img
-              src={image}
-              alt=""
+          <img src={image} alt="" 
               className="w-full h-full object-cover"
-            />
-          </div>
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  </div>
-</div>
+              />
+                          </div>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
+                </div>
 
+       
                 <div className="lg:col-span-6 col-span-12 px-4 w-full">
                   <div className="product_detail_name">
                     <div className="flex justify-between mb-2">
-                      <h3 className="font-bold text-2xl">{product.ten_san_pham}</h3>
+                      <h3 className="font-bold text-3xl">{product.ten_san_pham}</h3>
                     
 
                     </div>
-                    <h4 className="mb-3 text-xl font-normal">
-                      {product.mo_ta_ngan}
-                    </h4>
-                    <div className="stars_reviews flex mb-3">
+                    <div className="mb-3">
+                      {/* <span className="font-semibold">Thẻ sản phẩm: </span> */}
+                      {product.the_san_pham.map((tag, index) => (
+                        <span key={tag.id} className="bg-blue-100 px-2 py-1 rounded-md text-xs font-bold text-blue-700 mr-2 ">
+                          {tag.ten_the}
+                        </span>
+                      ))}
+                    </div>       
+              
+                    <div className="stars_reviews flex">
                       <Rate
                         disabled
                         defaultValue={Number(averageRating)}
@@ -497,63 +369,86 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                         </span>
                       </span>
                     </div>
-                  </div>
+                    <h4 className="mb-3  text-lg font-normal">
+                      {product.mo_ta_ngan}
+                    </h4>
+                      </div>
 
-                  {selectedVariant && (
-                    <div className="mb-4 text-lg font-medium">
-                      {selectedVariant.gia_khuyen_mai ? (
-                        <>
-                          <del className="text-[#A4A1AA]">
-                            {selectedVariant.gia_ban.toLocaleString("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            })}
-                          </del>
-                          <span className="ml-2">
-                            {selectedVariant.gia_khuyen_mai.toLocaleString(
-                              "vi-VN",
-                              { style: "currency", currency: "VND" }
-                            )}
-                          </span>
-                        </>
-                      ) : (
-                        <span>
-                          {selectedVariant.gia_ban.toLocaleString("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          })}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                      {selectedVariant && (
+  <div className="mb-4 text-lg font-medium">
+    {selectedVariant.gia_khuyen_mai ? (
+      <>
+        <span className="text-red-500 text-2xl">
+          {selectedVariant.gia_khuyen_mai.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </span>
+        <del className="text-[#A4A1AA] ml-2">
+          {selectedVariant.gia_ban.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          })}
+        </del>
+        <span className="ml-2 text-red-500 bg-red-100 rounded-lg px-2 py-1 text-sm">
+        -{Math.round(((selectedVariant.gia_ban - selectedVariant.gia_khuyen_mai) / selectedVariant.gia_ban) * 100)}% 
+        </span>
+      </>
+    ) : (
+      <span>
+        {selectedVariant.gia_ban.toLocaleString("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        })}
+      </span>
+    )}
+  </div>
+)}
 
-                  <div className="mb-4">
-                    <h3 className="text-gray-900 mb-2 font-bold">Color</h3>
-                    <div className="flex space-x-2">
-                      {uniqueColors.map((color, index) => (
-                        <button
-                          key={index}
-                          className={`w-7 h-7 rounded-md border-2 ${selectedColor === color ? "border-black" : ""}`}
-                          style={{ backgroundColor: color }}
-                          onClick={() => setSelectedColor(color)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="items-center mt-4 mb-3">
-                    <h3 className="mr-4 font-bold">Size</h3>
-                    <div className="flex mt-3">
-                      {sizesForSelectedColor.map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => setSelectedSize(size)}
-                          className={`w-8 h-8 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${selectedSize === size ? "bg-blackL text-white" : ""}`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+<div className="mb-4">
+  <h3 className="text-gray-900 mb-2 font-bold text-xl">
+    Màu: <span className="font-normal text-lg">{selectedColorName || 'Chưa chọn'}</span>
+  </h3>
+  <div className="flex space-x-2">
+    {uniqueColors.map((color, index) => {
+      const colorVariant = product.bien_the_san_pham.find(
+        (variant) => variant.mau_bien_the.ma_mau_sac === color
+      );
+      return (
+        <button
+          key={index}
+          className={`w-7 h-7 rounded-md border-2 ${selectedColor === color ? "border-black" : ""}`}
+          style={{ backgroundColor: color }}
+          onClick={() => {
+            setSelectedColor(color);
+            setSelectedColorName(colorVariant?.mau_bien_the.ten_mau_sac || null);
+          }}
+          title={colorVariant?.mau_bien_the.ten_mau_sac}
+        />
+      );
+    })}
+  </div>
+</div>
+
+
+<div className="items-center mt-4 mb-3 text-xl">
+  <h3 className="mr-4 font-bold text-lg">
+    Kích thước: <span className="font-normal">{selectedSize || 'Chưa chọn'}</span>
+  </h3>
+  <div className="flex mt-3">
+    {sizesForSelectedColor.map((size) => (
+      <button
+        key={size}
+        onClick={() => setSelectedSize(size)}
+        className={`w-8 h-8 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
+          selectedSize === size ? "bg-blackL text-white" : ""
+        }`}
+      >
+        {size}
+      </button>
+    ))}
+  </div>
+</div>
                   <p style={{ marginTop: "20px" }}>
   {selectedVariant && getStockStatus(selectedVariant)}
 </p>
@@ -609,7 +504,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
           <div className="border-t pt-6">
             <h1 className="text-2xl font-semibold mb-4">Chi tiết sản phẩm</h1>
             <div className="mb-8 flex justify-center"></div>
-            <div className="mb-8 flex justify-center">
+            {/* <div className="mb-8 flex justify-center">
               <div className="bg-[#FAFAFB] w-1000 h-[400px] flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
                 <img
                   src={product.anh_san_pham}
@@ -618,7 +513,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                   className="cursor-pointer max-h-full w-auto object-contain"
                 />
               </div>
-            </div>
+            </div> */}
             <div
               className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${
                 isDescriptionExpanded ? "" : "line-clamp-3"
