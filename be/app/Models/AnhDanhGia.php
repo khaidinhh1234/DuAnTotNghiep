@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\AuditTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AnhDanhGia extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, AuditTrait;
     protected $fillable = [
         'danh_gia_id',
         'anh_danh_gia'

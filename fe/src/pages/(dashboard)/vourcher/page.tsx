@@ -21,6 +21,7 @@ import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/admin";
+import Detail from "./detail/detail";
 
 interface PromotionType {
   key: React.Key;
@@ -235,49 +236,65 @@ const VoucherAdmin: React.FC = () => {
 
   const columns: TableColumnsType<PromotionType> = [
     {
-      title: "Khuyến mãi",
-      key: "ma_code",
-      width: "18%",
-      ...getColumnSearchProps("mo_ta"), // Sử dụng tính năng tìm kiếm cho "mo_ta"
-      onFilter: (value: boolean | React.Key, record: PromotionType) =>
-        record.mo_ta.toLowerCase().includes(String(value).toLowerCase()) ||
-        record.ma_code.toLowerCase().includes(String(value).toLowerCase()),
-      sorter: (a: any, b: any) => a.ma_code.localeCompare(b.ma_code),
-      render: (record) => (
-        <div>
-          <h5>{record.mo_ta}</h5>
-
-          <span className="text-gray-600 text-sm">Mã: {record.ma_code}</span>
-        </div>
-      ),
+      title: "STT",
+      dataIndex: "key",
+      key: "key",
+      width: "5%",
+      className: "text-center",
+      render: (text, record, index) => index + 1,
     },
     {
-      title: "Thời gian thu thập - Thời gian quy đổi",
-      key: "ngay_bat_dau",
-      width: "20%",
-      ...getColumnSearchProps("ngay_bat_dau"),
-      onFilter: (value: boolean | React.Key, record: any) =>
-        new Date(record.ngay_bat_dau)
-          .toLocaleDateString("vi-VN")
-          .includes(String(value)) ||
-        new Date(record.ngay_ket_thuc)
-          .toLocaleDateString("vi-VN")
-          .includes(String(value)), // Tìm kiếm trong cả ngay_bat_dau và ngay_ket_thuc
-      sorter: (a: any, b: any) =>
-        new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(), // Sắp xếp theo thời gian
-      render: (record) => (
-        <>
-          <span>
-            Từ: {new Date(record.ngay_bat_dau).toLocaleDateString("vi-VN")}
-          </span>{" "}
-          <br />
-          Đến:{" "}
-          <span>
-            {new Date(record.ngay_ket_thuc).toLocaleDateString("vi-VN")}
-          </span>
-        </>
-      ),
+      title: "Khuyến Mãi",
+
+      key: "gia_tri",
+      width: "40%",
+      className: "text-center",
+      render: (record) => <Detail record={record} />,
     },
+    // {
+    //   title: "Khuyến mãi",
+    //   key: "ma_code",
+    //   width: "18%",
+    //   ...getColumnSearchProps("mo_ta"), // Sử dụng tính năng tìm kiếm cho "mo_ta"
+    //   onFilter: (value: boolean | React.Key, record: PromotionType) =>
+    //     record.mo_ta.toLowerCase().includes(String(value).toLowerCase()) ||
+    //     record.ma_code.toLowerCase().includes(String(value).toLowerCase()),
+    //   sorter: (a: any, b: any) => a.ma_code.localeCompare(b.ma_code),
+    //   render: (record) => (
+    //     <div>
+    //       <h5>{record.mo_ta}</h5>
+
+    //       <span className="text-gray-600 text-sm">Mã: {record.ma_code}</span>
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   title: "Thời gian thu thập - Thời gian quy đổi",
+    //   key: "ngay_bat_dau",
+    //   width: "20%",
+    //   ...getColumnSearchProps("ngay_bat_dau"),
+    //   onFilter: (value: boolean | React.Key, record: any) =>
+    //     new Date(record.ngay_bat_dau)
+    //       .toLocaleDateString("vi-VN")
+    //       .includes(String(value)) ||
+    //     new Date(record.ngay_ket_thuc)
+    //       .toLocaleDateString("vi-VN")
+    //       .includes(String(value)), // Tìm kiếm trong cả ngay_bat_dau và ngay_ket_thuc
+    //   sorter: (a: any, b: any) =>
+    //     new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(), // Sắp xếp theo thời gian
+    //   render: (record) => (
+    //     <>
+    //       <span>
+    //         Từ: {new Date(record.ngay_bat_dau).toLocaleDateString("vi-VN")}
+    //       </span>{" "}
+    //       <br />
+    //       Đến:{" "}
+    //       <span>
+    //         {new Date(record.ngay_ket_thuc).toLocaleDateString("vi-VN")}
+    //       </span>
+    //     </>
+    //   ),
+    // },
 
     {
       title: "Số lượng",
@@ -288,7 +305,7 @@ const VoucherAdmin: React.FC = () => {
         record.so_luong_da_su_dung.toString().includes(String(value)), // Tìm kiếm trong cả so_luong và so_luong_da_su_dung
       sorter: (a: any, b: any) => a.so_luong - b.so_luong, // Sắp xếp theo số
 
-      width: "15%",
+      width: "30%",
       render: (record) => (
         <>
           <span
@@ -301,102 +318,94 @@ const VoucherAdmin: React.FC = () => {
     },
 
     // {
-    //   title: "Giá trị",
-    //   dataIndex: "gia_tri",
-    //   key: "gia_tri",
+    //   title: "Loại khuyến mãi",
+    //   // dataIndex: "loai_khuyen_mai",
+    //   key: "loai",
     //   width: "15%",
-    //   render: (gia_tri: number | string) =>
-    //     typeof gia_tri === "number"
-    //       ? `${gia_tri.toLocaleString()} VND`
-    //       : `${gia_tri}%`,
-    //   sorter: (a: any, b: any) => a.gia_tri - b.gia_tri,
+    //   sorter: (a: any, b: any) => a.loai.localeCompare(b.loai),
+    //   render: (record) => (
+    //     <Tag
+    //       color={record.loai === "phần trăm" ? "#1cb5e0" : "#155799"}
+    //       className="font-semibold px-2  rounded-lg"
+    //     >
+    //       {record.loai === "phan_tram" ? "phần trăm" : "tiền"}
+    //     </Tag>
+    //   ),
     // },
-    {
-      title: "Loại khuyến mãi",
-      // dataIndex: "loai_khuyen_mai",
-      key: "loai",
-      width: "15%",
-      sorter: (a: any, b: any) => a.loai.localeCompare(b.loai),
-      render: (record) => (
-        <Tag
-          color={record.loai === "phần trăm" ? "#1cb5e0" : "#155799"}
-          className="font-semibold px-2  rounded-lg"
-        >
-          {record.loai === "phan_tram" ? "phần trăm" : "tiền"}
-        </Tag>
-      ),
-    },
-    {
-      title: "Hạng thành viên",
-      key: "hang_thanh_viens",
-      ...getColumnSearchProps("hang_thanh_viens"),
-      onFilter: (value: boolean | React.Key, record: any) =>
-        record.hang_thanh_viens
-          .map((hang: any) =>
-            hang.ten_hang_thanh_vien === "Vàng"
-              ? "Vàng"
-              : hang.ten_hang_thanh_vien === "Bạc"
-                ? "Bạc"
-                : "Đồng"
-          )
-          .join(", ")
-          .includes(String(value)), // Tìm kiếm trong cả hang_thanh_viens
-      sorter: (a: any, b: any) =>
-        a.hang_thanh_viens.length - b.hang_thanh_viens.length,
-      width: "15%",
-      render: (record) => (
-        <>
-          <span className="text-gray-600 text-md">
-            {record.hang_thanh_viens
-              .map((hang: any) =>
-                hang.ten_hang_thanh_vien === "Vàng"
-                  ? "Vàng"
-                  : hang.ten_hang_thanh_vien === "Bạc"
-                    ? "Bạc"
-                    : "Đồng"
-              )
-              .join(", ")}
-          </span>
-        </>
-      ),
-    },
-    {
-      title: "Chi tiết khuyến mãi",
+    // {
+    //   title: "Hạng thành viên",
+    //   key: "hang_thanh_viens",
+    //   ...getColumnSearchProps("hang_thanh_viens"),
+    //   onFilter: (value: boolean | React.Key, record: any) =>
+    //     record.hang_thanh_viens
+    //       .map((hang: any) =>
+    //         hang.ten_hang_thanh_vien === "Vàng"
+    //           ? "Vàng"
+    //           : hang.ten_hang_thanh_vien === "Bạc"
+    //             ? "Bạc"
+    //             : "Đồng"
+    //       )
+    //       .join(", ")
+    //       .includes(String(value)), // Tìm kiếm trong cả hang_thanh_viens
+    //   sorter: (a: any, b: any) =>
+    //     a.hang_thanh_viens.length - b.hang_thanh_viens.length,
+    //   width: "15%",
+    //   render: (record) => (
+    //     console.log(record),
+    //     (
+    //       <>
+    //         <span className="text-gray-600 text-md">
+    //           {record.hang_thanh_viens
+    //             .map((hang: any) =>
+    //               hang.ten_hang_thanh_vien === "Vàng"
+    //                 ? "Vàng"
+    //                 : hang.ten_hang_thanh_vien === "Bạc"
+    //                   ? "Bạc"
+    //                   : "Đồng"
+    //             )
+    //             .join(", ")}
+    //         </span>
+    //       </>
+    //     )
+    //   ),
+    // },
+    // {
+    //   title: "Chi tiết khuyến mãi",
 
-      key: " chi_tieu_toi_thieu",
-      width: "25%",
-      ...getColumnSearchProps("chi_tieu_toi_thieu"),
-      onFilter: (value: boolean | React.Key, record: any) =>
-        record.chi_tieu_toi_thieu
-          .map((chi_tieu_toi_thieu: any) =>
-            chi_tieu_toi_thieu === 0
-              ? "Áp dụng cho tất cả sản phẩm"
-              : "   Giá trị đơn hàng tối thiểu  " +
-                chi_tieu_toi_thieu.toLocaleString() +
-                " VNĐ"
-          )
-          .join(", ")
-          .includes(String(value)), // Tìm kiếm trong cả chi_tieu_toi_thieu
-      sorter: (a: any, b: any) => a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu,
+    //   key: " chi_tieu_toi_thieu",
+    //   width: "25%",
+    //   ...getColumnSearchProps("chi_tieu_toi_thieu"),
+    //   onFilter: (value: boolean | React.Key, record: any) =>
+    //     record.chi_tieu_toi_thieu
+    //       .map((chi_tieu_toi_thieu: any) =>
+    //         chi_tieu_toi_thieu === 0
+    //           ? "Áp dụng cho tất cả sản phẩm"
+    //           : "   Giá trị đơn hàng tối thiểu  " +
+    //             chi_tieu_toi_thieu.toLocaleString() +
+    //             " VNĐ"
+    //       )
+    //       .join(", ")
+    //       .includes(String(value)), // Tìm kiếm trong cả chi_tieu_toi_thieu
+    //   sorter: (a: any, b: any) => a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu,
 
-      render: (record) => (
-        // console.log(record),
-        <div>
-          <h5>
-            Mức giảm giá: {record.giam_gia.toLocaleString()}{" "}
-            {record.loai === "tien_mat" ? "VNĐ" : "%"}
-            <br />
-            {record.chi_tieu_toi_thieu === 0
-              ? "Áp dụng cho tất cả sản phẩm"
-              : "   Giá trị đơn hàng tối thiểu  " +
-                record.chi_tieu_toi_thieu.toLocaleString() +
-                " VNĐ"}
-            {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
-            VND */}
-          </h5>
-        </div>
-      ),
-    },
+    //   render: (record) => (
+    //     // console.log(record),
+    //     <div>
+    //       <h5>
+    //         Mức giảm giá: {record.giam_gia.toLocaleString()}{" "}
+    //         {record.loai === "tien_mat" ? "VNĐ" : "%"}
+    //         <br />
+    //         {record.chi_tieu_toi_thieu === 0
+    //           ? "Áp dụng cho tất cả sản phẩm"
+    //           : "   Giá trị đơn hàng tối thiểu  " +
+    //             record.chi_tieu_toi_thieu.toLocaleString() +
+    //             " VNĐ"}
+    //         {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
+    //         VND */}
+    //       </h5>
+    //     </div>
+    //   ),
+    // },
     {
       title: "Trạng thái",
       dataIndex: "trang_thai",
