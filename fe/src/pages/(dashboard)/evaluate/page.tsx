@@ -5,6 +5,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
+  Image,
   Input,
   InputRef,
   Modal,
@@ -26,6 +27,7 @@ const EvaluateAdmin = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
+  const [expandedKeys, setExpandedKeys] = useState<number[]>([])
   // Query to fetch evaluations
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
@@ -34,7 +36,13 @@ const EvaluateAdmin = () => {
       return response.data;
     },
   });
-
+  const toggleExpand = (id: number) => {
+    setExpandedKeys((prevKeys) =>
+      prevKeys.includes(id)
+        ? prevKeys.filter((key) => key !== id)
+        : [...prevKeys, id]
+    );
+  };
   // Mutation to send replies to API
   const mutation = useMutation({
     mutationFn: async ({
@@ -183,55 +191,80 @@ const EvaluateAdmin = () => {
   });
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Đã xảy ra lỗi khi tải dữ liệu.</p>;
-
+  const showDetail = (record: IEvaluate) => {
+    setCurrentEvaluate(record);
+    setIsModalOpen(true); // Sử dụng modal để hiển thị chi tiết
+  };
   const dataSource =
     data?.data.map((evaluate: IEvaluate) => ({
       key: evaluate.id,
       ...evaluate,
-      user_id: evaluate?.user?.ten || "Chưa có dữ liệu",
+      user_id: evaluate?.user?.ten + " " + evaluate?.user?.ho || "Chưa có dữ liệu",
       san_pham_id: evaluate.san_pham?.ten_san_pham || "Chưa có dữ liệu",
+      // anh_danh_gias: evaluate.anh_danh_gias? || "Chưa có dữ liệu",
+
     })) || [];
 
   const columns: TableColumnsType<IEvaluate> = [
-    { title: "ID", dataIndex: "id", key: "id" },
     {
       title: "Nội dung",
+      width: "30%",
       key: "mo_ta",
       sorter: (a: any, b: any) => a.mo_ta?.localeCompare(b.mo_ta) || 0,
-      render: (record: IEvaluate) => (
-        <div>
-          <p>
-            {record.user?.ten || "Người dùng ẩn"}: {record.mo_ta}
-          </p>
-          {record.phan_hoi && (
+      render: (record: IEvaluate) => {
+        const content =
+          record.mo_ta.length > 100 ? `${record.mo_ta.substring(0, 100)}...` : record.mo_ta;
+    
+        return (
+          <div>
             <p>
-              <strong>Trả lời:</strong> {record.phan_hoi}
+              <strong>{record.user?.ho + " " + record.user?.ten || "Người dùng ẩn"}</strong>: {content}
             </p>
-          )}
-        </div>
-      ),
+            {record.phan_hoi && (
+              <p className="bg-gray-100 p-2 rounded">
+                <strong>Trả lời:</strong> {record.phan_hoi}
+              </p>
+            )}
+          </div>
+        );
+      },
+      align: "left",
     },
-
     {
       title: "Chất lượng sản phẩm",
+      width: "20%",
       key: "chat_luong_san_pham",
-      ...getColumnSearchProps("san_pham_id"), // Sử dụng `san_pham_id` để tìm kiếm
+      ...getColumnSearchProps("san_pham_id"),
       sorter: (a: any, b: any) =>
-        a.san_pham?.ten_san_pham?.localeCompare(b.san_pham?.ten_san_pham) || 0, // So sánh `ten_san_pham`
+        a.san_pham?.ten_san_pham?.localeCompare(b.san_pham?.ten_san_pham) || 0,
       render: (record: IEvaluate) => (
-        <div>
-          {record.san_pham?.ten_san_pham || "Sản phẩm ẩn"} <br />
-          {record.san_pham?.anh_san_pham || "Ảnh phản hồi ẩn"}
-          {/* {record.chat_luong_san_pham} */}
+        <div style={{ textAlign: "left", paddingBottom: "60px" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
+            {record.san_pham?.anh_san_pham ? (
+              <img
+                src={record.san_pham.anh_san_pham}
+                alt={record.san_pham.ten_san_pham}
+                style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
+              />
+            ) : (
+              "Ảnh phản hồi ẩn"
+            )}
+            <span>{record.san_pham?.ten_san_pham || "Sản phẩm ẩn"}</span>
+          </div>
         </div>
       ),
+      align: 'left',
     },
     {
       title: "Chất lượng",
       width: "20%",
       key: "chat_luong",
       render: (record: IEvaluate) => (
-        <div>
+        <div style={{ textAlign: "left" }}>
+          <div className="flex justify-between">
+            <span>Đánh giá tổng quan: </span>
+            <Rate disabled value={record.tong_so_sao_trung_binh} />
+          </div>
           <div className="flex justify-between">
             <span>Sản phẩm: </span>
             <Rate disabled value={record.so_sao_san_pham} />
@@ -242,18 +275,16 @@ const EvaluateAdmin = () => {
           </div>
         </div>
       ),
+      align: 'left',
     },
     {
       title: "Hành động",
+      width: "20%",
       key: "hanh_dong",
       render: (_, record: IEvaluate) => (
-        <Space>
-          <Button
-            className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
-            onClick={() => showModal(record)}
-            disabled={!!record.phan_hoi}
-          >
-            Trả lời
+        <Space style={{ paddingBottom: "80px" }}>
+          <Button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white hover:bg-blue-600 shadow-md" onClick={() => showDetail(record)} type="link">
+            Xem chi tiết
           </Button>
           <Popconfirm
             title="Bạn có chắc muốn ẩn đánh giá này không?"
@@ -263,10 +294,13 @@ const EvaluateAdmin = () => {
               Ẩn
             </Button>
           </Popconfirm>
+          
         </Space>
       ),
+      align: 'left',
     },
   ];
+
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -284,6 +318,88 @@ const EvaluateAdmin = () => {
         pagination={{ pageSize: 10, className: "my-5" }}
       />
       <Modal
+        // title="Chi tiết đánh giá"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <h1 className="text-3xl font-bold">Chi tiết đánh giá</h1>
+        {currentEvaluate && (
+          <div className="flex flex-col gap-2">
+            <div style={{ textAlign: "left" }}>
+              <div style={{ display: "flex", gap: "10px" }}>
+                {currentEvaluate.san_pham?.anh_san_pham ? (
+                  <img
+                    src={currentEvaluate.san_pham.anh_san_pham}
+                    alt={currentEvaluate.san_pham.ten_san_pham}
+                    style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
+                  />
+                ) : (
+                  "Ảnh phản hồi ẩn"
+                )}
+                <span>{currentEvaluate.san_pham?.ten_san_pham || "Sản phẩm ẩn"}</span>
+              </div>
+            </div>
+            <p>
+              <strong> {currentEvaluate.user?.ho + " " + currentEvaluate.user?.ten}:</strong> {currentEvaluate.mo_ta}
+            </p>
+            <div>
+              <div className="flex justify-between">
+                <strong>Đánh giá tổng quan: </strong>
+                <Rate disabled value={currentEvaluate.tong_so_sao_trung_binh} />
+              </div>
+              <div className="flex justify-between">
+                <strong>Sản phẩm: </strong>
+                <Rate disabled value={currentEvaluate.so_sao_san_pham} />
+              </div>
+              <div className="flex justify-between">
+                <strong>Vận chuyển: </strong>
+                <Rate disabled value={currentEvaluate.so_sao_dich_vu_van_chuyen} />
+              </div>
+            </div>
+            <strong>Ảnh đánh giá:</strong>
+            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+              {currentEvaluate.anh_danh_gias?.length > 0 ? (
+                currentEvaluate.anh_danh_gias.map((img: any) => (
+                  <Image
+                    key={img.id}
+                    src={img.anh_danh_gia}
+                    alt="Ảnh đánh giá"
+                    style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "5px" }}
+                  />
+                ))
+              ) : (
+                <span>Không có ảnh đánh giá</span>
+              )}
+            </div>
+            <Input.TextArea
+              rows={4}
+              value={phan_hoi[currentEvaluate.id as number] || ""}
+              onChange={(e) =>
+                handlephan_hoiChange(
+                  currentEvaluate.id as number,
+                  e.target.value
+                )
+              }
+              placeholder="Nhập phản hồi"
+              disabled={!!currentEvaluate.phan_hoi}
+            />
+            {/* <Input.TextArea
+              rows={4}
+              value={phan_hoi[currentEvaluate.id as number] || ""}
+              onChange={(e) =>
+                handlephan_hoiChange(
+                  currentEvaluate.id as number,
+                  e.target.value
+                )
+              }
+              placeholder="Nhập phản hồi"
+              disabled={!!currentEvaluate.phan_hoi}
+            /> */}
+          </div>
+        )}
+      </Modal>
+      {/* <Modal
         title="Phản hồi đánh giá"
         open={isModalOpen}
         onOk={handleOk}
@@ -308,7 +424,7 @@ const EvaluateAdmin = () => {
             />
           </div>
         )}
-      </Modal>
+      </Modal> */}
     </main>
   );
 };
