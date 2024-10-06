@@ -580,7 +580,7 @@ const OrderAdmin: React.FC = () => {
                     onChange={(e: any) => handleSearchChange(e)}
                   />
 
-                  <RangePicker onChange={handleDateChange} />
+                  {/* <RangePicker onChange={handleDateChange} /> */}
                 </Space>
               </div>
             </div>
