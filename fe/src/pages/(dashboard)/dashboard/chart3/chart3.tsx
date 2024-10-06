@@ -1,66 +1,19 @@
-import React, { useEffect } from "react";
-import ApexCharts from "apexcharts";
+import { CreditCard } from "lucide-react";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const Chart3: React.FC = () => {
-  // Dữ liệu doanh thu trong 10 ngày
-  const revenueData = [
-    1200, 1500, 1800, 1600, 1900, 1700, 2000, 2100, 2200, 2300,
-  ];
-
-  // Lấy 10 ngày gần nhất
-  const getLast10Days = () => {
-    const today = new Date();
-    const days = [];
-    for (let i = 0; i < 10; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
-      days.unshift(`${date.getDate()} Thg ${date.getMonth() + 1}`);
-    }
-    return days;
-  };
-
-  useEffect(() => {
-    const options = {
-      series: [
-        {
-          name: "Doanh Thu",
-          type: "line",
-          data: revenueData,
-        },
-      ],
-      chart: {
-        height: 350,
-        type: "line",
-      },
-      stroke: {
-        width: 4,
-      },
-      title: {
-        text: "Doanh Thu Trong 10 Ngày Qua",
-      },
-      dataLabels: {
-        enabled: true,
-      },
-      labels: getLast10Days(),
-      yaxis: {
-        title: {
-          text: "Doanh Thu (VNĐ)",
-        },
-      },
-    };
-
-    const chart = new ApexCharts(
-      document.querySelector("#revenue-chart"),
-      options
-    );
-    chart.render();
-
-    return () => {
-      chart.destroy();
-    };
-  }, []);
-
-  return <div id="revenue-chart" />;
+  return (
+    <Card x-chunk="dashboard-01-chunk-2" className="bg-white">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-xl font-bold">Bán hàng</CardTitle>
+        <CreditCard className="h-6 w-6 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">+12,234</div>
+        <p className="text-xs text-muted-foreground">+19% so với tháng trước</p>
+      </CardContent>
+    </Card>
+  );
 };
 
 export default Chart3;
