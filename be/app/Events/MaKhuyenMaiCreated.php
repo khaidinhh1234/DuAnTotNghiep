@@ -3,12 +3,11 @@
 namespace App\Events;
 
 use App\Models\MaKhuyenMai;
-use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class MaKhuyenMaiCreated implements ShouldBroadcast
@@ -22,8 +21,9 @@ class MaKhuyenMaiCreated implements ShouldBroadcast
      * Create a new event instance.
      *
      * @param  \App\Models\MaKhuyenMai  $maKhuyenMai
+     * @param  array $hangThanhVienIds
      */
-    public function __construct(MaKhuyenMai $maKhuyenMai, $hangThanhVienIds)
+    public function __construct(MaKhuyenMai $maKhuyenMai, array $hangThanhVienIds)
     {
         $this->maKhuyenMai = $maKhuyenMai;
         $this->hangThanhVienIds = $hangThanhVienIds;
@@ -33,14 +33,12 @@ class MaKhuyenMaiCreated implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return \Illuminate\Broadcasting\PrivateChannel
      */
     public function broadcastOn()
     {
-        // Sử dụng Channel để công khai
-        return [
-            new Channel('ma-khuyen-mai'),  // Kênh public
-        ];
+        // Sử dụng PrivateChannel để chỉ những thành viên đăng nhập mới có thể truy cập
+        return new PrivateChannel('ma-khuyen-mai');
     }
 
     /**
@@ -58,5 +56,4 @@ class MaKhuyenMaiCreated implements ShouldBroadcast
             'hang_thanh_vien_ids' => $this->hangThanhVienIds,
         ];
     }
-
 }
