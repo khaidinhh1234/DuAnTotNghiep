@@ -16,7 +16,6 @@ import {
   Tabs,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import DetailTransport from "./DetailTransport";
 
 type TableRowSelection<T extends object = object> =
@@ -196,9 +195,9 @@ const TableUncomfirmedOrder: React.FC = () => {
               (record.trang_thai_van_chuyen === "Chờ xử lý"
                 ? "text-yellow-400"
                 : record.trang_thai_van_chuyen === "Đang giao hàng"
-                  ? "text-orange-500"
+                  ? "text-blue-500"
                   : record.trang_thai_van_chuyen === "Giao hàng thành công"
-                    ? "text-blue-500"
+                    ? "text-green-500"
                     : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                       ? "text-red-500"
                       : "text-gray-500")
@@ -279,6 +278,12 @@ const TableUncomfirmedOrder: React.FC = () => {
         </div>
       </div> */}
       <div>
+      <Tabs
+            defaultActiveKey="Tất cả"
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key)}
+            items={tabItems}
+          />
         {/* Bộ lọc tìm kiếm */}
         <div style={{ marginBottom: 16 }}>
           <Space>
@@ -286,12 +291,7 @@ const TableUncomfirmedOrder: React.FC = () => {
 
             <RangePicker />
           </Space>
-          <Tabs
-            defaultActiveKey="Tất cả"
-            activeKey={activeTab}
-            onChange={(key) => setActiveTab(key)}
-            items={tabItems}
-          />
+          
         </div>
         <Flex gap="middle" vertical>
           <Flex align="center" gap="middle" className="relative">
