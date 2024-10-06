@@ -21,18 +21,17 @@ const LoginForm = () => {
   });
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
+      console.log(user);
       const { data } = await instance.post("/login", user);
 
       localStorage.setItem("user", JSON.stringify(data));
       // console.log(data);
-      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("accessToken", data?.access_token);
       nav("/");
-    },
-    onSuccess: () => {
       toast.success("Đăng nhập thành công");
     },
+
     onError: (error: any) => {
-      console.log(error.response.data.message);
       if (
         error.response.data.message ==
         "Tài khoản hoặc mật khẩu không chính xác."

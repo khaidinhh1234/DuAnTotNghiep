@@ -305,11 +305,11 @@ const VoucherAdmin: React.FC = () => {
         record.so_luong_da_su_dung.toString().includes(String(value)), // Tìm kiếm trong cả so_luong và so_luong_da_su_dung
       sorter: (a: any, b: any) => a.so_luong - b.so_luong, // Sắp xếp theo số
 
-      width: "30%",
+      width: "25%",
       render: (record) => (
         <>
           <span
-            className={` font-medium text-md ${record.so_luong - record.so_luong_da_su_dung >= 20 ? "text-gray-600" : record.so_luong - record.so_luong_da_su_dung >= 5 ? "text-yellow-600" : "text-red-600"}`}
+            className={` font-medium text-lg ${record.so_luong - record.so_luong_da_su_dung >= 20 ? "text-gray-600" : record.so_luong - record.so_luong_da_su_dung >= 5 ? "text-yellow-600" : "text-red-600"}`}
           >
             {record.so_luong_da_su_dung} / {record.so_luong}
           </span>
@@ -410,7 +410,7 @@ const VoucherAdmin: React.FC = () => {
       title: "Trạng thái",
       dataIndex: "trang_thai",
       key: "trang_thai",
-      width: "10%",
+      width: "30%",
       sorter: (a: any, b: any) => a.trang_thai - b.trang_thai,
       onFilter: (value: boolean | React.Key, record: any) =>
         record.trang_thai

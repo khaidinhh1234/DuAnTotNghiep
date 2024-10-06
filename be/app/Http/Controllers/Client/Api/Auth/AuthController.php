@@ -66,7 +66,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         if (Auth::attempt($request->only('email', 'password'))) {
-            $user = User::where('email', $request->email)->with('vaiTros')->first();
+            $user = User::query()->where('email', $request->email)->first();
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([

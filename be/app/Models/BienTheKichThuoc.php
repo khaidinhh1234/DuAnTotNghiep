@@ -12,6 +12,7 @@ class BienTheKichThuoc extends Model
     use HasFactory , SoftDeletes, AuditTrait;
     protected $fillable = [
         'kich_thuoc',
+        'loai_kich_thuoc'
     ];
     public function bienTheSanPhams()
     {
