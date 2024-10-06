@@ -60,7 +60,7 @@ const Chart6 = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("Updated data:", data);
+      console.log("Updated data:", data?.theo_tuan?.ngay);
     },
   });
 
@@ -70,9 +70,15 @@ const Chart6 = () => {
     },
 
     xaxis: {
-      categories:
-        data?.theo_nam?.quy || data?.theo_quy?.thang || data?.theo_thang?.tuan,
-      // data?.theo_tuan?.ngay |
+      categories: data?.theo_nam?.quy?.length
+        ? data.theo_nam.quy
+        : data?.theo_quy?.thang?.length
+          ? data.theo_quy.thang
+          : data?.theo_thang?.tuan?.length
+            ? data.theo_thang.tuan
+            : data?.theo_tuan?.ngay?.length
+              ? data.theo_tuan.ngay
+              : [0, 0, 0],
     },
     plotOptions: {
       bar: {
@@ -128,30 +134,30 @@ const Chart6 = () => {
       case "1":
         return [
           { value: null, label: "Tất cả" },
-          { value: 1, label: "Tháng 1" },
-          { value: 2, label: "Tháng 2" },
-          { value: 3, label: "Tháng 3" },
+          { value: "1", label: "Tháng 1" },
+          { value: "2", label: "Tháng 2" },
+          { value: "3", label: "Tháng 3" },
         ];
       case "2":
         return [
           { value: null, label: "Tất cả" },
-          { value: 4, label: "Tháng 4" },
-          { value: 5, label: "Tháng 5" },
-          { value: 6, label: "Tháng 6" },
+          { value: "4", label: "Tháng 4" },
+          { value: "5", label: "Tháng 5" },
+          { value: "6", label: "Tháng 6" },
         ];
       case "3":
         return [
           { value: null, label: "Tất cả" },
-          { value: 7, label: "Tháng 7" },
-          { value: 8, label: "Tháng 8" },
-          { value: 9, label: "Tháng 9" },
+          { value: "7", label: "Tháng 7" },
+          { value: "8", label: "Tháng 8" },
+          { value: "9", label: "Tháng 9" },
         ];
       case "4":
         return [
           { value: null, label: "Tất cả" },
-          { value: 10, label: "Tháng 10" },
-          { value: 11, label: "Tháng 11" },
-          { value: 12, label: "Tháng 12" },
+          { value: "10", label: "Tháng 10" },
+          { value: "11", label: "Tháng 11" },
+          { value: "12", label: "Tháng 12" },
         ];
       default:
         return [{ value: null, label: "Tất cả" }];
@@ -245,7 +251,7 @@ const Chart6 = () => {
                 ? "Quý"
                 : data?.theo_thang?.tuan
                   ? "Tháng"
-                  : data?.theo_tuan?.nay
+                  : data?.theo_tuan?.ngay
                     ? "Tuần"
                     : ""}
           </h3>
