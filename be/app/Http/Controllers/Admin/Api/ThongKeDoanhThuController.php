@@ -73,6 +73,14 @@ class ThongKeDoanhThuController extends Controller
 
             // Nếu không có quý, tháng, tuần, chỉ trả về doanh thu theo năm
             if (!$quy && !$thang && !$tuan) {
+                // Mảng ánh xạ tên quý
+                $tenQuy = [
+                    1 => 'Quý 1',
+                    2 => 'Quý 2',
+                    3 => 'Quý 3',
+                    4 => 'Quý 4',
+                ];
+
                 for ($i = 1; $i <= 4; $i++) {
                     // Clone lại query gốc để đảm bảo không bị thay đổi trong mỗi lần lặp
                     $queryClone = clone $query;
@@ -81,9 +89,11 @@ class ThongKeDoanhThuController extends Controller
                     $doanhThuTheoQuy = (float) $queryClone->whereRaw('QUARTER(created_at) = ?', [$i])
                         ->sum('tong_tien_don_hang');
 
-                    $doanhThu['theo_nam']['quy'][] = $i;
+                    // Thêm tên quý vào dữ liệu
+                    $doanhThu['theo_nam']['quy'][] = $tenQuy[$i]; // Lấy tên quý từ mảng
                     $doanhThu['theo_nam']['doanh_thu'][] = $doanhThuTheoQuy;
                 }
+
                 return response()->json(['tong_doanh_thu_nam' => $tongDoanhThuNam] + $doanhThu);
             }
         }
@@ -91,25 +101,63 @@ class ThongKeDoanhThuController extends Controller
 
         // Nếu có chọn quý
         if ($quy && $nam) {
-            $query->whereRaw('QUARTER(created_at) = ?', [$quy]);
+            // Lọc dữ liệu theo quý
+            $query->whereRaw('QUARTER(created_at) = ?', [$quy])
+                ->whereYear('created_at', $nam);
             $tongDoanhThuQuy = (float) $query->sum('tong_tien_don_hang');
 
-            // Nếu không có tháng, tuần, chỉ trả về doanh thu theo quý
+            // Nếu không có tháng và tuần, trả về doanh thu theo tháng trong quý
             if (!$thang && !$tuan) {
+                // Xác định tháng bắt đầu của quý
                 $startMonth = ($quy - 1) * 3 + 1;
-                for ($i = $startMonth; $i < $startMonth + 3; $i++) {
-                    $doanhThuTheoThang = (float) $query->whereMonth('created_at', $i)
-                        ->sum('tong_tien_don_hang');
-                    $doanhThu['theo_quy']['thang'][] = $i;
+                $endMonth = $startMonth + 2;
+
+                // Lấy doanh thu theo từng tháng trong quý
+                $monthsData = $query->clone()
+                    ->selectRaw('MONTH(created_at) as thang, SUM(tong_tien_don_hang) as doanh_thu_thang')
+                    ->whereBetween(DB::raw('MONTH(created_at)'), [$startMonth, $endMonth])
+                    ->groupBy('thang')
+                    ->get();
+
+                // Khởi tạo mảng để chứa doanh thu theo tháng
+                $doanhThu['theo_quy']['thang'] = [];
+                $doanhThu['theo_quy']['doanh_thu'] = [];
+                // $doanhThu['theo_quy']['ten_thang'] = []; // Mảng để chứa tên tháng
+
+                // Mảng ánh xạ giữa số tháng và tên tháng
+                $tenThang = [
+                    1 => 'Tháng 1',
+                    2 => 'Tháng 2',
+                    3 => 'Tháng 3',
+                    4 => 'Tháng 4',
+                    5 => 'Tháng 5',
+                    6 => 'Tháng 6',
+                    7 => 'Tháng 7',
+                    8 => 'Tháng 8',
+                    9 => 'Tháng 9',
+                    10 => 'Tháng 10',
+                    11 => 'Tháng 11',
+                    12 => 'Tháng 12'
+                ];
+
+                // Duyệt qua từng tháng trong quý
+                for ($i = $startMonth; $i <= $endMonth; $i++) {
+                    // Lấy doanh thu cho từng tháng từ dữ liệu đã nhóm, ép kiểu về float
+                    $doanhThuTheoThang = (float) ($monthsData->where('thang', $i)->first()->doanh_thu_thang ?? 0);
+                    // $doanhThu['theo_quy']['thang'][] = $i;
                     $doanhThu['theo_quy']['doanh_thu'][] = $doanhThuTheoThang;
+                    $doanhThu['theo_quy']['thang'][] = $tenThang[$i]; // Thêm tên tháng vào mảng
                 }
+
+                // Trả về tổng doanh thu của quý và doanh thu theo từng tháng
                 return response()->json(['tong_doanh_thu_quy' => $tongDoanhThuQuy] + $doanhThu);
             }
         }
 
         if ($thang && $nam && $quy) {
             // Lọc doanh thu theo tháng
-            $query->whereMonth('created_at', $thang);
+            $query->whereMonth('created_at', $thang)
+                ->whereYear('created_at', $nam);
             $tongDoanhThuThang = (float) $query->sum('tong_tien_don_hang');
 
             // Nếu không có tuần được chỉ định, trả về doanh thu theo tháng chia theo tuần
@@ -117,53 +165,36 @@ class ThongKeDoanhThuController extends Controller
                 $startOfMonth = now()->setDate($nam, $thang, 1)->startOfMonth();
                 $endOfMonth = now()->setDate($nam, $thang, 1)->endOfMonth();
 
-                // Lấy tuần đầu tiên và tuần cuối cùng của tháng
-                $currentWeek = $startOfMonth->weekOfYear;
-                $endWeek = $endOfMonth->weekOfYear;
-
-                // Đảm bảo rằng tuần cuối không nhỏ hơn tuần đầu
-                if ($endWeek < $currentWeek) {
-                    $endWeek += 1;
-                }
-
                 // Khởi tạo mảng doanh thu theo tuần
                 $doanhThu['theo_thang']['tuan'] = [];
                 $doanhThu['theo_thang']['doanh_thu'] = [];
 
-                // Duyệt qua từng tuần trong tháng
+                // Lấy doanh thu chia theo tuần
+                $weeksData = $query->clone()
+                    ->selectRaw('WEEK(created_at, 1) as week, SUM(tong_tien_don_hang) as doanh_thu_tuan')
+                    ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                    ->groupBy('week')
+                    ->get();
+
+                $currentWeek = $startOfMonth->weekOfYear;
+                $endWeek = $endOfMonth->weekOfYear;
+
+                // Khởi tạo mảng để chứa các tuần có doanh thu
+                $weekMap = $weeksData->pluck('doanh_thu_tuan', 'week');
+
+                // Duyệt qua từng tuần và gán doanh thu, ép kiểu về float
                 for ($i = $currentWeek; $i <= $endWeek; $i++) {
-                    $queryClone = clone $query;
-
-                    // Tính ngày bắt đầu và kết thúc của tuần
-                    $startOfWeek = now()->setISODate($nam, $i)->startOfWeek();
-                    $endOfWeek = now()->setISODate($nam, $i)->endOfWeek();
-
-                    // Đảm bảo rằng phạm vi tuần nằm trong tháng
-                    if ($startOfWeek < $startOfMonth) {
-                        $startOfWeek = $startOfMonth;
-                    }
-                    if ($endOfWeek > $endOfMonth) {
-                        $endOfWeek = $endOfMonth;
-                    }
-
-                    // Chuyển đổi ngày bắt đầu và kết thúc về dạng chuỗi
-                    $startOfWeekStr = $startOfWeek->toDateString();
-                    $endOfWeekStr = $endOfWeek->toDateString();
-
-                    // Tính doanh thu cho từng tuần
-                    $doanhThuTheoTuan = (float) $queryClone->whereBetween('created_at', [$startOfWeekStr, $endOfWeekStr])
-                        ->sum('tong_tien_don_hang');
-
-                    // Lưu kết quả doanh thu và tuần tương ứng
-                    $doanhThu['theo_thang']['tuan'][] = $i - $currentWeek + 1;
-                    $doanhThu['theo_thang']['doanh_thu'][] = $doanhThuTheoTuan;
+                    // $doanhThu['theo_thang']['tuan'][] = $i - $currentWeek + 1; // Số tuần
+                    $doanhThu['theo_thang']['doanh_thu'][] = (float) $weekMap->get($i, 0); // Doanh thu
+                    $doanhThu['theo_thang']['tuan'][] = 'Tuần ' . ($i - $currentWeek + 1); // Thêm tên tuần
                 }
 
                 // Kiểm tra nếu tổng doanh thu của các tuần không khớp với tổng doanh thu tháng
                 $tongDoanhThuTuan = array_sum($doanhThu['theo_thang']['doanh_thu']);
                 if ($tongDoanhThuTuan != $tongDoanhThuThang) {
-                    $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra';
-                    $doanhThu['theo_thang']['doanh_thu'][] = $tongDoanhThuThang - $tongDoanhThuTuan;
+                    // $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra';
+                    $doanhThu['theo_thang']['doanh_thu'][] = (float) ($tongDoanhThuThang - $tongDoanhThuTuan); // Ép kiểu về float
+                    $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra'; // Thêm tên cho tổng kiểm tra
                 }
 
                 // Trả về tổng doanh thu của tháng và doanh thu theo từng tuần
@@ -171,57 +202,47 @@ class ThongKeDoanhThuController extends Controller
             }
         }
 
-        // Nếu có chọn tuần, lấy dữ liệu theo tuần và chi tiết theo ngày trong tuần
-        if ($tuan && $nam) {
-            $startOfWeek = now()->setISODate($nam, $tuan)->startOfWeek()->toDateString();
-            $endOfWeek = now()->setISODate($nam, $tuan)->endOfWeek()->toDateString();
 
-            // Đảm bảo ngày bắt đầu và kết thúc tuần nằm trong phạm vi của tháng
-            if ($startOfWeek < $startOfMonth->toDateString()) {
-                $startOfWeek = $startOfMonth->toDateString();
-            }
+        // Nếu có chọn tuần, tháng, quý và năm
+        if ($tuan && $thang && $quy && $nam) {
+            // Xác định ngày bắt đầu và kết thúc của tuần
+            $startOfWeek = now()->setISODate($nam, $tuan)->startOfWeek();
+            $endOfWeek = now()->setISODate($nam, $tuan)->endOfWeek();
 
-            if ($endOfWeek > $endOfMonth->toDateString()) {
-                $endOfWeek = $endOfMonth->toDateString();
-            }
+            // Xác định ngày bắt đầu và kết thúc của tháng
+            $startOfMonth = now()->setDate($nam, $thang, 1)->startOfMonth();
+            $endOfMonth = now()->setDate($nam, $thang, 1)->endOfMonth();
 
-            // Lọc dữ liệu theo khoảng thời gian đã xác định
-            $queryClone = clone $query; // Tạo bản sao của query để không ảnh hưởng tới các truy vấn khác
-            $queryClone->whereBetween('created_at', [$startOfWeek, $endOfWeek]);
-            $tongDoanhThuTuan = (float) $queryClone->sum('tong_tien_don_hang');
-
-            // Thống kê doanh thu chi tiết từng ngày trong tuần
+            // Điều chỉnh ngày bắt đầu và kết thúc tuần nếu nằm ngoài tháng
+            $startOfWeek = $startOfWeek < $startOfMonth ? $startOfMonth : $startOfWeek;
+            $endOfWeek = $endOfWeek > $endOfMonth ? $endOfMonth : $endOfWeek;
             $doanhThu['theo_tuan'] = [
                 'ngay' => [],
                 'doanh_thu' => []
             ];
 
+            // Duyệt qua từng ngày trong tuần
             for ($i = 0; $i < 7; $i++) {
                 $ngayTrongTuan = now()->setDate($nam, $thang, 1)->addWeeks($tuan - 1)->startOfWeek()->addDays($i)->toDateString();
 
-                // Chỉ thống kê doanh thu nếu ngày đó nằm trong khoảng thời gian của tuần trong tháng
-                if ($ngayTrongTuan >= $startOfWeek && $ngayTrongTuan <= $endOfWeek) {
-                    // Tạo query clone mới cho từng ngày
-                    $queryNgay = clone $query; // Clone lại query ban đầu
-                    $doanhThuTheoNgay = (float) $queryNgay->whereDate('created_at', $ngayTrongTuan)
-                        ->sum('tong_tien_don_hang');
-                } else {
-                    $doanhThuTheoNgay = 0;
-                }
+                // Tính doanh thu cho từng ngày
+                $doanhThuTheoNgay = (float) $query->clone()->whereDate('created_at', $ngayTrongTuan)->sum('tong_tien_don_hang');
 
+                // Cập nhật danh sách ngày và doanh thu
                 $doanhThu['theo_tuan']['ngay'][] = $ngayTrongTuan;
                 $doanhThu['theo_tuan']['doanh_thu'][] = $doanhThuTheoNgay;
+                $tongDoanhThuTuan = array_sum($doanhThu['theo_tuan']['doanh_thu']);
             }
 
+            // Trả về kết quả
             return response()->json(['tong_doanh_thu_tuan' => $tongDoanhThuTuan] + $doanhThu);
         }
-
 
 
         return response()->json($doanhThu);
     }
 
-   public function doanhThuTheoNgay(Request $request)
+    public function doanhThuTheoNgay(Request $request)
     {
 
         try {
@@ -581,61 +602,45 @@ class ThongKeDoanhThuController extends Controller
     }
 
 
-    public function soSanhDoanhThu(Request $request)
+    public function soSanhDoanhThuThang(Request $request)
     {
-        // Bắt đầu transaction
-
-
         try {
             DB::beginTransaction();
-            // Lấy tham số 'type' từ request (tuần, tháng, quý, năm)
-            $type = $request->input('type', 'month');  // Mặc định là tháng
+
             $now = Carbon::now();
 
-            // Query lấy doanh thu theo thời gian từ đơn hàng có trạng thái 'Đã giao hàng thành công'
-            $query = DB::table('don_hangs')
-                ->select(DB::raw('SUM(tong_tien_don_hang) as doanh_thu'));
+            // Lấy doanh thu của tháng hiện tại
+            $doanhThuThangHienTai = (float) DB::table('don_hangs')
+                ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereMonth('created_at', $now->month)
+                ->whereYear('created_at', $now->year)
+                ->sum('tong_tien_don_hang');
 
-            // Lọc theo loại thống kê (tuần, tháng, quý, năm)
-            switch ($type) {
-                case 'week':
-                    $query->selectRaw('WEEK(created_at) as thoi_gian')  // Nhóm theo tuần
-                        ->whereBetween('created_at', [$now->startOfWeek(), $now->endOfWeek()])
-                        ->groupBy(DB::raw('WEEK(created_at)'));
-                    break;
+            // Lấy doanh thu của tháng trước
+            $thangTruoc = $now->subMonth();  // Lùi về tháng trước
+            $doanhThuThangTruoc = DB::table('don_hangs')
+                ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereMonth('created_at', $thangTruoc->month)
+                ->whereYear('created_at', $thangTruoc->year)
+                ->sum('tong_tien_don_hang');
 
-                case 'month':
-                    $query->selectRaw('MONTH(created_at) as thoi_gian')  // Nhóm theo tháng
-                        ->whereYear('created_at', $now->year)
-                        ->groupBy(DB::raw('MONTH(created_at)'));
-                    break;
-
-                case 'quarter':
-                    $query->selectRaw('QUARTER(created_at) as thoi_gian')  // Nhóm theo quý
-                        ->whereYear('created_at', $now->year)
-                        ->groupBy(DB::raw('QUARTER(created_at)'));
-                    break;
-
-                case 'year':
-                    $query->selectRaw('YEAR(created_at) as thoi_gian')  // Nhóm theo năm
-                        ->groupBy(DB::raw('YEAR(created_at)'));
-                    break;
-
-                default:
-                    $query->selectRaw('MONTH(created_at) as thoi_gian')  // Mặc định là nhóm theo tháng
-                        ->whereYear('created_at', $now->year)
-                        ->groupBy(DB::raw('MONTH(created_at)'));
-                    break;
-            }
-
-            // Lọc theo trạng thái đơn hàng "Đã giao hàng thành công"
-            $data = $query->where('trang_thai_don_hang', DonHang::TTDH_DGTC)->get();
+            // Tính sự chênh lệch về doanh thu (số tiền và phần trăm)
+            $chenhLechSoTien = $doanhThuThangHienTai - $doanhThuThangTruoc;
+            $chenhLechPhanTram = ($doanhThuThangTruoc > 0)
+                ? ($chenhLechSoTien / $doanhThuThangTruoc) * 100
+                : 100;  // Nếu doanh thu tháng trước bằng 0, thì mặc định tăng 100%
 
             // Commit transaction khi không có lỗi
             DB::commit();
 
-            // Trả về dữ liệu doanh thu đã nhóm theo thời gian
-            return response()->json($data);
+            // Trả về kết quả bao gồm doanh thu tháng này, tháng trước, chênh lệch số tiền và phần trăm
+            return response()->json([
+                'doanh_thu_thang_hien_tai' => $doanhThuThangHienTai,
+                'doanh_thu_thang_truoc' => $doanhThuThangTruoc,
+                'chenh_lech_so_tien' => $chenhLechSoTien,
+                'chenh_lech_phan_tram' => $chenhLechPhanTram
+            ]);
+
         } catch (Exception $e) {
             // Rollback nếu có lỗi xảy ra
             DB::rollBack();
@@ -644,6 +649,7 @@ class ThongKeDoanhThuController extends Controller
             return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
         }
     }
+
 
 
     public function sanPhamBanChayTheoThang(Request $request)
@@ -774,5 +780,4 @@ class ThongKeDoanhThuController extends Controller
 
         return response()->json($result);
     }
-
 }

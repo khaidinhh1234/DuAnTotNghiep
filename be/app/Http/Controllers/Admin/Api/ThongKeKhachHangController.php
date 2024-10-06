@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class ThongKeKhachHangController extends Controller
 {
@@ -126,7 +127,7 @@ class ThongKeKhachHangController extends Controller
     }
     public function thongKeTop5KhachHangGanDay()
     {
-        $khachHang = User::select('users.*', DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_tien_da_mua'))
+        $khachHang = User::select('users.*', DB::raw('CAST(SUM(don_hangs.tong_tien_don_hang) AS UNSIGNED) as tong_tien_da_mua'))
             ->join('don_hangs', 'users.id', '=', 'don_hangs.user_id')
             ->whereNull('don_hangs.deleted_at')
             ->groupBy('users.id') // Nhóm theo người dùng để tính tổng tiền chi tiêu của từng khách hàng.
@@ -134,8 +135,53 @@ class ThongKeKhachHangController extends Controller
             ->take(5)
             ->get();
 
+
         return $khachHang;
     }
+    public function soSanhKhachHangRegister(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
+            $now = Carbon::now();
+
+            // Đếm số lượng khách hàng đăng ký trong tháng hiện tại
+            $registerHienTai = DB::table('users')
+                ->whereMonth('created_at', $now->month)
+                ->whereYear('created_at', $now->year)
+                ->count();  // Đếm số lượt đăng ký
+
+            // Lùi về tháng trước
+            $thangTruoc = $now->subMonth();
+
+            // Đếm số lượng khách hàng đăng ký trong tháng trước
+            $registerTruoc = DB::table('users')
+                ->whereMonth('created_at', $thangTruoc->month)
+                ->whereYear('created_at', $thangTruoc->year)
+                ->count();  // Đếm số lượt đăng ký
+
+            // Tính sự chênh lệch về số lượng đăng ký và phần trăm
+            $chenhLechSo = $registerHienTai - $registerTruoc;
+            $chenhLechPhanTram = ($registerTruoc > 0)
+                ? ($chenhLechSo / $registerTruoc) * 100
+                : 100;  // Nếu tháng trước không có lượt đăng ký, mặc định tăng 100%
+
+            DB::commit();
+
+            // Trả về kết quả so sánh
+            return response()->json([
+                'register_hien_tai' => $registerHienTai,
+                'register_truoc' => $registerTruoc,
+                'chenh_lech_so' => $chenhLechSo,
+                'chenh_lech_phan_tram' => $chenhLechPhanTram
+            ]);
+        } catch (Exception $e) {
+            // Rollback nếu có lỗi xảy ra
+            DB::rollBack();
+
+            // Trả về lỗi kèm theo mã lỗi
+            return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
+        }
+    }
 
 }
