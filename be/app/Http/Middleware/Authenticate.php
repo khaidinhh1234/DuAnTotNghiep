@@ -14,6 +14,9 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return HttpResponse::HTTP_UNAUTHORIZED;
+        return response()->json(
+            [
+                'message' => 'Tài khoản chưa đăng nhập.'
+            ], 500);
     }
 }
