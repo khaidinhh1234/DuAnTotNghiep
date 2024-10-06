@@ -117,7 +117,7 @@ class VanChuyenController extends Controller
     public function layThongTinVanChuyen()
     {
         try {
-            // Đếm số lượng đơn hàng chờ lấy hàng
+            //
             $choLayHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_CXL)->count();
             $tongTienChoLayHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_CXL)
                 ->with('donHang')
@@ -126,7 +126,7 @@ class VanChuyenController extends Controller
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
 
-            // Đếm số lượng đơn hàng đang giao hàng
+            // 
             $dangGiaoHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_DGH)->count();
             $tongTienDangGiaoHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_DGH)
                 ->with('donHang')
@@ -135,7 +135,7 @@ class VanChuyenController extends Controller
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
 
-            // Đếm số lượng đơn hàng giao hàng không thành công
+            // 
             $giaoHangThatBais = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTB)->count();
             $tongTienGiaoHangThatBais = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTB)
                 ->with('donHang')
@@ -143,15 +143,22 @@ class VanChuyenController extends Controller
                 ->sum(function ($vanChuyen) {
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
-
-            // Đếm số lượng đơn hàng giao hàng thành công
-            $giaoHangThanhCongs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTC)->count();
+            // 
+            $giaoHangThanhCongs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTC)
+                ->whereHas('donHang', function ($query) {
+                    $query->where('trang_thai_thanh_toan', DonHang::TTTT_DTT);
+                })
+                ->count();
             $tongTienGiaoHangThanhCongs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTC)
+                ->whereHas('donHang', function ($query) {
+                    $query->where('trang_thai_thanh_toan', DonHang::TTTT_DTT); 
+                })
                 ->with('donHang')
                 ->get()
                 ->sum(function ($vanChuyen) {
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
+
 
             return response()->json([
                 'status' => true,
