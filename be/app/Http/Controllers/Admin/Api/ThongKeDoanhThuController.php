@@ -603,52 +603,52 @@ class ThongKeDoanhThuController extends Controller
 
 
     public function soSanhDoanhThuThang(Request $request)
-{
-    try {
-        DB::beginTransaction();
+    {
+        try {
+            DB::beginTransaction();
 
-        $now = Carbon::now();
+            $now = Carbon::now();
 
-        // Lấy doanh thu của tháng hiện tại
-        $doanhThuThangHienTai = (float)DB::table('don_hangs')
-            ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-            ->whereMonth('created_at', $now->month)
-            ->whereYear('created_at', $now->year)
-            ->sum('tong_tien_don_hang');
+            // Lấy doanh thu của tháng hiện tại
+            $doanhThuThangHienTai = (float) DB::table('don_hangs')
+                ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereMonth('created_at', $now->month)
+                ->whereYear('created_at', $now->year)
+                ->sum('tong_tien_don_hang');
 
-        // Lấy doanh thu của tháng trước
-        $thangTruoc = $now->subMonth();  // Lùi về tháng trước
-        $doanhThuThangTruoc = DB::table('don_hangs')
-            ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
-            ->whereMonth('created_at', $thangTruoc->month)
-            ->whereYear('created_at', $thangTruoc->year)
-            ->sum('tong_tien_don_hang');
+            // Lấy doanh thu của tháng trước
+            $thangTruoc = $now->subMonth();  // Lùi về tháng trước
+            $doanhThuThangTruoc = DB::table('don_hangs')
+                ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->whereMonth('created_at', $thangTruoc->month)
+                ->whereYear('created_at', $thangTruoc->year)
+                ->sum('tong_tien_don_hang');
 
-        // Tính sự chênh lệch về doanh thu (số tiền và phần trăm)
-        $chenhLechSoTien = $doanhThuThangHienTai - $doanhThuThangTruoc;
-        $chenhLechPhanTram = ($doanhThuThangTruoc > 0)
-            ? ($chenhLechSoTien / $doanhThuThangTruoc) * 100
-            : 100;  // Nếu doanh thu tháng trước bằng 0, thì mặc định tăng 100%
+            // Tính sự chênh lệch về doanh thu (số tiền và phần trăm)
+            $chenhLechSoTien = $doanhThuThangHienTai - $doanhThuThangTruoc;
+            $chenhLechPhanTram = ($doanhThuThangTruoc > 0)
+                ? ($chenhLechSoTien / $doanhThuThangTruoc) * 100
+                : 100;  // Nếu doanh thu tháng trước bằng 0, thì mặc định tăng 100%
 
-        // Commit transaction khi không có lỗi
-        DB::commit();
+            // Commit transaction khi không có lỗi
+            DB::commit();
 
-        // Trả về kết quả bao gồm doanh thu tháng này, tháng trước, chênh lệch số tiền và phần trăm
-        return response()->json([
-            'doanh_thu_thang_hien_tai' => $doanhThuThangHienTai,
-            'doanh_thu_thang_truoc' => $doanhThuThangTruoc,
-            'chenh_lech_so_tien' => $chenhLechSoTien,
-            'chenh_lech_phan_tram' => $chenhLechPhanTram
-        ]);
+            // Trả về kết quả bao gồm doanh thu tháng này, tháng trước, chênh lệch số tiền và phần trăm
+            return response()->json([
+                'doanh_thu_thang_hien_tai' => $doanhThuThangHienTai,
+                'doanh_thu_thang_truoc' => $doanhThuThangTruoc,
+                'chenh_lech_so_tien' => $chenhLechSoTien,
+                'chenh_lech_phan_tram' => $chenhLechPhanTram
+            ]);
 
-    } catch (Exception $e) {
-        // Rollback nếu có lỗi xảy ra
-        DB::rollBack();
+        } catch (Exception $e) {
+            // Rollback nếu có lỗi xảy ra
+            DB::rollBack();
 
-        // Trả về lỗi kèm theo mã lỗi
-        return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
+            // Trả về lỗi kèm theo mã lỗi
+            return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
+        }
     }
-}
 
 
 
