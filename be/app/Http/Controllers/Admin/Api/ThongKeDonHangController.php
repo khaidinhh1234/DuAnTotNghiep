@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\DonHang;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -133,6 +134,51 @@ class ThongKeDonHangController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi trong quá trình xử lý dữ liệu.'], 500);
+        }
+    }
+    public function soSanhDonHangThang(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $now = Carbon::now();
+
+            // Đếm số lượng khách hàng đăng ký trong tháng hiện tại
+            $donHangHienTai = DB::table('don_hangs')
+                ->whereMonth('created_at', $now->month)
+                ->whereYear('created_at', $now->year)
+                ->count();  // Đếm số lượt đăng ký
+
+            // Lùi về tháng trước
+            $thangTruoc = $now->subMonth();
+
+            // Đếm số lượng khách hàng đăng ký trong tháng trước
+            $donHangTruoc = DB::table('don_hangs')
+                ->whereMonth('created_at', $thangTruoc->month)
+                ->whereYear('created_at', $thangTruoc->year)
+                ->count();  // Đếm số lượt đăng ký
+
+            // Tính sự chênh lệch về số lượng đăng ký và phần trăm
+            $chenhLechSo = $donHangHienTai - $donHangTruoc;
+            $chenhLechPhanTram = ($donHangTruoc > 0)
+                ? ($chenhLechSo / $donHangTruoc) * 100
+                : 100;  // Nếu tháng trước không có lượt đăng ký, mặc định tăng 100%
+
+            DB::commit();
+
+            // Trả về kết quả so sánh
+            return response()->json([
+                'donHang_hien_tai' => $donHangHienTai,
+                'donHang_truoc' => $donHangTruoc,
+                'chenh_lech_so' => $chenhLechSo,
+                'chenh_lech_phan_tram' => $chenhLechPhanTram
+            ]);
+        } catch (Exception $e) {
+            // Rollback nếu có lỗi xảy ra
+            DB::rollBack();
+
+            // Trả về lỗi kèm theo mã lỗi
+            return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
         }
     }
 
