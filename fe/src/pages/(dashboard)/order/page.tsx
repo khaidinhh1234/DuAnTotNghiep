@@ -8,6 +8,7 @@ import type {
 } from "antd";
 import {
   Button,
+  DatePicker,
   Flex,
   Input,
   message,
@@ -15,12 +16,14 @@ import {
   Select,
   Space,
   Table,
+  Tabs,
 } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import Detail from "./detail";
 import instance from "@/configs/admin";
+const { RangePicker } = DatePicker;
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
 
@@ -57,12 +60,21 @@ const datas = [
 ];
 type DataIndex = keyof any;
 const OrderAdmin: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>("Tất cả");
+
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
   const [searchText, setSearchText] = useState("");
 
   // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const searchInput = useRef<InputRef>(null);
-
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["ORDERS"],
+    queryFn: async () => {
+      const response = await instance.get("/donhang");
+      return response.data;
+    },
+  });
+  const order: DataType[] | undefined = data?.data;
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
@@ -147,6 +159,29 @@ const OrderAdmin: React.FC = () => {
         text
       ),
   });
+  // Cập nhật dữ liệu khi nhận được từ API
+  useEffect(() => {
+    // console.log("order", activeTab);
+    if (order) {
+      if (activeTab === "Tất cả") {
+        // console.log("order", activeTab);
+        setFilteredData(order);
+      } else {
+        const filtered = order?.filter(
+          (item: any) =>
+            item.trang_thai_don_hang
+              .toLowerCase()
+              .includes(activeTab.toLowerCase()) ||
+            item.trang_thai_thanh_toan
+              .toLowerCase()
+              .includes(activeTab.toLowerCase())
+        );
+        setFilteredData(filtered);
+      }
+
+      // setFilteredData(order);
+    }
+  }, [order, activeTab]);
   const columns: TableColumnsType<DataType> = [
     {
       title: "Mã Đơn hàng",
@@ -180,7 +215,7 @@ const OrderAdmin: React.FC = () => {
     {
       title: "Khách hàng",
       render: (_, record: any) => {
-        console.log(record?.user?.ho);
+        // console.log(record?.user?.ho);
         return (
           <div>
             {record.ten_nguoi_dat_hang
@@ -219,7 +254,7 @@ const OrderAdmin: React.FC = () => {
                         ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
                         : record.trang_thai_don_hang === "Hủy hàng"
                           ? "text-red-500" // Hủy đơn hàng: màu đ��
-                          : "text-green-500 ")
+                          : "text-red-700 ")
             }
           >
             {record.trang_thai_don_hang === "Chờ xác nhận"
@@ -234,7 +269,7 @@ const OrderAdmin: React.FC = () => {
                       ? "Đã giao hàng thành công"
                       : record.trang_thai_don_hang === "Hủy hàng"
                         ? "Hủy hàng"
-                        : "Hủy hàng"}
+                        : "Giao hàng thất bại"}
           </div>
         );
       },
@@ -356,15 +391,8 @@ const OrderAdmin: React.FC = () => {
   const [trangthai, setTrangThai] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [formcheck, setFormCheck] = useState(false);
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["ORDERS"],
-    queryFn: async () => {
-      const response = await instance.get("/donhang");
-      return response.data;
-    },
-  });
-  const order: DataType[] | undefined = data?.data;
-  console.log("order", order);
+
+  // console.log("order", order);
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {
@@ -494,6 +522,20 @@ const OrderAdmin: React.FC = () => {
     setTrangThai(value);
   };
   const hasSelected = selectedRowKeys.length > 0;
+  const tabItems = [
+    { label: "Tổng đơn hàng", key: "Tất cả" },
+    { label: "Chờ xác nhận", key: "Chờ xác nhận" },
+    { label: "Đã xác nhận", key: "Đã xác nhận" },
+    { label: "Hoàn tất chuẩn bị", key: "Đang xử lý" },
+
+    { label: "Giao hàng thất bại", key: "Giao hàng thất bại" },
+
+    { label: "Giao hàng thành công", key: "Giao hàng thành công" },
+    { label: "Chưa thanh toán", key: "Chưa thanh toán" },
+
+    { label: "Đã thanh toán", key: "Đã thanh toán" },
+  ];
+
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error...</div>;
   return (
@@ -508,27 +550,36 @@ const OrderAdmin: React.FC = () => {
       </div>
       <div>
         {" "}
-        <div className="max-w-xs my-2">
-          <Input
-            placeholder="Tìm kiếm..."
-            size="large"
-            value={searchText}
-            onChange={handleSearchChange}
-            style={{ marginBottom: 16, maxWidth: 300 }}
-          />
-        </div>
+        <Tabs
+          defaultActiveKey="Tất cả"
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key)}
+          items={tabItems}
+        />
         <Flex gap="middle" vertical>
           <Flex align="center" gap="middle" className="relative">
-            <Button
-              type="primary"
-              onClick={start}
-              disabled={!hasSelected}
-              loading={loading}
-              className="text-white"
-            >
-              Thao tác
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                type="primary"
+                onClick={start}
+                disabled={!hasSelected}
+                loading={loading}
+                className="text-white"
+              >
+                Thao tác
+              </Button>
+              <div style={{ marginBottom: 16 }}>
+                <Space>
+                  <Input
+                    placeholder="Tìm kiếm"
+                    prefix={<SearchOutlined />}
+                    onChange={(e: any) => handleSearchChange(e)}
+                  />
 
+                  <RangePicker />
+                </Space>
+              </div>
+            </div>
             {formcheck && (
               <div className="bg-white absolute left-0 top-10 z-10 w-80 h-36 rounded-lg shadow-md p-3">
                 <p>Cập nhật trạng thái đơn hàng theo:</p>
@@ -559,13 +610,12 @@ const OrderAdmin: React.FC = () => {
                 </div>
               </div>
             )}
-
             {hasSelected ? `Đã chọn ${selectedRowKeys.length} đơn` : null}
           </Flex>
           <Table<DataType>
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={dataSource}
+            dataSource={filteredData}
             loading={isLoading}
             pagination={{ pageSize: 10, className: "my-5" }}
           />

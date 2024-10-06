@@ -10,7 +10,7 @@ import {
   ShoppingCart,
   Star,
   Tag,
-  User
+  User,
 } from "lucide-react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -55,7 +55,7 @@ const items: MenuItem[] = [
     // getItem('Thu hộ', '19', null, '/admin/orders/collect'),
   ]),
   getItem("Mã khuyến mại", "21", <Tag />, "/admin/vouchers"),
-  getItem("Tin tức", "20", <Newspaper />, "/admin/news"), 
+  getItem("Tin tức", "20", <Newspaper />, "/admin/news"),
   getItem("Tài khoản", "sub4", <User />, "", [
     getItem("Khách hàng", "11", null, "/admin/users/khachhang"),
     getItem("Nhân viên", "12", null, "/admin/users/nhanvien"),
@@ -67,7 +67,7 @@ const items: MenuItem[] = [
     getItem("Footer", "16", null, "/admin/Content/qlfooter"),
     getItem("Banner", "17", null, "/admin/Content/qlbanner"),
   ]),
-  getItem("Thống kê", "18", <BarChart />, "/admin/analytics"),
+  // getItem("Thống kê", "18", <BarChart />, "/admin/analytics"),
 ];
 
 const SiderComponent: React.FC = () => {
