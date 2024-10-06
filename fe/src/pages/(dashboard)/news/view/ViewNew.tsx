@@ -43,16 +43,16 @@ const ViewNew: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Chi tiết</h1>
+        <h1 className="font-semibold md:text-3xl">Chi tiết: {data?.data.tieu_de}</h1>
         <Link to="/admin/news">
-          <Button className="bg-black text-white rounded-lg py-1">
+          <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
             Quay lại
           </Button>
         </Link>
       </div>
       <div style={{ padding: 14, minHeight: 360 }}>
         {/* <div className="bg-white px-4 rounded-xl py-5 shadow-lg max-w-7xl"> */}
-          <Title level={2} style={{ color: "#1890ff" }}>
+          <Title className="font-bold" level={2} style={{ color: "#1890ff" }}>
             {tieu_de}
           </Title>
           <Text strong style={{ color: "#555" }}>
