@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState, useCallback } from "react";
 import { Form, Input, Select, Upload, Button } from "antd";
 import { UploadOutlined, ReloadOutlined } from "@ant-design/icons";
@@ -38,7 +36,9 @@ const ProductForm = ({
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = prefix;
     for (let i = 0; i < 8; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
     }
     return result;
   }, []);
@@ -66,18 +66,21 @@ const ProductForm = ({
     }
   }, [productCode, form]);
 
-  const handleValuesChange = useCallback((changedValues: any, allValues: any) => {
-    if (!changedValues.ma_san_pham) {
-      onValuesChange(changedValues, allValues);
-    }
-  }, [onValuesChange]);
+  const handleValuesChange = useCallback(
+    (changedValues: any, allValues: any) => {
+      if (!changedValues.ma_san_pham) {
+        onValuesChange(changedValues, allValues);
+      }
+    },
+    [onValuesChange]
+  );
 
   const updateContent = useCallback((content: string) => {
     setData(content);
     form.setFieldsValue({
       noi_dung: content,
     });
-  }, [form, setData]);
+  }, []);
 
   return (
     <Form
@@ -173,7 +176,7 @@ const ProductForm = ({
             fileList={fileList}
             onChange={({ fileList }) => setFileList(fileList)}
             beforeUpload={() => false}
-            onPreview={() => { }}
+            onPreview={() => {}}
           >
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
@@ -185,7 +188,10 @@ const ProductForm = ({
           label="Nội dung"
           name="noi_dung"
           rules={[
-            { required: true, message: "Nội dung sản phẩm bắt buộc phải nhập!" },
+            {
+              required: true,
+              message: "Nội dung sản phẩm bắt buộc phải nhập!",
+            },
           ]}
         >
           <Editor
@@ -204,11 +210,10 @@ const ProductForm = ({
                 { value: "Email", title: "Email" },
               ],
             }}
-            onEditorChange={(content) => {
-              updateContent(content);
+            onEditorChange={(noidung) => {
+              updateContent(noidung);
             }}
           />
-
         </Form.Item>
       </div>
     </Form>
