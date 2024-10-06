@@ -59,8 +59,8 @@ class ThongTinWebController extends Controller
             'link_instagram' => 'nullable|string|max:255',
             'link_tiktok' => 'nullable|string|max:255',
             'banner' => 'nullable|array', // Mảng banner
-            'banner.*.duong_dan_anh' => 'nullable|array', // Mảng đường dẫn ảnh
-            'banner.*.noi_dung.duong_dan' => 'nullable|string|max:255',
+            'banner.*.duong_dan_anh' => 'nullable|string|max:255', // Đường dẫn ảnh
+            'banner.*.noi_dung' => 'nullable|array', // Nội dung cho mỗi banner
             'banner.*.noi_dung.tieu_de_chinh' => 'nullable|string|max:255',
             'banner.*.noi_dung.mau_tieu_de_chinh' => 'nullable|string|max:7',
             'banner.*.noi_dung.tieu_de_phu' => 'nullable|string|max:255',
@@ -69,7 +69,7 @@ class ThongTinWebController extends Controller
             'banner.*.noi_dung.mau_van_ban_quang_cao' => 'nullable|string|max:7',
             'banner.*.noi_dung.tieu_de_nut' => 'nullable|string|max:255',
             'banner.*.noi_dung.mau_nut' => 'nullable|string|max:7',
-            'noi_dung_banner' => 'nullable|array', // Mảng nội dung banner
+            'banner.*.noi_dung.duong_link' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -82,21 +82,10 @@ class ThongTinWebController extends Controller
         try {
             $data = $request->all();
 
+            // Xử lý banner
             if (isset($data['banner'])) {
-                foreach ($data['banner'] as &$banner) {
-                    if (isset($banner['duong_dan_anh'])) {
-                        $banner['duong_dan_anh'] = array_map('trim', $banner['duong_dan_anh']); // Xóa khoảng trắng thừa
-                    }
-
-                    if (isset($banner['noi_dung'])) {
-                        $banner['noi_dung'] = $banner['noi_dung'];
-                    }
-                }
-                $data['banner'] = $data['banner'];
-            }
-
-            if (isset($data['noi_dung_banner'])) {
-                $data['noi_dung_banner'] = $data['noi_dung_banner'];
+                // Không cần chuyển đổi sang JSON, lưu trực tiếp dưới dạng mảng
+                $data['banner'] = $data['banner']; // Đảm bảo dữ liệu là mảng
             }
 
             $thongTinWeb = ThongTinWeb::first();
@@ -112,15 +101,20 @@ class ThongTinWebController extends Controller
             return response()->json([
                 'status' => true,
                 'data' => $thongTinWeb,
-                'message' => $message
+                'message' => $message,
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Thao tác thất bại',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
+
+
+
+
+
 }

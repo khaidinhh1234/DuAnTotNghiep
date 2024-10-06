@@ -20,7 +20,7 @@ import CategoriesRemote from "@/pages/(dashboard)/categories/remote/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
-import { Dashboard } from "@/pages/(dashboard)/dashboard/page";
+import { Dashboard } from "@/pages/(dashboard)/dashboard/list/page";
 import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
@@ -97,6 +97,9 @@ import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorde
 import ShowUser from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import Collect from "@/pages/(dashboard)/transport/collect/Collect";
 import ShowNhanvien from "@/pages/(dashboard)/user/khachhang/show/showUser";
+import DoanhThu from "@/pages/(dashboard)/dashboard/doanhthu/page";
+import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
+import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
@@ -140,12 +143,15 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            // <PrivateRoute>
+            <PrivateRoute>
               <LayoutAdmin />
-            // </PrivateRoute>
+            </PrivateRoute>
           }
         >
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="dashboard/list" element={<Dashboard />} />
+          <Route path="dashboard/doanhthu" element={<DoanhThu />} />
+          <Route path="dashboard/sanpham" element={<SanPham />} />
+          <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
           {/* Sản phẩm  */}
           <Route
             path="products"

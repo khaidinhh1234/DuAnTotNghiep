@@ -39,6 +39,7 @@ const DetailTransport = ({ record }: any) => {
   // const donhang = data?.data;
   // console.log("data", donhang);
   // console.log("data", products);
+  console.log(record.don_hang.ten_nguoi_dat_hang)
   const thongtin = data?.data?.thong_tin;
   console.log(thongtin, )
   const handleCancel = () => {
@@ -366,39 +367,38 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
               <hr />
               <h5 className="text-blue-600 my-2">
-                {record.ten_nguoi_dat_hang
-                  ? record.ten_nguoi_dat_hang
-                  : thongtin?.ho + " " + thongtin?.ten
-                  }
+                {record.don_hang.ten_nguoi_dat_hang
+              ? record.don_hang.ten_nguoi_dat_hang
+              : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
               <h5 className="text-black my-2">
                 {" "}
-                {record.ten_nguoi_dat_hang
-                  ? record.ten_nguoi_dat_hang
+                {record.don_hang.ten_nguoi_dat_hang
+                  ? record.don_hang.ten_nguoi_dat_hang
                   : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <p className="text-blue-800 font-semibold">
                 Số điện thoại :
                 <span className="text-black font-medium">
-                  {record.so_dien_thoai_nguoi_dat_hang
-                    ? record.so_dien_thoai_nguoi_dat_hang
+                  {record.don_hang.so_dien_thoai_nguoi_dat_hang
+                    ? record.don_hang.so_dien_thoai_nguoi_dat_hang
                     : thongtin?.so_dien_thoai}
                 </span>
               </p>
               <h5 className="text-blue-800">
                 Địa chỉ Giao hàng: <br />
                 <span className="text-black">
-                  {record?.dia_chi_nguoi_dat_hang
-                    ? record?.dia_chi_nguoi_dat_hang
+                  {record?.don_hang.dia_chi_nguoi_dat_hang
+                    ? record?.don_hang.dia_chi_nguoi_dat_hang
                     : thongtin?.dia_chi}
                 </span>
               </h5>
               <p className="text-blue-800 font-semibold">
                 Ghi chú của khách hàng : <br />
                 <span className="text-black">
-                  {record?.ghi_chu ? record?.ghi_chu : "Không có ghi chú"}
+                  {record?.don_hang.ghi_chu ? record?.don_hang.ghi_chu : "Không có ghi chú"}
                 </span>
               </p>
             </div>

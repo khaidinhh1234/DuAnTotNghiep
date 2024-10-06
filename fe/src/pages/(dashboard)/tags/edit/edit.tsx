@@ -28,7 +28,7 @@ const Tagsedit = () => {
       return response.data;
     },
     onSuccess: () => {
-      message.success("Cập nhật nhãn dán thành công");
+      message.success("Cập nhật thẻ đính kèm thành công");
       // form.resetFields();
       nav("/admin/products/tags");
     },
@@ -52,8 +52,8 @@ const Tagsedit = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Nhãn dán /
-          <span className="font-semibold px-px"> Thêm nhãn dán</span>
+          Quản trị / Thẻ đính kèm /
+          <span className="font-semibold px-px"> Thêm thẻ đính kèm</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">

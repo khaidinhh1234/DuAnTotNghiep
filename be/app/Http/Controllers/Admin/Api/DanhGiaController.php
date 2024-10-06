@@ -58,17 +58,25 @@ class DanhGiaController extends Controller
             ])
                 ->orderBy('created_at', 'desc')
                 ->get();
-
+    
             $danhGias->transform(function ($danhGia) {
-                $danhGia->tong_so_sao_trung_binh = ($danhGia->so_sao_san_pham + $danhGia->so_sao_dich_vu_van_chuyen) / 2;
+                $soSaoSanPham = $danhGia->so_sao_san_pham ?? 0;
+                $soSaoVanChuyen = $danhGia->so_sao_dich_vu_van_chuyen ?? 0;
+    
+                if ($soSaoSanPham > 0 || $soSaoVanChuyen > 0) {
+                    $danhGia->tong_so_sao_trung_binh = ($soSaoSanPham + $soSaoVanChuyen) / 2;
+                } else {
+                    $danhGia->tong_so_sao_trung_binh = 0;
+                }
+    
                 return $danhGia;
             });
-
+    
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Danh sách tất cả đánh giá với tổng số sao',
-                'data' => $danhGias
+                'danh_gias' => $danhGias,
             ]);
         } catch (\Exception $exception) {
             return response()->json([
@@ -79,7 +87,7 @@ class DanhGiaController extends Controller
             ], 500);
         }
     }
-
+    
     /**
      * Update the specified resource in storage.
      */

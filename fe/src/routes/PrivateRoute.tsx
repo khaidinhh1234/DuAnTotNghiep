@@ -33,12 +33,13 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
 
   // Kiểm tra trạng thái xác thực
   const isAuthenticated = !!localStorage.getItem("user");
+  <Navigate to="/" />;
   // toast.error("Bạn không có quyền truy cập");
   if (!isAuthenticated || !phanquyen || phanquyen.length === 0) {
     // Sử dụng toast để hiển thị thông báo
     message.error("Bạn không có quyền truy cập");
     // toast.error("Bạn không có quyền truy cập"); // Hiển thị toast thông báo
-    return <Navigate to="/adfsgvhb" />; // Chuyển hướng đến trang khác
+    return <Navigate to="/login" />; // Chuyển hướng đến trang khác
   }
 
   // Trả về children nếu đã xác thực và có quyền

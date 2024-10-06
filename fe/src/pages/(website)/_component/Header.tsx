@@ -3,18 +3,24 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal } from "antd";
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
   const [user] = useLocalStorage("user", {});
-
+  const nav = useNavigate();
   const member = user.user;
   const phanquyen = user?.user?.vai_tros?.filter(
     (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
   );
   // console.log("member", member);
   // console.log("phanquyen", phanquyen);
+  const logout = () => {
+    // nav("/login");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    // setUser(null);
+  };
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
@@ -271,6 +277,7 @@ const Header = () => {
                       </li>
                       <li className="mb-2">
                         <a
+                          onClick={logout}
                           href=""
                           className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                         >
