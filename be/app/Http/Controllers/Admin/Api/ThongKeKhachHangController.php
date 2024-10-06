@@ -192,36 +192,34 @@ class ThongKeKhachHangController extends Controller
             $now = Carbon::now();
 
 
-            $blockHienTai = DB::table('users')
-                ->whereNotNull('deleted_at')
-                ->whereMonth('created_at', $now->month)
-                ->whereYear('created_at', $now->year)
+            $activityHienTai = DB::table('users')
+                ->whereNull('deleted_at')
                 ->count();  // Đếm số lượt đăng ký
 
-            // Lùi về tháng trước
-            $thangTruoc = $now->subMonth();
+            // // Lùi về tháng trước
+            // $thangTruoc = $now->subMonth();
 
 
-            $blockTruoc = DB::table('users')
-                ->whereNotNull('deleted_at')
-                ->whereMonth('created_at', $thangTruoc->month)
-                ->whereYear('created_at', $thangTruoc->year)
-                ->count();  // Đếm số lượt block
+            // $blockTruoc = DB::table('users')
+            //     ->whereNotNull('deleted_at')
+            //     ->whereMonth('created_at', $thangTruoc->month)
+            //     ->whereYear('created_at', $thangTruoc->year)
+            //     ->count();  // Đếm số lượt block
 
-            // Tính sự chênh lệch về số lượng đăng ký và phần trăm
-            $chenhLechSo = $blockHienTai - $blockTruoc;
-            $chenhLechPhanTram = ($blockTruoc > 0)
-                ? ($chenhLechSo / $blockTruoc) * 100
-                : 100;
+            // // Tính sự chênh lệch về số lượng đăng ký và phần trăm
+            // $chenhLechSo = $blockHienTai - $blockTruoc;
+            // $chenhLechPhanTram = ($blockTruoc > 0)
+            //     ? ($chenhLechSo / $blockTruoc) * 100
+            //     : 100;
 
             DB::commit();
 
             // Trả về kết quả so sánh
             return response()->json([
-                'block_hien_tai' => $blockHienTai,
-                'block_truoc' => $blockTruoc,
-                'chenh_lech_so' => $chenhLechSo,
-                'chenh_lech_phan_tram' => $chenhLechPhanTram
+                'activity_hien_tai' => $activityHienTai,
+                // 'block_truoc' => $blockTruoc,
+                // 'chenh_lech_so' => $chenhLechSo,
+                // 'chenh_lech_phan_tram' => $chenhLechPhanTram
             ]);
         } catch (Exception $e) {
             // Rollback nếu có lỗi xảy ra
