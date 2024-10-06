@@ -109,23 +109,39 @@ class ThongKeDoanhThuController extends Controller
                     ->get();
 
                 // Khởi tạo mảng để chứa doanh thu theo tháng
-                $doanhThu['theo_quy']['thang'] = [];
+                // $doanhThu['theo_quy']['thang'] = [];
                 $doanhThu['theo_quy']['doanh_thu'] = [];
+                $doanhThu['theo_quy']['ten_thang'] = []; // Mảng để chứa tên tháng
+
+                // Mảng ánh xạ giữa số tháng và tên tháng
+                $tenThang = [
+                    1 => 'Tháng 1',
+                    2 => 'Tháng 2',
+                    3 => 'Tháng 3',
+                    4 => 'Tháng 4',
+                    5 => 'Tháng 5',
+                    6 => 'Tháng 6',
+                    7 => 'Tháng 7',
+                    8 => 'Tháng 8',
+                    9 => 'Tháng 9',
+                    10 => 'Tháng 10',
+                    11 => 'Tháng 11',
+                    12 => 'Tháng 12'
+                ];
 
                 // Duyệt qua từng tháng trong quý
                 for ($i = $startMonth; $i <= $endMonth; $i++) {
                     // Lấy doanh thu cho từng tháng từ dữ liệu đã nhóm, ép kiểu về float
                     $doanhThuTheoThang = (float) ($monthsData->where('thang', $i)->first()->doanh_thu_thang ?? 0);
-                    $doanhThu['theo_quy']['thang'][] = $i;
+                    // $doanhThu['theo_quy']['thang'][] = $i;
                     $doanhThu['theo_quy']['doanh_thu'][] = $doanhThuTheoThang;
+                    $doanhThu['theo_quy']['ten_thang'][] = $tenThang[$i]; // Thêm tên tháng vào mảng
                 }
 
                 // Trả về tổng doanh thu của quý và doanh thu theo từng tháng
                 return response()->json(['tong_doanh_thu_quy' => $tongDoanhThuQuy] + $doanhThu);
             }
         }
-
-
 
         if ($thang && $nam && $quy) {
             // Lọc doanh thu theo tháng
@@ -139,8 +155,9 @@ class ThongKeDoanhThuController extends Controller
                 $endOfMonth = now()->setDate($nam, $thang, 1)->endOfMonth();
 
                 // Khởi tạo mảng doanh thu theo tuần
-                $doanhThu['theo_thang']['tuan'] = [];
+                // $doanhThu['theo_thang']['tuan'] = [];
                 $doanhThu['theo_thang']['doanh_thu'] = [];
+                $doanhThu['theo_thang']['ten_tuan'] = []; // Mảng để chứa tên tuần
 
                 // Lấy doanh thu chia theo tuần
                 $weeksData = $query->clone()
@@ -157,21 +174,24 @@ class ThongKeDoanhThuController extends Controller
 
                 // Duyệt qua từng tuần và gán doanh thu, ép kiểu về float
                 for ($i = $currentWeek; $i <= $endWeek; $i++) {
-                    $doanhThu['theo_thang']['tuan'][] = $i - $currentWeek + 1;
-                    $doanhThu['theo_thang']['doanh_thu'][] = (float) $weekMap->get($i, 0); // Ép kiểu về float
+                    // $doanhThu['theo_thang']['tuan'][] = $i - $currentWeek + 1; // Số tuần
+                    $doanhThu['theo_thang']['doanh_thu'][] = (float) $weekMap->get($i, 0); // Doanh thu
+                    $doanhThu['theo_thang']['ten_tuan'][] = 'Tuần ' . ($i - $currentWeek + 1); // Thêm tên tuần
                 }
 
                 // Kiểm tra nếu tổng doanh thu của các tuần không khớp với tổng doanh thu tháng
                 $tongDoanhThuTuan = array_sum($doanhThu['theo_thang']['doanh_thu']);
                 if ($tongDoanhThuTuan != $tongDoanhThuThang) {
-                    $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra';
+                    // $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra';
                     $doanhThu['theo_thang']['doanh_thu'][] = (float) ($tongDoanhThuThang - $tongDoanhThuTuan); // Ép kiểu về float
+                    $doanhThu['theo_thang']['ten_tuan'][] = 'Tổng kiểm tra'; // Thêm tên cho tổng kiểm tra
                 }
 
                 // Trả về tổng doanh thu của tháng và doanh thu theo từng tuần
                 return response()->json(['tong_doanh_thu_thang' => $tongDoanhThuThang] + $doanhThu);
             }
         }
+
 
         // Nếu có chọn tuần, tháng, quý và năm
         if ($tuan && $thang && $quy && $nam) {
