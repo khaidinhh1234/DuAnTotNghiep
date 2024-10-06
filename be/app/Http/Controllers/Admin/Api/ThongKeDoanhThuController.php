@@ -124,9 +124,6 @@ class ThongKeDoanhThuController extends Controller
                 return response()->json(['tong_doanh_thu_quy' => $tongDoanhThuQuy] + $doanhThu);
             }
         }
-
-
-
         if ($thang && $nam && $quy) {
             // Lọc doanh thu theo tháng
             $query->whereMonth('created_at', $thang)
@@ -572,69 +569,54 @@ class ThongKeDoanhThuController extends Controller
     }
 
 
-    public function soSanhDoanhThu(Request $request)
-    {
-        // Bắt đầu transaction
+    public function soSanhDoanhThuThang(Request $request)
+{
+    try {
+        DB::beginTransaction();
 
+        $now = Carbon::now();
 
-        try {
-            DB::beginTransaction();
-            // Lấy tham số 'type' từ request (tuần, tháng, quý, năm)
-            $type = $request->input('type', 'month');  // Mặc định là tháng
-            $now = Carbon::now();
+        // Lấy doanh thu của tháng hiện tại
+        $doanhThuThangHienTai = (float)DB::table('don_hangs')
+            ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->whereMonth('created_at', $now->month)
+            ->whereYear('created_at', $now->year)
+            ->sum('tong_tien_don_hang');
 
-            // Query lấy doanh thu theo thời gian từ đơn hàng có trạng thái 'Đã giao hàng thành công'
-            $query = DB::table('don_hangs')
-                ->select(DB::raw('SUM(tong_tien_don_hang) as doanh_thu'));
+        // Lấy doanh thu của tháng trước
+        $thangTruoc = $now->subMonth();  // Lùi về tháng trước
+        $doanhThuThangTruoc = DB::table('don_hangs')
+            ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->whereMonth('created_at', $thangTruoc->month)
+            ->whereYear('created_at', $thangTruoc->year)
+            ->sum('tong_tien_don_hang');
 
-            // Lọc theo loại thống kê (tuần, tháng, quý, năm)
-            switch ($type) {
-                case 'week':
-                    $query->selectRaw('WEEK(created_at) as thoi_gian')  // Nhóm theo tuần
-                        ->whereBetween('created_at', [$now->startOfWeek(), $now->endOfWeek()])
-                        ->groupBy(DB::raw('WEEK(created_at)'));
-                    break;
+        // Tính sự chênh lệch về doanh thu (số tiền và phần trăm)
+        $chenhLechSoTien = $doanhThuThangHienTai - $doanhThuThangTruoc;
+        $chenhLechPhanTram = ($doanhThuThangTruoc > 0)
+            ? ($chenhLechSoTien / $doanhThuThangTruoc) * 100
+            : 100;  // Nếu doanh thu tháng trước bằng 0, thì mặc định tăng 100%
 
-                case 'month':
-                    $query->selectRaw('MONTH(created_at) as thoi_gian')  // Nhóm theo tháng
-                        ->whereYear('created_at', $now->year)
-                        ->groupBy(DB::raw('MONTH(created_at)'));
-                    break;
+        // Commit transaction khi không có lỗi
+        DB::commit();
 
-                case 'quarter':
-                    $query->selectRaw('QUARTER(created_at) as thoi_gian')  // Nhóm theo quý
-                        ->whereYear('created_at', $now->year)
-                        ->groupBy(DB::raw('QUARTER(created_at)'));
-                    break;
+        // Trả về kết quả bao gồm doanh thu tháng này, tháng trước, chênh lệch số tiền và phần trăm
+        return response()->json([
+            'doanh_thu_thang_hien_tai' => $doanhThuThangHienTai,
+            'doanh_thu_thang_truoc' => $doanhThuThangTruoc,
+            'chenh_lech_so_tien' => $chenhLechSoTien,
+            'chenh_lech_phan_tram' => $chenhLechPhanTram
+        ]);
 
-                case 'year':
-                    $query->selectRaw('YEAR(created_at) as thoi_gian')  // Nhóm theo năm
-                        ->groupBy(DB::raw('YEAR(created_at)'));
-                    break;
+    } catch (Exception $e) {
+        // Rollback nếu có lỗi xảy ra
+        DB::rollBack();
 
-                default:
-                    $query->selectRaw('MONTH(created_at) as thoi_gian')  // Mặc định là nhóm theo tháng
-                        ->whereYear('created_at', $now->year)
-                        ->groupBy(DB::raw('MONTH(created_at)'));
-                    break;
-            }
-
-            // Lọc theo trạng thái đơn hàng "Đã giao hàng thành công"
-            $data = $query->where('trang_thai_don_hang', DonHang::TTDH_DGTC)->get();
-
-            // Commit transaction khi không có lỗi
-            DB::commit();
-
-            // Trả về dữ liệu doanh thu đã nhóm theo thời gian
-            return response()->json($data);
-        } catch (Exception $e) {
-            // Rollback nếu có lỗi xảy ra
-            DB::rollBack();
-
-            // Trả về lỗi kèm theo mã lỗi
-            return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
-        }
+        // Trả về lỗi kèm theo mã lỗi
+        return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
     }
+}
+
 
 
     public function sanPhamBanChayTheoThang(Request $request)
