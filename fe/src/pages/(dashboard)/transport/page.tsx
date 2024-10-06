@@ -1,13 +1,41 @@
-import React, { useState } from "react";
-import { Card, Col, Row, Select, Checkbox, Typography } from "antd";
-import { CaretDownOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import instance from "@/configs/admin";
+import { CaretDownOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
+import { Col, Row, Select } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Option } = Select;
-const { Title, Text } = Typography;
 
 const PageTransport = () => {
-  const [autoUpdate, setAutoUpdate] = useState(false);
+  const {
+    data: chodon,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["tongquan"],
+    queryFn: async () => {
+      const res = await instance.get("lay-thong-tin-don");
+      return res.data;
+    },
+  });
+  const { data: cholay } = useQuery({
+    queryKey: ["tongquan2"],
+    queryFn: async () => {
+      const res = await instance.get("lay-thong-tin-van-chuyen");
+      return res.data;
+    },
+  });
+  const choxacnhan = chodon?.choXacNhan;
+  const choThanhToan = chodon?.choThanhToan;
+  const chuaGiaoHang = chodon?.chuaGiaoHang;
+  const donHoanHang = chodon?.donHoanHang;
+
+  const choLayHang = cholay?.choLayHang;
+  const donDangGiao = cholay?.donDangGiao;
+
+  const giaoThatBai = cholay?.giaoThatBai;
+  const giaoThanhCong = cholay?.giaoThanhCong;
+
   const navigate = useNavigate(); // Sử dụng useNavigate để chuyển trang
 
   // Hàm xử lý sự kiện chọn ngày
@@ -15,43 +43,10 @@ const PageTransport = () => {
     console.log("Selected Date:", value);
   };
 
-  // Hàm xử lý sự kiện thay đổi cập nhật liên tục
-  const handleAutoUpdateChange = (e: any) => {
-    setAutoUpdate(e.target.checked);
-  };
-
-  // Hàm điều hướng trang khi click vào card
-  const handleCardClick = (route: any) => {
-    navigate(route); // Chuyển hướng tới route được truyền vào
-  };
-
-  const renderCard = (
-    title: any,
-    number: any,
-    amount: any,
-    color = "black",
-    highlight = false,
-    route = "/"
-  ) => (
-    <Card
-      bordered={false}
-      style={{
-        backgroundColor: highlight ? "#fff5f5" : "#f5f5f5",
-        cursor: "pointer",
-      }} // Thêm hiệu ứng pointer để dễ nhận biết là có thể click
-      onClick={() => handleCardClick(route)} // Thêm sự kiện onClick để chuyển trang
-    >
-      <Title level={5}>{title}</Title>
-      <Text style={{ fontSize: 24, color }}>{number}</Text>
-      <br />
-      <Text>{amount} ₫</Text>
-    </Card>
-  );
-
   return (
     <div style={{ padding: 20 }}>
       {/* Header với dropdown chọn ngày và checkbox cập nhật liên tục */}
-      <Row justify="space-between" align="middle">
+      {/* <Row justify="space-between" align="middle">
         <Col>
           <Select
             defaultValue="Hôm nay"
@@ -64,7 +59,7 @@ const PageTransport = () => {
             <Option value="tuantruoc">Tuần trước</Option>
           </Select>
         </Col>
-      </Row>
+      </Row> */}
 
       <div>
         <div style={{ marginTop: 20 }}>
@@ -77,36 +72,56 @@ const PageTransport = () => {
               </h1>
             </div>
             <div className="grid grid-cols-3 gap-10">
-              <div className="col-span-1 border p-3 text-center rounded-lg">
-                <h3 className="text-lg font-semibold text-slate-700">
-                  Đơn chưa xác nhận
-                </h3>
-                <span className="text-2xl font-semibold py-1 text-blue-600">
-                  0
-                </span>
-                <br />
-                <span className="text-xl text-slate-600"> 0 đ</span>
-              </div>
-              <div className="col-span-1 border p-3 text-center rounded-lg">
-                <h3 className="text-lg font-semibold text-slate-700">
-                  Chờ thanh toán
-                </h3>
-                <span className="text-2xl font-semibold py-1 text-blue-600">
-                  1
-                </span>
-                <br />
-                <span className="text-xl text-slate-600"> 10,023,000 đ</span>
-              </div>
-              <div className="col-span-1 border p-3 text-center rounded-lg">
-                <h3 className="text-lg font-semibold text-slate-700">
-                  Chưa giao hàng
-                </h3>
-                <span className="text-2xl font-semibold py-1 text-blue-600">
-                  2
-                </span>
-                <br />
-                <span className="text-xl text-slate-600"> 1,420,023đ</span>
-              </div>
+              {" "}
+              <Link to="/admin/orders/list">
+                <div className="col-span-1 border p-3 text-center rounded-lg">
+                  <h3 className="text-lg font-semibold text-slate-700">
+                    Đơn chưa xác nhận
+                  </h3>
+                  <span className="text-2xl font-semibold py-1 text-blue-600">
+                    {(choxacnhan?.tong_don_cho_xac_nhan ?? 0).toLocaleString(
+                      "vi-VN"
+                    )}
+                  </span>
+                  <br />
+                  <span className="text-xl text-slate-600">
+                    {" "}
+                    {choxacnhan?.tong_tien.toLocaleString("vi-VN") ?? 0}đ
+                  </span>
+                </div>{" "}
+              </Link>{" "}
+              <Link to="/admin/orders/list">
+                <div className="col-span-1 border p-3 text-center rounded-lg">
+                  <h3 className="text-lg font-semibold text-slate-700">
+                    Chờ thanh toán
+                  </h3>
+                  <span className="text-2xl font-semibold py-1 text-blue-600">
+                    {(
+                      choThanhToan?.tong_don_cho_thanh_toan ?? 0
+                    ).toLocaleString("vi-VN")}
+                  </span>
+                  <br />
+                  <span className="text-xl text-slate-600">
+                    {choThanhToan?.tong_tien.toLocaleString("vi-VN")}đ
+                  </span>
+                </div>
+              </Link>{" "}
+              <Link to="/admin/orders/list">
+                <div className="col-span-1 border p-3 text-center rounded-lg">
+                  <h3 className="text-lg font-semibold text-slate-700">
+                    Chưa giao hàng
+                  </h3>
+                  <span className="text-2xl font-semibold py-1 text-blue-600">
+                    {(
+                      chuaGiaoHang?.tong_don_chua_giao_hang ?? 0
+                    ).toLocaleString("vi-VN")}
+                  </span>
+                  <br />
+                  <span className="text-xl text-slate-600">
+                    {(chuaGiaoHang?.tong_tien ?? 0).toLocaleString("vi-VN")}đ
+                  </span>
+                </div>
+              </Link>{" "}
             </div>
           </div>
 
@@ -121,37 +136,39 @@ const PageTransport = () => {
                 Giao hàng
               </h1>
             </div>
-            <div className="grid grid-cols-3 gap-10">
-              <div className="col-span-1 border p-3 text-center rounded-lg">
-                <h3 className="text-lg font-semibold text-slate-700">
-                  Chờ lấy hàng
-                </h3>
-                <span className="text-2xl font-semibold py-1 text-blue-600">
-                  0
-                </span>
-                <br />
-                <span className="text-xl text-slate-600"> 0 đ</span>
-              </div>
-              <div className="col-span-1 border p-3 text-center rounded-lg">
-                <h3 className="text-lg font-semibold text-slate-700">
-                  Đang giao hàng
-                </h3>
-                <span className="text-2xl font-semibold py-1 text-blue-600">
-                  1
-                </span>
-                <br />
-                <span className="text-xl text-slate-600"> 10,023,000 đ</span>
-              </div>
-              <div className="col-span-1 border p-3 text-center rounded-lg">
-                <h3 className="text-lg font-semibold text-slate-700">
-                  Giao hàng thất bại
-                </h3>
-                <span className="text-2xl font-semibold py-1 text-red-600">
-                  2
-                </span>
-                <br />
-                <span className="text-xl text-slate-600"> 1,420,023đ</span>
-              </div>
+            <div className="grid grid-cols-2 justify-center gap-3 ">
+              <Link to="/admin/orders/uncomfirmedorder">
+                <div className="col-span-1 border p-3 text-center rounded-lg mx-30">
+                  <h3 className="text-lg font-semibold text-slate-700">
+                    Chờ lấy hàng
+                  </h3>
+                  <span className="text-2xl font-semibold py-1 text-blue-600">
+                    {(choLayHang?.tong_don_cho_lay_hang ?? 0).toLocaleString(
+                      "vi-VN"
+                    )}
+                  </span>
+                  <br />
+                  <span className="text-xl text-slate-600">
+                    {(choLayHang?.tong_tien ?? 0).toLocaleString("vi-VN")}đ
+                  </span>
+                </div>
+              </Link>
+              <Link to="/admin/orders/uncomfirmedorder">
+                <div className="col-span-1 border p-3 text-center rounded-lg mx-30">
+                  <h3 className="text-lg font-semibold text-slate-700">
+                    Đang giao hàng
+                  </h3>
+                  <span className="text-2xl font-semibold py-1 text-blue-600">
+                    {(donDangGiao?.tong_don_dang_giao_hang ?? 0).toLocaleString(
+                      "vi-VN"
+                    )}
+                  </span>
+                  <br />
+                  <span className="text-xl text-slate-600">
+                    {(donDangGiao?.tong_tien ?? 0).toLocaleString("vi-VN")}đ
+                  </span>
+                </div>
+              </Link>
             </div>
           </div>
 
@@ -160,39 +177,51 @@ const PageTransport = () => {
             <div className="flex items-center ">
               <h1 className=" font-semibold md:text-2xl">
                 <i className="fa-regular fa-cart-shopping text-[#63E6BE] mr-3"></i>
-                Đơn hàng{" "}
+                Tổng hợp
               </h1>
             </div>
             <div className="grid grid-cols-3 gap-10">
               <div className="col-span-1 border p-3 text-center rounded-lg">
                 <h3 className="text-lg font-semibold text-slate-700">
-                  Đơn chưa xác nhận
+                  Giao thất bại
                 </h3>
                 <span className="text-2xl font-semibold py-1 text-blue-600">
-                  0
+                  {(
+                    giaoThatBai?.tong_don_giao_hang_that_bai ?? 0
+                  ).toLocaleString("vi-VN")}
                 </span>
                 <br />
-                <span className="text-xl text-slate-600"> 0 đ</span>
+                <span className="text-xl text-slate-600">
+                  {(giaoThatBai?.tong_tien ?? 0).toLocaleString("vi-VN")}đ
+                </span>
               </div>
               <div className="col-span-1 border p-3 text-center rounded-lg">
                 <h3 className="text-lg font-semibold text-slate-700">
-                  Chờ thanh toán
+                  Giao thành công
                 </h3>
                 <span className="text-2xl font-semibold py-1 text-blue-600">
-                  1
+                  {(
+                    giaoThanhCong?.tong_don_giao_hang_thanh_cong ?? 0
+                  ).toLocaleString("vi-VN")}
                 </span>
                 <br />
-                <span className="text-xl text-slate-600"> 10,023,000 đ</span>
+                <span className="text-xl text-slate-600">
+                  {(giaoThanhCong?.tong_tien ?? 0).toLocaleString("vi-VN")}đ đ
+                </span>
               </div>
               <div className="col-span-1 border p-3 text-center rounded-lg">
                 <h3 className="text-lg font-semibold text-slate-700">
-                  Chưa giao hàng
+                  Hoàn hàng
                 </h3>
                 <span className="text-2xl font-semibold py-1 text-blue-600">
-                  2
+                  {(donHoanHang?.tong_don_hoan_hang ?? 0).toLocaleString(
+                    "vi-VN"
+                  )}
                 </span>
                 <br />
-                <span className="text-xl text-slate-600"> 1,420,023đ</span>
+                <span className="text-xl text-slate-600">
+                  {(donHoanHang?.tong_tien ?? 0).toLocaleString("vi-VN")}đ
+                </span>
               </div>
             </div>
           </div>

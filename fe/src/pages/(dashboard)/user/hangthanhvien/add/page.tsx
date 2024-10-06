@@ -1,13 +1,19 @@
-
-
-import instance from '@/configs/admin';
-import { uploadToCloudinary } from '@/configs/cloudinary';
-import { UploadOutlined } from '@ant-design/icons';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Form, Input, InputNumber, Typography, Upload, message } from 'antd';
-import { RcFile, UploadFile, UploadProps } from 'antd/es/upload';
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import instance from "@/configs/admin";
+import { uploadToCloudinary } from "@/configs/cloudinary";
+import { UploadOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Typography,
+  Upload,
+  message,
+} from "antd";
+import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -26,8 +32,8 @@ const MemberRankForm: React.FC = () => {
 
   // Query để lấy danh sách hạng thành viên hiện có
   const { data: existingRanks = [] } = useQuery<MemberRank[]>({
-    queryKey: ['memberRanks'],
-    queryFn: () => instance.get('/hangthanhvien').then(res => res.data),
+    queryKey: ["memberRanks"],
+    queryFn: () => instance.get("/hangthanhvien").then((res) => res.data),
   });
 
   const addMemberRankMutation = useMutation({
@@ -42,24 +48,26 @@ const MemberRankForm: React.FC = () => {
       // }
 
       if (fileList.length > 0 && fileList[0].originFileObj) {
-        const cloudinaryUrl = await uploadToCloudinary(fileList[0].originFileObj);
+        const cloudinaryUrl = await uploadToCloudinary(
+          fileList[0].originFileObj
+        );
         newRank.anh_hang_thanh_vien = cloudinaryUrl;
       }
-      return instance.post('/hangthanhvien', newRank);
+      return instance.post("/hangthanhvien", newRank);
     },
     onSuccess: () => {
-      message.success('Thêm hạng thành viên thành công');
-      queryClient.invalidateQueries({ queryKey: ['memberRanks'] });
-      navigate('/admin/users/rank');
+      message.success("Thêm hạng thành viên thành công");
+      queryClient.invalidateQueries({ queryKey: ["memberRanks"] });
+      navigate("/admin/users/rank");
     },
     onError: (error: Error) => {
-      message.error('Có lỗi xảy ra khi thêm hạng thành viên: ' + error.message);
+      message.error("Có lỗi xảy ra khi thêm hạng thành viên: " + error.message);
     },
   });
 
   const onFinish = (values: any) => {
     const newRank: MemberRank = {
-      anh_hang_thanh_vien: '',
+      anh_hang_thanh_vien: "",
       ten_hang_thanh_vien: values.rankName,
       chi_tieu_toi_thieu: values.minSpend,
       chi_tieu_toi_da: values.maxSpend,
@@ -68,21 +76,21 @@ const MemberRankForm: React.FC = () => {
   };
 
   const validateUpload = (file: RcFile): boolean => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJpgOrPng) {
-      message.error('Chỉ chấp nhận file JPG/PNG!');
+      message.error("Chỉ chấp nhận file JPG/PNG!");
     }
     const isLt1MB = file.size / 1024 / 1024 < 1;
     if (!isLt1MB) {
-      message.error('Dung lượng phải nhỏ hơn 1MB!');
+      message.error("Dung lượng phải nhỏ hơn 1MB!");
     }
     return isJpgOrPng && isLt1MB;
   };
 
-  const handleChange: UploadProps['onChange'] = (info) => {
+  const handleChange: UploadProps["onChange"] = (info) => {
     let newFileList = [...info.fileList];
     newFileList = newFileList.slice(-1);
-    newFileList = newFileList.map(file => {
+    newFileList = newFileList.map((file) => {
       if (file.response) {
         file.url = file.response.url;
       }
@@ -128,7 +136,9 @@ const MemberRankForm: React.FC = () => {
       </div>
 
       <div className="max-w-2xl ml-5 mt-6 p-6 bg-white shadow-md rounded-lg">
-        <Title level={3} className="mb-4">Tạo hạng thành viên mới</Title>
+        <Title level={3} className="mb-4">
+          Tạo hạng thành viên mới
+        </Title>
         <hr />
         <br />
         <Form
@@ -141,11 +151,7 @@ const MemberRankForm: React.FC = () => {
             name="rankName"
             label="Tên hạng thành viên"
             rules={[
-              { required: true, message: 'Vui lòng nhập tên hạng thành viên' },
-              {
-                pattern: /^[A-Z].*$/,
-                message: "Chữ cái đầu tiên phải viết hoa!",
-              },
+              { required: true, message: "Vui lòng nhập tên hạng thành viên" },
             ]}
           >
             <Input placeholder="Diamond" />
@@ -172,64 +178,74 @@ const MemberRankForm: React.FC = () => {
             </Upload>
           </Form.Item>
           <p className="text-xs text-gray-500 mt-1">
-            Dung lượng &lt; 1MB. Kích thước 500x500 pixels. Định dạng: png, jpeg.
+            Dung lượng &lt; 1MB. Kích thước 500x500 pixels. Định dạng: png,
+            jpeg.
           </p>
 
           <div className="flex space-x-4">
-          <Form.Item
-  name="minSpend"
-  label="Chi tiêu tối thiểu (VND)"
-  rules={[
-    { required: true, message: 'Vui lòng nhập chi tiêu tối thiểu' },
-    () => ({
-      validator(_, value) {
-        if (value === 0 || value > 1000) {
-          return Promise.resolve();
-        }
-        return Promise.reject(new Error('Giá trị phải là 0 hoặc lớn hơn 1.000'));
-      },
-    }),
-  ]}
-  className="flex-1"
->
-  <InputNumber
-    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-    parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
-    addonAfter="VND"
-    className="w-full"
-  />
-</Form.Item>
-
-
             <Form.Item
-              name="maxSpend"
-              label="Chi tiêu tối đa (VND)"
-              dependencies={['minSpend']}
+              name="minSpend"
+              label="Chi tiêu tối thiểu (VND)"
               rules={[
-                { required: true, message: 'Vui lòng nhập chi tiêu tối đa' },
-                ({ getFieldValue }) => ({
+                { required: true, message: "Vui lòng nhập chi tiêu tối thiểu" },
+                () => ({
                   validator(_, value) {
-                    if (!value || getFieldValue('minSpend') < value) {
+                    if (value === 0 || value > 1000) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error('Chi tiêu tối đa phải lớn hơn chi tiêu tối thiểu'));
+                    return Promise.reject(
+                      new Error("Giá trị phải là 0 hoặc lớn hơn 1.000")
+                    );
                   },
                 }),
               ]}
               className="flex-1"
             >
               <InputNumber
-                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+                formatter={(value) =>
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
+                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+                addonAfter="VND"
+                className="w-full"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="maxSpend"
+              label="Chi tiêu tối đa (VND)"
+              dependencies={["minSpend"]}
+              rules={[
+                { required: true, message: "Vui lòng nhập chi tiêu tối đa" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("minSpend") < value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(
+                        "Chi tiêu tối đa phải lớn hơn chi tiêu tối thiểu"
+                      )
+                    );
+                  },
+                }),
+              ]}
+              className="flex-1"
+            >
+              <InputNumber
+                formatter={(value) =>
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
+                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
                 addonAfter="VND"
                 className="w-full"
               />
             </Form.Item>
           </div>
           <div className="flex justify-start space-x-1 mt-6">
-            <Button 
-              type="primary" 
-              size="middle" 
+            <Button
+              type="primary"
+              size="middle"
               htmlType="submit"
               className="px-8 py-3 bg-black text-white rounded-lg"
               loading={addMemberRankMutation.isPending}

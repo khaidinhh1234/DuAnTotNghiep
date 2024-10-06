@@ -93,7 +93,7 @@ const MemberRankEdit = () => {
     return true;
   };
 
-  const handleChange = async (info) => {
+  const handleChange = async (info: any) => {
     if (info.file.status === "done") {
       try {
         const url = await uploadToCloudinary(info.file.originFileObj);
@@ -157,10 +157,6 @@ const MemberRankEdit = () => {
             label="Tên hạng thành viên"
             rules={[
               { required: true, message: "Vui lòng nhập tên hạng thành viên" },
-              {
-                pattern: /^[A-Z].*$/,
-                message: "Chữ cái đầu tiên phải viết hoa!",
-              },
             ]}
           >
             <Input placeholder="Diamond" />
@@ -178,9 +174,11 @@ const MemberRankEdit = () => {
               showUploadList={false}
               beforeUpload={validateUpload}
               onChange={handleChange}
-              customRequest={({ onSuccess }) =>
-                setTimeout(() => onSuccess("ok"), 0)
-              }
+              customRequest={({ onSuccess }) => {
+                if (onSuccess) {
+                  setTimeout(() => onSuccess("ok"), 0);
+                }
+              }}
             >
               {imageUrl ? (
                 <div className="relative group">
@@ -222,7 +220,7 @@ const MemberRankEdit = () => {
                 formatter={(value) =>
                   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
-                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                parser={(value: any) => value.replace(/\$\s?|(,*)/g, "")}
                 addonAfter="VND"
                 className="w-full"
               />
@@ -240,7 +238,7 @@ const MemberRankEdit = () => {
                 formatter={(value) =>
                   `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 }
-                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                parser={(value: any) => value.replace(/\$\s?|(,*)/g, "")}
                 addonAfter="VND"
                 className="w-full"
               />
