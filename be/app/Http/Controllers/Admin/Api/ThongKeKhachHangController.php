@@ -129,15 +129,15 @@ class ThongKeKhachHangController extends Controller
     {
         $khachHang = User::select('users.*', DB::raw('CAST(SUM(don_hangs.tong_tien_don_hang) AS UNSIGNED) as tong_tien_da_mua'))
             ->join('don_hangs', 'users.id', '=', 'don_hangs.user_id')
+            ->where('trang_thai_don_hang', 'Giao hàng thành công')
             ->whereNull('don_hangs.deleted_at')
             ->groupBy('users.id') // Nhóm theo người dùng để tính tổng tiền chi tiêu của từng khách hàng.
             ->orderByDesc(DB::raw('MAX(don_hangs.created_at)'))
             ->take(5)
             ->get();
-
-
         return $khachHang;
     }
+
     public function soSanhKhachHangRegister(Request $request)
     {
         try {
