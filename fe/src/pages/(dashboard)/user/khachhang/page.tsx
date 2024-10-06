@@ -49,7 +49,7 @@ const UsersAdminkhachhang: React.FC = () => {
       return res.data;
     },
   });
-  console.log(data);
+  // console.log(data);
   const user = data?.data
     ?.filter((item: any) =>
       item?.vai_tros?.some((item: any) => item?.ten_vai_tro === "Khách hàng")
@@ -62,7 +62,7 @@ const UsersAdminkhachhang: React.FC = () => {
         index: index,
       };
     });
-  console.log(user);
+  // console.log(user);
   const mutate = useMutation({
     mutationFn: async (id: string) => {
       try {
@@ -184,61 +184,69 @@ const UsersAdminkhachhang: React.FC = () => {
       className: "pl-5",
     },
     {
-      title: "Ảnh người dùng",
-      render: (record) =>
-        record.anh_nguoi_dung ? (
-          <Image
-            src={record.anh_nguoi_dung}
-            alt=""
-            className="w-20 h-20 object-cover rounded-lg p-2 border"
-          />
-        ) : (
-          <img
-            src="https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
-            alt=""
-            className="w-20 h-20 object-cover rounded-lg p-2 border"
-          />
-        ),
-      className: "pl-10",
-      width: "15%",
+      title: "Sản phẩm",
+      render: (record) => (
+        <div className="flex gap-5">
+          <div>
+            <Image
+              src={
+                record.anh_nguoi_dung
+                  ? record.anh_nguoi_dung
+                  : "https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
+              }
+              alt=""
+              className="w-20 h-20 object-cover rounded-lg p-2 border"
+            />
+          </div>
+          <div className="pt-4 text-start">
+            <p>
+              {record.ho} {record.ten}
+            </p>
+            <p>{record.email}</p>
+          </div>
+        </div>
+      ),
+
+      className: "mx-auto",
+      width: "30%",
       key: "anh_nguoi_dung",
     },
-    {
-      title: "Tên",
-      dataIndex: "ten",
-      key: "ten",
-      width: "5%",
-      ...getColumnSearchProps("ten"),
-      sorter: (a: any, b: any) => a.ten.length - b.ten.length,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
-    {
-      title: "Họ",
-      dataIndex: "ho",
-      key: "ho",
-      width: "5%",
-      ...getColumnSearchProps("ho"),
-      sorter: (a: any, b: any) => a.ho.length - b.ho.length,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: "20%",
-      ...getColumnSearchProps("email"),
-      sorter: (a: any, b: any) => a.email.length - b.email.length,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
-    {
-      title: "Số điện thoại",
-      dataIndex: "so_dien_thoai",
-      key: "so_dien_thoai",
-      width: "15%",
-      ...getColumnSearchProps("so_dien_thoai"),
-      sorter: (a: any, b: any) => a.so_dien_thoai - b.so_dien_thoai,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
+    // {
+    //   title: "Tên",
+    //   dataIndex: "ten",
+    //   key: "ten",
+    //   width: "5%",
+    //   ...getColumnSearchProps("ten"),
+    //   sorter: (a: any, b: any) => a.ten.length - b.ten.length,
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
+    // {
+    //   title: "Họ",
+    //   dataIndex: "ho",
+    //   key: "ho",
+    //   width: "5%",
+    //   ...getColumnSearchProps("ho"),
+    //   sorter: (a: any, b: any) => a.ho.length - b.ho.length,
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
+    // {
+    //   title: "Email",
+    //   dataIndex: "email",
+    //   key: "email",
+    //   width: "20%",
+    //   ...getColumnSearchProps("email"),
+    //   sorter: (a: any, b: any) => a.email.length - b.email.length,
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
+    // {
+    //   title: "Số điện thoại",
+    //   dataIndex: "so_dien_thoai",
+    //   key: "so_dien_thoai",
+    //   width: "15%",
+    //   ...getColumnSearchProps("so_dien_thoai"),
+    //   sorter: (a: any, b: any) => a.so_dien_thoai - b.so_dien_thoai,
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
     {
       title: "Địa chỉ",
       dataIndex: "dia_chi",
