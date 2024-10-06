@@ -60,7 +60,7 @@ const Chart6 = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("Updated data:", data);
+      console.log("Updated data:", data?.theo_tuan?.ngay);
     },
   });
 
@@ -70,9 +70,15 @@ const Chart6 = () => {
     },
 
     xaxis: {
-      categories:
-        data?.theo_nam?.quy || data?.theo_quy?.thang || data?.theo_thang?.tuan,
-      // data?.theo_tuan?.ngay |
+      categories: data?.theo_nam?.quy?.length
+        ? data.theo_nam.quy
+        : data?.theo_quy?.thang?.length
+          ? data.theo_quy.thang
+          : data?.theo_thang?.tuan?.length
+            ? data.theo_thang.tuan
+            : data?.theo_tuan?.ngay?.length
+              ? data.theo_tuan.ngay
+              : [0, 0, 0],
     },
     plotOptions: {
       bar: {
@@ -245,7 +251,7 @@ const Chart6 = () => {
                 ? "Quý"
                 : data?.theo_thang?.tuan
                   ? "Tháng"
-                  : data?.theo_tuan?.nay
+                  : data?.theo_tuan?.ngay
                     ? "Tuần"
                     : ""}
           </h3>

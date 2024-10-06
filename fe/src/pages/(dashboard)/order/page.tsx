@@ -478,7 +478,12 @@ const OrderAdmin: React.FC = () => {
   }
 
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
-
+  const dataSource: OrderData[] | undefined = filteredData?.map(
+    (item: DataType, i: number): OrderData => ({
+      ...item,
+      key: i + 1,
+    })
+  );
   // Cập nhật dữ liệu khi nhận được từ API
   useEffect(() => {
     if (order) {
@@ -487,37 +492,36 @@ const OrderAdmin: React.FC = () => {
   }, [order]);
 
   // Hàm xử lý tìm kiếm
-  const handleSearchChange = (e: any) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchText(value);
-    // console.log(value);
+
     if (value) {
-      const filtered = order?.filter(
-        (item: any) =>
-          item.ten_nguoi_dat_hang.toLowerCase().includes(value.toLowerCase()) ||
-          item.ma_don_hang.toLowerCase().includes(value.toLowerCase()) ||
-          item.trang_thai_don_hang
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          item.trang_thai_thanh_toan
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          item.trang_thai_van_chuyen.toLowerCase().includes(value.toLowerCase())
-      );
+      const filtered = order?.filter((item: any) => {
+        // Kiểm tra nếu các trường tồn tại trước khi gọi toLowerCase
+        const tenNguoiDatHang = item.ten_nguoi_dat_hang?.toLowerCase() || "";
+        const maDonHang = item.ma_don_hang?.toLowerCase() || "";
+        const trangThaiDonHang = item.trang_thai_don_hang?.toLowerCase() || "";
+        const trangThaiThanhToan =
+          item.trang_thai_thanh_toan?.toLowerCase() || "";
+        const trangThaiVanChuyen =
+          item.trang_thai_van_chuyen?.toLowerCase() || "";
+
+        return (
+          tenNguoiDatHang.includes(value.toLowerCase()) ||
+          maDonHang.includes(value.toLowerCase()) ||
+          trangThaiDonHang.includes(value.toLowerCase()) ||
+          trangThaiThanhToan.includes(value.toLowerCase()) ||
+          trangThaiVanChuyen.includes(value.toLowerCase())
+        );
+      });
       setFilteredData(filtered || []);
     } else {
-      if (order) {
-        setFilteredData(order); // Reset to original order data if search is empty
-      }
+      // Reset về dữ liệu gốc khi không có giá trị tìm kiếm
+      if (order) setFilteredData(order);
     }
   };
 
-  const dataSource: OrderData[] | undefined = filteredData?.map(
-    (item: DataType, i: number): OrderData => ({
-      ...item,
-      key: i + 1,
-    })
-  );
   const handleChange = (value: string) => {
     setTrangThai(value);
   };
@@ -576,7 +580,7 @@ const OrderAdmin: React.FC = () => {
                     onChange={(e: any) => handleSearchChange(e)}
                   />
 
-                  <RangePicker />
+                  <RangePicker onChange={handleDateChange} />
                 </Space>
               </div>
             </div>
@@ -615,7 +619,7 @@ const OrderAdmin: React.FC = () => {
           <Table<DataType>
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={filteredData}
+            dataSource={dataSource}
             loading={isLoading}
             pagination={{ pageSize: 10, className: "my-5" }}
           />
