@@ -116,10 +116,7 @@ const UserskhachhangAdd = () => {
                       required: true,
                       message: "Họ của khách hàng bắt buộc phải nhập!",
                     },
-                    {
-                      pattern: /^[A-Z].*$/,
-                      message: "Chữ cái đầu tiên phải viết hoa!",
-                    },
+
                     {
                       pattern: /^[^\s]+(\s+[^\s]+)*$/,
                       message: "Vui lòng nhập họ không chứa ký tự trắng!",
@@ -136,10 +133,7 @@ const UserskhachhangAdd = () => {
                       required: true,
                       message: "Tên của khách hàng bắt buộc phải nhập!",
                     },
-                    {
-                      pattern: /^[A-Z].*$/,
-                      message: "Chữ cái đầu tiên phải viết hoa!",
-                    },
+
                     {
                       pattern: /^[^\s]+(\s+[^\s]+)*$/,
                       message: "Vui lòng nhập tên không chứa ký tự trắng!",

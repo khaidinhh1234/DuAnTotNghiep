@@ -68,10 +68,7 @@ const Tagsadd = () => {
                     required: true,
                     message: "Tên nhãn dán bắt buộc phải nhập!",
                   },
-                  {
-                    pattern: /^[A-Z].*$/,
-                    message: "Chữ cái đầu tiên phải viết hoa!",
-                  },
+
                   {
                     pattern: /^[^\s]+(\s+[^\s]+)*$/,
                     message: "Vui lòng nhập chứa ký tự trắng!",

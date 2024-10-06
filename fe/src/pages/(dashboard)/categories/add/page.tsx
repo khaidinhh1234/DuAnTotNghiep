@@ -100,10 +100,6 @@ const CategoriesAdd = () => {
                     pattern: /^[^\s]+(\s+[^\s]+)*$/,
                     message: "Vui lòng không chứa ký tự trắng!",
                   },
-                  {
-                    pattern: /^[A-Z].*$/,
-                    message: "Chữ cái đầu tiên phải viết hoa!",
-                  },
                 ]}
               >
                 <Input placeholder="Nhập tên danh mục" />

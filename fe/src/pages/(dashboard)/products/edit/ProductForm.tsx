@@ -252,10 +252,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
           name="ten_san_pham"
           rules={[
             { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
-            {
-              pattern: /^[A-Z].*$/,
-              message: "Chữ cái đầu tiên phải viết hoa!",
-            },
           ]}
         >
           <Input placeholder="Nhập tên sản phẩm" />

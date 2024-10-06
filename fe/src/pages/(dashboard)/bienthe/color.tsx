@@ -130,10 +130,6 @@ const Color = () => {
                 name="ten_mau_sac"
                 rules={[
                   { required: true, message: "Tên màu bắt buộc phải nhập!" },
-                  {
-                    pattern: /^[A-Z].*$/,
-                    message: "Chữ cái đầu tiên phải viết hoa!",
-                  },
                 ]}
               >
                 <Input placeholder="Nhập tên màu" />

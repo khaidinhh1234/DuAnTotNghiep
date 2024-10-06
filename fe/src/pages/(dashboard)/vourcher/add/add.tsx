@@ -307,10 +307,6 @@ const AddVoucher = () => {
                           required: true,
                           message: "Vui lòng chọn Nhập tên khuyễn mãi!",
                         },
-                        {
-                          pattern: /^[A-Z].*$/,
-                          message: "Chữ cái đầu tiên phải viết hoa!",
-                        },
                       ]}
                       className="mb-0 w-[50%]"
                     >
