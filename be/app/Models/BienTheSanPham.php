@@ -22,13 +22,13 @@ class BienTheSanPham extends Model
 
     public function sanPham()
     {
-        return $this->belongsTo(SanPham::class);
+        return $this->belongsTo(SanPham::class, 'san_pham_id', 'id');
     }
 
 
     public function anhBienThe()
     {
-        return $this->hasMany(AnhBienThe::class);
+        return $this->hasMany(AnhBienThe::class, 'bien_the_san_pham_id', 'id');
     }
 
     public function mauBienThe()
@@ -38,10 +38,10 @@ class BienTheSanPham extends Model
 
     public function kichThuocBienThe()
     {
-        return $this->belongsTo(BienTheKichThuoc::class,'bien_the_kich_thuoc_id', 'id');
+        return $this->belongsTo(BienTheKichThuoc::class, 'bien_the_kich_thuoc_id', 'id');
     }
     public function chiTiets()
     {
-        return $this->hasMany(DonHangChiTiet::class, 'bien_the_san_pham_id');
+        return $this->hasMany(DonHangChiTiet::class, 'bien_the_san_pham_id', 'id');
     }
 }

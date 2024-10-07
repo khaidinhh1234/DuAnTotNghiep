@@ -15,7 +15,7 @@ return new class extends Migration {
         Schema::create('don_hangs', function (Blueprint $table) {
             $table->id();
             $table->string('ma_don_hang')->unique();  // Thêm cột ma_don_hang và đảm bảo giá trị là unique
-            $table->foreignIdFor(User::class)->constrained();
+            $table->foreignIdFor( User::class)->constrained();
             $table->text('ghi_chu')->nullable();
             $table->enum('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL, DonHang::TTDH_DGH, DonHang::TTDH_DGTC, DonHang::TTDH_GHTB, DonHang::TTDH_DH, DonHang::TTDH_HH])->nullable();
             $table->enum('phuong_thuc_thanh_toan', [DonHang::PTTT_TT, DonHang::PTTT_NH, DonHang::PTTT_MM])->nullable();
@@ -26,7 +26,6 @@ return new class extends Migration {
             $table->string('ma_giam_gia')->nullable();
             $table->integer('so_tien_giam_gia')->nullable();
             $table->enum('trang_thai_thanh_toan', [DonHang::TTTT_CTT, DonHang::TTTT_DTT])->nullable();
-            // $table->enum('trang_thai_van_chuyen', [DonHang::TTVC_CXT, DonHang::TTVC_CLH, DonHang::TTVC_DGH, DonHang::TTVC_GHTC])->nullable();
             $table->string('duong_dan')->nullable();
             $table->timestamps();
             $table->softDeletes();

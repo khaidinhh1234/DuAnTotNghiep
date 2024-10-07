@@ -16,12 +16,16 @@ return new class extends Migration
         Schema::create('van_chuyens', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(DonHang::class)->constrained();
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('shipper_id')->constrained('users');
             $table->string('ma_van_chuyen');
             $table->date('ngay_tao');
             $table->enum('trang_thai_van_chuyen',  [VanChuyen::TTVC_CXL, VanChuyen::TTVC_DGH, VanChuyen::TTVC_GHTC, VanChuyen::TTVC_GHTB])->default(VanChuyen::TTVC_CXL);
             $table->enum('cod', [VanChuyen::TTCOD_CN, VanChuyen::TTCOD_DN, VanChuyen::TTCOD_KT])->default(VanChuyen::TTCOD_KT);
             $table->integer('tien_cod')->default(0);
             $table->string('anh_xac_thuc')->nullable();
+            $table->tinyInteger('shipper_xac_nhan')->default(0); // 0: Chưa xác nhận, 1: Đã xác nhận
+            $table->tinyInteger('khach_hang_xac_nhan')->default(0); // 0: Chưa xác nhận, 1: Đã xác nhận
             $table->timestamps();
         });
     }

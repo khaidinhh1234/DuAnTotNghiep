@@ -20,6 +20,6 @@ class HangThanhVien extends Model
     ];
     public function users()
     {
-        return $this->hasMany(user::class);
+        return $this->hasMany(user::class, 'hang_thanh_vien_id', 'id');
     }
 }
