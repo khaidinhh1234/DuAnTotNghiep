@@ -146,7 +146,8 @@ const Router = () => {
           element={
             // <PrivateRoute>
               <LayoutAdmin />
-            // </PrivateRoute> 
+            // </PrivateRoute>
+
           }
         >
           <Route path="dashboard/list" element={<Dashboard />} />
