@@ -9,6 +9,7 @@ use App\Models\HangThanhVien;
 use App\Models\User;
 use App\Models\VaiTro;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TaiKhoanController extends Controller
@@ -20,7 +21,7 @@ class TaiKhoanController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = User::query()->with('vaiTros', 'hangThanhVien')->orderBy('id', 'desc')->get();
+            $data = User::query()->with('vaiTros', 'hangThanhVien')->whereNot('id', Auth::guard('api')->id())->orderBy('id', 'desc')->get();
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -146,8 +147,9 @@ class TaiKhoanController extends Controller
     {
         try {
             DB::beginTransaction();
-            $vaiTro_id = [];
-            $taiKhoan = User::query()->with('vaiTros')->findOrFail($taikhoan->id);
+
+            $taiKhoan = User::with('vaiTros')->findOrFail($taikhoan->id);
+
             $taiKhoan->update([
                 'ho' => $request->ho,
                 'ten' => $request->ten,
@@ -156,27 +158,21 @@ class TaiKhoanController extends Controller
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,
                 'gioi_tinh' => $request->gioi_tinh,
-                'hang_thanh_vien_id' => $request->hang_thanh_vien_id
+                'hang_thanh_vien_id' => $request->hang_thanh_vien_id ?? 1
             ]);
 
-            if ($request->vai_tros == []) {
-                $member = VaiTro::query()->where('ten_vai_tro', 'Khách hàng')->first();
-                if ($member == []) {
-                    $member = VaiTro::updateOrCreate(
-                        [
-                            'ten_vai_tro' => 'Khách hàng',
-                            'mo_ta' => 'Khách hàng'
-                        ]
-                    );
-                }
-                array_push($vaiTro_id, $member->id);
+            $vaiTro_id = [];
+            if (empty($request->vai_tros)) {
+                $member = VaiTro::firstOrCreate(
+                    ['ten_vai_tro' => 'Khách hàng'],
+                    ['mo_ta' => 'Khách hàng']
+                );
+                $vaiTro_id[] = $member->id;
             } else {
-                foreach ($request->vai_tros ?? [] as $vaiTro) {
-                    $vaiTro = VaiTro::query()->where('ten_vai_tro', $vaiTro)->first();
-                    array_push($vaiTro_id, $vaiTro->id);
-                }
+                $vaiTro_id = VaiTro::whereIn('ten_vai_tro', $request->vai_tros)->pluck('id')->toArray();
             }
             $taiKhoan->vaiTros()->sync($vaiTro_id);
+
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -249,7 +245,7 @@ class TaiKhoanController extends Controller
             DB::beginTransaction();
             $taiKhoan = User::onlyTrashed()->findOrFail($id);
             $taiKhoan->restore();
-            $member = VaiTro::query()->where('ten_vai_tro', 'member')->first();
+            $member = VaiTro::query()->where('ten_vai_tro',  'Khách hàng')->first();
             $taiKhoan->vaiTros()->attach($member->id);
             DB::commit();
             return response()->json([
