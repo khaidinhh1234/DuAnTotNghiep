@@ -74,10 +74,10 @@ const BannerManagement: React.FC = () => {
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
   const [bannerTextData, setBannerTextData] = useState([
     { key: "Tiêu đề chính", value: "", color: "" },
-    { key: "tiêu đề phụ", value: "", color: "" },
-    { key: "văn bản quảng cáo", value: "", color: "" },
-    { key: "tiêu đề nút", value: "", color: "" },
-    { key: "đường dẫn", value: "" },
+    { key: "Tiêu đề phụ", value: "", color: "" },
+    { key: "Văn bản quảng cáo", value: "", color: "" },
+    { key: "Tiêu đề nút", value: "", color: "" },
+    { key: "Đường dẫn", value: "" },
   ]);
 
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -95,10 +95,10 @@ const BannerManagement: React.FC = () => {
       apiResponse.data.banner &&
       apiResponse.data.banner.length > 0
     ) {
-      console.log("Setting banner data");
+      // console.log("Setting banner data");
       setBannerData(apiResponse.data.banner[0]);
     } else {
-      console.log("No banner data in response");
+      // console.log("No banner data in response");
     }
   }, [apiResponse]);
 
@@ -111,21 +111,21 @@ const BannerManagement: React.FC = () => {
           color: bannerData.noi_dung.mau_tieu_de_chinh || "",
         },
         {
-          key: "tiêu đề phụ",
+          key: "Tiêu đề phụ",
           value: bannerData.noi_dung.tieu_de_phu || "",
           color: bannerData.noi_dung.mau_tieu_de_phu || "",
         },
         {
-          key: "văn bản quảng cáo",
+          key: "Văn bản quảng cáo",
           value: bannerData.noi_dung.van_ban_quang_cao || "",
           color: bannerData.noi_dung.mau_van_ban_quang_cao || "",
         },
         {
-          key: "tiêu đề nút",
+          key: "Tiêu đề nút",
           value: bannerData.noi_dung.tieu_de_nut || "",
           color: bannerData.noi_dung.mau_tieu_de_nut || "",
         },
-        { key: "đường dẫn", value: bannerData.noi_dung.duong_dan || "" },
+        { key: "Đường dẫn", value: bannerData.noi_dung.duong_dan || "" },
       ]);
       setAccentColor(bannerData.noi_dung.mau_nut || "#000000");
 
@@ -156,8 +156,8 @@ const BannerManagement: React.FC = () => {
             const cloudinaryUrl = await uploadToCloudinary(file.originFileObj);
             return { ...file, status: "done", url: cloudinaryUrl };
           } catch (error) {
-            console.error("Error uploading to Cloudinary:", error);
-            message.error("Failed to upload image");
+            // console.error("Error uploading to Cloudinary:", error);
+            message.error("Không tải được hình ảnh lên");
             return { ...file, status: "error" };
           } finally {
             setUploadingFiles((prev) => ({ ...prev, [file.uid]: false }));
@@ -198,14 +198,14 @@ const BannerManagement: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bannerData"] });
-      message.success("Banner updated successfully");
+      message.success("Banner đã được cập nhật thành công");
     },
     onError: (error: any) => {
       if (error.response && error.response.data && error.response.data.errors) {
         const errorMessages = Object.values(error.response.data.errors).flat();
         errorMessages.forEach((msg) => message.error(msg as string));
       } else {
-        message.error("Failed to update banner");
+        message.error("Không cập nhật được banner");
       }
     },
   });
@@ -243,12 +243,12 @@ const BannerManagement: React.FC = () => {
     );
   }
   if (isError) {
-    console.log("Error occurred");
-    return <div>Error loading banner data. Please try again later.</div>;
+    // console.log("Error occurred");
+    return <div>Lỗi khi tải dữ liệu biểu ngữ. Vui lòng thử lại sau.</div>;
   }
   if (!bannerData) {
-    console.log("No banner data");
-    return <div>No banner data available. Please add some data.</div>;
+    // console.log("No banner data");
+    return <div>Không có dữ liệu biểu ngữ nào khả dụng. Vui lòng thêm một số dữ liệu.</div>;
   }
 
   const uploadButton = (

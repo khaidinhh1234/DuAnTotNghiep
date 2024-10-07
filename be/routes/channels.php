@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\MaKhuyenMai;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -21,7 +22,7 @@ Broadcast::channel('thongbao', function(){
     return true;
 });
 
-Broadcast::channel('ma-khuyen-mai', function () {
-    return true; // Tất cả người dùng đều có quyền truy cập vào kênh này
+Broadcast::channel('ma-khuyen-mai', function ($user, MaKhuyenMai $maKhuyenMai) {
+    return (new App\Policies\MaKhuyenMaiPolicy)->join($user, $maKhuyenMai->hang_thanh_vien_ids);
 });
 

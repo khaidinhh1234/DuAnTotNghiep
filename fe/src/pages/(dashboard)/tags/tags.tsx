@@ -162,7 +162,7 @@ const TagsAdmin: React.FC = () => {
       dataIndex: "index",
     },
     {
-      title: "Tên Nhãn Dán",
+      title: "Tên thẻ đính kèm",
       width: "40%",
       key: "ten_the",
       dataIndex: "ten_the",
@@ -217,11 +217,11 @@ const TagsAdmin: React.FC = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Nhãn dán</span>
+          Quản trị / <span className="font-semibold px-px">Thẻ đính kèm</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Nhãn dán</h1>
+        <h1 className="font-semibold md:text-3xl">Thẻ đính kèm</h1>
         <div className="flex">
           <Link to="/admin/products/tags/add" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">

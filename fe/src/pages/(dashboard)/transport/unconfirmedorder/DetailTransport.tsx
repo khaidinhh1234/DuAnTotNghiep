@@ -23,14 +23,14 @@ const DetailTransport = ({ record }: any) => {
   };
 
   const id = record?.don_hang?.id
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["ORDER_DETAIL", id],
     queryFn: async () => {
       const response = await instance.get(`donhang/${id}`);
       return response.data;
     },
   });
-   
+
   const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
@@ -39,7 +39,9 @@ const DetailTransport = ({ record }: any) => {
   // const donhang = data?.data;
   // console.log("data", donhang);
   // console.log("data", products);
-
+  console.log(record.don_hang.ten_nguoi_dat_hang)
+  const thongtin = data?.data?.thong_tin;
+  console.log(thongtin, )
   const handleCancel = () => {
     setOpen(false);
   };
@@ -57,7 +59,7 @@ const DetailTransport = ({ record }: any) => {
 
         if (error === "Cập nhật trạng thái đơn hàng thành công") {
           message.open({
-            type: "success",  
+            type: "success",
             content: error,
           });
         } else {
@@ -116,34 +118,34 @@ const DetailTransport = ({ record }: any) => {
               </div>{" "}
               <div
                 className={`font-bold text-[15px] ${record.trang_thai_van_chuyen === "Chờ xử lý"
-                    ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
-                    : record.trang_thai_van_chuyen === "Đang giao hàng"
-                      ? "text-purple-500" // Đang giao hàng: màu tím
-                          : record.trang_thai_van_chuyen ===
-                            "Đã giao hàng thành công"
-                            ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
-                            : ` `
+                  ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
+                  : record.trang_thai_van_chuyen === "Đang giao hàng"
+                    ? "text-purple-500" // Đang giao hàng: màu tím
+                    : record.trang_thai_van_chuyen ===
+                      "Đã giao hàng thành công"
+                      ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
+                      : ` `
                   }`}
               >
                 <div
                   className={`${record.trang_thai_van_chuyen === "Chờ xử lý"
-                      ? "bg-blue-400" // Chờ xác nhận: màu vàng nhạt
-                          : record.trang_thai_van_chuyen === "Đang giao hàng"
-                            ? "bg-purple-500" // Đang giao hàng: màu tím
-                            : record.trang_thai_van_chuyen ===
-                              "Giao hàng thành công"
-                              ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
-                              : "bg-red-500" // Các trạng thái khác: màu đỏ
+                    ? "bg-blue-400" // Chờ xác nhận: màu vàng nhạt
+                    : record.trang_thai_van_chuyen === "Đang giao hàng"
+                      ? "bg-purple-500" // Đang giao hàng: màu tím
+                      : record.trang_thai_van_chuyen ===
+                        "Giao hàng thành công"
+                        ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
+                        : "bg-red-500" // Các trạng thái khác: màu đỏ
                     } text-white px-2 py-1 font-bold rounded-lg`}
                 >
                   {record.trang_thai_van_chuyen === "Chờ xử lý"
                     ? "Chờ xử lý" // Chờ xác nhận: màu vàng nhạt
-                        : record.trang_thai_van_chuyen === "Đang giao hàng"
-                          ? "Đang giao hàng" // Đang giao hàng: màu tím
-                          : record.trang_thai_van_chuyen ===
-                            "Giao hàng thành công"
-                            ? "Giao hàng thành công"
-                            : ``}
+                    : record.trang_thai_van_chuyen === "Đang giao hàng"
+                      ? "Đang giao hàng" // Đang giao hàng: màu tím
+                      : record.trang_thai_van_chuyen ===
+                        "Giao hàng thành công"
+                        ? "Giao hàng thành công"
+                        : ``}
                 </div>
               </div>
             </div>
@@ -236,14 +238,14 @@ const DetailTransport = ({ record }: any) => {
                       <p>Trạng thái vận chuyển</p>{" "}
                       <span
                         className={`   ${record.trang_thai_van_chuyen == "Chờ xử lý"
-                            ? "bg-blue-500"
-                                : record.trang_thai_van_chuyen == "Đang giao hàng"
-                                  ? "bg-purple-500"
-                                  : record.trang_thai_van_chuyen ==
-                                    "Giao hàng thành công"
-                                    ? "bg-green-500"
-                                    
-                          : record}
+                          ? "bg-blue-500"
+                          : record.trang_thai_van_chuyen == "Đang giao hàng"
+                            ? "bg-purple-500"
+                            : record.trang_thai_van_chuyen ==
+                              "Giao hàng thành công"
+                              ? "bg-green-500"
+
+                              : record}
                         } text-white px-2 font-bold rounded-lg h-6`}
                       >
                         {" "}
@@ -251,12 +253,12 @@ const DetailTransport = ({ record }: any) => {
                           ? "Chờ xử lý"
                           : record.trang_thai_van_chuyen == "Giao hang"
                             ? "Đang giao hàng"
-                              : record.trang_thai_van_chuyen == "Đang giao hàng"
-                                ? "Đang giao hàng"
-                                : record.trang_thai_van_chuyen ==
-                                  "Giao hàng thành công"
-                                  ? "Giao hàng thành công"
-                                  : ""}
+                            : record.trang_thai_van_chuyen == "Đang giao hàng"
+                              ? "Đang giao hàng"
+                              : record.trang_thai_van_chuyen ==
+                                "Giao hàng thành công"
+                                ? "Giao hàng thành công"
+                                : ""}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -281,8 +283,9 @@ const DetailTransport = ({ record }: any) => {
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {
-                        data?.data?.cod
+                      {data?.data?.tong_thanh_tien_san_pham.toLocaleString(
+                        "vi-VN"
+                      )
                         // .toLocaleString()
                       }
                     </span>{" "}
@@ -294,9 +297,12 @@ const DetailTransport = ({ record }: any) => {
                   <p className="text-base font-semibold">
                     -{" "}
                     <span>
-                      {data?.data?.gia_khuyen_mai
-                        ? data?.data?.gia_khuyen_mai
-                        : "1.029.007"}
+                      {data?.data?.don_hang?.so_tien_giam_gia
+                        ? data?.data?.don_hang?.so_tien_giam_gia.toLocaleString(
+                          "vi-VN"
+                        )
+                        : 0}{" "}
+                      VNĐ
                     </span>
                   </p>
                 </div>
@@ -342,7 +348,7 @@ const DetailTransport = ({ record }: any) => {
                 ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
                   <>
                     <button
-                      className="w-full py-2 border bg-green-500 rounded-lg text-white hover:bg-green-400"
+                      className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400"
                       onClick={() =>
                         mutate({ id: record.id, action: "Giao hàng thành công" })
                       }
@@ -361,30 +367,46 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
               <hr />
               <h5 className="text-blue-600 my-2">
-                {record.ten_nguoi_dat_hang}
+                {record.don_hang.ten_nguoi_dat_hang
+              ? record.don_hang.ten_nguoi_dat_hang
+              : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
-              <h5 className="text-black my-2">{record.ten_nguoi_dat_hang}</h5>
-              <p>
-                Số điện thoại :{" "}
-                <span>{record.so_dien_thoai_nguoi_dat_hang}</span>
+              <h5 className="text-black my-2">
+                {" "}
+                {record.don_hang.ten_nguoi_dat_hang
+                  ? record.don_hang.ten_nguoi_dat_hang
+                  : thongtin?.ho + " " + thongtin?.ten}
+              </h5>
+              <p className="text-blue-800 font-semibold">
+                Số điện thoại :
+                <span className="text-black font-medium">
+                  {record.don_hang.so_dien_thoai_nguoi_dat_hang
+                    ? record.don_hang.so_dien_thoai_nguoi_dat_hang
+                    : thongtin?.so_dien_thoai}
+                </span>
               </p>
               <h5 className="text-blue-800">
-                Địa chỉ Giao hàng: <span>{record?.dia_chi_nguoi_dat_hang}</span>
+                Địa chỉ Giao hàng: <br />
+                <span className="text-black">
+                  {record?.don_hang.dia_chi_nguoi_dat_hang
+                    ? record?.don_hang.dia_chi_nguoi_dat_hang
+                    : thongtin?.dia_chi}
+                </span>
               </h5>
               <p className="text-blue-800 font-semibold">
                 Ghi chú của khách hàng : <br />
                 <span className="text-black">
-                  {record?.ghi_chu ? record?.ghi_chu : "Không có ghi chú"}
+                  {record?.don_hang.ghi_chu ? record?.don_hang.ghi_chu : "Không có ghi chú"}
                 </span>
               </p>
-            </div>  
+            </div>
           </div>
         </div>
       </Modal>
     </div>
   );
-};
+};  
 
 export default DetailTransport;

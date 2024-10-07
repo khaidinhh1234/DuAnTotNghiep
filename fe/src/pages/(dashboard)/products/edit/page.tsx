@@ -16,6 +16,7 @@ import {
   ProductFormData,
 } from "@/common/types/product";
 import instance from "@/configs/admin";
+import { uniqBy } from "lodash";
 
 const { Option } = Select;
 
@@ -166,16 +167,16 @@ const EditProductsAndVariants: React.FC = () => {
             ngay_bat_dau_khuyen_mai: v.ngay_bat_dau_khuyen_mai,
             ngay_ket_thuc_khuyen_mai: v.ngay_ket_thuc_khuyen_mai,
             anh_bien_the: v.anh_bien_the
-              ? v.anh_bien_the.map((img: any) => ({
-                  uid: img.id.toString(),
-                  name: `image-${img.id}.png`,
-                  status: "done",
-                  url: img.duong_dan_anh,
-                }))
-              : [],
-          })
-        );
-        setVariantData(newVariantData);
+            ? uniqBy(v.anh_bien_the, 'duong_dan_anh').map((img: any) => ({
+                uid: img.id.toString(),
+                name: `image-${img.id}.png`,
+                status: "done",
+                url: img.duong_dan_anh,
+              }))
+            : [],
+        })
+      );
+      setVariantData(newVariantData);
       }
 
       setIsLoading(false);

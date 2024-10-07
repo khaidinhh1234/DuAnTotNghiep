@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\AuditTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class LienHe extends Model
 {
-    use HasFactory;
+    use HasFactory, AuditTrait;
 
     protected $fillable = [
         'user_id',

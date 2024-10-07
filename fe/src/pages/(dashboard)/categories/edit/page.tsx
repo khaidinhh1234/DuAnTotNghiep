@@ -92,7 +92,7 @@ const CategoriesEdit = () => {
       <div className="flex items-center">
         <h1 className="md:text-base">
           Quản trị / Danh mục /
-          <span className="font-semibold px-px"> Cập nhập danh mục</span>
+          <span className="font-semibold px-px">Cập nhập danh mục</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">

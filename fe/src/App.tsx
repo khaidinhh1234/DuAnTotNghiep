@@ -13,7 +13,7 @@ declare global {
 }
 
 function App() {
-  const [notifications, setNotifications] = useState<string[]>([]);
+  const [notifications] = useState<string[]>([]);
 
   useEffect(() => {
     // Thiết lập Pusher
@@ -31,13 +31,13 @@ function App() {
       console.log("Notification received:", event.mo_ta);
 
       // Hiển thị thông báo sử dụng Toast
-        // Hiển thị thông báo toast với thông tin từ event
-        const toastMessage = `${event.mo_ta} - ${event.hang_thanh_vien_ids}`;
-        toast(toastMessage);
+      // Hiển thị thông báo toast với thông tin từ event
+      const toastMessage = `${event.mo_ta} - ${event.hang_thanh_vien_ids}`;
+      toast(toastMessage);
 
 // Thêm thông báo alert
-        const alertMessage = `Mã khuyến mãi mới: ${event.mo_ta} - ${event.hang_thanh_vien_ids}`;
-        alert(alertMessage);
+      const alertMessage = `Mã khuyến mãi mới: ${event.mo_ta} - ${event.hang_thanh_vien_ids}`;
+      alert(alertMessage);
 
     });
 

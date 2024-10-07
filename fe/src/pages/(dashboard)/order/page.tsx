@@ -75,6 +75,21 @@ const OrderAdmin: React.FC = () => {
     },
   });
   const order: DataType[] | undefined = data?.data;
+  const handleDateChange = (e: any, dateStrings: [string, string]) => {
+    const startDate = new Date(dateStrings[0]);
+    const endDate = new Date(dateStrings[1]);
+    // console.log("startDate", startDate);
+    // console.log("endDate", endDate);
+
+    const filtered = order?.filter((record: any) => {
+      const recordDate = new Date(record.created_at);
+      return recordDate >= startDate && recordDate <= endDate;
+    });
+    // console.log("filtered", filtered);
+    setFilteredData(filtered || []);
+    // Thực hiện hành động gì đó, ví dụ như gọi API để lọc theo khoảng ngày
+  };
+
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
@@ -580,7 +595,7 @@ const OrderAdmin: React.FC = () => {
                     onChange={(e: any) => handleSearchChange(e)}
                   />
 
-                  {/* <RangePicker onChange={handleDateChange} /> */}
+                  <RangePicker onChange={handleDateChange} />
                 </Space>
               </div>
             </div>

@@ -54,11 +54,6 @@ class DanhMucController extends Controller
 
             ]);
 
-            if ($request->hasFile('anh_danh_muc')) {
-                $pathFile = $request->file('anh_danh_muc')->store('danh_mucs', 'public');
-                $validateDanhMuc['anh_danh_muc'] = Storage::url($pathFile);
-            }
-
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc = DanhMuc::create($validateDanhMuc);
             DB::commit();
@@ -124,16 +119,6 @@ class DanhMucController extends Controller
 
             $danhMuc = DanhMuc::findOrFail($id);
 
-            if ($request->hasFile('anh_danh_muc')) {
-                if ($danhMuc->anh_danh_muc) {
-                    Storage::delete('public/' . basename($danhMuc->anh_danh_muc));
-                }
-                $pathFile = $request->file('anh_danh_muc')->store('danh_mucs', 'public');
-                $validateDanhMuc['anh_danh_muc'] = Storage::url($pathFile);
-            } else {
-                $validateDanhMuc['anh_danh_muc'] = $danhMuc->anh_danh_muc;
-            }
-
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc->update($validateDanhMuc);
             DB::commit();
@@ -170,17 +155,6 @@ class DanhMucController extends Controller
                 return response()->json(['error' => 'Không thể xóa danh mục này vì vẫn còn danh mục con.'], 422);
             }
 
-
-            if ($danhMuc->anh_danh_muc) {
-                $fileName = basename($danhMuc->anh_danh_muc);
-                $filePath = public_path('storage/danh_mucs/' . $fileName);
-
-                if (file_exists($filePath)) {
-                    unlink($filePath);
-                } else {
-                    Log::error('File không tồn tại: ' . $filePath);
-                }
-            }
 
             $danhMuc->delete();
             DB::commit();
