@@ -27,12 +27,12 @@ class SanPham extends Model
 
     public function danhMuc()
     {
-        return $this->belongsTo(DanhMuc::class);
+        return $this->belongsTo(DanhMuc::class, 'danh_muc_id', 'id');
     }
 
     public function bienTheSanPham()
     {
-        return $this->hasMany(BienTheSanPham::class);
+        return $this->hasMany(BienTheSanPham::class, 'san_pham_id', 'id');
     }
     public function theSanPham()
     {
@@ -41,7 +41,7 @@ class SanPham extends Model
 
     public function danhGias()
     {
-        return $this->hasMany(DanhGia::class, 'san_pham_id');
+        return $this->hasMany(DanhGia::class, 'san_pham_id', 'id');
     }
 
     public function chuongTrinhUuDais()
@@ -49,8 +49,8 @@ class SanPham extends Model
         return $this->belongsToMany(ChuongTrinhUuDai::class, 'chuong_trinh_san_pham', 'san_pham_id', 'chuong_trinh_uu_dai_id');
     }
 
-
-    public function khachHangYeuThich(){
+    public function khachHangYeuThich()
+    {
         return $this->belongsToMany(User::class,  'san_pham_yeu_thich', 'san_pham_id', 'user_id');
     }
 }

@@ -66,43 +66,60 @@ class VanChuyenController extends Controller
                 'trang_thai_van_chuyen' => 'required',
             ]);
 
+            DB::beginTransaction();
             foreach ($validate['id'] as $id) {
-                DB::beginTransaction();
                 $vanChuyen = VanChuyen::findOrFail($id);
                 $validTransitions = [
                     VanChuyen::TTVC_CXL => [VanChuyen::TTVC_DGH],
                     VanChuyen::TTVC_DGH => [VanChuyen::TTVC_GHTC, VanChuyen::TTVC_GHTB],
                 ];
+
                 if (
                     !isset($validTransitions[$vanChuyen->trang_thai_van_chuyen])
-                    || !in_array($request->trang_thai_van_chuyen, $validTransitions[$vanChuyen->trang_thai_van_chuyen])
+                    || !in_array($validate['trang_thai_van_chuyen'], $validTransitions[$vanChuyen->trang_thai_van_chuyen])
                 ) {
-                    $mess = 'Không thể cập nhật trạng thái ngược lại hoặc trạng thái không hợp lệ';
-                } else {
-                    $vanChuyen->update(
-                        [
-                            'trang_thai_van_chuyen' => $validate['trang_thai_van_chuyen'],
-                        ]
-                    );
-                    $trangThaiDonHangMap = [
-                        VanChuyen::TTVC_DGH => DonHang::TTDH_DGH,
-                        VanChuyen::TTVC_GHTC => DonHang::TTDH_DGTC,
-                        VanChuyen::TTVC_GHTB => DonHang::TTDH_GHTB,
-                    ];
-
-                    if (isset($trangThaiDonHangMap[$vanChuyen->trang_thai_van_chuyen])) {
-                        $vanChuyen->donHang()->update([
-                            'trang_thai_don_hang' => $trangThaiDonHangMap[$vanChuyen->trang_thai_van_chuyen]
-                        ]);
-                    }
-                    $mess = 'Cập nhật trạng thái vận chuyển thành công';
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 400,
+                        'message' => 'Không thể cập nhật trạng thái ngược lại hoặc trạng thái không hợp lệ'
+                    ], 400);
                 }
-                DB::commit();
+
+                if ($vanChuyen->trang_thai_van_chuyen == VanChuyen::TTVC_DGH) {
+                    if (($vanChuyen->khach_hang_xac_nhan == 0 || $vanChuyen->shipper_xac_nhan == 0) && $request->trang_thai_van_chuyen == VanChuyen::TTVC_GHTC
+                    ) {
+                        DB::rollBack();
+                        return response()->json([
+                            'status' => false,
+                            'status_code' => 400,
+                            'message' => 'Khách hàng và shipper phải xác nhận trước khi cập nhật trạng thái giao hàng thành công'
+                        ], 400);
+                    }
+                }
+
+                $vanChuyen->update([
+                    'trang_thai_van_chuyen' => $validate['trang_thai_van_chuyen'],
+                ]);
+
+                $trangThaiDonHangMap = [
+                    VanChuyen::TTVC_DGH => DonHang::TTDH_DGH,
+                    VanChuyen::TTVC_GHTC => DonHang::TTDH_DGTC,
+                    VanChuyen::TTVC_GHTB => DonHang::TTDH_GHTB,
+                ];
+
+                if (array_key_exists($validate['trang_thai_van_chuyen'], $trangThaiDonHangMap)) {
+                    $vanChuyen->donHang()->update([
+                        'trang_thai_don_hang' => $trangThaiDonHangMap[$validate['trang_thai_van_chuyen']]
+                    ]);
+                }
             }
+            DB::commit();
+            $mess = 'Cập nhật trạng thái vận chuyển thành công';
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => $mess
+                'message' => $mess,
             ]);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -126,7 +143,7 @@ class VanChuyenController extends Controller
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
 
-            // 
+            //
             $dangGiaoHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_DGH)->count();
             $tongTienDangGiaoHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_DGH)
                 ->with('donHang')
@@ -135,7 +152,7 @@ class VanChuyenController extends Controller
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
 
-            // 
+            //
             $giaoHangThatBais = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTB)->count();
             $tongTienGiaoHangThatBais = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTB)
                 ->with('donHang')
@@ -143,7 +160,7 @@ class VanChuyenController extends Controller
                 ->sum(function ($vanChuyen) {
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
-            // 
+            //
             $giaoHangThanhCongs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTC)
                 ->whereHas('donHang', function ($query) {
                     $query->where('trang_thai_thanh_toan', DonHang::TTTT_DTT);
@@ -151,7 +168,7 @@ class VanChuyenController extends Controller
                 ->count();
             $tongTienGiaoHangThanhCongs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTC)
                 ->whereHas('donHang', function ($query) {
-                    $query->where('trang_thai_thanh_toan', DonHang::TTTT_DTT); 
+                    $query->where('trang_thai_thanh_toan', DonHang::TTTT_DTT);
                 })
                 ->with('donHang')
                 ->get()
