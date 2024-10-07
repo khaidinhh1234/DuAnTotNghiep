@@ -76,7 +76,17 @@ const data = [
   // Thêm dữ liệu mẫu khác ở đây...
 ];
 
+import { useState, useEffect } from 'react';
+
 const PageSupport: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate a data fetch
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }, []);
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -98,6 +108,7 @@ const PageSupport: React.FC = () => {
         columns={columns}
         dataSource={data}
         pagination={{ pageSize: 10 }}
+        loading={isLoading}
       />
     </main>
   );
