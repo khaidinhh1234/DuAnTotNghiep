@@ -174,7 +174,7 @@ const ProductForm = ({
           <Upload
             listType="picture"
             fileList={fileList}
-            onChange={({ fileList }) => setFileList(fileList)}
+            onChange={({ fileList }: any) => setFileList(fileList)}
             beforeUpload={() => false}
             onPreview={() => {}}
           >
