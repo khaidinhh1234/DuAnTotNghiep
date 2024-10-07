@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('bien_the_kich_thuocs', function (Blueprint $table) {
-            $table->enum('loai_kich_thuoc', ['nguoi_lon', 'tre_em'])->after('kich_thuoc');
+            $table->enum('loai_kich_thuoc', ['nam', 'nu', 'tre_em'])->after('kich_thuoc');
         });
     }
 
