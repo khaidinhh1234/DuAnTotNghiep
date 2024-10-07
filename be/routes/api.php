@@ -252,17 +252,18 @@ Route::middleware([])
             Route::post('/doanh-thu-thang', [ThongKeDoanhThuController::class, 'doanhThuTheoThang'])->name('doanh-thu-thang.thong-ke');
             Route::post('/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy'])->name('doanh-thu-quy.thong-ke');
             Route::post('/doanh-thu-nam', [ThongKeDoanhThuController::class, 'doanhThuTheoNam'])->name('doanh-thu-nam.thong-ke.thong-ke');
+
+            //Thống kê danh mục
+            Route::post('/doanh-thu-danh-muc', [ThongKeDoanhThuController::class, 'doanhThuTheoDanhMuc'])->name('doanh-thu-danh-muc.thong-ke');
+            Route::get('/danh-muc', [ThongKeDoanhThuController::class, 'layTatCaDanhMuc']);
+            Route::post('/doanh-thu-theo-danh-muc', action: [ThongKeDoanhThuController::class, 'thongKeDoanhThuTheoDanhMuc']);
+            Route::get('/doanh-thu-so-sanh', [ThongKeDoanhThuController::class, 'soSanhDoanhThuThang'])->name("doanh-thu-so-sanh.thong-ke");
+            // Route thống kê sản phẩm
             Route::get('/doanh-thu-san-pham', [ThongKeDoanhThuController::class, 'doanhThuTheoSanPham'])->name('doanh-thu-san-pham.thong-ke');
             Route::post('/doanh-thu-tung-san-pham', [ThongKeDoanhThuController::class, 'doanhThuTheoTungSanPham'])->name('doanh-thu-tung-san-pham.thong-ke');
-            Route::get('/doanh-thu-danh-muc', [ThongKeDoanhThuController::class, 'doanhThuTheoDanhMuc'])->name('doanh-thu-danh-muc.thong-ke');
-            Route::get('/doanh-thu-so-sanh', [ThongKeDoanhThuController::class, 'soSanhDoanhThuThang'])->name("doanh-thu-so-sanh.thong-ke");
-            // Route thống kê theo tháng
             Route::get('/san-pham-ban-theo-thang', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoThang'])->name('san-pham-ban-theo-thang.thong-ke');
-            // Route thống kê theo năm
             Route::get('/san-pham-ban-theo-nam', [ThongKeDoanhThuController::class, 'sanPhamBanChayTheoNam'])->name('san-pham-ban-theo-nam.thong-ke');
-            // Thống kê số lượng tồn kho của từng sản phẩm
             Route::get('/so-luong-ton-kho-cua-san-pham', [ThongKeDoanhThuController::class, 'soLuongTonKhoCuaSanPham'])->name('so-luong-ton-kho-cua-san-pham.thong-ke');
-            // Thống kê số lượng sản phẩm sắp hết hàng
             Route::get('/so-luong-san-pham-sap-het-hang', [ThongKeDoanhThuController::class, 'soLuongSanPhamSapHetHang'])->name('so-luong-san-pham-sap-het-hang.thong-ke');
             //Route Thống kê hạng thành viên
             Route::get('/khach-hang-theo-hang-thanh-vien', [ThongKeKhachHangController::class, 'thongKeKhachHangTheoHangThanhVien'])->name('khach-hang-theo-hang-thanh-vien.thong-ke');
@@ -274,10 +275,10 @@ Route::middleware([])
             Route::get('/hoan-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHoanHang'])->name('hoan-hang-theo-thang.thong-ke');
             Route::get('/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHangTheoThang'])->name('huy-hang-theo-thang.thong-ke');
             Route::get('/so-sanh-don-hang-thang', [ThongKeDonHangController::class, 'soSanhDonHangThang'])->name('soSanhDonHangThang');
-            Route::get('/top5-khach-hang-gan-day',  [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
+            Route::get('/top5-khach-hang-gan-day', [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
             Route::get('/so-sanh-khach-hang-register', [ThongKeKhachHangController::class, 'soSanhKhachHangRegister'])->name('soSanhKhachHangRegister');
-            Route::get('/so-sanh-khach-hang-block', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock'])->name('soSanhKhachHangBlock');
-
+            Route::get('/so-sanh-khach-hang-activity', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock'])->name('soSanhKhachHangActivity');
+            Route::post('/tim-kiem-thanh-vien-theo-hang', [ThongKeKhachHangController::class, 'timKiemThanhVienTheoHang']);
             // Thống kê đánh giá
             Route::get('/{sanpham}/thong-ke-danh-gia', [ThongKeDanhGiaController::class, 'danhSachDanhGiaTheoSanPham'])->name('thong-ke-danh-gia.thong-ke');
         });

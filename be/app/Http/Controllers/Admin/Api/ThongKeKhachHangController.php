@@ -229,4 +229,33 @@ class ThongKeKhachHangController extends Controller
             return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
         }
     }
+    public function timKiemThanhVienTheoHang(Request $request)
+{
+    $validatedData = $request->validate([
+        'ten_hang_thanh_vien' => 'required|string|max:255',
+    ]);
+
+    try {
+
+        $hangThanhVien = HangThanhVien::where('ten_hang_thanh_vien', $validatedData['ten_hang_thanh_vien'])->first();
+
+        if (!$hangThanhVien) {
+            return response()->json(['error' => 'Không tìm thấy hạng thành viên'], 404);
+        }
+
+        // Lấy danh sách thành viên có hạng thành viên đó
+        $thanhVienTheoHang = User::where('hang_thanh_vien_id', $hangThanhVien->id)
+            ->select('ho', 'ten', 'email', 'so_dien_thoai', 'dia_chi', 'ngay_sinh', 'gioi_tinh', 'anh_nguoi_dung')
+            ->get();
+
+        if ($thanhVienTheoHang->isEmpty()) {
+            return response()->json(['message' => 'Không có thành viên nào thuộc hạng này'], 404);
+        }
+
+        return response()->json(['thanh_vien_theo_hang' => $thanhVienTheoHang], 200);
+    } catch (Exception $e) {
+        return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
+    }
+}
+
 }
