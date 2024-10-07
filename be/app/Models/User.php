@@ -10,71 +10,73 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, AuditTrait;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
 
-    const TYPE_NAM = 1;
-    const TYPE_NU = 2;
-    const TYPE_KHAC = 3;
-    protected $fillable = [
-        'ho',
-        'ten',
-        'anh_nguoi_dung',
-        'email',
-        'password',
-        'so_dien_thoai',
-        'dia_chi',
-        'ngay_sinh',
-        'gioi_tinh',
-        'hang_thanh_vien_id'
-    ];
+        /**
+         * The attributes that are mass assignable.
+         *
+         * @var array<int, string>
+         */
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+        const TYPE_NAM = 1;
+        const TYPE_NU = 2;
+        const TYPE_KHAC = 3;
+        protected $fillable = [
+            'ho',
+            'ten',
+            'anh_nguoi_dung',
+            'email',
+            'password',
+            'so_dien_thoai',
+            'dia_chi',
+            'ngay_sinh',
+            'gioi_tinh',
+            'hang_thanh_vien_id'
+        ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+        /**
+         * The attributes that should be hidden for serialization.
+         *
+         * @var array<int, string>
+         */
+        protected $hidden = [
+            'password',
+            'remember_token',
+        ];
 
-    public function vaiTros()
-    {
-        return $this->belongsToMany(VaiTro::class, 'vai_tro_tai_khoan', 'user_id', 'vai_tro_id');
-    }
+        /**
+         * The attributes that should be cast.
+         *
+         * @var array<string, string>
+         */
+        protected $casts = [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
 
-    public function lichSuTimKiem()
-    {
-        return $this->hasMany(LichSuTimKiem::class);
-    }
+        public function vaiTros()
+        {
+            return $this->belongsToMany(VaiTro::class, 'vai_tro_tai_khoan', 'user_id', 'vai_tro_id');
+        }
 
-    public function tinTuc()
-    {
-        return $this->hasMany(TinTuc::class, 'user_id', 'id');
-    }
+        public function lichSuTimKiem()
+        {
+            return $this->hasMany(LichSuTimKiem::class);
+        }
 
-    public function hangThanhVien()
-    {
-        return $this->belongsTo(HangThanhVien::class);
-    }
+        public function tinTuc()
+        {
+            return $this->hasMany(TinTuc::class, 'user_id', 'id');
+        }
+
+        public function hangThanhVien()
+        {
+            return $this->belongsTo(HangThanhVien::class);
+        }
 
     public function danhGias()
     {

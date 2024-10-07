@@ -100,6 +100,7 @@ import ShowNhanvien from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import DoanhThu from "@/pages/(dashboard)/dashboard/doanhthu/page";
 import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
+import PageSupport from "@/pages/(dashboard)/support/page";
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
@@ -146,6 +147,7 @@ const Router = () => {
             // <PrivateRoute>
               <LayoutAdmin />
             // </PrivateRoute>
+
           }
         >
           <Route path="dashboard/list" element={<Dashboard />} />
@@ -238,6 +240,8 @@ const Router = () => {
           <Route path="users/rank/edit/:id" element={<MemberRank />} />
           {/* Đánh giá */}
           <Route path="evaluates" element={<EvaluateAdmin />} />
+          {/* liên hệ */}
+          <Route path="support" element={<PageSupport />}/>
           {/* Tin tức */}
           <Route path="news" element={<PageNew />} />
           <Route path="news/add" element={<NewAdd />} />

@@ -576,30 +576,165 @@ class ThongKeDoanhThuController extends Controller
     }
     public function doanhThuTheoDanhMuc(Request $request)
     {
-
         try {
             DB::beginTransaction();
-            // Lấy doanh thu theo danh mục
-            $doanhThuDanhMucs = DanhMuc::join('san_phams', 'danh_mucs.id', '=', 'san_phams.danh_muc_id')
+
+            // Lấy tên danh mục từ request
+            $tenDanhMuc = $request->input('ten_danh_muc');
+            $now = Carbon::now(); // Lấy thời gian hiện tại
+
+            // Truy vấn để lấy doanh thu tổng theo danh mục (bất kể thời gian)
+            $doanhThuTong = DanhMuc::join('san_phams', 'danh_mucs.id', '=', 'san_phams.danh_muc_id')
+            ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+            ->join('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
+            ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+            ->where('danh_mucs.ten_danh_muc', $tenDanhMuc)
+            ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
+            ->groupBy('don_hangs.id') // Group by để không bị tính trùng đơn hàng
+            ->select(DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu'))
+            ->first();
+            // Doanh thu theo năm hiện tại
+            $doanhThuNamHienTai = DanhMuc::join('san_phams', 'danh_mucs.id', '=', 'san_phams.danh_muc_id')
                 ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
                 ->join('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
                 ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
-                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC) // Chỉ lấy đơn hàng đã giao thành công
+                ->where('danh_mucs.ten_danh_muc', $tenDanhMuc)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC) // Đơn hàng đã giao thành công
+                ->whereYear('don_hangs.created_at', $now->year) // Doanh thu theo năm hiện tại
+                ->select(DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu'))
+                ->first();
+
+            // Doanh thu theo tháng hiện tại
+            $doanhThuThangHienTai = DanhMuc::join('san_phams', 'danh_mucs.id', '=', 'san_phams.danh_muc_id')
+                ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+                ->join('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
+                ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+                ->where('danh_mucs.ten_danh_muc', $tenDanhMuc)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC) // Đơn hàng đã giao thành công
+                ->whereMonth('don_hangs.created_at', $now->month) // Doanh thu theo tháng hiện tại
+                ->whereYear('don_hangs.created_at', $now->year) // Doanh thu theo năm hiện tại
+                ->select(DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu'))
+                ->first();
+
+            // Lấy thông tin các sản phẩm thuộc danh mục cùng doanh thu của từng sản phẩm
+            $sanPhamDoanhThu = SanPham::join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+                ->join('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
+                ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+                ->join('danh_mucs', 'san_phams.danh_muc_id', '=', 'danh_mucs.id')
+                ->where('danh_mucs.ten_danh_muc', $tenDanhMuc)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC) // Đơn hàng đã giao thành công
                 ->select(
-                    'danh_mucs.id as danh_muc_id',
-                    'danh_mucs.ten_danh_muc',
-                    DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu')
+                    'san_phams.ten_san_pham',
+                    DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu_san_pham')
                 )
-                ->groupBy('danh_mucs.id', 'danh_mucs.ten_danh_muc')
+                ->groupBy('san_phams.id', 'san_phams.ten_san_pham')
                 ->get();
 
             DB::commit();
-            return response()->json(['doanh_thu_danh_muc' => $doanhThuDanhMucs], 200);
+
+            return response()->json([
+                'doanh_thu_tong' => $doanhThuTong->tong_doanh_thu ?? 0,
+                'doanh_thu_nam_hien_tai' => $doanhThuNamHienTai->tong_doanh_thu ?? 0,
+                'doanh_thu_thang_hien_tai' => $doanhThuThangHienTai->tong_doanh_thu ?? 0,
+                'san_pham_doanh_thu' => $sanPhamDoanhThu,
+            ], 200);
+
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function thongKeDoanhThuTheoDanhMuc(Request $request)
+    {
+        // Lấy tham số danh_muc_con_id và danh_muc_cha_id từ request
+        $danhMucConId = $request->input('danh_muc_con_id');
+        $danhMucChaId = $request->input('danh_muc_cha_id');
+
+        // 1. Kiểm tra danh_muc_con_id có thuộc về danh_muc_cha_id hay không
+        if ($danhMucConId) {
+            // Tìm danh mục con theo ID
+            $danhMucCon = DanhMuc::where('id', $danhMucConId)
+                ->where('cha_id', $danhMucChaId)
+                ->first();
+
+            // Nếu không tìm thấy danh mục con phù hợp, trả về lỗi
+            if (!$danhMucCon) {
+                return response()->json([
+                    'error' => 'Danh mục con không thuộc danh mục cha hoặc không tồn tại.'
+                ], 400);
+            }
+        }
+
+        // 2. Lấy tất cả danh mục con thuộc danh mục cha
+        $danhMucCons = DanhMuc::where('cha_id', $danhMucChaId)->with('sanPhams.bienTheSanPham')->get();
+
+        // Mảng chứa dữ liệu danh mục con và doanh thu
+        $data = [];
+
+        foreach ($danhMucCons as $danhMucCon) {
+            // 3. Khởi tạo tổng doanh thu cho danh mục con
+            $tongDoanhThuDanhMucCon = 0;
+
+            // Mảng chứa dữ liệu từng sản phẩm trong danh mục con
+            $sanPhamData = [];
+
+            // 4. Lấy tất cả sản phẩm và biến thể của danh mục con
+            foreach ($danhMucCon->sanPhams as $sanPham) {
+                $tongDoanhThuSanPham = 0;
+
+                foreach ($sanPham->bienTheSanPham as $bienTheSanPham) {
+                    // 5. Lấy chi tiết đơn hàng của từng biến thể sản phẩm
+                    $doanhThuBienThe = DonHangChiTiet::where('bien_the_san_pham_id', $bienTheSanPham->id)
+                        ->whereHas('donHang', function($query) {
+                            // Lọc những đơn hàng đã giao hàng thành công
+                            $query->where('trang_thai_don_hang', DonHang::TTDH_DGTC);
+                        })
+                        ->sum('thanh_tien'); // Tổng doanh thu của biến thể sản phẩm
+
+                    // Cộng doanh thu của biến thể vào doanh thu tổng của sản phẩm
+                    $tongDoanhThuSanPham += $doanhThuBienThe;
+                }
+
+                // Cộng doanh thu của sản phẩm vào doanh thu tổng của danh mục con
+                $tongDoanhThuDanhMucCon += $tongDoanhThuSanPham;
+
+                // Chỉ thêm thông tin sản phẩm nếu có danh_muc_con_id
+                if ($danhMucConId) {
+                    // Lưu thông tin từng sản phẩm
+                    $sanPhamData[] = [
+                        'ten_san_pham' => $sanPham->ten_san_pham,
+                        'doanh_thu' => $tongDoanhThuSanPham,
+                    ];
+                }
+            }
+
+            // 6. Tính phần trăm doanh thu của từng sản phẩm trong tổng doanh thu của danh mục con
+            if ($danhMucConId) {
+                foreach ($sanPhamData as &$sp) {
+                    if ($tongDoanhThuDanhMucCon > 0) {
+                        $sp['phan_tram'] = round(($sp['doanh_thu'] / $tongDoanhThuDanhMucCon) * 100, 2);
+                    } else {
+                        $sp['phan_tram'] = 0;
+                    }
+                }
+            }
+
+            // 7. Lưu thông tin của danh mục con và sản phẩm thuộc danh mục đó nếu có danh_muc_con_id
+            $data[] = [
+                'ten_danh_muc_con' => $danhMucCon->ten_danh_muc,
+                'tong_doanh_thu_danh_muc_con' => $tongDoanhThuDanhMucCon,
+                // Chỉ thêm danh sách sản phẩm nếu có danh_muc_con_id
+                'san_phams' => $danhMucConId ? $sanPhamData : []
+            ];
+        }
+
+        // Trả về kết quả
+        return response()->json($data);
+    }
+
+
+
 
 
     public function soSanhDoanhThuThang(Request $request)
