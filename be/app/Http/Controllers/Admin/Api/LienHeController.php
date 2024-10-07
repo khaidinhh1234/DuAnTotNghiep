@@ -35,6 +35,10 @@ class LienHeController extends Controller
     public function phanHoi(Request $request, $id)
     {
         try {
+            $request->validate([
+                'noi_dung_phan_hoi' => 'required|string'
+            ]);
+
             $lien_he = LienHe::find($id);
 
             if (!$lien_he) {
