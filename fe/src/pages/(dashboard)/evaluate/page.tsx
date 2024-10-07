@@ -29,6 +29,7 @@ const EvaluateAdmin = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [expandedKeys, setExpandedKeys] = useState<number[]>([])
   // Query to fetch evaluations
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
     queryFn: async () => {
@@ -36,6 +37,7 @@ const EvaluateAdmin = () => {
       return response.data;
     },
   });
+  console.log(data)
   const toggleExpand = (id: number) => {
     setExpandedKeys((prevKeys) =>
       prevKeys.includes(id)
@@ -196,7 +198,7 @@ const EvaluateAdmin = () => {
     setIsModalOpen(true); // Sử dụng modal để hiển thị chi tiết
   };
   const dataSource =
-    data?.data.map((evaluate: IEvaluate) => ({
+    data?.data?.map((evaluate: IEvaluate) => ({
       key: evaluate.id,
       ...evaluate,
       user_id: evaluate?.user?.ten + " " + evaluate?.user?.ho || "Chưa có dữ liệu",
