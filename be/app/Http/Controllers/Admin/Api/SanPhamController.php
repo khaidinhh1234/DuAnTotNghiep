@@ -422,7 +422,7 @@ class SanPhamController extends Controller
                     'status_code' => $status_code,
                     'mess' => $mess,
                 ], $status_code);
-            }else{
+            } else {
                 return response()->json([
                     'status' => false,
                     'status_code' => 401,
@@ -497,6 +497,4 @@ class SanPhamController extends Controller
 
         return response()->json(['message' => 'Khôi phục thành công cho các sản phẩm'], 200);
     }
-
-
 }

@@ -22,11 +22,11 @@ class AuthController extends Controller
         $hangThanhVien = HangThanhVien::query()->where('chi_tieu_toi_thieu', 0)->first();
         if ($hangThanhVien == []) {
             $hangThanhVien = HangThanhVien::create([
-                'ten_hang_thanh_vien' => 'Đồng',
+                'ten_hang_thanh_vien' => 'Thành viên mới',
                 'anh_hang_thanh_vien' => '',
                 'chi_tieu_toi_thieu' => 0,
                 'chi_tieu_toi_da' => 500000,
-                'mo_ta' => 'Rank đồng'
+                'mo_ta' => 'Thành viên mới'
             ]);
         }
         // Tạo người dùng mới
@@ -75,6 +75,7 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user,
+                'vai_tro' => $user->vaiTros
             ], 200);
         }
 
