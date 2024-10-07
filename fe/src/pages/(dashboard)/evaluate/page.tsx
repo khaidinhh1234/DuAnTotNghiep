@@ -36,6 +36,7 @@ const EvaluateAdmin = () => {
       return response.data;
     },
   });
+  console.log(data)
   const toggleExpand = (id: number) => {
     setExpandedKeys((prevKeys) =>
       prevKeys.includes(id)
@@ -194,7 +195,7 @@ const EvaluateAdmin = () => {
     setIsModalOpen(true); // Sử dụng modal để hiển thị chi tiết
   };
   const dataSource =
-    data?.data.map((evaluate: IEvaluate) => ({
+    data?.danh_gias?.map((evaluate: IEvaluate) => ({
       key: evaluate.id,
       ...evaluate,
       user_id:
@@ -216,7 +217,7 @@ const EvaluateAdmin = () => {
             : record.mo_ta;
 
         return (
-          <div>
+          <div style={{textAlign: "left", paddingBottom: "60px"  }}>
             <p>
               <strong>
                 {record.user?.ho + " " + record.user?.ten || "Người dùng ẩn"}

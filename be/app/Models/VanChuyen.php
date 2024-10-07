@@ -34,6 +34,11 @@ class VanChuyen extends Model
         return $this->belongsTo(DonHang::class, 'don_hang_id', 'id');
     }
 
+    public function shipper()
+    {
+        return $this->belongsTo(User::class, 'shipper_id', 'id');
+    }
+
     protected static function boot()
     {
         parent::boot();

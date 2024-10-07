@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BienTheKichThuoc extends Model
 {
-    use HasFactory , SoftDeletes, AuditTrait;
+    use HasFactory, SoftDeletes, AuditTrait;
     protected $fillable = [
         'kich_thuoc',
         'loai_kich_thuoc'
     ];
     public function bienTheSanPhams()
     {
-        return $this->hasMany(BienTheSanPham::class);
+        return $this->hasMany(BienTheSanPham::class, 'bien_the_kich_thuoc_id', 'id');
     }
 }

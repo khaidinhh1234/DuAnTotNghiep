@@ -22,10 +22,10 @@ class DonHangChiTiet extends Model
     // Relationship with DonHang
     public function donHang()
     {
-        return $this->belongsTo(DonHang::class);
+        return $this->belongsTo(DonHang::class, 'don_hang_id', 'id');
     }
     public function bienTheSanPham()
     {
-        return $this->belongsTo(BienTheSanPham::class, 'bien_the_san_pham_id');
+        return $this->belongsTo(BienTheSanPham::class, 'bien_the_san_pham_id', 'id');
     }
 }
