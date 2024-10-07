@@ -30,7 +30,7 @@ use App\Http\Controllers\Client\Api\DanhGiaController;
 use App\Http\Controllers\Client\Api\GioHangController;
 use App\Http\Controllers\Client\Api\DonHangClientController;
 use App\Http\Controllers\Client\Api\KhuyenMaiController;
-use App\Http\Controllers\Client\Api\LienHeController;
+use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
 use Illuminate\Http\Request;
@@ -113,7 +113,7 @@ Route::middleware([])
         Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
 
         // Liên hệ
-        Route::post('lienhe', [LienHeController::class, 'lienHe']);
+        Route::post('lienhe', [TrangLienHeController::class, 'lienHe']);
 
         // Giỏ hàng
         Route::get('/gio-hang', [GioHangController::class, 'index']);
@@ -236,8 +236,9 @@ Route::middleware([])
         Route::post('hangthanhvien/thung-rac/{id}', [HangThanhVienController::class, 'khoiPhucHangThanhVien'])->name('hangthanhvien.khoiphuc');
         Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
 
-        // 
+        // Liên hệ
         Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe']);
+        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi']);
 
         //Vai trò
         Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
