@@ -26,7 +26,7 @@ trait AuditTrait
             }
         });
 
-        static::updating(function ($model) {
+        static::updated(function ($model) {
             $user = Auth::guard('api')->user();
             if ($user) {
                 LichSuHoatDong::create([
