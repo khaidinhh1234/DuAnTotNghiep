@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Events\PhanHoiLienHe;
 use App\Events\SendMail;
 use App\Listeners\SendMailContact;
 use App\Listeners\SendMailForgotPassword;
+use App\Listeners\SendMailPhanHoiLienHe;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -24,7 +26,10 @@ class EventServiceProvider extends ServiceProvider
         SendMail::class => [
             SendMailForgotPassword::class,
             SendMailContact::class
-        ]
+        ],
+        PhanHoiLienHe::class => [
+            SendMailPhanHoiLienHe::class,
+        ],
     ];
 
     /**
