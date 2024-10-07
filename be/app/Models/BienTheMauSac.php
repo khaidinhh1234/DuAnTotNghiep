@@ -16,6 +16,6 @@ class BienTheMauSac extends Model
     ];
     public function bienTheSanPhams()
     {
-        return $this->hasMany(BienTheSanPham::class);
+        return $this->hasMany(BienTheSanPham::class, 'bien_the_mau_sac_id', 'id');
     }
 }

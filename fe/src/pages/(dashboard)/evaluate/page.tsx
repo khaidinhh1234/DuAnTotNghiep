@@ -27,7 +27,7 @@ const EvaluateAdmin = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [expandedKeys, setExpandedKeys] = useState<number[]>([])
+  const [expandedKeys, setExpandedKeys] = useState<number[]>([]);
   // Query to fetch evaluations
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
@@ -79,9 +79,7 @@ const EvaluateAdmin = () => {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentEvaluate, setCurrentEvaluate] = useState<IEvaluate | null>(
-    null
-  );
+  const [currentEvaluate, setCurrentEvaluate] = useState<any | null>(null);
   const [phan_hoi, setphan_hoi] = useState<{ [key: number]: string }>({});
 
   const showModal = (record: IEvaluate) => {
@@ -200,10 +198,10 @@ const EvaluateAdmin = () => {
     data?.danh_gias?.map((evaluate: IEvaluate) => ({
       key: evaluate.id,
       ...evaluate,
-      user_id: evaluate?.user?.ten + " " + evaluate?.user?.ho || "Chưa có dữ liệu",
+      user_id:
+        evaluate?.user?.ten + " " + evaluate?.user?.ho || "Chưa có dữ liệu",
       san_pham_id: evaluate.san_pham?.ten_san_pham || "Chưa có dữ liệu",
       // anh_danh_gias: evaluate.anh_danh_gias? || "Chưa có dữ liệu",
-
     })) || [];
 
   const columns: TableColumnsType<IEvaluate> = [
@@ -214,12 +212,17 @@ const EvaluateAdmin = () => {
       sorter: (a: any, b: any) => a.mo_ta?.localeCompare(b.mo_ta) || 0,
       render: (record: IEvaluate) => {
         const content =
-          record.mo_ta.length > 100 ? `${record.mo_ta.substring(0, 100)}...` : record.mo_ta;
-    
+          record.mo_ta.length > 100
+            ? `${record.mo_ta.substring(0, 100)}...`
+            : record.mo_ta;
+
         return (
           <div style={{textAlign: "left", paddingBottom: "60px"  }}>
             <p>
-              <strong>{record.user?.ho + " " + record.user?.ten || "Người dùng ẩn"}</strong>: {content}
+              <strong>
+                {record.user?.ho + " " + record.user?.ten || "Người dùng ẩn"}
+              </strong>
+              : {content}
             </p>
             {record.phan_hoi && (
               <p className="bg-gray-100 p-2 rounded">
@@ -245,7 +248,12 @@ const EvaluateAdmin = () => {
               <img
                 src={record.san_pham.anh_san_pham}
                 alt={record.san_pham.ten_san_pham}
-                style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                }}
               />
             ) : (
               "Ảnh phản hồi ẩn"
@@ -254,7 +262,7 @@ const EvaluateAdmin = () => {
           </div>
         </div>
       ),
-      align: 'left',
+      align: "left",
     },
     {
       title: "Chất lượng",
@@ -276,7 +284,7 @@ const EvaluateAdmin = () => {
           </div>
         </div>
       ),
-      align: 'left',
+      align: "left",
     },
     {
       title: "Hành động",
@@ -284,7 +292,11 @@ const EvaluateAdmin = () => {
       key: "hanh_dong",
       render: (_, record: IEvaluate) => (
         <Space style={{ paddingBottom: "80px" }}>
-          <Button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white hover:bg-blue-600 shadow-md" onClick={() => showDetail(record)} type="link">
+          <Button
+            className="bg-gradient-to-r from-blue-500 to-blue-400 text-white hover:bg-blue-600 shadow-md"
+            onClick={() => showDetail(record)}
+            type="link"
+          >
             Xem chi tiết
           </Button>
           <Popconfirm
@@ -295,13 +307,11 @@ const EvaluateAdmin = () => {
               Ẩn
             </Button>
           </Popconfirm>
-          
         </Space>
       ),
-      align: 'left',
+      align: "left",
     },
   ];
-
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -334,16 +344,27 @@ const EvaluateAdmin = () => {
                   <img
                     src={currentEvaluate.san_pham.anh_san_pham}
                     alt={currentEvaluate.san_pham.ten_san_pham}
-                    style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
+                    style={{
+                      width: "50px",
+                      height: "50px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
                   />
                 ) : (
                   "Ảnh phản hồi ẩn"
                 )}
-                <span>{currentEvaluate.san_pham?.ten_san_pham || "Sản phẩm ẩn"}</span>
+                <span>
+                  {currentEvaluate.san_pham?.ten_san_pham || "Sản phẩm ẩn"}
+                </span>
               </div>
             </div>
             <p>
-              <strong> {currentEvaluate.user?.ho + " " + currentEvaluate.user?.ten}:</strong> {currentEvaluate.mo_ta}
+              <strong>
+                {" "}
+                {currentEvaluate.user?.ho + " " + currentEvaluate.user?.ten}:
+              </strong>{" "}
+              {currentEvaluate.mo_ta}
             </p>
             <div>
               <div className="flex justify-between">
@@ -356,18 +377,26 @@ const EvaluateAdmin = () => {
               </div>
               <div className="flex justify-between">
                 <strong>Vận chuyển: </strong>
-                <Rate disabled value={currentEvaluate.so_sao_dich_vu_van_chuyen} />
+                <Rate
+                  disabled
+                  value={currentEvaluate.so_sao_dich_vu_van_chuyen}
+                />
               </div>
             </div>
             <strong>Ảnh đánh giá:</strong>
             <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
               {currentEvaluate.anh_danh_gias?.length > 0 ? (
-                currentEvaluate.anh_danh_gias.map((img: any) => (
+                currentEvaluate?.anh_danh_gias?.map((img: any) => (
                   <Image
                     key={img.id}
                     src={img.anh_danh_gia}
                     alt="Ảnh đánh giá"
-                    style={{ width: "70px", height: "70px", objectFit: "cover", borderRadius: "5px" }}
+                    style={{
+                      width: "70px",
+                      height: "70px",
+                      objectFit: "cover",
+                      borderRadius: "5px",
+                    }}
                   />
                 ))
               ) : (

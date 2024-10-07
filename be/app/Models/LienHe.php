@@ -17,16 +17,14 @@ class LienHe extends Model
         'email',
         'noi_dung_lien_he',
         'loai_lien_he',
-        // 'nguoi_phu_trach_id'
     ];
 
     public function taiKhoanLienHe()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
-    // public function nguoiPhuTrach()
-    // {
-    //     return $this->belongsTo(User::class, 'nguoi_phu_trach_id');
-    // }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

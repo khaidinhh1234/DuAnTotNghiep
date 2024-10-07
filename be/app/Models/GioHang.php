@@ -10,7 +10,6 @@ class GioHang extends Model
 {
     use HasFactory, SoftDeletes;
 
-
     protected $fillable = [
         'user_id',
         'bien_the_san_pham_id',

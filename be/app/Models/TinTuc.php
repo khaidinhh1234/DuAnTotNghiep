@@ -21,10 +21,10 @@ class TinTuc extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
     public function danhMucTinTuc()
     {
-        return $this->belongsTo(DanhMucTinTuc::class, 'danh_muc_tin_tuc_id');
+        return $this->belongsTo(DanhMucTinTuc::class, 'danh_muc_tin_tuc_id', 'id');
     }
 }
