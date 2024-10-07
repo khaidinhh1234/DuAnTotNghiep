@@ -29,7 +29,6 @@ const EvaluateAdmin = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [expandedKeys, setExpandedKeys] = useState<number[]>([])
   // Query to fetch evaluations
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
     queryFn: async () => {
@@ -198,7 +197,7 @@ const EvaluateAdmin = () => {
     setIsModalOpen(true); // Sử dụng modal để hiển thị chi tiết
   };
   const dataSource =
-    data?.data?.map((evaluate: IEvaluate) => ({
+    data?.danh_gias?.map((evaluate: IEvaluate) => ({
       key: evaluate.id,
       ...evaluate,
       user_id: evaluate?.user?.ten + " " + evaluate?.user?.ho || "Chưa có dữ liệu",
@@ -218,7 +217,7 @@ const EvaluateAdmin = () => {
           record.mo_ta.length > 100 ? `${record.mo_ta.substring(0, 100)}...` : record.mo_ta;
     
         return (
-          <div>
+          <div style={{textAlign: "left", paddingBottom: "60px"  }}>
             <p>
               <strong>{record.user?.ho + " " + record.user?.ten || "Người dùng ẩn"}</strong>: {content}
             </p>

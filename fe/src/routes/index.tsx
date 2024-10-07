@@ -146,11 +146,7 @@ const Router = () => {
           element={
             // <PrivateRoute>
               <LayoutAdmin />
-<<<<<<< HEAD
-            /* </PrivateRoute> */
-=======
             // </PrivateRoute> 
->>>>>>> 0525cb00bb93353d82ec4f0ccec4420ba9859899
           }
         >
           <Route path="dashboard/list" element={<Dashboard />} />
