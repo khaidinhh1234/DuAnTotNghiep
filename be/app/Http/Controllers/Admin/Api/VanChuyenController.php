@@ -64,6 +64,7 @@ class VanChuyenController extends Controller
             $validate = $request->validate([
                 'id' => 'required|array',
                 'trang_thai_van_chuyen' => 'required',
+                'anh_xac_thuc' => 'nullable|image',
             ]);
 
             DB::beginTransaction();
@@ -87,7 +88,9 @@ class VanChuyenController extends Controller
                 }
 
                 if ($vanChuyen->trang_thai_van_chuyen == VanChuyen::TTVC_DGH) {
-                    if (($vanChuyen->khach_hang_xac_nhan == 0 || $vanChuyen->shipper_xac_nhan == 0) && $request->trang_thai_van_chuyen == VanChuyen::TTVC_GHTC
+                    if (
+                        ($vanChuyen->khach_hang_xac_nhan == 0 || $vanChuyen->shipper_xac_nhan == 0)
+                        && $validate['trang_thai_van_chuyen'] == VanChuyen::TTVC_GHTC
                     ) {
                         DB::rollBack();
                         return response()->json([
@@ -104,14 +107,23 @@ class VanChuyenController extends Controller
 
                 $trangThaiDonHangMap = [
                     VanChuyen::TTVC_DGH => DonHang::TTDH_DGH,
-                    VanChuyen::TTVC_GHTC => DonHang::TTDH_DGTC,
                     VanChuyen::TTVC_GHTB => DonHang::TTDH_GHTB,
+                    VanChuyen::TTVC_GHTC => DonHang::TTDH_DGTC,
                 ];
 
                 if (array_key_exists($validate['trang_thai_van_chuyen'], $trangThaiDonHangMap)) {
-                    $vanChuyen->donHang()->update([
+                    $updateData = [
                         'trang_thai_don_hang' => $trangThaiDonHangMap[$validate['trang_thai_van_chuyen']]
-                    ]);
+                    ];
+
+                    if ($validate['trang_thai_van_chuyen'] == VanChuyen::TTVC_GHTC && ($vanChuyen->khach_hang_xac_nhan != 0 || $vanChuyen->shipper_xac_nhan != 0)) {
+                        $updateData['trang_thai_thanh_toan'] = DonHang::TTTT_DTT;
+                        $updateData['ngay_giao_hang_thanh_cong'] = now();
+                        $vanChuyen->update([
+                            'cod' =>  VanChuyen::TTCOD_DN,
+                        ]);
+                    }
+                    $vanChuyen->donHang()->update($updateData);
                 }
             }
             DB::commit();
