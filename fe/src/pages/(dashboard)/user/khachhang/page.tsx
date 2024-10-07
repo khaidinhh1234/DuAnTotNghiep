@@ -12,7 +12,7 @@ import {
   Tag,
 } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { Alert, Flex, Spin } from "antd";
@@ -181,35 +181,65 @@ const UsersAdminkhachhang: React.FC = () => {
       title: "STT",
       render: (record) => <span>{record.index + 1}</span>,
       key: "key",
-      className: "pl-5",
+      className: "1%",
     },
     {
-      title: "Sản phẩm",
+      title: "Thông tin",
+      key: "thong_tin",
+      width: "20%",
       render: (record) => (
-        <div className="flex gap-5">
-          <div>
-            <Image
-              src={
-                record.anh_nguoi_dung
-                  ? record.anh_nguoi_dung
-                  : "https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
-              }
-              alt=""
-              className="w-20 h-20 object-cover rounded-lg p-2 border"
-            />
+        <Link to={`show/${record.key}`} style={{ textDecoration: "none", color: "inherit" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              border: "1px solid white",
+              padding: "10px",
+              borderRadius: "8px",
+              backgroundColor: "#f0faff",
+              transition: "background-color 0.3s ease", 
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = "#AABBCC"; 
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "#f0faff"; 
+            }}
+          >
+            {record.anh_nguoi_dung ? (
+              <img
+                src={record.anh_nguoi_dung}
+                alt="Avatar"
+                style={{ width: "60px", height: "60px", borderRadius: "50%", marginRight: "10px" }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "70%",
+                  backgroundColor: "#ccc",
+                  marginRight: "10px",
+                }}
+              />
+            )}
+            <div>
+              <div style={{ fontWeight: "bold" }}>
+                {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+              </div>
+              <div
+                style={{
+                  marginTop: "5px",
+                  fontSize: "14px",
+                  color: "#333",
+                }}
+              >
+                {record.email ? record.email : "Chưa có dữ liệu"}
+              </div>
+            </div>
           </div>
-          <div className="pt-4 text-start">
-            <p>
-              {record.ho} {record.ten}
-            </p>
-            <p>{record.email}</p>
-          </div>
-        </div>
+        </Link>
       ),
-
-      className: "mx-auto",
-      width: "30%",
-      key: "anh_nguoi_dung",
     },
     // {
     //   title: "Tên",
@@ -257,15 +287,15 @@ const UsersAdminkhachhang: React.FC = () => {
         (a.dia_chi?.length || 0) - (b.dia_chi?.length || 0),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-    // {
-    //   title: "Giới tính",
-    //   dataIndex: "gioi_tinh",
-    //   key: "gioi_tinh",
-    //   width: "10%",
-    //   // ...getColumnSearchProps("gioi_tinh"),
-    //   sorter: (a: any, b: any) => (a.gioi_tinh || 0) - (b.gioi_tinh || 0),
-    //   render: (text) => (text == 1 ? "Nam" : text == 2 ? "Nữ" : "Khác"),
-    // },
+    {
+      title: "Giới tính",
+      dataIndex: "gioi_tinh",
+      key: "gioi_tinh",
+      width: "10%",
+      // ...getColumnSearchProps("gioi_tinh"),
+      sorter: (a: any, b: any) => (a.gioi_tinh || 0) - (b.gioi_tinh || 0),
+      render: (text) => (text == 1 ? "Nam" : text == 2 ? "Nữ" : "Khác"),
+    },
     // {
     //   title: "Ngày sinh",
     //   dataIndex: "ngay_sinh",
@@ -299,11 +329,11 @@ const UsersAdminkhachhang: React.FC = () => {
               Chỉnh sửa
             </Button>
           </Link>
-          <Link to={`show/${record.key}`}>
+          {/* <Link to={`show/${record.key}`}>
             <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               xem
             </Button>
-          </Link>
+          </Link> */}
         </Space>
       ),
     },
@@ -322,6 +352,31 @@ const UsersAdminkhachhang: React.FC = () => {
   // };
 
   // const products = [...data].reverse();
+  const [filteredData, setFilteredData] = useState<DataType[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      setFilteredData(user);
+    }
+  }, [data?.data]);
+
+  const handleKeyDown = (_e: React.KeyboardEvent<HTMLInputElement>) => {
+    const value = searchText;
+    setSearchText(value);
+    if (value) {
+      const filtered = user?.filter(
+        (item: any) =>
+          item.ten?.toLowerCase().includes(value.toLowerCase()) ||
+        item.email?.toLowerCase().includes(value.toLowerCase()) ||
+        item.ho?.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredData(filtered || []);
+    } else {
+      if (user) {
+        setFilteredData(user);
+      }
+    }
+  };
   isError && (
     <div>
       {" "}
@@ -356,10 +411,21 @@ const UsersAdminkhachhang: React.FC = () => {
           </Link>
         </div>
       </div>
+      <div className="max-w-sm my-2">
+
+      <Input
+            placeholder="Tìm kiếm..."
+            size="large"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
+          />
+        </div>
       <div className=" ">
         <Table
           columns={columns}
-          dataSource={user}
+          dataSource={filteredData}
           loading={isLoading}
           pagination={{ pageSize: 10, className: "my-5" }}
         />

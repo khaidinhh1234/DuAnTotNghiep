@@ -25,9 +25,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         SendMail::class => [
             SendMailForgotPassword::class,
-            SendMailContact::class
-        ],
-        PhanHoiLienHe::class => [
+            SendMailContact::class,
             SendMailPhanHoiLienHe::class,
         ],
     ];
