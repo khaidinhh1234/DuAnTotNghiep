@@ -23,4 +23,6 @@ class VaiTro extends Model
     {
         return $this->belongsToMany(Quyen::class, "quyen_vai_tro", "vai_tro_id", "quyen_id");
     }
+
+
 }
