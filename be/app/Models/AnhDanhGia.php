@@ -14,7 +14,8 @@ class AnhDanhGia extends Model
         'danh_gia_id',
         'anh_danh_gia'
     ];
-    public function danhGia(){
-        return $this->belongsTo(DanhGia::class, 'danh_gia_id');
+    public function danhGia()
+    {
+        return $this->belongsTo(DanhGia::class, 'danh_gia_id', 'id');
     }
 }

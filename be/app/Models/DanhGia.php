@@ -22,21 +22,21 @@ class DanhGia extends Model
     ];
     public function sanPham()
     {
-        return $this->belongsTo(SanPham::class, 'san_pham_id');
+        return $this->belongsTo(SanPham::class, 'san_pham_id', 'id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function anhDanhGias()
     {
-        return $this->hasMany(AnhDanhGia::class, 'danh_gia_id');
+        return $this->hasMany(AnhDanhGia::class, 'danh_gia_id', 'id');
     }
 
     public function donHang()
     {
-        return $this->belongsTo(DonHang::class, 'don_hang_id');
+        return $this->belongsTo(DonHang::class, 'don_hang_id', 'id');
     }
 }
