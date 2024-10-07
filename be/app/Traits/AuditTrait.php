@@ -12,6 +12,7 @@ trait AuditTrait
     {
         static::created(function ($model) {
             $user = Auth::guard('api');
+            Log::debug('Kiem tra nguoi thao tac: ' . $user->id());
             if ($user->check()) {
                 LichSuHoatDong::create([
                     'ten_bang' => $model->getTable(),
