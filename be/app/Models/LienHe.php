@@ -13,6 +13,7 @@ class LienHe extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'email',
         'noi_dung_lien_he',
         'sdt_lien_he',
         'loai_lien_he',
