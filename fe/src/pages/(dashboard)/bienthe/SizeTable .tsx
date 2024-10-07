@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -10,6 +10,7 @@ import {
   Popconfirm,
   message,
   Spin,
+  Select,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Highlighter from "react-highlight-words";
@@ -22,6 +23,8 @@ interface SizeDataType {
   key: string;
   id: number;
   kich_thuoc: string;
+  loai_kich_thuoc: string;
+  uniqueSizeTypes: string[];
 }
 
 type SizeDataIndex = keyof SizeDataType;
@@ -31,6 +34,7 @@ const SizeManagement: React.FC = () => {
   const [searchText, setSearchText] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [form] = Form.useForm();
+  const [sizeTypes, setSizeTypes] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
 
@@ -41,7 +45,12 @@ const SizeManagement: React.FC = () => {
       return res.data;
     },
   });
-
+  useEffect(() => {
+    if (data && data.data) {
+      const uniqueSizeTypes: string[] = Array.from(new Set(data.data.map((item: any) => item.loai_kich_thuoc)));
+      setSizeTypes(uniqueSizeTypes);
+    }
+  }, [data]);
   const sizes = data?.data.map((item: any, index: number) => ({
     ...item,
     key: item.id,
@@ -68,11 +77,12 @@ const SizeManagement: React.FC = () => {
   });
 
   const addSizeMutation = useMutation({
-    mutationFn: async (newSize: { kich_thuoc: string }) => {
+    mutationFn: async (newSize: { kich_thuoc: string; loai_kich_thuoc: string }) => {
       // Check if the size already exists
       const existingSize = sizes.find(
         (size: any) =>
-          size.kich_thuoc.toLowerCase() === newSize.kich_thuoc.toLowerCase()
+          size.kich_thuoc.toLowerCase() === newSize.kich_thuoc.toLowerCase() &&
+          size.loai_kich_thuoc === newSize.loai_kich_thuoc
       );
       if (existingSize) {
         throw new Error("Kích thước đã tồn tại");
@@ -98,7 +108,10 @@ const SizeManagement: React.FC = () => {
 
   const handleAddSize = (): void => {
     form.validateFields().then((values) => {
-      addSizeMutation.mutate({ kich_thuoc: values.tensize });
+      addSizeMutation.mutate({
+        kich_thuoc: values.tensize,
+        loai_kich_thuoc: values.loai_kich_thuoc,
+      });
     });
   };
 
@@ -203,6 +216,19 @@ const SizeManagement: React.FC = () => {
           .includes(value.toString().toLowerCase()),
     },
     {
+      title: "Loại kích thước",
+      dataIndex: "loai_kich_thuoc",
+      key: "loai_kich_thuoc",
+      width: "50%",
+      sorter: (a, b) => a.kich_thuoc.localeCompare(b.kich_thuoc),
+      ...getColumnSearchProps("loai_kich_thuoc"),
+      onFilter: (value: boolean | React.Key, record: SizeDataType) =>
+        record.kich_thuoc
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase()),
+    },
+    {
       title: "Quản trị",
       key: "action",
       render: (_, item) => (
@@ -259,14 +285,27 @@ const SizeManagement: React.FC = () => {
         >
           <Input placeholder="Tên kích thước" />
         </Form.Item>
+        <Form.Item
+          className="flex-grow mb-0"
+          name="loai_kich_thuoc"
+          rules={[{ required: true, message: "Vui lòng chọn loại kích thước" }]}
+        >
+          <Select placeholder="Chọn loại kích thước" loading={isLoading}>
+            {sizeTypes.map((type) => (
+              <Select.Option key={type} value={type}>
+                {type}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
         <Button
           type="primary"
-          className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+          className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
           onClick={handleAddSize}
         >
           Thêm size
         </Button>
-      </Form>{" "}
+      </Form>
       <br />
       <Table
         columns={columns}
