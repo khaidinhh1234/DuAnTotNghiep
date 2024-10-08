@@ -13,17 +13,14 @@ trait AuditTrait
     {
         static::created(function ($model) {
             $user = Auth::guard('api');
-            Log::debug('Kiem tra nguoi thao tac: ' . $user->id());
             if ($user->check()) {
                 LichSuHoatDong::create([
                     'ten_bang' => $model->getTable(),
                     'bang_id' => $model->id,
-                    'loai_thao_tac' => 'create',
-                    'du_lieu_moi' => $model->toJson(),
+                    'loai_thao_tac' => 'Thêm mới',
+                    'du_lieu_moi' => $model->getAttributes(),
                     'nguoi_thao_tac' => $user->id(),
                 ]);
-            } else {
-                Log::warning('Không có người dùng đăng nhập để lưu lịch sử create.');
             }
         });
 
@@ -33,14 +30,11 @@ trait AuditTrait
                 LichSuHoatDong::create([
                     'ten_bang' => $model->getTable(),
                     'bang_id' => $model->id,
-                    'loai_thao_tac' => 'update',
-                    'du_lieu_cu' => json_encode($model->getOriginal()),
-                    'du_lieu_moi' => $model->toJson(),
+                    'loai_thao_tac' => 'Cập nhật',
+                    'du_lieu_cu' => $model->getOriginal(),
+                    'du_lieu_moi' => $model->getAttributes(),
                     'nguoi_thao_tac' => $user->id(),
                 ]);
-            } else {
-
-                Log::warning('Không có người dùng đăng nhập để lưu lịch sử update.');
             }
         });
 
@@ -50,28 +44,24 @@ trait AuditTrait
                 LichSuHoatDong::create([
                     'ten_bang' => $model->getTable(),
                     'bang_id' => $model->id,
-                    'loai_thao_tac' => 'delete',
-                    'du_lieu_cu' => $model->toJson(),
+                    'loai_thao_tac' => 'Xóa',
+                    'du_lieu_cu' => $model->getAttributes(),
                     'nguoi_thao_tac' => $user->id(),
                 ]);
-            } else {
-                Log::warning('Không có người dùng đăng nhập để lưu lịch sử delete.');
             }
         });
 
         if (in_array(SoftDeletes::class, class_uses(static::class))) {
             static::restored(function ($model) {
                 $user = Auth::guard('api');
-                if ($user) {
+                if ($user->check()) {
                     LichSuHoatDong::create([
                         'ten_bang' => $model->getTable(),
                         'bang_id' => $model->id,
-                        'loai_thao_tac' => 'restore',
-                        'du_lieu_moi' => $model->toJson(),
+                        'loai_thao_tac' => 'Khôi phục',
+                        'du_lieu_moi' => $model->getAttributes(),
                         'nguoi_thao_tac' => $user->id(),
                     ]);
-                } else {
-                    Log::warning('Không có người dùng đăng nhập để lưu lịch sử restore.');
                 }
             });
         }

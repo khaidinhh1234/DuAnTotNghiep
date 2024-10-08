@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\BienTheMauSacController;
 use App\Http\Controllers\Admin\Api\ChuongTrinhUuDaiController;
 use App\Http\Controllers\Admin\Api\DanhGiaController as AdminDanhGiaController;
+use App\Http\Controllers\Admin\Api\LichSuHoatDongController;
 use App\Http\Controllers\Admin\Api\LienHeController as AdminLienHeController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
+use App\Models\LichSuHoatDong;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -287,5 +289,10 @@ Route::middleware([])
 
             // Thống kê đánh giá
             Route::get('/{sanpham}/thong-ke-danh-gia', [ThongKeDanhGiaController::class, 'danhSachDanhGiaTheoSanPham'])->name('thong-ke-danh-gia.thong-ke');
+
         });
+
+        // Lich su hoat dong
+        Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index'])->name('lich-su-hoat-dong.index');
+        Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show'])->name('lich-su-hoat-dong.show');
     });

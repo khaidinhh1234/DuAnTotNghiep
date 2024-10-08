@@ -23,5 +23,10 @@ class LichSuHoatDong extends Model
         'du_lieu_moi' => 'array',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'nguoi_thao_tac', 'id');
+    }
+
 
 }
