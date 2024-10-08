@@ -99,6 +99,7 @@ import DoanhThu from "@/pages/(dashboard)/dashboard/doanhthu/page";
 import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
 import PageSupport from "@/pages/(dashboard)/support/page";
+import Productsadd from "@/pages/(dashboard)/products/fix";
 
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
 import { Test } from "@/pages/(dashboard)/test";
@@ -167,6 +168,8 @@ const Router = () => {
           <Route path="products/addd" element={<AddProducts />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
+          {/* <Route path="products/adds" element={<Productsadd />} /> */}
+
           {/* Biến thể */}
           {/* <Route path="products/detaile" element={<Detail item={{
             id: 0

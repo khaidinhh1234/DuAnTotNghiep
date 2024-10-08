@@ -3,7 +3,7 @@ import { ReloadOutlined, UploadOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import type { FormProps } from "antd";
 import { Button, Form, Input, Select, Upload } from "antd";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Link } from "react-router-dom";
@@ -13,12 +13,44 @@ type FieldType = {
   password?: string;
   remember?: string;
 };
-
+// API calls
+const fetchData = async (endpoint: string): Promise<any> => {
+  const response = await instance.get(`/${endpoint}`);
+  return response.data;
+};
 const AddProducts: React.FC = () => {
   const [value, setValue] = useState("");
+  const [productCode, setProductCode] = useState("");
 
-  //Call API
+  const { data: tagsData, isLoading: tagsLoading } = useQuery<{ data: Tag[] }>({
+    queryKey: ["tags"],
+    queryFn: () => fetchData("the"),
+  });
+  const { data: categoriesData, isLoading: categoriesLoading } = useQuery<{
+    data: Category[];
+  }>({
+    queryKey: ["danhmuc"],
+    queryFn: () => fetchData("danhmuc"),
+  });
+  const generateRandomProductCode = useCallback(() => {
+    const prefix = "SP-";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = prefix;
+    for (let i = 0; i < 8; i++) {
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
+    }
+    return result;
+  }, []);
 
+  const generateNewProductCode = useCallback(() => {
+    const generatedCode = generateRandomProductCode();
+    console.log("New product code generated:", generatedCode);
+    setProductCode(generatedCode);
+    form.setFieldsValue({ ma_san_pham: generatedCode });
+    console.log("Form values after update:", form.getFieldsValue());
+  }, [form, generateRandomProductCode]);
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     console.log("Success:", { ...values, noi_dung: value });
   };
@@ -69,12 +101,12 @@ const AddProducts: React.FC = () => {
               rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
             >
               <Select placeholder="Vui lòng chọn danh mục" className="w-full">
-                {/* {categoriesData &&
-                  categoriesData.map((category) => (
-                    <Option key={category.id} value={category.id}>
-                      {category.ten_danh_muc}
-                    </Option>
-                  ))} */}
+                {categoriesData?.data &&
+                  categoriesData.data.map((danhmuc: any) => (
+                    <Select.Option key={danhmuc.id} value={danhmuc.id}>
+                      {danhmuc.ten_danh_muc}
+                    </Select.Option>
+                  ))}
               </Select>
             </Form.Item>
           </div>{" "}
@@ -91,28 +123,24 @@ const AddProducts: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 gap-5">
             <Form.Item label="Chọn tags" name="tags">
-              <Select
-                mode="multiple"
-                className="w-full"
-                placeholder="Chọn tags"
-              >
-                {/* {tagsData &&
-              tagsData.map((tag) => (
-                <Option key={tag.id} value={tag.id}>
+            <Select mode="multiple" className="w-full" placeholder="Chọn tags">
+            {tagsData?.data &&
+              tagsData.data.map((tag: Tag) => (
+                <Select.Option key={tag.id} value={tag.id}>
                   {tag.ten_the}
-                </Option>
-              ))} */}
-              </Select>
+                </Select.Option>
+              ))}
+          </Select>
             </Form.Item>
 
             <Form.Item
               label="Mã sản phẩm"
               name="ma_san_pham"
-              //   rules={[
-              //     { required: true, message: "Mã sản phẩm bắt buộc phải nhập!" },
-              //   ]}
+                rules={[
+                  { required: true, message: "Mã sản phẩm bắt buộc phải nhập!" },
+                ]}
             >
-              {/* <Input
+              <Input
             placeholder="Nhập mã sản phẩm"
             addonAfter={
               <Button
@@ -122,7 +150,7 @@ const AddProducts: React.FC = () => {
                 style={{ padding: 0 }}
               />
             }
-          /> */}
+          />
             </Form.Item>
           </div>
           <div className="grid grid-cols-2 gap-5">
