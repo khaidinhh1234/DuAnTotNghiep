@@ -1,6 +1,9 @@
 import instance from "@/configs/admin";
+import { uploadToCloudinary } from "@/configs/cloudinary";
+import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, message, Modal } from "antd";
+import { Upload } from "lucide-react";
 import { useState } from "react";
 
 const DetailTransport = ({ record }: any) => {
@@ -82,7 +85,23 @@ const DetailTransport = ({ record }: any) => {
       });
     },
   });
+  const onFinish = async (values: any) => {
+    try {
+      let imageUrl = null;
+      if (values.imageFile && values.imageFile[0]) {
+        imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
+      }
 
+      // const categoryData: ICategories = {
+      //   ...values,
+      //   cha_id: values.category || null,
+      //   anh_danh_muc: imageUrl,
+      // };
+      // mutate(categoryData);
+    } catch (error) {
+      message.error("Lỗi khi tải ảnh lên");
+    }
+  };
   // if (isLoading) {
   //   return <div>Loading...</div>;
   // }
@@ -99,7 +118,7 @@ const DetailTransport = ({ record }: any) => {
         footer={null}
         onCancel={handleCancel}
       >
-        <h1 className="text-3xl font-bold">Chi tiết đơn hàng </h1>
+        <h1 className="text-3xl font-bold">Chi tiết vận chuyển </h1>
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-9">
             {" "}
@@ -401,6 +420,56 @@ const DetailTransport = ({ record }: any) => {
                   {record?.don_hang.ghi_chu ? record?.don_hang.ghi_chu : "Không có ghi chú"}
                 </span>
               </p>
+            </div> {" "}
+            {/* shipper */}
+            <div className=" bg-slate-100 p-5 border rounded-lg my-2">
+              <h5 className="text-blue-800 text-lg">Xác nhận của shipper</h5>
+              <hr />
+              {/* <h5 className="text-blue-600 my-2">
+                {record.don_hang.ten_nguoi_dat_hang
+              ? record.don_hang.ten_nguoi_dat_hang
+              : thongtin?.ho + " " + thongtin?.ten}
+              </h5> */}
+              <hr />
+              <h5 className="text-blue-800 text-lg my-2">Nhân viên ship</h5>
+              <span className="text-black my-2">
+                {/* {" "} */}
+                {record.don_hang.ten_nguoi_dat_hang
+                  ? record.don_hang.ten_nguoi_dat_hang
+                  : thongtin?.ho + " " + thongtin?.ten}
+              </span>
+              <p className="text-blue-800 font-semibold">
+                Số điện thoại :
+                <span className="text-black font-medium">
+                  {record.don_hang.so_dien_thoai_nguoi_dat_hang
+                    ? record.don_hang.so_dien_thoai_nguoi_dat_hang
+                    : thongtin?.so_dien_thoai}
+                </span>
+              </p>
+              <h5 className="text-blue-800">
+                Ảnh xác nhận giao hàng thành công: <br />
+                {/* <Form.Item
+                label="Thêm ảnh"
+                name="imageFile"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
+              > */}
+                <Upload
+                  // listType="picture"
+                  // maxCount={1}
+                  // beforeUpload={() => false}
+                >
+                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                </Upload>
+              {/* </Form.Item> */}
+              </h5>
+              {/* <p className="text-blue-800 font-semibold">
+                Ghi chú của khách hàng : <br />
+                <span className="text-black">
+                  {record?.don_hang.ghi_chu ? record?.don_hang.ghi_chu : "Không có ghi chú"}
+                </span>
+              </p> */}
             </div>
           </div>
         </div>

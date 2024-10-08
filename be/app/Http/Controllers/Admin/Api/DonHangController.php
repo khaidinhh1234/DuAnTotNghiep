@@ -208,7 +208,7 @@ class DonHangController extends Controller
 
                     if ($donHang->trang_thai_don_hang === DonHang::TTDH_DXL) {
                         if ($shippers->isEmpty()) {
-                            throw new \Exception('No shippers available');
+                            throw new \Exception('Không có shipper nào trong hệ thống');
                         }
                         $shipper = $shippers->sortBy(function ($shipper) {
                             return $shipper->vanChuyens->count();
