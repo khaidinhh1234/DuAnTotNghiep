@@ -14,7 +14,7 @@ import {
   Tag,
 } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
@@ -38,7 +38,7 @@ const UsersAdminNhanvien: React.FC = () => {
   const mutate = useMutation({
     mutationFn: async (id: string) => {
       try {
-        const res = await instance.delete(`/taikhoan/${id}`);
+        const res = await instance.delete(`taikhoan/${id}`);
         message.open({
           type: "success",
           content: "Xóa thành công",
@@ -60,11 +60,11 @@ const UsersAdminNhanvien: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
-      const res = await instance.get("/taikhoan");
+      const res = await instance.get("taikhoan");
       return res.data;
     },
   });
-
+console.log(data)
   const user = data?.data
     ?.filter((item: any) =>
       item?.vai_tros.some((role: any) => role.ten_vai_tro !== "Khách hàng")
@@ -75,7 +75,7 @@ const UsersAdminNhanvien: React.FC = () => {
       index: index,
     }));
 
-  // console.log(user);
+  console.log(user);
 
   // const [searchText, setSearchText] = useState
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -174,52 +174,131 @@ const UsersAdminNhanvien: React.FC = () => {
       className: "pl-5",
     },
     {
-      title: "Ảnh người dùng",
-      render: (record) =>
-        record.anh_nguoi_dung ? (
-          <Image
-            src={record.anh_nguoi_dung}
-            alt=""
-            className="w-20 h-20 object-cover rounded-lg p-2 border"
-          />
-        ) : (
-          <img
-            src="https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
-            alt=""
-            className="w-20 h-20 object-cover rounded-lg p-2 border"
-          />
-        ),
-      className: "pl-10",
+      title: "Thông tin",
+      key: "thong_tin",
+      width: "30%",
+      render: (record) => (
+        <Link to={`show/${record.key}`} style={{ textDecoration: "none", color: "inherit" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              border: "1px solid white",
+              padding: "10px",
+              borderRadius: "8px",
+              backgroundColor: "#f0faff",
+              transition: "background-color 0.3s ease", 
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = "#AABBCC"; 
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = "#f0faff"; 
+            }}
+          >
+            {record.anh_nguoi_dung ? (
+              <img
+                src={record.anh_nguoi_dung}
+                alt="Avatar"
+                style={{ width: "60px", height: "60px", borderRadius: "50%", marginRight: "10px" }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "70%",
+                  backgroundColor: "#ccc",
+                  marginRight: "10px",
+                }}
+              />
+            )}
+            <div>
+              <div style={{ fontWeight: "bold" }}>
+                {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+              </div>
+              <div
+                style={{
+                  marginTop: "5px",
+                  fontSize: "14px",
+                  color: "#333",
+                }}
+              >
+                {record.email ? record.email : "Chưa có dữ liệu"}
+              </div>
+            </div>
+          </div>
+        </Link>
+      ),
+    },
+    
+    
+    
+    {
+      title: "Vai trò",
+      render: (_, record) =>
+        Array.isArray(record.vai_tros) &&
+        record.vai_tros.map((item: any) => (
+          <Tag
+            color="#36D1DC"
+            className="rounded-xl font-bold my-1 w-28 text-center mx-auto truncate"
+            key={item.key}
+          >
+            {item.ten_vai_tro}
+          </Tag>
+        )),
+      key: "vai_tros",
       width: "15%",
-      key: "anh_nguoi_dung",
+      sorter: (a: any, b: any) => a.vai_tros.length - b.vai_tros.length,
     },
-    {
-      title: "Tên",
-      dataIndex: "ten",
-      key: "ten",
-      width: "5%",
-      ...getColumnSearchProps("ten"),
-      sorter: (a: any, b: any) => a.ten.length - b.ten.length,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
-    {
-      title: "Họ",
-      dataIndex: "ho",
-      key: "ho",
-      width: "5%",
-      ...getColumnSearchProps("ho"),
-      sorter: (a: any, b: any) => a.ho.length - b.ho.length,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: "20%",
-      ...getColumnSearchProps("email"),
-      sorter: (a: any, b: any) => a.email.length - b.email.length,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
+    
+    // {
+    //   title: "Ảnh người dùng",
+    //   render: (record) =>
+    //     record.anh_nguoi_dung ? (
+    //       <Image
+    //         src={record.anh_nguoi_dung}
+    //         alt=""
+    //         className="w-20 h-20 object-cover rounded-lg p-2 border"
+    //       />
+    //     ) : (
+    //       <img
+    //         src="https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
+    //         alt=""
+    //         className="w-20 h-20 object-cover rounded-lg p-2 border"
+    //       />
+    //     ),
+    //   className: "pl-10",
+    //   width: "15%",
+    //   key: "anh_nguoi_dung",
+    // },
+    // {
+    //   title: "Tên",
+    //   dataIndex: "ten",
+    //   key: "ten",
+    //   width: "5%",
+    //   ...getColumnSearchProps("ten"),
+    //   sorter: (a: any, b: any) => a.ten.length - b.ten.length,
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
+    // {
+    //   title: "Họ",
+    //   dataIndex: "ho",
+    //   key: "ho",
+    //   width: "5%",
+    //   ...getColumnSearchProps("ho"),
+    //   sorter: (a: any, b: any) => a.ho.length - b.ho.length,
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
+    // {
+    //   title: "Email",
+    //   dataIndex: "email",
+    //   key: "email",
+    //   width: "20%",
+    //   ...getColumnSearchProps("email"),
+    //   sorter: (a: any, b: any) => a.email.length - b.email.length,
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
     {
       title: "Số điện thoại",
       dataIndex: "so_dien_thoai",
@@ -256,23 +335,7 @@ const UsersAdminNhanvien: React.FC = () => {
       ...getColumnSearchProps("ngay_sinh"),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-    {
-      title: "Vai trò",
-      render: (_, record) =>
-        Array.isArray(record.vai_tros) &&
-        record.vai_tros.map((item: any) => (
-          <Tag
-            color="#36D1DC"
-            className="rounded-xl font-bold my-1 w-28 text-center mx-auto truncate"
-            key={item.key}
-          >
-            {item.ten_vai_tro}
-          </Tag>
-        )),
-      key: "vai_tros",
-      width: "30%",
-      sorter: (a: any, b: any) => a.vai_tros.length - b.vai_tros.length,
-    },
+   
     {
       title: "Quản trị",
       key: "action",
@@ -297,17 +360,42 @@ const UsersAdminNhanvien: React.FC = () => {
               Chỉnh sửa
             </Button>
           </Link>{" "}
-          <Link to={`show/${record.key}`}>
+          {/* <Link to={`show/${record.key}`}>
             <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               xem
             </Button>
-          </Link>
+          </Link> */}
         </Space>
       ),
     },
   ];
   const [searchText, setSearchText] = useState("");
 
+  const [filteredData, setFilteredData] = useState<DataType[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      setFilteredData(user);
+    }
+  }, [data?.data]);
+
+  const handleKeyDown = (_e: React.KeyboardEvent<HTMLInputElement>) => {
+    const value = searchText;
+    setSearchText(value);
+    if (value) {
+      const filtered = user?.filter(
+        (item: any) =>
+          item.ten?.toLowerCase().includes(value.toLowerCase()) ||
+        item.email?.toLowerCase().includes(value.toLowerCase()) ||
+        item.ho?.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredData(filtered || []);
+    } else {
+      if (user) {
+        setFilteredData(user);
+      }
+    }
+  };
   if (isError)
     return (
       <div>
@@ -338,10 +426,21 @@ const UsersAdminNhanvien: React.FC = () => {
           </Link>
         </div>
       </div>
+      <div className="max-w-sm my-2">
+
+<Input
+      placeholder="Tìm kiếm..."
+      size="large"
+      value={searchText}
+      onChange={(e) => setSearchText(e.target.value)}
+      onKeyDown={handleKeyDown}
+      className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
+    />
+  </div>
       <div className=" ">
         <Table
           columns={columns}
-          dataSource={user}
+          dataSource={filteredData}
           loading={isLoading}
           pagination={{ pageSize: 10, className: "my-5" }}
           rowKey="key"

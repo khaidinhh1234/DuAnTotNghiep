@@ -8,7 +8,7 @@ use App\Models\LienHe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class LienHeController extends Controller
+class TrangLienHeController extends Controller
 {
 
     public function lienHe(Request $request)
@@ -21,6 +21,7 @@ class LienHeController extends Controller
                 'sdt_lien_he' => 'nullable|string|max:20',
                 'loai_lien_he' => 'nullable|string',
                 'trang_thai_lien_he' => 'nullable|string',
+                'noi_dung_phan_hoi' => 'nullable|string',
             ]);
 
 
@@ -31,7 +32,6 @@ class LienHeController extends Controller
                     'status' => false,
                     'status_code' => 401,
                     'message' => 'Không thể gửi liên hệ',
-                    'data' => Auth::check()
                 ], 401);
             }
 

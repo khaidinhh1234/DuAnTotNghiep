@@ -23,10 +23,10 @@ class SendMailContact implements ShouldQueue
      */
     public function handle(SendMail $event): void
     {
+        $email = $event->email;
+        $name = $event->name;
+        $noidung = LienHe::query()->where('email', $email)->first()->noi_dung_lien_he;
         if ($event->condition === 'contact') {
-            $email = $event->email;
-            $name = $event->name;
-            $noidung = LienHe::query()->where('email', $email)->first()->noi_dung_lien_he;
             Mail::send('emails.contact', compact('name', 'noidung', 'email'), function ($message) use ($email) {
                 $message->to($email);
                 $message->subject('Thông báo liên hệ');

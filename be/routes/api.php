@@ -3,7 +3,8 @@
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\BienTheMauSacController;
 use App\Http\Controllers\Admin\Api\ChuongTrinhUuDaiController;
-use App\Http\Controllers\Admin\Api\DanhGiaController as ApiDanhGiaController;
+use App\Http\Controllers\Admin\Api\DanhGiaController as AdminDanhGiaController;
+use App\Http\Controllers\Admin\Api\LienHeController as AdminLienHeController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -29,7 +30,7 @@ use App\Http\Controllers\Client\Api\DanhGiaController;
 use App\Http\Controllers\Client\Api\GioHangController;
 use App\Http\Controllers\Client\Api\DonHangClientController;
 use App\Http\Controllers\Client\Api\KhuyenMaiController;
-use App\Http\Controllers\Client\Api\LienHeController;
+use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
 use Illuminate\Http\Request;
@@ -112,7 +113,7 @@ Route::middleware([])
         Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
 
         // Liên hệ
-        Route::post('lienhe', [LienHeController::class, 'lienHe']);
+        Route::post('lienhe', [TrangLienHeController::class, 'lienHe']);
 
         // Giỏ hàng
         Route::get('/gio-hang', [GioHangController::class, 'index']);
@@ -169,9 +170,9 @@ Route::middleware([])
         Route::get('the/{id}', [TheController::class, 'show'])->name('the.show');
 
         // Đánh giá
-        Route::get('danhsachdanhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAll']);
-        Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'DanhGiaTheoSanPham']);
-        Route::post('danhsachdanhgia/{danhgia}', [ApiDanhGiaController::class, 'phanHoiDanhGia']);
+        Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll']);
+        Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham']);
+        Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia']);
 
         // Đơn hàng
         Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
@@ -234,6 +235,10 @@ Route::middleware([])
         Route::get('hangthanhvien/thung-rac', [HangThanhVienController::class, 'danhSachHangThanhVienDaXoa'])->name('hangthanhvien.thungrac');
         Route::post('hangthanhvien/thung-rac/{id}', [HangThanhVienController::class, 'khoiPhucHangThanhVien'])->name('hangthanhvien.khoiphuc');
         Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
+
+        // Liên hệ
+        Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe']);
+        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi']);
 
         //Vai trò
         Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
