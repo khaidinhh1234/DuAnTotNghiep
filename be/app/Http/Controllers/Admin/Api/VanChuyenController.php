@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DonHang;
 use App\Models\VanChuyen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class VanChuyenController extends Controller
@@ -13,7 +14,12 @@ class VanChuyenController extends Controller
     public function index()
     {
         try {
-            $vanChuyen = VanChuyen::query()->with('donHang')->get();
+            $auth = Auth::guard('api')->user();
+            $query = VanChuyen::query()->with('donHang');
+            if ($auth->vaiTros->contains('ten_vai_tro', 'Người giao hàng')) {
+                $query->where('shipper_id', $auth->id);
+            }
+            $vanChuyen = $query->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -140,6 +146,45 @@ class VanChuyenController extends Controller
                 'status_code' => 500,
                 'message' => $exception->getMessage()
             ]);
+        }
+    }
+    public function xacNhanVanChuyen(Request $request, $id)
+    {
+        try {
+            $validate = $request->validate([
+                'shipper_xac_nhan' => 'required',
+                'anh_xac_thuc' => 'required|image',
+            ]);
+
+            DB::beginTransaction();
+            $vanChuyen = VanChuyen::findOrFail($id);
+            $shiper = Auth::guard('api')->id();
+            if ($vanChuyen->shipper_id != $shiper) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Bạn không phải shipper của đơn hàng này'
+                ], 400);
+            } else {
+                $vanChuyen->update([
+                    'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
+                    'anh_xac_thuc' => $validate['anh_xac_thuc'],
+                ]);
+                DB::commit();
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Xác nhận vận chuyển thành công'
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $exception->getMessage()
+            ], 500);
         }
     }
 
