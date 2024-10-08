@@ -1,21 +1,48 @@
-import { useState } from "react";
+import { Button, Form, Input, Typography } from "antd";
+// import TextEditor from "components/TextEditor";
+import React, { useState } from "react";
+import TextEditor from "./test2";
 
-import { Button } from "antd"; // Importing Ant Design's Button
-import "antd/dist/reset.css"; // Make sure to import Ant Design's CSS
+const { Item } = Form;
+const { TextArea } = Input;
+const { Title } = Typography;
 
-const Test = () => {
-  const [value, setValue] = useState("");
-  console.log("Value:", value);
+interface IPostCreate {
+  body: string;
+}
 
+export const Test = () => {
+  const [form] = Form.useForm();
+
+  const onSubmit = (values: IPostCreate) => {
+    // logic to submit form to server
+    console.log(values.body);
+    form.resetFields();
+  };
   return (
-    <div>
-   
-      <Button type="primary" style={{ marginTop: "16px" }}>
-        Submit
-      </Button>
-      <h1>{value}</h1>
-    </div>
+    <>
+      <Title level={5}>Your Post</Title>
+
+      <Form layout="vertical" form={form} onFinish={onSubmit}>
+        <Item
+          name="body"
+          rules={[
+            {
+              required: true,
+              message: "Please enter body of post",
+            },
+          ]}
+        >
+          {/* @ts-ignore */}
+          <TextEditor />
+        </Item>
+
+        <Item>
+          <Button htmlType="submit" type="primary">
+            Submit
+          </Button>
+        </Item>
+      </Form>
+    </>
   );
 };
-
-export default Test;
