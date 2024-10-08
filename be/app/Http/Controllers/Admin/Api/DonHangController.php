@@ -7,11 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateDonHangRequest;
 use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Models\DonHang;
+use App\Models\User;
 use App\Models\VanChuyen;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DonHangController extends Controller
@@ -170,6 +171,9 @@ class DonHangController extends Controller
 
                 // Tìm đơn hàng theo ID
                 $donHang = DonHang::findOrFail($id);
+                $shippers = User::with('vaiTros')->whereHas('vaiTros', callback: function ($query) {
+                    $query->where('ten_vai_tro', 'Người giao hàng');
+                })->get();
 
                 if ($donHang->trang_thai_don_hang === DonHang::TTDH_DGH || $donHang->trang_thai_don_hang === DonHang::TTDH_DGTC) {
                     if ($request->trang_thai_don_hang === DonHang::TTDH_DH) {
@@ -203,20 +207,24 @@ class DonHangController extends Controller
                     ]);
 
                     if ($donHang->trang_thai_don_hang === DonHang::TTDH_DXL) {
+                        if ($shippers->isEmpty()) {
+                            throw new \Exception('Không có shipper nào trong hệ thống');
+                        }
+                        $shipper = $shippers->sortBy(function ($shipper) {
+                            return $shipper->vanChuyens->count();
+                        })->first();
+
                         $vanChuyenData = [
                             'don_hang_id' => $donHang->id,
+                            'user_id' => $donHang->user_id,
+                            'shipper_id' => $shipper->id,
                             'ngay_tao' => Carbon::now(),
                             'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
+                            'cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? VanChuyen::TTCOD_KT : VanChuyen::TTCOD_CN,
+                            'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? null : $donHang->tong_tien_don_hang,
                         ];
 
-                        if ($donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT) {
-                            $vanChuyenData['cod'] = VanChuyen::TTCOD_KT;
-                        } else {
-                            $vanChuyenData['cod'] = VanChuyen::TTCOD_CN;
-                            $vanChuyenData['tien_cod'] = $donHang->tong_tien_don_hang;
-                        }
-
-                        VanChuyen::create($vanChuyenData);
+                        $vanChuyen = VanChuyen::create($vanChuyenData);
                     }
                     $mess = "Cập nhật trạng thái đơn hàng thành công";
                 }
@@ -228,7 +236,7 @@ class DonHangController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => $mess,
-                'data' => $donHang
+                'data' => $vanChuyen
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -265,22 +273,22 @@ class DonHangController extends Controller
     public function layThongTinDon()
     {
         try {
-            // 
+            //
             $donChoXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->count();
             $tongTienDonChoXacNhan = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->sum('tong_tien_don_hang') ?? 0;
 
-            // 
+            //
             $donChoThanhToan = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->count();
             $tongTienChuaTT = (int) DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->sum('tong_tien_don_hang') ?? 0;
 
-            // 
+            //
             $donChuaGiaoHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
             $tongTienDonChuaGiao = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->sum('tong_tien_don_hang') ?? 0;
 
-            // 
+            //
             $donHoanHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
             $tongTienHoan = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->sum('tong_tien_don_hang') ?? 0;
-            // 
+            //
             $daThanhToan = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_DTT)->count();
             $tongTienThanhToan = (int) DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_DTT)->sum('tong_tien_don_hang') ?? 0;
             return response()->json([
@@ -303,8 +311,8 @@ class DonHangController extends Controller
                     'tong_tien' => $tongTienHoan
                 ],
                 'donDaThanhToan' => [
-                    'tong_don_da_thanh_toan'=> $daThanhToan,
-                    'tong_tien'=> $tongTienThanhToan
+                    'tong_don_da_thanh_toan' => $daThanhToan,
+                    'tong_tien' => $tongTienThanhToan
                 ]
             ], 200);
         } catch (\Exception $e) {

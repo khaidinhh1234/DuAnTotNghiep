@@ -32,7 +32,6 @@ class TrangLienHeController extends Controller
                     'status' => false,
                     'status_code' => 401,
                     'message' => 'Không thể gửi liên hệ',
-                    'data' => Auth::check()
                 ], 401);
             }
 

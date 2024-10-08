@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Events\PhanHoiLienHe;
+use App\Events\SendMail;
 use App\Http\Controllers\Controller;
 use App\Models\LienHe;
 use Illuminate\Http\Request;
@@ -35,6 +36,10 @@ class LienHeController extends Controller
     public function phanHoi(Request $request, $id)
     {
         try {
+            $request->validate([
+                'noi_dung_phan_hoi' => 'required|string'
+            ]);
+
             $lien_he = LienHe::find($id);
 
             if (!$lien_he) {
@@ -44,7 +49,7 @@ class LienHeController extends Controller
             $lien_he->trang_thai_lien_he = 'da_xu_ly';
             $lien_he->save();
 
-            event(new PhanHoiLienHe($lien_he->email, $lien_he->name, $request->noi_dung_phan_hoi));
+            event(new SendMail($lien_he->email, $lien_he->name, 'Phản hồi từ Admin'));
 
             return response()->json([
                 'status' => true,
