@@ -22,4 +22,6 @@ class LichSuHoatDong extends Model
         'du_lieu_cu' => 'array',
         'du_lieu_moi' => 'array',
     ];
+
+
 }
