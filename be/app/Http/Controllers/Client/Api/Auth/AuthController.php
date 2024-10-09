@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-
 class AuthController extends Controller
 {
     // Đăng ký người dùng mới
@@ -35,7 +34,7 @@ class AuthController extends Controller
             'ten' => $request->ten,
             'anh_nguoi_dung' => 'https://i.pinimg.com/originals/f3/d1/ed/f3d1edf10d63c40e1fa06364176fa502.png',
             'email' => $request->email,
-            'password' => $request->password,
+            'password' => bcrypt($request->password),
             'so_dien_thoai' => $request->so_dien_thoai,
             'dia_chi' => $request->dia_chi,
             'ngay_sinh' => $request->ngay_sinh,
@@ -65,25 +64,26 @@ class AuthController extends Controller
     // Đăng nhập người dùng
     public function login(LoginRequest $request)
     {
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $user = User::query()->where('email', $request->email)->first();
-            $token = $user->createToken('auth_token')->plainTextToken;
-
+        if (!Auth::guard('web')->attempt($request->only('email', 'password'))) {
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user,
-                'vai_tro' => $user->vaiTros
-            ], 200);
+                'status' => false,
+                'status_code' => 401,
+                'message' => 'Tài khoản hoặc mật khẩu không chính xác'
+            ], 401);
         }
 
+        $user = User::where('email', $request->email)->first();
+
+        $token = $user->createToken(name: 'token')->plainTextToken;
+
         return response()->json([
-            'status' => false,
-            'status_code' => 401,
-            'message' => 'Tài khoản hoặc mật khẩu không chính xác.',
-        ], 401);
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Đăng nhập thành công',
+            'access_token' => $token,
+            'user' => $user,
+            'vaii_tros' => $user->vaiTros
+        ], 200);
     }
 
     // Đăng xuất người dùng

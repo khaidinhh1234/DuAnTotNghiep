@@ -173,66 +173,119 @@ console.log(data)
       key: "key",
       className: "pl-5",
     },
+    // {
+    //   title: "Thông tin",
+    //   key: "thong_tin",
+    //   width: "30%",
+    //   render: (record) => (
+    //     <Link to={`show/${record.key}`} style={{ textDecoration: "none", color: "inherit" }}>
+    //       <div
+    //         style={{
+    //           display: "flex",
+    //           alignItems: "center",
+    //           border: "1px solid white",
+    //           height: "30px",
+    //           padding: "60px",
+    //           borderRadius: "8px",
+    //           backgroundColor: "#f0faff",
+    //           transition: "background-color 0.3s ease", 
+    //         }}
+    //         onMouseOver={(e) => {
+    //           e.currentTarget.style.backgroundColor = "#AABBCC"; 
+    //         }}
+    //         onMouseOut={(e) => {
+    //           e.currentTarget.style.backgroundColor = "#f0faff"; 
+    //         }}
+    //       >
+    //         {record.anh_nguoi_dung ? (
+    //           <img
+    //             src={record.anh_nguoi_dung}
+    //             alt="Avatar"
+    //             style={{ width: "60px", height: "60px", borderRadius: "50%", marginRight: "10px" }}
+    //           />
+    //         ) : (
+    //           <div
+    //             style={{
+    //               width: "50px",
+    //               height: "50px",
+    //               borderRadius: "70%",
+    //               backgroundColor: "#ccc",
+    //               marginRight: "10px",
+    //             }}
+    //           />
+    //         )}
+    //         <div>
+    //           <div style={{ fontWeight: "bold" }}>
+    //             {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+    //           </div>
+    //           <div
+    //             style={{
+    //               marginTop: "5px",
+    //               fontSize: "14px",
+    //               color: "#333",
+    //             }}
+    //           >
+    //             {record.email ? record.email : "Chưa có dữ liệu"}
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </Link>
+    //   ),
+    // },
+    
+    
     {
       title: "Thông tin",
       key: "thong_tin",
-      width: "30%",
+      width: "25%",
       render: (record) => (
         <Link to={`show/${record.key}`} style={{ textDecoration: "none", color: "inherit" }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              border: "1px solid white",
-              padding: "10px",
-              borderRadius: "8px",
-              backgroundColor: "#f0faff",
+              border: "1px solid #e0e0e0", 
+              height: "120px", 
+              padding: "15px", 
+              borderRadius: "15px", 
+              backgroundColor: "#f7fafd", 
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", 
               transition: "background-color 0.3s ease", 
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#AABBCC"; 
+              e.currentTarget.style.backgroundColor = "#e0f7fa"; 
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#f0faff"; 
+              e.currentTarget.style.backgroundColor = "#f7fafd"; 
             }}
           >
             {record.anh_nguoi_dung ? (
               <img
                 src={record.anh_nguoi_dung}
                 alt="Avatar"
-                style={{ width: "60px", height: "60px", borderRadius: "50%", marginRight: "10px" }}
+                style={{ width: "80px", height: "80px", borderRadius: "12px", marginRight: "20px", objectFit: "cover" }} 
               />
             ) : (
               <div
                 style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "70%",
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "12px",
                   backgroundColor: "#ccc",
-                  marginRight: "10px",
+                  marginRight: "20px",
                 }}
               />
             )}
             <div>
-              <div style={{ fontWeight: "bold" }}>
-                {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
-              </div>
-              <div
-                style={{
-                  marginTop: "5px",
-                  fontSize: "14px",
-                  color: "#333",
-                }}
-              >
-                {record.email ? record.email : "Chưa có dữ liệu"}
-              </div>
+              <div style={{ fontWeight: "bold", marginBottom: "8px", fontSize: "16px"}}>            {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+              </div> 
+              <div style={{ color: "#888", fontSize: "16px" }}>           {record.email ? record.email : "Chưa có dữ liệu"}
+              </div> 
             </div>
           </div>
         </Link>
       ),
     },
-    
-    
     
     {
       title: "Vai trò",
@@ -309,15 +362,15 @@ console.log(data)
         a.so_dien_thoai.length - b.so_dien_thoai.length,
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-    {
-      title: "Địa chỉ",
-      dataIndex: "dia_chi",
-      key: "dia_chi",
-      width: "20%",
-      ...getColumnSearchProps("dia_chi"),
-      sorter: (a: any, b: any) => a.dia_chi.length - b.dia_chi.length,
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
+    // {
+    //   title: "Địa chỉ",
+    //   dataIndex: "dia_chi",
+    //   key: "dia_chi",
+    //   width: "20%",
+    //   ...getColumnSearchProps("dia_chi"),
+    //   sorter: (a: any, b: any) => a.dia_chi.length - b.dia_chi.length,
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
     {
       title: "Giới tính",
       dataIndex: "gioi_tinh",
@@ -327,14 +380,14 @@ console.log(data)
       sorter: (a: any, b: any) => (a.gioi_tinh || 0) - (b.gioi_tinh || 0),
       render: (text) => (text == 1 ? "Nam" : text == 2 ? "Nữ" : "Khác"),
     },
-    {
-      title: "Ngày sinh",
-      dataIndex: "ngay_sinh",
-      key: "ngay_sinh",
-      width: "15%",
-      ...getColumnSearchProps("ngay_sinh"),
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
-    },
+    // {
+    //   title: "Ngày sinh",
+    //   dataIndex: "ngay_sinh",
+    //   key: "ngay_sinh",
+    //   width: "15%",
+    //   ...getColumnSearchProps("ngay_sinh"),
+    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
+    // },
    
     {
       title: "Quản trị",
