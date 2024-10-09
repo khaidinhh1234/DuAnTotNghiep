@@ -40,6 +40,7 @@ export interface Variant {
 }
 const AddProducts: React.FC = () => {
   const [value, setValue] = useState("");
+  const [productCode, setProductCode] = useState("");
 
   //Call API
   const { data: categoriesData } = useQuery({

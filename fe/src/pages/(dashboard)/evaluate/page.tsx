@@ -188,7 +188,7 @@ const EvaluateAdmin = () => {
         text
       ),
   });
-  if (isLoading) return <p>Loading...</p>;
+  // if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Đã xảy ra lỗi khi tải dữ liệu.</p>;
   const showDetail = (record: IEvaluate) => {
     setCurrentEvaluate(record);
@@ -327,6 +327,7 @@ const EvaluateAdmin = () => {
         columns={columns}
         dataSource={dataSource}
         pagination={{ pageSize: 10, className: "my-5" }}
+        loading={isLoading}
       />
       <Modal
         // title="Chi tiết đánh giá"
