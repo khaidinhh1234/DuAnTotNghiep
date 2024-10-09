@@ -54,7 +54,7 @@ class ThongKeDonHangController extends Controller
     }
     public function thongKeHuyHangTheoThang()
 {
-    // Truy vấn các đơn hàng bị hủy theo từng tháng
+    // Truy vấn các đơn hàng bị hủy, nhóm theo tháng và năm
     $thongKeHuyHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
         ->select(
             DB::raw('MONTH(created_at) as thang'),
@@ -62,26 +62,49 @@ class ThongKeDonHangController extends Controller
             DB::raw('COUNT(id) as so_luong_don_huy')
         )
         ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
+        ->orderBy('nam', 'asc')
+        ->orderBy('thang', 'asc')
         ->with(['chiTiets.bienTheSanPham.sanPham'])
         ->get();
 
-    // Mảng kết quả cuối cùng
-    $thongKeSanPhamHuy = [];
+    // Mảng kết quả cho năm
+    $thongKeNam = [];
+    // Mảng kết quả cho tháng
+    $thongKeThang = [];
 
-    // Duyệt qua từng tháng để lấy thông tin sản phẩm bị hủy
+    // Duyệt qua từng tháng và năm để lấy thông tin sản phẩm bị hủy
     foreach ($thongKeHuyHang as $thongKe) {
-        $donHangsTrongThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
+        // Thống kê theo từng năm, nếu chưa có thì tạo mới
+        if (!isset($thongKeNam[$thongKe->nam])) {
+            $thongKeNam[$thongKe->nam] = [
+                'nam' => $thongKe->nam,
+                'so_luong_don_huy' => 0,
+                'san_pham_huy' => [] // Mảng sản phẩm bị hủy theo năm
+            ];
+        }
+        $thongKeNam[$thongKe->nam]['so_luong_don_huy'] += $thongKe->so_luong_don_huy;
+
+        // Lấy tất cả đơn hàng bị hủy trong tháng và năm hiện tại
+        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
             ->whereYear('created_at', $thongKe->nam)
             ->whereMonth('created_at', $thongKe->thang)
             ->with(['chiTiets.bienTheSanPham.sanPham'])
             ->get();
 
+        // Mảng để lưu sản phẩm bị hủy trong tháng và năm hiện tại
         $sanPhamTrongThang = [];
 
-        // Duyệt qua từng đơn hàng trong tháng đó
-        foreach ($donHangsTrongThang as $donHang) {
+        // Duyệt qua từng đơn hàng
+        foreach ($donHangs as $donHang) {
             foreach ($donHang->chiTiets as $chiTiet) {
                 $sanPham = $chiTiet->bienTheSanPham->sanPham;
+
+                // Thêm sản phẩm vào mảng thống kê theo năm nếu chưa tồn tại
+                if (!in_array($sanPham->ten_san_pham, $thongKeNam[$thongKe->nam]['san_pham_huy'])) {
+                    $thongKeNam[$thongKe->nam]['san_pham_huy'][] = $sanPham->ten_san_pham;
+                }
+
+                // Thêm sản phẩm vào mảng thống kê theo tháng
                 $sanPhamTrongThang[] = [
                     'ten_san_pham' => $sanPham->ten_san_pham,
                     'so_luong_huy' => $chiTiet->so_luong,
@@ -91,8 +114,8 @@ class ThongKeDonHangController extends Controller
             }
         }
 
-        // Thêm dữ liệu vào mảng kết quả
-        $thongKeSanPhamHuy[] = [
+        // Thêm dữ liệu vào mảng kết quả cho tháng
+        $thongKeThang[] = [
             'thang' => $thongKe->thang,
             'nam' => $thongKe->nam,
             'so_luong_don_huy' => $thongKe->so_luong_don_huy,
@@ -100,8 +123,16 @@ class ThongKeDonHangController extends Controller
         ];
     }
 
-    return $thongKeSanPhamHuy;
+    // Kết quả cuối cùng
+    $ketQua = [
+        'thong_ke_nam' => array_values($thongKeNam), // Thống kê theo năm
+        'thong_ke_thang' => $thongKeThang // Thống kê chi tiết theo tháng
+    ];
+
+    return $ketQua;
 }
+
+
     public function thongKeDonHangTheoTrangThai(Request $request)
     {
         try {
@@ -114,7 +145,7 @@ class ThongKeDonHangController extends Controller
             $soLuongDangGiaoHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGH)->count();
             $soLuongDaGiaoHangThanhCong = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)->count();
             $soLuongDaHuyHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)->count();
-            $soLuongHoanHang = DonHang::where('trang_thai_don_hang',  DonHang::TTDH_HH)->count();
+            $soLuongHoanHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
 
             DB::commit();
 

@@ -327,4 +327,29 @@ class ChuongTrinhUuDaiController extends Controller
             ], 500);
         }
     }
+
+    public function show($id)
+    {
+        try {
+            $data = ChuongTrinhUuDai::query()->with('sanPhams')->findOrFail($id);
+
+            $sanPhamIds = $data->sanPhams->pluck('id')->toArray();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'chuongTrinhUuDai' => $data,
+                    'sanPhamIds' => $sanPhamIds,
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy chương trình ưu đãi hoặc có lỗi xảy ra.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
