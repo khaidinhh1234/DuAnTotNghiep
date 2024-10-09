@@ -176,7 +176,6 @@ class BienTheKichThuocController extends Controller
                     'message' => 'Không thể xóa vì sản phẩm có biến thể này.',
                 ], 400);
             }
-
             $bienTheKichThuoc->delete();
             return response()->json([
                 'status' => true,
