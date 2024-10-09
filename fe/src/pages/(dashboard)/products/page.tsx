@@ -357,7 +357,7 @@
 //           </Link>
 //           <Link to="/admin/products/remote">
 //             <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-//               <DeleteOutlined className="mr-1" />
+//               <DeleteOutlined clas me="mr-1" />
 //               Thùng rác
 //             </Button>
 //           </Link>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bien_the_kich_thuocs', function (Blueprint $table) {
             $table->id();
-            $table->string('kich_thuoc', 10)->unique();
+            $table->string('kich_thuoc', 10);
             $table->timestamps();
             $table->softDeletes();
         });
