@@ -117,12 +117,13 @@ class BienTheKichThuocController extends Controller
             if ($exists) {
                 $validator->errors()->add('kich_thuoc', 'Kích thước đã tồn tại cho loại này.');
             }
-
             if ($request->loai_kich_thuoc === 'nu' && !in_array($request->kich_thuoc, ['XS', 'S', 'M', 'L', 'XL', 'XXL'])) {
                 $validator->errors()->add('kich_thuoc', 'Kích thước cho nữ chỉ được phép từ XS đến XXL.');
-            } elseif ($request->loai_kich_thuoc === 'nam' && !in_array($request->kich_thuoc, ['S', 'M', 'L', 'XL', 'XXL'])) {
+            }
+            elseif ($request->loai_kich_thuoc === 'nam' && !in_array($request->kich_thuoc, ['S', 'M', 'L', 'XL', 'XXL'])) {
                 $validator->errors()->add('kich_thuoc', 'Kích thước cho nam chỉ được phép từ S đến XXL.');
-            } elseif ($request->loai_kich_thuoc === 'tre_em' && (!is_numeric($request->kich_thuoc) || $request->kich_thuoc < 1 || $request->kich_thuoc > 9)) {
+            }
+            elseif ($request->loai_kich_thuoc === 'tre_em' && (!is_numeric($request->kich_thuoc) || $request->kich_thuoc < 1 || $request->kich_thuoc > 9)) {
                 $validator->errors()->add('kich_thuoc', 'Kích thước cho trẻ em phải là số từ 1 đến 9.');
             }
         });
