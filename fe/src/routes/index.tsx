@@ -87,9 +87,7 @@ import { Route, Routes } from "react-router-dom";
 import Bienthe from "../pages/(dashboard)/bienthe/bienthe";
 import PageOur from "../pages/(website)/ourstory/pageOur";
 import Page from "./../pages/(website)/shop/shop";
-import PrivateRoute from "./PrivateRoute";
 
-import Component from "@/pages/(dashboard)/test";
 import PageTransport from "@/pages/(dashboard)/transport/page";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
@@ -101,7 +99,13 @@ import DoanhThu from "@/pages/(dashboard)/dashboard/doanhthu/page";
 import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
 import PageSupport from "@/pages/(dashboard)/support/page";
+import Productsadd from "@/pages/(dashboard)/products/fix";
+
+import AddProducts from "@/pages/(dashboard)/products/Addd/page";
+import { Test } from "@/pages/(dashboard)/test";
+
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
+
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
@@ -145,9 +149,9 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            <PrivateRoute>
-              <LayoutAdmin />
-            </PrivateRoute>
+            // <PrivateRoute>
+            <LayoutAdmin />
+            // </PrivateRoute>
           }
         >
           <Route path="dashboard/list" element={<Dashboard />} />
@@ -161,8 +165,11 @@ const Router = () => {
           />{" "}
           <Route path="products/list" element={<ProductsAdmin />} />
           <Route path="products/add" element={<ProductsAdd />} />
+          <Route path="products/addd" element={<AddProducts />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
+          {/* <Route path="products/adds" element={<Productsadd />} /> */}
+
           {/* Biến thể */}
           {/* <Route path="products/detaile" element={<Detail item={{
             id: 0
@@ -241,8 +248,10 @@ const Router = () => {
           {/* Đánh giá */}
           <Route path="evaluates" element={<EvaluateAdmin />} />
           {/* liên hệ */}
+
           <Route path="support" element={<PageSupport />}/>
           <Route path="support/feedback" element={<Feedback />}/>
+
           {/* Tin tức */}
           <Route path="news" element={<PageNew />} />
           <Route path="news/add" element={<NewAdd />} />
@@ -254,7 +263,7 @@ const Router = () => {
           <Route path="centralstocks" element={<CentralStock />} />
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          <Route path="test" element={<Component />} />
+          <Route path="test" element={<Test />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}

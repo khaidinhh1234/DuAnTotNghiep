@@ -227,6 +227,10 @@ const UsersNhanvienAdd = () => {
                           message:
                             "Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.",
                         },
+                        {
+                          pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                          message: "Vui lòng nhập họ không chứa ký tự trắng!",
+                        },
                       ]}
                     >
                       <Input placeholder="Nhập số điện thoại của Nhân viên  " />
@@ -284,6 +288,10 @@ const UsersNhanvienAdd = () => {
                             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
                           message:
                             "Mật khẩu phải chứa ít nhất 1 chữ hoa và 1 số!",
+                        },
+                        {
+                          pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                          message: "Vui lòng nhập họ không chứa ký tự trắng!",
                         },
                       ]}
                     >

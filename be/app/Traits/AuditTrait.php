@@ -3,62 +3,67 @@
 namespace App\Traits;
 
 use App\Models\LichSuHoatDong;
-use App\Models\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 trait AuditTrait
 {
     public static function bootAuditTrait()
     {
         static::created(function ($model) {
-            self::logAction('create', $model);
+            $user = Auth::guard('api');
+            if ($user->check()) {
+                LichSuHoatDong::create([
+                    'ten_bang' => $model->getTable(),
+                    'bang_id' => $model->id,
+                    'loai_thao_tac' => 'Thêm mới',
+                    'du_lieu_moi' => $model->getAttributes(),
+                    'nguoi_thao_tac' => $user->id(),
+                ]);
+            }
         });
 
         static::updating(function ($model) {
-            self::logAction('update', $model, json_encode($model->getOriginal()));
+            $user = Auth::guard('api');
+            if ($user->check()) {
+                LichSuHoatDong::create([
+                    'ten_bang' => $model->getTable(),
+                    'bang_id' => $model->id,
+                    'loai_thao_tac' => 'Cập nhật',
+                    'du_lieu_cu' => $model->getOriginal(),
+                    'du_lieu_moi' => $model->getAttributes(),
+                    'nguoi_thao_tac' => $user->id(),
+                ]);
+            }
         });
 
         static::deleted(function ($model) {
-            self::logAction('delete', $model, $model->toJson());
+            $user = Auth::guard('api');
+            if ($user->check()) {
+                LichSuHoatDong::create([
+                    'ten_bang' => $model->getTable(),
+                    'bang_id' => $model->id,
+                    'loai_thao_tac' => 'Xóa',
+                    'du_lieu_cu' => $model->getAttributes(),
+                    'nguoi_thao_tac' => $user->id(),
+                ]);
+            }
         });
 
-        if (in_array(SoftDeletes::class, class_uses(get_called_class()))) {
+        if (in_array(SoftDeletes::class, class_uses(static::class))) {
             static::restored(function ($model) {
-                self::logAction('restore', $model);
+                $user = Auth::guard('api');
+                if ($user->check()) {
+                    LichSuHoatDong::create([
+                        'ten_bang' => $model->getTable(),
+                        'bang_id' => $model->id,
+                        'loai_thao_tac' => 'Khôi phục',
+                        'du_lieu_moi' => $model->getAttributes(),
+                        'nguoi_thao_tac' => $user->id(),
+                    ]);
+                }
             });
-        }
-    }
-
-    private static function logAction($actionType, $model, $oldData = null)
-    {
-        try {
-            $userId = Auth::guard('api')->id();
-            if (!$userId) {
-                Log::warning("Không có ID người dùng để thực hiện thao tác $actionType.");
-                return;
-            }
-
-            $user = User::find($userId);
-            if (!$user) {
-                Log::warning("Người dùng với ID $userId không tồn tại.");
-                return;
-            }
-
-            LichSuHoatDong::create([
-                'ten_bang' => $model->getTable(),
-                'bang_id' => $model->id,
-                'loai_thao_tac' => $actionType,
-                'du_lieu_cu' => $oldData,
-                'du_lieu_moi' => $model->toJson(),
-                'nguoi_thao_tac' => $user->id,
-            ]);
-
-            Log::debug("Người thao tác: $user->id, loại thao tác: $actionType");
-
-        } catch (\Exception $e) {
-            Log::error('Lỗi khi ghi log hoạt động: ' . $e->getMessage());
         }
     }
 }
