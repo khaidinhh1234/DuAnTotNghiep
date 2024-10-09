@@ -14,6 +14,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
   colorsData,
   sizesData,
 }) => {
+  console.log("Variants in VariantForm:", colorsData);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -64,6 +65,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
       dataIndex: "mau_sac_id",
       key: "mau_sac",
       render: (colorId: number) => {
+        console.log("Color ID:", colorId);
         const color = colorsData.find((c) => Number(c.id) === colorId);
         return color ? color.ten_mau_sac : "";
       },

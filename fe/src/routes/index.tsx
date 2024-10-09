@@ -102,7 +102,10 @@ import PageSupport from "@/pages/(dashboard)/support/page";
 // import Productsadd from "@/pages/(dashboard)/products/fix";
 
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
-import { Test } from "@/pages/(dashboard)/test";
+
+import PrivateRoute from "./PrivateRoute";
+import Test from "@/pages/(dashboard)/test";
+import List from "@/pages/(dashboard)/dashboard/test/list";
 
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 
@@ -148,9 +151,9 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            // <PrivateRoute>
-            <LayoutAdmin />
-            // </PrivateRoute>
+            <PrivateRoute>
+              <LayoutAdmin />
+            </PrivateRoute>
           }
         >
           <Route path="dashboard/list" element={<Dashboard />} />
@@ -260,6 +263,7 @@ const Router = () => {
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="revenues" element={<RevenueAdmin />} />
           <Route path="test" element={<Test />} />
+          <Route path="list" element={<List />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
