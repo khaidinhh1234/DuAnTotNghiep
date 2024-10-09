@@ -60,8 +60,14 @@ const MemberRankForm: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["memberRanks"] });
       navigate("/admin/users/rank");
     },
-    onError: (error: Error) => {
-      message.error("Có lỗi xảy ra khi thêm hạng thành viên: " + error.message);
+    onError: (error: any) => {
+      console.error("Error adding size:", error);
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errorMessages = Object.values(error.response.data.errors).flat();
+        errorMessages.map((msg) => message.error(msg as string));
+      } else {
+        message.error(error.message || "Thêm Hạng thành viên thất bại");
+      }
     },
   });
 

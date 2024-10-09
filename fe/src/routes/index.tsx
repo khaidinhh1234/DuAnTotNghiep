@@ -99,12 +99,15 @@ import DoanhThu from "@/pages/(dashboard)/dashboard/doanhthu/page";
 import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
 import PageSupport from "@/pages/(dashboard)/support/page";
-import Productsadd from "@/pages/(dashboard)/products/fix";
+// import Productsadd from "@/pages/(dashboard)/products/fix";
 
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
 import { Test } from "@/pages/(dashboard)/test";
 
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
+import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
+import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
+import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
 
 
 // import Test from "@/pages/(dashboard)/test";
@@ -212,6 +215,13 @@ const Router = () => {
           <Route path="add-vocher" element={<AddVoucher />} />
           <Route path="vouchers/show/:id" element={<ShowVoucher />} />
           <Route path="vouchers/edit/:id" element={<EditVoucher />} />
+                    {/* trương trình ưu đâix */}
+                    <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
+                    <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
+                    {/* <Route path="chuongtrinhuudaiedit" element={<ChuongTrinhUuDaiEdit />} /> */}
+
+
+
           {/* Tài khoản khách hàng */}
           <Route
             path="users"
