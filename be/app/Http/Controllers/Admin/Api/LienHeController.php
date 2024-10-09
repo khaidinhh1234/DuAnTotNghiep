@@ -14,7 +14,7 @@ class LienHeController extends Controller
     {
         try {
             $lienHes = LienHe::with([
-                'user:id,ho,ten,email',
+                'user:id,ho,ten,email,anh_nguoi_dung',
             ])->orderBy('created_at', 'desc')->get();
 
             return response()->json([
