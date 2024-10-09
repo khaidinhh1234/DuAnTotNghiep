@@ -48,21 +48,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-    // $users = $request->user()->vaiTros;
-    // foreach ($users as $user) {
-    //     $vaiTro = VaiTro::query()->where('ten_vai_tro', $user->ten_vai_tro)->with('quyens')->first();
-    //     $tenQuyen = $vaiTro->quyens->pluck('ten_quyen');
-    // }
-    // return $tenQuyen;
-})->name('user');
+Route::middleware('auth.sanctum')->get('/user', function () {
+    return response()->json(['id' => auth()->id(), 'name' => auth()->user()->name]);
+});
 
 // Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth:sanctum');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.sanctum');
+Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth.sanctum');
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
@@ -126,7 +120,7 @@ Route::middleware([])
     });
 
 //'auth:sanctum', 'auth.checkrole'.
-Route::middleware([])
+Route::middleware('auth.sanctum')
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {

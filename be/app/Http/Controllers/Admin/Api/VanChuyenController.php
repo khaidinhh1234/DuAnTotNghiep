@@ -13,11 +13,12 @@ class VanChuyenController extends Controller
 {
     public function index()
     {
+        $auth = Auth::guard('api');;
+
         try {
-            $auth = Auth::guard('api')->user();
             $query = VanChuyen::query()->with('donHang');
-            if ($auth->vaiTros->contains('ten_vai_tro', 'Người giao hàng')) {
-                $query->where('shipper_id', $auth->id);
+            if ($auth->user()->vaiTros->contains('ten_vai_tro', 'Người giao hàng')) {
+                $query->where('shipper_id', $auth->id());
             }
             $vanChuyen = $query->get();
             return response()->json([
@@ -30,7 +31,9 @@ class VanChuyenController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi khi lấy danh sách vận chuyển.',
-                'error' => $exception->getMessage()
+                'error' => $exception->getMessage(),
+                'data' =>  Auth::gruard('api')->user()
+
             ], 500);
         }
     }
