@@ -1,23 +1,14 @@
 import React from "react";
 import { Card, Statistic, Row, Col } from "antd";
+import Chart1 from "./chart1/chart1";
 
-const Test = () => {
+const List = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h2 className="text-2xl font-bold mb-6">Tổng quan</h2>
       <Row gutter={16}>
         <Col span={12} sm={8}>
-          <Card className="shadow-md">
-            <Statistic
-              title="Tổng hàng chốt"
-              value={327282428}
-              precision={0}
-              valueStyle={{ color: "#3f8600" }}
-              suffix="đ"
-            />
-            <div className="mt-2 text-gray-500">Số lượng đơn: 8.232</div>
-            <div className="text-green-600">+ 89,09%</div>
-          </Card>
+          <Chart1 />
         </Col>
         <Col span={12} sm={8}>
           <Card className="shadow-md">
@@ -69,4 +60,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default List;

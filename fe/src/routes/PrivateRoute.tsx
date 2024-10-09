@@ -5,6 +5,8 @@ import { ReactElement } from "react";
 import { Navigate } from "react-router-dom"; // Correct import for React Router DOM
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Include styles for toast
+import { useQuery } from "@tanstack/react-query";
+import instance from "@/configs/admin";
 
 interface Props {
   children: ReactElement;
@@ -12,7 +14,6 @@ interface Props {
 
 const PrivateRoute: React.FC<Props> = ({ children }) => {
   // Lấy thông tin người dùng từ localStorage
-
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = user?.access_token;
 
@@ -30,14 +31,13 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
     return <Navigate to="/login" />;
   }
 
-  // Tạo instance của axios
   const userAPI = axios.create({
-    baseURL: "http://duantotnghiep.test/be/public/api/",
+    baseURL: "http://duantotnghiep.test/be/public/api",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
-
 
   // Sử dụng interceptor để gán token vào headers
   userAPI.interceptors.request.use(
@@ -51,12 +51,24 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
       return Promise.reject(error);
     }
   );
-  
+
   // Thử gọi API
   // userAPI
   //   .get('admin/sanpham')
   //   .then((response) => console.log(response.data))
   //   .catch((error) => console.error("Error:", error));
+
+  // Sử dụng useQuery để lấy dữ liệu sản phẩm
+  const { data } = useQuery({
+    queryKey: ["sanpham"],
+    queryFn: async () => {
+      const { data } = await userAPI.get("/admin/sanpham"); // Sử dụng userAPI
+      return data;
+    },
+  });
+
+  // Kiểm tra dữ liệu
+  console.log(data);
 
   // Nếu đã xác thực và có quyền, trả về children
   return (

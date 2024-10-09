@@ -434,7 +434,7 @@ const AddVoucher = () => {
                       <Radio.Group
                         className="flex "
                         value={value}
-                        onChange={(e) => setValue(e.target.value)}
+                        onChange={(e: any) => setValue(e.target.value)}
                       >
                         <Radio
                           value={0}
