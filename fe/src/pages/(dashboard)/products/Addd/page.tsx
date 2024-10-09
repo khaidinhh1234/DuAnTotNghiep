@@ -73,7 +73,7 @@ const AddProducts: React.FC = () => {
   });
 
   // tạo mã sản phẩm
-  const [productCode, setProductCode] = useState("");
+  // const [productCode, setProductCode] = useState("");
   const generateRandomCode = () => {
     const length = 8; // Độ dài mã khuyến mãi
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
