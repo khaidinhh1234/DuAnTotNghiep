@@ -1,9 +1,8 @@
 import instance from "@/configs/admin";
-import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Modal } from "antd";
-import { Upload } from "lucide-react";
+import { Button, Form, message, Modal } from "antd";
+import { Upload } from "antd";
 import { useState } from "react";
 
 const DetailTransport = ({ record }: any) => {
@@ -44,7 +43,7 @@ const DetailTransport = ({ record }: any) => {
   // console.log("data", products);
   console.log(record.don_hang.ten_nguoi_dat_hang)
   const thongtin = data?.data?.thong_tin;
-  console.log(thongtin, )
+  console.log(thongtin,)
   const handleCancel = () => {
     setOpen(false);
   };
@@ -85,23 +84,7 @@ const DetailTransport = ({ record }: any) => {
       });
     },
   });
-  const onFinish = async (values: any) => {
-    try {
-      let imageUrl = null;
-      if (values.imageFile && values.imageFile[0]) {
-        imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
-      }
 
-      // const categoryData: ICategories = {
-      //   ...values,
-      //   cha_id: values.category || null,
-      //   anh_danh_muc: imageUrl,
-      // };
-      // mutate(categoryData);
-    } catch (error) {
-      message.error("Lỗi khi tải ảnh lên");
-    }
-  };
   // if (isLoading) {
   //   return <div>Loading...</div>;
   // }
@@ -387,8 +370,8 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <h5 className="text-blue-600 my-2">
                 {record.don_hang.ten_nguoi_dat_hang
-              ? record.don_hang.ten_nguoi_dat_hang
-              : thongtin?.ho + " " + thongtin?.ten}
+                  ? record.don_hang.ten_nguoi_dat_hang
+                  : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
@@ -446,36 +429,34 @@ const DetailTransport = ({ record }: any) => {
                     : thongtin?.so_dien_thoai}
                 </span>
               </p>
-              <h5 className="text-blue-800">
-                Ảnh xác nhận giao hàng thành công: <br />
-                {/* <Form.Item
+              <h5 className="text-blue-800 mb-4">
+                Ảnh xác nhận giao hàng thành công:
+              </h5>
+              <Form.Item
                 label="Thêm ảnh"
                 name="imageFile"
                 valuePropName="fileList"
-                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                getValueFromEvent={(e: any) => (Array.isArray(e) ? e : e?.fileList)}
                 rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
-              > */}
+                className="mb-4"
+              >
                 <Upload
-                  // listType="picture"
-                  // maxCount={1}
-                  // beforeUpload={() => false}
+                  listType="picture"
+                  maxCount={1}
+                  beforeUpload={() => false} // Disable automatic upload
                 >
-                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                  <Button icon={<UploadOutlined />}>
+                    Chọn ảnh
+                  </Button>
                 </Upload>
-              {/* </Form.Item> */}
-              </h5>
-              {/* <p className="text-blue-800 font-semibold">
-                Ghi chú của khách hàng : <br />
-                <span className="text-black">
-                  {record?.don_hang.ghi_chu ? record?.don_hang.ghi_chu : "Không có ghi chú"}
-                </span>
-              </p> */}
+              </Form.Item>
+
             </div>
           </div>
         </div>
       </Modal>
     </div>
   );
-};  
+};
 
 export default DetailTransport;
