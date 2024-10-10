@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\API\ThongKeDoanhThuController;
 use App\Http\Controllers\Admin\Api\ThongKeDonHangController;
 use App\Http\Controllers\Admin\Api\ThongKeKhachHangController;
 use App\Http\Controllers\Admin\Api\ThongKeSanPham;
+use App\Http\Controllers\Admin\Api\ThongKeTongQuanController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
@@ -320,6 +321,7 @@ Route::middleware('auth.sanctum')
 
             Route::get('don-hang/chot', action: [ThongKeDonHangController::class, 'thongKeDonHangChot']);
             Route::get('san-pham/ton-kho', [ThongKeSanPham::class, 'thongKeSanPhamTonKho']);
+          
             // Thống kê tuần tự
             Route::get('/doanh-thu-so-sanh', [ThongKeDoanhThuController::class, 'soSanhDoanhThuThang']);
 
