@@ -20,7 +20,7 @@ import CategoriesRemote from "@/pages/(dashboard)/categories/remote/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
-import { Dashboard } from "@/pages/(dashboard)/dashboard/list/page";
+
 import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
@@ -87,9 +87,7 @@ import { Route, Routes } from "react-router-dom";
 import Bienthe from "../pages/(dashboard)/bienthe/bienthe";
 import PageOur from "../pages/(website)/ourstory/pageOur";
 import Page from "./../pages/(website)/shop/shop";
-import PrivateRoute from "./PrivateRoute";
 
-import Component from "@/pages/(dashboard)/test";
 import PageTransport from "@/pages/(dashboard)/transport/page";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
@@ -101,9 +99,25 @@ import DoanhThu from "@/pages/(dashboard)/dashboard/doanhthu/page";
 import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
 import PageSupport from "@/pages/(dashboard)/support/page";
+// import Productsadd from "@/pages/(dashboard)/products/fix";
+
+import AddProducts from "@/pages/(dashboard)/products/Addd/page";
+
+import PrivateRoute from "./PrivateRoute";
+import Test from "@/pages/(dashboard)/test";
+// import List from "@/pages/(dashboard)/dashboard/test/page";
+
+import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
+// import Dashboard from "@/pages/(dashboard)/dashboard/tongquan/page";
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
+import { List } from "./../pages/(dashboard)/dashboard/list/page";
+
+import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
+
+import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
+
 
 const Router = () => {
   //
@@ -144,13 +158,14 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            // <PrivateRoute>
+            <PrivateRoute>
               <LayoutAdmin />
-            // </PrivateRoute> 
+            </PrivateRoute>
           }
         >
+          <Route index element={<Navigate to="/admin/dashboard/list" />} />
           <Route path="dashboard/list" element={<Dashboard />} />
-          <Route path="dashboard/doanhthu" element={<DoanhThu />} />
+          <Route path="dashboard/doanhthu" element={<List />} />
           <Route path="dashboard/sanpham" element={<SanPham />} />
           <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
           {/* Sản phẩm  */}
@@ -160,8 +175,10 @@ const Router = () => {
           />{" "}
           <Route path="products/list" element={<ProductsAdmin />} />
           <Route path="products/add" element={<ProductsAdd />} />
+          <Route path="products/addd" element={<AddProducts />} />
           <Route path="products/edit/:id" element={<ProductsEdit />} />
           <Route path="products/remote" element={<ProductsRemote />} />
+          {/* <Route path="products/adds" element={<Productsadd />} /> */}
           {/* Biến thể */}
           {/* <Route path="products/detaile" element={<Detail item={{
             id: 0
@@ -240,7 +257,8 @@ const Router = () => {
           {/* Đánh giá */}
           <Route path="evaluates" element={<EvaluateAdmin />} />
           {/* liên hệ */}
-          <Route path="support" element={<PageSupport />}/>
+          <Route path="support" element={<PageSupport />} />
+          <Route path="support/feedback" element={<Feedback />} />
           {/* Tin tức */}
           <Route path="news" element={<PageNew />} />
           <Route path="news/add" element={<NewAdd />} />
@@ -252,7 +270,8 @@ const Router = () => {
           <Route path="centralstocks" element={<CentralStock />} />
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          <Route path="test" element={<Component />} />
+          <Route path="test" element={<Test />} />
+          <Route path="list" element={<List />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}
@@ -281,6 +300,8 @@ const Router = () => {
             path="ADmin/userprivileges/edit-permission/:id"
             element={<PageEditPermission />}
           />
+          {/* Profile admin */}
+          <Route path="admin-profile" element={<AdminProfile/>}/>
           {/* Nội dung */}
           <Route
             path="Content"

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import {
@@ -11,6 +12,7 @@ import {
   Empty,
   message,
   Spin,
+  Tabs,
 } from "antd";
 import type { UploadFile, UploadProps } from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,19 +20,20 @@ import { uploadToCloudinary } from "@/configs/cloudinary";
 import instance from "@/configs/admin";
 
 interface BannerData {
+  id: number;
+  duong_dan_anh: string;
   noi_dung: {
-    mau_nut: string;
-    tieu_de_nut: string;
-    tieu_de_phu: string;
     tieu_de_chinh: string;
-    mau_tieu_de_phu: string;
     mau_tieu_de_chinh: string;
+    tieu_de_phu: string;
+    mau_tieu_de_phu: string;
     van_ban_quang_cao: string;
     mau_van_ban_quang_cao: string;
-    duong_dan: string;
+    tieu_de_nut: string;
+    mau_nut: string;
     mau_tieu_de_nut: string;
+    duong_link: string;
   };
-  duong_dan_anh: string[];
 }
 
 interface ApiResponse {
@@ -40,6 +43,8 @@ interface ApiResponse {
   };
   message: string;
 }
+
+const { TabPane } = Tabs;
 
 const BannerManagement: React.FC = () => {
   const queryClient = useQueryClient();
@@ -51,15 +56,13 @@ const BannerManagement: React.FC = () => {
   } = useQuery<ApiResponse>({
     queryKey: ["bannerData"],
     queryFn: async () => {
-      console.log("Starting API call");
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
         const response = await instance.get("/thong-tin-web", {
           signal: controller.signal,
         });
         clearTimeout(timeoutId);
-        console.log("API response:", response.data);
         return response.data;
       } catch (error: any) {
         console.error("API call failed:", error);
@@ -71,74 +74,39 @@ const BannerManagement: React.FC = () => {
     },
   });
 
-  const [bannerData, setBannerData] = useState<BannerData | null>(null);
-  const [bannerTextData, setBannerTextData] = useState([
-    { key: "Tiêu đề chính", value: "", color: "" },
-    { key: "Tiêu đề phụ", value: "", color: "" },
-    { key: "Văn bản quảng cáo", value: "", color: "" },
-    { key: "Tiêu đề nút", value: "", color: "" },
-    { key: "Đường dẫn", value: "" },
-  ]);
-
+  const [banners, setBanners] = useState<BannerData[]>([]);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [accentColor, setAccentColor] = useState("#000000");
   const [uploadingFiles, setUploadingFiles] = useState<{
     [key: string]: boolean;
   }>({});
 
   useEffect(() => {
-    if (
-      apiResponse &&
-      apiResponse.data &&
-      apiResponse.data.banner &&
-      apiResponse.data.banner.length > 0
-    ) {
-      // console.log("Setting banner data");
-      setBannerData(apiResponse.data.banner[0]);
-    } else {
-      // console.log("No banner data in response");
-    }
-  }, [apiResponse]);
-
-  useEffect(() => {
-    if (bannerData) {
-      setBannerTextData([
-        {
-          key: "Tiêu đề chính",
-          value: bannerData.noi_dung.tieu_de_chinh || "",
-          color: bannerData.noi_dung.mau_tieu_de_chinh || "",
-        },
-        {
-          key: "Tiêu đề phụ",
-          value: bannerData.noi_dung.tieu_de_phu || "",
-          color: bannerData.noi_dung.mau_tieu_de_phu || "",
-        },
-        {
-          key: "Văn bản quảng cáo",
-          value: bannerData.noi_dung.van_ban_quang_cao || "",
-          color: bannerData.noi_dung.mau_van_ban_quang_cao || "",
-        },
-        {
-          key: "Tiêu đề nút",
-          value: bannerData.noi_dung.tieu_de_nut || "",
-          color: bannerData.noi_dung.mau_tieu_de_nut || "",
-        },
-        { key: "Đường dẫn", value: bannerData.noi_dung.duong_dan || "" },
-      ]);
-      setAccentColor(bannerData.noi_dung.mau_nut || "#000000");
-
+    if (apiResponse && apiResponse.data && apiResponse.data.banner) {
+      setBanners(apiResponse.data.banner);
       setFileList(
-        bannerData.duong_dan_anh.map((url, index) => ({
+        apiResponse.data.banner.map((banner, index) => ({
           uid: `-${index}`,
           name: `image-${index}`,
           status: "done",
-          url: url,
+          url: banner.duong_dan_anh,
         }))
       );
     }
-  }, [bannerData]);
+  }, [apiResponse]);
+
+  const saveMutation = useMutation({
+    mutationFn: (newBanners: BannerData[]) =>
+      instance.post('/thong-tin-web', { banner: newBanners }),
+    onSuccess: () => {
+      message.success("Đã lưu thay đổi thành công");
+      queryClient.invalidateQueries({ queryKey: ["bannerData"] });
+    },
+    onError: () => {
+      message.error("Lỗi khi lưu thay đổi");
+    },
+  });
 
   const handlePreview = async (file: UploadFile) => {
     setPreviewImage(file.url || (file.preview as string));
@@ -148,6 +116,10 @@ const BannerManagement: React.FC = () => {
   const handleChange: UploadProps["onChange"] = async ({
     fileList: newFileList,
   }) => {
+    if (fileList.length <= 3 && newFileList.length < fileList.length) {
+      message.warning("Không thể xóa khi chỉ còn 3 ảnh");
+      return;
+    }
     const updatedFileList = await Promise.all(
       newFileList.map(async (file) => {
         if (file.originFileObj && !file.url && !uploadingFiles[file.uid]) {
@@ -156,7 +128,6 @@ const BannerManagement: React.FC = () => {
             const cloudinaryUrl = await uploadToCloudinary(file.originFileObj);
             return { ...file, status: "done", url: cloudinaryUrl };
           } catch (error) {
-            // console.error("Error uploading to Cloudinary:", error);
             message.error("Không tải được hình ảnh lên");
             return { ...file, status: "error" };
           } finally {
@@ -168,86 +139,57 @@ const BannerManagement: React.FC = () => {
     );
 
     setFileList(updatedFileList as UploadFile[]);
-  };
 
-  const handleTextChange = (key: string, newValue: string) => {
-    setBannerTextData((prevData) =>
-      prevData.map((item) =>
-        item.key === key ? { ...item, value: newValue } : item
-      )
-    );
-  };
-
-  const handleRemove = (_file: UploadFile) => {
-    return fileList.length > 3;
-  };
-
-  const handleColorChange = (key: string, newColor: string) => {
-    setBannerTextData((prevData) =>
-      prevData.map((item) =>
-        item.key === key ? { ...item, color: newColor } : item
-      )
-    );
-  };
-
-  const mutation = useMutation({
-    mutationFn: (newBannerData: BannerData[]) => {
-      return instance.post("/thong-tin-web", {
-        banner: newBannerData,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bannerData"] });
-      message.success("Banner đã được cập nhật thành công");
-    },
-    onError: (error: any) => {
-      if (error.response && error.response.data && error.response.data.errors) {
-        const errorMessages = Object.values(error.response.data.errors).flat();
-        errorMessages.forEach((msg) => message.error(msg as string));
+    const updatedBanners = updatedFileList.map((file) => {
+      const existingBanner = banners.find(banner => banner.duong_dan_anh === file.url);
+      if (existingBanner) {
+        return existingBanner;
       } else {
-        message.error("Không cập nhật được banner");
+        return {
+          id: Date.now(), 
+          duong_dan_anh: file.url || "",
+          noi_dung: {
+            tieu_de_chinh: "",
+            mau_tieu_de_chinh: "",
+            tieu_de_phu: "",
+            mau_tieu_de_phu: "",
+            van_ban_quang_cao: "",
+            mau_van_ban_quang_cao: "",
+            tieu_de_nut: "",
+            mau_nut: "",
+            mau_tieu_de_nut: "",
+            duong_link: "",
+          },
+        };
       }
-    },
-  });
+    });
 
-  const handleSave = () => {
-    if (!bannerData) return;
+    setBanners(updatedBanners);
+  };
 
-    const newBannerData: BannerData = {
-      duong_dan_anh: fileList
-        .map((file) => file.url || "")
-        .filter((url) => url !== ""),
-      noi_dung: {
-        mau_nut: accentColor,
-        tieu_de_nut: bannerTextData[3].value,
-        tieu_de_phu: bannerTextData[1].value,
-        tieu_de_chinh: bannerTextData[0].value,
-        mau_tieu_de_phu: bannerTextData[1].color || "",
-        mau_tieu_de_chinh: bannerTextData[0].color || "",
-        van_ban_quang_cao: bannerTextData[2].value,
-        mau_van_ban_quang_cao: bannerTextData[2].color || "",
-        mau_tieu_de_nut: bannerTextData[3].color || "",
-        duong_dan: bannerTextData[4].value,
-      },
-    };
-
-    mutation.mutate([newBannerData]);
+  const handleBannerChange = (bannerId: number, field: string, value: string) => {
+    setBanners((prevBanners) =>
+      prevBanners.map((banner) =>
+        banner.id === bannerId
+          ? { ...banner, noi_dung: { ...banner.noi_dung, [field]: value } }
+          : banner
+      )
+    );
   };
 
   if (isLoading) {
-    console.log("Still loading...");
     return (
       <Spin tip="Loading...">
         <div className="content" />
       </Spin>
     );
   }
+
   if (isError) {
-    // console.log("Error occurred");
     return <div>Lỗi khi tải dữ liệu biểu ngữ. Vui lòng thử lại sau.</div>;
   }
-  if (!bannerData) {
-    // console.log("No banner data");
+
+  if (banners.length === 0) {
     return <div>Không có dữ liệu biểu ngữ nào khả dụng. Vui lòng thêm một số dữ liệu.</div>;
   }
 
@@ -262,8 +204,7 @@ const BannerManagement: React.FC = () => {
     <div className="p-4 grid grid-cols-2 gap-4">
       <div className="flex flex-col space-y-9">
         <h1 className="md:text-base">
-          Quản trị /{" "}
-          <span className="font-semibold px-px">Thông tin website</span>
+          Quản trị / <span className="font-semibold px-px">Thông tin website</span>
         </h1>
 
         <div className="flex items-center justify-between mb-4">
@@ -272,29 +213,34 @@ const BannerManagement: React.FC = () => {
         <div>
           <h2 className="text-xl font-semibold mb-2">Ảnh Banner</h2>
           <Upload
-            listType="picture-card"
-            fileList={fileList}
-            onPreview={handlePreview}
-            onChange={handleChange}
-            onRemove={handleRemove}
-            beforeUpload={() => false}
-            itemRender={(originNode, file) => {
-              if (uploadingFiles[file.uid]) {
-                return (
-                  <div className="ant-upload-list-item-container">
-                    <Spin
-                      indicator={
-                        <LoadingOutlined style={{ fontSize: 24 }} spin />
-                      }
-                    />
-                  </div>
-                );
-              }
-              return originNode;
-            }}
-          >
-            {fileList.length >= 4 ? null : uploadButton}
-          </Upload>
+  listType="picture-card"
+  fileList={fileList}
+  onPreview={handlePreview}
+  onChange={handleChange}
+  beforeUpload={() => false}
+  itemRender={(originNode, file, fileList) => {
+    if (uploadingFiles[file.uid]) {
+      return (
+        <div className="ant-upload-list-item-container">
+          <Spin
+            indicator={
+              <LoadingOutlined style={{ fontSize: 24 }} spin />
+            }
+          />
+        </div>
+      );
+    }
+    if (fileList.length <= 3) {
+      return React.cloneElement(originNode, {
+        actions: originNode.props.actions?.filter((action: any) => action.key !== 'delete')
+      });
+    }
+    return originNode;
+  }}
+>
+  {fileList.length >= 4 ? null : uploadButton}
+</Upload>
+
           {previewImage && (
             <Image
               style={{ display: "none" }}
@@ -309,56 +255,68 @@ const BannerManagement: React.FC = () => {
 
         <div>
           <h2 className="text-xl font-semibold mb-2">Nội dung banner</h2>
-          <Table dataSource={bannerTextData} pagination={false}>
-            <Table.Column title="Key" dataIndex="key" key="key" />
-            <Table.Column
-              title="Value"
-              dataIndex="value"
-              key="value"
-              render={(text, record: any) => (
-                <Input
-                  value={text}
-                  onChange={(e) => handleTextChange(record.key, e.target.value)}
-                />
-              )}
-            />
-            <Table.Column
-              title="Color"
-              key="color"
-              render={(_text, record: any) =>
-                record.key !== "đường dẫn" ? (
-                  <ColorPicker
-                    value={record.color}
-                    onChange={(color) =>
-                      handleColorChange(record.key, color.toHexString())
-                    }
-                  />
-                ) : null
-              }
-            />
-          </Table>
+          <Tabs defaultActiveKey="0">
+            {banners.map((banner, index) => (
+   <TabPane tab={`Banner ${index + 1}`} key={index}>
+   <Table
+     dataSource={[
+       { key: "Tiêu đề chính", field: "tieu_de_chinh", value: banner.noi_dung.tieu_de_chinh, color: banner.noi_dung.mau_tieu_de_chinh },
+       { key: "Tiêu đề phụ", field: "tieu_de_phu", value: banner.noi_dung.tieu_de_phu, color: banner.noi_dung.mau_tieu_de_phu },
+       { key: "Văn bản quảng cáo", field: "van_ban_quang_cao", value: banner.noi_dung.van_ban_quang_cao, color: banner.noi_dung.mau_van_ban_quang_cao },
+       { key: "Tiêu đề nút", field: "tieu_de_nut", value: banner.noi_dung.tieu_de_nut, color: banner.noi_dung.mau_tieu_de_nut },
+       { key: "Đường dẫn", field: "duong_link", value: banner.noi_dung.duong_link },
+       { key: "Màu nền nút", field: "mau_nut", color: banner.noi_dung.mau_nut },
+     ]}
+     pagination={false}
+   >
+     <Table.Column title="Tên" dataIndex="key" key="key" />
+     <Table.Column
+       title="Nội Dung"
+       dataIndex="value"
+       key="value"
+       render={(text, record: any) => {
+         if (record.field === "mau_nut") {
+           return null;
+         }
+         return (
+           <Input
+             value={text}
+             onChange={(e) => handleBannerChange(banner.id, record.field, e.target.value)}
+           />
+         );
+       }}
+     />
+     <Table.Column
+       title="Màu"
+       key="color"
+       render={(_text, record: any) => {
+         if (record.field === "duong_link") {
+           return null;
+         }
+         return (
+           <ColorPicker
+             value={record.color}
+             onChange={(color) => handleBannerChange(banner.id, record.field === "mau_nut" ? "mau_nut" : `mau_${record.field}`, color.toHexString())}
+           />
+         );
+       }}
+     />
+   </Table>
+ </TabPane>
+ 
+
+         
+            ))}
+          </Tabs>
         </div>
       </div>
 
       <div className="flex flex-col space-y-4 mt-40">
         <div>
-          <h2 className="text-xl font-semibold mb-2">Màu Banner</h2>
-          <div className="flex space-x-4">
-            <div>
-              <p>Màu button</p>
-              <ColorPicker
-                value={accentColor}
-                onChange={(color) => setAccentColor(color.toHexString())}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div>
           <h2 className="text-xl font-semibold mb-2">Xem trước</h2>
           {fileList.length > 0 ? (
             <Carousel autoplay>
-              {fileList.map((file, index) => (
+              {banners.map((banner, index) => (
                 <div key={index}>
                   <div
                     style={{
@@ -366,12 +324,12 @@ const BannerManagement: React.FC = () => {
                       borderRadius: "8px",
                       position: "relative",
                       overflow: "hidden",
-                      height: "300px",
+                      height: "400px",
                       width: "100%",
                     }}
                   >
                     <img
-                      src={file.url || ""}
+                      src={banner.duong_dan_anh}
                       alt={`Banner preview ${index}`}
                       style={{
                         position: "absolute",
@@ -383,36 +341,36 @@ const BannerManagement: React.FC = () => {
                         zIndex: 0,
                       }}
                     />
-                    <div className="absolute top-[100px] left-16">
+                    <div className="absolute top-[130px] left-40">
                       <div className="mb-4">
                         <p
-                          className="font-semibold text-sm mb-2"
-                          style={{ color: bannerTextData[0].color }}
+                          className="font-semibold text-base mb-2"
+                          style={{ color: banner.noi_dung.mau_tieu_de_chinh }}
                         >
-                          {bannerTextData[0].value}
+                          {banner.noi_dung.tieu_de_chinh}
                         </p>
                         <p
                           className="text-xl font-bold mb-2 tracking-[1px]"
-                          style={{ color: bannerTextData[1].color }}
+                          style={{ color: banner.noi_dung.mau_tieu_de_phu }}
                         >
-                          {bannerTextData[1].value}
+                          {banner.noi_dung.tieu_de_phu}
                         </p>
                         <p
                           className="text-base font-medium uppercase"
-                          style={{ color: bannerTextData[2].color }}
+                          style={{ color: banner.noi_dung.mau_van_ban_quang_cao }}
                         >
-                          {bannerTextData[2].value}
+                          {banner.noi_dung.van_ban_quang_cao}
                         </p>
                       </div>
                       <div>
                         <button
                           className="px-4 py-2 rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium"
                           style={{
-                            backgroundColor: accentColor,
-                            color: bannerTextData[3].color,
+                            backgroundColor: banner.noi_dung.mau_nut,
+                            color: banner.noi_dung.mau_tieu_de_nut,
                           }}
                         >
-                          {bannerTextData[3].value}
+                          {banner.noi_dung.tieu_de_nut}
                           <i className="fa-solid fa-arrow-right ml-2"></i>
                         </button>
                       </div>
@@ -431,11 +389,13 @@ const BannerManagement: React.FC = () => {
           )}
         </div>
       </div>
-
       <div className="mt-4 flex justify-start">
         <Button
-          className="  bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-2 hover:bg-blue-600 shadow-md transition-colors"
-          onClick={handleSave}
+          className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-2 hover:bg-blue-600 shadow-md transition-colors"
+          onClick={() => {
+            saveMutation.mutate(banners);
+          }}
+          loading={saveMutation.isLoading}
         >
           Lưu thay đổi
         </Button>
@@ -443,5 +403,6 @@ const BannerManagement: React.FC = () => {
     </div>
   );
 };
+
 
 export default BannerManagement;

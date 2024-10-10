@@ -18,15 +18,15 @@ class DanhMuc extends Model
     ];
     public function parent()
     {
-        return $this->belongsTo(DanhMuc::class, 'cha_id');
+        return $this->belongsTo(DanhMuc::class, 'cha_id', 'id');
     }
     public function children()
     {
-        return $this->hasMany(DanhMuc::class, 'cha_id');
+        return $this->hasMany(DanhMuc::class, 'cha_id', 'id');
     }
 
     public function sanPhams()
     {
-        return $this->hasMany(SanPham::class);
+        return $this->hasMany(SanPham::class, 'danh_muc_id', 'id');
     }
 }

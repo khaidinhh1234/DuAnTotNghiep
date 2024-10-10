@@ -9,7 +9,7 @@ export interface IEvaluate {
   so_sao_dich_vu_van_chuyen: number;
   chat_luong_san_pham: string;
   mo_ta: string;
-  anh_danh_gias: string;
+  anh_danh_gias: { id: number; anh_danh_gia: string }[];
   phan_hoi: string;
   trang_thai: boolean;
   created_at: Date;

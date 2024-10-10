@@ -100,7 +100,7 @@ const UsersNhanvienAdd = () => {
         <div>
           {" "}
           <Link to="/admin/users/nhanvien" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg  py-1">
+            <Button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>
@@ -227,6 +227,10 @@ const UsersNhanvienAdd = () => {
                           message:
                             "Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.",
                         },
+                        {
+                          pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                          message: "Vui lòng nhập họ không chứa ký tự trắng!",
+                        },
                       ]}
                     >
                       <Input placeholder="Nhập số điện thoại của Nhân viên  " />
@@ -285,6 +289,10 @@ const UsersNhanvienAdd = () => {
                           message:
                             "Mật khẩu phải chứa ít nhất 1 chữ hoa và 1 số!",
                         },
+                        {
+                          pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                          message: "Vui lòng nhập họ không chứa ký tự trắng!",
+                        },
                       ]}
                     >
                       <Input placeholder="Mật khẩu " />
@@ -320,19 +328,13 @@ const UsersNhanvienAdd = () => {
                 </div>{" "}
               </div>
               <Form.Item>
-                <button
-                  type="submit"
-                  className="px-3 py-2 bg-black text-white rounded-lg"
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 >
-                  {isPending ? (
-                    <>
-                      <Loading3QuartersOutlined className="animate-spin" />{" "}
-                      Submit
-                    </>
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
+                  Thêm tài khoản nhân viên
+                </Button>
               </Form.Item>
             </Form>
           </div>

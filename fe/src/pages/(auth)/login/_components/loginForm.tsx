@@ -21,7 +21,7 @@ const LoginForm = () => {
   });
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
-      console.log(user);
+      // console.log(user);
       const { data } = await instance.post("/login", user);
 
       localStorage.setItem("user", JSON.stringify(data));

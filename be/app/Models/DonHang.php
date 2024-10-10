@@ -48,22 +48,22 @@ class DonHang extends Model
     // Relationship with DonHangChiTiet
     public function chiTiets()
     {
-        return $this->hasMany(DonHangChiTiet::class);
+        return $this->hasMany(DonHangChiTiet::class, 'don_hang_id', 'id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function danhGias()
     {
-        return $this->hasMany(DanhGia::class, 'don_hang_id');
+        return $this->hasMany(DanhGia::class, 'don_hang_id', 'id');
     }
 
     public function vanChuyen()
     {
-        return $this->hasOne(VanChuyen::class);
+        return $this->hasOne(VanChuyen::class, 'don_hang_id', 'id');
     }
     public function bienTheSanPhams()
     {

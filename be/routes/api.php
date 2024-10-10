@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\BienTheMauSacController;
 use App\Http\Controllers\Admin\Api\ChuongTrinhUuDaiController;
-use App\Http\Controllers\Admin\Api\DanhGiaController as ApiDanhGiaController;
+use App\Http\Controllers\Admin\Api\DanhGiaController as AdminDanhGiaController;
+use App\Http\Controllers\Admin\Api\LichSuHoatDongController;
+use App\Http\Controllers\Admin\Api\LienHeController as AdminLienHeController;
 use App\Http\Controllers\Admin\Api\DanhMucController;
 use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
@@ -31,9 +33,10 @@ use App\Http\Controllers\Client\Api\DanhGiaController;
 use App\Http\Controllers\Client\Api\GioHangController;
 use App\Http\Controllers\Client\Api\DonHangClientController;
 use App\Http\Controllers\Client\Api\KhuyenMaiController;
-use App\Http\Controllers\Client\Api\LienHeController;
+use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
+use App\Models\LichSuHoatDong;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,21 +52,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-    // $users = $request->user()->vaiTros;
-    // foreach ($users as $user) {
-    //     $vaiTro = VaiTro::query()->where('ten_vai_tro', $user->ten_vai_tro)->with('quyens')->first();
-    //     $tenQuyen = $vaiTro->quyens->pluck('ten_quyen');
-    // }
-    // return $tenQuyen;
-})->name('user');
+Route::middleware('auth.sanctum')->get('/user', function () {
+    return response()->json(['id' => auth()->id(), 'name' => auth()->user()->name]);
+});
 
 // Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth:sanctum');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.sanctum');
+Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth.sanctum');
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
@@ -101,7 +98,7 @@ Route::middleware([])
         // lấy ra kích thước
         Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc']);
 
-        // lọc theo kích thước
+        // Lọc theo kích thước
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc']);
 
         //Client Chi tiết sản phẩm
@@ -114,7 +111,7 @@ Route::middleware([])
         Route::post('danhgia', [DanhGiaController::class, 'themMoiDanhGia']);
 
         // Liên hệ
-        Route::post('lienhe', [LienHeController::class, 'lienHe']);
+        Route::post('lienhe', [TrangLienHeController::class, 'lienHe']);
 
         // Giỏ hàng
         Route::get('/gio-hang', [GioHangController::class, 'index']);
@@ -126,8 +123,8 @@ Route::middleware([])
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
-//'auth:sanctum', 'auth.checkrole'
-Route::middleware([])
+//'auth.sanctum', 'auth.checkrole'
+Route::middleware(['auth.sanctum', 'auth.checkrole'])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -171,9 +168,9 @@ Route::middleware([])
         Route::get('the/{id}', [TheController::class, 'show'])->name('the.show');
 
         // Đánh giá
-        Route::get('danhsachdanhgia', [ApiDanhGiaController::class, 'danhSachDanhGiaAll']);
-        Route::get('sanpham/{sanpham}/danhgia', [ApiDanhGiaController::class, 'DanhGiaTheoSanPham']);
-        Route::post('danhsachdanhgia/{danhgia}', [ApiDanhGiaController::class, 'phanHoiDanhGia']);
+        Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll']);
+        Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham']);
+        Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia']);
 
         // Đơn hàng
         Route::get('/donhang', [DonHangController::class, 'index'])->name('donhang.index');
@@ -185,12 +182,12 @@ Route::middleware([])
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
         Route::get('lay-thong-tin-don', [DonHangController::class, 'layThongTinDon']);
 
-
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
         Route::get('/vanchuyen/{id}', [VanChuyenController::class, 'show'])->name('vanchuyen.show');
         Route::put('/vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
         Route::get('lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen']);
+        Route::put('vanchuyen/xac-nhan-van-chuyen/{id}', [VanChuyenController::class, 'xacNhanVanChuyen'])->name('vanchuyen.xacnhan');
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
@@ -237,9 +234,14 @@ Route::middleware([])
         Route::post('hangthanhvien/thung-rac/{id}', [HangThanhVienController::class, 'khoiPhucHangThanhVien'])->name('hangthanhvien.khoiphuc');
         Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
 
+        // Liên hệ
+        Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe'])->name('lienhe.index');
+        Route::put('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
+
         //Vai trò
-        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
-        Route::apiResource('vaitro', VaiTroController::class);
+        Route::apiResource('vaitro', VaiTroController::class)->except('show');
+        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen'])->name('vaitro.routes');
+        Route::get('vaitro/{id}', [VaiTroController::class, 'show'])->name('vaitro.show');
         // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
 
@@ -249,6 +251,7 @@ Route::middleware([])
             // Tổng quan thống kê
 
             Route::get('/doanh-thu-ngay', [ThongKeDoanhThuController::class, 'doanhThuTheoNgay'])->name('thong-ke.doanh-thu-ngay');
+            Route::post('/doanh-thu-tuan-tu', [ThongKeDoanhThuController::class, 'thongKeDoanhThuTuanTu'])->name('doanh-thu-tuan-tu.thong-ke');
             Route::post('/doanh-thu-tuan', [ThongKeDoanhThuController::class, 'doanhThuTheoTuan'])->name('doanh-thu-tuan.thong-ke');
             Route::post('/doanh-thu-thang', [ThongKeDoanhThuController::class, 'doanhThuTheoThang'])->name('doanh-thu-thang.thong-ke');
             Route::post('/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy'])->name('doanh-thu-quy.thong-ke');
@@ -289,9 +292,19 @@ Route::middleware([])
             Route::get('/khach-hang-moi-theo-tung-thang', [ThongKeKhachHangController::class, 'thongKeKhachHangMoi'])->name('khach-hang-moi-theo-tung-thang.thong-ke');
             Route::get('/khach-hang-quay-lai-theo-thang', [ThongKeKhachHangController::class, 'thongKeKhachHangQuayLaiTheoThang'])->name('khach-hang-quay-lai-theo-thang.thong-ke');
 
+
+            Route::get('/so-sanh-don-hang-thang', [ThongKeDonHangController::class, 'soSanhDonHangThang']);
+            Route::get('/top5-khach-hang-gan-day', [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
+            Route::get('/so-sanh-khach-hang-register', [ThongKeKhachHangController::class, 'soSanhKhachHangRegister']);
+            Route::get('/so-sanh-khach-hang-activity', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock']);
+
             Route::post('/tim-kiem-thanh-vien-theo-hang', [ThongKeKhachHangController::class, 'timKiemThanhVienTheoHang']);
 
             // Thống kê đánh giá
             Route::get('/{sanpham}/thong-ke-danh-gia', [ThongKeDanhGiaController::class, 'danhSachDanhGiaTheoSanPham'])->name('thong-ke-danh-gia.thong-ke');
         });
+
+        // Lich su hoat dong
+        Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index'])->name('lich-su-hoat-dong.index');
+        Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show'])->name('lich-su-hoat-dong.show');
     });

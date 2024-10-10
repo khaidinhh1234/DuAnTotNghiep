@@ -31,15 +31,25 @@ class BienTheKichThuocController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kich_thuoc' => 'required|string|max:255|unique:bien_the_kich_thuocs,kich_thuoc',
-            'loai_kich_thuoc' => 'required|in:nguoi_lon,tre_em',
+            'kich_thuoc' => 'required|string|max:255',
+            'loai_kich_thuoc' => 'required|in:nam,nu,tre_em',
         ]);
 
         $validator->after(function ($validator) use ($request) {
-            if ($request->loai_kich_thuoc === 'nguoi_lon' && !preg_match('/^[a-zA-Z]+$/', $request->kich_thuoc)) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước phải là chữ cho loại người lớn.');
-            } elseif ($request->loai_kich_thuoc === 'tre_em' && !is_numeric($request->kich_thuoc)) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước phải là số cho loại trẻ em.');
+            $exists = BienTheKichThuoc::where('kich_thuoc', $request->kich_thuoc)
+                ->where('loai_kich_thuoc', $request->loai_kich_thuoc)
+                ->exists();
+
+            if ($exists) {
+                $validator->errors()->add('kich_thuoc', 'Kích thước đã tồn tại cho loại này.');
+            }
+
+            if ($request->loai_kich_thuoc === 'nu' && !in_array($request->kich_thuoc, ['XS', 'S', 'M', 'L', 'XL', 'XXL'])) {
+                $validator->errors()->add('kich_thuoc', 'Kích thước cho nữ chỉ được phép từ XS đến XXL.');
+            } elseif ($request->loai_kich_thuoc === 'nam' && !in_array($request->kich_thuoc, ['S', 'M', 'L', 'XL', 'XXL'])) {
+                $validator->errors()->add('kich_thuoc', 'Kích thước cho nam chỉ được phép từ S đến XXL.');
+            } elseif ($request->loai_kich_thuoc === 'tre_em' && (!is_numeric($request->kich_thuoc) || $request->kich_thuoc < 1 || $request->kich_thuoc > 9)) {
+                $validator->errors()->add('kich_thuoc', 'Kích thước cho trẻ em phải là số từ 1 đến 9.');
             }
         });
 
@@ -94,15 +104,25 @@ class BienTheKichThuocController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'kich_thuoc' => 'required|string|max:255|unique:bien_the_kich_thuocs,kich_thuoc,' . $id,
-            'loai_kich_thuoc' => 'required|in:nguoi_lon,tre_em',
+            'kich_thuoc' => 'required|string|max:255',
+            'loai_kich_thuoc' => 'required|in:nam,nu,tre_em',
         ]);
 
-        $validator->after(function ($validator) use ($request) {
-            if ($request->loai_kich_thuoc === 'nguoi_lon' && !preg_match('/^[a-zA-Z]+$/', $request->kich_thuoc)) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước phải là chữ cho loại người lớn.');
-            } elseif ($request->loai_kich_thuoc === 'tre_em' && !is_numeric($request->kich_thuoc)) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước phải là số cho loại trẻ em.');
+        $validator->after(function ($validator) use ($request, $id) {
+            $exists = BienTheKichThuoc::where('kich_thuoc', $request->kich_thuoc)
+                ->where('loai_kich_thuoc', $request->loai_kich_thuoc)
+                ->where('id', '!=', $id)
+                ->exists();
+
+            if ($exists) {
+                $validator->errors()->add('kich_thuoc', 'Kích thước đã tồn tại cho loại này.');
+            }
+            if ($request->loai_kich_thuoc === 'nu' && !in_array($request->kich_thuoc, ['XS', 'S', 'M', 'L', 'XL', 'XXL'])) {
+                $validator->errors()->add('kich_thuoc', 'Kích thước cho nữ chỉ được phép từ XS đến XXL.');
+            } elseif ($request->loai_kich_thuoc === 'nam' && !in_array($request->kich_thuoc, ['S', 'M', 'L', 'XL', 'XXL'])) {
+                $validator->errors()->add('kich_thuoc', 'Kích thước cho nam chỉ được phép từ S đến XXL.');
+            } elseif ($request->loai_kich_thuoc === 'tre_em' && (!is_numeric($request->kich_thuoc) || $request->kich_thuoc < 1 || $request->kich_thuoc > 9)) {
+                $validator->errors()->add('kich_thuoc', 'Kích thước cho trẻ em phải là số từ 1 đến 9.');
             }
         });
 
@@ -147,6 +167,7 @@ class BienTheKichThuocController extends Controller
                 ], 404);
             }
 
+
             if ($bienTheKichThuoc->bienTheSanPhams()->exists()) {
                 return response()->json([
                     'status' => false,
@@ -154,65 +175,17 @@ class BienTheKichThuocController extends Controller
                     'message' => 'Không thể xóa vì sản phẩm có biến thể này.',
                 ], 400);
             }
-
             $bienTheKichThuoc->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Xóa dữ liệu thành công',
-                'data' => $bienTheKichThuoc
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Xóa dữ liệu thất bại',
-            ], 500);
-        }
-    }
-
-    public function danhSachXoaMem()
-    {
-        try {
-            $bienTheKichThuoc = BienTheKichThuoc::onlyTrashed()->get();
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công',
-                'data' => $bienTheKichThuoc
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Lấy dữ liệu thất bại',
-            ], 500);
-        }
-    }
-
-    public function khoiPhucXoaMem(string $id)
-    {
-        try {
-            $bienTheKichThuoc = BienTheKichThuoc::withTrashed()->find($id);
-            if (!$bienTheKichThuoc) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 404,
-                    'message' => 'Biến thể kích thước không tồn tại',
-                ], 404);
-            }
-            $bienTheKichThuoc->restore();
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Khôi phục dữ liệu thành công',
-                'data' => $bienTheKichThuoc
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Khôi phục dữ liệu thất bại',
             ], 500);
         }
     }

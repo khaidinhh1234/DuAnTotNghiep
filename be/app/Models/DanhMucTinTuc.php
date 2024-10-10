@@ -16,6 +16,6 @@ class DanhMucTinTuc extends Model
         'duong_dan',
     ];
     public function tinTuc() {
-        return $this->hasMany(TinTuc::class, 'danh_muc_tin_tuc_id');
+        return $this->hasMany(TinTuc::class, 'danh_muc_tin_tuc_id', 'id');
     }
 }

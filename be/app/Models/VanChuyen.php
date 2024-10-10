@@ -21,17 +21,26 @@ class VanChuyen extends Model
     const TTCOD_KT = 'Không thu';
     protected $fillable = [
         'don_hang_id',
+        'shipper_id',
+        'user_id',
         'ma_van_chuyen',
         'ngay_tao',
         'trang_thai_van_chuyen',
         'cod',
         'tien_cod',
-        'anh_xac_thuc'
+        'anh_xac_thuc',
+        'shipper_xac_nhan',
+        'khach_hang_xac_nhan',
     ];
 
     public function donHang()
     {
         return $this->belongsTo(DonHang::class, 'don_hang_id', 'id');
+    }
+
+    public function shipper()
+    {
+        return $this->belongsTo(User::class, 'shipper_id', 'id');
     }
 
     protected static function boot()
