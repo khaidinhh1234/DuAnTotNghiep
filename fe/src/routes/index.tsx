@@ -20,7 +20,7 @@ import CategoriesRemote from "@/pages/(dashboard)/categories/remote/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
-import { Dashboard } from "@/pages/(dashboard)/dashboard/list/page";
+
 import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
@@ -105,12 +105,14 @@ import AddProducts from "@/pages/(dashboard)/products/Addd/page";
 
 import PrivateRoute from "./PrivateRoute";
 import Test from "@/pages/(dashboard)/test";
-import List from "@/pages/(dashboard)/dashboard/test/list";
+// import List from "@/pages/(dashboard)/dashboard/test/page";
 
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
+import Dashboard from "@/pages/(dashboard)/dashboard/test/page";
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
+import { List } from "./../pages/(dashboard)/dashboard/list/page";
 
 const Router = () => {
   //
@@ -156,9 +158,10 @@ const Router = () => {
             </PrivateRoute>
           }
         >
+          <Route index element={<Navigate to="/admin/dashboard/list" />} />
           <Route path="dashboard/list" element={<Dashboard />} />
           <Route path="dashboard/doanhthu" element={<DoanhThu />} />
-          <Route path="dashboard/sanpham" element={<SanPham />} />
+          <Route path="dashboard/sanpham" element={<List />} />
           <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
           {/* Sản phẩm  */}
           <Route

@@ -25,7 +25,6 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
   // Kiểm tra trạng thái xác thực
   const isAuthenticated = !!token && phanquyen && phanquyen.length > 0;
 
-  // Nếu chưa xác thực hoặc không có quyền, chuyển hướng về trang đăng nhập
   if (!isAuthenticated) {
     message.error("Bạn không có quyền truy cập");
     return <Navigate to="/login" />;
@@ -39,7 +38,6 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
     },
   });
 
-  // Sử dụng interceptor để gán token vào headers
   userAPI.interceptors.request.use(
     (config) => {
       if (token) {
@@ -53,10 +51,10 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
   );
 
   // Thử gọi API
-  // userAPI
-  //   .get('admin/sanpham')
-  //   .then((response) => console.log(response.data))
-  //   .catch((error) => console.error("Error:", error));
+  userAPI
+    .get("admin/sanpham")
+    .then((response) => console.log(response.data))
+    .catch((error) => console.error("Error:", error));
 
   // Sử dụng useQuery để lấy dữ liệu sản phẩm
   const { data } = useQuery({

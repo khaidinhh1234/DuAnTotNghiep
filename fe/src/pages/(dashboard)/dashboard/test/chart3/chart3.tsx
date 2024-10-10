@@ -1,21 +1,21 @@
 import { ArrowDownOutlined } from "@ant-design/icons";
 import { Card } from "antd";
 
-const Chart1 = () => {
+const Chart3 = () => {
   return (
     <Card className="shadow-md px-1 rounded-lg bg-white flex flex-col">
       <div className="flex items-center mb-2">
-        <div className="bg-green-600 py-[7px] px-3 flex items-center rounded-full mr-2">
+        <div className="bg-blue-600 py-[7px] px-3 flex items-center rounded-full mr-2">
           <i className="fa-regular fa-box-check text-white text-xl"></i>
         </div>
 
-        <h3 className="text-lg font-bold">Tổng hàng chốt</h3>
+        <h3 className="text-lg font-bold">Có thể bán</h3>
       </div>
       <div className="grid grid-cols-2">
         <div>
           <div className="text-black">
-            Tổng tiền: <br />
-            <span className="text-2xl font-bold text-green-800"> 8.232</span>
+            Giá nhập: <br />
+            <span className="text-2xl font-bold text-blue-800"> 8.232</span>
           </div>
           <div className="flex items-center mt-1">
             <ArrowDownOutlined className="text-red-500" />
@@ -24,7 +24,7 @@ const Chart1 = () => {
         </div>
         <div>
           <div className="text-black">
-            Số lượng đơn hàng: <br />
+            Giá bán: <br />
             <span className="text-2xl font-bold text-black"> 32</span>
           </div>
           <div className="flex items-center mt-1">
@@ -37,4 +37,4 @@ const Chart1 = () => {
   );
 };
 
-export default Chart1;
+export default Chart3;
