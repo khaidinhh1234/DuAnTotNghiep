@@ -108,12 +108,16 @@ import Test from "@/pages/(dashboard)/test";
 // import List from "@/pages/(dashboard)/dashboard/test/page";
 
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
-import Dashboard from "@/pages/(dashboard)/dashboard/test/page";
+// import Dashboard from "@/pages/(dashboard)/dashboard/tongquan/page";
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 import { List } from "./../pages/(dashboard)/dashboard/list/page";
+
+import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
+
 import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
+
 
 const Router = () => {
   //
