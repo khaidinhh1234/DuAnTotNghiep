@@ -65,6 +65,17 @@ class DonHang extends Model
     {
         return $this->hasOne(VanChuyen::class, 'don_hang_id', 'id');
     }
+    public function bienTheSanPhams()
+    {
+        return $this->hasManyThrough(
+            BienTheSanPham::class,       // Bảng đích (biến thể sản phẩm)
+            DonHangChiTiet::class,       // Bảng trung gian (chi tiết đơn hàng)
+            'don_hang_id',               // Khóa ngoại của DonHangChiTiet tham chiếu tới DonHang
+            'id',                        // Khóa chính của BienTheSanPham
+            'id',                        // Khóa chính của DonHang
+            'bien_the_san_pham_id'       // Khóa ngoại của DonHangChiTiet tham chiếu tới BienTheSanPham
+        );
+    }
 
     protected static function boot()
     {

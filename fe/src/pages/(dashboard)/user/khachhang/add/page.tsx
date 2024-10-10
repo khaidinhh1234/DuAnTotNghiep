@@ -319,19 +319,13 @@ const UserskhachhangAdd = () => {
                 </Form.Item>{" "}
               </div>
               <Form.Item>
-                <button
-                  type="submit"
+                <Button
+                  type="primary"
+                  htmlType="submit"
                   className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 >
-                  {isPending ? (
-                    <>
-                      <Loading3QuartersOutlined className="animate-spin" />{" "}
-                      Submit
-                    </>
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
+                  Thêm tài khoản khách hàng
+                </Button>
               </Form.Item>
             </Form>
           </div>

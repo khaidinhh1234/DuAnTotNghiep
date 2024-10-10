@@ -408,7 +408,7 @@ const ProductsRemote: React.FC = () => {
 
   const restoreMultipleProductsMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      await instance.patch("sanphams/khoi-phuc-xoa-mem-nhieu-san-pham", { 
+      await instance.patch("sanpham/khoi-phuc-xoa-mem-nhieu-san-pham", { 
         san_phams: ids 
       });
     },

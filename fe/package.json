@@ -16,6 +16,7 @@
   "dependencies": {
     "@ant-design/cssinjs": "^1.21.0",
     "@ant-design/icons": "^5.4.0",
+    "@ant-design/pro-layout": "^7.20.2",
     "@ckeditor/ckeditor5-build-classic": "^43.1.0",
     "@ckeditor/ckeditor5-react": "^9.2.0",
     "@heroicons/react": "^2.1.5",
@@ -40,6 +41,7 @@
     "@types/lodash": "^4.17.0",
     "@types/react-color": "^3.0.12",
     "antd": "^5.21.2",
+    "antd-style": "^3.7.0",
     "apexcharts": "^3.53.0",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
@@ -62,6 +64,7 @@
     "react-apexcharts": "^1.4.1",
     "react-color": "^2.19.3",
     "react-colorful": "^5.6.1",
+    "react-countup": "^6.5.3",
     "react-dom": "^18.2.0",
     "react-google-recaptcha": "^3.1.0",
     "react-highlight-words": "^0.20.0",

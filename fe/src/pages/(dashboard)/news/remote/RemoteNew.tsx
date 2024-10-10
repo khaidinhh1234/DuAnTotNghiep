@@ -93,7 +93,7 @@ const RemoteNew: React.FC = () => {
             title="Bạn có chắc chắn muốn khôi phục?"
             onConfirm={() => handleRestore(record.key)}
           >
-            <Button type="primary">Khôi phục</Button>
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">Khôi phục</Button>
           </Popconfirm>
           {/* <Button type="default" onClick={() => navigate(`/admin/news/details/${record.key}`)}>
             Chi tiết
