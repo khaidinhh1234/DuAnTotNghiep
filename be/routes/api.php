@@ -125,6 +125,7 @@ Route::middleware([])
 
 
 //'auth:sanctum', 'auth.checkrole'
+Route::middleware([])
 
     ->name('admin.')
     ->prefix('admin')
