@@ -32,6 +32,7 @@ const PageSupport: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEvaluate, setCurrentEvaluate] = useState<any | null>(null);
   const [phan_hoi, setphan_hoi] = useState<{ [key: number]: string }>({});
+  // console.log('phan_hoi', phan_hoi);
   const [searchText, setSearchText] = useState<string>("");
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
@@ -42,6 +43,7 @@ const PageSupport: React.FC = () => {
       return res.data
     }
   })
+
   const dataSource = data?.data.map((support: Support, index: number) => ({
     key: support.id,
     ...support,
@@ -56,8 +58,9 @@ const PageSupport: React.FC = () => {
       id: number | string;
       phan_hoi: string;
     }) => {
+      // console.log(phan_hoi,'sưefsefd');
       const response = await instance.put(`/lien-he/${id}`, {
-        phan_hoi,
+        noi_dung_phan_hoi: phan_hoi
       });
       return response.data;
     },
@@ -80,6 +83,7 @@ const PageSupport: React.FC = () => {
     },
   });
   const showDetail = (record: Support) => {
+    console.log("record", record);
     setCurrentEvaluate(record);
     setIsModalOpen(true); // Sử dụng modal để hiển thị chi tiết
   };
