@@ -86,8 +86,9 @@ class SanPhamController extends Controller
                     'bien_the_mau_sac_id' => $value['mau_sac_id'],
                     'bien_the_kich_thuoc_id' => $value['kich_thuoc_id'],
                     'so_luong_bien_the' => $value['so_luong_bien_the'],
+                    'chi_phi_san_xuat' => $value['chi_phi_san_xuat'],
                     'gia_ban' => $value['gia_ban'],
-                    'gia_khuyen_mai' => $value['gia_khuyen_mai'],
+                    'gia_khuyen_mai' => $value['gia_khuyen_mai'] ?? null,
                     'anh' => $value['anh'] ?? [],
                 ];
             }
@@ -203,8 +204,9 @@ class SanPhamController extends Controller
                     'bien_the_mau_sac_id' => $value['mau_sac_id'],
                     'bien_the_kich_thuoc_id' => $value['kich_thuoc_id'],
                     'so_luong_bien_the' => $value['so_luong_bien_the'],
+                    'chi_phi_san_xuat' => $value['chi_phi_san_xuat'],
                     'gia_ban' => $value['gia_ban'],
-                    'gia_khuyen_mai' => $value['gia_khuyen_mai'],
+                    'gia_khuyen_mai' => $value['gia_khuyen_mai'] ?? null,
                     'anh' => $value['anh'] ?? [],
                 ];
             }
