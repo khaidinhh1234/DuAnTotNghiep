@@ -8,7 +8,7 @@ import { useState } from "react";
 const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-
+  const [imageSelected, setImageSelected] = useState(false);
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -84,7 +84,9 @@ const DetailTransport = ({ record }: any) => {
       });
     },
   });
-
+  const handleImageChange = (e: any) => {
+    setImageSelected(e && e.fileList.length > 0);
+  };
   // if (isLoading) {
   //   return <div>Loading...</div>;
   // }
@@ -405,52 +407,48 @@ const DetailTransport = ({ record }: any) => {
               </p>
             </div> {" "}
             {/* shipper */}
-            <div className=" bg-slate-100 p-5 border rounded-lg my-2">
+            <div className="bg-slate-100 p-5 border rounded-lg my-2">
               <h5 className="text-blue-800 text-lg">Xác nhận của shipper</h5>
               <hr />
-              {/* <h5 className="text-blue-600 my-2">
-                {record.don_hang.ten_nguoi_dat_hang
-              ? record.don_hang.ten_nguoi_dat_hang
-              : thongtin?.ho + " " + thongtin?.ten}
-              </h5> */}
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Nhân viên ship</h5>
               <span className="text-black my-2">
-                {/* {" "} */}
                 {record.don_hang.ten_nguoi_dat_hang
                   ? record.don_hang.ten_nguoi_dat_hang
                   : thongtin?.ho + " " + thongtin?.ten}
               </span>
               <p className="text-blue-800 font-semibold">
-                Số điện thoại :
+                Số điện thoại:
                 <span className="text-black font-medium">
                   {record.don_hang.so_dien_thoai_nguoi_dat_hang
                     ? record.don_hang.so_dien_thoai_nguoi_dat_hang
                     : thongtin?.so_dien_thoai}
                 </span>
               </p>
-              <h5 className="text-blue-800 mb-4">
-                Ảnh xác nhận giao hàng thành công:
-              </h5>
+              <h5 className="text-blue-800 mb-4">Ảnh xác nhận giao hàng thành công:</h5>
               <Form.Item
                 label="Thêm ảnh"
                 name="imageFile"
                 valuePropName="fileList"
-                getValueFromEvent={(e: any) => (Array.isArray(e) ? e : e?.fileList)}
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
                 rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
                 className="mb-4"
               >
                 <Upload
                   listType="picture"
                   maxCount={1}
-                  beforeUpload={() => false} // Disable automatic upload
+                  beforeUpload={() => false}
+                  onChange={handleImageChange}
                 >
-                  <Button icon={<UploadOutlined />}>
-                    Chọn ảnh
-                  </Button>
+                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
                 </Upload>
               </Form.Item>
 
+              {imageSelected && (
+                <Button type="primary" htmlType="submit">
+                  Xác nhận
+                </Button>
+              )}
             </div>
           </div>
         </div>
