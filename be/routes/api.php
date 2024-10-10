@@ -124,9 +124,14 @@ Route::middleware([])
     });
 
 
+<<<<<<< HEAD
 //'auth:sanctum', 'auth.checkrole'
 Route::middleware(['auth:sanctum', 'auth.checkrole'])
 
+=======
+//'auth.sanctum', 'auth.checkrole'
+Route::middleware(['auth.sanctum', 'auth.checkrole'])
+>>>>>>> 64e881b2edac57764defc0f784279b7b6371caac
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -241,8 +246,9 @@ Route::middleware(['auth:sanctum', 'auth.checkrole'])
         Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
 
         //Vai trò
-        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
-        Route::apiResource('vaitro', VaiTroController::class);
+        Route::apiResource('vaitro', VaiTroController::class)->except('show');
+        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen'])->name('vaitro.routes');
+        Route::get('vaitro/{id}', [VaiTroController::class, 'show'])->name('vaitro.show');
         // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
 
