@@ -98,7 +98,7 @@ Route::middleware([])
         // lấy ra kích thước
         Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc']);
 
-        // lọc theo kích thước
+        // Lọc theo kích thước
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc']);
 
         //Client Chi tiết sản phẩm
