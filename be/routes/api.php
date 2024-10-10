@@ -235,8 +235,8 @@ Route::middleware([])
         Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
 
         // Liên hệ
-        Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe']);
-        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi']);
+        Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe'])->name('lien-he.index');
+        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lien-he.phanhoi');
 
         //Vai trò
         Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
