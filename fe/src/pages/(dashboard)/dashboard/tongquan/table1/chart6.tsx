@@ -48,7 +48,9 @@ const Chart6 = () => {
       },
       yaxis: {
         labels: {
-          formatter: (val: number) => `${val}M`,
+          formatter: (val: number) => {
+            return `${val.toLocaleString("vi-VN")} đ`;
+          },
         },
       },
     },

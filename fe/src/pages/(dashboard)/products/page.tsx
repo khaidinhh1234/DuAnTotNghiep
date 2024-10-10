@@ -489,30 +489,36 @@ const ProductsAdmin: React.FC = () => {
   });
 
   const bulkActionMutation = useMutation({
-    mutationFn: async ({ action, ids }: { action: string; ids: React.Key[] }) => {
-      let endpoint = '';
-      let method = 'patch';
+    mutationFn: async ({
+      action,
+      ids,
+    }: {
+      action: string;
+      ids: React.Key[];
+    }) => {
+      let endpoint = "";
+      let method = "patch";
       let payload: any = {};
 
       switch (action) {
-        case 'activate':
-          endpoint = 'sanpham/trang-thai-nhieu-san-pham';
+        case "activate":
+          endpoint = "sanpham/trang-thai-nhieu-san-pham";
           payload = { san_phams: ids, trang_thai: true };
           break;
-        case 'deactivate':
-          endpoint = 'sanpham/trang-thai-nhieu-san-pham';
+        case "deactivate":
+          endpoint = "sanpham/trang-thai-nhieu-san-pham";
           payload = { san_phams: ids, trang_thai: false };
           break;
-        case 'delete':
-          endpoint = 'sanphams';
-          method = 'delete';
+        case "delete":
+          endpoint = "sanphams";
+          method = "delete";
           payload = { san_phams: ids };
           break;
         default:
-          throw new Error('Invalid action');
+          throw new Error("Invalid action");
       }
 
-      if (method === 'patch') {
+      if (method === "patch") {
         const response = await instance.patch(endpoint, payload);
         return response.data;
       } else {
@@ -637,8 +643,6 @@ const ProductsAdmin: React.FC = () => {
     onChange: onSelectChange,
   };
 
-
-
   const hasSelected = selectedRowKeys.length > 0;
 
   const handleBulkAction = (action: string) => {
@@ -647,21 +651,22 @@ const ProductsAdmin: React.FC = () => {
 
   const bulkActionMenu = (
     <Menu>
-      <Menu.Item key="activate" onClick={() => handleBulkAction('activate')}>
+      <Menu.Item key="activate" onClick={() => handleBulkAction("activate")}>
         Kích hoạt
       </Menu.Item>
-      <Menu.Item key="deactivate" onClick={() => handleBulkAction('deactivate')}>
+      <Menu.Item
+        key="deactivate"
+        onClick={() => handleBulkAction("deactivate")}
+      >
         Hủy kích hoạt
       </Menu.Item>
-      <Menu.Item key="delete" onClick={() => handleBulkAction('delete')}>
+      <Menu.Item key="delete" onClick={() => handleBulkAction("delete")}>
         Xóa
       </Menu.Item>
     </Menu>
   );
 
   const columns: TableColumnsType<DataType> = [
-
-
     {
       title: "Sản phẩm",
       key: "ten_san_pham",
@@ -793,28 +798,34 @@ const ProductsAdmin: React.FC = () => {
               Thùng rác
             </Button>
           </Link>
-
         </div>
       </div>
-      <div className="max-w-sm my-2">
-        <div className="flex items-center">
-          <Dropdown overlay={bulkActionMenu} disabled={!hasSelected}>
-            <Button type="primary"
-              className=" text-white font-bold py-2 px-4 rounded h-8 mr-2">
-              Thao tác ({selectedRowKeys.length})
-            </Button>
-          </Dropdown>
-          <Input
-            placeholder="Tìm kiếm..."
-            size="large"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
-          />
+      <div className="max-w-full my-2">
+        <div className="flex  justify-between">
+          <div className="flex">
+            <Dropdown overlay={bulkActionMenu} disabled={!hasSelected}>
+              <Button
+                type="primary"
+                className=" text-white font-bold py-2 px-4 rounded h-8 mr-2"
+              >
+                Thao tác ({selectedRowKeys.length})
+              </Button>
+            </Dropdown>
+            <Input
+              placeholder="Tìm kiếm..."
+              size="large"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
+            />
+          </div>
+          <div className="mx-10 underline underline-offset-4 decoration-sky-400 hover:decoration-sky-700 decoration-2 text-sky-400 text-lg hover:text-sky-700">
+            {" "}
+            <Link to={"/#"}>Lịch sử thao tác</Link>
+          </div>
         </div>
       </div>
-
 
       <div>
         <Table

@@ -31,8 +31,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 
 const Header = () => {
+  const [user] = useLocalStorage("user", {});
+  const ten = user?.user.ho + " " + user?.user.ten;
+  const anh = user?.user.anh_nguoi_dung;
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b bg-white px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -126,17 +130,19 @@ const Header = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">
-            <CircleUser className="h-5 w-5" />
+            <img src={anh} alt="" className="w-[30px] h-[30px] rounded-full" />
             <span className="sr-only">Toggle user menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="max-h-[400px]  mr-10">
+          <DropdownMenuLabel>{ten}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
+          <DropdownMenuItem>Thông tin cá nhân</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to={"/admin/history"}>Nhập ký truy cập</Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

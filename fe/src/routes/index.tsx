@@ -114,6 +114,7 @@ import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 import { List } from "./../pages/(dashboard)/dashboard/list/page";
 import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
+import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
 
 const Router = () => {
   //
@@ -303,6 +304,8 @@ const Router = () => {
           />
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
+          {/* Lịch sử thao tác */}
+          <Route path="history" element={<ActionLog />} />
           {/* Error */}
           <Route path="*" element={<NotFoundPage />} />
           {/* Chưa dùng đến */}

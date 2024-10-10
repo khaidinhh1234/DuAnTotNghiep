@@ -126,7 +126,7 @@ class Chart3 extends React.Component<{}, ApexChartState> {
         tooltip: {
           y: {
             formatter: (val: number) => {
-              return "$ " + val + " nghìn";
+              return `${val.toLocaleString("vi-VN")} đ`;
             },
           },
         },
