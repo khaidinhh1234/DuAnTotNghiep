@@ -98,7 +98,7 @@ Route::middleware([])
         // lấy ra kích thước
         Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc']);
 
-        // lọc theo kích thước
+        // Lọc theo kích thước
         Route::post('/loc-san-pham-theo-kich-thuoc', [TrangSanPhamController::class, 'laySanPhamTheoKichThuoc']);
 
         //Client Chi tiết sản phẩm
@@ -237,7 +237,7 @@ Route::middleware(['auth.sanctum', 'auth.checkrole'])
 
         // Liên hệ
         Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe'])->name('lienhe.index');
-        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
+        Route::put('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
 
         //Vai trò
         Route::apiResource('vaitro', VaiTroController::class)->except('show');
