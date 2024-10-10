@@ -98,7 +98,7 @@ const Color = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Danh mục /
+          Quản trị / Biến thể /
           <span className="font-semibold px-px"> Cập nhật màu sắc</span>
         </h1>
       </div>

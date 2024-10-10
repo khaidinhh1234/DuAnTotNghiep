@@ -251,7 +251,7 @@
 // export default ChuongTrinhUuDai;
 import React, { useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table } from "antd";
+import { Button, Input, Popconfirm, Space, Spin, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -280,7 +280,7 @@ const ChuongTrinhUuDai: React.FC = () => {
   const [searchText, setSearchText] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["chuongtrinhuudai"],
     queryFn: async () => {
       const res = await instance.get("/chuongtrinhuudai");
@@ -489,8 +489,6 @@ const ChuongTrinhUuDai: React.FC = () => {
       },
   ];
 
-  if (isError) return <div>Đã xảy ra lỗi</div>;
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -517,6 +515,8 @@ const ChuongTrinhUuDai: React.FC = () => {
           dataSource={chuongTrinhUuDai}
           pagination={{ pageSize: 10, className: "my-5" }}
           rowKey="id"
+          loading={isLoading}
+
         />
       </div>
     </main>

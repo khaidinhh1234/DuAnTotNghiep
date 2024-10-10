@@ -108,6 +108,7 @@ import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
 import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
 import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
+import PrivateRoute from "./PrivateRoute";
 
 
 // import Test from "@/pages/(dashboard)/test";
@@ -153,7 +154,9 @@ const Router = () => {
           path="admin"
           element={
             // <PrivateRoute>
-            <LayoutAdmin />
+              <>
+                <LayoutAdmin />
+              </>
             // </PrivateRoute>
           }
         >
