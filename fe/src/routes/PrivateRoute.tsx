@@ -6,7 +6,8 @@ import { Navigate } from "react-router-dom"; // Correct import for React Router 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Include styles for toast
 import { useQuery } from "@tanstack/react-query";
-import instance from "@/configs/admin";
+
+import instance from "./../configs/auth";
 
 interface Props {
   children: ReactElement;
@@ -25,22 +26,20 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
   // Kiểm tra trạng thái xác thực
   const isAuthenticated = !!token && phanquyen && phanquyen.length > 0;
 
-  // Nếu chưa xác thực hoặc không có quyền, chuyển hướng về trang đăng nhập
   if (!isAuthenticated) {
     message.error("Bạn không có quyền truy cập");
     return <Navigate to="/login" />;
   }
 
-  const userAPI = axios.create({
-    baseURL: "http://duantotnghiep.test/be/public/api",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  // const userAPI = axios.create({
+  //   baseURL: "http://duantotnghiep.test/be/public/api",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${token}`,
+  //   },
+  // });
 
-  // Sử dụng interceptor để gán token vào headers
-  userAPI.interceptors.request.use(
+  instance.interceptors.request.use(
     (config) => {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -54,23 +53,10 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
 
   // Thử gọi API
   // userAPI
-  //   .get('admin/sanpham')
+  //   .get("/admin/sanpham")
   //   .then((response) => console.log(response.data))
   //   .catch((error) => console.error("Error:", error));
 
-  // Sử dụng useQuery để lấy dữ liệu sản phẩm
-  const { data } = useQuery({
-    queryKey: ["sanpham"],
-    queryFn: async () => {
-      const { data } = await userAPI.get("/admin/sanpham"); // Sử dụng userAPI
-      return data;
-    },
-  });
-
-  // Kiểm tra dữ liệu
-  console.log(data);
-
-  // Nếu đã xác thực và có quyền, trả về children
   return (
     <>
       {children}
