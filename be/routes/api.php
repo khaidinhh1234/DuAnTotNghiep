@@ -124,9 +124,14 @@ Route::middleware([])
     });
 
 
+<<<<<<< HEAD
 //'auth:sanctum', 'auth.checkrole'
-Route::middleware(['auth.sanctum', 'auth.checkrole'])
+Route::middleware(['auth:sanctum', 'auth.checkrole'])
 
+=======
+//'auth.sanctum', 'auth.checkrole'
+Route::middleware(['auth.sanctum', 'auth.checkrole'])
+>>>>>>> 64e881b2edac57764defc0f784279b7b6371caac
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -184,12 +189,12 @@ Route::middleware(['auth.sanctum', 'auth.checkrole'])
         Route::get('/donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
         Route::get('lay-thong-tin-don', [DonHangController::class, 'layThongTinDon']);
 
-
         //Vận chuyển
         Route::get('/vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
         Route::get('/vanchuyen/{id}', [VanChuyenController::class, 'show'])->name('vanchuyen.show');
         Route::put('/vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
         Route::get('lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen']);
+        Route::put('vanchuyen/xac-nhan-van-chuyen/{id}', [VanChuyenController::class, 'xacNhanVanChuyen'])->name('vanchuyen.xacnhan');
 
         //Danh Mục Tin Tức
         Route::apiResource('danhmuctintuc', DanhMucTinTucController::class)->except(['show']);
@@ -237,12 +242,13 @@ Route::middleware(['auth.sanctum', 'auth.checkrole'])
         Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
 
         // Liên hệ
-        Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe'])->name('lien-he.index');
-        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lien-he.phanhoi');
+        Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe'])->name('lienhe.index');
+        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
 
         //Vai trò
-        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
-        Route::apiResource('vaitro', VaiTroController::class);
+        Route::apiResource('vaitro', VaiTroController::class)->except('show');
+        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen'])->name('vaitro.routes');
+        Route::get('vaitro/{id}', [VaiTroController::class, 'show'])->name('vaitro.show');
         // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
 

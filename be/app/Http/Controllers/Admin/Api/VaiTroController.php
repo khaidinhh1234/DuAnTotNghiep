@@ -267,7 +267,8 @@ class VaiTroController extends Controller
                 'thong-ke-danh-gia' => 'Đánh giá',
                 'lich-su-hoat-dong' => 'Lịch sử hoạt động',
                 'doanh-thu-tuan-tu' => 'Doanh thu tuần tự',
-                
+                'routes' => 'Danh sách',
+                'xacnhan' => 'Xác nhận',
             ];
 
             $key = explode('.', $permission);

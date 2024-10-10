@@ -113,7 +113,11 @@ import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 import { List } from "./../pages/(dashboard)/dashboard/list/page";
+
 import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
+
+import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
+
 
 const Router = () => {
   //
@@ -296,6 +300,8 @@ const Router = () => {
             path="ADmin/userprivileges/edit-permission/:id"
             element={<PageEditPermission />}
           />
+          {/* Profile admin */}
+          <Route path="admin-profile" element={<AdminProfile/>}/>
           {/* Nội dung */}
           <Route
             path="Content"
