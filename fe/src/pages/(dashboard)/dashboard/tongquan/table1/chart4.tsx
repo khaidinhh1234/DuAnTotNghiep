@@ -9,10 +9,17 @@ const Chart4 = () => {
   const chartData = {
     series: [
       {
-        name: "Doanh số",
+        name: "165 ngày qua",
         data: [
           100000, 200000, 300000, 400000, 200000, 100000, 300000, 400000,
           500000, 100000, 400000,
+        ], // Example data
+      },
+      {
+        name: "165 ngày trước",
+        data: [
+          12000, 90000, 32000, 12000, 561000, 280000, 32000, 48000, 59000,
+          130000, 45000,
         ], // Example data
       },
     ],
@@ -23,6 +30,7 @@ const Chart4 = () => {
       },
       stroke: {
         curve: "smooth",
+        dashArray: [0, 5],
       },
       dataLabels: {
         enabled: false,
@@ -44,7 +52,9 @@ const Chart4 = () => {
       },
       yaxis: {
         labels: {
-          formatter: (val: number) => `${val} đ`,
+          formatter: (val: number) => {
+            return `${val.toLocaleString("vi-VN")} đ`;
+          },
         },
       },
     },

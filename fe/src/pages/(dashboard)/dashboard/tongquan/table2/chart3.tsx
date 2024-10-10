@@ -57,16 +57,16 @@ class Chart3 extends React.Component<{}, ApexChartState> {
       series: [
         {
           name: "Lợi nhuận ròng",
-          data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+          data: [44, 55, 57, 56, 61, 8, 63, 60, 66, 87, 105, 91],
         },
         {
           name: "Doanh thu",
-          data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
+          data: [76, 85, 101, 98, 87, 105, 91, 114, 92, 52, 53, 41],
         },
-        {
-          name: "Dòng tiền tự do",
-          data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
-        },
+        // {
+        //   name: "Dòng tiền tự do",
+        //   data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
+        // },
       ],
       options: {
         chart: {
@@ -90,15 +90,29 @@ class Chart3 extends React.Component<{}, ApexChartState> {
         },
         xaxis: {
           categories: [
-            "Tháng 2",
-            "Tháng 3",
-            "Tháng 4",
-            "Tháng 5",
-            "Tháng 6",
-            "Tháng 7",
-            "Tháng 8",
-            "Tháng 9",
-            "Tháng 10",
+            "0h",
+
+            "2h",
+
+            "4h",
+
+            "6h",
+
+            "8h",
+
+            "10h",
+
+            "12h",
+
+            "14h",
+
+            "16h",
+
+            "18h",
+
+            "20h",
+
+            "22h",
           ],
         },
         yaxis: {

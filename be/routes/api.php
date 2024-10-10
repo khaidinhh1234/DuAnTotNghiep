@@ -125,8 +125,13 @@ Route::middleware([])
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
+
+
+//'auth:sanctum', 'auth.checkrole'
+
 //'auth.sanctum', 'auth.checkrole'
 Route::middleware('auth.sanctum')
+
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -358,6 +363,8 @@ Route::middleware('auth.sanctum')
         });
 
         // Lich su hoat dong
+
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
     });
+
