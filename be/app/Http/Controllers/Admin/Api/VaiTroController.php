@@ -262,7 +262,10 @@ class VaiTroController extends Controller
                 'so-luong-ton-kho-cua-san-pham' => 'Số lượng tồn kho của sản phẩm',
                 'so-luong-san-pham-sap-het-hang' => 'Số lượng sản phẩm sắp hết hàng',
                 'doanh-thu-tung-san-pham' => 'Doanh thu từng sản phẩm',
-                'thong-ke-danh-gia' => 'Đánh giá'
+                'thong-ke-danh-gia' => 'Đánh giá',
+                'lich-su-hoat-dong' => 'Lịch sử hoạt động',
+                'doanh-thu-tuan-tu' => 'Doanh thu tuần tự',
+                'so-sanh-don-hang-hang-thang'
             ];
 
             $key = explode('.', $permission);
