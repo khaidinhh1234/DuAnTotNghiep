@@ -133,7 +133,7 @@ Route::middleware('auth.sanctum')
         // Danh muc
         Route::middleware('auth.checkrole')
             ->group(function () {
-                Route::apiResource('danhmuc', controller: DanhMucController::class)->except(['show']);
+                Route::apiResource('danhmuc',  DanhMucController::class)->except(['show']);
                 Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa'])->name('danhmuc.thungrac');
                 Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
                 Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc'])->name('danhmuc.khoiphuc');
@@ -319,15 +319,15 @@ Route::middleware('auth.sanctum')
             Route::get('don-hang/hoan-hang', [ThongKeDonHangController::class, 'thongKeHoanHang']);
             Route::get('/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHang']);
 
-            Route::get('don-hang/chot', action: [ThongKeDonHangController::class, 'thongKeDonHangChot']);
+            Route::get('don-hang/chot',  [ThongKeDonHangController::class, 'thongKeDonHangChot']);
             Route::get('san-pham/ton-kho', [ThongKeSanPham::class, 'thongKeSanPhamTonKho']);
-          
+
             // Thống kê tuần tự
             Route::get('/doanh-thu-so-sanh', [ThongKeDoanhThuController::class, 'soSanhDoanhThuThang']);
 
             Route::get('/so-sanh-don-hang-thang', [ThongKeDonHangController::class, 'soSanhDonHangThang']);
             Route::get('/so-sanh-khach-hang-register', [ThongKeKhachHangController::class, 'soSanhKhachHangRegister']);
-            Route::get('/so-sanh-khach-hang-activity', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock']);
+            Route::get('/so-sanh-khach-hang-block', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock']);
             Route::post('/doanh-thu-tuan-tu', [ThongKeDoanhThuController::class, 'thongKeDoanhThuTuanTu']);
             Route::get('/top5-khach-hang-gan-day', [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
 
