@@ -42,7 +42,8 @@ class VanChuyenController extends Controller
     {
         try {
             $vanChuyen = VanChuyen::query()->with([
-                'donHang.chiTiets'
+                'donHang.chiTiets',
+                'shipper'
             ])->findOrFail($id);
 
             // Tính toán tổng số lượng và tổng tiền
@@ -73,7 +74,6 @@ class VanChuyenController extends Controller
             $validate = $request->validate([
                 'id' => 'required|array',
                 'trang_thai_van_chuyen' => 'required',
-                'anh_xac_thuc' => 'nullable|image',
             ]);
 
             DB::beginTransaction();
@@ -158,7 +158,6 @@ class VanChuyenController extends Controller
                 'shipper_xac_nhan' => 'required',
                 'anh_xac_thuc' => 'required|image',
             ]);
-
             DB::beginTransaction();
             $vanChuyen = VanChuyen::findOrFail($id);
             $shiper = Auth::guard('api')->id();
@@ -173,6 +172,7 @@ class VanChuyenController extends Controller
                 $vanChuyen->update([
                     'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
                     'anh_xac_thuc' => $validate['anh_xac_thuc'],
+                    ''
                 ]);
                 DB::commit();
                 return response()->json([
@@ -194,7 +194,6 @@ class VanChuyenController extends Controller
     public function layThongTinVanChuyen()
     {
         try {
-            //
             $choLayHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_CXL)->count();
             $tongTienChoLayHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_CXL)
                 ->with('donHang')
@@ -202,8 +201,6 @@ class VanChuyenController extends Controller
                 ->sum(function ($vanChuyen) {
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
-
-            //
             $dangGiaoHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_DGH)->count();
             $tongTienDangGiaoHangs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_DGH)
                 ->with('donHang')
@@ -211,8 +208,6 @@ class VanChuyenController extends Controller
                 ->sum(function ($vanChuyen) {
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
-
-            //
             $giaoHangThatBais = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTB)->count();
             $tongTienGiaoHangThatBais = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTB)
                 ->with('donHang')
@@ -220,7 +215,6 @@ class VanChuyenController extends Controller
                 ->sum(function ($vanChuyen) {
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
-            //
             $giaoHangThanhCongs = VanChuyen::where('trang_thai_van_chuyen', VanChuyen::TTVC_GHTC)
                 ->whereHas('donHang', function ($query) {
                     $query->where('trang_thai_thanh_toan', DonHang::TTTT_DTT);
@@ -235,8 +229,6 @@ class VanChuyenController extends Controller
                 ->sum(function ($vanChuyen) {
                     return $vanChuyen->donHang ? $vanChuyen->donHang->tong_tien_don_hang : 0;
                 });
-
-
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
