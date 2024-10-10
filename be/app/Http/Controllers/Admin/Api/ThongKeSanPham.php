@@ -15,7 +15,50 @@ use Illuminate\Support\Facades\DB;
 class ThongKeSanPham extends Controller
 {
 
-    public function thongKeDoanhThuTheoSanPham (Request $request)
+    public function thongKeSanPhamTonKho()
+    {
+        // Ngày hiện tại và ngày cách đây 3 tháng
+        $ngayHienTai = Carbon::now();
+        $ngay3ThangTruoc = $ngayHienTai->subMonths(3);
+
+        // Truy vấn sản phẩm được tạo từ 3 tháng trước trở lên
+        $sanPhamTonKho = SanPham::where('created_at', '<=', $ngay3ThangTruoc)
+            ->with(['bienThes']) // Giả sử có quan hệ với bảng biến thể sản phẩm để lấy số lượng tồn
+            ->get();
+
+        // Mảng kết quả thống kê sản phẩm tồn kho
+        $thongKeTonKho = [];
+        $tongSoLuongTonKhoTatCaSanPham = 0; // Biến để tính tổng số lượng tồn kho của tất cả sản phẩm
+
+        // Duyệt qua từng sản phẩm và tính tổng số lượng tồn kho
+        foreach ($sanPhamTonKho as $sanPham) {
+            $tongSoLuongTon = 0;
+
+            // Duyệt qua các biến thể của sản phẩm để tính tổng số lượng tồn
+            foreach ($sanPham->bienThes as $bienThe) {
+                $tongSoLuongTon += $bienThe->so_luong_ton; // Giả sử có trường `so_luong_ton` trong bảng biến thể
+            }
+
+            // Cộng số lượng tồn của sản phẩm vào tổng số lượng tồn của tất cả sản phẩm
+            $tongSoLuongTonKhoTatCaSanPham += $tongSoLuongTon;
+
+            // Thêm thông tin sản phẩm vào kết quả
+            $thongKeTonKho[] = [
+                'ten_san_pham' => $sanPham->ten_san_pham,
+                'ma_san_pham' => $sanPham->ma_san_pham,
+                'so_luong_ton' => $tongSoLuongTon,
+                'ngay_tao' => $sanPham->created_at->format('Y-m-d')
+            ];
+        }
+
+        // Trả về mảng kết quả cùng với tổng số lượng tồn kho của tất cả sản phẩm
+        return [
+            'tong_so_luong_ton_kho' => $tongSoLuongTonKhoTatCaSanPham,
+            'danh_sach_san_pham_ton_kho' => $thongKeTonKho
+        ];
+    }
+
+    public function thongKeDoanhThuTheoSanPham(Request $request)
     {
         $tenSanPham = $request->ten_san_pham;
 
