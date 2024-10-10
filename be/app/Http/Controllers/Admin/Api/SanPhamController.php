@@ -61,13 +61,13 @@ class SanPhamController extends Controller
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
+            'bien_the.*.chi_phi_san_xuat' => 'required|integer',
             'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.gia_ban' => 'required|integer',
-            'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
+            'bien_the.*.gia_ban' => 'required|integer|gt:bien_the.*.chi_phi_san_xuat',
+            'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban',
             'bien_the.*.anh' => 'required|array',
             'bien_the.*.anh.*' => 'required|string'
         ]);
-
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -175,8 +175,9 @@ class SanPhamController extends Controller
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
+            'bien_the.*.chi_phi_san_xuat' => 'required|integer',
             'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.gia_ban' => 'required|integer',
+            'bien_the.*.gia_ban' => 'required|integer|gt:bien_the.*.chi_phi_san_xuat',
             'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
             'bien_the.*.anh' => 'required|array',
             'bien_the.*.anh.*' => 'required|string'
@@ -185,6 +186,7 @@ class SanPhamController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+
 
         $sanPham = SanPham::findOrFail($id);
 
