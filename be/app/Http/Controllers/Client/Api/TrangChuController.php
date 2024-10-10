@@ -53,4 +53,41 @@ class TrangChuController extends Controller
             'danh_gia_khach_hang' => $dataDanhGiaKhachHang,
         ], 200);
     }
+
+    public function thongTinWeb()
+    {
+        try {
+            $data = ThongTinWeb::query()->first();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu này',
+                'data' => $data,
+            ], 200);
+        }catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Lấy dữ liệu thất bại',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
+    public function timKiemGoiY(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|min:1',
+        ]);
+
+        $query = $request->input('query');
+
+        $goiY = SanPham::where('ten_san_pham', 'like', '%' . $query . '%')
+            ->select('ten_san_pham')
+            ->limit(10)
+            ->get();
+
+        return response()->json($goiY);
+    }
 }
