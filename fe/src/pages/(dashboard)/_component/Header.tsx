@@ -134,6 +134,7 @@ const Header = () => {
             <span className="sr-only">Toggle user menu</span>
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="end" className="max-h-[400px]  mr-10">
           <DropdownMenuLabel>{ten}</DropdownMenuLabel>
           <DropdownMenuSeparator />
@@ -141,6 +142,12 @@ const Header = () => {
           <DropdownMenuItem>
             <Link to={"/admin/history"}>Nhập ký truy cập</Link>
           </DropdownMenuItem>
+
+          <DropdownMenuLabel>My account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem><Link to="admin-profile">My Account</Link></DropdownMenuItem>
+          <DropdownMenuItem>Support</DropdownMenuItem>
+
           <DropdownMenuSeparator />
           <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
         </DropdownMenuContent>

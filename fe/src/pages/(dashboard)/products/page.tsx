@@ -509,9 +509,11 @@ const ProductsAdmin: React.FC = () => {
           endpoint = "sanpham/trang-thai-nhieu-san-pham";
           payload = { san_phams: ids, trang_thai: false };
           break;
-        case "delete":
-          endpoint = "sanphams";
-          method = "delete";
+
+        case 'delete':
+          endpoint = 'sanpham';
+          method = 'delete';
+
           payload = { san_phams: ids };
           break;
         default:

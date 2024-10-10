@@ -113,8 +113,12 @@ import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 import { List } from "./../pages/(dashboard)/dashboard/list/page";
+
 import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
 import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
+
+import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
+
 
 const Router = () => {
   //
@@ -162,8 +166,8 @@ const Router = () => {
         >
           <Route index element={<Navigate to="/admin/dashboard/list" />} />
           <Route path="dashboard/list" element={<Dashboard />} />
-          <Route path="dashboard/doanhthu" element={<DoanhThu />} />
-          <Route path="dashboard/sanpham" element={<List />} />
+          <Route path="dashboard/doanhthu" element={<List />} />
+          <Route path="dashboard/sanpham" element={<SanPham />} />
           <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
           {/* Sản phẩm  */}
           <Route
@@ -297,6 +301,8 @@ const Router = () => {
             path="ADmin/userprivileges/edit-permission/:id"
             element={<PageEditPermission />}
           />
+          {/* Profile admin */}
+          <Route path="admin-profile" element={<AdminProfile/>}/>
           {/* Nội dung */}
           <Route
             path="Content"
