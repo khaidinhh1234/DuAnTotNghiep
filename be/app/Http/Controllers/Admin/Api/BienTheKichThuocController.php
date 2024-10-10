@@ -117,7 +117,6 @@ class BienTheKichThuocController extends Controller
             if ($exists) {
                 $validator->errors()->add('kich_thuoc', 'Kích thước đã tồn tại cho loại này.');
             }
-
             if ($request->loai_kich_thuoc === 'nu' && !in_array($request->kich_thuoc, ['XS', 'S', 'M', 'L', 'XL', 'XXL'])) {
                 $validator->errors()->add('kich_thuoc', 'Kích thước cho nữ chỉ được phép từ XS đến XXL.');
             } elseif ($request->loai_kich_thuoc === 'nam' && !in_array($request->kich_thuoc, ['S', 'M', 'L', 'XL', 'XXL'])) {
@@ -168,6 +167,7 @@ class BienTheKichThuocController extends Controller
                 ], 404);
             }
 
+
             if ($bienTheKichThuoc->bienTheSanPhams()->exists()) {
                 return response()->json([
                     'status' => false,
@@ -175,7 +175,6 @@ class BienTheKichThuocController extends Controller
                     'message' => 'Không thể xóa vì sản phẩm có biến thể này.',
                 ], 400);
             }
-
             $bienTheKichThuoc->delete();
             return response()->json([
                 'status' => true,
