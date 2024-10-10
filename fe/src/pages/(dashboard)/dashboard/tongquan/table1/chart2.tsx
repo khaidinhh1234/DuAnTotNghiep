@@ -11,7 +11,7 @@ const Chart2 = () => {
       <Card className=" rounded-lg bg-[#F2F4F7] w-72">
         <div className="">
           <div className="flex justify-between">
-            <div className="text-black">Online:</div>
+            <div className="text-black">Thanh toán Online:</div>
             <div className="text-black">_</div>
           </div>
           <div className="flex justify-between">

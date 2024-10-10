@@ -32,7 +32,7 @@ const Chart5 = () => {
       <Card className=" rounded-lg bg-[#F2F4F7] ">
         <div className="">
           <div className="">
-            <div className="text-black text-base">Đơn xoá :</div>
+            <div className="text-black text-base">Đơn hoàn :</div>
             <div className="text-black text-base font-bold">1234</div>
           </div>
         </div>

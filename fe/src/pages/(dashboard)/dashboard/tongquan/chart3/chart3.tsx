@@ -12,8 +12,10 @@ const Chart3 = () => {
         <div className="bg-blue-600 py-[7px] px-3 flex items-center rounded-full mr-2">
           <i className="fa-regular fa-box-check text-white text-xl"></i>
         </div>
-
-        <h3 className="text-lg font-bold">Có thể bán</h3>
+        <div className="flex ">
+          <h3 className="text-lg font-bold">Sản phẩm tồn kho: </h3>{" "}
+          <h3 className="text-lg font-bold mx-1">20 sản phẩm</h3>
+        </div>
       </div>
       <div className="grid grid-cols-2">
         <div>
