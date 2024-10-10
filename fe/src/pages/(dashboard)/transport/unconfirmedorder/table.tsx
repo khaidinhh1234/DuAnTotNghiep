@@ -33,6 +33,7 @@ interface Transport {
   id: number;
   created_at: string;
   don_hang_id: number;
+  shipper_id: number
   ma_van_chuyen: string;
   trang_thai_van_chuyen: string;
   cod: number;
@@ -121,6 +122,7 @@ const TableUncomfirmedOrder: React.FC = () => {
       return response.data;
     },
   });
+  console.log(data);
 
   const start = () => {
     setFormCheck(!formcheck);
@@ -149,6 +151,7 @@ const TableUncomfirmedOrder: React.FC = () => {
       ...item,
       don_hang_id: item.don_hang?.ma_don_hang || "Chưa có dữ liệu",
       trang_thai_thanh_toan: item.don_hang?.trang_thai_thanh_toan || "Chưa có dữ liệu",
+      shipper_id: item.don_hang?.shipper?.ho_ten || "Chưa có dữ liệu",
     })
   );
 

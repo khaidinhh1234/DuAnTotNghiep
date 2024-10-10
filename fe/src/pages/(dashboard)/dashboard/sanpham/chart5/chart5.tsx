@@ -2,15 +2,22 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-
-import Chart from "react-apexcharts";
-import { Props } from "react-apexcharts";
-import dayjs from "dayjs"; // Thêm thư viện dayjs
-import utc from "dayjs/plugin/utc";
+import { ConfigProvider, DatePicker, Select } from "antd";
+import viVN from "antd/lib/locale/vi_VN";
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
 import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import "moment/locale/vi";
+import Chart, { Props } from "react-apexcharts";
+const handleChange = (value: string) => {
+  console.log(`selected ${value}`);
+};
 
+const { RangePicker } = DatePicker;
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.locale("vi");
 
 const Chart5 = () => {
   const optionsareachart: Props = {
@@ -90,13 +97,32 @@ const Chart5 = () => {
   ];
 
   return (
-    <Chart
-      className="bg-white p-5"
-      options={optionsareachart}
-      series={seriesareachart}
-      type="area"
-      height="500px"
-    />
+    <>
+      <div>
+        <ConfigProvider locale={viVN}>
+          <RangePicker />
+        </ConfigProvider>
+        <Select
+          defaultValue="lucy"
+          style={{ width: 120 }}
+          className="ml-5"
+          onChange={handleChange}
+          options={[
+            { value: "jack", label: "Top 5" },
+            { value: "lucy", label: "Top 10" },
+            { value: "Yiminghe", label: "Top 20" },
+            { value: "disabled", label: "Disabled", disabled: true },
+          ]}
+        />
+      </div>
+      <Chart
+        className="bg-white p-5"
+        options={optionsareachart}
+        series={seriesareachart}
+        type="area"
+        height="500px"
+      />
+    </>
   );
 };
 

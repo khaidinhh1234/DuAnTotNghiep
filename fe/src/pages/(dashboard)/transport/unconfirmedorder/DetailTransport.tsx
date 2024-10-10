@@ -32,7 +32,13 @@ const DetailTransport = ({ record }: any) => {
       return response.data;
     },
   });
-
+  const { data: dataShipper } = useQuery({
+    queryKey: ["SHIPPER", id],
+    queryFn: async () => {
+      const response = await instance.get(`/vanchuyen/${id}`);
+      return response.data;
+    },
+  })
   const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
@@ -41,9 +47,17 @@ const DetailTransport = ({ record }: any) => {
   // const donhang = data?.data;
   // console.log("data", donhang);
   // console.log("data", products);
-  console.log(record.don_hang.ten_nguoi_dat_hang)
+  // console.log(record.don_hang.ten_nguoi_dat_hang)
   const thongtin = data?.data?.thong_tin;
-  console.log(thongtin,)
+
+  const shipperDetails = dataShipper?.data?.shipper;
+  const shipperName = shipperDetails
+    ? `${shipperDetails.ho} ${shipperDetails.ten}`
+    : "Chưa có thông tin";
+  const shipperPhone = shipperDetails?.so_dien_thoai || "Chưa có số điện thoại";
+  // console.log(thongtin_shipper)
+  // console.log(thongtin,)
+
   const handleCancel = () => {
     setOpen(false);
   };
@@ -87,9 +101,6 @@ const DetailTransport = ({ record }: any) => {
   const handleImageChange = (e: any) => {
     setImageSelected(e && e.fileList.length > 0);
   };
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
   return (
     <div>
       {" "}
@@ -407,23 +418,15 @@ const DetailTransport = ({ record }: any) => {
               </p>
             </div> {" "}
             {/* shipper */}
+            <div className="col-span-3">
             <div className="bg-slate-100 p-5 border rounded-lg my-2">
-              <h5 className="text-blue-800 text-lg">Xác nhận của shipper</h5>
+              <h5 className="text-blue-800 text-lg">Thông tin shipper</h5>
               <hr />
-              <hr />
-              <h5 className="text-blue-800 text-lg my-2">Nhân viên ship</h5>
-              <span className="text-black my-2">
-                {record.don_hang.ten_nguoi_dat_hang
-                  ? record.don_hang.ten_nguoi_dat_hang
-                  : thongtin?.ho + " " + thongtin?.ten}
-              </span>
+              <p className="text-blue-800 text-lg my-2">Nhân viên ship:</p>
+              <span className="text-black my-2">{shipperName}</span>
               <p className="text-blue-800 font-semibold">
                 Số điện thoại:
-                <span className="text-black font-medium">
-                  {record.don_hang.so_dien_thoai_nguoi_dat_hang
-                    ? record.don_hang.so_dien_thoai_nguoi_dat_hang
-                    : thongtin?.so_dien_thoai}
-                </span>
+                <span className="text-black font-medium">{shipperPhone}</span>
               </p>
               <h5 className="text-blue-800 mb-4">Ảnh xác nhận giao hàng thành công:</h5>
               <Form.Item
@@ -450,6 +453,7 @@ const DetailTransport = ({ record }: any) => {
                 </Button>
               )}
             </div>
+          </div>
           </div>
         </div>
       </Modal>

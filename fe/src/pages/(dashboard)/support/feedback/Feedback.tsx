@@ -19,6 +19,7 @@ import { FilterDropdownProps } from "antd/es/table/interface";
 import { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type DataIndex = keyof IEvaluate;
 const Feedback = () => {
@@ -48,15 +49,21 @@ const Feedback = () => {
   const mutation = useMutation({
     mutationFn: async ({
       id,
-      phan_hoi,
+      noi_dung_phan_hoi,
     }: {
       id: number | string;
-      phan_hoi: string;
+      noi_dung_phan_hoi: string;
     }) => {
-      const response = await instance.post(`/lien-he/${id}`, {
-        phan_hoi,
-      });
-      return response.data;
+      try {
+        const response = await instance.put(`/lien-he/${id}`, {
+          noi_dung_phan_hoi,
+        });
+        toast.success("Thành công");
+        return response.data;
+      } catch (error) {
+        toast.error("Có lỗi xảy ra");
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["phanhoilienhe"] });
@@ -90,7 +97,7 @@ const Feedback = () => {
     if (currentEvaluate && phan_hoi[currentEvaluate.id as number]) {
       mutation.mutate({
         id: currentEvaluate.id,
-        phan_hoi: phan_hoi[currentEvaluate.id as number],
+        noi_dung_phan_hoi: phan_hoi[currentEvaluate.id as number],
       });
     }
     setIsModalOpen(false);

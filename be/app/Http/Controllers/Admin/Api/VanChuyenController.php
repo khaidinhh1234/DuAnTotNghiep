@@ -42,7 +42,8 @@ class VanChuyenController extends Controller
     {
         try {
             $vanChuyen = VanChuyen::query()->with([
-                'donHang.chiTiets'
+                'donHang.chiTiets',
+                'shipper'
             ])->findOrFail($id);
 
             // Tính toán tổng số lượng và tổng tiền

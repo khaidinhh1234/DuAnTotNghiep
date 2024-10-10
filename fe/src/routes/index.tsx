@@ -165,8 +165,8 @@ const Router = () => {
         >
           <Route index element={<Navigate to="/admin/dashboard/list" />} />
           <Route path="dashboard/list" element={<Dashboard />} />
-          <Route path="dashboard/doanhthu" element={<DoanhThu />} />
-          <Route path="dashboard/sanpham" element={<List />} />
+          <Route path="dashboard/doanhthu" element={<List />} />
+          <Route path="dashboard/sanpham" element={<SanPham />} />
           <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
           {/* Sản phẩm  */}
           <Route

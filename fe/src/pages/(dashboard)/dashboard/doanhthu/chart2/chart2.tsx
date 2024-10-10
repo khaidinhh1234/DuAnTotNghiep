@@ -1,119 +1,289 @@
 "use client";
 
-import { Area, AreaChart, XAxis, YAxis } from "recharts";
+import { MoreHorizontal } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-const Chart2 = () => {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { Image } from "antd";
+export default function Chart2() {
   return (
-    <Card className="max-w-[310px] bg-gradient-to-r from-[#1f4037] to-[#99f2c8] ">
-      <CardHeader className="space-y-0 pb-0">
-        <CardDescription className="text-white">Doanh thu</CardDescription>
-        <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
-          <h2 className="text-2xl font-bold text-white">44.000.000 đ</h2>
-          <p className="text-[15px] text-white">( - 23.6% ↓ )</p>{" "}
-        </CardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>Products</CardTitle>
+        <CardDescription>
+          Manage your products and view their sales performance.
+        </CardDescription>
       </CardHeader>
-      <CardContent className="p-0">
-        <ChartContainer
-          config={{
-            time: {
-              label: "Time",
-              color: "hsl(var(--chart-2))", // Bạn có thể thay đổi màu này
-            },
-          }}
-        >
-          <AreaChart
-            accessibilityLayer
-            data={[
-              {
-                date: "2024-01-01",
-                time: 29.5,
-              },
-              {
-                date: "2024-01-02",
-                time: 27.2,
-              },
-              {
-                date: "2024-01-03",
-                time: 23,
-              },
-              {
-                date: "2024-01-04",
-                time: 21,
-              },
-              {
-                date: "2024-01-05",
-                time: 40,
-              },
-              {
-                date: "2024-01-06",
-                time: 30,
-              },
-              {
-                date: "2024-01-07",
-                time: 17.0,
-              },
-            ]}
-            margin={{
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-            }}
-            height={50}
-          >
-            <XAxis dataKey="date" hide />
-            <YAxis domain={["dataMin - 5", "dataMax + 2"]} hide />
-            <defs>
-              <linearGradient id="fillTime" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="" // Màu cho gradient đầu
-                  stopOpacity={0.8}
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="hidden w-[100px] sm:table-cell">
+                <span className="sr-only">Image</span>
+              </TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="hidden md:table-cell">Price</TableHead>
+              <TableHead className="hidden md:table-cell">
+                Total Sales
+              </TableHead>
+              <TableHead className="hidden md:table-cell">Created at</TableHead>
+              <TableHead>
+                <span className="sr-only">Actions</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="hidden sm:table-cell">
+                <Image
+                  alt="Product image"
+                  className="aspect-square rounded-md object-cover"
+                  height="64"
+                  src="https://picsum.photos/200/300/?blur"
+                  width="64"
                 />
-                <stop
-                  offset="95%"
-                  stopColor="" // Màu cho gradient cuối
-                  stopOpacity={0.1}
+              </TableCell>
+              <TableCell className="font-medium">
+                Laser Lemonade Machine
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline">Draft</Badge>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">$499.99</TableCell>
+              <TableCell className="hidden md:table-cell">25</TableCell>
+              <TableCell className="hidden md:table-cell">
+                2023-07-12 10:42 AM
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="hidden sm:table-cell">
+                <Image
+                  alt="Product image"
+                  className="aspect-square rounded-md object-cover"
+                  height="64"
+                  src="https://picsum.photos/200/300/?blur"
+                  width="64"
                 />
-              </linearGradient>
-            </defs>
-            <Area
-              dataKey="time"
-              type="natural"
-              fill="url(#fillTime)"
-              fillOpacity={0.4}
-              stroke="#6dd5ed " // Màu của đường viền
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-              formatter={(value) => (
-                <div className="flex min-w-[120px] items-center text-xs text-muted-foreground text-white">
-                  doanh thu
-                  <div className="ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground">
-                    {value}
-                    <span className="font-normal text-muted-foreground">đ</span>
-                  </div>
-                </div>
-              )}
-            />
-          </AreaChart>
-        </ChartContainer>
+              </TableCell>
+              <TableCell className="font-medium">
+                Hypernova Headphones
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline">Active</Badge>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">$129.99</TableCell>
+              <TableCell className="hidden md:table-cell">100</TableCell>
+              <TableCell className="hidden md:table-cell">
+                2023-10-18 03:21 PM
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="hidden sm:table-cell">
+                <Image
+                  alt="Product image"
+                  className="aspect-square rounded-md object-cover"
+                  height="64"
+                  src="https://picsum.photos/200/300/?blur"
+                  width="64"
+                />
+              </TableCell>
+              <TableCell className="font-medium">AeroGlow Desk Lamp</TableCell>
+              <TableCell>
+                <Badge variant="outline">Active</Badge>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">$39.99</TableCell>
+              <TableCell className="hidden md:table-cell">50</TableCell>
+              <TableCell className="hidden md:table-cell">
+                2023-11-29 08:15 AM
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="hidden sm:table-cell">
+                <Image
+                  alt="Product image"
+                  className="aspect-square rounded-md object-cover"
+                  height="64"
+                  src="https://picsum.photos/200/300/?blur"
+                  width="64"
+                />
+              </TableCell>
+              <TableCell className="font-medium">
+                TechTonic Energy Drink
+              </TableCell>
+              <TableCell>
+                <Badge variant="secondary">Draft</Badge>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">$2.99</TableCell>
+              <TableCell className="hidden md:table-cell">0</TableCell>
+              <TableCell className="hidden md:table-cell">
+                2023-12-25 11:59 PM
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="hidden sm:table-cell">
+                <Image
+                  alt="Product image"
+                  className="aspect-square rounded-md object-cover"
+                  height="64"
+                  src="https://picsum.photos/200/300/?blur"
+                  width="64"
+                />
+              </TableCell>
+              <TableCell className="font-medium">
+                Gamer Gear Pro Controller
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline">Active</Badge>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">$59.99</TableCell>
+              <TableCell className="hidden md:table-cell">75</TableCell>
+              <TableCell className="hidden md:table-cell">
+                2024-01-01 12:00 AM
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell className="hidden sm:table-cell">
+                <Image
+                  alt="Product image"
+                  className="aspect-square rounded-md object-cover"
+                  height="64"
+                  src="https://picsum.photos/200/300/?blur"
+                  width="64"
+                />
+              </TableCell>
+              <TableCell className="font-medium">Luminous VR Headset</TableCell>
+              <TableCell>
+                <Badge variant="outline">Active</Badge>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">$199.99</TableCell>
+              <TableCell className="hidden md:table-cell">30</TableCell>
+              <TableCell className="hidden md:table-cell">
+                2024-02-14 02:14 PM
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                      <MoreHorizontal className="h-4 w-4" />
+                      <span className="sr-only">Toggle menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </CardContent>
+      <CardFooter>
+        <div className="text-xs text-muted-foreground">
+          Showing <strong>1-10</strong> of <strong>32</strong> products
+        </div>
+      </CardFooter>
     </Card>
   );
-};
-
-export default Chart2;
+}
