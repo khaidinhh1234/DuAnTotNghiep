@@ -7,6 +7,7 @@ use App\Events\SendMail;
 use App\Http\Controllers\Controller;
 use App\Models\LienHe;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LienHeController extends Controller
 {
@@ -36,21 +37,16 @@ class LienHeController extends Controller
     public function phanHoi(Request $request, $id)
     {
         try {
-            $request->validate([
-                'noi_dung_phan_hoi' => 'required|string'
-            ]);
-
+            DB::beginTransaction();
             $lien_he = LienHe::find($id);
 
-            if (!$lien_he) {
-                return redirect()->back()->with('error', 'Liên hệ không tồn tại.');
-            }
-            $lien_he->noi_dung_phan_hoi = $request->noi_dung_phan_hoi;
-            $lien_he->trang_thai_lien_he = 'da_xu_ly';
-            $lien_he->save();
+            $lien_he->update([
+                'noi_dung_phan_hoi' => $request->noi_dung_phan_hoi,
+                'trang_thai_lien_he' => 'da_xu_ly',
+            ]);
 
             event(new SendMail($lien_he->email, $lien_he->name, 'Phản hồi từ Admin'));
-
+            DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -58,6 +54,7 @@ class LienHeController extends Controller
                 'data' => $lien_he
             ]);
         } catch (\Exception $exception) {
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,

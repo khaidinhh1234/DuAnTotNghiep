@@ -1,21 +1,26 @@
-import { ArrowDownOutlined } from "@ant-design/icons";
-import { Card } from "antd";
+import React from "react";
+import { Card, Statistic } from "antd";
+import {
+  CheckCircleOutlined,
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+} from "@ant-design/icons";
 
-const Chart1 = () => {
+const Chart2 = () => {
   return (
     <Card className="shadow-md px-1 rounded-lg bg-white flex flex-col">
       <div className="flex items-center mb-2">
-        <div className="bg-green-600 py-[7px] px-3 flex items-center rounded-full mr-2">
+        <div className="bg-orange-600 py-[7px] px-3 flex items-center rounded-full mr-2">
           <i className="fa-regular fa-box-check text-white text-xl"></i>
         </div>
 
-        <h3 className="text-lg font-bold">Tổng hàng chốt</h3>
+        <h3 className="text-lg font-bold">Tổng hàng hoàn</h3>
       </div>
       <div className="grid grid-cols-2">
         <div>
           <div className="text-black">
             Tổng tiền: <br />
-            <span className="text-2xl font-bold text-green-800"> 8.232</span>
+            <span className="text-2xl font-bold text-orange-700"> 8.232</span>
           </div>
           <div className="flex items-center mt-1">
             <ArrowDownOutlined className="text-red-500" />
@@ -37,4 +42,4 @@ const Chart1 = () => {
   );
 };
 
-export default Chart1;
+export default Chart2;
