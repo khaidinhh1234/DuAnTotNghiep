@@ -6,7 +6,10 @@ export const loginSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Mật khẩu không chính xác" })
-    .regex(/^\S+$/, { message: "Mật khẩu không đúng định dạng" }),
+    .max(20, { message: "Không quá 20 ký tự" })
+    .regex(/^[A-Za-zÀ-ỹ]+(?:\s[A-Za-zÀ-ỹ]+)?$/, {
+      message: "Không chứa ký tự đặc biệt, số và dấu cách",
+    }),
 });
 
 export const registerSchema = z
@@ -14,21 +17,24 @@ export const registerSchema = z
     ten: z
       .string()
       .min(2, { message: "Vui lòng nhập Tên" })
-      .regex(/^[^\s]+(\s[^\s]+)?$/, {
-        message: "Vui lòng nhập đúng định dạng",
+      .max(20, { message: "Không quá 20 ký tự" })
+
+      .max(20, { message: "Không quá 20 ký tự" })
+      .regex(/^[A-Za-zÀ-ỹ]+(?:\s[A-Za-zÀ-ỹ]+)?$/, {
+        message: "Không chứa ký tự đặc biệt, số và dấu cách",
       }),
     ho: z
       .string()
       .min(2, { message: "Vui lòng nhập Họ" })
-      .regex(/^[^\s]+(\s[^\s]+)?$/, {
-        message: "Vui lòng nhập đúng định dạng",
+      .max(20, { message: "Không quá 20 ký tự" })
+      .regex(/^[A-Za-zÀ-ỹ]+(?:\s[A-Za-zÀ-ỹ]+)?$/, {
+        message: "Không chứa ký tự đặc biệt, số và dấu cách",
       }),
     email: z.string().email({ message: "Email không hợp lệ" }),
     password: z
       .string()
       .min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" })
       .regex(/[A-Z]/, { message: "Mật khẩu phải có ít nhất 1 chữ cái in hoa" })
-      .regex(/[0-9]/, { message: "Mật khẩu phải có ít nhất 1 chữ số" })
       .regex(/^\S+$/, { message: "Mật khẩu không đúng định dạng" }),
     password_confirmation: z.string(),
     checkboxs: z.boolean(),

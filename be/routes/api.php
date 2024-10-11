@@ -375,4 +375,3 @@ Route::middleware('auth.sanctum')
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
     });
-
