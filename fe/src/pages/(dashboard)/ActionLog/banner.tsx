@@ -15,10 +15,10 @@ const { Text, Title } = Typography;
 
 const Banner = () => {
   const [{ user }] = useLocalStorage("user", {});
-  console.log(user);
+  // console.log(user);
   const url = user.anh_nguoi_dung;
   const vaitro = user.vai_tros.map((item: any) => item.ten_vai_tro);
-  console.log(vaitro);
+  // console.log(vaitro);
   return (
     <>
       <Card

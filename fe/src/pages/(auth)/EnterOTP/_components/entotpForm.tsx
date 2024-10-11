@@ -1,5 +1,3 @@
-import React from "react";
-
 const OTPForm = () => {
   const handleInputChange = (e: any) => {
     e.target.value = e.target.value.replace(/[^0-9]/g, "").slice(0, 1);

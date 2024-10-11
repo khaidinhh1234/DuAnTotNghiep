@@ -20,7 +20,7 @@ const Chart6 = () => {
   const [selectedMonth, setSelectedMonth] = useState<any>(null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: [
       "thongke",
       selectedYear,
@@ -273,7 +273,7 @@ const Chart6 = () => {
             value={selectedWeek}
             style={{ width: 120, marginRight: 10 }}
             onChange={handleWeekChange}
-            options={getWeekOptions(selectedMonth)} // Update to use dynamic week options
+            options={getWeekOptions(selectedMonth) as any} // Update to use dynamic week options
           />
         </div>
       </CardHeader>
