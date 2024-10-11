@@ -40,7 +40,7 @@ class DonHang extends Model
         'dia_chi_nguoi_dat_hang',
         'ma_giam_gia',
         'so_tien_giam_gia',
-        'ngay_giao_hang_thanh_cong',
+        'ngay_hoan_thanh_don',
         'trang_thai_thanh_toan',
         'trang_thai_van_chuyen'
     ];

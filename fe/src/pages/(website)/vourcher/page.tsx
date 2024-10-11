@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import Banner from "./_component/banner";
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { A11y, Navigation, Pagination, Scrollbar } from "swiper/modules";
+import Banner from "./_component/banner";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 

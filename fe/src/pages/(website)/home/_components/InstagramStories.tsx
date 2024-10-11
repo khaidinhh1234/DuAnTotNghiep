@@ -1,5 +1,4 @@
 import { story } from "@/assets/img";
-import React from "react";
 
 const InstagramStories = () => {
   return (

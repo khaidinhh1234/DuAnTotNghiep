@@ -12,6 +12,7 @@ class ThongKeTongQuanController extends Controller
 {
     public function thongKeDonHangChot(Request $request)
     {
+
         $ngayBatDau  = Carbon::parse($request->input('ngay_bat_dau'));
         $ngayKetThuc  = Carbon::parse($request->input('ngay_ket_thuc'));
 
@@ -19,6 +20,15 @@ class ThongKeTongQuanController extends Controller
 
         $donHangChot = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->whereBetween('created_at', [$ngayBatDau , $ngayKetThuc ])
+
+        $startDate = Carbon::parse($request->input('start_date'));
+        $endDate = Carbon::parse($request->input('end_date'));
+
+        $duration = $startDate->diffInDays($endDate) + 1;
+
+        $donHangChot = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+
             ->get();
 
         $tongTien = 0;
@@ -30,11 +40,19 @@ class ThongKeTongQuanController extends Controller
             });
         });
 
+
         $ngayBatDauTruoc   = $ngayBatDau ->copy()->subDays($khoangThoiGian );
         $ngayKetThucTruoc   = $ngayKetThuc ->copy()->subDays($khoangThoiGian );
 
         $donHangChotTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->whereBetween('created_at', [$ngayBatDauTruoc  , $ngayKetThucTruoc  ])
+
+        $previousStartDate = $startDate->copy()->subDays($duration);
+        $previousEndDate = $endDate->copy()->subDays($duration);
+
+        $donHangChotTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
+            ->whereBetween('created_at', [$previousStartDate, $previousEndDate])
+
             ->get();
 
         $tongTienTruoc = 0;
@@ -67,6 +85,7 @@ class ThongKeTongQuanController extends Controller
         ]);
     }
 
+
     public function thongKeHoanHang(Request $request)
     {
         $ngayBatDau  = Carbon::parse($request->input('ngay_bat_dau'));
@@ -77,6 +96,18 @@ class ThongKeTongQuanController extends Controller
         $donHangHoan = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->where('trang_thai_don_hang', DonHang::TTDH_HH)
             ->whereBetween('created_at', [$ngayBatDau , $ngayKetThuc ])
+
+    public function thongKeHoanHang(Request $request)
+    {
+        $startDate = Carbon::parse($request->input('start_date'));
+        $endDate = Carbon::parse($request->input('end_date'));
+
+        $duration = $startDate->diffInDays($endDate) + 1;
+
+        $donHangHoan = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
+            ->where('trang_thai_don_hang', DonHang::TTDH_HH)
+            ->whereBetween('created_at', [$startDate, $endDate])
+
             ->get();
 
         $tongTienHoan = 0;
@@ -88,12 +119,21 @@ class ThongKeTongQuanController extends Controller
             });
         });
 
+
         $ngayBatDauTruoc   = $ngayBatDau ->copy()->subDays($khoangThoiGian );
         $ngayKetThucTruoc   = $ngayKetThuc ->copy()->subDays($khoangThoiGian );
 
         $donHangHoanTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->where('trang_thai_don_hang', DonHang::TTDH_HH)
             ->whereBetween('created_at', [$ngayBatDauTruoc  , $ngayKetThucTruoc  ])
+
+        $previousStartDate = $startDate->copy()->subDays($duration);
+        $previousEndDate = $endDate->copy()->subDays($duration);
+
+        $donHangHoanTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
+            ->where('trang_thai_don_hang', DonHang::TTDH_HH)
+            ->whereBetween('created_at', [$previousStartDate, $previousEndDate])
+
             ->get();
 
         $tongTienHoanTruoc = 0;
@@ -127,6 +167,7 @@ class ThongKeTongQuanController extends Controller
     }
     public function thongKeSanPhamTonKho(Request $request)
     {
+
         $ngayBatDau  = Carbon::parse($request->input('ngay_bat_dau'));
         $ngayKetThuc  = Carbon::parse($request->input('ngay_ket_thuc'));
 
@@ -134,6 +175,15 @@ class ThongKeTongQuanController extends Controller
 
         // Lấy các sản phẩm được tạo trong khoảng thời gian chỉ định
         $sanPhamTonKho = SanPham::whereBetween('created_at', [$ngayBatDau , $ngayKetThuc ])
+
+        $startDate = Carbon::parse($request->input('start_date'));
+        $endDate = Carbon::parse($request->input('end_date'));
+
+        $duration = $startDate->diffInDays($endDate) + 1;
+
+        // Lấy các sản phẩm được tạo trong khoảng thời gian chỉ định
+        $sanPhamTonKho = SanPham::whereBetween('created_at', [$startDate, $endDate])
+
             ->with(['bienTheSanPham']) // Đúng với quan hệ đã định nghĩa
             ->get();
 
@@ -157,11 +207,19 @@ class ThongKeTongQuanController extends Controller
             ];
         }
 
+
         $ngayBatDauTruoc   = $ngayBatDau ->copy()->subDays($khoangThoiGian );
         $ngayKetThucTruoc   = $ngayKetThuc ->copy()->subDays($khoangThoiGian );
 
         // Lấy sản phẩm trong khoảng thời gian trước đó
         $sanPhamTonKhoTruoc = SanPham::whereBetween('created_at', [$ngayBatDauTruoc  , $ngayKetThucTruoc  ])
+
+        $previousStartDate = $startDate->copy()->subDays($duration);
+        $previousEndDate = $endDate->copy()->subDays($duration);
+
+        // Lấy sản phẩm trong khoảng thời gian trước đó
+        $sanPhamTonKhoTruoc = SanPham::whereBetween('created_at', [$previousStartDate, $previousEndDate])
+
             ->with(['bienTheSanPham']) // Đúng với quan hệ đã định nghĩa
             ->get();
 
@@ -189,6 +247,7 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_ton_kho' => $tiLeTangGiamTonKhoFormatted
         ]);
     }
+
 
     public function thongKeDoanhThuTong(Request $request)
     {
@@ -340,4 +399,6 @@ class ThongKeTongQuanController extends Controller
         ]);
     }
     
+
+
 }
