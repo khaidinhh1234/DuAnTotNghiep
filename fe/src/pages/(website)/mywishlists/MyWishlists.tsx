@@ -1,12 +1,11 @@
-import React from 'react'
-import MyWishlistsPage from './_components/MyWishlists'
+import MyWishlistsPage from "./_components/MyWishlists";
 
 const MyWishlists = () => {
   return (
     <>
-    <MyWishlistsPage/>
+      <MyWishlistsPage />
     </>
-  )
-}
+  );
+};
 
-export default MyWishlists
+export default MyWishlists;
