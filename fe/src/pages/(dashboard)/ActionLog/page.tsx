@@ -120,12 +120,15 @@ export function ActionLog() {
       title: "Hành động",
       dataIndex: "hanh_dong",
       render: (text: any) => {
-        let color =
-          text === "Thêm mới" ? "green" : text === "Cập nhật" ? "blue" : "red";
         return (
-          <Tag color={color} key={text}>
-            {text}
-          </Tag>
+          <div>
+            <p
+              className={`w-24 text-center text-white rounded-md font-bold px-2 my-auto ${text === "Thêm mới" ? "bg-green-500" : text === "Xóa" ? "bg-red-500" : "bg-yellow-500"}`}
+            >
+              {" "}
+              {text}
+            </p>
+          </div>
         );
       },
       className: "w-[15%]",
