@@ -10,8 +10,7 @@ const CategoriesRemote: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
   const { id } = useParams();
 
-
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["danhmuc-remote"],
     queryFn: async () => {
       try {
@@ -33,7 +32,7 @@ const CategoriesRemote: React.FC = () => {
       console.error("Error restoring category:", error);
       toast.error("Khôi phục danh mục thất bại");
     }
-  };;
+  };
 
   const columns = [
     {

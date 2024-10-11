@@ -1,7 +1,7 @@
 import { sanPham2 } from "@/assets/img";
 
 // Component hiển thị thông tin sản phẩm
-const ProductItem = ({ status, price }) => {
+const ProductItem = ({ status, price }: any) => {
   return (
     <div className="pb-6 flex justify-between border-b border-hrBlack">
       <div className="grid justify-between">

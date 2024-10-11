@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
 import { ICategories } from "@/common/types/category";
+import { useEffect, useState } from "react";
 
+import instance from "@/configs/admin";
+import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, Select, Upload, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { UploadOutlined } from "@ant-design/icons";
-import instance from "@/configs/admin";
 
 const CategoriesEdit = () => {
   const { id } = useParams();
