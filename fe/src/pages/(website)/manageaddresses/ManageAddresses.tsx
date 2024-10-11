@@ -1,12 +1,11 @@
-import React from 'react'
-import ManageAddressesPage from './_components/ManageAddresses'
+import ManageAddressesPage from "./_components/ManageAddresses";
 
 const ManageAddresses = () => {
   return (
     <>
-    <ManageAddressesPage/>
+      <ManageAddressesPage />
     </>
-  )
-}
+  );
+};
 
-export default ManageAddresses
+export default ManageAddresses;

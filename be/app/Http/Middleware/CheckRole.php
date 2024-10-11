@@ -28,7 +28,6 @@ class CheckRole
                 'status' => false,
                 'status_code' => 401,
                 'message' => 'Không có quyền',
-                'data' => $vaiTro
             ], 401);
         }
         return $next($request);

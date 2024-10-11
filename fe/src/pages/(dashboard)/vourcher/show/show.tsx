@@ -466,7 +466,7 @@ const ShowVoucher = () => {
                               ? 1
                               : 2
                         }
-                        onChange={(e) => setValue(e.target.value)}
+                        onChange={(e: any) => setValue(e.target.value)}
                       >
                         <Radio
                           value={0}

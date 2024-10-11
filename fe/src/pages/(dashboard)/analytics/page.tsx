@@ -1,10 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Activity, CreditCard, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Chart1 from "./chart1/chart1";
-import Chart6 from "./chart6/chart6";
 import Chart5 from "./chart5/chart5";
+import Chart6 from "./chart6/chart6";
 // type SelectCommonPlacement = SelectProps["placement"];
 export function AnalyticsAdmin() {
   return (

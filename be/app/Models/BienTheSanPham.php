@@ -15,6 +15,7 @@ class BienTheSanPham extends Model
         'bien_the_mau_sac_id',
         'bien_the_kich_thuoc_id',
         'so_luong_bien_the',
+        'chi_phi_san_xuat',
         'gia_ban',
         'gia_khuyen_mai',
         'gia_khuyen_mai_tam_thoi',

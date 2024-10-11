@@ -1,9 +1,7 @@
-import React from 'react'
-
 const OurStory = () => {
   return (
     <>
-    <section id="OurStory" className="my-16">
+      <section id="OurStory" className="my-16">
         <h2 className="lg:text-4xl text-2xl font-semibold mb-6 text-center">
           Our Story
         </h2>
@@ -15,9 +13,8 @@ const OurStory = () => {
           blends style, comfort, and quality seamlessly.
         </p>
       </section>
-
     </>
-  )
-}
+  );
+};
 
-export default OurStory
+export default OurStory;

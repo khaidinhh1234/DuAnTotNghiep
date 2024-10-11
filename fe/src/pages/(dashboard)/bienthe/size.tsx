@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from "react";
 import { IColor } from "@/common/types/product";
+import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message, Spin } from "antd";
+<<<<<<< HEAD
 import {  Link, useNavigate, useParams } from "react-router-dom";
 import instance from "@/configs/admin";
+=======
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+>>>>>>> b161f0ce256b6db55be2919b9cac64d07b2329b4
 
 const getSizeTypeDisplay = (loaiKichThuoc: string): string => {
   switch (loaiKichThuoc) {
-    case 'tre_em':
-      return 'Trẻ em';
-    case 'nam':
-      return 'Nam';
-    case 'nu':
-      return 'Nữ';
+    case "tre_em":
+      return "Trẻ em";
+    case "nam":
+      return "Nam";
+    case "nu":
+      return "Nữ";
     default:
       return loaiKichThuoc;
   }
@@ -20,12 +25,12 @@ const getSizeTypeDisplay = (loaiKichThuoc: string): string => {
 
 const getOriginalSizeType = (displayText: string): string => {
   switch (displayText) {
-    case 'Trẻ em':
-      return 'tre_em';
-    case 'Nam':
-      return 'nam';
-    case 'Nữ':
-      return 'nu';
+    case "Trẻ em":
+      return "tre_em";
+    case "Nam":
+      return "nam";
+    case "Nữ":
+      return "nu";
     default:
       return displayText;
   }
@@ -35,8 +40,8 @@ const Size = () => {
   const { id } = useParams<{ id: string }>();
   const [form] = Form.useForm();
   const nav = useNavigate();
-  const [sizeType, setSizeType] = useState<string>('');
-  const [originalSizeType, setOriginalSizeType] = useState<string>('');
+  const [sizeType, setSizeType] = useState<string>("");
+  const [originalSizeType, setOriginalSizeType] = useState<string>("");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["size", id],
@@ -50,7 +55,7 @@ const Size = () => {
     if (data) {
       const formData = {
         ...data.data,
-        loai_kich_thuoc: getSizeTypeDisplay(data.data.loai_kich_thuoc)
+        loai_kich_thuoc: getSizeTypeDisplay(data.data.loai_kich_thuoc),
       };
       form.setFieldsValue(formData);
       setSizeType(data.data.loai_kich_thuoc);
@@ -62,9 +67,12 @@ const Size = () => {
     mutationFn: async (values: IColor) => {
       const updatedValues = {
         ...values,
-        loai_kich_thuoc: originalSizeType
+        loai_kich_thuoc: originalSizeType,
       };
-      const response = await instance.put(`/bienthekichthuoc/${id}`, updatedValues);
+      const response = await instance.put(
+        `/bienthekichthuoc/${id}`,
+        updatedValues
+      );
       return response.data;
     },
     onSuccess: () => {
@@ -102,16 +110,20 @@ const Size = () => {
     ];
 
     switch (sizeType) {
-      case 'tre_em':
+      case "tre_em":
         return [
           ...commonRules,
-          { pattern: /^\d+$/, message: "Kích thước trẻ em chỉ được nhập số" }
+          { pattern: /^\d+$/, message: "Kích thước trẻ em chỉ được nhập số" },
         ];
-      case 'nam':
-      case 'nu':
+      case "nam":
+      case "nu":
         return [
           ...commonRules,
-          { pattern: /^[A-Z]*$/, message: "Kích thước phải bắt đầu bằng chữ hoa và không được chứa số" }
+          {
+            pattern: /^[A-Z]*$/,
+            message:
+              "Kích thước phải bắt đầu bằng chữ hoa và không được chứa số",
+          },
         ];
       default:
         return commonRules;
@@ -157,10 +169,7 @@ const Size = () => {
                 <Input placeholder="Nhập kích thước" />
               </Form.Item>
 
-              <Form.Item
-                label="Loại kích thước"
-                name="loai_kich_thuoc"
-              >
+              <Form.Item label="Loại kích thước" name="loai_kich_thuoc">
                 <Input disabled />
               </Form.Item>
 

@@ -4,12 +4,12 @@ import instance from "@/configs/admin";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm, Space, Table, TableColumnsType } from "antd";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const RemoteNew: React.FC = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Fetch danh sách tin tức đã xóa
   const { data, isLoading, isError } = useQuery({
@@ -93,7 +93,9 @@ const RemoteNew: React.FC = () => {
             title="Bạn có chắc chắn muốn khôi phục?"
             onConfirm={() => handleRestore(record.key)}
           >
-            <Button type="primary">Khôi phục</Button>
+            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+              Khôi phục
+            </Button>
           </Popconfirm>
           {/* <Button type="default" onClick={() => navigate(`/admin/news/details/${record.key}`)}>
             Chi tiết

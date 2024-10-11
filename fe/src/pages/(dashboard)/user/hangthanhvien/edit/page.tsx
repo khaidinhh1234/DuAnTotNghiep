@@ -137,7 +137,7 @@ const MemberRankEdit = () => {
         <h1 className="font-semibold md:text-3xl">Chỉnh sửa hạng thành viên</h1>
         <div>
           <Link to="/admin/users/rank" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
+            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
           </Link>
@@ -253,7 +253,7 @@ const MemberRankEdit = () => {
               type="primary"
               size="middle"
               htmlType="submit"
-              className="px-8 py-3 bg-black text-white rounded-lg"
+              className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
             >
               Cập nhật
             </Button>

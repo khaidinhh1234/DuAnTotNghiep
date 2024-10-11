@@ -1,12 +1,14 @@
 import instance from "@/configs/admin";
+import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Modal } from "antd";
+import { Button, Form, message, Modal } from "antd";
+import { Upload } from "antd";
 import { useState } from "react";
 
 const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-
+  const [imageSelected, setImageSelected] = useState(false);
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -30,7 +32,13 @@ const DetailTransport = ({ record }: any) => {
       return response.data;
     },
   });
-
+  const { data: dataShipper } = useQuery({
+    queryKey: ["SHIPPER", id],
+    queryFn: async () => {
+      const response = await instance.get(`/vanchuyen/${id}`);
+      return response.data;
+    },
+  })
   const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
@@ -39,9 +47,17 @@ const DetailTransport = ({ record }: any) => {
   // const donhang = data?.data;
   // console.log("data", donhang);
   // console.log("data", products);
-  console.log(record.don_hang.ten_nguoi_dat_hang)
+  // console.log(record.don_hang.ten_nguoi_dat_hang)
   const thongtin = data?.data?.thong_tin;
-  console.log(thongtin, )
+
+  const shipperDetails = dataShipper?.data?.shipper;
+  const shipperName = shipperDetails
+    ? `${shipperDetails.ho} ${shipperDetails.ten}`
+    : "Chưa có thông tin";
+  const shipperPhone = shipperDetails?.so_dien_thoai || "Chưa có số điện thoại";
+  // console.log(thongtin_shipper)
+  // console.log(thongtin,)
+
   const handleCancel = () => {
     setOpen(false);
   };
@@ -82,10 +98,9 @@ const DetailTransport = ({ record }: any) => {
       });
     },
   });
-
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
+  const handleImageChange = (e: any) => {
+    setImageSelected(e && e.fileList.length > 0);
+  };
   return (
     <div>
       {" "}
@@ -99,7 +114,7 @@ const DetailTransport = ({ record }: any) => {
         footer={null}
         onCancel={handleCancel}
       >
-        <h1 className="text-3xl font-bold">Chi tiết đơn hàng </h1>
+        <h1 className="text-3xl font-bold">Chi tiết vận chuyển </h1>
         <div className="grid grid-cols-12 gap-4">
           <div className="col-span-9">
             {" "}
@@ -368,8 +383,8 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <h5 className="text-blue-600 my-2">
                 {record.don_hang.ten_nguoi_dat_hang
-              ? record.don_hang.ten_nguoi_dat_hang
-              : thongtin?.ho + " " + thongtin?.ten}
+                  ? record.don_hang.ten_nguoi_dat_hang
+                  : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
@@ -401,12 +416,49 @@ const DetailTransport = ({ record }: any) => {
                   {record?.don_hang.ghi_chu ? record?.don_hang.ghi_chu : "Không có ghi chú"}
                 </span>
               </p>
+            </div> {" "}
+            {/* shipper */}
+            <div className="col-span-3">
+            <div className="bg-slate-100 p-5 border rounded-lg my-2">
+              <h5 className="text-blue-800 text-lg">Thông tin shipper</h5>
+              <hr />
+              <p className="text-blue-800 text-lg my-2">Nhân viên ship:</p>
+              <span className="text-black my-2">{shipperName}</span>
+              <p className="text-blue-800 font-semibold">
+                Số điện thoại:
+                <span className="text-black font-medium">{shipperPhone}</span>
+              </p>
+              <h5 className="text-blue-800 mb-4">Ảnh xác nhận giao hàng thành công:</h5>
+              <Form.Item
+                label="Thêm ảnh"
+                name="imageFile"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
+                className="mb-4"
+              >
+                <Upload
+                  listType="picture"
+                  maxCount={1}
+                  beforeUpload={() => false}
+                  onChange={handleImageChange}
+                >
+                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                </Upload>
+              </Form.Item>
+
+              {imageSelected && (
+                <Button type="primary" htmlType="submit">
+                  Xác nhận
+                </Button>
+              )}
             </div>
+          </div>
           </div>
         </div>
       </Modal>
     </div>
   );
-};  
+};
 
 export default DetailTransport;

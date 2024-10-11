@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Form, Input, Select, Button, message } from "antd";
-import { Editor } from "@tinymce/tinymce-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Editor } from "@tinymce/tinymce-react";
+import { Button, Form, Input, message, Select } from "antd";
+import { useCallback, useState } from "react";
 
 import { INew } from "@/common/types/new";
-import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "@/configs/admin";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -63,7 +63,7 @@ const NewEdit = () => {
     const newsData: INew = {
       ...values,
       user_id: values.user_id, // Ghi nhận user_id từ form
-      noi_dung: editorContent,  // Pass editor content
+      noi_dung: editorContent, // Pass editor content
     };
     mutate(newsData);
   };
@@ -77,7 +77,12 @@ const NewEdit = () => {
   }
 
   if (fetchError || newsError) {
-    return <div>Có lỗi xảy ra khi tải dữ liệu: {fetchError?.message || newsError?.message}</div>;
+    return (
+      <div>
+        Có lỗi xảy ra khi tải dữ liệu:{" "}
+        {fetchError?.message || newsError?.message}
+      </div>
+    );
   }
 
   if (!newsData) {
@@ -88,7 +93,8 @@ const NewEdit = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Tin tức / <span className="font-semibold px-px">Cập nhật tin tức</span>
+          Quản trị / Tin tức /{" "}
+          <span className="font-semibold px-px">Cập nhật tin tức</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
@@ -122,7 +128,9 @@ const NewEdit = () => {
                 <Form.Item
                   label="Tiêu đề"
                   name="tieu_de"
-                  rules={[{ required: true, message: "Tiêu đề bắt buộc phải nhập!" }]}
+                  rules={[
+                    { required: true, message: "Tiêu đề bắt buộc phải nhập!" },
+                  ]}
                 >
                   <Input placeholder="Nhập tiêu đề tin tức" />
                 </Form.Item>
@@ -132,9 +140,14 @@ const NewEdit = () => {
                 <Form.Item
                   label="Tài khoản"
                   name="user_id"
-                  rules={[{ required: true, message: "Vui lòng chọn tài khoản" }]}
+                  rules={[
+                    { required: true, message: "Vui lòng chọn tài khoản" },
+                  ]}
                 >
-                  <Select placeholder="Vui lòng chọn tài khoản" className="w-full">
+                  <Select
+                    placeholder="Vui lòng chọn tài khoản"
+                    className="w-full"
+                  >
                     {categoriesAndUsers?.users.map((user: any) => (
                       <Option key={user.id} value={user.id}>
                         {user.ho} {user.ten}
@@ -162,12 +175,26 @@ const NewEdit = () => {
                 <Form.Item
                   label="Nội dung"
                   name="noi_dung"
-                  rules={[{ required: true, message: "Nội dung tin tức bắt buộc phải nhập!" }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Nội dung tin tức bắt buộc phải nhập!",
+                    },
+                  ]}
                 >
                   <Editor
                     apiKey="4co2z7i0ky0nmudlm5lsoetsvp6g3u4110d77s2cq143a9in"
                     init={{
-                      plugins: ["link", "image", "media", "table", "code", "help", "preview", "searchreplace"],
+                      plugins: [
+                        "link",
+                        "image",
+                        "media",
+                        "table",
+                        "code",
+                        "help",
+                        "preview",
+                        "searchreplace",
+                      ],
                       toolbar:
                         "undo redo | styleselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image media | preview code help",
                       height: 500,
@@ -181,7 +208,6 @@ const NewEdit = () => {
                   Cập nhật
                 </Button>
               </div>
-
             </Form>
           </div>
         </div>
