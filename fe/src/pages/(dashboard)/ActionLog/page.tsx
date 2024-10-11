@@ -1,4 +1,6 @@
-import { Table, Tag } from "antd";
+import { Col, Table, Tag } from "antd";
+import ProfileBanner from "../adminProfile/profile/ProfileBanner";
+import Banner from "./banner";
 
 // Dữ liệu mẫu cho bảng
 const data = [
@@ -61,19 +63,19 @@ export function ActionLog() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="flex items-center">
-          <h1 className=" md:text-base">
-            Quản trị /{" "}
-            <span className="font-semibold px-px=">Nhật ký truy cập </span>{" "}
-          </h1>
-        </div>
-        <div className="flex items-center">
-          <h1 className=" font-semibold md:text-3xl">Nhật ký truy cập </h1>
-        </div>
+        <Col span={24} className="w-full">
+          <Banner />
+        </Col>
 
-        <div className="max-w-8xl">
-          {" "}
-          <Table columns={columns} dataSource={data} />
+        <div className="max-w-8xl bg-white rounded-md p-5">
+          <div className="flex items-center">
+            <h1 className=" font-semibold md:text-2xl px-2">
+              Nhật ký truy cập{" "}
+            </h1>
+          </div>
+          <div className="shadow-md shadow-slate-400 border-t rounded-lg">
+            <Table columns={columns} dataSource={data} />
+          </div>
         </div>
       </main>
       {/* <Chart3 /> */}
