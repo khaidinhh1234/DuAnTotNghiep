@@ -616,25 +616,25 @@
 // };
 
 // export default SizeManagement;
-import React, { useRef, useState } from "react";
+import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
-  Input,
-  Space,
-  Table,
   Form,
+  Input,
   InputRef,
-  Popconfirm,
   message,
-  Spin,
+  Popconfirm,
   Select,
+  Space,
+  Spin,
+  Table,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import instance from "@/configs/admin";
 
 interface SizeDataType {
   key: string;
@@ -687,7 +687,10 @@ const SizeManagement: React.FC = () => {
   });
 
   const addSizeMutation = useMutation({
-    mutationFn: async (newSize: { kich_thuoc: string; loai_kich_thuoc: string }) => {
+    mutationFn: async (newSize: {
+      kich_thuoc: string;
+      loai_kich_thuoc: string;
+    }) => {
       const existingSize = sizes.find(
         (size: any) =>
           size.kich_thuoc.toLowerCase() === newSize.kich_thuoc.toLowerCase() &&
@@ -833,12 +836,12 @@ const SizeManagement: React.FC = () => {
       // ...getColumnSearchProps("loai_kich_thuoc"),
       render: (text: string) => {
         switch (text) {
-          case 'nam':
-            return 'Nam';
-          case 'nu':
-            return 'Nữ';
-          case 'tre_em':
-            return 'Trẻ em';
+          case "nam":
+            return "Nam";
+          case "nu":
+            return "Nữ";
+          case "tre_em":
+            return "Trẻ em";
           default:
             return text;
         }
