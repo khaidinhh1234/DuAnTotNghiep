@@ -1,6 +1,6 @@
 import { sanPham2 } from "@/assets/img";
-import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const ProductCategories = () => {
   const [showcate, setShowcate] = useState(true);
