@@ -110,6 +110,11 @@ Route::middleware([])
 
 //'auth.sanctum'
 Route::middleware('auth.sanctum')
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> c2fb63bd6e93683dc73d6007717d8f1ba5a764f3
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {

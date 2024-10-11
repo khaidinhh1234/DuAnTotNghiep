@@ -57,7 +57,7 @@ const Feedback = () => {
     }) => {
       try {
         const response = await instance.put(`/lien-he/${id}`, {
-          noi_dung_phan_hoi,
+          noi_dung_phan_hoi:noi_dung_phan_hoi,
         });
         toast.success("Thành công");
         return response.data;
