@@ -9,10 +9,17 @@ const Chart4 = () => {
   const chartData = {
     series: [
       {
-        name: "Doanh số",
+        name: "165 ngày qua",
         data: [
           100000, 200000, 300000, 400000, 200000, 100000, 300000, 400000,
           500000, 100000, 400000,
+        ], // Example data
+      },
+      {
+        name: "165 ngày trước",
+        data: [
+          12000, 90000, 32000, 12000, 561000, 280000, 32000, 48000, 59000,
+          130000, 45000,
         ], // Example data
       },
     ],
@@ -23,28 +30,31 @@ const Chart4 = () => {
       },
       stroke: {
         curve: "smooth",
+        dashArray: [0, 5],
       },
       dataLabels: {
         enabled: false,
       },
       xaxis: {
         categories: [
-          "13",
-          "14",
-          "15",
-          "16",
-          "17",
-          "18",
-          "19",
-          "20",
-          "21",
-          "22",
-          "23",
+          "13/04/2024",
+          "14/04/2024",
+          "15/04/2024",
+          "16/04/2024",
+          "17/04/2024",
+          "18/04/2024",
+          "19/04/2024",
+          "20/04/2024",
+          "21/04/2024",
+          "22/04/2024",
+          "23/04/2024",
         ], // Days of the month
       },
       yaxis: {
         labels: {
-          formatter: (val: number) => `${val} đ`,
+          formatter: (val: number) => {
+            return `${val.toLocaleString("vi-VN")} đ`;
+          },
         },
       },
     },

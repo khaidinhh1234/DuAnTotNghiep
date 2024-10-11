@@ -188,4 +188,5 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_ton_kho' => $tiLeTangGiamTonKhoFormatted
         ]);
     }
+
 }

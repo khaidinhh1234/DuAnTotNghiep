@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(HangThanhVien::class)->constrained();
+            $table->foreignIdFor(HangThanhVien::class)->nullable()->constrained()->onDelete('set null');
             $table->string('ho', 30);
             $table->string('ten', 30);
             $table->string('anh_nguoi_dung')->nullable();

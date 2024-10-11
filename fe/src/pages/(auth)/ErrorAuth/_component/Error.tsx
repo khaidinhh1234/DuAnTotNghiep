@@ -1,11 +1,11 @@
 import { time } from "@/assets/img";
 import { Link } from "react-router-dom";
 
-type IUser = {
-  password: string;
-  password_confirmation: string;
-  token: string;
-};
+// type IUser = {
+//   password: string;
+//   password_confirmation: string;
+//   token: string;
+// };
 const Error = () => {
   // const location = useLocation();
   // const queryParams = new URLSearchParams(location.search);

@@ -12,36 +12,36 @@ use Exception;
 class ThongKeDonHangController extends Controller
 {
     public function thongKeDonHangChot(Request $request)
-{
-   // Lấy tất cả đơn hàng mà không lọc theo trạng thái
-   $donHangChot = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])->get();
+    {
+        // Lấy tất cả đơn hàng mà không lọc theo trạng thái
+        $donHangChot = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])->get();
 
-   // Khởi tạo biến tổng tiền và tổng số lượng đơn hàng
-   $tongTien = 0;
-   $tongSoLuongDonHang = $donHangChot->count(); // Đếm tổng số lượng đơn hàng
+        // Khởi tạo biến tổng tiền và tổng số lượng đơn hàng
+        $tongTien = 0;
+        $tongSoLuongDonHang = $donHangChot->count(); // Đếm tổng số lượng đơn hàng
 
-   // Lấy thông tin sản phẩm trong các đơn hàng
-   $thongKeChiTiet = $donHangChot->flatMap(function ($donHang) use (&$tongTien) {
-       return $donHang->chiTiets->map(function ($chiTiet) use (&$tongTien) {
-           // Cộng dồn tổng tiền của các đơn hàng
-           $tongTien += $chiTiet->thanh_tien;
+        // Lấy thông tin sản phẩm trong các đơn hàng
+        $thongKeChiTiet = $donHangChot->flatMap(function ($donHang) use (&$tongTien) {
+            return $donHang->chiTiets->map(function ($chiTiet) use (&$tongTien) {
+                // Cộng dồn tổng tiền của các đơn hàng
+                $tongTien += $chiTiet->thanh_tien;
 
-           // Trả về chi tiết sản phẩm trong các đơn hàng
-           return [
-               'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
-               'so_luong' => $chiTiet->so_luong,
-               'gia' => $chiTiet->gia,
-               'thanh_tien' => $chiTiet->thanh_tien,
-           ];
-       });
-   });
-   // Trả về dữ liệu bao gồm tổng số lượng đơn hàng, tổng tiền, và chi tiết sản phẩm
-   return response()->json([
-       'tong_so_luong_don_hang' => $tongSoLuongDonHang, // Tổng số lượng đơn hàng
-       'tong_tien' => $tongTien,  // Tổng tiền của tất cả đơn hàng
-       'san_pham' => $thongKeChiTiet // Danh sách chi tiết sản phẩm của các đơn hàng
-   ]);
-}
+                // Trả về chi tiết sản phẩm trong các đơn hàng
+                return [
+                    'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
+                    'so_luong' => $chiTiet->so_luong,
+                    'gia' => $chiTiet->gia,
+                    'thanh_tien' => $chiTiet->thanh_tien,
+                ];
+            });
+        });
+        // Trả về dữ liệu bao gồm tổng số lượng đơn hàng, tổng tiền, và chi tiết sản phẩm
+        return response()->json([
+            'tong_so_luong_don_hang' => $tongSoLuongDonHang, // Tổng số lượng đơn hàng
+            'tong_tien' => $tongTien,  // Tổng tiền của tất cả đơn hàng
+            'san_pham' => $thongKeChiTiet // Danh sách chi tiết sản phẩm của các đơn hàng
+        ]);
+    }
 
     public function thongKeHoanHang(Request $request)
     {
@@ -79,84 +79,84 @@ class ThongKeDonHangController extends Controller
     }
 
     public function thongKeHuyHang()
-{
-    // Truy vấn các đơn hàng bị hủy, nhóm theo tháng và năm
-    $thongKeHuyHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
-        ->select(
-            DB::raw('MONTH(created_at) as thang'),
-            DB::raw('YEAR(created_at) as nam'),
-            DB::raw('COUNT(id) as so_luong_don_huy')
-        )
-        ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
-        ->orderBy('nam', 'asc')
-        ->orderBy('thang', 'asc')
-        ->with(['chiTiets.bienTheSanPham.sanPham'])
-        ->get();
-
-    // Mảng kết quả cho năm
-    $thongKeNam = [];
-    // Mảng kết quả cho tháng
-    $thongKeThang = [];
-
-    // Duyệt qua từng tháng và năm để lấy thông tin sản phẩm bị hủy
-    foreach ($thongKeHuyHang as $thongKe) {
-        // Thống kê theo từng năm, nếu chưa có thì tạo mới
-        if (!isset($thongKeNam[$thongKe->nam])) {
-            $thongKeNam[$thongKe->nam] = [
-                'nam' => $thongKe->nam,
-                'so_luong_don_huy' => 0,
-                'san_pham_huy' => [] // Mảng sản phẩm bị hủy theo năm
-            ];
-        }
-        $thongKeNam[$thongKe->nam]['so_luong_don_huy'] += $thongKe->so_luong_don_huy;
-
-        // Lấy tất cả đơn hàng bị hủy trong tháng và năm hiện tại
-        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
-            ->whereYear('created_at', $thongKe->nam)
-            ->whereMonth('created_at', $thongKe->thang)
+    {
+        // Truy vấn các đơn hàng bị hủy, nhóm theo tháng và năm
+        $thongKeHuyHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
+            ->select(
+                DB::raw('MONTH(created_at) as thang'),
+                DB::raw('YEAR(created_at) as nam'),
+                DB::raw('COUNT(id) as so_luong_don_huy')
+            )
+            ->groupBy(DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
+            ->orderBy('nam', 'asc')
+            ->orderBy('thang', 'asc')
             ->with(['chiTiets.bienTheSanPham.sanPham'])
             ->get();
 
-        // Mảng để lưu sản phẩm bị hủy trong tháng và năm hiện tại
-        $sanPhamTrongThang = [];
+        // Mảng kết quả cho năm
+        $thongKeNam = [];
+        // Mảng kết quả cho tháng
+        $thongKeThang = [];
 
-        // Duyệt qua từng đơn hàng
-        foreach ($donHangs as $donHang) {
-            foreach ($donHang->chiTiets as $chiTiet) {
-                $sanPham = $chiTiet->bienTheSanPham->sanPham;
-
-                // Thêm sản phẩm vào mảng thống kê theo năm nếu chưa tồn tại
-                if (!in_array($sanPham->ten_san_pham, $thongKeNam[$thongKe->nam]['san_pham_huy'])) {
-                    $thongKeNam[$thongKe->nam]['san_pham_huy'][] = $sanPham->ten_san_pham;
-                }
-
-                // Thêm sản phẩm vào mảng thống kê theo tháng
-                $sanPhamTrongThang[] = [
-                    'ten_san_pham' => $sanPham->ten_san_pham,
-                    'so_luong_huy' => $chiTiet->so_luong,
-                    'gia' => $chiTiet->gia,
-                    'thanh_tien' => $chiTiet->thanh_tien
+        // Duyệt qua từng tháng và năm để lấy thông tin sản phẩm bị hủy
+        foreach ($thongKeHuyHang as $thongKe) {
+            // Thống kê theo từng năm, nếu chưa có thì tạo mới
+            if (!isset($thongKeNam[$thongKe->nam])) {
+                $thongKeNam[$thongKe->nam] = [
+                    'nam' => $thongKe->nam,
+                    'so_luong_don_huy' => 0,
+                    'san_pham_huy' => [] // Mảng sản phẩm bị hủy theo năm
                 ];
             }
+            $thongKeNam[$thongKe->nam]['so_luong_don_huy'] += $thongKe->so_luong_don_huy;
+
+            // Lấy tất cả đơn hàng bị hủy trong tháng và năm hiện tại
+            $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
+                ->whereYear('created_at', $thongKe->nam)
+                ->whereMonth('created_at', $thongKe->thang)
+                ->with(['chiTiets.bienTheSanPham.sanPham'])
+                ->get();
+
+            // Mảng để lưu sản phẩm bị hủy trong tháng và năm hiện tại
+            $sanPhamTrongThang = [];
+
+            // Duyệt qua từng đơn hàng
+            foreach ($donHangs as $donHang) {
+                foreach ($donHang->chiTiets as $chiTiet) {
+                    $sanPham = $chiTiet->bienTheSanPham->sanPham;
+
+                    // Thêm sản phẩm vào mảng thống kê theo năm nếu chưa tồn tại
+                    if (!in_array($sanPham->ten_san_pham, $thongKeNam[$thongKe->nam]['san_pham_huy'])) {
+                        $thongKeNam[$thongKe->nam]['san_pham_huy'][] = $sanPham->ten_san_pham;
+                    }
+
+                    // Thêm sản phẩm vào mảng thống kê theo tháng
+                    $sanPhamTrongThang[] = [
+                        'ten_san_pham' => $sanPham->ten_san_pham,
+                        'so_luong_huy' => $chiTiet->so_luong,
+                        'gia' => $chiTiet->gia,
+                        'thanh_tien' => $chiTiet->thanh_tien
+                    ];
+                }
+            }
+
+            // Thêm dữ liệu vào mảng kết quả cho tháng
+            $thongKeThang[] = [
+                'thang' => $thongKe->thang,
+                'nam' => $thongKe->nam,
+                'so_luong_don_huy' => $thongKe->so_luong_don_huy,
+                'san_pham_huy' => $sanPhamTrongThang
+            ];
         }
 
-        // Thêm dữ liệu vào mảng kết quả cho tháng
-        $thongKeThang[] = [
-            'thang' => $thongKe->thang,
-            'nam' => $thongKe->nam,
-            'so_luong_don_huy' => $thongKe->so_luong_don_huy,
-            'san_pham_huy' => $sanPhamTrongThang
+        // Kết quả cuối cùng
+        $ketQua = [
+            'thong_ke_nam' => array_values($thongKeNam), // Thống kê theo năm
+            'thong_ke_thang' => $thongKeThang // Thống kê chi tiết theo tháng
         ];
+
+        return $ketQua;
     }
-
-    // Kết quả cuối cùng
-    $ketQua = [
-        'thong_ke_nam' => array_values($thongKeNam), // Thống kê theo năm
-        'thong_ke_thang' => $thongKeThang // Thống kê chi tiết theo tháng
-    ];
-
-    return $ketQua;
-}
 
 
     public function thongKeDonHangTheoTrangThai(Request $request)
@@ -187,7 +187,6 @@ class ThongKeDonHangController extends Controller
                     'hoan_hang' => $soLuongHoanHang,
                 ]
             ], 200);
-
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['error' => 'Đã xảy ra lỗi trong quá trình xử lý dữ liệu.'], 500);
@@ -238,5 +237,4 @@ class ThongKeDonHangController extends Controller
             return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
         }
     }
-
 }

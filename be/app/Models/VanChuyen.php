@@ -31,6 +31,8 @@ class VanChuyen extends Model
         'anh_xac_thuc',
         'shipper_xac_nhan',
         'khach_hang_xac_nhan',
+        'ghi_chu',
+        'ngay_giao_hang_thanh_cong',
     ];
 
     public function donHang()

@@ -31,7 +31,7 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "Quản trị",
     key: "action",
-    render: (_, record) => (
+    render: () => (
       <Space>
         <Popconfirm
           title="Chuyển vào thùng rác "
@@ -90,28 +90,32 @@ const CentralStock = () => {
       {
         key: "odd",
         text: "Select Odd Row",
-        onSelect: (changeableRowKeys) => {
+        onSelect: (changeableRowKeys: any) => {
           let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return false;
+          newSelectedRowKeys = changeableRowKeys.filter(
+            (_: any, index: any) => {
+              if (index % 2 !== 0) {
+                return false;
+              }
+              return true;
             }
-            return true;
-          });
+          );
           setSelectedRowKeys(newSelectedRowKeys);
         },
       },
       {
         key: "even",
         text: "Select Even Row",
-        onSelect: (changeableRowKeys) => {
+        onSelect: (changeableRowKeys: any) => {
           let newSelectedRowKeys = [];
-          newSelectedRowKeys = changeableRowKeys.filter((_, index) => {
-            if (index % 2 !== 0) {
-              return true;
+          newSelectedRowKeys = changeableRowKeys.filter(
+            (_: any, index: any) => {
+              if (index % 2 !== 0) {
+                return true;
+              }
+              return false;
             }
-            return false;
-          });
+          );
           setSelectedRowKeys(newSelectedRowKeys);
         },
       },

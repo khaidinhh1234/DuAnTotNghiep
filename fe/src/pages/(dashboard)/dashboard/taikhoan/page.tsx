@@ -1,8 +1,5 @@
-import React from "react";
 import Chart1 from "./chart1/chart1";
 import Chart2 from "./chart2/chart2";
-import Chart3 from "./chart3/chart3";
-import Chart4 from "./chart4/chart4";
 import Chart5 from "./chart5/chart5";
 import Chart6 from "./chart6/chart6";
 

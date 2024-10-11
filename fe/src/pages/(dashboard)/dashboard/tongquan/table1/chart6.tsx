@@ -9,10 +9,16 @@ const Chart6 = () => {
   const chartData = {
     series: [
       {
-        name: "Revenue",
-        data: [100, 200, 300, 400, 200, 100, 300, 400, 500, 100, 400], // Example data
+        name: "Đơn hủy",
+        data: [1100, 200, 300, 6400, 200, 5100, 4300, 6400, 500, 3100, 8400], // Example data
+      },
+
+      {
+        name: "Đơn chốt",
+        data: [1100, 2100, 3100, 4200, 2300, 3200, 2300, 100, 600, 200, 300], // Example data
       },
     ],
+
     options: {
       chart: {
         type: "line",
@@ -21,27 +27,30 @@ const Chart6 = () => {
       stroke: {
         curve: "smooth",
       },
+      colors: ["#FF0000", "#00FF00"],
       dataLabels: {
         enabled: false,
       },
       xaxis: {
         categories: [
-          "13",
-          "14",
-          "15",
-          "16",
-          "17",
-          "18",
-          "19",
-          "20",
-          "21",
-          "22",
-          "23",
+          "13/04/2024",
+          "14/04/2024",
+          "15/04/2024",
+          "16/04/2024",
+          "17/04/2024",
+          "18/04/2024",
+          "19/04/2024",
+          "20/04/2024",
+          "21/04/2024",
+          "22/04/2024",
+          "23/04/2024",
         ], // Days of the month
       },
       yaxis: {
         labels: {
-          formatter: (val: number) => `${val}M`,
+          formatter: (val: number) => {
+            return `${val.toLocaleString("vi-VN")} đ`;
+          },
         },
       },
     },
