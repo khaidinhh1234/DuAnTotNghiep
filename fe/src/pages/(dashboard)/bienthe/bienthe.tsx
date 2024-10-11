@@ -20,13 +20,13 @@ const Bienthe: React.FC = () => {
           <Link to="/admin/products/bienthe/remote">
             <Button className="bg-gradient-to-r  from-red-500 to-orange-400 text-white rounded-lg">
               <DeleteOutlined />
-              màu
+              Màu
             </Button>
           </Link>
           <Link to="/admin/products/bienthe/remotesize">
             <Button className="bg-gradient-to-r  from-red-500 to-orange-400 text-white rounded-lg">
               <DeleteOutlined />
-              kích thước
+              Kích thước
             </Button>
           </Link>
         </div>

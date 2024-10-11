@@ -20,7 +20,6 @@ use App\Http\Controllers\Admin\API\ThongKeDoanhThuController;
 use App\Http\Controllers\Admin\Api\ThongKeDonHangController;
 use App\Http\Controllers\Admin\Api\ThongKeKhachHangController;
 use App\Http\Controllers\Admin\Api\ThongKeSanPham;
-use App\Http\Controllers\Admin\Api\ThongKeTongQuanController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
@@ -37,25 +36,7 @@ use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
-use App\Models\LichSuHoatDong;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-Route::middleware('auth.sanctum')->get('/user', function () {
-    return response()->json(['id' => auth()->id(), 'name' => auth()->user()->name]);
-});
 
 // Auth
 Route::post('/register', [AuthController::class, 'register']);
@@ -125,13 +106,8 @@ Route::middleware([])
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
-
-
-//'auth:sanctum', 'auth.checkrole'
-
 //'auth.sanctum', 'auth.checkrole'
 Route::middleware('auth.sanctum')
-
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
