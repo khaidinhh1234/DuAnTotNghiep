@@ -6,6 +6,7 @@ import {
   UserOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 // import profilecover from 'src/assets/images/backgrounds/profilebg.jpg';
 // import userimg from 'src/assets/images/profile/user-1.jpg';
 // import ProfileTab from './ProfileTab';
@@ -13,8 +14,11 @@ import {
 const { Text, Title } = Typography;
 
 const Banner = () => {
-  const url =
-    "https://res-console.cloudinary.com/dpypwbeis/thumbnails/v1/image/upload/v1728619647/Ml9vaTY1bXY=/drilldown";
+  const [{ user }] = useLocalStorage("user", {});
+  console.log(user);
+  const url = user.anh_nguoi_dung;
+  const vaitro = user.vai_tros.map((item: any) => item.ten_vai_tro);
+  console.log(vaitro);
   return (
     <>
       <Card
@@ -77,9 +81,13 @@ const Banner = () => {
 
               <div className="mt-3 text-center">
                 <Title level={5} className="m-0">
-                  Ngô Đình Toản
+                  {user?.ho + " " + user?.ten}
                 </Title>
-                <Text type="secondary">Nhân viên dọn vệ sinh</Text>
+                {vaitro?.map((item: any) => (
+                  <Text type="secondary">
+                    {item.length > 1 ? item : item + ","}
+                  </Text>
+                ))}
               </div>
             </div>
           </Col>
