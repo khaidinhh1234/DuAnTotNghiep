@@ -1,15 +1,9 @@
 import { Bar, BarChart, Rectangle, XAxis } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
-import { useQuery } from "@tanstack/react-query";
 import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Chart1() {
   const { data } = useQuery({
