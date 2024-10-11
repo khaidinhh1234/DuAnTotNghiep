@@ -20,7 +20,7 @@ import CategoriesRemote from "@/pages/(dashboard)/categories/remote/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
-import { Dashboard } from "@/pages/(dashboard)/dashboard/list/page";
+
 import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
@@ -102,17 +102,23 @@ import PageSupport from "@/pages/(dashboard)/support/page";
 // import Productsadd from "@/pages/(dashboard)/products/fix";
 
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
-import { Test } from "@/pages/(dashboard)/test";
+
+import PrivateRoute from "./PrivateRoute";
+import Test from "@/pages/(dashboard)/test";
+// import List from "@/pages/(dashboard)/dashboard/test/page";
 
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
 import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
 import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
-import PrivateRoute from "./PrivateRoute";
+// import PrivateRoute from "./PrivateRoute";
 
+import Dashboard from "@/pages/(dashboard)/dashboard/test/page";
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
+import { List } from "./../pages/(dashboard)/dashboard/list/page";
+import EditProducts from "@/pages/(dashboard)/products/Editt/page";
 
 const Router = () => {
   //
@@ -153,16 +159,16 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            // <PrivateRoute>
-              <>
-                <LayoutAdmin />
-              </>
-            // </PrivateRoute>
+
+            <PrivateRoute>
+              <LayoutAdmin />
+            </PrivateRoute>
           }
         >
+          <Route index element={<Navigate to="/admin/dashboard/list" />} />
           <Route path="dashboard/list" element={<Dashboard />} />
           <Route path="dashboard/doanhthu" element={<DoanhThu />} />
-          <Route path="dashboard/sanpham" element={<SanPham />} />
+          <Route path="dashboard/sanpham" element={<List />} />
           <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
           {/* Sản phẩm  */}
           <Route
@@ -172,10 +178,10 @@ const Router = () => {
           <Route path="products/list" element={<ProductsAdmin />} />
           <Route path="products/add" element={<ProductsAdd />} />
           <Route path="products/addd" element={<AddProducts />} />
-          <Route path="products/edit/:id" element={<ProductsEdit />} />
+          <Route path="products/edit/:id" element={<EditProducts />} />
+          {/* <Route path="products/edit/:id" element={<ProductsEdit />} /> */}
           <Route path="products/remote" element={<ProductsRemote />} />
           {/* <Route path="products/adds" element={<Productsadd />} /> */}
-
           {/* Biến thể */}
           {/* <Route path="products/detaile" element={<Detail item={{
             id: 0
@@ -261,10 +267,8 @@ const Router = () => {
           {/* Đánh giá */}
           <Route path="evaluates" element={<EvaluateAdmin />} />
           {/* liên hệ */}
-
-          <Route path="support" element={<PageSupport />}/>
-          <Route path="support/feedback" element={<Feedback />}/>
-
+          <Route path="support" element={<PageSupport />} />
+          <Route path="support/feedback" element={<Feedback />} />
           {/* Tin tức */}
           <Route path="news" element={<PageNew />} />
           <Route path="news/add" element={<NewAdd />} />
@@ -277,6 +281,7 @@ const Router = () => {
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="revenues" element={<RevenueAdmin />} />
           <Route path="test" element={<Test />} />
+          <Route path="list" element={<List />} />
           <Route
             path="ADmin"
             element={<Navigate to="/admin/ADmin/privilegeadmin" />}

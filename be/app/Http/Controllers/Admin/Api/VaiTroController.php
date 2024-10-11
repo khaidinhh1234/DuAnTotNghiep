@@ -228,6 +228,8 @@ class VaiTroController extends Controller
                 'sanpham' => 'sản phẩm',
                 'the' => 'thẻ',
                 'vaitro' => 'vai trò',
+                'lienhe' => 'liên hệ',
+                'phanhoi' => 'phản hồi',
                 'chuongtrinhuudai' => 'chương trình ưu đãi',
                 'thongtinweb' => 'thông tin website',
                 'danhmuctintuc' => 'danh mục tin tức',
@@ -262,7 +264,10 @@ class VaiTroController extends Controller
                 'so-luong-ton-kho-cua-san-pham' => 'Số lượng tồn kho của sản phẩm',
                 'so-luong-san-pham-sap-het-hang' => 'Số lượng sản phẩm sắp hết hàng',
                 'doanh-thu-tung-san-pham' => 'Doanh thu từng sản phẩm',
-                'thong-ke-danh-gia' => 'Đánh giá'
+                'thong-ke-danh-gia' => 'Đánh giá',
+                'lich-su-hoat-dong' => 'Lịch sử hoạt động',
+                'doanh-thu-tuan-tu' => 'Doanh thu tuần tự',
+                'routes' => 'Danh sách',
             ];
 
             $key = explode('.', $permission);

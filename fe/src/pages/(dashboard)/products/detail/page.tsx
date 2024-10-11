@@ -167,9 +167,9 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
   useEffect(() => {
     if (data && data.data.bien_the_san_pham.length > 0) {
       const firstVariant = data.data.bien_the_san_pham[0];
-      setSelectedColor(firstVariant.mau_bien_the.ma_mau_sac);
-      setSelectedSize(firstVariant.kich_thuoc_bien_the.kich_thuoc);
-      setSelectedColorName(firstVariant.mau_bien_the.ten_mau_sac);
+      setSelectedColor(firstVariant?.mau_bien_the?.ma_mau_sac);
+      setSelectedSize(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
+      setSelectedColorName(firstVariant?.mau_bien_the?.ten_mau_sac);
     }
   }, [data]);
 
@@ -230,12 +230,12 @@ Hết hàng
   );
   const sizesForSelectedColor = product.bien_the_san_pham
     .filter((variant) => variant.mau_bien_the.ma_mau_sac === selectedColor)
-    .map((variant) => variant.kich_thuoc_bien_the.kich_thuoc);
+    .map((variant) => variant?.kich_thuoc_bien_the?.kich_thuoc);
 
   const selectedVariant = product.bien_the_san_pham.find(
     (variant) =>
       variant.mau_bien_the.ma_mau_sac === selectedColor &&
-      variant.kich_thuoc_bien_the.kich_thuoc === selectedSize
+      variant?.kich_thuoc_bien_the?.kich_thuoc === selectedSize
   );
 
   const variantImages = selectedVariant

@@ -122,8 +122,10 @@ Route::middleware([])
         //Thanh toán Momo
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
-// 'auth.sanctum'
-//'auth:sanctum', 'auth.checkrole'.
+
+
+
+//'auth.sanctum', 'auth.checkrole'
 Route::middleware([])
     ->name('admin.')
     ->prefix('admin')
@@ -235,12 +237,13 @@ Route::middleware([])
         Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
 
         // Liên hệ
-        Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe']);
-        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi']);
+        Route::get('lien-he', [AdminLienHeController::class, 'danhSachLienHe'])->name('lienhe.index');
+        Route::patch('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
 
         //Vai trò
-        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen']);
-        Route::apiResource('vaitro', VaiTroController::class);
+        Route::apiResource('vaitro', VaiTroController::class)->except('show');
+        Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen'])->name('vaitro.routes');
+        Route::get('vaitro/{id}', [VaiTroController::class, 'show'])->name('vaitro.show');
         // Route::get('vaitro/thung-rac', [VaiTroController::class, 'danhSachVaiTroDaXoa'])->name('vaitro.thungrac');
         // Route::post('vaitro/thung-rac/{id}', [VaiTroController::class, 'khoiPhucVaiTro'])->name('vaitro.khoiphuc');
 
@@ -248,8 +251,8 @@ Route::middleware([])
         //Thống kê doanh thu
         Route::prefix('thong-ke')->group(function () {
             // Tổng quan thống kê
-            Route::post('/doanh-thu-tuan-tu', [ThongKeDoanhThuController::class, 'thongKeDoanhThuTuanTu'])->name('thongKeDoanhThuTuanTu');
             Route::get('/doanh-thu-ngay', [ThongKeDoanhThuController::class, 'doanhThuTheoNgay'])->name('thong-ke.doanh-thu-ngay');
+            Route::post('/doanh-thu-tuan-tu', [ThongKeDoanhThuController::class, 'thongKeDoanhThuTuanTu'])->name('doanh-thu-tuan-tu.thong-ke');
             Route::post('/doanh-thu-tuan', [ThongKeDoanhThuController::class, 'doanhThuTheoTuan'])->name('doanh-thu-tuan.thong-ke');
             Route::post('/doanh-thu-thang', [ThongKeDoanhThuController::class, 'doanhThuTheoThang'])->name('doanh-thu-thang.thong-ke');
             Route::post('/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy'])->name('doanh-thu-quy.thong-ke');
@@ -279,15 +282,14 @@ Route::middleware([])
             Route::get('/hoan-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHoanHang'])->name('hoan-hang-theo-thang.thong-ke');
             Route::get('/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHangTheoThang'])->name('huy-hang-theo-thang.thong-ke');
 
-            Route::get('/so-sanh-don-hang-thang', [ThongKeDonHangController::class, 'soSanhDonHangThang'])->name('soSanhDonHangThang');
+            Route::get('/so-sanh-don-hang-thang', [ThongKeDonHangController::class, 'soSanhDonHangThang']);
             Route::get('/top5-khach-hang-gan-day', [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
-            Route::get('/so-sanh-khach-hang-register', [ThongKeKhachHangController::class, 'soSanhKhachHangRegister'])->name('soSanhKhachHangRegister');
-            Route::get('/so-sanh-khach-hang-activity', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock'])->name('soSanhKhachHangActivity');
+            Route::get('/so-sanh-khach-hang-register', [ThongKeKhachHangController::class, 'soSanhKhachHangRegister']);
+            Route::get('/so-sanh-khach-hang-activity', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock']);
             Route::post('/tim-kiem-thanh-vien-theo-hang', [ThongKeKhachHangController::class, 'timKiemThanhVienTheoHang']);
 
             // Thống kê đánh giá
             Route::get('/{sanpham}/thong-ke-danh-gia', [ThongKeDanhGiaController::class, 'danhSachDanhGiaTheoSanPham'])->name('thong-ke-danh-gia.thong-ke');
-
         });
 
         // Lich su hoat dong

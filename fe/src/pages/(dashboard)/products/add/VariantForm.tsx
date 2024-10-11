@@ -14,6 +14,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
   colorsData,
   sizesData,
 }) => {
+  console.log("Variants in VariantForm:", colorsData);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -64,6 +65,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
       dataIndex: "mau_sac_id",
       key: "mau_sac",
       render: (colorId: number) => {
+        console.log("Color ID:", colorId);
         const color = colorsData.find((c) => Number(c.id) === colorId);
         return color ? color.ten_mau_sac : "";
       },
@@ -112,9 +114,11 @@ const VariantForm: React.FC<VariantFormProps> = ({
           validateStatus={
             text && text !== "0" && isNaN(Number(text))
               ? "error"
-              : text && text !== "0" && Number(record.gia_ban) > 0 &&
-                (Number(text) < Number(record.gia_ban) * 0.5 ||
-                  Number(text) >= Number(record.gia_ban))
+              : text &&
+                  text !== "0" &&
+                  Number(record.gia_ban) > 0 &&
+                  (Number(text) < Number(record.gia_ban) * 0.5 ||
+                    Number(text) >= Number(record.gia_ban))
                 ? "error"
                 : ""
           }
@@ -124,10 +128,10 @@ const VariantForm: React.FC<VariantFormProps> = ({
               : isNaN(Number(text))
                 ? "Bắt buộc phải là số!"
                 : Number(record.gia_ban) > 0 &&
-                  Number(text) < Number(record.gia_ban) * 0.5
+                    Number(text) < Number(record.gia_ban) * 0.5
                   ? "Bắt buộc nhỏ hơn 50% giá bán!"
                   : Number(record.gia_ban) > 0 &&
-                    Number(text) >= Number(record.gia_ban)
+                      Number(text) >= Number(record.gia_ban)
                     ? "Bắt buộc phải nhỏ hơn giá bán"
                     : ""
           }
@@ -147,7 +151,6 @@ const VariantForm: React.FC<VariantFormProps> = ({
         </Form.Item>
       ),
     },
-    
 
     {
       title: "Số lượng",
@@ -159,7 +162,7 @@ const VariantForm: React.FC<VariantFormProps> = ({
           hasFeedback
           validateStatus={
             text !== "" &&
-              (isNaN(Number(text)) || Number(text) < 0 || Number(text) > 100000)
+            (isNaN(Number(text)) || Number(text) < 0 || Number(text) > 100000)
               ? "error"
               : ""
           }

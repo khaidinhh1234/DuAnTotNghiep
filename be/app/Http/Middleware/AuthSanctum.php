@@ -17,12 +17,12 @@ class AuthSanctum
     public function handle(Request $request, Closure $next): Response
     {
         $authorizationHeader = $request->header('Authorization');
-        if (!$authorizationHeader || !str_contains($authorizationHeader, 'Bearer ')) {
+
+        if (!$authorizationHeader || !str_contains($authorizationHeader, 'Bearer')) {
             return response()->json([
                 'status' => false,
                 'status_code' => 401,
                 'message' => 'Không được phép',
-                'data' => $request->header()
             ], 401);
         }
 

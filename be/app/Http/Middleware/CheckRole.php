@@ -27,7 +27,8 @@ class CheckRole
             return response()->json([
                 'status' => false,
                 'status_code' => 401,
-                'message' => 'Không có quyền'
+                'message' => 'Không có quyền',
+                'data' => $vaiTro
             ], 401);
         }
         return $next($request);
