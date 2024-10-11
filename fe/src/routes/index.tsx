@@ -88,23 +88,21 @@ import Bienthe from "../pages/(dashboard)/bienthe/bienthe";
 import PageOur from "../pages/(website)/ourstory/pageOur";
 import Page from "./../pages/(website)/shop/shop";
 
-import PageTransport from "@/pages/(dashboard)/transport/page";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
+import PageTransport from "@/pages/(dashboard)/transport/page";
 import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
 // import Detail from "@/pages/(dashboard)/products/detail/page";
-import ShowUser from "@/pages/(dashboard)/user/khachhang/show/showUser";
-import Collect from "@/pages/(dashboard)/transport/collect/Collect";
-import ShowNhanvien from "@/pages/(dashboard)/user/khachhang/show/showUser";
-import DoanhThu from "@/pages/(dashboard)/dashboard/doanhthu/page";
 import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
 import PageSupport from "@/pages/(dashboard)/support/page";
+import Collect from "@/pages/(dashboard)/transport/collect/Collect";
+import { default as ShowNhanvien, default as ShowUser } from "@/pages/(dashboard)/user/khachhang/show/showUser";
 // import Productsadd from "@/pages/(dashboard)/products/fix";
 
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
 
-import PrivateRoute from "./PrivateRoute";
 import Test from "@/pages/(dashboard)/test";
+import PrivateRoute from "./PrivateRoute";
 // import List from "@/pages/(dashboard)/dashboard/test/page";
 
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
@@ -114,8 +112,8 @@ import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 import { List } from "./../pages/(dashboard)/dashboard/list/page";
 
-import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
 import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
+import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
 
 import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
 
