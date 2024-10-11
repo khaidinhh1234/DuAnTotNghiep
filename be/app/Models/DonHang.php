@@ -40,7 +40,7 @@ class DonHang extends Model
         'dia_chi_nguoi_dat_hang',
         'ma_giam_gia',
         'so_tien_giam_gia',
-        'ngay_giao_hang_thanh_cong',
+        'ngay_hoan_thanh_don',
         'trang_thai_thanh_toan',
         'trang_thai_van_chuyen'
     ];
@@ -64,6 +64,17 @@ class DonHang extends Model
     public function vanChuyen()
     {
         return $this->hasOne(VanChuyen::class, 'don_hang_id', 'id');
+    }
+    public function bienTheSanPhams()
+    {
+        return $this->hasManyThrough(
+            BienTheSanPham::class,       // Bảng đích (biến thể sản phẩm)
+            DonHangChiTiet::class,       // Bảng trung gian (chi tiết đơn hàng)
+            'don_hang_id',               // Khóa ngoại của DonHangChiTiet tham chiếu tới DonHang
+            'id',                        // Khóa chính của BienTheSanPham
+            'id',                        // Khóa chính của DonHang
+            'bien_the_san_pham_id'       // Khóa ngoại của DonHangChiTiet tham chiếu tới BienTheSanPham
+        );
     }
 
     protected static function boot()

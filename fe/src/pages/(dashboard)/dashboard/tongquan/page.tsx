@@ -53,12 +53,12 @@ const Dashboard = () => {
           <div className="">
             {" "}
             <Segmented<string>
-              options={["Tổng quan", "Nguồn đơn", "Trạng thái"]}
+              options={["Tổng quan", "Trạng thái"]}
               onChange={(value) => {
                 setTab(value);
               }}
               block
-              className="mb-5 w-96 "
+              className="mb-5 w-96 font-semibold text-lg"
             />
             {(() => {
               switch (tab) {
@@ -68,12 +68,7 @@ const Dashboard = () => {
                       <Tablechart4 />
                     </div>
                   );
-                case "Nguồn đơn":
-                  return (
-                    <div>
-                      <Tablechart5 />
-                    </div>
-                  );
+
                 case "Trạng thái":
                   return (
                     <div>
@@ -92,6 +87,9 @@ const Dashboard = () => {
         </Row>{" "}
         <div className="col-span-3">
           <div className="shadow-md bg-white rounded-md px-6 py-7">
+            <h2 className="text-xl font-bold mb-3">
+              Thông tin kinh doanh hôm nay
+            </h2>
             <div className="flex gap-5 mb-3">
               <div>
                 <Table2chart1 />

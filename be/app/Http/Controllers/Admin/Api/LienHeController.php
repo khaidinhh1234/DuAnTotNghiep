@@ -36,12 +36,16 @@ class LienHeController extends Controller
 
     public function phanHoi(Request $request, $id)
     {
+        $validatedData = $request->validate([
+            'noi_dung_phan_hoi' => 'required|string',
+        ]);
+
         try {
             DB::beginTransaction();
-            $lien_he = LienHe::find($id);
+            $lien_he = LienHe::findOrFail($id);
 
             $lien_he->update([
-                'noi_dung_phan_hoi' => $request->noi_dung_phan_hoi,
+                'noi_dung_phan_hoi' => $validatedData['noi_dung_phan_hoi'],
                 'trang_thai_lien_he' => 'da_xu_ly',
             ]);
 

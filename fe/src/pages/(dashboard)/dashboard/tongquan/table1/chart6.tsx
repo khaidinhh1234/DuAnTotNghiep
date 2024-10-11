@@ -9,10 +9,16 @@ const Chart6 = () => {
   const chartData = {
     series: [
       {
-        name: "Revenue",
-        data: [100, 200, 300, 400, 200, 100, 300, 400, 500, 100, 400], // Example data
+        name: "Đơn hủy",
+        data: [1100, 200, 300, 6400, 200, 5100, 4300, 6400, 500, 3100, 8400], // Example data
+      },
+
+      {
+        name: "Đơn chốt",
+        data: [1100, 2100, 3100, 4200, 2300, 3200, 2300, 100, 600, 200, 300], // Example data
       },
     ],
+
     options: {
       chart: {
         type: "line",
@@ -21,6 +27,7 @@ const Chart6 = () => {
       stroke: {
         curve: "smooth",
       },
+      colors: ["#FF0000", "#00FF00"],
       dataLabels: {
         enabled: false,
       },
@@ -41,7 +48,9 @@ const Chart6 = () => {
       },
       yaxis: {
         labels: {
-          formatter: (val: number) => `${val}M`,
+          formatter: (val: number) => {
+            return `${val.toLocaleString("vi-VN")} đ`;
+          },
         },
       },
     },
