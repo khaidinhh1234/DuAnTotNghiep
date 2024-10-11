@@ -63,10 +63,6 @@ class Chart3 extends React.Component<{}, ApexChartState> {
           name: "Doanh thu",
           data: [76, 85, 101, 98, 87, 105, 91, 114, 92, 52, 53, 41],
         },
-        // {
-        //   name: "Dòng tiền tự do",
-        //   data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
-        // },
       ],
       options: {
         chart: {

@@ -246,7 +246,7 @@ const Header = () => {
                       ) : (
                         <li className="my-1">
                           <a
-                            href="admin/dashboard"
+                            href="admin"
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                           >
                             <img
