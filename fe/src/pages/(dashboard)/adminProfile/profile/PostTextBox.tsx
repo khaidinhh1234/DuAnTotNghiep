@@ -1,8 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import React from 'react';
-import { Button, Input, Upload } from 'antd';
-import { UploadOutlined, FileImageOutlined, FileTextOutlined } from '@ant-design/icons';
+import { FileImageOutlined, FileTextOutlined } from "@ant-design/icons";
+import { Button, Input, Upload } from "antd";
 
 export const PostTextBox = () => {
   return (

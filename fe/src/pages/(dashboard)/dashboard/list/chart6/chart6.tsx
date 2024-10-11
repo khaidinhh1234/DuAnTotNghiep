@@ -20,7 +20,7 @@ const Chart6 = () => {
   const [selectedMonth, setSelectedMonth] = useState<any>(null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: [
       "thongke",
       selectedYear,

@@ -1,6 +1,6 @@
 import { ArrowDownOutlined } from "@ant-design/icons";
-import { Card, Col, Statistic } from "antd";
 import type { StatisticProps } from "antd";
+import { Card, Statistic } from "antd";
 import CountUp from "react-countup";
 const Chart1 = () => {
   const formatter: StatisticProps["formatter"] = (value: any) => (

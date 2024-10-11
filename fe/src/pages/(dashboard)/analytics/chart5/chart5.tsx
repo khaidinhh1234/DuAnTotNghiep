@@ -1,10 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
 const Chart5 = () => {
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ["productskey"],
     queryFn: async () => {
       const res = await instance.get("thong-ke/top5-khach-hang-gan-day");

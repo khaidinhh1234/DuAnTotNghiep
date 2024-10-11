@@ -24,8 +24,11 @@ return new class extends Migration
             $table->enum('cod', [VanChuyen::TTCOD_CN, VanChuyen::TTCOD_DN, VanChuyen::TTCOD_KT])->default(VanChuyen::TTCOD_KT);
             $table->integer('tien_cod')->default(0);
             $table->string('anh_xac_thuc')->nullable();
-            $table->tinyInteger('shipper_xac_nhan')->default(0); // 0: Chưa xác nhận, 1: Đã xác nhận
-            $table->tinyInteger('khach_hang_xac_nhan')->default(0); // 0: Chưa xác nhận, 1: Đã xác nhận
+            $table->enum('shipper_xac_nhan', [0, 1, 2])->default(0); // 0: Chưa xác nhận, 1: Đã xác nhận, 2: Khách hàng không nhận
+            $table->enum('khach_hang_xac_nhan', [0, 1])->default(0); // 0: Chưa xác nhận, 1: Đã xác nhận
+            $table->string('ghi_chu')->nullable();
+            $table->tinyInteger('so_lan_giao')->default(0);
+            $table->date('ngay_giao_hang_thanh_cong')->nullable();
             $table->timestamps();
         });
     }

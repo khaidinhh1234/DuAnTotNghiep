@@ -12,6 +12,7 @@ class ThongKeTongQuanController extends Controller
 {
     public function thongKeDonHangChot(Request $request)
     {
+
         $ngayBatDau  = Carbon::parse($request->input('ngay_bat_dau'));
         $ngayKetThuc  = Carbon::parse($request->input('ngay_ket_thuc'));
 
@@ -19,6 +20,7 @@ class ThongKeTongQuanController extends Controller
 
         $donHangChot = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->whereBetween('created_at', [$ngayBatDau , $ngayKetThuc ])
+
             ->get();
 
         $tongTien = 0;
@@ -30,11 +32,13 @@ class ThongKeTongQuanController extends Controller
             });
         });
 
+
         $ngayBatDauTruoc   = $ngayBatDau ->copy()->subDays($khoangThoiGian );
         $ngayKetThucTruoc   = $ngayKetThuc ->copy()->subDays($khoangThoiGian );
 
         $donHangChotTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->whereBetween('created_at', [$ngayBatDauTruoc  , $ngayKetThucTruoc  ])
+
             ->get();
 
         $tongTienTruoc = 0;
@@ -67,6 +71,7 @@ class ThongKeTongQuanController extends Controller
         ]);
     }
 
+
     public function thongKeHoanHang(Request $request)
     {
         $ngayBatDau  = Carbon::parse($request->input('ngay_bat_dau'));
@@ -77,6 +82,7 @@ class ThongKeTongQuanController extends Controller
         $donHangHoan = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->where('trang_thai_don_hang', DonHang::TTDH_HH)
             ->whereBetween('created_at', [$ngayBatDau , $ngayKetThuc ])
+
             ->get();
 
         $tongTienHoan = 0;
@@ -88,12 +94,14 @@ class ThongKeTongQuanController extends Controller
             });
         });
 
+
         $ngayBatDauTruoc   = $ngayBatDau ->copy()->subDays($khoangThoiGian );
         $ngayKetThucTruoc   = $ngayKetThuc ->copy()->subDays($khoangThoiGian );
 
         $donHangHoanTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->where('trang_thai_don_hang', DonHang::TTDH_HH)
             ->whereBetween('created_at', [$ngayBatDauTruoc  , $ngayKetThucTruoc  ])
+
             ->get();
 
         $tongTienHoanTruoc = 0;
@@ -125,7 +133,7 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_tien_hoan' => $tiLeTangGiamTienHoanFormatted,
         ]);
     }
-    public function thongKeSanPhamTonKho(Request $request)
+     public function thongKeSanPhamTonKho(Request $request)
     {
         $ngayBatDau  = Carbon::parse($request->input('ngay_bat_dau'));
         $ngayKetThuc  = Carbon::parse($request->input('ngay_ket_thuc'));
@@ -293,6 +301,7 @@ class ThongKeTongQuanController extends Controller
         ]);
     }
 
+  
     public function thongKeThanhToanKhiNhanHang(Request $request)
     {
         // Lấy khoảng thời gian bắt đầu và kết thúc từ request
@@ -339,5 +348,6 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_doanh_thu' => $tiLeTangGiamDoanhThuFormatted
         ]);
     }
+
 
 }
