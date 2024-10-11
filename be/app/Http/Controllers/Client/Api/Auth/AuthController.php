@@ -22,7 +22,7 @@ class AuthController extends Controller
         if ($hangThanhVien == []) {
             $hangThanhVien = HangThanhVien::create([
                 'ten_hang_thanh_vien' => 'Thành viên mới',
-                'anh_hang_thanh_vien' => '',
+                'anh_hang_thanh_vien' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1728635543/game-level-icons-medals-stars-ui-badges-trophy_jxsnoo.png',
                 'chi_tieu_toi_thieu' => 0,
                 'chi_tieu_toi_da' => 500000,
                 'mo_ta' => 'Thành viên mới'
