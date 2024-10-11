@@ -106,11 +106,19 @@ import PrivateRoute from "./PrivateRoute";
 // import List from "@/pages/(dashboard)/dashboard/test/page";
 
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
+import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
+import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
+// import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
+// import PrivateRoute from "./PrivateRoute";
+
+
 // import Dashboard from "@/pages/(dashboard)/dashboard/tongquan/page";
+
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
 import { List } from "./../pages/(dashboard)/dashboard/list/page";
+import EditProducts from "@/pages/(dashboard)/products/Editt/page";
 
 import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
 import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
@@ -157,9 +165,10 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            <PrivateRoute>
+
+            // <PrivateRoute>
               <LayoutAdmin />
-            </PrivateRoute>
+            /* </PrivateRoute> */
           }
         >
           <Route index element={<Navigate to="/admin/dashboard/list" />} />
@@ -175,7 +184,8 @@ const Router = () => {
           <Route path="products/list" element={<ProductsAdmin />} />
           <Route path="products/add" element={<ProductsAdd />} />
           <Route path="products/addd" element={<AddProducts />} />
-          <Route path="products/edit/:id" element={<ProductsEdit />} />
+          <Route path="products/edit/:id" element={<EditProducts />} />
+          {/* <Route path="products/edit/:id" element={<ProductsEdit />} /> */}
           <Route path="products/remote" element={<ProductsRemote />} />
           {/* <Route path="products/adds" element={<Productsadd />} /> */}
           {/* Biến thể */}
@@ -220,6 +230,13 @@ const Router = () => {
           <Route path="add-vocher" element={<AddVoucher />} />
           <Route path="vouchers/show/:id" element={<ShowVoucher />} />
           <Route path="vouchers/edit/:id" element={<EditVoucher />} />
+                    {/* trương trình ưu đâix */}
+                    <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
+                    <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
+                    {/* <Route path="chuongtrinhuudaiedit" element={<ChuongTrinhUuDaiEdit />} /> */}
+
+
+
           {/* Tài khoản khách hàng */}
           <Route
             path="users"
