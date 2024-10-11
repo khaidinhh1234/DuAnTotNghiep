@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\API\ThongKeDoanhThuController;
 use App\Http\Controllers\Admin\Api\ThongKeDonHangController;
 use App\Http\Controllers\Admin\Api\ThongKeKhachHangController;
 use App\Http\Controllers\Admin\Api\ThongKeSanPham;
+use App\Http\Controllers\Admin\Api\ThongKeTongQuanController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
@@ -106,7 +107,7 @@ Route::middleware([])
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
-//'auth.sanctum', 'auth.checkrole'
+//'auth.sanctum'
 Route::middleware('auth.sanctum')
     ->name('admin.')
     ->prefix('admin')
@@ -295,9 +296,9 @@ Route::middleware('auth.sanctum')
             // Thống kê đơn hàng
             Route::post('/danh-muc/don-hang-thanh-cong', [ThongKeDanhMuc::class, 'demDHTheoDanhMuc']);
             Route::post('/danh-muc/don-hang-bi-huy', [ThongKeDanhMuc::class, 'demDHHuyTheoDanhMuc']);
-
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai'])->name("don-hang-theo-trang-thai.thong-ke");
-            // Thống kê tôngr quan
+
+            // Thống kê tổng quan
             Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
             Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
             Route::post('don-hang/chot',  [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
