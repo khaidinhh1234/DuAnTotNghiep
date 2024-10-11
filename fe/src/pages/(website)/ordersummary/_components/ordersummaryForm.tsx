@@ -1,5 +1,4 @@
 import { sanPham2 } from "@/assets/img";
-import React from "react";
 
 const Order = () => {
   return (

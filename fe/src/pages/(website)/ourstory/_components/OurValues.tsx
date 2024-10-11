@@ -1,5 +1,4 @@
 import { anh1, anh2, anh3 } from "@/assets/img";
-import React from "react";
 
 const OurValues = () => {
   return (

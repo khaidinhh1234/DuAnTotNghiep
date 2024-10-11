@@ -62,10 +62,14 @@ const MemberRankEdit = () => {
       message.success("Cập nhật hạng thành viên thành công");
       nav("/admin/users/rank");
     },
-    onError: (error) => {
-      message.error(
-        error.message || "Có lỗi xảy ra khi cập nhật hạng thành viên"
-      );
+    onError: (error: any) => {
+      console.error("Error adding size:", error);
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errorMessages = Object.values(error.response.data.errors).flat();
+        errorMessages.map((msg) => message.error(msg as string));
+      } else {
+        message.error(error.message || "Cập nhập Hạng thành viên thất bại");
+      }
     },
   });
 

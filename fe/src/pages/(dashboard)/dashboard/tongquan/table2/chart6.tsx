@@ -1,4 +1,3 @@
-import { ArrowDownOutlined } from "@ant-design/icons";
 import { Card } from "antd";
 
 const Chart5 = () => {

@@ -16,6 +16,8 @@ class LichSuHoatDong extends Model
         'du_lieu_cu',
         'du_lieu_moi',
         'nguoi_thao_tac',
+        'dia_chi_ip',
+        'mo_ta'
     ];
 
     protected $casts = [

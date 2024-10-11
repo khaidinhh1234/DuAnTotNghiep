@@ -37,25 +37,7 @@ use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
-use App\Models\LichSuHoatDong;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-Route::middleware('auth.sanctum')->get('/user', function () {
-    return response()->json(['id' => auth()->id(), 'name' => auth()->user()->name]);
-});
 
 // Auth
 Route::post('/register', [AuthController::class, 'register']);
@@ -126,13 +108,13 @@ Route::middleware([])
     });
 
 
-
-//'auth:sanctum', 'auth.checkrole'
-
-//'auth.sanctum', 'auth.checkrole'
+//'auth.sanctum'
 Route::middleware('auth.sanctum')
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> c2fb63bd6e93683dc73d6007717d8f1ba5a764f3
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -320,6 +302,15 @@ Route::middleware('auth.sanctum')
             // Thống kê đơn hàng
             Route::post('/danh-muc/don-hang-thanh-cong', [ThongKeDanhMuc::class, 'demDHTheoDanhMuc']);
             Route::post('/danh-muc/don-hang-bi-huy', [ThongKeDanhMuc::class, 'demDHHuyTheoDanhMuc']);
+            Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai'])->name("don-hang-theo-trang-thai.thong-ke");
+
+            // Thống kê tổng quan
+            Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
+            Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
+            Route::post('don-hang/chot',  [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
+            Route::post('san-pham/ton-kho',  [ThongKeTongQuanController::class, 'thongKeSanPhamTonKho']);
+            Route::post('doanh-thu/tong', [ThongKeTongQuanController::class, 'thongKeDoanhThuTong']);
+
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai']);
             // Thống kê tổng quan
             Route::get('don-hang/hoan-hang', [ThongKeDonHangController::class, 'thongKeHoanHang']);
@@ -327,6 +318,7 @@ Route::middleware('auth.sanctum')
 
             Route::get('don-hang/chot',  [ThongKeDonHangController::class, 'thongKeDonHangChot']);
             Route::get('san-pham/ton-kho', [ThongKeSanPham::class, 'thongKeSanPhamTonKho']);
+
 
             // Thống kê tuần tự
             Route::get('/doanh-thu-so-sanh', [ThongKeDoanhThuController::class, 'soSanhDoanhThuThang']);
@@ -345,6 +337,7 @@ Route::middleware('auth.sanctum')
             Route::get('/so-luong-ton-kho-cua-san-pham', [ThongKeSanPham::class, 'soLuongTonKhoCuaSanPham']);
             Route::get('/so-luong-san-pham-sap-het-hang', [ThongKeSanPham::class, 'soLuongSanPhamSapHetHang']);
 
+
             //Route Thống kê hạng thành viên
             Route::get('/khach-hang-theo-hang-thanh-vien', [ThongKeKhachHangController::class, 'thongKeKhachHangTheoHangThanhVien']);
             Route::get('/khach-hang-moi-theo-hang', [ThongKeKhachHangController::class, 'thongKeKhachHangMoiTheoHangThanhVien']);
@@ -352,10 +345,7 @@ Route::middleware('auth.sanctum')
             //Route thống kê khách hàng mới
             Route::get('/khach-hang-moi-theo-tung-thang', [ThongKeKhachHangController::class, 'thongKeKhachHangMoi']);
             Route::get('/khach-hang-quay-lai-theo-thang', [ThongKeKhachHangController::class, 'thongKeKhachHangQuayLaiTheoThang']);
-            Route::get('/so-sanh-don-hang-thang', [ThongKeDonHangController::class, 'soSanhDonHangThang']);
-            Route::get('/top5-khach-hang-gan-day', [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
-            Route::get('/so-sanh-khach-hang-register', [ThongKeKhachHangController::class, 'soSanhKhachHangRegister']);
-            Route::get('/so-sanh-khach-hang-activity', [ThongKeKhachHangController::class, 'soSanhKhachHangBlock']);
+
 
             Route::post('/tim-kiem-thanh-vien-theo-hang', [ThongKeKhachHangController::class, 'timKiemThanhVienTheoHang']);
 
