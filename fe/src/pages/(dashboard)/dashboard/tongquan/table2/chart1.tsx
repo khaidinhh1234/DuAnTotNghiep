@@ -1,8 +1,5 @@
-import { ArrowDownOutlined } from "@ant-design/icons";
-import { Card } from "antd";
 import type { StatisticProps } from "antd";
-import { Statistic } from "antd";
-import Chart from "react-apexcharts";
+import { Card, Statistic } from "antd";
 import CountUp from "react-countup";
 const formatter: StatisticProps["formatter"] = (value: any) => (
   <CountUp end={value as number} separator="," />
