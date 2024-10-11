@@ -1,5 +1,4 @@
 import { ellipse, hello } from '@/assets/img'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 const SettingPage = () => {

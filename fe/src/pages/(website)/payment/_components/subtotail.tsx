@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Subtotal = () => (
     <div className="lg:col-span-4 col-span-6">
