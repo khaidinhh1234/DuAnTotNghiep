@@ -1,5 +1,3 @@
-import React from 'react';
-
 const PaymentForm = () => {
   return (
     <div className="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]">
@@ -8,20 +6,16 @@ const PaymentForm = () => {
           <div className="pl-1">
             <i
               className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-              style={{ color: '#ffffff' }}
+              style={{ color: "#ffffff" }}
             ></i>
           </div>
           <hr className="m-0 dashed-black" />
           <div className="text-center">
-            <i
-              className="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-            ></i>
+            <i className="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
           </div>
           <hr className="m-0 dashed-line" />
           <div className="pr-1 text-center">
-            <i
-              className="fa-light fa-file-invoice bg-stone-100 w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-            ></i>
+            <i className="fa-light fa-file-invoice bg-stone-100 w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
           </div>
         </div>
         <div className="flex justify-between space-x-0">
@@ -48,11 +42,16 @@ const PaymentForm = () => {
               name="paymentMethod"
               className="bg-blackL"
             />
-            <label htmlFor="creditCard" className="title-h3 px-3">Thẻ ghi nợ/Thẻ tín dụng</label>
+            <label htmlFor="creditCard" className="title-h3 px-3">
+              Thẻ ghi nợ/Thẻ tín dụng
+            </label>
           </div>
 
           <div className="my-5">
-            <label htmlFor="cardNumber" className="text-md px-1">Số thẻ</label><br />
+            <label htmlFor="cardNumber" className="text-md px-1">
+              Số thẻ
+            </label>
+            <br />
             <input
               type="text"
               id="cardNumber"
@@ -62,7 +61,10 @@ const PaymentForm = () => {
             />
           </div>
           <div className="my-5">
-            <label htmlFor="cardName" className="text-md px-1">Tên chủ thẻ</label><br />
+            <label htmlFor="cardName" className="text-md px-1">
+              Tên chủ thẻ
+            </label>
+            <br />
             <input
               type="text"
               id="cardName"
@@ -73,7 +75,10 @@ const PaymentForm = () => {
           </div>
           <div className="flex justify-between xl:w-[720px] md:w-[720px] lg:w-[460px] w-[400px] mb-7">
             <div>
-              <label htmlFor="expiryDate" className="text-md px-3">Ngày hết hạn</label><br />
+              <label htmlFor="expiryDate" className="text-md px-3">
+                Ngày hết hạn
+              </label>
+              <br />
               <input
                 type="text"
                 id="expiryDate"
@@ -82,7 +87,10 @@ const PaymentForm = () => {
               />
             </div>
             <div>
-              <label htmlFor="cvv" className="text-md px-3">CVV</label><br />
+              <label htmlFor="cvv" className="text-md px-3">
+                CVV
+              </label>
+              <br />
               <input
                 type="text"
                 id="cvv"
@@ -108,7 +116,9 @@ const PaymentForm = () => {
               name="paymentMethod"
               className="bg-blackL"
             />
-            <label htmlFor="googlePay" className="title-h3 px-3">Google Pay</label>
+            <label htmlFor="googlePay" className="title-h3 px-3">
+              Google Pay
+            </label>
           </div>
           <div className="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio">
             <input
@@ -117,7 +127,9 @@ const PaymentForm = () => {
               name="paymentMethod"
               className="bg-blackL"
             />
-            <label htmlFor="paypal" className="title-h3 px-3">Paypal</label>
+            <label htmlFor="paypal" className="title-h3 px-3">
+              Paypal
+            </label>
           </div>
           <div className="border-t border-hrBlack pt-4 mb-7 flex items-center custom-radio">
             <input
@@ -126,12 +138,12 @@ const PaymentForm = () => {
               name="paymentMethod"
               className="bg-blackL"
             />
-            <label htmlFor="cashOnDelivery" className="title-h3 px-3">Thanh toán khi nhận hàng</label>
+            <label htmlFor="cashOnDelivery" className="title-h3 px-3">
+              Thanh toán khi nhận hàng
+            </label>
           </div>
           <a href="ordersummary.html">
-            <button
-              className="btn-black px-10 w-[320px] py-4 rounded-lg mb-5 text-md font-medium"
-            >
+            <button className="btn-black px-10 w-[320px] py-4 rounded-lg mb-5 text-md font-medium">
               Tiếp tục
             </button>
           </a>
@@ -142,19 +154,23 @@ const PaymentForm = () => {
 };
 
 export default PaymentForm;
-{/* <div className="flex justify-around gap-3 my-4">
+{
+  /* <div className="flex justify-around gap-3 my-4">
   <button className="bg-slate-200 hover:bg-blackL hover:text-white border border-slate-300 hover:border-transparent rounded-md px-4 py-1 text-sm max-w-[120px]">
     <i className="fa-regular fa-pen-to-square lowercase"></i> Edit
   </button>
   <button className="bg-rose-100 text-red-400 hover:bg-[#FF7262] hover:text-white border border-rose-200 hover:border-transparent rounded-md px-4 py-1 text-sm max-w-[120px]">
     <i className="fa-regular fa-trash-can"></i> Delete
   </button>
-</div> */}
+</div> */
+}
 //<div className="flex justify-around gap-3 my-4">
-{/* <button className="bg-slate-200 hover:bg-blackL hover:text-white border border-slate-300 hover:border-transparent rounded-md px-2 py-1 text-sm">
+{
+  /* <button className="bg-slate-200 hover:bg-blackL hover:text-white border border-slate-300 hover:border-transparent rounded-md px-2 py-1 text-sm">
 <i className="fa-regular fa-pen-to-square lowercase"></i> Edit
 </button>
 <button className="bg-rose-100 text-red-400 hover:bg-[#FF7262] hover:text-white border border-rose-200 hover:border-transparent rounded-md px-2 py-1 text-sm">
 <i className="fa-regular fa-trash-can"></i> Delete
 </button>
-</div> */}
+</div> */
+}
