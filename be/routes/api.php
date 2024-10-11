@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\API\ThongKeDoanhThuController;
 use App\Http\Controllers\Admin\Api\ThongKeDonHangController;
 use App\Http\Controllers\Admin\Api\ThongKeKhachHangController;
 use App\Http\Controllers\Admin\Api\ThongKeSanPham;
+use App\Http\Controllers\Admin\Api\ThongKeTongQuanController;
 use App\Http\Controllers\Admin\Api\VaiTroController;
 use App\Http\Controllers\Admin\Api\ThongTinWebController;
 use App\Http\Controllers\Admin\Api\TinTucController;
@@ -267,10 +268,12 @@ Route::middleware(['auth.sanctum', 'auth.checkrole'])
             Route::post('/danh-muc/don-hang-bi-huy', [ThongKeDanhMuc::class, 'demDHHuyTheoDanhMuc']);
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai'])->name("don-hang-theo-trang-thai.thong-ke");
             // Thống kê tôngr quan
-            Route::get('don-hang/hoan-hang', [ThongKeDonHangController::class, 'thongKeHoanHang'])->name('hoan-hang.thong-ke');
-            Route::get('/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHang'])->name('huy-hang-theo-thang.thong-ke');
-            Route::get('don-hang/chot', action: [ThongKeDonHangController::class, 'thongKeDonHangChot'])->name('chot.thong-ke');
-            Route::get('san-pham/ton-kho', [ThongKeSanPham::class, 'thongKeSanPhamTonKho'])->name('san-pham-ton.thong-ke');
+            Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
+            Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
+            Route::post('don-hang/chot',  [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
+            Route::post('san-pham/ton-kho',  [ThongKeTongQuanController::class, 'thongKeSanPhamTonKho']);
+            Route::post('doanh-thu/tong', [ThongKeTongQuanController::class, 'thongKeDoanhThuTong']);
+
             // Thống kê tuần tự
             Route::get('/doanh-thu-so-sanh', [ThongKeDoanhThuController::class, 'soSanhDoanhThuThang'])->name("doanh-thu-so-sanh.thong-ke");
             Route::get('/so-sanh-don-hang-thang', [ThongKeDonHangController::class, 'soSanhDonHangThang'])->name('soSanhDonHangThang');
