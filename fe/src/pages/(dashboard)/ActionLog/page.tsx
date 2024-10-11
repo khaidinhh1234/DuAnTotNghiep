@@ -1,8 +1,7 @@
-import { Col, Table, Tag } from "antd";
-import ProfileBanner from "../adminProfile/profile/ProfileBanner";
-import Banner from "./banner";
-import { useQuery } from "@tanstack/react-query";
 import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
+import { Col, Table } from "antd";
+import Banner from "./banner";
 export function ActionLog() {
   const { data: lichsu } = useQuery({
     queryKey: ["actionLog"],

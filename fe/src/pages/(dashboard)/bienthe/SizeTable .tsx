@@ -724,7 +724,7 @@ const SizeManagement: React.FC = () => {
   });
 
   const handleAddSize = (): void => {
-    form.validateFields().then((values) => {
+    form.validateFields().then((values: any) => {
       addSizeMutation.mutate({
         kich_thuoc: values.tensize,
         loai_kich_thuoc: values.loai_kich_thuoc,
@@ -824,7 +824,7 @@ const SizeManagement: React.FC = () => {
       dataIndex: "kich_thuoc",
       key: "kich_thuoc",
       width: "50%",
-      sorter: (a, b) => a.kich_thuoc.localeCompare(b.kich_thuoc),
+      sorter: (a: any, b: any) => a.kich_thuoc.localeCompare(b.kich_thuoc),
       ...getColumnSearchProps("kich_thuoc"),
     },
     {

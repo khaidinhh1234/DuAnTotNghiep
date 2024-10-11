@@ -1,13 +1,11 @@
-import React from 'react';
-import ShoppingCart from './_components/MinicardForm';
-
+import ShoppingCart from "./_components/MinicardForm";
 
 const Minicard = () => {
   return (
     <main>
-      < ShoppingCart/>
+      <ShoppingCart />
     </main>
   );
-}
+};
 
 export default Minicard;

@@ -27,7 +27,7 @@ const CategoriesEdit = () => {
     },
   });
 
-  const { data: allCategoriesData, error: fetchError } = useQuery({
+  const { data: allCategoriesData } = useQuery({
     queryKey: ["allCategories"],
     queryFn: async () => {
       try {

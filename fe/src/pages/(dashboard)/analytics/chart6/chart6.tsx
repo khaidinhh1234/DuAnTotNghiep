@@ -173,7 +173,7 @@ const Chart6 = () => {
     }));
 
     // Add "Tất cả" option only if a month is selected
-    weekOptions.unshift({ value: null, label: "Tất cả" });
+    weekOptions.unshift({ value: null, label: "Tất cả" } as any);
 
     return weekOptions;
   };
