@@ -1,5 +1,4 @@
 import { bannerend } from "@/assets/img";
-import React from "react";
 
 const OurJourney = () => {
   return (
