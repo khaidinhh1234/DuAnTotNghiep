@@ -1,5 +1,4 @@
 import { our1, our2 } from "@/assets/img";
-import React from "react";
 
 const OurMission = () => {
   return (

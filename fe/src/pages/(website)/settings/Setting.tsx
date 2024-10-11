@@ -1,12 +1,11 @@
-import React from 'react'
-import SettingPage from './_components/Setting'
+import SettingPage from "./_components/Setting";
 
 const Setting = () => {
   return (
     <>
-    <SettingPage/>
+      <SettingPage />
     </>
-  )
-}
+  );
+};
 
-export default Setting
+export default Setting;
