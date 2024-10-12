@@ -67,7 +67,7 @@ const SignupForm = () => {
                 placeholder="Nhập họ của bạn"
                 {...register("ho", { required: true })}
               />
-              {errors.ten && (
+              {errors.ho && (
                 <p className="text-red-600 mt-1">{errors.ho?.message}</p>
               )}
             </div>
@@ -81,7 +81,7 @@ const SignupForm = () => {
                 placeholder="Nhập tên của bạn"
                 {...register("ten", { required: true })}
               />
-              {errors.ho && (
+              {errors.ten && (
                 <p className="text-red-600 mt-1">{errors.ten?.message}</p>
               )}
             </div>
