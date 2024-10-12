@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('thes', function (Blueprint $table) {
-            $table->string('duong_dan_anh')->nullable()->after('duong_dan');
+        Schema::create('bo_suu_taps', function (Blueprint $table) {
+            $table->id();
+            $table->string('ten')->unique();
+            $table->string('duong_dan')->unique();
+            $table->string('duong_dan_anh')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -21,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('thes', function (Blueprint $table) {
-            $table->dropColumn('duong_dan_anh');
-        });
+        Schema::dropIfExists('thes');
     }
 };
