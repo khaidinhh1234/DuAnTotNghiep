@@ -52,13 +52,13 @@ const UserPrivilegeAdmin = () => {
       title: "Hành động",
       render: (_, record) => (
         <Space>
-          {/* {typeof record.key === "number" && record.key <= 3 ? (
+          {typeof record.key === "number" && record.key <= 3 ? (
             <Link to={`show/${record.key}`}>
               <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
                 Xem Quyền
               </Button>
             </Link>
-          ) : ( */}
+          ) : (
           <>
             {" "}
             <Button
@@ -78,7 +78,7 @@ const UserPrivilegeAdmin = () => {
               </Button>
             </Link>
           </>
-          {/* )} */}
+          )}
         </Space>
       ),
     },
