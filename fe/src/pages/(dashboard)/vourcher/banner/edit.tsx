@@ -43,6 +43,7 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
   const [allProducts, setAllProducts] = useState<ISanPham[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ISanPham[]>([]);
+  const [selectedProductDetails, setSelectedProductDetails] = useState<ISanPham[]>([]);
 
   const { data: chuongTrinhUuDaiData, isLoading: isLoadingChuongTrinh } = useQuery<{ data: IChuongTrinhUuDai }>({
     queryKey: ["chuongTrinhUuDai", id],
@@ -69,7 +70,7 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
   });
 
   useEffect(() => {
-    if (chuongTrinhUuDaiData?.data && !isLoadingChuongTrinh) {
+    if (chuongTrinhUuDaiData?.data && !isLoadingChuongTrinh && allProductsData?.data) {
       const data = chuongTrinhUuDaiData.data;
       form.setFieldsValue({
         ten_uu_dai: data.ten_uu_dai,
@@ -81,8 +82,14 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
         san_pham: data.san_phams,
       });
       setSelectedProducts(data.san_phams);
+
+      // Map lại các sản phẩm đã chọn
+      const selectedDetails = allProductsData.data.filter(product => 
+        data.san_phams.includes(product.id)
+      );
+      setSelectedProductDetails(selectedDetails);
     }
-  }, [chuongTrinhUuDaiData, isLoadingChuongTrinh, form]);
+  }, [chuongTrinhUuDaiData, isLoadingChuongTrinh, allProductsData, form]);
 
   useEffect(() => {
     if (allProductsData?.data) {
@@ -135,14 +142,20 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
 
   const handleProductChange = (selectedValues: number[]) => {
     setSelectedProducts(selectedValues);
+    const selectedDetails = allProducts.filter(product => 
+      selectedValues.includes(product.id)
+    );
+    setSelectedProductDetails(selectedDetails);
   };
 
   const handleSelectAll = (selected: boolean) => {
     if (filteredProducts) {
       if (selected) {
         setSelectedProducts(filteredProducts.map(product => product.id));
+        setSelectedProductDetails(filteredProducts);
       } else {
         setSelectedProducts([]);
+        setSelectedProductDetails([]);
       }
     }
   };
@@ -157,6 +170,7 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
       setFilteredProducts(filtered);
     }
     setSelectedProducts([]);
+    setSelectedProductDetails([]);
   };
 
   const renderTreeNodes = (data: IDanhMuc[]): any[] => 
@@ -318,7 +332,13 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
                           handleSelectAll(selectedProducts.length !== filteredProducts.length);
                         }
                       }}
-                    />
+                    >
+                      {selectedProductDetails.map(product => (
+                        <Select.Option key={product.id} value={product.id}>
+                          {product.ten_san_pham}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
               </Row>
