@@ -41,8 +41,8 @@ class VanChuyenController extends Controller
     public function show(string $id)
     {
         try {
-            $vanChuyen = VanChuyen::query()->with([
-                'donHang.chiTiets',
+            $vanChuyen = VanChuyen::query()->with([  
+                'donHang.chiTiets.bienTheSanPham.sanPham',
                 'shipper'
             ])->findOrFail($id);
 

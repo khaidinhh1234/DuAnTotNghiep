@@ -267,11 +267,8 @@ Route::middleware('auth.sanctum')
                 Route::put('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
             });
 
-<<<<<<< HEAD
         //Vai trò auth.checkrole
-=======
         //Vai trò auth.checkrole'auth.checkrole'
->>>>>>> 9b4fcce4dd882d52c1018879a3055a31c00d8d4d
         Route::middleware([])
             ->group(function () {
                 Route::apiResource('vaitro', VaiTroController::class)->except('show');
