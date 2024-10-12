@@ -28,4 +28,9 @@ class DonHangChiTiet extends Model
     {
         return $this->belongsTo(BienTheSanPham::class, 'bien_the_san_pham_id', 'id');
     }
+    public function sanPham()
+    {
+        return $this->belongsTo(SanPham::class, 'san_pham_id', 'id');
+    }
+    
 }

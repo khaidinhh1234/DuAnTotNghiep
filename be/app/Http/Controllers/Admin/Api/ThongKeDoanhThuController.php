@@ -45,14 +45,14 @@ class ThongKeDoanhThuController extends Controller
             $endOfWeek = $now->endOfWeek()->toDateString();
 
             // Tính tổng doanh thu theo tuần
-            $tongDoanhThuTuan = (float) DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $tongDoanhThuTuan = (float) DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
                 ->sum('tong_tien_don_hang');
 
             // Thống kê doanh thu 7 ngày trong tuần
             for ($i = 1; $i <= 7; $i++) {
                 $ngayTrongTuan = now()->setISODate($nam, $tuan, $i)->toDateString();
-                $doanhThuTheoNgay = (float) DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                $doanhThuTheoNgay = (float) DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                     ->whereDate('created_at', $ngayTrongTuan)
                     ->sum('tong_tien_don_hang');
 
@@ -64,7 +64,7 @@ class ThongKeDoanhThuController extends Controller
         }
 
         // Query chung cho doanh thu
-        $query = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC);
+        $query = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH);
 
         // Nếu có chọn năm
         if ($nam) {
@@ -249,7 +249,7 @@ class ThongKeDoanhThuController extends Controller
             DB::beginTransaction();
             $today = Carbon::today();
 
-            $doanhThu = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThu = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereDate('created_at', $today)
                 ->sum('tong_tien_don_hang');
 
@@ -295,12 +295,12 @@ class ThongKeDoanhThuController extends Controller
             }
 
             // Tổng doanh thu của tuần đã chọn
-            $doanhThuTheoTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThuTheoTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
                 ->sum('tong_tien_don_hang');
 
             // Doanh thu theo từng ngày trong tuần
-            $doanhThuTheoNgayTrongTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThuTheoNgayTrongTuan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
                 ->selectRaw('DATE(created_at) as ngay, SUM(tong_tien_don_hang) as doanh_thu_ngay')
                 ->groupBy('ngay')
@@ -342,12 +342,12 @@ class ThongKeDoanhThuController extends Controller
             $endOfMonth = Carbon::create($nam, $thang)->endOfMonth();
 
             // Tổng doanh thu của tháng đã chọn
-            $doanhThuThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThuThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
                 ->sum('tong_tien_don_hang');
 
             // Doanh thu theo từng tuần trong tháng
-            $doanhThuTheoTuanTrongThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThuTheoTuanTrongThang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
                 ->selectRaw('WEEK(created_at, 1) - WEEK(DATE_SUB(created_at, INTERVAL DAYOFMONTH(created_at)-1 DAY), 1) + 1 as tuan, SUM(tong_tien_don_hang) as doanh_thu_tuan')
                 ->groupBy('tuan')
@@ -402,12 +402,12 @@ class ThongKeDoanhThuController extends Controller
             $endOfQuarter = Carbon::create($nam, $thangKetThuc)->endOfMonth();
 
             // Tổng doanh thu của quý đã chọn
-            $doanhThuTheoQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThuTheoQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
                 ->sum('tong_tien_don_hang');
 
             // Doanh thu theo từng tháng trong quý
-            $doanhThuTheoThangTrongQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThuTheoThangTrongQuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfQuarter, $endOfQuarter])
                 ->selectRaw('MONTH(created_at) as thang, SUM(tong_tien_don_hang) as doanh_thu_thang')
                 ->groupBy('thang')
@@ -455,12 +455,12 @@ class ThongKeDoanhThuController extends Controller
             $endOfYear = Carbon::create($nam)->endOfYear();
 
             // Tổng doanh thu của năm đã chọn
-            $doanhThuTheoNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThuTheoNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfYear, $endOfYear])
                 ->sum('tong_tien_don_hang');
 
             // Doanh thu theo từng quý trong năm
-            $doanhThuTheoQuyTrongNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+            $doanhThuTheoQuyTrongNam = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('created_at', [$startOfYear, $endOfYear])
                 ->selectRaw('QUARTER(created_at) as quy, SUM(tong_tien_don_hang) as doanh_thu_quy')
                 ->groupBy('quy')
@@ -501,7 +501,7 @@ class ThongKeDoanhThuController extends Controller
 
             // Lấy doanh thu của tháng hiện tại
             $doanhThuThangHienTai = (float) DB::table('don_hangs')
-                ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereMonth('created_at', $now->month)
                 ->whereYear('created_at', $now->year)
                 ->sum('tong_tien_don_hang');
@@ -509,7 +509,7 @@ class ThongKeDoanhThuController extends Controller
             // Lấy doanh thu của tháng trước
             $thangTruoc = $now->subMonth();  // Lùi về tháng trước
             $doanhThuThangTruoc = DB::table('don_hangs')
-                ->where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereMonth('created_at', $thangTruoc->month)
                 ->whereYear('created_at', $thangTruoc->year)
                 ->sum('tong_tien_don_hang');
