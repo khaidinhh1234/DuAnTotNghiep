@@ -51,6 +51,7 @@ class TheController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'ten_the' => 'required|string|max:255|unique:thes,ten_the',
+                'duong_dan_anh' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
@@ -126,6 +127,7 @@ class TheController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'ten_the' => 'required|string|max:255|unique:thes,ten_the',
+                'duong_dan_anh' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
