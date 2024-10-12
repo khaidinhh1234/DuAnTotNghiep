@@ -30,7 +30,7 @@ class ThongKeDanhMuc extends Controller
                 ->join('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
                 ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
                 ->where('danh_mucs.ten_danh_muc', $tenDanhMuc)
-                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->groupBy('don_hangs.id') // Group by để không bị tính trùng đơn hàng
                 ->select(DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu'))
                 ->first();
@@ -40,7 +40,7 @@ class ThongKeDanhMuc extends Controller
                 ->join('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
                 ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
                 ->where('danh_mucs.ten_danh_muc', $tenDanhMuc)
-                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC) // Đơn hàng đã giao thành công
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH) // Đơn hàng đã giao thành công
                 ->whereYear('don_hangs.created_at', $now->year) // Doanh thu theo năm hiện tại
                 ->select(DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu'))
                 ->first();
@@ -51,7 +51,7 @@ class ThongKeDanhMuc extends Controller
                 ->join('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
                 ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
                 ->where('danh_mucs.ten_danh_muc', $tenDanhMuc)
-                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC) // Đơn hàng đã giao thành công
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH) // Đơn hàng đã giao thành công
                 ->whereMonth('don_hangs.created_at', $now->month) // Doanh thu theo tháng hiện tại
                 ->whereYear('don_hangs.created_at', $now->year) // Doanh thu theo năm hiện tại
                 ->select(DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu'))
@@ -63,7 +63,7 @@ class ThongKeDanhMuc extends Controller
                 ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
                 ->join('danh_mucs', 'san_phams.danh_muc_id', '=', 'danh_mucs.id')
                 ->where('danh_mucs.ten_danh_muc', $tenDanhMuc)
-                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC) // Đơn hàng đã giao thành công
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH) // Đơn hàng đã giao thành công
                 ->select(
                     'san_phams.ten_san_pham',
                     DB::raw('SUM(don_hangs.tong_tien_don_hang) as tong_doanh_thu_san_pham')
@@ -157,7 +157,7 @@ class ThongKeDanhMuc extends Controller
                     $doanhThuBienThe = DonHangChiTiet::where('bien_the_san_pham_id', $bienTheSanPham->id)
                         ->whereHas('donHang', function ($query) {
                             // Lọc những đơn hàng đã giao hàng thành công
-                            $query->where('trang_thai_don_hang', DonHang::TTDH_DGTC);
+                            $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH);
                         })
                         ->sum('thanh_tien'); // Tổng doanh thu của biến thể sản phẩm
 
@@ -224,7 +224,7 @@ class ThongKeDanhMuc extends Controller
             // Tính tổng số lượng sản phẩm đã bán trong các đơn hàng đã giao hàng thành công
             $soldCount = DB::table('don_hang_chi_tiets')
                 ->join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
-                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC) // Chỉ tính đơn hàng thành công
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH) // Chỉ tính đơn hàng thành công
                 ->whereIn('don_hang_chi_tiets.bien_the_san_pham_id', function($query) use ($sanPhamIds) {
                     $query->select('id')
                           ->from('bien_the_san_phams')
@@ -258,7 +258,7 @@ class ThongKeDanhMuc extends Controller
 
             foreach ($parentCategory->children as $child) {
                 $successfulOrderCount = DB::table('don_hangs')
-                    ->where('trang_thai_don_hang', DonHang::TTDH_DGTC) // Đơn hàng đã giao thành công
+                    ->where('trang_thai_don_hang', DonHang::TTDH_HTDH) // Đơn hàng đã giao thành công
                     ->whereIn('id', function ($query) use ($child) {
                         $query->select('don_hang_id')
                               ->from('don_hang_chi_tiets')

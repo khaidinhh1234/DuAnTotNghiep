@@ -4,6 +4,7 @@ import ProfileBanner from "../profile/ProfileBanner";
 import IntroCard from "../profile/IntroCard";
 import PhotosCard from "../profile/PhotosCard";
 import Post from "../profile/Post";
+import ChangePassword from "../profile/ChangePassword";
 
 const AdminProfile = () => {
   return (
@@ -29,6 +30,7 @@ const AdminProfile = () => {
           {/* Thẻ bài viết */}
           <Col xs={24} lg={16}>
             {/* <Post /> */}
+            <ChangePassword/>
           </Col>
         </Row>
       </div>

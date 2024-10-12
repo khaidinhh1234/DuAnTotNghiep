@@ -72,7 +72,7 @@ class ThongKeSanPham extends Controller
         // Lấy doanh thu theo trạng thái giao hàng thành công
         $doanhThu = DonHangChiTiet::with(['donHang'])
             ->whereHas('donHang', function ($query) {
-                $query->where('trang_thai_don_hang', DonHang::TTDH_DGTC);
+                $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH);
             })
             ->where('bien_the_san_pham_id', $sanPham->id) // Sử dụng ID của sản phẩm để lấy
             ->get();
@@ -130,7 +130,7 @@ class ThongKeSanPham extends Controller
             $doanhThuTheoNam = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
                 ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
-                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->selectRaw('YEAR(don_hangs.created_at) as nam, SUM(don_hang_chi_tiets.so_luong * don_hang_chi_tiets.gia) as doanh_thu_nam')
                 ->groupBy('nam')
                 ->orderBy('nam', 'asc')
@@ -142,7 +142,7 @@ class ThongKeSanPham extends Controller
             $doanhThuTheoThang = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
                 ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
-                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_DGTC)
+                ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereYear('don_hangs.created_at', $currentYear)
                 ->whereMonth('don_hangs.created_at', $currentMonth)
                 ->selectRaw('SUM(don_hang_chi_tiets.so_luong * don_hang_chi_tiets.gia) as doanh_thu_thang')
@@ -165,7 +165,7 @@ class ThongKeSanPham extends Controller
         $month = $request->input('month', Carbon::now()->month);
 
         // Lấy danh sách đơn hàng với trạng thái 'Đã giao hàng thành công' trong tháng được chọn
-        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->whereMonth('created_at', $month)
             ->pluck('id'); // Lấy danh sách id của các đơn hàng
 
@@ -201,7 +201,7 @@ class ThongKeSanPham extends Controller
         $year = $request->input('year', Carbon::now()->year);
 
         // Lấy danh sách đơn hàng với trạng thái 'Đã giao hàng thành công' trong năm được chọn
-        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->whereYear('created_at', $year)
             ->pluck('id'); // Lấy danh sách id của các đơn hàng
 
