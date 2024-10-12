@@ -34,6 +34,7 @@ use App\Http\Controllers\Client\Api\DanhGiaController;
 use App\Http\Controllers\Client\Api\GioHangController;
 use App\Http\Controllers\Client\Api\DonHangClientController;
 use App\Http\Controllers\Client\Api\KhuyenMaiController;
+use App\Http\Controllers\Client\Api\TrangChiTietSpController;
 use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
@@ -62,6 +63,9 @@ Route::middleware([])
         //Client Sản Phẩm
         // Lấy ra danh mục cha
         Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
+
+        // Client trang chi tiết sản phẩm
+        Route::get('/chi-tiet-san-pham/{id}', [TrangChiTietSpController::class, 'chiTietSanPham']);
 
         // Lọc sản phẩm theo danh mục
         Route::post('/loc-san-pham-theo-danh-muc', [TrangSanPhamController::class, 'locSanPhamTheoDanhMuc']);
@@ -110,11 +114,6 @@ Route::middleware([])
 
 //'auth.sanctum'
 Route::middleware('auth.sanctum')
-<<<<<<< HEAD
-
-
-=======
->>>>>>> c2fb63bd6e93683dc73d6007717d8f1ba5a764f3
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
