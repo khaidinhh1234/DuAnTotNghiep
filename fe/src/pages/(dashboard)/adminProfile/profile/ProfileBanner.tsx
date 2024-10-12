@@ -1,22 +1,36 @@
 import { Avatar, Button, Card, Row, Col, Typography } from 'antd';
-import { 
-  FacebookFilled, 
-  YoutubeFilled, 
-  TwitterCircleFilled, 
-  UserOutlined 
+import {
+  FacebookFilled,
+  YoutubeFilled,
+  TwitterCircleFilled,
+  UserOutlined,
+  CameraOutlined,
+  CheckCircleOutlined
 } from '@ant-design/icons';
-// import profilecover from 'src/assets/images/backgrounds/profilebg.jpg';
-// import userimg from 'src/assets/images/profile/user-1.jpg';
+import { useState } from 'react';
 // import ProfileTab from './ProfileTab';
+import { Upload } from 'antd';
+import { banner } from '@/assets/img';
+import { useLocalStorage } from '@/components/hook/useStoratge';
 
 const { Text, Title } = Typography;
 
 const ProfileBanner = () => {
+  const [avatarImage, setAvatarImage] = useState<string>('');
+  const [{ user }] = useLocalStorage('user', {});
+  const url = user.anh_nguoi_dung;
+  const vaitro = user.vai_tros.map((item: any) => item.ten_vai_tro);
+  const handleAvatarChange = (info: any) => {
+    if (info.file && info.file.originFileObj) {
+      const file = URL.createObjectURL(info.file.originFileObj);
+      setAvatarImage(file);
+    }
+  };
   return (
     <>
       <Card
         cover={
-          <img src="http://localhost:5174/src/assets/images/backgrounds/profilebg.jpg" alt="Profile Cover" className="w-full h-48 object-cover" />
+          <img src={banner} alt="Profile Cover" className="w-full h-48 object-cover" />
         }
         className="p-4 bg-white shadow-md"
       >
@@ -59,19 +73,43 @@ const ProfileBanner = () => {
             lg={8}
             className="flex flex-col items-center order-1 lg:order-2"
           >
-            <div className="-mt-20 flex flex-col items-center">
-              <Avatar
-                src='http://localhost:5174/src/assets/images/profile/user-1.jpg'
-                size={110}
+           <div className="flex justify-center mt-[-70px] relative">
+        <div className="text-center">
+          <div className="relative w-28 h-28 mx-auto rounded-full bg-gradient-to-r">
+            <Avatar
+              src={avatarImage || url}  
+              size={110}
                 className="border-4 border-white shadow-lg"
+            />
+            <Upload
+              showUploadList={false}
+              onChange={handleAvatarChange}
+              className="absolute bottom-0 right-0 "
+            >
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<CameraOutlined />}
+                className="bg-blue-400 hover:bg-blue-500 text-white p-2"
               />
-              <div className="mt-3 text-center">
-                <Title level={5} className="m-0">
-                  Mathew Anderson
+            </Upload>
+          </div>
+
+          <div className="mt-2">
+          <Title level={5} className="m-0">
+                  {user?.ho + " " + user?.ten}
                 </Title>
-                <Text type="secondary">Designer</Text>
-              </div>
-            </div>
+                {/* <Title level={5} className="m-0">
+                  {user?.so_dien_thoai}
+                </Title> */}
+                {vaitro?.map((item: any) => (
+                  <Text type="secondary">
+                    {item.length > 1 ? item : item + ","}
+                  </Text>
+                ))}
+          </div>
+        </div>
+      </div>
           </Col>
           {/* Social Buttons and Story Button */}
           <Col

@@ -18,18 +18,19 @@ class DonHangSeeder extends Seeder
 
         for ($i = 0; $i < 10; $i++) {
             DonHang::create([
-                'ma_don_hang' => 'DH' . strtoupper(uniqid()), // Tạo mã đơn hàng ngẫu nhiên
-                'user_id' => User::inRandomOrder()->first()->id, // Chọn user ngẫu nhiên
+                'ma_don_hang' => 'DH' . strtoupper(uniqid()), // Mã đơn hàng ngẫu nhiên
+                'user_id' => User::inRandomOrder()->first()->id, // Người dùng ngẫu nhiên
                 'ghi_chu' => $faker->optional()->sentence(),
                 'trang_thai_don_hang' => $faker->randomElement([
-                    DonHang::TTDH_CXH,  // Chờ xác nhận
-                    DonHang::TTDH_DXH,  // Đã xác nhận
-                    DonHang::TTDH_DXL,  // Đang xử lý
-                    DonHang::TTDH_DGH,  // Đang giao hàng
-                    DonHang::TTDH_DGTC, // Giao hàng thành công
-                    DonHang::TTDH_GHTB, // Giao hàng thất bại
-                    DonHang::TTDH_DH,   // Đã hủy
-                    DonHang::TTDH_HH    // Hoàn hàng
+                    DonHang::TTDH_CXH,   // Chờ xác nhận
+                    DonHang::TTDH_DXH,   // Đã xác nhận
+                    DonHang::TTDH_DXL,   // Đang xử lý
+                    DonHang::TTDH_DGH,   // Đang giao hàng
+                    DonHang::TTDH_CKHCN, // Chờ khách hàng nhận
+                    DonHang::TTDH_HTDH,  // Hoàn thành đơn hàng
+                    DonHang::TTDH_DHTB,  // Đã thất bại
+                    DonHang::TTDH_DH,    // Đã hủy
+                    DonHang::TTDH_HH     // Hoàn hàng
                 ]),
                 'phuong_thuc_thanh_toan' => $faker->randomElement([
                     DonHang::PTTT_TT,  // Thanh toán tiền mặt
@@ -47,6 +48,7 @@ class DonHangSeeder extends Seeder
                     DonHang::TTTT_DTT  // Đã thanh toán
                 ]),
                 'duong_dan' => $faker->optional()->url(),
+                'ngay_hoan_thanh_don' => $faker->optional()->dateTimeBetween('-1 years', 'now'), // Ngày hoàn thành đơn hàng
             ]);
         }
     }

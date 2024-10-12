@@ -18,12 +18,12 @@ class CheckRole
     public function handle(Request $request, Closure $next): Response
     {
         $tenRoute = $request->route()->getName();
-        $users = $request->user()->vaiTros;
-        foreach ($users as $user) {
-            $vaiTro = VaiTro::query()->where('ten_vai_tro', $user->ten_vai_tro)->with('quyens')->first();
-            $tenQuyen = $vaiTro->quyens->pluck('ten_quyen');
+        $mangQuyen = [];
+        foreach ($request->user()->vaiTros as $vaiTro) {
+            array_push($mangQuyen, $vaiTro->quyens->pluck('ten_quyen')->toArray());
         }
-        if (!in_array($tenRoute, $tenQuyen->toArray())) {
+        $mangQuyen = array_merge(...$mangQuyen);
+        if (!in_array($tenRoute, $mangQuyen)) {
             return response()->json([
                 'status' => false,
                 'status_code' => 401,
