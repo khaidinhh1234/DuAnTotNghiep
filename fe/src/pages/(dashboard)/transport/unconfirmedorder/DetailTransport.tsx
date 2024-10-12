@@ -1,14 +1,36 @@
 import instance from "@/configs/admin";
-import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, message, Modal } from "antd";
-import { Upload } from "antd";
-import { useState } from "react";
+import React, { useRef, useState } from "react";
+import AllCameras from "../../shipper/page";
+import Webcam from "react-webcam";
+
+const videoConstraints = {
+  width: 540,
+  facingMode: "environment",
+};
 
 const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const [imageSelected, setImageSelected] = useState(false);
+  const [isWebcamVisible, setIsWebcamVisible] = useState(false);
+  const [url, setUrl] = useState<string | null>(null);
+  const webcamRef = useRef<Webcam>(null);
+
+  // Capture a photo from the webcam
+  const capturePhoto = () => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setUrl(imageSrc);
+    }
+  };
+
+  const videoConstraints = {
+    width: 1280,
+    height: 720,
+    facingMode: "user",
+  };
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -333,34 +355,88 @@ const DetailTransport = ({ record }: any) => {
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
 
               <div className="flex flex-col gap-2">
+                {isWebcamVisible && (
+                  <div className="relative mx-auto mt-6">
+                    {url ? null : (
+                      <div className="relative">
+                        <Webcam
+                          ref={webcamRef}
+                          screenshotFormat="image/jpeg"
+                          videoConstraints={videoConstraints}
+                          className="w-60 rounded-lg"
+                          audio={false}
+                        />
+                        <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
+                          <button
+                            onClick={capturePhoto}
+                            className="px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                          >
+                            <i className="fa-regular fa-camera"></i>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Show the captured image */}
+                    {url && (
+                      <div>
+                        <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
+                      </div>
+                    )}
+
+                    {/* Option to remove the captured image */}
+                    {url && (
+                      <div className="relative  flex justify-center mt-3">
+                        <button
+                          onClick={() => setUrl(null)} // Reset the URL to show the webcam again
+                          className=" absolute -top-10 px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                        >
+                          <i className="fa-regular fa-trash"></i>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
                   <>
                     <button
                       className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Đang giao hàng" })
-                      }
+                      onClick={() => {
+                        setIsWebcamVisible(true); // Show the webcam on button click
+                        mutate({ id: record.id, action: "Đang giao hàng" });
+                      }}
                     >
                       Giao hàng
-                    </button>{" "}
+                    </button>
                   </>
                 ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
                   <>
                     <button
-                      className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400"
+                      className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
                       onClick={() =>
                         mutate({ id: record.id, action: "Giao hàng thành công" })
                       }
                     >
-                      Giao hàng thành công
-                    </button>{" "}
+                      Xác nhận giao hàng
+                    </button>
+                    <button
+                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
+                      onClick={() =>
+                        mutate({ id: record.id, action: "Hủy hàng" })
+                      }
+                    >
+                      Giao hàng thất bại
+                    </button>
                   </>
                 ) : record.trang_thai_van_chuyen === "Chờ xử lý" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
                     Giao hàng thành công
                   </span>
-                ) : ``}
+                ) : null}
               </div>
+
+              {/* Conditionally render the webcam section */}
+
             </div>{" "}
             <div className=" bg-slate-100 p-5 border rounded-lg my-2">
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
@@ -403,41 +479,55 @@ const DetailTransport = ({ record }: any) => {
             </div> {" "}
             {/* shipper */}
             <div className="col-span-3">
-            <div className="bg-slate-100 p-5 border rounded-lg my-2">
-              <h5 className="text-blue-800 text-lg">Thông tin shipper</h5>
-              <hr />
-              <p className="text-blue-800 text-lg my-2">Nhân viên ship:</p>
-              {/* <span className="text-black my-2">{shipperName}</span> */}
-              <p className="text-blue-800 font-semibold">
-                Số điện thoại:
-                {/* <span className="text-black font-medium">{shipperPhone}</span> */}
-              </p>
-              <h5 className="text-blue-800 mb-4">Ảnh xác nhận giao hàng thành công:</h5>
-              <Form.Item
-                label=""
-                name="imageFile"
-                valuePropName="fileList"
-                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
-                rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
-                className="mb-4"
-              >
-                <Upload
-                  listType="picture"
-                  maxCount={1}
-                  beforeUpload={() => false}
-                  onChange={handleImageChange}
-                >
-                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
-                </Upload>
-              </Form.Item>
-
-              {imageSelected && (
-                <Button type="primary" htmlType="submit">
-                  Xác nhận
-                </Button>
-              )}
+              <div className="bg-slate-100 p-5 border rounded-lg my-2">
+                <h5 className="text-blue-800 text-lg">Thông tin nhân viên giao hàng</h5>
+                <hr />
+                <p className="text-blue-800 text-lg my-2">Nhân viên giao hàng:</p>
+                {/* <span className="text-black my-2">{shipperName}</span> */}
+                <p className="text-blue-800 font-semibold">
+                  Số điện thoại:
+                  {/* <span className="text-black font-medium">{shipperPhone}</span> */}
+                </p>
+                <h5 className="text-blue-800 mb-4">Ảnh xác nhận giao hàng thành công:</h5>
+                {/* <div className="relative mx-auto">
+                  {url ? null : (
+                    <div className="relative">
+                      <Webcam
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        videoConstraints={videoConstraints}
+                        onUserMedia={onUserMedia}
+                        className="w-60 rounded-lg"
+                        audio={false}
+                      />
+                      <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
+                        <button
+                          onClick={capturePhoto}
+                          className="px-5 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                        >
+                          <i className="fa-regular fa-camera"></i>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {url ? (
+                    <div>
+                      <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
+                    </div>
+                  ) : null}
+                  {url ? (
+                    <div className="flex justify-center mt-3">
+                      <button
+                        onClick={() => setUrl(null)}
+                        className="px-4 py-2 rounded-full text-2xl bg-white mx-2"
+                      >
+                        <i className="fa-regular fa-trash"></i>
+                      </button>
+                    </div>
+                  ) : null}
+                </div> */}
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </Modal>
