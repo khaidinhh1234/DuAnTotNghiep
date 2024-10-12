@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button, Form, Select, Spin, message } from "antd";
-import { ArrowLeftOutlined, LoadingOutlined } from "@ant-design/icons";
+import {  LoadingOutlined } from "@ant-design/icons";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { uploadToCloudinary } from "@/configs/cloudinary";

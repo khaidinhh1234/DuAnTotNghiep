@@ -66,10 +66,15 @@ const SiderComponent: React.FC = () => {
             <Menu.Item key="/admin/users/nhanvien">Nhân viên</Menu.Item>
             <Menu.Item key="/admin/users/rank">Hạng thành viên</Menu.Item>
           </SubMenu>
+          <SubMenu key="sub6" icon={<Tag />} title="vouchers">
 
-          <Menu.Item key="/admin/vouchers" icon={<Tag />}>
+          <Menu.Item key="/admin/vouchers">
             Mã khuyến mại
           </Menu.Item>
+          <Menu.Item key="/admin/chuongtrinhuudai">
+            Chương trình ưu đãi
+          </Menu.Item>
+          </SubMenu>
 
           <Menu.Item key="/admin/news" icon={<Newspaper />}>
             Tin tức
@@ -87,7 +92,7 @@ const SiderComponent: React.FC = () => {
             Phân quyền
           </Menu.Item>
 
-          <SubMenu key="sub6" icon={<AlignJustify />} title="Nội dung">
+          <SubMenu key="sub7" icon={<AlignJustify />} title="Nội dung">
             <Menu.Item key="/admin/Content/qlfooter">Footer</Menu.Item>
             <Menu.Item key="/admin/Content/qlbanner">Banner</Menu.Item>
           </SubMenu>

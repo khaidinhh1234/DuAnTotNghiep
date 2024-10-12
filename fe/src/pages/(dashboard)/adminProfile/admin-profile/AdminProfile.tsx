@@ -21,14 +21,14 @@ const AdminProfile = () => {
                 <IntroCard />
               </Col>
               <Col span={24}>
-                <PhotosCard />
+                {/* <PhotosCard /> */}
               </Col>
             </Row>
           </Col>
 
           {/* Thẻ bài viết */}
           <Col xs={24} lg={16}>
-            <Post />
+            {/* <Post /> */}
           </Col>
         </Row>
       </div>
