@@ -116,16 +116,14 @@ class TinTucController extends Controller
 
             $tinTuc = TinTuc::findOrFail($id);
             $validatedTinTuc = $request->validate([
-                'user_id' => 'required|exists:users,id',
+                // 'user_id' => 'required|exists:users,id',
                 'danh_muc_tin_tuc_id' => 'required|exists:danh_muc_tin_tucs,id',
                 'tieu_de' => 'required|unique:tin_tucs,tieu_de,' . $id . '|max:255',
                 'anh_tin_tuc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'noi_dung' => 'required|string',
                 'duong_dan' => 'nullable',
             ]);
-
-
-            $validatedTinTuc['user_id'] = Auth::guard('api')->id();
+            $validatedTinTuc['user_id'] = $tinTuc->user_id;
             $validatedTinTuc['duong_dan'] = Str::slug($validatedTinTuc['tieu_de']);
 
             $tinTuc->update($validatedTinTuc);
@@ -160,10 +158,10 @@ class TinTucController extends Controller
         try {
             DB::beginTransaction();
 
-            
+
             $tinTuc = TinTuc::findOrFail($id);
 
-            
+
             $tinTuc->delete();
 
             DB::commit();
