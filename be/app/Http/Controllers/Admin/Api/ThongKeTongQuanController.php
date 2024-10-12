@@ -127,7 +127,7 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_tien_hoan' => $tiLeTangGiamTienHoanFormatted,
         ]);
     }
-  
+
     public function thongKeSanPhamTonKho(Request $request)
     {
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
@@ -200,7 +200,7 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
 
         // Trạng thái giao hàng thành công
-        $trangThaiGiaoHangThanhCong = DonHang::TTDH_DGTC;
+        $trangThaiGiaoHangThanhCong = DonHang::TTDH_HTDH;
 
         // Lấy tổng doanh thu và số lượng đơn hàng với trạng thái giao hàng thành công
         $donHangs = DonHang::where('trang_thai_don_hang', $trangThaiGiaoHangThanhCong)
@@ -343,7 +343,7 @@ class ThongKeTongQuanController extends Controller
         ]);
     }
 
-  
+
     public function thongKeThanhToanKhiNhanHang(Request $request)
 
     {
@@ -399,7 +399,7 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
 
         // Lấy tất cả các đơn hàng có trạng thái "Giao hàng thành công" trong khoảng thời gian hiện tại
-        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
             ->with('chiTiets.bienTheSanPham')  // Lấy chi tiết đơn hàng và biến thể sản phẩm
             ->get();
@@ -433,7 +433,7 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
         // Lấy tất cả các đơn hàng có trạng thái "Giao hàng thành công" trong khoảng thời gian trước đó
-        $donHangsTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+        $donHangsTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
             ->with('chiTiets.bienTheSanPham')
             ->get();
@@ -493,7 +493,7 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
 
         // Lấy tất cả các đơn hàng có trạng thái "Giao hàng thành công" trong khoảng thời gian hiện tại
-        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+        $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
             ->with('chiTiets.bienTheSanPham')  // Lấy chi tiết đơn hàng và biến thể sản phẩm
             ->get();
@@ -519,7 +519,7 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
         // Lấy tất cả các đơn hàng có trạng thái "Giao hàng thành công" trong khoảng thời gian trước đó
-        $donHangsTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)
+        $donHangsTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
             ->with('chiTiets.bienTheSanPham')
             ->get();
