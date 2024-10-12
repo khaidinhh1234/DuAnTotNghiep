@@ -8,16 +8,18 @@ import {
   CheckCircleOutlined
 } from '@ant-design/icons';
 import { useState } from 'react';
-// import profilecover from 'src/assets/images/backgrounds/profilebg.jpg';
-// import userimg from 'src/assets/images/profile/user-1.jpg';
 // import ProfileTab from './ProfileTab';
 import { Upload } from 'antd';
+import { banner } from '@/assets/img';
+import { useLocalStorage } from '@/components/hook/useStoratge';
 
 const { Text, Title } = Typography;
 
 const ProfileBanner = () => {
   const [avatarImage, setAvatarImage] = useState<string>('');
-
+  const [{ user }] = useLocalStorage('user', {});
+  const url = user.anh_nguoi_dung;
+  const vaitro = user.vai_tros.map((item: any) => item.ten_vai_tro);
   const handleAvatarChange = (info: any) => {
     if (info.file && info.file.originFileObj) {
       const file = URL.createObjectURL(info.file.originFileObj);
@@ -28,7 +30,7 @@ const ProfileBanner = () => {
     <>
       <Card
         cover={
-          <img src="http://localhost:5174/src/assets/images/backgrounds/profilebg.jpg" alt="Profile Cover" className="w-full h-48 object-cover" />
+          <img src={banner} alt="Profile Cover" className="w-full h-48 object-cover" />
         }
         className="p-4 bg-white shadow-md"
       >
@@ -75,9 +77,9 @@ const ProfileBanner = () => {
         <div className="text-center">
           <div className="relative w-28 h-28 mx-auto rounded-full bg-gradient-to-r">
             <Avatar
-              src={avatarImage}
-              size={100}
-              className="border-4 border-white"
+              src={avatarImage || url}  
+              size={110}
+                className="border-4 border-white shadow-lg"
             />
             <Upload
               showUploadList={false}
@@ -94,13 +96,17 @@ const ProfileBanner = () => {
           </div>
 
           <div className="mt-2">
-            <Title level={5} className="flex items-center justify-center">
-              Ngô Quốc Toản
-              <CheckCircleOutlined className="ml-2 text-blue-500" />
-            </Title>
-            <Text type="secondary" className="text-gray-500">
-              0983827425
-            </Text>
+          <Title level={5} className="m-0">
+                  {user?.ho + " " + user?.ten}
+                </Title>
+                {/* <Title level={5} className="m-0">
+                  {user?.so_dien_thoai}
+                </Title> */}
+                {vaitro?.map((item: any) => (
+                  <Text type="secondary">
+                    {item.length > 1 ? item : item + ","}
+                  </Text>
+                ))}
           </div>
         </div>
       </div>

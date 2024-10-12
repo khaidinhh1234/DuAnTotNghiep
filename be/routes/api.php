@@ -268,6 +268,7 @@ Route::middleware('auth.sanctum')
                 Route::put('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
             });
 
+        //Vai trò auth.checkrole
         //Vai trò auth.checkrole'auth.checkrole'
         Route::middleware([])
             ->group(function () {

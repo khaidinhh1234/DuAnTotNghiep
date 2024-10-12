@@ -1,7 +1,7 @@
 import instance from '@/configs/admin';
 import { SearchOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Input, InputRef, Modal, Space, Table, TableColumnsType } from 'antd';
+import { Button, Input, InputRef, Modal, Space, Table, TableColumnsType, Tabs } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import dayjs from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
@@ -22,6 +22,10 @@ interface Support {
     ten: string
   }
 }
+const datas = [
+  { value: "1", label: "Chưa xử lý" },
+  { value: "2", label: "Đã xử lý" },
+];
 
 const PageSupport: React.FC = () => {
   const queryClient = useQueryClient();
@@ -29,9 +33,12 @@ const PageSupport: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEvaluate, setCurrentEvaluate] = useState<any | null>(null);
   const [phan_hoi, setphan_hoi] = useState<{ [key: number]: string }>({});
+  const [filteredData, setFilteredData] = useState<Support[]>([]);
+
   // console.log('phan_hoi', phan_hoi);
   const [searchText, setSearchText] = useState<string>("");
   const [searchedColumn, setSearchedColumn] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string>("Tất cả");
   const searchInput = useRef<InputRef>(null);
   const { data } = useQuery({
     queryKey: ['phanhoilienhe'],
@@ -68,21 +75,10 @@ const PageSupport: React.FC = () => {
       console.error("Error:", error);
     },
   });
-  const detailSupport = useMutation({
-    mutationFn: async (id: number) => {
-      await instance.delete(`/lien-he/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["phanhoilienhe"] });
-    },
-    onError: (error) => {
-      console.error("Error hiding review:", error);
-    },
-  });
   const showDetail = (record: Support) => {
     console.log("record", record);
     setCurrentEvaluate(record);
-    setIsModalOpen(true); // Sử dụng modal để hiển thị chi tiết
+    setIsModalOpen(true);
   };
   const handleOk = () => {
     if (currentEvaluate && phan_hoi[currentEvaluate.id as number]) {
@@ -96,6 +92,20 @@ const PageSupport: React.FC = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  // lấy trạng thái
+  const support: Support[] | undefined = data?.data;
+  useEffect(() => {
+    if (support) {
+      if (activeTab === "Tất cả") {
+        setFilteredData(support);
+      } else {
+        const filtered = support.filter(
+          (item) => item.trang_thai_lien_he === activeTab 
+        );
+        setFilteredData(filtered);
+      }
+    }
+  }, [support, activeTab]);
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
@@ -267,6 +277,11 @@ const PageSupport: React.FC = () => {
       setIsLoading(false);
     }, 2000);
   }, []);
+  const tabItems = [
+    { label: "Tất cả", key: "Tất cả" },
+    { label: "Chưa xử lý", key: "chua_xu_ly" }, // Sử dụng giá trị 'chua_xu_ly' từ dữ liệu thực tế
+    { label: "Đã xử lý", key: "da_xu_ly" }, // Sử dụng giá trị 'da_xu_ly' từ dữ liệu thực tế
+  ];
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -277,6 +292,12 @@ const PageSupport: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">Liên hệ khách hàng</h1>
       </div>
+      <Tabs
+            defaultActiveKey="Tất cả"
+            activeKey={activeTab}
+            onChange={(key: any) => setActiveTab(key)}
+            items={tabItems}
+          />
       <Search
         placeholder="Tìm kiếm"
         onSearch={(value) => console.log(value)}

@@ -26,37 +26,21 @@ const DetailTransport = ({ record }: any) => {
 
   const id = record?.don_hang?.id
   const { data } = useQuery({
-    queryKey: ["ORDER_DETAIL", id],
+    queryKey: ["SHIPPER"],
     queryFn: async () => {
-      const response = await instance.get(`donhang/${id}`);
-      return response.data;
-    },
-  });
-  const { data: dataShipper } = useQuery({
-    queryKey: ["SHIPPER", id],
-    queryFn: async () => {
+      console.log(id)
       const response = await instance.get(`/vanchuyen/${id}`);
       return response.data;
     },
   })
-  const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
+  // console.log(data?.data?.van_chuyen?.don_hang)
+  const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
     };
   });
-  // const donhang = data?.data;
-  // console.log("data", donhang);
-  // console.log("data", products);
-  // console.log(record.don_hang.ten_nguoi_dat_hang)
+  console.log(products)
   const thongtin = data?.data?.thong_tin;
-
-  const shipperDetails = dataShipper?.data?.shipper;
-  const shipperName = shipperDetails
-    ? `${shipperDetails.ho} ${shipperDetails.ten}`
-    : "Chưa có thông tin";
-  const shipperPhone = shipperDetails?.so_dien_thoai || "Chưa có số điện thoại";
-  // console.log(thongtin_shipper)
-  // console.log(thongtin,)
 
   const handleCancel = () => {
     setOpen(false);
@@ -312,8 +296,8 @@ const DetailTransport = ({ record }: any) => {
                   <p className="text-base font-semibold">
                     -{" "}
                     <span>
-                      {data?.data?.don_hang?.so_tien_giam_gia
-                        ? data?.data?.don_hang?.so_tien_giam_gia.toLocaleString(
+                      {data?.data?.van_chuyen?.don_hang?.so_tien_giam_gia
+                        ? data?.data?.van_chuyen?.don_hang?.so_tien_giam_gia.toLocaleString(
                           "vi-VN"
                         )
                         : 0}{" "}
@@ -382,38 +366,38 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
               <hr />
               <h5 className="text-blue-600 my-2">
-                {record.don_hang.ten_nguoi_dat_hang
-                  ? record.don_hang.ten_nguoi_dat_hang
+                {record.van_chuyen?.don_hang.ten_nguoi_dat_hang
+                  ? record.van_chuyen?.don_hang.ten_nguoi_dat_hang
                   : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
               <h5 className="text-black my-2">
                 {" "}
-                {record.don_hang.ten_nguoi_dat_hang
-                  ? record.don_hang.ten_nguoi_dat_hang
+                {record.van_chuyen?.don_hang.ten_nguoi_dat_hang
+                  ? record.van_chuyen?.don_hang.ten_nguoi_dat_hang
                   : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <p className="text-blue-800 font-semibold">
                 Số điện thoại :
                 <span className="text-black font-medium">
-                  {record.don_hang.so_dien_thoai_nguoi_dat_hang
-                    ? record.don_hang.so_dien_thoai_nguoi_dat_hang
+                  {record.van_chuyen?.don_hang.so_dien_thoai_nguoi_dat_hang
+                    ? record.van_chuyen?.don_hang.so_dien_thoai_nguoi_dat_hang
                     : thongtin?.so_dien_thoai}
                 </span>
               </p>
               <h5 className="text-blue-800">
                 Địa chỉ Giao hàng: <br />
                 <span className="text-black">
-                  {record?.don_hang.dia_chi_nguoi_dat_hang
-                    ? record?.don_hang.dia_chi_nguoi_dat_hang
+                  {record?.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
+                    ? record?.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
                     : thongtin?.dia_chi}
                 </span>
               </h5>
               <p className="text-blue-800 font-semibold">
                 Ghi chú của khách hàng : <br />
                 <span className="text-black">
-                  {record?.don_hang.ghi_chu ? record?.don_hang.ghi_chu : "Không có ghi chú"}
+                  {record?.van_chuyen?.don_hang.ghi_chu ? record?.van_chuyen?.don_hang.ghi_chu : "Không có ghi chú"}
                 </span>
               </p>
             </div> {" "}
@@ -423,14 +407,14 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg">Thông tin shipper</h5>
               <hr />
               <p className="text-blue-800 text-lg my-2">Nhân viên ship:</p>
-              <span className="text-black my-2">{shipperName}</span>
+              {/* <span className="text-black my-2">{shipperName}</span> */}
               <p className="text-blue-800 font-semibold">
                 Số điện thoại:
-                <span className="text-black font-medium">{shipperPhone}</span>
+                {/* <span className="text-black font-medium">{shipperPhone}</span> */}
               </p>
               <h5 className="text-blue-800 mb-4">Ảnh xác nhận giao hàng thành công:</h5>
               <Form.Item
-                label="Thêm ảnh"
+                label=""
                 name="imageFile"
                 valuePropName="fileList"
                 getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
