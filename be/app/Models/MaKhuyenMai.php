@@ -40,4 +40,9 @@ class MaKhuyenMai extends Model
     {
         return $this->belongsToMany(DanhMuc::class, 'khuyen_mai_danh_muc', 'ma_khuyen_mai_id', 'danh_muc_id');
     }
+
+    public function user()
+    {
+        return $this->belongsToMany(User::class, 'nguoi_dung_ma_khuyen_mai', 'ma_khuyen_mai_id', 'user_id');
+    }
 }

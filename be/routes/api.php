@@ -74,8 +74,10 @@ Route::middleware([])
         // Trang chủ
         Route::get('trangchu', [TrangChuController::class, 'index']);
 
-        //Chương trình ưu đãi
+        //Chương trình ưu đãi và mã khuyến mãi
         Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'danhSachSanPhamChuongTrinhUuDai']);
+        Route::get('ma-khuyen-mai', [KhuyenMaiController::class, 'layMaKhuyenMaiTheoHangThanhVien']);
+        Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
 
         //Client Sản Phẩm
         // Lấy ra danh mục cha
@@ -362,7 +364,7 @@ Route::middleware('auth.sanctum')
             //Route thống kê khách hàng mới
             Route::get('/khach-hang-moi-theo-tung-thang', [ThongKeKhachHangController::class, 'thongKeKhachHangMoi']);
             Route::get('/khach-hang-quay-lai-theo-thang', [ThongKeKhachHangController::class, 'thongKeKhachHangQuayLaiTheoThang']);
-            
+
 
             Route::post('/tim-kiem-thanh-vien-theo-hang', [ThongKeKhachHangController::class, 'timKiemThanhVienTheoHang']);
 
