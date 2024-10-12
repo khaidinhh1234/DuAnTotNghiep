@@ -44,7 +44,6 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.sanctum');
 Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->middleware('auth.sanctum');
-
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
@@ -264,8 +263,8 @@ Route::middleware('auth.sanctum')
                 Route::put('lien-he/{id}', [AdminLienHeController::class, 'phanHoi'])->name('lienhe.phanhoi');
             });
 
-        //Vai trò auth.checkrole
-        Route::middleware(['auth.checkrole'])
+        //Vai trò auth.checkrole'auth.checkrole'
+        Route::middleware([])
             ->group(function () {
                 Route::apiResource('vaitro', VaiTroController::class)->except('show');
                 Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen'])->withoutMiddleware('auth.checkrole');
@@ -355,4 +354,3 @@ Route::middleware('auth.sanctum')
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
     });
-
