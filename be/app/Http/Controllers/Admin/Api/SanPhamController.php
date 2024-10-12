@@ -61,12 +61,12 @@ class SanPhamController extends Controller
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
-            'bien_the.*.chi_phi_san_xuat' => 'required|integer',
-            'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.gia_ban' => 'required|integer|gt:bien_the.*.chi_phi_san_xuat',
+            'bien_the.*.chi_phi_san_xuat' => 'nullable|integer',
+            'bien_the.*.so_luong_bien_the' => 'nullable|integer',
+            'bien_the.*.gia_ban' => 'nullable|integer|gt:bien_the.*.chi_phi_san_xuat',
             'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban',
-            'bien_the.*.anh' => 'required|array',
-            'bien_the.*.anh.*' => 'required|string'
+            'bien_the.*.anh' => 'nullable|array',
+            'bien_the.*.anh.*' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -176,12 +176,12 @@ class SanPhamController extends Controller
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
-            'bien_the.*.chi_phi_san_xuat' => 'required|integer',
-            'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.gia_ban' => 'required|integer|gt:bien_the.*.chi_phi_san_xuat',
+            'bien_the.*.chi_phi_san_xuat' => 'nullable|integer',
+            'bien_the.*.so_luong_bien_the' => 'nullable|integer',
+            'bien_the.*.gia_ban' => 'nullable|integer|gt:bien_the.*.chi_phi_san_xuat',
             'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
-            'bien_the.*.anh' => 'required|array',
-            'bien_the.*.anh.*' => 'required|string'
+            'bien_the.*.anh' => 'nullable|array',
+            'bien_the.*.anh.*' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {

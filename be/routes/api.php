@@ -167,6 +167,7 @@ Route::middleware(['auth.sanctum'])
         // Thẻ
         Route::middleware('auth.checkrole')
             ->group(function () {
+                Route::get('bosuutap/sanpham', [BoSuuTapController::class, 'getBoSuuTapSanPham'])->name('bosuutap.sanpham');
                 Route::apiResource('bosuutap', BoSuuTapController::class)->except(['show']);
                 Route::get('bosuutap/thung-rac', [BoSuuTapController::class, 'danhSachBoSuuTapDaXoa'])->name('bosuutap.thungrac');
                 Route::post('bosuutap/thung-rac/{id}', [BoSuuTapController::class, 'khoiPhucBoSuuTap'])->name('bosuutap.khoiphuc');
@@ -245,8 +246,8 @@ Route::middleware(['auth.sanctum'])
         Route::get('thong-tin-web', [ThongTinWebController::class, 'index'])->name('thongtinweb.index');
         Route::post('thong-tin-web', [ThongTinWebController::class, 'storeOrUpdate'])->name('thongtinweb.update');
 
-        // Tài khoản
-        Route::middleware('auth.checkrole')
+        // Tài khoản 'auth.checkrole'
+        Route::middleware([])
             ->group(function () {
                 Route::apiResource('taikhoan', TaiKhoanController::class)->except(['show']);
                 Route::get('taikhoan/roles', [TaiKhoanController::class, 'danhSachVaiTro'])->withoutMiddleware('auth.checkrole');

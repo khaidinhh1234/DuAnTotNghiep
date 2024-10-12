@@ -35,6 +35,17 @@ class BoSuuTapController extends Controller
         }
     }
 
+    public function getBoSuuTapSanPham()
+    {
+        $data = BoSuuTap::query()->with('sanPhams')->orderByDesc('id')->get();
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $data
+        ], 200);
+    }
+
     /**
      * Show BoSuuTap form for creating a new resource.
      */

@@ -226,7 +226,7 @@ class VaiTroController extends Controller
                 'ttvc' => 'Trạng thái',
                 'danhmuc' => 'danh mục',
                 'sanpham' => 'sản phẩm',
-                'the' => 'thẻ',
+                'bosuutap' => 'Bộ sưu tập',
                 'vaitro' => 'vai trò',
                 'lienhe' => 'liên hệ',
                 'phanhoi' => 'Phản hồi',
@@ -247,6 +247,7 @@ class VaiTroController extends Controller
                 'bulk-restore' => 'Khôi phục nhiều',
                 'update-tags' => 'Cập nhật tag',
                 'bulk-destroy' => 'Xóa nhiều',
+
             ];
 
             $key = explode('.', $permission);
