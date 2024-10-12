@@ -45,6 +45,7 @@ const Feedback = () => {
         : [...prevKeys, id]
     );
   };
+  
   // Mutation to send replies to API
   const mutation = useMutation({
     mutationFn: async ({
@@ -56,7 +57,7 @@ const Feedback = () => {
     }) => {
       try {
         const response = await instance.put(`/lien-he/${id}`, {
-          noi_dung_phan_hoi,
+          noi_dung_phan_hoi:noi_dung_phan_hoi,
         });
         toast.success("Thành công");
         return response.data;

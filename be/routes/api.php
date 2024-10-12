@@ -37,25 +37,7 @@ use App\Http\Controllers\Client\Api\KhuyenMaiController;
 use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
-use App\Models\LichSuHoatDong;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-Route::middleware('auth.sanctum')->get('/user', function () {
-    return response()->json(['id' => auth()->id(), 'name' => auth()->user()->name]);
-});
 
 // Auth
 Route::post('/register', [AuthController::class, 'register']);
@@ -125,13 +107,8 @@ Route::middleware([])
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
-
-
-//'auth:sanctum', 'auth.checkrole'
-
-//'auth.sanctum', 'auth.checkrole'
+//'auth.sanctum'
 Route::middleware('auth.sanctum')
-
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -306,7 +283,6 @@ Route::middleware('auth.sanctum')
 
             Route::post('/doanh-thu-tuan', [ThongKeDoanhThuController::class, 'doanhThuTheoTuan']);
             Route::post('/doanh-thu-thang', [ThongKeDoanhThuController::class, 'doanhThuTheoThang']);
-
             Route::post('/doanh-thu-quy', [ThongKeDoanhThuController::class, 'doanhThuTheoQuy']);
             Route::post('/doanh-thu-nam', [ThongKeDoanhThuController::class, 'doanhThuTheoNam']);
 
@@ -321,7 +297,8 @@ Route::middleware('auth.sanctum')
             Route::post('/danh-muc/don-hang-bi-huy', [ThongKeDanhMuc::class, 'demDHHuyTheoDanhMuc']);
 
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai'])->name("don-hang-theo-trang-thai.thong-ke");
-            // Thống kê tôngr quan
+
+            // Thống kê tổng quan
             Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
             Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
             Route::post('don-hang/chot',  [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
@@ -331,16 +308,14 @@ Route::middleware('auth.sanctum')
             Route::post('doanh-thu/thanh-toan-off', action: [ThongKeTongQuanController::class, 'thongKeThanhToanOff']);
             Route::post('doanh-so', [ThongKeTongQuanController::class, 'thongKeDoanhSo']);
             Route::post('doanh-thu/tb', [ThongKeTongQuanController::class, 'thongKeDoanhThuTB']);
-
-
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai']);
+          
             // Thống kê tổng quan
             Route::get('don-hang/hoan-hang', [ThongKeDonHangController::class, 'thongKeHoanHang']);
             Route::get('/huy-hang-theo-thang', [ThongKeDonHangController::class, 'thongKeHuyHang']);
 
             Route::get('don-hang/chot',  [ThongKeDonHangController::class, 'thongKeDonHangChot']);
             Route::get('san-pham/ton-kho', [ThongKeSanPham::class, 'thongKeSanPhamTonKho']);
-
 
             // Thống kê tuần tự
             Route::get('/doanh-thu-so-sanh', [ThongKeDoanhThuController::class, 'soSanhDoanhThuThang']);
@@ -380,3 +355,4 @@ Route::middleware('auth.sanctum')
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
     });
+

@@ -1,5 +1,3 @@
-import React from "react";
-
 const ShippingAddress = () => {
   return (
     <>
@@ -37,7 +35,9 @@ const ShippingAddress = () => {
       <div className="my-5">
         <h3 className="title-h3">Chọn địa chỉ giao hàng</h3>
         <span className="text-[13px]">
-        Tôi hoàn toàn yêu thích TopShelfBC; giá cả phải chăng với mọi ngân sách và giao hàng rất nhanh, trực tiếp đến cửa nhà! Tôi giới thiệu họ cho tất cả bạn bè và gia đình của mình cho nhu cầu 420 của họ.
+          Tôi hoàn toàn yêu thích TopShelfBC; giá cả phải chăng với mọi ngân
+          sách và giao hàng rất nhanh, trực tiếp đến cửa nhà! Tôi giới thiệu họ
+          cho tất cả bạn bè và gia đình của mình cho nhu cầu 420 của họ.
         </span>
       </div>
       <div className="grid md:grid-cols-12 lg:grid-cols-6 xl:grid-cols-12 grid-cols-4 xl:gap-8 items-center mb-5">
@@ -47,8 +47,8 @@ const ShippingAddress = () => {
             <input type="checkbox" name="" id="" className="bg-blackL" />
           </div>
           <span className="text-md">
-            FR7V+8CF, Hồng Vũ Thắng Lợi, Khu đô thị, Tp. Sông Công, Thái
-            Nguyên 250000
+            FR7V+8CF, Hồng Vũ Thắng Lợi, Khu đô thị, Tp. Sông Công, Thái Nguyên
+            250000
           </span>
           <div className="flex justify-around gap-3 *:px-12 *:py-1 my-4 *:rounded-lg">
             <button className="bg-slate-200 hover:bg-blackL hover:text-white">
@@ -67,8 +67,8 @@ const ShippingAddress = () => {
             <input type="checkbox" name="" id="" className="bg-blackL" />
           </div>
           <span className="text-md">
-            FR7V+8CF, Hồng Vũ Thắng Lợi, Khu đô thị, Tp. Sông Công, Thái
-            Nguyên 250000
+            FR7V+8CF, Hồng Vũ Thắng Lợi, Khu đô thị, Tp. Sông Công, Thái Nguyên
+            250000
           </span>
           <div className="flex justify-around gap-3 *:px-12 *:py-1 my-4 *:rounded-lg">
             <button className="bg-slate-200 hover:bg-blackL hover:text-white">

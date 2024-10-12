@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
-
-import { Row, Col } from 'antd';
-import { PostTextBox } from './PostTextBox';
+import { Col, Row } from "antd";
+import { PostTextBox } from "./PostTextBox";
 
 const Post = () => {
   // const dispatch = useDispatch();
@@ -9,7 +7,7 @@ const Post = () => {
   //   dispatch(fetchPosts());
   // }, [dispatch]);
 
-//   const getPosts: PostType[] = useSelector((state) => state.userpostsReducer.posts);
+  //   const getPosts: PostType[] = useSelector((state) => state.userpostsReducer.posts);
 
   return (
     <Row gutter={[16, 16]}>

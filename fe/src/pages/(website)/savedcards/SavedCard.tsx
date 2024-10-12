@@ -1,12 +1,11 @@
-import React from 'react'
-import SavedCardPage from './_components/SavedCard'
+import SavedCardPage from "./_components/SavedCard";
 
 const SavedCard = () => {
   return (
     <>
-      <SavedCardPage/>
+      <SavedCardPage />
     </>
-  )
-}
+  );
+};
 
-export default SavedCard
+export default SavedCard;

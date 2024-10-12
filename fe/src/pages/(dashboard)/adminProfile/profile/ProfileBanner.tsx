@@ -1,17 +1,29 @@
 import { Avatar, Button, Card, Row, Col, Typography } from 'antd';
-import { 
-  FacebookFilled, 
-  YoutubeFilled, 
-  TwitterCircleFilled, 
-  UserOutlined 
+import {
+  FacebookFilled,
+  YoutubeFilled,
+  TwitterCircleFilled,
+  UserOutlined,
+  CameraOutlined,
+  CheckCircleOutlined
 } from '@ant-design/icons';
+import { useState } from 'react';
 // import profilecover from 'src/assets/images/backgrounds/profilebg.jpg';
 // import userimg from 'src/assets/images/profile/user-1.jpg';
 // import ProfileTab from './ProfileTab';
+import { Upload } from 'antd';
 
 const { Text, Title } = Typography;
 
 const ProfileBanner = () => {
+  const [avatarImage, setAvatarImage] = useState<string>('');
+
+  const handleAvatarChange = (info: any) => {
+    if (info.file && info.file.originFileObj) {
+      const file = URL.createObjectURL(info.file.originFileObj);
+      setAvatarImage(file);
+    }
+  };
   return (
     <>
       <Card
@@ -59,19 +71,39 @@ const ProfileBanner = () => {
             lg={8}
             className="flex flex-col items-center order-1 lg:order-2"
           >
-            <div className="-mt-20 flex flex-col items-center">
-              <Avatar
-                src='http://localhost:5174/src/assets/images/profile/user-1.jpg'
-                size={110}
-                className="border-4 border-white shadow-lg"
+           <div className="flex justify-center mt-[-70px] relative">
+        <div className="text-center">
+          <div className="relative w-28 h-28 mx-auto rounded-full bg-gradient-to-r">
+            <Avatar
+              src={avatarImage}
+              size={100}
+              className="border-4 border-white"
+            />
+            <Upload
+              showUploadList={false}
+              onChange={handleAvatarChange}
+              className="absolute bottom-0 right-0 "
+            >
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<CameraOutlined />}
+                className="bg-blue-400 hover:bg-blue-500 text-white p-2"
               />
-              <div className="mt-3 text-center">
-                <Title level={5} className="m-0">
-                  Mathew Anderson
-                </Title>
-                <Text type="secondary">Designer</Text>
-              </div>
-            </div>
+            </Upload>
+          </div>
+
+          <div className="mt-2">
+            <Title level={5} className="flex items-center justify-center">
+              Ngô Quốc Toản
+              <CheckCircleOutlined className="ml-2 text-blue-500" />
+            </Title>
+            <Text type="secondary" className="text-gray-500">
+              0983827425
+            </Text>
+          </div>
+        </div>
+      </div>
           </Col>
           {/* Social Buttons and Story Button */}
           <Col

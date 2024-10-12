@@ -1,11 +1,8 @@
-import React from "react";
 import { message } from "antd";
-import axios from "axios";
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import { Navigate } from "react-router-dom"; // Correct import for React Router DOM
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Include styles for toast
-import { useQuery } from "@tanstack/react-query";
 
 import instance from "./../configs/auth";
 

@@ -1,5 +1,4 @@
 import { ellipse, hello } from '@/assets/img'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 const SettingPage = () => {
@@ -18,10 +17,10 @@ const SettingPage = () => {
                           {/* Sidebar */}
                           <div className="lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] lg:h-[524px] rounded-lg">
                               <div className="flex items-center p-5 border-b border-hrBlack">
-                                  <img src={ellipse} alt className="rounded-full md:w-[51px] md:h-[51px]" />
+                                  <img src={ellipse} alt='' className="rounded-full md:w-[51px] md:h-[51px]" />
                                   <div className="px-4 py-2">
                                       <span className='' />
-                                      <img src={hello} className="px-[2px]" alt />
+                                      <img src={hello} className="px-[2px]" alt='' />
                                       <h4 className="font-bold text-lg">Robert Fox</h4>
                                   </div>
                                   <div className="lg:hidden ">
@@ -84,7 +83,7 @@ const SettingPage = () => {
                                       <h4 className="font-bold text-base mb-2">Language</h4>
                                       <p className="text-[#A4A1AA]">Select your language</p>
                                   </div>
-                                  <select name id className="bg-neutral-100 hover:bg-neutral-200 focus:ring-2 focus:ring-blue-500 rounded-md pl-3 py-2 text-sm ">
+                                  <select name='' id='' className="bg-neutral-100 hover:bg-neutral-200 focus:ring-2 focus:ring-blue-500 rounded-md pl-3 py-2 text-sm ">
                                       <option value={1}>English</option>
                                       <option value={2}>Vietnamese</option>
                                       <option value={3}>China</option>

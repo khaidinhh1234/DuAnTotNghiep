@@ -1,27 +1,19 @@
 import instance from "@/configs/admin";
-import { CaretDownOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
-import { Col, Row, Select } from "antd";
-import { Link, useNavigate } from "react-router-dom";
-
-const { Option } = Select;
+import { Link } from "react-router-dom";
 
 const PageTransport = () => {
-  const {
-    data: chodon,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: chodon } = useQuery({
     queryKey: ["tongquan"],
     queryFn: async () => {
-      const res = await instance.get("lay-thong-tin-don");
+      const res = await instance.get("donhang/lay-thong-tin-don");
       return res.data;
     },
   });
   const { data: cholay } = useQuery({
     queryKey: ["tongquan2"],
     queryFn: async () => {
-      const res = await instance.get("lay-thong-tin-van-chuyen");
+      const res = await instance.get("vanchuyen/lay-thong-tin-van-chuyen");
       return res.data;
     },
   });
@@ -35,13 +27,6 @@ const PageTransport = () => {
 
   const giaoThatBai = cholay?.giaoThatBai;
   const giaoThanhCong = cholay?.giaoThanhCong;
-
-  const navigate = useNavigate(); // Sử dụng useNavigate để chuyển trang
-
-  // Hàm xử lý sự kiện chọn ngày
-  const handleDateChange = (value: any) => {
-    console.log("Selected Date:", value);
-  };
 
   return (
     <main className="">
@@ -112,7 +97,8 @@ const PageTransport = () => {
                       </span>
                       <br />
                       <span className="text-xl text-slate-600">
-                        {choThanhToan?.tong_tien.toLocaleString("vi-VN")}đ
+                        {(choThanhToan?.tong_tien ?? 0).toLocaleString("vi-VN")}
+                        đ
                       </span>
                     </div>
                   </Link>{" "}
@@ -218,7 +204,6 @@ const PageTransport = () => {
                     <br />
                     <span className="text-xl text-slate-600">
                       {(giaoThanhCong?.tong_tien ?? 0).toLocaleString("vi-VN")}đ
-                      đ
                     </span>
                   </div>
                   <div className="col-span-1 border p-3 text-center rounded-lg">

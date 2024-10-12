@@ -1,6 +1,4 @@
-import React from "react";
-import { logo, login } from "@/assets/img";
-import { imglogin2 } from "@/assets/img";
+import { imglogin2, logo } from "@/assets/img";
 const ImageSection = () => {
   return (
     <div className="hidden md:flex md:w-1/2  bg-gray-100 relative">

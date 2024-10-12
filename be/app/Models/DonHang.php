@@ -21,8 +21,9 @@ class DonHang extends Model
     const TTDH_DXL = 'Đang xử lý';
     const TTDH_DH = 'Hủy hàng';
     const TTDH_DGH = 'Đang giao hàng';
-    const TTDH_DGTC = 'Giao hàng thành công';
-    const TTDH_GHTB = 'Giao hàng thất bại';
+    const TTDH_CKHCN = 'Chờ khách hàng xác nhận';
+    const TTDH_HTDH = 'Hoàn tất đơn hàng';
+    const TTDH_DHTB = 'Đơn hàng bị từ chối nhân';
     const TTDH_HH = 'Hoàn hàng';
 
     // Trạng thái thanh toán
@@ -40,7 +41,7 @@ class DonHang extends Model
         'dia_chi_nguoi_dat_hang',
         'ma_giam_gia',
         'so_tien_giam_gia',
-        'ngay_giao_hang_thanh_cong',
+        'ngay_hoan_thanh_don',
         'trang_thai_thanh_toan',
         'trang_thai_van_chuyen'
     ];

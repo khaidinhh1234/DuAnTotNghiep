@@ -12,7 +12,6 @@ class ThongKeTongQuanController extends Controller
 {
     public function thongKeDonHangChot(Request $request)
     {
-
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
 
@@ -20,7 +19,6 @@ class ThongKeTongQuanController extends Controller
 
         $donHangChot = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
-
             ->get();
 
         $tongTien = 0;
@@ -32,13 +30,11 @@ class ThongKeTongQuanController extends Controller
             });
         });
 
-
         $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
         $donHangChotTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
-
             ->get();
 
         $tongTienTruoc = 0;
@@ -94,14 +90,12 @@ class ThongKeTongQuanController extends Controller
             });
         });
 
-
         $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
         $donHangHoanTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
             ->where('trang_thai_don_hang', DonHang::TTDH_HH)
             ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
-
             ->get();
 
         $tongTienHoanTruoc = 0;
@@ -133,6 +127,7 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_tien_hoan' => $tiLeTangGiamTienHoanFormatted,
         ]);
     }
+  
     public function thongKeSanPhamTonKho(Request $request)
     {
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
@@ -301,7 +296,6 @@ class ThongKeTongQuanController extends Controller
         ]);
     }
 
-
     public function thongKeThanhToanOff(Request $request)
     {
         // Lấy khoảng thời gian bắt đầu và kết thúc từ request
@@ -348,6 +342,56 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_doanh_thu' => $tiLeTangGiamDoanhThuFormatted
         ]);
     }
+
+  
+    public function thongKeThanhToanKhiNhanHang(Request $request)
+
+    {
+        // Lấy khoảng thời gian bắt đầu và kết thúc từ request
+        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+
+        // Lấy tổng doanh thu và số lượng đơn hàng với phương thức thanh toán là Thanh toán khi nhận hàng
+        $donHangs = DonHang::where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
+            ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+            ->get();
+
+        // Tính tổng doanh thu
+        $tongDoanhThu = $donHangs->sum('tong_tien_don_hang');
+
+        // Đếm số lượng đơn hàng
+        $soDonHang = $donHangs->count();
+
+        // Tính toán dữ liệu cho khoảng thời gian trước đó
+        $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
+        $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
+        $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
+
+        // Lấy tổng doanh thu và số lượng đơn hàng trong khoảng thời gian trước đó
+        $donHangsTruoc = DonHang::where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
+            ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
+            ->get();
+
+        $tongDoanhThuTruoc = $donHangsTruoc->sum('tong_tien_don_hang');
+        $soDonHangTruoc = $donHangsTruoc->count();
+
+        // Tính tỷ lệ tăng giảm doanh thu
+        $tiLeTangGiamDoanhThu = $tongDoanhThuTruoc > 0
+            ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
+            : ($tongDoanhThu > 0 ? 100 : 0);
+
+        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
+
+        // Trả về kết quả
+        return response()->json([
+            'tong_doanh_thu' => $tongDoanhThu,
+            'so_don_hang' => $soDonHang,
+            'tong_doanh_thu_truoc' => $tongDoanhThuTruoc,
+            'so_don_hang_truoc' => $soDonHangTruoc,
+            'ti_le_tang_giam_doanh_thu' => $tiLeTangGiamDoanhThuFormatted
+        ]);
+    }
+
     public function thongKeDoanhSo(Request $request)
     {
         // Lấy khoảng thời gian bắt đầu và kết thúc từ request
@@ -507,7 +551,4 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_doanh_thu_tb' => $tiLeTangGiamDoanhThuTB,
         ]);
     }
-
-
-
 }

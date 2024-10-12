@@ -1,13 +1,13 @@
-import { PageContainer } from '@ant-design/pro-layout'; // or 'antd'
-import { Row, Col } from 'antd';
-import ProfileBanner from '../profile/ProfileBanner';
-import IntroCard from '../profile/IntroCard';
-import PhotosCard from '../profile/PhotosCard';
-import Post from '../profile/Post';
+import { PageContainer } from "@ant-design/pro-layout"; // or 'antd'
+import { Row, Col } from "antd";
+import ProfileBanner from "../profile/ProfileBanner";
+import IntroCard from "../profile/IntroCard";
+import PhotosCard from "../profile/PhotosCard";
+import Post from "../profile/Post";
 
 const AdminProfile = () => {
   return (
-    <PageContainer >
+    <PageContainer>
       <div className="container mx-auto p-4">
         <Row gutter={[16, 16]} className="space-y-3">
           <Col span={24} className="w-full">
@@ -21,14 +21,14 @@ const AdminProfile = () => {
                 <IntroCard />
               </Col>
               <Col span={24}>
-                <PhotosCard />
+                {/* <PhotosCard /> */}
               </Col>
             </Row>
           </Col>
 
           {/* Thẻ bài viết */}
           <Col xs={24} lg={16}>
-            <Post />
+            {/* <Post /> */}
           </Col>
         </Row>
       </div>
