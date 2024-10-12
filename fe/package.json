@@ -91,7 +91,11 @@
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/react-highlight-words": "^0.20.0",
     "@types/react-slick": "^0.23.13",
+<<<<<<< HEAD
+    "@types/react-webcam": "^1.1.0",
+=======
     "@types/react-webcam": "^3.0.0",
+>>>>>>> 7ac775f4a66d2f379eb76eceea0bfed845dfd0d3
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
