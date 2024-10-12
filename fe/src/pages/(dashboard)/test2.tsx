@@ -18,7 +18,7 @@ const AllCameras = () => {
     }
   }, [webcamRef]);
 
-  const onUserMedia = (e) => {
+  const onUserMedia = (e: any) => {
     console.log(e);
   };
   console.log(url, "url");
