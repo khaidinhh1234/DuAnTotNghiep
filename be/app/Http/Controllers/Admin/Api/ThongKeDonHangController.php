@@ -169,7 +169,7 @@ class ThongKeDonHangController extends Controller
             $soLuongDaXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXH)->count();
             $soLuongDangXuLy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
             $soLuongDangGiaoHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGH)->count();
-            $soLuongDaGiaoHangThanhCong = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DGTC)->count();
+            $soLuongDaGiaoHangThanhCong = DonHang::where('trang_thai_don_hang', operator: DonHang::TTDH_HTDH)->count();
             $soLuongDaHuyHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)->count();
             $soLuongHoanHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
 
