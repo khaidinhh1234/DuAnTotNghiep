@@ -51,6 +51,6 @@ class SanPham extends Model
 
     public function khachHangYeuThich()
     {
-        return $this->belongsToMany(User::class,  'san_pham_yeu_thich', 'san_pham_id', 'user_id');
+        return $this->belongsToMany(User::class, 'san_pham_yeu_thich', 'san_pham_id', 'user_id');
     }
 }
