@@ -7,6 +7,7 @@ use App\Models\ChuongTrinhUuDai;
 use App\Models\MaKhuyenMai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class KhuyenMaiController extends Controller
 {
@@ -79,6 +80,10 @@ class KhuyenMaiController extends Controller
     {
         $user = Auth::user();
 
+        if (!$user) {
+            return response()->json(['message' => 'Bạn cần đăng nhập để xem mã khuyến mãi.'], 401);
+        }
+
         $hangThanhVien = $user->hangThanhVien;
 
         $maKhuyenMais = MaKhuyenMai::whereHas('hangThanhViens', function ($query) use ($hangThanhVien) {
@@ -89,25 +94,53 @@ class KhuyenMaiController extends Controller
             ->where('ngay_ket_thuc', '>=', now())
             ->get();
 
+        foreach ($maKhuyenMais as $maKhuyenMai) {
+            // Kiểm tra xem người dùng có trong danh sách đã thu thập không
+            $maKhuyenMai->da_thu_thap = $maKhuyenMai->user()->where('id', $user->id)->exists() ? 1 : 0;
+        }
+
         return response()->json($maKhuyenMais);
     }
 
+
     public function thuThapMaKhuyenMai($maCode)
     {
-        $maKhuyenMai = MaKhuyenMai::where('ma_code', $maCode)->firstOrFail();
+        try {
+            $maKhuyenMai = MaKhuyenMai::where('ma_code', $maCode)->firstOrFail();
 
-        if ($maKhuyenMai->trang_thai == 0) {
-            return response()->json(['message' => 'Mã khuyến mãi này đã hết hạn sử dụng.'], 400);
+            if ($maKhuyenMai->trang_thai == 0) {
+                return response()->json(['message' => 'Mã khuyến mãi này đã hết hạn sử dụng.'], 400);
+            }
+
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json(['message' => 'Bạn cần đăng nhập để áp dụng mã khuyến mãi.'], 401);
+            }
+
+            $isMemberEligible = $maKhuyenMai->hangThanhViens()->where('id', $user->hang_thanh_vien_id)->exists();
+
+            if (!$isMemberEligible) {
+                return response()->json(['message' => 'Bạn không thuộc hạng thành viên áp dụng cho mã khuyến mãi này.'], 403);
+            }
+
+            DB::beginTransaction();
+
+            $maKhuyenMai->increment('so_luong_da_su_dung');
+            $maKhuyenMai->user()->syncWithoutDetaching($user->id);
+
+            if ($maKhuyenMai->so_luong_da_su_dung >= $maKhuyenMai->so_luong) {
+                $maKhuyenMai->update(['trang_thai' => 0]);
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => 'Thu thập mã khuyến mãi thành công.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Có lỗi xảy ra khi xử lý mã khuyến mãi.', 'error' => $e->getMessage()], 400);
         }
-
-        $maKhuyenMai->increment('so_luong_da_su_dung');
-
-        if ($maKhuyenMai->so_luong_da_su_dung >= $maKhuyenMai->so_luong) {
-            $maKhuyenMai->update(['trang_thai' => 0]);
-        }
-
-        return response()->json(['message' => 'Mã khuyến mãi đã được áp dụng thành công.']);
     }
+
 
 
 
