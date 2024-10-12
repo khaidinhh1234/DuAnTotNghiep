@@ -54,8 +54,8 @@ class ThongKeTongQuanController extends Controller
             ? (($tongTien - $tongTienTruoc) / $tongTienTruoc) * 100
             : ($tongTien > 0 ? 100 : 0);
 
-        $tiLeTangGiamDonHangFormatted = $tiLeTangGiamDonHang >= 0 ? '+' . $tiLeTangGiamDonHang : $tiLeTangGiamDonHang;
-        $tiLeTangGiamTienFormatted = $tiLeTangGiamTien >= 0 ? '+' . $tiLeTangGiamTien : $tiLeTangGiamTien;
+        $tiLeTangGiamDonHangFormatted = $tiLeTangGiamDonHang >= 0 ? '+ ' . $tiLeTangGiamDonHang : $tiLeTangGiamDonHang;
+        $tiLeTangGiamTienFormatted = $tiLeTangGiamTien >= 0 ? '+ ' . $tiLeTangGiamTien : $tiLeTangGiamTien;
 
         return response()->json([
             'tong_so_luong_don_hang' => $tongSoLuongDonHang,
@@ -115,8 +115,8 @@ class ThongKeTongQuanController extends Controller
             ? (($tongTienHoan - $tongTienHoanTruoc) / $tongTienHoanTruoc) * 100
             : ($tongTienHoan > 0 ? 100 : 0);
 
-        $tiLeTangGiamDonHangHoanFormatted = $tiLeTangGiamDonHangHoan >= 0 ? '+' . $tiLeTangGiamDonHangHoan : $tiLeTangGiamDonHangHoan;
-        $tiLeTangGiamTienHoanFormatted = $tiLeTangGiamTienHoan >= 0 ? '+' . $tiLeTangGiamTienHoan : $tiLeTangGiamTienHoan;
+        $tiLeTangGiamDonHangHoanFormatted = $tiLeTangGiamDonHangHoan >= 0 ? '+ ' . $tiLeTangGiamDonHangHoan : $tiLeTangGiamDonHangHoan;
+        $tiLeTangGiamTienHoanFormatted = $tiLeTangGiamTienHoan >= 0 ? '+ ' . $tiLeTangGiamTienHoan : $tiLeTangGiamTienHoan;
 
         return response()->json([
             'tong_so_luong_don_hang_hoan' => $tongSoLuongDonHangHoan,
@@ -184,7 +184,7 @@ class ThongKeTongQuanController extends Controller
             ? (($tongSoLuongTonKhoTatCaSanPham - $tongSoLuongTonKhoTatCaSanPhamTruoc) / $tongSoLuongTonKhoTatCaSanPhamTruoc) * 100
             : ($tongSoLuongTonKhoTatCaSanPham > 0 ? 100 : 0);
 
-        $tiLeTangGiamTonKhoFormatted = $tiLeTangGiamTonKho >= 0 ? '+' . $tiLeTangGiamTonKho : $tiLeTangGiamTonKho;
+        $tiLeTangGiamTonKhoFormatted = $tiLeTangGiamTonKho >= 0 ? '+ ' . $tiLeTangGiamTonKho : $tiLeTangGiamTonKho;
 
         return response()->json([
             'tong_so_luong_ton_kho' => $tongSoLuongTonKhoTatCaSanPham,
@@ -231,7 +231,7 @@ class ThongKeTongQuanController extends Controller
             ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
             : ($tongDoanhThu > 0 ? 100 : 0);
 
-        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
+        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+ ' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
 
         // Trả về kết quả
         return response()->json([
@@ -284,7 +284,7 @@ class ThongKeTongQuanController extends Controller
             ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
             : ($tongDoanhThu > 0 ? 100 : 0);
 
-        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
+        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+ ' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
 
         // Trả về kết quả
         return response()->json([
@@ -331,7 +331,7 @@ class ThongKeTongQuanController extends Controller
             ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
             : ($tongDoanhThu > 0 ? 100 : 0);
 
-        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
+        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+ ' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
 
         // Trả về kết quả
         return response()->json([
@@ -380,7 +380,7 @@ class ThongKeTongQuanController extends Controller
             ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
             : ($tongDoanhThu > 0 ? 100 : 0);
 
-        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
+        $tiLeTangGiamDoanhThuFormatted = $tiLeTangGiamDoanhThu >= 0 ? '+ ' . $tiLeTangGiamDoanhThu : $tiLeTangGiamDoanhThu;
 
         // Trả về kết quả
         return response()->json([

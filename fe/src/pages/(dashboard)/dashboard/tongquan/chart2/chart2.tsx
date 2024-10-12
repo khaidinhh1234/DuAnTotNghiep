@@ -1,11 +1,21 @@
+import instance from "@/configs/admin";
 import { ArrowDownOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
 import { Card, Statistic } from "antd";
 import CountUp from "react-countup";
 const Chart2 = () => {
+  const { data } = useQuery({
+    queryKey: ["chart1"],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/don-hang/chot");
+      return response.data;
+    },
+  });
   const formatter: StatisticProps["formatter"] = (value: any) => (
     <CountUp end={value as number} separator="," />
   );
+  console.log(data);
   return (
     <Card className="shadow-md px-1 rounded-lg bg-white flex flex-col">
       <div className="flex items-center mb-2">
@@ -22,7 +32,7 @@ const Chart2 = () => {
             <span className="text-2xl font-bold text-orange-700">
               {" "}
               <Statistic
-                value={145622234}
+                value={data?.tong_tien || 0}
                 formatter={formatter}
                 suffix="đ"
                 valueStyle={{ color: "#FF6600" }}
@@ -31,7 +41,9 @@ const Chart2 = () => {
           </div>
           <div className="flex items-center mt-1">
             <ArrowDownOutlined className="text-red-500" />
-            <span className="text-red-500 ml-1 font-medium">- 89,09 %</span>
+            <span className="text-red-500 ml-1 font-medium">
+              {data?.ti_le_tang_giam_tien || 0} %
+            </span>
           </div>
         </div>
         <div>
@@ -39,12 +51,17 @@ const Chart2 = () => {
             Số lượng đơn hàng: <br />
             <span className="text-2xl font-bold text-black">
               {" "}
-              <Statistic value={2234} formatter={formatter} />
+              <Statistic
+                value={data?.tong_so_luong_don_hang || 0}
+                formatter={formatter}
+              />
             </span>
           </div>
           <div className="flex items-center mt-1">
             <i className="fa-solid fa-arrow-up text-green-500"></i>
-            <span className="text-green-500 ml-1  font-medium">- 89,09 %</span>
+            <span className="text-green-500 ml-1  font-medium">
+              {data?.ti_le_tang_giam_don_hang || 0} %
+            </span>
           </div>
         </div>
       </div>

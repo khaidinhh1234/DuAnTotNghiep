@@ -1,7 +1,17 @@
+import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
 import { Card, Statistic } from "antd";
 import CountUp from "react-countup";
 const Chart1 = () => {
+  const { data } = useQuery({
+    queryKey: ["chart1"],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/doanh-thu/tong");
+      return response.data;
+    },
+  });
+  // console.log(data);
   const formatter: StatisticProps["formatter"] = (value: any) => (
     <CountUp end={value as number} separator="," />
   );
@@ -19,7 +29,7 @@ const Chart1 = () => {
             <div className="text-black font-bold text-md">
               {" "}
               <Statistic
-                value={1456234}
+                value={data?.doanh_thu || 0}
                 formatter={formatter}
                 suffix="đ"
                 valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
@@ -31,7 +41,7 @@ const Chart1 = () => {
             <div className="text-black text-lg font-semibold">
               {" "}
               <Statistic
-                value={234}
+                value={data?.tong_so_luong_don_hang || 0}
                 formatter={formatter}
                 valueStyle={{ fontSize: "17px" }} // Giảm font size ở đây
               />
