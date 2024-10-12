@@ -12,7 +12,6 @@ use App\Models\VanChuyen;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DonHangController extends Controller
@@ -175,12 +174,12 @@ class DonHangController extends Controller
                     $query->where('ten_vai_tro', 'Người giao hàng');
                 })->get();
 
-                if ($donHang->trang_thai_don_hang === DonHang::TTDH_DGH || $donHang->trang_thai_don_hang === DonHang::TTDH_DGTC) {
+                if ($donHang->trang_thai_don_hang === DonHang::TTDH_DGH || $donHang->trang_thai_don_hang === DonHang::TTDH_CKHCN) {
                     if ($request->trang_thai_don_hang === DonHang::TTDH_DH) {
                         $mess = 'Không thể hủy đơn hàng khi đơn hàng đang được giao hoặc đã giao thành công.';
                     }
 
-                    if ($donHang->trang_thai_don_hang === DonHang::TTDH_DGTC && $request->trang_thai_don_hang === DonHang::TTDH_HH) {
+                    if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH && $request->trang_thai_don_hang === DonHang::TTDH_HH) {
                         $donHang->update([
                             'trang_thai_don_hang' => $request->trang_thai_don_hang,
                         ]);
@@ -192,8 +191,9 @@ class DonHangController extends Controller
                     DonHang::TTDH_CXH => [DonHang::TTDH_DXH, DonHang::TTDH_DH],
                     DonHang::TTDH_DXH => [DonHang::TTDH_DXL, DonHang::TTDH_DH],
                     DonHang::TTDH_DXL => [DonHang::TTDH_DGH, DonHang::TTDH_DH],
-                    DonHang::TTDH_DGH => [DonHang::TTDH_DGTC],
-                    DonHang::TTDH_DGTC => [DonHang::TTDH_HH]
+                    DonHang::TTDH_DGH => [DonHang::TTDH_CKHCN, DonHang::TTDH_DHTB],
+                    DonHang::TTDH_CKHCN => [DonHang::TTDH_HTDH],
+                    DonHang::TTDH_HTDH => [DonHang::TTDH_HH],
                 ];
 
                 if (

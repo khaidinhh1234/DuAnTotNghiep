@@ -170,21 +170,22 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 404);
             }
 
-            $ngayBatDau = Carbon::parse($uuDai->ngay_bat_dau);
+            $ngayKetThuc = Carbon::parse($uuDai->ngay_ket_thuc);
             $ngayHienTai = Carbon::now();
 
-            if ($ngayHienTai->isPast($ngayBatDau)) {
+            // Chỉ không cho phép cập nhật nếu ngày hiện tại đã vượt qua ngày kết thúc
+            if ($ngayHienTai->greaterThan($ngayKetThuc)) {
                 return response()->json([
                     'status' => false,
                     'status_code' => 400,
-                    'message' => 'Không thể cập nhật chương trình ưu đãi vì ngày bắt đầu đã đến.',
+                    'message' => 'Không thể cập nhật chương trình ưu đãi vì ngày kết thúc đã qua.',
                 ], 400);
             }
 
             $validator = Validator::make($request->all(), [
                 'ten_uu_dai' => 'required|string|max:255',
                 'duong_dan_anh' => 'required|string',
-                'ngay_hien_thi' => 'required|date|before_or_equal:ngay_bat_dau',
+                'ngay_hien_thi' => 'required|date|before_or_equal:' . $request->ngay_bat_dau,
                 'mo_ta' => 'required|string',
                 'ngay_bat_dau' => 'required|date',
                 'ngay_ket_thuc' => 'required|date|after:ngay_bat_dau',
@@ -202,12 +203,19 @@ class ChuongTrinhUuDaiController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
+
             $dataUuDai = $request->except('san_pham');
-            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai']) . '-' . Carbon::now()->timestamp;
+            $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai'] ?? 'uu-dai') . '-' . Carbon::now()->timestamp;
+
             DB::beginTransaction();
             $uuDai->update($dataUuDai);
-            $uuDai->sanPhams()->sync($request->san_pham);
+
+            if ($request->has('san_pham')) {
+                $uuDai->sanPhams()->sync($request->san_pham);
+            }
+
             DB::commit();
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -215,6 +223,8 @@ class ChuongTrinhUuDaiController extends Controller
                 'data' => $uuDai,
             ], 200);
         } catch (\Exception $e) {
+            Log::error('Error updating promotion: ', ['error' => $e->getMessage()]);
+
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -223,6 +233,7 @@ class ChuongTrinhUuDaiController extends Controller
             ], 500);
         }
     }
+
 
 
 

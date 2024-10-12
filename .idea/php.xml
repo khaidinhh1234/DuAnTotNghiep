@@ -69,7 +69,6 @@
       <path value="$PROJECT_DIR$/be/vendor/symfony/error-handler" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/event-dispatcher-contracts" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/polyfill-ctype" />
-      <path value="$PROJECT_DIR$/be/vendor/symfony/polyfill-php72" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/mailer" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/mime" />
       <path value="$PROJECT_DIR$/be/vendor/symfony/polyfill-intl-normalizer" />

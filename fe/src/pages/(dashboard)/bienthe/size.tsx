@@ -2,8 +2,13 @@ import { IColor } from "@/common/types/product";
 import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message, Spin } from "antd";
+<<<<<<< HEAD
 import {  Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+=======
+import { useEffect, useState } from "react";
+import {  Link, useNavigate, useParams } from "react-router-dom";
+>>>>>>> 7ac775f4a66d2f379eb76eceea0bfed845dfd0d3
 
 const getSizeTypeDisplay = (loaiKichThuoc: string): string => {
   switch (loaiKichThuoc) {
@@ -127,7 +132,7 @@ const Size = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-            <div className="flex items-center">
+      <div className="flex items-center">
         <h1 className="md:text-base">
           Quản trị / Biến thể /
           <span className="font-semibold px-px"> Cập nhật kích thước</span>
