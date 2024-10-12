@@ -188,8 +188,16 @@ const Detail = ({ record }: any) => {
                       : record.trang_thai_don_hang === "Đang giao hàng"
                         ? "text-purple-500" // Đang giao hàng: màu tím
                         : record.trang_thai_don_hang ===
-                          "Đã giao hàng thành công"
+                          "Hoàn tất đơn hàng"
                           ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
+                          : record.trang_thai_don_hang === "Chờ khách hàng xác nhận"
+                          ? "bg-pink-500"
+                          :record.trang_thai_don_hang === "Đơn hàng bị từ chối nhan"
+                          ? "bg-red-500"
+                          : record.trang_thai_don_hang === "Hủy hàng"
+                          ? "bg-red-500"
+                          : record.trang_thai_don_hang === "Hoàn hàng"
+                          ? "bg-green-500"
                           : "text-red-500" // Các trạng thái khác: màu đỏ
                   }`}
               >
@@ -203,8 +211,16 @@ const Detail = ({ record }: any) => {
                         : record.trang_thai_don_hang === "Đang giao hàng"
                           ? "bg-purple-500" // Đang giao hàng: màu tím
                           : record.trang_thai_don_hang ===
-                            "Giao hàng thành công"
+                            "Hoàn tất đơn hàng"
                             ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
+                            :record.trang_thai_don_hang === "Chờ khách hàng xác nhận"
+                            ? "bg-pink-500" // Ch�� khách hàng xác nhận: màu tím
+                            :record.trang_thai_don_hang === "Đơn hàng bị từ chối nhan"
+                            ? "bg-red-500" // Đơn hàng bị từ chối nhan: màu đ��
+                            :record.trang_thai_don_hang === "Hủy hàng"
+                            ? "bg-red-500" // Hủy hàng: màu đ��
+                            : record.trang_thai_don_hang === "Hoàn hàng"
+                            ? "bg-green-500" // Hoàn hàng: màu xanh lá
                             : "bg-red-500" // Các trạng thái khác: màu đỏ
                     } text-white px-2 py-1 font-bold rounded-lg`}
                 >
@@ -214,11 +230,19 @@ const Detail = ({ record }: any) => {
                       ? "Đã xác nhận" // Đã xác nhận: màu cam đậm
                       : record.trang_thai_don_hang === "Đang xử lý"
                         ? "Chờ lấy hàng" // Đang xử lý: màu xanh dương
-                        : record.trang_thai_don_hang === "Đang giao hàng"
-                          ? "Đang giao hàng" // Đang giao hàng: màu tím
+                        : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
+                          ? "Hoàn tất đơn hàng" // Đang giao hàng: màu tím
                           : record.trang_thai_don_hang ===
-                            "Giao hàng thành công"
-                            ? "Giao hàng thành công" // Đã giao hàng thành công: màu xanh lá
+                            "Hoàn tất đơn hàng"
+                            ? "Hoàn tất đơn hàng" // Đã giao hàng thành công: màu xanh lá
+                            :record.trang_thai_don_hang === "Chờ khách hàng xác nhận"
+                            ? "Chờ khách hàng xác nhận" // Chờ khách hàng xác nhận: màu tím
+                            :record.trang_thai_don_hang === "Đơn hàng bị từ chối nhan"
+                            ? "Đơn hàng bị từ chối nhan" // Đơn hàng bị từ chối nhan: màu đ��
+                            :record.trang_thai_don_hang === "Hủy hàng"
+                            ? "Hủy hàng" // Hủy hàng: màu đ��
+                            :record.trang_thai_don_hang === "Hoàn hàng"
+                            ? "Hoàn hàng" // Hoàn hàng: màu xanh lá
                             : "Đã hủy"}
                 </div>
               </div>
@@ -323,7 +347,15 @@ const Detail = ({ record }: any) => {
                                     "Đang giao hàng"
                                     ? "bg-purple-500"
                                     : record.trang_thai_don_hang ==
-                                      "Giao hàng thành công"
+                                      "Hoàn tất đơn hàng"
+                                      ? "bg-green-500"
+                                      : record.trang_thai_don_hang == "Chờ khách hàng xác nhận"
+                                      ? "bg-pink-500"
+                                      :record.trang_thai_don_hang == "Đơn hàng bị từ chối nhan"
+                                      ? "bg-red-500"
+                                      :record.trang_thai_don_hang == "Hủy hàng"
+                                      ? "bg-red-500"
+                                      :record.trang_thai_don_hang == "Hoàn hàng"
                                       ? "bg-green-500"
                                       : "bg-red-500"
                               }
@@ -340,9 +372,18 @@ const Detail = ({ record }: any) => {
                                     "Đang giao hàng"
                                     ? "Đang giao hàng"
                                     : record.trang_thai_don_hang ==
-                                      "Giao hàng thành công"
-                                      ? "Giao hàng thành công"
-                                      : "Đã hủy"}
+                                      "Hoàn tất đơn hàng"
+                                      ? "Hoàn tất đơn hàng"
+                                    : record.trang_thai_don_hang == "Chờ khách hàng xác nhận"
+                                    ? "Chờ khách hàng xác nhận"  
+                                    : record.trang_thai_don_hang == "Đơn hàng bị từ chối nhan"
+                                     ? "Đơn hàng bị từ chối nhan"
+                                    : record.trang_thai_don_hang == "Hủy hàng"
+                                     ? "Hủy hàng"
+                                    : record.trang_thai_don_hang == "Hoàn hàng"
+                                     ? "Hoàn hàng"
+                                     : "Đã hủy"
+                                    }
                           </span>
                         </div>
                         <div className="flex justify-between">
@@ -468,9 +509,9 @@ const Detail = ({ record }: any) => {
                   <span className="w-full py-1 px-2 text-base font-medium text-purple-500 border-b-2 border-purple-500 hover:text-purple-600 hover:border-purple-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     Đang giao hàng
                   </span>
-                ) : record.trang_thai_don_hang === "Giao hàng thành công" ? (
+                ) : record.trang_thai_don_hang === "Hoàn tất đơn hàng" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-green-500 border-b-2 border-green-500 hover:text-green-600 hover:border-green-600 transition-all duration-300 ease-in-out cursor-default text-center">
-                    Giao hàng thành công
+                    Hoàn tất đơn hàng
                   </span>
                 ) : (
                   <span className="w-full py-1 px-2 text-base font-medium text-red-500 border-b-2 border-red-500 hover:text-red-600 hover:border-red-600 transition-all duration-300 ease-in-out cursor-default text-center">
@@ -522,7 +563,7 @@ const Detail = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg font-semibold mb-1">
                 Đánh giá của khách hàng
               </h5>
-              {record.trang_thai_don_hang === "Giao hàng thành công" && (
+              {record.trang_thai_don_hang === "Hoàn tất đơn hàng" && (
                 <>
                   {data?.data?.don_hang?.danh_gias?.length > 0 ? (
                     data.data.don_hang.danh_gias.map((item: any, index: number) => (

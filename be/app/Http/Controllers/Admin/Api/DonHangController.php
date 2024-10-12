@@ -192,8 +192,8 @@ class DonHangController extends Controller
                     DonHang::TTDH_CXH => [DonHang::TTDH_DXH, DonHang::TTDH_DH],
                     DonHang::TTDH_DXH => [DonHang::TTDH_DXL, DonHang::TTDH_DH],
                     DonHang::TTDH_DXL => [DonHang::TTDH_DGH, DonHang::TTDH_DH],
-                    DonHang::TTDH_DGH => [DonHang::TTDH_DGTC],
-                    DonHang::TTDH_DGTC => [DonHang::TTDH_HH]
+                    DonHang::TTDH_DGH => [DonHang::],
+                    DonHang:: => [DonHang::TTDH_HH]
                 ];
 
                 if (
