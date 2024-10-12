@@ -788,7 +788,7 @@ const ProductsAdmin: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">Danh sách sản phẩm</h1>
         <div className="flex gap-2">
-          <Link to="/admin/products/add" className="mr-1">
+          <Link to="/admin/products/addd" className="mr-1">
             <Button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
               Thêm sản phẩm

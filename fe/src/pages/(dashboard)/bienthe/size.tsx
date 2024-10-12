@@ -2,13 +2,8 @@ import { IColor } from "@/common/types/product";
 import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message, Spin } from "antd";
-<<<<<<< HEAD
 import {  Link, useNavigate, useParams } from "react-router-dom";
-import instance from "@/configs/admin";
-=======
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
->>>>>>> b161f0ce256b6db55be2919b9cac64d07b2329b4
 
 const getSizeTypeDisplay = (loaiKichThuoc: string): string => {
   switch (loaiKichThuoc) {

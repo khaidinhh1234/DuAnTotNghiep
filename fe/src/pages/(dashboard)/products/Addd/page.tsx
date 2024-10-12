@@ -59,6 +59,8 @@ const AddProducts: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const queryClient = useQueryClient();
   const sizeTypeLabels: { [key: string]: string } = {
@@ -259,6 +261,7 @@ const AddProducts: React.FC = () => {
           kich_thuoc_id: kichthuoc?.data.find((s: any) => s.kich_thuoc === combo.size)?.id,
           so_luong_bien_the: parseInt(values[`so_luong_bien_the-${index}`], 10),
           gia_ban: parseFloat(values[`gia_ban-${index}`]),
+          chi_phi_san_xuat: parseFloat(values[`chi_phi_san_xuat-${index}`]),
           gia_khuyen_mai: parseFloat(values[`gia_khuyen_mai-${index}`]),
           anh: fileLists[index]?.map((file: any) => file.response?.url) || [],
         })),
@@ -277,14 +280,14 @@ const AddProducts: React.FC = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / Tin tức /
-          <span className="font-semibold px-px"> Thêm tin tức</span>
+          Quản trị / Sản phẩm /
+          <span className="font-semibold px-px"> Thêm sản phẩm</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Thêm danh mục tin tức</h1>
+        <h1 className="font-semibold md:text-3xl">Thêm sản phẩm</h1>
         <div>
-          <Link to="/admin/news" className="mr-1">
+          <Link to="/admin/products" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
@@ -313,7 +316,7 @@ const AddProducts: React.FC = () => {
           >
             <Input placeholder="Nhập tên sản phẩm" />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label="Danh mục sản phẩm"
             name="danh_muc_id"
             rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
@@ -327,7 +330,27 @@ const AddProducts: React.FC = () => {
                   </Select.Option>
                 ))}
             </Select>
-          </Form.Item>
+          </Form.Item> */}
+          <Form.Item
+  label="Danh mục sản phẩm"
+  name="danh_muc_id"
+  rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
+>
+  <Select placeholder="Vui lòng chọn danh mục" className="w-full">
+    {categoriesData &&
+      categoriesData.data &&
+      categoriesData.data.map((category: any) => (
+        <Select.Option key={category.id} value={category.id}>
+          {category.cha_id === null ? (
+            <span className="font-bold">{category.ten_danh_muc}</span>
+          ) : (
+            <span className="ml-4"> {category.ten_danh_muc}</span>
+          )}
+        </Select.Option>
+      ))}
+  </Select>
+</Form.Item>
+
         </div>{" "}
         <div className="grid grid-cols-1 gap-5">
           <Form.Item
@@ -588,6 +611,8 @@ const AddProducts: React.FC = () => {
                   <th className="p-1 border-r border-gray-300">Kích thước</th>
                   <th className="p-1 border-r border-gray-300">Màu sắc</th>
                   <th className="p-1 border-r border-gray-300">Giá bán</th>
+                  <th className="p-1 border-r border-gray-300">Chi phí sản xuất</th>
+
                   <th className="p-1 border-r border-gray-300">
                     Giá khuyến mãi
                   </th>
@@ -633,6 +658,35 @@ const AddProducts: React.FC = () => {
                           <InputNumber style={{ width: "100%" }} placeholder="Nhập giá bán" />
 
                         </Form.Item>
+                      </td>
+                      <td className="p-1 border-r border-gray-300 w-[20%]">
+                        <Form.Item
+                          name={`chi_phi_san_xuat-${index}`}
+                          className="my-0 px-5"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập chi phí sản xuất!",
+                            },
+                            {
+                              validator: (_, value) => {
+                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
+                                if (value && giaBan && value >= giaBan) {
+                                  return Promise.reject("Chi phí sản xuất  phải nhỏ hơn giá bán!");
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                          style={{ margin: 0 }}
+                        >
+                          <InputNumber
+                            placeholder="0"
+                            style={{ width: "100%" }}
+                            min={0}
+                          />
+                        </Form.Item>
+
                       </td>
                       <td className="p-1 border-r border-gray-300 w-[20%]">
                         <Form.Item
@@ -759,8 +813,16 @@ const AddProducts: React.FC = () => {
         </div>{" "}
         <div className="mt-10">
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={addProductMutation.isPending}>
-              Submit
+          <Button
+  type="primary"
+  htmlType="submit"
+  loading={addProductMutation.isPending}
+  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors ml-12"
+  style={{
+    padding: "14px 50px",
+    marginRight: "190px",
+  }}
+>              Thêm sản phẩm
             </Button>
           </Form.Item>
           
