@@ -5,7 +5,6 @@ import { Button, Form, Input, message, Spin } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-
 const getSizeTypeDisplay = (loaiKichThuoc: string): string => {
   switch (loaiKichThuoc) {
     case "tre_em":
@@ -128,7 +127,7 @@ const Size = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-            <div className="flex items-center">
+      <div className="flex items-center">
         <h1 className="md:text-base">
           Quản trị / Biến thể /
           <span className="font-semibold px-px"> Cập nhật kích thước</span>
