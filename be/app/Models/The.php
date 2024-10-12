@@ -13,6 +13,7 @@ class The extends Model
     protected $fillable = [
         'ten_the',
         'duong_dan',
+        'duong_dan_anh',
     ];
     public function sanPhams()
     {
