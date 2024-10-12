@@ -44,6 +44,7 @@ return [
         ],
 
         'mysql' => [
+            'timezone' => '+07:00', 
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
@@ -64,6 +65,7 @@ return [
         ],
 
         'pgsql' => [
+            
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),

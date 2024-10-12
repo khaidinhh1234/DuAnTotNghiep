@@ -1,59 +1,47 @@
-import React from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import React, { useEffect, useRef } from "react";
+import Webcam from "react-webcam";
+import jsQR from "jsqr";
 
-const modules = {
-  toolbar: [
-    [{ header: [1, 2, false] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
-    ],
-    ["link", "code"],
-    ["clean"],
-  ],
+const videoConstraints = {
+  width: 540,
+  facingMode: "environment",
 };
 
-const formats = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-  "code",
-];
+const AllCameras = () => {
+  const webcamRef = useRef<Webcam>(null);
+  const [url, setUrl] = React.useState<string | null>(null);
 
-interface OnChangeHandler {
-  (e: any): void;
-}
+  const capturePhoto = React.useCallback(async () => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setUrl(imageSrc);
+      console.log(imageSrc);
+    }
+  }, [webcamRef]);
 
-type Props = {
-  value: string;
-  placeholder: string;
-  onChange: OnChangeHandler;
-};
+  const onUserMedia = (e) => {
+    console.log(e);
+  };
 
-const TextEditor: React.FC<Props> = ({ value, onChange, placeholder }) => {
   return (
     <>
-      <ReactQuill
-        theme="snow"
-        value={value || ""}
-        modules={modules}
-        formats={formats}
-        onChange={onChange}
-        placeholder={placeholder}
+      <Webcam
+        ref={webcamRef}
+        audio={true}
+        screenshotFormat="image/jpeg"
+        videoConstraints={videoConstraints}
+        onUserMedia={onUserMedia}
+        className="w-60"
       />
+      <button onClick={capturePhoto}>Capture</button>
+      <button onClick={() => setUrl(null)}>Refresh</button>
+      {url && (
+        <div>
+          <img src={url} alt="Screenshot" className="w-60" />
+        </div>
+      )}
     </>
   );
 };
 
-export default TextEditor;
+export default AllCameras;

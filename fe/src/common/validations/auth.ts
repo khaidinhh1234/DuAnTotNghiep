@@ -6,10 +6,8 @@ export const loginSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Mật khẩu không chính xác" })
-    .max(20, { message: "Không quá 20 ký tự" })
-    .regex(/^[A-Za-zÀ-ỹ]+(?:\s[A-Za-zÀ-ỹ]+)?$/, {
-      message: "Không chứa ký tự đặc biệt, số và dấu cách",
-    }),
+
+    .regex(/^\S+$/, { message: "Mật khẩu không đúng định dạng" }),
 });
 
 export const registerSchema = z
