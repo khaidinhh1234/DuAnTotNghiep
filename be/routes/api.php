@@ -107,9 +107,9 @@ Route::middleware([])
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
-
+// 'auth.sanctum'
 //'auth.sanctum'
-Route::middleware('auth.sanctum')
+Route::middleware('auth.checkrole')
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
