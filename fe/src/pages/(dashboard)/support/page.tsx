@@ -1,7 +1,7 @@
 import instance from '@/configs/admin';
 import { SearchOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Input, InputRef, Modal, Space, Table, TableColumnsType, Tabs } from 'antd';
+import { Button, Input, InputRef, message, Modal, Space, Table, TableColumnsType, Tabs } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import dayjs from 'dayjs';
 import React, { useEffect, useRef, useState } from 'react';
@@ -69,6 +69,7 @@ const PageSupport: React.FC = () => {
       return response.data;
     },
     onSuccess: () => {
+      message.success("Phản hồi thành công");
       queryClient.invalidateQueries({ queryKey: ["phanhoilienhe"] });
     },
     onError: (error) => {
@@ -214,17 +215,17 @@ const PageSupport: React.FC = () => {
         </div>
       ),
     },
-    {
-      title: 'Nội dung',
-      dataIndex: 'noi_dung_lien_he',
-      key: 'noi_dung_lien_he',
-      width: '30%',
-      render: (text: string) => (
-        <span>
-          {text.length > 100 ? `${text.substring(0, 100)}...` : text}
-        </span>
-      ),
-    },
+    // {
+    //   title: 'Nội dung',
+    //   dataIndex: 'noi_dung_lien_he',
+    //   key: 'noi_dung_lien_he',
+    //   width: '30%',
+    //   render: (text: string) => (
+    //     <span>
+    //       {text.length > 100 ? `${text.substring(0, 100)}...` : text}
+    //     </span>
+    //   ),
+    // },
     
     {
       title: 'Trạng thái',
