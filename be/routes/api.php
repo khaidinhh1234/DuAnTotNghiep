@@ -65,6 +65,7 @@ Route::middleware([])
 
         // Client trang chi tiết sản phẩm
         Route::get('/chi-tiet-san-pham/{id}', [TrangChiTietSpController::class, 'chiTietSanPham']);
+        Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']); 
 
         // Lọc sản phẩm theo danh mục
         Route::post('/loc-san-pham-theo-danh-muc', [TrangSanPhamController::class, 'locSanPhamTheoDanhMuc']);
