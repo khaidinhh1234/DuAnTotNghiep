@@ -43,6 +43,10 @@ class VanChuyenController extends Controller
         try {
             $vanChuyen = VanChuyen::query()->with([  
                 'donHang.chiTiets.bienTheSanPham.sanPham',
+                'donHang.chiTiets.bienTheSanPham.mauBienThe',
+                'donHang.chiTiets.bienTheSanPham.kichThuocBienThe',
+                'donHang.chiTiets.bienTheSanPham.anhBienThe',
+
                 'shipper'
             ])->findOrFail($id);
 

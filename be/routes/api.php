@@ -115,7 +115,7 @@ Route::middleware([])
 
 // Admin
 //'auth.sanctum'
-Route::middleware('auth.checkrole')
+Route::middleware(['auth.checkrole','auth.sanctum'])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
