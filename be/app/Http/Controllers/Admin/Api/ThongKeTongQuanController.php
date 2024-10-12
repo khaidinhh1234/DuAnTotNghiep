@@ -12,8 +12,8 @@ class ThongKeTongQuanController extends Controller
 {
     public function thongKeDonHangChot(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
 
         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
 
@@ -76,8 +76,8 @@ class ThongKeTongQuanController extends Controller
 
     public function thongKeHoanHang(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
 
         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
 
@@ -132,8 +132,8 @@ class ThongKeTongQuanController extends Controller
 
     public function thongKeSanPhamTonKho(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
 
         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
 
@@ -194,8 +194,8 @@ class ThongKeTongQuanController extends Controller
 
     public function thongKeDoanhThuTong(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
 
         $trangThaiGiaoHangThanhCong = DonHang::TTDH_HTDH;
 
@@ -232,8 +232,8 @@ class ThongKeTongQuanController extends Controller
 
     public function thongKeThanhToanOnline(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
 
         $donHangs = DonHang::whereIn('phuong_thuc_thanh_toan', [
             DonHang::PTTT_MM,
@@ -275,8 +275,8 @@ class ThongKeTongQuanController extends Controller
 
     public function thongKeThanhToanOff(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
 
         $donHangs = DonHang::where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
             ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
@@ -313,8 +313,8 @@ class ThongKeTongQuanController extends Controller
     public function thongKeDoanhSo(Request $request)
     {
         // Lấy khoảng thời gian bắt đầu và kết thúc từ request
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
 
         // Lấy tất cả các đơn hàng có trạng thái "Giao hàng thành công" trong khoảng thời gian hiện tại
         $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
@@ -407,8 +407,8 @@ class ThongKeTongQuanController extends Controller
     public function thongKeDoanhThuTB(Request $request)
     {
         // Lấy khoảng thời gian bắt đầu và kết thúc từ request
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau'));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc'));
+         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
 
         // Lấy tất cả các đơn hàng có trạng thái "Giao hàng thành công" trong khoảng thời gian hiện tại
         $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
