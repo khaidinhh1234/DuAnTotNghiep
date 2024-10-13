@@ -108,6 +108,8 @@ Route::middleware([])
         Route::post('/gio-hang', [GioHangController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
         Route::put('/gio-hang/{id}', [GioHangController::class, 'update']); // Cập nhật giỏ hàng
         Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+        Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart'])->middleware('auth:sanctum');
+
 
         //Thanh toán
         //Thanh toán Momo
@@ -225,6 +227,7 @@ Route::middleware(['auth.sanctum'])
         Route::middleware('auth.checkrole')
             ->group(function () {
                 Route::apiResource('chuongtrinhuudai', ChuongTrinhUuDaiController::class)->except(['show']);
+                Route::get('chuongtrinhuudai/san-pham-chua-co-uu-dai', [ChuongTrinhUuDaiController::class, 'getSanPhamChuaCoUuDai'])->name('chuongtrinhuudai.sanphamchuaco');
                 Route::get('chuongtrinhuudai/thung-rac', [ChuongTrinhUuDaiController::class, 'danhSachXoaMem'])->name('chuongtrinhuudai.thungrac');
                 Route::post('chuongtrinhuudai/thung-rac/{id}', [ChuongTrinhUuDaiController::class, 'khoiPhucXoaMem'])->name('chuongtrinhuudai.khoiphuc');
                 Route::get('chuongtrinhuudai/{id}', [ChuongTrinhUuDaiController::class, 'show'])->name('chuongtrinhuudai.show');
