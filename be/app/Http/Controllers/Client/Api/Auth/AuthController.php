@@ -72,9 +72,17 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::query()->with('vaiTros')->where('email', $request->email)->first();
+
+        $user->vaiTros->each(function ($role) {
+            $role->makeHidden('quyens');
+        });
 
         $token = $user->createToken(name: 'token')->plainTextToken;
+
+        $quyen = $user->vaiTros->flatMap(function ($vaiTro) {
+            return $vaiTro->quyens->pluck('ten_quyen');
+        })->unique()->values()->all();
 
         return response()->json([
             'status' => true,
@@ -82,7 +90,7 @@ class AuthController extends Controller
             'message' => 'Đăng nhập thành công',
             'access_token' => $token,
             'user' => $user,
-            'vaii_tros' => $user->vaiTros
+            'quyen' => $quyen
         ], 200);
     }
 
