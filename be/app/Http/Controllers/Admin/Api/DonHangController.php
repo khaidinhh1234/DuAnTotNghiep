@@ -224,7 +224,7 @@ class DonHangController extends Controller
                             'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? null : $donHang->tong_tien_don_hang,
                         ];
 
-                        $vanChuyen = VanChuyen::create($vanChuyenData);
+                        VanChuyen::create($vanChuyenData);
                     }
                     $mess = "Cập nhật trạng thái đơn hàng thành công";
                 }
@@ -236,7 +236,7 @@ class DonHangController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => $mess,
-                'data' => $vanChuyen
+                'data' => $donHang
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
