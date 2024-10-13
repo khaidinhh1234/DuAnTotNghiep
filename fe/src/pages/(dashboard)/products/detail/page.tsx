@@ -131,7 +131,7 @@ interface Product {
   anh_san_pham: string;
   bien_the_san_pham: ProductVariant[];
   danh_gias: Review[];
-  the_san_pham: Array<{ id: number; ten_the: string }>;
+  bo_suu_tap_san_pham: Array<{ id: number; ten: string }>;
 }
 
 const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
@@ -349,9 +349,9 @@ Hết hàng
                     </div>
                     <div className="mb-3">
                       {/* <span className="font-semibold">Thẻ sản phẩm: </span> */}
-                      {product.the_san_pham.map((tag, index) => (
+                      {product.bo_suu_tap_san_pham.map((tag) => (
                         <span key={tag.id} className="bg-blue-100 px-2 py-1 rounded-md text-xs font-bold text-blue-700 mr-2 ">
-                          {tag.ten_the}
+                          {tag.ten}
                         </span>
                       ))}
                     </div>       
