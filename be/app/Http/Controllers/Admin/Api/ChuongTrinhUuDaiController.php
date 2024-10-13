@@ -52,14 +52,6 @@ class ChuongTrinhUuDaiController extends Controller
     public function store(Request $request)
     {
         try {
-            if (ChuongTrinhUuDai::whereNull('deleted_at')->exists()) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Chỉ có thể tạo 1 chương trình ưu đãi đang hoạt động',
-                ], 400);
-            }
-
             $validator = Validator::make($request->all(), [
                 'ten_uu_dai' => 'required|string|max:255',
                 'duong_dan_anh' => 'required|string',
@@ -80,6 +72,17 @@ class ChuongTrinhUuDaiController extends Controller
                     'message' => 'Dữ liệu không hợp lệ',
                     'errors' => $validator->errors(),
                 ], 422);
+            }
+
+            $sanPhamIds = $request->san_pham;
+            if ($sanPhamIds && ChuongTrinhUuDai::whereHas('sanPhams', function ($query) use ($sanPhamIds) {
+                    $query->whereIn('san_pham_id', $sanPhamIds);
+                })->exists()) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Một số sản phẩm đã tồn tại trong chương trình ưu đãi khác. Vui lòng kiểm tra lại.',
+                ], 400);
             }
 
             $dataUuDai = $request->except('san_pham');
@@ -109,6 +112,8 @@ class ChuongTrinhUuDaiController extends Controller
             ], 500);
         }
     }
+
+
 
     private function updateTemporaryPromotionPrices($uuDai)
     {
@@ -173,7 +178,6 @@ class ChuongTrinhUuDaiController extends Controller
             $ngayKetThuc = Carbon::parse($uuDai->ngay_ket_thuc);
             $ngayHienTai = Carbon::now();
 
-            // Chỉ không cho phép cập nhật nếu ngày hiện tại đã vượt qua ngày kết thúc
             if ($ngayHienTai->greaterThan($ngayKetThuc)) {
                 return response()->json([
                     'status' => false,
@@ -204,6 +208,18 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 422);
             }
 
+            $sanPhamIds = $request->san_pham;
+            if ($sanPhamIds && ChuongTrinhUuDai::whereHas('sanPhams', function ($query) use ($sanPhamIds, $id) {
+                    $query->whereIn('san_pham_id', $sanPhamIds)
+                        ->where('chuong_trinh_uu_dai_id', '!=', $id);
+                })->exists()) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Một số sản phẩm đã tồn tại trong chương trình ưu đãi khác. Vui lòng kiểm tra lại.',
+                ], 400);
+            }
+
             $dataUuDai = $request->except('san_pham');
             $dataUuDai['duong_dan'] = Str::slug($dataUuDai['ten_uu_dai'] ?? 'uu-dai') . '-' . Carbon::now()->timestamp;
 
@@ -223,8 +239,7 @@ class ChuongTrinhUuDaiController extends Controller
                 'data' => $uuDai,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Error updating promotion: ', ['error' => $e->getMessage()]);
-
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -233,6 +248,7 @@ class ChuongTrinhUuDaiController extends Controller
             ], 500);
         }
     }
+
 
 
 
@@ -361,5 +377,29 @@ class ChuongTrinhUuDaiController extends Controller
             ], 500);
         }
     }
+
+    public function getSanPhamChuaCoUuDai()
+    {
+        try {
+            $sanPhamDaCoUuDai = DB::table('chuong_trinh_san_pham')->pluck('san_pham_id')->toArray();
+
+            $sanPhamChuaCoUuDai = SanPham::whereNotIn('id', $sanPhamDaCoUuDai)->get();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lọc sản phẩm chưa có trong chương trình ưu đãi thành công',
+                'data' => $sanPhamChuaCoUuDai,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh sách sản phẩm',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 
 }

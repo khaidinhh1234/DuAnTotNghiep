@@ -135,8 +135,8 @@ Route::middleware(['auth.sanctum'])
                 Route::apiResource('sanpham', SanPhamController::class)->except(['show']);
                 Route::patch('sanpham/khoi-phuc-xoa-mem-nhieu-san-pham', [SanPhamController::class, 'bulkRestore'])->name('sanpham.bulk-restore');
                 Route::delete('sanpham', [SanPhamController::class, 'bulkDelete'])->name('sanpham.bulk-delete');
-                Route::patch('sanpham/trang-thai-nhieu-san-pham', [SanPhamController::class, 'updateStatus'])->withoutMiddleware('auth.checkrole');
-                Route::patch('sanpham/cap-nhat-nhieu-san-pham-the', [SanPhamController::class, 'bulkUpdateTags'])->name('sanpham.update-tags');
+                Route::patch('sanpham/trang-thai-nhieu-san-pham', [SanPhamController::class, 'updateStatus'])->name('sanpham.update-status');
+//                Route::patch('sanpham/cap-nhat-nhieu-san-pham-the', [SanPhamController::class, 'bulkUpdateTags'])->name('sanpham.update-tags');
                 Route::get('sanpham/exports', [SanPhamController::class, 'exportSanPham'])->withoutMiddleware('auth.checkrole');
                 Route::post('sanpham/kich-hoat/{id}', [SanPhamController::class, 'kichHoatSanPham'])->name('sanpham.kichhoat');
                 Route::post('sanpham/huy-kich-hoat/{id}', [SanPhamController::class, 'huyKichHoatSanPham'])->name('sanpham.huykichhoat');
@@ -225,6 +225,7 @@ Route::middleware(['auth.sanctum'])
         Route::middleware('auth.checkrole')
             ->group(function () {
                 Route::apiResource('chuongtrinhuudai', ChuongTrinhUuDaiController::class)->except(['show']);
+                Route::get('chuongtrinhuudai/san-pham-chua-co-uu-dai', [ChuongTrinhUuDaiController::class, 'getSanPhamChuaCoUuDai'])->name('chuongtrinhuudai.sanphamchuaco');
                 Route::get('chuongtrinhuudai/thung-rac', [ChuongTrinhUuDaiController::class, 'danhSachXoaMem'])->name('chuongtrinhuudai.thungrac');
                 Route::post('chuongtrinhuudai/thung-rac/{id}', [ChuongTrinhUuDaiController::class, 'khoiPhucXoaMem'])->name('chuongtrinhuudai.khoiphuc');
                 Route::get('chuongtrinhuudai/{id}', [ChuongTrinhUuDaiController::class, 'show'])->name('chuongtrinhuudai.show');
@@ -233,13 +234,13 @@ Route::middleware(['auth.sanctum'])
         // Mã khuyến mãi
         Route::middleware('auth.checkrole')
             ->group(function () {
-                Route::post('makhuyenmai/kich-hoat/{id}', [MaKhuyenMaiController::class, 'kichHoatMaKhuyenMai'])->withoutMiddleware('auth.checkrole');
-                Route::post('makhuyenmai/huy-kich-hoat/{id}', [MaKhuyenMaiController::class, 'huyKichHoatMaKhuyenMai'])->withoutMiddleware('auth.checkrole');
                 Route::apiResource('makhuyenmai', MaKhuyenMaiController::class)->except(['show']);
                 Route::post('makhuyenmai/thongbao', [MaKhuyenMaiController::class, 'guiThongBao'])->name('makhuyenmai.thongbao');
                 Route::get('makhuyenmai/thung-rac', [MaKhuyenMaiController::class, 'danhSachMaKhuyenMaiDaXoa'])->name('makhuyenmai.thungrac');
                 Route::post('makhuyenmai/thung-rac/{id}', [MaKhuyenMaiController::class, 'khoiPhucMaKhuyenMai'])->name('makhuyenmai.khoiphuc');
                 Route::get('makhuyenmai/{id}', [MaKhuyenMaiController::class, 'show'])->name('makhuyenmai.show');
+                Route::post('makhuyenmai/kich-hoat/{id}', [MaKhuyenMaiController::class, 'kichHoatMaKhuyenMai'])->withoutMiddleware('auth.checkrole');
+                Route::post('makhuyenmai/huy-kich-hoat/{id}', [MaKhuyenMaiController::class, 'huyKichHoatMaKhuyenMai'])->withoutMiddleware('auth.checkrole');
             });
 
         // Thông tin website

@@ -244,10 +244,10 @@ class VaiTroController extends Controller
                 'bienthemausac' => 'biến thể màu sắc',
                 'hangthanhvien' => 'hạng thành viên',
                 'xacnhan' => 'Xác nhận',
+                'bulk-delete' => 'Xóa nhiều',
+                'update-status' => 'Cập nhật trạng thái nhiều',
+                'sanphamchuaco' => 'Sản phẩm chưa có',
                 'bulk-restore' => 'Khôi phục nhiều',
-                'update-tags' => 'Cập nhật tag',
-                'bulk-destroy' => 'Xóa nhiều',
-
             ];
 
             $key = explode('.', $permission);

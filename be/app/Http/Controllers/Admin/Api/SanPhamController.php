@@ -270,16 +270,7 @@ class SanPhamController extends Controller
         try {
             DB::beginTransaction();
 
-            $sanPham = SanPham::with(['bienTheSanPham.anhBienThe', 'theSanPham'])->findOrFail($id);
-
-            foreach ($sanPham->bienTheSanPham as $bienThe) {
-                foreach ($bienThe->anhBienThe as $anh) {
-                    $anh->delete();
-                }
-                $bienThe->delete();
-            }
-
-            $sanPham->theSanPham()->sync([]);
+            $sanPham = SanPham::with(['bienTheSanPham.anhBienThe', 'boSuuTapSanPham'])->findOrFail($id);
             $sanPham->delete();
 
             DB::commit();
@@ -309,7 +300,7 @@ class SanPhamController extends Controller
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
-                'theSanPham'
+                'boSuuTapSanPham'
             ])->orderBy('deleted_at', 'desc')->get();
 
             return response()->json([
@@ -333,7 +324,7 @@ class SanPhamController extends Controller
         try {
             DB::beginTransaction();
 
-            $sanPham = SanPham::onlyTrashed()->with(['bienTheSanPham', 'theSanPham'])->findOrFail($id);
+            $sanPham = SanPham::onlyTrashed()->with(['bienTheSanPham', 'boSuuTapSanPham'])->findOrFail($id);
 
             $sanPham->restore();
 
