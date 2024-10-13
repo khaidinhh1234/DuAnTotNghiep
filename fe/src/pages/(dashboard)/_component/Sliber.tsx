@@ -1,3 +1,5 @@
+import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
 import { Layout, Menu } from "antd";
 import {
   AlignJustify,
@@ -8,7 +10,7 @@ import {
   Package,
   ShoppingCart,
   Tag,
-  User
+  User,
 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +24,14 @@ const SiderComponent: React.FC = () => {
   const handleMenuClick = ({ key }: { key: string }) => {
     navigate(key);
   };
-
+  const { data } = useQuery({
+    queryKey: ["actionLog"],
+    queryFn: async () => {
+      const response = await instance.get("lich-su-hoat-dong");
+      return response.data;
+    },
+  });
+  console.log(data);
   return (
     <Layout className="min-h-screen flex">
       <Sider
@@ -45,7 +54,9 @@ const SiderComponent: React.FC = () => {
           <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
             <Menu.Item key="/admin/products/list">Danh sách sản phẩm</Menu.Item>
             <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
-            <Menu.Item key="/admin/products/tags">Quản lý thẻ đính kèm</Menu.Item>
+            <Menu.Item key="/admin/products/tags">
+              Quản lý thẻ đính kèm
+            </Menu.Item>
           </SubMenu>
 
           <SubMenu key="sub3" icon={<Folder />} title="Danh mục">
@@ -67,13 +78,10 @@ const SiderComponent: React.FC = () => {
             <Menu.Item key="/admin/users/rank">Hạng thành viên</Menu.Item>
           </SubMenu>
           <SubMenu key="sub6" icon={<Tag />} title="Khuyến mại & Ưu đãi">
-
-          <Menu.Item key="/admin/vouchers">
-            Mã khuyến mại
-          </Menu.Item>
-          <Menu.Item key="/admin/chuongtrinhuudai">
-            Chương trình ưu đãi
-          </Menu.Item>
+            <Menu.Item key="/admin/vouchers">Mã khuyến mại</Menu.Item>
+            <Menu.Item key="/admin/chuongtrinhuudai">
+              Chương trình ưu đãi
+            </Menu.Item>
           </SubMenu>
 
           <Menu.Item key="/admin/news" icon={<Newspaper />}>
