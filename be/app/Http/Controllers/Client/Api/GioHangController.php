@@ -172,4 +172,47 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
+    public function syncCart(Request $request)
+    {
+        try {
+            $cartItems = $request->input('cartItems');
+            $userId = Auth::id();
+
+            foreach ($cartItems as $item) {
+                $bienTheSanPham = BienTheSanPham::findOrFail($item['bien_the_san_pham_id']);
+
+                if ($item['so_luong'] > $bienTheSanPham->so_luong_bien_the) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
+                    ], 400);
+                }
+
+                $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
+
+                $gioHang = GioHang::updateOrCreate(
+                    [
+                        'user_id' => $userId,
+                        'bien_the_san_pham_id' => $item['bien_the_san_pham_id'],
+                    ],
+                    [
+                        'so_luong' => $item['so_luong'],
+                        'gia' => $gia,
+                    ]
+                );
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Giỏ hàng đã được đồng bộ thành công!'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
