@@ -17,7 +17,7 @@ use App\Http\Controllers\Admin\Api\TaiKhoanController;
 use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhGiaController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhMuc;
-use App\Http\Controllers\Admin\API\ThongKeDoanhThuController;
+use App\Http\Controllers\Admin\Api\ThongKeDoanhThuController;
 use App\Http\Controllers\Admin\Api\ThongKeDonHangController;
 use App\Http\Controllers\Admin\Api\ThongKeKhachHangController;
 use App\Http\Controllers\Admin\Api\ThongKeSanPham;
@@ -175,9 +175,9 @@ Route::middleware(['auth.sanctum'])
             });
 
         // Đánh giá
-        Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll']);
-        Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham']);
-        Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia']);
+        Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll'])->middleware('auth.checkrole');
+        Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham'])->middleware('auth.checkrole');
+        Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia'])->middleware('auth.checkrole');
 
         // Đơn hàng
         Route::middleware('auth.checkrole')
@@ -273,8 +273,7 @@ Route::middleware(['auth.sanctum'])
             });
 
         //Vai trò auth.checkrole
-        //Vai trò auth.checkrole'auth.checkrole'
-        Route::middleware([])
+        Route::middleware(['auth.checkrole'])
             ->group(function () {
                 Route::apiResource('vaitro', VaiTroController::class)->except('show');
                 Route::get('vaitro/routes', [VaiTroController::class, 'danhSachQuyen'])->withoutMiddleware('auth.checkrole');
