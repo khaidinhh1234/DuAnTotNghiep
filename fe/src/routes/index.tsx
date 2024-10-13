@@ -124,6 +124,7 @@ import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
 import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
 
 import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
+import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
 
 
 const Router = () => {
@@ -233,7 +234,7 @@ const Router = () => {
                     {/* trương trình ưu đâix */}
                     <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
                     <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
-                    {/* <Route path="chuongtrinhuudaiedit" element={<ChuongTrinhUuDaiEdit />} /> */}
+                    <Route path="chuongtrinhuudaiedit" element={<ChuongTrinhUuDaiEdit />} />
 
 
 
