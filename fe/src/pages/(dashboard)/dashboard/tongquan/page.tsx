@@ -15,17 +15,18 @@ import Table2chart4 from "./table2/chart4";
 import Table2chart5 from "./table2/chart5";
 import Table2chart6 from "./table2/chart6";
 import { DatePicker, Space } from "antd";
-
+import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 const Dashboard = () => {
-  const [datestart, setDatestart] = useState();
-  const [dateend, setDateend] = useState();
+  const [datestart, setDatestart] = useState(dayjs().subtract(10, "day"));
+  const [dateend, setDateend] = useState(dayjs());
   const [tab, setTab] = useState<string>("Trang chủ 1");
-  const handleDateChange = (e: any, dateStrings: [string, string]) => {
-    const startDate = dateStrings[0];
-    const endDate = dateStrings[1];
-    setDatestart(startDate as any);
-    setDateend(endDate as any);
+  const handleDateChange = (dates: any, dateStrings: [string, string]) => {
+    if (dates) {
+      const [startDate, endDate] = dates;
+      setDatestart(startDate);
+      setDateend(endDate);
+    }
   };
 
   return (
@@ -33,33 +34,46 @@ const Dashboard = () => {
       <div className="flex mb-6 gap-10">
         <h2 className="text-2xl font-bold ">Tổng quan</h2>
         <div>
-          <RangePicker onChange={handleDateChange} />
+          <RangePicker
+            onChange={handleDateChange}
+            value={[datestart, dateend]} // Hiển thị giá trị ngày từ state
+            defaultValue={[dayjs().subtract(10, "day"), dayjs()]} // Giá trị mặc định từ 10 ngày trước đến hôm nay
+          />
         </div>
       </div>
       <Row gutter={16}>
         <Col span={12} sm={8}>
-          <Chart1 datestart={datestart} dateend={dateend} />
+          <Chart1 datestart={datestart as any} dateend={dateend as any} />
         </Col>
         <Col span={12} sm={8}>
-          <Chart2 datestart={datestart} dateend={dateend} />
+          <Chart2 datestart={datestart as any} dateend={dateend as any} />
         </Col>
         <Col span={12} sm={8}>
-          <Chart3 />
+          <Chart3 datestart={datestart as any} dateend={dateend as any} />
         </Col>
       </Row>
       <div className="mt-6 grid grid-cols-8 gap-5">
         <Row className="col-span-5 shadow-md bg-white rounded-md px-6 py-7">
           <div className="grid grid-cols-3 gap-5 mb-5">
             <div>
-              <Tablechart1 />
+              <Tablechart1
+                datestart={datestart as any}
+                dateend={dateend as any}
+              />
             </div>
             <div>
               {" "}
-              <Tablechart2 />
+              <Tablechart2
+                datestart={datestart as any}
+                dateend={dateend as any}
+              />
             </div>
             <div>
               {" "}
-              <Tablechart3 />
+              <Tablechart3
+                datestart={datestart as any}
+                dateend={dateend as any}
+              />
             </div>
           </div>{" "}
           <div className="">

@@ -1,21 +1,41 @@
 import instance from "@/configs/admin";
-import { ArrowDownOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
-import { Card, Statistic } from "antd";
+import { Card, Statistic, Typography } from "antd";
+import { useEffect } from "react";
 import CountUp from "react-countup";
-const Chart3 = () => {
-  const { data } = useQuery({
-    queryKey: ["chart1"],
+const { Text } = Typography;
+interface ChartProps {
+  datestart?: string;
+  dateend?: string;
+}
+const Chart3 = ({ datestart, dateend }: ChartProps) => {
+  const date =
+    datestart && dateend
+      ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
+      : null;
+
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["chart3", datestart, dateend],
     queryFn: async () => {
-      const response = await instance.post("thong-ke/don-hang/chot");
+      const response = await instance.post("thong-ke/don-hang/chot", date);
       return response.data;
     },
+    enabled: !!datestart && !!dateend,
   });
+
   const formatter: StatisticProps["formatter"] = (value: any) => (
     <CountUp end={value as number} separator="," />
   );
-  console.log(data);
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch();
+    }
+  }, [datestart, dateend, refetch]);
+  const phantien = data?.ti_le_tang_giam_ton_kho > 0;
+  const phandon = data?.ti_le_tang_giam_ton_kho > 0;
+
   return (
     <Card className="shadow-md px-1 rounded-lg bg-white flex flex-col">
       <div className="flex items-center mb-2">
@@ -24,7 +44,9 @@ const Chart3 = () => {
         </div>
         <div className="flex ">
           <h3 className="text-lg font-bold">Sản phẩm tồn kho: </h3>{" "}
-          <h3 className="text-lg font-bold mx-1">20 sản phẩm</h3>
+          <h3 className="text-lg font-bold mx-1">
+            {data?.tong_so_luong_ton_kho || 0} sản phẩm
+          </h3>
         </div>
       </div>
       <div className="grid grid-cols-2">
@@ -56,9 +78,19 @@ const Chart3 = () => {
               <Statistic value={""} formatter={formatter} />
             </span>
           </div>
-          <div className="flex items-center mt-1">
-            <i className="fa-solid fa-arrow-up text-green-500"></i>
-            <span className="text-green-500 ml-1  font-medium">{"0"} %</span>
+          <div
+            className={`flex items-center mt-1 ${phandon ? "text-green-600" : "text-red-600"}`}
+          >
+            {phandon ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            <Text
+              className={`ml-1 font-medium ${phandon ? "text-green-600" : "text-red-600"}`}
+            >
+              {data?.ti_le_tang_giam_ton_kho !== undefined &&
+              data?.ti_le_tang_giam_ton_kho !== null &&
+              data?.ti_le_tang_giam_ton_kho !== 0
+                ? `${data.ti_le_tang_giam_ton_kho} %`
+                : "0 %"}
+            </Text>
           </div>
         </div>
       </div>

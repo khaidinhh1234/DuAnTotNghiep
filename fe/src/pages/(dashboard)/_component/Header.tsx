@@ -135,17 +135,13 @@ const Header = () => {
         <DropdownMenuContent align="end" className="max-h-[400px]  mr-10">
           <DropdownMenuLabel>{ten}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Thông tin cá nhân</DropdownMenuItem>
+          <DropdownMenuItem>
+            {" "}
+            <Link to="admin-profile">Thông tin cá nhân </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem>
             <Link to={"/admin/history"}>Nhập ký truy cập</Link>
           </DropdownMenuItem>
-
-          <DropdownMenuLabel>My account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link to="admin-profile">My Account</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
 
           <DropdownMenuSeparator />
           <DropdownMenuItem>Đăng xuất</DropdownMenuItem>

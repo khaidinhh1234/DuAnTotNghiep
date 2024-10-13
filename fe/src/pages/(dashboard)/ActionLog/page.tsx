@@ -26,6 +26,7 @@ export function ActionLog() {
     danh_muc_tin_tucs: "Danh mục tin tức",
     tin_tucs: "Tin tức",
     quyens: "Phân quyền truy cập",
+    vai_tros: "Cấp Vai trò",
   };
 
   // console.log(lichsu);
@@ -39,7 +40,10 @@ export function ActionLog() {
 
     // Lấy ngày (YYYY-MM-DD)
     const date = vnTime.toISOString().split("T")[0];
+    const [year, month, day] = date.split("-");
+    const reversedDate = `${day}/${month}/${year}`;
 
+    // console.log(reversedDate);
     // Lấy giờ (HH:MM:SS)
     const time = vnTime.toISOString().split("T")[1].split(".")[0];
 
@@ -49,7 +53,7 @@ export function ActionLog() {
       hanh_dong: item?.loai_thao_tac,
       anh: item?.user?.anh_nguoi_dung,
       email: item?.user?.email,
-      thoi_gian: date + " " + time,
+      thoi_gian: reversedDate + " " + time,
       // thoi_gian_raw: item?.created_at,
       nhanvien: item?.user?.ho + " " + item?.user?.ten,
       mo_ta: item?.mo_ta,
