@@ -120,9 +120,9 @@ class VanChuyenController extends Controller
         try {
             $validate = $request->validate([
                 'shipper_xac_nhan' => 'required|in:1,2',
-                'anh_xac_thuc' => 'nullable|image',
+                'anh_xac_thuc' => 'nullable|',
                 'ghi_chu' => 'nullable|string'
-            ]);
+            ]); 
 
             DB::beginTransaction();
 
@@ -165,7 +165,7 @@ class VanChuyenController extends Controller
                         'cod' => VanChuyen::TTCOD_DN,
                         'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
                         'anh_xac_thuc' => $validate['anh_xac_thuc'],
-                        'ghi_chu' => $validate['ghi_chu'],
+                        // 'ghi_chu' => $validate['ghi_chu'],
                         'ngay_giao_hang_thanh_cong' => now()
                     ]);
                     $vanChuyen->donHang->update([

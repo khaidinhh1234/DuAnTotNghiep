@@ -6,10 +6,10 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, Select, Upload, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { uploadToCloudinary } from "@/configs/cloudinary";
 
 const CategoriesEdit = () => {
   const { id } = useParams();
-  // console.log(id); // Kiểm tra ID
 
   const [form] = Form.useForm();
   const nav = useNavigate();
@@ -79,14 +79,23 @@ const CategoriesEdit = () => {
     },
   });
 
-  const onFinish = (values: ICategories) => {
-    const categoryData: ICategories = {
-      ...values,
-      cha_id: values.cha_id || null, // Chỉnh sửa để khớp với tên trong Form.Item
-    };
-    mutate(categoryData);
-  };
+  const onFinish = async (values: any) => {
+    try {
+      let imageUrl = null;
+      if (values.imageFile && values.imageFile[0]) {
+        imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
+      }
 
+      const categoryData: ICategories = {
+        ...values,
+        cha_id: values.category || null,
+        anh_danh_muc: imageUrl,
+      };
+      mutate(categoryData);
+    } catch (error) {
+      message.error("Lỗi khi tải ảnh lên");
+    }
+  };
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
