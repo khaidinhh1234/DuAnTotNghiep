@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Api\BienTheKichThuocController;
 use App\Http\Controllers\Admin\Api\BienTheMauSacController;
+use App\Http\Controllers\Admin\Api\BoSuuTapController;
 use App\Http\Controllers\Admin\Api\ChuongTrinhUuDaiController;
 use App\Http\Controllers\Admin\Api\DanhGiaController as AdminDanhGiaController;
 use App\Http\Controllers\Admin\Api\LichSuHoatDongController;
@@ -115,7 +116,7 @@ Route::middleware([])
 
 
 //'auth.sanctum'
-Route::middleware(['auth.checkrole','auth.sanctum'])
+Route::middleware(['auth.sanctum'])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
@@ -164,13 +165,13 @@ Route::middleware(['auth.checkrole','auth.sanctum'])
                 Route::get('bienthemausac/{id}', [BienTheMauSacController::class, 'show'])->name('bienthemausac.show');
             });
 
-        // Thẻ
+        // Bộ sưu tập
         Route::middleware('auth.checkrole')
             ->group(function () {
-                Route::apiResource('the', TheController::class)->except(['show']);
-                Route::get('the/thung-rac', [TheController::class, 'danhSachTheDaXoa'])->name('the.thungrac');
-                Route::post('the/thung-rac/{id}', [TheController::class, 'khoiPhucThe'])->name('the.khoiphuc');
-                Route::get('the/{id}', [TheController::class, 'show'])->name('the.show');
+                Route::apiResource('bosuutap',  BoSuuTapController::class)->except(['show']);
+                Route::get('bosuutap/thung-rac', [BoSuuTapController::class, 'danhSachBoSuuTapDaXoa'])->name('bosuutap.thungrac');
+                Route::post('bosuutap/thung-rac/{id}', [BoSuuTapController::class, 'khoiPhucBoSuuTap'])->name('bosuutap.khoiphuc');
+                Route::get('bosuutap/{id}', [BoSuuTapController::class, 'show'])->name('the.show');
             });
 
         // Đánh giá
