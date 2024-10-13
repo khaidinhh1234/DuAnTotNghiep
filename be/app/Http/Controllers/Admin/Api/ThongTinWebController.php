@@ -58,9 +58,10 @@ class ThongTinWebController extends Controller
             'link_zalo' => 'nullable|string|max:255',
             'link_instagram' => 'nullable|string|max:255',
             'link_tiktok' => 'nullable|string|max:255',
-            'banner' => 'nullable|array', // Mảng banner
-            'banner.*.duong_dan_anh' => 'nullable|string|max:255', // Đường dẫn ảnh
-            'banner.*.noi_dung' => 'nullable|array', // Nội dung cho mỗi banner
+            'banner' => 'nullable|array',
+            'banner.*.duong_dan_anh' => 'nullable|string|max:255',
+            'banner.*.vi_tri' => 'required|integer|in:1,2,3,4,5,6,7,8,9,10', // Yêu cầu vi_tri phải là 1-10
+            'banner.*.noi_dung' => 'nullable|array',
             'banner.*.noi_dung.tieu_de_chinh' => 'nullable|string|max:255',
             'banner.*.noi_dung.mau_tieu_de_chinh' => 'nullable|string|max:7',
             'banner.*.noi_dung.tieu_de_phu' => 'nullable|string|max:255',
@@ -82,10 +83,20 @@ class ThongTinWebController extends Controller
         try {
             $data = $request->all();
 
-            // Xử lý banner
             if (isset($data['banner'])) {
-                // Không cần chuyển đổi sang JSON, lưu trực tiếp dưới dạng mảng
-                $data['banner'] = $data['banner']; // Đảm bảo dữ liệu là mảng
+                // Kiểm tra trùng lặp vị trí
+                $positions = array_column($data['banner'], 'vi_tri');
+                $duplicatePositions = array_filter(array_count_values($positions), function($count) {
+                    return $count > 1;
+                });
+
+                if (!empty($duplicatePositions)) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Vị trí banner bị trùng lặp.',
+                        'duplicate_positions' => array_keys($duplicatePositions),
+                    ], 422);
+                }
             }
 
             $thongTinWeb = ThongTinWeb::first();
@@ -103,6 +114,7 @@ class ThongTinWebController extends Controller
                 'data' => $thongTinWeb,
                 'message' => $message,
             ], 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -111,6 +123,7 @@ class ThongTinWebController extends Controller
             ], 500);
         }
     }
+
 
 
 

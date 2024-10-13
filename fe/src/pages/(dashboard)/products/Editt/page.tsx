@@ -300,6 +300,7 @@ const EditProducts: React.FC = () => {
           color: Number(v.bien_the_mau_sac_id || v.mau_sac_id),
           size: Number(v.bien_the_kich_thuoc_id || v.kich_thuoc_id),
           gia_ban: v.gia_ban,
+          chi_phi_san_xuat: v.chi_phi_san_xuat,
           gia_khuyen_mai: v.gia_khuyen_mai,
           so_luong_bien_the: v.so_luong_bien_the,
           anh_bien_the: v.anh_bien_the
@@ -375,6 +376,7 @@ const EditProducts: React.FC = () => {
           kich_thuoc_id: combo.size,
           so_luong_bien_the: parseInt(values[`so_luong_bien_the-${index}`], 10),
           gia_ban: parseFloat(values[`gia_ban-${index}`]),
+          chi_phi_san_xuat: parseFloat(values[`chi_phi_san_xuat-${index}`]),
           gia_khuyen_mai: parseFloat(values[`gia_khuyen_mai-${index}`]),
           anh: combo.anh,
         })),
@@ -485,8 +487,9 @@ const EditProducts: React.FC = () => {
                   placeholder="Nhập mã sản phẩm"
                   value={"SP-" + productCode}
                   readOnly
+                  disabled
                 />
-                <Button onClick={generateRandomCode}>Đổi mã</Button>
+                {/* <Button onClick={generateRandomCode}>Đổi mã</Button> */}
               </div>
             </Form.Item>
           </div>
@@ -640,6 +643,7 @@ const EditProducts: React.FC = () => {
                     <th className="p-1 border-r border-gray-300">Kích thước</th>
                     <th className="p-1 border-r border-gray-300">Màu sắc</th>
                     <th className="p-1 border-r border-gray-300">Giá bán</th>
+                    <th className="p-1 border-r border-gray-300">Chi phí sản xuất</th>
                     <th className="p-1 border-r border-gray-300">Giá khuyến mãi</th>
                     <th className="p-1 border-r border-gray-300">Số lượng</th>
                     <th className="p-1">Ảnh biến thể</th>
@@ -666,6 +670,37 @@ const EditProducts: React.FC = () => {
                         >
                           <InputNumber style={{ width: "100%" }} placeholder="Nhập giá bán" />
                         </Form.Item>
+                      </td>
+                      <td className="p-1 border-r border-gray-300 w-[20%]">
+                        <Form.Item
+                          name={`chi_phi_san_xuat-${index}`}
+                          className="my-0 px-5"
+                          initialValue={combo.chi_phi_san_xuat}
+
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập chi phí sản xuất!",
+                            },
+                            {
+                              validator: (_, value) => {
+                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
+                                if (value && giaBan && value >= giaBan) {
+                                  return Promise.reject("Chi phí sản xuất  phải nhỏ hơn giá bán!");
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                          style={{ margin: 0 }}
+                        >
+                          <InputNumber
+                            placeholder="0"
+                            style={{ width: "100%" }}
+                            min={0}
+                          />
+                        </Form.Item>
+
                       </td>
                       <td className="p-1 border-r border-gray-300 w-[20%]">
                         <Form.Item
@@ -740,8 +775,12 @@ const EditProducts: React.FC = () => {
                                 </div>{" "}
                                   <div className="mt-10">
                                     <Form.Item>
-                                    <Button type="primary" htmlType="submit" loading={updateProductMutation.isPending}>
-                                    Submit
+                                    <Button type="primary" htmlType="submit" className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors ml-12"
+  style={{
+    padding: "14px 40px",
+    marginRight: "190px",
+  }} loading={updateProductMutation.isPending}>
+                                    Cập nhập sản phẩm
                                       </Button>
                                     </Form.Item>
                                   </div>
