@@ -1,15 +1,19 @@
 import instance from "@/configs/admin";
+import { uploadToCloudinary } from "@/configs/cloudinary";
+import { UploadOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, message, Spin, Upload } from "antd";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Tagsadd = () => {
   const [form] = Form.useForm();
   const nav = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
-      const response = await instance.post(`/the`, data);
+      const response = await instance.post(`/bosuutap`, data);
       return response.data;
     },
     onSuccess: () => {
@@ -20,26 +24,48 @@ const Tagsadd = () => {
     onError: (error) => {
       message.error(error.message);
     },
+    onSettled: () => {
+      setIsSubmitting(false);
+    },
   });
 
-  const onFinish = (values: any) => {
-    const data: any = {
-      ...values,
-    };
-    mutate(data);
+  const onFinish = async (values: any) => {
+    // const data: any = {
+    //   ...values,
+    // };
+    // mutate(data);
     // console.log(values);
+    setIsSubmitting(true);
+
+    try {
+      let imageUrl = null;
+      if (values.imageFile && values.imageFile[0]) {
+        imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
+      }
+
+      const data = {
+        ...values,
+        ten: values.ten,
+        duong_dan_anh: imageUrl,
+      };
+      mutate(data);
+    } catch (error) {
+      message.error("Lỗi khi tải ảnh lên");
+      setIsSubmitting(false);
+
+    }
   };
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / thẻ đính kèm /
-          <span className="font-semibold px-px"> Thêm thẻ đính kèm</span>
+          Quản trị /Bộ sưu tập /
+          <span className="font-semibold px-px"> Bộ sưu tập</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Thêm thẻ đính kèm</h1>
+        <h1 className="font-semibold md:text-3xl">Thêm bộ sưu tập</h1>
         <div>
           <Link to="/admin/products/tags" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
@@ -62,7 +88,7 @@ const Tagsadd = () => {
             >
               <Form.Item
                 label="Tên thẻ đính kèm"
-                name="ten_the"
+                name="ten"
                 rules={[
                   {
                     required: true,
@@ -77,15 +103,32 @@ const Tagsadd = () => {
               >
                 <Input placeholder="Nhập tên thẻ đính kèm" />
               </Form.Item>
-
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+              <Form.Item
+                label="Thêm ảnh"
+                name="imageFile"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
+              >
+                <Upload
+                  listType="picture-card"
+                  maxCount={1}
+                  beforeUpload={() => false}
                 >
-                  Thêm
-                </Button>
+                  <Button>  
+                      <UploadOutlined /> tải ảnh
+                    </Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item>
+              <Button
+  type="primary"
+  htmlType="submit"
+  className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+  disabled={isSubmitting}
+>
+{isSubmitting ? <><Spin size="small"/> Đang Thêm...</> : "Thêm"}
+</Button>
               </Form.Item>
             </Form>
           </div>

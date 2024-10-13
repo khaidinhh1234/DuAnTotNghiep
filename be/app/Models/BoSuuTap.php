@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class The extends Model
+class BoSuuTap extends Model
 {
     use HasFactory, SoftDeletes, AuditTrait;
     protected $fillable = [
-        'ten_the',
+        'ten',
         'duong_dan',
+        'duong_dan_anh',
     ];
     public function sanPhams()
     {
-        return $this->belongsToMany(SanPham::class, 'the_san_pham', 'san_pham_id', 'the_id');
+        return $this->belongsToMany(SanPham::class, 'bo_suu_tap_san_pham', 'san_pham_id', 'bo_suu_tap_id');
     }
 }

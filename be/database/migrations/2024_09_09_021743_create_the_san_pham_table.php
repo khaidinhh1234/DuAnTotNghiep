@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\BoSuuTap;
 use App\Models\SanPham;
 use App\Models\The;
 use Illuminate\Database\Migrations\Migration;
@@ -13,10 +14,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('the_san_pham', function (Blueprint $table) {
+        Schema::create('bo_suu_tap_san_pham', function (Blueprint $table) {
             $table->foreignIdFor(SanPham::class)->constrained();
-            $table->foreignIdFor(The::class)->constrained();
-            $table->primary(['san_pham_id', 'the_id']);
+            $table->foreignIdFor(BoSuuTap::class)->constrained();
+            $table->primary(['san_pham_id', 'bo_suu_tap_id']);
         });
     }
 

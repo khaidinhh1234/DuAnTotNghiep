@@ -25,7 +25,7 @@ class SanPhamController extends Controller
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
-                'theSanPham'
+                'boSuuTapSanPham'
             ])
                 ->orderByDesc('id')
                 ->get();
@@ -56,17 +56,17 @@ class SanPhamController extends Controller
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'gia_tot' => 'nullable|boolean',
-            'the' => 'nullable|array',
-            'the.*' => 'integer',
+            'bo_suu_tap' => 'nullable|array',
+            'bo_suu_tap.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
-            'bien_the.*.chi_phi_san_xuat' => 'required|integer',
-            'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.gia_ban' => 'required|integer|gt:bien_the.*.chi_phi_san_xuat',
+            'bien_the.*.chi_phi_san_xuat' => 'nullable|integer',
+            'bien_the.*.so_luong_bien_the' => 'nullable|integer',
+            'bien_the.*.gia_ban' => 'nullable|integer|gt:bien_the.*.chi_phi_san_xuat',
             'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban',
-            'bien_the.*.anh' => 'required|array',
-            'bien_the.*.anh.*' => 'required|string'
+            'bien_the.*.anh' => 'nullable|array',
+            'bien_the.*.anh.*' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -74,9 +74,9 @@ class SanPhamController extends Controller
         }
 
 
-        $dataSanPham = $request->except('bien_the', 'the');
+        $dataSanPham = $request->except('bien_the', 'bo_suu_tap');
         $dataSanPham['duong_dan'] = Str::slug($dataSanPham['ten_san_pham']);
-        $theSanPham = $request->the;
+        $boSuuTapSanPham = $request->bo_suu_tap;
         $bienTheSanPhamTmp = $request->bien_the;
         $bienTheSanPham = [];
 
@@ -114,7 +114,7 @@ class SanPhamController extends Controller
                 }
             }
 
-            $sanPham->theSanPham()->sync($theSanPham);
+            $sanPham->boSuuTapSanPham()->sync($boSuuTapSanPham);
             DB::commit();
 
             return response()->json([
@@ -143,7 +143,7 @@ class SanPhamController extends Controller
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
-                'theSanPham',
+                'boSuuTapSanPham',
             ])->findOrFail($id);
 
             return response()->json([
@@ -171,17 +171,17 @@ class SanPhamController extends Controller
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'gia_tot' => 'nullable|boolean',
-            'the' => 'nullable|array',
-            'the.*' => 'integer',
+            'bo_suu_tap' => 'nullable|array',
+            'bo_suu_tap.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
-            'bien_the.*.chi_phi_san_xuat' => 'required|integer',
-            'bien_the.*.so_luong_bien_the' => 'required|integer',
-            'bien_the.*.gia_ban' => 'required|integer|gt:bien_the.*.chi_phi_san_xuat',
+            'bien_the.*.chi_phi_san_xuat' => 'nullable|integer',
+            'bien_the.*.so_luong_bien_the' => 'nullable|integer',
+            'bien_the.*.gia_ban' => 'nullable|integer|gt:bien_the.*.chi_phi_san_xuat',
             'bien_the.*.gia_khuyen_mai' => 'nullable|integer|lt:bien_the.*.gia_ban', // Giá khuyến mãi phải nhỏ hơn giá bán
-            'bien_the.*.anh' => 'required|array',
-            'bien_the.*.anh.*' => 'required|string'
+            'bien_the.*.anh' => 'nullable|array',
+            'bien_the.*.anh.*' => 'nullable|string'
         ]);
 
         if ($validator->fails()) {
@@ -191,9 +191,9 @@ class SanPhamController extends Controller
 
         $sanPham = SanPham::findOrFail($id);
 
-        $dataSanPham = $request->except('bien_the', 'the');
+        $dataSanPham = $request->except('bien_the', 'bo_suu_tap');
         $dataSanPham['duong_dan'] = Str::slug($dataSanPham['ten_san_pham']);
-        $theSanPham = $request->the;
+        $boSuuTapSanPham = $request->bo_suu_tap;
         $bienTheSanPhamTmp = $request->bien_the;
 
         $bienTheSanPham = [];
@@ -242,7 +242,7 @@ class SanPhamController extends Controller
                 }
             }
 
-            $sanPham->theSanPham()->sync($theSanPham);
+            $sanPham->boSuuTapSanPham()->sync($boSuuTapSanPham);
 
             DB::commit();
 
@@ -270,16 +270,7 @@ class SanPhamController extends Controller
         try {
             DB::beginTransaction();
 
-            $sanPham = SanPham::with(['bienTheSanPham.anhBienThe', 'theSanPham'])->findOrFail($id);
-
-            foreach ($sanPham->bienTheSanPham as $bienThe) {
-                foreach ($bienThe->anhBienThe as $anh) {
-                    $anh->delete();
-                }
-                $bienThe->delete();
-            }
-
-            $sanPham->theSanPham()->sync([]);
+            $sanPham = SanPham::with(['bienTheSanPham.anhBienThe', 'boSuuTapSanPham'])->findOrFail($id);
             $sanPham->delete();
 
             DB::commit();
@@ -309,7 +300,7 @@ class SanPhamController extends Controller
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
-                'theSanPham'
+                'boSuuTapSanPham'
             ])->orderBy('deleted_at', 'desc')->get();
 
             return response()->json([
@@ -333,7 +324,7 @@ class SanPhamController extends Controller
         try {
             DB::beginTransaction();
 
-            $sanPham = SanPham::onlyTrashed()->with(['bienTheSanPham', 'theSanPham'])->findOrFail($id);
+            $sanPham = SanPham::onlyTrashed()->with(['bienTheSanPham', 'boSuuTapSanPham'])->findOrFail($id);
 
             $sanPham->restore();
 

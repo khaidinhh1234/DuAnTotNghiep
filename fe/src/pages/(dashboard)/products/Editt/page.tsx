@@ -83,7 +83,7 @@ const EditProducts: React.FC = () => {
   const { data: tagsData } = useQuery({
     queryKey: ["tags"],
     queryFn: async () => {
-      const response = await instance.get("/the");
+      const response = await instance.get("/bosuutap");
       return response.data;
     },
   });
@@ -253,7 +253,7 @@ const EditProducts: React.FC = () => {
         ten_san_pham: productData.data.ten_san_pham,
         danh_muc_id: productData.data.danh_muc_id,
         mo_ta_ngan: productData.data.mo_ta_ngan,
-        tags: productData.data.the_san_pham.map((tag: any) => tag.id),
+        tags: productData.data.bo_suu_tap_san_pham.map((tag: any) => tag.id),
         gia_tot: productData.data.gia_tot === 1,
         noi_dung: productData.data.noi_dung,
       });
@@ -300,6 +300,7 @@ const EditProducts: React.FC = () => {
           color: Number(v.bien_the_mau_sac_id || v.mau_sac_id),
           size: Number(v.bien_the_kich_thuoc_id || v.kich_thuoc_id),
           gia_ban: v.gia_ban,
+          chi_phi_san_xuat: v.chi_phi_san_xuat,
           gia_khuyen_mai: v.gia_khuyen_mai,
           so_luong_bien_the: v.so_luong_bien_the,
           anh_bien_the: v.anh_bien_the
@@ -369,12 +370,13 @@ const EditProducts: React.FC = () => {
         noi_dung: value,
         danh_muc_id: values.danh_muc_id,
         gia_tot: values.gia_tot ? 1 : 0,
-        the: values.tags,
+        bo_suu_tap: values.tags,
         bien_the: updatedCombinations.map((combo, index) => ({
           mau_sac_id: combo.color,
           kich_thuoc_id: combo.size,
           so_luong_bien_the: parseInt(values[`so_luong_bien_the-${index}`], 10),
           gia_ban: parseFloat(values[`gia_ban-${index}`]),
+          chi_phi_san_xuat: parseFloat(values[`chi_phi_san_xuat-${index}`]),
           gia_khuyen_mai: parseFloat(values[`gia_khuyen_mai-${index}`]),
           anh: combo.anh,
         })),
@@ -461,20 +463,20 @@ const EditProducts: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 gap-5">
             <Form.Item
-              label="Chọn tags"
+              label="Chọn bộ sưu tập"
               name="tags"
-              rules={[{ required: true, message: "Vui lòng chọn tags" }]}
+              rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
             >
               <Select
                 mode="multiple"
                 className="w-full"
-                placeholder="Chọn tags"
+                placeholder="Chọn bộ sưu tập"
               >
                 {tagsData &&
                   tagsData.data &&
                   tagsData.data.map((tag: any) => (
                     <Select.Option key={tag.id} value={tag.id}>
-                      {tag.ten_the}
+                      {tag.ten}
                     </Select.Option>
                   ))}
               </Select>
@@ -485,8 +487,9 @@ const EditProducts: React.FC = () => {
                   placeholder="Nhập mã sản phẩm"
                   value={"SP-" + productCode}
                   readOnly
+                  disabled
                 />
-                <Button onClick={generateRandomCode}>Đổi mã</Button>
+                {/* <Button onClick={generateRandomCode}>Đổi mã</Button> */}
               </div>
             </Form.Item>
           </div>
@@ -640,6 +643,7 @@ const EditProducts: React.FC = () => {
                     <th className="p-1 border-r border-gray-300">Kích thước</th>
                     <th className="p-1 border-r border-gray-300">Màu sắc</th>
                     <th className="p-1 border-r border-gray-300">Giá bán</th>
+                    <th className="p-1 border-r border-gray-300">Chi phí sản xuất</th>
                     <th className="p-1 border-r border-gray-300">Giá khuyến mãi</th>
                     <th className="p-1 border-r border-gray-300">Số lượng</th>
                     <th className="p-1">Ảnh biến thể</th>
@@ -669,11 +673,46 @@ const EditProducts: React.FC = () => {
                       </td>
                       <td className="p-1 border-r border-gray-300 w-[20%]">
                         <Form.Item
+                          name={`chi_phi_san_xuat-${index}`}
+                          className="my-0 px-5"
+                          initialValue={combo.chi_phi_san_xuat}
+
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập chi phí sản xuất!",
+                            },
+                            { type: "number", min: 1000, message: "Giá bán phải lớn hơn hoặc bằng 1000!" },
+
+                            {
+                              validator: (_, value) => {
+                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
+                                if (value && giaBan && value >= giaBan) {
+                                  return Promise.reject("Chi phí sản xuất  phải nhỏ hơn giá bán!");
+                                }
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                          style={{ margin: 0 }}
+                        >
+                          <InputNumber
+                            placeholder="0"
+                            style={{ width: "100%" }}
+                            min={0}
+                          />
+                        </Form.Item>
+
+                      </td>
+                      {/* <td className="p-1 border-r border-gray-300 w-[20%]">
+                        <Form.Item
                           name={`gia_khuyen_mai-${index}`}
                           className="my-0 px-5"
                           initialValue={combo.gia_khuyen_mai}
                           rules={[
                             { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
+                            { type: "number", min: 1000, message: "Giá bán phải lớn hơn hoặc bằng 1000!" },
+
                             {
                               validator: (_, value) => {
                                 const giaBan = form.getFieldValue(`gia_ban-${index}`);
@@ -687,7 +726,37 @@ const EditProducts: React.FC = () => {
                         >
                           <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
                         </Form.Item>
-                      </td>
+                      </td> */}
+                      <td className="p-1 border-r border-gray-300 w-[20%]">
+  <Form.Item
+    name={`gia_khuyen_mai-${index}`}
+    className="my-0 px-5"
+    initialValue={combo.gia_khuyen_mai}
+    rules={[
+      { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
+      {
+        type: "number",
+        min: 0,
+        message: "Giá khuyến mãi phải lớn hơn hoặc bằng 0!",
+      },
+      {
+        validator: (_, value) => {
+          const giaBan = form.getFieldValue(`gia_ban-${index}`);
+          if (value === 0 || (value > 0 && value <= 1000)) {
+            if (giaBan && value >= giaBan) {
+              return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
+            }
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc nhỏ hơn hoặc bằng 1000!"));
+        },
+      },
+    ]}
+  >
+    <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
+  </Form.Item>
+</td>
+
                       <td className="p-1 border-r border-gray-300 w-[20%]">
                         <Form.Item
                           name={`so_luong_bien_the-${index}`}
@@ -695,10 +764,10 @@ const EditProducts: React.FC = () => {
                           initialValue={combo.so_luong_bien_the}
                           rules={[
                             { required: true, message: "Vui lòng nhập số lượng!" },
-                            { type: "number", min: 1, message: "Số lượng phải lớn hơn 0!" },
+                            { type: "number", min: 0, message: "Số lượng phải số âm!" },
                           ]}
                         >
-                          <InputNumber placeholder="Nhập số lượng" style={{ width: "100%" }} min={1} />
+                          <InputNumber placeholder="Nhập số lượng" style={{ width: "100%" }} min={0} />
                         </Form.Item>
                       </td>
                       <td className="p-1">
@@ -740,8 +809,12 @@ const EditProducts: React.FC = () => {
                                 </div>{" "}
                                   <div className="mt-10">
                                     <Form.Item>
-                                    <Button type="primary" htmlType="submit" loading={updateProductMutation.isPending}>
-                                    Submit
+                                    <Button type="primary" htmlType="submit" className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors ml-12"
+  style={{
+    padding: "14px 40px",
+    marginRight: "190px",
+  }} loading={updateProductMutation.isPending}>
+                                    Cập nhập sản phẩm
                                       </Button>
                                     </Form.Item>
                                   </div>
