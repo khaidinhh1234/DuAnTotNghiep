@@ -71,6 +71,7 @@ class ThongTinWebController extends Controller
             'banner.*.noi_dung.tieu_de_nut' => 'nullable|string|max:255',
             'banner.*.noi_dung.mau_nut' => 'nullable|string|max:7',
             'banner.*.noi_dung.duong_link' => 'nullable|string|max:255',
+            'banner.*.loai_banner' => 'nullable|in:1,2', // 1 Banner quảng cáo sản phẩm, 2 Banner quảng cáo dịch vụ
         ]);
 
         if ($validator->fails()) {
@@ -86,7 +87,7 @@ class ThongTinWebController extends Controller
             if (isset($data['banner'])) {
                 // Kiểm tra trùng lặp vị trí
                 $positions = array_column($data['banner'], 'vi_tri');
-                $duplicatePositions = array_filter(array_count_values($positions), function($count) {
+                $duplicatePositions = array_filter(array_count_values($positions), function ($count) {
                     return $count > 1;
                 });
 
@@ -114,7 +115,6 @@ class ThongTinWebController extends Controller
                 'data' => $thongTinWeb,
                 'message' => $message,
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -123,11 +123,4 @@ class ThongTinWebController extends Controller
             ], 500);
         }
     }
-
-
-
-
-
-
-
 }
