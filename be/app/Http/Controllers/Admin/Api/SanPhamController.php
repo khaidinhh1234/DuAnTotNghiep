@@ -25,7 +25,7 @@ class SanPhamController extends Controller
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
-                'theSanPham'
+                'boSuuTapSanPham'
             ])
                 ->orderByDesc('id')
                 ->get();
@@ -56,8 +56,8 @@ class SanPhamController extends Controller
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'gia_tot' => 'nullable|boolean',
-            'the' => 'nullable|array',
-            'the.*' => 'integer',
+            'bo_suu_tap' => 'nullable|array',
+            'bo_suu_tap.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
@@ -74,9 +74,9 @@ class SanPhamController extends Controller
         }
 
 
-        $dataSanPham = $request->except('bien_the', 'the');
+        $dataSanPham = $request->except('bien_the', 'bo_suu_tap');
         $dataSanPham['duong_dan'] = Str::slug($dataSanPham['ten_san_pham']);
-        $theSanPham = $request->the;
+        $boSuuTapSanPham = $request->bo_suu_tap;
         $bienTheSanPhamTmp = $request->bien_the;
         $bienTheSanPham = [];
 
@@ -114,7 +114,7 @@ class SanPhamController extends Controller
                 }
             }
 
-            $sanPham->theSanPham()->sync($theSanPham);
+            $sanPham->boSuuTapSanPham()->sync($boSuuTapSanPham);
             DB::commit();
 
             return response()->json([
@@ -143,7 +143,7 @@ class SanPhamController extends Controller
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
-                'theSanPham',
+                'boSuuTapSanPham',
             ])->findOrFail($id);
 
             return response()->json([
@@ -171,8 +171,8 @@ class SanPhamController extends Controller
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'gia_tot' => 'nullable|boolean',
-            'the' => 'nullable|array',
-            'the.*' => 'integer',
+            'bo_suu_tap' => 'nullable|array',
+            'bo_suu_tap.*' => 'integer',
             'bien_the' => 'required|array',
             'bien_the.*.mau_sac_id' => 'required|integer',
             'bien_the.*.kich_thuoc_id' => 'required|integer',
@@ -191,9 +191,9 @@ class SanPhamController extends Controller
 
         $sanPham = SanPham::findOrFail($id);
 
-        $dataSanPham = $request->except('bien_the', 'the');
+        $dataSanPham = $request->except('bien_the', 'bo_suu_tap');
         $dataSanPham['duong_dan'] = Str::slug($dataSanPham['ten_san_pham']);
-        $theSanPham = $request->the;
+        $boSuuTapSanPham = $request->bo_suu_tap;
         $bienTheSanPhamTmp = $request->bien_the;
 
         $bienTheSanPham = [];
@@ -242,7 +242,7 @@ class SanPhamController extends Controller
                 }
             }
 
-            $sanPham->theSanPham()->sync($theSanPham);
+            $sanPham->boSuuTapSanPham()->sync($boSuuTapSanPham);
 
             DB::commit();
 
