@@ -31,7 +31,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const [user] = useLocalStorage("user", {});
+  const [user] = useLocalStorage("user" as any, {});
   const ten = user?.user.ho + " " + user?.user.ten;
   const anh = user?.user.anh_nguoi_dung;
   return (
