@@ -226,7 +226,7 @@ class VaiTroController extends Controller
                 'ttvc' => 'Trạng thái',
                 'danhmuc' => 'danh mục',
                 'sanpham' => 'sản phẩm',
-                'bosuutap' => 'Bộ sưu tập',
+                'bosuutap' => 'bộ sưu tập',
                 'vaitro' => 'vai trò',
                 'lienhe' => 'liên hệ',
                 'phanhoi' => 'Phản hồi',
