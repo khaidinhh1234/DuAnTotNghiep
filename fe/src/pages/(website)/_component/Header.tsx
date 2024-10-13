@@ -7,14 +7,19 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
-  const [user] = useLocalStorage("user", {});
+  const [user] = useLocalStorage("user" as any, {});
   const nav = useNavigate();
   const member = user.user;
   const phanquyen = user?.user?.vai_tros?.filter(
     (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
   );
+  console.log("member", member);
+  const giaohang = user?.user?.vai_tros?.filter(
+    (vai_tro: any) => vai_tro?.ten_vai_tro == "Người giao hàng"
+  );
   // console.log("member", member);
-  // console.log("phanquyen", phanquyen);
+  const giaohangs = giaohang && giaohang.length == 0;
+  console.log("giaohang", giaohangs);
   const logout = () => {
     // nav("/login");
     localStorage.removeItem("accessToken");
@@ -244,21 +249,43 @@ const Header = () => {
                       {!phanquyen || phanquyen.length === 0 ? (
                         ""
                       ) : (
-                        <li className="my-1">
-                          <a
-                            href="admin"
-                            className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
-                          >
-                            <img
-                              src="https://github.com/shadcn.png"
-                              alt=""
-                              className="w-[30px] h-[30px] rounded-full"
-                            />
-                            <h6 className="font-semibold mx-2 text-lg ">
-                              Quản trị
-                            </h6>
-                          </a>
-                        </li>
+                        <>
+                          {giaohangs && (
+                            <li className="my-1">
+                              <a
+                                href="admin"
+                                className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+                              >
+                                <img
+                                  src="https://github.com/shadcn.png"
+                                  alt=""
+                                  className="w-[30px] h-[30px] rounded-full"
+                                />
+                                <h6 className="font-semibold mx-2 text-lg ">
+                                  Quản trị
+                                </h6>
+                              </a>
+                            </li>
+                          )}
+
+                          {giaohangs == false && (
+                            <li className="my-1">
+                              <a
+                                href="admin/orders/uncomfirmedorder"
+                                className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+                              >
+                                <img
+                                  src="https://github.com/shadcn.png"
+                                  alt=""
+                                  className="w-[30px] h-[30px] rounded-full"
+                                />
+                                <h6 className="font-semibold mx-2 text-lg ">
+                                  Vận chuyển hàng
+                                </h6>
+                              </a>
+                            </li>
+                          )}
+                        </>
                       )}
                       <li className="my-1">
                         <a

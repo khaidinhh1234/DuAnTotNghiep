@@ -11,8 +11,10 @@ import {
   Radio,
   Select,
 } from "antd";
-import moment from "moment";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+
 type FieldType = {
   ho?: string;
   ten?: string;
@@ -21,7 +23,7 @@ type FieldType = {
   so_dien_thoai?: string;
   dia_chi?: string;
   gioi_tinh?: string;
-  ngay_sinh?: any;
+  ngay_sinh?: dayjs.Dayjs | null; // Đảm bảo kiểu ngày sinh là Dayjs hoặc null
 };
 
 const UsersnhanvienEdit = () => {
@@ -30,7 +32,7 @@ const UsersnhanvienEdit = () => {
   const { id } = useParams();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["USERID", id],
+    queryKey: ["taikhoanid", id],
     queryFn: async () => {
       try {
         const res = await instance.get(`/taikhoan/${id}`);
@@ -40,8 +42,9 @@ const UsersnhanvienEdit = () => {
       }
     },
   });
-  const { data: vaitroid } = useQuery({
-    queryKey: ["VAITRO"],
+
+  const { data: vaitroid, refetch } = useQuery({
+    queryKey: ["vaitro"],
     queryFn: async () => {
       try {
         const res = await instance.get("/vaitro");
@@ -51,19 +54,23 @@ const UsersnhanvienEdit = () => {
       }
     },
   });
+
   const phanquyen =
     vaitroid?.data
-      .filter((item: any) => item.ten_vai_tro !== "Khách hàng") // Lọc ra vai trò không phải là "Khách hàng"
+      .filter((item: any) => item.ten_vai_tro !== "Khách hàng")
       .map((item: any) => ({
         label: item.ten_vai_tro,
         value: item.ten_vai_tro,
       })) || [];
-  console.log(data?.data?.tai_khoan?.vai_tros);
+
   const vaitro =
     data?.data?.tai_khoan?.vai_tros?.map((item: any) => item?.ten_vai_tro) ||
     [];
-  console.log(vaitro);
+
   const user = data?.data?.tai_khoan;
+  console.log(user);
+  const [phanquyenSelected, setPhanquyenSelected] = useState<string[]>(vaitro);
+
   const mutate = useMutation({
     mutationFn: async (data) => {
       try {
@@ -78,8 +85,7 @@ const UsersnhanvienEdit = () => {
         type: "success",
         content: "Cập nhật tài khoản khách hàng thành công",
       });
-      nav("/admin/users/khachhang");
-      form.resetFields();
+      nav("/admin/users/nhanvien");
     },
     onError: (error: any) => {
       message.open({
@@ -93,11 +99,37 @@ const UsersnhanvienEdit = () => {
     const data = {
       ...values,
       ngay_sinh: values.ngay_sinh
-        ? (values.ngay_sinh as any).format("YYYY-MM-DD")
+        ? values.ngay_sinh.format("YYYY-MM-DD")
         : undefined,
+      vai_tros: phanquyenSelected,
     };
     mutate.mutate(data as any);
   };
+
+  useEffect(() => {
+    if (user) {
+      const selectedRoles = user.vai_tros.map((item: any) => item.ten_vai_tro);
+      setPhanquyenSelected(selectedRoles);
+
+      // Cập nhật các trường trong form, bao gồm ngày sinh
+      form.setFieldsValue({
+        ho: user.ho,
+        ten: user.ten,
+        email: user.email,
+        so_dien_thoai: user.so_dien_thoai,
+        dia_chi: user.dia_chi,
+        gioi_tinh: user.gioi_tinh,
+        ngay_sinh: user.ngay_sinh ? dayjs(user.ngay_sinh) : null, // Chuyển đổi sang dayjs
+        vai_tros: selectedRoles,
+      });
+    }
+  }, [user, form]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      vai_tros: phanquyenSelected,
+    });
+  }, [phanquyenSelected, form]);
 
   if (isLoading) return <p>Đang tải dữ liệu...</p>;
   if (isError) return <p>Có lỗi xảy ra khi tải dữ liệu</p>;
@@ -105,7 +137,7 @@ const UsersnhanvienEdit = () => {
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
-        <h1 className=" md:text-base">
+        <h1 className="md:text-base">
           Quản trị / Tài khoản /
           <span className="font-semibold px-px="> Cập nhật Tài khoản </span>
         </h1>
@@ -115,7 +147,7 @@ const UsersnhanvienEdit = () => {
           Cập nhật Tài khoản{user?.email ? `: ${user?.email}` : ""}
         </h1>
         <div>
-          <Link to="/admin/users/khachhang" className="mr-1">
+          <Link to="/admin/users/nhanvien" className="mr-1">
             <Button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
               Quay lại
             </Button>
@@ -136,9 +168,8 @@ const UsersnhanvienEdit = () => {
               onFinish={onFinish}
               initialValues={{
                 ...user,
-                ngay_sinh: user?.ngay_sinh
-                  ? moment(user?.ngay_sinh)
-                  : undefined,
+                ngay_sinh: user?.ngay_sinh ? dayjs(user.ngay_sinh) : null,
+                vai_tros: vaitro,
               }}
               autoComplete="off"
             >
@@ -151,10 +182,6 @@ const UsersnhanvienEdit = () => {
                       required: true,
                       message: "Họ của khách hàng bắt buộc phải nhập!",
                     },
-                    {
-                      pattern: /^[^\s]+(\s+[^\s]+)*$/,
-                      message: "Vui lòng nhập họ không chứa ký tự trắng!",
-                    },
                   ]}
                 >
                   <Input placeholder="Nhập Họ của khách hàng" />
@@ -166,11 +193,6 @@ const UsersnhanvienEdit = () => {
                     {
                       required: true,
                       message: "Tên của khách hàng bắt buộc phải nhập!",
-                    },
-
-                    {
-                      pattern: /^[^\s]+(\s+[^\s]+)*$/,
-                      message: "Vui lòng nhập tên không chứa ký tự trắng!",
                     },
                   ]}
                 >
@@ -213,19 +235,11 @@ const UsersnhanvienEdit = () => {
                 <Form.Item
                   label="Số điện thoại"
                   name="so_dien_thoai"
+                  className="col-span-1"
                   rules={[
                     {
                       required: true,
                       message: "Số điện thoại bắt buộc phải nhập!",
-                    },
-                    {
-                      pattern: /^[0-9]{10,11}$/,
-                      message:
-                        "Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.",
-                    },
-                    {
-                      pattern: /^[^\s]+(\s+[^\s]+)*$/,
-                      message: "Vui lòng nhập họ không chứa ký tự trắng!",
                     },
                   ]}
                 >
@@ -234,54 +248,43 @@ const UsersnhanvienEdit = () => {
                 <Form.Item
                   label="Ngày sinh"
                   name="ngay_sinh"
+                  className="col-span-1"
                   rules={[
                     {
                       required: true,
                       message: "Ngày sinh bắt buộc phải nhập!",
                     },
-                    {
-                      validator: (_, value) => {
-                        if (!value) return Promise.resolve();
-                        const today = new Date();
-                        const birthDate = new Date(value);
-                        let age = today.getFullYear() - birthDate.getFullYear();
-                        if (age < 3)
-                          return Promise.reject(
-                            new Error("Khách hàng yêu cầu độ tuổi phù hợp!")
-                          );
-                        if (birthDate > today)
-                          return Promise.reject(
-                            new Error(
-                              "Ngày sinh không được là ngày trong tương lai!"
-                            )
-                          );
-                        return Promise.resolve();
-                      },
-                    },
                   ]}
                 >
-                  <DatePicker className="w-full" />
+                  <DatePicker
+                    className="w-full"
+                    disabledDate={(current) =>
+                      current && current.isBefore(dayjs().startOf("day"))
+                    }
+                    // onChange={(date) => {
+                    //   form.setFieldsValue({ ngay_sinh: date }); // Cập nhật giá trị ngay_sinh trong form
+                    // }}
+                  />
                 </Form.Item>
-                <Form>
-                  <Form.Item
-                    label="Vai trò"
-                    name="vai_tros"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vai trò bắt buộc phải nhập!",
-                      },
-                    ]}
-                  >
-                    <Select
-                      mode="tags" // Chế độ chọn nhiều
-                      style={{ width: "100%" }}
-                      defaultValue={vaitro}
-                      placeholder="Chọn vai trò"
-                      options={phanquyen} // Sử dụng danh sách vai trò
-                    />
-                  </Form.Item>
-                </Form>
+                <Form.Item
+                  label="Vai trò"
+                  name="vai_tros"
+                  className="col-span-2"
+                  rules={[
+                    { required: true, message: "Vai trò bắt buộc phải nhập!" },
+                  ]}
+                >
+                  <Select
+                    mode="tags"
+                    style={{ width: "100%" }}
+                    value={phanquyenSelected}
+                    onChange={(value) => {
+                      setPhanquyenSelected(value);
+                    }}
+                    placeholder="Chọn vai trò"
+                    options={phanquyen}
+                  />
+                </Form.Item>
               </div>
               <div className="grid grid-cols-6 gap-5">
                 <Form.Item

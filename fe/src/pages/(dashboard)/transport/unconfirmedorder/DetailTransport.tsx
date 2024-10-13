@@ -46,44 +46,44 @@ const DetailTransport = ({ record }: any) => {
   // Hàm để xác nhận giao hàng
   const handleSave = async () => {
     try {
-        setLoading(true);
-        let imageUrl = null;
+      setLoading(true);
+      let imageUrl = null;
 
-        // Chỉ chụp ảnh nếu url đã có giá trị
-        if (url) {
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-            imageUrl = await uploadToCloudinary(file); // Tải ảnh lên Cloudinary
-        } else {
-            alert('Vui lòng chụp ảnh trước khi xác nhận giao hàng.');
-            return;
-        }
+      // Chỉ chụp ảnh nếu url đã có giá trị
+      if (url) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+        imageUrl = await uploadToCloudinary(file); // Tải ảnh lên Cloudinary
+      } else {
+        alert('Vui lòng chụp ảnh trước khi xác nhận giao hàng.');
+        return;
+      }
 
-        // Gọi mutate để xác nhận giao hàng
-        const response: any = await mutate({
-          id: record.id,
-          action: "Xác nhận giao hàng",
-          imageUrl: imageUrl,
-          shipper_xac_nhan: 1 // hoặc 2 nếu là giao hàng thất bại
-        });
+      // Gọi mutate để xác nhận giao hàng
+      const response: any = await mutate({
+        id: record.id,
+        action: "Xác nhận giao hàng",
+        imageUrl: imageUrl,
+        shipper_xac_nhan: 1 
+      });
 
-        console.log('API Response:', response); // In phản hồi từ API để kiểm tra
+      console.log('API Response:', response); 
 
-        if (response && response.status) {
-            alert('Đã lưu ảnh và xác nhận giao hàng thành công!');
-            setIsDeliveryConfirmed(true);
-        } else {
-            alert('Có lỗi xảy ra trong quá trình xác nhận giao hàng.');
-        }
+      if (response && response.status) {
+        alert('Đã lưu ảnh và xác nhận giao hàng thành công!');
+        setIsDeliveryConfirmed(true);
+      } else {
+        alert('Có lỗi xảy ra trong quá trình xác nhận giao hàng.');
+      }
 
     } catch (error) {
-        console.error('Có lỗi xảy ra:', error);
-        alert('Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!');
+      console.error('Có lỗi xảy ra:', error);
+      alert('Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
 
 
@@ -106,18 +106,15 @@ const DetailTransport = ({ record }: any) => {
   const { data } = useQuery({
     queryKey: ["SHIPPER"],
     queryFn: async () => {
-      // console.log(id)
       const response = await instance.get(`/vanchuyen/${id}`);
       return response.data;
     },
   })
-  // console.log(data?.data?.van_chuyen?.don_hang)
   const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
     };
   });
-  // console.log(products)
   const thongtin = data?.data?.thong_tin;
 
   const handleCancel = () => {
@@ -126,49 +123,44 @@ const DetailTransport = ({ record }: any) => {
 
   const { mutate } = useMutation({
     mutationFn: async ({ id, action, imageUrl }: any) => {
-        try {
-            let response;
+      try {
+        let response;
 
-            if (action === "Xác nhận giao hàng") {
-                // Gọi đến endpoint xác nhận giao hàng
-                response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
-                    anh_xac_thuc: imageUrl,
-                    shipper_xac_nhan: 1, // Đảm bảo rằng bạn gửi giá trị đúng
-                });
-            } else {
-                // Gọi đến endpoint cập nhật trạng thái đơn hàng
-                response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
-                    trang_thai_van_chuyen: action,
-                    id: [id],
-                });
-            }
-
-            const error = response.data.message;
-
-            message.open({
-                type: error === "Cập nhật trạng thái đơn hàng thành công" ? "success" : "info",
-                content: error,
-            });
-
-            return response.data;
-
-        } catch (error) {
-            message.open({
-                type: "error",
-                content: "Không thể cập nhật trạng thái đơn hàng!",
-            });
+        if (action === "Xác nhận giao hàng") {
+          response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
+            anh_xac_thuc: imageUrl,
+            shipper_xac_nhan: 1, 
+          });
+        } else {
+          // Gọi đến endpoint cập nhật trạng thái đơn hàng
+          response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
+            trang_thai_van_chuyen: action,
+            id: [id],
+          });
         }
+
+        const error = response.data.message;
+
+        message.open({
+          type: error === "Cập nhật trạng thái đơn hàng thành công" ? "success" : "info",
+          content: error,
+        });
+
+        return response.data;
+
+      } catch (error) {
+        message.open({
+          type: "error",
+          content: "Không thể cập nhật trạng thái đơn hàng!",
+        });
+      }
     },
     onSuccess: () => {
-        queryClient.invalidateQueries({
-            queryKey: ["vanchuyen"],
-        });
+      queryClient.invalidateQueries({
+        queryKey: ["vanchuyen"],
+      });
     },
-});
-
-  // const handleImageChange = (e: any) => {
-  //   setImageSelected(e && e.fileList.length > 0);
-  // };
+  });
   return (
     <div>
       {" "}
@@ -369,7 +361,6 @@ const DetailTransport = ({ record }: any) => {
                       {data?.data?.tong_thanh_tien_san_pham.toLocaleString(
                         "vi-VN"
                       )
-                        // .toLocaleString()
                       }
                     </span>{" "}
                     VNĐ
@@ -444,16 +435,16 @@ const DetailTransport = ({ record }: any) => {
                       </div>
                     )}
 
-{url && !isDeliveryConfirmed && ( // Ẩn biểu tượng thùng rác nếu giao hàng đã được xác nhận
-            <div className="relative flex justify-center mt-3">
-              <button
-                onClick={() => setUrl(null)} // Xóa ảnh và hiển thị lại webcam
-                className="absolute -top-10 px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
-              >
-                <i className="fa-regular fa-trash"></i>
-              </button>
-            </div>
-          )}
+                    {url && !isDeliveryConfirmed && ( 
+                      <div className="relative flex justify-center mt-3">
+                        <button
+                          onClick={() => setUrl(null)} 
+                          className="absolute -top-10 px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                        >
+                          <i className="fa-regular fa-trash"></i>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -461,7 +452,7 @@ const DetailTransport = ({ record }: any) => {
                   <button
                     className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
                     onClick={() => {
-                      setIsWebcamVisible(true); // Hiển thị webcam khi bấm "Giao hàng"
+                      setIsWebcamVisible(true);
                       mutate({ id: record.id, action: "Đang giao hàng" });
                     }}
                   >
@@ -472,7 +463,7 @@ const DetailTransport = ({ record }: any) => {
                     <button
                       className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
                       onClick={handleSave}
-                      disabled={loading || isImageSaved} // Vô hiệu hóa khi đang xử lý hoặc đã lưu
+                      disabled={loading || isImageSaved} 
                     >
                       {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
                     </button>

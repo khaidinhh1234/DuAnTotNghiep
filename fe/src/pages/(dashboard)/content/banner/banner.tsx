@@ -13,6 +13,7 @@ import {
   message,
   Spin,
   Tabs,
+  Select,
 } from "antd";
 import type { UploadFile, UploadProps } from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -22,6 +23,7 @@ import instance from "@/configs/admin";
 interface BannerData {
   id: number;
   duong_dan_anh: string;
+  vi_tri: number;
   noi_dung: {
     tieu_de_chinh: string;
     mau_tieu_de_chinh: string;
@@ -84,7 +86,7 @@ const BannerManagement: React.FC = () => {
 
   useEffect(() => {
     if (apiResponse && apiResponse.data && apiResponse.data.banner) {
-      setBanners(apiResponse.data.banner);
+      setBanners(apiResponse.data.banner.sort((a, b) => a.vi_tri - b.vi_tri));
       setFileList(
         apiResponse.data.banner.map((banner, index) => ({
           uid: `-${index}`,
@@ -140,14 +142,15 @@ const BannerManagement: React.FC = () => {
 
     setFileList(updatedFileList as UploadFile[]);
 
-    const updatedBanners = updatedFileList.map((file) => {
+    const updatedBanners = updatedFileList.map((file, index) => {
       const existingBanner = banners.find(banner => banner.duong_dan_anh === file.url);
       if (existingBanner) {
         return existingBanner;
       } else {
         return {
-          id: Date.now(), 
+          id: Date.now() + index,
           duong_dan_anh: file.url || "",
+          vi_tri: banners.length + 1,
           noi_dung: {
             tieu_de_chinh: "",
             mau_tieu_de_chinh: "",
@@ -175,6 +178,24 @@ const BannerManagement: React.FC = () => {
           : banner
       )
     );
+  };
+
+  const handlePositionChange = (bannerId: number, newPosition: number) => {
+    setBanners((prevBanners) => {
+      const bannerToMove = prevBanners.find((banner) => banner.id === bannerId);
+      if (!bannerToMove) return prevBanners;
+
+      const updatedBanners = prevBanners.map((banner) => {
+        if (banner.id === bannerId) {
+          return { ...banner, vi_tri: newPosition };
+        } else if (banner.vi_tri === newPosition) {
+          return { ...banner, vi_tri: bannerToMove.vi_tri };
+        }
+        return banner;
+      });
+
+      return updatedBanners.sort((a, b) => a.vi_tri - b.vi_tri);
+    });
   };
 
   if (isLoading) {
@@ -213,33 +234,33 @@ const BannerManagement: React.FC = () => {
         <div>
           <h2 className="text-xl font-semibold mb-2">Ảnh Banner</h2>
           <Upload
-  listType="picture-card"
-  fileList={fileList}
-  onPreview={handlePreview}
-  onChange={handleChange}
-  beforeUpload={() => false}
-  itemRender={(originNode, file, fileList) => {
-    if (uploadingFiles[file.uid]) {
-      return (
-        <div className="ant-upload-list-item-container">
-          <Spin
-            indicator={
-              <LoadingOutlined style={{ fontSize: 24 }} spin />
-            }
-          />
-        </div>
-      );
-    }
-    if (fileList.length <= 3) {
-      return React.cloneElement(originNode, {
-        actions: originNode.props.actions?.filter((action: any) => action.key !== 'delete')
-      });
-    }
-    return originNode;
-  }}
->
-  {fileList.length >= 4 ? null : uploadButton}
-</Upload>
+            listType="picture-card"
+            fileList={fileList}
+            onPreview={handlePreview}
+            onChange={handleChange}
+            beforeUpload={() => false}
+            itemRender={(originNode, file, fileList) => {
+              if (uploadingFiles[file.uid]) {
+                return (
+                  <div className="ant-upload-list-item-container">
+                    <Spin
+                      indicator={
+                        <LoadingOutlined style={{ fontSize: 24 }} spin />
+                      }
+                    />
+                  </div>
+                );
+              }
+              if (fileList.length <= 3) {
+                return React.cloneElement(originNode, {
+                  actions: originNode.props.actions?.filter((action: any) => action.key !== 'delete')
+                });
+              }
+              return originNode;
+            }}
+          >
+            {fileList.length >= 4 ? null : uploadButton}
+          </Upload>
 
           {previewImage && (
             <Image
@@ -257,55 +278,68 @@ const BannerManagement: React.FC = () => {
           <h2 className="text-xl font-semibold mb-2">Nội dung banner</h2>
           <Tabs defaultActiveKey="0">
             {banners.map((banner, index) => (
-   <TabPane tab={`Banner ${index + 1}`} key={index}>
-   <Table
-     dataSource={[
-       { key: "Tiêu đề chính", field: "tieu_de_chinh", value: banner.noi_dung.tieu_de_chinh, color: banner.noi_dung.mau_tieu_de_chinh },
-       { key: "Tiêu đề phụ", field: "tieu_de_phu", value: banner.noi_dung.tieu_de_phu, color: banner.noi_dung.mau_tieu_de_phu },
-       { key: "Văn bản quảng cáo", field: "van_ban_quang_cao", value: banner.noi_dung.van_ban_quang_cao, color: banner.noi_dung.mau_van_ban_quang_cao },
-       { key: "Tiêu đề nút", field: "tieu_de_nut", value: banner.noi_dung.tieu_de_nut, color: banner.noi_dung.mau_tieu_de_nut },
-       { key: "Đường dẫn", field: "duong_link", value: banner.noi_dung.duong_link },
-       { key: "Màu nền nút", field: "mau_nut", color: banner.noi_dung.mau_nut },
-     ]}
-     pagination={false}
-   >
-     <Table.Column title="Tên" dataIndex="key" key="key" />
-     <Table.Column
-       title="Nội Dung"
-       dataIndex="value"
-       key="value"
-       render={(text, record: any) => {
-         if (record.field === "mau_nut") {
-           return null;
-         }
-         return (
-           <Input
-             value={text}
-             onChange={(e) => handleBannerChange(banner.id, record.field, e.target.value)}
-           />
-         );
-       }}
-     />
-     <Table.Column
-       title="Màu"
-       key="color"
-       render={(_text, record: any) => {
-         if (record.field === "duong_link") {
-           return null;
-         }
-         return (
-           <ColorPicker
-             value={record.color}
-             onChange={(color) => handleBannerChange(banner.id, record.field === "mau_nut" ? "mau_nut" : `mau_${record.field}`, color.toHexString())}
-           />
-         );
-       }}
-     />
-   </Table>
- </TabPane>
- 
-
-         
+              <TabPane tab={`Banner ${index + 1}`} key={index}>
+                <Table
+                  dataSource={[
+                    { key: "Vị trí", field: "vi_tri", value: banner.vi_tri },
+                    { key: "Tiêu đề chính", field: "tieu_de_chinh", value: banner.noi_dung.tieu_de_chinh, color: banner.noi_dung.mau_tieu_de_chinh },
+                    { key: "Tiêu đề phụ", field: "tieu_de_phu", value: banner.noi_dung.tieu_de_phu, color: banner.noi_dung.mau_tieu_de_phu },
+                    { key: "Văn bản quảng cáo", field: "van_ban_quang_cao", value: banner.noi_dung.van_ban_quang_cao, color: banner.noi_dung.mau_van_ban_quang_cao },
+                    { key: "Tiêu đề nút", field: "tieu_de_nut", value: banner.noi_dung.tieu_de_nut, color: banner.noi_dung.mau_tieu_de_nut },
+                    { key: "Đường dẫn", field: "duong_link", value: banner.noi_dung.duong_link },
+                    { key: "Màu nền nút", field: "mau_nut", color: banner.noi_dung.mau_nut },
+                  ]}
+                  pagination={false}
+                >
+                  <Table.Column title="Tên" dataIndex="key" key="key" />
+                  <Table.Column
+                    title="Nội Dung"
+                    dataIndex="value"
+                    key="value"
+                    render={(text, record: any) => {
+                      if (record.field === "mau_nut") {
+                        return null;
+                      }
+                      if (record.field === "vi_tri") {
+                        return (
+                          <Select
+                            value={text}
+                            onChange={(value) => handlePositionChange(banner.id, value)}
+                            style={{ width: 120 }}
+                          >
+                            {banners.map((_, i) => (
+                              <Select.Option key={i} value={i + 1}>
+                                {i + 1}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        );
+                      }
+                      return (
+                        <Input
+                          value={text}
+                          onChange={(e) => handleBannerChange(banner.id, record.field, e.target.value)}
+                        />
+                      );
+                    }}
+                  />
+                  <Table.Column
+                    title="Màu"
+                    key="color"
+                    render={(_text, record: any) => {
+                      if (record.field === "duong_link" || record.field === "vi_tri") {
+                        return null;
+                      }
+                      return (
+                        <ColorPicker
+                          value={record.color}
+                          onChange={(color) => handleBannerChange(banner.id, record.field === "mau_nut" ? "mau_nut" : `mau_${record.field}`, color.toHexString())}
+                        />
+                      );
+                    }}
+                  />
+                </Table>
+              </TabPane>
             ))}
           </Tabs>
         </div>
@@ -403,6 +437,5 @@ const BannerManagement: React.FC = () => {
     </div>
   );
 };
-
 
 export default BannerManagement;

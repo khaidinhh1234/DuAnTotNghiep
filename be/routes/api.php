@@ -177,9 +177,9 @@ Route::middleware(['auth.sanctum'])
             });
 
         // Đánh giá
-        Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll'])->middleware('auth.checkrole');
-        Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham'])->middleware('auth.checkrole');
-        Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia'])->middleware('auth.checkrole');
+        Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll'])->name('danhgia.index')->middleware('auth.checkrole');
+        Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham']);
+        Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia'])->name('danhgia.phanhoi')->middleware('auth.checkrole');
 
         // Đơn hàng
         Route::middleware('auth.checkrole')
@@ -257,6 +257,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
                 Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
                 Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
+                Route::post('taikhoan/cap-nhat-mat-khau', [TaiKhoanController::class, 'doiMatKhau'])->withoutMiddleware('auth.checkrole');
             });
 
         //Hạng thành viên
