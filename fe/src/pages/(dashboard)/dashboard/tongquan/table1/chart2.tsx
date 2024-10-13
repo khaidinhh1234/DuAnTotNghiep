@@ -1,10 +1,38 @@
+import instance from "@/configs/admin";
+import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
-import { Card, Statistic } from "antd";
+import { Card, Statistic, Typography } from "antd";
+import { useEffect } from "react";
 import CountUp from "react-countup";
-const formatter: StatisticProps["formatter"] = (value: any) => (
-  <CountUp end={value as number} separator="," />
-);
-const Chart2 = () => {
+const { Text } = Typography;
+interface ChartProps {
+  datestart?: string;
+  dateend?: string;
+}
+const Chart2 = ({ datestart, dateend }: ChartProps) => {
+  const date =
+    datestart && dateend
+      ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
+      : null;
+
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["chart1", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/doanh-thu/tong", date);
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+  // console.log(data);
+  const formatter: StatisticProps["formatter"] = (value: any) => (
+    <CountUp end={value as number} separator="," />
+  );
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch();
+    }
+  }, [datestart, dateend, refetch]);
   return (
     <div>
       {" "}
@@ -19,7 +47,7 @@ const Chart2 = () => {
             <div className="text-black font-bold text-lg">
               {" "}
               <Statistic
-                value={523234}
+                value={data?.tong_doanh_thu || 0}
                 formatter={formatter}
                 suffix="đ"
                 valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
@@ -30,7 +58,7 @@ const Chart2 = () => {
             <div className="text-black text-lg">Đơn chốt:</div>
             <div className="text-black text-lg font-semibold">
               <Statistic
-                value={3454}
+                value={data?.so_don_hang || 0}
                 formatter={formatter}
                 valueStyle={{ fontSize: "17px" }} // Giảm font size ở đây
               />
