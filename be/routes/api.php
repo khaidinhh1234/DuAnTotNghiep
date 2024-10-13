@@ -171,7 +171,7 @@ Route::middleware(['auth.sanctum'])
                 Route::apiResource('bosuutap',  BoSuuTapController::class)->except(['show']);
                 Route::get('bosuutap/thung-rac', [BoSuuTapController::class, 'danhSachBoSuuTapDaXoa'])->name('bosuutap.thungrac');
                 Route::post('bosuutap/thung-rac/{id}', [BoSuuTapController::class, 'khoiPhucBoSuuTap'])->name('bosuutap.khoiphuc');
-                Route::get('bosuutap/{id}', [BoSuuTapController::class, 'show'])->name('the.show');
+                Route::get('bosuutap/{id}', [BoSuuTapController::class, 'show'])->name('bosuutap.show');
             });
 
         // Đánh giá
