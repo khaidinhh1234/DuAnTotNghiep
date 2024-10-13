@@ -1,36 +1,92 @@
 import instance from "@/configs/admin";
+import { uploadToCloudinary } from "@/configs/cloudinary";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Form, message, Modal } from "antd";
-import React, { useRef, useState } from "react";
-import AllCameras from "../../shipper/page";
+import { Button, message, Modal } from "antd";
+import { useRef, useState } from "react";
 import Webcam from "react-webcam";
-
-const videoConstraints = {
-  width: 540,
-  facingMode: "environment",
-};
-
+interface Transport {
+  don_hang: any;
+  id: number;
+  created_at: string;
+  don_hang_id: number;
+  shipper_id: number
+  ma_van_chuyen: string;
+  trang_thai_van_chuyen: string;
+  cod: number;
+  tien_cod: number;
+  anh_xac_thuc: string;
+  khach_hang_xac_nhan: string
+  shipper_xac_nhan: number
+}
 const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const [imageSelected, setImageSelected] = useState(false);
-  const [isWebcamVisible, setIsWebcamVisible] = useState(false);
-  const [url, setUrl] = useState<string | null>(null);
+  const [isDeliveryConfirmed, setIsDeliveryConfirmed] = useState(false);
+  // 
+  const [url, setUrl] = useState<string | null>(null); // URL ảnh đã chụp
+  const [loading, setLoading] = useState(false); // Trạng thái đang xử lý
+  const [isImageSaved, setIsImageSaved] = useState(false); // Trạng thái đã lưu ảnh
+  const [isWebcamVisible, setIsWebcamVisible] = useState(false); // Hiển thị webcam
   const webcamRef = useRef<Webcam>(null);
-
-  // Capture a photo from the webcam
-  const capturePhoto = () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      setUrl(imageSrc);
-    }
-  };
 
   const videoConstraints = {
     width: 1280,
     height: 720,
-    facingMode: "user",
+    facingMode: 'user',
   };
+
+  // Hàm chụp ảnh bằng webcam
+  const capturePhoto = () => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setUrl(imageSrc); // Hiển thị ảnh đã chụp
+    }
+  };
+
+  // Hàm để xác nhận giao hàng
+  const handleSave = async () => {
+    try {
+        setLoading(true);
+        let imageUrl = null;
+
+        // Chỉ chụp ảnh nếu url đã có giá trị
+        if (url) {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+            imageUrl = await uploadToCloudinary(file); // Tải ảnh lên Cloudinary
+        } else {
+            alert('Vui lòng chụp ảnh trước khi xác nhận giao hàng.');
+            return;
+        }
+
+        // Gọi mutate để xác nhận giao hàng
+        const response: any = await mutate({
+          id: record.id,
+          action: "Xác nhận giao hàng",
+          imageUrl: imageUrl,
+          shipper_xac_nhan: 1 // hoặc 2 nếu là giao hàng thất bại
+        });
+
+        console.log('API Response:', response); // In phản hồi từ API để kiểm tra
+
+        if (response && response.status) {
+            alert('Đã lưu ảnh và xác nhận giao hàng thành công!');
+            setIsDeliveryConfirmed(true);
+        } else {
+            alert('Có lỗi xảy ra trong quá trình xác nhận giao hàng.');
+        }
+
+    } catch (error) {
+        console.error('Có lỗi xảy ra:', error);
+        alert('Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!');
+    } finally {
+        setLoading(false);
+    }
+};
+
+
+
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -50,7 +106,7 @@ const DetailTransport = ({ record }: any) => {
   const { data } = useQuery({
     queryKey: ["SHIPPER"],
     queryFn: async () => {
-      console.log(id)
+      // console.log(id)
       const response = await instance.get(`/vanchuyen/${id}`);
       return response.data;
     },
@@ -61,7 +117,7 @@ const DetailTransport = ({ record }: any) => {
       ...item,
     };
   });
-  console.log(products)
+  // console.log(products)
   const thongtin = data?.data?.thong_tin;
 
   const handleCancel = () => {
@@ -69,44 +125,50 @@ const DetailTransport = ({ record }: any) => {
   };
 
   const { mutate } = useMutation({
-    mutationFn: async ({ id, action }: any) => {
-      console.log("data", id, action);
+    mutationFn: async ({ id, action, imageUrl }: any) => {
+        try {
+            let response;
 
-      try {
-        const response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
-          trang_thai_van_chuyen: action,
-          id: [id],
-        });
-        const error = response.data.message;
+            if (action === "Xác nhận giao hàng") {
+                // Gọi đến endpoint xác nhận giao hàng
+                response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
+                    anh_xac_thuc: imageUrl,
+                    shipper_xac_nhan: 1, // Đảm bảo rằng bạn gửi giá trị đúng
+                });
+            } else {
+                // Gọi đến endpoint cập nhật trạng thái đơn hàng
+                response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
+                    trang_thai_van_chuyen: action,
+                    id: [id],
+                });
+            }
 
-        if (error === "Cập nhật trạng thái đơn hàng thành công") {
-          message.open({
-            type: "success",
-            content: error,
-          });
-        } else {
-          message.open({
-            type: "success",
-            content: error,
-          });
+            const error = response.data.message;
+
+            message.open({
+                type: error === "Cập nhật trạng thái đơn hàng thành công" ? "success" : "info",
+                content: error,
+            });
+
+            return response.data;
+
+        } catch (error) {
+            message.open({
+                type: "error",
+                content: "Không thể cập nhật trạng thái đơn hàng!",
+            });
         }
-        return response.data;
-      } catch (error) {
-        message.open({
-          type: "error",
-          content: "Không thể cập nhật trạng thái đơn hàng!",
-        });
-      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["vanchuyen"],
-      });
+        queryClient.invalidateQueries({
+            queryKey: ["vanchuyen"],
+        });
     },
-  });
-  const handleImageChange = (e: any) => {
-    setImageSelected(e && e.fileList.length > 0);
-  };
+});
+
+  // const handleImageChange = (e: any) => {
+  //   setImageSelected(e && e.fileList.length > 0);
+  // };
   return (
     <div>
       {" "}
@@ -353,7 +415,6 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg">Xác nhận đơn hàng </h5>
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
-
               <div className="flex flex-col gap-2">
                 {isWebcamVisible && (
                   <div className="relative mx-auto mt-6">
@@ -377,66 +438,54 @@ const DetailTransport = ({ record }: any) => {
                       </div>
                     )}
 
-                    {/* Show the captured image */}
                     {url && (
                       <div>
                         <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
                       </div>
                     )}
 
-                    {/* Option to remove the captured image */}
-                    {url && (
-                      <div className="relative  flex justify-center mt-3">
-                        <button
-                          onClick={() => setUrl(null)} // Reset the URL to show the webcam again
-                          className=" absolute -top-10 px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
-                        >
-                          <i className="fa-regular fa-trash"></i>
-                        </button>
-                      </div>
-                    )}
+{url && !isDeliveryConfirmed && ( // Ẩn biểu tượng thùng rác nếu giao hàng đã được xác nhận
+            <div className="relative flex justify-center mt-3">
+              <button
+                onClick={() => setUrl(null)} // Xóa ảnh và hiển thị lại webcam
+                className="absolute -top-10 px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+              >
+                <i className="fa-regular fa-trash"></i>
+              </button>
+            </div>
+          )}
                   </div>
                 )}
+
                 {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
-                  <>
-                    <button
-                      className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
-                      onClick={() => {
-                        setIsWebcamVisible(true); // Show the webcam on button click
-                        mutate({ id: record.id, action: "Đang giao hàng" });
-                      }}
-                    >
-                      Giao hàng
-                    </button>
-                  </>
+                  <button
+                    className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
+                    onClick={() => {
+                      setIsWebcamVisible(true); // Hiển thị webcam khi bấm "Giao hàng"
+                      mutate({ id: record.id, action: "Đang giao hàng" });
+                    }}
+                  >
+                    Giao hàng
+                  </button>
                 ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
                   <>
                     <button
                       className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Giao hàng thành công" })
-                      }
+                      onClick={handleSave}
+                      disabled={loading || isImageSaved} // Vô hiệu hóa khi đang xử lý hoặc đã lưu
                     >
-                      Xác nhận giao hàng
+                      {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
                     </button>
+
                     <button
                       className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Hủy hàng" })
-                      }
+                      onClick={() => mutate({ id: record.id, action: "Hủy hàng" })}
                     >
                       Giao hàng thất bại
                     </button>
                   </>
-                ) : record.trang_thai_van_chuyen === "Chờ xử lý" ? (
-                  <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
-                    Giao hàng thành công
-                  </span>
                 ) : null}
               </div>
-
-              {/* Conditionally render the webcam section */}
-
             </div>{" "}
             <div className=" bg-slate-100 p-5 border rounded-lg my-2">
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
@@ -488,44 +537,6 @@ const DetailTransport = ({ record }: any) => {
                   Số điện thoại:
                   {/* <span className="text-black font-medium">{shipperPhone}</span> */}
                 </p>
-                <h5 className="text-blue-800 mb-4">Ảnh xác nhận giao hàng thành công:</h5>
-                {/* <div className="relative mx-auto">
-                  {url ? null : (
-                    <div className="relative">
-                      <Webcam
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        videoConstraints={videoConstraints}
-                        onUserMedia={onUserMedia}
-                        className="w-60 rounded-lg"
-                        audio={false}
-                      />
-                      <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
-                        <button
-                          onClick={capturePhoto}
-                          className="px-5 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
-                        >
-                          <i className="fa-regular fa-camera"></i>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  {url ? (
-                    <div>
-                      <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
-                    </div>
-                  ) : null}
-                  {url ? (
-                    <div className="flex justify-center mt-3">
-                      <button
-                        onClick={() => setUrl(null)}
-                        className="px-4 py-2 rounded-full text-2xl bg-white mx-2"
-                      >
-                        <i className="fa-regular fa-trash"></i>
-                      </button>
-                    </div>
-                  ) : null}
-                </div> */}
               </div>
             </div>
           </div>
