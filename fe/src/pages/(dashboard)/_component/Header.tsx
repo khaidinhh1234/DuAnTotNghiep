@@ -31,7 +31,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const [user] = useLocalStorage("user", {});
+  const [user] = useLocalStorage("user" as any, {});
   const ten = user?.user.ho + " " + user?.user.ten;
   const anh = user?.user.anh_nguoi_dung;
   return (
@@ -135,17 +135,13 @@ const Header = () => {
         <DropdownMenuContent align="end" className="max-h-[400px]  mr-10">
           <DropdownMenuLabel>{ten}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Thông tin cá nhân</DropdownMenuItem>
+          <DropdownMenuItem>
+            {" "}
+            <Link to="admin-profile">Thông tin cá nhân </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem>
             <Link to={"/admin/history"}>Nhập ký truy cập</Link>
           </DropdownMenuItem>
-
-          <DropdownMenuLabel>My account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link to="admin-profile">My Account</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
 
           <DropdownMenuSeparator />
           <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
