@@ -24,7 +24,7 @@ const TagsAdmin: React.FC = () => {
     queryKey: ["tag"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/the");
+        const response = await instance.get("/bosuutap");
         const tag = response.data;
 
         return tag; 
@@ -44,7 +44,7 @@ const TagsAdmin: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.delete(`/the/${id}`);
+        const response = await instance.delete(`/bosuutap/${id}`);
         if (response.data.status) {
           return id;
         } else {
@@ -162,10 +162,10 @@ const TagsAdmin: React.FC = () => {
       dataIndex: "index",
     },
     {
-      title: "Tên thẻ đính kèm",
+      title: "Tên Bô Sưu Tập",
       width: "40%",
-      key: "ten_the",
-      dataIndex: "ten_the",
+      key: "ten",
+      dataIndex: "ten",
       //   ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a: any, b: any) => a.ten_the.localeCompare(b.ten_the),
       ...getColumnSearchProps("ten_the"),
@@ -176,7 +176,22 @@ const TagsAdmin: React.FC = () => {
           .includes(value.toString().toLowerCase()),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-
+    {
+      title: "Ảnh bộ sưu tập",
+      width: "15%",
+      key: "duong_dan_anh",
+      dataIndex: "duong_dan_anh",
+      render: (duong_dan_anh: string) =>
+        duong_dan_anh ? (
+          <img
+            src={duong_dan_anh}
+            alt="Ảnh danh mục"
+            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+          />
+        ) : (
+          <span>Ảnh không có</span>
+        ),
+    },
     {
       title: "Quản trị",
       key: "action",
@@ -217,11 +232,11 @@ const TagsAdmin: React.FC = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Thẻ đính kèm</span>
+          Quản trị / <span className="font-semibold px-px">Bộ sưu tập</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Thẻ đính kèm</h1>
+        <h1 className="font-semibold md:text-3xl">Bộ sưu tập</h1>
         <div className="flex">
           <Link to="/admin/products/tags/add" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">

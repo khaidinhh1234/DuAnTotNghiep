@@ -66,7 +66,7 @@ const SiderComponent: React.FC = () => {
             <Menu.Item key="/admin/users/nhanvien">Nhân viên</Menu.Item>
             <Menu.Item key="/admin/users/rank">Hạng thành viên</Menu.Item>
           </SubMenu>
-          <SubMenu key="sub6" icon={<Tag />} title="vouchers">
+          <SubMenu key="sub6" icon={<Tag />} title="Khuyến mại & Ưu đãi">
 
           <Menu.Item key="/admin/vouchers">
             Mã khuyến mại

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GioHang extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -16,4 +16,15 @@ class GioHang extends Model
         'so_luong',
         'gia',
         ];
+
+
+    public function sanPham()
+    {
+        return $this->belongsTo(SanPham::class, 'bien_the_san_pham_id', 'id');
+    }
+
+    public function bienTheSanPhams()
+    {
+        return $this->belongsTo(BienTheSanPham::class, 'bien_the_san_pham_id', 'id');
+    }
 }

@@ -61,7 +61,7 @@ class ThongKeTongQuanController extends Controller
             ? (($tongTien - $tongTienTruoc) / $tongTienTruoc) * 100
             : ($tongTien > 0 ? 100 : 0);
 
-        // Trả về kết quả dưới dạng số thực hoặc số nguyên thay vì string
+
         return response()->json([
             'tong_so_luong_don_hang' => $tongSoLuongDonHang,
             'tong_tien' => $tongTien,
@@ -465,6 +465,7 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_doanh_thu_tb' => $tiLeTangGiamDoanhThuTB,
         ]);
     }
+
     public function doanhThuKhoangSoSanh(Request $request)
     {
 
@@ -555,3 +556,5 @@ class ThongKeTongQuanController extends Controller
     }
 
 }
+
+

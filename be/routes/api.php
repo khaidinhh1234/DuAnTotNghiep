@@ -56,8 +56,10 @@ Route::middleware([])
         // Trang chủ
         Route::get('trangchu', [TrangChuController::class, 'index']);
 
-        //Chương trình ưu đãi
+        //Chương trình ưu đãi và mã khuyến mãi
         Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'danhSachSanPhamChuongTrinhUuDai']);
+        Route::get('ma-khuyen-mai', [KhuyenMaiController::class, 'layMaKhuyenMaiTheoHangThanhVien']);
+        Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
 
         //Client Sản Phẩm
         // Lấy ra danh mục cha
@@ -111,8 +113,9 @@ Route::middleware([])
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
+
 //'auth.sanctum'
-Route::middleware('auth.sanctum')
+Route::middleware(['auth.checkrole','auth.sanctum'])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {

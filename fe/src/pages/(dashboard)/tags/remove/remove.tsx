@@ -20,7 +20,7 @@ const TagsRemoteAdmin: React.FC = () => {
     queryKey: ["tag"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/the/thung-rac");
+        const response = await instance.get("/bosuutap/thung-rac");
         const tag = response.data;
 
         return tag; 
@@ -41,7 +41,7 @@ const TagsRemoteAdmin: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.post(`/the/thung-rac/${id}`);
+        const response = await instance.post(`/bosuutap/thung-rac/${id}`);
         if (response.data.status) {
           message.open({
             type: "success",
@@ -161,13 +161,28 @@ const TagsRemoteAdmin: React.FC = () => {
     {
       title: "Tên Nhãn Dán",
       width: "40%",
-      key: "ten_the",
-      dataIndex: "ten_the",
+      key: "ten",
+      dataIndex: "ten",
       //   ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a: any, b: any) => a.ten_the.localeCompare(b.ten_the),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-
+    {
+      title: "Ảnh bộ sưu tập",
+      width: "15%",
+      key: "duong_dan_anh",
+      dataIndex: "duong_dan_anh",
+      render: (duong_dan_anh: string) =>
+        duong_dan_anh ? (
+          <img
+            src={duong_dan_anh}
+            alt="Ảnh danh mục"
+            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+          />
+        ) : (
+          <span>Ảnh không có</span>
+        ),
+    },
     {
       title: "Quản trị",
       key: "action",

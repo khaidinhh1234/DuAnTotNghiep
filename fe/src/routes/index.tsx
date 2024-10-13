@@ -33,7 +33,7 @@ import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 import OrderAdmin from "@/pages/(dashboard)/order/page";
 import ProductsAdd from "@/pages/(dashboard)/products/add/page";
-import ProductsEdit from "@/pages/(dashboard)/products/edit/page";
+// import ProductsEdit from "@/pages/(dashboard)/products/edit/page";
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
 import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
 import RevenueAdmin from "@/pages/(dashboard)/revenue/page";
@@ -102,7 +102,7 @@ import { default as ShowNhanvien, default as ShowUser } from "@/pages/(dashboard
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
 
 import Test from "@/pages/(dashboard)/test";
-import PrivateRoute from "./PrivateRoute";
+// import PrivateRoute from "./PrivateRoute";
 // import List from "@/pages/(dashboard)/dashboard/test/page";
 
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
@@ -124,6 +124,7 @@ import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
 import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
 
 import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
+import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
 
 
 const Router = () => {
@@ -233,7 +234,7 @@ const Router = () => {
                     {/* trương trình ưu đâix */}
                     <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
                     <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
-                    {/* <Route path="chuongtrinhuudaiedit" element={<ChuongTrinhUuDaiEdit />} /> */}
+                    <Route path="chuongtrinhuudaiedit" element={<ChuongTrinhUuDaiEdit />} />
 
 
 

@@ -118,7 +118,7 @@ const NewAdd = () => {
                 </Form.Item>
               </div>
 
-              <div className="grid grid-cols-1 gap-5">
+              {/* <div className="grid grid-cols-1 gap-5">
                 <Form.Item
                   label="Tài khoản"
                   name="user_id"
@@ -136,7 +136,7 @@ const NewAdd = () => {
                     )}
                   </Select>
                 </Form.Item>
-              </div>
+              </div> */}
 
               <Form.Item
                 label="Danh mục tin tức"
