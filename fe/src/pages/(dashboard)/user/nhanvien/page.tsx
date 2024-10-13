@@ -53,21 +53,21 @@ const UsersAdminNhanvien: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["productskey"],
+        queryKey: ["taikhoan"],
       });
     },
   });
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["productskey"],
+    queryKey: ["taikhoan"],
     queryFn: async () => {
       const res = await instance.get("taikhoan");
       return res.data;
     },
   });
-console.log(data)
+  console.log(data);
   const user = data?.data
     ?.filter((item: any) =>
-      item?.vai_tros.some((role: any) => role.ten_vai_tro !== "Khách hàng")
+      item?.vai_tros?.some((role: any) => role.ten_vai_tro !== "Khách hàng")
     )
     .map((item: any, index: string) => ({
       ...item,
@@ -188,13 +188,13 @@ console.log(data)
     //           padding: "60px",
     //           borderRadius: "8px",
     //           backgroundColor: "#f0faff",
-    //           transition: "background-color 0.3s ease", 
+    //           transition: "background-color 0.3s ease",
     //         }}
     //         onMouseOver={(e) => {
-    //           e.currentTarget.style.backgroundColor = "#AABBCC"; 
+    //           e.currentTarget.style.backgroundColor = "#AABBCC";
     //         }}
     //         onMouseOut={(e) => {
-    //           e.currentTarget.style.backgroundColor = "#f0faff"; 
+    //           e.currentTarget.style.backgroundColor = "#f0faff";
     //         }}
     //       >
     //         {record.anh_nguoi_dung ? (
@@ -232,38 +232,46 @@ console.log(data)
     //     </Link>
     //   ),
     // },
-    
-    
+
     {
       title: "Thông tin",
       key: "thong_tin",
       width: "25%",
       render: (record) => (
-        <Link to={`show/${record.key}`} style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to={`show/${record.key}`}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              border: "1px solid #e0e0e0", 
-              height: "120px", 
-              padding: "15px", 
-              borderRadius: "15px", 
-              backgroundColor: "#f7fafd", 
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", 
-              transition: "background-color 0.3s ease", 
+              border: "1px solid #e0e0e0",
+              height: "120px",
+              padding: "15px",
+              borderRadius: "15px",
+              backgroundColor: "#f7fafd",
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              transition: "background-color 0.3s ease",
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#e0f7fa"; 
+              e.currentTarget.style.backgroundColor = "#e0f7fa";
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#f7fafd"; 
+              e.currentTarget.style.backgroundColor = "#f7fafd";
             }}
           >
             {record.anh_nguoi_dung ? (
               <img
                 src={record.anh_nguoi_dung}
                 alt="Avatar"
-                style={{ width: "80px", height: "80px", borderRadius: "12px", marginRight: "20px", objectFit: "cover" }} 
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "12px",
+                  marginRight: "20px",
+                  objectFit: "cover",
+                }}
               />
             ) : (
               <div
@@ -277,16 +285,26 @@ console.log(data)
               />
             )}
             <div>
-              <div style={{ fontWeight: "bold", marginBottom: "8px", fontSize: "16px"}}>            {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
-              </div> 
-              <div style={{ color: "#888", fontSize: "16px" }}>           {record.email ? record.email : "Chưa có dữ liệu"}
-              </div> 
+              <div
+                style={{
+                  fontWeight: "bold",
+                  marginBottom: "8px",
+                  fontSize: "16px",
+                }}
+              >
+                {" "}
+                {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+              </div>
+              <div style={{ color: "#888", fontSize: "16px" }}>
+                {" "}
+                {record.email ? record.email : "Chưa có dữ liệu"}
+              </div>
             </div>
           </div>
         </Link>
       ),
     },
-    
+
     {
       title: "Vai trò",
       render: (_, record) =>
@@ -304,7 +322,7 @@ console.log(data)
       width: "15%",
       sorter: (a: any, b: any) => a.vai_tros.length - b.vai_tros.length,
     },
-    
+
     // {
     //   title: "Ảnh người dùng",
     //   render: (record) =>
@@ -388,7 +406,7 @@ console.log(data)
     //   ...getColumnSearchProps("ngay_sinh"),
     //   render: (text) => (text ? text : "Chưa có dữ liệu"),
     // },
-   
+
     {
       title: "Quản trị",
       key: "action",
@@ -439,8 +457,8 @@ console.log(data)
       const filtered = user?.filter(
         (item: any) =>
           item.ten?.toLowerCase().includes(value.toLowerCase()) ||
-        item.email?.toLowerCase().includes(value.toLowerCase()) ||
-        item.ho?.toLowerCase().includes(value.toLowerCase())
+          item.email?.toLowerCase().includes(value.toLowerCase()) ||
+          item.ho?.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredData(filtered || []);
     } else {
@@ -480,16 +498,15 @@ console.log(data)
         </div>
       </div>
       <div className="max-w-sm my-2">
-
-<Input
-      placeholder="Tìm kiếm..."
-      size="large"
-      value={searchText}
-      onChange={(e) => setSearchText(e.target.value)}
-      onKeyDown={handleKeyDown}
-      className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
-    />
-  </div>
+        <Input
+          placeholder="Tìm kiếm..."
+          size="large"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
+        />
+      </div>
       <div className=" ">
         <Table
           columns={columns}
