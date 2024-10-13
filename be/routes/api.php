@@ -257,6 +257,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
                 Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
                 Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
+                Route::post('taikhoan/cap-nhat-mat-khau', [TaiKhoanController::class, 'doiMatKhau'])->withoutMiddleware('auth.checkrole');
             });
 
         //Hạng thành viên
