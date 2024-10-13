@@ -118,7 +118,7 @@
             <p class="reply">Chúng tôi đã nhận được liên hệ của bạn từ Website Glow Clothing, Chúng tôi sẽ trả lời thư
                 của bạn sớm
                 nhất có thể!</p>
-                <div class="contact-customers"><strong>Nội dung: {{ $noidung }}</strong> </div>
+                <div class="contact-customers"><strong>Nội dung: {{ $noi_dung_phan_hoi }}</strong> </div>
         </div>
         <div class="footer">
             <p>Bằng cách tương tác với email này, bạn đồng ý với <a href="#">Điều Khoản & Điều Kiện</a> và <a

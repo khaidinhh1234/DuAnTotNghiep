@@ -63,7 +63,7 @@ const Feedback = () => {
         const response = await instance.put(`/lien-he/${id}`, {
           noi_dung_phan_hoi: noi_dung_phan_hoi,
         });
-     console.log(response ,'ưefdas')
+    //  console.log(response ,'ưefdas')
         return response.data;
       } catch (error) {
         throw error;

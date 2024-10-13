@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DonHang;
 use App\Models\HangThanhVien;
 use App\Models\User;
 use Carbon\Carbon;
@@ -27,7 +28,6 @@ class ThongKeKhachHangController extends Controller
                     'so_luong_khach_hang' => $hang->users_count,
                 ];
             });
-
         return response()->json($thongKe);
     }
 
@@ -129,7 +129,7 @@ class ThongKeKhachHangController extends Controller
     {
         $khachHang = User::select('users.*', DB::raw('CAST(SUM(don_hangs.tong_tien_don_hang) AS UNSIGNED) as tong_tien_da_mua'))
             ->join('don_hangs', 'users.id', '=', 'don_hangs.user_id')
-            ->where('trang_thai_don_hang', 'Giao hàng thành công')
+            ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->whereNull('don_hangs.deleted_at')
             ->groupBy('users.id') // Nhóm theo người dùng để tính tổng tiền chi tiêu của từng khách hàng.
             ->orderByDesc(DB::raw('MAX(don_hangs.created_at)'))
