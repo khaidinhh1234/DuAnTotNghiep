@@ -3,20 +3,21 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\The;
+use App\Models\BoSuuTap;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class TheController extends Controller
+class BoSuuTapController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of BoSuuTap resource.
      */
     public function index()
     {
         try {
-            $data = The::query()->orderByDesc('id')->get();
+            $data = BoSuuTap::query()->orderByDesc('id')->get();
             $json = [
                 'status' => true,
                 'status_code' => 200,
@@ -35,8 +36,19 @@ class TheController extends Controller
         }
     }
 
+    public function getBoSuuTapSanPham()
+    {
+        $data = BoSuuTap::query()->with('sanPhams')->orderByDesc('id')->get();
+        return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Lấy dữ liệu thành công',
+            'data' => $data
+        ], 200);
+    }
+
     /**
-     * Show the form for creating a new resource.
+     * Show BoSuuTap form for creating a new resource.
      */
     public function create()
     {
@@ -50,7 +62,10 @@ class TheController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'ten_the' => 'required|string|max:255|unique:thes,ten_the',
+                'ten' => 'required|string|max:255|unique:bo_suu_taps,ten',
+                'duong_dan_anh' => 'required|string|max:255',
+                'san_pham' => 'array',
+                'san_pham.*' => 'integer',
             ]);
 
             if ($validator->fails()) {
@@ -58,19 +73,21 @@ class TheController extends Controller
             }
 
             $data = $request->all();
-            $data['duong_dan'] = Str::slug($data['ten_the']);
-
-            The::create($data);
-
+            $data['duong_dan'] = Str::slug($data['ten']);
+            DB::beginTransaction();
+            $boSuuTap = BoSuuTap::create($data);
+            $boSuuTap->sanPhams()->sync($request->san_pham);
             $json = [
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Thêm dữ liệu thành công',
             ];
 
+            DB::commit();
             return response()->json($json, 200);
 
         } catch (\Exception $e) {
+            DB::rollBack();
             $json = [
                 'status' => false,
                 'status_code' => 500,
@@ -84,12 +101,13 @@ class TheController extends Controller
 
 
     /**
-     * Display the specified resource.
+     * Display BoSuuTap specified resource.
      */
     public function show(string $id)
     {
         try {
-            $data = The::query()->where('id', $id)->first();
+            $data = BoSuuTap::query()->where('id', $id)->first();
+            $data['san_pham'] = $data->sanPhams;
             $json = [
                 'status' => true,
                 'status_code' => 200,
@@ -111,7 +129,7 @@ class TheController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show BoSuuTap form for editing BoSuuTap specified resource.
      */
     public function edit(string $id)
     {
@@ -119,51 +137,68 @@ class TheController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update BoSuuTap specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
         try {
             $validator = Validator::make($request->all(), [
-                'ten_the' => 'required|string|max:255|unique:thes,ten_the',
+                'ten' => 'required|string|max:255|unique:bo_suu_taps,ten,' . $id,
+                'duong_dan_anh' => 'required|string|max:255',
+                'san_pham' => 'array',
+                'san_pham.*' => 'integer',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
 
+            $boSuuTap = BoSuuTap::find($id);
+            if (!$boSuuTap) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Bộ sưu tập không tồn tại',
+                ], 404);
+            }
+
             $data = $request->all();
-            $data['duong_dan'] = Str::slug($data['ten_the']);
+            $data['duong_dan'] = Str::slug($data['ten']);
 
-            The::query()->where('id', $id)->update($data);
+            DB::beginTransaction();
+            $boSuuTap->update($data);
 
-            $json = [
+            if ($request->has('san_pham')) {
+                $boSuuTap->sanPhams()->sync($request->san_pham);
+            }
+
+            DB::commit();
+
+            return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Cập nhật dữ liệu thành công',
-            ];
-
-            return response()->json($json, 200);
+            ], 200);
 
         } catch (\Exception $e) {
-            $json = [
+            DB::rollBack();
+            return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Cập nhật dữ liệu thất bại',
                 'error' => $e->getMessage(),
-            ];
-
-            return response()->json($json, 500);
+            ], 500);
         }
     }
 
+
     /**
-     * Remove the specified resource from storage.
+     * Remove BoSuuTap specified resource from storage.
      */
     public function destroy(string $id)
     {
         try {
-            The::query()->where('id', $id)->delete();
+            BoSuuTap::query()->where('id', $id)->delete();
             $json = [
                 'status' => true,
                 'status_code' => 200,
@@ -181,10 +216,10 @@ class TheController extends Controller
         }
     }
 
-    public function danhSachTheDaXoa()
+    public function danhSachBoSuuTapDaXoa()
     {
         try {
-            $data = The::onlyTrashed()->get();
+            $data = BoSuuTap::onlyTrashed()->get();
             $json = [
                 'status' => true,
                 'status_code' => 200,
@@ -203,10 +238,10 @@ class TheController extends Controller
         }
     }
 
-    public function khoiPhucThe($id)
+    public function khoiPhucBoSuuTap($id)
     {
         try {
-            The::onlyTrashed()->where('id', $id)->restore();
+            BoSuuTap::onlyTrashed()->where('id', $id)->restore();
             $json = [
                 'status' => true,
                 'status_code' => 200,
