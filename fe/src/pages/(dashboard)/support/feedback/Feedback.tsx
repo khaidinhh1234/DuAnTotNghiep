@@ -8,6 +8,7 @@ import {
   Image,
   Input,
   InputRef,
+  message,
   Modal,
   Popconfirm,
   Rate,
@@ -19,7 +20,6 @@ import { FilterDropdownProps } from "antd/es/table/interface";
 import { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 
 type DataIndex = keyof IEvaluate;
 const Feedback = () => {
@@ -56,26 +56,33 @@ const Feedback = () => {
       noi_dung_phan_hoi: string;
     }) => {
       try {
+        message.open({
+          type: "success",
+          content: "Phản hồi thành công!",
+        })
         const response = await instance.put(`/lien-he/${id}`, {
-          noi_dung_phan_hoi:noi_dung_phan_hoi,
+          noi_dung_phan_hoi: noi_dung_phan_hoi,
         });
-        toast.success("Thành công");
+     console.log(response ,'ưefdas')
         return response.data;
       } catch (error) {
-        toast.error("Có lỗi xảy ra");
         throw error;
       }
     },
     onSuccess: () => {
+      
       queryClient.invalidateQueries({ queryKey: ["phanhoilienhe"] });
     },
     onError: (error) => {
       console.error("Error:", error);
+      message.error("Có lỗi xảy ra khi phản hồi"); 
     },
   });
+  
 
   const hideEvaluate = useMutation({
     mutationFn: async (id: number) => {
+
       await instance.delete(`/lien-he/${id}`);
     },
     onSuccess: () => {

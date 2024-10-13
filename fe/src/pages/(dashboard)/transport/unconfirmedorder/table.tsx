@@ -240,7 +240,17 @@ const TableUncomfirmedOrder: React.FC = () => {
     {
       title: "Tổng tiền",
       dataIndex: "tien_cod",
-      key: "tien_cod",
+      // key: "tien_cod",
+      render: (_, record) => {
+        return (
+          <div>
+            {new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(Number(record.tien_cod))}
+          </div>
+        );
+      },
     },
     {
       title: "Thao tác",
