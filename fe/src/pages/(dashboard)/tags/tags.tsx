@@ -24,10 +24,10 @@ const TagsAdmin: React.FC = () => {
     queryKey: ["tag"],
     queryFn: async () => {
       try {
-        const response = await instance.get("/bosuutap");
+        const response = await instance.get("bosuutap");
         const tag = response.data;
 
-        return tag; 
+        return tag;
       } catch (error) {
         console.error("Error fetching categories:", error);
         throw new Error("Error fetching categories");
