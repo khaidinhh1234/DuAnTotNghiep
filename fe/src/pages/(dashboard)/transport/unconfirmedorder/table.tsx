@@ -39,8 +39,10 @@ interface Transport {
   cod: number;
   tien_cod: number;
   anh_xac_thuc: string;
-  khach_hang_xac_nhan: string | number
-  shipper_xac_nhan: string | number
+  khach_hang_xac_nhan: string
+  shipper_xac_nhan: string
+  so_lan_giao: string
+  ghi_chu: string
 }
 
 const datas = [
