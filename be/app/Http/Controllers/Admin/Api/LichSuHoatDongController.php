@@ -10,10 +10,17 @@ class LichSuHoatDongController extends Controller
     public function index()
     {
         $data = LichSuHoatDong::query()
-            ->select('id', 'ten_bang', 'bang_id', 'loai_thao_tac', 'nguoi_thao_tac', 'mo_ta', 'dia_chi_ip', 'created_at')
-            ->with('user.vaiTros')->orderByDesc('id')->get();
+            ->select('lich_su_hoat_dongs.id', 'lich_su_hoat_dongs.ten_bang', 'lich_su_hoat_dongs.bang_id', 'lich_su_hoat_dongs.loai_thao_tac', 'lich_su_hoat_dongs.nguoi_thao_tac', 'lich_su_hoat_dongs.mo_ta', 'lich_su_hoat_dongs.dia_chi_ip', 'lich_su_hoat_dongs.created_at', 'users.ten as ten_nguoi_dung', 'vai_tros.ten_vai_tro')
+            ->join('users', 'lich_su_hoat_dongs.nguoi_thao_tac', '=', 'users.id')
+            ->join('vai_tro_tai_khoan', 'users.id', '=', 'vai_tro_tai_khoan.user_id')
+            ->join('vai_tros', 'vai_tro_tai_khoan.vai_tro_id', '=', 'vai_tros.id')
+            ->orderByDesc('lich_su_hoat_dongs.id')
+            ->get();
+
         return response()->json($data);
     }
+
+
 
     public function show(string $id)
     {
