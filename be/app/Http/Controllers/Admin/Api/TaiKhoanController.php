@@ -21,7 +21,13 @@ class TaiKhoanController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = User::query()->with('vaiTros', 'hangThanhVien')->whereNot('id', Auth::guard('api')->id())->orderBy('id', 'desc')->get();
+            $user = Auth::guard('api')->user();
+            $data = User::query()->with('vaiTros', 'hangThanhVien')
+                ->whereNot('id', $user->id)
+                ->whereDoesntHave('vaiTros', function ($query) use ($user) {
+                    $query->whereIn('id', $user->vaiTros->pluck('id'));
+                })
+                ->orderBy('id', 'desc')->get();
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -115,10 +121,17 @@ class TaiKhoanController extends Controller
     public function show(string $id)
     {
         try {
+            // $quyen = [];
             $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs', 'sanPhamYeuThich')->findOrFail($id);
             $tongTienDonhangThanhCong = $taiKhoan->donHangs()->where('trang_thai_don_hang', 'Giao hàng thành công')->where('trang_thai_thanh_toan', 'Đã thanh toán')->sum('tong_tien_don_hang');
+
+            // $quyen = $taiKhoan->vaiTros->flatMap(function ($vaiTro) {
+            //     return $vaiTro->quyens->pluck('ten_quyen');
+            // })->unique()->values()->all();
+
             $data = [
                 'tai_khoan' => $taiKhoan,
+                // 'quyen' => $quyen,
                 'tong_tien_don_hang' => (int)$tongTienDonhangThanhCong,
                 'so_luong_danh_gia' => count($taiKhoan->danhGias),
                 'so_luong_don_hang' => count($taiKhoan->donHangs),
@@ -270,5 +283,43 @@ class TaiKhoanController extends Controller
         return response()->json([
             'data' => $allRole
         ], 200);
+    }
+
+    public function doiMatKhau(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'password' => 'required',
+                'new_password' => 'required',
+                'confirm_password' => 'required|same:new_password'
+            ]);
+
+            $user = User::query()->findOrFail(Auth::guard('api')->id());
+
+            if (!password_verify($validated['password'], $user->password)) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Mật khẩu cũ không chính xác.'
+                ], 400);
+            } else {
+                $user->update([
+                    'password' => $validated['new_password']
+                ]);
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Đổi mật khẩu thành công.'
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi đổi mật khẩu.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

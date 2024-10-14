@@ -21,7 +21,7 @@ import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Link, useNavigate } from "react-router-dom";
-
+import CategorySelect from '../../../../components/CategorySelect';
 const { TextArea } = Input;
 
 export interface VariantType {
@@ -204,6 +204,7 @@ const AddProducts: React.FC = () => {
 
 
 
+
   const handleChange = (info: { fileList: UploadFile[] }, index: number) => {
     setFileLists((prev) => ({
       ...prev,
@@ -331,25 +332,8 @@ const AddProducts: React.FC = () => {
                 ))}
             </Select>
           </Form.Item> */}
-          <Form.Item
-  label="Danh mục sản phẩm"
-  name="danh_muc_id"
-  rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
->
-  <Select placeholder="Vui lòng chọn danh mục" className="w-full">
-    {categoriesData &&
-      categoriesData.data &&
-      categoriesData.data.map((category: any) => (
-        <Select.Option key={category.id} value={category.id}>
-          {category.cha_id === null ? (
-            <span className="font-bold">{category.ten_danh_muc}</span>
-          ) : (
-            <span className="ml-4"> {category.ten_danh_muc}</span>
-          )}
-        </Select.Option>
-      ))}
-  </Select>
-</Form.Item>
+
+          <CategorySelect categoriesData={categoriesData} />
 
         </div>{" "}
         <div className="grid grid-cols-1 gap-5">

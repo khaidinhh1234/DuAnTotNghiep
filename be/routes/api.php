@@ -108,6 +108,8 @@ Route::middleware([])
         Route::post('/gio-hang', [GioHangController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
         Route::put('/gio-hang/{id}', [GioHangController::class, 'update']); // Cập nhật giỏ hàng
         Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+        Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart'])->middleware('auth:sanctum');
+
 
         //Thanh toán
         //Thanh toán Momo
@@ -175,9 +177,9 @@ Route::middleware(['auth.sanctum'])
         });
 
         // Đánh giá
-        Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll'])->middleware('auth.checkrole');
-        Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham'])->middleware('auth.checkrole');
-        Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia'])->middleware('auth.checkrole');
+        Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll'])->name('danhgia.index')->middleware('auth.checkrole');
+        Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham']);
+        Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia'])->name('danhgia.phanhoi')->middleware('auth.checkrole');
 
         // Đơn hàng
         Route::middleware('auth.checkrole')
@@ -224,11 +226,12 @@ Route::middleware(['auth.sanctum'])
         // Chương trình ưu đãi
         Route::middleware('auth.checkrole')
             ->group(function () {
-            Route::apiResource('chuongtrinhuudai', ChuongTrinhUuDaiController::class)->except(['show']);
-            Route::get('chuongtrinhuudai/thung-rac', [ChuongTrinhUuDaiController::class, 'danhSachXoaMem'])->name('chuongtrinhuudai.thungrac');
-            Route::post('chuongtrinhuudai/thung-rac/{id}', [ChuongTrinhUuDaiController::class, 'khoiPhucXoaMem'])->name('chuongtrinhuudai.khoiphuc');
-            Route::get('chuongtrinhuudai/{id}', [ChuongTrinhUuDaiController::class, 'show'])->name('chuongtrinhuudai.show');
-        });
+                Route::apiResource('chuongtrinhuudai', ChuongTrinhUuDaiController::class)->except(['show']);
+                Route::get('chuongtrinhuudai/san-pham-chua-co-uu-dai', [ChuongTrinhUuDaiController::class, 'getSanPhamChuaCoUuDai'])->name('chuongtrinhuudai.sanphamchuaco');
+                Route::get('chuongtrinhuudai/thung-rac', [ChuongTrinhUuDaiController::class, 'danhSachXoaMem'])->name('chuongtrinhuudai.thungrac');
+                Route::post('chuongtrinhuudai/thung-rac/{id}', [ChuongTrinhUuDaiController::class, 'khoiPhucXoaMem'])->name('chuongtrinhuudai.khoiphuc');
+                Route::get('chuongtrinhuudai/{id}', [ChuongTrinhUuDaiController::class, 'show'])->name('chuongtrinhuudai.show');
+            });
 
         // Mã khuyến mãi
         Route::middleware('auth.checkrole')
@@ -249,12 +252,13 @@ Route::middleware(['auth.sanctum'])
         // Tài khoản
         Route::middleware('auth.checkrole')
             ->group(function () {
-            Route::apiResource('taikhoan', TaiKhoanController::class)->except(['show']);
-            Route::get('taikhoan/roles', [TaiKhoanController::class, 'danhSachVaiTro'])->withoutMiddleware('auth.checkrole');
-            Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
-            Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
-            Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
-        });
+                Route::apiResource('taikhoan', TaiKhoanController::class)->except(['show']);
+                Route::get('taikhoan/roles', [TaiKhoanController::class, 'danhSachVaiTro'])->withoutMiddleware('auth.checkrole');
+                Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
+                Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
+                Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
+                Route::post('taikhoan/cap-nhat-mat-khau', [TaiKhoanController::class, 'doiMatKhau'])->withoutMiddleware('auth.checkrole');
+            });
 
         //Hạng thành viên
         Route::middleware('auth.checkrole')

@@ -96,7 +96,10 @@ import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
 import PageSupport from "@/pages/(dashboard)/support/page";
 import Collect from "@/pages/(dashboard)/transport/collect/Collect";
-import { default as ShowNhanvien, default as ShowUser } from "@/pages/(dashboard)/user/khachhang/show/showUser";
+import {
+  default as ShowNhanvien,
+  default as ShowUser,
+} from "@/pages/(dashboard)/user/khachhang/show/showUser";
 // import Productsadd from "@/pages/(dashboard)/products/fix";
 
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
@@ -111,9 +114,7 @@ import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
 // import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
 // import PrivateRoute from "./PrivateRoute";
 
-
 // import Dashboard from "@/pages/(dashboard)/dashboard/tongquan/page";
-
 
 // import Test from "@/pages/(dashboard)/test";
 // import showVoucher from "./../pages/(dashboard)/vourcher/show";
@@ -125,7 +126,7 @@ import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
 
 import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
 import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
-
+import PrivateRoute from "./PrivateRoute";
 
 const Router = () => {
   //
@@ -166,10 +167,9 @@ const Router = () => {
         <Route
           path="admin"
           element={
-
-            // <PrivateRoute>
+            <PrivateRoute>
               <LayoutAdmin />
-            /* </PrivateRoute> */
+            </PrivateRoute>
           }
         >
           <Route index element={<Navigate to="/admin/dashboard/list" />} />
@@ -231,13 +231,13 @@ const Router = () => {
           <Route path="add-vocher" element={<AddVoucher />} />
           <Route path="vouchers/show/:id" element={<ShowVoucher />} />
           <Route path="vouchers/edit/:id" element={<EditVoucher />} />
-                    {/* trương trình ưu đâix */}
-                    <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
-                    <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
-                    <Route path="chuongtrinhuudaiedit" element={<ChuongTrinhUuDaiEdit />} />
-
-
-
+          {/* trương trình ưu đâix */}
+          <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
+          <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
+          <Route
+            path="chuongtrinhuudaiedit"
+            element={<ChuongTrinhUuDaiEdit />}
+          />
           {/* Tài khoản khách hàng */}
           <Route
             path="users"
@@ -318,7 +318,7 @@ const Router = () => {
             element={<PageEditPermission />}
           />
           {/* Profile admin */}
-          <Route path="admin-profile" element={<AdminProfile/>}/>
+          <Route path="admin-profile" element={<AdminProfile />} />
           {/* Nội dung */}
           <Route
             path="Content"
