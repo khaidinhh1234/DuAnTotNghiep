@@ -21,7 +21,13 @@ class TaiKhoanController extends Controller
     {
         try {
             DB::beginTransaction();
-            $data = User::query()->with('vaiTros', 'hangThanhVien')->whereNot('id', Auth::guard('api')->id())->orderBy('id', 'desc')->get();
+            $user = Auth::guard('api')->user();
+            $data = User::query()->with('vaiTros', 'hangThanhVien')
+                ->whereNot('id', $user->id)
+                ->whereDoesntHave('vaiTros', function ($query) use ($user) {
+                    $query->whereIn('id', $user->vaiTros->pluck('id'));
+                })
+                ->orderBy('id', 'desc')->get();
             DB::commit();
             return response()->json([
                 'status' => true,
