@@ -118,12 +118,12 @@ Route::middleware([])
 
 
 //'auth.sanctum'
-Route::middleware(['auth.sanctum'])
+Route::middleware([])
     ->name('admin.')
     ->prefix('admin')
     ->group(function () {
         // Danh muc
-        Route::middleware('auth.checkrole')
+        Route::middleware([])
             ->group(function () {
                 Route::apiResource('danhmuc',  DanhMucController::class)->except(['show']);
                 Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa'])->name('danhmuc.thungrac');
@@ -133,7 +133,7 @@ Route::middleware(['auth.sanctum'])
             });
 
         // Sản phẩm
-        Route::middleware('auth.checkrole')
+        Route::middleware([])
             ->group(function () {
                 Route::apiResource('sanpham', SanPhamController::class)->except(['show']);
                 Route::patch('sanpham/khoi-phuc-xoa-mem-nhieu-san-pham', [SanPhamController::class, 'bulkRestore'])->name('sanpham.bulk-restore');
@@ -150,7 +150,7 @@ Route::middleware(['auth.sanctum'])
             });
 
         // Kích thước biến thể
-        Route::middleware('auth.checkrole')
+        Route::middleware([])
             ->group(function () {
                 Route::apiResource('bienthekichthuoc', BienTheKichThuocController::class)->except(['show']);
                 Route::get('bienthekichthuoc/thung-rac', [BienTheKichThuocController::class, 'danhSachXoaMem'])->name('bienthekichthuoc.thungrac');
@@ -159,7 +159,7 @@ Route::middleware(['auth.sanctum'])
             });
 
         // Màu sắc biến thể
-        Route::middleware('auth.checkrole')
+        Route::middleware([])
             ->group(function () {
                 Route::apiResource('bienthemausac', BienTheMauSacController::class)->except(['show']);
                 Route::get('bienthemausac/thung-rac', [BienTheMauSacController::class, 'danhSachXoaMem'])->name('bienthemausac.thungrac');
@@ -168,7 +168,7 @@ Route::middleware(['auth.sanctum'])
             });
 
         // Bộ sưu tập
-        Route::middleware('auth.checkrole')
+        Route::middleware([])
             ->group(function () {
                 Route::apiResource('bosuutap',  BoSuuTapController::class)->except(['show']);
                 Route::get('bosuutap/thung-rac', [BoSuuTapController::class, 'danhSachBoSuuTapDaXoa'])->name('bosuutap.thungrac');
@@ -224,7 +224,7 @@ Route::middleware(['auth.sanctum'])
             });
 
         // Chương trình ưu đãi
-        Route::middleware('auth.checkrole')
+        Route::middleware([])
             ->group(function () {
                 Route::apiResource('chuongtrinhuudai', ChuongTrinhUuDaiController::class)->except(['show']);
                 Route::get('chuongtrinhuudai/san-pham-chua-co-uu-dai', [ChuongTrinhUuDaiController::class, 'getSanPhamChuaCoUuDai'])->name('chuongtrinhuudai.sanphamchuaco');
