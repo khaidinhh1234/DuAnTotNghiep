@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\DonHang;
 use App\Models\SanPham;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ThongKeTongQuanController extends Controller
 {
@@ -223,7 +225,6 @@ class ThongKeTongQuanController extends Controller
         ]);
     }
 
-
     public function thongKeDoanhThuTong(Request $request)
     {
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
@@ -373,7 +374,6 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam' => $tiLeTangGiam
         ]);
     }
-
 
     public function thongKeDoanhThuTB(Request $request)
     {
@@ -533,6 +533,75 @@ class ThongKeTongQuanController extends Controller
             'so_luong_huy_hang' => $soLuongHuyHang
         ]);
     }
+
+    public function thanhToanTienMatTheoNgay(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $today = Carbon::today();
+
+            // Lấy tổng doanh thu và số lượng đơn có trạng thái "Thanh toán khi nhận hàng" trong ngày hiện tại
+            $donHangQuery = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                ->where('phuong_thuc_thanh_toan', DonHang::TTDH_HTDH) // Điều kiện thanh toán khi nhận hàng
+                ->whereDate('created_at', $today);
+
+            // Tính tổng doanh thu
+            $tongDoanhThu = $donHangQuery->sum('tong_tien_don_hang');
+
+            // Đếm số lượng đơn hàng
+            $soDonHang = $donHangQuery->count();
+
+            DB::commit();
+
+            return response()->json([
+                'tong_doanh_thu' => $tongDoanhThu,
+                'so_don_hang' => $soDonHang
+            ], 200);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Đã xảy ra lỗi',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function thanhToanOnlineTheoNgay(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $today = Carbon::today();
+
+            // Lấy tổng doanh thu và số lượng đơn có phương thức thanh toán online (momo, ngân hàng) trong ngày hiện tại
+            $donHangQuery = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                ->whereIn('phuong_thuc_thanh_toan', [
+                    DonHang::PTTT_MM, // Momo
+                    DonHang::PTTT_NH  // Ngân hàng
+                ])
+                ->whereDate('created_at', $today);
+
+            // Tính tổng doanh thu
+            $tongDoanhThu = $donHangQuery->sum('tong_tien_don_hang');
+
+            // Đếm số lượng đơn hàng
+            $soDonHang = $donHangQuery->count();
+
+            DB::commit();
+
+            return response()->json([
+                'tong_doanh_thu' => $tongDoanhThu,
+                'so_don_hang' => $soDonHang
+            ], 200);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Đã xảy ra lỗi',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 }
 
