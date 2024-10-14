@@ -14,7 +14,6 @@ use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Admin\Api\HangThanhVienController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TaiKhoanController;
-use App\Http\Controllers\Admin\Api\TheController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhGiaController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhMuc;
 use App\Http\Controllers\Admin\Api\ThongKeDoanhThuController;
@@ -56,6 +55,8 @@ Route::middleware([])
     ->group(function () {
         // Trang chủ
         Route::get('trangchu', [TrangChuController::class, 'index']);
+        Route::get('thong-tin-web', [TrangChuController::class, 'thongTinWeb']);
+        Route::get('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
 
         //Chương trình ưu đãi và mã khuyến mãi
         Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'danhSachSanPhamChuongTrinhUuDai']);
