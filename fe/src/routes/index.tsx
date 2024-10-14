@@ -234,7 +234,7 @@ const Router = () => {
                     {/* trương trình ưu đâix */}
                     <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
                     <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
-                    <Route path="chuongtrinhuudaiedit" element={<ChuongTrinhUuDaiEdit />} />
+                    <Route path="chuongtrinhuudai/edit/:id" element={<ChuongTrinhUuDaiEdit />} />
 
 
 

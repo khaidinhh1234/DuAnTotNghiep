@@ -705,7 +705,8 @@ const AddProducts: React.FC = () => {
                           />
                         </Form.Item>
 
-                      </td> */}                      <td className="p-1 border-r border-gray-300 w-[20%]">
+                      </td> */}  
+                                          <td className="p-1 border-r border-gray-300 w-[20%]">
   <Form.Item
     name={`gia_khuyen_mai-${index}`}
     className="my-0 px-5"
@@ -719,7 +720,7 @@ const AddProducts: React.FC = () => {
       {
         validator: (_, value) => {
           const giaBan = form.getFieldValue(`gia_ban-${index}`);
-          if (value === 0 || (value > 0 && value <= 1000)) {
+          if (value === 0 || (value > 0 && value >= 1000)) {
             if (giaBan && value >= giaBan) {
               return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
             }

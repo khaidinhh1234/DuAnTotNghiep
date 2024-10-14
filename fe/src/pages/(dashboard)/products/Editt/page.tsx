@@ -742,7 +742,7 @@ const EditProducts: React.FC = () => {
       {
         validator: (_, value) => {
           const giaBan = form.getFieldValue(`gia_ban-${index}`);
-          if (value === 0 || (value > 0 && value <= 1000)) {
+          if (value === 0 || (value > 0 && value >= 1000)) {
             if (giaBan && value >= giaBan) {
               return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
             }
