@@ -139,7 +139,7 @@ class VanChuyenController extends Controller
                         $vanChuyen->update([
                             'trang_thai_van_chuyen' => VanChuyen::TTVC_GHTB,
                             'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
-                            'ghi_chu' => $validate['ghi_chu']
+                            // 'ghi_chu' => $validate['ghi_chu']
                         ]);
                         DB::commit();
                         return response()->json([
@@ -150,7 +150,7 @@ class VanChuyenController extends Controller
                     } else {
                         $vanChuyen->increment('so_lan_giao');
                         $vanChuyen->update([
-                            'ghi_chu' => $validate['ghi_chu']
+                            // 'ghi_chu' => $validate['ghi_chu']
                         ]);
                         DB::commit();
                         return response()->json([

@@ -16,7 +16,8 @@ interface Transport {
   tien_cod: number;
   anh_xac_thuc: string;
   khach_hang_xac_nhan: string
-  shipper_xac_nhan: number
+  shipper_xac_nhan: string
+  so_lan_giao: string
 }
 const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
@@ -25,8 +26,9 @@ const DetailTransport = ({ record }: any) => {
   // 
   const [url, setUrl] = useState<string | null>(null); // URL ảnh đã chụp
   const [loading, setLoading] = useState(false); // Trạng thái đang xử lý
-  const [isImageSaved, setIsImageSaved] = useState(false); // Trạng thái đã lưu ảnh
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const [isWebcamVisible, setIsWebcamVisible] = useState(false); // Hiển thị webcam
+  const [isImageSaved, setIsImageSaved] = useState(false); // Trạng thái đã lưu ảnh
   const webcamRef = useRef<Webcam>(null);
 
   const videoConstraints = {
@@ -49,30 +51,30 @@ const DetailTransport = ({ record }: any) => {
       setLoading(true);
       let imageUrl = null;
 
-      // Chỉ chụp ảnh nếu url đã có giá trị
+      // Kiểm tra nếu đã chụp ảnh
       if (url) {
         const response = await fetch(url);
         const blob = await response.blob();
         const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-        imageUrl = await uploadToCloudinary(file); // Tải ảnh lên Cloudinary
+        imageUrl = await uploadToCloudinary(file); // Giả sử có hàm uploadToCloudinary để tải ảnh lên
       } else {
         alert('Vui lòng chụp ảnh trước khi xác nhận giao hàng.');
         return;
       }
 
-      // Gọi mutate để xác nhận giao hàng
+      // Gọi API mutate để xác nhận giao hàng với ảnh đã được upload
       const response: any = await mutate({
         id: record.id,
         action: "Xác nhận giao hàng",
         imageUrl: imageUrl,
-        shipper_xac_nhan: 1 
+        failedAttempts: failedAttempts, // Truyền số lần thất bại
       });
 
-      console.log('API Response:', response); 
-
+      // Kiểm tra kết quả từ API
       if (response && response.status) {
         alert('Đã lưu ảnh và xác nhận giao hàng thành công!');
-        setIsDeliveryConfirmed(true);
+        setIsImageSaved(true); // Đánh dấu ảnh đã được lưu
+        setFailedAttempts(0); // Reset số lần thất bại khi giao hàng thành công
       } else {
         alert('Có lỗi xảy ra trong quá trình xác nhận giao hàng.');
       }
@@ -85,7 +87,17 @@ const DetailTransport = ({ record }: any) => {
     }
   };
 
+  // Hàm xử lý khi giao hàng thất bại
+  const handleDeliveryFailure = () => {
+    const newFailedAttempts = failedAttempts + 1;
+    setFailedAttempts(newFailedAttempts);
 
+    if (newFailedAttempts >= 3) {
+      alert('Giao hàng thất bại 3 lần. Đơn hàng sẽ được đánh dấu là thất bại.');
+    } else {
+      alert(`Giao hàng thất bại lần ${newFailedAttempts}. Sau 3 lần sẽ chuyển sang "Giao hàng thất bại".`);
+    }
+  };
 
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
@@ -122,37 +134,30 @@ const DetailTransport = ({ record }: any) => {
   };
 
   const { mutate } = useMutation({
-    mutationFn: async ({ id, action, imageUrl }: any) => {
+    mutationFn: async ({ id, action, imageUrl, failedAttempts }: any) => {
       try {
         let response;
 
         if (action === "Xác nhận giao hàng") {
+          const shipperXacNhan = failedAttempts >= 3 ? "2" : "1"; // Nếu thất bại 3 lần, shipper_xac_nhan là "2"
+
+          // Gọi API để cập nhật
           response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
             anh_xac_thuc: imageUrl,
-            shipper_xac_nhan: 1, 
+            shipper_xac_nhan: shipperXacNhan,
           });
         } else {
-          // Gọi đến endpoint cập nhật trạng thái đơn hàng
+          // Gọi đến endpoint cập nhật trạng thái đơn hàng khác
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
             trang_thai_van_chuyen: action,
             id: [id],
           });
         }
 
-        const error = response.data.message;
-
-        message.open({
-          type: error === "Cập nhật trạng thái đơn hàng thành công" ? "success" : "info",
-          content: error,
-        });
-
         return response.data;
-
       } catch (error) {
-        message.open({
-          type: "error",
-          content: "Không thể cập nhật trạng thái đơn hàng!",
-        });
+        console.error("Error during API request:", error);
+        message.error("Không thể cập nhật trạng thái đơn hàng!");
       }
     },
     onSuccess: () => {
@@ -407,9 +412,13 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
-                {isWebcamVisible && (
+                {isWebcamVisible && !isImageSaved && ( // Chỉ hiển thị webcam nếu chưa lưu ảnh
                   <div className="relative mx-auto mt-6">
-                    {url ? null : (
+                    {url ? (
+                      <div>
+                        <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
+                      </div>
+                    ) : (
                       <div className="relative">
                         <Webcam
                           ref={webcamRef}
@@ -426,23 +435,6 @@ const DetailTransport = ({ record }: any) => {
                             <i className="fa-regular fa-camera"></i>
                           </button>
                         </div>
-                      </div>
-                    )}
-
-                    {url && (
-                      <div>
-                        <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
-                      </div>
-                    )}
-
-                    {url && !isDeliveryConfirmed && ( 
-                      <div className="relative flex justify-center mt-3">
-                        <button
-                          onClick={() => setUrl(null)} 
-                          className="absolute -top-10 px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
-                        >
-                          <i className="fa-regular fa-trash"></i>
-                        </button>
                       </div>
                     )}
                   </div>
@@ -463,14 +455,13 @@ const DetailTransport = ({ record }: any) => {
                     <button
                       className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
                       onClick={handleSave}
-                      disabled={loading || isImageSaved} 
+                      disabled={loading || isImageSaved} // Disable nếu đang tải hoặc ảnh đã lưu
                     >
                       {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
                     </button>
-
                     <button
                       className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                      onClick={() => mutate({ id: record.id, action: "Hủy hàng" })}
+                      onClick={handleDeliveryFailure}
                     >
                       Giao hàng thất bại
                     </button>
