@@ -1,36 +1,104 @@
-"use client";
+import React from "react";
+import ReactApexChart from "react-apexcharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "antd";
+const Chart1: React.FC = () => {
+  const options: ApexCharts.ApexOptions = {
+    chart: {
+      type: "donut",
+      toolbar: {
+        show: false,
+      },
+    },
+    labels: ["Nam", "Nữ", "khác"],
+    colors: ["#1E90FF", "#32CD32", "#D3D3D3"], // Blue, Green, Grey
+    legend: {
+      show: true,
+      position: "left",
+      markers: {
+        width: 10,
+        height: 10,
+        radius: 10,
+        offsetX: -5,
+      },
+      labels: {
+        colors: ["#000"],
+      },
+      itemMargin: {
+        vertical: 5,
+      },
+    },
+    dataLabels: {
+      enabled: false, // Disable data labels
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: "80%",
+          labels: {
+            show: false, // Hide center label
+          },
+        },
+      },
+    },
+    stroke: {
+      show: true,
+      width: 0,
+    },
+    tooltip: {
+      enabled: true, // Enable tooltip on hover
+      y: {
+        formatter: (val: number) => {
+          return `${val.toFixed(0)}%`; // Show value with "%" symbol
+        },
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 200,
+          },
+          legend: {
+            position: "bottom",
+          },
+        },
+      },
+    ],
+  };
 
-export default function Chart1() {
+  const series = [57, 3, 40]; // Data for Nam, Nữ, khác
+
   return (
-    <Card className="bg-gradient-to-r from-slate-500 to-slate-950 shadow-inner shadow-black">
-      <CardHeader className="pb-2 text-white">
-        <CardDescription>This Week</CardDescription>
-        <CardTitle className="text-4xl">$1,329</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-xs text-muted-foreground text-white">
-          +25% from last week
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Progress
-          percent={50}
-          percentPosition={{ align: "center", type: "inner" }}
-          size={[300, 10]}
-          strokeColor="#ffffff"
-          showInfo={false}
-        />
-      </CardFooter>
-    </Card>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+      }}
+    >
+      <h3>Giới tính</h3>
+      <ReactApexChart
+        options={options}
+        series={series}
+        type="donut"
+        width="300"
+      />
+      <div style={{ marginTop: "10px" }}>
+        <p>
+          <span style={{ color: "#1E90FF", marginRight: "5px" }}>●</span> Nam{" "}
+          <br />
+          <span style={{ color: "#32CD32", marginRight: "5px" }}>
+            ●
+          </span> Nữ <br />
+          <span style={{ color: "#D3D3D3", marginRight: "5px" }}>●</span> Chưa
+          có thông tin
+        </p>
+      </div>
+    </div>
   );
-}
+};
+
+export default Chart1;
