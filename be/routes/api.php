@@ -110,7 +110,9 @@ Route::middleware([])
         Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
         Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart'])->middleware('auth:sanctum');
 
-
+        // Đơn hàng
+        Route::get('/don-hang', [DonHangClientController::class, 'donHangUser'])->middleware('auth:sanctum');
+        Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang'])->middleware('auth:sanctum');
         //Thanh toán
         //Thanh toán Momo
         Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);

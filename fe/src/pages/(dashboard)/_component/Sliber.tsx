@@ -25,11 +25,11 @@ const SiderComponent: React.FC = () => {
   };
   const [user] = useLocalStorage("user" as any, {});
   const quyen = user.quyen;
-  console.log(quyen);
-  console.log(user);
+  // console.log(quyen);
+  // console.log(user);
   const vaitro =
     user?.user?.vai_tros?.map((item: any) => item.ten_vai_tro) || [];
-  console.log(vaitro);
+  // console.log(vaitro);
   useEffect(() => {
     if (vaitro.includes("Người giao hàng")) {
       navigate("/admin/orders/uncomfirmedorder");
@@ -57,7 +57,7 @@ const SiderComponent: React.FC = () => {
             </SubMenu>
           )}
           {(quyen?.includes("admin.sanpham.index") ||
-            quyen?.includes("admin.bienthesanpham.index") ||
+            (quyen?.includes("admin.bienthekichthuoc.index") && quyen?.includes("admin.bienthemausac.index"))||
             quyen?.includes("admin.bosuutap.index")) && (
             <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
               {quyen?.includes("admin.sanpham.index") && (
@@ -65,12 +65,12 @@ const SiderComponent: React.FC = () => {
                   Danh sách sản phẩm
                 </Menu.Item>
               )}
-              {quyen?.includes("admin.bienthesanpham.index") && (
+              {(quyen?.includes("admin.bienthekichthuoc.index") && quyen?.includes("admin.bienthemausac.index") ) && (
                 <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
               )}
               {quyen?.includes("admin.bosuutap.index") && (
                 <Menu.Item key="/admin/products/tags">
-                  Quản lý thẻ đính kèm
+                  Bộ sưu tập
                 </Menu.Item>
               )}
             </SubMenu>
