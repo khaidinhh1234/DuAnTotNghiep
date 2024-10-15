@@ -510,9 +510,9 @@ const ProductsAdmin: React.FC = () => {
           payload = { san_phams: ids, trang_thai: false };
           break;
 
-        case 'delete':
-          endpoint = 'sanpham';
-          method = 'delete';
+        case "delete":
+          endpoint = "sanpham";
+          method = "delete";
 
           payload = { san_phams: ids };
           break;
@@ -821,10 +821,6 @@ const ProductsAdmin: React.FC = () => {
               onKeyDown={handleKeyDown}
               className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
             />
-          </div>
-          <div className="mx-10 underline underline-offset-4 decoration-sky-400 hover:decoration-sky-700 decoration-2 text-sky-400 text-lg hover:text-sky-700">
-            {" "}
-            <Link to={"/#"}>Lịch sử thao tác</Link>
           </div>
         </div>
       </div>

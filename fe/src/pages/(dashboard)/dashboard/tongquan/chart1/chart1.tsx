@@ -18,7 +18,7 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
       : null;
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["chart1", datestart, dateend],
+    queryKey: ["tongquanchart1", datestart, dateend],
     queryFn: async () => {
       const response = await instance.post("thong-ke/don-hang/chot", date);
       return response.data;
@@ -67,17 +67,18 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
             </span>
           </div>
           <div
-            className={`flex items-center mt-1 ${phantien ? "text-green-600" : "text-red-600"}`}
+            className={`flex items-center gap-1 mt-1 ${phantien ? "text-green-600" : "text-red-600"}`}
           >
             {phantien ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-            <Text
-              className={`ml-1 font-medium ${phantien ? "text-green-600" : "text-red-600"}`}
-            >
-              {data?.ti_le_tang_giam_tien !== undefined &&
-              data?.ti_le_tang_giam_tien !== null
-                ? `${data.ti_le_tang_giam_tien} %`
-                : "0 %"}
-            </Text>
+            <Statistic
+              value={data?.ti_le_tang_giam_tien || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: phantien ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
           </div>
         </div>
         <div>
@@ -91,18 +92,18 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
             </span>
           </div>
           <div
-            className={`flex items-center mt-1 ${phandon ? "text-green-600" : "text-red-600"}`}
+            className={`flex items-center gap-1 mt-1 ${phandon ? "text-green-600" : "text-red-600"}`}
           >
             {phandon ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-            <Text
-              className={`ml-1 font-medium ${phandon ? "text-green-600" : "text-red-600"}`}
-            >
-              {data?.ti_le_tang_giam_don_hang !== undefined &&
-              data?.ti_le_tang_giam_don_hang !== null &&
-              data?.ti_le_tang_giam_don_hang !== 0
-                ? `${data.ti_le_tang_giam_don_hang} %`
-                : "0 %"}
-            </Text>
+            <Statistic
+              value={data?.ti_le_tang_giam_don_hang || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: phandon ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
           </div>
         </div>
       </div>

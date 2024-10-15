@@ -17,14 +17,14 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
       : null;
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["chart3", datestart, dateend],
+    queryKey: ["tongquanchart3", datestart, dateend],
     queryFn: async () => {
-      const response = await instance.post("thong-ke/don-hang/chot", date);
+      const response = await instance.post("thong-ke/san-pham/ton-kho", date);
       return response.data;
     },
     enabled: !!datestart && !!dateend,
   });
-
+  // console.log(data);
   const formatter: StatisticProps["formatter"] = (value: any) => (
     <CountUp end={value as number} separator="," />
   );
@@ -34,7 +34,6 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
     }
   }, [datestart, dateend, refetch]);
   const phantien = data?.ti_le_tang_giam_ton_kho > 0;
-  const phandon = data?.ti_le_tang_giam_ton_kho > 0;
 
   return (
     <Card className="shadow-md px-1 rounded-lg bg-white flex flex-col">
@@ -52,33 +51,42 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
       <div className="grid grid-cols-2">
         <div>
           <div className="text-black">
-            Giá nhập: <br />
+            Chi phí sản xuất: <br />
             <span className="text-2xl font-bold text-blue-800">
               {" "}
               <Statistic
-                value={data?.tong_tien}
+                value={data?.tong_chi_phi_san_xuat}
                 formatter={formatter}
                 suffix="đ"
                 valueStyle={{ color: "#3333CC" }}
               />
             </span>
           </div>
-          <div className="flex items-center mt-1">
-            <ArrowDownOutlined className="text-red-500" />
-            <span className="text-red-500 ml-1 font-medium">
-              {data?.ti_le_tang_giam_tien || 0} %
-            </span>
+          <div
+            className={`flex items-center gap-1 mt-1 ${phantien ? "text-green-600" : "text-red-600"}`}
+          >
+            {phantien ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+
+            <Statistic
+              value={data?.ti_le_tang_giam_ton_kho || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: phantien ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
           </div>
         </div>
         <div>
           <div className="text-black">
-            Giá bán: <br />
+            Giá bán : <br />
             <span className="text-2xl font-bold text-black">
               {" "}
-              <Statistic value={""} formatter={formatter} />
+              <Statistic value={data?.tong_gia_ban} formatter={formatter} />
             </span>
           </div>
-          <div
+          {/* <div
             className={`flex items-center mt-1 ${phandon ? "text-green-600" : "text-red-600"}`}
           >
             {phandon ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
@@ -91,7 +99,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
                 ? `${data.ti_le_tang_giam_ton_kho} %`
                 : "0 %"}
             </Text>
-          </div>
+          </div> */}
         </div>
       </div>
     </Card>

@@ -32,6 +32,8 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   const [user] = useLocalStorage("user" as any, {});
+  const vaitro =
+    user?.user?.vai_tros?.map((item: any) => item.ten_vai_tro) || [];
   const ten = user?.user.ho + " " + user?.user.ten;
   const anh = user?.user.anh_nguoi_dung;
   return (
@@ -139,10 +141,11 @@ const Header = () => {
             {" "}
             <Link to="admin-profile">Thông tin cá nhân </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link to={"/admin/history"}>Nhập ký truy cập</Link>
-          </DropdownMenuItem>
-
+          {vaitro?.includes("Quản trị viên") && (
+            <DropdownMenuItem>
+              <Link to={"/admin/history"}>Nhập ký truy cập</Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
         </DropdownMenuContent>

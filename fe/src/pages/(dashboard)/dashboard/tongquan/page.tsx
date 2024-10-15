@@ -91,20 +91,29 @@ const Dashboard = () => {
                 case "Tổng quan":
                   return (
                     <div>
-                      <Tablechart4 />
+                      <Tablechart4
+                        datestart={datestart as any}
+                        dateend={dateend as any}
+                      />
                     </div>
                   );
 
                 case "Trạng thái":
                   return (
                     <div>
-                      <Tablechart6 />
+                      <Tablechart6
+                        datestart={datestart as any}
+                        dateend={dateend as any}
+                      />
                     </div>
                   );
                 default:
                   return (
                     <div>
-                      <Tablechart4 />
+                      <Tablechart4
+                        datestart={datestart as any}
+                        dateend={dateend as any}
+                      />
                     </div>
                   );
               }

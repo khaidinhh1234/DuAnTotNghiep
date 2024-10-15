@@ -1,7 +1,17 @@
 import { Select } from 'antd';
 import React from 'react';
 
-const CategorySelect = ({ categoriesData }) => {
+interface Category {
+    id: number;
+    cha_id: number | null;
+    ten_danh_muc: string;
+}
+
+interface CategoriesData {
+    data: Category[];
+}
+
+const CategorySelect: React.FC<{ categoriesData: CategoriesData }> = ({ categoriesData }) => {
     // Hàm render để hiển thị các danh mục
     const renderCategories = (parentId: number | null, level: number = 0) => {
         const children = categoriesData.data.filter((category: any) => category.cha_id === parentId);
@@ -9,7 +19,7 @@ const CategorySelect = ({ categoriesData }) => {
         return children.map((category: any) => {
             // Kiểm tra xem danh mục có con không
             const hasChildren = categoriesData.data.some(child => child.cha_id === category.id);
-
+            console.log(category);
             return (
                 <React.Fragment key={category.id}>
                     {/* Chỉ hiển thị danh mục cuối cùng không có danh mục con */}
