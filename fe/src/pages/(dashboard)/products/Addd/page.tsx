@@ -295,7 +295,8 @@ const AddProducts: React.FC = () => {
           </Link>
         </div>
       </div>
-      <div className="bg-white p-3">      <Form
+      <div className="bg-white p-3">      
+        <Form
         form={form}
         name="basic"
         layout="vertical"
@@ -309,6 +310,7 @@ const AddProducts: React.FC = () => {
       >
         <div className="grid grid-cols-2 gap-5">
           <Form.Item
+            className="block text-md font-medium text-gray-700 mt-2 mb-1"
             label="Tên sản phẩm"
             name="ten_san_pham"
             rules={[
@@ -317,12 +319,13 @@ const AddProducts: React.FC = () => {
           >
             <Input placeholder="Nhập tên sản phẩm" />
           </Form.Item>
-          {/* <Form.Item
+          <Form.Item
+            className="block text-md font-medium text-gray-700 mt-2 mb-1"
             label="Danh mục sản phẩm"
             name="danh_muc_id"
             rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
           >
-            <Select placeholder="Vui lòng chọn danh mục" className="w-full">
+            {/* <Select placeholder="Vui lòng chọn danh mục" className="w-full">
               {categoriesData &&
                 categoriesData.data &&
                 categoriesData.data.map((category: any) => (
@@ -330,14 +333,14 @@ const AddProducts: React.FC = () => {
                     {category.ten_danh_muc}
                   </Select.Option>
                 ))}
-            </Select>
-          </Form.Item> */}
-
+            </Select> */}
           <CategorySelect categoriesData={categoriesData} />
-
+          </Form.Item>
+          
         </div>{" "}
         <div className="grid grid-cols-1 gap-5">
           <Form.Item
+            className="block text-md font-medium mt-2 text-gray-700 mb-1"
             label="Mô tả ngắn"
             name="mo_ta_ngan"
             rules={[
@@ -349,6 +352,7 @@ const AddProducts: React.FC = () => {
         </div>
         <div className="grid grid-cols-2 gap-5">
           <Form.Item
+            className="block text-md font-medium mt-2 text-gray-700 mb-1"
             label="Chọn bộ sưu tập"
             name="tags"
             rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
@@ -368,6 +372,7 @@ const AddProducts: React.FC = () => {
           </Form.Item>
 
           <Form.Item
+            className="block text-md font-medium mt-2 text-gray-700 mb-1"
             label="Mã sản phẩm"
             name="ma_san_pham"
           >
@@ -385,6 +390,7 @@ const AddProducts: React.FC = () => {
 
 
           <Form.Item
+            className="block text-md font-medium mt-2 text-gray-700 mb-1"
             label="Ảnh nổi bật"
             name="anh_san_pham"
             rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
@@ -468,14 +474,17 @@ const AddProducts: React.FC = () => {
         <img alt="example" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </Form.Item> */}
-          <Form.Item label="Giá tốt" name="gia_tot" valuePropName="checked">
+          <Form.Item 
+            className="block text-md font-medium mt-2 text-gray-700 mb-1"
+            label="Giá tốt" name="gia_tot" valuePropName="checked">
             <Checkbox />
           </Form.Item>
         </div>
         <div className="grid grid-cols-1 gap-5 ">
           <Form.Item
             name="noi_dung"
-            className=""
+            className="block text-md font-medium mt-2 text-gray-700 mb-1"
+            label="Nội dung sản phẩm"
             rules={[
               {
                 required: true,
@@ -492,8 +501,8 @@ const AddProducts: React.FC = () => {
             />
           </Form.Item>
         </div>
-        <div className="mt-8 px-2">
-          <h2 className="text-2xl font-semibold mb-4">
+        <div className="mt-8">
+          <h2 className="text-2xl pt-8 font-semibold mb-4 ">
             Giá bán, Kho hàng và Biến thể
           </h2>
           <p className="text-sm text-gray-600 mb-4">
@@ -586,7 +595,7 @@ const AddProducts: React.FC = () => {
           </div>
 
         </div>
-        <div className="p-4">
+        <div className="p-0">
           <h2 className="text-xl font-bold ">Giá bán & Kho hàng</h2>
           <div className="mt-4 overflow-x-auto shadow-md">
             <table className="w-full max-w-full table-auto bg-white rounded-lg  border border-gray-300">
@@ -705,6 +714,7 @@ const AddProducts: React.FC = () => {
                           />
                         </Form.Item>
 
+<<<<<<< HEAD
                       </td> */}  
                                           <td className="p-1 border-r border-gray-300 w-[20%]">
   <Form.Item
@@ -734,6 +744,37 @@ const AddProducts: React.FC = () => {
     <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
   </Form.Item>
 </td>
+=======
+                      </td> */}                      
+                      <td className="p-1 border-r border-gray-300 w-[20%]">
+                      <Form.Item
+                        name={`gia_khuyen_mai-${index}`}
+                        className="my-0 px-5"
+                        rules={[
+                          { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
+                          {
+                            type: "number",
+                            min: 0,
+                            message: "Giá khuyến mãi phải lớn hơn hoặc bằng 0!",
+                          },
+                          {
+                            validator: (_, value) => {
+                              const giaBan = form.getFieldValue(`gia_ban-${index}`);
+                              if (value === 0 || (value > 0 && value <= 1000)) {
+                                if (giaBan && value >= giaBan) {
+                                  return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
+                                }
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc nhỏ hơn hoặc bằng 1000!"));
+                            },
+                          },
+                        ]}
+                      >
+                        <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
+                      </Form.Item>
+                    </td>
+>>>>>>> c73378bfd63be082de6e327b78b1d204c8fe31e4
 
                       <td className="p-1 border-r border-gray-300 w-[20%]">
                         <Form.Item

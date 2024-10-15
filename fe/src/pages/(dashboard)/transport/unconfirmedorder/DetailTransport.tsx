@@ -16,76 +16,98 @@ interface Transport {
   tien_cod: number;
   anh_xac_thuc: string;
   khach_hang_xac_nhan: string
-  shipper_xac_nhan: number
+  shipper_xac_nhan: string
+  so_lan_giao: string
+  ghi_chu: string
 }
 const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const [isDeliveryConfirmed, setIsDeliveryConfirmed] = useState(false);
   // 
-  const [url, setUrl] = useState<string | null>(null); // URL ảnh đã chụp
-  const [loading, setLoading] = useState(false); // Trạng thái đang xử lý
-  const [isImageSaved, setIsImageSaved] = useState(false); // Trạng thái đã lưu ảnh
-  const [isWebcamVisible, setIsWebcamVisible] = useState(false); // Hiển thị webcam
-  const webcamRef = useRef<Webcam>(null);
+  const [url, setUrl] = useState<string | null>(null); 
+const [loading, setLoading] = useState(false); 
+const [failedAttempts, setFailedAttempts] = useState(0); 
+const [isWebcamVisible, setIsWebcamVisible] = useState(false); 
+const [isImageSaved, setIsImageSaved] = useState(false); 
+const [note, setNote] = useState(""); 
+const [showNoteInput, setShowNoteInput] = useState(false); // Trạng thái hiển thị ô nhập ghi chú 
+const webcamRef = useRef<Webcam>(null);
 
-  const videoConstraints = {
-    width: 1280,
-    height: 720,
-    facingMode: 'user',
-  };
+const videoConstraints = {
+  width: 1280,
+  height: 720,
+  facingMode: 'user',
+};
 
-  // Hàm chụp ảnh bằng webcam
-  const capturePhoto = () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      setUrl(imageSrc); // Hiển thị ảnh đã chụp
+// Hàm chụp ảnh bằng webcam
+const capturePhoto = () => {
+  if (webcamRef.current) {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setUrl(imageSrc);
+  }
+};
+
+// Hàm để xác nhận giao hàng
+const handleSave = async () => {
+  try {
+    setLoading(true);
+    let imageUrl = null;
+
+    // Kiểm tra nếu đã chụp ảnh
+    if (url) {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+      imageUrl = await uploadToCloudinary(file);
+    } else if (failedAttempts >= 3) {
+      // Nếu đã thất bại 3 lần, không cần chụp ảnh
+      imageUrl = null;
+    } else {
+      alert('Vui lòng chụp ảnh trước khi xác nhận giao hàng.');
+      return;
     }
-  };
 
-  // Hàm để xác nhận giao hàng
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-      let imageUrl = null;
+    // Gọi API mutate để xác nhận giao hàng với ảnh đã được upload
+    const response: any = await mutate({
+      id: record.id,
+      action: "Xác nhận giao hàng",
+      imageUrl: imageUrl,
+      note: note,
+      failedAttempts: failedAttempts,
+    });
 
-      // Chỉ chụp ảnh nếu url đã có giá trị
-      if (url) {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-        imageUrl = await uploadToCloudinary(file); // Tải ảnh lên Cloudinary
-      } else {
-        alert('Vui lòng chụp ảnh trước khi xác nhận giao hàng.');
-        return;
-      }
-
-      // Gọi mutate để xác nhận giao hàng
-      const response: any = await mutate({
-        id: record.id,
-        action: "Xác nhận giao hàng",
-        imageUrl: imageUrl,
-        shipper_xac_nhan: 1 
-      });
-
-      console.log('API Response:', response); 
-
-      if (response && response.status) {
-        alert('Đã lưu ảnh và xác nhận giao hàng thành công!');
-        setIsDeliveryConfirmed(true);
-      } else {
-        alert('Có lỗi xảy ra trong quá trình xác nhận giao hàng.');
-      }
-
-    } catch (error) {
-      console.error('Có lỗi xảy ra:', error);
-      alert('Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!');
-    } finally {
-      setLoading(false);
+    // Kiểm tra kết quả từ API
+    if (response && response.status) {
+      alert('Đã lưu ảnh và xác nhận giao hàng thành công!');
+      setIsImageSaved(true);
+      setFailedAttempts(0);
+      setNote("");
+      setShowNoteInput(false); // Ẩn ô nhập ghi chú
+    } else {
+      alert('Có lỗi xảy ra trong quá trình xác nhận giao hàng.');
     }
-  };
 
+  } catch (error) {
+    console.error('Có lỗi xảy ra:', error);
+    alert('Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!');
+  } finally {
+    setLoading(false);
+  }
+};
 
+// Hàm xử lý khi giao hàng thất bại
+const handleDeliveryFailure = () => {
+  const newFailedAttempts = failedAttempts + 1;
+  setFailedAttempts(newFailedAttempts);
+
+  if (newFailedAttempts >= 3) {
+    alert('Giao hàng thất bại 3 lần. Vui lòng nhập ghi chú.');
+    setShowNoteInput(true); // Hiện ô nhập ghi chú
+    setIsWebcamVisible(false); // Ẩn webcam
+  } else {
+    alert(`Giao hàng thất bại lần ${newFailedAttempts}.`);
+  }
+};
 
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
@@ -122,37 +144,29 @@ const DetailTransport = ({ record }: any) => {
   };
 
   const { mutate } = useMutation({
-    mutationFn: async ({ id, action, imageUrl }: any) => {
+    mutationFn: async ({ id, action, imageUrl, note, failedAttempts }: any) => {
       try {
         let response;
-
+  
         if (action === "Xác nhận giao hàng") {
+          const shipperXacNhan = failedAttempts >= 3 ? "2" : "1"; // Nếu thất bại 3 lần, shipper_xac_nhan là "2"
+  
           response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
             anh_xac_thuc: imageUrl,
-            shipper_xac_nhan: 1, 
+            shipper_xac_nhan: shipperXacNhan,
+            ghi_chu: note,
           });
         } else {
-          // Gọi đến endpoint cập nhật trạng thái đơn hàng
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
             trang_thai_van_chuyen: action,
             id: [id],
           });
         }
-
-        const error = response.data.message;
-
-        message.open({
-          type: error === "Cập nhật trạng thái đơn hàng thành công" ? "success" : "info",
-          content: error,
-        });
-
+  
         return response.data;
-
       } catch (error) {
-        message.open({
-          type: "error",
-          content: "Không thể cập nhật trạng thái đơn hàng!",
-        });
+        console.error("Error during API request:", error);
+        message.error("Không thể cập nhật trạng thái đơn hàng!");
       }
     },
     onSuccess: () => {
@@ -407,9 +421,13 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
-                {isWebcamVisible && (
+                {isWebcamVisible && !isImageSaved && (
                   <div className="relative mx-auto mt-6">
-                    {url ? null : (
+                    {url ? (
+                      <div>
+                        <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
+                      </div>
+                    ) : (
                       <div className="relative">
                         <Webcam
                           ref={webcamRef}
@@ -428,24 +446,18 @@ const DetailTransport = ({ record }: any) => {
                         </div>
                       </div>
                     )}
-
-                    {url && (
-                      <div>
-                        <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
-                      </div>
-                    )}
-
-                    {url && !isDeliveryConfirmed && ( 
-                      <div className="relative flex justify-center mt-3">
-                        <button
-                          onClick={() => setUrl(null)} 
-                          className="absolute -top-10 px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
-                        >
-                          <i className="fa-regular fa-trash"></i>
-                        </button>
-                      </div>
-                    )}
                   </div>
+                )}
+
+                {/* Hiện ô nhập ghi chú nếu giao hàng thất bại 3 lần */}
+                {showNoteInput && (
+                  <textarea
+                    rows={3}
+                    placeholder="Nhập ghi chú..."
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    className="border rounded-lg p-2 mt-4"
+                  />
                 )}
 
                 {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
@@ -460,20 +472,31 @@ const DetailTransport = ({ record }: any) => {
                   </button>
                 ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
                   <>
-                    <button
-                      className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
-                      onClick={handleSave}
-                      disabled={loading || isImageSaved} 
-                    >
-                      {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
-                    </button>
-
-                    <button
-                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                      onClick={() => mutate({ id: record.id, action: "Hủy hàng" })}
-                    >
-                      Giao hàng thất bại
-                    </button>
+                    {showNoteInput ? (
+                      <button
+                        onClick={handleSave} // Gửi ghi chú khi nhấn nút này
+                        className="w-full py-2 border bg-green-600 rounded-lg text-white hover:bg-green-700 mt-7"
+                        disabled={loading}
+                      >
+                        Gửi ghi chú
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
+                          onClick={handleSave}
+                          disabled={loading || isImageSaved}
+                        >
+                          {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
+                        </button>
+                        <button
+                          className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
+                          onClick={handleDeliveryFailure}
+                        >
+                          Giao hàng thất bại
+                        </button>
+                      </>
+                    )}
                   </>
                 ) : null}
               </div>
