@@ -57,12 +57,14 @@ class TrangChuController extends Controller
     public function thongTinWeb()
     {
         try {
-            $data = ThongTinWeb::query()->first();
+            $data = ThongTinWeb::query()
+                ->first()
+                ->makeHidden(['banner']);
 
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Lấy dữ liệu này',
+                'message' => 'Lấy dữ liệu thành công',
                 'data' => $data,
             ], 200);
         }catch (\Exception $exception) {
@@ -81,10 +83,9 @@ class TrangChuController extends Controller
             'query' => 'required|string|min:1',
         ]);
 
-        $query = $request->input('query');
+        $query = trim($request->input('query'));
 
         $goiY = SanPham::where('ten_san_pham', 'like', '%' . $query . '%')
-            ->select('ten_san_pham')
             ->limit(10)
             ->get();
 

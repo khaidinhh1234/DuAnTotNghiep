@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\DonHang;
+use App\Models\DonHangChiTiet;
 use App\Models\SanPham;
 use Carbon\Carbon;
 use Exception;
@@ -602,6 +603,61 @@ class ThongKeTongQuanController extends Controller
         }
     }
 
+    public function thongKeTongQuanTrongNgay(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $today = Carbon::today();
+
+            // Số lượng đơn hủy trong ngày
+            $soDonHangHuy = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DH)
+                ->whereDate('updated_at', $today)
+                ->count();
+
+            // Số lượng đơn hoàn trong ngày
+            $soDonHangHoan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
+                ->whereDate('updated_at', $today)
+                ->count();
+
+            // Số lượng đơn mới trong ngày
+            $soDonHangMoi = DonHang::whereDate('created_at', $today)
+                ->count();
+
+            // Số lượng đơn thành công trong ngày
+            $soDonHangThanhCong = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                ->whereDate('updated_at', $today)
+                ->count();
+
+            // Số lượng sản phẩm bán ra trong ngày
+            $soLuongSanPhamBanRa = DonHangChiTiet::whereHas('donHang', function ($query) use ($today) {
+                $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                    ->whereDate('updated_at', $today);
+            })->sum('so_luong');
+
+            // Số lượng khách hàng mua sản phẩm trong ngày
+            $soLuongKhachHangMua = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                ->whereDate('updated_at', $today)
+                ->distinct('user_id')
+                ->count('user_id');
+
+            DB::commit();
+
+            return response()->json([
+                'so_don_hang_huy' => $soDonHangHuy,
+                'so_don_hang_hoan' => $soDonHangHoan,
+                'so_don_hang_moi' => $soDonHangMoi,
+                'so_don_hang_thanh_cong' => $soDonHangThanhCong,
+                'so_luong_san_pham_ban_ra' => $soLuongSanPhamBanRa,
+                'so_luong_khach_hang_mua' => $soLuongKhachHangMua,
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Đã xảy ra lỗi',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 }
 
