@@ -18,19 +18,19 @@ const Chart2 = ({ datestart, dateend }: ChartProps) => {
       : null;
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["chart1", datestart, dateend],
+    queryKey: ["tongquanchart2", datestart, dateend],
     queryFn: async () => {
       const response = await instance.post("thong-ke/don-hang/hoan-hang", date);
       return response.data;
     },
     enabled: !!datestart && !!dateend,
   });
-
+  console.log(data);
   const formatter: StatisticProps["formatter"] = (value: any) => (
     <CountUp end={value as number} separator="," />
   );
-  const phantien = data?.ti_le_tang_giam_tien > 0;
-  const phandon = data?.ti_le_tang_giam_don_hang > 0;
+  const phantien = data?.ti_le_tang_giam_tien_hoan > 0;
+  const phandon = data?.ti_le_tang_giam_don_hang_hoan > 0;
 
   // if (isLoading) {
   //   return <div>Loading...</div>;
@@ -59,7 +59,7 @@ const Chart2 = ({ datestart, dateend }: ChartProps) => {
             Tổng tiền: <br />
             <span className="text-2xl font-bold text-orange-800">
               <Statistic
-                value={data?.tong_tien || 0}
+                value={data?.tong_tien_hoan || 0}
                 formatter={formatter}
                 suffix="đ"
                 valueStyle={{ color: "#fc4a1a" }}
@@ -67,17 +67,19 @@ const Chart2 = ({ datestart, dateend }: ChartProps) => {
             </span>
           </div>
           <div
-            className={`flex items-center mt-1 ${phantien ? "text-green-600" : "text-red-600"}`}
+            className={`flex items-center gap-1 mt-1 ${phantien ? "text-green-600" : "text-red-600"}`}
           >
             {phantien ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-            <Text
-              className={`ml-1 font-medium ${phantien ? "text-green-600" : "text-red-600"}`}
-            >
-              {data?.ti_le_tang_giam_tien !== undefined &&
-              data?.ti_le_tang_giam_tien !== null
-                ? `${data.ti_le_tang_giam_tien} %`
-                : "0 %"}
-            </Text>
+
+            <Statistic
+              value={data?.ti_le_tang_giam_tien_hoan || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: phantien ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
           </div>
         </div>
         <div>
@@ -85,24 +87,24 @@ const Chart2 = ({ datestart, dateend }: ChartProps) => {
             Số lượng đơn hàng: <br />
             <span className="text-2xl font-bold text-black">
               <Statistic
-                value={data?.tong_so_luong_don_hang || 0}
+                value={data?.tong_so_luong_don_hang_hoan || 0}
                 formatter={formatter}
               />
             </span>
           </div>
           <div
-            className={`flex items-center mt-1 ${phandon ? "text-green-600" : "text-red-600"}`}
+            className={`flex items-center gap-1 mt-1 ${phandon ? "text-green-600" : "text-red-600"}`}
           >
             {phandon ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-            <Text
-              className={`ml-1 font-medium ${phandon ? "text-green-600" : "text-red-600"}`}
-            >
-              {data?.ti_le_tang_giam_don_hang !== undefined &&
-              data?.ti_le_tang_giam_don_hang !== null &&
-              data?.ti_le_tang_giam_don_hang !== 0
-                ? `${data.ti_le_tang_giam_don_hang} %`
-                : "0 %"}
-            </Text>
+            <Statistic
+              value={data?.ti_le_tang_giam_don_hang_hoan || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: phandon ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
           </div>
         </div>
       </div>

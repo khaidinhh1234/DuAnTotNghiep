@@ -17,9 +17,12 @@ const Chart2 = ({ datestart, dateend }: ChartProps) => {
       : null;
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["chart1", datestart, dateend],
+    queryKey: ["tongquantablechart2", datestart, dateend],
     queryFn: async () => {
-      const response = await instance.post("thong-ke/doanh-thu/tong", date);
+      const response = await instance.post(
+        "thong-ke/doanh-thu/thanh-toan-online",
+        date
+      );
       return response.data;
     },
     enabled: !!datestart && !!dateend,
