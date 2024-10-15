@@ -24,8 +24,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import instance from "@/configs/admin";
 
-const { Content } = Layout;
-const { Title } = Typography;
+// const { Content } = Layout;
+// const { Title } = Typography;
 
 const getBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
