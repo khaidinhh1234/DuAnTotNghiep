@@ -17,7 +17,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
       : null;
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["chart1", datestart, dateend],
+    queryKey: ["tongquantablechart3", datestart, dateend],
     queryFn: async () => {
       const response = await instance.post(
         "thong-ke/doanh-thu/thanh-toan-off",
@@ -27,7 +27,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  // console.log(data);
+  console.log(data);
   const formatter: StatisticProps["formatter"] = (value: any) => (
     <CountUp end={value as number} separator="," />
   );
