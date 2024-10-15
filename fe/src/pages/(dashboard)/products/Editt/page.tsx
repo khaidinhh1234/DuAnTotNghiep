@@ -261,7 +261,7 @@ const EditProducts: React.FC = () => {
       setProductCode(productData.data.ma_san_pham?.replace("SP-", "") || '');
       setProductImage(productData.data.anh_san_pham || '');
 
-   
+ 
       if (productData.data.anh_san_pham) {
         setProductImageList([{
           uid: "-1",
@@ -314,7 +314,6 @@ const EditProducts: React.FC = () => {
         }));
         setCombinations(newCombinations);
         
-        // Set fileLists for variant images
         const newFileLists: any = {};
         newCombinations.forEach((combo: any, index: number) => {
           newFileLists[index] = combo.anh_bien_the;
@@ -339,8 +338,10 @@ const EditProducts: React.FC = () => {
       return;
     }
     try {
-      let productImageUrl = '';
-      if (productImageList.length > 0) {
+      let productImageUrl = productImage; // Use the existing image URL by default
+  
+      if (productImageList.length > 0 && productImageList[0].originFileObj) {
+        // Only upload if there's a new file
         const file = productImageList[0].originFileObj;
         productImageUrl = await uploadToCloudinary(file);
       }
@@ -489,7 +490,6 @@ const EditProducts: React.FC = () => {
                   readOnly
                   disabled
                 />
-                {/* <Button onClick={generateRandomCode}>Đổi mã</Button> */}
               </div>
             </Form.Item>
           </div>
@@ -498,8 +498,16 @@ const EditProducts: React.FC = () => {
    <Form.Item
   label="Ảnh nổi bật"
   name="anh_san_pham"
-  rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
->
+  rules={[
+    {
+      validator: (_, value) => {
+        if (productImageList.length > 0 || productImage) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error('Vui lòng tải lên ảnh sản phẩm!'));
+      },
+    },
+  ]}>
   <Upload
     listType="picture-card"
     beforeUpload={(file) => {
@@ -507,10 +515,11 @@ const EditProducts: React.FC = () => {
       if (!isImage) {
         message.error('Bạn chỉ có thể tải lên file ảnh!');
       }
-      return false; // Prevent upload
+      return false; 
     }}
     onChange={({ fileList }) => setProductImageList(fileList)}
     onPreview={handlePreview}
+    onRemove={handleRemove}
     fileList={productImageList}
   >
     {productImageList.length === 0 && uploadButton}
@@ -704,29 +713,7 @@ const EditProducts: React.FC = () => {
                         </Form.Item>
 
                       </td>
-                      {/* <td className="p-1 border-r border-gray-300 w-[20%]">
-                        <Form.Item
-                          name={`gia_khuyen_mai-${index}`}
-                          className="my-0 px-5"
-                          initialValue={combo.gia_khuyen_mai}
-                          rules={[
-                            { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
-                            { type: "number", min: 1000, message: "Giá bán phải lớn hơn hoặc bằng 1000!" },
-
-                            {
-                              validator: (_, value) => {
-                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
-                                if (value && giaBan && value >= giaBan) {
-                                  return Promise.reject("Giá khuyến mãi phải nhỏ hơn giá bán!");
-                                }
-                                return Promise.resolve();
-                              },
-                            },
-                          ]}
-                        >
-                          <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
-                        </Form.Item>
-                      </td> */}
+                  
                       <td className="p-1 border-r border-gray-300 w-[20%]">
   <Form.Item
     name={`gia_khuyen_mai-${index}`}
@@ -748,7 +735,7 @@ const EditProducts: React.FC = () => {
             }
             return Promise.resolve();
           }
-          return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc nhỏ hơn hoặc bằng 1000!"));
+          return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc lớn hơn hoặc bằng 1000!"));
         },
       },
     ]}

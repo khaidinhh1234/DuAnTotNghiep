@@ -714,7 +714,6 @@ const AddProducts: React.FC = () => {
                           />
                         </Form.Item>
 
-<<<<<<< HEAD
                       </td> */}  
                                           <td className="p-1 border-r border-gray-300 w-[20%]">
   <Form.Item
@@ -744,37 +743,7 @@ const AddProducts: React.FC = () => {
     <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
   </Form.Item>
 </td>
-=======
-                      </td> */}                      
-                      <td className="p-1 border-r border-gray-300 w-[20%]">
-                      <Form.Item
-                        name={`gia_khuyen_mai-${index}`}
-                        className="my-0 px-5"
-                        rules={[
-                          { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
-                          {
-                            type: "number",
-                            min: 0,
-                            message: "Giá khuyến mãi phải lớn hơn hoặc bằng 0!",
-                          },
-                          {
-                            validator: (_, value) => {
-                              const giaBan = form.getFieldValue(`gia_ban-${index}`);
-                              if (value === 0 || (value > 0 && value <= 1000)) {
-                                if (giaBan && value >= giaBan) {
-                                  return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
-                                }
-                                return Promise.resolve();
-                              }
-                              return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc nhỏ hơn hoặc bằng 1000!"));
-                            },
-                          },
-                        ]}
-                      >
-                        <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
-                      </Form.Item>
-                    </td>
->>>>>>> c73378bfd63be082de6e327b78b1d204c8fe31e4
+
 
                       <td className="p-1 border-r border-gray-300 w-[20%]">
                         <Form.Item
