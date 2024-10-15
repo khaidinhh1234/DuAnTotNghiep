@@ -3,19 +3,19 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
+import { ellipse } from "@/assets/img";
 import "swiper/css";
-import { avata, ellipse } from "@/assets/img";
 
 const Customer = () => {
-  const reviews = [
-    {
-      title: "Tokyo",
-      content:
-        "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.",
-      name: "Leslie Alexander",
-      avata: { ellipse },
-    },
-  ];
+  // const reviews = [
+  //   {
+  //     title: "Tokyo",
+  //     content:
+  //       "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.",
+  //     name: "Leslie Alexander",
+  //     avata: { ellipse },
+  //   },
+  // ];
   return (
     <>
       <section className="bg-gray-100 py-12">
@@ -71,9 +71,7 @@ const Customer = () => {
                     <span className="text-yellow-500 text-4xl">★★★★★</span>
                   </div>
 
-
                   <p className="text-gray-600 font-medium mb-5 w-[330px] text-start">
-
                     It is a long established fact that a reader will be
                     distracted by the readable content of a page when looking at
                     its layout. The point of using Lorem Ipsum.
@@ -99,10 +97,8 @@ const Customer = () => {
                   <div className="flex mb-1">
                     <span className="text-yellow-500 text-4xl">★★★★★</span>
                   </div>
-
 
                   <p className="text-gray-600 font-medium mb-5 w-[330px] text-start ">
-
                     It is a long established fact that a reader will be
                     distracted by the readable content of a page when looking at
                     its layout. The point of using Lorem Ipsum.
@@ -197,8 +193,6 @@ const Customer = () => {
                       />
                     </div>
                     <div className="ml-4 text-start">
-
-                  
                       <h3 className="text-xl font-bold">Leslie Alexander</h3>
                       <p className="text-gray-600">Model</p>
                     </div>

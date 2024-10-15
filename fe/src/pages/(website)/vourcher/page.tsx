@@ -11,12 +11,12 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 const Voucher = () => {
-  const vourcher = [
-    {
-      title: "From 77K",
-      content: "Voucher",
-    },
-  ];
+  // const vourcher = [
+  //   {
+  //     title: "From 77K",
+  //     content: "Voucher",
+  //   },
+  // ];
   const [activeTab, setActiveTab] = useState("account");
 
   console.log(activeTab);
