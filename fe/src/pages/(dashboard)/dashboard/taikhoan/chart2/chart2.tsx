@@ -26,11 +26,7 @@ const Chart2: React.FC = () => {
     stroke: {
       width: [1, 1],
     },
-    title: {
-      text: "Phân tích khách hàng và chi tiêu",
-      align: "left",
-      offsetX: 110,
-    },
+
     xaxis: {
       categories: [
         "Rank 1",
@@ -112,14 +108,18 @@ const Chart2: React.FC = () => {
   };
 
   return (
-    <div id="chart" style={{ maxWidth: "800px", margin: "0 auto" }}>
-      <ReactApexChart
-        options={options}
-        series={options.series}
-        type="line"
-        height={350}
-      />
-    </div>
+    <>
+      {" "}
+      <h3 className="font-semibold">Phân tích Hạng thành viên</h3>
+      <div id="chart" style={{ maxWidth: "800px", margin: "0 auto" }}>
+        <ReactApexChart
+          options={options}
+          series={options.series}
+          type="line"
+          height={350}
+        />
+      </div>
+    </>
   );
 };
 

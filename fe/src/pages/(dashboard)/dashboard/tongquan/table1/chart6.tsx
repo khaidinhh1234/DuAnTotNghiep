@@ -1,21 +1,130 @@
+import instance from "@/configs/admin";
+import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
 import { Statistic } from "antd";
+import { useEffect } from "react";
 import Chart from "react-apexcharts";
 import CountUp from "react-countup";
 const formatter: StatisticProps["formatter"] = (value: any) => (
   <CountUp end={value as number} separator="," />
 );
-const Chart6 = () => {
+interface ChartProps {
+  datestart?: string;
+  dateend?: string;
+}
+const Chart6 = ({ datestart, dateend }: ChartProps) => {
+  const date =
+    datestart && dateend
+      ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
+      : null;
+  const {
+    data: doanhso,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["tongquanchart4", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/doanh-so", date);
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+  const {
+    data: loinhuan,
+
+    refetch: refetch2,
+  } = useQuery({
+    queryKey: ["tongquanchart5", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/doanh-thu/tong", date);
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+  const {
+    data: gttb,
+
+    refetch: refetch3,
+  } = useQuery({
+    queryKey: ["tongquanchart6", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/doanh-thu/tb", date);
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+  const {
+    data: don,
+
+    refetch: refetch4,
+  } = useQuery({
+    queryKey: ["tongquanchart1", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/don-hang/chot", date);
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+  const {
+    data: Chart2,
+
+    refetch: chart2,
+  } = useQuery({
+    queryKey: ["table1chart2", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post(
+        "thong-ke/don-hang/trang-thai",
+        date
+      );
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+
+  const doanh_so = doanhso?.ti_le_tang_giam > 0;
+  const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
+  const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;
+  const don_hang = don?.ti_le_tang_giam_don_hang > 0;
+
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch();
+    }
+  }, [datestart, dateend, refetch]);
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch2();
+    }
+  }, [datestart, dateend, refetch2]);
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch3();
+    }
+  }, [datestart, dateend, refetch3]);
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch4();
+    }
+  }, [datestart, dateend, refetch4]);
+  useEffect(() => {
+    if (datestart && dateend) {
+      chart2();
+    }
+  }, [datestart, dateend, chart2]);
+  console.log(Chart2);
   const chartData = {
     series: [
       {
         name: "Đơn hủy",
-        data: [1100, 200, 300, 6400, 200, 5100, 4300, 6400, 500, 3100, 8400], // Example data
+        data: Chart2?.so_luong_huy_hang, // Example data
       },
 
       {
         name: "Đơn chốt",
-        data: [1100, 2100, 3100, 4200, 2300, 3200, 2300, 100, 600, 200, 300], // Example data
+        data: Chart2?.so_luong_hoan_tat_don_hang, // Example data
       },
     ],
 
@@ -32,24 +141,12 @@ const Chart6 = () => {
         enabled: false,
       },
       xaxis: {
-        categories: [
-          "13/04/2024",
-          "14/04/2024",
-          "15/04/2024",
-          "16/04/2024",
-          "17/04/2024",
-          "18/04/2024",
-          "19/04/2024",
-          "20/04/2024",
-          "21/04/2024",
-          "22/04/2024",
-          "23/04/2024",
-        ], // Days of the month
+        categories: Chart2?.ngay, // Days of the month
       },
       yaxis: {
         labels: {
           formatter: (val: number) => {
-            return `${val.toLocaleString("vi-VN")} đ`;
+            return `${Math.round(val)} đơn`;
           },
         },
       },
@@ -64,51 +161,104 @@ const Chart6 = () => {
           <p className="text-base font-semibold text-red-600">
             {" "}
             <Statistic
-              value={120234}
+              value={doanhso?.tong_doanh_so_hien_tai || 0}
               formatter={formatter}
               suffix="đ"
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
           </p>
-          <span className="text-red-600">↓ 89,09%</span>
+          <div
+            className={` mt-1 ${doanh_so ? "text-green-600" : "text-red-600"} flex justify-end gap-1`}
+          >
+            {doanh_so ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            <Statistic
+              value={doanhso?.ti_le_tang_giam || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: doanh_so ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
+          </div>
         </div>
         <div className="col-span-1 text-end border-r px-5">
           <h3 className="text-lg font-bold">Lợi nhuận (17.22%)</h3>
           <p className="text-base font-semibold text-green-600">
             {" "}
             <Statistic
-              value={120234}
+              value={loinhuan?.tong_doanh_thu || 0}
               formatter={formatter}
               suffix="đ"
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
           </p>
-          <span className="text-green-600">↑ 89,09%</span>
+          <div
+            className={` mt-1 ${loi_nhuan ? "text-green-600" : "text-red-600"} flex justify-end gap-1`}
+          >
+            {loi_nhuan ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            <Statistic
+              value={loinhuan?.ti_le_tang_giam_doanh_thu || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: loi_nhuan ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
+          </div>
         </div>
         <div className="col-span-1 text-end border-r px-5">
           <h3 className="text-lg font-bold">GTTB</h3>
           <p className="text-base font-semibold text-green-600">
             {" "}
             <Statistic
-              value={120234}
+              value={gttb?.doanh_thu_tb_hien_tai || 0}
               formatter={formatter}
               suffix="đ"
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
           </p>
-          <span className="text-green-600">↑ 89,09%</span>
+          <div
+            className={` mt-1 ${gt_tb ? "text-green-600" : "text-red-600"} flex justify-end gap-1`}
+          >
+            {gt_tb ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            <Statistic
+              value={gttb?.ti_le_tang_giam_doanh_thu_tb || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: gt_tb ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
+          </div>
         </div>
         <div className="col-span-1 text-end border-r px-5">
           <h3 className="text-lg font-bold">Đơn chốt</h3>
           <p className="text-base font-semibold text-red-600">
             {" "}
             <Statistic
-              value={120234}
+              value={don?.tong_so_luong_don_hang || 0}
               formatter={formatter}
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
           </p>
-          <span className="text-red-600">↓ 89,09%</span>
+          <div
+            className={` mt-1 ${don_hang ? "text-green-600" : "text-red-600"} flex justify-end  gap-1`}
+          >
+            {don_hang ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+
+            <Statistic
+              value={don?.ti_le_tang_giam_don_hang || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: don_hang ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
+          </div>
         </div>
         <div className="col-span-1 text-end border-r px-5">
           <h3 className="text-lg font-bold">SL sản phẩm</h3>
