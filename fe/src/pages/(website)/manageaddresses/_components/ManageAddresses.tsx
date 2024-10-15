@@ -21,7 +21,7 @@ const ManageAddressesPage = () => {
                 <div className="flex items-center p-5 border-b border-hrBlack">
                   <img
                     src={ellipse}
-                    alt
+                    alt=""
                     className="rounded-full md:w-[51px] md:h-[51px]"
                   />
                   <div className="px-4 py-2">
