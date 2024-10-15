@@ -98,23 +98,7 @@ const Chart5 = () => {
 
   return (
     <>
-      <div>
-        <ConfigProvider locale={viVN}>
-          <RangePicker />
-        </ConfigProvider>
-        <Select
-          defaultValue="lucy"
-          style={{ width: 120 }}
-          className="ml-5"
-          onChange={handleChange}
-          options={[
-            { value: "jack", label: "Top 5" },
-            { value: "lucy", label: "Top 10" },
-            { value: "Yiminghe", label: "Top 20" },
-            { value: "disabled", label: "Disabled", disabled: true },
-          ]}
-        />
-      </div>
+   
       <Chart
         className="bg-white p-5"
         options={optionsareachart}

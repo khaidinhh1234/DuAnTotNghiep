@@ -64,12 +64,12 @@ const Chart3: React.FC = () => {
   ];
 
   return (
-    <div id="chart" style={{ maxWidth: "800px", margin: "0 auto" }}>
+    <div id="chart" style={{ maxWidth: "1400px", margin: "0 auto" }}>
       <ReactApexChart
         options={options}
         series={series}
         type="line"
-        height={350}
+        height={450}
       />
     </div>
   );
