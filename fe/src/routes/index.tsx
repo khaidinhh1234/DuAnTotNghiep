@@ -127,6 +127,7 @@ import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
 import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
 import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
 import PrivateRoute from "./PrivateRoute";
+import ChuongTrinhUuDaiRemote from "@/pages/(dashboard)/vourcher/banner/remote";
 
 const Router = () => {
   //
@@ -168,7 +169,9 @@ const Router = () => {
           path="admin"
           element={
             <PrivateRoute>
-              <LayoutAdmin />
+              <>
+                <LayoutAdmin />
+              </>
             </PrivateRoute>
           }
         >
@@ -231,13 +234,15 @@ const Router = () => {
           <Route path="add-vocher" element={<AddVoucher />} />
           <Route path="vouchers/show/:id" element={<ShowVoucher />} />
           <Route path="vouchers/edit/:id" element={<EditVoucher />} />
-          {/* trương trình ưu đâix */}
-          <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
-          <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
-          <Route
-            path="chuongtrinhuudaiedit"
-            element={<ChuongTrinhUuDaiEdit />}
-          />
+                    {/* trương trình ưu đâix */}
+                    <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
+                    <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
+                    <Route path="chuongtrinhuudai/edit/:id" element={<ChuongTrinhUuDaiEdit />} />
+                    <Route path="chungtrinhuudai/remote" element={<ChuongTrinhUuDaiRemote />} />
+
+
+
+
           {/* Tài khoản khách hàng */}
           <Route
             path="users"
