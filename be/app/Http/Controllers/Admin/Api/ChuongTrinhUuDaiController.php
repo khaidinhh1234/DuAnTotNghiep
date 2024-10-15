@@ -358,15 +358,11 @@ class ChuongTrinhUuDaiController extends Controller
     public function show($id)
     {
         try {
-            $data = ChuongTrinhUuDai::query()->findOrFail($id);
-
-            $data['sanPhams'] = $data->sanPhams()->pluck('id')->toArray();
+            $data = ChuongTrinhUuDai::query()->with('sanPhams')->findOrFail($id);
 
             return response()->json([
                 'success' => true,
-                'data' => [
-                    'chuongTrinhUuDai' => $data,
-                ]
+                'data' => $data
             ], 200);
 
         } catch (\Exception $e) {

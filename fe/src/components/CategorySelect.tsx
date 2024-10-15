@@ -19,7 +19,7 @@ const CategorySelect: React.FC<{ categoriesData: CategoriesData }> = ({ categori
         return children.map((category: any) => {
             // Kiểm tra xem danh mục có con không
             const hasChildren = categoriesData.data.some(child => child.cha_id === category.id);
-
+            console.log(category);
             return (
                 <React.Fragment key={category.id}>
                     {/* Chỉ hiển thị danh mục cuối cùng không có danh mục con */}

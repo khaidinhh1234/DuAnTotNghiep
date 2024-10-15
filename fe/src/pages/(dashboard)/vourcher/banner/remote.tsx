@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from "react";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, message, Popconfirm, Space, Spin, Table } from "antd";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
@@ -25,7 +25,7 @@ interface DataType {
 
 type DataIndex = keyof DataType;
 
-const ChuongTrinhUuDai: React.FC = () => {
+const ChuongTrinhUuDaiRemote: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
@@ -33,7 +33,7 @@ const ChuongTrinhUuDai: React.FC = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["chuongtrinhuudai"],
     queryFn: async () => {
-      const res = await instance.get("/chuongtrinhuudai");
+      const res = await instance.get("/chuongtrinhuudai/thung-rac");
       return res.data;
     },
   });
@@ -54,29 +54,29 @@ const ChuongTrinhUuDai: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.delete(`/chuongtrinhuudai/${id}`);
+        const response = await instance.post(`/chuongtrinhuudai/thung-rac/${id}`);
         if (response.data.status) {
+          message.open({
+            type: "success",
+            content: "Khôi phục thành công",
+          });
           return id;
         } else {
           throw new Error(response.data.message || "Failed to delete");
         }
       } catch (error) {
-        console.error("Error deleting :", error);
+        console.error("Error deleting category:", error);
         throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chuongtrinhuudai"] });
-      message.open({
-        type: "success",
-        content: "Xóa  thành công",
-      });
     },
     onError: (error) => {
-      console.error("Error deleting :", error);
+      console.error("Error deleting category:", error);
       message.open({
         type: "error",
-        content: "Xóa   thất bại",
+        content: "Xóa danh mục thất bại",
       });
     },
   });
@@ -240,33 +240,16 @@ const ChuongTrinhUuDai: React.FC = () => {
         title: "Quản trị",
         key: "action",
         render: (_, record) => (
-          <Space>
-            <Popconfirm
-              title="Chuyển vào thùng rác"
-              description="Bạn có chắc chắn muốn xóa không?"
-              okText="Có"
-              cancelText="Không"
-              onConfirm={() => {
-                mutate(String(record.id));
-              }}
-            >
-              <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
-                xóa
-              </Button>
-            </Popconfirm>
-            <Link to={`/admin/chuongtrinhuudai/edit/${record.id}`}>
-            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
-                Chỉnh sửa
-              </Button>
-            </Link>
-            {/* <Link to={`show/${record.key}`}>
-              <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
-                xem
-              </Button>
-            </Link> */}
+     <Space>
+          <Button
+            className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+            onClick={() => mutate(record.id)}
+          >
+            Khôi phục
+          </Button>
           </Space>
         ),
-      },
+        },
   ];
 
 
@@ -274,24 +257,16 @@ const ChuongTrinhUuDai: React.FC = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị /{" "}
-          <span className="font-semibold px-px">Chương trình ưu đãi</span>
+          Quản trị / Chương trình ưu đãi /{" "}
+          <span className="font-semibold px-px">Thùng rác</span>
         </h1>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Chương trình ưu đãi</h1>
+        <h1 className="font-semibold md:text-3xl">Thùng rác</h1>
         <div className="flex">
-          <Link to="/admin/chuongtrinhuudaiadd" className="mr-1">
+          <Link to="/admin/chuongtrinhuudai" className="mr-1">
             <Button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
-              <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
-              Thêm
-            </Button>
-          </Link>
-          <Link to="/admin/chungtrinhuudai/remote">
-            <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-              <DeleteOutlined className="mr-1" />
-              Thùng rác
-            </Button>
+Quay lại            </Button>
           </Link>
         </div>
       </div>
@@ -311,4 +286,4 @@ const ChuongTrinhUuDai: React.FC = () => {
   );
 };
 
-export default ChuongTrinhUuDai;
+export default ChuongTrinhUuDaiRemote;

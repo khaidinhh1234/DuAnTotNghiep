@@ -59,25 +59,25 @@ const UserPrivilegeAdmin = () => {
               </Button>
             </Link>
           ) : (
-          <>
-            {" "}
-            <Button
-              className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300"
-              onClick={() => mutate(record.key as number)}
-            >
-              Xóa
-            </Button>
-            <Link to={`edit-permission/${record.key}`}>
-              <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
-                Cập nhật
+            <>
+              {" "}
+              <Button
+                className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300"
+                onClick={() => mutate(record.key as number)}
+              >
+                Xóa
               </Button>
-            </Link>
-            <Link to={`show/${record.key}`}>
-              <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
-                Xem Quyền
-              </Button>
-            </Link>
-          </>
+              <Link to={`edit-permission/${record.key}`}>
+                <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+                  Cập nhật
+                </Button>
+              </Link>
+              <Link to={`show/${record.key}`}>
+                <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+                  Xem Quyền
+                </Button>
+              </Link>
+            </>
           )}
         </Space>
       ),
