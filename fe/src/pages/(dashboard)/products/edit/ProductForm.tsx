@@ -182,12 +182,12 @@
 // };
 
 // export default ProductForm;
-import React, { useEffect, useCallback } from "react";
-import { Form, Input, Select, Upload, Button } from "antd";
+import { Category, ProductFormData, Tag } from "@/common/types/product";
 import { UploadOutlined } from "@ant-design/icons";
-import { UploadFile } from "antd/es/upload/interface";
-import { Category, Tag, ProductFormData } from "@/common/types/product";
 import { Editor } from "@tinymce/tinymce-react";
+import { Button, Form, Input, Select, Upload } from "antd";
+import { UploadFile } from "antd/es/upload/interface";
+import React, { useCallback, useEffect } from "react";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -363,7 +363,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             //   });
             // }}
             // value={form.getFieldValue("noi_dung")} // Đảm bảo giá trị đồng bộ với form
-            onEditorChange={(content, editor) => {
+            onEditorChange={(content) => {
               updateContent(content);
             }}
           />

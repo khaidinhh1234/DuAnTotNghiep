@@ -37,7 +37,7 @@ const Order = () => {
         <h3 className="title-h3">Dự kiến giao hàng: 22 Tháng 2, 2024</h3>
 
         <div className="px-2 mb-8">
-          {[1, 2, 3].map((item, index) => (
+          {[1, 2, 3].map((index) => (
             <div
               key={index}
               className="flex gap-5 px-2 items-center border-b border-hrBlack py-5"
