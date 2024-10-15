@@ -1,21 +1,14 @@
-import {
-  banner1,
-  banner3,
-  banner4,
-  banner5,
-  banner6,
-  message,
-} from "@/assets/img";
+import { banner1, banner3, banner4, banner5, banner6 } from "@/assets/img";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import Swiper styles
 import "swiper/css";
-import "swiper/css/pagination";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 
-import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
+import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 
 const Banner = () => {
   return (
