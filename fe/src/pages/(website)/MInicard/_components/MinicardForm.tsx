@@ -1,9 +1,10 @@
-import React from 'react';
-import {sanPham2} from '@/assets/img'
+import { sanPham2 } from "@/assets/img";
 const ShoppingCart = () => {
   return (
     <div className="absolute top-24 right-60 w-85 bg-white shadow-lg p-6 rounded-lg z-10">
-      <h2 className="text-lg font-semibold mb-4">Bạn có 3 sản phẩm trong giỏ hàng</h2>
+      <h2 className="text-lg font-semibold mb-4">
+        Bạn có 3 sản phẩm trong giỏ hàng
+      </h2>
 
       {/* Cart items */}
       <div className="space-y-14">
