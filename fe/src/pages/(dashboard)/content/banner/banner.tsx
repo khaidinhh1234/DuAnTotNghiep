@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import {
@@ -100,7 +99,7 @@ const BannerManagement: React.FC = () => {
 
   const saveMutation = useMutation({
     mutationFn: (newBanners: BannerData[]) =>
-      instance.post('/thong-tin-web', { banner: newBanners }),
+      instance.post("/thong-tin-web", { banner: newBanners }),
     onSuccess: () => {
       message.success("Đã lưu thay đổi thành công");
       queryClient.invalidateQueries({ queryKey: ["bannerData"] });
@@ -143,7 +142,9 @@ const BannerManagement: React.FC = () => {
     setFileList(updatedFileList as UploadFile[]);
 
     const updatedBanners = updatedFileList.map((file, index) => {
-      const existingBanner = banners.find(banner => banner.duong_dan_anh === file.url);
+      const existingBanner = banners.find(
+        (banner) => banner.duong_dan_anh === file.url
+      );
       if (existingBanner) {
         return existingBanner;
       } else {
@@ -170,7 +171,11 @@ const BannerManagement: React.FC = () => {
     setBanners(updatedBanners);
   };
 
-  const handleBannerChange = (bannerId: number, field: string, value: string) => {
+  const handleBannerChange = (
+    bannerId: number,
+    field: string,
+    value: string
+  ) => {
     setBanners((prevBanners) =>
       prevBanners.map((banner) =>
         banner.id === bannerId
@@ -211,7 +216,11 @@ const BannerManagement: React.FC = () => {
   }
 
   if (banners.length === 0) {
-    return <div>Không có dữ liệu biểu ngữ nào khả dụng. Vui lòng thêm một số dữ liệu.</div>;
+    return (
+      <div>
+        Không có dữ liệu biểu ngữ nào khả dụng. Vui lòng thêm một số dữ liệu.
+      </div>
+    );
   }
 
   const uploadButton = (
@@ -225,7 +234,8 @@ const BannerManagement: React.FC = () => {
     <div className="p-4 grid grid-cols-2 gap-4">
       <div className="flex flex-col space-y-9">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Thông tin website</span>
+          Quản trị /{" "}
+          <span className="font-semibold px-px">Thông tin website</span>
         </h1>
 
         <div className="flex items-center justify-between mb-4">
@@ -253,7 +263,9 @@ const BannerManagement: React.FC = () => {
               }
               if (fileList.length <= 3) {
                 return React.cloneElement(originNode, {
-                  actions: originNode.props.actions?.filter((action: any) => action.key !== 'delete')
+                  actions: originNode.props.actions?.filter(
+                    (action: any) => action.key !== "delete"
+                  ),
                 });
               }
               return originNode;
@@ -282,12 +294,40 @@ const BannerManagement: React.FC = () => {
                 <Table
                   dataSource={[
                     { key: "Vị trí", field: "vi_tri", value: banner.vi_tri },
-                    { key: "Tiêu đề chính", field: "tieu_de_chinh", value: banner.noi_dung.tieu_de_chinh, color: banner.noi_dung.mau_tieu_de_chinh },
-                    { key: "Tiêu đề phụ", field: "tieu_de_phu", value: banner.noi_dung.tieu_de_phu, color: banner.noi_dung.mau_tieu_de_phu },
-                    { key: "Văn bản quảng cáo", field: "van_ban_quang_cao", value: banner.noi_dung.van_ban_quang_cao, color: banner.noi_dung.mau_van_ban_quang_cao },
-                    { key: "Tiêu đề nút", field: "tieu_de_nut", value: banner.noi_dung.tieu_de_nut, color: banner.noi_dung.mau_tieu_de_nut },
-                    { key: "Đường dẫn", field: "duong_link", value: banner.noi_dung.duong_link },
-                    { key: "Màu nền nút", field: "mau_nut", color: banner.noi_dung.mau_nut },
+                    {
+                      key: "Tiêu đề chính",
+                      field: "tieu_de_chinh",
+                      value: banner.noi_dung.tieu_de_chinh,
+                      color: banner.noi_dung.mau_tieu_de_chinh,
+                    },
+                    {
+                      key: "Tiêu đề phụ",
+                      field: "tieu_de_phu",
+                      value: banner.noi_dung.tieu_de_phu,
+                      color: banner.noi_dung.mau_tieu_de_phu,
+                    },
+                    {
+                      key: "Văn bản quảng cáo",
+                      field: "van_ban_quang_cao",
+                      value: banner.noi_dung.van_ban_quang_cao,
+                      color: banner.noi_dung.mau_van_ban_quang_cao,
+                    },
+                    {
+                      key: "Tiêu đề nút",
+                      field: "tieu_de_nut",
+                      value: banner.noi_dung.tieu_de_nut,
+                      color: banner.noi_dung.mau_tieu_de_nut,
+                    },
+                    {
+                      key: "Đường dẫn",
+                      field: "duong_link",
+                      value: banner.noi_dung.duong_link,
+                    },
+                    {
+                      key: "Màu nền nút",
+                      field: "mau_nut",
+                      color: banner.noi_dung.mau_nut,
+                    },
                   ]}
                   pagination={false}
                 >
@@ -304,7 +344,9 @@ const BannerManagement: React.FC = () => {
                         return (
                           <Select
                             value={text}
-                            onChange={(value) => handlePositionChange(banner.id, value)}
+                            onChange={(value) =>
+                              handlePositionChange(banner.id, value)
+                            }
                             style={{ width: 120 }}
                           >
                             {banners.map((_, i) => (
@@ -318,7 +360,13 @@ const BannerManagement: React.FC = () => {
                       return (
                         <Input
                           value={text}
-                          onChange={(e) => handleBannerChange(banner.id, record.field, e.target.value)}
+                          onChange={(e) =>
+                            handleBannerChange(
+                              banner.id,
+                              record.field,
+                              e.target.value
+                            )
+                          }
                         />
                       );
                     }}
@@ -327,13 +375,24 @@ const BannerManagement: React.FC = () => {
                     title="Màu"
                     key="color"
                     render={(_text, record: any) => {
-                      if (record.field === "duong_link" || record.field === "vi_tri") {
+                      if (
+                        record.field === "duong_link" ||
+                        record.field === "vi_tri"
+                      ) {
                         return null;
                       }
                       return (
                         <ColorPicker
                           value={record.color}
-                          onChange={(color) => handleBannerChange(banner.id, record.field === "mau_nut" ? "mau_nut" : `mau_${record.field}`, color.toHexString())}
+                          onChange={(color) =>
+                            handleBannerChange(
+                              banner.id,
+                              record.field === "mau_nut"
+                                ? "mau_nut"
+                                : `mau_${record.field}`,
+                              color.toHexString()
+                            )
+                          }
                         />
                       );
                     }}
@@ -391,7 +450,9 @@ const BannerManagement: React.FC = () => {
                         </p>
                         <p
                           className="text-base font-medium uppercase"
-                          style={{ color: banner.noi_dung.mau_van_ban_quang_cao }}
+                          style={{
+                            color: banner.noi_dung.mau_van_ban_quang_cao,
+                          }}
                         >
                           {banner.noi_dung.van_ban_quang_cao}
                         </p>

@@ -14,7 +14,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 const { Text, Title } = Typography;
 
 const Banner = () => {
-  const [{ user }] = useLocalStorage("user", {});
+  const [{ user }] = useLocalStorage("user" as any, {});
   // console.log(user);
   const url = user.anh_nguoi_dung;
   const vaitro = user.vai_tros.map((item: any) => item.ten_vai_tro);

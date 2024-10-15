@@ -2,8 +2,8 @@ import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Col, DatePicker, Input, Space, Table } from "antd";
-import Banner from "./banner";
 import { useState } from "react";
+import Banner from "./banner";
 const { RangePicker } = DatePicker;
 export function ActionLog() {
   const { data: lichsu } = useQuery({
@@ -187,7 +187,7 @@ export function ActionLog() {
   ];
   // type SelectCommonPlacement = SelectProps["placement"];
   const [filteredData, setFilteredData] = useState(datas);
-  const handleDateChange = (e: any, dateStrings: [string, string]) => {
+  const handleDateChange = (_e: any, dateStrings: [string, string]) => {
     const startDate = new Date(dateStrings[0]);
     const endDate = new Date(dateStrings[1]);
     // console.log("startDate", startDate);

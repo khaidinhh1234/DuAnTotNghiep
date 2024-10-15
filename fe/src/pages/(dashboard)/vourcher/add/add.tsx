@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
 import {
+  Button,
+  DatePicker,
+  Divider,
   Form,
   Input,
   InputNumber,
-  Select,
-  DatePicker,
-  Button,
-  Divider,
   Radio,
+  Select,
   message,
 } from "antd";
 import { DateTime } from "luxon";
+import { useEffect, useState } from "react";
 
-import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
+import { Link, useNavigate } from "react-router-dom";
 
-import dayjs from "dayjs";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import instance from "@/configs/admin";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 
 const AddVoucher = () => {
   const [form] = Form.useForm();
@@ -37,7 +37,7 @@ const AddVoucher = () => {
   const [danhm, setdanhmuc] = useState<string[]>([]);
 
   const [isAllSelected1, setIsAllSelected1] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
   const nav = useNavigate();
   const { mutate } = useMutation({
     // mutationKey: "createVoucher",
@@ -207,18 +207,18 @@ const AddVoucher = () => {
 
   const [selectedValues1, setSelectedValues1] = useState<string[]>([]);
 
-  const handleDeselectAll1 = () => {
-    setSelectedValues1([]);
-    setIsAllSelected1(false);
-  };
-  const handleSearch1 = (value: any) => {
-    setSearchTerm(value);
-  };
-  const handleSelectAll1 = () => {
-    const allValues = dm.map((option: any) => option.label);
-    setSelectedValues1(allValues as any);
-    setIsAllSelected1(true);
-  };
+  // const handleDeselectAll1 = () => {
+  //   setSelectedValues1([]);
+  //   setIsAllSelected1(false);
+  // };
+  // const handleSearch1 = (value: any) => {
+  //   setSearchTerm(value);
+  // };
+  // const handleSelectAll1 = () => {
+  //   const allValues = dm.map((option: any) => option.label);
+  //   setSelectedValues1(allValues as any);
+  //   setIsAllSelected1(true);
+  // };
   const handleChange1 = (value: string[]) => {
     console.log("value", value);
     setdanhmuc(value);
@@ -513,7 +513,7 @@ const AddVoucher = () => {
                               placeholder="Please select"
                               value={selectedValues1}
                               onChange={handleChange1}
-                              onSearch={handleSearch1}
+                              // onSearch={handleSearch1}
                               options={dm}
                               dropdownRender={(menu) => (
                                 <div>
