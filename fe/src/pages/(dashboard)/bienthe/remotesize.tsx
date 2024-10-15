@@ -7,7 +7,7 @@ import instance from "@/configs/admin";
 
 const Remotesize: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
-  const { id } = useParams();
+  // const { id } = useParams();
 
   // Fetch danh mục đã xóa
   const { data, isLoading, isError } = useQuery({
