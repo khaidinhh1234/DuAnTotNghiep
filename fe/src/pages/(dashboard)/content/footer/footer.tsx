@@ -1,31 +1,29 @@
-import React, { useState, useEffect } from "react";
-import {
-  Layout,
-  Row,
-  Col,
-  Input,
-  Table,
-  Typography,
-  Upload,
-  Image,
-  message,
-  Button,
-  Form,
-} from "antd";
+import instance from "@/configs/admin";
+import { uploadToCloudinary } from "@/configs/cloudinary";
 import {
   FacebookOutlined,
   InstagramOutlined,
-  TikTokOutlined,
   PlusOutlined,
+  TikTokOutlined,
   YoutubeOutlined,
 } from "@ant-design/icons";
-import "antd/dist/reset.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { uploadToCloudinary } from "@/configs/cloudinary";
-import instance from "@/configs/admin";
+import {
+  Button,
+  Col,
+  Form,
+  Image,
+  Input,
+  message,
+  Row,
+  Table,
+  Upload,
+} from "antd";
+import "antd/dist/reset.css";
+import { useEffect, useState } from "react";
 
-const { Content } = Layout;
-const { Title } = Typography;
+// const { Content } = Layout;
+// const { Title } = Typography;
 
 const getBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {

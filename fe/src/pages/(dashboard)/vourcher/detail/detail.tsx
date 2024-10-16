@@ -1,6 +1,4 @@
-import { IEvaluate } from "@/common/types/evaluate";
-import { useQueryClient } from "@tanstack/react-query";
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import { useState } from "react";
 
 const Detail = ({ record }: any) => {

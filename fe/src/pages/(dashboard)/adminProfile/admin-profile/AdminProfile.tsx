@@ -1,15 +1,13 @@
 import { PageContainer } from "@ant-design/pro-layout"; // or 'antd'
-import { Row, Col } from "antd";
-import ProfileBanner from "../profile/ProfileBanner";
-import IntroCard from "../profile/IntroCard";
-import PhotosCard from "../profile/PhotosCard";
-import Post from "../profile/Post";
+import { Col, Row } from "antd";
 import ChangePassword from "../profile/ChangePassword";
+import IntroCard from "../profile/IntroCard";
+import ProfileBanner from "../profile/ProfileBanner";
 
 const AdminProfile = () => {
   return (
     <PageContainer>
-      <div className="container mx-auto p-4">
+      <div className="">
         <Row gutter={[16, 16]} className="space-y-3">
           <Col span={24} className="w-full">
             <ProfileBanner />

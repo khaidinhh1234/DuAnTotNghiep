@@ -1,11 +1,10 @@
 import { message } from "antd";
 import React, { ReactElement } from "react";
 import { Navigate, useNavigate } from "react-router-dom"; // Correct import for React Router DOM
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Include styles for toast
 
 import instance from "./../configs/auth";
-import HomePage from "@/pages/(website)/home/page";
 
 interface Props {
   children: ReactElement;
