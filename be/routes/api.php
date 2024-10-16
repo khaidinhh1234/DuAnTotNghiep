@@ -59,9 +59,11 @@ Route::middleware([])
         Route::get('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
 
         //Chương trình ưu đãi và mã khuyến mãi
-        Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'danhSachSanPhamChuongTrinhUuDai']);
+        Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
+        Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
         Route::get('ma-khuyen-mai', [KhuyenMaiController::class, 'layMaKhuyenMaiTheoHangThanhVien']);
         Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
+        Route::get('ma-uu-dai-cho-nguoi-dung-cu-the', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoNguoiDung']);
 
         //Client Sản Phẩm
         // Lấy ra danh mục cha
