@@ -15,6 +15,7 @@ interface IMemberRank {
   chi_tieu_toi_thieu: number;
   chi_tieu_toi_da: number;
 }
+type DataIndex = keyof IMemberRank;
 
 const Remoterank: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
@@ -71,10 +72,10 @@ const Remoterank: React.FC = () => {
     }
   };
 
-  const handleSearch = (
+  const handleSearch = (      
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
-    dataIndex: string
+    dataIndex: DataIndex
   ) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -86,17 +87,17 @@ const Remoterank: React.FC = () => {
     setSearchText("");
   };
 
-  const getColumnSearchProps = (dataIndex: string) => ({
+  const getColumnSearchProps = (dataIndex: DataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
       clearFilters,
-    }: FilterDropdownProps) => (
+    }: any) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Tìm ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -116,7 +117,7 @@ const Remoterank: React.FC = () => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            Tìm kiếm
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -131,17 +132,17 @@ const Remoterank: React.FC = () => {
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
     ),
-    onFilter: (value: string | number | boolean, record: IMemberRank) =>
-      record[dataIndex as keyof IMemberRank]
+    onFilter: (value: any, record: any) =>
+      record[dataIndex]
         ?.toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible: boolean) => {
+    onFilterDropdownOpenChange: (visible: any) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    render: (text: string) =>
+    render: (text: any) =>
       searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
@@ -153,7 +154,6 @@ const Remoterank: React.FC = () => {
         text
       ),
   });
-
   const columns: TableColumnsType<IMemberRank> = [
     {
       title: "STT",
@@ -169,6 +169,7 @@ const Remoterank: React.FC = () => {
         (a.ten_hang_thanh_vien || "").localeCompare(
           b.ten_hang_thanh_vien || ""
         ),
+        ...getColumnSearchProps("ten_hang_thanh_vien"),
       render: (record: IMemberRank) => (
         <div className="flex items-center">
           <img

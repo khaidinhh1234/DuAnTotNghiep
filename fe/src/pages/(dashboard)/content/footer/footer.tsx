@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-  Layout,
   Row,
   Col,
   Input,
   Table,
-  Typography,
   Upload,
   Image,
   message,
@@ -24,8 +22,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import instance from "@/configs/admin";
 
-const { Content } = Layout;
-const { Title } = Typography;
+// const { Content } = Layout;
+// const { Title } = Typography;
 
 const getBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -413,7 +411,7 @@ const Contents = () => {
                     title="Liên kết"
                     dataIndex="value"
                     key="value"
-                    render={(text: string, record: any) => (
+                    render={(record: any) => (
                       <Form.Item
                         name={`link_${record.platform.toLowerCase()}`}
                         rules={[
@@ -450,7 +448,7 @@ const Contents = () => {
                   title="Giá trị"
                   dataIndex="value"
                   key="value"
-                  render={(text: string, record: any) => (
+                  render={(record: any) => (
                     <Form.Item
                       name={record.key}
                       rules={[

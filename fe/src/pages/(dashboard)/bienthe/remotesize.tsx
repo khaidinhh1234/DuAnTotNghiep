@@ -2,12 +2,12 @@ import React from "react";
 import { Table, Button, Space, message, Spin } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import instance from "@/configs/admin";
 
 const Remotesize: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
-  const { id } = useParams();
+  // const { id } = useParams();
 
   // Fetch danh mục đã xóa
   const { data, isLoading, isError } = useQuery({
