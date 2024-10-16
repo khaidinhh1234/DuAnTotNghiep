@@ -29,6 +29,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
+  console.log(doanhso);
   const {
     data: loinhuan,
 
@@ -41,6 +42,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
+  console.log(loinhuan);
   const {
     data: gttb,
 
@@ -53,6 +55,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
+  console.log(gttb);
   const {
     data: don,
 
@@ -65,6 +68,20 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
+  console.log(don);
+  const {
+    data: soluong,
+
+    refetch: refetch9,
+  } = useQuery({
+    queryKey: ["tongquanchart9", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/doanh-so-san-pham", date);
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+  console.log(soluong);
   const {
     data: Chart2,
 
@@ -106,6 +123,11 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
       refetch4();
     }
   }, [datestart, dateend, refetch4]);
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch9();
+    }
+  }, [datestart, dateend, refetch9]);
   useEffect(() => {
     if (datestart && dateend) {
       chart2();

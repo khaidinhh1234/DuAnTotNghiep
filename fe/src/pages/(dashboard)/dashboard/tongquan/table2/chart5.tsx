@@ -11,7 +11,7 @@ const Chart5 = () => {
     queryKey: ["table2chart5"],
     queryFn: async () => {
       const response = await instance.get(
-        "thongke/thanh-toan-online-theo-ngay"
+        "thong-ke/thanh-toan-online-theo-ngay"
       );
       return response.data;
     },

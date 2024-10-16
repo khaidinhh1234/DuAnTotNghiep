@@ -24,7 +24,10 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
   } = useQuery({
     queryKey: ["tongquanchart4", datestart, dateend],
     queryFn: async () => {
-      const response = await instance.post("thong-ke/doanh-so", date);
+      const response = await instance.post(
+        "thong_ke/tong_doanh_so_hien_tai",
+        date
+      );
       return response.data;
     },
     enabled: !!datestart && !!dateend,

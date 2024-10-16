@@ -83,50 +83,46 @@ class ThongKeTongQuanController extends Controller
 
     public function thongKeHoanHang(Request $request)
     {
+        // Lấy ngày bắt đầu và kết thúc từ request (hoặc mặc định là 10 ngày gần nhất)
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->addDay();
 
+        // Tính khoảng thời gian để so sánh trước đó
         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
 
-        $donHangHoan = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
-            ->where('trang_thai_don_hang', DonHang::TTDH_HH)
+        // Lấy các đơn hàng hoàn trả trong khoảng thời gian hiện tại
+        $donHangHoan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
             ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
             ->get();
 
-        $tongTienHoan = 0;
+        // Tính tổng số lượng đơn hàng hoàn và tổng tiền hoàn (dựa trên tổng tiền đơn hàng)
+        $tongTienHoan = $donHangHoan->sum('tong_tien_don_hang');
         $tongSoLuongDonHangHoan = $donHangHoan->count();
 
-        $donHangHoan->each(function ($donHang) use (&$tongTienHoan) {
-            $donHang->chiTiets->each(function ($chiTiet) use (&$tongTienHoan) {
-                $tongTienHoan += $chiTiet->thanh_tien;
-            });
-        });
-
+        // Lấy khoảng thời gian trước đó để so sánh
         $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
-        $donHangHoanTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
-            ->where('trang_thai_don_hang', DonHang::TTDH_HH)
+        // Lấy các đơn hàng hoàn trả trong khoảng thời gian trước đó
+        $donHangHoanTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
             ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
             ->get();
 
-        $tongTienHoanTruoc = 0;
+        // Tính tổng số lượng đơn hàng hoàn trước đó và tổng tiền hoàn trước đó
+        $tongTienHoanTruoc = $donHangHoanTruoc->sum('tong_tien_don_hang');
         $tongSoLuongDonHangHoanTruoc = $donHangHoanTruoc->count();
 
-        $donHangHoanTruoc->each(function ($donHang) use (&$tongTienHoanTruoc) {
-            $donHang->chiTiets->each(function ($chiTiet) use (&$tongTienHoanTruoc) {
-                $tongTienHoanTruoc += $chiTiet->thanh_tien;
-            });
-        });
-
+        // Tính tỷ lệ tăng giảm số lượng đơn hàng hoàn
         $tiLeTangGiamDonHangHoan = $tongSoLuongDonHangHoanTruoc > 0
             ? (($tongSoLuongDonHangHoan - $tongSoLuongDonHangHoanTruoc) / $tongSoLuongDonHangHoanTruoc) * 100
             : ($tongSoLuongDonHangHoan > 0 ? 100 : 0);
 
+        // Tính tỷ lệ tăng giảm tổng tiền hoàn
         $tiLeTangGiamTienHoan = $tongTienHoanTruoc > 0
             ? (($tongTienHoan - $tongTienHoanTruoc) / $tongTienHoanTruoc) * 100
             : ($tongTienHoan > 0 ? 100 : 0);
 
+        // Trả về kết quả thống kê
         return response()->json([
             'tong_so_luong_don_hang_hoan' => $tongSoLuongDonHangHoan,
             'tong_tien_hoan' => $tongTienHoan,
@@ -136,6 +132,7 @@ class ThongKeTongQuanController extends Controller
             'ti_le_tang_giam_tien_hoan' => $tiLeTangGiamTienHoan,          // Trả về số
         ]);
     }
+
 
     public function thongKeSanPhamTonKho(Request $request)
     {
@@ -663,10 +660,14 @@ class ThongKeTongQuanController extends Controller
         try {
             DB::beginTransaction();
             $today = Carbon::today();
-
+            $trangThaiBiLoaiBo = [
+                DonHang::TTDH_DH,   // Hủy hàng
+                DonHang::TTDH_DHTB, // Đơn hàng bị từ chối nhận
+                DonHang::TTDH_HH    // Hoàn hàng
+            ];
             // Lấy tổng doanh thu và số lượng đơn có trạng thái "Thanh toán khi nhận hàng" trong ngày hiện tại
-            $donHangQuery = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                ->where('phuong_thuc_thanh_toan', DonHang::TTDH_HTDH) // Điều kiện thanh toán khi nhận hàng
+            $donHangQuery = DonHang::whereNotIn('trang_thai_don_hang', $trangThaiBiLoaiBo)
+                ->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT) // Điều kiện thanh toán khi nhận hàng
                 ->whereDate('created_at', $today);
 
             // Tính tổng doanh thu
@@ -695,9 +696,13 @@ class ThongKeTongQuanController extends Controller
         try {
             DB::beginTransaction();
             $today = Carbon::today();
-
+            $trangThaiBiLoaiBo = [
+                DonHang::TTDH_DH,   // Hủy hàng
+                DonHang::TTDH_DHTB, // Đơn hàng bị từ chối nhận
+                DonHang::TTDH_HH    // Hoàn hàng
+            ];
             // Lấy tổng doanh thu và số lượng đơn có phương thức thanh toán online (momo, ngân hàng) trong ngày hiện tại
-            $donHangQuery = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+            $donHangQuery = DonHang::whereNotIn('trang_thai_don_hang',  $trangThaiBiLoaiBo)
                 ->whereIn('phuong_thuc_thanh_toan', [
                     DonHang::PTTT_MM, // Momo
                     DonHang::PTTT_NH  // Ngân hàng

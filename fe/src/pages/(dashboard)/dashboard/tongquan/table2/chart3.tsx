@@ -1,10 +1,10 @@
 import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const Chart3: React.FC = () => {
-  const { data } = useQuery({
+  const { data: chart3, refetch } = useQuery({
     queryKey: ["tongquattable2chart3"],
     queryFn: async () => {
       const response = await instance.get(
@@ -13,16 +13,16 @@ const Chart3: React.FC = () => {
       return response.data;
     },
   });
-  console.log(data);
-  const [chartData] = useState({
+
+  const [chartData, setChartData] = useState({
     series: [
       {
         name: "Lợi nhuận ròng",
-        data: data?.loi_nhuan,
+        data: [],
       },
       {
         name: "Doanh thu",
-        data: data?.doanh_thu,
+        data: [],
       },
     ],
     options: {
@@ -79,6 +79,24 @@ const Chart3: React.FC = () => {
       },
     },
   });
+
+  useEffect(() => {
+    if (chart3) {
+      setChartData((prevData) => ({
+        ...prevData,
+        series: [
+          {
+            name: "Lợi nhuận ròng",
+            data: chart3.loi_nhuan || [],
+          },
+          {
+            name: "Doanh thu",
+            data: chart3.doanh_thu || [],
+          },
+        ],
+      }));
+    }
+  }, [chart3]);
 
   return (
     <div>
