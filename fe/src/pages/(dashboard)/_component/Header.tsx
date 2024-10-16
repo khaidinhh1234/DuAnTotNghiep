@@ -36,6 +36,7 @@ const Header = () => {
     user?.user?.vai_tros?.map((item: any) => item.ten_vai_tro) || [];
   const ten = user?.user.ho + " " + user?.user.ten;
   const anh = user?.user.anh_nguoi_dung;
+
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b bg-white px-4 lg:h-[60px] lg:px-6">
       <Sheet>
