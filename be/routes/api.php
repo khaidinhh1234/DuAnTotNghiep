@@ -361,6 +361,10 @@ Route::middleware(['auth.sanctum'])
             //Route thống kê khách hàng mới
             Route::get('/khach-hang-moi-theo-tung-thang', [ThongKeKhachHangController::class, 'thongKeKhachHangMoi']);
             Route::get('/khach-hang-quay-lai-theo-thang', [ThongKeKhachHangController::class, 'thongKeKhachHangQuayLaiTheoThang']);
+            Route::get('/khach-hang-do-tuoi', [ThongKeKhachHangController::class, 'thongKeDoTuoi']);
+            Route::get('/rank-va-chi-tieu', [ThongKeKhachHangController::class, 'rankVaChiTieu']);
+            Route::get('/khach-hang-all', [ThongKeKhachHangController::class, 'thongKeKhachHangAll']);
+
 
 
             Route::post('/tim-kiem-thanh-vien-theo-hang', [ThongKeKhachHangController::class, 'timKiemThanhVienTheoHang']);
