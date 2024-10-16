@@ -334,7 +334,6 @@ Route::middleware(['auth.sanctum'])
             Route::get('doanh-thu-va-don-theo-ngay', [ThongKeTongQuanController::class, 'thongKeDoanhThuTrongNgay']);
 
 
-
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai']);
 
             // Thống kê tuần tự
@@ -365,6 +364,7 @@ Route::middleware(['auth.sanctum'])
             Route::get('/khach-hang-do-tuoi', [ThongKeKhachHangController::class, 'thongKeDoTuoi']);
             Route::get('/rank-va-chi-tieu', [ThongKeKhachHangController::class, 'rankVaChiTieu']);
             Route::get('/khach-hang-all', [ThongKeKhachHangController::class, 'thongKeKhachHangAll']);
+            Route::get('/top-10-khach-hang-tieu-bieu',  [ThongKeKhachHangController::class, 'top10KhachHangTieuBieu']);
 
 
 
