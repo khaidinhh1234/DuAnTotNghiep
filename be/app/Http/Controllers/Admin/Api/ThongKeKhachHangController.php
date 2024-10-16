@@ -334,5 +334,55 @@ public function thongKeDoTuoi(Request $request)
             'moc_time' => $ngayMocs
         ]);
     }
+    function top10KhachHangTieuBieu()
+    {
+        // Lấy thời gian 1 tháng trước
+        $now = Carbon::now();
+        $motThangTruoc = $now->copy()->subMonth();
+
+        // Truy vấn để lấy thông tin các khách hàng và tính toán các thông số
+        $topKhachHang = User::select('users.id', 'users.ho', 'users.ten', 'users.so_dien_thoai', 'hang_thanh_viens.ten_hang_thanh_vien')
+            ->join('hang_thanh_viens', 'users.hang_thanh_vien_id', '=', 'hang_thanh_viens.id') // Tham gia với bảng hạng thành viên
+            ->withCount([
+                'donHangs as tong_so_don' => function($query) use ($motThangTruoc) {
+                    $query->where('created_at', '>=', $motThangTruoc);
+                },
+                'donHangs as so_don_thanh_cong' => function($query) use ($motThangTruoc) {
+                    $query->where('created_at', '>=', $motThangTruoc)
+                          ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Trạng thái hoàn tất đơn hàng
+                },
+                'donHangs as so_don_huy' => function($query) use ($motThangTruoc) {
+                    $query->where('created_at', '>=', $motThangTruoc)
+                          ->where('trang_thai_don_hang', DonHang::TTDH_DH); // Trạng thái hủy
+                }
+            ])
+            ->withSum([
+                'donHangs as tong_tien_mua_hang' => function($query) use ($motThangTruoc) {
+                    $query->where('created_at', '>=', $motThangTruoc)
+                          ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Chỉ tính tiền cho các đơn hàng thành công
+                },
+            ], 'tong_tien_don_hang')
+            ->orderByDesc('tong_tien_mua_hang') // Sắp xếp theo tổng chi tiêu
+            ->orderBy('so_don_huy') // Ưu tiên khách có ít đơn hủy
+            ->limit(10) // Giới hạn top 10 khách hàng
+            ->get();
+
+        // Định dạng kết quả
+        $result = $topKhachHang->map(function ($khachHang) {
+            return [
+                'ten_khach_hang' => $khachHang->ho . ' ' . $khachHang->ten,
+                'so_dien_thoai' => $khachHang->so_dien_thoai,
+                'hang_thanh_vien' => $khachHang->ten_hang_thanh_vien, // Thêm thông tin hạng thành viên
+                'tong_so_don' => $khachHang->tong_so_don,
+                'so_don_thanh_cong' => $khachHang->so_don_thanh_cong,
+                'so_don_huy' => $khachHang->so_don_huy,
+                'tong_tien_mua_hang' => $khachHang->tong_tien_mua_hang,
+            ];
+        });
+
+        // Trả về kết quả dưới dạng JSON
+        return response()->json($result);
+    }
+
 
 }
