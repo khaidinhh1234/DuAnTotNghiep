@@ -2,7 +2,7 @@ import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, message, Modal } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 interface Transport {
   don_hang: any;
@@ -24,91 +24,104 @@ const DetailTransport = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   // 
-  const [url, setUrl] = useState<string | null>(null); 
-const [loading, setLoading] = useState(false); 
-const [failedAttempts, setFailedAttempts] = useState(0); 
-const [isWebcamVisible, setIsWebcamVisible] = useState(false); 
-const [isImageSaved, setIsImageSaved] = useState(false); 
-const [note, setNote] = useState(""); 
-const [showNoteInput, setShowNoteInput] = useState(false); // Trạng thái hiển thị ô nhập ghi chú 
-const webcamRef = useRef<Webcam>(null);
+  const [url, setUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isWebcamVisible, setIsWebcamVisible] = useState<boolean>(
+    () => JSON.parse(localStorage.getItem("isWebcamVisible") || "false")
+  );
+  const [isImageSaved, setIsImageSaved] = useState(false);
+  const [note, setNote] = useState("");
+  const [showNoteInput, setShowNoteInput] = useState(false);
+  const webcamRef = useRef<Webcam>(null);
 
-const videoConstraints = {
-  width: 1280,
-  height: 720,
-  facingMode: 'user',
-};
+  const videoConstraints = {
+    width: 1280,
+    height: 720,
+    facingMode: "user",
+  };
 
-// Hàm chụp ảnh bằng webcam
-const capturePhoto = () => {
-  if (webcamRef.current) {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setUrl(imageSrc);
-  }
-};
+  // Lưu trạng thái camera vào localStorage
+  useEffect(() => {
+    localStorage.setItem("isWebcamVisible", JSON.stringify(isWebcamVisible));
+  }, [isWebcamVisible]);
 
-// Hàm để xác nhận giao hàng
-const handleSave = async () => {
-  try {
-    setLoading(true);
-    let imageUrl = null;
-
-    // Kiểm tra nếu đã chụp ảnh
-    if (url) {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-      imageUrl = await uploadToCloudinary(file);
-    } else if (failedAttempts >= 3) {
-      // Nếu đã thất bại 3 lần, không cần chụp ảnh
-      imageUrl = null;
-    } else {
-      alert('Vui lòng chụp ảnh trước khi xác nhận giao hàng.');
-      return;
+  // Hiện camera nếu trạng thái đang giao hàng và ảnh chưa được lưu
+  useEffect(() => {
+    if (record.trang_thai_van_chuyen === "Đang giao hàng" && !isImageSaved) {
+      setIsWebcamVisible(true);
     }
+  }, [record.trang_thai_van_chuyen, isImageSaved]);
 
-    // Gọi API mutate để xác nhận giao hàng với ảnh đã được upload
-    const response: any = await mutate({
-      id: record.id,
-      action: "Xác nhận giao hàng",
-      imageUrl: imageUrl,
-      note: note,
-      failedAttempts: failedAttempts,
-    });
-
-    // Kiểm tra kết quả từ API
-    if (response && response.status) {
-      alert('Đã lưu ảnh và xác nhận giao hàng thành công!');
-      setIsImageSaved(true);
-      setFailedAttempts(0);
-      setNote("");
-      setShowNoteInput(false); // Ẩn ô nhập ghi chú
-    } else {
-      alert('Có lỗi xảy ra trong quá trình xác nhận giao hàng.');
+  // Hàm chụp ảnh bằng webcam
+  const capturePhoto = () => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      setUrl(imageSrc);
     }
+  };
 
-  } catch (error) {
-    console.error('Có lỗi xảy ra:', error);
-    alert('Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!');
-  } finally {
-    setLoading(false);
-  }
-};
+  // Hàm để xác nhận giao hàng
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      let imageUrl = null;
 
-// Hàm xử lý khi giao hàng thất bại
-const handleDeliveryFailure = () => {
-  const newFailedAttempts = failedAttempts + 1;
-  setFailedAttempts(newFailedAttempts);
+      if (url) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
 
-  if (newFailedAttempts >= 3) {
-    alert('Giao hàng thất bại 3 lần. Vui lòng nhập ghi chú.');
-    setShowNoteInput(true); // Hiện ô nhập ghi chú
-    setIsWebcamVisible(false); // Ẩn webcam
-  } else {
-    alert(`Giao hàng thất bại lần ${newFailedAttempts}.`);
-  }
-};
+        // Upload ảnh lên Cloudinary hoặc dịch vụ lưu trữ khác
+        imageUrl = await uploadToCloudinary(file);
 
+        if (!imageUrl) {
+          alert("Lỗi khi upload ảnh. Vui lòng thử lại.");
+          return;
+        }
+      } else {
+        alert("Vui lòng chụp ảnh trước khi xác nhận giao hàng.");
+        return;
+      }
+
+      const response: any = await mutate({
+        id: record.id,
+        action: "Xác nhận giao hàng",
+        imageUrl: imageUrl,
+        note: note,
+        failedAttempts: failedAttempts,
+      });
+
+      if (response && response.data) {
+        alert("Đã lưu ảnh và xác nhận giao hàng thành công!");
+        setIsImageSaved(true); // Đánh dấu ảnh đã được lưu
+        setFailedAttempts(0);
+        setNote("");
+        setShowNoteInput(false); // Ẩn ô nhập ghi chú nếu có
+      } else {
+        alert("Có lỗi xảy ra trong quá trình xác nhận giao hàng.");
+      }
+    } catch (error) {
+      console.error("Có lỗi xảy ra:", error);
+      alert("Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Hàm xử lý khi giao hàng thất bại
+  const handleDeliveryFailure = () => {
+    const newFailedAttempts = failedAttempts + 1;
+    setFailedAttempts(newFailedAttempts);
+
+    if (newFailedAttempts >= 3) {
+      alert("Giao hàng thất bại 3 lần. Vui lòng nhập ghi chú.");
+      setShowNoteInput(true); // Hiện ô nhập ghi chú
+      setIsWebcamVisible(false); // Ẩn webcam
+    } else {
+      alert(`Giao hàng thất bại lần ${newFailedAttempts}.`);
+    }
+  };
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -147,10 +160,10 @@ const handleDeliveryFailure = () => {
     mutationFn: async ({ id, action, imageUrl, note, failedAttempts }: any) => {
       try {
         let response;
-  
+
         if (action === "Xác nhận giao hàng") {
-          const shipperXacNhan = failedAttempts >= 3 ? "2" : "1"; // Nếu thất bại 3 lần, shipper_xac_nhan là "2"
-  
+          const shipperXacNhan = failedAttempts >= 3 ? "2" : "1";
+
           response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
             anh_xac_thuc: imageUrl,
             shipper_xac_nhan: shipperXacNhan,
@@ -162,7 +175,7 @@ const handleDeliveryFailure = () => {
             id: [id],
           });
         }
-  
+
         return response.data;
       } catch (error) {
         console.error("Error during API request:", error);
