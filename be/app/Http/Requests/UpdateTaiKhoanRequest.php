@@ -28,8 +28,8 @@ class UpdateTaiKhoanRequest extends FormRequest
         // $user = $this->route('taikhoan');
         // $userId= $user->id;
         return [
-            'ho' => 'required|string|max:255',
-            'ten' => 'required|string|max:255',
+            'ho' => 'nullable|string|max:255',
+            'ten' => 'nullable|string|max:255',
             'anh_nguoi_dung' => 'nullable',
             // 'email' => "required|string|email|max:255|unique:users,email," . $userId,
             // 'password' => 'required|string|min:6',
