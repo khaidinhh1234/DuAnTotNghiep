@@ -5,7 +5,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import instance from "@/configs/admin";
-import { Link } from "react-router-dom";
 
 const Remotesize: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
