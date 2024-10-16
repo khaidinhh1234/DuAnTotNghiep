@@ -139,12 +139,6 @@ const ChangePassword = () => {
           Đổi mật khẩu
         </Button>
       </div>
-
-      {/* {alert && (
-        <div className="mt-4">
-          <Alert message={alert.message} type={alert.type} showIcon />
-        </div>
-      )} */}
     </div>
   );
 };

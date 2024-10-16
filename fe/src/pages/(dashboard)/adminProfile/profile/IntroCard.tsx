@@ -20,7 +20,6 @@ const IntroCard = () => (
 
     <Row gutter={[16, 16]} className="mb-3">
       <Col span={2}>
-        {/* <BriefcaseOutlined style={{ fontSize: '21px' }} /> */}
         <i className="fa-regular fa-briefcase"></i>
       </Col>
       <Col span={22}>

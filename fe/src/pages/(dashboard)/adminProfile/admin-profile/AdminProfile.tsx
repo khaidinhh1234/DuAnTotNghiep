@@ -1,6 +1,6 @@
 import { PageContainer } from "@ant-design/pro-layout"; // or 'antd'
 import { Col, Row } from "antd";
-import ChangePassword from "../profile/ChangePassword";
+import ChangePasswordAdmin from "../profile/ChangePassword";
 import IntroCard from "../profile/IntroCard";
 import ProfileBanner from "../profile/ProfileBanner";
 
@@ -25,10 +25,10 @@ const AdminProfile = () => {
             </Row>
           </Col>
 
-          {/* Thẻ bài viết */}
+          
           <Col xs={24} lg={16}>
             {/* <Post /> */}
-            <ChangePassword/>
+            <ChangePasswordAdmin/>
           </Col>
         </Row>
       </div>
