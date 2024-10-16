@@ -1,5 +1,5 @@
 import { banner2 } from '@/assets/img'
-import React from 'react'
+// import React from 'react'
 
 const DealsOfTheMonth = () => {
   return (

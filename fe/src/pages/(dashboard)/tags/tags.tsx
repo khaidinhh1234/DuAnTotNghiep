@@ -166,11 +166,10 @@ const TagsAdmin: React.FC = () => {
       width: "40%",
       key: "ten",
       dataIndex: "ten",
-      //   ...getColumnSearchProps("ten_danh_muc"),
-      sorter: (a: any, b: any) => a.ten_the.localeCompare(b.ten_the),
+      sorter: (a: any, b: any) => a.ten.localeCompare(b.ten),
       ...getColumnSearchProps("ten_the"),
       onFilter: (value: boolean | React.Key, record: ICategories) =>
-        record.ten_the
+        record.ten
           .toString()
           .toLowerCase()
           .includes(value.toString().toLowerCase()),

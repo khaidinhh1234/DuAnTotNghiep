@@ -67,7 +67,7 @@ const Chart6: React.FC = () => {
       }}
       scroll={{ y: 600 }}
       bordered
-      summary={(pageData) => {
+      summary={() => {
         return (
           <Table.Summary fixed>
             <Table.Summary.Row className="font-bold">

@@ -9,7 +9,7 @@ import {
   Space,
   Spin,
   Table,
-  Tabs,
+  // Tabs,
 } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
@@ -19,7 +19,7 @@ import { Link } from "react-router-dom";
 import { ICategories } from "@/common/types/category";
 import instance from "@/configs/admin";
 // import { toast } from "react-toastify";
-const { TabPane } = Tabs;
+// const { TabPane } = Tabs;
 
 type DataIndex = keyof ICategories;
 const CategoriesAdmin: React.FC = () => {

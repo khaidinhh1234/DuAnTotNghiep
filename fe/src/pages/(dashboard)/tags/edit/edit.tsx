@@ -96,10 +96,10 @@ const Tagsedit: React.FC = () => {
     }
   };
 
-  const handleRemove = () => {
-    setImageUrl(null);
-    setFileList([]);
-  };
+  // const handleRemove = () => {
+  //   setImageUrl(null);
+  //   setFileList([]);
+  // };
 
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error</p>;
@@ -113,7 +113,7 @@ const Tagsedit: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-center justify-between">
-        <h1 className="font-semibold md:text-3xl">Thêm bộ sưu tập</h1>
+        <h1 className="font-semibold md:text-3xl">Cập nhập bộ sưu tập</h1>
         <div>
           <Link to="/admin/products/tags" className="mr-1">
             <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
@@ -144,7 +144,9 @@ const Tagsedit: React.FC = () => {
                 <Input placeholder="Nhập tên nhãn dán" />
               </Form.Item>
 
-              <Form.Item label="Ảnh" name="imageFile">
+              <Form.Item label="Ảnh" name="imageFile"
+                  getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                  rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}>
                 <Upload
                   listType="picture-card"
                   fileList={fileList}
@@ -152,6 +154,7 @@ const Tagsedit: React.FC = () => {
                   onChange={handleChange}
                   beforeUpload={() => false}
                   maxCount={1}
+                  
                 >
                   {fileList.length === 0 && (
                     <div>

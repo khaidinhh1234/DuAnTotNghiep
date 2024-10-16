@@ -3,12 +3,12 @@ import { Button, Space, Table } from "antd";
 import React from "react";
 
 import instance from "@/configs/admin";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const CategoriesRemote: React.FC = () => {
   const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
-  const { id } = useParams();
+  // const { id } = useParams();
 
   const { data, isLoading } = useQuery({
     queryKey: ["danhmuc-remote"],

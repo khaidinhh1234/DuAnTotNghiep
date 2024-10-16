@@ -1,11 +1,11 @@
 import instance from "@/configs/admin";
-import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
+// import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
-import { Card, Statistic, Typography } from "antd";
+import { Card, Statistic } from "antd";
 import { useEffect } from "react";
 import CountUp from "react-countup";
-const { Text } = Typography;
+// const { Text } = Typography;
 interface ChartProps {
   datestart?: string;
   dateend?: string;
@@ -16,7 +16,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
       : null;
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["tongquantablechart3", datestart, dateend],
     queryFn: async () => {
       const response = await instance.post(
