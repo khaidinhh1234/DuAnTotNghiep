@@ -14,6 +14,7 @@ const Header = () => {
   const phanquyen = user?.user?.vai_tros?.filter(
     (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
   );
+  console.log(member);
   // console.log("member", member);
   // console.log("member", member);
 
@@ -219,7 +220,7 @@ const Header = () => {
               {member ? (
                 <>
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarImage src={member?.anh_nguoi_dung} />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   {check && (
