@@ -9,7 +9,7 @@ import {
   Space,
   Spin,
   Table,
-  Tabs
+  Tabs,
 } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
@@ -61,7 +61,7 @@ const CategoriesAdmin: React.FC = () => {
       try {
         const response = await instance.delete(`/danhmuc/${id}`);
         if (response.data.status) {
-          return id;  
+          return id;
         } else {
           throw new Error(response.data.message || "Failed to delete");
         }
@@ -216,7 +216,7 @@ const CategoriesAdmin: React.FC = () => {
           .includes((value as string).toLowerCase()) || false,
 
       sorter: (a: any, b: any) => a.cha_id.localeCompare(b.cha_id),
-      render: (text: string) => categoriesMap.get(text) || "không có",
+      render: (text: string) => categoriesMap.get(text) || "________",
     },
     {
       title: "Thời gian tạo",
@@ -288,23 +288,19 @@ const CategoriesAdmin: React.FC = () => {
           </Link>
         </div>
       </div>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Danh mục cha" key="1">
-          <Table
-            columns={columns}
-            dataSource={dataSource.filter((category: any) => !category.cha_id)}
-            loading={isLoading}
-          />
-        </TabPane>
-        <TabPane tab="Danh mục con" key="2">
+      {/* <Tabs defaultActiveKey="1"> */}
+      {/* <TabPane tab="Danh mục cha" key="1"> */}
+      <Table columns={columns} dataSource={dataSource} loading={isLoading} />
+      {/* </TabPane> */}
+      {/* <TabPane tab="Danh mục con" key="2">
           <Table
             columns={columns}
             dataSource={dataSource.filter((category: any) => category.cha_id)}
             loading={isLoading}
             pagination={{ pageSize: 5, className: "my-5" }}
           />
-        </TabPane>
-      </Tabs>
+        </TabPane> */}
+      {/* </Tabs> */}
     </main>
   );
 };
