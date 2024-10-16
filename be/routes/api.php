@@ -133,6 +133,7 @@ Route::middleware(['auth.sanctum'])
             Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
             Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc'])->name('danhmuc.khoiphuc');
             Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
+            Route::get('danhmuc/loadAll', [DanhMucController::class, 'loadAll'])->name('danhmuc.loadAll');
         });
 
         // Sản phẩm
