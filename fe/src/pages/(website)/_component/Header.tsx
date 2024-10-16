@@ -235,7 +235,7 @@ const Header = () => {
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                           >
                             <img
-                              src="https://github.com/shadcn.png"
+                              src=""
                               alt=""
                               className="w-[30px] h-[30px] rounded-full"
                             />
