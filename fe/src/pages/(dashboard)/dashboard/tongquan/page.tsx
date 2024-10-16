@@ -134,7 +134,6 @@ const Dashboard = () => {
               </div>
             </div>
             <div>
-              {" "}
               <Table2chart3 />
             </div>
             <div className="flex gap-5 mb-3">
