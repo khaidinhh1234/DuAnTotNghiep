@@ -2,8 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { ConfigProvider, DatePicker, Select } from "antd";
-import viVN from "antd/lib/locale/vi_VN";
+import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import timezone from "dayjs/plugin/timezone";
@@ -98,23 +97,6 @@ const Chart5 = () => {
 
   return (
     <>
-      <div>
-        <ConfigProvider locale={viVN}>
-          <RangePicker />
-        </ConfigProvider>
-        <Select
-          defaultValue="lucy"
-          style={{ width: 120 }}
-          className="ml-5"
-          onChange={handleChange}
-          options={[
-            { value: "jack", label: "Top 5" },
-            { value: "lucy", label: "Top 10" },
-            { value: "Yiminghe", label: "Top 20" },
-            { value: "disabled", label: "Disabled", disabled: true },
-          ]}
-        />
-      </div>
       <Chart
         className="bg-white p-5"
         options={optionsareachart}

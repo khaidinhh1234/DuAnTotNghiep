@@ -1,6 +1,6 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
-
+const conlai = 100 - (57 + 3 + 4);
 const Chart1: React.FC = () => {
   const options: ApexCharts.ApexOptions = {
     chart: {
@@ -9,13 +9,12 @@ const Chart1: React.FC = () => {
         show: false,
       },
     },
-    labels: ["Nam", "Nữ", "khác"],
-    colors: ["#1E90FF", "#32CD32", "#D3D3D3"], // Blue, Green, Grey
+    labels: ["Nam", "Nữ", "khác", "Chưa có DL"],
+    colors: ["#1E90FF", "#32CD32", "#38ef7d", "#D3D3D3"], // Blue, Green, Grey
     legend: {
       show: true,
       position: "left",
       markers: {
-        width: 10,
         height: 10,
         radius: 10,
         offsetX: -5,
@@ -35,7 +34,15 @@ const Chart1: React.FC = () => {
         donut: {
           size: "80%",
           labels: {
-            show: false, // Hide center label
+            show: true, // Show center label
+            name: {
+              fontSize: "22px", // Customize center label font size
+              fontWeight: "bold", // Make it bold
+            },
+            value: {
+              fontSize: "16px", // Customize value font size
+              fontWeight: "normal", // Make it normal
+            },
           },
         },
       },
@@ -48,7 +55,7 @@ const Chart1: React.FC = () => {
       enabled: true, // Enable tooltip on hover
       y: {
         formatter: (val: number) => {
-          return `${val.toFixed(0)}%`; // Show value with "%" symbol
+          return `${val.toFixed(0)}`;
         },
       },
     },
@@ -67,37 +74,28 @@ const Chart1: React.FC = () => {
     ],
   };
 
-  const series = [57, 3, 40]; // Data for Nam, Nữ, khác
+  const series = [57, 3, 4, conlai]; // Data for Nam, Nữ, khác
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-      }}
-    >
-      <h3>Giới tính</h3>
-      <ReactApexChart
-        options={options}
-        series={series}
-        type="donut"
-        width="300"
-      />
-      <div style={{ marginTop: "10px" }}>
-        <p>
-          <span style={{ color: "#1E90FF", marginRight: "5px" }}>●</span> Nam{" "}
-          <br />
-          <span style={{ color: "#32CD32", marginRight: "5px" }}>
-            ●
-          </span> Nữ <br />
-          <span style={{ color: "#D3D3D3", marginRight: "5px" }}>●</span> Chưa
-          có thông tin
-        </p>
+    <>
+      <h3 className="font-semibold">Giới tính</h3>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        className="mt-14"
+      >
+        <ReactApexChart
+          options={options}
+          series={series}
+          type="donut"
+          width="300"
+        />
       </div>
-    </div>
+    </>
   );
 };
 

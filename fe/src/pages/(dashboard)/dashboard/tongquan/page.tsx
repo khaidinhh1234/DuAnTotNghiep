@@ -101,7 +101,10 @@ const Dashboard = () => {
                 case "Trạng thái":
                   return (
                     <div>
-                      <Tablechart6 />
+                      <Tablechart6
+                        datestart={datestart as any}
+                        dateend={dateend as any}
+                      />
                     </div>
                   );
                 default:

@@ -68,7 +68,19 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  console.log(doanhso);
+  const {
+    data: Chart1,
+
+    refetch: chart1,
+  } = useQuery({
+    queryKey: ["table1chart1", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/doanh-thu/so-sanh", date);
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+  console.log(Chart1);
   const doanh_so = doanhso?.ti_le_tang_giam > 0;
   const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
   const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;
@@ -105,21 +117,22 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
       refetch4();
     }
   }, [datestart, dateend, refetch4]);
+  useEffect(() => {
+    if (datestart && dateend) {
+      chart1();
+    }
+  }, [datestart, dateend, chart1]);
+  // const date2 = Chart1?.ngay_trong_khoang.map((item: any) => item);
+  // console.log(date2);
   const chartData = {
     series: [
       {
-        name: "165 ngày qua",
-        data: [
-          100000, 200000, 300000, 400000, 200000, 100000, 300000, 400000,
-          500000, 100000, 400000,
-        ], // Example data
+        name: "Doanh thu đơn thành công",
+        data: Chart1?.doanh_thu_hoan_tat_theo_ngay, // Example data
       },
       {
-        name: "165 ngày trước",
-        data: [
-          12000, 90000, 32000, 12000, 561000, 280000, 32000, 48000, 59000,
-          130000, 45000,
-        ], // Example data
+        name: "Số tiền hoàn hàng",
+        data: Chart1?.doanh_thu_huy_hoan_theo_ngay, // Example data
       },
     ],
     options: {
@@ -135,19 +148,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
         enabled: false,
       },
       xaxis: {
-        categories: [
-          "13/04/2024",
-          "14/04/2024",
-          "15/04/2024",
-          "16/04/2024",
-          "17/04/2024",
-          "18/04/2024",
-          "19/04/2024",
-          "20/04/2024",
-          "21/04/2024",
-          "22/04/2024",
-          "23/04/2024",
-        ], // Days of the month
+        categories: Chart1?.ngay_trong_khoang, // Days of the month
       },
       yaxis: {
         labels: {
@@ -189,7 +190,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
           </div>
         </div>
         <div className="col-span-1 text-end border-r px-5">
-          <h3 className="text-lg font-bold">Lợi nhuận (17.22%)</h3>
+          <h3 className="text-lg font-bold">Lợi nhuận </h3>
           <p className="text-base font-semibold text-green-600">
             {" "}
             <Statistic
@@ -267,7 +268,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
           </div>
         </div>
         <div className="col-span-1 text-end border-r px-5">
-          <h3 className="text-lg font-bold">SL sản phẩm</h3>
+          <h3 className="text-lg font-bold">Số lượng sản phẩm</h3>
           <p className="text-base font-semibold text-green-600">
             {" "}
             <Statistic

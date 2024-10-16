@@ -2,19 +2,35 @@ import { logo } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal } from "antd";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
+  const [check, setcheck] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as any)) {
+        // Khi click ra ngoài, ẩn phần tử
+        setcheck(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
   const [user] = useLocalStorage("user" as any, {});
   const nav = useNavigate();
   const member = user.user;
   const phanquyen = user?.user?.vai_tros?.filter(
     (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
   );
-  console.log("member", member);
-
+  console.log(member);
+  // console.log("member", member);
   // console.log("member", member);
 
   // console.log("giaohang", giaohangs);
@@ -218,89 +234,92 @@ const Header = () => {
               </span>
               {member ? (
                 <>
-                  <Avatar className="relative">
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                  <Avatar className="relative" onClick={() => setcheck(!check)}>
+                    <AvatarImage src={member?.anh_nguoi_dung} />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
-                  <div
-                    className="absolute top-20 w-60 h-auto p-3 rounded-lg shadow-lg
+                  {check && (
+                    <div
+                      ref={ref}
+                      className="absolute top-20 w-60 h-auto p-3 rounded-lg shadow-lg
                    bg-white border"
-                  >
-                    <ul>
-                      <li className="mb-1">
-                        <a
-                          href=""
-                          className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
-                        >
-                          <img
-                            src="https://github.com/shadcn.png"
-                            alt=""
-                            className="w-[30px] h-[30px] rounded-full"
-                          />
-                          <h6 className="font-semibold mx-2 text-lg ">
-                            {" "}
-                            {member.ten + " " + member.ho}
-                          </h6>
-                        </a>
-                      </li>
-                      <hr />
-                      {!phanquyen || phanquyen.length === 0 ? (
-                        ""
-                      ) : (
-                        <>
-                          <li className="my-1">
-                            <a
-                              href="admin"
-                              className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
-                            >
-                              <img
-                                src="https://github.com/shadcn.png"
-                                alt=""
-                                className="w-[30px] h-[30px] rounded-full"
-                              />
-                              <h6 className="font-semibold mx-2 text-lg ">
-                                Quản trị
-                              </h6>
-                            </a>
-                          </li>
-                        </>
-                      )}
-                      <li className="my-1">
-                        <a
-                          href=""
-                          className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
-                        >
-                          <img
-                            src="https://github.com/shadcn.png"
-                            alt=""
-                            className="w-[30px] h-[30px] rounded-full"
-                          />
-                          <h6 className="font-semibold mx-2 text-lg ">
-                            Cài đặt
-                          </h6>
-                        </a>
-                      </li>
-                      <li className="mb-2">
-                        <a
-                          onClick={logout}
-                          href=""
-                          className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
-                        >
-                          <img
-                            src="https://github.com/shadcn.png"
-                            alt=""
-                            className="w-[30px] h-[30px] rounded-full"
-                          />
-                          <h6 className="font-semibold mx-2 text-lg ">
-                            Đăng xuất
-                          </h6>
-                        </a>
-                      </li>
-                    </ul>
-                    <p className="text-[12px] p-2">
-                      Quyền riêng tư · Điều khoản · © 2024
-                    </p>
-                  </div>
+                    >
+                      <ul>
+                        <li className="mb-1">
+                          <a
+                            href=""
+                            className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
+                          >
+                            <img
+                              src=""
+                              alt=""
+                              className="w-[30px] h-[30px] rounded-full"
+                            />
+                            <h6 className="font-semibold mx-2 text-lg ">
+                              {" "}
+                              {member.ten + " " + member.ho}
+                            </h6>
+                          </a>
+                        </li>
+                        <hr />
+                        {!phanquyen || phanquyen.length === 0 ? (
+                          ""
+                        ) : (
+                          <>
+                            <li className="my-1">
+                              <a
+                                href="admin"
+                                className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+                              >
+                                <img
+                                  src="https://github.com/shadcn.png"
+                                  alt=""
+                                  className="w-[30px] h-[30px] rounded-full"
+                                />
+                                <h6 className="font-semibold mx-2 text-lg ">
+                                  Quản trị
+                                </h6>
+                              </a>
+                            </li>
+                          </>
+                        )}
+                        <li className="my-1">
+                          <a
+                            href=""
+                            className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+                          >
+                            <img
+                              src="https://github.com/shadcn.png"
+                              alt=""
+                              className="w-[30px] h-[30px] rounded-full"
+                            />
+                            <h6 className="font-semibold mx-2 text-lg ">
+                              Cài đặt
+                            </h6>
+                          </a>
+                        </li>
+                        <li className="mb-2">
+                          <a
+                            onClick={logout}
+                            href=""
+                            className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+                          >
+                            <img
+                              src="https://github.com/shadcn.png"
+                              alt=""
+                              className="w-[30px] h-[30px] rounded-full"
+                            />
+                            <h6 className="font-semibold mx-2 text-lg ">
+                              Đăng xuất
+                            </h6>
+                          </a>
+                        </li>
+                      </ul>
+                      <p className="text-[12px] p-2">
+                        Quyền riêng tư · Điều khoản · © 2024
+                      </p>
+                    </div>
+                  )}
                 </>
               ) : (
                 <Link to="/login">

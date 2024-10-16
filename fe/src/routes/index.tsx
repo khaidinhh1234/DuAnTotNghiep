@@ -234,15 +234,17 @@ const Router = () => {
           <Route path="add-vocher" element={<AddVoucher />} />
           <Route path="vouchers/show/:id" element={<ShowVoucher />} />
           <Route path="vouchers/edit/:id" element={<EditVoucher />} />
-                    {/* trương trình ưu đâix */}
-                    <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
-                    <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
-                    <Route path="chuongtrinhuudai/edit/:id" element={<ChuongTrinhUuDaiEdit />} />
-                    <Route path="chungtrinhuudai/remote" element={<ChuongTrinhUuDaiRemote />} />
-
-
-
-
+          {/* trương trình ưu đâix */}
+          <Route path="chuongtrinhuudai" element={<ChuongTrinhUuDai />} />
+          <Route path="chuongtrinhuudaiadd" element={<ChuongTrinhUuDaiAdd />} />
+          <Route
+            path="chuongtrinhuudai/edit/:id"
+            element={<ChuongTrinhUuDaiEdit />}
+          />
+          <Route
+            path="chungtrinhuudai/remote"
+            element={<ChuongTrinhUuDaiRemote />}
+          />
           {/* Tài khoản khách hàng */}
           <Route
             path="users"
@@ -332,7 +334,7 @@ const Router = () => {
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
           {/* Lịch sử thao tác */}
-          <Route path="history" element={<ActionLog />} />
+          <Route path="history" element={<ActionLog />} />zz
           {/* Error */}
           <Route path="*" element={<NotFoundPage />} />
           {/* Chưa dùng đến */}

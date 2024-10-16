@@ -13,7 +13,6 @@ type IUser = {
 };
 const Change = () => {
   // const nav = useNavigate(); // Removed duplicate declaration
-
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");

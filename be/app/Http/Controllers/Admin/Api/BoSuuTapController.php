@@ -31,6 +31,7 @@ class BoSuuTapController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Lấy dữ liệu thất bại',
+                'error' => $e->getMessage(),
             ];
             return response()->json($json, 500);
         }

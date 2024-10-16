@@ -2,10 +2,10 @@ import instance from "@/configs/admin";
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
-import { Card, Statistic, Typography } from "antd";
+import { Card, Statistic } from "antd";
 import { useEffect } from "react";
 import CountUp from "react-countup";
-const { Text } = Typography;
+
 interface ChartProps {
   datestart?: string;
   dateend?: string;
