@@ -31,7 +31,7 @@ const MemberRankForm: React.FC = () => {
   const queryClient = useQueryClient();
 
   // Query để lấy danh sách hạng thành viên hiện có
-  const { data: existingRanks = [] } = useQuery<MemberRank[]>({
+  useQuery<MemberRank[]>({
     queryKey: ["memberRanks"],
     queryFn: () => instance.get("/hangthanhvien").then((res) => res.data),
   });
@@ -112,7 +112,7 @@ const MemberRankForm: React.FC = () => {
     maxCount: 1,
     listType: "picture-card",
     accept: "image/png,image/jpeg",
-    customRequest: ({ file, onSuccess }) => {
+    customRequest: ({ onSuccess }) => {
       setTimeout(() => {
         if (onSuccess) {
           onSuccess("ok");

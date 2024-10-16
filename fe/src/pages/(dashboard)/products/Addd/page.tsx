@@ -59,7 +59,7 @@ const AddProducts: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   const queryClient = useQueryClient();

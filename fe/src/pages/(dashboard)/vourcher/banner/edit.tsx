@@ -5,11 +5,34 @@ import { Button, Form, Input, Select, Upload, message, DatePicker, TreeSelect, C
 import { UploadOutlined } from "@ant-design/icons";
 import moment from 'moment';
 
-import { IChuongTrinhUuDai } from "@/common/types/chuongtrinhuudai";
-import { ISanPham } from "@/common/types/sanpham";
-import { IDanhMuc } from "@/common/types/danhmuc";
+
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
+
+interface ISanPham {
+  id: number;
+  ten_san_pham: string;
+  danh_muc_id: number;
+}
+
+interface IDanhMuc {
+  id: number;
+  ten_danh_muc: string;
+  children?: IDanhMuc[];
+}
+
+interface IChuongTrinhUuDai {
+  id: number;
+  ten_uu_dai: string;
+  duong_dan_anh: string | null;
+  ngay_hien_thi: string;
+  mo_ta: string;
+  ngay_bat_dau: string;
+  ngay_ket_thuc: string;
+  gia_tri_uu_dai: number;
+  loai: 'phan_tram' | 'tien';
+  san_pham: number[];
+}
 
 const { RangePicker } = DatePicker;
 
@@ -94,7 +117,7 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
     setFileList(newFileList);
   };
 
-  const validateDates = (_: any, value: any) => {
+  const validateDates = (_: any) => {
     const ngayHienThi = form.getFieldValue('ngay_hien_thi');
     const dateRange = form.getFieldValue('date_range');
 
@@ -173,8 +196,8 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
     form.setFieldsValue({ san_pham: [] });
   };
 
-  const renderTreeNodes = (data: IDanhMuc[]) => 
-    data.map((item) => ({
+  const renderTreeNodes = (data: IDanhMuc[]): { title: string; value: string; children: any[] }[] => 
+    data.map((item): { title: string; value: string; children: any[] } => ({
       title: item.ten_danh_muc,
       value: item.id.toString(),
       children: item.children ? renderTreeNodes(item.children) : [],

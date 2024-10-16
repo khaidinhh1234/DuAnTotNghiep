@@ -1,3 +1,15 @@
+import { useState, useEffect } from "react";
+import {
+  Row,
+  Col,
+  Input,
+  Table,
+  Upload,
+  Image,
+  message,
+  Button,
+  Form,
+} from "antd";
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import {
@@ -411,7 +423,7 @@ const Contents = () => {
                     title="Liên kết"
                     dataIndex="value"
                     key="value"
-                    render={(text: string, record: any) => (
+                    render={(record: any) => (
                       <Form.Item
                         name={`link_${record.platform.toLowerCase()}`}
                         rules={[
@@ -448,7 +460,7 @@ const Contents = () => {
                   title="Giá trị"
                   dataIndex="value"
                   key="value"
-                  render={(text: string, record: any) => (
+                  render={(record: any) => (
                     <Form.Item
                       name={record.key}
                       rules={[

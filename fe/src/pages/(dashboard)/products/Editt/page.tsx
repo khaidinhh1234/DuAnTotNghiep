@@ -143,7 +143,7 @@ const EditProducts: React.FC = () => {
 
   const handleCancel = () => setPreviewVisible(false);
 
-  const handleRemove = (file: any) => {
+  const handleRemove = () => {
     setProductImage("");
     message.success("Ảnh sản phẩm đã được xóa");
   };
@@ -500,7 +500,7 @@ const EditProducts: React.FC = () => {
   name="anh_san_pham"
   rules={[
     {
-      validator: (_, value) => {
+      validator: (_) => {
         if (productImageList.length > 0 || productImage) {
           return Promise.resolve();
         }

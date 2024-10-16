@@ -18,18 +18,6 @@ const getSizeTypeDisplay = (loaiKichThuoc: string): string => {
   }
 };
 
-const getOriginalSizeType = (displayText: string): string => {
-  switch (displayText) {
-    case "Trẻ em":
-      return "tre_em";
-    case "Nam":
-      return "nam";
-    case "Nữ":
-      return "nu";
-    default:
-      return displayText;
-  }
-};
 
 const Size = () => {
   const { id } = useParams<{ id: string }>();
