@@ -1,15 +1,4 @@
-import { useState, useEffect } from "react";
-import {
-  Row,
-  Col,
-  Input,
-  Table,
-  Upload,
-  Image,
-  message,
-  Button,
-  Form,
-} from "antd";
+
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import {
