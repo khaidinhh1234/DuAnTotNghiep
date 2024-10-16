@@ -20,9 +20,6 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
       : null;
   const {
     data: doanhso,
-    isLoading,
-    isError,
-    error,
     refetch,
   } = useQuery({
     queryKey: ["tongquanchart4", datestart, dateend],

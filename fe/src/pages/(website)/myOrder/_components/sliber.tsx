@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { avata, hello } from "@/assets/img";
 
 // Component hiển thị thanh điều hướng bên

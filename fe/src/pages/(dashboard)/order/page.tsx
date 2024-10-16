@@ -75,7 +75,7 @@ const OrderAdmin: React.FC = () => {
     },
   });
   const order: DataType[] | undefined = data?.data;
-  const handleDateChange = (e: any, dateStrings: [string, string]) => {
+  const handleDateChange = (_: any, dateStrings: [string, string]) => {
     const startDate = new Date(dateStrings[0]);
     const endDate = new Date(dateStrings[1]);
     // console.log("startDate", startDate);

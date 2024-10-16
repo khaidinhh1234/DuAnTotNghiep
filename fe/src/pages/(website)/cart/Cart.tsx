@@ -1,4 +1,4 @@
-import React from 'react'
+// import React from 'react'
 import CheckOut from './_components/CheckOut'
 
 const Cart = () => {

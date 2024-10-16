@@ -1,5 +1,5 @@
 
-import React from 'react'
+// import React from 'react'
 import Sidebar from './_components/sliber'
 import ProductList from './_components/product'
 import SearchSection from './_components/sheach'

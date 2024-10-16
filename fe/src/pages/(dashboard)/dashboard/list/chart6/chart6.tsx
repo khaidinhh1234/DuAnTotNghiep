@@ -173,7 +173,7 @@ const Chart6 = () => {
 
     const daysInMonth = new Date(selectedYear, month, 0).getDate();
     const numberOfWeeks = Math.ceil(daysInMonth / 7);
-    const weekOptions = Array.from({ length: numberOfWeeks }, (_, i) => ({
+    const weekOptions: { value: number | null; label: string }[] = Array.from({ length: numberOfWeeks }, (_, i) => ({
       value: i + 1,
       label: `Tuần ${i + 1}`,
     }));

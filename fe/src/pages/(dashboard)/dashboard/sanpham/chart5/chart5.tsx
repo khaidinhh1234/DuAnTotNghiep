@@ -9,11 +9,11 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import "moment/locale/vi";
 import Chart, { Props } from "react-apexcharts";
-const handleChange = (value: string) => {
-  console.log(`selected ${value}`);
-};
+// const handleChange = (value: string) => {
+//   console.log(`selected ${value}`);
+// };
 
-const { RangePicker } = DatePicker;
+// const { RangePicker } = DatePicker;
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.locale("vi");

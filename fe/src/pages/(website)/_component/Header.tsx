@@ -3,7 +3,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
@@ -24,7 +24,7 @@ const Header = () => {
     };
   }, [ref]);
   const [user] = useLocalStorage("user" as any, {});
-  const nav = useNavigate();
+  // const nav = useNavigate();
   const member = user.user;
   const phanquyen = user?.user?.vai_tros?.filter(
     (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"

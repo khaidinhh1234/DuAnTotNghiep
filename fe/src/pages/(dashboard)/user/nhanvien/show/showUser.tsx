@@ -2,7 +2,9 @@ import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
 import { Progress } from "antd";
 import { Link, useParams } from "react-router-dom";
-import Detail from "../detail";
+// import Detail from "../detail";
+ import Detail from "@/pages/(dashboard)/user/khachhang/detail";
+
 
 const ShowUser = () => {
   const { id } = useParams();

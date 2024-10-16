@@ -97,3 +97,8 @@ export type ColorFormValues = Omit<IColor, 'id'>;
 export type UpdateColorMutationFn = (values: ColorFormValues) => Promise<ColorResponse>;
 
 export type FetchColorQueryFn = () => Promise<ColorResponse>;
+export interface ICategories {
+  ten: string;
+  id?: number | string;
+  duong_dan_anh: string;
+}
