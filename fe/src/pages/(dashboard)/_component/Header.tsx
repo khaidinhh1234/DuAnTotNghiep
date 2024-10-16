@@ -143,7 +143,7 @@ const Header = () => {
           </DropdownMenuItem>
           {vaitro?.includes("Quản trị viên") && (
             <DropdownMenuItem>
-              <Link to={"/admin/history"}>Nhập ký truy cập</Link>
+              <Link to={"/admin/history"}>Lịch sử thao tác </Link>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
