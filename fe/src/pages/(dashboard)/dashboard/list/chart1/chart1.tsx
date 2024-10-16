@@ -16,18 +16,18 @@ export default function Chart1() {
   // console.log(data);
   return (
     <Card className="w-full bg-white">
-      <CardHeader className="p-4 pb-0">
-        <CardTitle className="text-xl">Tổng doanh thu </CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-xl font-bold">Tổng doanh thu </CardTitle>
         {/* <CardDescription>
           Over the last 7 days, your distance walked and run was 12.5 miles per
           day.
         </CardDescription> */}
       </CardHeader>
-      <CardContent className="flex gap-4 p-4 pt-0">
-        <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
+      <CardContent className="flex gap-4 p-6 pt-0">
+        <div className="flex items-baseline gap-1 text-2xl tabular-nums leading-none">
           <div>
-            {data?.doanh_thu_thang_hien_tai.toLocaleString("vi-VN")} <br />
-            <span className="text-sm font-normal text-muted-foreground">
+            <div className="font-bold">{ data?.doanh_thu_thang_hien_tai.toLocaleString("vi-VN")}</div>
+            <span className="text-xs text-muted-foreground">
               +{data?.chenh_lech_phan_tram}% so với tháng trước
             </span>
           </div>{" "}
