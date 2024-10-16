@@ -2,12 +2,27 @@ import { logo } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal } from "antd";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
   const [check, setcheck] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as any)) {
+        // Khi click ra ngoài, ẩn phần tử
+        setcheck(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
   const [user] = useLocalStorage("user" as any, {});
   const nav = useNavigate();
   const member = user.user;
@@ -225,6 +240,7 @@ const Header = () => {
                   </Avatar>
                   {check && (
                     <div
+                      ref={ref}
                       className="absolute top-20 w-60 h-auto p-3 rounded-lg shadow-lg
                    bg-white border"
                     >
