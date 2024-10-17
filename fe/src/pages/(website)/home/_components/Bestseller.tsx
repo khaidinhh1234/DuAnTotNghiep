@@ -34,11 +34,11 @@ const Bestseller = ({ products }: any) => {
             {" "}
             {products?.slice(0, 4).map((product: any, index: any) => (
               <div
-                className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[300px]"
+                className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
                 key={index}
               >
                 <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
-                  <div className="relative w-full h-[385px] ">
+                  <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
                     <a href="#">
                       <i className="z-20 fa-regular fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                     </a>
@@ -52,7 +52,7 @@ const Bestseller = ({ products }: any) => {
                       <img
                         src={product?.anh_san_pham}
                         alt=""
-                        className="w-[300px] h-[380px] rounded-t-md"
+                        className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
                       />
                       {product?.gia_tot == 1 && (
                         <span className="absolute top-3 right-3 bg-red-500 text-white px-3 py-[2px] rounded-lg font-bold">
@@ -60,7 +60,7 @@ const Bestseller = ({ products }: any) => {
                         </span>
                       )}
                     </div>
-                    <button className="hover:bg-blackL hover:text-white absolute px-[65px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                    <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
                       Thêm vào giỏ hàng
                     </button>
                   </div>

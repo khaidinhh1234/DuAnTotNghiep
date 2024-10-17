@@ -1,8 +1,7 @@
-import { sanPham3 } from "@/assets/img";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import "swiper/css";
 import { useState } from "react";
+import "swiper/css";
 const Categories = ({ bo_suu_tap }: any) => {
   const [activeTab, setActiveTab] = useState<number>(0);
   // const categories = [
@@ -27,8 +26,8 @@ const Categories = ({ bo_suu_tap }: any) => {
   //     image: sanPham3,
   //   },
   // ];
-  console.log(bo_suu_tap);
-  console.log(activeTab);
+  // console.log(bo_suu_tap);
+  // console.log(activeTab);
   return (
     <>
       <section>
@@ -38,10 +37,10 @@ const Categories = ({ bo_suu_tap }: any) => {
             <h1 className="md:text-4xl text-3xl font-semibold tracking-[1px] text-center">
               Bộ Sưu Tập Bán Chạy
             </h1>{" "}
-            <div className="flex justify-center items-center *:mx-3 my-10">
+            <div className="flex justify-center items-center  my-10">
               {bo_suu_tap?.map((item: any, index: number) => (
                 <button
-                  className={`px-5 py-2 font-bold rounded-3xl pt-3 ${
+                  className={` px-1 py-1 lg:px-5 lg:py-2 font-bold text-xs lg:text-base rounded-3xl lg:pt-3 lg:mx-3 ${
                     activeTab === index
                       ? "bg-black/80 text-white"
                       : " text-gray-500"
@@ -88,11 +87,15 @@ const Categories = ({ bo_suu_tap }: any) => {
             onSwiper={(swiper) => console.log(swiper)}
             className="grid grid-flow-col lg:auto-cols-[100px]  md:auto-cols-[50px]  auto-cols-[40px] gap-x-[12px] lg:gap-x-[22px] "
           >
-            {bo_suu_tap[activeTab].san_phams?.map(
+            {bo_suu_tap[activeTab]?.san_phams?.map(
               (item: any, index: number) => (
-                <SwiperSlide style={{ width: "300px" }} key={index}>
+                <SwiperSlide
+                  style={{ width: "300px" }}
+                  key={index}
+                  className=" mx-9 lg:mx-0"
+                >
                   <div className="">
-                    <div className="w-[300px] h-[400px] bg-neutral-200/70 relative">
+                    <div className="w-[400px]  lg:w-[300px] lg:h-[400px] h-[500px] bg-neutral-200/70 relative">
                       <h1 className="text-neutral-300 absolute pt-5  truncate flex items-center justify-center px-6 text-7xl font-bold text-center z-0 ">
                         {item?.ten_san_pham?.substring(0, 7)}
                       </h1>
@@ -101,7 +104,7 @@ const Categories = ({ bo_suu_tap }: any) => {
                         alt=""
                         className="absolute top-0 left-0 w-full h-full object-cover z-10"
                       />
-                      <button className="hover:bg-black hover:text-white bg-white text-center w-[270px] py-[13px] absolute bottom-6 left-4 rounded-lg  text-base z-20 font-semibold">
+                      <button className="hover:bg-black hover:text-white bg-white text-center lg:w-[270px] w-[360px] py-[13px] absolute bottom-6 left-4 rounded-lg  text-base z-20 font-semibold">
                         {item?.ten_san_pham}
                       </button>
                     </div>
