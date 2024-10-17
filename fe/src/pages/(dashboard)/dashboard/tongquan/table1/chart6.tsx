@@ -18,13 +18,10 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     datestart && dateend
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
       : null;
-  const {
-    data: doanhso,
-    refetch,
-  } = useQuery({
+  const { data: doanhso, refetch } = useQuery({
     queryKey: ["tongquanchart4", datestart, dateend],
     queryFn: async () => {
-      const response = await instance.post("thong-ke/doanh-so", date);
+      const response = await instance.post("thong-ke/doanh-so-san-pham", date);
       return response.data;
     },
     enabled: !!datestart && !!dateend,
@@ -68,20 +65,20 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  console.log(don);
-  const {
-    data: soluong,
+  // console.log(don);
+  // const {
+  //   data: soluong,
 
-    refetch: refetch9,
-  } = useQuery({
-    queryKey: ["tongquanchart9", datestart, dateend],
-    queryFn: async () => {
-      const response = await instance.post("thong-ke/doanh-so-san-pham", date);
-      return response.data;
-    },
-    enabled: !!datestart && !!dateend,
-  });
-  console.log(soluong);
+  //   refetch: refetch9,
+  // } = useQuery({
+  //   queryKey: ["tongquanchart9", datestart, dateend],
+  //   queryFn: async () => {
+  //     const response = await instance.post("thong-ke/doanh-so-san-pham", date);
+  //     return response.data;
+  //   },
+  //   enabled: !!datestart && !!dateend,
+  // });
+  // console.log(soluong);
   const {
     data: Chart2,
 
@@ -99,6 +96,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
   });
 
   const doanh_so = doanhso?.ti_le_tang_giam > 0;
+  const san_pham = doanhso?.ti_le_tang_giam_san_pham > 0;
   const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
   const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;
   const don_hang = don?.ti_le_tang_giam_don_hang > 0;
@@ -123,11 +121,11 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
       refetch4();
     }
   }, [datestart, dateend, refetch4]);
-  useEffect(() => {
-    if (datestart && dateend) {
-      refetch9();
-    }
-  }, [datestart, dateend, refetch9]);
+  // useEffect(() => {
+  //   if (datestart && dateend) {
+  //     refetch9();
+  //   }
+  // }, [datestart, dateend, refetch9]);
   useEffect(() => {
     if (datestart && dateend) {
       chart2();
@@ -191,7 +189,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
           >
             {doanh_so ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
             <Statistic
-              value={doanhso?.ti_le_tang_giam || 0}
+              value={doanhso?.ti_le_tang_giam_don_hang || 0}
               formatter={formatter}
               suffix="%"
               valueStyle={{
@@ -289,7 +287,21 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
           </p>
-          <span className="text-green-600">↑ 89,09%</span>
+          <div
+            className={` mt-1 ${san_pham ? "text-green-600" : "text-red-600"} flex justify-end  gap-1`}
+          >
+            {san_pham ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+
+            <Statistic
+              value={doanhso?.ti_le_tang_giam_san_pham || 0}
+              formatter={formatter}
+              suffix="%"
+              valueStyle={{
+                fontSize: "14px",
+                color: san_pham ? "green" : "red",
+              }} // Giảm font size ở đây
+            />
+          </div>
         </div>
       </div>
 

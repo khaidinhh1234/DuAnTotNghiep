@@ -58,7 +58,7 @@ const TaiKhoan = () => {
               </div>
               <p className="text-sm text-gray-500 mt-2">Đã chi tiêu </p>
               <p className="text-sm font-bold">1,324,034,000 VNĐ</p>
-              <div className="w-full mt-4">
+              {/* <div className="w-full mt-4">
                 <div className="flex justify-between text-sm font-semibold">
                   <span>Kinh nghiệm</span>
                   <span>90%</span>
@@ -69,7 +69,7 @@ const TaiKhoan = () => {
                     style={{ width: "90%" }}
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="col-span-4 shadow-md rounded-md border ">
