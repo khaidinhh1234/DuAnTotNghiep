@@ -126,7 +126,7 @@ const TableUncomfirmedOrder: React.FC = () => {
       return response.data;
     },
   });
-  console.log(data);
+  // console.log(data);
 
   const start = () => {
     setFormCheck(!formcheck);
@@ -260,6 +260,7 @@ const TableUncomfirmedOrder: React.FC = () => {
       title: "Thao tác",
       key: "action",
       render: (_, record) => (
+        // console.log(record),
         <Space size="middle">
           <DetailTransport record={record} />
         </Space>
