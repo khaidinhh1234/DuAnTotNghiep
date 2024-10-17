@@ -702,7 +702,7 @@ class ThongKeTongQuanController extends Controller
                 DonHang::TTDH_HH    // Hoàn hàng
             ];
             // Lấy tổng doanh thu và số lượng đơn có phương thức thanh toán online (momo, ngân hàng) trong ngày hiện tại
-            $donHangQuery = DonHang::whereNotIn('trang_thai_don_hang',  $trangThaiBiLoaiBo)
+            $donHangQuery = DonHang::whereNotIn('trang_thai_don_hang', $trangThaiBiLoaiBo)
                 ->whereIn('phuong_thuc_thanh_toan', [
                     DonHang::PTTT_MM, // Momo
                     DonHang::PTTT_NH  // Ngân hàng
@@ -749,6 +749,12 @@ class ThongKeTongQuanController extends Controller
 
             // Số lượng đơn mới trong ngày
             $soDonHangMoi = DonHang::whereDate('created_at', $today)
+                ->whereIn('trang_thai_don_hang', [
+                    DonHang::  TTDH_CXH,
+                    DonHang:: TTDH_DXH,
+                    DonHang:: TTDH_DXL,
+                    DonHang::  TTDH_DGH,
+                ])
                 ->count();
 
             // Số lượng đơn thành công trong ngày
@@ -756,11 +762,11 @@ class ThongKeTongQuanController extends Controller
                 ->whereDate('updated_at', $today)
                 ->count();
 
-            // Số lượng sản phẩm bán ra trong ngày
-            $soLuongSanPhamBanRa = DonHangChiTiet::whereHas('donHang', function ($query) use ($today) {
-                $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                    ->whereDate('updated_at', $today);
-            })->sum('so_luong');
+                $soLuongSanPhamBanRa = DonHangChiTiet::whereHas('donHang', function ($query) use ($today) {
+                    $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH)  // Trạng thái hoàn tất đơn hàng
+                          ->whereDate('created_at', $today);                 // Ngày tạo là hôm nay
+                })->sum('so_luong');
+
 
             // Số lượng khách hàng mua sản phẩm trong ngày
             $soLuongKhachHangMua = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
