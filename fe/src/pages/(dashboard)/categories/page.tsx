@@ -9,7 +9,6 @@ import {
   Space,
   Spin,
   Table,
-  // Tabs,
 } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
@@ -18,8 +17,6 @@ import { Link } from "react-router-dom";
 
 import { ICategories } from "@/common/types/category";
 import instance from "@/configs/admin";
-// import { toast } from "react-toastify";
-// const { TabPane } = Tabs;
 
 type DataIndex = keyof ICategories;
 const CategoriesAdmin: React.FC = () => {
@@ -288,19 +285,12 @@ const CategoriesAdmin: React.FC = () => {
           </Link>
         </div>
       </div>
-      {/* <Tabs defaultActiveKey="1"> */}
-      {/* <TabPane tab="Danh mục cha" key="1"> */}
-      <Table columns={columns} dataSource={dataSource} loading={isLoading} />
-      {/* </TabPane> */}
-      {/* <TabPane tab="Danh mục con" key="2">
           <Table
             columns={columns}
-            dataSource={dataSource.filter((category: any) => category.cha_id)}
+            dataSource={dataSource.filter((category: any) => !category.cha_id)}
             loading={isLoading}
-            pagination={{ pageSize: 5, className: "my-5" }}
           />
-        </TabPane> */}
-      {/* </Tabs> */}
+
     </main>
   );
 };
