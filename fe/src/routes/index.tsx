@@ -334,7 +334,7 @@ const Router = () => {
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
           {/* Lịch sử thao tác */}
-          <Route path="history" element={<ActionLog />} />zz
+          <Route path="history" element={<ActionLog />} />
           {/* Error */}
           <Route path="*" element={<NotFoundPage />} />
           {/* Chưa dùng đến */}

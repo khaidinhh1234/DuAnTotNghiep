@@ -319,13 +319,13 @@ const AddProducts: React.FC = () => {
           >
             <Input placeholder="Nhập tên sản phẩm" />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             className="block text-md font-medium text-gray-700 mt-2 mb-1"
             label="Danh mục sản phẩm"
             name="danh_muc_id"
             rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
           >
-            {/* <Select placeholder="Vui lòng chọn danh mục" className="w-full">
+            <Select placeholder="Vui lòng chọn danh mục" className="w-full">
               {categoriesData &&
                 categoriesData.data &&
                 categoriesData.data.map((category: any) => (
@@ -333,10 +333,20 @@ const AddProducts: React.FC = () => {
                     {category.ten_danh_muc}
                   </Select.Option>
                 ))}
-            </Select> */}
-          <CategorySelect categoriesData={categoriesData} />
-          </Form.Item>
-          
+            </Select>
+          {/* <CategorySelect categoriesData={categoriesData} /> */}
+          {/* </Form.Item>  */}
+          <Form.Item
+      className="block text-md font-medium mt-2 text-gray-700 mb-1"
+      label="Danh mục sản phẩm"
+      name="danh_muc_id"
+      rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
+    >
+      <CategorySelect 
+        categories={categoriesData?.data || []} 
+        onChange={(value) => form.setFieldsValue({ danh_muc_id: value })}
+      />
+    </Form.Item>
         </div>{" "}
         <div className="grid grid-cols-1 gap-5">
           <Form.Item
