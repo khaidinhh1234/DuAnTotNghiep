@@ -73,10 +73,10 @@ const Detail = ({ record }: any) => {
       ...item,
     };
   });
-  // console.log(record, "toan");
+  console.log(record, "toan");
   // const donhang = data?.data;
   const thongtin = data?.data.thong_tin;
-
+  console.log("data", products);
   // console.log("data", products);
   // console.log(vanchuyen, "vanchuyen");
   const handleCancel = () => {

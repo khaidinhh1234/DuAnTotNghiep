@@ -141,7 +141,7 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
-          <Route path="/product-detail" element={<PageProductDetail />} />
+          <Route path="/product-detail/:id" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           <Route path="/myprofile" element={<MyProfile />} />
           <Route path="/mywishlist" element={<MyWishlists />} />
@@ -334,7 +334,8 @@ const Router = () => {
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
           {/* Lịch sử thao tác */}
-          <Route path="history" element={<ActionLog />} />zz
+          <Route path="history" element={<ActionLog />} />
+          zz
           {/* Error */}
           <Route path="*" element={<NotFoundPage />} />
           {/* Chưa dùng đến */}

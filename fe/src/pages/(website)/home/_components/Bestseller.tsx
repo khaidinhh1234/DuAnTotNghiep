@@ -16,44 +16,8 @@ const Bestseller = () => {
     },
   });
   const products = data?.danh_sach_san_pham_moi || [];
-  // console.log(products);
-  // const products = [
-  //   {
-  //     name: "Allen Solly",
-  //     description: "Women Texttured Handheld Bag",
-  //     price: 10000,
-  //     discount: 80,
-  //     image: sanPham2,
-  //   },
-  //   {
-  //     name: "San Frissco",
-  //     description: " Women Texttured Handheld Bag",
-  //     price: 20000,
-  //     discount: 150000,
-  //     image: sanPham2,
-  //   },
-  //   {
-  //     name: "Allen Solly",
-  //     description: "xfg",
-  //     price: 1000000,
-  //     discount: 8000,
-  //     image: sanPham2,
-  //   },
-  //   {
-  //     name: "Allen Solly",
-  //     description: "",
-  //     price: 100000,
-  //     discount: 80000,
-  //     image: sanPham2,
-  //   },
-  //   {
-  //     name: "Allen Solly",
-  //     description: "",
-  //     price: 10000,
-  //     discount: 80000,
-  //     image: sanPham2,
-  //   },
-  // ];
+  console.log(products);
+
   return (
     <>
       <section>
@@ -72,7 +36,7 @@ const Bestseller = () => {
                 className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[300px]"
                 key={index}
               >
-                <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/50">
+                <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
                   <div className="relative w-full h-[385px] ">
                     <a href="#">
                       <i className="fa-regular fa-star text-lg bg-white hover:bg-black hover:text-white w-12 h-12 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
@@ -94,20 +58,31 @@ const Bestseller = () => {
                   </div>
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
                     <a href="#">
-                      <h5 className=" text-base truncate w-60">
+                      <h5 className=" text-base truncate w-60 font-medium">
                         {product?.ten_san_pham}
                       </h5>
                     </a>
-                    {/* <p className="my-1 font-normal text-lg w-60 truncate">
-                      {product?.mo_ta_ngan}
-                    </p> */}
-                    <p className="font-medium text-base">
-                      {product?.bien_the_san_pham?.gia_ban} VNĐ
-                      <span className="text-black/20 line-through px-1">
-                        {product.discount} VNĐ
+                    <p className="font-semibold text-lg">
+                      20.034.000 đ
+                      <span className="text-black/20 line-through pl-3 text-[16px]">
+                        25.003.033 đ
                       </span>
                     </p>
-                    <div></div>
+
+                    <p className="font-bold text-lg flex items-center">
+                      {" "}
+                      {product?.bien_the_san_pham?.map(
+                        (item: any, index: any) => (
+                          <button
+                            key={index}
+                            className="w-7 h-7 rounded-full border-1 inline-block mr-1"
+                            style={{
+                              backgroundColor: item?.mau_bien_the?.ma_mau_sac,
+                            }}
+                          />
+                        )
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>

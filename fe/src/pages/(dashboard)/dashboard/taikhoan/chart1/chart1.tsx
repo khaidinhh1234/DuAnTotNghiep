@@ -1,7 +1,17 @@
+import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 const conlai = 100 - (57 + 3 + 4);
 const Chart1: React.FC = () => {
+  const { data: chart1 } = useQuery({
+    queryKey: ["khachhangtable1chart1"],
+    queryFn: async () => {
+      const response = await instance.get("/thong-ke/khach-hang-do-tuoi");
+      return response.data;
+    },
+  });
+  console.log(chart1);
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: "donut",
