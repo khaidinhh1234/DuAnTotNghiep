@@ -18,16 +18,20 @@ interface DataType {
 //   address: `London, Park Lane no. ${i}`,
 // }));
 
-const Chart5: React.FC = () => {
-  const { data: chart5 } = useQuery({
-    queryKey: ["dashboardtable2chart5"],
-    queryFn: async () => {
-      const response = await instance.get(
-        "thong-ke/top-10-khach-hang-tieu-bieu"
-      );
-      return response.data;
-    },
-  });
+interface Chart5Props {
+  chart5: DataType[];
+}
+
+const Chart5: React.FC<Chart5Props> = ({ chart5 }) => {
+  // const { data: chart5 } = useQuery({
+  //   queryKey: ["dashboardtable2chart5"],
+  //   queryFn: async () => {
+  //     const response = await instance.get(
+  //       "thong-ke/top-10-khach-hang-tieu-bieu"
+  //     );
+  //     return response.data;
+  //   },
+  // });
   // console.log(chart5);
   const columns: TableColumnsType<DataType> = [
     {
@@ -55,14 +59,16 @@ const Chart5: React.FC = () => {
     {
       title: "Giá trị đơn thành công",
       dataIndex: "tong_tien_mua_hang",
-      // render: (value) => (
-      //   <span>
-      //     {value.toLocaleString("vi-VN", {
-      //       style: "currency",
-      //       currency: "VND",
-      //     })}
-      //   </span>
-      // ),
+      render: (value) => (
+        <span>
+          {value
+            ? value.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })
+            : "___________"}
+        </span>
+      ),
     },
   ];
 
@@ -70,12 +76,8 @@ const Chart5: React.FC = () => {
     <Table<DataType>
       columns={columns}
       dataSource={chart5}
-      pagination={{
-        pageSize: 10, // Default page size
-        showSizeChanger: true, // Enable page size changer
-        pageSizeOptions: ["10", "20", "50", "100"], // Page size options as strings
-      }}
       scroll={{ y: 600 }}
+      pagination={{ pageSize: 10, className: "my-2" }}
     />
   );
 };
