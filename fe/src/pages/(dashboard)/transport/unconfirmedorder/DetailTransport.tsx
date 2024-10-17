@@ -111,7 +111,7 @@ const DetailTransport = ({ record }: any) => {
       } else {
         message.success("Giao hàng thành công");
       }
-      
+
     } catch (error) {
       console.error("Có lỗi xảy ra:", error);
       message.error("Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!");
@@ -157,7 +157,7 @@ const DetailTransport = ({ record }: any) => {
       const response = await instance.get(`/vanchuyen/${id}`);
       return response.data;
 
-    },  
+    },
     // enabled: !!id,
   })
   const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map((item: any) => {
@@ -306,7 +306,7 @@ const DetailTransport = ({ record }: any) => {
                                     {" "}
                                     {
                                       item?.chi_tiets?.bien_the_san_pham?.mau_bien_the
-                                        ?.ten_mau_sac 
+                                        ?.ten_mau_sac
                                     }
                                   </span>
                                 </p>
@@ -478,8 +478,7 @@ const DetailTransport = ({ record }: any) => {
                   </div>
                 )}
 
-                {/* Hiện ô nhập ghi chú nếu giao hàng thất bại 3 lần */}
-                {showNoteInput && (
+                {record.trang_thai_van_chuyen === "Đang giao hàng" && (
                   <textarea
                     rows={3}
                     placeholder="Nhập ghi chú..."
@@ -488,7 +487,6 @@ const DetailTransport = ({ record }: any) => {
                     className="border rounded-lg p-2 mt-4"
                   />
                 )}
-
                 {/* Nút xử lý giao hàng */}
                 {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
                   <button
@@ -502,34 +500,23 @@ const DetailTransport = ({ record }: any) => {
                   </button>
                 ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
                   <>
-                    {showNoteInput ? (
-                      <button
-                        onClick={handleSave} // Gửi ghi chú khi nhấn nút này
-                        className="w-full py-2 border bg-green-600 rounded-lg text-white hover:bg-green-700 mt-7"
-                        disabled={loading}
-                      >
-                        Gửi ghi chú
-                      </button>
-                    ) : (
-                      <>
-                        <button
-                          className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
-                          onClick={handleSave}
-                          disabled={loading || isImageSaved}
-                        >
-                          {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
-                        </button>
-                        <button
-                          className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                          onClick={handleDeliveryFailure}
-                        >
-                          Giao hàng thất bại
-                        </button>
-                      </>
-                    )}
+                    <button
+                      className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
+                      onClick={handleSave}
+                      disabled={loading || isImageSaved}
+                    >
+                      {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
+                    </button>
+                    <button
+                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
+                      onClick={handleDeliveryFailure}
+                    >
+                      Giao hàng thất bại
+                    </button>
                   </>
                 ) : null}
               </div>
+
             </div>{" "}
             <div className=" bg-slate-100 p-5 border rounded-lg my-2">
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
