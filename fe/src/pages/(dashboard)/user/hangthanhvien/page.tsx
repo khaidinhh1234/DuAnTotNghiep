@@ -198,7 +198,7 @@ const Rank: React.FC = () => {
       sorter: (a, b) =>
         a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu ||
         a.chi_tieu_toi_da - b.chi_tieu_toi_da,
-      render: (text, record) => {
+      render: (record) => {
         const formatCurrency = (value: number): string =>
           new Intl.NumberFormat("vi-VN", {
             style: "currency",
@@ -235,11 +235,11 @@ const Rank: React.FC = () => {
     },
   ];
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      console.log(searchText);
-    }
-  };
+  // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //   if (e.key === "Enter") {
+  //     console.log(searchText);
+  //   }
+  // };
   isError && <div>Đã xảy ra lỗi</div>;
   isLoading && <div>Đang tải dữ liệu...</div>;
   return (

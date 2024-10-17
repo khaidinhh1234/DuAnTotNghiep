@@ -341,7 +341,7 @@ const Voucher = () => {
                           <div className="w-[390px] md:h-[200px] h-[160px]">
                             <img
                               src="../assets/images/vocher/voucher.png"
-                              alt=""
+                              // alt=""
                             />
                           </div>
                           <div className="absolute top-7     left-5 grid grid-cols-6 ">
@@ -388,7 +388,7 @@ const Voucher = () => {
                           <div className="w-[390px] md:h-[200px] h-[160px]">
                             <img
                               src="../assets/images/vocher/voucher.png"
-                              alt=""
+                              // alt=""
                             />
                           </div>
                           <div className="absolute top-7     left-5 grid grid-cols-6 ">
@@ -396,7 +396,7 @@ const Voucher = () => {
                               <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
                                 <img
                                   src="../assets/images/Logo.svg "
-                                  alt=""
+                                  // alt=""
                                   className="w-10 h-10 px-1"
                                 />
                               </div>
@@ -443,7 +443,7 @@ const Voucher = () => {
                               <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
                                 <img
                                   src="../assets/images/Logo.svg "
-                                  alt=""
+                                  // alt=""
                                   className="w-10 h-10 px-1"
                                 />
                               </div>
@@ -515,7 +515,7 @@ const Voucher = () => {
                           <div className="w-[390px] md:h-[200px] h-[160px]">
                             <img
                               src="../assets/images/vocher/voucher.png"
-                              alt=""
+                              // alt=""
                             />
                           </div>
                           <div className="absolute top-7     left-5 grid grid-cols-6 ">
@@ -562,7 +562,7 @@ const Voucher = () => {
                           <div className="w-[390px] md:h-[200px] h-[160px]">
                             <img
                               src="../assets/images/vocher/voucher.png"
-                              alt=""
+                              // alt=""
                             />
                           </div>
                           <div className="absolute top-7     left-5 grid grid-cols-6 ">
@@ -570,7 +570,54 @@ const Voucher = () => {
                               <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
                                 <img
                                   src="../assets/images/Logo.svg "
-                                  alt=""
+                                  // alt=""
+                                  className="w-10 h-10 px-1"
+                                />
+                              </div>
+                              <h3 className="md:text-xl  text-base font-bold h-10 text-[#fe4960]">
+                                Nệm Thuần Việt
+                              </h3>
+                            </div>
+                            <div className="col-span-4 px-4 text-[#fe4960]">
+                              <h5 className="font-bold md:text-3xl text-xl">
+                                $80.00
+                              </h5>
+                              <p className="md:text-xl  text-base">
+                                Min. spend <span>$120.00</span>
+                              </p>
+                              <p className="md:text-xl  text-base">
+                                Valid till <span> 10 Jul, 11:59PM </span>
+                              </p>
+                              <div className="flex justify-between items-center">
+                                <a
+                                  href="#"
+                                  className="bg-pink-200 rounded-lg px-2 mr-1 text-xs"
+                                >
+                                  T&amp;C
+                                </a>
+                                <button className="bg-gradient-to-r from-orange-600 to-pink-500 px-7 py-1 rounded-lg font-bold md:text-2xl text-white">
+                                  Collect
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </SwiperSlide>{" "}
+                      <SwiperSlide>
+                        {" "}
+                        <div className="col-span-12 md:col-span-4 py-2 px-4 relative md:w-[390px] w-[300px] border rounded-2xl bg-slate-100  ">
+                          <div className="w-[390px] md:h-[200px] h-[160px]">
+                            <img
+                              src="../assets/images/vocher/voucher.png"
+                              // alt=""
+                            />
+                          </div>
+                          <div className="absolute top-7     left-5 grid grid-cols-6 ">
+                            <div className="md:w-[125px] col-span-2 text-center">
+                              <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
+                                <img
+                                  src="../assets/images/Logo.svg "
+                                  // alt=""
                                   className="w-10 h-10 px-1"
                                 />
                               </div>
@@ -617,7 +664,7 @@ const Voucher = () => {
                               <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
                                 <img
                                   src="../assets/images/Logo.svg "
-                                  alt=""
+                                  // alt=""
                                   className="w-10 h-10 px-1"
                                 />
                               </div>
@@ -656,7 +703,7 @@ const Voucher = () => {
                           <div className="w-[390px] md:h-[200px] h-[160px]">
                             <img
                               src="../assets/images/vocher/voucher.png"
-                              alt=""
+                              // alt=""
                             />
                           </div>
                           <div className="absolute top-7     left-5 grid grid-cols-6 ">
@@ -664,54 +711,7 @@ const Voucher = () => {
                               <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
                                 <img
                                   src="../assets/images/Logo.svg "
-                                  alt=""
-                                  className="w-10 h-10 px-1"
-                                />
-                              </div>
-                              <h3 className="md:text-xl  text-base font-bold h-10 text-[#fe4960]">
-                                Nệm Thuần Việt
-                              </h3>
-                            </div>
-                            <div className="col-span-4 px-4 text-[#fe4960]">
-                              <h5 className="font-bold md:text-3xl text-xl">
-                                $80.00
-                              </h5>
-                              <p className="md:text-xl  text-base">
-                                Min. spend <span>$120.00</span>
-                              </p>
-                              <p className="md:text-xl  text-base">
-                                Valid till <span> 10 Jul, 11:59PM </span>
-                              </p>
-                              <div className="flex justify-between items-center">
-                                <a
-                                  href="#"
-                                  className="bg-pink-200 rounded-lg px-2 mr-1 text-xs"
-                                >
-                                  T&amp;C
-                                </a>
-                                <button className="bg-gradient-to-r from-orange-600 to-pink-500 px-7 py-1 rounded-lg font-bold md:text-2xl text-white">
-                                  Collect
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </SwiperSlide>{" "}
-                      <SwiperSlide>
-                        {" "}
-                        <div className="col-span-12 md:col-span-4 py-2 px-4 relative md:w-[390px] w-[300px] border rounded-2xl bg-slate-100  ">
-                          <div className="w-[390px] md:h-[200px] h-[160px]">
-                            <img
-                              src="../assets/images/vocher/voucher.png"
-                              alt=""
-                            />
-                          </div>
-                          <div className="absolute top-7     left-5 grid grid-cols-6 ">
-                            <div className="md:w-[125px] col-span-2 text-center">
-                              <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
-                                <img
-                                  src="../assets/images/Logo.svg "
-                                  alt=""
+                                  // alt=""
                                   className="w-10 h-10 px-1"
                                 />
                               </div>

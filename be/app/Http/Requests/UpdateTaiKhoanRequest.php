@@ -37,7 +37,7 @@ class UpdateTaiKhoanRequest extends FormRequest
             'dia_chi' => 'nullable|string',
             'ngay_sinh' => 'nullable|date',
             'gioi_tinh' => 'nullable|in:1,2,0',
-            'vai_tros' => 'array',
+            'vai_tros' => 'nullable|array',
             'hang_thanh_vien_id' => 'nullable|'
         ];
     }

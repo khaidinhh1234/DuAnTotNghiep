@@ -1,18 +1,18 @@
-import { ICategories } from "@/common/types/category";
+import { ICategories } from "@/common/types/product";
 import instance from "@/configs/admin";
-import { SearchOutlined } from "@ant-design/icons";
+// import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { InputRef, TableColumnsType } from "antd";
-import { Button, Input, message, Space, Spin, Table } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import React, { useRef, useState } from "react";
-import Highlighter from "react-highlight-words";
+import type { TableColumnsType } from "antd";
+import { Button, message, Space, Spin, Table } from "antd";
+// import type { FilterDropdownProps } from "antd/es/table/interface";
+import React, { } from "react";
+// import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
 const TagsRemoteAdmin: React.FC = () => {
-  const [searchedColumn, setSearchedColumn] = useState<string>("");
-  const searchInput = useRef<InputRef>(null);
-  const [searchText, setSearchText] = useState<string>("");
+  // const [searchedColumn, setSearchedColumn] = useState<string>("");
+  // const searchInput = useRef<InputRef>(null);
+  // const [searchText, setSearchText] = useState<string>("");
 
   const queryClient = useQueryClient();
 
@@ -68,88 +68,88 @@ const TagsRemoteAdmin: React.FC = () => {
     },
   });
 
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: FilterDropdownProps["confirm"],
-    dataIndex: string
-  ) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
+  // const handleSearch = (
+  //   selectedKeys: string[],
+  //   confirm: FilterDropdownProps["confirm"],
+  //   dataIndex: string
+  // ) => {
+  //   confirm();
+  //   setSearchText(selectedKeys[0]);
+  //   setSearchedColumn(dataIndex);
+  // };
 
-  const handleReset = (clearFilters: () => void) => {
-    clearFilters();
-    setSearchText("");
-  };
+  // const handleReset = (clearFilters: () => void) => {
+  //   clearFilters();
+  //   setSearchText("");
+  // };
 
-  const getColumnSearchProps = (dataIndex: string) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }: any) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0] as string}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() =>
-            handleSearch(selectedKeys as string[], confirm, dataIndex)
-          }
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() =>
-              handleSearch(selectedKeys as string[], confirm, dataIndex)
-            }
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
-    ),
-    onFilter: (value: string | number | boolean, record: any) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible: boolean) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-    render: (text: string) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
+  // const getColumnSearchProps = (dataIndex: string) => ({
+  //   filterDropdown: ({
+  //     setSelectedKeys,
+  //     selectedKeys,
+  //     confirm,
+  //     clearFilters,
+  //   }: any) => (
+  //     <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+  //       <Input
+  //         ref={searchInput}
+  //         placeholder={`Search ${dataIndex}`}
+  //         value={selectedKeys[0] as string}
+  //         onChange={(e) =>
+  //           setSelectedKeys(e.target.value ? [e.target.value] : [])
+  //         }
+  //         onPressEnter={() =>
+  //           handleSearch(selectedKeys as string[], confirm, dataIndex)
+  //         }
+  //         style={{ marginBottom: 8, display: "block" }}
+  //       />
+  //       <Space>
+  //         <Button
+  //           type="primary"
+  //           onClick={() =>
+  //             handleSearch(selectedKeys as string[], confirm, dataIndex)
+  //           }
+  //           icon={<SearchOutlined />}
+  //           size="small"
+  //           style={{ width: 90 }}
+  //         >
+  //           Search
+  //         </Button>
+  //         <Button
+  //           onClick={() => clearFilters && handleReset(clearFilters)}
+  //           size="small"
+  //           style={{ width: 90 }}
+  //         >
+  //           Reset
+  //         </Button>
+  //       </Space>
+  //     </div>
+  //   ),
+  //   filterIcon: (filtered: boolean) => (
+  //     <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+  //   ),
+  //   onFilter: (value: string | number | boolean, record: any) =>
+  //     record[dataIndex]
+  //       .toString()
+  //       .toLowerCase()
+  //       .includes((value as string).toLowerCase()),
+  //   onFilterDropdownOpenChange: (visible: boolean) => {
+  //     if (visible) {
+  //       setTimeout(() => searchInput.current?.select(), 100);
+  //     }
+  //   },
+  //   render: (text: string) =>
+  //     searchedColumn === dataIndex ? (
+  //       <Highlighter
+  //         highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+  //         searchWords={[searchText]}
+  //         autoEscape
+  //         textToHighlight={text ? text.toString() : ""}
+  //       />
+  //     ) : (
+  //       text
+  //     ),
+  // });
 
   const columns: TableColumnsType<ICategories> = [
     {
@@ -163,8 +163,8 @@ const TagsRemoteAdmin: React.FC = () => {
       width: "40%",
       key: "ten",
       dataIndex: "ten",
-      //   ...getColumnSearchProps("ten_danh_muc"),
-      sorter: (a: any, b: any) => a.ten_the.localeCompare(b.ten_the),
+      // ...getColumnSearchProps("ten"),
+      sorter: (a: any, b: any) => a.ten.localeCompare(b.ten),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {

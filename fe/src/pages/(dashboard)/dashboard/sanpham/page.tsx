@@ -5,7 +5,7 @@ import Chart6 from "./chart6/chart6";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { ConfigProvider, DatePicker, Select } from "antd";
-import viVN from "antd/lib/locale/vi_VN";
+// import viVN from "antd/lib/locale/vi_VN";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import timezone from "dayjs/plugin/timezone";

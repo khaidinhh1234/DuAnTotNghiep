@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  ChevronLeft,
-  ChevronRight,
+  // ChevronLeft,
+  // ChevronRight,
   Copy,
   CreditCard,
   MoreVertical,
@@ -28,7 +28,7 @@ import {
 import {
   Pagination,
   PaginationContent,
-  PaginationItem,
+  // PaginationItem,
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 

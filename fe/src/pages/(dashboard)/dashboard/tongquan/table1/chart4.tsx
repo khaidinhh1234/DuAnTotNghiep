@@ -2,11 +2,11 @@ import instance from "@/configs/admin";
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
-import { Statistic, Typography } from "antd";
+import { Statistic } from "antd";
 import { useEffect } from "react";
 import Chart from "react-apexcharts";
 import CountUp from "react-countup";
-const { Text } = Typography;
+// const { Text } = Typography;
 interface ChartProps {
   datestart?: string;
   dateend?: string;
@@ -20,14 +20,14 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
   // console.log(date);
   const {
     data: doanhso,
-    isLoading,
-    isError,
-    error,
     refetch,
   } = useQuery({
     queryKey: ["tongquanchart4", datestart, dateend],
     queryFn: async () => {
-      const response = await instance.post("thong-ke/doanh-so", date);
+      const response = await instance.post(
+        "thong_ke/tong_doanh_so_hien_tai",
+        date
+      );
       return response.data;
     },
     enabled: !!datestart && !!dateend,

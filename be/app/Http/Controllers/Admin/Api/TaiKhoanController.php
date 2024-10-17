@@ -174,6 +174,11 @@ class TaiKhoanController extends Controller
                 'hang_thanh_vien_id' => $request->hang_thanh_vien_id ?? 1
             ]);
 
+            $currentVaiTroIds  = $taiKhoan->vaiTros->pluck('id')->toArray();
+
+            $adminRole = VaiTro::where('ten_vai_tro', 'Quản trị viên')->first();
+            $isAdmin = in_array($adminRole->id, $currentVaiTroIds);
+
             $vaiTro_id = [];
             if (empty($request->vai_tros)) {
                 $member = VaiTro::firstOrCreate(
@@ -184,6 +189,12 @@ class TaiKhoanController extends Controller
             } else {
                 $vaiTro_id = VaiTro::whereIn('ten_vai_tro', $request->vai_tros)->pluck('id')->toArray();
             }
+
+            if ($isAdmin) {
+                $vaiTro_id[] = $adminRole->id;
+            }
+            $currentVaiTroIds = array_unique(array_merge($currentVaiTroIds, $vaiTro_id));
+            
             $taiKhoan->vaiTros()->sync($vaiTro_id);
 
             DB::commit();

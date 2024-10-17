@@ -20,7 +20,7 @@ import DetailTransport from "./DetailTransport";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
-const { Option } = Select;
+// const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 interface TransportData extends Transport {

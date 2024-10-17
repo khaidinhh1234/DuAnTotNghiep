@@ -17,6 +17,6 @@ class BoSuuTap extends Model
     ];
     public function sanPhams()
     {
-        return $this->belongsToMany(SanPham::class, 'bo_suu_tap_san_pham', 'san_pham_id', 'bo_suu_tap_id');
+        return $this->belongsToMany(SanPham::class, 'bo_suu_tap_san_pham', 'bo_suu_tap_id','san_pham_id');
     }
 }

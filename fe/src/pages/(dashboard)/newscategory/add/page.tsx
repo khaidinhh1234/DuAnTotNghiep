@@ -1,4 +1,4 @@
-import { ICategories } from "@/common/types/category";
+// import { ICategories } from "@/common/types/category";
 import { NewCategories } from "@/common/types/newcategory";
 import instance from "@/configs/admin";
 
@@ -11,7 +11,7 @@ const NewCategoriesAdd = () => {
   const nav = useNavigate();
 
   const { mutate } = useMutation({
-    mutationFn: async (category: ICategories) => {
+    mutationFn: async (category: NewCategories) => {
       const response = await instance.post(`/danhmuctintuc`, category);
       return response.data;
     },

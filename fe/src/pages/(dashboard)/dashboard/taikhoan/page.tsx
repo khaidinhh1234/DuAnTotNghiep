@@ -1,11 +1,11 @@
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import Chart1 from "./chart1/chart1";
 import Chart2 from "./chart2/chart2";
 import Chart3 from "./chart3/chart3";
 import Chart4 from "./chart4/chart4";
-import { DatePicker, Space } from "antd";
+// import { DatePicker } from "antd";
 import Chart5 from "./chart5/chart5";
-const { RangePicker } = DatePicker;
+// const { RangePicker } = DatePicker;
 const TaiKhoan = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">

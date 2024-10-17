@@ -2,7 +2,6 @@ import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
-  DeleteOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
@@ -241,7 +240,7 @@ const VoucherAdmin: React.FC = () => {
       key: "key",
       width: "5%",
       className: "text-center",
-      render: (text, record, index) => index + 1,
+      render: ( index) => index + 1,
     },
     {
       title: "Khuyến Mãi",

@@ -14,14 +14,14 @@ import Table2chart3 from "./table2/chart3";
 import Table2chart4 from "./table2/chart4";
 import Table2chart5 from "./table2/chart5";
 import Table2chart6 from "./table2/chart6";
-import { DatePicker, Space } from "antd";
+import { DatePicker } from "antd";
 import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 const Dashboard = () => {
   const [datestart, setDatestart] = useState(dayjs().subtract(10, "day"));
   const [dateend, setDateend] = useState(dayjs());
   const [tab, setTab] = useState<string>("Trang chủ 1");
-  const handleDateChange = (dates: any, dateStrings: [string, string]) => {
+  const handleDateChange = (dates: any) => {
     if (dates) {
       const [startDate, endDate] = dates;
       setDatestart(startDate);
@@ -134,7 +134,6 @@ const Dashboard = () => {
               </div>
             </div>
             <div>
-              {" "}
               <Table2chart3 />
             </div>
             <div className="flex gap-5 mb-3">

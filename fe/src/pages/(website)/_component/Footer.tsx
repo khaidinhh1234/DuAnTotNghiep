@@ -1,6 +1,5 @@
 import { bank, logofooter } from "@/assets/img";
 
-type Props = {};
 
 const Footer = () => {
   return (

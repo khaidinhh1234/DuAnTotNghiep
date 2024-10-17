@@ -2,15 +2,15 @@ import instance from "@/configs/admin";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Space, Table } from "antd";
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const NewCategoriesRemote: React.FC = () => {
   const queryClient = useQueryClient();
-  const { id } = useParams();
+  // const { id } = useParams();
 
   // Fetch danh mục đã xóa
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["danhmuc-remote"],
     queryFn: async () => {
       try {

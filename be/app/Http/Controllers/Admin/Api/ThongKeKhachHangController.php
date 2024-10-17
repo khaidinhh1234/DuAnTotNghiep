@@ -31,40 +31,6 @@ class ThongKeKhachHangController extends Controller
         return response()->json($thongKe);
     }
 
-    public function thongKeKhachHangMoiTheoHangThanhVien(Request $request)
-    {
-        // Lấy tháng từ request, mặc định là tháng hiện tại
-        $thang = $request->input('thang', Carbon::now()->month);
-
-        // Lấy khách hàng mới được tạo trong tháng và có hạng thành viên
-        $khachHangMoi = User::with('hangThanhVien')
-            ->whereMonth('created_at', $thang) // Lọc theo tháng tạo tài khoản
-            ->get();
-
-        // Gom nhóm theo hạng thành viên
-        $thongKe = $khachHangMoi->groupBy('hang_thanh_vien_id')
-            ->map(function ($users, $hang_thanh_vien_id) {
-                $hang = HangThanhVien::find($hang_thanh_vien_id);
-                return [
-                    'ten_hang_thanh_vien' => $hang->ten_hang_thanh_vien,
-                    'so_luong_khach_hang' => $users->count(),
-                    'khach_hang' => $users->map(function ($user) {
-                        return [
-                            'ho' => $user->ho,
-                            'ten' => $user->ten,
-                            'email' => $user->email,
-                            'so_dien_thoai' => $user->so_dien_thoai,
-                            'dia_chi' => $user->dia_chi,
-                            'ngay_sinh' => $user->ngay_sinh,
-                            'gioi_tinh' => $user->gioi_tinh,
-                            'ngay_tao' => $user->created_at,
-                        ];
-                    })
-                ];
-            });
-
-        return response()->json($thongKe);
-    }
 
     public function thongKeKhachHangMoi(Request $request)
     {
@@ -257,5 +223,166 @@ class ThongKeKhachHangController extends Controller
         return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
     }
 }
+
+public function thongKeDoTuoi(Request $request)
+    {
+        // Thống kê giới tính
+        $gioiTinhCounts = [
+            'nam' => User::where('gioi_tinh', User::TYPE_NAM)->count(),
+            'nu' => User::where('gioi_tinh', User::TYPE_NU)->count(),
+            'khac' => User::where('gioi_tinh', User::TYPE_KHAC)->count(),
+        ];
+
+        // Khởi tạo mảng tuổi và số lượng
+        $tuoiLabels = ['duoi_18', '18_24', '25_34', '35_44', '45_54', 'tren_55'];
+        $doTuoiCounts = array_fill_keys($tuoiLabels, 0); // Mảng số lượng khởi tạo với giá trị 0
+
+        // Lấy danh sách tất cả khách hàng và tính toán tuổi
+        $users = User::select('ngay_sinh')->get();
+
+        foreach ($users as $user) {
+            $tuoi = Carbon::parse($user->ngay_sinh)->age;
+
+            if ($tuoi < 18) {
+                $doTuoiCounts['duoi_18']++;
+            } elseif ($tuoi >= 18 && $tuoi <= 24) {
+                $doTuoiCounts['18_24']++;
+            } elseif ($tuoi >= 25 && $tuoi <= 34) {
+                $doTuoiCounts['25_34']++;
+            } elseif ($tuoi >= 35 && $tuoi <= 44) {
+                $doTuoiCounts['35_44']++;
+            } elseif ($tuoi >= 45 && $tuoi <= 54) {
+                $doTuoiCounts['45_54']++;
+            } else {
+                $doTuoiCounts['tren_55']++;
+            }
+        }
+
+        // Tách riêng mảng tuổi và mảng số lượng
+        $tuoiGroups = array_keys($doTuoiCounts);
+        $soLuongGroups = array_values($doTuoiCounts);
+
+        // Kết hợp thống kê giới tính và độ tuổi
+        return response()->json([
+            'gioi_tinh' => $gioiTinhCounts,
+            'tuoi' => $tuoiGroups,
+            'so_luong' => $soLuongGroups,
+        ]);
+    }
+    function rankVaChiTieu() {
+        $hangs = HangThanhVien::with('users.donHangs')->get();
+
+        $tenHangThanhVien = [];
+        $soLuongThanhVien = [];
+        $tongChiTieu = [];
+
+        foreach ($hangs as $hang) {
+            $tenHangThanhVien[] = $hang->ten_hang_thanh_vien;
+            $soLuongThanhVien[] = $hang->users->count();
+
+            $tongTienChiTieu = 0;
+            foreach ($hang->users as $user) {
+                $tongTienChiTieu += $user->donHangs
+                    ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                    ->sum('tong_tien_don_hang');
+            }
+            $tongChiTieu[] = $tongTienChiTieu;
+        }
+
+        return [
+            'ten_hang_thanh_vien' => $tenHangThanhVien,
+            'so_luong_thanh_vien' => $soLuongThanhVien,
+            'tong_chi_tieu' => $tongChiTieu,
+        ];
+    }
+    function thongKeKhachHangAll() {
+        // Mốc thời gian cố định
+        $ngayMocs = [1, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30];
+
+        // Khởi tạo các mảng kết quả
+        $soLuongKhachHangMoi = [];
+        $soLuongKhachHangCu = [];
+        $tongSoLuongKhachHang = [];
+
+        // Lấy thời gian hiện tại
+        $now = Carbon::now();
+
+        foreach ($ngayMocs as $ngay) {
+            // Thời gian tính từ mốc ngày
+            $mocThoiGian = $now->copy()->subDays($ngay);
+
+            // Tính khách hàng mới (đăng ký trong vòng 1 tháng trở lại)
+            $khachHangMoi = User::where('created_at', '>=', $mocThoiGian->copy()->subMonth())->where('created_at', '>=', $mocThoiGian)->count();
+
+            // Tính khách hàng cũ (đăng ký trước 1 tháng trở lại)
+            $khachHangCu = User::where('created_at', '<', $mocThoiGian->copy()->subMonth())->where('created_at', '>=', $mocThoiGian)->count();
+
+            // Tính tổng số khách hàng
+            $tongKhachHang = User::where('created_at', '>=', $mocThoiGian)->count();
+
+            // Đưa vào mảng kết quả
+            $soLuongKhachHangMoi[] = $khachHangMoi;
+            $soLuongKhachHangCu[] = $khachHangCu;
+            $tongSoLuongKhachHang[] = $tongKhachHang;
+        }
+
+        // Trả về kết quả dưới dạng JSON
+        return response()->json([
+            'so_luong_khach_hang_moi' => $soLuongKhachHangMoi,
+            'so_luong_khach_hang_cu' => $soLuongKhachHangCu,
+            'tong_so_luong_khach_hang' => $tongSoLuongKhachHang,
+            'moc_time' => $ngayMocs
+        ]);
+    }
+    function top10KhachHangTieuBieu()
+    {
+        // Lấy thời gian 1 tháng trước
+        $now = Carbon::now();
+        $motThangTruoc = $now->copy()->subMonth();
+
+        // Truy vấn để lấy thông tin các khách hàng và tính toán các thông số
+        $topKhachHang = User::select('users.id', 'users.ho', 'users.ten', 'users.so_dien_thoai', 'hang_thanh_viens.ten_hang_thanh_vien')
+            ->join('hang_thanh_viens', 'users.hang_thanh_vien_id', '=', 'hang_thanh_viens.id') // Tham gia với bảng hạng thành viên
+            ->withCount([
+                'donHangs as tong_so_don' => function($query) use ($motThangTruoc) {
+                    $query->where('created_at', '>=', $motThangTruoc);
+                },
+                'donHangs as so_don_thanh_cong' => function($query) use ($motThangTruoc) {
+                    $query->where('created_at', '>=', $motThangTruoc)
+                          ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Trạng thái hoàn tất đơn hàng
+                },
+                'donHangs as so_don_huy' => function($query) use ($motThangTruoc) {
+                    $query->where('created_at', '>=', $motThangTruoc)
+                          ->where('trang_thai_don_hang', DonHang::TTDH_DH); // Trạng thái hủy
+                }
+            ])
+            ->withSum([
+                'donHangs as tong_tien_mua_hang' => function($query) use ($motThangTruoc) {
+                    $query->where('created_at', '>=', $motThangTruoc)
+                          ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Chỉ tính tiền cho các đơn hàng thành công
+                },
+            ], 'tong_tien_don_hang')
+            ->orderByDesc('tong_tien_mua_hang') // Sắp xếp theo tổng chi tiêu
+            ->orderBy('so_don_huy') // Ưu tiên khách có ít đơn hủy
+            ->limit(10) // Giới hạn top 10 khách hàng
+            ->get();
+
+        // Định dạng kết quả
+        $result = $topKhachHang->map(function ($khachHang) {
+            return [
+                'ten_khach_hang' => $khachHang->ho . ' ' . $khachHang->ten,
+                'so_dien_thoai' => $khachHang->so_dien_thoai,
+                'hang_thanh_vien' => $khachHang->ten_hang_thanh_vien, // Thêm thông tin hạng thành viên
+                'tong_so_don' => $khachHang->tong_so_don,
+                'so_don_thanh_cong' => $khachHang->so_don_thanh_cong,
+                'so_don_huy' => $khachHang->so_don_huy,
+                'tong_tien_mua_hang' => $khachHang->tong_tien_mua_hang,
+            ];
+        });
+
+        // Trả về kết quả dưới dạng JSON
+        return response()->json($result);
+    }
+
 
 }

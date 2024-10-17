@@ -141,7 +141,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
   const [open, setOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [isHeart, setIsHeart] = useState(false);
+  // const [isHeart, setIsHeart] = useState(false);
   const [expandedResponses, setExpandedResponses] = useState<number[]>([]);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [selectedColorName, setSelectedColorName] = useState<string | null>(null);
@@ -182,9 +182,9 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
     setPreviewOpen(true);
   };
 
-  const handleClickHeart = () => {
-    setIsHeart(!isHeart);
-  };
+  // const handleClickHeart = () => {
+  //   setIsHeart(!isHeart);
+  // };
 
   const toggleResponse = (reviewId: number) => {
     setExpandedResponses((prev) =>
@@ -241,7 +241,7 @@ Hết hàng
   const variantImages = selectedVariant
     ? selectedVariant.anh_bien_the.map((img) => img.duong_dan_anh)
     : [];
-  const allImages = [product.anh_san_pham, ...variantImages].filter(Boolean);
+  // const allImages = [product.anh_san_pham, ...variantImages].filter(Boolean);
 
   return (
     <div>

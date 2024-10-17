@@ -32,7 +32,7 @@ import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 import OrderAdmin from "@/pages/(dashboard)/order/page";
-import ProductsAdd from "@/pages/(dashboard)/products/add/page";
+// import ProductsAdd from "@/pages/(dashboard)/products/add/page";
 // import ProductsEdit from "@/pages/(dashboard)/products/edit/page";
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
 import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
@@ -187,7 +187,7 @@ const Router = () => {
             element={<Navigate to="/admin/products/list" />}
           />{" "}
           <Route path="products/list" element={<ProductsAdmin />} />
-          <Route path="products/add" element={<ProductsAdd />} />
+          {/* <Route path="products/add" element={<ProductsAdd />} /> */}
           <Route path="products/addd" element={<AddProducts />} />
           <Route path="products/edit/:id" element={<EditProducts />} />
           {/* <Route path="products/edit/:id" element={<ProductsEdit />} /> */}

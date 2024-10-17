@@ -12,6 +12,7 @@ import {
   Checkbox,
   Empty,
   Modal,
+  Spin,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
@@ -143,7 +144,7 @@ const EditProducts: React.FC = () => {
 
   const handleCancel = () => setPreviewVisible(false);
 
-  const handleRemove = (file: any) => {
+  const handleRemove = () => {
     setProductImage("");
     message.success("Ảnh sản phẩm đã được xóa");
   };
@@ -390,9 +391,12 @@ const EditProducts: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center mt-[250px]">
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -500,7 +504,7 @@ const EditProducts: React.FC = () => {
   name="anh_san_pham"
   rules={[
     {
-      validator: (_, value) => {
+      validator: (_) => {
         if (productImageList.length > 0 || productImage) {
           return Promise.resolve();
         }

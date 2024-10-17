@@ -1,3 +1,4 @@
+
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import {
@@ -16,6 +17,7 @@ import {
   Input,
   message,
   Row,
+  Spin,
   Table,
   Upload,
 } from "antd";
@@ -163,7 +165,13 @@ const Contents = () => {
     </div>
   );
 
-  if (isLoading) return <div>Loading...</div>;
+
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center mt-[250px]">
+        <Spin size="large" />
+      </div>
+    );
   if (error) return <div>An error occurred: {(error as Error).message}</div>;
   if (!localWebsiteInfo) return <div>No data available</div>;
 
@@ -171,172 +179,58 @@ const Contents = () => {
     {
       key: "ten_website",
       label: "Tên Website",
-      value: localWebsiteInfo.ten_website || "",
+      value: localWebsiteInfo?.ten_website || "",
     },
     {
       key: "ten_doanh_nghiep",
       label: "Tên Doanh Nghiệp",
-      value: localWebsiteInfo.ten_doanh_nghiep || "",
+      value: localWebsiteInfo?.ten_doanh_nghiep || "",
     },
-    { key: "dia_chi", label: "Địa Chỉ", value: localWebsiteInfo.dia_chi || "" },
-    { key: "email", label: "Email", value: localWebsiteInfo.email || "" },
+    { key: "dia_chi", label: "Địa Chỉ", value: localWebsiteInfo?.dia_chi || "" },
+    { key: "email", label: "Email", value: localWebsiteInfo?.email || "" },
     {
       key: "so_dien_thoai_dat_hang",
       label: "SĐT Đặt Hàng",
-      value: localWebsiteInfo.so_dien_thoai_dat_hang || "",
+      value: localWebsiteInfo?.so_dien_thoai_dat_hang || "",
     },
     {
       key: "so_dien_thoai_khieu_nai",
       label: "SĐT Khiếu Nại",
-      value: localWebsiteInfo.so_dien_thoai_khieu_nai || "",
+      value: localWebsiteInfo?.so_dien_thoai_khieu_nai || "",
     },
-    { key: "cau_noi", label: "Câu Nói", value: localWebsiteInfo.cau_noi || "" },
+    { key: "cau_noi", label: "Câu Nói", value: localWebsiteInfo?.cau_noi || "" },
   ];
 
   const socialLinks = [
     {
       platform: "Facebook",
       icon: <FacebookOutlined />,
-      value: localWebsiteInfo.link_facebook || "",
+      value: localWebsiteInfo?.link_facebook || "",
     },
     {
       platform: "Instagram",
       icon: <InstagramOutlined />,
-      value: localWebsiteInfo.link_instagram || "",
+      value: localWebsiteInfo?.link_instagram || "",
     },
     {
       platform: "Youtube",
       icon: <YoutubeOutlined />,
-      value: localWebsiteInfo.link_youtube || "",
+      value: localWebsiteInfo?.link_youtube || "",
     },
     {
       platform: "TikTok",
       icon: <TikTokOutlined />,
-      value: localWebsiteInfo.link_tiktok || "",
+      value: localWebsiteInfo?.link_tiktok || "",
     },
     {
       platform: "Zalo",
       icon: <TikTokOutlined />,
-      value: localWebsiteInfo.link_zalo || "",
+      value: localWebsiteInfo?.link_zalo || "",
     },
   ];
 
   return (
-    // <Layout>
-    //   <Content style={{ padding: '0 50px', marginTop: '20px' }}>
-    //     <div style={{ border: '1px solid #f0f0f0', padding: '20px', borderRadius: '8px' }}>
-    //       <Title level={2}>Quản lý thông tin</Title>
-    //       <Form form={form} layout="vertical">
-    //         <Row gutter={16}>
-    //           <Col span={8}>
-    //             <div className="flex flex-col space-y-4">
-    //               <h2 className="text-xl font-semibold mb-2">Logo</h2>
-    //               <Form.Item
-    //                 name="logo_website"
-    //                 rules={[{ required: true, message: 'Vui lòng tải lên logo' }]}
-    //               >
-    //                 <Upload
-    //                   listType="picture-card"
-    //                   fileList={fileList}
-    //                   onPreview={handlePreview}
-    //                   onChange={handleChange}
-    //                   customRequest={async ({ file, onSuccess }) => {
-    //                     try {
-    //                       const cloudinaryUrl = await uploadToCloudinary(file as File);
-    //                       setLocalWebsiteInfo((prev: any) => ({ ...prev, logo_website: cloudinaryUrl }));
-    //                       form.setFieldsValue({ logo_website: cloudinaryUrl });
-    //                       onSuccess?.("Ok");
-    //                     } catch (error) {
-    //                       message.error('Không thể tải lên logo');
-    //                       console.error('Lỗi khi tải lên:', error);
-    //                     }
-    //                   }}
-    //                 >
-    //                   {fileList.length >= 1 ? null : uploadButton}
-    //                 </Upload>
-    //               </Form.Item>
-    //               {previewImage && (
-    //                 <Image
-    //                   preview={{
-    //                     visible: previewOpen,
-    //                     onVisibleChange: (visible) => setPreviewOpen(visible),
-    //                   }}
-    //                   src={previewImage}
-    //                 />
-    //               )}
-    //               <div style={{ marginTop: '17px' }}>
-    //                 <h2 className="text-xl font-semibold mb-2">Liên kết mạng xã hội</h2>
-    //                 <br />
-    //                 <Table
-    //                   dataSource={socialLinks}
-    //                   pagination={false}
-    //                   rowKey="platform"
-    //                 >
-    //                   <Table.Column title="Mạng xã hội" dataIndex="platform" key="platform" />
-    //                   <Table.Column
-    //                     title="Liên kết"
-    //                     dataIndex="value"
-    //                     key="value"
-    //                     render={(text: string, record: any) => (
-    //                       <Form.Item
-    //                         name={`link_${record.platform.toLowerCase()}`}
-    //                         rules={[{ required: true, message: `Vui lòng nhập liên kết ${record.platform}` }]}
-    //                       >
-    //                         <Input
-    //                           prefix={record.icon}
-    //                           onChange={(e) => handleSocialLinkChange(record.platform, e.target.value)}
-    //                           placeholder={`Nhập liên kết ${record.platform}`}
-    //                         />
-    //                       </Form.Item>
-    //                     )}
-    //                   />
-    //                 </Table>
-    //               </div>
-    //             </div>
-    //           </Col>
 
-    //           <Col span={16}>
-    //             <div className="flex flex-col space-y-4">
-    //               <h2 className="text-xl font-semibold mb-2">Thông tin liên hệ</h2>
-    //               <Table
-    //                 dataSource={contactData}
-    //                 pagination={false}
-    //                 rowKey="key"
-    //               >
-    //                 <Table.Column title="Chỉ số" dataIndex="label" key="label" />
-    //                 <Table.Column
-    //                   title="Giá trị"
-    //                   dataIndex="value"
-    //                   key="value"
-    //                   render={(text: string, record: any) => (
-    //                     <Form.Item
-    //                       name={record.key}
-    //                       rules={[
-    //                         { required: true, message: `Vui lòng nhập ${record.label}` },
-    //                         record.key.includes('so_dien_thoai') ?
-    //                           { pattern: /^[0-9]+$/, message: 'Vui lòng chỉ nhập số' } :
-    //                           {}
-    //                       ]}
-    //                     >
-    //                       <Input
-    //                         onChange={(e) => handleInputChange(record.key, e.target.value)}
-    //                         placeholder={`Nhập ${record.label}`}
-    //                       />
-    //                     </Form.Item>
-    //                   )}
-    //                 />
-    //               </Table>
-    //             </div>
-    //           </Col>
-    //         </Row>
-    //         <Button  onClick={handleUpdate}           style={{ width: '100%', margin: '30px 0px' }}
-    //         >
-    //           Cập nhật thông tin
-    //         </Button>
-    //       </Form>
-    //     </div>
-    //   </Content>
-    // </Layout>
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
@@ -411,7 +305,7 @@ const Contents = () => {
                     title="Liên kết"
                     dataIndex="value"
                     key="value"
-                    render={(text: string, record: any) => (
+                    render={(_, record) => (
                       <Form.Item
                         name={`link_${record.platform.toLowerCase()}`}
                         rules={[
@@ -433,6 +327,7 @@ const Contents = () => {
                         />
                       </Form.Item>
                     )}
+                    
                   />
                 </Table>
               </div>
@@ -448,7 +343,7 @@ const Contents = () => {
                   title="Giá trị"
                   dataIndex="value"
                   key="value"
-                  render={(text: string, record: any) => (
+                  render={(_, record) => (
                     <Form.Item
                       name={record.key}
                       rules={[
@@ -472,6 +367,7 @@ const Contents = () => {
                       />
                     </Form.Item>
                   )}
+                  
                 />
               </Table>
             </div>

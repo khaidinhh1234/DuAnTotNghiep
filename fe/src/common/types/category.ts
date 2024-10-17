@@ -1,5 +1,5 @@
 export interface ICategories {
-  ten_the: any;
+  ten: any;
   id?: number | string;
   ten_danh_muc: string;
   cha_id?: string | null;
