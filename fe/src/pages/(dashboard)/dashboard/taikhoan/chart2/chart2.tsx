@@ -1,18 +1,28 @@
+import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 const Chart2: React.FC = () => {
+  const { data: chart2 } = useQuery({
+    queryKey: ["khachhangtable1chart2"],
+    queryFn: async () => {
+      const response = await instance.get("thong-ke/rank-va-chi-tieu");
+      return response.data;
+    },
+  });
+  // console.log(chart2);
   const options: ApexCharts.ApexOptions = {
     series: [
       {
         name: "Số lượng khách",
         type: "column",
-        data: [14, 20, 25, 15, 95, 28, 38, 46],
+        data: chart2?.so_luong_thanh_vien || [],
       },
       {
         name: "Tiền đã chi tiêu",
         type: "column",
-        data: [10, 37, 31, 46, 41, 49, 65, 85],
+        data: chart2?.tong_chi_tieu || [],
       },
     ],
     chart: {
@@ -28,16 +38,7 @@ const Chart2: React.FC = () => {
     },
 
     xaxis: {
-      categories: [
-        "Rank 1",
-        "Rank 2",
-        "Rank 3",
-        "Rank 4",
-        "Rank 5",
-        "Rank 6",
-        "Rank 7",
-        "Rank 8",
-      ], // Ranks instead of years
+      categories: chart2?.ten_hang_thanh_vien || [], // Ranks instead of years
     },
     yaxis: [
       {
@@ -82,7 +83,7 @@ const Chart2: React.FC = () => {
             colors: "#00E396",
           },
           formatter: (value: number) => {
-            return `${value}M`; // Format to show in millions
+            return `${value.toLocaleString()} đ `; // Format to show in millions
           },
         },
         title: {
