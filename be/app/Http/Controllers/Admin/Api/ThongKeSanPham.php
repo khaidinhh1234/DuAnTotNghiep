@@ -21,28 +21,23 @@ class ThongKeSanPham extends Controller
         $ngayHienTai = Carbon::now();
         $ngay3ThangTruoc = $ngayHienTai->subMonths(3);
 
-        // Truy vấn sản phẩm được tạo từ 3 tháng trước trở lên
+
         $sanPhamTonKho = SanPham::where('created_at', '<=', $ngay3ThangTruoc)
-            ->with(['bienThes']) // Giả sử có quan hệ với bảng biến thể sản phẩm để lấy số lượng tồn
+            ->with(['bienThes'])
             ->get();
 
-        // Mảng kết quả thống kê sản phẩm tồn kho
         $thongKeTonKho = [];
-        $tongSoLuongTonKhoTatCaSanPham = 0; // Biến để tính tổng số lượng tồn kho của tất cả sản phẩm
+        $tongSoLuongTonKhoTatCaSanPham = 0;
 
-        // Duyệt qua từng sản phẩm và tính tổng số lượng tồn kho
         foreach ($sanPhamTonKho as $sanPham) {
             $tongSoLuongTon = 0;
 
-            // Duyệt qua các biến thể của sản phẩm để tính tổng số lượng tồn
             foreach ($sanPham->bienThes as $bienThe) {
-                $tongSoLuongTon += $bienThe->so_luong_ton; // Giả sử có trường `so_luong_ton` trong bảng biến thể
+                $tongSoLuongTon += $bienThe->so_luong_ton;
             }
 
-            // Cộng số lượng tồn của sản phẩm vào tổng số lượng tồn của tất cả sản phẩm
             $tongSoLuongTonKhoTatCaSanPham += $tongSoLuongTon;
 
-            // Thêm thông tin sản phẩm vào kết quả
             $thongKeTonKho[] = [
                 'ten_san_pham' => $sanPham->ten_san_pham,
                 'ma_san_pham' => $sanPham->ma_san_pham,
@@ -51,7 +46,6 @@ class ThongKeSanPham extends Controller
             ];
         }
 
-        // Trả về mảng kết quả cùng với tổng số lượng tồn kho của tất cả sản phẩm
         return [
             'tong_so_luong_ton_kho' => $tongSoLuongTonKhoTatCaSanPham,
             'danh_sach_san_pham_ton_kho' => $thongKeTonKho
@@ -74,7 +68,7 @@ class ThongKeSanPham extends Controller
             ->whereHas('donHang', function ($query) {
                 $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH);
             })
-            ->where('bien_the_san_pham_id', $sanPham->id) // Sử dụng ID của sản phẩm để lấy
+            ->where('bien_the_san_pham_id', $sanPham->id)
             ->get();
 
         $tongDoanhThu = $doanhThu->sum('thanh_tien');
@@ -101,16 +95,13 @@ class ThongKeSanPham extends Controller
         try {
             DB::beginTransaction();
 
-            // Lấy dữ liệu từ request
             $tenSanPham = $request->ten_san_pham;
             $maSanPham = $request->ma_san_pham;
 
-            // Kiểm tra đầu vào: yêu cầu có tên sản phẩm hoặc mã sản phẩm
             if (!$tenSanPham && !$maSanPham) {
                 return response()->json(['error' => 'Vui lòng cung cấp tên hoặc mã sản phẩm'], 400);
             }
 
-            // Lấy thông tin sản phẩm dựa trên tên hoặc mã sản phẩm
             $sanPham = SanPham::when($tenSanPham, function ($query, $tenSanPham) {
                 return $query->where('ten_san_pham', $tenSanPham);
             })
@@ -119,12 +110,10 @@ class ThongKeSanPham extends Controller
                 })
                 ->first();
 
-            // Nếu không tìm thấy sản phẩm
             if (!$sanPham) {
                 return response()->json(['error' => 'Không tìm thấy sản phẩm'], 404);
             }
 
-            // Doanh thu của sản phẩm theo năm
             $doanhThuTheoNam = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
                 ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
@@ -134,7 +123,6 @@ class ThongKeSanPham extends Controller
                 ->orderBy('nam', 'asc')
                 ->get();
 
-            // Doanh thu của sản phẩm theo tháng hiện tại
             $currentYear = Carbon::now()->year;
             $currentMonth = Carbon::now()->month;
             $doanhThuTheoThang = DonHangChiTiet::join('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
@@ -159,7 +147,6 @@ class ThongKeSanPham extends Controller
 
     public function sanPhamBanChayTheoThang(Request $request)
     {
-        // Nhận tháng từ request hoặc sử dụng tháng hiện tại
         $month = $request->input('month', Carbon::now()->month);
 
         // Lấy danh sách đơn hàng với trạng thái 'Đã giao hàng thành công' trong tháng được chọn
@@ -184,7 +171,6 @@ class ThongKeSanPham extends Controller
         // Sản phẩm bán chạy nhất (top 1)
         $sanPhamBanChayNhat = $sanPhamStats->first();
 
-        // Sản phẩm ít được mua nhất (bottom 1)
         $sanPhamItMuaNhat = $sanPhamStats->last();
 
         return response()->json([
@@ -195,15 +181,13 @@ class ThongKeSanPham extends Controller
     }
     public function sanPhamBanChayTheoNam(Request $request)
     {
-        // Nhận năm từ request hoặc sử dụng năm hiện tại
+
         $year = $request->input('year', Carbon::now()->year);
 
-        // Lấy danh sách đơn hàng với trạng thái 'Đã giao hàng thành công' trong năm được chọn
         $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->whereYear('created_at', $year)
-            ->pluck('id'); // Lấy danh sách id của các đơn hàng
+            ->pluck('id');
 
-        // Lấy thống kê sản phẩm dựa trên đơn hàng chi tiết
         $sanPhamStats = DonHangChiTiet::whereIn('don_hang_id', $donHangs)
             ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
             ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
@@ -217,10 +201,8 @@ class ThongKeSanPham extends Controller
             ->orderBy('tong_so_luong', 'desc')
             ->get();
 
-        // Sản phẩm bán chạy nhất (top 1)
         $sanPhamBanChayNhat = $sanPhamStats->first();
 
-        // Sản phẩm ít được mua nhất (bottom 1)
         $sanPhamItMuaNhat = $sanPhamStats->last();
 
         return response()->json([
