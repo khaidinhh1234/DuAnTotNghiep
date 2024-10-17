@@ -353,11 +353,6 @@ return response()->json([
 
     }
 
-
-
-
-
-
     function top10KhachHangTieuBieu()
     {
         // Lấy thời gian 1 tháng trước
