@@ -9,7 +9,10 @@ import {
   Space,
   Spin,
   Table,
+<<<<<<< HEAD
+=======
   // Tabs,
+>>>>>>> a63e5097d4d734b416b8129be3c1c38e7b83d314
 } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
@@ -18,9 +21,12 @@ import { Link } from "react-router-dom";
 
 import { ICategories } from "@/common/types/category";
 import instance from "@/configs/admin";
+<<<<<<< HEAD
+=======
 // import { toast } from "react-toastify";
 // const { TabPane } = Tabs;
 
+>>>>>>> a63e5097d4d734b416b8129be3c1c38e7b83d314
 type DataIndex = keyof ICategories;
 const CategoriesAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
@@ -288,6 +294,13 @@ const CategoriesAdmin: React.FC = () => {
           </Link>
         </div>
       </div>
+<<<<<<< HEAD
+          <Table
+            columns={columns}
+            dataSource={dataSource.filter((category: any) => !category.cha_id)}
+            loading={isLoading}
+          />
+=======
       {/* <Tabs defaultActiveKey="1"> */}
       {/* <TabPane tab="Danh mục cha" key="1"> */}
       <Table columns={columns} dataSource={dataSource} loading={isLoading} />
@@ -301,6 +314,7 @@ const CategoriesAdmin: React.FC = () => {
           />
         </TabPane> */}
       {/* </Tabs> */}
+>>>>>>> a63e5097d4d734b416b8129be3c1c38e7b83d314
     </main>
   );
 };
