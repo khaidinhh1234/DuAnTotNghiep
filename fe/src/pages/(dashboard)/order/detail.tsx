@@ -34,6 +34,7 @@ const Detail = ({ record }: any) => {
       return response.data;
     },
   });
+  // console.log(data,'datatoString');
   // const { data: vanchuyen, isLoading } = useQuery({
   //   queryKey: ["vanchuyen"],
   //   queryFn: async () => {
@@ -73,7 +74,7 @@ const Detail = ({ record }: any) => {
       ...item,
     };
   });
-  // console.log(record, "toan");
+  console.log(record, "toan");
   // const donhang = data?.data;
   const thongtin = data?.data.thong_tin;
 

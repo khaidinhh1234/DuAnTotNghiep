@@ -203,17 +203,16 @@ const BannerManagement: React.FC = () => {
     });
   };
 
-  if (isLoading) {
-    return (
-      <Spin tip="Loading...">
-        <div className="content" />
-      </Spin>
-    );
-  }
 
-  if (isError) {
-    return <div>Lỗi khi tải dữ liệu biểu ngữ. Vui lòng thử lại sau.</div>;
-  }
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center mt-[250px]">
+        <Spin size="large" />
+      </div>
+    );
+
+    if (isError) return <div>Error</div>;
+
 
   if (banners.length === 0) {
     return (
@@ -490,8 +489,8 @@ const BannerManagement: React.FC = () => {
           onClick={() => {
             saveMutation.mutate(banners);
           }}
-          loading={saveMutation.isLoading}
-        >
+          loading={saveMutation.isPending}
+          >
           Lưu thay đổi
         </Button>
       </div>

@@ -46,15 +46,22 @@ const DetailTransport = ({ record }: any) => {
     localStorage.setItem("isWebcamVisible", JSON.stringify(isWebcamVisible));
   }, [isWebcamVisible]);
 
-  // Hiện camera nếu trạng thái đang giao hàng và ảnh chưa được lưu
+  // Hiện camera chỉ khi trạng thái là "Đang giao hàng" và ảnh chưa được lưu
   useEffect(() => {
     if (record.trang_thai_van_chuyen === "Đang giao hàng" && !isImageSaved) {
       setIsWebcamVisible(true);
+    } else {
+      setIsWebcamVisible(false);
     }
   }, [record.trang_thai_van_chuyen, isImageSaved]);
 
   // Hàm chụp ảnh bằng webcam
   const capturePhoto = () => {
+    if (record.trang_thai_van_chuyen !== "Đang giao hàng") {
+      alert("Chỉ có thể chụp ảnh khi trạng thái là 'Đang giao hàng'.");
+      return;
+    }
+
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
       setUrl(imageSrc);
@@ -67,21 +74,24 @@ const DetailTransport = ({ record }: any) => {
       setLoading(true);
       let imageUrl = null;
 
-      if (url) {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+      // Kiểm tra nếu đang gửi ghi chú sau 3 lần giao hàng thất bại, không cần upload ảnh
+      if (!showNoteInput) {
+        if (url) {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
 
-        // Upload ảnh lên Cloudinary hoặc dịch vụ lưu trữ khác
-        imageUrl = await uploadToCloudinary(file);
+          // Upload ảnh lên Cloudinary hoặc dịch vụ lưu trữ khác
+          imageUrl = await uploadToCloudinary(file);
 
-        if (!imageUrl) {
-          alert("Lỗi khi upload ảnh. Vui lòng thử lại.");
+          if (!imageUrl) {
+            alert("Lỗi khi upload ảnh. Vui lòng thử lại.");
+            return;
+          }
+        } else {
+          alert("Vui lòng chụp ảnh trước khi xác nhận giao hàng.");
           return;
         }
-      } else {
-        alert("Vui lòng chụp ảnh trước khi xác nhận giao hàng.");
-        return;
       }
 
       const response: any = await mutate({
@@ -93,17 +103,18 @@ const DetailTransport = ({ record }: any) => {
       });
 
       if (response && response.data) {
-        alert("Đã lưu ảnh và xác nhận giao hàng thành công!");
-        setIsImageSaved(true); // Đánh dấu ảnh đã được lưu
+        message.success(showNoteInput ? "Ghi chú đã được gửi thành công!" : "Đã lưu ảnh và xác nhận giao hàng thành công!");
+        setIsImageSaved(true); // Đánh dấu ảnh đã được lưu nếu không phải ghi chú
         setFailedAttempts(0);
         setNote("");
         setShowNoteInput(false); // Ẩn ô nhập ghi chú nếu có
       } else {
-        alert("Có lỗi xảy ra trong quá trình xác nhận giao hàng.");
+        message.success("Giao hàng thành công");
       }
+      
     } catch (error) {
       console.error("Có lỗi xảy ra:", error);
-      alert("Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!");
+      message.error("Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!");
     } finally {
       setLoading(false);
     }
@@ -115,11 +126,11 @@ const DetailTransport = ({ record }: any) => {
     setFailedAttempts(newFailedAttempts);
 
     if (newFailedAttempts >= 3) {
-      alert("Giao hàng thất bại 3 lần. Vui lòng nhập ghi chú.");
+      message.success("Giao hàng thất bại 3 lần. Vui lòng nhập ghi chú.");
       setShowNoteInput(true); // Hiện ô nhập ghi chú
       setIsWebcamVisible(false); // Ẩn webcam
     } else {
-      alert(`Giao hàng thất bại lần ${newFailedAttempts}.`);
+      message.success(`Giao hàng thất bại lần ${newFailedAttempts}.`);
     }
   };
   const formatDate = (dateString: any) => {
@@ -137,20 +148,25 @@ const DetailTransport = ({ record }: any) => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  const id = record?.don_hang?.id
+  const id = record?.id
+  // // console.log(id);
+  // console.log(id)
   const { data } = useQuery({
     queryKey: ["SHIPPER"],
     queryFn: async () => {
       const response = await instance.get(`/vanchuyen/${id}`);
       return response.data;
-    },
+
+    },  
+    // enabled: !!id,
   })
   const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
     };
   });
-  const thongtin = data?.data?.thong_tin;
+  const thongtin = data?.data?.van_chuyen?.don_hang;
+  console.log(thongtin, "dsadas")
 
   const handleCancel = () => {
     setOpen(false);
@@ -259,7 +275,6 @@ const DetailTransport = ({ record }: any) => {
                   <thead>
                     <tr className="*:px-12 *:text-base">
                       <th className=" w-[30%]"></th>
-
                       <th className="w-[15%]">Số Lượng</th>
                       <th className="w-[20%]">Giá</th>
                       <th className="w-[35%]">Thành Tiền</th>
@@ -272,7 +287,7 @@ const DetailTransport = ({ record }: any) => {
                           <div className="flex gap-5 items-center  w-[50%] my-2">
                             <img
                               src={
-                                item?.bien_the_san_pham?.san_pham?.anh_san_pham
+                                item?.bien_the_san_pham?.san_pham?.anh_san_pham || ''
                               }
                               alt={""}
                               className="w-20 h-20"
@@ -290,8 +305,8 @@ const DetailTransport = ({ record }: any) => {
                                   <span>
                                     {" "}
                                     {
-                                      item?.bien_the_san_pham?.mau_bien_the
-                                        ?.ten_mau_sac
+                                      item?.chi_tiets?.bien_the_san_pham?.mau_bien_the
+                                        ?.ten_mau_sac 
                                     }
                                   </span>
                                 </p>
@@ -434,6 +449,7 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
+                {/* Hiển thị webcam nếu điều kiện cho phép */}
                 {isWebcamVisible && !isImageSaved && (
                   <div className="relative mx-auto mt-6">
                     {url ? (
@@ -473,6 +489,7 @@ const DetailTransport = ({ record }: any) => {
                   />
                 )}
 
+                {/* Nút xử lý giao hàng */}
                 {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
                   <button
                     className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
@@ -518,38 +535,38 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
               <hr />
               <h5 className="text-blue-600 my-2">
-                {record.van_chuyen?.don_hang.ten_nguoi_dat_hang
-                  ? record.van_chuyen?.don_hang.ten_nguoi_dat_hang
+                {thongtin?.ten_nguoi_dat_hang
+                  ? thongtin?.ten_nguoi_dat_hang
                   : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
               <h5 className="text-black my-2">
                 {" "}
-                {record.van_chuyen?.don_hang.ten_nguoi_dat_hang
-                  ? record.van_chuyen?.don_hang.ten_nguoi_dat_hang
+                {record.van_chuyen?.don_hang?.ten_nguoi_dat_hang
+                  ? record.van_chuyen?.don_hang?.ten_nguoi_dat_hang
                   : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <p className="text-blue-800 font-semibold">
                 Số điện thoại :
                 <span className="text-black font-medium">
-                  {record.van_chuyen?.don_hang.so_dien_thoai_nguoi_dat_hang
-                    ? record.van_chuyen?.don_hang.so_dien_thoai_nguoi_dat_hang
+                  {record.van_chuyen?.don_hang?.so_dien_thoai_nguoi_dat_hang
+                    ? record.van_chuyen?.don_hang?.so_dien_thoai_nguoi_dat_hang
                     : thongtin?.so_dien_thoai}
                 </span>
               </p>
               <h5 className="text-blue-800">
                 Địa chỉ Giao hàng: <br />
                 <span className="text-black">
-                  {record?.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
-                    ? record?.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
+                  {record?.van_chuyen?.don_hang?.dia_chi_nguoi_dat_hang
+                    ? record?.van_chuyen?.don_hang?.dia_chi_nguoi_dat_hang
                     : thongtin?.dia_chi}
                 </span>
               </h5>
               <p className="text-blue-800 font-semibold">
                 Ghi chú của khách hàng : <br />
                 <span className="text-black">
-                  {record?.van_chuyen?.don_hang.ghi_chu ? record?.van_chuyen?.don_hang.ghi_chu : "Không có ghi chú"}
+                  {record?.van_chuyen?.don_hang?.ghi_chu ? record?.van_chuyen?.don_hang?.ghi_chu : "Không có ghi chú"}
                 </span>
               </p>
             </div> {" "}

@@ -15,6 +15,7 @@ import {
   Popconfirm,
   Select,
   Space,
+  Spin,
   Table,
   Tabs,
 } from "antd";
@@ -75,7 +76,7 @@ const OrderAdmin: React.FC = () => {
     },
   });
   const order: DataType[] | undefined = data?.data;
-  const handleDateChange = (e: any, dateStrings: [string, string]) => {
+  const handleDateChange = (_: any, dateStrings: [string, string]) => {
     const startDate = new Date(dateStrings[0]);
     const endDate = new Date(dateStrings[1]);
     // console.log("startDate", startDate);
@@ -555,8 +556,13 @@ const OrderAdmin: React.FC = () => {
     { label: "Đã thanh toán", key: "Đã thanh toán" },
   ];
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error...</div>;
+
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center mt-[250px]">
+        <Spin size="large" />
+      </div>
+    );  if (isError) return <div>Error...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">

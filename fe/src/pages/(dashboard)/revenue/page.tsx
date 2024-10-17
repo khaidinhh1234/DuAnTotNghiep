@@ -190,7 +190,7 @@ const RevenueAdmin: React.FC = () => {
           />
           <DatePicker.RangePicker
             format="DD/MM/YYYY"
-            onChange={(dates, dateStrings) =>
+            onChange={(dates) =>
               handleDateRangeChange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)
             }
             className="w-80"

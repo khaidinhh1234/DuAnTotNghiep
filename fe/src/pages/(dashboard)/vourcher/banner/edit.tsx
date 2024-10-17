@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, Select, Upload, message, DatePicker, TreeSelect, Col, Row } from "antd";
+import { Button, Form, Input, Select, Upload, message, DatePicker, TreeSelect, Col, Row, Spin, Space } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from 'moment';
 
@@ -51,6 +51,8 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
     queryKey: ["chuongTrinhUuDai", id],
     queryFn: async () => {
       const response = await instance.get(`/chuongtrinhuudai/${id}`);
+      console.log(response.data); // Xem toàn bộ phản hồi từ API
+      console.log(response.data.data); // Xem phần data thực sự
       return response.data.data;
     },
   });
@@ -97,7 +99,7 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
         loai: chuongTrinhUuDaiData.loai,
         san_pham: selectedProductIds, // Set the san_pham field value
       });
-      if (chuongTrinhUuDaiData.duong_dan_anh) {
+      if (chuongTrinhUuDaiData && chuongTrinhUuDaiData.duong_dan_anh) {
         setFileList([
           {
             uid: '-1',
@@ -250,9 +252,13 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
     }
   };
 
-  if (isLoadingChuongTrinhUuDai) {
-    return <div>Loading...</div>;
-  }
+  if (isLoadingChuongTrinhUuDai)
+    return (
+      <div className="flex items-center justify-center mt-[250px]">
+        <Spin size="large" />
+      </div>
+    );
+
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -349,8 +355,8 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
               </Form.Item>
 
               <Form.Item label="Loại và giá trị ưu đãi">
-                <Input.Group compact>
-                <Form.Item
+              <Space.Compact>
+              <Form.Item
                     name="loai"
                     rules={[{ required: true, message: "Vui lòng chọn loại ưu đãi!" }]}
                     style={{ marginBottom: 0, marginRight: 8 }}
@@ -370,8 +376,8 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
                   >
                     <Input type="number" placeholder="Nhập giá trị ưu đãi" style={{ width: 615 }} />
                   </Form.Item>
-                </Input.Group>
-              </Form.Item>
+                    </Space.Compact>
+                  </Form.Item>
 
               <Row gutter={16}>
                 <Col span={5}>

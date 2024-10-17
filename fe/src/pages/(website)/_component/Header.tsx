@@ -3,7 +3,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
@@ -24,7 +24,7 @@ const Header = () => {
     };
   }, [ref]);
   const [user] = useLocalStorage("user" as any, {});
-  const nav = useNavigate();
+  // const nav = useNavigate();
   const member = user.user;
   const phanquyen = user?.user?.vai_tros?.filter(
     (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
@@ -87,7 +87,7 @@ const Header = () => {
     <header className="h-12 relative">
       <div className="bg-white w-full">
         <div
-          className={`fixed top-0 left-0 w-full h-screen z-10 transition-transform duration-300 ease-in-out ${
+          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${
             menu ? "translate-x-0" : "-translate-x-full"
           }`}
           style={{
@@ -113,8 +113,8 @@ const Header = () => {
                   Trẻ em
                 </a>
               </div>
-              <nav className="h-full my-5 px-2">
-                <ul className="space-y-4 text-xl font-bold">
+              <nav className="h-full my-5 px-2 ">
+                <ul className="space-y-4 text-xl font-bold ">
                   {MenuList.map((item, index) => (
                     <li key={index}>
                       <NavLink
@@ -161,20 +161,20 @@ const Header = () => {
                   setMenu(!menu);
                 }}
               >
-                <i className="fa-solid fa-bars text-2xl"></i>
+                <i className="fa-solid fa-bars text-2xl mx-5"></i>
               </button>
             </div>
             <div className="order-2 lg:w-60">
               <img
                 src={logo}
                 alt="Logo"
-                className="lg:w-[150px] lg:h-[45px] w-32 h-10"
+                className="lg:w-[130px] lg:h-[40px] w-32 h-9"
               />
             </div>
             <nav className="hidden lg:block order-3">
-              <ul className="flex items-center space-x-4">
+              <ul className="flex items-center space-x-4 ">
                 {MenuList.map((item, index) => (
-                  <li key={index}>
+                  <li key={index} className="mt-2">
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>

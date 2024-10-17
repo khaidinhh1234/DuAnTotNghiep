@@ -42,7 +42,7 @@ const UsersnhanvienEdit = () => {
     },
   });
 
-  const { data: vaitroid, refetch } = useQuery({
+  const { data: vaitroid } = useQuery({
     queryKey: ["vaitro"],
     queryFn: async () => {
       try {

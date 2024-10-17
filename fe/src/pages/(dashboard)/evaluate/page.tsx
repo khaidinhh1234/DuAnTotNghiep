@@ -18,16 +18,16 @@ import {
 import { FilterDropdownProps } from "antd/es/table/interface";
 import { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 
 type DataIndex = keyof IEvaluate;
 const EvaluateAdmin = () => {
   const queryClient = useQueryClient();
-  const { id } = useParams();
+  // const { id } = useParams();
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [expandedKeys, setExpandedKeys] = useState<number[]>([]);
+  // const [expandedKeys, setExpandedKeys] = useState<number[]>([]);
   // Query to fetch evaluations
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
@@ -37,13 +37,13 @@ const EvaluateAdmin = () => {
     },
   });
   console.log(data)
-  const toggleExpand = (id: number) => {
-    setExpandedKeys((prevKeys) =>
-      prevKeys.includes(id)
-        ? prevKeys.filter((key) => key !== id)
-        : [...prevKeys, id]
-    );
-  };
+  // const toggleExpand = (id: number) => {
+  //   setExpandedKeys((prevKeys) =>
+  //     prevKeys.includes(id)
+  //       ? prevKeys.filter((key) => key !== id)
+  //       : [...prevKeys, id]
+  //   );
+  // };
   // Mutation to send replies to API
   const mutation = useMutation({
     mutationFn: async ({
@@ -82,10 +82,10 @@ const EvaluateAdmin = () => {
   const [currentEvaluate, setCurrentEvaluate] = useState<any | null>(null);
   const [phan_hoi, setphan_hoi] = useState<{ [key: number]: string }>({});
 
-  const showModal = (record: IEvaluate) => {
-    setCurrentEvaluate(record);
-    setIsModalOpen(true);
-  };
+  // const showModal = (record: IEvaluate) => {
+  //   setCurrentEvaluate(record);
+  //   setIsModalOpen(true);
+  // };
   const handleOk = () => {
     if (currentEvaluate && phan_hoi[currentEvaluate.id as number]) {
       mutation.mutate({

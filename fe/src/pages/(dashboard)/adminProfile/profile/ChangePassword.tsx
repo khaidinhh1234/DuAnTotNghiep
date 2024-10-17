@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Input, Button, Alert } from 'antd';
+import { Input, Button } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import instance from '@/configs/auth';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '@/components/hook/useStoratge';
 
 interface ChangPassword {
@@ -16,7 +16,7 @@ interface ChangPassword {
 }
 
 const ChangePassword = () => {
-  const nav = useNavigate();
+  // const nav = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');

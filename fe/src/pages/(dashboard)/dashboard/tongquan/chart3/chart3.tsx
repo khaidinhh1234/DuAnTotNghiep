@@ -16,7 +16,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
       : null;
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["tongquanchart3", datestart, dateend],
     queryFn: async () => {
       const response = await instance.post("thong-ke/san-pham/ton-kho", date);

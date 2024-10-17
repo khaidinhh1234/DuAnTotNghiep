@@ -128,6 +128,7 @@ import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminPr
 import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
 import PrivateRoute from "./PrivateRoute";
 import ChuongTrinhUuDaiRemote from "@/pages/(dashboard)/vourcher/banner/remote";
+import IntroCard from "@/pages/(dashboard)/adminProfile/profile/IntroCard";
 
 const Router = () => {
   //
@@ -141,7 +142,7 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
-          <Route path="/product-detail" element={<PageProductDetail />} />
+          <Route path="/product-detail/:id" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           <Route path="/myprofile" element={<MyProfile />} />
           <Route path="/mywishlist" element={<MyWishlists />} />
@@ -168,11 +169,11 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            <PrivateRoute>
+            // <PrivateRoute>
               <>
                 <LayoutAdmin />
               </>
-            </PrivateRoute>
+            // </PrivateRoute>
           }
         >
           <Route index element={<Navigate to="/admin/dashboard/list" />} />
@@ -326,6 +327,8 @@ const Router = () => {
           />
           {/* Profile admin */}
           <Route path="admin-profile" element={<AdminProfile />} />
+          <Route path="admin/taikhoan/:id" element={<IntroCard/>} />
+
           {/* Nội dung */}
           <Route
             path="Content"
@@ -334,7 +337,8 @@ const Router = () => {
           <Route path="Content/qlfooter" element={<Content />} />
           <Route path="Content/qlbanner" element={<BannerManagement />} />
           {/* Lịch sử thao tác */}
-          <Route path="history" element={<ActionLog />} />zz
+          <Route path="history" element={<ActionLog />} />
+
           {/* Error */}
           <Route path="*" element={<NotFoundPage />} />
           {/* Chưa dùng đến */}

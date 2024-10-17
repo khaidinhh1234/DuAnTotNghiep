@@ -1,5 +1,5 @@
-import { products1, products2 } from "@/assets/img";
-import React from "react";
+// import { products1, products2 } from "@/assets/img";
+// import React from "react";
 
 const CheckOut = () => {
   return (

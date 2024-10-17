@@ -22,7 +22,7 @@ const Detail = ({ record }: any) => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["ORDER_DETAIL", record.id],
     queryFn: async () => {
       const response = await instance.get(`/donhang/${record.id}`);

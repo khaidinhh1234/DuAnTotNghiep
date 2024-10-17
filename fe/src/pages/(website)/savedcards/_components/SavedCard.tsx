@@ -17,10 +17,10 @@ const SavedCardPage = () => {
                             {/* Sidebar */}
                             <div className="lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] lg:h-[524px] rounded-lg">
                                 <div className="flex items-center p-5 border-b border-hrBlack">
-                                    <img src={ellipse} alt className="rounded-full md:w-[51px] md:h-[51px]" />
+                                    <img src={ellipse} alt="" className="rounded-full md:w-[51px] md:h-[51px]" />
                                     <div className="px-4 py-2">
                                         <span className='' />
-                                        <img src={hello} className="px-[2px]" alt />
+                                        <img src={hello} className="px-[2px]"  />
                                         <h4 className="font-bold text-lg">Robert Fox</h4>
                                     </div>
                                     <div className="lg:hidden ">
@@ -70,13 +70,13 @@ const SavedCardPage = () => {
                                 {/* Content */}
                                 <div className="mt-2 mb-8"><button className="btn-black lg:w-[320px] w-[220px] h-14 rounded-lg"><i className="fa-solid fa-plus mr-4" /> Add New Card</button></div>
                                 <div className="flex my-5 justify-between items-center border-b border-hrBlack pb-5">
-                                    <div className="flex"><img src={master} alt className="w-16 h-16 px-1 py-3 bg-neutral-100 rounded-lg" />
+                                    <div className="flex"><img src={master}  className="w-16 h-16 px-1 py-3 bg-neutral-100 rounded-lg" />
                                         <div className="px-4 "><h4 className="font-bold text-xl mb-3">Master Card</h4>
                                             <span>3456 XXX3 5433 9XX8</span></div></div><button className="bg-rose-100/70 text-red-400 hover:bg-[#FF7262]  w-[85px] h-[38px] hover:text-white rounded-lg">
                                         <i className="fa-regular fa-trash-can pr-2"> </i>Delete
                                     </button></div>
                                 <div className="flex my-5 justify-between items-center border-b border-hrBlack pb-5">
-                                    <div className="flex"><img src={visa} alt className="w-16 h-16 px-1 py-3 bg-neutral-100 rounded-lg" />
+                                    <div className="flex"><img src={visa}  className="w-16 h-16 px-1 py-3 bg-neutral-100 rounded-lg" />
                                         <div className="px-4 "><h4 className="font-bold text-xl mb-3">Visa Card</h4>
                                             <span>3456 XXX3 5433 9XX8</span></div></div><button className="bg-rose-100/70 text-red-400 hover:bg-[#FF7262]  w-[85px] h-[38px] hover:text-white rounded-lg">
                                         <i className="fa-regular fa-trash-can pr-2"> </i>Delete
