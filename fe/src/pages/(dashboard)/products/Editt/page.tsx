@@ -21,6 +21,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/admin";
 import { uniqBy } from "lodash";
 import { uploadToCloudinary } from "@/configs/cloudinary";
+import CategorySelect from '../../../../components/CategorySelect';
+
 
 const { TextArea } = Input;
 
@@ -439,7 +441,7 @@ const EditProducts: React.FC = () => {
             >
               <Input placeholder="Nhập tên sản phẩm" />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               label="Danh mục sản phẩm"
               name="danh_muc_id"
               rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
@@ -453,7 +455,17 @@ const EditProducts: React.FC = () => {
                     </Select.Option>
                   ))}
               </Select>
-            </Form.Item>
+            </Form.Item> */}
+            <Form.Item
+  label="Danh mục sản phẩm"
+  name="danh_muc_id"
+  rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
+>
+  <CategorySelect 
+    categories={categoriesData?.data || []} 
+    onChange={(value: any) => form.setFieldsValue({ danh_muc_id: value })}
+  />
+</Form.Item>
           </div>
           <div className="grid grid-cols-1 gap-5">
             <Form.Item
