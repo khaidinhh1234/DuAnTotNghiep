@@ -141,6 +141,9 @@ class TrangChuController extends Controller
 
 
 
+
+
+
         $dataDanhGiaKhachHang = DanhGia::query()->whereIn('so_sao_san_pham', [4, 5])->orderByDesc('id')->take(8)->get();
 
         return response()->json([
