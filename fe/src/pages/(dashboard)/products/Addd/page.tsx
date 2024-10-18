@@ -5,7 +5,6 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
-  Checkbox,
   Empty,
   Form,
   Image,
@@ -13,6 +12,7 @@ import {
   InputNumber,
   Modal,
   Select,
+  Switch,
   Upload,
   UploadFile,
   message,
@@ -365,7 +365,7 @@ const AddProducts: React.FC = () => {
             className="block text-md font-medium mt-2 text-gray-700 mb-1"
             label="Chọn bộ sưu tập"
             name="tags"
-            rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
+            // rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
           >
             <Select
               mode="multiple"
@@ -484,11 +484,19 @@ const AddProducts: React.FC = () => {
         <img alt="example" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </Form.Item> */}
-          <Form.Item 
+          {/* <Form.Item 
             className="block text-md font-medium mt-2 text-gray-700 mb-1"
             label="Giá tốt" name="gia_tot" valuePropName="checked">
             <Checkbox />
-          </Form.Item>
+          </Form.Item> */}
+          <Form.Item
+  className="block text-md font-medium mt-2 text-gray-700 mb-1"
+  label="Giá tốt" 
+  name="gia_tot" 
+  valuePropName="checked"
+>
+  <Switch />
+</Form.Item>
         </div>
         <div className="grid grid-cols-1 gap-5 ">
           <Form.Item

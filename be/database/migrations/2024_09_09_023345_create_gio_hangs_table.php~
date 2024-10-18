@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(BienTheSanPham::class)->constrained();
             $table->integer('gia');
-            $table->integer('gia_cu');
             $table->integer('so_luong');
             $table->timestamps();
             $table->softDeletes();

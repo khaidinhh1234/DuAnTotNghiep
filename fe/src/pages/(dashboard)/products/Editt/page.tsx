@@ -9,10 +9,10 @@ import {
   Upload,
   message,
   InputNumber,
-  Checkbox,
   Empty,
   Modal,
   Spin,
+  Switch,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
@@ -482,7 +482,7 @@ const EditProducts: React.FC = () => {
             <Form.Item
               label="Chọn bộ sưu tập"
               name="tags"
-              rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
+              // rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
             >
               <Select
                 mode="multiple"
@@ -543,7 +543,7 @@ const EditProducts: React.FC = () => {
 </Form.Item>
 
             <Form.Item label="Giá tốt" name="gia_tot" valuePropName="checked">
-              <Checkbox />
+            <Switch />
             </Form.Item>
           </div>
           <div className="grid grid-cols-1 gap-5 ">

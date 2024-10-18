@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class ThongKeSanPham extends Controller
 {
-    public function thongKeTopSanPham(Request $request)
+        public function thongKeTopSanPham(Request $request)
     {
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());

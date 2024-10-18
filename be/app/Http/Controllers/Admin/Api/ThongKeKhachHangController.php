@@ -220,6 +220,14 @@ class ThongKeKhachHangController extends Controller
         // Lấy danh sách tất cả khách hàng và tính toán tuổi
         $users = User::select('ngay_sinh')->get();
 
+        //Thống kế số lượng người không nhập ngày sinh
+        $ngaySinhUser = User::select('ngay_sinh')->get();
+
+        $khongCoNgaysinh = $ngaySinhUser->whereNull('ngay_sinh')->count();
+        $coNgaySinh = $ngaySinhUser->whereNotNull('ngay_sinh')->count();
+
+        $phanTramKhongCoNgaySinh = $khongCoNgaysinh > 0 ? round(($khongCoNgaysinh / $ngaySinhUser->count()) * 100, 2) : 0;
+        $phanTramCoNgaySinh = $coNgaySinh > 0 ? round(($coNgaySinh / $ngaySinhUser->count()) * 100, 2) : 0;
         foreach ($users as $user) {
             $tuoi = Carbon::parse($user->ngay_sinh)->age;
 
@@ -244,6 +252,10 @@ class ThongKeKhachHangController extends Controller
 
         // Trả về kết hợp thống kê giới tính, tỷ lệ giới tính và độ tuổi
         return response()->json([
+            'khong_co_ngay_sinh' => $khongCoNgaysinh,
+            'co_ngay_sinh' => $coNgaySinh,
+            'phan_tram_khong_co_ngay_sinh' => $phanTramKhongCoNgaySinh,
+            'phan_tram_co_ngay_sinh' => $phanTramCoNgaySinh,
             'gioi_tinh_labels' => $gioiTinhLabels,
             'gioi_tinh_counts' => $gioiTinhValues,
             'gioi_tinh_percents' => $gioiTinhPhanTram,
