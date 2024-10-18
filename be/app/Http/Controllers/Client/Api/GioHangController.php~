@@ -14,8 +14,6 @@ class GioHangController extends Controller
     public function index()
     {
         try {
-            $userId = Auth::id();
-
             $gioHangs = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
@@ -40,16 +38,13 @@ class GioHangController extends Controller
                     'bien_the_kich_thuocs.kich_thuoc',
                     'anh_bien_thes.duong_dan_anh as hinh_anh'
                 )
-                ->where('gio_hangs.user_id', $userId)
+                ->where('gio_hangs.user_id', Auth::id())
                 ->get();
-
-            $tongSoLuong = $gioHangs->sum('so_luong');
 
             return response()->json([
                 'status' => true,
                 'message' => 'Danh sách giỏ hàng đã được lấy thành công.',
-                'data' => $gioHangs,
-                'tong_so_luong' => $tongSoLuong
+                'data' => $gioHangs
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -58,7 +53,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 
     public function store(Request $request)
     {

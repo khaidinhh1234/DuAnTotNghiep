@@ -135,8 +135,6 @@ class ThongKeSanPham extends Controller
         ]);
     }
 
-
-
     public function doanhThuTheoTungSanPham(Request $request)
     {
         try {

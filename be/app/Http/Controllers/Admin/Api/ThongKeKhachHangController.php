@@ -30,8 +30,6 @@ class ThongKeKhachHangController extends Controller
             });
         return response()->json($thongKe);
     }
-
-
     public function thongKeKhachHangMoi(Request $request)
     {
         // Lấy tất cả khách hàng, nhóm theo tháng đăng ký
@@ -47,7 +45,6 @@ class ThongKeKhachHangController extends Controller
             $khachHangThangNay = User::whereYear('created_at', $item->nam)
                 ->whereMonth('created_at', $item->thang)
                 ->get(['ho', 'ten', 'email', 'so_dien_thoai', 'dia_chi', 'ngay_sinh', 'gioi_tinh', 'created_at']);
-
             return [
                 'nam' => $item->nam,
                 'thang' => $item->thang,
@@ -55,7 +52,6 @@ class ThongKeKhachHangController extends Controller
                 'chi_tiet_khach_hang' => $khachHangThangNay
             ];
         });
-
         return response()->json($thongKeChiTiet);
     }
     public function thongKeKhachHangQuayLaiTheoThang()
@@ -71,14 +67,12 @@ class ThongKeKhachHangController extends Controller
             ->groupBy('user_id', 'nam', 'thang')
             ->having('so_luong_don_hang', '>', 1)
             ->get();
-
         // Lấy thông tin chi tiết của các khách hàng quay lại trong từng tháng
         $thongTinKhachHangTheoThang = [];
         foreach ($khachHangQuayLaiTheoThang as $khachHang) {
             $thongTin = DB::table('users')
                 ->where('id', $khachHang->user_id)
                 ->first(['ho', 'ten', 'email', 'so_dien_thoai', 'dia_chi', 'ngay_sinh', 'gioi_tinh']);
-
             $thongTinKhachHangTheoThang[] = [
                 'nam' => $khachHang->nam,
                 'thang' => $khachHang->thang,
@@ -86,7 +80,6 @@ class ThongKeKhachHangController extends Controller
                 'thong_tin_khach_hang' => $thongTin,
             ];
         }
-
         return response()->json([
             'khach_hang_quay_lai_theo_thang' => $thongTinKhachHangTheoThang
         ]);
@@ -103,37 +96,29 @@ class ThongKeKhachHangController extends Controller
             ->get();
         return $khachHang;
     }
-
     public function soSanhKhachHangRegister(Request $request)
     {
         try {
             DB::beginTransaction();
-
             $now = Carbon::now();
-
             // Đếm số lượng khách hàng đăng ký trong tháng hiện tại
             $registerHienTai = DB::table('users')
                 ->whereMonth('created_at', $now->month)
                 ->whereYear('created_at', $now->year)
                 ->count();  // Đếm số lượt đăng ký
-
             // Lùi về tháng trước
             $thangTruoc = $now->subMonth();
-
             // Đếm số lượng khách hàng đăng ký trong tháng trước
             $registerTruoc = DB::table('users')
                 ->whereMonth('created_at', $thangTruoc->month)
                 ->whereYear('created_at', $thangTruoc->year)
                 ->count();  // Đếm số lượt đăng ký
-
             // Tính sự chênh lệch về số lượng đăng ký và phần trăm
             $chenhLechSo = $registerHienTai - $registerTruoc;
             $chenhLechPhanTram = ($registerTruoc > 0)
                 ? ($chenhLechSo / $registerTruoc) * 100
                 : 100;  // Nếu tháng trước không có lượt đăng ký, mặc định tăng 100%
-
             DB::commit();
-
             // Trả về kết quả so sánh
             return response()->json([
                 'register_hien_tai' => $registerHienTai,
@@ -144,7 +129,6 @@ class ThongKeKhachHangController extends Controller
         } catch (Exception $e) {
             // Rollback nếu có lỗi xảy ra
             DB::rollBack();
-
             // Trả về lỗi kèm theo mã lỗi
             return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
         }
@@ -154,32 +138,23 @@ class ThongKeKhachHangController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $now = Carbon::now();
-
-
             $activityHienTai = DB::table('users')
                 ->whereNull('deleted_at')
                 ->count();  // Đếm số lượt đăng ký
-
             // // Lùi về tháng trước
             // $thangTruoc = $now->subMonth();
-
-
             // $blockTruoc = DB::table('users')
             //     ->whereNotNull('deleted_at')
             //     ->whereMonth('created_at', $thangTruoc->month)
             //     ->whereYear('created_at', $thangTruoc->year)
             //     ->count();  // Đếm số lượt block
-
             // // Tính sự chênh lệch về số lượng đăng ký và phần trăm
             // $chenhLechSo = $blockHienTai - $blockTruoc;
             // $chenhLechPhanTram = ($blockTruoc > 0)
             //     ? ($chenhLechSo / $blockTruoc) * 100
             //     : 100;
-
             DB::commit();
-
             // Trả về kết quả so sánh
             return response()->json([
                 'activity_hien_tai' => $activityHienTai,
@@ -190,7 +165,6 @@ class ThongKeKhachHangController extends Controller
         } catch (Exception $e) {
             // Rollback nếu có lỗi xảy ra
             DB::rollBack();
-
             // Trả về lỗi kèm theo mã lỗi
             return response()->json(['error' => 'Có lỗi xảy ra trong quá trình xử lý', 'message' => $e->getMessage()], 500);
         }
@@ -200,31 +174,24 @@ class ThongKeKhachHangController extends Controller
         $validatedData = $request->validate([
             'ten_hang_thanh_vien' => 'required|string|max:255',
         ]);
-
         try {
-
             $hangThanhVien = HangThanhVien::where('ten_hang_thanh_vien', $validatedData['ten_hang_thanh_vien'])->first();
-
             if (!$hangThanhVien) {
                 return response()->json(['error' => 'Không tìm thấy hạng thành viên'], 404);
             }
-
             // Lấy danh sách thành viên có hạng thành viên đó
             $thanhVienTheoHang = User::where('hang_thanh_vien_id', $hangThanhVien->id)
                 ->select('ho', 'ten', 'email', 'so_dien_thoai', 'dia_chi', 'ngay_sinh', 'gioi_tinh', 'anh_nguoi_dung')
                 ->get();
-
             if ($thanhVienTheoHang->isEmpty()) {
                 return response()->json(['message' => 'Không có thành viên nào thuộc hạng này'], 404);
             }
-
             return response()->json(['thanh_vien_theo_hang' => $thanhVienTheoHang], 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
     }
-
-    public function thongKeDoTuoi(Request $request)
+   public function thongKeDoTuoi(Request $request)
     {
         // Thống kê giới tính
         $gioiTinhLabels = ['nam', 'nu', 'khac', 'conlai'];
@@ -285,7 +252,6 @@ class ThongKeKhachHangController extends Controller
         ]);
     }
 
-
     function rankVaChiTieu()
     {
         $hangs = HangThanhVien::with('users.donHangs')->get();
@@ -306,14 +272,13 @@ class ThongKeKhachHangController extends Controller
             }
             $tongChiTieu[] = $tongTienChiTieu;
         }
-
         return [
             'ten_hang_thanh_vien' => $tenHangThanhVien,
             'so_luong_thanh_vien' => $soLuongThanhVien,
             'tong_chi_tieu' => $tongChiTieu,
         ];
     }
-    public function thongKeKhachHangAll()
+      public function thongKeKhachHangAll()
     {
         // Khởi tạo các mảng kết quả
         $soLuongKhachHangMoi = [];
@@ -363,7 +328,6 @@ class ThongKeKhachHangController extends Controller
         ]);
 
     }
-
     function top10KhachHangTieuBieu()
     {
         // Lấy thời gian 1 tháng trước
@@ -371,7 +335,7 @@ class ThongKeKhachHangController extends Controller
         $motThangTruoc = $now->copy()->subMonth();
 
         // Truy vấn để lấy thông tin các khách hàng và tính toán các thông số
-        $topKhachHang = User::select('users.id', 'users.ho', 'users.ten', 'users.so_dien_thoai', 'hang_thanh_viens.ten_hang_thanh_vien')
+        $topKhachHang = User::select('users.id', 'users.anh_nguoi_dung', 'users.ho', 'users.ten', 'users.so_dien_thoai', 'hang_thanh_viens.ten_hang_thanh_vien', 'hang_thanh_viens.anh_hang_thanh_vien')
             ->join('hang_thanh_viens', 'users.hang_thanh_vien_id', '=', 'hang_thanh_viens.id') // Tham gia với bảng hạng thành viên
             ->withCount([
                 'donHangs as tong_so_don' => function ($query) use ($motThangTruoc) {
@@ -402,17 +366,17 @@ class ThongKeKhachHangController extends Controller
             return [
                 'ten_khach_hang' => $khachHang->ho . ' ' . $khachHang->ten,
                 'so_dien_thoai' => $khachHang->so_dien_thoai,
-                'hang_thanh_vien' => $khachHang->ten_hang_thanh_vien, // Thêm thông tin hạng thành viên
+                'anh_nguoi_dung' => $khachHang->anh_nguoi_dung,
+                'ten_hang_thanh_vien' => $khachHang->ten_hang_thanh_vien,
+                'anh_hang_thanh_vien' => $khachHang->anh_hang_thanh_vien,
                 'tong_so_don' => $khachHang->tong_so_don,
                 'so_don_thanh_cong' => $khachHang->so_don_thanh_cong,
                 'so_don_huy' => $khachHang->so_don_huy,
-                'tong_tien_mua_hang' => $khachHang->tong_tien_mua_hang,
+                'tong_tien_mua_hang' => (int)$khachHang->tong_tien_mua_hang,
             ];
         });
 
         // Trả về kết quả dưới dạng JSON
         return response()->json($result);
     }
-
-
 }

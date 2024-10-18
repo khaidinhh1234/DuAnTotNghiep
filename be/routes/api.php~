@@ -107,13 +107,11 @@ Route::middleware([])
         Route::post('lienhe', [TrangLienHeController::class, 'lienHe']);
 
         // Giỏ hàng
-       Route::middleware('auth.sanctum')->group(function () {
-           Route::get('/gio-hang', [GioHangController::class, 'index']);
-           Route::post('/gio-hang', [GioHangController::class, 'store']);
-           Route::put('/gio-hang/{id}', [GioHangController::class, 'update']);
-           Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
-           Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
-       });
+        Route::get('/gio-hang', [GioHangController::class, 'index']);
+        Route::post('/gio-hang', [GioHangController::class, 'store']); // Thêm sản phẩm vào giỏ hàng
+        Route::put('/gio-hang/{id}', [GioHangController::class, 'update']); // Cập nhật giỏ hàng
+        Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']); // Xóa sản phẩm khỏi giỏ hàng
+        Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart'])->middleware('auth:sanctum');
 
         // Đơn hàng
         Route::get('/don-hang', [DonHangClientController::class, 'donHangUser'])->middleware('auth:sanctum');
@@ -350,7 +348,6 @@ Route::middleware(['auth.sanctum'])
             Route::get('/top5-khach-hang-gan-day', [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
 
             // Route thống kê sản phẩm
-            Route::post('/top-san-pham', [ThongKeSanPham::class, 'thongKeTopSanPham']);
             Route::post('/doanh-thu-tung-san-pham', [ThongKeSanPham::class, 'thongKeDoanhThuTheoSanPham']);
             Route::post('/doanh-thu-theo-tung-san-pham', [ThongKeSanPham::class, 'thongKeDoanhThuTheoSanPham']);
             Route::get('/san-pham-ban-theo-thang', [ThongKeSanPham::class, 'sanPhamBanChayTheoThang']);

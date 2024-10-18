@@ -142,7 +142,7 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
-          <Route path="/product-detail" element={<PageProductDetail />} />
+          <Route path="/product-detail/:id" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           <Route path="/myprofile" element={<MyProfile />} />
           <Route path="/mywishlist" element={<MyWishlists />} />
@@ -169,11 +169,11 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            // <PrivateRoute>
+            <PrivateRoute>
               <>
                 <LayoutAdmin />
               </>
-            // </PrivateRoute>
+            </PrivateRoute>
           }
         >
           <Route index element={<Navigate to="/admin/dashboard/list" />} />
@@ -327,8 +327,7 @@ const Router = () => {
           />
           {/* Profile admin */}
           <Route path="admin-profile" element={<AdminProfile />} />
-          <Route path="admin/taikhoan/:id" element={<IntroCard/>} />
-
+          <Route path="admin/taikhoan/:id" element={<IntroCard />} />
           {/* Nội dung */}
           <Route
             path="Content"
