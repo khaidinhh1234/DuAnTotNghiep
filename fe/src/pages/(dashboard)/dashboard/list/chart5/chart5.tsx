@@ -13,12 +13,13 @@ const Chart5 = () => {
   return (
     <>
       <CardHeader>
-        <div>
+        <div className="flex">
           {" "}
           <CardTitle className="mt-5">Bán hàng gần đây</CardTitle>
           <img
             src="https://res.cloudinary.com/dpypwbeis/image/upload/v1729271891/Screenshot_2024-10-19_001716-removebg-preview_hhxvdp.png"
-            alt=""
+            alt="https://res.cloudinary.com/dpypwbeis/image/upload/v1729271891/Screenshot_2024-10-19_001716-removebg-preview_hhxvdp.png"
+            className="w-20 h-20 mx-auto"
           />
         </div>
       </CardHeader>
