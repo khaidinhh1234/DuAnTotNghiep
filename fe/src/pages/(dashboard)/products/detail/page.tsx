@@ -166,7 +166,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
 
   useEffect(() => {
     if (data && data.data.bien_the_san_pham.length > 0) {
-      const firstVariant = data.data.bien_the_san_pham[0];
+      const firstVariant = data?.data.bien_the_san_pham[0];
       setSelectedColor(firstVariant?.mau_bien_the?.ma_mau_sac);
       setSelectedSize(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
       setSelectedColorName(firstVariant?.mau_bien_the?.ten_mau_sac);

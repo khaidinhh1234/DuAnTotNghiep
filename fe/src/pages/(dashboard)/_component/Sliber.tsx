@@ -57,7 +57,8 @@ const SiderComponent: React.FC = () => {
             </SubMenu>
           )}
           {(quyen?.includes("admin.sanpham.index") ||
-            (quyen?.includes("admin.bienthekichthuoc.index") && quyen?.includes("admin.bienthemausac.index"))||
+            (quyen?.includes("admin.bienthekichthuoc.index") &&
+              quyen?.includes("admin.bienthemausac.index")) ||
             quyen?.includes("admin.bosuutap.index")) && (
             <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
               {quyen?.includes("admin.sanpham.index") && (
@@ -65,13 +66,12 @@ const SiderComponent: React.FC = () => {
                   Danh sách sản phẩm
                 </Menu.Item>
               )}
-              {(quyen?.includes("admin.bienthekichthuoc.index") && quyen?.includes("admin.bienthemausac.index") ) && (
-                <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
-              )}
+              {quyen?.includes("admin.bienthekichthuoc.index") &&
+                quyen?.includes("admin.bienthemausac.index") && (
+                  <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
+                )}
               {quyen?.includes("admin.bosuutap.index") && (
-                <Menu.Item key="/admin/products/tags">
-                  Bộ sưu tập
-                </Menu.Item>
+                <Menu.Item key="/admin/products/tags">Bộ sưu tập</Menu.Item>
               )}
             </SubMenu>
           )}

@@ -270,10 +270,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Input, message, Popconfirm, Space, Spin, Table, Modal, Image, Typography } from 'antd';
 import type { InputRef, TableColumnsType } from 'antd';
 import type { FilterDropdownProps } from 'antd/es/table/interface';
-import { DeleteOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
+import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import instance from '@/configs/admin';
 import { ICategories } from '@/common/types/category';
+import Detail from "@/pages/(dashboard)/products/detail/page";
 
 const { Title, Text } = Typography;
 
@@ -294,7 +295,13 @@ const TagsAdmin: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedCollection, setSelectedCollection] = useState<CollectionData | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isProductModalVisible, setIsProductModalVisible] = useState(false);
 
+  const showProductDetails = (product: Product) => {
+    setSelectedProduct(product);
+    setIsProductModalVisible(true);
+  };
   const queryClient = useQueryClient();
 
   const {
@@ -569,6 +576,10 @@ const TagsAdmin: React.FC = () => {
                   title: 'Tên sản phẩm',
                   dataIndex: 'ten_san_pham',
                   key: 'ten_san_pham',
+                  render: (text, record) => (
+                    <a className="text-black" 
+                     onClick={() => showProductDetails(record)}>{text}</a>
+                  ),
                 },
                 {
                   title: 'Ảnh sản phẩm',
@@ -584,6 +595,16 @@ const TagsAdmin: React.FC = () => {
               pagination={false}
             />
           </div>
+        )}
+      </Modal>
+      <Modal
+        title="Chi tiết sản phẩm"
+        visible={isProductModalVisible}
+        onCancel={() => setIsProductModalVisible(false)}
+        footer={null}
+      >
+        {isProductModalVisible && selectedProduct && (
+          <Detail item={selectedProduct} />
         )}
       </Modal>
     </main>

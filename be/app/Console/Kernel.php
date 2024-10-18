@@ -16,15 +16,15 @@ class Kernel extends ConsoleKernel
         $schedule->command('chuongtrinh:delete-expired')->daily();
         $schedule->command('sanpham:cap-nhat-hang-moi')->daily();
         $schedule->command('khuyenmai:update-gia-tam-thoi')->hourly();
+        $schedule->command('app:cap-nhat-khach-hang-xac-nhan')->daily();
     }
-
 
     /**
      * Register the commands for the application.
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
