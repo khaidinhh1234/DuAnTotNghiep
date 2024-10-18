@@ -107,13 +107,13 @@ Route::middleware([])
         Route::post('lienhe', [TrangLienHeController::class, 'lienHe']);
 
         // Giỏ hàng
-       Route::middleware('auth.sanctum')->group(function () {
-           Route::get('/gio-hang', [GioHangController::class, 'index']);
-           Route::post('/gio-hang', [GioHangController::class, 'store']);
-           Route::put('/gio-hang/{id}', [GioHangController::class, 'update']);
-           Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
-           Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
-       });
+        Route::middleware('auth.sanctum')->group(function () {
+            Route::get('/gio-hang', [GioHangController::class, 'index']);
+            Route::post('/gio-hang', [GioHangController::class, 'store']);
+            Route::put('/gio-hang/{id}', [GioHangController::class, 'update']);
+            Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
+            Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
+        });
 
         // Đơn hàng
         Route::get('/don-hang', [DonHangClientController::class, 'donHangUser'])->middleware('auth:sanctum');
@@ -331,7 +331,7 @@ Route::middleware(['auth.sanctum'])
             Route::post('doanh-thu/tb', [ThongKeTongQuanController::class, 'thongKeDoanhThuTB']);
             Route::post('don-hang/trang-thai', [ThongKeTongQuanController::class, 'trangThaiKhoangDonSoSanh']);
             Route::post('doanh-thu/so-sanh', [ThongKeTongQuanController::class, 'doanhThuTheoKhoang']);
-            Route::get('thanh-toan-tien-mat-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanTienMatTheoNgay']);
+            Route::get('thanh-toan-tien-mat-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanTienMatTheoNgay'])->middleware(['throttle:100,1']);
             Route::get('thanh-toan-online-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanOnlineTheoNgay']);
             Route::get('tong-quan-theo-ngay', [ThongKeTongQuanController::class, 'thongKeTongQuanTrongNgay']);
             Route::get('doanh-thu-loi-nhuan-theo-ngay', [ThongKeTongQuanController::class, 'doanhThuLoiNhuanRoi']);

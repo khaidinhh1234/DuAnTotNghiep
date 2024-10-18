@@ -78,7 +78,8 @@ class VanChuyenController extends Controller
                     'van_chuyen' => $vanChuyen,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
-                    'ghi_chu' => $vanchuyen['ghichu']
+                    'ghi_chu' => $vanchuyen['ghichu'],
+                    'anh_xac_thuc' => $vanChuyen->anh_xac_thuc
                 ]
             ], 200);
         } catch (\Exception $exception) {
