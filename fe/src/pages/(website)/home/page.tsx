@@ -12,14 +12,18 @@ const HomePage = () => {
   const { data } = useQuery({
     queryKey: ["PRODUCTS_KEY"],
     queryFn: async () => {
-      const response = await instanceClient.get("trangchu");
-      if (response.data.status_code !== 200) {
-        throw new Error("Error fetching product");
+      try {
+        const response = await instanceClient.get("trangchu");
+        if (response.data.status_code !== 200) {
+          throw new Error("Lỗi khi lấy thông tin");
+        }
+        return response.data;
+      } catch (error) {
+        throw new Error("Lỗi khi lấy thông tin");
       }
-      return response.data;
     },
   });
-
+  // console.log(data?.danh_gia_khach_hang);
   const banner = data?.banner?.banner || [];
   const products = data?.danh_sach_san_pham_moi || [];
   const bo_suu_tap = data?.bo_suu_tap_ua_chuongs || [];

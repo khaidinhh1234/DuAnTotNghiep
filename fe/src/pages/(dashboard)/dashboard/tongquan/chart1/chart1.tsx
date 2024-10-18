@@ -12,6 +12,7 @@ interface ChartProps {
 }
 
 const Chart1 = ({ datestart, dateend }: ChartProps) => {
+  console.log(datestart, dateend);
   const date =
     datestart && dateend
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
