@@ -41,23 +41,39 @@ class VanChuyenController extends Controller
     public function show(string $id)
     {
         try {
-            $vanChuyen = VanChuyen::query()->with([  
+            $vanChuyen = VanChuyen::query()->with([
                 'donHang.chiTiets.bienTheSanPham.sanPham',
                 'donHang.chiTiets.bienTheSanPham.mauBienThe',
                 'donHang.chiTiets.bienTheSanPham.kichThuocBienThe',
                 'donHang.chiTiets.bienTheSanPham.anhBienThe',
-
-                'shipper'
+                'shipper',
+                'donHang'
             ])->findOrFail($id);
 
             // Tính toán tổng số lượng và tổng tiền
             $tongSoLuong = $vanChuyen->donHang->chiTiets->sum('so_luong');
             $tongTienSanPham = $vanChuyen->donHang->chiTiets->sum('thanh_tien');
 
+            //Thong tin user
+
+            if (
+                $vanChuyen->donHang->ten_nguoi_dat_hang == ""
+                && $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang == ""
+                && $vanChuyen->donHang->dia_chi_nguoi_dat_hang == ""
+            ) {
+                $thongTin = $vanChuyen->donHang->user;
+            } else {
+                $thongTin = [
+                    'ten_nguoi_dat_hang' => $vanChuyen->donHang->ten_nguoi_dat_hang === "" ? ($vanChuyen->donHang->user->ho . " " . $vanChuyen->donHang->user->ten) : $vanChuyen->donHang->ten_nguoi_dat_hang,
+                    'so_dien_thoai_nguoi_dat_hang' => $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang === "" ? $vanChuyen->donHang->user->so_dien_thoai : $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang,
+                    'dia_chi_nguoi_dat_hang' => $vanChuyen->donHang->dia_chi_nguoi_dat_hang === "" ? $vanChuyen->donHang->user->dia_chi : $vanChuyen->donHang->dia_chi_nguoi_dat_hang
+                ];
+            }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'data' => [
+                    'thong_tin' => $thongTin,
                     'van_chuyen' => $vanChuyen,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
@@ -122,7 +138,7 @@ class VanChuyenController extends Controller
                 'shipper_xac_nhan' => 'required|in:1,2',
                 'anh_xac_thuc' => 'nullable|',
                 'ghi_chu' => 'nullable|string'
-            ]); 
+            ]);
 
             DB::beginTransaction();
 
