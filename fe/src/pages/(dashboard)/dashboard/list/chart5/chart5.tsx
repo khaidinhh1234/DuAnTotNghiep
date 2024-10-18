@@ -13,13 +13,13 @@ const Chart5 = () => {
   return (
     <>
       <CardHeader>
-        <div className="flex">
+        <div className="flex items-center gap-10 justify-between">
           {" "}
           <CardTitle className="mt-5">Bán hàng gần đây</CardTitle>
           <img
             src="https://res.cloudinary.com/dpypwbeis/image/upload/v1729271891/Screenshot_2024-10-19_001716-removebg-preview_hhxvdp.png"
             alt="https://res.cloudinary.com/dpypwbeis/image/upload/v1729271891/Screenshot_2024-10-19_001716-removebg-preview_hhxvdp.png"
-            className="w-20 h-20 mx-auto"
+            className="w-16 h-14 "
           />
         </div>
       </CardHeader>
