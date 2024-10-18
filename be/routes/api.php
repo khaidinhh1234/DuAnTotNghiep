@@ -348,6 +348,7 @@ Route::middleware(['auth.sanctum'])
             Route::get('/top5-khach-hang-gan-day', [ThongKeKhachHangController::class, 'thongKeTop5KhachHangGanDay']);
 
             // Route thống kê sản phẩm
+            Route::post('/top-san-pham', [ThongKeSanPham::class, 'thongKeTopSanPham']);
             Route::post('/doanh-thu-tung-san-pham', [ThongKeSanPham::class, 'thongKeDoanhThuTheoSanPham']);
             Route::post('/doanh-thu-theo-tung-san-pham', [ThongKeSanPham::class, 'thongKeDoanhThuTheoSanPham']);
             Route::get('/san-pham-ban-theo-thang', [ThongKeSanPham::class, 'sanPhamBanChayTheoThang']);
