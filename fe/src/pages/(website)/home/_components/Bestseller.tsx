@@ -18,7 +18,7 @@ const Bestseller = ({ products }: any) => {
   // });
   // // console.log(data);
   // const products = data?.danh_sach_san_pham_moi || [];
-  console.log(products);
+  // console.log(products);
 
   return (
     <>
