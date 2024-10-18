@@ -46,7 +46,7 @@ const UserskhachhangAdd = () => {
       // form.resetFields();
     },
   });
-  const [isPending] = useState(false);
+  // const [isPending] = useState(false);
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     const data = {
       ...values,

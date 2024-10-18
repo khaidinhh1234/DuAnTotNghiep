@@ -240,7 +240,7 @@ const VoucherAdmin: React.FC = () => {
       key: "key",
       width: "5%",
       className: "text-center",
-      render: ( index) => index + 1,
+      render: (index) => index + 1,
     },
     {
       title: "Khuyến Mãi",
