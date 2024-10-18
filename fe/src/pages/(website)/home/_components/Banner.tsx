@@ -35,22 +35,22 @@ const Banner = () => {
                   className="md:w-full h-auto object-cover"
                 />
 
-                <div className="absolute  top-[270px] left-64">
-                  <div className="mb-16">
-                    <p className="font-semibold text-4xl text-black mb-7">
+                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
+                  <div className="lg:mb-16">
+                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-6xl  font-bold mb-5 tracking-[1px]">
+                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
                       {" "}
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-3xl  font-medium text uppercase">
+                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
                       {" "}
                       upto 40% off
                     </p>
                   </div>
                   <div>
-                    <button className="px-8 py-4 bg-blackL text-white rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
+                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
                       Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
                     </button>
                   </div>
@@ -62,22 +62,22 @@ const Banner = () => {
                   alt=""
                   className="w-full h-auto object-cover"
                 />{" "}
-                <div className="absolute  top-[270px] left-64">
-                  <div className="mb-16">
-                    <p className="font-semibold text-4xl text-black mb-7">
+                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
+                  <div className="lg:mb-16">
+                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-6xl  font-bold mb-5 tracking-[1px]">
+                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
                       {" "}
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-3xl  font-medium text uppercase">
+                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
                       {" "}
                       upto 40% off
                     </p>
                   </div>
                   <div>
-                    <button className="px-8 py-4 bg-blackL text-white rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
+                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
                       Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
                     </button>
                   </div>
@@ -89,22 +89,22 @@ const Banner = () => {
                   alt=""
                   className="w-full h-auto object-cover"
                 />{" "}
-                <div className="absolute  top-[270px] left-64">
-                  <div className="mb-16">
-                    <p className="font-semibold text-4xl text-black mb-7">
+                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
+                  <div className="lg:mb-16">
+                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-6xl  font-bold mb-5 tracking-[1px]">
+                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
                       {" "}
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-3xl  font-medium text uppercase">
+                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
                       {" "}
                       upto 40% off
                     </p>
                   </div>
                   <div>
-                    <button className="px-8 py-4 bg-blackL text-white rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
+                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
                       Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
                     </button>
                   </div>
@@ -116,22 +116,22 @@ const Banner = () => {
                   alt=""
                   className="w-full h-auto object-cover"
                 />{" "}
-                <div className="absolute  top-[270px] left-64">
-                  <div className="mb-16">
-                    <p className="font-semibold text-4xl text-black mb-7">
+                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
+                  <div className="lg:mb-16">
+                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-6xl  font-bold mb-5 tracking-[1px]">
+                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
                       {" "}
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-3xl  font-medium text uppercase">
+                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
                       {" "}
                       upto 40% off
                     </p>
                   </div>
                   <div>
-                    <button className="px-8 py-4 bg-blackL text-white rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
+                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
                       Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
                     </button>
                   </div>
@@ -143,22 +143,22 @@ const Banner = () => {
                   alt=""
                   className="w-full h-auto object-cover"
                 />{" "}
-                <div className="absolute  top-[270px] left-64">
-                  <div className="mb-16">
-                    <p className="font-semibold text-4xl text-black mb-7">
+                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
+                  <div className="lg:mb-16">
+                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-6xl  font-bold mb-5 tracking-[1px]">
+                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
                       {" "}
                       Beyond Builder
                     </p>
-                    <p className="text-blackL text-3xl  font-medium text uppercase">
+                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
                       {" "}
                       upto 40% off
                     </p>
                   </div>
                   <div>
-                    <button className="px-8 py-4 bg-blackL text-white rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
+                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
                       Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
                     </button>
                   </div>

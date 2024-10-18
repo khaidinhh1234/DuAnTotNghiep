@@ -49,7 +49,8 @@ class VanChuyenController extends Controller
                 'shipper',
                 'donHang'
             ])->findOrFail($id);
-
+            $vanChuyen->makeHidden(['ghi_chu']);
+            $vanchuyen['ghichu'] = json_decode($vanChuyen->ghi_chu);
             // Tính toán tổng số lượng và tổng tiền
             $tongSoLuong = $vanChuyen->donHang->chiTiets->sum('so_luong');
             $tongTienSanPham = $vanChuyen->donHang->chiTiets->sum('thanh_tien');
@@ -77,6 +78,8 @@ class VanChuyenController extends Controller
                     'van_chuyen' => $vanChuyen,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'ghi_chu' => $vanchuyen['ghichu'],
+                    'anh_xac_thuc' => $vanChuyen->anh_xac_thuc
                 ]
             ], 200);
         } catch (\Exception $exception) {
