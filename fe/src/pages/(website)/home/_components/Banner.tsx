@@ -1,4 +1,4 @@
-import { banner1, banner3, banner4, banner5, banner6 } from "@/assets/img";
+import { banner1 } from "@/assets/img";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
