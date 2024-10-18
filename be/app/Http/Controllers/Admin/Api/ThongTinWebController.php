@@ -71,7 +71,7 @@ class ThongTinWebController extends Controller
             'banner.*.noi_dung.tieu_de_nut' => 'nullable|string|max:255',
             'banner.*.noi_dung.mau_nut' => 'nullable|string|max:7',
             'banner.*.noi_dung.duong_link' => 'nullable|string|max:255',
-            'banner.*.loai_banner' => 'nullable|in:1,2', // 1 Banner quảng cáo sản phẩm, 2 Banner quảng cáo dịch vụ
+            // 'banner.*.loai_banner' => 'nullable|in:1,2', // 1 Banner quảng cáo sản phẩm, 2 Banner quảng cáo dịch vụ
         ]);
 
         if ($validator->fails()) {

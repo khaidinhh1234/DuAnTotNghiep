@@ -137,7 +137,10 @@ class VanChuyenController extends Controller
             $validate = $request->validate([
                 'shipper_xac_nhan' => 'required|in:1,2',
                 'anh_xac_thuc' => 'nullable|',
-                'ghi_chu' => 'nullable|string'
+                'ghi_chu' => 'nullable|array',
+                'ghi_chu.*.lan1' => 'nullable|string',
+                'ghi_chu.*.lan2' => 'nullable|string',
+                'ghi_chu.*.lan3' => 'nullable|string',
             ]);
 
             DB::beginTransaction();
@@ -155,7 +158,7 @@ class VanChuyenController extends Controller
                         $vanChuyen->update([
                             'trang_thai_van_chuyen' => VanChuyen::TTVC_GHTB,
                             'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
-                            'ghi_chu' => $validate['ghi_chu']
+                            'ghi_chu' => json_encode($validate['ghi_chu.*.lan3']),
                         ]);
                         DB::commit();
                         return response()->json([
@@ -166,7 +169,7 @@ class VanChuyenController extends Controller
                     } else {
                         $vanChuyen->increment('so_lan_giao');
                         $vanChuyen->update([
-                            'ghi_chu' => $validate['ghi_chu']
+                            'ghi_chu' => json_encode($validate['ghi_chu.*.lan' . $vanChuyen->so_lan_giao]),
                         ]);
                         DB::commit();
                         return response()->json([
