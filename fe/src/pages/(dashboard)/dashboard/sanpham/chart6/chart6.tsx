@@ -3,6 +3,7 @@ import { Table } from "antd";
 import type { TableColumnsType } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import instance from "@/configs/admin";
+import { Dayjs } from "dayjs";
 
 interface DataType {
   key: React.Key;
