@@ -11,8 +11,8 @@ import "swiper/css/pagination";
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 
 const Banner = ({ banner }: any) => {
-  const mau = banner?.[0]?.noi_dung?.mau_tieu_de_chinh;
-  console.log(mau);
+  // const mau = banner?.[0]?.noi_dung?.mau_tieu_de_chinh;
+  console.log(banner);
   return (
     <div>
       {" "}
@@ -40,16 +40,20 @@ const Banner = ({ banner }: any) => {
 
                   <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
                     <div className="lg:mb-16">
-                      <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
+                      <p
+                        className={`font-semibold text-xs lg:text-4xl text-[${item?.noi_dung?.mau_tieu_de_phu ?? "#ffffff"}] lg:mb-7`}
+                      >
                         {item?.noi_dung?.tieu_de_phu || "Beyond Builder"}
                       </p>
                       <p
-                        className={`text-[${mau ? mau : "#321c75"}] text-md lg:text-6xl font-bold lg:mb-5 tracking-[1px]`}
+                        className={`text-[${item?.noi_dung?.mau_tieu_de_chinh ?? "#ffffff"}] text-md lg:text-6xl font-bold lg:mb-5 tracking-[1px]`}
                       >
                         {item?.noi_dung?.tieu_de_chinh ?? "Beyond Builder"}
                       </p>
 
-                      <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
+                      <p
+                        className={`text-[${item?.noi_dung?.mau_van_ban_quang_cao ?? "#ffffff"}] text-xs lg:text-3xl font-medium text uppercase`}
+                      >
                         {" "}
                         {item?.noi_dung?.van_ban_quang_cao || "upto 40% off"}
                       </p>
@@ -65,114 +69,6 @@ const Banner = ({ banner }: any) => {
                   </div>
                 </SwiperSlide>
               ))}
-              {/* <SwiperSlide>
-                <img
-                  src={banner3}
-                  alt=""
-                  className="w-full h-auto object-cover"
-                />{" "}
-                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
-                  <div className="lg:mb-16">
-                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
-                      Beyond Builder
-                    </p>
-                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
-                      {" "}
-                      Beyond Builder
-                    </p>
-                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
-                      {" "}
-                      upto 40% off
-                    </p>
-                  </div>
-                  <div>
-                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
-                      Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
-                    </button>
-                  </div>
-                </div>
-              </SwiperSlide>{" "}
-              <SwiperSlide>
-                <img
-                  src={banner4}
-                  alt=""
-                  className="w-full h-auto object-cover"
-                />{" "}
-                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
-                  <div className="lg:mb-16">
-                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
-                      Beyond Builder
-                    </p>
-                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
-                      {" "}
-                      Beyond Builder
-                    </p>
-                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
-                      {" "}
-                      upto 40% off
-                    </p>
-                  </div>
-                  <div>
-                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
-                      Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
-                    </button>
-                  </div>
-                </div>
-              </SwiperSlide>{" "}
-              <SwiperSlide>
-                <img
-                  src={banner5}
-                  alt=""
-                  className="w-full h-auto object-cover"
-                />{" "}
-                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
-                  <div className="lg:mb-16">
-                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
-                      Beyond Builder
-                    </p>
-                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
-                      {" "}
-                      Beyond Builder
-                    </p>
-                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
-                      {" "}
-                      upto 40% off
-                    </p>
-                  </div>
-                  <div>
-                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
-                      Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
-                    </button>
-                  </div>
-                </div>
-              </SwiperSlide>{" "}
-              <SwiperSlide>
-                <img
-                  src={banner6}
-                  alt=""
-                  className="w-full h-auto object-cover"
-                />{" "}
-                <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
-                  <div className="lg:mb-16">
-                    <p className="font-semibold text-xs lg:text-4xl text-black lg:mb-7">
-                      Beyond Builder
-                    </p>
-                    <p className="text-blackL text-md lg:text-6xl  font-bold lg:mb-5 tracking-[1px]">
-                      {" "}
-                      Beyond Builder
-                    </p>
-                    <p className="text-blackL text-xs lg:text-3xl  font-medium text uppercase">
-                      {" "}
-                      upto 40% off
-                    </p>
-                  </div>
-                  <div>
-                    <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
-                      Shop Now<i className="fa-solid fa-arrow-right ml-3"></i>
-                    </button>
-                  </div>
-                </div>
-              </SwiperSlide> */}
             </Swiper>
           </div>
           {/* <div className="fixed bottom-10 right-10 z-20">
