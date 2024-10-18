@@ -1,7 +1,4 @@
 // import { sanPham2 } from "@/assets/img";
-import instanceClient from "@/configs/client";
-
-import { useQuery } from "@tanstack/react-query";
 
 import { Link } from "react-router-dom";
 
