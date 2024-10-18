@@ -1,4 +1,3 @@
-
 // import { sanPham2 } from "@/assets/img";
 import instanceClient from "@/configs/client";
 
@@ -19,7 +18,7 @@ const Bestseller = ({ products }: any) => {
   // });
   // // console.log(data);
   // const products = data?.danh_sach_san_pham_moi || [];
-  // console.log(products);
+  console.log(products);
 
   return (
     <>
@@ -73,31 +72,24 @@ const Bestseller = ({ products }: any) => {
                       </h5>
                     </a>
                     <p className="font-semibold text-lg">
-                      {(product?.bien_the_san_pham[0].gia_khuyen_mai).toLocaleString(
-                        "vi-VN"
-                      ) ?? 0}{" "}
-                      đ
+                      {(product?.gia_thap_nhat).toLocaleString("vi-VN") ?? 0} đ
                       <span className="text-black/20 line-through pl-3 text-[16px]">
-                        {(product?.bien_the_san_pham[0]?.gia_ban).toLocaleString(
-                          "vi-VN"
-                        ) ?? 0}{" "}
+                        {(product?.gia_thap_nhat).toLocaleString("vi-VN") ?? 0}{" "}
                         đ
                       </span>
                     </p>
 
                     <p className="font-bold text-lg flex items-center">
                       {" "}
-                      {product?.bien_the_san_pham?.map(
-                        (item: any, index: any) => (
-                          <button
-                            key={index}
-                            className="w-7 h-7 rounded-full border-1 inline-block mr-1"
-                            style={{
-                              backgroundColor: item?.mau_bien_the?.ma_mau_sac,
-                            }}
-                          />
-                        )
-                      )}
+                      {product?.bien_the?.map((item: any, index: any) => (
+                        <button
+                          key={index}
+                          className="w-7 h-7 rounded-full border-1 inline-block mr-1"
+                          style={{
+                            backgroundColor: item?.ma_mau_sac,
+                          }}
+                        />
+                      ))}
                     </p>
                   </div>
                 </div>
