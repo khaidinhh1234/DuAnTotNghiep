@@ -4,24 +4,37 @@ import Chart6 from "./chart6/chart6";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { ConfigProvider, DatePicker, Select } from "antd";
+import { DatePicker, Select } from "antd";
 // import viVN from "antd/lib/locale/vi_VN";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import "moment/locale/vi";
-const handleChange = (value: string) => {
-  console.log(`selected ${value}`);
-};
+import { useState } from "react";
 
 const { RangePicker } = DatePicker;
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.locale("vi");
 
-// const { RangePicker } = DatePicker;
 const SanPham = () => {
+  const [datestart, setDatestart] = useState(dayjs().subtract(10, "day"));
+  const [dateend, setDateend] = useState(dayjs());
+  const [top, setTop] = useState(5);
+
+  // console.log(datestart, dateend);
+  const handleDateChange = (value: any) => {
+    if (value) {
+      const [startDate, endDate] = value;
+      setDatestart(startDate);
+      setDateend(endDate);
+    }
+  };
+
+  const handleChange = (value: any) => {
+    setTop(value);
+  };
   return (
     <>
       <div className="p-6 bg-gray-100 min-h-screen">
@@ -29,20 +42,20 @@ const SanPham = () => {
           <h2 className="text-2xl font-bold ">Thống kê sản phẩm</h2>
           <div>
             <RangePicker
-              // onChange={handleDateChange}
-              // value={[datestart, dateend]} // Hiển thị giá trị ngày từ state
+              onChange={handleDateChange}
+              value={[datestart, dateend]} // Hiển thị giá trị ngày từ state
               defaultValue={[dayjs().subtract(10, "day"), dayjs()]} // Giá trị mặc định từ 10 ngày trước đến hôm nay
             />
 
             <Select
-              defaultValue="1"
+              defaultValue="Top 5"
               style={{ width: 120 }}
               className="ml-5"
               onChange={handleChange}
               options={[
-                { value: "1", label: "Top 5" },
-                { value: "2", label: "Top 10" },
-                { value: "3", label: "Top 20" },
+                { value: 5, label: "Top 5" },
+                { value: 10, label: "Top 10" },
+                { value: 20, label: "Top 20" },
               ]}
             />
           </div>{" "}
@@ -52,9 +65,9 @@ const SanPham = () => {
             <h2 className="text-base  font-semibold mb-3 text-end ">
               Phân tích theo dõi sản phẩm
             </h2>
-            <Chart5 />
+            <Chart5 datestart={datestart} dateend={dateend} top={top} />
           </div>
-          <Chart6 />
+          <Chart6 datestart={datestart} dateend={dateend} top={top} />
         </div>
       </div>
     </>

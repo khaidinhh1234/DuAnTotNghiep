@@ -12,7 +12,7 @@ import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 
 const Banner = ({ banner }: any) => {
   // const mau = banner?.[0]?.noi_dung?.mau_tieu_de_chinh;
-  console.log(banner);
+  // console.log(banner);
   return (
     <div>
       {" "}

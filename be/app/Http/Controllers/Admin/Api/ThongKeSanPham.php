@@ -27,15 +27,14 @@ class ThongKeSanPham extends Controller
 
         // Truy vấn chi tiết đơn hàng theo khoảng thời gian và trạng thái "TTDH_HTDH"
         $topSanPhams = DonHangChiTiet::select('bien_the_san_pham_id', DB::raw('SUM(so_luong) as tong_so_luong'))
-            ->whereHas('donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
-                $query->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
-                      ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái
-            })
-            ->groupBy('bien_the_san_pham_id')
-            ->orderBy('tong_so_luong', 'desc')
-            ->limit($soLuongTop)
-            ->with(['bienTheSanPham.sanPham']) // Load sản phẩm để lấy tên
-            ->get();
+        ->whereHas('donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
+            $query->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
+        })
+        ->groupBy('bien_the_san_pham_id')
+        ->orderBy('tong_so_luong', 'desc')
+        ->limit($soLuongTop)
+        ->with(['bienTheSanPham.sanPham']) // Load sản phẩm để lấy tên
+        ->get();
 
         $result = [];
 
@@ -44,20 +43,18 @@ class ThongKeSanPham extends Controller
 
             $soLuongTheoNgay = [];
             foreach ($dates as $date) {
-                $soLuongTrongNgay = DonHangChiTiet::whereDate('created_at', $date)
+                $soLuongTrongNgay = DonHangChiTiet::whereHas('donHang', function ($query) use ($date) {
+                    $query->whereDate('ngay_hoan_thanh_don', $date);
+                })
                     ->where('bien_the_san_pham_id', $sanPhamChiTiet->bien_the_san_pham_id)
-                    ->whereHas('donHang', function ($query) {
-                        $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
-                    })
                     ->sum('so_luong');
-
                 // Đảm bảo số lượng là một số (trả về 0 nếu không có dữ liệu)
                 $soLuongTheoNgay[] = (int) $soLuongTrongNgay;
             }
 
             // Thêm vào result
             $result[] = [
-                'sản phẩm' => $tenSanPham,
+                'name' => $tenSanPham,
                 'data' => $soLuongTheoNgay,
             ];
         }
