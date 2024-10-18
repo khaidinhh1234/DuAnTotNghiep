@@ -191,7 +191,7 @@ class ThongKeKhachHangController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
     }
-    public function thongKeDoTuoi(Request $request)
+   public function thongKeDoTuoi(Request $request)
     {
         // Thống kê giới tính
         $gioiTinhLabels = ['nam', 'nu', 'khac', 'conlai'];
@@ -199,22 +199,30 @@ class ThongKeKhachHangController extends Controller
             'nam' => User::where('gioi_tinh', User::TYPE_NAM)->count(),
             'nu' => User::where('gioi_tinh', User::TYPE_NU)->count(),
             'khac' => User::where('gioi_tinh', User::TYPE_KHAC)->count(),
-            'conlai' => User::whereNull('gioi_tinh')->orWhere('gioi_tinh', '=', null)->count() // Thống kê những người không nhập giới tính
+            'conlai' => User::whereNull('gioi_tinh')->orWhere('gioi_tinh', '=', null)->count()
         ];
+
         $gioiTinhValues = array_values($gioiTinhCounts); // Mảng số lượng giới tính
+        $tongSoNguoiDung = array_sum($gioiTinhCounts); // Tổng số người dùng
+
+        // Tính tỉ lệ phần trăm giới tính
+        $gioiTinhPhanTram= [
+            'nam' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['nam'] / $tongSoNguoiDung) * 100, 2) : 0,
+            'nu' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['nu'] / $tongSoNguoiDung) * 100, 2) : 0,
+            'khac' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['khac'] / $tongSoNguoiDung) * 100, 2) : 0,
+            'conlai' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['conlai'] / $tongSoNguoiDung) * 100, 2) : 0,
+        ];
+
         // Khởi tạo mảng tuổi và số lượng
         $tuoiLabels = ['duoi_18', '18_24', '25_34', '35_44', '45_54', 'tren_55'];
-        $doTuoiCounts = array_fill_keys($tuoiLabels, 0); // Mảng số lượng khởi tạo với giá trị 0
+        $doTuoiCounts = array_fill_keys($tuoiLabels, 0);
+
         // Lấy danh sách tất cả khách hàng và tính toán tuổi
         $users = User::select('ngay_sinh')->get();
-        //Thống kế số lượng người không nhập ngày sinh
-        $ngaySinhUser = User::select('ngay_sinh')->get();
-
-        $khongCoNgaysinh = $ngaySinhUser->whereNull('ngay_sinh')->count();
-        $coNgaySinh = $ngaySinhUser->whereNotNull('ngay_sinh')->count();
 
         foreach ($users as $user) {
             $tuoi = Carbon::parse($user->ngay_sinh)->age;
+
             if ($tuoi < 18) {
                 $doTuoiCounts['duoi_18']++;
             } elseif ($tuoi >= 18 && $tuoi <= 24) {
@@ -229,15 +237,16 @@ class ThongKeKhachHangController extends Controller
                 $doTuoiCounts['tren_55']++;
             }
         }
+
         // Tách riêng mảng tuổi và mảng số lượng
         $tuoiGroups = array_keys($doTuoiCounts);
         $soLuongGroups = array_values($doTuoiCounts);
-        // Trả về kết hợp thống kê giới tính và độ tuổi
+
+        // Trả về kết hợp thống kê giới tính, tỷ lệ giới tính và độ tuổi
         return response()->json([
-            'khong_co_ngay_sinh' => $khongCoNgaysinh,
-            'co_ngay_sinh' => $coNgaySinh,
-            'gioi_tinh_labels' => $gioiTinhLabels, // Mảng nhãn giới tính
-            'gioi_tinh_counts' => $gioiTinhValues, // Mảng số lượng giới tính
+            'gioi_tinh_labels' => $gioiTinhLabels,
+            'gioi_tinh_counts' => $gioiTinhValues,
+            'gioi_tinh_percents' => $gioiTinhPhanTram,
             'tuoi' => $tuoiGroups,
             'so_luong' => $soLuongGroups,
         ]);
@@ -269,7 +278,7 @@ class ThongKeKhachHangController extends Controller
             'tong_chi_tieu' => $tongChiTieu,
         ];
     }
-    public function thongKeKhachHangAll()
+      public function thongKeKhachHangAll()
     {
         // Khởi tạo các mảng kết quả
         $soLuongKhachHangMoi = [];
@@ -289,13 +298,18 @@ class ThongKeKhachHangController extends Controller
             // Tính mốc thời gian hiện tại (cuối ngày)
             $mocThoiGianHienTai = $date->copy()->endOfDay(); // Mốc thời gian hiện tại (cuối ngày)
             $mocThoiGianTruoc = $date->copy()->startOfDay(); // Mốc thời gian trước đó (đầu ngày)
+
             // Tính khách hàng mới (đăng ký trong ngày hiện tại)
             $khachHangMoi = User::whereBetween('created_at', [$mocThoiGianTruoc, $mocThoiGianHienTai])->count();
+
             // Cập nhật số lượng khách hàng cũ
             $khachHangCu = User::where('created_at', '<', $now->copy()->subMonth())->count(); // Khách hàng cũ (đăng ký trước 1 tháng)
+
             // $khachHangCu =User::where('created_at', '<', $startDate->copy()->subMonth())->where('created_at', '>=', $startDate)->count();
+
             // Cộng dồn tổng số khách hàng mới
             $tongKhachHangCongDon += $khachHangMoi;
+
             // Lưu dữ liệu vào mảng cho mỗi ngày
             if ($date->day % 2 == 1) { // Chỉ lưu dữ liệu cho các ngày lẻ (1, 3, 5, ...)
                 $mocTime[] = $date->format('Y-m-d'); // Thêm mốc thời gian vào mảng
@@ -304,6 +318,7 @@ class ThongKeKhachHangController extends Controller
                 $tongSoLuongKhachHang[] = $tongKhachHangCongDon + $khachHangCu; // Tổng số khách hàng
             }
         }
+
         // Trả về kết quả dưới dạng JSON
         return response()->json([
             'so_luong_khach_hang_moi' => $soLuongKhachHangMoi,  // Tổng khách hàng mới cộng dồn
@@ -311,6 +326,7 @@ class ThongKeKhachHangController extends Controller
             'tong_so_luong_khach_hang' => $tongSoLuongKhachHang,  // Tổng số khách hàng
             'moc_time' => $mocTime  // Mốc thời gian (ngày)
         ]);
+
     }
     function top10KhachHangTieuBieu()
     {

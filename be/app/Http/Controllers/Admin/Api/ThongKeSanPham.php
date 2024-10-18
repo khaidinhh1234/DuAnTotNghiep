@@ -14,6 +14,51 @@ use Illuminate\Support\Facades\DB;
 
 class ThongKeSanPham extends Controller
 {
+    public function thongKeTopSanPham(Request $request)
+    {
+        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
+        $soLuongTop = $request->input('top') ?? 5;
+
+        $dates = [];
+        for ($date = $ngayBatDau; $date->lte($ngayKetThuc); $date->addDay()) {
+            $dates[] = $date->format('Y-m-d');
+        }
+
+        $topSanPhams = DonHangChiTiet::select('bien_the_san_pham_id', DB::raw('SUM(so_luong) as tong_so_luong'))
+            ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+            ->groupBy('bien_the_san_pham_id')
+            ->orderBy('tong_so_luong', 'desc')
+            ->limit($soLuongTop)
+            ->with(['bienTheSanPham.sanPham']) // Load sản phẩm để lấy tên
+            ->get();
+
+        $result = [];
+
+        foreach ($topSanPhams as $sanPhamChiTiet) {
+            $tenSanPham = $sanPhamChiTiet->bienTheSanPham->sanPham->ten_san_pham;
+
+            $soLuongTheoNgay = [];
+            foreach ($dates as $date) {
+                $soLuongTrongNgay = DonHangChiTiet::whereDate('created_at', $date)
+                    ->where('bien_the_san_pham_id', $sanPhamChiTiet->bien_the_san_pham_id)
+                    ->sum('so_luong');
+                $soLuongTheoNgay[] = $soLuongTrongNgay;
+            }
+
+            // Thêm vào result
+            $result[] = [
+                'sản phẩm' => $tenSanPham,
+                'data' => $soLuongTheoNgay,
+            ];
+        }
+
+        return response()->json([
+            'ngay_trong_khoang_chon' => $dates,
+            'series' => $result,
+        ]);
+    }
+
 
     public function thongKeSanPhamTonKho()
     {
