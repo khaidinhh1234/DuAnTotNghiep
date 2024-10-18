@@ -15,6 +15,7 @@ class GioHang extends Model
         'bien_the_san_pham_id',
         'so_luong',
         'gia',
+        'gia_cu'
         ];
 
 
