@@ -13,11 +13,11 @@ const Chart5 = () => {
   return (
     <>
       <CardHeader>
-        <CardTitle>Bán hàng gần đây</CardTitle>
+        <CardTitle className="mt-5">Bán hàng gần đây</CardTitle>
       </CardHeader>
       {data?.map((item: any, index: number) => (
         <CardContent className="grid gap-8  py-4 px-6 rounded-lg " key={index}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between border-b pb-2">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14">
                 <img
@@ -33,7 +33,7 @@ const Chart5 = () => {
                 <p className="text-sm text-gray-600">{item?.email}</p>
               </div>
             </div>
-            <div className="font-medium text-gray-800">
+            <div className="font-bold text-gray-800">
               + {item?.tong_tien_da_mua.toLocaleString("vn-VN")} VNĐ
             </div>
           </div>

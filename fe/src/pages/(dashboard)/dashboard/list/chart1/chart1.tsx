@@ -9,8 +9,12 @@ export default function Chart1() {
   const { data } = useQuery({
     queryKey: ["thongkesdf"],
     queryFn: async () => {
-      const res = await instance.get("thong-ke/doanh-thu-so-sanh");
-      return res.data;
+      try {
+        const res = await instance.get("thong-ke/doanh-thu-so-sanh");
+        return res.data;
+      } catch (error) {
+        console.error(error);
+      }
     },
   });
   // console.log(data);
@@ -23,80 +27,19 @@ export default function Chart1() {
           day.
         </CardDescription> */}
       </CardHeader>
-      <CardContent className="flex gap-4 p-6 pt-0">
+      <CardContent className="flex gap-4 p-6 pt-0 justify-between ">
         <div className="flex items-baseline gap-1 text-2xl tabular-nums leading-none">
           <div>
-            <div className="font-bold">{ data?.doanh_thu_thang_hien_tai.toLocaleString("vi-VN")}</div>
-            <span className="text-xs text-muted-foreground">
-              +{data?.chenh_lech_phan_tram}% so với tháng trước
+            <div className="font-bold text-green-700">
+              {data?.doanh_thu_thang_hien_tai.toLocaleString("vi-VN")} đ
+            </div>
+            <span className="text-sm text-muted-foreground text-green-600">
+              +{data?.chenh_lech_phan_tram}%{" "}
+              <span className="text-black">so với tháng trước</span>
             </span>
           </div>{" "}
         </div>
-        <ChartContainer
-          config={{
-            steps: {
-              label: "Steps",
-              color: "hsl(var(--chart-1))",
-            },
-          }}
-          className="ml-auto w-[72px]"
-        >
-          <BarChart
-            accessibilityLayer
-            margin={{
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-            }}
-            data={[
-              {
-                date: "2024-01-01",
-                steps: 2000,
-              },
-              {
-                date: "2024-01-02",
-                steps: 2100,
-              },
-              {
-                date: "2024-01-03",
-                steps: 2200,
-              },
-              {
-                date: "2024-01-04",
-                steps: 1300,
-              },
-              {
-                date: "2024-01-05",
-                steps: 1400,
-              },
-              {
-                date: "2024-01-06",
-                steps: 2500,
-              },
-              {
-                date: "2024-01-07",
-                steps: 1600,
-              },
-            ]}
-          >
-            <Bar
-              dataKey="steps"
-              fill="var(--color-steps)"
-              radius={2}
-              fillOpacity={0.2}
-              activeIndex={6}
-              activeBar={<Rectangle fillOpacity={0.8} />}
-            />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={4}
-              hide
-            />
-          </BarChart>
-        </ChartContainer>
+        <i className="fa-solid fa-chart-mixed-up-circle-dollar text-4xl text-green-600"></i>
       </CardContent>
     </Card>
   );

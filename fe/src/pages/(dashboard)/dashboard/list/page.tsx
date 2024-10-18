@@ -12,7 +12,7 @@ export function List() {
       <div className="flex mb-6 gap-10">
         <h2 className="text-2xl font-bold ">Thống kê doanh thu</h2>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mb-5">
         {/* <Card x-chunk="dashboard-01-chunk-0 " className="bg-white"> */}
         <Chart1 />
         {/* </Card> */}
