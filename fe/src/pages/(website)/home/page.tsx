@@ -19,12 +19,13 @@ const HomePage = () => {
       return response.data;
     },
   });
-  console.log(data?.bo_suu_tap_ua_chuongs);
+
+  const banner = data?.banner?.banner || [];
   const products = data?.danh_sach_san_pham_moi || [];
   const bo_suu_tap = data?.bo_suu_tap_ua_chuongs || [];
   return (
     <div>
-      <Banner />
+      <Banner banner={banner} />
       <Categories bo_suu_tap={bo_suu_tap} />
       <Bestseller products={products} />
       <DealsOfTheMonth />
