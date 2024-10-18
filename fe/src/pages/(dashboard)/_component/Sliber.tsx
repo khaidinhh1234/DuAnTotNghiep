@@ -53,7 +53,7 @@ const SiderComponent: React.FC = () => {
               <Menu.Item key="/admin/dashboard/list">Tổng quan</Menu.Item>
               <Menu.Item key="/admin/dashboard/doanhthu">Doanh thu</Menu.Item>
               <Menu.Item key="/admin/dashboard/sanpham">Sản phẩm</Menu.Item>
-              <Menu.Item key="/admin/dashboard/taikhoan">Tài khoản</Menu.Item>
+              <Menu.Item key="/admin/dashboard/taikhoan">Khách hàng</Menu.Item>
             </SubMenu>
           )}
           {(quyen?.includes("admin.sanpham.index") ||
