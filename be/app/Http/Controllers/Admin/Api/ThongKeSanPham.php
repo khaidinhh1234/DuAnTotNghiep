@@ -59,6 +59,86 @@ class ThongKeSanPham extends Controller
         ]);
     }
 
+    public function thongKeSanPhamAllTime(Request $request) {
+        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->addDay();
+    
+        // Lấy danh sách các sản phẩm và biến thể
+        $sanPhams = SanPham::whereHas('bienTheSanPham.chiTiets.donHang', function ($query) {
+            $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH);
+        })->with(['bienTheSanPham', 'bienTheSanPham.chiTiets' => function ($query) {
+            $query->whereHas('donHang', function ($query) {
+                $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH);
+            });
+        }])->get();
+    
+        // Khởi tạo các biến tổng
+        $totalSoLuongBanRa = 0;
+        $totalSoLuongThucTeBan = 0;
+        $totalTienHang = 0;
+        $totalDoanhSo = 0;
+        $totalSoLuongDonHang = 0;
+    
+        $thongKeSanPhams = [];
+    
+        foreach ($sanPhams as $sanPham) {
+            foreach ($sanPham->bienTheSanPham as $bienThe) {
+                $soLuongThucTeBan = 0;
+                $soLuongBanRa = 0;
+                $tienHang = 0;
+                $doanhSo = 0;
+                $soLuongDonHang = 0;
+    
+                foreach ($bienThe->chiTiets as $chiTiet) {
+                    $donHang = $chiTiet->donHang;
+    
+                    // Tính tổng số lượng bán ra (bao gồm tất cả đơn hàng)
+                    $soLuongBanRa += $chiTiet->so_luong;
+    
+                    // Chỉ tính số lượng thực bán và thành tiền cho các đơn hoàn tất
+                    if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH) {
+                        $soLuongThucTeBan += $chiTiet->so_luong;
+                        $doanhSo += $chiTiet->thanh_tien;
+                        $soLuongDonHang++;
+                    }
+                }
+    
+                // Tính tiền hàng từ chi phí sản xuất * số lượng biến thể (hoặc số lượng bán ra tùy logic)
+                $tienHang = $bienThe->chi_phi_san_xuat * $soLuongBanRa;
+    
+                // Cộng dồn các giá trị vào tổng
+                $totalSoLuongBanRa += $soLuongBanRa;
+                $totalSoLuongThucTeBan += $soLuongThucTeBan;
+                $totalTienHang += $tienHang;
+                $totalDoanhSo += $doanhSo;
+                $totalSoLuongDonHang += $soLuongDonHang;
+    
+                // Lưu dữ liệu thống kê vào mảng
+                $thongKeSanPhams[] = [
+                    'ma_san_pham' => $sanPham->ma_san_pham,
+                    'ten_san_pham' => $sanPham->ten_san_pham,
+                    'so_luong_ban_ra' => $soLuongBanRa,
+                    'so_luong_thuc_ban' => $soLuongThucTeBan,
+                    'tien_hang' => $tienHang,
+                    'doanh_so' => $doanhSo,
+                    'so_luong_don_hang' => $soLuongDonHang,
+                ];
+            }
+        }
+    
+        return response()->json([
+            'data' => $thongKeSanPhams,
+            'tong_so_luong_ban_ra' => $totalSoLuongBanRa,
+            'tong_so_luong_thuc_ban' => $totalSoLuongThucTeBan,
+            'tong_tien_hang' => $totalTienHang,
+            'tong_doanh_so' => $totalDoanhSo,
+            'tong_so_luong_don_hang' => $totalSoLuongDonHang,
+            'ngay_bat_dau' => $ngayBatDau->format('Y-m-d'),
+            'ngay_ket_thuc' => $ngayKetThuc->format('Y-m-d')
+        ]);
+    }
+    
+
 
     public function thongKeSanPhamTonKho()
     {
