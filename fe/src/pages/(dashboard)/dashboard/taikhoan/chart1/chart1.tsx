@@ -2,7 +2,7 @@ import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import ReactApexChart from "react-apexcharts";
-const conlai = 100 - (57 + 3 + 4);
+// const conlai = 100 - (57 + 3 + 4);
 const Chart1: React.FC = () => {
   const { data: chart1 } = useQuery({
     queryKey: ["khachhangtable1chart1"],

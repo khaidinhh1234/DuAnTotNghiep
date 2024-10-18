@@ -97,8 +97,8 @@ const Chart5 = () => {
 
   return (
     <>
+      {" "}
       <Chart
-        className="bg-white p-5"
         options={optionsareachart}
         series={seriesareachart}
         type="area"

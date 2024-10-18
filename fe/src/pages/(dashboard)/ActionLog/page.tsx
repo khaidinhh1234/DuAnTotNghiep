@@ -51,11 +51,12 @@ export function ActionLog() {
       key: index + 1,
       ten_bang: tableNamesWithAccents[item?.ten_bang] || item?.ten_bang,
       hanh_dong: item?.loai_thao_tac,
-      anh: item?.user?.anh_nguoi_dung,
-      email: item?.user?.email,
+      anh: item?.anh_nguoi_dung,
+      email: item?.email,
       thoi_gian: reversedDate + " " + time,
       // thoi_gian_raw: item?.created_at,
-      nhanvien: item?.user?.ho + " " + item?.user?.ten,
+      ten_vai_tro: item?.ten_vai_tro,
+      nhanvien: item?.ten,
       mo_ta: item?.mo_ta,
       dia_chi_ip: item?.dia_chi_ip,
     };
@@ -136,14 +137,14 @@ export function ActionLog() {
       key: "ten_bang",
     },
     {
-      title: "Hành động",
+      title: "Chức vụ",
       // className: "w-[10%]",
-      dataIndex: "hanh_dong",
+      dataIndex: "ten_vai_tro",
       render: (text: any) => {
         return (
           <div>
             <p
-              className={`w-24 text-center text-white rounded-md font-bold px-2 my-auto ${text === "Thêm mới" ? "bg-green-500" : text === "Xóa" ? "bg-red-500" : "bg-yellow-500"}`}
+              className={` text-center text-white rounded-md font-bold px-2 my-auto ${text === "Quản trị viên" ? "bg-green-500" : text === "Khách hàng" ? "bg-red-700" : "bg-yellow-500"}`}
             >
               {" "}
               {text}

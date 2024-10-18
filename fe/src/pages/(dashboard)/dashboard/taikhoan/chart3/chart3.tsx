@@ -11,7 +11,7 @@ const Chart3: React.FC = () => {
       return response.data;
     },
   });
-  console.log(chart3);
+  // console.log(chart3);
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: "line",

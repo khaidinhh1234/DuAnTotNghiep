@@ -9,15 +9,15 @@ const Chart4: React.FC = () => {
     queryKey: ["khachhangtable1chart1"],
     queryFn: async () => {
       const response = await instance.get("/thong-ke/khach-hang-do-tuoi");
-      return response.data;
+      return response.data || {};
     },
   });
-  console.log(chart1);
+
   const [chartData, setChartData] = useState({
     series: [
       {
         name: "Người",
-        data: chart1?.so_luong || [],
+        data: [],
       },
     ],
     options: {
@@ -83,6 +83,7 @@ const Chart4: React.FC = () => {
       },
     },
   });
+
   useEffect(() => {
     if (chart1) {
       setChartData((prevData) => ({
@@ -96,25 +97,38 @@ const Chart4: React.FC = () => {
       }));
     }
   }, [chart1]);
+
+  const coPercent =
+    chart1 &&
+    chart1.co_ngay_sinh !== undefined &&
+    chart1.không_co_ngay_sinh !== undefined
+      ? (chart1.co_ngay_sinh /
+          (chart1.co_ngay_sinh + chart1.không_co_ngay_sinh)) *
+        100
+      : 0;
+
   return (
     <>
       <h3 className="mx-5 font-semibold">Độ tuổi</h3>
+
       <div className="">
-        <Progress
-          percent={59}
-          percentPosition={{ align: "center", type: "inner" }}
-          size={[300, 10]}
-          strokeColor={["#38ef7d", "#ff4d4f"]}
-          showInfo={false}
-          className="px-5"
-        />
+        <div className="flex justify-center items-center text-lg">
+          <span>{chart1?.co_ngay_sinh || 0}</span>
+          <Progress
+            percent={chart1?.co_ngay_sinh}
+            size="small"
+            strokeColor={["#38ef7d", "#ff4d4f"]}
+            showInfo={false}
+            className="px-5 w-72"
+          />
+          <span>{chart1?.không_co_ngay_sinh || 0}</span>
+        </div>
         <div className="flex items-center gap-3 mx-5">
           <p className="w-3 h-3 bg-[#38ef7d] mt-3 rounded-lg"></p>{" "}
           <span>có ngày sinh</span>{" "}
           <p className="w-3 h-3 bg-[#d9d9d9] mt-3 rounded-lg"></p>{" "}
           <span>không có ngày sinh</span>{" "}
         </div>
-
         <div id="chart">
           <ReactApexChart
             options={chartData.options as any}
