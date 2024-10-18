@@ -16,7 +16,7 @@ const Chart2 = () => {
       return response.data;
     },
   });
-  console.log(data);
+  // console.log(data);
   return (
     <div>
       {" "}

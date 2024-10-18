@@ -84,6 +84,13 @@ const Chart3: React.FC = () => {
     if (chart3) {
       setChartData((prevData) => ({
         ...prevData,
+        tooltip: {
+          y: {
+            formatter: (val: number) => {
+              return `${val.toLocaleString("vi-VN")} đ`;
+            },
+          },
+        },
         series: [
           {
             name: "Lợi nhuận ròng",
@@ -96,7 +103,7 @@ const Chart3: React.FC = () => {
         ],
       }));
     }
-  }, [chart3]);
+  }, [chart3, refetch]);
 
   return (
     <div>
