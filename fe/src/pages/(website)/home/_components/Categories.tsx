@@ -61,30 +61,30 @@ const Categories = ({ bo_suu_tap }: any) => {
             slidesPerView={4}
             breakpoints={{
               0: {
-                slidesPerView: 1.5,
-                spaceBetween: 30,
+                slidesPerView: 1,
+                spaceBetween: 10,
               },
 
               640: {
-                slidesPerView: 2,
+                slidesPerView: 1.5,
                 spaceBetween: 30,
               },
               840: {
-                slidesPerView: 2.5,
+                slidesPerView: 1.5,
                 spaceBetween: 30,
               },
               1024: {
                 slidesPerView: 3,
               },
-              1184: {
-                slidesPerView: 3.5,
+              1204: {
+                slidesPerView: 3,
               },
               1244: {
                 slidesPerView: 4,
               },
             }}
-            onSlideChange={() => console.log("slide change")}
-            onSwiper={(swiper) => console.log(swiper)}
+            // onSlideChange={() => console.log("slide change")}
+            // onSwiper={(swiper) => console.log(swiper)}
             className="grid grid-flow-col lg:auto-cols-[100px]  md:auto-cols-[50px]  auto-cols-[40px] gap-x-[12px] lg:gap-x-[22px] "
           >
             {bo_suu_tap[activeTab]?.san_phams?.map(
@@ -92,19 +92,19 @@ const Categories = ({ bo_suu_tap }: any) => {
                 <SwiperSlide
                   style={{ width: "300px" }}
                   key={index}
-                  className=" mx-9 lg:mx-0"
+                  className="mx-2  lg:mx-0 "
                 >
                   <div className="">
-                    <div className="w-[400px]  lg:w-[300px] lg:h-[400px] h-[500px] bg-neutral-200/70 relative">
+                    <div className="w-[400px]  lg:w-[300px] lg:h-[400px] h-[500px] bg-neutral-200/70 relative ">
                       <h1 className="text-neutral-300 absolute pt-5  truncate flex items-center justify-center px-6 text-7xl font-bold text-center z-0 ">
-                        {item?.ten_san_pham?.substring(0, 7)}
+                        {item?.ten_san_pham?.substring(0, 5)}
                       </h1>
                       <img
                         src={item?.anh_san_pham}
                         alt=""
                         className="absolute top-0 left-0 w-full h-full object-cover z-10"
                       />
-                      <button className="hover:bg-black hover:text-white bg-white text-center lg:w-[270px] w-[360px] py-[13px] absolute bottom-6 left-4 rounded-lg  text-base z-20 font-semibold">
+                      <button className="hover:bg-black hover:text-white bg-white text-center lg:w-[270px] w-[360px] py-[13px] absolute bottom-6 left-4 rounded-lg  text-base z-20 font-semibold truncate px-10">
                         {item?.ten_san_pham}
                       </button>
                     </div>
