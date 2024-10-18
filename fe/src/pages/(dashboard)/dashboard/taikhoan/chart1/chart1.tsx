@@ -2,7 +2,7 @@ import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import ReactApexChart from "react-apexcharts";
-const conlai = 100 - (57 + 3 + 4);
+// const conlai = 100 - (57 + 3 + 4);
 const Chart1: React.FC = () => {
   const { data: chart1 } = useQuery({
     queryKey: ["khachhangtable1chart1"],
@@ -11,7 +11,7 @@ const Chart1: React.FC = () => {
       return response.data;
     },
   });
-  console.log(chart1);
+  // console.log(chart1);
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: "donut",
@@ -19,7 +19,7 @@ const Chart1: React.FC = () => {
         show: false,
       },
     },
-    labels: ["Nam", "Nữ", "khác", "Chưa có DL"],
+    labels: ["Nam", "Nữ", "khác", "Còn lại"],
     colors: ["#1E90FF", "#32CD32", "#38ef7d", "#D3D3D3"], // Blue, Green, Grey
     legend: {
       show: true,
@@ -84,7 +84,7 @@ const Chart1: React.FC = () => {
     ],
   };
 
-  const series = [57, 3, 4, conlai]; // Data for Nam, Nữ, khác
+  const series = chart1?.gioi_tinh_counts || 0; // Data for Nam, Nữ, khác
 
   return (
     <>

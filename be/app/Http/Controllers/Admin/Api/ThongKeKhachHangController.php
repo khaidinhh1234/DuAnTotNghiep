@@ -319,7 +319,7 @@ class ThongKeKhachHangController extends Controller
         $motThangTruoc = $now->copy()->subMonth();
 
         // Truy vấn để lấy thông tin các khách hàng và tính toán các thông số
-        $topKhachHang = User::select('users.id', 'users.anh_nguoi_dung', 'users.ho', 'users.ten', 'users.so_dien_thoai', 'hang_thanh_viens')
+        $topKhachHang = User::select('users.id', 'users.anh_nguoi_dung', 'users.ho', 'users.ten', 'users.so_dien_thoai', 'hang_thanh_viens.ten_hang_thanh_vien', 'hang_thanh_viens.anh_hang_thanh_vien')
             ->join('hang_thanh_viens', 'users.hang_thanh_vien_id', '=', 'hang_thanh_viens.id') // Tham gia với bảng hạng thành viên
             ->withCount([
                 'donHangs as tong_so_don' => function ($query) use ($motThangTruoc) {
@@ -351,7 +351,8 @@ class ThongKeKhachHangController extends Controller
                 'ten_khach_hang' => $khachHang->ho . ' ' . $khachHang->ten,
                 'so_dien_thoai' => $khachHang->so_dien_thoai,
                 'anh_nguoi_dung' => $khachHang->anh_nguoi_dung,
-                'hang_thanh_vien' => $khachHang->hang_thanh_viens, // Thêm thông tin hạng thành viên
+                'ten_hang_thanh_vien' => $khachHang->ten_hang_thanh_vien,
+                'anh_hang_thanh_vien' => $khachHang->anh_hang_thanh_vien,
                 'tong_so_don' => $khachHang->tong_so_don,
                 'so_don_thanh_cong' => $khachHang->so_don_thanh_cong,
                 'so_don_huy' => $khachHang->so_don_huy,

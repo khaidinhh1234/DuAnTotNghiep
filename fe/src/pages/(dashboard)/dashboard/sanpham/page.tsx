@@ -26,7 +26,7 @@ const SanPham = () => {
     <>
       <div className="p-6 bg-gray-100 min-h-screen">
         <div className="flex mb-6 gap-10">
-          <h2 className="text-2xl font-bold ">Tổng quan</h2>
+          <h2 className="text-2xl font-bold ">Thống kê sản phẩm</h2>
           <div>
             <RangePicker
               // onChange={handleDateChange}
@@ -35,21 +35,25 @@ const SanPham = () => {
             />
 
             <Select
-              defaultValue="lucy"
+              defaultValue="1"
               style={{ width: 120 }}
               className="ml-5"
               onChange={handleChange}
               options={[
-                { value: "jack", label: "Top 5" },
-                { value: "lucy", label: "Top 10" },
-                { value: "Yiminghe", label: "Top 20" },
-                { value: "disabled", label: "Disabled", disabled: true },
+                { value: "1", label: "Top 5" },
+                { value: "2", label: "Top 10" },
+                { value: "3", label: "Top 20" },
               ]}
             />
           </div>{" "}
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-1 px-6">
-          <Chart5 />
+          <div className="bg-white px-5 py-5">
+            <h2 className="text-xl font-bold mb-3 text-center">
+              Thông tin kinh doanh hôm nay
+            </h2>
+            <Chart5 />
+          </div>
           <Chart6 />
         </div>
       </div>

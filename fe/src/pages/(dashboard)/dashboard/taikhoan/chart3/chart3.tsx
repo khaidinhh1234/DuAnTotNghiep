@@ -11,26 +11,22 @@ const Chart3: React.FC = () => {
       return response.data;
     },
   });
-  console.log(chart3);
+  // console.log(chart3);
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: "line",
       height: 350,
     },
     title: {
-      text: "Phân tích khách hàng trong ... ngày",
+      text: "Phân tích khách hàng trong 30 ngày qua",
       align: "center",
       style: {
         fontSize: "20px",
       },
     },
+
     xaxis: {
-      categories: chart3?.moc_time || [],
-      labels: {
-        formatter: function (val: string) {
-          return parseInt(val).toString(); // Hiển thị giá trị số như 1, 2, 3, 4...
-        },
-      },
+      categories: chart3?.moc_time, // Days of the month
     },
     yaxis: {
       title: {
