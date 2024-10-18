@@ -60,7 +60,7 @@ const SanPham = () => {
             />
           </div>{" "}
         </div>
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-1 px-6">
+        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-1 ">
           <div className="bg-white px-5 py-5">
             <h2 className="text-base  font-semibold mb-3 text-end ">
               Phân tích theo dõi sản phẩm
