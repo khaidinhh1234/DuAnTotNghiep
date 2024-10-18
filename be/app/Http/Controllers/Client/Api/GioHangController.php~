@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client\Api;
 use App\Http\Controllers\Controller;
 use App\Models\GioHang;
 use App\Models\BienTheSanPham;
+use App\Models\MaKhuyenMai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,8 @@ class GioHangController extends Controller
     public function index()
     {
         try {
+            $userId = Auth::id();
+
             $gioHangs = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
@@ -28,23 +31,27 @@ class GioHangController extends Controller
                     'gio_hangs.user_id',
                     'gio_hangs.bien_the_san_pham_id',
                     'gio_hangs.gia',
+                    'gio_hangs.gia_cu',
                     'gio_hangs.so_luong',
                     'san_phams.ten_san_pham',
                     'bien_the_san_phams.so_luong_bien_the',
-                    'bien_the_san_phams.gia_ban',
-                    'bien_the_san_phams.gia_khuyen_mai',
-                    'bien_the_san_phams.gia_khuyen_mai_tam_thoi',
+//                    'bien_the_san_phams.gia_ban',
+//                    'bien_the_san_phams.gia_khuyen_mai',
+//                    'bien_the_san_phams.gia_khuyen_mai_tam_thoi',
                     'bien_the_mau_sacs.ten_mau_sac as mau_sac',
                     'bien_the_kich_thuocs.kich_thuoc',
                     'anh_bien_thes.duong_dan_anh as hinh_anh'
                 )
-                ->where('gio_hangs.user_id', Auth::id())
+                ->where('gio_hangs.user_id', $userId)
                 ->get();
+
+            $tongSoLuong = $gioHangs->sum('so_luong');
 
             return response()->json([
                 'status' => true,
                 'message' => 'Danh sách giỏ hàng đã được lấy thành công.',
-                'data' => $gioHangs
+                'data' => $gioHangs,
+                'tong_so_luong' => $tongSoLuong
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -53,6 +60,7 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
 
     public function store(Request $request)
     {
@@ -78,7 +86,16 @@ class GioHangController extends Controller
                 ], 400);
             }
 
-            $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
+            if ($bienTheSanPham->gia_khuyen_mai_tam_thoi) {
+                $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi;
+                $giaCu = $bienTheSanPham->gia_khuyen_mai;
+            } elseif ($bienTheSanPham->gia_khuyen_mai) {
+                $gia = $bienTheSanPham->gia_khuyen_mai;
+                $giaCu = $bienTheSanPham->gia_ban;
+            } else {
+                $gia = $bienTheSanPham->gia_ban;
+                $giaCu = null;
+            }
 
             $gioHang = GioHang::updateOrCreate(
                 [
@@ -88,6 +105,7 @@ class GioHangController extends Controller
                 [
                     'so_luong' => $tongSoLuong,
                     'gia' => $gia,
+                    'gia_cu' => $giaCu,
                 ]
             );
 
@@ -103,6 +121,7 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
 
     public function update(Request $request, $id)
     {
@@ -217,5 +236,87 @@ class GioHangController extends Controller
         }
     }
 
+    public function apDungMaGiamGia(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'ma_giam_gia' => 'required|string|exists:ma_khuyen_mais,ma_code',
+                'san_pham_chon' => 'required|array',
+                'san_pham_chon.*.gio_hang_id' => 'required|exists:gio_hangs,id',
+            ]);
 
+            $maGiamGia = MaKhuyenMai::where('ma_code', $validatedData['ma_giam_gia'])->first();
+
+            if (!$maGiamGia || $maGiamGia->trang_thai === 0) {
+                return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
+            }
+
+            $userId = Auth::id();
+            $nguoiDungMaKhuyenMai = DB::table('nguoi_dung_ma_khuyen_mais')->where('user_id', $userId)
+                ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                ->first();
+
+            if (!$nguoiDungMaKhuyenMai) {
+                return response()->json(['status' => false, 'message' => 'Bạn chưa lưu mã giảm giá này.'], 400);
+            }
+
+            if ($nguoiDungMaKhuyenMai->da_su_dung) {
+                return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
+            }
+
+            $appliedDiscounts = [];
+
+            foreach ($validatedData['san_pham_chon'] as $item) {
+                $gioHangItem = GioHang::find($item['gio_hang_id']);
+                $bienTheSanPham = BienTheSanPham::find($gioHangItem->bien_the_san_pham_id);
+
+                if (!$bienTheSanPham) {
+                    continue;
+                }
+
+                $isCategoryInPromotion = DB::table('khuyen_mai_danh_muc')
+                    ->join('danh_mucs', 'khuyen_mai_danh_muc.danh_muc_id', '=', 'danh_mucs.id')
+                    ->where('danh_mucs.id', $bienTheSanPham->danh_muc_id)
+                    ->where('khuyen_mai_danh_muc.ma_khuyen_mai_id', $maGiamGia->id)
+                    ->exists();
+
+                if (!$isCategoryInPromotion) {
+                    $isProductInPromotion = DB::table('khuyen_mai_san_pham')
+                        ->where('san_pham_id', $bienTheSanPham->id)
+                        ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                        ->exists();
+
+                    if (!$isProductInPromotion) {
+                        continue;
+                    }
+                }
+
+                $discountAmount = $maGiamGia->loai === 'phan_tram'
+                    ? ($gioHangItem->gia * $maGiamGia->giam_gia / 100)
+                    : $maGiamGia->giam_gia;
+
+                $appliedDiscounts[] = [
+                    'gio_hang_id' => $gioHangItem->id,
+                    'bien_the_san_pham_id' => $bienTheSanPham->id,
+                    'giam_gia' => $discountAmount,
+                ];
+            }
+
+            if (empty($appliedDiscounts)) {
+                return response()->json(['status' => false, 'message' => 'Không có sản phẩm nào đủ điều kiện áp dụng mã giảm giá này.'], 400);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Mã giảm giá đã được áp dụng thành công.',
+                'applied_discounts' => $appliedDiscounts,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+    
 }
