@@ -14,7 +14,7 @@ export function ActionLog() {
       return response.data;
     },
   });
-  console.log(lichsu);
+  // console.log(lichsu);
   const tableNamesWithAccents: { [key: string]: string } = {
     lien_hes: "Liên hệ",
     anh_bien_thes: "Ảnh biến thể",
@@ -31,22 +31,13 @@ export function ActionLog() {
 
   // console.log(lichsu);
   const datas = lichsu?.map((item: any, index: number) => {
-    // Chuyển đổi chuỗi thành đối tượng Date
     const dateObj = new Date(item?.created_at);
-
-    // Chuyển sang múi giờ Việt Nam (GMT+7)
-
     const vnTime = new Date(dateObj.getTime());
-
-    // Lấy ngày (YYYY-MM-DD)
     const date = vnTime.toISOString().split("T")[0];
     const [year, month, day] = date.split("-");
     const reversedDate = `${day}/${month}/${year}`;
-
-    // console.log(reversedDate);
-    // Lấy giờ (HH:MM:SS)
     const time = vnTime.toISOString().split("T")[1].split(".")[0];
-
+    // console.log("item", reversedDate);
     return {
       key: index + 1,
       ten_bang: tableNamesWithAccents[item?.ten_bang] || item?.ten_bang,
@@ -54,7 +45,7 @@ export function ActionLog() {
       anh: item?.anh_nguoi_dung,
       email: item?.email,
       thoi_gian: reversedDate + " " + time,
-      // thoi_gian_raw: item?.created_at,
+      timedate: item?.created_at,
       ten_vai_tro: item?.ten_vai_tro,
       nhanvien: item?.ten,
       mo_ta: item?.mo_ta,
@@ -188,20 +179,27 @@ export function ActionLog() {
   ];
   // type SelectCommonPlacement = SelectProps["placement"];
   const [filteredData, setFilteredData] = useState(datas);
+  // console.log("datas", filteredData);
   const handleDateChange = (_e: any, dateStrings: [string, string]) => {
     const startDate = new Date(dateStrings[0]);
-    const endDate = new Date(dateStrings[1]);
+    startDate.setHours(0, 0, 0, 0);
     // console.log("startDate", startDate);
+
+    const endDate = new Date(dateStrings[1]);
+    endDate.setHours(23, 59, 59, 999); // Đặt endDate đến cuối ngày
     // console.log("endDate", endDate);
 
     const filtered = datas?.filter((record: any) => {
-      const recordDate = new Date(record.thoi_gian);
+      const recordDate = new Date(record?.timedate);
+      recordDate.setHours(0, 0, 0, 0); // Loại bỏ thời gian của recordDate
+      // console.log("recordDate", recordDate);
+
       return recordDate >= startDate && recordDate <= endDate;
     });
-    // console.log("filtered", filtered);
+
     setFilteredData(filtered || []);
-    // Thực hiện hành động gì đó, ví dụ như gọi API để lọc theo khoảng ngày
   };
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
