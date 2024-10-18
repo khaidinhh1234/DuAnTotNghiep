@@ -6,6 +6,7 @@ use App\Traits\AuditTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class SanPham extends Model
 {
@@ -52,5 +53,16 @@ class SanPham extends Model
     public function khachHangYeuThich()
     {
         return $this->belongsToMany(User::class, 'san_pham_yeu_thich', 'san_pham_id', 'user_id');
+    }
+
+    public function giaThapCaoNhat()
+    {
+        return $this->bienTheSanPhams()
+            ->select(
+                'san_pham_id',
+                DB::raw('MIN(COALESCE(gia_khuyen_mai_tam_thoi, gia_khuyen_mai, gia_ban)) as gia_thap_nhat'),
+                DB::raw('MAX(COALESCE(gia_khuyen_mai_tam_thoi, gia_khuyen_mai, gia_ban)) as gia_cao_nhat')
+            )
+            ->groupBy('san_pham_id');
     }
 }
