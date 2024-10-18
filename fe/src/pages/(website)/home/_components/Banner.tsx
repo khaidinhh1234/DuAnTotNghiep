@@ -41,26 +41,54 @@ const Banner = ({ banner }: any) => {
                   <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
                     <div className="lg:mb-16">
                       <p
-                        className={`font-semibold text-xs lg:text-4xl text-[${item?.noi_dung?.mau_tieu_de_phu ?? "#ffffff"}] lg:mb-7`}
+                        style={{
+                          color: item?.noi_dung?.mau_tieu_de_phu ?? "#ffffff",
+                        }}
+                        className="font-semibold text-xs lg:text-4xl lg:mb-7"
                       >
                         {item?.noi_dung?.tieu_de_phu || "Beyond Builder"}
                       </p>
                       <p
-                        className={`text-[${item?.noi_dung?.mau_tieu_de_chinh ?? "#ffffff"}] text-md lg:text-6xl font-bold lg:mb-5 tracking-[1px]`}
+                        style={{
+                          color: item?.noi_dung?.mau_tieu_de_chinh ?? "#ffffff",
+                        }}
+                        className="text-md lg:text-6xl font-bold lg:mb-5 tracking-[1px]"
                       >
                         {item?.noi_dung?.tieu_de_chinh ?? "Beyond Builder"}
                       </p>
-
                       <p
-                        className={`text-[${item?.noi_dung?.mau_van_ban_quang_cao ?? "#ffffff"}] text-xs lg:text-3xl font-medium text uppercase`}
+                        style={{
+                          color:
+                            item?.noi_dung?.mau_van_ban_quang_cao ?? "#ffffff",
+                        }}
+                        className="text-xs lg:text-3xl font-medium uppercase"
                       >
-                        {" "}
                         {item?.noi_dung?.van_ban_quang_cao || "upto 40% off"}
                       </p>
                     </div>
                     {item?.noi_dung?.tieu_de_nut && (
                       <div>
-                        <button className="lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl bg-blackL text-white rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium">
+                        <button
+                          style={{
+                            backgroundColor: item?.noi_dung?.mau_nut,
+                            color: item?.noi_dung?.mau_tieu_de_nut,
+                          }}
+                          onMouseEnter={(e: any) => {
+                            e.target.style.backgroundColor =
+                              item?.noi_dung?.mau_nut;
+                            e.target.style.color =
+                              item?.noi_dung?.mau_tieu_de_nut;
+                            e.target.style.opacity = "0.9";
+                          }}
+                          onMouseLeave={(e: any) => {
+                            e.target.style.opacity = "1";
+                            e.target.style.backgroundColor =
+                              item?.noi_dung?.mau_nut;
+                            e.target.style.color =
+                              item?.noi_dung?.mau_tieu_de_nut;
+                          }}
+                          className={`lg:px-8  px-2  py-[6px] lg:py-4 text-[8px] lg:text-xl  rounded-sm lg:rounded-lg shadow-2xl shadow-slate-500/50 hover:bg-white hover:text-black font-medium`}
+                        >
                           {item?.noi_dung?.tieu_de_nut}
                           <i className="fa-solid fa-arrow-right ml-3"></i>
                         </button>
