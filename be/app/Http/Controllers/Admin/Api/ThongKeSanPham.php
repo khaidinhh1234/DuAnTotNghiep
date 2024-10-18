@@ -18,15 +18,19 @@ class ThongKeSanPham extends Controller
     {
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
-        $soLuongTop = $request->input('top') ?? 5;
+        $soLuongTop = $request->input('top', 5);
 
         $dates = [];
-        for ($date = $ngayBatDau; $date->lte($ngayKetThuc); $date->addDay()) {
+        for ($date = $ngayBatDau->copy(); $date->lte($ngayKetThuc); $date->addDay()) {
             $dates[] = $date->format('Y-m-d');
         }
 
+        // Truy vấn chi tiết đơn hàng theo khoảng thời gian và trạng thái "TTDH_HTDH"
         $topSanPhams = DonHangChiTiet::select('bien_the_san_pham_id', DB::raw('SUM(so_luong) as tong_so_luong'))
-            ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+            ->whereHas('donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
+                $query->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+                      ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái
+            })
             ->groupBy('bien_the_san_pham_id')
             ->orderBy('tong_so_luong', 'desc')
             ->limit($soLuongTop)
@@ -42,8 +46,13 @@ class ThongKeSanPham extends Controller
             foreach ($dates as $date) {
                 $soLuongTrongNgay = DonHangChiTiet::whereDate('created_at', $date)
                     ->where('bien_the_san_pham_id', $sanPhamChiTiet->bien_the_san_pham_id)
+                    ->whereHas('donHang', function ($query) {
+                        $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
+                    })
                     ->sum('so_luong');
-                $soLuongTheoNgay[] = $soLuongTrongNgay;
+
+                // Đảm bảo số lượng là một số (trả về 0 nếu không có dữ liệu)
+                $soLuongTheoNgay[] = (int) $soLuongTrongNgay;
             }
 
             // Thêm vào result
