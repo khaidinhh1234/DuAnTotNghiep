@@ -19,14 +19,14 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
       : null;
   // console.log(date);
   const { data: doanhso, refetch } = useQuery({
-    queryKey: ["tongquanchart4", datestart, dateend],
+    queryKey: ["tongquandoanhso", datestart, dateend],
     queryFn: async () => {
       const response = await instance.post("thong-ke/doanh-so-san-pham", date);
       return response.data;
     },
     enabled: !!datestart && !!dateend,
   });
-  // console.log(doanhso);
+  console.log(doanhso);
   const {
     data: loinhuan,
 
@@ -76,7 +76,9 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
     enabled: !!datestart && !!dateend,
   });
   // console.log(Chart1);
-  const doanh_so = doanhso?.ti_le_tang_giam > 0;
+  // console.log(doanhso);
+  const doanh_so = doanhso?.ti_le_tang_giam_don_hang > 0;
+  // console.log(doanh_so);
   const san_pham = doanhso?.ti_le_tang_giam_san_pham > 0;
   const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
   const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;

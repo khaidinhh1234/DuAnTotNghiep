@@ -26,7 +26,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  console.log(doanhso);
+  // console.log(doanhso);
   const {
     data: loinhuan,
 
@@ -39,7 +39,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  console.log(loinhuan);
+  // console.log(loinhuan);
   const {
     data: gttb,
 
@@ -52,7 +52,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  console.log(gttb);
+  // console.log(gttb);
   const {
     data: don,
 
@@ -95,7 +95,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     enabled: !!datestart && !!dateend,
   });
 
-  const doanh_so = doanhso?.ti_le_tang_giam > 0;
+  const doanh_so = doanhso?.ti_le_tang_giam_don_hang > 0;
   const san_pham = doanhso?.ti_le_tang_giam_san_pham > 0;
   const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
   const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;
@@ -131,7 +131,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
       chart2();
     }
   }, [datestart, dateend, chart2]);
-  console.log(Chart2);
+  // console.log(Chart2);
   const chartData = {
     series: [
       {
@@ -278,11 +278,11 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
           </div>
         </div>
         <div className="col-span-1 text-end border-r px-5">
-          <h3 className="text-lg font-bold">SL sản phẩm</h3>
+          <h3 className="text-lg font-bold">Số lượng sản phẩm</h3>
           <p className="text-base font-semibold text-green-600">
             {" "}
             <Statistic
-              value={120234}
+              value={doanhso?.tong_so_luong_san_pham_hien_tai || 0}
               formatter={formatter}
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />

@@ -98,15 +98,6 @@ const Chart4: React.FC = () => {
     }
   }, [chart1]);
 
-  const coPercent =
-    chart1 &&
-    chart1.co_ngay_sinh !== undefined &&
-    chart1.không_co_ngay_sinh !== undefined
-      ? (chart1.co_ngay_sinh /
-          (chart1.co_ngay_sinh + chart1.không_co_ngay_sinh)) *
-        100
-      : 0;
-
   return (
     <>
       <h3 className="mx-5 font-semibold">Độ tuổi</h3>
@@ -115,7 +106,7 @@ const Chart4: React.FC = () => {
         <div className="flex justify-center items-center text-lg">
           <span>{chart1?.co_ngay_sinh || 0}</span>
           <Progress
-            percent={chart1?.co_ngay_sinh}
+            percent={chart1?.phan_tram_co_ngay_sinh}
             size="small"
             strokeColor={["#38ef7d", "#ff4d4f"]}
             showInfo={false}

@@ -20,13 +20,15 @@ const Chart4: React.FC = () => {
         <CardTitle className="text-xl font-bold">
           Tài khoản ngừng hoạt động
         </CardTitle>
-        <Activity className="h-6 w-6 text-muted-foreground" />
+        <Activity className="h-8 w-8 text-muted-foreground text-red-700" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
+        <div className="text-2xl font-bold text-red-700">
           + {(data?.block_hien_tai ?? 0).toLocaleString("vn-VN")}
         </div>
-        <p className="text-xs text-muted-foreground">+201 kể từ giờ trước</p>
+        <p className="text-sm text-muted-foreground text-green-600">
+          +201 <span className="text-black"> kể từ giờ trước</span>
+        </p>
       </CardContent>
     </Card>
   );

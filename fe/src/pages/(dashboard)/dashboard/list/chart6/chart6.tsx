@@ -60,7 +60,7 @@ const Chart6 = () => {
       return res.data;
     },
     onSuccess: (data) => {
-      console.log("Updated data:", data?.theo_tuan?.ngay);
+      // console.log("Updated data:", data?.theo_tuan?.ngay);
     },
   });
 
@@ -91,14 +91,11 @@ const Chart6 = () => {
     dataLabels: {
       enabled: false,
     },
-    colors: ["#000000"],
-    tooltip: {
-      y: {
+    colors: ["#EC6EAD", "#3494E6"],
+    yaxis: {
+      labels: {
         formatter: (val: number) => {
-          return val.toLocaleString("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          });
+          return `${val.toLocaleString("vi-VN")} đ`;
         },
       },
     },
@@ -173,10 +170,13 @@ const Chart6 = () => {
 
     const daysInMonth = new Date(selectedYear, month, 0).getDate();
     const numberOfWeeks = Math.ceil(daysInMonth / 7);
-    const weekOptions: { value: number | null; label: string }[] = Array.from({ length: numberOfWeeks }, (_, i) => ({
-      value: i + 1,
-      label: `Tuần ${i + 1}`,
-    }));
+    const weekOptions: { value: number | null; label: string }[] = Array.from(
+      { length: numberOfWeeks },
+      (_, i) => ({
+        value: i + 1,
+        label: `Tuần ${i + 1}`,
+      })
+    );
 
     // Add "Tất cả" option only if a month is selected
     weekOptions.unshift({ value: null, label: "Tất cả" });
@@ -231,30 +231,41 @@ const Chart6 = () => {
     <div>
       <CardHeader className="grid grid-cols-12 mt-5">
         <div className="col-span-5">
-          <CardTitle>Tổng quan doanh thu</CardTitle>
-          <h3 className="text-lg font-bold">
-            Doanh thu:{" "}
-            {(data?.tong_doanh_thu_nam
-              ? data?.tong_doanh_thu_nam
-              : data?.tong_doanh_thu_quy
-                ? data?.tong_doanh_thu_quy
-                : data?.tong_doanh_thu_thang
-                  ? data?.tong_doanh_thu_thang
-                  : data?.tong_doanh_thu_tuan
-                    ? data?.tong_doanh_thu_tuan
-                    : 0
-            ).toLocaleString("vi-VN")}
-            VNĐ /
-            {data?.theo_nam?.quy.length
-              ? "Năm"
-              : data?.theo_quy?.thang.length
-                ? "Quý"
-                : data?.theo_thang?.tuan
-                  ? "Tháng"
-                  : data?.theo_tuan?.ngay
-                    ? "Tuần"
-                    : ""}
-          </h3>
+          {" "}
+          <div className="flex gap-5 items-center">
+            {" "}
+            <div>
+              {" "}
+              <CardTitle>Tổng quan doanh thu</CardTitle>{" "}
+              <h3 className="text-lg font-bold ml-2 text-green-600">
+                {(data?.tong_doanh_thu_nam
+                  ? data?.tong_doanh_thu_nam
+                  : data?.tong_doanh_thu_quy
+                    ? data?.tong_doanh_thu_quy
+                    : data?.tong_doanh_thu_thang
+                      ? data?.tong_doanh_thu_thang
+                      : data?.tong_doanh_thu_tuan
+                        ? data?.tong_doanh_thu_tuan
+                        : 0
+                ).toLocaleString("vi-VN")}{" "}
+                VNĐ /
+                {data?.theo_nam?.quy.length
+                  ? "Năm"
+                  : data?.theo_quy?.thang.length
+                    ? "Quý"
+                    : data?.theo_thang?.tuan.length
+                      ? "Tháng"
+                      : data?.theo_tuan?.ngay
+                        ? "Tuần"
+                        : ""}
+              </h3>{" "}
+            </div>
+            <img
+              src="https://res.cloudinary.com/dpypwbeis/image/upload/v1729270666/Screenshot_2024-10-18_235631-removebg-preview_it6fq1.png"
+              alt="https://res.cloudinary.com/dpypwbeis/image/upload/v1729270666/Screenshot_2024-10-18_235631-removebg-preview_it6fq1.png"
+              className="w-28 h-22"
+            />{" "}
+          </div>
         </div>
         <div className="col-span-7">
           <Select

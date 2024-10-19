@@ -175,7 +175,7 @@ const Remoterank: React.FC = () => {
           <img
             src={record.anh_hang_thanh_vien || "https://via.placeholder.com/24"}
             alt="member rank"
-            className="w-6 h-6 object-cover rounded-full mr-2"
+            className="w-12 h-12 object-cover  mr-2"
           />
           <span className="text-sm font-medium capitalize">
             {record.ten_hang_thanh_vien || "Chưa có hạng"}

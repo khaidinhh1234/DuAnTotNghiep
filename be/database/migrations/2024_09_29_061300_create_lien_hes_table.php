@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('sdt_lien_he')->nullable();
             $table->string('email')->nullable();
             $table->text('noi_dung_lien_he')->nullable();
-            $table->enum('loai_lien_he', ['ho_tro', 'bao_gia', 'phan_hoi', 'khac'])->default('khac');
+            $table->enum('loai_lien_he', ['ho_tro', 'bao_gia', 'phan_hoi', 'thong_bao_san_pham_moi', 'bo_suu_tap', 'khac'])->default('khac');
             $table->enum('trang_thai_lien_he', ['chua_xu_ly', 'dang_xu_ly', 'da_xu_ly'])->default('chua_xu_ly');
             $table->text('noi_dung_phan_hoi')->nullable();
             // $table->foreignId('nguoi_phu_trach_id')->nullable()->constrained('users');

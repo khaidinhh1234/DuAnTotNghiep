@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Table } from "antd";
 import type { TableColumnsType } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import instance from "@/configs/admin";
+import { Dayjs } from "dayjs";
 
 interface DataType {
   key: React.Key;
@@ -14,57 +17,81 @@ interface DataType {
 const columns: TableColumnsType<DataType> = [
   {
     title: "Mã sản phẩm",
-    dataIndex: "MSP",
+    dataIndex: "ma_san_pham",
     width: 150,
   },
   {
     title: "Tên sản phẩm",
-    dataIndex: "name",
+    dataIndex: "ten_san_pham",
     width: 150,
   },
   {
     title: "Số lượng bán ra",
-    dataIndex: "age",
+    dataIndex: "so_luong_ban_ra",
     width: 150,
   },
   {
     title: "Số lượng thực bán",
-    dataIndex: "age",
+    dataIndex: "so_luong_thuc_ban",
     width: 150,
   },
   {
     title: "Tiền hàng",
-    dataIndex: "address",
+    dataIndex: "tien_hang",
+    render: (value) => {
+      return <div>{value?.toLocaleString("vi-VN")}đ </div>;
+    },
   },
   {
     title: "Doanh số",
-    dataIndex: "address",
+    dataIndex: "doanh_so",
+    render: (value) => {
+      return <div>{value?.toLocaleString("vi-VN")}đ</div>;
+    },
   },
   {
     title: "SL đơn hàng",
-    dataIndex: "sl",
+    dataIndex: "so_luong_don_hang",
   },
 ];
 
-const dataSource = Array.from({ length: 100 }).map<DataType>((_, i) => ({
-  key: i,
-  MSP: `SP_AHDHG00${i}`,
-  name: `Sản Phẩm ${i}`,
-  age: 32,
-  address: `1${i}00234 VNĐ`,
-  sl: 32,
-}));
+interface Chart6Props {
+  datestart: Dayjs;
 
-const Chart6: React.FC = () => {
+  dateend: Dayjs;
+
+  top: number;
+}
+const Chart6: React.FC<Chart6Props> = ({ datestart, dateend, top }) => {
+  // console.log(datestart, dateend, top);
+  const date =
+    datestart && dateend && top
+      ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend, top: top }
+      : null;
+  const { data, refetch } = useQuery({
+    queryKey: ["sanphamtable2chart6", datestart, dateend, top],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/san-pham-all-time", date);
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend && !!top,
+  });
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch();
+    }
+    if (top) {
+      refetch();
+    }
+  }, [datestart, dateend, top, refetch]);
+  // console.log(data);
+  const table = data?.data;
+
   return (
     <Table<DataType>
       columns={columns}
-      dataSource={dataSource}
-      pagination={{
-        pageSize: 10,
-        showSizeChanger: true,
-        pageSizeOptions: ["10", "20", "50", "100"],
-      }}
+      dataSource={table ? table : []}
+      pagination={{ pageSize: 10, className: "my-5" }}
       scroll={{ y: 600 }}
       bordered
       summary={() => {
@@ -73,16 +100,22 @@ const Chart6: React.FC = () => {
             <Table.Summary.Row className="font-bold">
               <Table.Summary.Cell index={0}>Tổng</Table.Summary.Cell>
               <Table.Summary.Cell index={1}></Table.Summary.Cell>
-              <Table.Summary.Cell index={2}>{2345}</Table.Summary.Cell>
+              <Table.Summary.Cell index={2}>
+                {data?.tong_so_luong_ban_ra}
+              </Table.Summary.Cell>
 
-              <Table.Summary.Cell index={3}>24359</Table.Summary.Cell>
+              <Table.Summary.Cell index={3}>
+                {data?.tong_so_luong_thuc_ban}
+              </Table.Summary.Cell>
               <Table.Summary.Cell index={4}>
-                {"4.345.333 VNĐ"}
+                {data?.tong_tien_hang?.toLocaleString("vi-VN")}đ
               </Table.Summary.Cell>
               <Table.Summary.Cell index={5}>
-                {"32.032.000 VNĐ"}
+                {data?.tong_doanh_so?.toLocaleString("vi-VN")}đ
               </Table.Summary.Cell>
-              <Table.Summary.Cell index={6}>{"10.002.023"}</Table.Summary.Cell>
+              <Table.Summary.Cell index={6}>
+                {data?.tong_so_luong_don_hang}
+              </Table.Summary.Cell>
             </Table.Summary.Row>
           </Table.Summary>
         );

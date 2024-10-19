@@ -5,17 +5,17 @@ import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import { ellipse } from "@/assets/img";
 import "swiper/css";
+import { Rate } from "antd";
 
-const Customer = () => {
-  // const reviews = [
-  //   {
-  //     title: "Tokyo",
-  //     content:
-  //       "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum.",
-  //     name: "Leslie Alexander",
-  //     avata: { ellipse },
-  //   },
-  // ];
+const Customer = ({ danhgia }: any) => {
+  // console.log(danhgia);
+  const maskEmail = (email: string, visibleChars: number = 2): string => {
+    const [name, domain] = email.split("@");
+    const maskedName =
+      name.slice(0, visibleChars) + "*".repeat(name.length - visibleChars);
+    return `${maskedName}@${domain}`;
+  };
+
   return (
     <>
       <section className="bg-gray-100 py-12">
@@ -29,7 +29,7 @@ const Customer = () => {
           </div>
 
           {/* <!-- Reviews Grid --> */}
-          <div className=" mx-4">
+          <div className=" ">
             {/* <!-- Review 1 --> */}
             {/* <div className="swiper feedblack"> */}
             {/* <div className="swiper-wrapper">
@@ -61,144 +61,46 @@ const Customer = () => {
                   slidesPerView: 3,
                 },
               }}
-              onSlideChange={() => console.log("slide change")}
-              onSwiper={(swiper) => console.log(swiper)}
+              // onSlideChange={() => console.log("slide change")}
+              // onSwiper={(swiper) => console.log(swiper)}
             >
-              <SwiperSlide>
-                {" "}
-                <div className="col-span-4 bg-white p-6 rounded-xl shadow-sm shadow-slate-300/50 w-[362px] h-[265px] mx-4 mb-8">
-                  <div className="flex mb-1">
-                    <span className="text-yellow-500 text-4xl">★★★★★</span>
-                  </div>
-
-                  <p className="text-gray-600 font-medium mb-5 w-[330px] text-start">
-                    It is a long established fact that a reader will be
-                    distracted by the readable content of a page when looking at
-                    its layout. The point of using Lorem Ipsum.
-                  </p>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <img
-                        src={ellipse}
-                        alt="Leslie Alexander"
-                        className="w-14 h-14 rounded-full"
-                      />
+              {danhgia?.map((item: any, index: any) => (
+                <SwiperSlide key={index} className="rounded-xl p-5  ">
+                  {" "}
+                  <div className="col-span-4 bg-white lg:px-2  py-2 shadow-slate-300/50 lg:w-[302px] w-[350px] h-[265px] mx-4 mb-8 ">
+                    <div>
+                      {" "}
+                      <div className="flex mb-1">
+                        <Rate
+                          disabled
+                          defaultValue={item?.so_sao_san_pham}
+                          className="text-2xl"
+                        />
+                      </div>
+                      <p className="text-gray-600 font-medium mb-5 w-[330px] text-start">
+                        {item?.mo_ta}
+                      </p>
                     </div>
-                    <div className="ml-4 text-start">
-                      <h3 className="text-xl font-bold">Leslie Alexander</h3>
-                      <p className="text-gray-600">Model</p>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                {" "}
-                <div className="col-span-4 bg-white p-6 rounded-xl shadow-sm shadow-slate-300/50 w-[362px] h-[265px] mx-4 mb-8">
-                  <div className="flex mb-1">
-                    <span className="text-yellow-500 text-4xl">★★★★★</span>
-                  </div>
-
-                  <p className="text-gray-600 font-medium mb-5 w-[330px] text-start ">
-                    It is a long established fact that a reader will be
-                    distracted by the readable content of a page when looking at
-                    its layout. The point of using Lorem Ipsum.
-                  </p>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <img
-                        src={ellipse}
-                        alt="Leslie Alexander"
-                        className="w-14 h-14 rounded-full"
-                      />
-                    </div>
-                    <div className="ml-4 text-start">
-                      <h3 className="text-xl font-bold">Leslie Alexander</h3>
-                      <p className="text-gray-600">Model</p>
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <img
+                          src={item?.user?.anh_nguoi_dung ?? ellipse}
+                          alt={item?.user?.anh_nguoi_dung}
+                          className="w-14 h-14 rounded-full"
+                        />
+                      </div>
+                      <div className="ml-4 text-start mt-2">
+                        <h3 className="text-xl font-bold">
+                          {item?.user?.ho + " " + item?.user.ten}
+                        </h3>
+                        <p className="text-gray-600">
+                          {maskEmail(item?.user?.email)}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                {" "}
-                <div className="col-span-4 bg-white p-6 rounded-xl shadow-sm shadow-slate-300/50 w-[362px] h-[265px] mx-4 mb-8">
-                  <div className="flex mb-1">
-                    <span className="text-yellow-500 text-4xl">★★★★★</span>
-                  </div>
-
-                  <p className="text-gray-600 font-medium mb-5 w-[330px] text-start">
-                    It is a long established fact that a reader will be
-                    distracted by the readable content of a page when looking at
-                    its layout. The point of using Lorem Ipsum.
-                  </p>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <img
-                        src={ellipse}
-                        alt="Leslie Alexander"
-                        className="w-14 h-14 rounded-full"
-                      />
-                    </div>
-                    <div className="ml-4 text-start">
-                      <h3 className="text-xl font-bold">Leslie Alexander</h3>
-                      <p className="text-gray-600">Model</p>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                {" "}
-                <div className="col-span-4 bg-white p-6 rounded-xl shadow-sm shadow-slate-300/50 w-[362px] h-[265px] mx-4 mb-8">
-                  <div className="flex mb-1">
-                    <span className="text-yellow-500 text-4xl">★★★★★</span>
-                  </div>
-
-                  <p className="text-gray-600 font-medium mb-5 w-[330px] text-start">
-                    It is a long established fact that a reader will be
-                    distracted by the readable content of a page when looking at
-                    its layout. The point of using Lorem Ipsum.
-                  </p>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <img
-                        src={ellipse}
-                        alt="Leslie Alexander"
-                        className="w-14 h-14 rounded-full"
-                      />
-                    </div>
-                    <div className="ml-4 text-start">
-                      <h3 className="text-xl font-bold">Leslie Alexander</h3>
-                      <p className="text-gray-600">Model</p>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                {" "}
-                <div className="col-span-4 bg-white p-6 rounded-xl shadow-sm shadow-slate-300/50 w-[362px] h-[265px] mx-4 mb-8">
-                  <div className="flex mb-1">
-                    <span className="text-yellow-500 text-4xl">★★★★★</span>
-                  </div>
-
-                  <p className="text-gray-600 font-medium mb-5 w-[330px] text-start">
-                    It is a long established fact that a reader will be
-                    distracted by the readable content of a page when looking at
-                    its layout. The point of using Lorem Ipsum.
-                  </p>
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <img
-                        src={ellipse}
-                        alt="Leslie Alexander"
-                        className="w-14 h-14 rounded-full"
-                      />
-                    </div>
-                    <div className="ml-4 text-start">
-                      <h3 className="text-xl font-bold">Leslie Alexander</h3>
-                      <p className="text-gray-600">Model</p>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
+                </SwiperSlide>
+              ))}
             </Swiper>
           </div>
         </div>

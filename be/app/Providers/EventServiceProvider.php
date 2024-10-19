@@ -7,6 +7,7 @@ use App\Events\SendMail;
 use App\Listeners\SendMailContact;
 use App\Listeners\SendMailForgotPassword;
 use App\Listeners\SendMailPhanHoiLienHe;
+use App\Listeners\SendNewProductMailListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;

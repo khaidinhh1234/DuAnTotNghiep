@@ -17,6 +17,7 @@ class SendMail
     public $email;
     public $condition;
     public $name;
+
     public function __construct($email, $name, $condition)
     {
         $this->condition = $condition;

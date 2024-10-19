@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Events\SendMail;
 use App\Exports\SanPhamExports;
 use App\Http\Controllers\Controller;
 use App\Models\AnhBienThe;
@@ -113,7 +114,6 @@ class SanPhamController extends Controller
                     }
                 }
             }
-
             $sanPham->boSuuTapSanPham()->sync($boSuuTapSanPham);
             DB::commit();
 

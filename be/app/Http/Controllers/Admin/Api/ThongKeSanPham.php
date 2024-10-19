@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class ThongKeSanPham extends Controller
 {
-        public function thongKeTopSanPham(Request $request)
+    public function thongKeTopSanPham(Request $request)
     {
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
@@ -23,12 +23,12 @@ class ThongKeSanPham extends Controller
         $dates = [];
         for ($date = $ngayBatDau->copy(); $date->lte($ngayKetThuc); $date->addDay()) {
             $dates[] = $date->format('Y-m-d');
-        }
-
-        // Truy vấn chi tiết đơn hàng theo khoảng thời gian và nhóm theo biến thể sản phẩm
+        };
+        // Truy vấn chi tiết đơn hàng theo khoảng thời gian và trạng thái "TTDH_HTDH"
         $topSanPhams = DonHangChiTiet::select('bien_the_san_pham_id', DB::raw('SUM(so_luong) as tong_so_luong'))
             ->whereHas('donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
-                $query->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
+                $query->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+                    ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái
             })
             ->groupBy('bien_the_san_pham_id')
             ->orderBy('tong_so_luong', 'desc')
@@ -45,16 +45,18 @@ class ThongKeSanPham extends Controller
             foreach ($dates as $date) {
                 $soLuongTrongNgay = DonHangChiTiet::whereDate('created_at', $date)
                     ->where('bien_the_san_pham_id', $sanPhamChiTiet->bien_the_san_pham_id)
-                    ->whereHas('donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
-                        $query->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
+                    ->whereHas('donHang', function ($query) {
+                        $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
                     })
                     ->sum('so_luong');
-                $soLuongTheoNgay[] = $soLuongTrongNgay;
+
+                // Đảm bảo số lượng là một số (trả về 0 nếu không có dữ liệu)
+                $soLuongTheoNgay[] = (int) $soLuongTrongNgay;
             }
 
             // Thêm vào result
             $result[] = [
-                'sản phẩm' => $tenSanPham,
+                'name' => $tenSanPham,
                 'data' => $soLuongTheoNgay,
             ];
         }
@@ -64,91 +66,85 @@ class ThongKeSanPham extends Controller
             'series' => $result,
         ]);
     }
-
+    
     public function thongKeSanPhamAllTime(Request $request)
     {
         // Lấy giá trị ngày bắt đầu và ngày kết thúc từ request
         $ngayBatDau = $request->input('ngay_bat_dau');
         $ngayKetThuc = $request->input('ngay_ket_thuc');
-        $topSanPham = $request->input('top_san_pham', 5);
 
-        // Kiểm tra định dạng của ngày bắt đầu và ngày kết thúc, nếu không hợp lệ thì trả về lỗi
-        if (!$ngayBatDau || !Carbon::hasFormat($ngayBatDau, 'Y-m-d')) {
-            return response()->json(['error' => 'Ngày bắt đầu không hợp lệ, định dạng phải là Y-m-d'], 422);
+        // Kiểm tra giá trị top_san_pham, đảm bảo nó là số nguyên dương
+        $topSanPham = $request->input('top_san_pham');
+        if (!is_numeric($topSanPham) || (int)$topSanPham <= 0) {
+            $topSanPham = 5; // Mặc định là 5 nếu không hợp lệ
+        } else {
+            $topSanPham = (int)$topSanPham; // Ép kiểu sang int
         }
 
-        if (!$ngayKetThuc || !Carbon::hasFormat($ngayKetThuc, 'Y-m-d')) {
-            return response()->json(['error' => 'Ngày kết thúc không hợp lệ, định dạng phải là Y-m-d'], 422);
+        // Nếu không nhập ngày bắt đầu hoặc ngày kết thúc, mặc định lấy 10 ngày gần đây
+        if (!$ngayBatDau && !$ngayKetThuc) {
+            $ngayBatDau = Carbon::now()->subDays(10)->startOfDay();
+            $ngayKetThuc = Carbon::now()->endOfDay();
+        } elseif (!$ngayBatDau) {
+            $ngayKetThuc = Carbon::parse($ngayKetThuc)->endOfDay();
+            $ngayBatDau = $ngayKetThuc->copy()->subDays(10)->startOfDay();
+        } elseif (!$ngayKetThuc) {
+            $ngayBatDau = Carbon::parse($ngayBatDau)->startOfDay();
+            $ngayKetThuc = Carbon::now()->endOfDay();
+        } else {
+            // Kiểm tra định dạng của ngày bắt đầu và ngày kết thúc
+            if (!Carbon::hasFormat($ngayBatDau, 'Y-m-d') || !Carbon::hasFormat($ngayKetThuc, 'Y-m-d')) {
+                return response()->json(['error' => 'Ngày không hợp lệ, định dạng phải là Y-m-d'], 422);
+            }
+
+            // Parse ngày bắt đầu và ngày kết thúc
+            $ngayBatDau = Carbon::parse($ngayBatDau)->startOfDay();
+            $ngayKetThuc = Carbon::parse($ngayKetThuc)->endOfDay();
         }
 
-        // Parse ngày bắt đầu và ngày kết thúc
-        $ngayBatDau = Carbon::parse($ngayBatDau);
-        $ngayKetThuc = Carbon::parse($ngayKetThuc)->endOfDay(); // Thêm endOfDay để lấy hết dữ liệu trong ngày kết thúc
-
-        // Lấy danh sách các sản phẩm và biến thể trong khoảng thời gian
-        $sanPhams = SanPham::whereHas('bienTheSanPham.chiTiets.donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
+        // Lấy danh sách sản phẩm và thống kê trực tiếp từ database
+        $thongKeSanPhams = SanPham::with(['bienTheSanPham.chiTiets.donHang' => function ($query) use ($ngayBatDau, $ngayKetThuc) {
             $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]); // Thay 'ngay_hoan_thanh' bằng 'created_at' hoặc cột thích hợp
-        })->with(['bienTheSanPham', 'bienTheSanPham.chiTiets' => function ($query) use ($ngayBatDau, $ngayKetThuc) {
-            $query->whereHas('donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
-                $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                    ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]); // Thay 'ngay_hoan_thanh' bằng 'created_at' hoặc cột thích hợp
-            });
-        }])->limit($topSanPham)->get();
-
-        // Khởi tạo các biến tổng
-        $totalSoLuongBanRa = 0;
-        $totalSoLuongThucTeBan = 0;
-        $totalTienHang = 0;
-        $totalDoanhSo = 0;
-        $totalSoLuongDonHang = 0;
-
-        $thongKeSanPhams = [];
-
-        foreach ($sanPhams as $sanPham) {
-            foreach ($sanPham->bienTheSanPham as $bienThe) {
-                $soLuongThucTeBan = 0;
-                $soLuongBanRa = 0;
-                $tienHang = 0;
-                $doanhSo = 0;
-                $soLuongDonHang = 0;
-
-                foreach ($bienThe->chiTiets as $chiTiet) {
-                    $donHang = $chiTiet->donHang;
-
-                    // Tính tổng số lượng bán ra (bao gồm tất cả đơn hàng)
-                    $soLuongBanRa += $chiTiet->so_luong;
-
-                    // Chỉ tính số lượng thực bán và thành tiền cho các đơn hoàn tất trong khoảng thời gian
-                    if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH) {
-                        $soLuongThucTeBan += $chiTiet->so_luong;
-                        $doanhSo += $chiTiet->thanh_tien;
-                        $soLuongDonHang++;
-                    }
-                }
-
-                // Tính tiền hàng từ chi phí sản xuất * số lượng biến thể
-                $tienHang = $bienThe->chi_phi_san_xuat * $soLuongBanRa;
-
-                // Cộng dồn các giá trị vào tổng
-                $totalSoLuongBanRa += $soLuongBanRa;
-                $totalSoLuongThucTeBan += $soLuongThucTeBan;
-                $totalTienHang += $tienHang;
-                $totalDoanhSo += $doanhSo;
-                $totalSoLuongDonHang += $soLuongDonHang;
-
-                // Lưu dữ liệu thống kê vào mảng
-                $thongKeSanPhams[] = [
+                ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
+        }])
+            ->get()
+            ->map(function ($sanPham) {
+                $thongKe = [
                     'ma_san_pham' => $sanPham->ma_san_pham,
                     'ten_san_pham' => $sanPham->ten_san_pham,
-                    'so_luong_ban_ra' => $soLuongBanRa,
-                    'so_luong_thuc_ban' => $soLuongThucTeBan,
-                    'tien_hang' => $tienHang,
-                    'doanh_so' => $doanhSo,
-                    'so_luong_don_hang' => $soLuongDonHang,
+                    'so_luong_ban_ra' => 0,
+                    'so_luong_thuc_ban' => 0,
+                    'doanh_so' => 0,
+                    'so_luong_don_hang' => 0,
+                    'tien_hang' => 0,
                 ];
-            }
-        }
+
+                foreach ($sanPham->bienTheSanPham as $bienThe) {
+                    foreach ($bienThe->chiTiets as $chiTiet) {
+                        $thongKe['so_luong_ban_ra'] += $chiTiet->so_luong;
+
+                        if ($chiTiet->donHang) {
+                            $thongKe['so_luong_thuc_ban'] += $chiTiet->so_luong;
+                            $thongKe['doanh_so'] += $chiTiet->thanh_tien;
+                            $thongKe['so_luong_don_hang']++;
+                        }
+                    }
+                    // Tính tiền hàng từ chi phí sản xuất * số lượng bán ra
+                    $thongKe['tien_hang'] += $bienThe->chi_phi_san_xuat * $thongKe['so_luong_ban_ra'];
+                }
+
+                return $thongKe;
+            })
+            ->sortByDesc('doanh_so')
+            ->take($topSanPham)
+            ->values();
+
+        // Tính tổng các giá trị
+        $totalSoLuongBanRa = $thongKeSanPhams->sum('so_luong_ban_ra');
+        $totalSoLuongThucTeBan = $thongKeSanPhams->sum('so_luong_thuc_ban');
+        $totalDoanhSo = $thongKeSanPhams->sum('doanh_so');
+        $totalSoLuongDonHang = $thongKeSanPhams->sum('so_luong_don_hang');
+        $totalTienHang = $thongKeSanPhams->sum('tien_hang');
 
         return response()->json([
             'data' => $thongKeSanPhams,
@@ -161,8 +157,6 @@ class ThongKeSanPham extends Controller
             'ngay_ket_thuc' => $ngayKetThuc->format('Y-m-d')
         ]);
     }
-
-
 
     public function thongKeSanPhamTonKho()
     {
