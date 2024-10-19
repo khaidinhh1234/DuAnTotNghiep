@@ -56,7 +56,7 @@ class ThongKeSanPham extends Controller
 
             // Thêm vào result
             $result[] = [
-                'sản phẩm' => $tenSanPham,
+                'name' => $tenSanPham,
                 'data' => $soLuongTheoNgay,
             ];
         }
