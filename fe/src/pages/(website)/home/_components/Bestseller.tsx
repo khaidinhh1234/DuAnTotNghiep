@@ -16,7 +16,7 @@ const Bestseller = ({ products }: any) => {
   // });
   // // console.log(data);
   // const products = data?.danh_sach_san_pham_moi || [];
-  console.log(products);
+  // console.log(products);
 
   return (
     <>
@@ -73,11 +73,26 @@ const Bestseller = ({ products }: any) => {
                       </h5>
 
                       <p className="font-semibold text-lg">
-                        {(product?.gia_thap_nhat).toLocaleString("vi-VN") ?? 0}{" "}
-                        đ
-                        <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
-                        {(product?.gia_thap_nhat).toLocaleString("vi-VN") ?? 0}{" "}
-                        đ
+                        {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
+                          <>
+                            {(product?.gia_cao_nhat ?? 0).toLocaleString(
+                              "vi-VN"
+                            )}{" "}
+                            đ
+                          </>
+                        ) : (
+                          <>
+                            {(product?.gia_thap_nhat ?? 0).toLocaleString(
+                              "vi-VN"
+                            )}{" "}
+                            đ
+                            <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
+                            {(product?.gia_cao_nhat ?? 0).toLocaleString(
+                              "vi-VN"
+                            )}{" "}
+                            đ
+                          </>
+                        )}
                       </p>
 
                       <p className="font-bold text-lg flex items-center">
