@@ -31,6 +31,9 @@ const DetailTransport = ({ record }: any) => {
     () => JSON.parse(localStorage.getItem("isWebcamVisible") || "false")
   );
   const [isImageSaved, setIsImageSaved] = useState(false);
+  const [notes, setNotes] = useState<string[]>([]); // Array to store all notes
+  const [isConfirmFailureVisible, setIsConfirmFailureVisible] = useState(false); // Control visibility of confirm failure button
+
   const [note, setNote] = useState("");
   const [showNoteInput, setShowNoteInput] = useState(false);
   const webcamRef = useRef<Webcam>(null);
@@ -67,8 +70,6 @@ const DetailTransport = ({ record }: any) => {
       setUrl(imageSrc);
     }
   };
-
-  // Hàm để xác nhận giao hàng
   const handleSave = async () => {
     try {
       setLoading(true);
@@ -98,41 +99,50 @@ const DetailTransport = ({ record }: any) => {
         id: record.id,
         action: "Xác nhận giao hàng",
         imageUrl: imageUrl,
-        note: note,
+        note: notes, // Send the notes array here
         failedAttempts: failedAttempts,
       });
 
       if (response && response.data) {
-        message.success(showNoteInput ? "Ghi chú đã được gửi thành công!" : "Đã lưu ảnh và xác nhận giao hàng thành công!");
+        // Add note to the notes array on successful save
+        if (note) {
+          setNotes((prevNotes) => [...prevNotes, note]); // Add the new note to the array
+          setNote(""); // Clear the current note input
+        }
+
+        alert(showNoteInput ? "Ghi chú đã được gửi thành công!" : "Đã lưu ảnh và xác nhận giao hàng thành công!");
         setIsImageSaved(true); // Đánh dấu ảnh đã được lưu nếu không phải ghi chú
         setFailedAttempts(0);
-        setNote("");
         setShowNoteInput(false); // Ẩn ô nhập ghi chú nếu có
       } else {
-        message.success("Giao hàng thành công");
+        alert("Có lỗi xảy ra trong quá trình xác nhận giao hàng.");
       }
-      
     } catch (error) {
       console.error("Có lỗi xảy ra:", error);
-      message.success("Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!");
+      alert("Lỗi khi lưu ảnh hoặc xác nhận đơn hàng!");
     } finally {
       setLoading(false);
     }
   };
+
 
   // Hàm xử lý khi giao hàng thất bại
   const handleDeliveryFailure = () => {
     const newFailedAttempts = failedAttempts + 1;
     setFailedAttempts(newFailedAttempts);
 
-    if (newFailedAttempts >= 3) {
-      message.success("Giao hàng thất bại 3 lần. Vui lòng nhập ghi chú.");
-      setShowNoteInput(true); // Hiện ô nhập ghi chú
-      setIsWebcamVisible(false); // Ẩn webcam
-    } else {
-      message.success(`Giao hàng thất bại lần ${newFailedAttempts}.`);
+    if (newFailedAttempts < 3) {
+      alert(`Giao hàng thất bại lần ${newFailedAttempts}.`);
+      setShowNoteInput(true); // Show note input for each failed attempt
+    } else if (newFailedAttempts === 3) {
+      alert("Giao hàng thất bại 3 lần. Vui lòng nhập ghi chú và xác nhận.");
+      setShowNoteInput(true); // Show note input for the third attempt
+      setIsConfirmFailureVisible(true); // Show confirm failure button
+      setIsWebcamVisible(false); // Hide webcam after 3 failed attempts
     }
   };
+
+
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
 
@@ -149,7 +159,6 @@ const DetailTransport = ({ record }: any) => {
   };
 
   const id = record?.id
-  // // console.log(id);
   // console.log(id)
   const { data } = useQuery({
     queryKey: ["SHIPPER"],
@@ -157,16 +166,14 @@ const DetailTransport = ({ record }: any) => {
       const response = await instance.get(`/vanchuyen/${id}`);
       return response.data;
 
-    },  
-    // enabled: !!id,
+    },
   })
   const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
     };
   });
-  const thongtin = data?.data?.thong_tin
-  console.log(thongtin, "dsadas")
+  const thongtin = data?.data?.thong_tin;
 
   const handleCancel = () => {
     setOpen(false);
@@ -306,7 +313,7 @@ const DetailTransport = ({ record }: any) => {
                                     {" "}
                                     {
                                       item?.chi_tiets?.bien_the_san_pham?.mau_bien_the
-                                        ?.ten_mau_sac 
+                                        ?.ten_mau_sac
                                     }
                                   </span>
                                 </p>
@@ -478,7 +485,7 @@ const DetailTransport = ({ record }: any) => {
                   </div>
                 )}
 
-                {/* Hiện ô nhập ghi chú nếu giao hàng thất bại 3 lần */}
+                {/* Hiện ô nhập ghi chú nếu giao hàng thất bại */}
                 {showNoteInput && (
                   <textarea
                     rows={3}
@@ -487,6 +494,18 @@ const DetailTransport = ({ record }: any) => {
                     onChange={(e) => setNote(e.target.value)}
                     className="border rounded-lg p-2 mt-4"
                   />
+                )}
+
+                {/* Render all notes */}
+                {notes.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-bold">Ghi chú đã nhập:</h4>
+                    <ul className="list-disc pl-5">
+                      {notes.map((n, index) => (
+                        <li key={index}>{n}</li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
 
                 {/* Nút xử lý giao hàng */}
@@ -502,71 +521,104 @@ const DetailTransport = ({ record }: any) => {
                   </button>
                 ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
                   <>
-                    {showNoteInput ? (
-                      <button
-                        onClick={handleSave} // Gửi ghi chú khi nhấn nút này
-                        className="w-full py-2 border bg-green-600 rounded-lg text-white hover:bg-green-700 mt-7"
-                        disabled={loading}
-                      >
-                        Gửi ghi chú
-                      </button>
-                    ) : (
+                    {failedAttempts < 3 ? (
                       <>
-                        <button
-                          className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
-                          onClick={handleSave}
-                          disabled={loading || isImageSaved}
-                        >
-                          {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
-                        </button>
-                        <button
-                          className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                          onClick={handleDeliveryFailure}
-                        >
-                          Giao hàng thất bại
-                        </button>
+                        {showNoteInput ? (
+                          <button
+                            onClick={() => {
+                              if (note.trim()) {
+                                setNotes((prevNotes) => [...prevNotes, note.trim()]);
+                                setNote(""); // Clear the note input
+                                setShowNoteInput(false); // Hide the note input
+                              } else {
+                                alert("Vui lòng nhập ghi chú.");
+                              }
+                            }}
+                            className="w-full py-2 border bg-green-600 rounded-lg text-white hover:bg-green-700 mt-7"
+                          >
+                            Gửi ghi chú
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
+                              onClick={handleSave}
+                              disabled={loading || isImageSaved}
+                            >
+                              {loading ? 'Đang xử lý...' : 'Xác nhận giao hàng'}
+                            </button>
+                            <button
+                              className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
+                              onClick={() => {
+                                setFailedAttempts((prev) => prev + 1);
+                                setShowNoteInput(true); // Show note input after marking as failed
+                              }}
+                            >
+                              Giao hàng thất bại
+                            </button>
+                          </>
+                        )}
                       </>
+                    ) : (
+                      <button
+                        className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
+                        onClick={async () => {
+                          // Confirm delivery failure with all notes
+                          await mutate({
+                            id: record.id,
+                            action: "Xác nhận giao hàng thất bại",
+                            note: notes, // Send all notes as an array
+                          });
+                          // Reset states after confirming failure
+                          setFailedAttempts(0);
+                          setNotes([]); // Clear notes after confirmation
+                          setShowNoteInput(false);
+                        }}
+                      >
+                        Xác nhận giao hàng thất bại
+                      </button>
                     )}
                   </>
                 ) : null}
               </div>
+
             </div>{" "}
             <div className=" bg-slate-100 p-5 border rounded-lg my-2">
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
               <hr />
               <h5 className="text-blue-600 my-2">
-                {thongtin?.ten_nguoi_dat_hang
-                  ? thongtin?.ten_nguoi_dat_hang
+                {record.van_chuyen?.don_hang.ten_nguoi_dat_hang
+                  ? record.van_chuyen?.don_hang.ten_nguoi_dat_hang
                   : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
               <h5 className="text-black my-2">
                 {" "}
-                {record.van_chuyen?.don_hang?.ten_nguoi_dat_hang
-                  ? record.van_chuyen?.don_hang?.ten_nguoi_dat_hang
+                {record.van_chuyen?.don_hang.ten_nguoi_dat_hang
+                  ? record.van_chuyen?.don_hang.ten_nguoi_dat_hang
                   : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <p className="text-blue-800 font-semibold">
                 Số điện thoại :
                 <span className="text-black font-medium">
-                  {record.van_chuyen?.don_hang?.so_dien_thoai_nguoi_dat_hang
-                    ? record.van_chuyen?.don_hang?.so_dien_thoai_nguoi_dat_hang
+                  {record.van_chuyen?.don_hang.so_dien_thoai_nguoi_dat_hang
+                    ? record.van_chuyen?.don_hang.so_dien_thoai_nguoi_dat_hang
                     : thongtin?.so_dien_thoai}
                 </span>
               </p>
               <h5 className="text-blue-800">
                 Địa chỉ Giao hàng: <br />
                 <span className="text-black">
-                  {record?.van_chuyen?.don_hang?.dia_chi_nguoi_dat_hang
-                    ? record?.van_chuyen?.don_hang?.dia_chi_nguoi_dat_hang
+                  {record?.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
+                    ? record?.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
                     : thongtin?.dia_chi}
                 </span>
               </h5>
               <p className="text-blue-800 font-semibold">
                 Ghi chú của khách hàng : <br />
                 <span className="text-black">
-                  {record?.van_chuyen?.don_hang?.ghi_chu ? record?.van_chuyen?.don_hang?.ghi_chu : "Không có ghi chú"}
+                  {record?.van_chuyen?.don_hang.ghi_chu ? record?.van_chuyen?.don_hang.ghi_chu : "Không có ghi chú"}
                 </span>
               </p>
             </div> {" "}
