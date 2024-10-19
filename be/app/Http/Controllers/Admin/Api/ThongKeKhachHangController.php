@@ -191,7 +191,7 @@ class ThongKeKhachHangController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi', 'message' => $e->getMessage()], 500);
         }
     }
-   public function thongKeDoTuoi(Request $request)
+    public function thongKeDoTuoi(Request $request)
     {
         // Thống kê giới tính
         $gioiTinhLabels = ['nam', 'nu', 'khac', 'conlai'];
@@ -206,7 +206,7 @@ class ThongKeKhachHangController extends Controller
         $tongSoNguoiDung = array_sum($gioiTinhCounts); // Tổng số người dùng
 
         // Tính tỉ lệ phần trăm giới tính
-        $gioiTinhPhanTram= [
+        $gioiTinhPhanTram = [
             'nam' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['nam'] / $tongSoNguoiDung) * 100, 2) : 0,
             'nu' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['nu'] / $tongSoNguoiDung) * 100, 2) : 0,
             'khac' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['khac'] / $tongSoNguoiDung) * 100, 2) : 0,
@@ -222,9 +222,12 @@ class ThongKeKhachHangController extends Controller
 
         //Thống kế số lượng người không nhập ngày sinh
         $ngaySinhUser = User::select('ngay_sinh')->get();
+
         $khongCoNgaysinh = $ngaySinhUser->whereNull('ngay_sinh')->count();
         $coNgaySinh = $ngaySinhUser->whereNotNull('ngay_sinh')->count();
 
+        $phanTramKhongCoNgaySinh = $khongCoNgaysinh > 0 ? round(($khongCoNgaysinh / $ngaySinhUser->count()) * 100, 2) : 0;
+        $phanTramCoNgaySinh = $coNgaySinh > 0 ? round(($coNgaySinh / $ngaySinhUser->count()) * 100, 2) : 0;
         foreach ($users as $user) {
             $tuoi = Carbon::parse($user->ngay_sinh)->age;
 
@@ -251,6 +254,8 @@ class ThongKeKhachHangController extends Controller
         return response()->json([
             'khong_co_ngay_sinh' => $khongCoNgaysinh,
             'co_ngay_sinh' => $coNgaySinh,
+            'phan_tram_khong_co_ngay_sinh' => $phanTramKhongCoNgaySinh,
+            'phan_tram_co_ngay_sinh' => $phanTramCoNgaySinh,
             'gioi_tinh_labels' => $gioiTinhLabels,
             'gioi_tinh_counts' => $gioiTinhValues,
             'gioi_tinh_percents' => $gioiTinhPhanTram,
@@ -285,7 +290,7 @@ class ThongKeKhachHangController extends Controller
             'tong_chi_tieu' => $tongChiTieu,
         ];
     }
-      public function thongKeKhachHangAll()
+    public function thongKeKhachHangAll()
     {
         // Khởi tạo các mảng kết quả
         $soLuongKhachHangMoi = [];
@@ -379,7 +384,7 @@ class ThongKeKhachHangController extends Controller
                 'tong_so_don' => $khachHang->tong_so_don,
                 'so_don_thanh_cong' => $khachHang->so_don_thanh_cong,
                 'so_don_huy' => $khachHang->so_don_huy,
-                'tong_tien_mua_hang' => (int)$khachHang->tong_tien_mua_hang,
+                'tong_tien_mua_hang' => (int) $khachHang->tong_tien_mua_hang,
             ];
         });
 
