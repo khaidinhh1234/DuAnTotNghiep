@@ -95,7 +95,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     enabled: !!datestart && !!dateend,
   });
 
-  const doanh_so = doanhso?.ti_le_tang_giam > 0;
+  const doanh_so = doanhso?.ti_le_tang_giam_don_hang > 0;
   const san_pham = doanhso?.ti_le_tang_giam_san_pham > 0;
   const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
   const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;

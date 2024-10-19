@@ -159,7 +159,7 @@ const Detail = ({ record }: any) => {
         centered
         open={open}
         width={1200}
-        className=" "
+        className=""
         okText="Đồng ý"
         footer={null}
         onCancel={handleCancel}
