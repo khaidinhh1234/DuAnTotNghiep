@@ -54,7 +54,7 @@ const Dashboard = () => {
       </Row>
       <div className="mt-6 grid grid-cols-8 gap-5">
         <Row className="col-span-5 shadow-md bg-white rounded-md px-6 py-7">
-          <div className="grid grid-cols-3 gap-5 mb-5">
+          <div className="grid grid-cols-3 gap-5 mb-5 mx-auto">
             <div>
               <Tablechart1
                 datestart={datestart as any}

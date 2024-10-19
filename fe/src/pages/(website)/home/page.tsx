@@ -23,7 +23,10 @@ const HomePage = () => {
       }
     },
   });
-  // console.log(data?.danh_gia_khach_hang);
+  const chuong_trinh_uu_dai = data?.chuong_trinh_uu_dai || [];
+  // console.log(chuong_trinh_uu_dai);
+  const danhgia = data?.danh_gia_khach_hang || [];
+
   const banner = data?.banner?.banner || [];
   const products = data?.danh_sach_san_pham_moi || [];
   const bo_suu_tap = data?.bo_suu_tap_ua_chuongs || [];
@@ -32,8 +35,8 @@ const HomePage = () => {
       <Banner banner={banner} />
       <Categories bo_suu_tap={bo_suu_tap} />
       <Bestseller products={products} />
-      <DealsOfTheMonth />
-      <Customer />
+      <DealsOfTheMonth chuong_trinh_uu_dai={chuong_trinh_uu_dai} />
+      <Customer danhgia={danhgia} />
       <InstagramStories />
       <Method />{" "}
     </div>

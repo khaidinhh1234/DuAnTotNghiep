@@ -58,22 +58,20 @@ const Bestseller = ({ products }: any) => {
                         </span>
                       )}
                     </div>
-                    <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+                    {/* <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
                       Thêm vào giỏ hàng
-                    </button>
+                    </button> */}
                   </div>
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
-                    <a href="#">
+                    <Link to={`/product-detail/${product.id}`}>
                       <h5 className=" text-base truncate w-60 font-medium">
                         {product?.ten_san_pham}
                       </h5>
-                    </a>
+                    </Link>
                     <p className="font-semibold text-lg">
                       {(product?.gia_thap_nhat).toLocaleString("vi-VN") ?? 0} đ
-                      <span className="text-black/20 line-through pl-3 text-[16px]">
-                        {(product?.gia_thap_nhat).toLocaleString("vi-VN") ?? 0}{" "}
-                        đ
-                      </span>
+                      <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
+                      {(product?.gia_thap_nhat).toLocaleString("vi-VN") ?? 0} đ
                     </p>
 
                     <p className="font-bold text-lg flex items-center">
