@@ -135,19 +135,20 @@ Route::middleware(['auth.sanctum'])
         // Sản phẩm
         Route::middleware('auth.checkrole')
             ->group(function () {
-            Route::apiResource('sanpham', SanPhamController::class)->except(['show']);
-            Route::patch('sanpham/khoi-phuc-xoa-mem-nhieu-san-pham', [SanPhamController::class, 'bulkRestore'])->name('sanpham.bulk-restore');
-            Route::delete('sanpham', [SanPhamController::class, 'bulkDelete'])->name('sanpham.bulk-delete');
-            Route::patch('sanpham/trang-thai-nhieu-san-pham', [SanPhamController::class, 'updateStatus'])->withoutMiddleware('auth.checkrole');
-            Route::patch('sanpham/cap-nhat-nhieu-san-pham-the', [SanPhamController::class, 'bulkUpdateTags'])->name('sanpham.update-tags');
-            Route::get('sanpham/exports', [SanPhamController::class, 'exportSanPham'])->withoutMiddleware('auth.checkrole');
-            Route::post('sanpham/kich-hoat/{id}', [SanPhamController::class, 'kichHoatSanPham'])->name('sanpham.kichhoat');
-            Route::post('sanpham/huy-kich-hoat/{id}', [SanPhamController::class, 'huyKichHoatSanPham'])->name('sanpham.huykichhoat');
-            Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
-            Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
-            Route::get('sanpham/{id}', [SanPhamController::class, 'show'])->name('sanpham.show');
-            Route::get('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->withoutMiddleware('auth.checkrole');
-        });
+
+                Route::apiResource('sanpham', SanPhamController::class)->except(['show']);
+                Route::patch('sanphams/khoi-phuc-xoa-mem-nhieu-san-pham', [SanPhamController::class, 'bulkRestore'])->name('sanpham.bulk-restore');
+                Route::delete('sanpham', [SanPhamController::class, 'bulkDelete'])->name('sanpham.bulk-delete');
+                Route::patch('sanphams/trang-thai-nhieu-san-pham', [SanPhamController::class, 'updateStatus'])->withoutMiddleware('auth.checkrole');
+                Route::patch('sanphams/cap-nhat-nhieu-san-pham-the', [SanPhamController::class, 'bulkUpdateTags'])->name('sanpham.update-tags');
+                Route::get('sanpham/exports', [SanPhamController::class, 'exportSanPham'])->withoutMiddleware('auth.checkrole');
+                Route::post('sanpham/kich-hoat/{id}', [SanPhamController::class, 'kichHoatSanPham'])->name('sanpham.kichhoat');
+                Route::post('sanpham/huy-kich-hoat/{id}', [SanPhamController::class, 'huyKichHoatSanPham'])->name('sanpham.huykichhoat');
+                Route::get('sanpham/thung-rac', [SanPhamController::class, 'danhSachSanPhamDaXoa'])->name('sanpham.thungrac');
+                Route::post('sanpham/thung-rac/{id}', [SanPhamController::class, 'khoiPhucSanPham'])->name('sanpham.khoiphuc');
+                Route::get('sanpham/{id}', [SanPhamController::class, 'show'])->name('sanpham.show');
+                Route::get('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->withoutMiddleware('auth.checkrole');
+            });
 
         // Kích thước biến thể
         Route::middleware('auth.checkrole')

@@ -38,7 +38,7 @@ class TrangChuController extends Controller
 
         $result = ['banner' => ['banner' => $bannersArray]];
 
-        $dataChuongTrinhUuDai = ChuongTrinhUuDai::query()->orderByDesc('id')->get();
+        $dataChuongTrinhUuDai = ChuongTrinhUuDai::query()->where('ngay_hien_thi', '>=', Carbon::now())->orderBy('ngay_hien_thi')->orderByDesc('id')->get();
 
         $dataDanhSachSanPhamMoi = SanPham::query()
             ->select(
@@ -46,6 +46,8 @@ class TrangChuController extends Controller
                 'san_phams.ten_san_pham',
                 'san_phams.duong_dan',
                 'san_phams.anh_san_pham',
+                'san_phams.hang_moi',
+                'san_phams.gia_tot',
                 DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'), // Giá thấp nhất
                 DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')  // Giá cao nhất
             )
@@ -54,6 +56,7 @@ class TrangChuController extends Controller
             ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
             ->where('san_phams.trang_thai', 1)
             ->where('san_phams.hang_moi', 1)
+            ->where('san_phams.danh_muc_id', '!=', 'null')
             ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
             ->orderByDesc('san_phams.id')
             ->take(8)
@@ -84,7 +87,13 @@ class TrangChuController extends Controller
 
                 $sanPham->bien_the = $bienThe;
                 $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
-                    ? 'Sản phẩm đang trong chương trình ưu đãi'
+                    ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
+                        $giaTriUuDai = $uuDai->loai_uu_dai === 'phan_tram'
+                            ? $uuDai->gia_tri_uu_dai . '%'
+                            : number_format($uuDai->gia_tri_uu_dai, 0, ',', '.') . ' VND';
+
+                        return $uuDai->ten_uu_dai . " - Giảm: " . $giaTriUuDai;
+                    })->implode(', ')
                     : null;
 
                 return $sanPham;
@@ -111,8 +120,11 @@ class TrangChuController extends Controller
                     'san_phams.id',
                     'san_phams.ten_san_pham',
                     'san_phams.duong_dan',
-                    'san_phams.anh_san_pham'
+                    'san_phams.anh_san_pham',
+                    'san_phams.hang_moi',
+                    'san_phams.gia_tot',
                 )
+                    ->where('san_phams.danh_muc_id', '!=', 'null')
                     ->where('san_phams.trang_thai', 1)
                     ->with(['bienTheSanPham' => function ($query) {
                         $query->select(
@@ -140,7 +152,13 @@ class TrangChuController extends Controller
         foreach ($boSuuTapUaChuongs as $boSuuTap) {
             foreach ($boSuuTap->sanPhams as $sanPham) {
                 $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
-                    ? 'Sản phẩm đang trong chương trình ưu đãi'
+                    ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
+                        $giaTriUuDai = $uuDai->loai === 'phan_tram'
+                            ? $uuDai->gia_tri_uu_dai . '%'
+                            : number_format($uuDai->gia_tri_uu_dai, 0, ',', '.') . ' VND';
+
+                        return $uuDai->ten_uu_dai . " - Giảm: " . $giaTriUuDai;
+                    })->implode(', ')
                     : null;
 
                 $lowestPrice = null;

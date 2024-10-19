@@ -5,12 +5,16 @@ namespace Database\Seeders;
 use App\Models\BienTheKichThuoc;
 use App\Models\BienTheMauSac;
 use App\Models\DanhMuc;
+use App\Models\DanhMucTinTuc;
 use App\Models\HangThanhVien;
 use App\Models\Quyen;
+use App\Models\User;
 use App\Models\VaiTro;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 class DataMasterSeeder extends Seeder
@@ -117,8 +121,8 @@ class DataMasterSeeder extends Seeder
                 $role->quyens()->sync([]);
             } else {
                 $quyenVanChuyenIds = Quyen::whereIn('ten_quyen', [
-                    'admin.van-chuyen.index',
-                    'admin.van-chuyen.show',
+                    'admin.vanchuyen.index',
+                    'admin.vanchuyen.show',
                     'admin.vanchuyen.ttvc',
                     'admin.vanchuyen.xacnhan',
                 ])->pluck('id')->toArray();
@@ -154,6 +158,25 @@ class DataMasterSeeder extends Seeder
                 'ten_danh_muc' => $DanhMuc['ten_danh_muc'],
                 'cha_id' => $DanhMuc['cha_id'],
                 'duong_dan' => $DanhMuc['duong_dan'],
+            ]);
+        }
+
+        //Danh mục tin tức
+        $DanhMucTinTucs = [
+            [
+                'ten_danh_muc_tin_tuc' => 'Dịch vụ khách hàng',
+                'duong_dan' => 'dich_vu_khach_hang',
+            ],
+            [
+                'ten_danh_muc_tin_tuc' => 'Về chúng tôi',
+                'duong_dan' => 've_chung_toi',
+            ],
+        ];
+
+        foreach ($DanhMucTinTucs as $DanhMucTinTuc) {
+            DanhMucTinTuc::create([
+                'ten_danh_muc_tin_tuc' => $DanhMucTinTuc['ten_danh_muc_tin_tuc'],
+                'duong_dan' => $DanhMucTinTuc['duong_dan'],
             ]);
         }
 
@@ -246,5 +269,25 @@ class DataMasterSeeder extends Seeder
                 'loai_kich_thuoc' => $size['loai_kich_thuoc'],
             ]);
         }
+
+        $user = User::create([
+            'ho' => 'Quản',
+            'ten' => 'Trị',
+            'email' => 'chiduc1611@gmail.com',
+            'password' => Hash::make('Admin1234'), // Mã hóa mật khẩu
+            'so_dien_thoai' => '0123456789',
+            'dia_chi' => '123 Đường ABC, TP XYZ',
+            'ngay_sinh' => Carbon::parse('1990-01-01'),
+            'email_verified_at' => Carbon::now(),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        if ($user) {
+            $user->vaiTros()->sync([2]);
+        }
+
     }
+
+
 }

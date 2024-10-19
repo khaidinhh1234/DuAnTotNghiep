@@ -116,11 +116,11 @@ const ProductsAdmin: React.FC = () => {
 
       switch (action) {
         case "activate":
-          endpoint = "sanpham/trang-thai-nhieu-san-pham";
+          endpoint = "sanphams/trang-thai-nhieu-san-pham";
           payload = { san_phams: ids, trang_thai: true };
           break;
         case "deactivate":
-          endpoint = "sanpham/trang-thai-nhieu-san-pham";
+          endpoint = "sanphams/trang-thai-nhieu-san-pham";
           payload = { san_phams: ids, trang_thai: false };
           break;
 

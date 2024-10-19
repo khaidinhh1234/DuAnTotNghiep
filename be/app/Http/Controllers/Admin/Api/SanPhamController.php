@@ -114,7 +114,6 @@ class SanPhamController extends Controller
                     }
                 }
             }
-            event(new SendMail($email = null, $name = null, $sanPham, 'thong_bao_san_pham_moi'));
             $sanPham->boSuuTapSanPham()->sync($boSuuTapSanPham);
             DB::commit();
 
