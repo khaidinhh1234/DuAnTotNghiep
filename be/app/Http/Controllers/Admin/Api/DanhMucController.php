@@ -19,7 +19,7 @@ class DanhMucController extends Controller
     public function index()
     {
         try {
-            $danhMucs = DanhMuc::whereNull('cha_id')->with('children.children')->get();
+            $danhMucs = DanhMuc::with('children.children')->get();
             return response()->json(
                 [
                     'status' => true,
