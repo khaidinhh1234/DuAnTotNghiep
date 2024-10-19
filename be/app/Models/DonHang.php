@@ -38,12 +38,14 @@ class DonHang extends Model
         'tong_tien_don_hang',
         'ten_nguoi_dat_hang',
         'so_dien_thoai_nguoi_dat_hang',
+        'email_nguoi_dat_hang',
         'dia_chi_nguoi_dat_hang',
         'ma_giam_gia',
         'so_tien_giam_gia',
         'ngay_hoan_thanh_don',
         'trang_thai_thanh_toan',
-        'trang_thai_van_chuyen'
+        'trang_thai_van_chuyen',
+
     ];
 
     // Relationship with DonHangChiTiet
