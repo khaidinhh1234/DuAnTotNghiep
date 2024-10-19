@@ -231,6 +231,7 @@ class DonHangClientController extends Controller
                     'so_luong' => $soLuongMua,
                     'gia' => $gia,
                     'thanh_tien' => $gia * $soLuongMua,
+                    'thanh_tien' => $bienTheSanPham->gia * $soLuongMua,
                 ]);
             }
 
