@@ -7,6 +7,7 @@ use App\Models\BienTheSanPham;
 use App\Models\DonHang;
 use App\Models\DonHangChiTiet;
 use App\Models\GioHang;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -144,6 +145,7 @@ class DonHangClientController extends Controller
                 'san_pham_chon.*.so_luong' => 'required|integer|min:1',
                 'ten_nguoi_dat_hang' => 'required|string|max:255',
                 'so_dien_thoai_nguoi_dat_hang' => 'required|string|max:15',
+                'email_nguoi_dat_hang' => 'required|email|max:255',
                 'dia_chi_nguoi_dat_hang' => 'required|string|max:255',
                 'phuong_thuc_thanh_toan' => 'required|in:' . implode(',', [DonHang::PTTT_TT, DonHang::PTTT_NH, DonHang::PTTT_MM]),
             ]);
@@ -160,33 +162,48 @@ class DonHangClientController extends Controller
             }
 
             $tongTienDonHang = 0;
-            $sanPhamHopLe = [];
 
             foreach ($sanPhamDuocChon as $sanPham) {
-                $gioHangItem = GioHang::where('user_id', Auth::id())
-                    ->where('bien_the_san_pham_id', $sanPham['bien_the_san_pham_id'])
-                    ->first();
-
-                if (!$gioHangItem || $sanPham['so_luong'] > $gioHangItem->so_luong) {
+                $bienTheSanPham = BienTheSanPham::findOrFail($sanPham['bien_the_san_pham_id']);
+                if ($sanPham['so_luong'] > $bienTheSanPham->so_luong_bien_the) {
                     return response()->json([
                         'status' => false,
-                        'message' => 'Số lượng sản phẩm không hợp lệ hoặc sản phẩm không có trong giỏ hàng.',
+                        'message' => 'Số lượng sản phẩm không hợp lệ.',
                     ], 400);
                 }
 
-                $sanPhamHopLe[] = [
-                    'gio_hang_item' => $gioHangItem,
-                    'so_luong' => $sanPham['so_luong']
-                ];
-
-                $tongTienDonHang += $gioHangItem->gia * $sanPham['so_luong'];
+                $tongTienDonHang += $bienTheSanPham->gia * $sanPham['so_luong'];
             }
 
             $maDonHang = 'DH' . strtoupper(uniqid());
 
+            $userId = null;
+
+            if (Auth::check()) {
+                $userId = Auth::id();
+            } else {
+                $existingUser = User::where('email', $request->email_nguoi_dat_hang)->first();
+
+                if ($existingUser) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Email đã tồn tại. Vui lòng đăng nhập để thực hiện đơn hàng.',
+                    ], 400);
+                } else {
+                    $user = User::create([
+                        'ten' => $request->ten_nguoi_dat_hang,
+                        'ho' => $request->ten_nguoi_dat_hang,
+                        'email' => $request->email_nguoi_dat_hang,
+                        'an_danh' => 1,
+                    ]);
+
+                    $userId = $user->id;
+                }
+            }
+
             $donHang = DonHang::create([
                 'ma_don_hang' => $maDonHang,
-                'user_id' => Auth::id(),
+                'user_id' => $userId,
                 'ghi_chu' => $request->ghi_chu,
                 'trang_thai_don_hang' => DonHang::TTDH_CXH,
                 'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
@@ -199,28 +216,22 @@ class DonHangClientController extends Controller
                 'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
             ]);
 
-            foreach ($sanPhamHopLe as $item) {
-                $gioHangItem = $item['gio_hang_item'];
-                $bienTheSanPham = BienTheSanPham::findOrFail($gioHangItem->bien_the_san_pham_id);
-                $soLuongMua = $item['so_luong'];
+            foreach ($sanPhamDuocChon as $sanPham) {
+                $bienTheSanPham = BienTheSanPham::findOrFail($sanPham['bien_the_san_pham_id']);
+                $soLuongMua = $sanPham['so_luong'];
+
+                $bienTheSanPham->so_luong_bien_the -= $soLuongMua;
+                $bienTheSanPham->save();
+
+                $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai  ?? $bienTheSanPham->gia_ban;
 
                 DonHangChiTiet::create([
                     'don_hang_id' => $donHang->id,
                     'bien_the_san_pham_id' => $bienTheSanPham->id,
                     'so_luong' => $soLuongMua,
-                    'gia' => $gioHangItem->gia,
-                    'thanh_tien' => $gioHangItem->gia * $soLuongMua,
+                    'gia' => $gia,
+                    'thanh_tien' => $gia * $soLuongMua,
                 ]);
-
-                $bienTheSanPham->so_luong_bien_the -= $soLuongMua;
-                $bienTheSanPham->save();
-
-                if ($soLuongMua == $gioHangItem->so_luong) {
-                    $gioHangItem->delete();
-                } else {
-                    $gioHangItem->so_luong -= $soLuongMua;
-                    $gioHangItem->save();
-                }
             }
 
             DB::commit();
@@ -238,5 +249,7 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
+
+
 
 }

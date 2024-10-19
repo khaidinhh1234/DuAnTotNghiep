@@ -108,6 +108,7 @@ Route::middleware([])
         });
 
         // Đơn hàng
+        Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
         Route::get('/don-hang', [DonHangClientController::class, 'donHangUser'])->middleware('auth:sanctum');
         Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang'])->middleware('auth:sanctum');
         //Thanh toán

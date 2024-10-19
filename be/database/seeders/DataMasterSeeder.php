@@ -617,5 +617,11 @@ class DataMasterSeeder extends Seeder
                 'thanh_tien' => 1000000,
             ],
         ]);
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 625d7d6fbec019d6a51708c9f81794b611c75235
     }
 }
