@@ -13,6 +13,60 @@ use Illuminate\Support\Facades\DB;
 
 class ThongKeTongQuanController extends Controller
 {
+
+    public function thongKeTongQuan(Request $request)
+    {
+        // Gọi hàm thống kê doanh thu theo khoảng
+        $doanhThuTheoKhoang = $this->doanhThuTheoKhoang($request);
+
+        // Gọi hàm so sánh trạng thái đơn hàng trong khoảng
+        $trangThaiKhoangDonSoSanh = $this->trangThaiKhoangDonSoSanh($request);
+
+        // Gọi hàm thống kê đơn hàng chốt
+        $thongKeDonHangChot = $this->thongKeDonHangChot($request);
+
+        // Gọi hàm thống kê hoàn hàng
+        $thongKeHoanHang = $this->thongKeHoanHang($request);
+
+        // Gọi hàm thống kê sản phẩm tồn kho
+        $thongKeSanPhamTonKho = $this->thongKeSanPhamTonKho($request);
+
+        // Gọi hàm thống kê doanh thu tổng
+        $thongKeDoanhThuTong = $this->thongKeDoanhThuTong($request);
+
+        // Gọi hàm thống kê lợi nhuận
+        $thongKeLoiNhuan = $this->thongKeLoiNhuan($request);
+
+        // Gọi hàm thống kê thanh toán online
+        $thongKeThanhToanOnline = $this->thongKeThanhToanOnline($request);
+
+        // Gọi hàm thống kê thanh toán offline
+        $thongKeThanhToanOff = $this->thongKeThanhToanOff($request);
+
+        // Gọi hàm thống kê doanh số sản phẩm
+        $thongKeDoanhSoSanPham = $this->thongKeDoanhSoSanPham($request);
+
+        // Gọi hàm thống kê doanh thu trung bình
+        $thongKeDoanhThuTB = $this->thongKeDoanhThuTB($request);
+
+        // Tổng hợp kết quả từ các hàm thống kê
+        return response()->json([
+            'doanh_thu_theo_khoang' => $doanhThuTheoKhoang->original,
+            'trang_thai_don_hang_so_sanh' => $trangThaiKhoangDonSoSanh->original,
+            'thong_ke_don_hang_chot' => $thongKeDonHangChot->original,
+            'thong_ke_hoan_hang' => $thongKeHoanHang->original,
+            'thong_ke_san_pham_ton_kho' => $thongKeSanPhamTonKho->original,
+            'thong_ke_doanh_thu' => $thongKeDoanhThuTong->original,
+            'thong_ke_loi_nhuan' => $thongKeLoiNhuan->original,
+            'thong_ke_thanh_toan_online' => $thongKeThanhToanOnline->original,
+            'thong_ke_thanh_toan_off' => $thongKeThanhToanOff->original,
+            'thong_ke_doanh_so_san_pham' => $thongKeDoanhSoSanPham->original,
+            'thong_ke_doanh_thu_tb' => $thongKeDoanhThuTB->original,
+        ]);
+    }
+
+
+
     public function thongKeDonHangChot(Request $request)
     {
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
@@ -224,46 +278,55 @@ class ThongKeTongQuanController extends Controller
     }
     public function thongKeDoanhThuTong(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->addDay();
+        try {
+            // Lấy ngày bắt đầu và ngày kết thúc từ request hoặc dùng giá trị mặc định
+            $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
+            $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
 
-        // $trangThaiBiLoaiBo = [
-        //     DonHang::TTDH_DH,   // Hủy hàng
-        //     DonHang::TTDH_HTDH, // Hoàn tất đơn hàng
-        //     DonHang::TTDH_DHTB, // Đơn hàng bị từ chối nhận
-        //     DonHang::TTDH_HH    // Hoàn hàng
-        // ];
+            // Lấy danh sách đơn hàng hoàn tất trong khoảng thời gian
+            $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
+                ->get();
 
-        $donHangs = DonHang::query()
-            ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-            ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
-            ->get();
+            // Tính tổng doanh thu và số đơn hàng trong khoảng thời gian
+            $tongDoanhThu = $donHangs->sum('tong_tien_don_hang');
+            $soDonHang = $donHangs->count();
 
-        $tongDoanhThu = $donHangs->sum('tong_tien_don_hang');
-        $soDonHang = $donHangs->count();
+            // Tính khoảng thời gian (số ngày)
+            $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
 
-        $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
-        $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
-        $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
+            // Khoảng thời gian trước (để so sánh)
+            $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
+            $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
-        $donHangsTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-            ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDauTruoc, $ngayKetThucTruoc])
-            ->get();
+            // Lấy danh sách đơn hàng trong khoảng thời gian trước
+            $donHangsTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDauTruoc, $ngayKetThucTruoc])
+                ->get();
 
-        $tongDoanhThuTruoc = $donHangsTruoc->sum('tong_tien_don_hang');
-        $soDonHangTruoc = $donHangsTruoc->count();
+            // Tính tổng doanh thu và số đơn hàng trong khoảng thời gian trước
+            $tongDoanhThuTruoc = $donHangsTruoc->sum('tong_tien_don_hang');
+            $soDonHangTruoc = $donHangsTruoc->count();
 
-        $tiLeTangGiamDoanhThu = $tongDoanhThuTruoc > 0
-            ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
-            : ($tongDoanhThu > 0 ? 100 : 0);
+            // Tính tỷ lệ tăng/giảm doanh thu
+            $tiLeTangGiamDoanhThu = $tongDoanhThuTruoc > 0
+                ? (($tongDoanhThu - $tongDoanhThuTruoc) / $tongDoanhThuTruoc) * 100
+                : ($tongDoanhThu > 0 ? 100 : 0);
 
-        return response()->json([
-            'tong_doanh_thu' => $tongDoanhThu,
-            'so_don_hang' => $soDonHang,
-            'tong_doanh_thu_truoc' => $tongDoanhThuTruoc,
-            'so_don_hang_truoc' => $soDonHangTruoc,
-            'ti_le_tang_giam_doanh_thu' => round($tiLeTangGiamDoanhThu, 2)
-        ]);
+            // Trả về dữ liệu dưới dạng JSON
+            return response()->json([
+                'tong_doanh_thu' => $tongDoanhThu,
+                'so_don_hang' => $soDonHang,
+                'tong_doanh_thu_truoc' => $tongDoanhThuTruoc,
+                'so_don_hang_truoc' => $soDonHangTruoc,
+                'ti_le_tang_giam_doanh_thu' => round($tiLeTangGiamDoanhThu, 2)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Đã xảy ra lỗi',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
     public function thongKeThanhToanOnline(Request $request)
     {
