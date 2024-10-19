@@ -17,14 +17,12 @@ class SendMail
     public $email;
     public $condition;
     public $name;
-    public $sanPham;
 
-    public function __construct($email = null, $name = null, $condition, $sanPham = null)
+    public function __construct($email, $name, $condition)
     {
         $this->condition = $condition;
         $this->email = $email;
         $this->name = $name;
-        $this->sanPham = $sanPham;
     }
 
     /**

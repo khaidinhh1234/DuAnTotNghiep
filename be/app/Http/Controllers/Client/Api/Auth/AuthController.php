@@ -32,7 +32,7 @@ class AuthController extends Controller
         $user = User::create([
             'ho' => $request->ho,
             'ten' => $request->ten,
-            'anh_nguoi_dung' => 'https://i.pinimg.com/originals/f3/d1/ed/f3d1edf10d63c40e1fa06364176fa502.png',
+            'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'so_dien_thoai' => $request->so_dien_thoai,

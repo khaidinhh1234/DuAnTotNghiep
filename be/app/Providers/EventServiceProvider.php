@@ -28,7 +28,6 @@ class EventServiceProvider extends ServiceProvider
             SendMailForgotPassword::class,
             SendMailContact::class,
             SendMailPhanHoiLienHe::class,
-            SendNewProductMailListener::class,
         ],
     ];
 
