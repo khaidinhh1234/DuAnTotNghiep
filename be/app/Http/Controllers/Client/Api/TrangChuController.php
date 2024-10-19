@@ -48,8 +48,16 @@ class TrangChuController extends Controller
                 'san_phams.anh_san_pham',
                 'san_phams.hang_moi',
                 'san_phams.gia_tot',
-                DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'), // Giá thấp nhất
-                DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')  // Giá cao nhất
+                DB::raw('MIN(CASE
+                    WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_ban
+                    WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_ban
+                    ELSE bien_the_san_phams.gia_ban
+                END) as gia_thap_nhat'),
+                DB::raw('MAX(CASE
+                    WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_ban
+                    WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_ban
+                    ELSE bien_the_san_phams.gia_ban
+                END) as gia_cao_nhat')
             )
             ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
             ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
@@ -62,6 +70,7 @@ class TrangChuController extends Controller
             ->take(8)
             ->get()
             ->map(function ($sanPham) {
+                // Lấy thông tin biến thể của sản phẩm, giới hạn 1 ảnh cho mỗi biến thể
                 $bienThe = BienTheSanPham::query()
                     ->select(
                         'bien_the_san_phams.id',
@@ -70,22 +79,32 @@ class TrangChuController extends Controller
                         'bien_the_mau_sacs.ten_mau_sac',
                         'bien_the_mau_sacs.ma_mau_sac',
                         'bien_the_kich_thuocs.kich_thuoc',
-                        'anh_bien_thes.duong_dan_anh',
-                        DB::raw('
-                    CASE
-                        WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
-                        WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_ban
-                        ELSE NULL
-                    END as gia_chua_giam'),
+                        DB::raw('(SELECT anh_bien_thes.duong_dan_anh
+                          FROM anh_bien_thes
+                          WHERE anh_bien_thes.bien_the_san_pham_id = bien_the_san_phams.id
+                          LIMIT 1) as duong_dan_anh'),
+                        DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'),
                         DB::raw('COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban) as gia_hien_tai') // Giá hiện tại
                     )
                     ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                     ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
-                    ->leftJoin('anh_bien_thes', 'bien_the_san_phams.id', '=', 'anh_bien_thes.bien_the_san_pham_id') // Join với bảng ảnh biến thể
                     ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
                     ->get();
 
+                // Tạo mảng chứa màu sắc và 1 ảnh đại diện cho từng màu
+                $mauSacVaAnh = $bienThe->groupBy('ma_mau_sac')->map(function ($items) {
+                    return [
+                        'ma_mau_sac' => $items->first()->ma_mau_sac,
+                        'ten_mau_sac' => $items->first()->ten_mau_sac,
+                        'hinh_anh' => $items->first()->duong_dan_anh // Lấy 1 ảnh đại diện từ kết quả truy vấn
+                    ];
+                })->values()->all();
+
+                // Gán biến thể và mảng màu + ảnh vào sản phẩm
                 $sanPham->bien_the = $bienThe;
+                $sanPham->mau_sac_va_anh = $mauSacVaAnh;
+
+                // Thêm thông tin chương trình ưu đãi nếu có
                 $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
                     ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
                         $giaTriUuDai = $uuDai->loai_uu_dai === 'phan_tram'
@@ -98,6 +117,8 @@ class TrangChuController extends Controller
 
                 return $sanPham;
             });
+
+
 
         $boSuuTapUaChuongs = BoSuuTap::query()
             ->select(
@@ -122,7 +143,7 @@ class TrangChuController extends Controller
                     'san_phams.duong_dan',
                     'san_phams.anh_san_pham',
                     'san_phams.hang_moi',
-                    'san_phams.gia_tot',
+                    'san_phams.gia_tot'
                 )
                     ->where('san_phams.danh_muc_id', '!=', 'null')
                     ->where('san_phams.trang_thai', 1)
@@ -134,13 +155,11 @@ class TrangChuController extends Controller
                             'bien_the_mau_sacs.ten_mau_sac',
                             'bien_the_mau_sacs.ma_mau_sac',
                             'bien_the_kich_thuocs.kich_thuoc',
-                            DB::raw('
-                    CASE
-                         WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
-                        WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_ban
-                        ELSE NULL
-                    END as gia_chua_giam'
-                            ),
+                            DB::raw('(SELECT anh_bien_thes.duong_dan_anh
+                          FROM anh_bien_thes
+                          WHERE anh_bien_thes.bien_the_san_pham_id = bien_the_san_phams.id
+                          LIMIT 1) as duong_dan_anh'), // Chỉ lấy 1 ảnh
+                            DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'), // Giá chưa giảm là giá bán
                             DB::raw('COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban) as gia_hien_tai') // Giá hiện tại
                         )
                             ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
@@ -149,8 +168,10 @@ class TrangChuController extends Controller
             }])
             ->get();
 
+// Lấy mảng màu và ảnh đại diện
         foreach ($boSuuTapUaChuongs as $boSuuTap) {
             foreach ($boSuuTap->sanPhams as $sanPham) {
+                // Kiểm tra và thêm thông tin chương trình ưu đãi nếu có
                 $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
                     ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
                         $giaTriUuDai = $uuDai->loai === 'phan_tram'
@@ -161,8 +182,18 @@ class TrangChuController extends Controller
                     })->implode(', ')
                     : null;
 
+                // Tính giá thấp nhất và cao nhất
                 $lowestPrice = null;
                 $highestPrice = null;
+
+                // Mảng chứa màu sắc và ảnh đại diện
+                $mauSacVaAnh = $sanPham->bienTheSanPham->groupBy('ma_mau_sac')->map(function ($items) {
+                    return [
+                        'ma_mau_sac' => $items->first()->ma_mau_sac,
+                        'ten_mau_sac' => $items->first()->ten_mau_sac,
+                        'hinh_anh' => $items->first()->duong_dan_anh // Lấy ảnh đầu tiên cho mỗi màu
+                    ];
+                })->values()->all();
 
                 foreach ($sanPham->bienTheSanPham as $bienThe) {
                     $currentPrice = $bienThe->gia_hien_tai;
@@ -175,10 +206,13 @@ class TrangChuController extends Controller
                     }
                 }
 
+                // Gán giá và mảng màu + ảnh vào sản phẩm
                 $sanPham->gia_thap_nhat = $lowestPrice;
                 $sanPham->gia_cao_nhat = $highestPrice;
+                $sanPham->mau_sac_va_anh = $mauSacVaAnh; // Gán mảng màu và ảnh vào sản phẩm
             }
         }
+
 
         $dataDanhGiaKhachHang = DanhGia::query()
             ->with(['user', 'sanPham'])
