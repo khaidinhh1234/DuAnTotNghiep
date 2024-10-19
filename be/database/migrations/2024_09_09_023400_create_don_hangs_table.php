@@ -20,9 +20,9 @@ return new class extends Migration {
             $table->enum('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL, DonHang::TTDH_DGH, DonHang::TTDH_CKHCN, DonHang::TTDH_HTDH, DonHang::TTDH_DHTB, DonHang::TTDH_DH, DonHang::TTDH_HH])->nullable();
             $table->enum('phuong_thuc_thanh_toan', [DonHang::PTTT_TT, DonHang::PTTT_NH, DonHang::PTTT_MM])->nullable();
             $table->integer('tong_tien_don_hang')->nullable();
-            $table->string('ten_nguoi_dat_hang');
-            $table->string('so_dien_thoai_nguoi_dat_hang');
-            $table->string('dia_chi_nguoi_dat_hang');
+            $table->string('ten_nguoi_dat_hang')->nullable();
+            $table->string('so_dien_thoai_nguoi_dat_hang')->nullable();
+            $table->string('dia_chi_nguoi_dat_hang')->nullable();
             $table->string('ma_giam_gia')->nullable();
             $table->integer('so_tien_giam_gia')->nullable();
             $table->enum('trang_thai_thanh_toan', [DonHang::TTTT_CTT, DonHang::TTTT_DTT])->nullable();
