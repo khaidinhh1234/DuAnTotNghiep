@@ -23,28 +23,23 @@ class CapNhatGiaKhuyenMaiTamThoi extends Command
     {
         $ngayHienTai = Carbon::now();
 
-        // Lấy tất cả các chương trình ưu đãi còn hiệu lực
         $uuDais = ChuongTrinhUuDai::where('ngay_bat_dau', '<=', $ngayHienTai)
             ->where('ngay_ket_thuc', '>=', $ngayHienTai)
             ->get();
 
-        // Duyệt qua từng chương trình ưu đãi
         foreach ($uuDais as $uuDai) {
             Log::info('Cập nhật giá khuyến mãi tạm thời cho chương trình ưu đãi ID: ' . $uuDai->id);
 
-            // Lấy danh sách sản phẩm liên kết với chương trình ưu đãi
             $sanPhams = SanPham::whereHas('chuongTrinhUuDais', function ($query) use ($uuDai) {
                 $query->where('chuong_trinh_uu_dai_id', $uuDai->id);
             })->with('bienTheSanPham')->get();
 
             Log::info('Số sản phẩm liên kết với chương trình ưu đãi ID: ' . $uuDai->id . ' là: ' . $sanPhams->count());
 
-            // Duyệt qua từng sản phẩm
             foreach ($sanPhams as $sanPham) {
                 Log::info('Xử lý sản phẩm ID: ' . $sanPham->id);
                 $bienTheSanPhams = $sanPham->bienTheSanPham;
 
-                // Kiểm tra xem sản phẩm có biến thể không
                 if ($bienTheSanPhams->isEmpty()) {
                     Log::warning('Sản phẩm ID: ' . $sanPham->id . ' không có biến thể.');
                     continue;
@@ -53,13 +48,11 @@ class CapNhatGiaKhuyenMaiTamThoi extends Command
                 foreach ($bienTheSanPhams as $bienTheSanPham) {
                     $originalPrice = $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
 
-                    // Kiểm tra nếu biến thể không có giá trị ban đầu
                     if ($originalPrice === null) {
                         Log::warning('Biến thể không có giá: ID ' . $bienTheSanPham->id);
                         continue;
                     }
 
-                    // Tính giá khuyến mãi tạm thời dựa trên loại ưu đãi
                     if ($uuDai->loai == 'tien') {
                         $bienTheSanPham->gia_khuyen_mai_tam_thoi = max(0, $originalPrice - $uuDai->gia_tri_uu_dai);
                     } elseif ($uuDai->loai == 'phan_tram') {
@@ -69,7 +62,6 @@ class CapNhatGiaKhuyenMaiTamThoi extends Command
 
                     Log::info('Cập nhật giá khuyến mãi tạm thời cho biến thể ID: ' . $bienTheSanPham->id . ', Giá khuyến mãi tạm thời: ' . $bienTheSanPham->gia_khuyen_mai_tam_thoi);
 
-                    // Sử dụng try-catch để lưu biến thể sản phẩm an toàn
                     try {
                         $bienTheSanPham->save();
                         Log::info('Lưu thành công biến thể ID: ' . $bienTheSanPham->id);
@@ -80,6 +72,6 @@ class CapNhatGiaKhuyenMaiTamThoi extends Command
             }
         }
 
-        return 0; // Trả về mã thành công
+        return 0;
     }
 }

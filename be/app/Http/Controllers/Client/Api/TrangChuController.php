@@ -162,8 +162,14 @@ class TrangChuController extends Controller
             }
         }
 
-
-        $dataDanhGiaKhachHang = DanhGia::query()->with(['user','sanPham'])->whereIn('so_sao_san_pham', [5])->orderByDesc('id')->take(8)->get();
+        $dataDanhGiaKhachHang = DanhGia::query()
+            ->with(['user', 'sanPham'])
+            ->whereIn('so_sao_san_pham', [5])
+            ->orderByDesc('id')
+            ->get()
+            ->unique('user.id')
+            ->unique('sanPham.id')
+            ->take(8);
 
         return response()->json([
             'status' => true,
