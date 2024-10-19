@@ -20,7 +20,7 @@ class ChuongTrinhUuDaiController extends Controller
     public function index()
     {
         try {
-            $uuDai = ChuongTrinhUuDai::query()->with('sanPhams')->first();
+            $uuDai = ChuongTrinhUuDai::query()->with('sanPhams')->orderByDesc('id')->get();
 
             if ($uuDai) {
                 return response()->json([

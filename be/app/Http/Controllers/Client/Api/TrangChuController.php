@@ -38,7 +38,7 @@ class TrangChuController extends Controller
 
         $result = ['banner' => ['banner' => $bannersArray]];
 
-        $dataChuongTrinhUuDai = ChuongTrinhUuDai::query()->first();
+        $dataChuongTrinhUuDai = ChuongTrinhUuDai::query()->orderByDesc('id')->get();
 
         $dataDanhSachSanPhamMoi = SanPham::query()
             ->select(
