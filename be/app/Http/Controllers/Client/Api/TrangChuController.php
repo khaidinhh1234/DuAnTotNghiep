@@ -168,10 +168,8 @@ class TrangChuController extends Controller
             }])
             ->get();
 
-// Lấy mảng màu và ảnh đại diện
         foreach ($boSuuTapUaChuongs as $boSuuTap) {
             foreach ($boSuuTap->sanPhams as $sanPham) {
-                // Kiểm tra và thêm thông tin chương trình ưu đãi nếu có
                 $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
                     ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
                         $giaTriUuDai = $uuDai->loai === 'phan_tram'
@@ -182,11 +180,9 @@ class TrangChuController extends Controller
                     })->implode(', ')
                     : null;
 
-                // Tính giá thấp nhất và cao nhất
                 $lowestPrice = null;
                 $highestPrice = null;
 
-                // Mảng chứa màu sắc và ảnh đại diện
                 $mauSacVaAnh = $sanPham->bienTheSanPham->groupBy('ma_mau_sac')->map(function ($items) {
                     return [
                         'ma_mau_sac' => $items->first()->ma_mau_sac,
@@ -206,10 +202,9 @@ class TrangChuController extends Controller
                     }
                 }
 
-                // Gán giá và mảng màu + ảnh vào sản phẩm
                 $sanPham->gia_thap_nhat = $lowestPrice;
                 $sanPham->gia_cao_nhat = $highestPrice;
-                $sanPham->mau_sac_va_anh = $mauSacVaAnh; // Gán mảng màu và ảnh vào sản phẩm
+                $sanPham->mau_sac_va_anh = $mauSacVaAnh;
             }
         }
 

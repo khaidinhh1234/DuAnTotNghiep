@@ -46,7 +46,7 @@ class CapNhatGiaKhuyenMaiTamThoi extends Command
                 }
 
                 foreach ($bienTheSanPhams as $bienTheSanPham) {
-                    $originalPrice = $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
+                    $originalPrice = $bienTheSanPham->gia_ban;
 
                     if ($originalPrice === null) {
                         Log::warning('Biến thể không có giá: ID ' . $bienTheSanPham->id);
