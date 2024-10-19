@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\AnhBienThe;
 use App\Models\BienTheKichThuoc;
 use App\Models\BienTheMauSac;
 use App\Models\DanhMuc;
 use App\Models\DanhMucTinTuc;
+use App\Models\DonHang;
 use App\Models\HangThanhVien;
 use App\Models\Quyen;
 use App\Models\User;
@@ -151,6 +153,16 @@ class DataMasterSeeder extends Seeder
                 'cha_id' => null,
                 'duong_dan' => 'tre-em',
             ],
+            [
+                'ten_danh_muc' => 'Áo polo',
+                'cha_id' => 1,
+                'duong_dan' => 'ao_polo',
+            ],
+            [
+                'ten_danh_muc' => 'Áo khoác',
+                'cha_id' => 1,
+                'duong_dan' => 'ao_khoac',
+            ],
         ];
 
         foreach ($DanhMucs as $DanhMuc) {
@@ -270,10 +282,11 @@ class DataMasterSeeder extends Seeder
             ]);
         }
 
-        $user = User::create([
+        $admin = User::create([
             'ho' => 'Quản',
             'ten' => 'Trị',
             'email' => 'chiduc1611@gmail.com',
+            'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
             'password' => Hash::make('Admin1234'), // Mã hóa mật khẩu
             'so_dien_thoai' => '0123456789',
             'dia_chi' => '123 Đường ABC, TP XYZ',
@@ -283,11 +296,326 @@ class DataMasterSeeder extends Seeder
             'updated_at' => Carbon::now(),
         ]);
 
-        if ($user) {
-            $user->vaiTros()->sync([2]);
+        $user = User::create([
+            'ho' => 'Nguyễn Chí',
+            'ten' => 'Đức',
+            'email' => 'ducncph32766@fpt.edu.vn',
+            'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
+            'password' => Hash::make('User1234'), // Mã hóa mật khẩu
+            'so_dien_thoai' => '0123456789',
+            'dia_chi' => '123 Đường ABC, TP XYZ',
+            'ngay_sinh' => Carbon::parse('1990-01-01'),
+            'email_verified_at' => Carbon::now(),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        if ($admin) {
+            $admin->vaiTros()->sync([2]);
+        } elseif ($user) {
+            $user->vaiTros()->sync([1]);
         }
 
+
+        //Sản phẩm
+        $sanPhams = [
+            [
+                'danh_muc_id' => 3,
+                'ten_san_pham' => 'Áo Polo Nam Cafe Bo Phối Màu',
+                'anh_san_pham' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729327625/ao-polo-nam-apm6443-ddo-3_iefbd7.webp',
+                'ma_san_pham' => 'APM7129',
+                'duong_dan' => 'ao-polo-nam-cafe-bo-phoi-mau',
+                'mo_ta_ngan' => 'Tạo ấn tượng mới với thiết kế áo polo nam phối màu trẻ trung, hiện đại. Thiết kế dáng áo cơ bản những phần cổ được xử lý tinh tế hơn. Phối màu hiện đại khiến chiếc áo polo nam của bạn không còn nhàm chán.',
+                'noi_dung' => 'Áo Polo Nam Cafe Bo Phối Màu',
+                'luot_xem' => 0,
+                'trang_thai' => 1,
+                'gia_tot' => 0,
+                'hang_moi' =>  1,
+            ],
+            [
+                'danh_muc_id' => 3,
+                'ten_san_pham' => 'Áo Polo Nam Xanh Lá Cây',
+                'anh_san_pham' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729327625/ao-polo-nam-apm6443-ddo-3_iefbd7.webp',
+                'ma_san_pham' => 'APM7130',
+                'duong_dan' => 'ao-polo-nam-xanh-la-cay',
+                'mo_ta_ngan' => 'Tạo ấn tượng mới với thiết kế áo polo nam phối màu trẻ trung, hiện đại. Thiết kế dáng áo cơ bản nhưng phần cổ được xử lý tinh tế hơn. Phối màu hiện đại khiến chiếc áo polo nam của bạn không còn nhàm chán.',
+                'noi_dung' => 'Áo Polo Nam Xanh Lá Cây',
+                'luot_xem' => 0,
+                'trang_thai' => 1,
+                'gia_tot' => 0,
+                'hang_moi' =>  1,
+            ],
+        ];
+
+        foreach ($sanPhams as $sanPham) {
+            $sanPham = \App\Models\SanPham::create([
+                'danh_muc_id' => $sanPham['danh_muc_id'],
+                'ten_san_pham' => $sanPham['ten_san_pham'],
+                'anh_san_pham' => $sanPham['anh_san_pham'],
+                'ma_san_pham' => $sanPham['ma_san_pham'],
+                'duong_dan' => $sanPham['duong_dan'],
+                'mo_ta_ngan' => $sanPham['mo_ta_ngan'],
+                'noi_dung' => $sanPham['noi_dung'],
+                'luot_xem' => $sanPham['luot_xem'],
+                'trang_thai' => $sanPham['trang_thai'],
+                'gia_tot' => $sanPham['gia_tot'],
+                'hang_moi' => $sanPham['hang_moi'],
+            ]);
+        }
+
+        //Biến thể sản phẩm
+
+        $bienTheSanPhams = [
+            [
+                'san_pham_id' => 1,
+                'bien_the_kich_thuoc_id' => 1,
+                'bien_the_mau_sac_id' => 1,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 1,
+                'bien_the_kich_thuoc_id' => 1,
+                'bien_the_mau_sac_id' => 2,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 1,
+                'bien_the_kich_thuoc_id' => 2,
+                'bien_the_mau_sac_id' => 1,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 1,
+                'bien_the_kich_thuoc_id' => 2,
+                'bien_the_mau_sac_id' => 2,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 2,
+                'bien_the_kich_thuoc_id' => 1,
+                'bien_the_mau_sac_id' => 1,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 2,
+                'bien_the_kich_thuoc_id' => 1,
+                'bien_the_mau_sac_id' => 2,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 2,
+                'bien_the_kich_thuoc_id' => 2,
+                'bien_the_mau_sac_id' => 1,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 2,
+                'bien_the_kich_thuoc_id' => 2,
+                'bien_the_mau_sac_id' => 2,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+        ];
+
+        foreach ($bienTheSanPhams as $bienTheSanPham) {
+            \App\Models\BienTheSanPham::create([
+                'san_pham_id' => $bienTheSanPham['san_pham_id'],
+                'bien_the_kich_thuoc_id' => $bienTheSanPham['bien_the_kich_thuoc_id'],
+                'bien_the_mau_sac_id' => $bienTheSanPham['bien_the_mau_sac_id'],
+                'so_luong_bien_the' => $bienTheSanPham['so_luong_bien_the'],
+                'gia_ban' => $bienTheSanPham['gia_ban'],
+                'chi_phi_san_xuat' => $bienTheSanPham['chi_phi_san_xuat'],
+                'gia_khuyen_mai' => $bienTheSanPham['gia_khuyen_mai'],
+            ]);
+        }
+
+        // Ảnh biến thể sản phẩm
+        $anhBienThes = [
+            [
+                'bien_the_san_pham_id' => 1,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 1,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 1,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 1,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 2,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 2,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 2,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 2,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 3,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 3,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 3,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 3,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 4,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 4,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 4,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 4,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 5,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 5,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 5,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 5,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 6,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 6,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 6,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 6,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 7,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 7,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 7,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 7,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 8,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 8,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 8,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 8,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ]
+        ];
+
+        foreach ($anhBienThes as $anhBienThe) {
+            AnhBienThe::create([
+                'bien_the_san_pham_id' => $anhBienThe['bien_the_san_pham_id'],
+                'duong_dan_anh' => $anhBienThe['duong_dan_anh'],
+            ]);
+        }
+
+        //Đơn hàng
+        DonHang::create([
+            'user_id' => 2,
+            'trang_thai_don_hang' =>  'Chờ xác nhận',
+            'phuong_thuc_thanh_toan' => 'Thanh toán khi nhận hàng',
+            'tong_tien_don_hang' => 1000000,
+            'trang_thai_thanh_toan' => 'Chưa thanh toán',
+        ]);
+
+        //Đơn hàng chi tiết
+        DB::table('don_hang_chi_tiets')->insert([
+            [
+                'don_hang_id' => 1,
+                'bien_the_san_pham_id' => 1,
+                'so_luong' => 10,
+                'gia' => 100000,
+                'thanh_tien' => 1000000,
+            ],
+            [
+                'don_hang_id' => 1,
+                'bien_the_san_pham_id' => 5,
+                'so_luong' => 10,
+                'gia' => 100000,
+                'thanh_tien' => 1000000,
+            ],
+        ]);
     }
-
-
 }
