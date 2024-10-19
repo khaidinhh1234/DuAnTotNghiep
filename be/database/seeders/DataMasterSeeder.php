@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\BienTheKichThuoc;
 use App\Models\BienTheMauSac;
 use App\Models\DanhMuc;
+use App\Models\DanhMucTinTuc;
 use App\Models\HangThanhVien;
 use App\Models\Quyen;
 use App\Models\VaiTro;
@@ -117,8 +118,8 @@ class DataMasterSeeder extends Seeder
                 $role->quyens()->sync([]);
             } else {
                 $quyenVanChuyenIds = Quyen::whereIn('ten_quyen', [
-                    'admin.van-chuyen.index',
-                    'admin.van-chuyen.show',
+                    'admin.vanchuyen.index',
+                    'admin.vanchuyen.show',
                     'admin.vanchuyen.ttvc',
                     'admin.vanchuyen.xacnhan',
                 ])->pluck('id')->toArray();
@@ -154,6 +155,25 @@ class DataMasterSeeder extends Seeder
                 'ten_danh_muc' => $DanhMuc['ten_danh_muc'],
                 'cha_id' => $DanhMuc['cha_id'],
                 'duong_dan' => $DanhMuc['duong_dan'],
+            ]);
+        }
+
+        //Danh mục tin tức
+        $DanhMucTinTucs = [
+            [
+                'ten_danh_muc_tin_tuc' => 'Dịch vụ khách hàng',
+                'duong_dan' => 'dich_vu_khach_hang',
+            ],
+            [
+                'ten_danh_muc_tin_tuc' => 'Về chúng tôi',
+                'duong_dan' => 've_chung_toi',
+            ],
+        ];
+
+        foreach ($DanhMucTinTucs as $DanhMucTinTuc) {
+            DanhMucTinTuc::create([
+                'ten_danh_muc_tin_tuc' => $DanhMucTinTuc['ten_danh_muc_tin_tuc'],
+                'duong_dan' => $DanhMucTinTuc['duong_dan'],
             ]);
         }
 
