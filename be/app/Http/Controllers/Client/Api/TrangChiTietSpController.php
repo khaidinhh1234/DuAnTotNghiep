@@ -17,7 +17,7 @@ class TrangChiTietSpController extends Controller
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
-                'theSanPham',
+                'boSuuTapSanPham',
             ])->findOrFail($id);
 
             return response()->json([
@@ -40,21 +40,28 @@ class TrangChiTietSpController extends Controller
     public function danhSachSanPhamCungLoai($id)
     {
         try {
-            $sanPhamHienTai = SanPham::findOrFail($id);
+            $sanPhamHienTai = SanPham::find($id);
+
+            if (!$sanPhamHienTai) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Không tìm thấy sản phẩm với ID này.'
+                ], 404);
+            }
 
             $sanPhamLienQuan = SanPham::where('danh_muc_id', $sanPhamHienTai->danh_muc_id)
                 ->where('id', '!=', $sanPhamHienTai->id)
-                ->take(10) 
+                ->take(10)
                 ->get();
 
             return response()->json([
                 'status' => true,
-                'status_code' => 500,
+                'status_code' => 200,
                 'message' => 'Sản phẩm liên quan',
                 'data' => $sanPhamLienQuan
-            ]);
+            ], 200);
         } catch (\Exception $exception) {
-
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
