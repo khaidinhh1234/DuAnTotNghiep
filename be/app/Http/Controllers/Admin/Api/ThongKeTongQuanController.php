@@ -915,5 +915,3 @@ class ThongKeTongQuanController extends Controller
     }
 
 }
-
-

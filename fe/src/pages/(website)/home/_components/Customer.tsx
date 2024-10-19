@@ -8,7 +8,7 @@ import "swiper/css";
 import { Rate } from "antd";
 
 const Customer = ({ danhgia }: any) => {
-  console.log(danhgia);
+  // console.log(danhgia);
   const maskEmail = (email: string, visibleChars: number = 2): string => {
     const [name, domain] = email.split("@");
     const maskedName =
