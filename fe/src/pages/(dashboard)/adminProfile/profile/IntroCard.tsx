@@ -23,7 +23,7 @@ const IntroCard = () => {
   const { id } = useParams();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["taikhoanid", id],
+    queryKey: ["taikhoanid  ", id],
     queryFn: async () => {
       try {
         const res = await instance.get(`/taikhoan/${id}`);

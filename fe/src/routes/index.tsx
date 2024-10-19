@@ -169,11 +169,11 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            <PrivateRoute>
+            // <PrivateRoute>
               <>
                 <LayoutAdmin />
               </>
-            </PrivateRoute>
+            // </PrivateRoute>
           }
         >
           <Route index element={<Navigate to="/admin/dashboard/list" />} />
