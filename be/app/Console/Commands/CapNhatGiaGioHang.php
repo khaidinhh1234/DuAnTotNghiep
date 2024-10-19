@@ -23,8 +23,7 @@ class CapNhatGiaGioHang extends Command
                     $bienThe->gia_khuyen_mai ??
                     $bienThe->gia_ban;
 
-                $giaCu =
-                    $bienThe->gia_khuyen_mai ??
+                $giaCu =  $bienThe->gia_khuyen_mai ??
                     null;
 
                 $gioHang->gia_cu = $giaCu;
