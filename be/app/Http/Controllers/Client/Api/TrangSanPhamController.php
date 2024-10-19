@@ -94,56 +94,89 @@ class TrangSanPhamController extends Controller
         }
     }
     public function layTatCaSanPham(Request $request)
-{
-    try {
-        // Số lượng sản phẩm hiển thị mỗi trang, mặc định là 10
-        $soLuongSanPhamMoiTrang = $request->get('per_page', 10);
+    {
+        try {
+            // Số lượng sản phẩm hiển thị mỗi trang, mặc định là 5
+            $soLuongSanPhamMoiTrang = $request->get('per_page', 5);
 
-        // Lấy tất cả sản phẩm, phân trang và sắp xếp theo sản phẩm mới nhất
-        $sanPhams = SanPham::with(['bienTheSanPham' => function ($query) {
-                $query->select('san_pham_id', 'gia_ban', 'gia_khuyen_mai');
+            // Lấy tất cả sản phẩm cùng với biến thể sản phẩm, màu sắc và kích thước
+            $sanPhams = SanPham::with(['bienTheSanPham' => function ($query) {
+                $query->with(['mauBienThe', 'kichThuocBienThe']) // Lấy cả thông tin màu sắc và kích thước
+                      ->select(
+                          'id',
+                          'san_pham_id',
+                          'so_luong_bien_the',
+                          'gia_ban',
+                          'gia_khuyen_mai',
+                          'gia_khuyen_mai_tam_thoi'
+                      );
             }])
-            ->select('id', 'ten_san_pham', 'anh_san_pham', 'created_at')
-            ->orderBy('created_at', 'desc')  // Sắp xếp theo thời gian tạo mới nhất
+            ->select(
+                'san_phams.id', // Chỉ định rõ bảng san_phams cho cột id
+                'san_phams.ten_san_pham',
+                'san_phams.anh_san_pham',
+                'san_phams.created_at',
+                'san_phams.ma_san_pham',
+                'san_phams.duong_dan',
+                'san_phams.hang_moi'
+            )
+            ->addSelect([
+                DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'), // Giá thấp nhất
+                DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')  // Giá cao nhất
+            ])
+            ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+            ->groupBy('san_phams.id') // Chỉ định rõ bảng san_phams cho cột id
+            ->orderBy('san_phams.created_at', 'desc')  // Sắp xếp theo thời gian tạo mới nhất
             ->paginate($soLuongSanPhamMoiTrang);  // Phân trang
 
-        // Xử lý dữ liệu trả về cho API
-        $result = $sanPhams->map(function ($sanPham) {
-            $bienTheSanPham = $sanPham->bienTheSanPham->first();  // Lấy biến thể sản phẩm đầu tiên
+            // Xử lý dữ liệu trả về cho API
+            $result = $sanPhams->map(function ($sanPham) {
+                return [
+                    'id' => $sanPham->id,
+                    'ten_san_pham' => $sanPham->ten_san_pham,
+                    'duong_dan' => $sanPham->duong_dan,
+                    'anh_san_pham' => $sanPham->anh_san_pham ?? 'default_image.jpg', // Gán ảnh mặc định nếu null
+                    'hang_moi' => $sanPham->hang_moi,
+                    'gia_thap_nhat' => $sanPham->gia_thap_nhat,
+                    'gia_cao_nhat' => $sanPham->gia_cao_nhat,
+                    'bien_the' => $sanPham->bienTheSanPham->map(function ($bienThe) {
+                        return [
+                            'id' => $bienThe->id,
+                            'so_luong_bien_the' => $bienThe->so_luong_bien_the ?? 0, // Gán giá trị 0 nếu null
+                            'gia_ban' => $bienThe->gia_ban ?? 0, // Gán giá trị 0 nếu null
+                            'gia_khuyen_mai' => $bienThe->gia_khuyen_mai ?? $bienThe->gia_ban, // Nếu null thì dùng giá bán
+                            'gia_khuyen_mai_tam_thoi' => $bienThe->gia_khuyen_mai_tam_thoi ?? null,
+                            'mau_sac' => $bienThe->mauBienThe->ten_mau_sac ?? 'Không xác định', // Gán chuỗi nếu null
+                            'kich_thuoc' => $bienThe->kichThuocBienThe->kich_thuoc ?? 'Không xác định', // Gán chuỗi nếu null
+                        ];
+                    })
+                ];
+            });
 
-            return [
-                'ten_san_pham' => $sanPham->ten_san_pham,
-                'gia_ban' => $bienTheSanPham ? $bienTheSanPham->gia_ban : null,
-                'gia_khuyen_mai' => $bienTheSanPham ? $bienTheSanPham->gia_khuyen_mai : null,
-                'anh_san_pham' => $sanPham->anh_san_pham,
-                'ngay_tao' => $sanPham->created_at
-            ];
-        });
+            // Trả về API dữ liệu phân trang
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy tất cả sản phẩm thành công.',
+                'data' => $result,
+                'pagination' => [
+                    'total' => $sanPhams->total(),
+                    'current_page' => $sanPhams->currentPage(),
+                    'last_page' => $sanPhams->lastPage(),
+                    'per_page' => $sanPhams->perPage(),
+                ]
+            ], 200);
 
-        // Trả về API dữ liệu phân trang
-        return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'message' => 'Lấy tất cả sản phẩm thành công.',
-            'data' => $result,
-            'pagination' => [
-                'total' => $sanPhams->total(),
-                'current_page' => $sanPhams->currentPage(),
-                'last_page' => $sanPhams->lastPage(),
-                'per_page' => $sanPhams->perPage(),
-            ]
-        ], 200);
-
-    } catch (\Exception $e) {
-        // Trả về lỗi nếu có exception
-        return response()->json([
-            'status' => false,
-            'status_code' => 500,
-            'message' => 'Có lỗi xảy ra khi lấy tất cả sản phẩm.',
-            'error' => $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            // Trả về lỗi nếu có exception
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Có lỗi xảy ra khi lấy tất cả sản phẩm.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
     public function locSanPham(Request $request)
     {
