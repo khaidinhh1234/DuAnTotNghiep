@@ -34,7 +34,8 @@ class User extends Authenticatable
         'dia_chi',
         'ngay_sinh',
         'gioi_tinh',
-        'hang_thanh_vien_id'
+        'hang_thanh_vien_id',
+        'an_danh'
     ];
 
     /**
