@@ -2,13 +2,30 @@ import { sanPham2 } from "@/assets/img";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ProductsList from "./ProductsList";
+import { useQuery } from "@tanstack/react-query";
+import instanceClient from "@/configs/client";
 
 const ProductCategories = () => {
   const [showcate, setShowcate] = useState(true);
   const [showcolor, setShowcolor] = useState(false);
   const [showprice, setShowprice] = useState(false);
   const [showsize, setShowsize] = useState(false);
-
+  const { data } = useQuery({
+    queryKey: ["PRODUCTSSHOP_KEYS"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get("san-pham-all");
+        if (response.data.status_code !== 200) {
+          throw new Error("Error fetching product");
+        }
+        return response.data;
+      } catch (error) {
+        throw new Error("Lỗi khi lấy thông tin");
+      }
+    },
+  });
+  const products = data?.data || [];
+  // console.log(products);
   return (
     <div>
       {" "}
