@@ -60,7 +60,7 @@ class TaiKhoanController extends Controller
             if ($hangThanhVien == []) {
                 $hangThanhVien = HangThanhVien::create([
                     'ten_hang_thanh_vien' => 'Thành viên mới',
-                    'anh_hang_thanh_vien' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1728635543/game-level-icons-medals-stars-ui-badges-trophy_jxsnoo.png',
+                    'anh_hang_thanh_vien' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
                     'chi_tieu_toi_thieu' => 0,
                     'chi_tieu_toi_da' => 500000,
                     'mo_ta' => 'Thành viên mới'
@@ -166,7 +166,7 @@ class TaiKhoanController extends Controller
             $taiKhoan->update([
                 'ho' => $request->ho,
                 'ten' => $request->ten,
-                'anh_nguoi_dung' => $request->anh_nguoi_dung ?? 'https://i.pinimg.com/originals/f3/d1/ed/f3d1edf10d63c40e1fa06364176fa502.png',
+                'anh_nguoi_dung' => $request->anh_nguoi_dung ?? 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
                 'so_dien_thoai' => $request->so_dien_thoai,
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,
@@ -194,7 +194,7 @@ class TaiKhoanController extends Controller
                 $vaiTro_id[] = $adminRole->id;
             }
             $currentVaiTroIds = array_unique(array_merge($currentVaiTroIds, $vaiTro_id));
-            
+
             $taiKhoan->vaiTros()->sync($vaiTro_id);
 
             DB::commit();
