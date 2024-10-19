@@ -282,7 +282,12 @@ class ThongKeTongQuanController extends Controller
             // Lấy ngày bắt đầu và ngày kết thúc từ request hoặc dùng giá trị mặc định
             $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
             $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
-
+  $trangThaiBiLoaiBo = [
+            DonHang::TTDH_DH,   // Hủy hàng
+            DonHang::TTDH_HTDH, // Hoàn tất đơn hàng
+            DonHang::TTDH_DHTB, // Đơn hàng bị từ chối nhận
+            DonHang::TTDH_HH    // Hoàn hàng
+        ];
             // Lấy danh sách đơn hàng hoàn tất trong khoảng thời gian
             $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
@@ -914,5 +919,3 @@ class ThongKeTongQuanController extends Controller
     }
 
 }
-
-
