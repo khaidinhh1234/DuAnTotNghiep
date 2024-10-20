@@ -504,16 +504,7 @@ Hết hàng
           <div className="border-t pt-6">
             <h1 className="text-2xl font-semibold mb-4">Chi tiết sản phẩm</h1>
             <div className="mb-8 flex justify-center"></div>
-            {/* <div className="mb-8 flex justify-center">
-              <div className="bg-[#FAFAFB] w-1000 h-[400px] flex justify-center items-center mb-4 rounded-2xl shadow shadow-zinc-300/60">
-                <img
-                  src={product.anh_san_pham}
-                  alt={product.ten_san_pham}
-                  onClick={() => handlePreview(product.anh_san_pham)}
-                  className="cursor-pointer max-h-full w-auto object-contain"
-                />
-              </div>
-            </div> */}
+        
             <div
               className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${
                 isDescriptionExpanded ? "" : "line-clamp-3"
