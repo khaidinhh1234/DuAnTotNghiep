@@ -149,6 +149,7 @@ class DonHangClientController extends Controller
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->where('gio_hangs.user_id', $userId)
                 ->where('gio_hangs.chon', 1)
+                ->where("gio_hangs.deleted_at", null)
                 ->select('bien_the_san_phams.id as bien_the_san_pham_id', 'gio_hangs.so_luong')
                 ->get();
 
