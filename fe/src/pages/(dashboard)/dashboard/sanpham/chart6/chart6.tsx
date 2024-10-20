@@ -64,28 +64,39 @@ interface Chart6Props {
 }
 const Chart6: React.FC<Chart6Props> = ({ datestart, dateend, top }) => {
   // console.log(datestart, dateend, top);
+
   const date =
     datestart && dateend && top
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend, top: top }
-      : null;
+      : {};
+
+  // console.log("Date object:", date);
+
   const { data, refetch } = useQuery({
     queryKey: ["sanphamtable2chart6", datestart, dateend, top],
     queryFn: async () => {
-      const response = await instance.post("thong-ke/san-pham-all-time", date);
-      return response.data;
+      // console.log("Sending request with date:", date);
+      try {
+        const response = await instance.post(
+          "thong-ke/san-pham-all-time",
+          date
+        );
+        return response.data;
+      } catch (error) {
+        throw new Error("Error fetching data");
+      }
     },
-    enabled: !!datestart && !!dateend && !!top,
+    enabled: Boolean(datestart && dateend && top),
   });
+
   useEffect(() => {
-    if (datestart && dateend) {
-      refetch();
-    }
-    if (top) {
+    if (datestart && dateend && top) {
       refetch();
     }
   }, [datestart, dateend, top, refetch]);
-  // console.log(data);
-  const table = data?.data;
+
+  // console.log("API response:", data);
+  const table = data?.data || [];
 
   return (
     <Table<DataType>

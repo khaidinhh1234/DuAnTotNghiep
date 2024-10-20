@@ -1,7 +1,7 @@
 // import { sanPham2 } from "@/assets/img";
 
 import { Link } from "react-router-dom";
-import View from "./View";
+import View from "../../_component/View";
 
 const Bestseller = ({ products }: any) => {
   // const { data } = useQuery({
@@ -16,7 +16,7 @@ const Bestseller = ({ products }: any) => {
   // });
   // // console.log(data);
   // const products = data?.danh_sach_san_pham_moi || [];
-  // console.log(products);
+  console.log(products);
 
   return (
     <>
@@ -39,14 +39,14 @@ const Bestseller = ({ products }: any) => {
                 {" "}
                 <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
                   <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
-                    <a href="#">
-                      <i className="z-20 fa-regular fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-                    </a>
+                    <span>
+                      <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                    </span>
                     <a href="#">
                       <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                     </a>
 
-                    <View id={product.id} />
+                    <View id={product?.id} />
                     <Link to={`/product-detail/${product.id}`}>
                       <div className="relative">
                         <img
@@ -54,9 +54,9 @@ const Bestseller = ({ products }: any) => {
                           alt=""
                           className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
                         />
-                        {product?.gia_tot == 1 && (
+                        {product?.hang_moi == 1 && (
                           <span className="absolute top-3 right-3 bg-red-500 text-white px-3 py-[2px] rounded-lg font-bold">
-                            new
+                            Mới
                           </span>
                         )}
                       </div>{" "}
