@@ -26,7 +26,6 @@ class GioHangController extends Controller
                     $join->on('bien_the_san_phams.id', '=', 'anh_bien_thes.bien_the_san_pham_id')
                         ->whereRaw('anh_bien_thes.id = (SELECT MIN(id) FROM anh_bien_thes WHERE bien_the_san_pham_id = bien_the_san_phams.id)');
                 })
-                ->where("gio_hangs.deleted_at", null)
                 ->select(
                     'gio_hangs.id',
                     'gio_hangs.bien_the_san_pham_id',
@@ -423,7 +422,6 @@ class GioHangController extends Controller
                     'bien_the_kich_thuocs.kich_thuoc',
                     'anh_bien_thes.duong_dan_anh as hinh_anh'
                 )
-                ->where("gio_hangs.deleted_at", null)
                 ->where('gio_hangs.user_id', $userId)
                 ->where('gio_hangs.chon', 1)
                 ->get();
@@ -478,5 +476,5 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
+    
 }

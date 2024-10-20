@@ -129,6 +129,7 @@ import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
 import PrivateRoute from "./PrivateRoute";
 import ChuongTrinhUuDaiRemote from "@/pages/(dashboard)/vourcher/banner/remote";
 import IntroCard from "@/pages/(dashboard)/adminProfile/profile/IntroCard";
+import Shipper from "@/pages/(van_chuyen)/shipper";
 
 const Router = () => {
   //
@@ -169,11 +170,11 @@ const Router = () => {
         <Route
           path="admin"
           element={
-            // <PrivateRoute>
+            <PrivateRoute>
               <>
                 <LayoutAdmin />
               </>
-            // </PrivateRoute>
+            </PrivateRoute>
           }
         >
           <Route index element={<Navigate to="/admin/dashboard/list" />} />
@@ -349,7 +350,8 @@ const Router = () => {
         <Route path="/EnterOtp" element={<OTPPage />} />
         <Route path="/error" element={<ErrorAuth />} />
         <Route path="/changePassword" element={<ChangePassword />} />
-        <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />{" "}
+        <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />
+        <Route path="/shipper" element={<Shipper />} />
       </Routes>
     </>
   );
