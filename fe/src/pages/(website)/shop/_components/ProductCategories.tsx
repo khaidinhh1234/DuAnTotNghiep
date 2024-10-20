@@ -25,18 +25,18 @@ const ProductCategories = () => {
     },
   });
   const products = data?.data || [];
-  // console.log(products);
+  console.log(products);
   return (
     <div>
       {" "}
       <section>
         <div className="container">
-          <div className="flex flex-wrap sm:mx-10 items-start w-full">
+          <div className="flex flex-wrap items-start w-full">
             {/* <!-- Sidebar Filters --> */}
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
             </button>
-            <div className="lg:block hidden w-1/4 py-4 px-5 mb-4 lg:mb-0">
+            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0">
               {/* <!-- Product Categories --> */}
               <div className="mb-5">
                 <div
@@ -270,8 +270,8 @@ const ProductCategories = () => {
               </div>
             </div>
             {/* <!-- Product Listings --> */}
-            <div className="sm:w-3/4 w-3/4 px-5">
-              <ProductsList />
+            <div className="sm:w-4/5 w-3/4 px-5">
+              <ProductsList products={products} />
             </div>
           </div>
         </div>
