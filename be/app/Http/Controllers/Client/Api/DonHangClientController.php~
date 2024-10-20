@@ -171,9 +171,7 @@ class DonHangClientController extends Controller
                     ], 400);
                 }
 
-                $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
-
-                $tongTienDonHang += $gia * $sanPham->so_luong;
+                $tongTienDonHang += $bienTheSanPham->gia * $sanPham->so_luong;
             }
 
             if (!empty($request->ma_giam_gia)) {
