@@ -8,7 +8,8 @@ const CheckOut = () => {
   const access_token = user.access_token || localStorage.getItem("access_token");
 
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]); // Lưu trữ các sản phẩm được chọn
-
+  const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
+  const [selectAllRegular, setSelectAllRegular] = useState(false);
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -32,16 +33,56 @@ const CheckOut = () => {
         : [...prevSelected, id]
     );
   };
+  const handleSelectAllDiscounted = () => {
+    if (selectAllDiscounted) {
+      // Bỏ chọn tất cả sản phẩm đang giảm giá
+      setSelectedProducts((prevSelected) =>
+        prevSelected.filter((productId) =>
+          !data?.san_pham_giam_gia.map((product) => product.id).includes(productId)
+        )
+      );
+    } else {
+      // Chọn tất cả sản phẩm đang giảm giá
+      const allDiscountedIds = data?.san_pham_giam_gia.map((product) => product.id) || [];
+      setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allDiscountedIds])]);
+    }
+    setSelectAllDiscounted(!selectAllDiscounted);
+  };
+
+  const handleSelectAllRegular = () => {
+    if (selectAllRegular) {
+      // Bỏ chọn tất cả sản phẩm nguyên giá
+      setSelectedProducts((prevSelected) =>
+        prevSelected.filter((productId) =>
+          !data?.san_pham_nguyen_gia.map((product) => product.id).includes(productId)
+        )
+      );
+    } else {
+      // Chọn tất cả sản phẩm nguyên giá
+      const allRegularIds = data?.san_pham_nguyen_gia.map((product) => product.id) || [];
+      setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allRegularIds])]);
+    }
+    setSelectAllRegular(!selectAllRegular);
+  };
 
   const grandTotal =
-    data?.san_pham_giam_gia
-      ?.filter((product: any) => selectedProducts.includes(product.id)) // Chỉ tính tổng cho sản phẩm đã chọn
+    (data?.san_pham_giam_gia
+      ?.filter((product: any) => selectedProducts.includes(product.id))
       .reduce(
         (total: number, product: { gia_hien_tai: number; so_luong: number }) => {
           return total + product.gia_hien_tai * product.so_luong;
         },
         0
-      ) || 0;
+      ) || 0) +
+    (data?.san_pham_nguyen_gia
+      ?.filter((product: any) => selectedProducts.includes(product.id))
+      .reduce(
+        (total: number, product: { gia_ban: number; so_luong: number }) => {
+          return total + product.gia_ban * product.so_luong;
+        },
+        0
+      ) || 0);
+
 
   return (
     <section className="container mx-auto">
@@ -50,29 +91,38 @@ const CheckOut = () => {
 
         {/* Thông báo */}
         {/* <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-          <p className="font-bold text-green-600">
-            Chúc mừng! Đơn hàng của bạn được{" "}
-            <span className="text-green-700">Miễn phí vận chuyển</span>
-          </p>
-          <div className="bg-green-100 rounded-full h-2 mt-3">
-            <div className="bg-green-500 h-full w-full"></div>
-          </div>
-        </div> */}
+            <p className="font-bold text-green-600">
+              Chúc mừng! Đơn hàng của bạn được{" "}
+              <span className="text-green-700">Miễn phí vận chuyển</span>
+            </p>
+            <div className="bg-green-100 rounded-full h-2 mt-3">
+              <div className="bg-green-500 h-full w-full"></div>
+            </div>
+          </div> */}
 
         {/* Khuyến mãi */}
         {/* <div className="flex items-center justify-between bg-red-100 text-red-600 px-6 py-4 rounded-lg mb-8">
-          <span className="font-bold">
-            🔥 Khuyến mại trong giỏ hàng của bạn chỉ còn trong 9 phút 59 giây
-            trước khi hết khuyến mãi
-          </span>
-        </div> */}
+            <span className="font-bold">
+              🔥 Khuyến mại trong giỏ hàng của bạn chỉ còn trong 9 phút 59 giây
+              trước khi hết khuyến mãi
+            </span>
+          </div> */}
 
         <div className="grid lg:grid-cols-12 gap-6 justify-center">
           {/* Sản phẩm */}
           <div className="lg:col-span-8 col-span-12">
             {/* Danh mục giảm giá */}
             <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-              <h2 className="font-bold text-xl mb-4">Đang được giảm giá</h2>
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  checked={selectAllDiscounted}
+                  onChange={handleSelectAllDiscounted}
+                  className="form-checkbox h-5 w-5 text-yellow-500"
+                />
+                <h2 className="font-bold text-xl mb-0 ml-2">Đang được giảm giá</h2>
+              </div>
+
               {data?.san_pham_giam_gia.map((product: any) => (
                 <div
                   key={product.id}
@@ -88,7 +138,7 @@ const CheckOut = () => {
                     <img
                       src={product.hinh_anh}
                       alt="Ảnh sản phẩm"
-                      className="w-20 h-20 object-cover rounded-md"
+                      className="w-30 h-40 object-cover rounded-md"
                     />
                     <div>
                       <h3 className="font-semibold">{product.ten_san_pham}</h3>
@@ -120,7 +170,16 @@ const CheckOut = () => {
 
             {/* Danh mục sản phẩm nguyên giá */}
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="font-bold text-xl mb-4">Sản phẩm nguyên giá</h2>
+             
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  checked={selectAllRegular}
+                  onChange={handleSelectAllRegular}
+                  className="form-checkbox h-5 w-5 text-yellow-500"
+                />
+                 <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm nguyên giá</h2>
+              </div>
               {data?.san_pham_nguyen_gia.map((product: any) => (
                 <div
                   key={product.id}
@@ -136,7 +195,7 @@ const CheckOut = () => {
                     <img
                       src={product.hinh_anh}
                       alt="Ảnh sản phẩm"
-                      className="w-20 h-20 object-cover rounded-md"
+                      className="w-30 h-40 object-cover rounded-md"
                     />
                     <div>
                       <h3 className="font-semibold">{product.ten_san_pham}</h3>
