@@ -89,8 +89,6 @@ class GioHangController extends Controller
 
 
 
-
-
     public function store(Request $request)
     {
         try {
@@ -343,7 +341,7 @@ class GioHangController extends Controller
             $isSelected = $request->input('chon');
 
             $gioHang = DB::table('gio_hangs')
-                ->where('id', $gioHangId)
+                ->whereIn('id', $gioHangId)
                 ->where('user_id', $userId)
                 ->first();
 
@@ -433,7 +431,7 @@ class GioHangController extends Controller
                     'van_chuyen' => $vanChuyen,
                     'giam_gia_van_chuyen' => -$giamGiaVanChuyen,
                     'tong_thanh_toan' => $tongThanhToan,
-                    'tiet_kiem' => $tongTietKiem + $giamGiaVanChuyen, 
+                    'tiet_kiem' => $tongTietKiem + $giamGiaVanChuyen,
                 ],
                 'tong_san_pham' => $gioHangs->count(),
             ]);
