@@ -138,13 +138,9 @@ class GioHangController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function tangSoLuong($id)
     {
         try {
-            $request->validate([
-                'so_luong' => 'required|integer',
-            ]);
-
             $gioHang = GioHang::findOrFail($id);
 
             if ($gioHang->user_id !== Auth::id()) {
@@ -152,29 +148,19 @@ class GioHangController extends Controller
             }
 
             $bienTheSanPham = BienTheSanPham::findOrFail($gioHang->bien_the_san_pham_id);
-            $soLuongMoi = $gioHang->so_luong + $request->so_luong;
 
-            if ($soLuongMoi > $bienTheSanPham->so_luong_bien_the) {
+            if ($gioHang->so_luong + 1 > $bienTheSanPham->so_luong_bien_the) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
                 ], 400);
             }
 
-            if ($soLuongMoi < 0) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Số lượng không thể nhỏ hơn 0.'
-                ], 400);
-            }
-
-            $gioHang->update([
-                'so_luong' => $soLuongMoi,
-            ]);
+            $gioHang->increment('so_luong');
 
             return response()->json([
                 'status' => true,
-                'message' => 'Giỏ hàng đã được cập nhật thành công!',
+                'message' => 'Đã tăng số lượng sản phẩm thành công!',
                 'data' => $gioHang
             ]);
         } catch (\Exception $e) {
@@ -185,6 +171,36 @@ class GioHangController extends Controller
         }
     }
 
+    public function giamSoLuong($id)
+    {
+        try {
+            $gioHang = GioHang::findOrFail($id);
+
+            if ($gioHang->user_id !== Auth::id()) {
+                return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            if ($gioHang->so_luong - 1 < 1) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Số lượng không thể nhỏ hơn 1.'
+                ], 400);
+            }
+
+            $gioHang->decrement('so_luong');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Đã giảm số lượng sản phẩm thành công!',
+                'data' => $gioHang
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
 
 
     public function destroy($id)
@@ -395,7 +411,7 @@ class GioHangController extends Controller
                     'bien_the_san_phams.gia_ban'
                 )
                 ->where('gio_hangs.user_id', $userId)
-                ->where('gio_hangs.chon', 1) // Sử dụng 1 thay vì true
+                ->where('gio_hangs.chon', 1)
                 ->get();
 
             if ($gioHangs->isEmpty()) {

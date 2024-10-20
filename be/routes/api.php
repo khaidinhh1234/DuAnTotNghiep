@@ -59,12 +59,7 @@ Route::middleware([])
         Route::get('thong-tin-web', [TrangChuController::class, 'thongTinWeb']);
         Route::get('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
 
-        //Chương trình ưu đãi và mã khuyến mãi
-        Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
-        Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
-        Route::get('ma-khuyen-mai', [KhuyenMaiController::class, 'layMaKhuyenMaiTheoHangThanhVien']);
-        Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
-        Route::get('ma-uu-dai-cho-nguoi-dung-cu-the', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoNguoiDung']);
+
 
         //Client Sản Phẩm
 
@@ -103,15 +98,26 @@ Route::middleware([])
         Route::post('/danh-gia/{danhGia}/like', [TrangChiTietSpController::class, 'likeDanhGia']);
         Route::delete('/danh-gia/{danhGia}/unlike', [TrangChiTietSpController::class, 'boLikeDanhGia']);
 
-        // Giỏ hàng
+        //Chương trình ưu đãi và
+        Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
+        Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
+
         Route::middleware('auth.sanctum')->group(function () {
+            // Giỏ hàng
             Route::get('/gio-hang', [GioHangController::class, 'index']);
             Route::post('/gio-hang', [GioHangController::class, 'store']);
-            Route::put('/gio-hang/{id}', [GioHangController::class, 'update']);
+            Route::put('/gio-hang/tang-so-luong/{id}', [GioHangController::class, 'tangSoLuong']);
+            Route::put('/gio-hang/giam-so-luong/{id}', [GioHangController::class, 'giamSoLuong']);
             Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
             Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
             Route::post('/gio-hang/chon-san-pham', [GioHangController::class, 'updateSelection']);
             Route::get('/gio-hang/chi-tiet', [GioHangController::class, 'calculateTotal']);
+            // mã khuyến mãi
+            Route::get('ma-khuyen-mai', [KhuyenMaiController::class, 'layMaKhuyenMaiTheoHangThanhVien']);
+            Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
+            Route::get('ma-uu-dai-cho-nguoi-dung-cu-the', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoNguoiDung']);
+
+            Route::post('ap-dung-ma-khuyen-mai', [GioHangController::class, 'apDungMaGiamGia']);
 
         });
 
