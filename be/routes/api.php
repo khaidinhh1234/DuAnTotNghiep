@@ -105,6 +105,9 @@ Route::middleware([])
             Route::put('/gio-hang/{id}', [GioHangController::class, 'update']);
             Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
             Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
+            Route::post('/gio-hang/chon-san-pham', [GioHangController::class, 'updateSelection']);
+            Route::get('/gio-hang/chi-tiet', [GioHangController::class, 'calculateTotal']);
+
         });
 
         // Đơn hàng
