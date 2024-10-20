@@ -56,6 +56,8 @@ class GioHangController extends Controller
                     $item->gia_cu = $item->gia_ban;
                 }
 
+
+
                 return $item;
             });
 
