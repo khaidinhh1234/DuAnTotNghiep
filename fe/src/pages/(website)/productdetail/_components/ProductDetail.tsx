@@ -816,15 +816,20 @@
 // };
 
 // export default ProductDetail;
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/client";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, FreeMode, Navigation, Pagination, Thumbs } from "swiper/modules";
-import { Button, Image, message, Rate } from "antd";
+import { Button, Image, Rate } from "antd";
+import { message } from 'antd';
 import SizeGuideModal from "./SizeGuide";
-
+import { EyeOutlined } from "@ant-design/icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp as farThumbsUp } from '@fortawesome/free-regular-svg-icons';
+import { faThumbsUp as fasThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import { toast } from "react-toastify";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -836,7 +841,7 @@ interface ProductData {
   danh_muc: {
     ten_danh_muc: string;
   };
-  danh_gias: Array<{
+    danh_gias: Array<{
     id: number
     so_sao_san_pham: number;
     chat_luong_san_pham: string;
@@ -851,6 +856,8 @@ interface ProductData {
     huu_ich: boolean;
     phan_hoi: string;
     mo_ta: string;
+    trang_thai_danh_gia_nguoi_dung: boolean;
+    danh_gia_huu_ich_count: number;
   }>;
   bien_the_san_pham: Array<{
     gia_ban: number;
@@ -877,6 +884,7 @@ interface RelatedProduct {
   gia_ban: string;
   gia_goc: string;
 }
+
 const fetchProduct = async (id: string) => {
   const response = await instance.get(`/chi-tiet-san-pham/${id}`);
   return response.data.data;
@@ -901,23 +909,79 @@ const ProductDetail: React.FC = () => {
   const [isHeart, setIsHeart] = useState(false);
   const [activeTab, setActiveTab] = useState("descriptions");
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
-
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('accessToken');
+    if (storedToken) {
+      setToken(storedToken);
+      instance.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+    }
+  }, []);
+  const queryClient = useQueryClient();
+
   const { data: product, isLoading, isError } = useQuery<ProductData>({
     queryKey: ['product', id],
     queryFn: () => fetchProduct(id!),
-  });
 
+
+  });
 
   const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
     queryKey: ['relatedProducts', id],
     queryFn: () => fetchRelatedProducts(Number(id)),
     enabled: !!product,
   });
+
+  const likeMutation = useMutation({
+    mutationFn: ({ reviewId, isLiked }: { reviewId: number; isLiked: boolean }) => {
+      if (!token) {
+        throw new Error('Bạn cần đăng nhập để thực hiện hành động này');
+      }
+      return isLiked
+        ? instance.delete(`/danh-gia/${reviewId}/unlike`)
+        : instance.post(`/danh-gia/${reviewId}/like`);
+    },
+    onSuccess: (data: any, variables: { reviewId: number; isLiked: boolean }) => {
+      queryClient.setQueryData<ProductData>(['product', id], (oldProduct) => {
+        if (!oldProduct) return oldProduct;
+        return {
+          ...oldProduct,
+          danh_gias: oldProduct.danh_gias.map((review) =>
+            review.id === variables.reviewId
+              ? {
+                  ...review,
+                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                  danh_gia_huu_ich_count: variables.isLiked 
+                    ? review.danh_gia_huu_ich_count - 1 
+                    : review.danh_gia_huu_ich_count + 1,
+                }
+              : review
+          ),
+        };
+      });
+    },
+    onError: (error) => {
+      message.error(error.message || 'Có lỗi xảy ra khi thực hiện hành động');
+    }
+  });
+  
+  
+  const handleReviewLike = useCallback((reviewId: number, isLiked: boolean) => {
+    if (!token) {
+      toast.warning('Bạn cần đăng nhập để thực hiện hành động này');
+      return;
+    }
+    likeMutation.mutate({ reviewId, isLiked });
+  }, [likeMutation, token]);
+  
+  
+  
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
   const selectedVariant = useMemo(() => {
     if (!product || !selectedColor || !selectedSize) return null;
     return product.bien_the_san_pham.find(
@@ -1026,7 +1090,9 @@ const ProductDetail: React.FC = () => {
           <div className="container pb-11">
             <div className="md:px-14 px-5 pt-3 grid grid-cols-12 gap-3 w-[100%] justify-center">
               <div className="lg:col-span-6 col-span-12 mb-6">
-                <div className="bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60">
+                {/* <div className="bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60"> */}
+                <div className="mt-8 xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl">
+
                   <Swiper
                     style={{
                       "--swiper-navigation-color": "#000000",
@@ -1054,16 +1120,17 @@ const ProductDetail: React.FC = () => {
                           alt=""
                           onClick={() => handlePreview(image)}
                           style={{
+                            top: '300px',
                             cursor: "pointer",
                             width: '665px',
-                            height: '550px',
+                            height: 'auto',
                             objectFit: 'cover',
                           }} />
                       </SwiperSlide>
                     ))}
                   </Swiper>
                 </div>
-                <div className="w-[500px] mx-auto">
+                <div className=" mt-2 w-[500px] mx-auto">
                   <Swiper
                     onSwiper={(swiperInstance) =>
                       setThumbsSwiper(swiperInstance as any)
@@ -1078,7 +1145,7 @@ const ProductDetail: React.FC = () => {
                   >
                     {currentImages.map((image, index) => (
                       <SwiperSlide key={`thumb-${index}`}>
-                        <div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] flex justify-center items-center">
+                        <div className="  md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] flex justify-center items-center">
                           <img src={image} alt="" style={{
                             cursor: "pointer",
                             width: '100%',
@@ -1097,9 +1164,9 @@ const ProductDetail: React.FC = () => {
                   <div className="flex justify-between">
                     <h3 className="font-bold text-2xl">{product?.ten_san_pham}</h3>
                     {selectedVariant && (
-                      <div>
+                      <div className="mt-2">
                         <a
-                          className={`text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                          className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
                             ? "bg-[#3CD139]/10 text-[#3CD139]"
                             : "bg-red-500 text-white"
                             }`}
@@ -1119,15 +1186,22 @@ const ProductDetail: React.FC = () => {
                     >
                       <i className="fa-regular fa-copy" style={{ fontSize: '1rem', marginBottom: '14px' }}></i> {/* Điều chỉnh kích thước và khoảng cách */}
                     </button>
+
+
+                    <div className="stars_reviews flex mt-1">
+                      <Rate disabled value={averageRating} allowHalf />
+                      <span className="px-2 text-[#A4A1AA] mt-1">
+                        {averageRating.toFixed(1)} <span className="px-[2px]">({product?.danh_gias.length})</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <EyeOutlined style={{ fontSize: '24px' }} />
+                    <span className="font-bold text-base">{product?.luot_xem}</span>
+                    <span>Người đã xem sản phẩm này</span>
                   </div>
 
 
-                  <div className="stars_reviews flex ">
-                    <Rate disabled value={averageRating} allowHalf />
-                    <span className="px-2 text-[#A4A1AA]">
-                      {averageRating.toFixed(1)} <span className="px-[2px]">({product?.danh_gias.length} Đánh giá)</span>
-                    </span>
-                  </div>
                   <h4 className="mb-3 text-2xl font-normal">{product?.mo_ta_ngan}</h4>
 
                 </div>
@@ -1204,8 +1278,7 @@ const ProductDetail: React.FC = () => {
                     </button>
                   </div>
                   <button className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
-                    Add to Cart
-                  </button>
+Thêm vào giỏ hàng                  </button>
                   <button
                     onClick={handleClickHeart}
                     className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${isHeart ? "bg-red-600" : ""
@@ -1288,8 +1361,7 @@ const ProductDetail: React.FC = () => {
         {activeTab === "reviews" && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2>
-            {/* <div className="space-y-6">
-            <h2 className="text-xl font-semibold mb-4">Customer Reviews</h2> */}
+
             {activeTab === "reviews" && product && (
               <div className="space-y-6">
                 {product.danh_gias.map((review) => (
@@ -1304,21 +1376,30 @@ const ProductDetail: React.FC = () => {
                       </div>
                       <div>
                         <h4 className="font-medium">{`${review.user.ho} ${review.user.ten}`}</h4>
-                        <div className="flex items-center">
+                        <div className="flex items-center justify-between">
                           <span className="text-yellow-500 text-sm">
                             {"★".repeat(review.so_sao_san_pham)}
                             {"☆".repeat(5 - review.so_sao_san_pham)}
                           </span>
-                          <span className="ml-2 text-xs text-gray-500">
-                            {new Date(review.created_at).toLocaleDateString()}
+                          <span className="ml-1 text-xs text-gray-500">
+                            {new Date(review.created_at).toLocaleString()}
                           </span>
+                          <div className="flex-1 text-xs text-gray-600 border-l border-gray-300 pl-1 ml-1">
+                            <span className="">Phân loại hàng:</span> {review.bien_the_san_pham.mau_bien_the.ten_mau_sac},{review.bien_the_san_pham.kich_thuoc_bien_the.kich_thuoc}
+                          </div>
                         </div>
+
                       </div>
+
                     </div>
-                    <p className="text-gray-700 font-medium mb-2">
-                      {review.chat_luong_san_pham}
+                    <p className="text-gray-600 text-sm mb-3">
+                      <span>Đúng với mô tả:</span> <span className="font-bold">{review.mo_ta}</span>
                     </p>
-                    <p className="text-gray-600 text-sm mb-3">{review.mo_ta}</p>
+
+
+                    <p className="text-gray-600  text-sm mb-2">
+                      <span className="font-bold"> {review.chat_luong_san_pham}</span>
+                    </p>
 
                     {review.anh_danh_gia && (
                       <div className="flex flex-wrap gap-2">
@@ -1339,19 +1420,35 @@ const ProductDetail: React.FC = () => {
                         <p className="text-gray-600 italic text-sm">Phản hồi: {review.phan_hoi}</p>
                       </div>
                     )}
-                    <div className="mt-2 flex items-center">
-                      <button className="flex items-center text-gray-500 hover:text-blue-500 text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                        </svg>
-                        Hữu ích ({review.huu_ich || 0})
-                      </button>
-                    </div>
-                  </div>
-                ))}
+        <div className="mt-2 flex items-center space-x-4">
+
+        <button 
+      className={`like-button flex items-center space-x-2 ${likeMutation.isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+      onClick={() => handleReviewLike(review.id, review.trang_thai_danh_gia_nguoi_dung)}
+      disabled={likeMutation.isLoading }
+    >
+      <FontAwesomeIcon 
+        icon={review.trang_thai_danh_gia_nguoi_dung ? fasThumbsUp : farThumbsUp} 
+        className={review.trang_thai_danh_gia_nguoi_dung ? 'text-blue-500' : 'text-gray-500'}
+      />
+      <span>
+        {likeMutation.isLoading ? (
+          'Đang xử lý...'
+        ) : (
+          <>
+            {review.trang_thai_danh_gia_nguoi_dung ? 'Đã thích' : 'Hữu ích'} ({review.danh_gia_huu_ich_count})
+          </>
+        )}
+      </span>
+    </button>
+
+
+                </div>
+              </div>
+            ))}
               </div>
             )}
-{/* 
+            {/* 
             <div className="space-y-6">
               <h3 className="text-lg font-semibold mt-8 mb-4">
                 Add your Review
@@ -1409,7 +1506,7 @@ const ProductDetail: React.FC = () => {
 
       <div className="container mx-14 pb-10">
         <h2 className="mx-14 text-4xl font-medium tracking-[1px] mb-12">
-Sản phẩm cùng loại        </h2>
+          Sản phẩm cùng loại        </h2>
         <div className="mx-14 lg:flex lg:gap-7 h-[500px]">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {relatedProducts?.data.map((product) => (
@@ -1454,40 +1551,40 @@ Sản phẩm cùng loại        </h2>
           </div>
         </div>
       </div>
-    
-<section>
-  <div className="container">
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-10 mt-12 mb-24">
-      <div className="flex items-center border-r border-gray-200 pr-6">
-        <div className="border border-red-100 bg-red-50 rounded-full p-3 mr-4">
-          <i className="fa-solid fa-hand-holding-dollar text-2xl text-red-400" />
+
+      <section>
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-10 mt-12 mb-24">
+            <div className="flex items-center border-r border-gray-200 pr-6">
+              <div className="border border-red-100 bg-red-50 rounded-full p-3 mr-4">
+                <i className="fa-solid fa-hand-holding-dollar text-2xl text-red-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">Thanh toán khi nhận hàng (COD)</h3>
+                <p className="text-gray-500">Giao hàng toàn quốc.</p>
+              </div>
+            </div>
+            <div className="flex items-center border-r border-gray-200 pr-6">
+              <div className="border border-red-100 bg-red-50 rounded-full p-3 mr-4">
+                <i className="fa-solid fa-truck-fast text-2xl text-red-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">Miễn phí giao hàng</h3>
+                <p className="text-gray-500">Với đơn hàng trên 599.000 ₫.</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <div className="border border-red-100 bg-red-50 rounded-full p-3 mr-4">
+                <i className="fa-solid fa-box-open text-2xl text-red-400" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">Đổi hàng miễn phí</h3>
+                <p className="text-gray-500">Trong 30 ngày kể từ ngày mua.</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <h3 className="font-bold text-lg">Thanh toán khi nhận hàng (COD)</h3>
-          <p className="text-gray-500">Giao hàng toàn quốc.</p>
-        </div>
-      </div>
-      <div className="flex items-center border-r border-gray-200 pr-6">
-        <div className="border border-red-100 bg-red-50 rounded-full p-3 mr-4">
-          <i className="fa-solid fa-truck-fast text-2xl text-red-400" />
-        </div>
-        <div>
-          <h3 className="font-bold text-lg">Miễn phí giao hàng</h3>
-          <p className="text-gray-500">Với đơn hàng trên 599.000 ₫.</p>
-        </div>
-      </div>
-      <div className="flex items-center">
-        <div className="border border-red-100 bg-red-50 rounded-full p-3 mr-4">
-          <i className="fa-solid fa-box-open text-2xl text-red-400" />
-        </div>
-        <div>
-          <h3 className="font-bold text-lg">Đổi hàng miễn phí</h3>
-          <p className="text-gray-500">Trong 30 ngày kể từ ngày mua.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
 
       {previewImage && (

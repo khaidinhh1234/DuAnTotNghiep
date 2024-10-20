@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Models\BienTheSanPham;
 use App\Models\DonHang;
 use App\Models\SanPham;
 use App\Models\User;
@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(SanPham::class)->constrained();
             $table->foreignIdFor(DonHang::class)->constrained();
+            $table->foreignIdFor(BienTheSanPham::class)->constrained();
             $table->integer('so_sao_san_pham')->nullable();
             $table->integer('so_sao_dich_vu_van_chuyen')->nullable();
             $table->text('chat_luong_san_pham')->nullable();

@@ -26,7 +26,6 @@ class TrangChiTietSpController extends Controller
                 },
                 'danhGias.bienTheSanPham.mauBienThe',
                 'danhGias.bienTheSanPham.kichThuocBienThe',
-                'danhGias.donHang',
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',

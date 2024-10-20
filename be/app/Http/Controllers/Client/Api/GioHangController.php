@@ -56,6 +56,8 @@ class GioHangController extends Controller
                     $item->gia_cu = $item->gia_ban;
                 }
 
+
+
                 return $item;
             });
 
@@ -86,9 +88,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
-
-
 
 
     public function store(Request $request)
@@ -339,23 +338,30 @@ class GioHangController extends Controller
     {
         try {
             $userId = Auth::id();
-            $gioHangId = $request->input('gio_hang_id');
+            $gioHangIds = $request->input('gio_hang_ids');
             $isSelected = $request->input('chon');
 
-            $gioHang = DB::table('gio_hangs')
-                ->where('id', $gioHangId)
-                ->where('user_id', $userId)
-                ->first();
-
-            if (!$gioHang) {
+            if (!is_array($gioHangIds) || empty($gioHangIds)) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Sản phẩm không tồn tại trong giỏ hàng.',
+                    'message' => 'Vui lòng cung cấp ít nhất một ID giỏ hàng.',
+                ], 400);
+            }
+
+            $gioHangs = DB::table('gio_hangs')
+                ->whereIn('id', $gioHangIds)
+                ->where('user_id', $userId)
+                ->get();
+
+            if ($gioHangs->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không có sản phẩm nào tồn tại trong giỏ hàng.',
                 ], 404);
             }
 
             DB::table('gio_hangs')
-                ->where('id', $gioHangId)
+                ->whereIn('id', $gioHangIds)
                 ->where('user_id', $userId)
                 ->update(['chon' => $isSelected]);
 
