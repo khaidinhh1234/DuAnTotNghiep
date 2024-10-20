@@ -13,6 +13,7 @@ class DanhGia extends Model
         'user_id',
         'don_hang_id',
         'san_pham_id',
+        'bien_the_san_pham_id',
         'so_sao_san_pham',
         'so_sao_dich_vu_van_chuyen',
         'chat_luong_san_pham',
@@ -38,5 +39,13 @@ class DanhGia extends Model
     public function donHang()
     {
         return $this->belongsTo(DonHang::class, 'don_hang_id', 'id');
+    }
+    public function danhGiaHuuIch()
+    {
+        return $this->belongsToMany(User::class, 'danh_gia_huu_iches', 'danh_gia_id', 'user_id');
+    }
+    public function bienTheSanPham()
+    {
+        return $this->belongsTo(BienTheSanPham::class, 'bien_the_san_pham_id', 'id');
     }
 }

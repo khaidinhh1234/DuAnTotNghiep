@@ -38,6 +38,7 @@ use App\Http\Controllers\Client\Api\TrangChiTietSpController;
 use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
+use App\Http\Controllers\Client\Api\DanhGiaHuuIchController;
 use Illuminate\Support\Facades\Route;
 
 // Auth
@@ -97,6 +98,10 @@ Route::middleware([])
 
         // Liên hệ
         Route::post('lienhe', [TrangLienHeController::class, 'lienHe']);
+
+        // Thích đánh giá
+        Route::post('/danh-gia/{danhGia}/like', [TrangChiTietSpController::class, 'likeDanhGia']);
+        Route::delete('/danh-gia/{danhGia}/unlike', [TrangChiTietSpController::class, 'boLikeDanhGia']);
 
         // Giỏ hàng
         Route::middleware('auth.sanctum')->group(function () {

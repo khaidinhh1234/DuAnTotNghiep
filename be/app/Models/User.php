@@ -106,4 +106,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(SanPham::class, 'san_pham_yeu_thich', 'user_id', 'san_pham_id');
     }
+    public function danhGiaHuuIch()
+    {
+        return $this->belongsToMany(DanhGia::class, 'danh_gia_huu_ich', 'user_id', 'danh_gia_id');
+    }
 }
