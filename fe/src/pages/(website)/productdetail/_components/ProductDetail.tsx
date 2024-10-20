@@ -844,6 +844,7 @@ interface ProductData {
       ho: string;
       ten: string;
       anh_nguoi_dung: string;
+      anh_danh_gia: string;
     };
     created_at: string;
     anh_danh_gia?: string;
@@ -1018,7 +1019,7 @@ const ProductDetail: React.FC = () => {
             <p className="px-2">{product?.danh_muc.ten_danh_muc}</p>
           </div>
         </div>
-      </section> <br />  <br /> <br />
+      </section>
 
       {product && (
         <section>
@@ -1327,6 +1328,7 @@ const ProductDetail: React.FC = () => {
                               src={img.trim()}
                               alt={`Review Image ${index + 1}`}
                               className="w-full h-full object-cover"
+                              onClick={() => review.anh_danh_gia && handlePreview(review.anh_danh_gia)}
                             />
                           </div>
                         ))}
@@ -1349,68 +1351,8 @@ const ProductDetail: React.FC = () => {
                 ))}
               </div>
             )}
-
+{/* 
             <div className="space-y-6">
-              {/* Review Item */}
-              {/* <div className="border p-4 rounded-lg">
-                <div className="flex items-center space-x-4 mb-2">
-                  <div className="w-12 h-12 rounded-full overflow-hidden">
-                    <img
-                      src="https://i.pravatar.cc/100"
-                      alt="Mark Williams"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Mark Williams</h4>
-                    <div className="flex items-center">
-                      <span className="text-yellow-500 text-xl">★★★★★</span>
-                      <span className="ml-2 text-sm text-gray-500">
-                        Jan 05, 2023
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-700 font-medium mb-2">
-                  Excellent Product, I Love It 😍
-                </p>
-                <p className="text-gray-600">
-                  It is a long established fact that a reader will be distracted
-                  by the readable content of a page when looking at its layout.
-                </p>
-              </div> */}
-
-              {/* Another Review Item */}
-              {/* <div className="border p-4 rounded-lg">
-                <div className="flex items-center space-x-4 mb-2">
-                  <div className="w-12 h-12 rounded-full overflow-hidden">
-                    <img
-                      src="https://i.pravatar.cc/100?img=2"
-                      alt="Alexa Johnson"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Alexa Johnson</h4>
-                    <div className="flex items-center">
-                      <span className="text-yellow-500 text-xl">★★★★★</span>
-                      <span className="ml-2 text-sm text-gray-500">
-                        Jan 06, 2023
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-gray-700 font-medium mb-2">
-                  My Daughter is very much happy with this product
-                </p>
-                <p className="text-gray-600">
-                  It is a long established fact that a reader will be distracted
-                  by the readable content of a page when looking at its layout.
-                </p>
-              </div> */}
-              {/* </div> */}
-
-              {/* Add Review Form */}
               <h3 className="text-lg font-semibold mt-8 mb-4">
                 Add your Review
               </h3>
@@ -1459,8 +1401,7 @@ const ProductDetail: React.FC = () => {
                   Submit
                 </button>
               </form>
-            </div>
-            {/* <h3 className="text-lg font-semibold mt-8 mb-4">Add your Review</h3> */}
+            </div> */}
             <form className="space-y-4">{/* Review form here */}</form>
           </div>
         )}
