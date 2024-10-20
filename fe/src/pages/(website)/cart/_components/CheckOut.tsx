@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const CheckOut = () => {
+  const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
 
@@ -25,7 +27,42 @@ const CheckOut = () => {
       }
     },
   });
-
+  const { mutate: increaseQuantity } = useMutation({
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`, 
+        { so_luong: currentQuantity + 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi tăng số lượng sản phẩm.');
+    },
+  });
+  const { mutate: decreaseQuantity } = useMutation({
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+      await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, { so_luong: currentQuantity - 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi giảm số lượng sản phẩm.');
+    },
+  });
   const handleCheckboxChange = (id: number) => {
     setSelectedProducts((prevSelected) =>
       prevSelected.includes(id)
@@ -38,12 +75,12 @@ const CheckOut = () => {
       // Bỏ chọn tất cả sản phẩm đang giảm giá
       setSelectedProducts((prevSelected) =>
         prevSelected.filter((productId) =>
-          !data?.san_pham_giam_gia.map((product) => product.id).includes(productId)
+          !data?.san_pham_giam_gia.map((product:any) => product.id).includes(productId)
         )
       );
     } else {
       // Chọn tất cả sản phẩm đang giảm giá
-      const allDiscountedIds = data?.san_pham_giam_gia.map((product) => product.id) || [];
+      const allDiscountedIds = data?.san_pham_giam_gia.map((product: any) => product.id) || [];
       setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allDiscountedIds])]);
     }
     setSelectAllDiscounted(!selectAllDiscounted);
@@ -54,12 +91,12 @@ const CheckOut = () => {
       // Bỏ chọn tất cả sản phẩm nguyên giá
       setSelectedProducts((prevSelected) =>
         prevSelected.filter((productId) =>
-          !data?.san_pham_nguyen_gia.map((product) => product.id).includes(productId)
+          !data?.san_pham_nguyen_gia.map((product: any) => product.id).includes(productId)
         )
       );
     } else {
       // Chọn tất cả sản phẩm nguyên giá
-      const allRegularIds = data?.san_pham_nguyen_gia.map((product) => product.id) || [];
+      const allRegularIds = data?.san_pham_nguyen_gia.map((product: any) => product.id) || [];
       setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allRegularIds])]);
     }
     setSelectAllRegular(!selectAllRegular);
@@ -119,6 +156,7 @@ const CheckOut = () => {
                   checked={selectAllDiscounted}
                   onChange={handleSelectAllDiscounted}
                   className="form-checkbox h-5 w-5 text-yellow-500"
+                  title="Select all discounted products"
                 />
                 <h2 className="font-bold text-xl mb-0 ml-2">Đang được giảm giá</h2>
               </div>
@@ -130,11 +168,12 @@ const CheckOut = () => {
                 >
                   <div className="flex items-center gap-6">
                     <input
-                      type="checkbox"
-                      checked={selectedProducts.includes(product.id)}
-                      onChange={() => handleCheckboxChange(product.id)}
-                      className="form-checkbox h-5 w-5 text-yellow-500"
-                    />
+                          type="checkbox"
+                          checked={selectedProducts.includes(product.id)}
+                          onChange={() => handleCheckboxChange(product.id)}
+                          className="form-checkbox h-5 w-5 text-yellow-500"
+                          title={`Select ${product.ten_san_pham}`}
+                        />
                     <img
                       src={product.hinh_anh}
                       alt="Ảnh sản phẩm"
@@ -151,7 +190,9 @@ const CheckOut = () => {
                     </div>
                   </div>
                   <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                    <button className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                    <button
+                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       −
                     </button>
                     <input
@@ -159,8 +200,11 @@ const CheckOut = () => {
                       value={product.so_luong}
                       className="w-12 text-center border-none outline-none"
                       readOnly
+                      title={`Quantity of ${product.ten_san_pham}`}
                     />
-                    <button className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                    <button
+                     onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       +
                     </button>
                   </div>
@@ -177,6 +221,7 @@ const CheckOut = () => {
                   checked={selectAllRegular}
                   onChange={handleSelectAllRegular}
                   className="form-checkbox h-5 w-5 text-yellow-500"
+                  title="Select all regular priced products"
                 />
                  <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm nguyên giá</h2>
               </div>
@@ -191,6 +236,7 @@ const CheckOut = () => {
                       checked={selectedProducts.includes(product.id)}
                       onChange={() => handleCheckboxChange(product.id)}
                       className="form-checkbox h-5 w-5 text-yellow-500"
+                      title={`Select ${product.ten_san_pham}`}
                     />
                     <img
                       src={product.hinh_anh}
@@ -206,7 +252,9 @@ const CheckOut = () => {
                     </div>
                   </div>
                   <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                    <button className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                    <button
+                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       −
                     </button>
                     <input
@@ -214,8 +262,11 @@ const CheckOut = () => {
                       value={product.so_luong}
                       className="w-12 text-center border-none outline-none"
                       readOnly
+                      title={`Quantity of ${product.ten_san_pham}`}
                     />
-                    <button className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                    <button
+                    onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       +
                     </button>
                   </div>

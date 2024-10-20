@@ -830,6 +830,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp as farThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { faThumbsUp as fasThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { toast } from "react-toastify";
+import instanceClient from "@/configs/client";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -838,10 +840,11 @@ interface ProductData {
   noi_dung: string;
   gia_tot: number;
   ma_san_pham: string;
+  so_luong: number
   danh_muc: {
     ten_danh_muc: string;
   };
-    danh_gias: Array<{
+  danh_gias: Array<{
     id: number
     so_sao_san_pham: number;
     chat_luong_san_pham: string;
@@ -911,6 +914,8 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [user] = useLocalStorage("user" as any, {});
+  const access_token = user.access_token || localStorage.getItem("access_token");
 
 
   useEffect(() => {
@@ -952,12 +957,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                  ...review,
-                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                  danh_gia_huu_ich_count: variables.isLiked 
-                    ? review.danh_gia_huu_ich_count - 1 
-                    : review.danh_gia_huu_ich_count + 1,
-                }
+                ...review,
+                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                danh_gia_huu_ich_count: variables.isLiked
+                  ? review.danh_gia_huu_ich_count - 1
+                  : review.danh_gia_huu_ich_count + 1,
+              }
               : review
           ),
         };
@@ -967,8 +972,52 @@ const ProductDetail: React.FC = () => {
       message.error(error.message || 'Có lỗi xảy ra khi thực hiện hành động');
     }
   });
-  
-  
+
+  const [quantity, setQuantity] = useState<number>(product?.so_luong || 1);
+
+// tăng số lượng
+const { mutate: increaseQuantity } = useMutation({
+  mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+    await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`, 
+      { so_luong: currentQuantity + 1 }, 
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+  },
+  onSuccess: () => {
+    setQuantity((prev) => prev + 1); // Cập nhật số lượng hiển thị
+    queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+  },
+  onError: (error: any) => {
+    toast.error(error.message || 'Có lỗi xảy ra khi tăng số lượng sản phẩm.');
+  },
+});
+
+// giảm số lượng
+const { mutate: decreaseQuantity } = useMutation({
+  mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+    await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, 
+      { so_luong: currentQuantity - 1 },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+  },
+  onSuccess: () => {
+    setQuantity((prev) => prev - 1); // Cập nhật số lượng hiển thị
+    queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+  },
+  onError: (error: any) => {
+    toast.error(error.message || 'Có lỗi xảy ra khi giảm số lượng sản phẩm.');
+  },
+});
+
+
   const handleReviewLike = useCallback((reviewId: number, isLiked: boolean) => {
     if (!token) {
       toast.warning('Bạn cần đăng nhập để thực hiện hành động này');
@@ -976,9 +1025,9 @@ const ProductDetail: React.FC = () => {
     }
     likeMutation.mutate({ reviewId, isLiked });
   }, [likeMutation, token]);
-  
-  
-  
+
+
+
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -1262,23 +1311,37 @@ const ProductDetail: React.FC = () => {
                 </div>
 
                 <div className="mt-12 flex gap-5">
-                  <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
-                    <button className="py-2 pr-2">
+                  <div className="border rounded-lg border-black xl:w-32 xl:h-14 ld:w-24 lg:h-10 md:w-32 md:h-14 w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
+                    <button
+                      onClick={() => {
+                        if (quantity > 1) {
+                          decreaseQuantity({ productId: product.id.toString(), currentQuantity: quantity });
+                        }
+                      }}
+                      className="py-2 pr-2"
+                      disabled={quantity <= 1} // Ngăn không cho số lượng giảm dưới 1
+                    >
                       <i className="fa-solid fa-minus" />
-                    </button>                  <input
+                    </button>
+
+                    <input
                       type="number"
-                      id="numberInput"
-                      defaultValue={1}
-                      min={1}
-                      maxLength={2}
-                      className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
+                      value={quantity} // Liên kết giá trị với state
+                      readOnly
+                      className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
                     />
-                    <button className="py-2 pl-2">
+
+                    <button
+                      onClick={() => increaseQuantity({ productId: product.id.toString(), currentQuantity: quantity })}
+                      className="py-2 pl-2"
+                    >
                       <i className="fa-solid fa-plus" />
                     </button>
                   </div>
+
                   <button className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
-Thêm vào giỏ hàng                  </button>
+                    Thêm vào giỏ hàng
+                  </button>
                   <button
                     onClick={handleClickHeart}
                     className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${isHeart ? "bg-red-600" : ""
@@ -1420,32 +1483,32 @@ Thêm vào giỏ hàng                  </button>
                         <p className="text-gray-600 italic text-sm">Phản hồi: {review.phan_hoi}</p>
                       </div>
                     )}
-        <div className="mt-2 flex items-center space-x-4">
+                    <div className="mt-2 flex items-center space-x-4">
 
-        <button 
-      className={`like-button flex items-center space-x-2 ${likeMutation.isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-      onClick={() => handleReviewLike(review.id, review.trang_thai_danh_gia_nguoi_dung)}
-      disabled={likeMutation.isLoading }
-    >
-      <FontAwesomeIcon 
-        icon={review.trang_thai_danh_gia_nguoi_dung ? fasThumbsUp : farThumbsUp} 
-        className={review.trang_thai_danh_gia_nguoi_dung ? 'text-blue-500' : 'text-gray-500'}
-      />
-      <span>
-        {likeMutation.isLoading ? (
-          'Đang xử lý...'
-        ) : (
-          <>
-            {review.trang_thai_danh_gia_nguoi_dung ? 'Đã thích' : 'Hữu ích'} ({review.danh_gia_huu_ich_count})
-          </>
-        )}
-      </span>
-    </button>
+                      <button
+                        className={`like-button flex items-center space-x-2 ${likeMutation.isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={() => handleReviewLike(review.id, review.trang_thai_danh_gia_nguoi_dung)}
+                        disabled={likeMutation.isLoading}
+                      >
+                        <FontAwesomeIcon
+                          icon={review.trang_thai_danh_gia_nguoi_dung ? fasThumbsUp : farThumbsUp}
+                          className={review.trang_thai_danh_gia_nguoi_dung ? 'text-blue-500' : 'text-gray-500'}
+                        />
+                        <span>
+                          {likeMutation.isLoading ? (
+                            'Đang xử lý...'
+                          ) : (
+                            <>
+                              {review.trang_thai_danh_gia_nguoi_dung ? 'Đã thích' : 'Hữu ích'} ({review.danh_gia_huu_ich_count})
+                            </>
+                          )}
+                        </span>
+                      </button>
 
 
-                </div>
-              </div>
-            ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
             {/* 
