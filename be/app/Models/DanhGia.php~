@@ -42,7 +42,7 @@ class DanhGia extends Model
     }
     public function danhGiaHuuIch()
     {
-        return $this->belongsToMany(User::class, 'danh_gia_huu_ich', 'danh_gia_id', 'user_id');
+        return $this->belongsToMany(User::class, 'danh_gia_huu_iches', 'danh_gia_id', 'user_id');
     }
     public function bienTheSanPham()
     {
