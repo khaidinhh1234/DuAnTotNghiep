@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const CheckOut = () => {
+  const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
 
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]); // Lưu trữ các sản phẩm được chọn
-
+  const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
+  const [selectAllRegular, setSelectAllRegular] = useState(false);
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -24,7 +27,42 @@ const CheckOut = () => {
       }
     },
   });
-
+  const { mutate: increaseQuantity } = useMutation({
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`, 
+        { so_luong: currentQuantity + 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi tăng số lượng sản phẩm.');
+    },
+  });
+  const { mutate: decreaseQuantity } = useMutation({
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+      await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, { so_luong: currentQuantity - 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi giảm số lượng sản phẩm.');
+    },
+  });
   const handleCheckboxChange = (id: number) => {
     setSelectedProducts((prevSelected) =>
       prevSelected.includes(id)
@@ -32,16 +70,56 @@ const CheckOut = () => {
         : [...prevSelected, id]
     );
   };
+  const handleSelectAllDiscounted = () => {
+    if (selectAllDiscounted) {
+      // Bỏ chọn tất cả sản phẩm đang giảm giá
+      setSelectedProducts((prevSelected) =>
+        prevSelected.filter((productId) =>
+          !data?.san_pham_giam_gia.map((product:any) => product.id).includes(productId)
+        )
+      );
+    } else {
+      // Chọn tất cả sản phẩm đang giảm giá
+      const allDiscountedIds = data?.san_pham_giam_gia.map((product: any) => product.id) || [];
+      setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allDiscountedIds])]);
+    }
+    setSelectAllDiscounted(!selectAllDiscounted);
+  };
+
+  const handleSelectAllRegular = () => {
+    if (selectAllRegular) {
+      // Bỏ chọn tất cả sản phẩm nguyên giá
+      setSelectedProducts((prevSelected) =>
+        prevSelected.filter((productId) =>
+          !data?.san_pham_nguyen_gia.map((product: any) => product.id).includes(productId)
+        )
+      );
+    } else {
+      // Chọn tất cả sản phẩm nguyên giá
+      const allRegularIds = data?.san_pham_nguyen_gia.map((product: any) => product.id) || [];
+      setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allRegularIds])]);
+    }
+    setSelectAllRegular(!selectAllRegular);
+  };
 
   const grandTotal =
-    data?.data
-      ?.filter((product: any) => selectedProducts.includes(product.id)) // Chỉ tính tổng cho sản phẩm đã chọn
+    (data?.san_pham_giam_gia
+      ?.filter((product: any) => selectedProducts.includes(product.id))
       .reduce(
-        (total: number, product: { gia: number; so_luong: number }) => {
-          return total + product.gia * product.so_luong;
+        (total: number, product: { gia_hien_tai: number; so_luong: number }) => {
+          return total + product.gia_hien_tai * product.so_luong;
         },
         0
-      ) || 0;
+      ) || 0) +
+    (data?.san_pham_nguyen_gia
+      ?.filter((product: any) => selectedProducts.includes(product.id))
+      .reduce(
+        (total: number, product: { gia_ban: number; so_luong: number }) => {
+          return total + product.gia_ban * product.so_luong;
+        },
+        0
+      ) || 0);
+
 
   return (
     <section className="container mx-auto">
@@ -49,59 +127,72 @@ const CheckOut = () => {
         <h1 className="text-3xl font-bold mb-6">Giỏ hàng</h1>
 
         {/* Thông báo */}
-        <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-          <p className="font-bold text-green-600">
-            Chúc mừng! Đơn hàng của bạn được{" "}
-            <span className="text-green-700">Miễn phí vận chuyển</span>
-          </p>
-          <div className="bg-green-100 rounded-full h-2 mt-3">
-            <div className="bg-green-500 h-full w-full"></div>
-          </div>
-        </div>
+        {/* <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+            <p className="font-bold text-green-600">
+              Chúc mừng! Đơn hàng của bạn được{" "}
+              <span className="text-green-700">Miễn phí vận chuyển</span>
+            </p>
+            <div className="bg-green-100 rounded-full h-2 mt-3">
+              <div className="bg-green-500 h-full w-full"></div>
+            </div>
+          </div> */}
 
         {/* Khuyến mãi */}
-        <div className="flex items-center justify-between bg-red-100 text-red-600 px-6 py-4 rounded-lg mb-8">
-          <span className="font-bold">
-            🔥 Khuyến mại trong giỏ hàng của bạn chỉ còn trong 9 phút 59 giây
-            trước khi hết khuyến mãi
-          </span>
-        </div>
+        {/* <div className="flex items-center justify-between bg-red-100 text-red-600 px-6 py-4 rounded-lg mb-8">
+            <span className="font-bold">
+              🔥 Khuyến mại trong giỏ hàng của bạn chỉ còn trong 9 phút 59 giây
+              trước khi hết khuyến mãi
+            </span>
+          </div> */}
 
         <div className="grid lg:grid-cols-12 gap-6 justify-center">
           {/* Sản phẩm */}
           <div className="lg:col-span-8 col-span-12">
             {/* Danh mục giảm giá */}
             <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-              <h2 className="font-bold text-xl mb-4">Đang được giảm giá</h2>
-              {data?.data?.map((product: any) => (
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  checked={selectAllDiscounted}
+                  onChange={handleSelectAllDiscounted}
+                  className="form-checkbox h-5 w-5 text-yellow-500"
+                  title="Select all discounted products"
+                />
+                <h2 className="font-bold text-xl mb-0 ml-2">Đang được giảm giá</h2>
+              </div>
+
+              {data?.san_pham_giam_gia.map((product: any) => (
                 <div
                   key={product.id}
                   className="flex justify-between items-center border-b py-4"
                 >
                   <div className="flex items-center gap-6">
                     <input
-                      type="checkbox"
-                      checked={selectedProducts.includes(product.id)}
-                      onChange={() => handleCheckboxChange(product.id)}
-                      className="form-checkbox h-5 w-5 text-yellow-500"
-                    />
+                          type="checkbox"
+                          checked={selectedProducts.includes(product.id)}
+                          onChange={() => handleCheckboxChange(product.id)}
+                          className="form-checkbox h-5 w-5 text-yellow-500"
+                          title={`Select ${product.ten_san_pham}`}
+                        />
                     <img
                       src={product.hinh_anh}
                       alt="Ảnh sản phẩm"
-                      className="w-20 h-20 object-cover rounded-md"
+                      className="w-30 h-40 object-cover rounded-md"
                     />
                     <div>
                       <h3 className="font-semibold">{product.ten_san_pham}</h3>
                       <p className="text-sm text-gray-500">
-                        {product.mau_sac}, {product.kich_co}
+                        {product.mau_sac}, {product.kich_thuoc}
                       </p>
-                      <p className="text-red-500 font-bold">{product.gia} ₫</p>
+                      <p className="text-red-500 font-bold">{product.gia_khuyen_mai} ₫</p>
                       <p className="text-gray-400 line-through">{product.gia_cu} ₫</p>
-                      <p className="text-sm text-red-500">Đã tiết kiệm: {product.so_tiet_kiem} ₫</p>
+                      <p className="text-sm text-red-500">Đã tiết kiệm: {product.tiet_kiem} ₫</p>
                     </div>
                   </div>
                   <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                    <button className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                    <button
+                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       −
                     </button>
                     <input
@@ -109,8 +200,11 @@ const CheckOut = () => {
                       value={product.so_luong}
                       className="w-12 text-center border-none outline-none"
                       readOnly
+                      title={`Quantity of ${product.ten_san_pham}`}
                     />
-                    <button className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                    <button
+                     onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       +
                     </button>
                   </div>
@@ -120,8 +214,18 @@ const CheckOut = () => {
 
             {/* Danh mục sản phẩm nguyên giá */}
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="font-bold text-xl mb-4">Sản phẩm nguyên giá</h2>
-              {data?.data?.map((product: any) => (
+             
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  checked={selectAllRegular}
+                  onChange={handleSelectAllRegular}
+                  className="form-checkbox h-5 w-5 text-yellow-500"
+                  title="Select all regular priced products"
+                />
+                 <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm nguyên giá</h2>
+              </div>
+              {data?.san_pham_nguyen_gia.map((product: any) => (
                 <div
                   key={product.id}
                   className="flex justify-between items-center border-b py-4"
@@ -132,22 +236,25 @@ const CheckOut = () => {
                       checked={selectedProducts.includes(product.id)}
                       onChange={() => handleCheckboxChange(product.id)}
                       className="form-checkbox h-5 w-5 text-yellow-500"
+                      title={`Select ${product.ten_san_pham}`}
                     />
                     <img
                       src={product.hinh_anh}
                       alt="Ảnh sản phẩm"
-                      className="w-20 h-20 object-cover rounded-md"
+                      className="w-30 h-40 object-cover rounded-md"
                     />
                     <div>
                       <h3 className="font-semibold">{product.ten_san_pham}</h3>
                       <p className="text-sm text-gray-500">
-                        {product.mau_sac}, {product.kich_co}
+                        {product.mau_sac}, {product.kich_thuoc}
                       </p>
-                      <p className="text-black font-bold">{product.gia} ₫</p>
+                      <p className="text-black font-bold">{product.gia_ban} ₫</p>
                     </div>
                   </div>
                   <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                    <button className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                    <button
+                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       −
                     </button>
                     <input
@@ -155,8 +262,11 @@ const CheckOut = () => {
                       value={product.so_luong}
                       className="w-12 text-center border-none outline-none"
                       readOnly
+                      title={`Quantity of ${product.ten_san_pham}`}
                     />
-                    <button className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                    <button
+                    onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       +
                     </button>
                   </div>
@@ -183,29 +293,18 @@ const CheckOut = () => {
               </div>
               <div className="flex justify-between mb-4">
                 <span className="text-gray-600">Giảm giá vận chuyển</span>
-                <span>-20.000 ₫</span>
+                <span>−20.000 ₫</span>
               </div>
-              <div className="flex justify-between font-bold text-lg mb-2">
-                <span>Tổng thanh toán</span>
-                <span>948.100 ₫</span>
-              </div>
-              <p className="text-right text-sm text-green-600">
-                Bạn đã tiết kiệm được 69.900 ₫
-              </p>
-
-              <button className="bg-yellow-500 text-white w-full py-3 mt-4 rounded-lg font-bold">
-                Mua hàng ({selectedProducts.length})
-              </button>
-
-              <div className="mt-6 text-center">
-                <p className="text-gray-600">
-                  Chọn Voucher giảm giá và áp dụng để được giá tốt nhất
-                </p>
-                <button className="text-yellow-500 font-bold mt-2">
-                  Chọn Voucher
-                </button>
+              <div className="border-t pt-4">
+                <div className="flex justify-between">
+                  <span className="font-bold">Tổng cộng</span>
+                  <span className="font-bold">{grandTotal} ₫</span>
+                </div>
               </div>
             </div>
+            <button className="w-full bg-yellow-500 text-white font-semibold py-2 rounded-lg mt-4">
+              Tiến hành thanh toán
+            </button>
           </div>
         </div>
       </div>
