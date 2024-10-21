@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('gia');
             $table->integer('so_luong');
             $table->timestamps();
-            $table->softDeletes();
+            // $table->softDeletes();
         });
     }
 

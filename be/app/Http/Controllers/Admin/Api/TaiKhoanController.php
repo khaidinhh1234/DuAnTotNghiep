@@ -60,7 +60,7 @@ class TaiKhoanController extends Controller
             if ($hangThanhVien == []) {
                 $hangThanhVien = HangThanhVien::create([
                     'ten_hang_thanh_vien' => 'Thành viên mới',
-                    'anh_hang_thanh_vien' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
+                    'anh_hang_thanh_vien' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729310626/game-level-icons-medals-stars-ui-badges-trophy_l6e7b2.png',
                     'chi_tieu_toi_thieu' => 0,
                     'chi_tieu_toi_da' => 500000,
                     'mo_ta' => 'Thành viên mới'
@@ -166,7 +166,7 @@ class TaiKhoanController extends Controller
             $taiKhoan->update([
                 'ho' => $request->ho,
                 'ten' => $request->ten,
-                'anh_nguoi_dung' => $request->anh_nguoi_dung ?? 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
+                'anh_nguoi_dung' => $request->anh_nguoi_dung ?? 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png',
                 'so_dien_thoai' => $request->so_dien_thoai,
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,
