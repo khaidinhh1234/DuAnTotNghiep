@@ -243,7 +243,7 @@ class TrangChuController extends Controller
                 'message' => 'Lấy dữ liệu thành công',
                 'data' => $data,
             ], 200);
-        }catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,

@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BienTheSanPham;
 use App\Models\DonHang;
+use App\Models\DonHangChiTiet;
+use App\Models\GioHang;
+use App\Models\MaKhuyenMai;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +37,7 @@ class DonHangClientController extends Controller
         curl_close($ch);
         return $result;
     }
+
     public function thanhToanMomo(Request $request)
     {
         $endpoint = env('MOMO_TEST_ENDPOINT');
@@ -129,6 +135,141 @@ class DonHangClientController extends Controller
                 'message' => 'Xác nhận nhận hàng thất bại',
                 'error' => $e->getMessage()
             ]);
+        }
+    }
+
+    public function taoDonHang(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $userId = Auth::id();
+
+            $sanPhamDuocChon = DB::table('gio_hangs')
+                ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+                ->where('gio_hangs.user_id', $userId)
+                ->where('gio_hangs.chon', 1)
+                ->select('bien_the_san_phams.id as bien_the_san_pham_id', 'gio_hangs.so_luong')
+                ->get();
+
+            if ($sanPhamDuocChon->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Bạn chưa chọn sản phẩm nào để mua.',
+                ], 400);
+            }
+
+            $tongTienDonHang = 0;
+            $soTienGiamGia = 0;
+
+            foreach ($sanPhamDuocChon as $sanPham) {
+                $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
+                if ($sanPham->so_luong > $bienTheSanPham->so_luong_bien_the) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Số lượng sản phẩm không hợp lệ.',
+                    ], 400);
+                }
+
+                $tongTienDonHang += $bienTheSanPham->gia * $sanPham->so_luong;
+            }
+
+            if (!empty($request->ma_giam_gia)) {
+                $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
+
+                if ($maGiamGia) {
+                    if ($maGiamGia->trang_thai !== 1) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Mã giảm giá không hợp lệ.',
+                        ], 400);
+                    }
+
+                    if ($maGiamGia->chi_tieu_toi_thieu && $tongTienDonHang < $maGiamGia->chi_tieu_toi_thieu) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Đơn hàng không đủ điều kiện áp dụng mã giảm giá.',
+                        ], 400);
+                    }
+
+                    $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
+                        ->where('user_id', $userId)
+                        ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                        ->value('da_su_dung');
+
+                    if ($daSuDung) {
+                        return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
+                    }
+
+                    if ($maGiamGia->loai === 'phan_tram') {
+                        $soTienGiamGia = $tongTienDonHang * ($maGiamGia->giam_gia / 100);
+                    } else {
+                        $soTienGiamGia = $maGiamGia->giam_gia;
+                    }
+
+                    if ($soTienGiamGia > $tongTienDonHang) {
+                        $soTienGiamGia = $tongTienDonHang;
+                    }
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Mã giảm giá không tồn tại.',
+                    ], 400);
+                }
+            }
+
+            $maDonHang = 'DH' . strtoupper(uniqid());
+            $donHang = DonHang::create([
+                'ma_don_hang' => $maDonHang,
+                'user_id' => $userId,
+                'ghi_chu' => $request->ghi_chu ?? null,
+                'trang_thai_don_hang' => DonHang::TTDH_CXH,
+                'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
+                'tong_tien_don_hang' => $tongTienDonHang - $soTienGiamGia,
+                'ten_nguoi_dat_hang' => $request->ten_nguoi_dat_hang,
+                'so_dien_thoai_nguoi_dat_hang' => $request->so_dien_thoai_nguoi_dat_hang,
+                'dia_chi_nguoi_dat_hang' => $request->dia_chi_nguoi_dat_hang,
+                'ma_giam_gia' => $request->ma_giam_gia ?? null,
+                'so_tien_giam_gia' => $soTienGiamGia,
+                'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
+            ]);
+
+            foreach ($sanPhamDuocChon as $sanPham) {
+                $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
+                $soLuongMua = $sanPham->so_luong;
+
+                $bienTheSanPham->so_luong_bien_the -= $soLuongMua;
+                $bienTheSanPham->save();
+
+                $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
+
+                DonHangChiTiet::create([
+                    'don_hang_id' => $donHang->id,
+                    'bien_the_san_pham_id' => $bienTheSanPham->id,
+                    'so_luong' => $soLuongMua,
+                    'gia' => $gia,
+                    'thanh_tien' => $gia * $soLuongMua,
+                ]);
+            }
+
+            DB::table('gio_hangs')
+                ->where('user_id', $userId)
+                ->where('chon', 1)
+                ->update(['deleted_at' => now()]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Đơn hàng đã được tạo thành công!',
+                'data' => $donHang
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+            ], 500);
         }
     }
 
