@@ -330,7 +330,7 @@ class DataMasterSeeder extends Seeder
                 'luot_xem' => 0,
                 'trang_thai' => 1,
                 'gia_tot' => 0,
-                'hang_moi' =>  1,
+                'hang_moi' => 1,
             ],
             [
                 'danh_muc_id' => 3,
@@ -343,7 +343,7 @@ class DataMasterSeeder extends Seeder
                 'luot_xem' => 0,
                 'trang_thai' => 1,
                 'gia_tot' => 0,
-                'hang_moi' =>  1,
+                'hang_moi' => 1,
             ],
         ];
 
@@ -594,7 +594,7 @@ class DataMasterSeeder extends Seeder
         //Đơn hàng
         DonHang::create([
             'user_id' => 2,
-            'trang_thai_don_hang' =>  'Chờ xác nhận',
+            'trang_thai_don_hang' => 'Chờ xác nhận',
             'phuong_thuc_thanh_toan' => 'Thanh toán khi nhận hàng',
             'tong_tien_don_hang' => 1000000,
             'trang_thai_thanh_toan' => 'Chưa thanh toán',
