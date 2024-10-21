@@ -229,13 +229,6 @@ class DonHangClientController extends Controller
                 ]);
             }
 
-            if (!empty($request->ma_giam_gia)) {
-                $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
-                if ($maGiamGia) {
-                    $maGiamGia->so_luong_da_su_dung += 1;
-                    $maGiamGia->save();
-                }
-            }
 
             $donHang = DonHang::with(['chiTietDonHangs'])
                 ->where('id', $donHang->id)

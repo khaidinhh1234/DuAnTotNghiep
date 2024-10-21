@@ -38,7 +38,12 @@ class TrangChuController extends Controller
 
         $result = ['banner' => ['banner' => $bannersArray]];
 
-        $dataChuongTrinhUuDai = ChuongTrinhUuDai::query()->where('ngay_hien_thi', '>=', Carbon::now())->orderBy('ngay_hien_thi')->orderByDesc('id')->get();
+        $dataChuongTrinhUuDai = ChuongTrinhUuDai::query()
+            ->where('ngay_hien_thi', '<=', Carbon::now())
+            ->where('ngay_ket_thuc', '>=', Carbon::now())
+            ->orderBy('ngay_hien_thi')
+            ->orderByDesc('id')
+            ->get();
 
         $dataDanhSachSanPhamMoi = SanPham::query()
             ->select(
