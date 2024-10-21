@@ -13,39 +13,39 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const { Title, Text } = Typography;
 
 const IntroCard = () => {
-  const { id } = useParams();
-  console.log(id);
+  // const { id } = useParams();
+  // console.log(id);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["taikhoanid", id],
-    queryFn: async () => {
-      try {
-        const res = await instance.get(`/taikhoan/${id}`);
-        return res.data;
-      } catch (error) {
-        throw error;
-      }
-    },
-  });
+  // const { data, isLoading, isError } = useQuery({
+  //   queryKey: ["taikhoanid", id],
+  //   queryFn: async () => {
+  //     try {
+  //       const res = await instance.get(`/taikhoan/${id}`);
+  //       return res.data;
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   },
+  // });
 
-  console.log(data);
+  // console.log(data);
 
   // Xử lý khi đang loading
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
+  // if (isLoading) {
+  //   return <p>Loading...</p>;
+  // }
 
   // Xử lý khi gặp lỗi
-  if (isError) {
-    return <p>Error loading data</p>;
-  }
+  // if (isError) {
+  //   return <p>Error loading data</p>;
+  // }
 
   // Nếu không có dữ liệu, trả về thông báo
-  if (!data?.data) {
-    return <p>No data available</p>;
-  }
+  // if (!data?.data) {
+  //   return <p>No data available</p>;
+  // }
 
-  const { email, so_dien_thoai, dia_chi, ngay_sinh, gioi_tinh } = data.data;
+  // const { email, so_dien_thoai, dia_chi, ngay_sinh, gioi_tinh } = data.data;
 
   return (
     <Card className="p-4 shadow-md">
@@ -58,7 +58,7 @@ const IntroCard = () => {
           <MailOutlined style={{ fontSize: "21px" }} />
         </Col>
         <Col span={22}>
-          <Text className="text-lg">Email: {email}</Text>
+          <Text className="text-lg">Email: Nqton301004@gmail.com</Text>
         </Col>
       </Row>
 
@@ -67,7 +67,7 @@ const IntroCard = () => {
           <DesktopOutlined style={{ fontSize: "21px" }} />
         </Col>
         <Col span={22}>
-          <Text className="text-lg">Số điện thoại: {so_dien_thoai}</Text>
+          <Text className="text-lg">Số điện thoại: 0983827425</Text>
         </Col>
       </Row>
 
@@ -76,7 +76,7 @@ const IntroCard = () => {
           <EnvironmentOutlined style={{ fontSize: "21px" }} />
         </Col>
         <Col span={22}>
-          <Text className="text-lg">Địa chỉ: {dia_chi}</Text>
+          <Text className="text-lg">Địa chỉ: Hà nội</Text>
         </Col>
       </Row>
 
@@ -85,7 +85,7 @@ const IntroCard = () => {
           {/* <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: "21px" }} /> */}
         </Col>
         <Col span={22}>
-          <Text className="text-lg">Ngày sinh: {ngay_sinh}</Text>
+          <Text className="text-lg">Ngày sinh: 30-10-2004</Text>
         </Col>
       </Row>
 
@@ -94,7 +94,7 @@ const IntroCard = () => {
           {/* <FontAwesomeIcon icon={faUser} style={{ fontSize: "21px" }} /> */}
         </Col>
         <Col span={22}>
-          <Text className="text-lg">Giới tính: {gioi_tinh}</Text>
+          <Text className="text-lg">Giới tính: Name</Text>
         </Col>
       </Row>
     </Card>
