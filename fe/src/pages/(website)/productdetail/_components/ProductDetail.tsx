@@ -988,7 +988,7 @@ const { mutate: increaseQuantity } = useMutation({
     );
   },
   onSuccess: () => {
-    setQuantity((prev) => prev + 1); // Cập nhật số lượng hiển thị
+    setQuantity((prev) => prev + 1); 
     queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
   },
   onError: (error: any) => {
@@ -1009,7 +1009,7 @@ const { mutate: decreaseQuantity } = useMutation({
     );
   },
   onSuccess: () => {
-    setQuantity((prev) => prev - 1); // Cập nhật số lượng hiển thị
+    setQuantity((prev) => prev - 1); 
     queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
   },
   onError: (error: any) => {

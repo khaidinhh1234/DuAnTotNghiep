@@ -328,7 +328,7 @@ const Router = () => {
           />
           {/* Profile admin */}
           <Route path="admin-profile" element={<AdminProfile />} />
-          <Route path="admin/taikhoan/:id" element={<IntroCard />} />
+          <Route path="taikhoan/:id" element={<IntroCard />} />
           {/* Nội dung */}
           <Route
             path="Content"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -29,7 +29,7 @@ const CheckOut = () => {
   });
   const { mutate: increaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`, 
+      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`,
         { so_luong: currentQuantity + 1 },
         {
           headers: {
@@ -37,32 +37,60 @@ const CheckOut = () => {
           },
         }
       );
-      
+
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Có lỗi xảy ra khi tăng số lượng sản phẩm.');
+      toast.error("Thao tác quá nhanh vui lòng chậm lại");
     },
   });
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, { so_luong: currentQuantity - 1 },
+      if (currentQuantity === 1) {
+        // Xóa sản phẩm khi số lượng giảm về 0
+        await instanceClient.delete(`/gio-hang/${productId}`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+      } else {
+        // Giảm số lượng sản phẩm
+        await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, { so_luong: currentQuantity - 1 },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    },
+    onError: (error: any) => {
+      toast.error("Thao tác quá nhanh vui lòng chậm lại");
+    },
+  });
+
+  const { mutate: Delete } = useMutation({
+    mutationFn: async (productId) => {
+      await instanceClient.delete(`/gio-hang/${productId}`,
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
         }
-      );
+      )
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Có lỗi xảy ra khi giảm số lượng sản phẩm.');
+      toast.error(error.message || 'Có lỗi xảy ra khi xóa sản phẩm.');
     },
-  });
+  })
   const handleCheckboxChange = (id: number) => {
     setSelectedProducts((prevSelected) =>
       prevSelected.includes(id)
@@ -75,7 +103,7 @@ const CheckOut = () => {
       // Bỏ chọn tất cả sản phẩm đang giảm giá
       setSelectedProducts((prevSelected) =>
         prevSelected.filter((productId) =>
-          !data?.san_pham_giam_gia.map((product:any) => product.id).includes(productId)
+          !data?.san_pham_giam_gia.map((product: any) => product.id).includes(productId)
         )
       );
     } else {
@@ -101,211 +129,219 @@ const CheckOut = () => {
     }
     setSelectAllRegular(!selectAllRegular);
   };
+  const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
+    const productInDiscounts = data?.san_pham_giam_gia.find((product: any) => product.id === productId);
+    const productInRegular = data?.san_pham_nguyen_gia.find((product: { id: number }) => product.id === productId);
 
-  const grandTotal =
-    (data?.san_pham_giam_gia
-      ?.filter((product: any) => selectedProducts.includes(product.id))
-      .reduce(
-        (total: number, product: { gia_hien_tai: number; so_luong: number }) => {
-          return total + product.gia_hien_tai * product.so_luong;
-        },
-        0
-      ) || 0) +
-    (data?.san_pham_nguyen_gia
-      ?.filter((product: any) => selectedProducts.includes(product.id))
-      .reduce(
-        (total: number, product: { gia_ban: number; so_luong: number }) => {
-          return total + product.gia_ban * product.so_luong;
-        },
-        0
-      ) || 0);
+    const quantity = productInDiscounts?.so_luong || productInRegular?.so_luong || 0;
+console.log("đâsd" ,quantity);
+    if (productInDiscounts) {
+      return total + (productInDiscounts.gia_hien_tai * quantity);
+    }
 
+    if (productInRegular) {
+      return total + (productInRegular.gia_hien_tai * quantity);
+    }
+
+    return total;
+  }, 0);
+console.log(totalSelectedPrice)
+  // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
+  const shippingFee = 20000; // Phí giao hàng là 20,000 VND
+  const discountShipping = 20000; // Giảm giá phí giao hàng
+  const finalTotal = totalSelectedPrice - discountShipping + shippingFee;
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+  };
 
   return (
-    <section className="container mx-auto">
-      <div className="lg:mx-16 mx-4 lg:my-16 my-8">
-        <h1 className="text-3xl font-bold mb-6">Giỏ hàng</h1>
+    <section className="container">
 
-        {/* Thông báo */}
-        {/* <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-            <p className="font-bold text-green-600">
-              Chúc mừng! Đơn hàng của bạn được{" "}
-              <span className="text-green-700">Miễn phí vận chuyển</span>
-            </p>
-            <div className="bg-green-100 rounded-full h-2 mt-3">
-              <div className="bg-green-500 h-full w-full"></div>
-            </div>
-          </div> */}
+      <div className="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
 
-        {/* Khuyến mãi */}
-        {/* <div className="flex items-center justify-between bg-red-100 text-red-600 px-6 py-4 rounded-lg mb-8">
-            <span className="font-bold">
-              🔥 Khuyến mại trong giỏ hàng của bạn chỉ còn trong 9 phút 59 giây
-              trước khi hết khuyến mãi
-            </span>
-          </div> */}
-
-        <div className="grid lg:grid-cols-12 gap-6 justify-center">
-          {/* Sản phẩm */}
-          <div className="lg:col-span-8 col-span-12">
-            {/* Danh mục giảm giá */}
-            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  checked={selectAllDiscounted}
-                  onChange={handleSelectAllDiscounted}
-                  className="form-checkbox h-5 w-5 text-yellow-500"
-                  title="Select all discounted products"
-                />
-                <h2 className="font-bold text-xl mb-0 ml-2">Đang được giảm giá</h2>
-              </div>
-
-              {data?.san_pham_giam_gia.map((product: any) => (
-                <div
-                  key={product.id}
-                  className="flex justify-between items-center border-b py-4"
-                >
-                  <div className="flex items-center gap-6">
-                    <input
-                          type="checkbox"
-                          checked={selectedProducts.includes(product.id)}
-                          onChange={() => handleCheckboxChange(product.id)}
-                          className="form-checkbox h-5 w-5 text-yellow-500"
-                          title={`Select ${product.ten_san_pham}`}
-                        />
-                    <img
-                      src={product.hinh_anh}
-                      alt="Ảnh sản phẩm"
-                      className="w-30 h-40 object-cover rounded-md"
-                    />
-                    <div>
-                      <h3 className="font-semibold">{product.ten_san_pham}</h3>
-                      <p className="text-sm text-gray-500">
-                        {product.mau_sac}, {product.kich_thuoc}
-                      </p>
-                      <p className="text-red-500 font-bold">{product.gia_khuyen_mai} ₫</p>
-                      <p className="text-gray-400 line-through">{product.gia_cu} ₫</p>
-                      <p className="text-sm text-red-500">Đã tiết kiệm: {product.tiet_kiem} ₫</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                    <button
-                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
-                      −
-                    </button>
-                    <input
-                      type="text"
-                      value={product.so_luong}
-                      className="w-12 text-center border-none outline-none"
-                      readOnly
-                      title={`Quantity of ${product.ten_san_pham}`}
-                    />
-                    <button
-                     onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
-                      +
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Danh mục sản phẩm nguyên giá */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-             
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  checked={selectAllRegular}
-                  onChange={handleSelectAllRegular}
-                  className="form-checkbox h-5 w-5 text-yellow-500"
-                  title="Select all regular priced products"
-                />
-                 <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm nguyên giá</h2>
-              </div>
-              {data?.san_pham_nguyen_gia.map((product: any) => (
-                <div
-                  key={product.id}
-                  className="flex justify-between items-center border-b py-4"
-                >
-                  <div className="flex items-center gap-6">
+        <h1 className="h1cart">Checkout</h1>
+        <div className="grid lg:grid-cols-12 gap-4 px-0 justify-center">
+          <div className="lg:col-span-8 col-span-6 md:px-0 px-3">
+            <table>
+              <thead>
+                <tr className="*:font-normal text-left border-hrBlack *:pb-5 border-b">
+                  {/* <th>
                     <input
                       type="checkbox"
-                      checked={selectedProducts.includes(product.id)}
-                      onChange={() => handleCheckboxChange(product.id)}
-                      className="form-checkbox h-5 w-5 text-yellow-500"
-                      title={`Select ${product.ten_san_pham}`}
+                      checked={selectAllDiscounted}
+                      onChange={handleSelectAllDiscounted}
+                      title="Select all discounted products"
                     />
-                    <img
-                      src={product.hinh_anh}
-                      alt="Ảnh sản phẩm"
-                      className="w-30 h-40 object-cover rounded-md"
-                    />
-                    <div>
-                      <h3 className="font-semibold">{product.ten_san_pham}</h3>
-                      <p className="text-sm text-gray-500">
-                        {product.mau_sac}, {product.kich_thuoc}
-                      </p>
-                      <p className="text-black font-bold">{product.gia_ban} ₫</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                    <button
-                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
-                      −
-                    </button>
-                    <input
-                      type="text"
-                      value={product.so_luong}
-                      className="w-12 text-center border-none outline-none"
-                      readOnly
-                      title={`Quantity of ${product.ten_san_pham}`}
-                    />
-                    <button
-                    onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
-                      +
-                    </button>
-                  </div>
+                  </th> */}
+                  <th className="font-bold">Sản phẩm</th>
+                  <th className="px-2 font-bold">Giá</th>
+                  <th className="lg:text-center hidden lg:block font-bold">Số lượng</th>
+                  <th className="font-bold">Tổng tiền</th>
+                </tr>
+              </thead>
+
+              <tbody className="*:border-hrBlack *:border-b">
+                {data?.san_pham_giam_gia?.map((product: any) => (
+                  <tr key={product.id} className="*:py-8">
+                    <td>
+                      <div className="flex gap-5 px-2 xl:w-[352px] sm:w-[392px] md:w-[309px]">
+                        <img
+                          src={product.hinh_anh}
+                          alt=""
+                          className="w-12 h-12"
+                        />
+                        <div className="px-1">
+                          <h3 className="font-bold ">{product.ten_san_pham}</h3>
+                          <p>
+                            {product.mau_sac}, {product.kich_thuoc}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="xl:w-24 sm:w-15 w-10 px-5">
+                      {formatCurrency(product.gia_hien_tai)}
+                    </td>
+
+                    <td className="hidden lg:block">
+                      <div className="border rounded-lg border-black xl:mx-5">
+                        <button
+                          onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                          className="py-1 pl-3"
+                          title="Decrease quantity">
+                          <i className="fa-solid fa-minus" />
+                        </button>
+                        <input
+                          type="number"
+                          id="numberInput"
+                          value={product.so_luong}
+                          className="w-9 h-10 border-0 focus:ring-0 focus:outline-none text-center"
+                          placeholder="Quantity"
+                        />
+                        <button
+                          onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                          className="py-1 pr-3"
+                          title="Increase quantity">
+
+                          <i className="fa-solid fa-plus" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="xl:w-24 sm:w-15 w-10">{formatCurrency(product.gia_hien_tai * product.so_luong)}</td>
+                    <td className="px-1">
+                      <button
+                        onClick={() => Delete(product.id)}
+                        title="Remove product">
+                        <i
+                          className="fa-regular fa-trash-can"
+                          style={{ color: "#db5151" }}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {data?.san_pham_nguyen_gia?.map((product: any) => (
+                  <tr key={product.id} className="*:py-8">
+                    <td>
+                      <div className="flex gap-5 px-2 xl:w-[352px] sm:w-[392px] md:w-[309px]">
+                        <img
+                          src={product.hinh_anh}
+                          alt=""
+                          className="w-12 h-12"
+                        />
+                        <div className="px-1">
+                          <h3 className="font-bold">{product.ten_san_pham}</h3>
+                          <p>
+                            {product.mau_sac}, {product.kich_thuoc}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="xl:w-24 sm:w-15 w-10 px-5">
+                      {formatCurrency(product.gia_hien_tai)}
+                    </td>
+
+                    <td className="hidden lg:block">
+                      <div className="border rounded-lg border-black xl:mx-5">
+                        <button
+                          onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                          className="py-1 pl-3"
+                          title="Decrease quantity">
+                          <i className="fa-solid fa-minus" />
+                        </button>
+                        <input
+                          type="number"
+                          id="numberInput"
+                          value={product.so_luong}
+                          className="w-9 h-10 border-0 focus:ring-0 focus:outline-none text-center"
+                          placeholder="Quantity"
+                        />
+                        <button
+                          onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                          className="py-1 pr-3"
+                          title="Increase quantity">
+
+                          <i className="fa-solid fa-plus" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="xl:w-24 sm:w-15 w-10">{formatCurrency(product.gia_hien_tai * product.so_luong)}</td>
+                    <td>
+                      <button
+                        onClick={() => Delete(product.id)}
+                        title="Remove product">
+                        <i
+                          className="fa-regular fa-trash-can"
+                          style={{ color: "#db5151" }}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* CHI TIẾT */}
+          <div className="lg:col-span-4 col-span-6">
+            <div className="border px-4 py-1 lg:w-[359px] rounded-md">
+              <div className="flex justify-between font-bold border-hrBlack border-b py-4">
+                <h4>Tổng tiền sản phẩm</h4>
+                <span className="px-2">{formatCurrency(totalSelectedPrice)}</span>
+              </div>
+
+              <div className="py-4">
+                <label className="text-xs">Nhập mã giảm giá</label>
+                <div className="flex mt-1">
+                  <input
+                    type="text"
+                    placeholder="FLAT50"
+                    className="lg:w-[218px] w-[300px] h-[56px] px-4 rounded-s-lg focus:outline-none border border-l-2 border-t-2 border-blackL border-r-0"
+                  />
+                  <button className="bg-black hover:bg-stone-700 w-[101px] h-[55px] border border-black rounded-r-lg text-white">
+                    Áp dụng
+                  </button>
                 </div>
-              ))}
+
+                <div className="py-4 flex justify-between font-medium border-b border-hrBlack">
+                  <p>Phí giao hàng</p>
+                  <span className="px-2">{formatCurrency(finalTotal)}</span>
+                </div>
+              </div>
+
+              <div className="flex justify-between font-bold mb-8">
+                <h4>Tổng cộng</h4>
+                <span>{formatCurrency(totalSelectedPrice + 5.00)}</span>
+              </div>
+
+              <div className="flex justify-center">
+                <a href="shippingaddress.html">
+                  <button className="btn-black rounded-lg mb-4 w-[320px] h-[56px]">
+                    Tiến hành thanh toán
+                  </button>
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Chi tiết đơn hàng */}
-          <div className="lg:col-span-4 col-span-12">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="font-bold text-xl mb-4">Chi tiết đơn hàng</h2>
-              <div className="flex justify-between mb-3">
-                <span className="text-gray-600">Tổng giá trị sản phẩm</span>
-                <span>{grandTotal} ₫</span>
-              </div>
-              <div className="flex justify-between mb-3">
-                <span className="text-gray-600">Giảm giá</span>
-                <span>-49.900 ₫</span>
-              </div>
-              <div className="flex justify-between mb-3">
-                <span className="text-gray-600">Vận chuyển</span>
-                <span>20.000 ₫</span>
-              </div>
-              <div className="flex justify-between mb-4">
-                <span className="text-gray-600">Giảm giá vận chuyển</span>
-                <span>−20.000 ₫</span>
-              </div>
-              <div className="border-t pt-4">
-                <div className="flex justify-between">
-                  <span className="font-bold">Tổng cộng</span>
-                  <span className="font-bold">{grandTotal} ₫</span>
-                </div>
-              </div>
-            </div>
-            <button className="w-full bg-yellow-500 text-white font-semibold py-2 rounded-lg mt-4">
-              Tiến hành thanh toán
-            </button>
-          </div>
         </div>
       </div>
     </section>
