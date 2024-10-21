@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\BienTheSanPham;
+use App\Models\DanhGia;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gio_hangs', function (Blueprint $table) {
-            $table->id();
+        Schema::create('danh_gia_huu_ich', function (Blueprint $table) {
             $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(BienTheSanPham::class)->constrained();
-            $table->integer('gia');
-            $table->integer('so_luong');
-            $table->timestamps();
-            // $table->softDeletes();
+            $table->foreignIdFor(DanhGia::class)->constrained();
+            $table->primary(['user_id', 'danh_gia_id']);
         });
     }
 
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gio_hangs');
+        Schema::dropIfExists('danh_gia_huu_ich');
     }
 };

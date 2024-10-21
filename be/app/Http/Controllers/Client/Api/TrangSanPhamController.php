@@ -100,34 +100,38 @@ class TrangSanPhamController extends Controller
             $soLuongSanPhamMoiTrang = $request->get('per_page', 5);
 
             // Lấy tất cả sản phẩm cùng với biến thể sản phẩm, màu sắc và kích thước
-            $sanPhams = SanPham::with(['bienTheSanPham' => function ($query) {
-                $query->with(['mauBienThe', 'kichThuocBienThe']) // Lấy cả thông tin màu sắc và kích thước
-                      ->select(
-                          'id',
-                          'san_pham_id',
-                          'so_luong_bien_the',
-                          'gia_ban',
-                          'gia_khuyen_mai',
-                          'gia_khuyen_mai_tam_thoi'
-                      );
-            }])
-            ->select(
-                'san_phams.id', // Chỉ định rõ bảng san_phams cho cột id
-                'san_phams.ten_san_pham',
-                'san_phams.anh_san_pham',
-                'san_phams.created_at',
-                'san_phams.ma_san_pham',
-                'san_phams.duong_dan',
-                'san_phams.hang_moi'
-            )
-            ->addSelect([
-                DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'), // Giá thấp nhất
-                DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')  // Giá cao nhất
+            $sanPhams = SanPham::with([
+                'bienTheSanPham' => function ($query) {
+                    $query->with(['mauBienThe', 'kichThuocBienThe']) // Lấy cả thông tin màu sắc và kích thước
+                        ->select( // lấy dữ liệu của  biến thể sản phẩm
+                            'id',
+                            'san_pham_id',
+                            'bien_the_mau_sac_id',   // Thêm trường màu sắc
+                            'bien_the_kich_thuoc_id', // Thêm trường kích thước
+                            'so_luong_bien_the',
+                            'gia_ban',
+                            'gia_khuyen_mai',
+                            'gia_khuyen_mai_tam_thoi'
+                        );
+                }
             ])
-            ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
-            ->groupBy('san_phams.id') // Chỉ định rõ bảng san_phams cho cột id
-            ->orderBy('san_phams.created_at', 'desc')  // Sắp xếp theo thời gian tạo mới nhất
-            ->paginate($soLuongSanPhamMoiTrang);  // Phân trang
+                ->select( // lấy dữ liệu của của  sản phẩm
+                    'san_phams.id', // Chỉ định rõ bảng san_phams cho cột id
+                    'san_phams.ten_san_pham',
+                    'san_phams.anh_san_pham',
+                    'san_phams.created_at',
+                    'san_phams.ma_san_pham',
+                    'san_phams.duong_dan',
+                    'san_phams.hang_moi'
+                )
+                ->addSelect([
+                    DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'), // Giá thấp nhất
+                    DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')  // Giá cao nhất
+                ])
+                ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+                ->groupBy('san_phams.id') // Chỉ định rõ bảng san_phams cho cột id
+                ->orderBy('san_phams.created_at', 'desc')  // Sắp xếp theo thời gian tạo mới nhất
+                ->paginate($soLuongSanPhamMoiTrang);  // Phân trang
 
             // Xử lý dữ liệu trả về cho API
             $result = $sanPhams->map(function ($sanPham) {
@@ -146,8 +150,8 @@ class TrangSanPhamController extends Controller
                             'gia_ban' => $bienThe->gia_ban ?? 0, // Gán giá trị 0 nếu null
                             'gia_khuyen_mai' => $bienThe->gia_khuyen_mai ?? $bienThe->gia_ban, // Nếu null thì dùng giá bán
                             'gia_khuyen_mai_tam_thoi' => $bienThe->gia_khuyen_mai_tam_thoi ?? null,
-                            'mau_sac' => $bienThe->mauBienThe->ten_mau_sac ?? 'Không xác định', // Gán chuỗi nếu null
-                            'kich_thuoc' => $bienThe->kichThuocBienThe->kich_thuoc ?? 'Không xác định', // Gán chuỗi nếu null
+                            'mau_sac' => $bienThe->mauBienThe->ten_mau_sac ?? 'Không xác định', // Lấy thông tin màu sắc
+                            'kich_thuoc' => $bienThe->kichThuocBienThe->kich_thuoc ?? 'Không xác định', // Lấy thông tin kích thước
                         ];
                     })
                 ];
@@ -177,6 +181,7 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
 
     public function locSanPham(Request $request)
     {
@@ -230,6 +235,7 @@ class TrangSanPhamController extends Controller
             ])
                 // ->select('gia_tri_uu_dai', 'luot_xem')
                 ->paginate(10);
+
 
             DB::commit();  // Commit transaction
 
