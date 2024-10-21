@@ -433,7 +433,7 @@ const BannerManagement: React.FC = () => {
                         zIndex: 0,
                       }}
                     />
-                    <div className="absolute top-[130px] left-40">
+                    <div className="absolute top-[130px] w-[500px] left-10">
                       <div className="mb-4">
                         <p
                           className="font-semibold text-base mb-2"
@@ -448,7 +448,7 @@ const BannerManagement: React.FC = () => {
                           {banner.noi_dung.tieu_de_phu}
                         </p>
                         <p
-                          className="text-base font-medium uppercase"
+                          className="text-sm font-normal uppercase"
                           style={{
                             color: banner.noi_dung.mau_van_ban_quang_cao,
                           }}

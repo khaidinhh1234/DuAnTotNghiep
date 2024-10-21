@@ -153,7 +153,7 @@ const Router = () => {
           <Route path="/setting" element={<Setting />} />
           <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} />
           <Route path="/minicard" element={<Minicard />} />
-          <Route path="/voucher" element={<Voucher />} />
+          <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
           <Route
