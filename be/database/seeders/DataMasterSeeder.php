@@ -286,7 +286,7 @@ class DataMasterSeeder extends Seeder
             'ho' => 'Quản',
             'ten' => 'Trị',
             'email' => 'chiduc1611@gmail.com',
-            'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
+            'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png',
             'password' => Hash::make('Admin1234'), // Mã hóa mật khẩu
             'so_dien_thoai' => '0123456789',
             'dia_chi' => '123 Đường ABC, TP XYZ',
@@ -300,7 +300,7 @@ class DataMasterSeeder extends Seeder
             'ho' => 'Nguyễn Chí',
             'ten' => 'Đức',
             'email' => 'ducncph32766@fpt.edu.vn',
-            'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729331411/Avata_rd5jtj.png',
+            'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png',
             'password' => Hash::make('User1234'), // Mã hóa mật khẩu
             'so_dien_thoai' => '0123456789',
             'dia_chi' => '123 Đường ABC, TP XYZ',
@@ -616,6 +616,58 @@ class DataMasterSeeder extends Seeder
                 'gia' => 100000,
                 'thanh_tien' => 1000000,
             ],
+        ]);
+
+        DB::table('thong_tin_webs')->insert([
+            'ten_website' => 'Glow Clothing',
+            'logo_website' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729324186/LOGOGLOW_ogegpp.png',
+            'ten_doanh_nghiep' => 'Glow Clothing',
+            'dia_chi' => '13 P. Trịnh Văn Bô, Xuân Phương, Nam Từ Liêm, Hà Nội, Việt Nam',
+            'email' => 'Glowclothing@gmail.com',
+            'so_dien_thoai_dat_hang' => '0342278284',
+            'so_dien_thoai_khieu_nai' => '0342278284',
+            'cau_noi' => 'Glow Clothing - Nơi bạn tỏa sáng',
+            'link_facebook' => 'https://facebook.com/example',
+            'link_youtube' => 'https://youtube.com/example',
+            'link_zalo' => 'https://zalo.me/example',
+            'link_instagram' => 'https://instagram.com/example',
+            'link_tiktok' => 'https://tiktok.com/@example',
+            'banner' => json_encode([
+                [
+                    'id' => 1,
+                    'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729482616/Banner_th%E1%BB%9Di_trang_3-min_gaxh9t.png',
+                    'vi_tri' => 1,
+                    'noi_dung' => [
+                        'tieu_de_chinh' => 'Bộ vest ngắn nữ',
+                        'mau_tieu_de_chinh' => '#000000',
+                        'tieu_de_phu' => 'Bộ đồ ngắn của chúng tôi',
+                        'mau_tieu_de_phu' => '#000000',
+                        'van_ban_quang_cao' => 'là một món đồ thời trang hoàn hảo cho một bộ trang phục hoàn hảo để tạo nên vẻ ngoài sành điệu và hợp thời trang.',
+                        'mau_van_ban_quang_cao' => '#000000',
+                        'tieu_de_nut' => 'Mua ngay',
+                        'mau_nut' => '#000000',
+                        'duong_link' => 'https://example.com/link1'
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729480274/Banner_th%E1%BB%9Di_trang_2-min_x2mtwk.png',
+                    'vi_tri' => 2,
+                    'noi_dung' => [
+                        'tieu_de_chinh' => 'Bộ vest ngắn nữ',
+                        'mau_tieu_de_chinh' => '#FFFFFF',
+                        'tieu_de_phu' => 'Bộ đồ ngắn của chúng tôi',
+                        'mau_tieu_de_phu' => '#FFFFFF',
+                        'van_ban_quang_cao' => 'là một món đồ thời trang hoàn hảo cho một bộ trang phục hoàn hảo để tạo nên vẻ ngoài sành điệu và hợp thời trang.',
+                        'mau_van_ban_quang_cao' => '#FFFFFF',
+                        'tieu_de_nut' => 'Mua ngay',
+                        'mau_nut' => '#FFFFFF',
+                        'duong_link' => 'https://example.com/link2'
+                    ]
+                ]
+            ]),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
 
     }
