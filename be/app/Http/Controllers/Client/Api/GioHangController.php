@@ -302,10 +302,13 @@ class GioHangController extends Controller
                 ->first();
 
             if (!$nguoiDungMaKhuyenMai) {
-                return response()->json(['status' => false, 'message' => 'Bạn chưa lưu mã giảm giá này.'], 400);
-            }
-
-            if ($nguoiDungMaKhuyenMai->da_su_dung) {
+                DB::table('nguoi_dung_ma_khuyen_mai')->insert([
+                    'user_id' => $userId,
+                    'ma_khuyen_mai_id' => $maGiamGia->id,
+                    'da_su_dung' => false,
+                    'ngay_su_dung' => null,
+                ]);
+            } else if ($nguoiDungMaKhuyenMai->da_su_dung) {
                 return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
             }
 
@@ -333,14 +336,22 @@ class GioHangController extends Controller
                 $soTienGiamGia = $tongGiaTriGioHang;
             }
 
+            DB::table('nguoi_dung_ma_khuyen_mai')
+                ->where('user_id', $userId)
+                ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                ->update(['da_su_dung' => true, 'ngay_su_dung' => now()]);
+
             return response()->json([
                 'status' => true,
                 'message' => 'Mã giảm giá đã được áp dụng thành công.',
                 'tong_gia_tri_gio_hang' => $tongGiaTriGioHang,
                 'so_tien_giam_gia' => $soTienGiamGia,
                 'tong_gia_tri_sau_giam' => $tongGiaTriGioHang - $soTienGiamGia,
+                'ap_dung_ma_giam_gia' => [
+                    'ma_giam_gia' => $validatedData['ma_giam_gia'],
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                ],
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -348,6 +359,8 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
+
 
 
 
