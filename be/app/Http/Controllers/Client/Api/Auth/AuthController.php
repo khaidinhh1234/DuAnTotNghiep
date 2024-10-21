@@ -51,7 +51,6 @@ class AuthController extends Controller
             );
         }
         $user->vaiTros()->attach($member->id);
-
         // Trả về phản hồi với token
         return response()->json([
             'status' => true,
