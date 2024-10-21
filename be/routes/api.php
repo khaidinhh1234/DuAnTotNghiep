@@ -83,8 +83,6 @@ Route::middleware([])
         Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
 
         //Client Chi tiết sản phẩm
-        Route::get('/chi-tiet-san-pham/{id}', [TrangChiTietSpController::class, 'chiTietSanPham']);
-        Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']);
         // Captcha
         Route::get('captcha', [CaptchaController::class, 'generateCaptcha']);
         Route::post('captcha/verify', [CaptchaController::class, 'verifyCaptcha']);

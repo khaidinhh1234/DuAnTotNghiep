@@ -134,7 +134,7 @@ const CheckOut = () => {
     const productInRegular = data?.san_pham_nguyen_gia.find((product: { id: number }) => product.id === productId);
 
     const quantity = productInDiscounts?.so_luong || productInRegular?.so_luong || 0;
-console.log("đâsd" ,quantity);
+    console.log("đâsd", quantity);
     if (productInDiscounts) {
       return total + (productInDiscounts.gia_hien_tai * quantity);
     }
@@ -145,7 +145,7 @@ console.log("đâsd" ,quantity);
 
     return total;
   }, 0);
-console.log(totalSelectedPrice)
+  console.log(totalSelectedPrice)
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
   const shippingFee = 20000; // Phí giao hàng là 20,000 VND
   const discountShipping = 20000; // Giảm giá phí giao hàng
@@ -181,6 +181,20 @@ console.log(totalSelectedPrice)
               </thead>
 
               <tbody className="*:border-hrBlack *:border-b">
+                {data?.san_pham_giam_gia?.length === 0 && data?.san_pham_nguyen_gia?.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="text-center py-8">
+                      <div className="flex justify-center items-center flex-col">
+                        <img
+                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4G_QUeNpzKi5F8stqZB8TnaKax58iEnOuVA&s"
+                          alt="No products"
+                          className="w-[800px] h-[200px] md:w-[800px] md:h-[400px] object-cover"
+                        />
+                        <p className="mt-4 text-lg font-semibold">Không có sản phẩm trong giỏ hàng</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
                 {data?.san_pham_giam_gia?.map((product: any) => (
                   <tr key={product.id} className="*:py-8">
                     <td>
