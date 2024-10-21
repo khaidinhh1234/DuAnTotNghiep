@@ -158,7 +158,6 @@ class ThongKeDonHangController extends Controller
         return $ketQua;
     }
 
-
     public function thongKeDonHangTheoTrangThai(Request $request)
     {
         try {
@@ -192,6 +191,7 @@ class ThongKeDonHangController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi trong quá trình xử lý dữ liệu.'], 500);
         }
     }
+
     public function soSanhDonHangThang(Request $request)
     {
         try {

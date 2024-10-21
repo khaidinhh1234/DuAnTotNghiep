@@ -11,7 +11,7 @@ const Method = () => {
           >
             <div className="mx-auto">
               <i className="fa-regular fa-box text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">Free Shipping</h3>
+              <h3 className="font-bold text-xl mt-3 mb-2">Miễn phí vận chuyển</h3>
               <p>Free shipping for order above $150</p>
             </div>
             <div className="mx-auto">

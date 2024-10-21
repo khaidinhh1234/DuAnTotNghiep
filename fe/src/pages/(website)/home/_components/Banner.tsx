@@ -37,17 +37,8 @@ const Banner = ({ banner }: any) => {
                     alt={item?.duong_dan_anh || banner1}
                     className="md:w-full h-[900px] object-cover bg-center bg-no-repeat"
                   />
-
-                  <div className="absolute top-[70px] lg:top-[270px] lg:left-64 left-10">
-                    <div className="lg:mb-16">
-                      <p
-                        style={{
-                          color: item?.noi_dung?.mau_tieu_de_phu ?? "#ffffff",
-                        }}
-                        className="font-semibold text-xs lg:text-4xl lg:mb-7"
-                      >
-                        {item?.noi_dung?.tieu_de_phu || "Beyond Builder"}
-                      </p>
+                  <div className="absolute top-[200px] w-[1150px] text-start left-20">
+                    <div className="mb-4">
                       <p
                         style={{
                           color: item?.noi_dung?.mau_tieu_de_chinh ?? "#ffffff",
@@ -55,6 +46,14 @@ const Banner = ({ banner }: any) => {
                         className="text-md lg:text-6xl font-bold lg:mb-5 tracking-[1px]"
                       >
                         {item?.noi_dung?.tieu_de_chinh ?? "Beyond Builder"}
+                      </p>
+                      <p
+                        style={{
+                          color: item?.noi_dung?.mau_tieu_de_phu ?? "#ffffff",
+                        }}
+                        className="font-semibold text-xl lg:text-4xl lg:mb-7"
+                      >
+                        {item?.noi_dung?.tieu_de_phu || "Beyond Builder"}
                       </p>
                       <p
                         style={{
