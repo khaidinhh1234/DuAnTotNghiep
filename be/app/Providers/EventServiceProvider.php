@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\HoanTatDonHang;
 use App\Events\PhanHoiLienHe;
 use App\Events\SendMail;
+use App\Listeners\GuiMailHoanTatDonHang;
 use App\Listeners\SendMailContact;
 use App\Listeners\SendMailForgotPassword;
 use App\Listeners\SendMailPhanHoiLienHe;
@@ -29,6 +31,10 @@ class EventServiceProvider extends ServiceProvider
             SendMailContact::class,
             SendMailPhanHoiLienHe::class,
         ],
+
+        HoanTatDonHang::class => [
+            GuiMailHoanTatDonHang::class,
+        ]
     ];
 
     /**

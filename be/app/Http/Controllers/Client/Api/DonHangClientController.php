@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Client\Api;
 
+use App\Events\HoanTatDonHang;
+use App\Events\SendMail;
 use App\Http\Controllers\Controller;
+use App\Mail\DonHangDuocTaoMail;
 use App\Models\BienTheSanPham;
 use App\Models\DonHang;
 use App\Models\DonHangChiTiet;
@@ -12,6 +15,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+
 
 class DonHangClientController extends Controller
 {
@@ -76,7 +81,6 @@ class DonHangClientController extends Controller
         $result = $this->execPostRequest($endpoint, json_encode($data));
         $jsonResult = json_decode($result, true);  // decode json
 
-        //Just a example, please check more in there
 
         return redirect()->to($jsonResult['payUrl']);
     }
@@ -138,6 +142,8 @@ class DonHangClientController extends Controller
         }
     }
 
+
+
     public function taoDonHang(Request $request)
     {
         try {
@@ -179,45 +185,12 @@ class DonHangClientController extends Controller
 
             if (!empty($request->ma_giam_gia)) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
-
                 if ($maGiamGia) {
-                    if ($maGiamGia->trang_thai !== 1) {
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'Mã giảm giá không hợp lệ.',
-                        ], 400);
-                    }
-
-                    if ($maGiamGia->chi_tieu_toi_thieu && $tongTienDonHang < $maGiamGia->chi_tieu_toi_thieu) {
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'Đơn hàng không đủ điều kiện áp dụng mã giảm giá.',
-                        ], 400);
-                    }
-
-                    $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
-                        ->where('user_id', $userId)
-                        ->where('ma_khuyen_mai_id', $maGiamGia->id)
-                        ->value('da_su_dung');
-
-                    if ($daSuDung) {
-                        return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
-                    }
-
                     if ($maGiamGia->loai === 'phan_tram') {
                         $soTienGiamGia = $tongTienDonHang * ($maGiamGia->giam_gia / 100);
                     } else {
                         $soTienGiamGia = $maGiamGia->giam_gia;
                     }
-
-                    if ($soTienGiamGia > $tongTienDonHang) {
-                        $soTienGiamGia = $tongTienDonHang;
-                    }
-                } else {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Mã giảm giá không tồn tại.',
-                    ], 400);
                 }
             }
 
@@ -231,6 +204,7 @@ class DonHangClientController extends Controller
                 'tong_tien_don_hang' => $tongTienDonHang - $soTienGiamGia,
                 'ten_nguoi_dat_hang' => $request->ten_nguoi_dat_hang,
                 'so_dien_thoai_nguoi_dat_hang' => $request->so_dien_thoai_nguoi_dat_hang,
+                'email_nguoi_dat_hang' => $request->email_nguoi_dat_hang,
                 'dia_chi_nguoi_dat_hang' => $request->dia_chi_nguoi_dat_hang,
                 'ma_giam_gia' => $request->ma_giam_gia ?? null,
                 'so_tien_giam_gia' => $soTienGiamGia,
@@ -255,10 +229,24 @@ class DonHangClientController extends Controller
                 ]);
             }
 
+            if (!empty($request->ma_giam_gia)) {
+                $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
+                if ($maGiamGia) {
+                    $maGiamGia->so_luong_da_su_dung += 1;
+                    $maGiamGia->save();
+                }
+            }
+
+            $donHang = DonHang::with(['chiTietDonHangs'])
+                ->where('id', $donHang->id)
+                ->first();
+
             DB::table('gio_hangs')
                 ->where('user_id', $userId)
                 ->where('chon', 1)
                 ->update(['deleted_at' => now()]);
+
+//            event(new HoanTatDonHang($donHang, $request->email_nguoi_dat_hang));
 
             DB::commit();
 
@@ -267,6 +255,7 @@ class DonHangClientController extends Controller
                 'message' => 'Đơn hàng đã được tạo thành công!',
                 'data' => $donHang
             ], 201);
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -275,5 +264,7 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
+
+
 
 }
