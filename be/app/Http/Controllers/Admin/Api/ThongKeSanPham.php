@@ -75,13 +75,14 @@ class ThongKeSanPham extends Controller
     }
 
     public function thongKeSanPhamAllTime(ValidateKhoangNgayNhapRequest $request)
+
     {
         // Lấy giá trị ngày bắt đầu và ngày kết thúc từ request
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
 
         // Kiểm tra giá trị top_san_pham, đảm bảo nó là số nguyên dương
-        $topSanPham = $request->input('top_san_pham');
+        $topSanPham = $request->input('top');
         if (!is_numeric($topSanPham) || (int)$topSanPham <= 0) {
             $topSanPham = 5; // Mặc định là 5 nếu không hợp lệ
         } else {
@@ -99,10 +100,6 @@ class ThongKeSanPham extends Controller
             $ngayBatDau = Carbon::parse($ngayBatDau)->startOfDay();
             $ngayKetThuc = Carbon::now()->endOfDay();
         } else {
-            // Kiểm tra định dạng của ngày bắt đầu và ngày kết thúc
-            if (!Carbon::hasFormat($ngayBatDau, 'Y-m-d') || !Carbon::hasFormat($ngayKetThuc, 'Y-m-d')) {
-                return response()->json(['error' => 'Ngày không hợp lệ, định dạng phải là Y-m-d'], 422);
-            }
 
             // Parse ngày bắt đầu và ngày kết thúc
             $ngayBatDau = Carbon::parse($ngayBatDau)->startOfDay();

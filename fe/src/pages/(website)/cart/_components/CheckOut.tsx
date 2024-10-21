@@ -1,171 +1,310 @@
-// import { products1, products2 } from "@/assets/img";
-// import React from "react";
-
+import React, { useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 const CheckOut = () => {
-  // Sử dụng hook để lấy thông tin người dùng
+  const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
-
-  // Lấy token từ user hoặc từ localStorage
   const access_token = user.access_token || localStorage.getItem("access_token");
 
-  // Kiểm tra nếu token không tồn tại
-  if (!access_token) {
-    console.log("No token found");
-    return <div>Please log in to proceed.</div>; // Hiển thị thông báo nếu không có token
-  }
-
-  console.log("Token:", access_token); // In ra token để kiểm tra
-  console.log("User:", user);
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]); // Lưu trữ các sản phẩm được chọn
+  const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
+  const [selectAllRegular, setSelectAllRegular] = useState(false);
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
       try {
         const response = await instanceClient.get(`/gio-hang`, {
           headers: {
-            Authorization: `Bearer ${access_token}` // Thêm token vào header
-          }
+            Authorization: `Bearer ${access_token}`,
+          },
         });
         return response.data;
       } catch (error) {
         throw new Error("Error fetching cart data");
       }
+    },
+  });
+  const { mutate: increaseQuantity } = useMutation({
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`, 
+        { so_luong: currentQuantity + 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi tăng số lượng sản phẩm.');
+    },
+  });
+  const { mutate: decreaseQuantity } = useMutation({
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+      await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, { so_luong: currentQuantity - 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi giảm số lượng sản phẩm.');
+    },
+  });
+  const handleCheckboxChange = (id: number) => {
+    setSelectedProducts((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((productId) => productId !== id)
+        : [...prevSelected, id]
+    );
+  };
+  const handleSelectAllDiscounted = () => {
+    if (selectAllDiscounted) {
+      // Bỏ chọn tất cả sản phẩm đang giảm giá
+      setSelectedProducts((prevSelected) =>
+        prevSelected.filter((productId) =>
+          !data?.san_pham_giam_gia.map((product:any) => product.id).includes(productId)
+        )
+      );
+    } else {
+      // Chọn tất cả sản phẩm đang giảm giá
+      const allDiscountedIds = data?.san_pham_giam_gia.map((product: any) => product.id) || [];
+      setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allDiscountedIds])]);
     }
-  })
-  console.log("Data:", data);
-  const grandTotal = data?.data?.reduce((total, product) => {
-    const productTotal = product.gia * product.so_luong; // Assuming `so_luong` is part of product data
-    return total + productTotal;
-  }, 0) || 0; // Fallback to 0 if no products
+    setSelectAllDiscounted(!selectAllDiscounted);
+  };
+
+  const handleSelectAllRegular = () => {
+    if (selectAllRegular) {
+      // Bỏ chọn tất cả sản phẩm nguyên giá
+      setSelectedProducts((prevSelected) =>
+        prevSelected.filter((productId) =>
+          !data?.san_pham_nguyen_gia.map((product: any) => product.id).includes(productId)
+        )
+      );
+    } else {
+      // Chọn tất cả sản phẩm nguyên giá
+      const allRegularIds = data?.san_pham_nguyen_gia.map((product: any) => product.id) || [];
+      setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allRegularIds])]);
+    }
+    setSelectAllRegular(!selectAllRegular);
+  };
+
+  const grandTotal =
+    (data?.san_pham_giam_gia
+      ?.filter((product: any) => selectedProducts.includes(product.id))
+      .reduce(
+        (total: number, product: { gia_hien_tai: number; so_luong: number }) => {
+          return total + product.gia_hien_tai * product.so_luong;
+        },
+        0
+      ) || 0) +
+    (data?.san_pham_nguyen_gia
+      ?.filter((product: any) => selectedProducts.includes(product.id))
+      .reduce(
+        (total: number, product: { gia_ban: number; so_luong: number }) => {
+          return total + product.gia_ban * product.so_luong;
+        },
+        0
+      ) || 0);
+
+
   return (
-    <section className="container">
+    <section className="container mx-auto">
+      <div className="lg:mx-16 mx-4 lg:my-16 my-8">
+        <h1 className="text-3xl font-bold mb-6">Giỏ hàng</h1>
 
-      <div className="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
+        {/* Thông báo */}
+        {/* <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+            <p className="font-bold text-green-600">
+              Chúc mừng! Đơn hàng của bạn được{" "}
+              <span className="text-green-700">Miễn phí vận chuyển</span>
+            </p>
+            <div className="bg-green-100 rounded-full h-2 mt-3">
+              <div className="bg-green-500 h-full w-full"></div>
+            </div>
+          </div> */}
 
-        <h1 className="h1cart">Checkout</h1>
-        <div className="grid lg:grid-cols-12 gap-4 px-0 justify-center">
-          <div className="lg:col-span-8 col-span-6 md:px-0 px-3">
-            <table>
-              <thead>
-                <tr className="*:font-normal text-left border-hrBlack *:pb-5 border-b">
-                  <th>Sản phẩm</th>
-                  <th className="px-2">Giá</th>
-                  <th className="lg:text-center hidden lg:block">Số lượng</th>
-                  <th>Tổng tiền</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody className="*:border-hrBlack *:border-b">
-                {data?.data?.map((product, index) => (
-                  <tr key={product.id} className="*:py-8">
-                    <td>
-                      <div className="flex gap-5 px-2 xl:w-[352px] sm:w-[392px] md:w-[309px]">
-                        <img
-                          src={product.hinh_anh}
-                          alt=""
-                          className="w-12 h-12"
-                        />
-                        <div className="px-1">
-                          <h3 className="font-bold">{product.ten_san_pham}</h3>
-                          <p>
-                            Kích thước: <span>{product.kich_thuoc}</span>
-                          </p>
-                          <p>
-                            Màu: <span>{product.mau_sac}</span>
-                          </p>
-                          <div className="lg:hidden flex mt-2">
-                            <button className="pl-3 border border-r-0 border-blackL rounded-s-lg text-sm">
-                              <i className="fa-solid fa-minus" />
-                            </button>
-                            <input
-                              type="number"
-                              id="numberInput"
-                              defaultValue={1}
-                              className="w-9 h-7 border-y focus:ring-0 focus:outline-none text-center border-blackL"
-                            />
-                            <button className="pr-3 border border-l-0 border-blackL rounded-e-lg text-sm">
-                              <i className="fa-solid fa-plus" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="xl:w-24 sm:w-15 w-10 px-5">
-                      <span className="font-bold">{product.gia}</span>
-                      {product.gia_cu && (
-                        <span className="text-red-500 line-through ml-2">{product.gia_cu}</span>
-                      )}
-                    </td>
+        {/* Khuyến mãi */}
+        {/* <div className="flex items-center justify-between bg-red-100 text-red-600 px-6 py-4 rounded-lg mb-8">
+            <span className="font-bold">
+              🔥 Khuyến mại trong giỏ hàng của bạn chỉ còn trong 9 phút 59 giây
+              trước khi hết khuyến mãi
+            </span>
+          </div> */}
 
-                    <td className="hidden lg:block">
-                      <div className="border rounded-lg border-black xl:mx-5">
-                        <button className="py-1 pl-3">
-                          <i className="fa-solid fa-minus" />
-                        </button>
-                        <input
-                          type="number"
-                          id="numberInput"
-                          defaultValue={1}
-                          className="w-9 h-10 border-0 focus:ring-0 focus:outline-none text-center"
+        <div className="grid lg:grid-cols-12 gap-6 justify-center">
+          {/* Sản phẩm */}
+          <div className="lg:col-span-8 col-span-12">
+            {/* Danh mục giảm giá */}
+            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  checked={selectAllDiscounted}
+                  onChange={handleSelectAllDiscounted}
+                  className="form-checkbox h-5 w-5 text-yellow-500"
+                  title="Select all discounted products"
+                />
+                <h2 className="font-bold text-xl mb-0 ml-2">Đang được giảm giá</h2>
+              </div>
+
+              {data?.san_pham_giam_gia.map((product: any) => (
+                <div
+                  key={product.id}
+                  className="flex justify-between items-center border-b py-4"
+                >
+                  <div className="flex items-center gap-6">
+                    <input
+                          type="checkbox"
+                          checked={selectedProducts.includes(product.id)}
+                          onChange={() => handleCheckboxChange(product.id)}
+                          className="form-checkbox h-5 w-5 text-yellow-500"
+                          title={`Select ${product.ten_san_pham}`}
                         />
-                        <button className="py-1 pr-3">
-                          <i className="fa-solid fa-plus" />
-                        </button>
-                      </div>
-                    </td>
-                    <td className="xl:w-24 sm:w-15 w-10">{product.gia * product.so_luong}</td>
-                    <td className="px-1">
-                      <button>
-                        <i
-                          className="fa-regular fa-trash-can"
-                          style={{ color: "#db5151" }}
-                        />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    <img
+                      src={product.hinh_anh}
+                      alt="Ảnh sản phẩm"
+                      className="w-30 h-40 object-cover rounded-md"
+                    />
+                    <div>
+                      <h3 className="font-semibold">{product.ten_san_pham}</h3>
+                      <p className="text-sm text-gray-500">
+                        {product.mau_sac}, {product.kich_thuoc}
+                      </p>
+                      <p className="text-red-500 font-bold">{product.gia_khuyen_mai} ₫</p>
+                      <p className="text-gray-400 line-through">{product.gia_cu} ₫</p>
+                      <p className="text-sm text-red-500">Đã tiết kiệm: {product.tiet_kiem} ₫</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                    <button
+                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      −
+                    </button>
+                    <input
+                      type="text"
+                      value={product.so_luong}
+                      className="w-12 text-center border-none outline-none"
+                      readOnly
+                      title={`Quantity of ${product.ten_san_pham}`}
+                    />
+                    <button
+                     onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Danh mục sản phẩm nguyên giá */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+             
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  checked={selectAllRegular}
+                  onChange={handleSelectAllRegular}
+                  className="form-checkbox h-5 w-5 text-yellow-500"
+                  title="Select all regular priced products"
+                />
+                 <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm nguyên giá</h2>
+              </div>
+              {data?.san_pham_nguyen_gia.map((product: any) => (
+                <div
+                  key={product.id}
+                  className="flex justify-between items-center border-b py-4"
+                >
+                  <div className="flex items-center gap-6">
+                    <input
+                      type="checkbox"
+                      checked={selectedProducts.includes(product.id)}
+                      onChange={() => handleCheckboxChange(product.id)}
+                      className="form-checkbox h-5 w-5 text-yellow-500"
+                      title={`Select ${product.ten_san_pham}`}
+                    />
+                    <img
+                      src={product.hinh_anh}
+                      alt="Ảnh sản phẩm"
+                      className="w-30 h-40 object-cover rounded-md"
+                    />
+                    <div>
+                      <h3 className="font-semibold">{product.ten_san_pham}</h3>
+                      <p className="text-sm text-gray-500">
+                        {product.mau_sac}, {product.kich_thuoc}
+                      </p>
+                      <p className="text-black font-bold">{product.gia_ban} ₫</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                    <button
+                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      −
+                    </button>
+                    <input
+                      type="text"
+                      value={product.so_luong}
+                      className="w-12 text-center border-none outline-none"
+                      readOnly
+                      title={`Quantity of ${product.ten_san_pham}`}
+                    />
+                    <button
+                    onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="lg:col-span-4 col-span-6">
-            <div className="border px-4 py-1 lg:w-[359px] rounded-md">
-              <div className="flex justify-between font-bold border-hrBlack border-b py-4">
-                <h4>Subtotal</h4>
-                <span className="px-2">$200.00</span>
+
+          {/* Chi tiết đơn hàng */}
+          <div className="lg:col-span-4 col-span-12">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="font-bold text-xl mb-4">Chi tiết đơn hàng</h2>
+              <div className="flex justify-between mb-3">
+                <span className="text-gray-600">Tổng giá trị sản phẩm</span>
+                <span>{grandTotal} ₫</span>
               </div>
-              <div className="py-4">
-                <label className="text-xs">Enter Discount Code</label>
-                <br />
-                <div className="flex">
-                  <input
-                    type="text"
-                    placeholder="FLAT50"
-                    className="lg:w-[218px] w-[300px] h-[56px] px-4 rounded-s-lg focus:outline-none border border-l-2 border-t-2 border-blackL border-r-0"
-                  />
-                  <button className="bg-black hover:bg-stone-700 w-[101px] h-[55px] border border-black rounded-r-lg text-white">
-                    Apply
-                  </button>
+              <div className="flex justify-between mb-3">
+                <span className="text-gray-600">Giảm giá</span>
+                <span>-49.900 ₫</span>
+              </div>
+              <div className="flex justify-between mb-3">
+                <span className="text-gray-600">Vận chuyển</span>
+                <span>20.000 ₫</span>
+              </div>
+              <div className="flex justify-between mb-4">
+                <span className="text-gray-600">Giảm giá vận chuyển</span>
+                <span>−20.000 ₫</span>
+              </div>
+              <div className="border-t pt-4">
+                <div className="flex justify-between">
+                  <span className="font-bold">Tổng cộng</span>
+                  <span className="font-bold">{grandTotal} ₫</span>
                 </div>
-                <div className="py-4 flex justify-between font-medium border-b border-hrBlack">
-                  <p>Delivery Charge</p>
-                  <span className="px-2">$5.00</span>
-                </div>
-              </div>
-              <div className="flex justify-between font-bold mb-8">
-                <h4>Grand Total</h4>
-                <span>$205.00</span>
-              </div>
-              <div className="flex justify-center">
-                <a href="shippingaddress.html">
-                  <button className="btn-black rounded-lg mb-4 w-[320px] h-[56px]">
-                    Proceed to Checkout
-                  </button>
-                </a>
               </div>
             </div>
+            <button className="w-full bg-yellow-500 text-white font-semibold py-2 rounded-lg mt-4">
+              Tiến hành thanh toán
+            </button>
           </div>
         </div>
       </div>
