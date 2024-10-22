@@ -11,6 +11,7 @@ use App\Models\DonHang;
 use App\Models\DonHangChiTiet;
 use App\Models\GioHang;
 use App\Models\MaKhuyenMai;
+use App\Models\ThongBao;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -89,11 +90,36 @@ class DonHangClientController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $donHang = DonHang::where('user_id', $user->id)->orderByDesc('created_at')->get();
+            $donHang = DonHang::where('user_id', $user->id)->with(['chiTietDonHangs.bienTheSanPham.mauBienThe',
+                'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
+                'user.hangThanhVien', 'vanChuyen', 'bienTheSanPhams'])
+                ->orderByDesc('created_at')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy danh sách đơn hàng thành công',
+                'data' => $donHang
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => '',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function donHangUserDetail(string $maDonHang)
+    {
+        try {
+            $donHang = DonHang::query()->with(['chiTietDonHangs.bienTheSanPham.mauBienThe',
+                'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
+                'user.hangThanhVien', 'vanChuyen', 'bienTheSanPhams'])->where('ma_don_hang', $maDonHang)->first();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy chi tiết đơn hàng',
                 'data' => $donHang
             ]);
         } catch (\Exception $e) {
@@ -241,6 +267,16 @@ class DonHangClientController extends Controller
 
 //            event(new HoanTatDonHang($donHang, $request->email_nguoi_dat_hang));
 
+
+            ThongBao::create([
+                'user_id' => $userId,
+                'tieu_de' => 'Đơn hàng đã được đặt',
+                'noi_dung' => 'Đơn hàng đã được đặt',
+                'loai' => 'Đơn hàng',
+                'duong_dan' => 'don-hang',
+                'loai_duong_dan' => 'don-hang',
+                'id_duong_dan' => $donHang->id,
+            ]);
             DB::commit();
 
             return response()->json([
