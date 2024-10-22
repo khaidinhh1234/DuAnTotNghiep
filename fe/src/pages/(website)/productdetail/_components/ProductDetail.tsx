@@ -143,9 +143,6 @@ const ProductDetail: React.FC = () => {
     }
   }, []);
   const queryClient = useQueryClient();
-
-  const { data: product } = useQuery<ProductData>({
-    queryKey: ["product", id],
     queryFn: () => fetchProduct(id!),
   });
 
@@ -181,12 +178,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                  ...review,
-                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                  danh_gia_huu_ich_count: variables.isLiked
-                    ? review.danh_gia_huu_ich_count - 1
-                    : review.danh_gia_huu_ich_count + 1,
-                }
+                ...review,
+                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                danh_gia_huu_ich_count: variables.isLiked
+                  ? review.danh_gia_huu_ich_count - 1
+                  : review.danh_gia_huu_ich_count + 1,
+              }
               : review
           ),
         };
@@ -197,63 +194,55 @@ const ProductDetail: React.FC = () => {
     },
   });
 
-  const [quantity, setQuantity] = useState<number>(product?.so_luong || 1);
+  const [quantity, setQuantity] = useState<number>(1);
 
-  // tăng số lượng
-  const { mutate: increaseQuantity } = useMutation({
-    mutationFn: async ({
-      productId,
-      currentQuantity,
-    }: {
-      productId: string;
-      currentQuantity: number;
-    }) => {
-      await instanceClient.put(
-        `/gio-hang/tang-so-luong/${productId}`,
-        { so_luong: currentQuantity + 1 },
+  const { mutate: addToCart } = useMutation({
+    mutationFn: async () => {
+      const response = await instanceClient.post(
+        '/gio-hang',
+        {
+          bien_the_san_pham_id: product?.id ?? 0,
+          so_luong: quantity,
+        },
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
         }
       );
+      return response.data;
     },
-    onSuccess: () => {
-      setQuantity((prev) => prev + 1); // Cập nhật số lượng hiển thị
-      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    onSuccess: (data) => {
+      if (data.status) {
+        toast.success("Thêm sản phẩm vào giỏ hàng thành công");
+        queryClient.invalidateQueries({ queryKey: ['cart', access_token] });
+      } else {
+        toast.error(data.message);
+      }
     },
     onError: (error: any) => {
-      toast.error(error.message || "Có lỗi xảy ra khi tăng số lượng sản phẩm.");
+      toast.error(
+        error.response?.data?.message || 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.'
+      );
     },
   });
 
-  // giảm số lượng
-  const { mutate: decreaseQuantity } = useMutation({
-    mutationFn: async ({
-      productId,
-      currentQuantity,
-    }: {
-      productId: string;
-      currentQuantity: number;
-    }) => {
-      await instanceClient.put(
-        `/gio-hang/giam-so-luong/${productId}`,
-        { so_luong: currentQuantity - 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
-    },
-    onSuccess: () => {
-      setQuantity((prev) => prev - 1); // Cập nhật số lượng hiển thị
-      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Có lỗi xảy ra khi giảm số lượng sản phẩm.");
-    },
-  });
+  const handleAddToCart = () => {
+    console.log('Biến thể sản phẩm ID:', product?.id); // Kiểm tra giá trị biến thể sản phẩm
+  
+    if (!product?.id) {
+      toast.error('Biến thể sản phẩm không hợp lệ.');
+      return;
+    }
+  
+    if (quantity < 1) {
+      toast.error('Số lượng phải lớn hơn hoặc bằng 1');
+      return;
+    }
+  
+    addToCart();
+  };
+  
 
   const handleReviewLike = useCallback(
     (reviewId: number, isLiked: boolean) => {
@@ -458,19 +447,16 @@ const ProductDetail: React.FC = () => {
                     {currentImages?.map((image, index) => (
                       <SwiperSlide key={`thumb-${index}`}>
                         <div className="  md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] flex justify-center items-center">
-                          <img
-                            src={image}
-                            alt=""
-                            style={{
-                              cursor: "pointer",
-                              objectFit: "cover",
-                              objectPosition: "top",
-                              width: "100%",
-                              height: "100%",
-                              imageRendering: "auto",
-                            }}
-                            className="w-full h-full py-1 rounded-2xl"
+                          <img src={image} alt="" style={{
+                            cursor: "pointer",
+                            objectFit: "cover",
+                            objectPosition: "top",
+                            width: "100%",
+                            height: "100%",
+                            imageRendering: "auto",
+                          }} className="w-full h-full py-1 rounded-2xl"
                           />
+
                         </div>
                       </SwiperSlide>
                     ))}
@@ -486,11 +472,10 @@ const ProductDetail: React.FC = () => {
                     {selectedVariant && (
                       <div className="mt-2">
                         <a
-                          className={` text-sm px-2 py-1 rounded-sm ${
-                            selectedVariant?.so_luong_bien_the > 0
+                          className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
                               ? "bg-[#3CD139]/10 text-[#3CD139]"
                               : "bg-red-500 text-white"
-                          }`}
+                            }`}
                         >
                           {selectedVariant?.so_luong_bien_the > 0
                             ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -624,14 +609,7 @@ const ProductDetail: React.FC = () => {
                 <div className="mt-12 flex gap-5">
                   <div className="border rounded-lg border-black xl:w-32 xl:h-14 ld:w-24 lg:h-10 md:w-32 md:h-14 w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                     <button
-                      onClick={() => {
-                        if (quantity > 1) {
-                          decreaseQuantity({
-                            productId: product?.id?.toString(),
-                            currentQuantity: quantity,
-                          });
-                        }
-                      }}
+                     onClick={() => setQuantity((prev) => Math.max(1, prev - 1))} // Không cho số lượng nhỏ hơn 1
                       className="py-2 pr-2"
                       disabled={quantity <= 1} // Ngăn không cho số lượng giảm dưới 1
                     >
@@ -642,30 +620,25 @@ const ProductDetail: React.FC = () => {
                       type="number"
                       value={quantity} // Liên kết giá trị với state
                       readOnly
+                      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)))}
                       className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
                     />
 
                     <button
-                      onClick={() =>
-                        increaseQuantity({
-                          productId: product?.id?.toString(),
-                          currentQuantity: quantity,
-                        })
-                      }
-                      className="py-2 pl-2"
+                      onClick={() => setQuantity((prev) => prev + 1)}
+                      className="py-2 pl-2 increase"
                     >
                       <i className="fa-solid fa-plus" />
                     </button>
                   </div>
 
-                  <button className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
+                  <button onClick={handleAddToCart} className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
                     Thêm vào giỏ hàng
                   </button>
                   <button
                     onClick={handleClickHeart}
-                    className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${
-                      isHeart ? "bg-red-600" : ""
-                    }`}
+                    className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${isHeart ? "bg-red-600" : ""
+                      }`}
                   >
                     <i
                       className={`fa-regular fa-heart text-2xl ${isHeart ? "text-white" : "text-red-600"}`}
@@ -702,9 +675,8 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${
-                isDescriptionExpanded ? "" : "line-clamp-3"
-              }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${isDescriptionExpanded ? "" : "line-clamp-3"
+                }`}
               dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
             />
             <div className="flex justify-center">
@@ -842,13 +814,8 @@ const ProductDetail: React.FC = () => {
                         }
                         disabled={likeMutation?.isLoading}
                       >
-                        <i
-                          className={
-                            review.trang_thai_danh_gia_nguoi_dung
-                              ? "fa-solid fa-thumbs-up text-blue-500"
-                              : "fa-regular fa-thumbs-up text-gray-500"
-                          }
-                        ></i>
+                        <i className={review.trang_thai_danh_gia_nguoi_dung ? "fa-solid fa-thumbs-up text-blue-500" : "fa-regular fa-thumbs-up text-gray-500"}></i>
+
 
                         <span>
                           {likeMutation?.isLoading ? (
@@ -971,7 +938,10 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div> */}
-      {product && <RelatedProducts productId={product?.id} />}
+      {product && (
+        <RelatedProducts productId={product?.id} />
+      )}
+
 
       <section>
         <div className="container">

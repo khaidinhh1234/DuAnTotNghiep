@@ -89,7 +89,7 @@
 
         <p class="signature">Trân trọng,<br>Đội ngũ hỗ trợ khách hàng</p>
 
-        <a href="https://example.com" class="btn">Quay lại trang chủ</a>
+        <a href="http://localhost:5173/" class="btn">Quay lại trang chủ</a>
 
         <div class="footer">
             <p>&copy; 2024 Glow Clothing</p>
