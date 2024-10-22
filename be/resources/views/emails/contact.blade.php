@@ -115,6 +115,7 @@
 
         <div class="content">
             <h2>Xin chào, {{ $name }}</h2>
+            <p>Email, {{ $email }}</p>
             <p class="reply">Chúng tôi đã nhận được liên hệ của bạn từ Website Glow Clothing, Chúng tôi sẽ trả lời thư
                 của bạn sớm
                 nhất có thể!</p>

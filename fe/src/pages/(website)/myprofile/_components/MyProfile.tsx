@@ -1,8 +1,21 @@
-import { ellipse, hello } from "@/assets/img";
-import { Link } from "react-router-dom";
+import { CameraOutlined } from "@ant-design/icons";
+import { Avatar, Button } from "antd";
 import Sidebar from "./../../_component/Slibar";
+// import ProfileTab from './ProfileTab';
+import { Upload } from "antd";
+import { useState } from "react";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 
 const MyProfilePage = ({ member }: any) => {
+  const [avatarImage, setAvatarImage] = useState<string>("");
+  const [{ user }] = useLocalStorage("user" as any, {});
+  const url = user.anh_nguoi_dung;
+  const handleAvatarChange = (info: any) => {
+    if (info.file && info.file.originFileObj) {
+      const file = URL.createObjectURL(info.file.originFileObj);
+      setAvatarImage(file);
+    }
+  };
   return (
     <>
       <main>
@@ -23,15 +36,23 @@ const MyProfilePage = ({ member }: any) => {
                 {/* Nội dung */}
                 <div className="flex justify-between items-center">
                   <div className="relative">
-                    <Link to="">
-                      {" "}
-                      <i className="fa-regular fa-pen-to-square text-sm pl-[6px] pb-[6px] pt-1 pr-1 rounded-lg bg-blackL text-white absolute -right-0 -bottom-0" />
-                    </Link>
-                    <img
-                      src={ellipse}
-                      alt=""
-                      className="md:w-20 md:h-20 w-14 h-14 rounded-full"
+                    <Avatar
+                      src={avatarImage || url}
+                      size={110}
+                      className="border-4 border-white shadow-lg"
                     />
+                    <Upload
+                      showUploadList={false}
+                      onChange={handleAvatarChange}
+                      className="absolute bottom-0 right-0 "
+                    >
+                      <Button
+                        type="primary"
+                        shape="circle"
+                        icon={<CameraOutlined />}
+                        className="bg-blue-400 hover:bg-blue-500 text-white p-2"
+                      />
+                    </Upload>
                   </div>
                   <button className="btn-black items-center md:px-8 md:py-4 px-4 py-2 flex whitespace-nowrap rounded-lg hover:text-black">
                     {" "}
