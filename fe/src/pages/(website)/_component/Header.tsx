@@ -5,11 +5,34 @@ import { Input, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import instance from "@/configs/client";
+interface Category {
+  id: number;
+  ten_danh_muc: string;
+  duong_dan: string;
+  children: Category[];
+}
+
 
 const Header = () => {
   const [check, setcheck] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await instance.get('/load-danh-muc');
+        const result = response.data;
+        if (result.status) {
+          setCategories(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
 
+    fetchCategories();
+  }, []);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as any)) {
@@ -195,95 +218,47 @@ const Header = () => {
                 className="lg:w-[130px] lg:h-[40px] w-32 h-9"
               />
             </div>
-            <nav className="hidden lg:block order-3 " >
-              <ul className="flex items-center space-x-4">
-                {MenuList.map((item, index) => (
-                  <li
-                    key={index}
-                    className="mt-2 relative"
-                    onMouseEnter={item.name === "Sản phẩm" ? handleMouseEnterProduct : undefined}
-                    onMouseLeave={item.name === "Sản phẩm" ? handleMouseLeaveProduct : undefined}
-                  >
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) =>
-                        `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
-                          !isActive
-                            ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
-                            : "text-white bg-black"
-                        }`
-                      }
-                    >
-                      {item.name}
-                    </NavLink>
-                    {item.name === "Sản phẩm" && isProductMenuVisible && (
-                <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50 ">
-                  <div className="p-8 w-[1200px] grid grid-cols-5 gap-8 bg-white rounded-md">
-                    <div className="border-r border-gray-100 ">
-                      <h3 className="font-bold mb-4 text-lg">Men</h3>
-                      <ul className="space-y-2">
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">T-Shirts</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Casual Shirts</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Formal Shirts</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Jackets</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Blazers & Coats</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Suits</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Trousers</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Jeans</a></li>
-                      </ul>
-                    </div>
-                    <div className="border-r border-gray-100 ">
-                      <h3 className="font-bold mb-4 text-lg">Women</h3>
-                      <ul className="space-y-2">
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Dresses</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Tops</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Skirts</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Jeans</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Trousers</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Jackets & Coats</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Blazers</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Lingerie</a></li>
-                      </ul>
-                    </div>
-                    <div className="border-r border-gray-100 ">
-                      <h3 className="font-bold mb-4 text-lg">Kids</h3>
-                      <ul className="space-y-2">
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">T-Shirts</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Shirts</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Jeans</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Trousers</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Party Wear</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Innerwear</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Sleepwear</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Accessories</a></li>
-                      </ul>
-                    </div>
-                    <div className="border-r border-gray-100 ">
-                      <h3 className="font-bold mb-4 text-lg">Footwear</h3>
-                      <ul className="space-y-2">
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Casual Shoes</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Sports Shoes</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Formal Shoes</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Boots</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Sandals & Floaters</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Flip Flops</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Heels</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Socks</a></li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h3 className="font-bold mb-4 text-lg">Accessories</h3>
-                      <ul className="space-y-2">
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Watches</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Wallets</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Belts</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Sunglasses</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Jewellery</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Bags & Backpacks</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Hats & Caps</a></li>
-                        <li><a href="#" className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap">Travel Accessories</a></li>
-                      </ul>
-                    </div>
+            <nav className="hidden lg:block order-3">
+        <ul className="flex items-center space-x-4">
+          {MenuList.map((item, index) => (
+            <li
+              key={index}
+              className="mt-2 relative"
+              onMouseEnter={item.name === "Sản phẩm" ? handleMouseEnterProduct : undefined}
+              onMouseLeave={item.name === "Sản phẩm" ? handleMouseLeaveProduct : undefined}
+            >
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
+                    !isActive
+                      ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
+                      : "text-white bg-black"
+                  }`
+                }
+              >
+                {item.name}
+              </NavLink>
+              {item.name === "Sản phẩm" && isProductMenuVisible && (
+                <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50">
+                  <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 bg-white rounded-md">
+                    {categories.map((category) => (
+                      <div key={category.id} className="border-r border-gray-100">
+                        <h3 className="font-bold mb-4 text-lg">{category.ten_danh_muc}</h3>
+                        <ul className="space-y-2">
+                          {category.children.map((subCategory) => (
+                            <li key={subCategory.id}>
+                              <a
+                                href={`/shop/${category.duong_dan}/${subCategory.duong_dan}`}
+                                className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                              >
+                                {subCategory.ten_danh_muc}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
