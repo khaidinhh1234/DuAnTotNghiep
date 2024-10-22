@@ -38,13 +38,17 @@ const Header = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await instance.get('/load-danh-muc');
+
+        const response = await instance.get("/load-danh-muc");
+
         const result = response.data;
         if (result.status) {
           setCategories(result.data);
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+
+        console.error("Error fetching categories:", error);
+
       }
     };
 
@@ -235,7 +239,9 @@ const Header = () => {
                 className="lg:w-[130px] lg:h-[40px] w-32 h-9"
               />
             </div>
-            <nav className="hidden lg:block order-3 ">
+
+            <nav className="hidden lg:block order-3">
+
         <ul className="flex items-center space-x-4">
           {MenuList.map((item, index) => (
             <li
@@ -284,6 +290,7 @@ const Header = () => {
           ))}
         </ul>
       </nav>
+
             <div className="order-4 flex items-center space-x-6 cursor-pointer">
               <span>
                 <div className="relative">

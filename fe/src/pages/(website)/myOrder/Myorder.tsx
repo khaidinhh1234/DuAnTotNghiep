@@ -1,10 +1,23 @@
 // import React from 'react'
+import { useQuery } from "@tanstack/react-query";
 import Sidebar from "./../_component/Slibar";
 
 import ProductList from "./_components/product";
 import SearchSection from "./_components/sheach";
 
 const MyOrder = () => {
+  // const { data } = useQuery({
+  //   queryKey: ["PRODUCT_LIST"],
+  //   queryFn: async () => {
+  //     try {
+  //       const response = await instanceClient.get("sanpham");
+  //       return response.data;
+  //     } catch (error) {
+  //       throw new Error("Lỗi khi lấy thông tin");
+  //     }
+  //   },
+  // });
+
   return (
     <>
       <section className="container ">
@@ -13,7 +26,7 @@ const MyOrder = () => {
           <div className="grid lg:grid-cols-12 grid-cols-8 lg:gap-8 gap-2 lg:my-12 my-6">
             <div className="lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] lg:h-[524px] rounded-lg">
               <Sidebar />
-            </div>{" "}
+            </div>
             <ProductList />
           </div>
         </div>

@@ -11,6 +11,7 @@ use App\Models\DanhMuc;
 use App\Models\DonHang;
 use App\Models\SanPham;
 use App\Models\ThongTinWeb;
+use App\Models\TinTuc;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,13 +56,14 @@ class TrangChuController extends Controller
                 'san_phams.hang_moi',
                 'san_phams.gia_tot',
                 DB::raw('MIN(CASE
-                    WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_ban
-                    WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_ban
+                    WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
+                    WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
                     ELSE bien_the_san_phams.gia_ban
                 END) as gia_thap_nhat'),
+
                 DB::raw('MAX(CASE
-                    WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_ban
-                    WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_ban
+                    WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
+                    WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
                     ELSE bien_the_san_phams.gia_ban
                 END) as gia_cao_nhat')
             )
@@ -70,14 +72,14 @@ class TrangChuController extends Controller
             ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
             ->where('san_phams.trang_thai', 1)
             ->where('san_phams.hang_moi', 1)
-            ->where('san_phams.danh_muc_id', '!=', 'null')
+            ->whereNotNull('san_phams.danh_muc_id')
             ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
             ->orderByDesc('san_phams.id')
             ->take(8)
             ->get()
             ->map(function ($sanPham) {
-                // Lấy thông tin biến thể của sản phẩm, giới hạn 1 ảnh cho mỗi biến thể
                 $bienThe = BienTheSanPham::query()
+                    ->with('anhBienThe')
                     ->select(
                         'bien_the_san_phams.id',
                         'bien_the_san_phams.san_pham_id',
@@ -85,45 +87,34 @@ class TrangChuController extends Controller
                         'bien_the_mau_sacs.ten_mau_sac',
                         'bien_the_mau_sacs.ma_mau_sac',
                         'bien_the_kich_thuocs.kich_thuoc',
-                        DB::raw('(SELECT anh_bien_thes.duong_dan_anh
-                          FROM anh_bien_thes
-                          WHERE anh_bien_thes.bien_the_san_pham_id = bien_the_san_phams.id
-                          LIMIT 1) as duong_dan_anh'),
                         DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'),
-                        DB::raw('COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban) as gia_hien_tai') // Giá hiện tại
+                        DB::raw('CASE
+                            WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
+                            WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
+                            ELSE bien_the_san_phams.gia_ban
+                        END as gia_hien_tai')
                     )
                     ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                     ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
                     ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
                     ->get();
 
-                // Tạo mảng chứa màu sắc và 1 ảnh đại diện cho từng màu
                 $mauSacVaAnh = $bienThe->groupBy('ma_mau_sac')->map(function ($items) {
+                    $bienTheDauTien = $items->first();
+                    $anhBienTheDaiDien = $bienTheDauTien->anhBienThe->first() ? $bienTheDauTien->anhBienThe->first()->duong_dan_anh : null;
+
                     return [
-                        'ma_mau_sac' => $items->first()->ma_mau_sac,
-                        'ten_mau_sac' => $items->first()->ten_mau_sac,
-                        'hinh_anh' => $items->first()->duong_dan_anh // Lấy 1 ảnh đại diện từ kết quả truy vấn
+                        'ma_mau_sac' => $bienTheDauTien->ma_mau_sac,
+                        'ten_mau_sac' => $bienTheDauTien->ten_mau_sac,
+                        'hinh_anh' => $anhBienTheDaiDien
                     ];
                 })->values()->all();
 
-                // Gán biến thể và mảng màu + ảnh vào sản phẩm
                 $sanPham->bien_the = $bienThe;
                 $sanPham->mau_sac_va_anh = $mauSacVaAnh;
 
-                // Thêm thông tin chương trình ưu đãi nếu có
-                $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
-                    ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
-                        $giaTriUuDai = $uuDai->loai_uu_dai === 'phan_tram'
-                            ? $uuDai->gia_tri_uu_dai . '%'
-                            : number_format($uuDai->gia_tri_uu_dai, 0, ',', '.') . ' VND';
-
-                        return $uuDai->ten_uu_dai . " - Giảm: " . $giaTriUuDai;
-                    })->implode(', ')
-                    : null;
-
                 return $sanPham;
             });
-
 
 
         $boSuuTapUaChuongs = BoSuuTap::query()
@@ -151,7 +142,7 @@ class TrangChuController extends Controller
                     'san_phams.hang_moi',
                     'san_phams.gia_tot'
                 )
-                    ->where('san_phams.danh_muc_id', '!=', 'null')
+                    ->whereNotNull('san_phams.danh_muc_id')
                     ->where('san_phams.trang_thai', 1)
                     ->with(['bienTheSanPham' => function ($query) {
                         $query->select(
@@ -164,9 +155,13 @@ class TrangChuController extends Controller
                             DB::raw('(SELECT anh_bien_thes.duong_dan_anh
                           FROM anh_bien_thes
                           WHERE anh_bien_thes.bien_the_san_pham_id = bien_the_san_phams.id
-                          LIMIT 1) as duong_dan_anh'), // Chỉ lấy 1 ảnh
-                            DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'), // Giá chưa giảm là giá bán
-                            DB::raw('COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban) as gia_hien_tai') // Giá hiện tại
+                          LIMIT 1) as duong_dan_anh'),
+                            DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'),
+                            DB::raw('CASE
+                                WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
+                                WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
+                                ELSE bien_the_san_phams.gia_ban
+                            END as gia_hien_tai')
                         )
                             ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                             ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id');
@@ -190,10 +185,13 @@ class TrangChuController extends Controller
                 $highestPrice = null;
 
                 $mauSacVaAnh = $sanPham->bienTheSanPham->groupBy('ma_mau_sac')->map(function ($items) {
+                    $bienTheDauTien = $items->first();
+                    $anhBienTheDaiDien = $bienTheDauTien->anhBienThe->first() ? $bienTheDauTien->anhBienThe->first()->duong_dan_anh : null;
+
                     return [
-                        'ma_mau_sac' => $items->first()->ma_mau_sac,
-                        'ten_mau_sac' => $items->first()->ten_mau_sac,
-                        'hinh_anh' => $items->first()->duong_dan_anh // Lấy ảnh đầu tiên cho mỗi màu
+                        'ma_mau_sac' => $bienTheDauTien->ma_mau_sac,
+                        'ten_mau_sac' => $bienTheDauTien->ten_mau_sac,
+                        'hinh_anh' => $anhBienTheDaiDien
                     ];
                 })->values()->all();
 
@@ -215,6 +213,7 @@ class TrangChuController extends Controller
         }
 
 
+
         $dataDanhGiaKhachHang = DanhGia::query()
             ->with(['user', 'sanPham'])
             ->whereIn('so_sao_san_pham', [5])
@@ -223,6 +222,8 @@ class TrangChuController extends Controller
             ->unique('user.id')
             ->unique('sanPham.id')
             ->take(8);
+
+        $dataTinTucMoi = TinTuc::query()->orderByDesc('id')->limit('4')->get();
 
         return response()->json([
             'status' => true,
@@ -233,6 +234,7 @@ class TrangChuController extends Controller
             'bo_suu_tap_ua_chuongs' => $boSuuTapUaChuongs,
             'chuong_trinh_uu_dai' => $dataChuongTrinhUuDai,
             'danh_gia_khach_hang' => $dataDanhGiaKhachHang,
+            'tin_tuc_moi' => $dataTinTucMoi
         ], 200);
     }
 

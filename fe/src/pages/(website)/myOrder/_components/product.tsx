@@ -3,10 +3,23 @@ import { sanPham2 } from "@/assets/img";
 // Component hiển thị thông tin sản phẩm
 const ProductItem = ({ status, price }: any) => {
   return (
-    <div className="pb-6 flex justify-between border-b border-hrBlack">
+    <div className="py-6 flex justify-between border-b border-hrBlack">
       <div className="grid justify-between">
-        <div className="flex gap-5 items-center">
-          <img src={sanPham2} alt="Sản phẩm" className="w-12 h-12" />
+        <div className="flex gap-5 items-center ">
+          <div className=" rounded-md text-center">
+            {" "}
+            <img
+              src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729223981/ao-khoac-nu-SKN7004-DEN_1_jjbtoe.webp"
+              alt="Sản phẩm"
+              className="w-20 h-24 rounded-md mb-5"
+            />
+            <a
+              href="#"
+              className={`text-xs px-3 py-1 rounded-sm ${status === "Delivered" ? "delivered" : "inprocrass"}`}
+            >
+              {status === "Delivered" ? "Đã Giao" : "Đang Xử Lý"}
+            </a>
+          </div>
           <div className="px-1">
             <h3 className="font-bold my-1">Váy In Họa Tiết Moana Hồng</h3>
             <p
@@ -17,26 +30,18 @@ const ProductItem = ({ status, price }: any) => {
             <p>
               Size: <span>S</span>
             </p>
-            <p>Số lượng: 1</p>
+            <p className="mb-10">Số lượng: 1</p>{" "}
+            <span className="">
+              Sản phẩm của bạn đã{" "}
+              {status === "Delivered" ? "được giao" : "đang được xử lý"}
+            </span>
           </div>
-        </div>
-        <div className="mt-9 px-7">
-          <a
-            href="#"
-            className={`text-xs px-2 py-1 rounded-sm ${status === "Delivered" ? "delivered" : "inprocrass"}`}
-          >
-            {status === "Delivered" ? "Đã Giao" : "Đang Xử Lý"}
-          </a>
-          <span>
-            Sản phẩm của bạn đã{" "}
-            {status === "Delivered" ? "được giao" : "đang được xử lý"}
-          </span>
         </div>
       </div>
       <div
         className={`text-center py-8 font-bold ${status === "Delivered" ? "md:block hidden" : ""}`}
       >
-        <p>${price}</p>
+        <p>{price.toLocaleString("vi-VN")} đ</p>
       </div>
       <div className="hidden sm:block">
         <button className="hover:bg-blackL hover:text-white shadow font-medium shadow-black/50 text-sm py-3 px-6 mb-2 rounded-lg">
@@ -48,7 +53,7 @@ const ProductItem = ({ status, price }: any) => {
             status === "Delivered"
               ? "bg-[#FF7262] hover:bg-[#e9b2ac]"
               : "bg-[#FF7262] hover:bg-[#e9b2ac]"
-          } shadow-lg shadow-slate-600/50 text-white px-5 text-sm py-3 rounded-lg`}
+          } shadow-lg shadow-slate-600/50 text-white w-[145px] text-sm py-3 rounded-lg`}
         >
           {status === "Delivered" ? "Hủy Đơn Hàng" : "Hủy Đơn Hàng"}
         </button>
@@ -61,9 +66,9 @@ const ProductItem = ({ status, price }: any) => {
 const ProductList = () => {
   return (
     <div className="lg:col-span-9 col-span-8 lg:pl-9">
-      <ProductItem status="Delivered" price="80.00" />
-      <ProductItem status="In Progress" price="80.00" />
-      <ProductItem status="In Progress" price="80.00" />
+      <ProductItem status="Delivered" price={8000000} />
+      <ProductItem status="In Progress" price={8000000} />
+      <ProductItem status="In Progress" price={8000000} />
     </div>
   );
 };
