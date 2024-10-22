@@ -70,7 +70,7 @@ const Bestseller = ({ products }: any) => {
                           className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
                         />
                         {product?.hang_moi == 1 && (
-                          <span className="absolute top-3 right-3 bg-red-500 text-white px-3 py-[2px] rounded-lg font-bold">
+                          <span className="absolute top-3 left-4 bg-red-500 text-white px-3 py-[2px] rounded-md font-bold">
                             Mới
                           </span>
                         )}
@@ -78,11 +78,13 @@ const Bestseller = ({ products }: any) => {
                     </Link>
                     <View id={product?.id} />
                   </div>
-                
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
-                    <Link to={`/product-detail/${product.id}`}>{" "}  <h5 className=" text-base truncate w-60 font-medium hover:text-red-500">
-                      {product?.ten_san_pham}
-                    </h5>   </Link>
+                    <Link to={`/product-detail/${product.id}`}>
+                      {" "}
+                      <h5 className=" text-base truncate w-60 font-medium hover:text-red-500">
+                        {product?.ten_san_pham}
+                      </h5>{" "}
+                    </Link>
 
                     <p className="font-semibold text-lg">
                       {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
@@ -126,7 +128,6 @@ const Bestseller = ({ products }: any) => {
                       )}
                     </p>
                   </div>{" "}
-               
                 </div>
               </div>
             ))}
