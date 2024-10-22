@@ -58,7 +58,7 @@ Route::middleware([])
         Route::get('trangchu', [TrangChuController::class, 'index']);
         Route::get('thong-tin-web', [TrangChuController::class, 'thongTinWeb']);
         Route::get('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
-
+        Route::get('load-danh-muc', [TrangChuController::class, 'loadDanhMuc']);
 
 
         //Client Sản Phẩm
