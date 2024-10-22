@@ -129,6 +129,9 @@ Route::middleware([])
         Route::get('sanpham/yeuthich', [SanPhamController::class, 'danhSachSanPhamYeuThich'])->middleware('auth:sanctum');
         Route::post('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
 
+        //Tài khoản
+        Route::post('/cap-nhat-thong-tin', [\App\Http\Controllers\Client\Api\TaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
+
         // Đơn hàng
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
         Route::get('/don-hang', [DonHangClientController::class, 'donHangUser'])->middleware('auth:sanctum');
@@ -373,7 +376,6 @@ Route::middleware(['auth.sanctum'])
             Route::get('/so-luong-ton-kho-cua-san-pham', [ThongKeSanPham::class, 'soLuongTonKhoCuaSanPham']);
             Route::get('/so-luong-san-pham-sap-het-hang', [ThongKeSanPham::class, 'soLuongSanPhamSapHetHang']);
             Route::post('/san-pham-all-time', [ThongKeSanPham::class, 'thongKeSanPhamAllTime']);
-
 
             //Route Thống kê hạng thành viên
             Route::get('/khach-hang-theo-hang-thanh-vien', [ThongKeKhachHangController::class, 'thongKeKhachHangTheoHangThanhVien']);
