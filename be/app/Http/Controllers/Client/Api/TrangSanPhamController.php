@@ -209,17 +209,18 @@ class TrangSanPhamController extends Controller
 
             // Lọc theo màu sắc sản phẩm
             if (!empty($mauSacIds) && is_array($mauSacIds)) {
-                $query->whereHas('bienTheSanPham', function ($query) use ($mauSacIds) {
-                    $query->whereIn('bien_the_mau_sac_id', $mauSacIds);
+                $query->whereHas('bienTheSanPham.mauBienThe', function ($query) use ($mauSacIds) {
+                    $query->whereIn('id', $mauSacIds);  // Lọc theo màu sắc
                 });
             }
 
             // Lọc theo kích thước sản phẩm
             if (!empty($kichThuocIds) && is_array($kichThuocIds)) {
-                $query->whereHas('bienTheSanPham', function ($query) use ($kichThuocIds) {
-                    $query->whereIn('bien_the_kich_thuoc_id', $kichThuocIds);
+                $query->whereHas('bienTheSanPham.kichThuocBienThe', function ($query) use ($kichThuocIds) {
+                    $query->whereIn('id', $kichThuocIds);  // Lọc theo kích thước
                 });
             }
+
             // Lọc theo khoảng giá
             if (!is_null($giaDuoi) && !is_null($giaTren)) {
                 $query->whereHas('bienTheSanPham', function ($query) use ($giaDuoi, $giaTren) {
@@ -230,12 +231,10 @@ class TrangSanPhamController extends Controller
             // Lấy dữ liệu sản phẩm với thông tin biến thể sản phẩm và ảnh biến thể
             $sanPhams = $query->with([
                 'bienTheSanPham' => function ($query) {
-                    $query->with(['anhBienThe', 'mauBienThe', 'kichThuocBienThe']);  // Lấy ảnh và thông tin màu
+                    $query->with(['anhBienThe', 'mauBienThe', 'kichThuocBienThe']);  // Lấy ảnh và thông tin màu, kích thước
                 }
             ])
-                // ->select('gia_tri_uu_dai', 'luot_xem')
-                ->paginate(10);
-
+            ->paginate(10);
 
             DB::commit();  // Commit transaction
 
@@ -257,4 +256,5 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
 }
