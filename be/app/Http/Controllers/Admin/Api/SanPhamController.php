@@ -434,11 +434,12 @@ class SanPhamController extends Controller
         }
     }
 
-    public function sanPhamYeuThich($id)
+    public function sanPhamYeuThich(string $id)
     {
         try {
             if (Auth::guard('api')->check()) {
-                $user = User::findOrFail(Auth::guard('api')->id());
+                $userId = Auth::guard('api')->id();
+                $user = User::findOrFail($userId);
                 if (!$user->sanPhamYeuThich()->where('san_pham_id', $id)->exists()) {
                     $user->sanPhamYeuThich()->attach($id);
                     $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
