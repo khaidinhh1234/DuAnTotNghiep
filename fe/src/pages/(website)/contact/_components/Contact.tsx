@@ -24,11 +24,11 @@ const ContactPage = ({ user }: any) => {
                   </div>
                   <div className="flex items-center space-x-3 py-[2px]">
                     <i className="fa-light fa-envelope text-lg" />
-                    <span className="text-lg">kist@example.com</span>
+                    <span className="text-lg ">kist@example.com</span>
                   </div>
                   <div className="flex items-center space-x-3 py-[2px]" />
                   <i className="fa-regular fa-location-dot text-lg" />
-                  <span className="text-lg">
+                  <span className="text-lg mx-3">
                     3891 Ranchview Dr.Richardson, California 626339
                   </span>
                 </div>
@@ -40,6 +40,7 @@ const ContactPage = ({ user }: any) => {
                   </label>
                   <input
                     type="text"
+                    value={user?.user?.name}
                     id="name"
                     placeholder="Tên của bạn"
                     className="border border-stone-500 rounded-lg px-3 py-2"
@@ -70,8 +71,8 @@ const ContactPage = ({ user }: any) => {
                     defaultValue={""}
                   />
                 </div>
-                <button className="btn-black lg:text-lg lg:py-3 lg:px-7 py-2 px-5 font-serif rounded-lg">
-                  Gửi
+                <button className="btn-black lg:text-lg lg:py-2 lg:px-7 py-2 px-5 font-medium rounded-lg">
+                  <span> Gửi yêu cầu hỗ trợ</span>
                 </button>
               </form>
             </div>

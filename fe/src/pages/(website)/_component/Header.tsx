@@ -249,7 +249,7 @@ const Header = () => {
                       <ul>
                         <li className="mb-1">
                           <a
-                            href=""
+                            href="/myprofile"
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                           >
                             <img

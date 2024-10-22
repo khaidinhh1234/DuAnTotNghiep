@@ -1,7 +1,10 @@
-import React from "react";
 import { ellipse, hello } from "@/assets/img";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 import { Link } from "react-router-dom";
 const Slibar = () => {
+  const [user] = useLocalStorage("user" as any, {});
+  const member = user.user;
+  console.log(member);
   return (
     <div className="lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] lg:h-[524px] rounded-lg">
       {" "}
@@ -12,13 +15,14 @@ const Slibar = () => {
           className="rounded-full md:w-[51px] md:h-[51px]"
         />
         <div className="px-4 py-2">
-          <span className="" />
+          <span className=""></span>
           <img src={hello} className="px-[2px]" alt="" />
-          <h4 className="font-bold text-lg">Robert Fox</h4>
+          <h4 className="font-bold text-lg">
+            {member?.ho + " " + member?.ten}
+          </h4>
         </div>
         <div className="lg:hidden ">
           <button>
-            {" "}
             <i className=" fa-solid fa-layer-group pl-5 text-xl" />
           </button>
         </div>{" "}
@@ -31,7 +35,7 @@ const Slibar = () => {
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-user mr-3" />
-              Personal Information
+              Thông Tin Cá Nhân
             </Link>
           </li>
           <li>
@@ -40,7 +44,7 @@ const Slibar = () => {
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-box mr-3" />
-              My Orders
+              Đơn Hàng Của Tôi
             </Link>
           </li>
           <li>
@@ -49,7 +53,7 @@ const Slibar = () => {
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-heart mr-3" />
-              My Wishlist
+              Danh Sách Yêu Thích
             </Link>
           </li>
           <li>
@@ -58,7 +62,7 @@ const Slibar = () => {
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-location-dot mr-3" />
-              Manage Addresses
+              Quản Lý Địa Chỉ
             </Link>
           </li>
           <li>
@@ -67,7 +71,7 @@ const Slibar = () => {
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-light fa-credit-card mr-3" />
-              Saved Cards
+              Thẻ Đã Lưu
             </Link>
           </li>
           <li>
@@ -76,7 +80,7 @@ const Slibar = () => {
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-bell mr-3" />
-              Notifications
+              Thông Báo
             </Link>
           </li>
           <li>
@@ -85,7 +89,7 @@ const Slibar = () => {
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-gear mr-3" />
-              Settings
+              Cài Đặt
             </Link>
           </li>
         </ul>
