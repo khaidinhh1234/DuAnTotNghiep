@@ -32,7 +32,17 @@
             padding: 15px;
             text-align: center;
         }
+        .gif-credit {
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+        margin: 10px 0;
+    }
 
+    .gif-credit a {
+        color: #0073e6;
+        text-decoration: none;
+    }
         .header img {
             max-width: 100px;
         }
@@ -59,13 +69,14 @@
         }
 
         .content p {
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
 
-        .content p.reply {
-            text-align: center;
+            font-size: 14px;
+            /* margin-bottom: 15px; */
         }
+ 
+        .content p.reply {
+            color: black;
+        } 
 
         .content a {
             color: #fff;
@@ -98,6 +109,36 @@
             color: #0073e6;
             text-decoration: none;
         }
+        .contact-customers {
+            font-size: 15px;
+            border-top: 1px solid #ddd;
+            margin-bottom: 5px;
+            padding-left: 15px;
+        }
+        blockquote {
+            /* background-color: #3B0F13; */
+            color: black;
+            /* border-left: 4px solid #ed4b4d; */
+            margin: 5px auto;
+            padding: 10px 15px;
+            font-style: italic;
+            font-size: 14px;
+            width: 80%;
+            border-radius: 5px;
+        }
+       
+        .signature {
+            margin-top: 30px;
+align-items: center;        }
+        .loi{
+            border-top: 1px solid #ddd;
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+        .loll{
+            margin-top: -13px;
+        }
     </style>
 </head>
 
@@ -112,14 +153,31 @@
             <img src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1726412281/Screenshot_2024-09-15_215744_skrx3f.png"
                 alt="Animation">
         </div>
-
-        <div class="content">
-            <h2>Xin chào, {{ $name }}</h2>
-            <p class="reply">Chúng tôi đã nhận được liên hệ của bạn từ Website Glow Clothing, Chúng tôi sẽ trả lời thư
-                của bạn sớm
-                nhất có thể!</p>
-            <div class="contact-customers"><strong>Nội dung: {{ $noidung }}</strong> </div>
+        <div class="gif-credit">
+            <p><a href="" class="text-underline font-size-sm" target="_blank">Confirmation email</a> by <a href=""
+                    class="text-underline font-size-sm" target="_blank">Creative Stall</a></p>
         </div>
+        <div class="content">
+            <h2>Xin chào:{{ $name }}</h2>
+            <p class="reply">Cảm ơn bạn đã liên hệ với chúng tôi. Chúng tôi sẽ trả lời email của bạn trong thời gian sớm nhất.</p>
+            <p class="reply">Thông tin liên hệ của bạn: {{ $email }}</p>
+            <!-- <div class="contact-customers"><strong>Nội dung:</strong>{{ $noidung }}</div> -->
+        
+        </div>
+        <div>
+                        <div class="contact-customers"><strong>Nội dung:</strong></div>
+
+            <blockquote>
+                {{ $noi_dung}}
+            </blockquote>
+            <div class="loi">
+                <p class="signature">Trân trọng,</p>
+                <p class="loll">Đội ngũ hỗ trợ khách hàng</p>
+    
+            </div>
+        </div>
+    
+      
         <div class="footer">
             <p>Bằng cách tương tác với email này, bạn đồng ý với <a href="#">Điều Khoản & Điều Kiện</a> và <a
                     href="#">Chính Sách Bảo Mật</a> của chúng tôi.</p>
