@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LienHe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TrangLienHeController extends Controller
 {
@@ -14,6 +15,7 @@ class TrangLienHeController extends Controller
     public function lienHe(Request $request)
     {
         try {
+            DB::beginTransaction();
             $validateLienHe = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
@@ -38,7 +40,7 @@ class TrangLienHeController extends Controller
             $lienhe = LienHe::create($validateLienHe);
 
             event(new SendMail( $lienhe->email, $lienhe->name, 'contact'));
-
+            DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -46,7 +48,7 @@ class TrangLienHeController extends Controller
                 'data' => $lienhe
             ]);
         } catch (\Exception $exception) {
-
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,

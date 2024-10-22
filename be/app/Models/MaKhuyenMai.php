@@ -17,6 +17,7 @@ class MaKhuyenMai extends Model
         'giam_gia',
         'loai',
         'so_luong',
+        'so_luong_da_su_dung',
         'ngay_bat_dau',
         'ngay_ket_thuc',
         'chi_tieu_toi_thieu',

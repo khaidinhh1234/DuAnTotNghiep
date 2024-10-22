@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(SanPham::class)->constrained();
 
-            $table->primary( 'user_id', 'san_pham_id');
-            $table->timestamps();
+            $table->primary( ['user_id', 'san_pham_id']);
         });
     }
 

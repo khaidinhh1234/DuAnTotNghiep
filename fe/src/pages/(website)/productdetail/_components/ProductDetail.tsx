@@ -1,12 +1,17 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/client";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, FreeMode, Navigation, Pagination, Thumbs } from "swiper/modules";
+import {
+  Autoplay,
+  FreeMode,
+  Navigation,
+  Pagination,
+  Thumbs,
+} from "swiper/modules";
 import { Button, Image, Rate } from "antd";
-import { message } from 'antd';
+import { message } from "antd";
 import SizeGuideModal from "./SizeGuide";
 import { EyeOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
@@ -28,7 +33,7 @@ interface ProductData {
     ten_danh_muc: string;
   };
   danh_gias: Array<{
-    id: number
+    id: number;
     so_sao_san_pham: number;
     chat_luong_san_pham: string;
     user: {
@@ -93,11 +98,16 @@ const fetchProduct = async (id: string) => {
 };
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
 };
 
 const fetchRelatedProducts = async (productId: number) => {
-  const response = await instance.get(`/danh-sach-san-pham-cung-loai/${productId}`);
+  const response = await instance.get(
+    `/danh-sach-san-pham-cung-loai/${productId}`
+  );
   return response.data;
 };
 const ProductDetail: React.FC = () => {
@@ -120,10 +130,11 @@ const ProductDetail: React.FC = () => {
   // const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('accessToken');
+    const storedToken = localStorage.getItem("accessToken");
     if (storedToken) {
       setToken(storedToken);
-      instance.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+      instance.defaults.headers.common["Authorization"] =
+        `Bearer ${storedToken}`;
     }
   }, []);
   const queryClient = useQueryClient();
@@ -131,55 +142,66 @@ const ProductDetail: React.FC = () => {
   const { data: product,  } = useQuery<ProductData>({
     queryKey: ['product', id],
     queryFn: () => fetchProduct(id!),
-
-
   });
 
   const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
-    queryKey: ['relatedProducts', id],
+    queryKey: ["relatedProducts", id],
     queryFn: () => fetchRelatedProducts(Number(id)),
     enabled: !!product,
   });
 
   const likeMutation = useMutation({
-    mutationFn: ({ reviewId, isLiked }: { reviewId: number; isLiked: boolean }) => {
+    mutationFn: ({
+      reviewId,
+      isLiked,
+    }: {
+      reviewId: number;
+      isLiked: boolean;
+    }) => {
       if (!token) {
-        throw new Error('Bạn cần đăng nhập để thực hiện hành động này');
+        throw new Error("Bạn cần đăng nhập để thực hiện hành động này");
       }
       return isLiked
         ? instance.delete(`/danh-gia/${reviewId}/unlike`)
         : instance.post(`/danh-gia/${reviewId}/like`);
     },
     onSuccess: (_: any, variables: { reviewId: number; isLiked: boolean }) => {
-      queryClient.setQueryData<ProductData>(['product', id], (oldProduct) => {
+      queryClient.setQueryData<ProductData>(["product", id], (oldProduct) => {
         if (!oldProduct) return oldProduct;
         return {
           ...oldProduct,
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                ...review,
-                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                danh_gia_huu_ich_count: variables.isLiked
-                  ? review.danh_gia_huu_ich_count - 1
-                  : review.danh_gia_huu_ich_count + 1,
-              }
+                  ...review,
+                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                  danh_gia_huu_ich_count: variables.isLiked
+                    ? review.danh_gia_huu_ich_count - 1
+                    : review.danh_gia_huu_ich_count + 1,
+                }
               : review
           ),
         };
       });
     },
     onError: (error) => {
-      message.error(error.message || 'Có lỗi xảy ra khi thực hiện hành động');
-    }
+      message.error(error.message || "Có lỗi xảy ra khi thực hiện hành động");
+    },
   });
 
   const [quantity, setQuantity] = useState<number>(product?.so_luong || 1);
 
   // tăng số lượng
   const { mutate: increaseQuantity } = useMutation({
-    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`,
+    mutationFn: async ({
+      productId,
+      currentQuantity,
+    }: {
+      productId: string;
+      currentQuantity: number;
+    }) => {
+      await instanceClient.put(
+        `/gio-hang/tang-so-luong/${productId}`,
         { so_luong: currentQuantity + 1 },
         {
           headers: {
@@ -193,14 +215,21 @@ const ProductDetail: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Có lỗi xảy ra khi tăng số lượng sản phẩm.');
+      toast.error(error.message || "Có lỗi xảy ra khi tăng số lượng sản phẩm.");
     },
   });
 
   // giảm số lượng
   const { mutate: decreaseQuantity } = useMutation({
-    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`,
+    mutationFn: async ({
+      productId,
+      currentQuantity,
+    }: {
+      productId: string;
+      currentQuantity: number;
+    }) => {
+      await instanceClient.put(
+        `/gio-hang/giam-so-luong/${productId}`,
         { so_luong: currentQuantity - 1 },
         {
           headers: {
@@ -214,20 +243,20 @@ const ProductDetail: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Có lỗi xảy ra khi giảm số lượng sản phẩm.');
+      toast.error(error.message || "Có lỗi xảy ra khi giảm số lượng sản phẩm.");
     },
   });
 
-
-  const handleReviewLike = useCallback((reviewId: number, isLiked: boolean) => {
-    if (!token) {
-      toast.warning('Bạn cần đăng nhập để thực hiện hành động này');
-      return;
-    }
-    likeMutation.mutate({ reviewId, isLiked });
-  }, [likeMutation, token]);
-
-
+  const handleReviewLike = useCallback(
+    (reviewId: number, isLiked: boolean) => {
+      if (!token) {
+        toast.warning("Bạn cần đăng nhập để thực hiện hành động này");
+        return;
+      }
+      likeMutation.mutate({ reviewId, isLiked });
+    },
+    [likeMutation, token]
+  );
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -235,33 +264,39 @@ const ProductDetail: React.FC = () => {
   const selectedVariant = useMemo(() => {
     if (!product || !selectedColor || !selectedSize) return null;
     return product.bien_the_san_pham.find(
-      v => v.mau_bien_the.ma_mau_sac === selectedColor && v.kich_thuoc_bien_the.kich_thuoc === selectedSize
+      (v) =>
+        v.mau_bien_the.ma_mau_sac === selectedColor &&
+        v.kich_thuoc_bien_the.kich_thuoc === selectedSize
     );
   }, [product, selectedColor, selectedSize]);
 
   const averageRating = useMemo(() => {
     if (!product || product.danh_gias.length === 0) return 0;
-    const totalStars = product.danh_gias.reduce((sum, review) => sum + review.so_sao_san_pham, 0);
+    const totalStars = product.danh_gias.reduce(
+      (sum, review) => sum + review.so_sao_san_pham,
+      0
+    );
     return totalStars / product.danh_gias.length;
   }, [product]);
 
   const displayPrice = useMemo(() => {
     if (!selectedVariant) return null;
-    const { gia_ban, gia_khuyen_mai, gia_khuyen_mai_tam_thoi } = selectedVariant;
+    const { gia_ban, gia_khuyen_mai, gia_khuyen_mai_tam_thoi } =
+      selectedVariant;
     if (gia_khuyen_mai_tam_thoi > 0) {
       return {
         currentPrice: formatCurrency(gia_khuyen_mai_tam_thoi),
-        originalPrice: formatCurrency(gia_ban)
+        originalPrice: formatCurrency(gia_ban),
       };
     } else if (gia_khuyen_mai > 0) {
       return {
         currentPrice: formatCurrency(gia_khuyen_mai),
-        originalPrice: formatCurrency(gia_ban)
+        originalPrice: formatCurrency(gia_ban),
       };
     } else {
       return {
         currentPrice: formatCurrency(gia_ban),
-        originalPrice: null
+        originalPrice: null,
       };
     }
   }, [selectedVariant]);
@@ -271,14 +306,18 @@ const ProductDetail: React.FC = () => {
       const defaultVariant = product.bien_the_san_pham[0];
       setSelectedColor(defaultVariant.mau_bien_the.ma_mau_sac);
       setSelectedSize(defaultVariant.kich_thuoc_bien_the.kich_thuoc);
-      setCurrentImages(defaultVariant.anh_bien_the.map(img => img.duong_dan_anh));
+      setCurrentImages(
+        defaultVariant.anh_bien_the.map((img) => img.duong_dan_anh)
+      );
     }
   }, [product]);
 
   const handleColorClick = (color: string) => {
     setSelectedColor(color);
     updateImages(color, selectedSize);
-    const selectedVariant = product?.bien_the_san_pham.find(v => v.mau_bien_the.ma_mau_sac === color);
+    const selectedVariant = product?.bien_the_san_pham.find(
+      (v) => v.mau_bien_the.ma_mau_sac === color
+    );
     setSelectedColorDisplay(selectedVariant?.mau_bien_the.ten_mau_sac || null);
   };
 
@@ -286,15 +325,17 @@ const ProductDetail: React.FC = () => {
     setSelectedSize(size);
     updateImages(selectedColor, size);
     setSelectedSizeDisplay(size);
-  }
+  };
 
   const updateImages = (color: string | null, size: string | null) => {
     if (color && size && product) {
       const variant = product.bien_the_san_pham.find(
-        v => v.mau_bien_the.ma_mau_sac === color && v.kich_thuoc_bien_the.kich_thuoc === size
+        (v) =>
+          v.mau_bien_the.ma_mau_sac === color &&
+          v.kich_thuoc_bien_the.kich_thuoc === size
       );
       if (variant) {
-        setCurrentImages(variant.anh_bien_the.map(img => img.duong_dan_anh));
+        setCurrentImages(variant.anh_bien_the.map((img) => img.duong_dan_anh));
       }
     }
   };
@@ -308,12 +349,13 @@ const ProductDetail: React.FC = () => {
   };
   const handleCopy = () => {
     if (product?.ma_san_pham) {
-      navigator.clipboard.writeText(product.ma_san_pham)
+      navigator.clipboard
+        .writeText(product.ma_san_pham)
         .then(() => {
-          message.success('Đã sao chép vào clipboard!');
+          message.success("Đã sao chép vào clipboard!");
         })
-        .catch(err => {
-          message.error('Không thể sao chép: ' + err);
+        .catch((err) => {
+          message.error("Không thể sao chép: " + err);
         });
     }
   };
@@ -345,12 +387,13 @@ const ProductDetail: React.FC = () => {
               <div className="lg:col-span-6 col-span-12 mb-6">
                 {/* <div className="bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60"> */}
                 <div className="mt-8 xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl">
-
                   <Swiper
-                    style={{
-                      "--swiper-navigation-color": "#000000",
-                      "--swiper-pagination-color": "#000000",
-                    } as React.CSSProperties}
+                    style={
+                      {
+                        "--swiper-navigation-color": "#000000",
+                        "--swiper-pagination-color": "#000000",
+                      } as React.CSSProperties
+                    }
                     centeredSlides={true}
                     autoplay={{
                       delay: 2500,
@@ -361,7 +404,13 @@ const ProductDetail: React.FC = () => {
                     }}
                     navigation={true}
                     thumbs={thumbsSwiper ? { swiper: thumbsSwiper } : undefined}
-                    modules={[Autoplay, Pagination, Navigation, Thumbs, FreeMode]}
+                    modules={[
+                      Autoplay,
+                      Pagination,
+                      Navigation,
+                      Thumbs,
+                      FreeMode,
+                    ]}
                     className="mySwiper2 w-[500px] swiper-with-hover"
                     loop={true}
                     spaceBetween={10}
@@ -373,7 +422,7 @@ const ProductDetail: React.FC = () => {
                           alt=""
                           onClick={() => handlePreview(image)}
                           style={{
-                            top: '300px',
+                            top: "300px",
                             cursor: "pointer",
                             width: '665px',
                             height: '600px',
@@ -419,14 +468,17 @@ const ProductDetail: React.FC = () => {
               <div className="lg:col-span-6 col-span-12 px-4 w-[100%]">
                 <div className="product_detail_name">
                   <div className="flex justify-between">
-                    <h3 className="font-bold text-2xl">{product?.ten_san_pham}</h3>
+                    <h3 className="font-bold text-2xl">
+                      {product?.ten_san_pham}
+                    </h3>
                     {selectedVariant && (
                       <div className="mt-2">
                         <a
-                          className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
-                            ? "bg-[#3CD139]/10 text-[#3CD139]"
-                            : "bg-red-500 text-white"
-                            }`}
+                          className={` text-sm px-2 py-1 rounded-sm ${
+                            selectedVariant?.so_luong_bien_the > 0
+                              ? "bg-[#3CD139]/10 text-[#3CD139]"
+                              : "bg-red-500 text-white"
+                          }`}
                         >
                           {selectedVariant?.so_luong_bien_the > 0
                             ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -436,19 +488,28 @@ const ProductDetail: React.FC = () => {
                     )}
                   </div>
                   <div className="flex items-center">
-                    <h4 className="mb-3 text-lg font-normal">Mã: {product?.ma_san_pham}</h4>
+                    <h4 className="mb-3 text-lg font-normal">
+                      Mã: {product?.ma_san_pham}
+                    </h4>
                     <button
                       onClick={handleCopy}
                       className="py-2 px-3 rounded flex items-center "
                     >
-                      <i className="fa-regular fa-copy" style={{ fontSize: '1rem', marginBottom: '14px' }}></i> {/* Điều chỉnh kích thước và khoảng cách */}
+                      <i
+                        className="fa-regular fa-copy"
+                        style={{ fontSize: "1rem", marginBottom: "14px" }}
+                      ></i>{" "}
+                      {/* Điều chỉnh kích thước và khoảng cách */}
                     </button>
 
 
                     <div className="stars_reviews flex mt-1 ">
                       <Rate disabled value={averageRating} allowHalf />
                       <span className="px-2 text-[#A4A1AA] mt-1">
-                        {averageRating.toFixed(1)} <span className="px-[2px]">({product?.danh_gias.length})</span>
+                        {averageRating.toFixed(1)}{" "}
+                        <span className="px-[2px]">
+                          ({product?.danh_gias.length})
+                        </span>
                       </span>
                     </div>
                   </div>
@@ -478,10 +539,21 @@ const ProductDetail: React.FC = () => {
 
                 <div className="mb-4">
                   <h3 className="text-gray-900 mb-2 font-bold text-lg">
-                    Màu sắc: {selectedColorDisplay ? <span className="font-normal">{selectedColorDisplay}</span> : null}
+                    Màu sắc:{" "}
+                    {selectedColorDisplay ? (
+                      <span className="font-normal">
+                        {selectedColorDisplay}
+                      </span>
+                    ) : null}
                   </h3>
                   <div className="flex space-x-2">
-                    {Array.from(new Set(product.bien_the_san_pham.map(v => v.mau_bien_the.ma_mau_sac))).map((color, index) => (
+                    {Array.from(
+                      new Set(
+                        product.bien_the_san_pham.map(
+                          (v) => v.mau_bien_the.ma_mau_sac
+                        )
+                      )
+                    ).map((color, index) => (
                       <button
                         key={index}
                         className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? "border-black" : ""}`}
@@ -495,20 +567,35 @@ const ProductDetail: React.FC = () => {
                 <div className="items-center mt-4 mb-3">
                   <div className="flex justify-between items-center">
                     <h3 className="mr-4 font-bold text-lg">
-                      Kích thước: {selectedSizeDisplay ? <span className="font-normal">{selectedSizeDisplay}</span> : null}
+                      Kích thước:{" "}
+                      {selectedSizeDisplay ? (
+                        <span className="font-normal">
+                          {selectedSizeDisplay}
+                        </span>
+                      ) : null}
                     </h3>
                     <p
                       onClick={toggleModal}
                       className="flex items-center text-sky-600 hover:text-sky-500 cursor-pointer"
                     >
-                      <i className="fa-solid fa-pen-ruler mr-2"></i>Bảng kích thước
+                      <i className="fa-solid fa-pen-ruler mr-2"></i>Bảng kích
+                      thước
                     </p>
 
-                    <SizeGuideModal isOpen={isModalOpen} onClose={toggleModal} />
+                    <SizeGuideModal
+                      isOpen={isModalOpen}
+                      onClose={toggleModal}
+                    />
                   </div>
 
                   <div className="flex mt-3">
-                    {Array.from(new Set(product.bien_the_san_pham.map(v => v.kich_thuoc_bien_the.kich_thuoc))).map((size, index) => (
+                    {Array.from(
+                      new Set(
+                        product.bien_the_san_pham.map(
+                          (v) => v.kich_thuoc_bien_the.kich_thuoc
+                        )
+                      )
+                    ).map((size, index) => (
                       <button
                         key={index}
                         onClick={() => handleSizeClick(size)}
@@ -520,13 +607,15 @@ const ProductDetail: React.FC = () => {
                   </div>
                 </div>
 
-
                 <div className="mt-12 flex gap-5">
                   <div className="border rounded-lg border-black xl:w-32 xl:h-14 ld:w-24 lg:h-10 md:w-32 md:h-14 w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                     <button
                       onClick={() => {
                         if (quantity > 1) {
-                          decreaseQuantity({ productId: product.id.toString(), currentQuantity: quantity });
+                          decreaseQuantity({
+                            productId: product.id.toString(),
+                            currentQuantity: quantity,
+                          });
                         }
                       }}
                       className="py-2 pr-2"
@@ -543,7 +632,12 @@ const ProductDetail: React.FC = () => {
                     />
 
                     <button
-                      onClick={() => increaseQuantity({ productId: product.id.toString(), currentQuantity: quantity })}
+                      onClick={() =>
+                        increaseQuantity({
+                          productId: product.id.toString(),
+                          currentQuantity: quantity,
+                        })
+                      }
                       className="py-2 pl-2"
                     >
                       <i className="fa-solid fa-plus" />
@@ -555,8 +649,9 @@ const ProductDetail: React.FC = () => {
                   </button>
                   <button
                     onClick={handleClickHeart}
-                    className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${isHeart ? "bg-red-600" : ""
-                      }`}
+                    className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${
+                      isHeart ? "bg-red-600" : ""
+                    }`}
                   >
                     <i
                       className={`fa-regular fa-heart text-2xl ${isHeart ? "text-white" : "text-red-600"}`}
@@ -567,7 +662,6 @@ const ProductDetail: React.FC = () => {
             </div>
           </div>
         </section>
-
       )}
       <div className="max-w-6xl mx-auto p-8">
         <div className="flex space-x-8 border-b pb-2 mb-4">
@@ -587,14 +681,16 @@ const ProductDetail: React.FC = () => {
             className={`font-medium ${activeTab === "reviews" ? "text-black border-b-2 border-black pb-2" : "text-gray-700"}`}
             onClick={() => setActiveTab("reviews")}
           >
-            Đánh giá          </button>
+            Đánh giá{" "}
+          </button>
         </div>
 
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${isDescriptionExpanded ? "" : "line-clamp-3"
-                }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${
+                isDescriptionExpanded ? "" : "line-clamp-3"
+              }`}
               dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
             />
             <div className="flex justify-center">
@@ -609,7 +705,7 @@ const ProductDetail: React.FC = () => {
             <h3 className="text-gray-900 mb-2 font-bold text-lg">Màu</h3>
             <div className="flex flex-wrap gap-2">
               {product?.bien_the_san_pham
-                .map(variant => variant.mau_bien_the.ten_mau_sac)
+                .map((variant) => variant.mau_bien_the.ten_mau_sac)
                 .filter((color, index, self) => self.indexOf(color) === index)
                 .map((color, index) => (
                   <span key={index} className="px-2 py-1 bg-gray-100 rounded">
@@ -620,7 +716,7 @@ const ProductDetail: React.FC = () => {
             <h3 className="mt-4 mb-2 font-bold text-lg">Kíchthước</h3>
             <div className="flex flex-wrap gap-2">
               {product?.bien_the_san_pham
-                .map(variant => variant.kich_thuoc_bien_the.kich_thuoc)
+                .map((variant) => variant.kich_thuoc_bien_the.kich_thuoc)
                 .filter((size, index, self) => self.indexOf(size) === index)
                 .map((size, index) => (
                   <span key={index} className="px-2 py-1 bg-gray-100 rounded">
@@ -631,19 +727,26 @@ const ProductDetail: React.FC = () => {
           </div>
         )}
 
-
         {activeTab === "reviews" && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">Đánh giá của khách hàng</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Đánh giá của khách hàng
+            </h2>
 
             {activeTab === "reviews" && product && (
               <div className="space-y-6">
                 {product.danh_gias.map((review) => (
-                  <div key={review.id} className="border p-4 rounded-lg shadow-sm">
+                  <div
+                    key={review.id}
+                    className="border p-4 rounded-lg shadow-sm"
+                  >
                     <div className="flex items-center space-x-4 mb-3">
                       <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
                         <img
-                          src={review.user.anh_nguoi_dung || "https://i.pravatar.cc/100"}
+                          src={
+                            review.user.anh_nguoi_dung ||
+                            "https://i.pravatar.cc/100"
+                          }
                           alt={`${review.user.ho} ${review.user.ten}`}
                           className="w-full h-full object-cover"
                         />
@@ -659,62 +762,83 @@ const ProductDetail: React.FC = () => {
                             {new Date(review.created_at).toLocaleString()}
                           </span>
                           <div className="flex-1 text-xs text-gray-600 border-l border-gray-300 pl-1 ml-1">
-                            <span className="">Phân loại hàng:</span> {review.bien_the_san_pham.mau_bien_the.ten_mau_sac},{review.bien_the_san_pham.kich_thuoc_bien_the.kich_thuoc}
+                            <span className="">Phân loại hàng:</span>{" "}
+                            {review.bien_the_san_pham.mau_bien_the.ten_mau_sac},
+                            {
+                              review.bien_the_san_pham.kich_thuoc_bien_the
+                                .kich_thuoc
+                            }
                           </div>
                         </div>
-
                       </div>
-
                     </div>
                     <p className="text-gray-600 text-sm mb-3">
-                      <span>Đúng với mô tả:</span> <span className="font-bold">{review.mo_ta}</span>
+                      <span>Đúng với mô tả:</span>{" "}
+                      <span className="font-bold">{review.mo_ta}</span>
                     </p>
 
-
                     <p className="text-gray-600  text-sm mb-2">
-                      <span className="font-bold"> {review.chat_luong_san_pham}</span>
+                      <span className="font-bold">
+                        {" "}
+                        {review.chat_luong_san_pham}
+                      </span>
                     </p>
 
                     {review.anh_danh_gia && (
                       <div className="flex flex-wrap gap-2">
-                        {review.anh_danh_gia.split(',').map((img: string, index: number) => (
-                          <div key={index} className="w-[72px] h-[72px] overflow-hidden rounded-lg">
-                            <img
-                              src={img.trim()}
-                              alt={`Review Image ${index + 1}`}
-                              className="w-full h-full object-cover"
-                              onClick={() => review.anh_danh_gia && handlePreview(review.anh_danh_gia)}
-                            />
-                          </div>
-                        ))}
+                        {review.anh_danh_gia
+                          .split(",")
+                          .map((img: string, index: number) => (
+                            <div
+                              key={index}
+                              className="w-[72px] h-[72px] overflow-hidden rounded-lg"
+                            >
+                              <img
+                                src={img.trim()}
+                                alt={`Review Image ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                onClick={() =>
+                                  review.anh_danh_gia &&
+                                  handlePreview(review.anh_danh_gia)
+                                }
+                              />
+                            </div>
+                          ))}
                       </div>
                     )}
                     {review.phan_hoi && (
                       <div className="mt-2 pl-4 border-l-2 border-gray-300">
-                        <p className="text-gray-600 italic text-sm">Phản hồi: {review.phan_hoi}</p>
+                        <p className="text-gray-600 italic text-sm">
+                          Phản hồi: {review.phan_hoi}
+                        </p>
                       </div>
                     )}
                     <div className="mt-2 flex items-center space-x-4">
-
                       <button
-                        className={`like-button flex items-center space-x-2 ${likeMutation.isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        onClick={() => handleReviewLike(review.id, review.trang_thai_danh_gia_nguoi_dung)}
+                        className={`like-button flex items-center space-x-2 ${likeMutation.isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() =>
+                          handleReviewLike(
+                            review.id,
+                            review.trang_thai_danh_gia_nguoi_dung
+                          )
+                        }
                         disabled={likeMutation.isLoading}
                       >
                        <i className={review.trang_thai_danh_gia_nguoi_dung ? "fa-solid fa-thumbs-up text-blue-500" : "fa-regular fa-thumbs-up text-gray-500"}></i>
 
                         <span>
                           {likeMutation.isLoading ? (
-                            'Đang xử lý...'
+                            "Đang xử lý..."
                           ) : (
                             <>
-                              {review.trang_thai_danh_gia_nguoi_dung ? 'Đã thích' : 'Hữu ích'} ({review.danh_gia_huu_ich_count})
+                              {review.trang_thai_danh_gia_nguoi_dung
+                                ? "Đã thích"
+                                : "Hữu ích"}{" "}
+                              ({review.danh_gia_huu_ich_count})
                             </>
                           )}
                         </span>
                       </button>
-
-
                     </div>
                   </div>
                 ))}
@@ -829,15 +953,13 @@ const ProductDetail: React.FC = () => {
       )}
 
       <section>
-
         <div className="container">
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 mt-12 mb-24"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 mt-12 mb-24">
             <div className="mx-auto">
               <i className="fa-regular fa-box text-3xl"></i>
               <h3 className="font-bold text-xl mt-3 mb-2">
-                Miễn phí giao hàng</h3>
+                Miễn phí giao hàng
+              </h3>
               <p>Với đơn hàng trên 599.000đ.</p>
             </div>
             <div className="mx-auto">
@@ -852,7 +974,9 @@ const ProductDetail: React.FC = () => {
             </div>
             <div className="mx-auto">
               <i className="fa-light fa-credit-card text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">Thanh toán linh hoạt</h3>
+              <h3 className="font-bold text-xl mt-3 mb-2">
+                Thanh toán linh hoạt
+              </h3>
               <p>Thanh toán bằng nhiều thẻ tín dụng</p>
             </div>
           </div>
@@ -861,14 +985,14 @@ const ProductDetail: React.FC = () => {
 
       {previewImage && (
         <Image
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           preview={{
             visible: previewOpen,
             src: previewImage,
             onVisibleChange: (visible) => {
               setPreviewOpen(visible);
               if (!visible) {
-                setPreviewImage('');
+                setPreviewImage("");
               }
             },
           }}

@@ -7,6 +7,7 @@ use App\Models\BienTheSanPham;
 use App\Models\BoSuuTap;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\DanhGia;
+use App\Models\DanhMuc;
 use App\Models\DonHang;
 use App\Models\SanPham;
 use App\Models\ThongTinWeb;
@@ -38,7 +39,12 @@ class TrangChuController extends Controller
 
         $result = ['banner' => ['banner' => $bannersArray]];
 
-        $dataChuongTrinhUuDai = ChuongTrinhUuDai::query()->where('ngay_hien_thi', '>=', Carbon::now())->orderBy('ngay_hien_thi')->orderByDesc('id')->get();
+        $dataChuongTrinhUuDai = ChuongTrinhUuDai::query()
+            ->where('ngay_hien_thi', '<=', Carbon::now())
+            ->where('ngay_ket_thuc', '>=', Carbon::now())
+            ->orderBy('ngay_hien_thi')
+            ->orderByDesc('id')
+            ->get();
 
         $dataDanhSachSanPhamMoi = SanPham::query()
             ->select(
@@ -266,5 +272,27 @@ class TrangChuController extends Controller
             ->get();
 
         return response()->json($goiY);
+    }
+
+    public function loadDanhMuc (){
+        try {
+            $danhMucs = DanhMuc::whereNull('cha_id')->with('children.children')->get();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $danhMucs,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 }

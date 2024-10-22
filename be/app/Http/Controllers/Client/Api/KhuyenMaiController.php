@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class KhuyenMaiController extends Controller
 {
@@ -41,7 +42,10 @@ class KhuyenMaiController extends Controller
     {
         try {
             $chuongTrinh = ChuongTrinhUuDai::query()
-                ->where('ngay_hien_thi', Carbon::now('Asia/Ho_Chi_Minh'))
+                ->where('ngay_hien_thi', '<=', Carbon::now())
+                ->where('ngay_ket_thuc', '>=', Carbon::now())
+                ->orderBy('ngay_hien_thi')
+                ->orderByDesc('id')
                 ->get();
 
             if ($chuongTrinh->isEmpty()) {
@@ -64,19 +68,45 @@ class KhuyenMaiController extends Controller
     {
         try {
             $chuongTrinh = ChuongTrinhUuDai::query()
-                ->with(['sanPhams.bienTheSanPham'])
-                ->where('slug', $slug)
-                ->where('ngay_hien_thi', Carbon::now('Asia/Ho_Chi_Minh'))
-                ->firstOrFail();
+                ->with([
+                    'sanPhams.bienTheSanPham',
+                    'sanPhams.bienTheSanPham.mauBienThe',
+                    'sanPhams.bienTheSanPham.kichThuocBienThe',
+                    'sanPhams.bienTheSanPham.anhBienThe',
+                ])
+                ->where('duong_dan', $slug)
+                ->first();
+
+            if (!$chuongTrinh) {
+                return response()->json(['status' => false, 'message' => 'Chương trình ưu đãi không tồn tại.'], 404);
+            }
+
+            if (Carbon::now()->lt($chuongTrinh->ngay_bat_dau)) {
+                return response()->json([
+                    'status' => true,
+                    'data' => [
+                        'chuong_trinh' => $chuongTrinh,
+                        'trang_thai' => 'Chưa bắt đầu chương trình',
+                    ]
+                ]);
+            }
+
+            if ($chuongTrinh->nagy_bat_dau <= Carbon::now() && $chuongTrinh->ngay_ket_thuc >= Carbon::now()) {
+                return response()->json([
+                    'status' => true,
+                    'data' => $chuongTrinh,
+                ]);
+            }
 
             return response()->json([
-                'status' => true,
-                'data' => $chuongTrinh
-            ]);
+                'status' => false,
+                'message' => 'Chương trình ưu đãi đã kết thúc.',
+            ], 400);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy chi tiết chương trình ưu đãi.', 'error' => $e->getMessage()], 400);
         }
     }
+
 
     public function layMaKhuyenMaiTheoHangThanhVien()
     {
@@ -93,8 +123,9 @@ class KhuyenMaiController extends Controller
                 $query->where('hang_thanh_vien_id', $hangThanhVien->id);
             })
                 ->where('trang_thai', 1)
-                ->where('ngay_bat_dau', '<=', now())
+                ->where('ngay_bat_dau_suu_tam', '<=', now())
                 ->where('ngay_ket_thuc', '>=', now())
+                ->where('so_luong_da_su_dung', '<', 'so_luong')
                 ->get();
 
             foreach ($maKhuyenMais as $maKhuyenMai) {
@@ -127,6 +158,10 @@ class KhuyenMaiController extends Controller
                 return response()->json(['status' => false, 'message' => 'Bạn không thuộc hạng thành viên áp dụng cho mã khuyến mãi này.'], 403);
             }
 
+            if ($maKhuyenMai->so_luong_da_su_dung >= $maKhuyenMai->so_luong) {
+                return response()->json(['status' => false, 'message' => 'Mã khuyến mãi đã hết.'], 404);
+            }
+
             DB::beginTransaction();
 
             $maKhuyenMai->increment('so_luong_da_su_dung');
@@ -144,4 +179,45 @@ class KhuyenMaiController extends Controller
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi xử lý mã khuyến mãi.', 'error' => $e->getMessage()], 400);
         }
     }
+
+
+    public function timKiemMaKhuyenMai(Request $request)
+    {
+        try {
+            $validate = Validator::make($request->all(), [
+                'key' => 'required|string|max:255',
+            ]);
+
+            if ($validate->fails()) {
+                return response()->json(['status' => false, 'message' => $validate->errors()->first()], 400);
+            }
+
+            $user = Auth::user();
+            $memberLevelId = $user->hang_thanh_vien_id;
+
+            $maKhuyenMais = MaKhuyenMai::where('trang_thai', 1)
+                ->where('ma_code', $request->key)
+                ->where('ngay_bat_dau', '<=', now())
+                ->where('ngay_ket_thuc', '>=', now())
+                ->whereHas('hangThanhViens', function ($query) use ($memberLevelId) {
+                    $query->where('id', $memberLevelId);
+                })
+                ->first();
+
+            if (!$maKhuyenMais) {
+                return response()->json(['status' => false, 'message' => 'Mã khuyến mãi không hợp lệ, đã hết hạn hoặc không áp dụng cho hạng thành viên của bạn.'], 404);
+            }
+
+            if ($maKhuyenMais->so_luong_da_su_dung >= $maKhuyenMais->so_luong) {
+                return response()->json(['status' => false, 'message' => 'Mã khuyến mãi đã hết.'], 404);
+            }
+
+            return response()->json(['status' => true, 'data' => $maKhuyenMais]);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi tìm kiếm mã khuyến mãi.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
 }
