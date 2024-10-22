@@ -32,7 +32,7 @@ class ThongKeSanPham extends Controller
         $topSanPhams = DonHangChiTiet::select('bien_the_san_pham_id', DB::raw('SUM(so_luong) as tong_so_luong'))
             ->whereHas('donHang', function ($query) use ($ngayBatDau, $ngayKetThuc) {
                 $query->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]) // Lọc theo ngày hoàn thành đơn
-                      ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
+                    ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
             })
             ->groupBy('bien_the_san_pham_id')
             ->orderBy('tong_so_luong', 'desc')
@@ -52,7 +52,7 @@ class ThongKeSanPham extends Controller
                 $soLuongTrongNgay = DonHangChiTiet::where('bien_the_san_pham_id', $sanPhamChiTiet->bien_the_san_pham_id)
                     ->whereHas('donHang', function ($query) use ($date) {
                         $query->whereDate('ngay_hoan_thanh_don', $date) // Lọc theo ngày hoàn thành đơn
-                              ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
+                            ->where('trang_thai_don_hang', DonHang::TTDH_HTDH); // Lọc theo trạng thái "TTDH_HTDH"
                     })
                     ->sum('so_luong');
 
@@ -62,7 +62,7 @@ class ThongKeSanPham extends Controller
 
             // Thêm sản phẩm và số liệu thống kê vào kết quả
             $result[] = [
-                'sản phẩm' => $tenSanPham,
+                'name' => $tenSanPham,
                 'data' => $soLuongTheoNgay,
             ];
         }

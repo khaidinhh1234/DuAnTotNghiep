@@ -125,15 +125,19 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
     queryFn: () => fetchRelatedProducts(productId),
     enabled: !!productId,
   });
+  console.log("Related Product ID:", productId);
 
   if (!relatedProducts?.data || relatedProducts.data.length === 0) {
     return null;
   }
 
   return (
-    <div className="container mx-14 pb-10">
-    <h2 className="mx-14 text-4xl font-medium  tracking-[1px] mb-12">Sản phẩm cùng loại</h2>
-    <div className="mx-14 lg:flex lg:gap-7  h-[500px] ">
+    <div className="container mb-28">
+      <div className="flex justify-center mb-5">
+        <h1 className="md:text-4xl text-3xl font-normal tracking-[1px]">
+          Sản phẩm cùng loại
+        </h1>
+      </div>
 
       <div className="grid grid-cols-12 justify-center gap-7">
         {relatedProducts.data.map((product, index) => (
@@ -151,7 +155,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
                 </a>
 
                 <View id={product.id} />
-                <Link to={`/product-detail/${product.id}`}>
+                                <Link to={`/product-detail/${product.id}`}>
                   <div className="relative">
                     <img
                       src={product.anh_san_pham}
@@ -196,7 +200,6 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
             </div>
           </div>
         ))}
-      </div>
       </div>
     </div>
   );

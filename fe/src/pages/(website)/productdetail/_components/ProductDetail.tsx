@@ -83,14 +83,14 @@ interface ProductData {
     danh_gia_huu_ich_count: number;
   }>;
 }
-interface RelatedProduct {
-  id: number;
-  ten_san_pham: string;
-  anh_san_pham: string;
-  mo_ta_ngan: string;
-  gia_ban: string;
-  gia_goc: string;
-}
+// interface RelatedProduct {
+//   id: number;
+//   ten_san_pham: string;
+//   anh_san_pham: string;
+//   mo_ta_ngan: string;
+//   gia_ban: string;
+//   gia_goc: string;
+// }
 
 const fetchProduct = async (id: string) => {
   const response = await instance.get(`/chi-tiet-san-pham/${id}`);
@@ -104,12 +104,12 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-const fetchRelatedProducts = async (productId: number) => {
-  const response = await instance.get(
-    `/danh-sach-san-pham-cung-loai/${productId}`
-  );
-  return response.data;
-};
+// const fetchRelatedProducts = async (productId: number) => {
+//   const response = await instance.get(
+//     `/danh-sach-san-pham-cung-loai/${productId}`
+//   );
+//   return response.data;
+// };
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -144,12 +144,15 @@ const ProductDetail: React.FC = () => {
     queryFn: () => fetchProduct(id!),
   });
 
-  const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
-    queryKey: ["relatedProducts", id],
-    queryFn: () => fetchRelatedProducts(Number(id)),
-    enabled: !!product,
-  });
-
+  // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
+  //   queryKey: ["relatedProducts", id],
+  //   queryFn: () => fetchRelatedProducts(Number(id)),
+  //   enabled: !!product,
+  // });
+  // console.log(product);
+  // useEffect(() => {
+  //   refetch();
+  // }, [product?.id, refetch]);
   const likeMutation = useMutation({
     mutationFn: ({
       reviewId,
@@ -263,20 +266,20 @@ const ProductDetail: React.FC = () => {
   };
   const selectedVariant = useMemo(() => {
     if (!product || !selectedColor || !selectedSize) return null;
-    return product.bien_the_san_pham.find(
+    return product?.bien_the_san_pham?.find(
       (v) =>
-        v.mau_bien_the.ma_mau_sac === selectedColor &&
-        v.kich_thuoc_bien_the.kich_thuoc === selectedSize
+        v?.mau_bien_the?.ma_mau_sac === selectedColor &&
+        v?.kich_thuoc_bien_the?.kich_thuoc === selectedSize
     );
   }, [product, selectedColor, selectedSize]);
 
   const averageRating = useMemo(() => {
-    if (!product || product.danh_gias.length === 0) return 0;
-    const totalStars = product.danh_gias.reduce(
-      (sum, review) => sum + review.so_sao_san_pham,
+    if (!product || product?.danh_gias?.length === 0) return 0;
+    const totalStars = product?.danh_gias?.reduce(
+      (sum, review) => sum + review?.so_sao_san_pham,
       0
     );
-    return totalStars / product.danh_gias.length;
+    return totalStars / product?.danh_gias?.length;
   }, [product]);
 
   const displayPrice = useMemo(() => {
@@ -303,11 +306,11 @@ const ProductDetail: React.FC = () => {
 
   useEffect(() => {
     if (product) {
-      const defaultVariant = product.bien_the_san_pham[0];
-      setSelectedColor(defaultVariant.mau_bien_the.ma_mau_sac);
-      setSelectedSize(defaultVariant.kich_thuoc_bien_the.kich_thuoc);
+      const defaultVariant = product?.bien_the_san_pham[0];
+      setSelectedColor(defaultVariant?.mau_bien_the?.ma_mau_sac);
+      setSelectedSize(defaultVariant?.kich_thuoc_bien_the?.kich_thuoc);
       setCurrentImages(
-        defaultVariant.anh_bien_the.map((img) => img.duong_dan_anh)
+        defaultVariant?.anh_bien_the.map((img) => img?.duong_dan_anh)
       );
     }
   }, [product]);
@@ -315,10 +318,10 @@ const ProductDetail: React.FC = () => {
   const handleColorClick = (color: string) => {
     setSelectedColor(color);
     updateImages(color, selectedSize);
-    const selectedVariant = product?.bien_the_san_pham.find(
-      (v) => v.mau_bien_the.ma_mau_sac === color
+    const selectedVariant = product?.bien_the_san_pham?.find(
+      (v) => v?.mau_bien_the?.ma_mau_sac === color
     );
-    setSelectedColorDisplay(selectedVariant?.mau_bien_the.ten_mau_sac || null);
+    setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
   };
 
   const handleSizeClick = (size: string) => {
@@ -329,13 +332,13 @@ const ProductDetail: React.FC = () => {
 
   const updateImages = (color: string | null, size: string | null) => {
     if (color && size && product) {
-      const variant = product.bien_the_san_pham.find(
+      const variant = product?.bien_the_san_pham?.find(
         (v) =>
-          v.mau_bien_the.ma_mau_sac === color &&
-          v.kich_thuoc_bien_the.kich_thuoc === size
+          v?.mau_bien_the?.ma_mau_sac === color &&
+          v?.kich_thuoc_bien_the?.kich_thuoc === size
       );
       if (variant) {
-        setCurrentImages(variant.anh_bien_the.map((img) => img.duong_dan_anh));
+        setCurrentImages(variant.anh_bien_the.map((img) => img?.duong_dan_anh));
       }
     }
   };
@@ -350,7 +353,7 @@ const ProductDetail: React.FC = () => {
   const handleCopy = () => {
     if (product?.ma_san_pham) {
       navigator.clipboard
-        .writeText(product.ma_san_pham)
+        .writeText(product?.ma_san_pham)
         .then(() => {
           message.success("Đã sao chép vào clipboard!");
         })
@@ -375,7 +378,7 @@ const ProductDetail: React.FC = () => {
             &gt;
             <p className="px-2">Cửa hàng</p>
             &gt;
-            <p className="px-2">{product?.danh_muc.ten_danh_muc}</p>
+            <p className="px-2">{product?.danh_muc?.ten_danh_muc}</p>
           </div>
         </div>
       </section>
@@ -529,6 +532,7 @@ const ProductDetail: React.FC = () => {
                       {displayPrice?.originalPrice && (
                         <del className="text-[#A4A1AA] ml-2 text-sm">
                           {displayPrice?.originalPrice}
+                          {displayPrice?.originalPrice}
                         </del>
                       )}
                     </>
@@ -549,8 +553,8 @@ const ProductDetail: React.FC = () => {
                   <div className="flex space-x-2">
                     {Array.from(
                       new Set(
-                        product.bien_the_san_pham.map(
-                          (v) => v.mau_bien_the.ma_mau_sac
+                        product?.bien_the_san_pham?.map(
+                          (v) => v?.mau_bien_the?.ma_mau_sac
                         )
                       )
                     ).map((color, index) => (
@@ -591,8 +595,8 @@ const ProductDetail: React.FC = () => {
                   <div className="flex mt-3">
                     {Array.from(
                       new Set(
-                        product.bien_the_san_pham.map(
-                          (v) => v.kich_thuoc_bien_the.kich_thuoc
+                        product?.bien_the_san_pham?.map(
+                          (v) => v?.kich_thuoc_bien_the?.kich_thuoc
                         )
                       )
                     ).map((size, index) => (
@@ -613,7 +617,7 @@ const ProductDetail: React.FC = () => {
                       onClick={() => {
                         if (quantity > 1) {
                           decreaseQuantity({
-                            productId: product.id.toString(),
+                            productId: product?.id?.toString(),
                             currentQuantity: quantity,
                           });
                         }
@@ -634,7 +638,7 @@ const ProductDetail: React.FC = () => {
                     <button
                       onClick={() =>
                         increaseQuantity({
-                          productId: product.id.toString(),
+                          productId: product?.id?.toString(),
                           currentQuantity: quantity,
                         })
                       }
@@ -705,7 +709,7 @@ const ProductDetail: React.FC = () => {
             <h3 className="text-gray-900 mb-2 font-bold text-lg">Màu</h3>
             <div className="flex flex-wrap gap-2">
               {product?.bien_the_san_pham
-                .map((variant) => variant.mau_bien_the.ten_mau_sac)
+                .map((variant) => variant?.mau_bien_the?.ten_mau_sac)
                 .filter((color, index, self) => self.indexOf(color) === index)
                 .map((color, index) => (
                   <span key={index} className="px-2 py-1 bg-gray-100 rounded">
@@ -716,7 +720,7 @@ const ProductDetail: React.FC = () => {
             <h3 className="mt-4 mb-2 font-bold text-lg">Kíchthước</h3>
             <div className="flex flex-wrap gap-2">
               {product?.bien_the_san_pham
-                .map((variant) => variant.kich_thuoc_bien_the.kich_thuoc)
+                .map((variant) => variant?.kich_thuoc_bien_the?.kich_thuoc)
                 .filter((size, index, self) => self.indexOf(size) === index)
                 .map((size, index) => (
                   <span key={index} className="px-2 py-1 bg-gray-100 rounded">
@@ -735,37 +739,41 @@ const ProductDetail: React.FC = () => {
 
             {activeTab === "reviews" && product && (
               <div className="space-y-6">
-                {product.danh_gias.map((review) => (
+                {product?.danh_gias?.map((review) => (
                   <div
-                    key={review.id}
+                    key={review?.id}
                     className="border p-4 rounded-lg shadow-sm"
                   >
                     <div className="flex items-center space-x-4 mb-3">
                       <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
                         <img
                           src={
-                            review.user.anh_nguoi_dung ||
+                            review?.user?.anh_nguoi_dung ||
                             "https://i.pravatar.cc/100"
                           }
-                          alt={`${review.user.ho} ${review.user.ten}`}
+                          alt={`${review?.user?.ho} ${review?.user?.ten}`}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div>
-                        <h4 className="font-medium">{`${review.user.ho} ${review.user.ten}`}</h4>
+                        <h4 className="font-medium">{`${review?.user?.ho} ${review?.user?.ten}`}</h4>
                         <div className="flex items-center justify-between">
                           <span className="text-yellow-500 text-sm">
-                            {"★".repeat(review.so_sao_san_pham)}
-                            {"☆".repeat(5 - review.so_sao_san_pham)}
+                            {"★".repeat(review?.so_sao_san_pham)}
+                            {"☆".repeat(5 - review?.so_sao_san_pham)}
                           </span>
                           <span className="ml-1 text-xs text-gray-500">
-                            {new Date(review.created_at).toLocaleString()}
+                            {new Date(review?.created_at).toLocaleString()}
                           </span>
                           <div className="flex-1 text-xs text-gray-600 border-l border-gray-300 pl-1 ml-1">
                             <span className="">Phân loại hàng:</span>{" "}
-                            {review.bien_the_san_pham.mau_bien_the.ten_mau_sac},
                             {
-                              review.bien_the_san_pham.kich_thuoc_bien_the
+                              review?.bien_the_san_pham?.mau_bien_the
+                                ?.ten_mau_sac
+                            }
+                            ,
+                            {
+                              review?.bien_the_san_pham?.kich_thuoc_bien_the
                                 .kich_thuoc
                             }
                           </div>
@@ -774,19 +782,19 @@ const ProductDetail: React.FC = () => {
                     </div>
                     <p className="text-gray-600 text-sm mb-3">
                       <span>Đúng với mô tả:</span>{" "}
-                      <span className="font-bold">{review.mo_ta}</span>
+                      <span className="font-bold">{review?.mo_ta}</span>
                     </p>
 
                     <p className="text-gray-600  text-sm mb-2">
                       <span className="font-bold">
                         {" "}
-                        {review.chat_luong_san_pham}
+                        {review?.chat_luong_san_pham}
                       </span>
                     </p>
 
-                    {review.anh_danh_gia && (
+                    {review?.anh_danh_gia && (
                       <div className="flex flex-wrap gap-2">
-                        {review.anh_danh_gia
+                        {review?.anh_danh_gia
                           .split(",")
                           .map((img: string, index: number) => (
                             <div
@@ -798,43 +806,43 @@ const ProductDetail: React.FC = () => {
                                 alt={`Review Image ${index + 1}`}
                                 className="w-full h-full object-cover"
                                 onClick={() =>
-                                  review.anh_danh_gia &&
-                                  handlePreview(review.anh_danh_gia)
+                                  review?.anh_danh_gia &&
+                                  handlePreview(review?.anh_danh_gia)
                                 }
                               />
                             </div>
                           ))}
                       </div>
                     )}
-                    {review.phan_hoi && (
+                    {review?.phan_hoi && (
                       <div className="mt-2 pl-4 border-l-2 border-gray-300">
                         <p className="text-gray-600 italic text-sm">
-                          Phản hồi: {review.phan_hoi}
+                          Phản hồi: {review?.phan_hoi}
                         </p>
                       </div>
                     )}
                     <div className="mt-2 flex items-center space-x-4">
                       <button
-                        className={`like-button flex items-center space-x-2 ${likeMutation.isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                        className={`like-button flex items-center space-x-2 ${likeMutation?.isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                         onClick={() =>
                           handleReviewLike(
-                            review.id,
-                            review.trang_thai_danh_gia_nguoi_dung
+                            review?.id,
+                            review?.trang_thai_danh_gia_nguoi_dung
                           )
                         }
-                        disabled={likeMutation.isLoading}
+                        disabled={likeMutation?.isLoading}
                       >
                        <i className={review.trang_thai_danh_gia_nguoi_dung ? "fa-solid fa-thumbs-up text-blue-500" : "fa-regular fa-thumbs-up text-gray-500"}></i>
 
                         <span>
-                          {likeMutation.isLoading ? (
+                          {likeMutation?.isLoading ? (
                             "Đang xử lý..."
                           ) : (
                             <>
-                              {review.trang_thai_danh_gia_nguoi_dung
+                              {review?.trang_thai_danh_gia_nguoi_dung
                                 ? "Đã thích"
                                 : "Hữu ích"}{" "}
-                              ({review.danh_gia_huu_ich_count})
+                              ({review?.danh_gia_huu_ich_count})
                             </>
                           )}
                         </span>
@@ -947,10 +955,9 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div> */}
-
 {product && (
-        <RelatedProducts productId={product.id} />
-      )}
+        <RelatedProducts productId={product?.id} />
+      )} 
 
       <section>
         <div className="container">
