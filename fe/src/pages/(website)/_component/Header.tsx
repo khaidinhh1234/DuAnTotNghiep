@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
+import CartOverlay from './CartOverlay'
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -18,6 +19,22 @@ const Header = () => {
   const [check, setcheck] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  
+  const [isCartVisible, setIsCartVisible] = useState(false);
+  const cartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
+        setIsCartVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -222,6 +239,7 @@ const Header = () => {
                 className="lg:w-[130px] lg:h-[40px] w-32 h-9"
               />
             </div>
+
             <nav className="hidden lg:block order-3">
 
         <ul className="flex items-center space-x-4">
@@ -245,18 +263,19 @@ const Header = () => {
                 {item.name}
               </NavLink>
               {item.name === "Sản phẩm" && isProductMenuVisible && (
-                <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50">
-                  <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 bg-white rounded-md">
-                    {categories.map((category) => (
-                      <div key={category.id} className="border-r border-gray-100">
+                <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50 ">
+    <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 rounded-md bg-white bg-opacity-100 ">
+
+{categories.map((category) => (
+                      <div key={category.id} className="border-r border-gray-240">
                         <h3 className="font-bold mb-4 text-lg">{category.ten_danh_muc}</h3>
                         <ul className="space-y-2">
                           {category.children.map((subCategory) => (
                             <li key={subCategory.id}>
                               <a
                                 href={`/shop/${category.duong_dan}/${subCategory.duong_dan}`}
-                                className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
-                              >
+                                className="block text-gray-700 text-lg whitespace-nowrap hover:text-red-600"
+                                >
                                 {subCategory.ten_danh_muc}
                               </a>
                             </li>
@@ -304,8 +323,11 @@ const Header = () => {
                       <i className="fa-regular fa-heart text-xl"></i>
                     </a>
                   </span>
-                  <span>
-                    <a href="/gio-hang">
+                  <span
+          ref={cartRef}
+          onMouseEnter={() => setIsCartVisible(true)}
+          onMouseLeave={() => setIsCartVisible(false)}
+        >                    <a href="/gio-hang">
                       <i className="fa-regular fa-bag-shopping text-xl relative">
                         <span
                           className={`${
@@ -316,6 +338,9 @@ const Header = () => {
                         </span>
                       </i>
                     </a>
+                    <div className="absolute top-full left-0 pt-4 w-full">
+            <CartOverlay isVisible={isCartVisible} />
+          </div>
                   </span>
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
                     <AvatarImage src={member?.anh_nguoi_dung} />
