@@ -400,8 +400,9 @@ class SanPhamController extends Controller
     public function danhSachSanPhamYeuThich()
     {
         try {
-            if(Auth::guard('api')->check()) {
-                $user = User::findOrFail(Auth::guard('api')->id());
+            if (Auth::guard('api')->check()) {
+                $userId = Auth::guard('api')->id();
+                $user = User::findOrFail($userId);
                 $data = $user->sanPhamYeuThich()->with([
                     'danhMuc',
                     'bienTheSanPham.anhBienThe',
@@ -433,20 +434,22 @@ class SanPhamController extends Controller
         }
     }
 
-    public function sanPhamYeuThich($id)
+    public function sanPhamYeuThich(string $id)
     {
         try {
             if (Auth::guard('api')->check()) {
-                $user = User::findOrFail(Auth::guard('api')->id());
+                $userId = Auth::guard('api')->id();
+                $user = User::findOrFail($userId);
                 if (!$user->sanPhamYeuThich()->where('san_pham_id', $id)->exists()) {
                     $user->sanPhamYeuThich()->attach($id);
                     $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
                     $status = true;
                     $status_code = 200;
                 } else {
-                    $mess = 'Sản phẩm đã có trong danh sách yêu thích';
-                    $status = false;
-                    $status_code = 409;
+                    $user->sanPhamYeuThich()->detach($id);
+                    $mess = 'Sản phẩm đã được xóa khỏi danh sách yêu thích';
+                    $status = true;
+                    $status_code = 200;
                 }
                 return response()->json([
                     'status' => $status,

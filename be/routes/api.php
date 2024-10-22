@@ -127,7 +127,7 @@ Route::middleware([])
 
         //Sản phẩm yêu thích
         Route::get('sanpham/yeuthich', [SanPhamController::class, 'danhSachSanPhamYeuThich'])->middleware('auth:sanctum');
-        Route::get('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
+        Route::post('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
 
         // Đơn hàng
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
