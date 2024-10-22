@@ -1,5 +1,3 @@
-import { product, products1, products2, sanPham2 } from "@/assets/img";
-import instance from "@/configs/admin";
 import instanceClient from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
 import { Modal, Rate } from "antd";
