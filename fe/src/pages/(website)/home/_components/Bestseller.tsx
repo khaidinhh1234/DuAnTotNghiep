@@ -2,8 +2,18 @@
 
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
+import { useState } from "react";
 
 const Bestseller = ({ products }: any) => {
+  const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
+  const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
+    null
+  );
+
+  const handleMouseEnter = (productId: number, variantIndex: any) => {
+    setHoveredProductId(productId);
+    setHoveredVariantIndex(variantIndex);
+  };
   // const { data } = useQuery({
   //   queryKey: ["PRODUCTS_KEYS"],
   //   queryFn: async () => {
@@ -16,7 +26,7 @@ const Bestseller = ({ products }: any) => {
   // });
   // // console.log(data);
   // const products = data?.danh_sach_san_pham_moi || [];
-  console.log(products);
+  // console.log(products);
 
   return (
     <>
@@ -46,69 +56,78 @@ const Bestseller = ({ products }: any) => {
                       <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                     </a>
 
-                    <View id={product?.id} />
                     <Link to={`/product-detail/${product.id}`}>
                       <div className="relative">
                         <img
-                          src={product?.anh_san_pham}
+                          src={
+                            hoveredProductId === product.id &&
+                            hoveredVariantIndex !== null
+                              ? product.mau_sac_va_anh[hoveredVariantIndex]
+                                  .hinh_anh
+                              : product.anh_san_pham
+                          }
                           alt=""
                           className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
                         />
                         {product?.hang_moi == 1 && (
-                          <span className="absolute top-3 right-3 bg-red-500 text-white px-3 py-[2px] rounded-lg font-bold">
+                          <span className="absolute top-3 left-4 bg-red-500 text-white px-3 py-[2px] rounded-md font-bold">
                             Mới
                           </span>
                         )}
                       </div>{" "}
                     </Link>
-                    {/* <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
-                      Thêm vào giỏ hàng
-                    </button> */}
+                    <View id={product?.id} />
                   </div>
-                  <Link to={`/product-detail/${product.id}`}>
-                    {" "}
-                    <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
-                      <h5 className=" text-base truncate w-60 font-medium">
+                  <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
+                    <Link to={`/product-detail/${product.id}`}>
+                      {" "}
+                      <h5 className=" text-base truncate w-60 font-medium hover:text-red-500">
                         {product?.ten_san_pham}
-                      </h5>
+                      </h5>{" "}
+                    </Link>
 
-                      <p className="font-semibold text-lg">
-                        {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
-                          <>
-                            {(product?.gia_cao_nhat ?? 0).toLocaleString(
-                              "vi-VN"
-                            )}{" "}
-                            đ
-                          </>
-                        ) : (
-                          <>
-                            {(product?.gia_thap_nhat ?? 0).toLocaleString(
-                              "vi-VN"
-                            )}{" "}
-                            đ
-                            <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
-                            {(product?.gia_cao_nhat ?? 0).toLocaleString(
-                              "vi-VN"
-                            )}{" "}
-                            đ
-                          </>
-                        )}
-                      </p>
+                    <p className="font-semibold text-lg">
+                      {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
+                        <>
+                          {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")}{" "}
+                          đ
+                        </>
+                      ) : (
+                        <>
+                          {(product?.gia_thap_nhat ?? 0).toLocaleString(
+                            "vi-VN"
+                          )}{" "}
+                          đ
+                          <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
+                          {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")}{" "}
+                          đ
+                        </>
+                      )}
+                    </p>
 
-                      <p className="font-bold text-lg flex items-center">
-                        {" "}
-                        {product?.bien_the?.map((item: any, index: any) => (
+                    <p className="font-bold text-lg flex items-center">
+                      {product?.mau_sac_va_anh?.map(
+                        (item: any, indexs: any) => (
                           <button
-                            key={index}
-                            className="w-7 h-7 rounded-full border-1 inline-block mr-1"
+                            key={indexs}
+                            className={`w-7 h-7 rounded-full border mr-1 
+                             ${
+                               hoveredProductId === product?.id &&
+                               hoveredVariantIndex === indexs
+                                 ? "border-black"
+                                 : "border-gray-300 hover:border-black"
+                             }`}
                             style={{
                               backgroundColor: item?.ma_mau_sac,
                             }}
+                            onMouseEnter={() =>
+                              handleMouseEnter(product?.id, indexs)
+                            }
                           />
-                        ))}
-                      </p>
-                    </div>{" "}
-                  </Link>
+                        )
+                      )}
+                    </p>
+                  </div>{" "}
                 </div>
               </div>
             ))}
