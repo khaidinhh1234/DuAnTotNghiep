@@ -11,6 +11,7 @@ use App\Models\DanhMuc;
 use App\Models\DonHang;
 use App\Models\SanPham;
 use App\Models\ThongTinWeb;
+use App\Models\TinTuc;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -222,6 +223,8 @@ class TrangChuController extends Controller
             ->unique('sanPham.id')
             ->take(8);
 
+        $dataTinTucMoi = TinTuc::query()->orderByDesc('id')->limit('4')->get();
+
         return response()->json([
             'status' => true,
             'status_code' => 200,
@@ -231,6 +234,7 @@ class TrangChuController extends Controller
             'bo_suu_tap_ua_chuongs' => $boSuuTapUaChuongs,
             'chuong_trinh_uu_dai' => $dataChuongTrinhUuDai,
             'danh_gia_khach_hang' => $dataDanhGiaKhachHang,
+            'tin_tuc_moi' => $dataTinTucMoi
         ], 200);
     }
 
