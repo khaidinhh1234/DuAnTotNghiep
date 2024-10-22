@@ -5,11 +5,33 @@ import { Input, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import instance from "@/configs/client";
+interface Category {
+  id: number;
+  ten_danh_muc: string;
+  duong_dan: string;
+  children: Category[];
+}
 
 const Header = () => {
   const [check, setcheck] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await instance.get("/load-danh-muc");
+        const result = response.data;
+        if (result.status) {
+          setCategories(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
 
+    fetchCategories();
+  }, []);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as any)) {
@@ -61,6 +83,30 @@ const Header = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const [isProductMenuVisible, setIsProductMenuVisible] = useState(false);
+
+  const handleMouseEnterProduct = () => {
+    setIsProductMenuVisible(true);
+  };
+
+  const handleMouseLeaveProduct = () => {
+    setIsProductMenuVisible(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as any)) {
+        setcheck(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+
   const MenuList = [
     {
       name: "Trang chủ",
@@ -172,9 +218,22 @@ const Header = () => {
               />
             </div>
             <nav className="hidden lg:block order-3">
-              <ul className="flex items-center space-x-4 ">
+              <ul className="flex items-center space-x-4">
                 {MenuList.map((item, index) => (
-                  <li key={index} className="mt-2">
+                  <li
+                    key={index}
+                    className="mt-2 relative"
+                    onMouseEnter={
+                      item.name === "Sản phẩm"
+                        ? handleMouseEnterProduct
+                        : undefined
+                    }
+                    onMouseLeave={
+                      item.name === "Sản phẩm"
+                        ? handleMouseLeaveProduct
+                        : undefined
+                    }
+                  >
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
@@ -187,6 +246,34 @@ const Header = () => {
                     >
                       {item.name}
                     </NavLink>
+                    {item.name === "Sản phẩm" && isProductMenuVisible && (
+                      <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md overflow-hidden">
+                        <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 bg-white/100 rounded-md opacity-100 z-50 overflow-hidden">
+                          {categories.map((category) => (
+                            <div
+                              key={category.id}
+                              className="border-r border-gray-100 bg-white"
+                            >
+                              <h3 className="font-bold mb-4 text-lg">
+                                {category.ten_danh_muc}
+                              </h3>
+                              <ul className="space-y-2">
+                                {category.children.map((subCategory) => (
+                                  <li key={subCategory.id}>
+                                    <a
+                                      href={`/shop/${category.duong_dan}/${subCategory.duong_dan}`}
+                                      className="block text-gray-700 hover:bg-gray-100 text-lg whitespace-nowrap"
+                                    >
+                                      {subCategory.ten_danh_muc}
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

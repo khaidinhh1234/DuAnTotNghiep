@@ -5,6 +5,7 @@ import Sidebar from "./../../_component/Slibar";
 import { Upload } from "antd";
 import { useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
+import { Link } from "react-router-dom";
 
 const MyProfilePage = ({ member }: any) => {
   const [avatarImage, setAvatarImage] = useState<string>("");
@@ -38,7 +39,7 @@ const MyProfilePage = ({ member }: any) => {
                   <div className="relative">
                     <Avatar
                       src={avatarImage || url}
-                      size={110}
+                      size={100}
                       className="border-4 border-white shadow-lg"
                     />
                     <Upload
@@ -54,11 +55,14 @@ const MyProfilePage = ({ member }: any) => {
                       />
                     </Upload>
                   </div>
-                  <button className="btn-black items-center md:px-8 md:py-4 px-4 py-2 flex whitespace-nowrap rounded-lg hover:text-black">
+                  <Link
+                    to={"/myProfile"}
+                    className="btn-black items-center md:px-8 md:py-4 px-4 py-2 flex whitespace-nowrap rounded-lg hover:text-black"
+                  >
                     {" "}
                     <i className="fa-solid fa-pen-to-square" />
-                    <span className="ml-3">Chỉnh Sửa Hồ Sơ</span>
-                  </button>
+                    <span className="ml-3">Quay lại</span>
+                  </Link>
                 </div>
                 <form className="my-8 mb-8">
                   <div className="flex justify-between  mb-7">

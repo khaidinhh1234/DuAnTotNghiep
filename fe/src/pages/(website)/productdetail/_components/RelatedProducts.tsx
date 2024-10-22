@@ -93,11 +93,11 @@
 // };
 
 // export default RelatedProducts;
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import instance from '@/configs/client';
-import View from '../../_component/View';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import instance from "@/configs/client";
+import View from "../../_component/View";
 
 interface RelatedProduct {
   id: number;
@@ -115,17 +115,19 @@ interface RelatedProductsProps {
 }
 
 const fetchRelatedProducts = async (productId: number) => {
-  const response = await instance.get(`/danh-sach-san-pham-cung-loai/${productId}`);
+  const response = await instance.get(
+    `/danh-sach-san-pham-cung-loai/${productId}`
+  );
   return response.data;
 };
 
 const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
   const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
-    queryKey: ['relatedProducts', productId],
+    queryKey: ["relatedProducts", productId],
     queryFn: () => fetchRelatedProducts(productId),
     enabled: !!productId,
   });
-  console.log("Related Product ID:", productId);
+  // console.log("Related Product ID:", productId);
 
   if (!relatedProducts?.data || relatedProducts.data.length === 0) {
     return null;
@@ -154,8 +156,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
                   <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                 </a>
 
-                <View id={product.id} />
-                                <Link to={`/product-detail/${product.id}`}>
+                <Link to={`/product-detail/${product.id}`}>
                   <div className="relative">
                     <img
                       src={product.anh_san_pham}
@@ -164,6 +165,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
                     />
                   </div>
                 </Link>
+                <View id={product?.id} />
               </div>
 
               <Link to={`/product-detail/${product.id}`}>
@@ -174,7 +176,9 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
 
                   <p className="font-semibold text-lg">
                     {product.gia_thap_nhat === product.gia_cao_nhat ? (
-                      <>{(product.gia_cao_nhat ?? 0).toLocaleString("vi-VN")} đ</>
+                      <>
+                        {(product.gia_cao_nhat ?? 0).toLocaleString("vi-VN")} đ
+                      </>
                     ) : (
                       <>
                         {(product.gia_thap_nhat ?? 0).toLocaleString("vi-VN")} đ
