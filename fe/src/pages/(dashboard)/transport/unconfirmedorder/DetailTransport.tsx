@@ -99,7 +99,11 @@ const DetailTransport = ({ record }: any) => {
         id: record.id,
         action: "Xác nhận giao hàng",
         imageUrl: imageUrl,
-        note: notes, // Send the notes array here
+        ghi_chu: {
+          lan1: note,
+          lan2: note,
+          lan3: note,
+        },
         failedAttempts: failedAttempts,
       });
 
@@ -190,19 +194,23 @@ const DetailTransport = ({ record }: any) => {
           response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
             anh_xac_thuc: imageUrl,
             shipper_xac_nhan: shipperXacNhan,
-            ghi_chu: note,
+            ghi_chu: {
+              lan1: note,
+              lan2: note,
+              lan3: note,
+            },
           });
         } else {
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
             trang_thai_van_chuyen: action,
-            id: [id],
-          });
-        }
+              id: [id],
+            });
+          }
 
-        return response.data;
-      } catch (error) {
-        console.error("Error during API request:", error);
-        message.error("Không thể cập nhật trạng thái đơn hàng!");
+          return response.data;
+        } catch (error) {
+          console.error("Error during API request:", error);
+          message.error("Không thể cập nhật trạng thái đơn hàng!");
       }
     },
     onSuccess: () => {
@@ -476,6 +484,7 @@ const DetailTransport = ({ record }: any) => {
                           <button
                             onClick={capturePhoto}
                             className="px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                            title="Capture Photo"
                           >
                             <i className="fa-regular fa-camera"></i>
                           </button>
