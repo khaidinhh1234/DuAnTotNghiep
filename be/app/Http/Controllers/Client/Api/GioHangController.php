@@ -273,8 +273,6 @@ class GioHangController extends Controller
         try {
             $validatedData = $request->validate([
                 'ma_giam_gia' => 'required|string|exists:ma_khuyen_mais,ma_code',
-                'san_pham_chon' => 'required|array',
-                'san_pham_chon.*.gio_hang_id' => 'required|exists:gio_hangs,id',
             ]);
 
             $maGiamGia = MaKhuyenMai::where('ma_code', $validatedData['ma_giam_gia'])->first();
@@ -284,64 +282,75 @@ class GioHangController extends Controller
             }
 
             $userId = Auth::id();
-            $nguoiDungMaKhuyenMai = DB::table('nguoi_dung_ma_khuyen_mais')->where('user_id', $userId)
+
+            $sanPhamTrongGioHang = DB::table('gio_hangs')
+                ->where('user_id', $userId)
+                ->whereNull('deleted_at')
+                ->select('id as gio_hang_id', 'bien_the_san_pham_id', 'so_luong')
+                ->get();
+
+            if ($sanPhamTrongGioHang->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không có sản phẩm nào trong giỏ hàng.',
+                ], 400);
+            }
+
+            $nguoiDungMaKhuyenMai = DB::table('nguoi_dung_ma_khuyen_mai')
+                ->where('user_id', $userId)
                 ->where('ma_khuyen_mai_id', $maGiamGia->id)
                 ->first();
 
             if (!$nguoiDungMaKhuyenMai) {
-                return response()->json(['status' => false, 'message' => 'Bạn chưa lưu mã giảm giá này.'], 400);
-            }
-
-            if ($nguoiDungMaKhuyenMai->da_su_dung) {
+                DB::table('nguoi_dung_ma_khuyen_mai')->insert([
+                    'user_id' => $userId,
+                    'ma_khuyen_mai_id' => $maGiamGia->id,
+                    'da_su_dung' => false,
+                    'ngay_su_dung' => null,
+                ]);
+            } else if ($nguoiDungMaKhuyenMai->da_su_dung) {
                 return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
             }
 
-            $appliedDiscounts = [];
+            $tongGiaTriGioHang = 0;
 
-            foreach ($validatedData['san_pham_chon'] as $item) {
-                $gioHangItem = GioHang::find($item['gio_hang_id']);
+            foreach ($sanPhamTrongGioHang as $gioHangItem) {
                 $bienTheSanPham = BienTheSanPham::find($gioHangItem->bien_the_san_pham_id);
 
                 if (!$bienTheSanPham) {
                     continue;
                 }
 
-                $isCategoryInPromotion = DB::table('khuyen_mai_danh_muc')
-                    ->join('danh_mucs', 'khuyen_mai_danh_muc.danh_muc_id', '=', 'danh_mucs.id')
-                    ->where('danh_mucs.id', $bienTheSanPham->danh_muc_id)
-                    ->where('khuyen_mai_danh_muc.ma_khuyen_mai_id', $maGiamGia->id)
-                    ->exists();
-
-                if (!$isCategoryInPromotion) {
-                    $isProductInPromotion = DB::table('khuyen_mai_san_pham')
-                        ->where('san_pham_id', $bienTheSanPham->id)
-                        ->where('ma_khuyen_mai_id', $maGiamGia->id)
-                        ->exists();
-
-                    if (!$isProductInPromotion) {
-                        continue;
-                    }
-                }
-
-                $discountAmount = $maGiamGia->loai === 'phan_tram'
-                    ? ($gioHangItem->gia * $maGiamGia->giam_gia / 100)
-                    : $maGiamGia->giam_gia;
-
-                $appliedDiscounts[] = [
-                    'gio_hang_id' => $gioHangItem->id,
-                    'bien_the_san_pham_id' => $bienTheSanPham->id,
-                    'giam_gia' => $discountAmount,
-                ];
+                $tongGiaTriGioHang += $bienTheSanPham->gia_ban * $gioHangItem->so_luong;
             }
 
-            if (empty($appliedDiscounts)) {
-                return response()->json(['status' => false, 'message' => 'Không có sản phẩm nào đủ điều kiện áp dụng mã giảm giá này.'], 400);
+            if ($tongGiaTriGioHang == 0) {
+                return response()->json(['status' => false, 'message' => 'Giỏ hàng trống.'], 400);
             }
+
+            $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                ? ($tongGiaTriGioHang * $maGiamGia->giam_gia / 100)
+                : $maGiamGia->giam_gia;
+
+            if ($soTienGiamGia > $tongGiaTriGioHang) {
+                $soTienGiamGia = $tongGiaTriGioHang;
+            }
+
+            DB::table('nguoi_dung_ma_khuyen_mai')
+                ->where('user_id', $userId)
+                ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                ->update(['da_su_dung' => true, 'ngay_su_dung' => now()]);
 
             return response()->json([
                 'status' => true,
                 'message' => 'Mã giảm giá đã được áp dụng thành công.',
-                'applied_discounts' => $appliedDiscounts,
+                'tong_gia_tri_gio_hang' => $tongGiaTriGioHang,
+                'so_tien_giam_gia' => $soTienGiamGia,
+                'tong_gia_tri_sau_giam' => $tongGiaTriGioHang - $soTienGiamGia,
+                'ap_dung_ma_giam_gia' => [
+                    'ma_giam_gia' => $validatedData['ma_giam_gia'],
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -350,6 +359,10 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
+
+
+
 
     public function updateSelection(Request $request)
     {
@@ -455,9 +468,13 @@ class GioHangController extends Controller
             });
 
             $vanChuyen = 20000;
-            $giamGiaVanChuyen = 20000;
-            $tongThanhToan = $tongGiaTriSanPham - $tongTietKiem + $vanChuyen - $giamGiaVanChuyen;
+            $giamGiaVanChuyen = 0;
 
+            if ($tongGiaTriSanPham > 500000) {
+                $giamGiaVanChuyen = $vanChuyen;
+            }
+
+            $tongThanhToan = $tongGiaTriSanPham - $tongTietKiem + $vanChuyen - $giamGiaVanChuyen;
             return response()->json([
                 'status' => true,
                 'message' => 'Tính tổng giá trị đơn hàng thành công.',

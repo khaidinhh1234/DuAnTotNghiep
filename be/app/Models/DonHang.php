@@ -80,6 +80,10 @@ class DonHang extends Model
         );
     }
 
+    public function chiTietDonHangs(){
+        return $this->hasMany(DonHangChiTiet::class, 'don_hang_id', 'id');
+    }
+
     protected static function boot()
     {
         parent::boot();
