@@ -1,9 +1,10 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { sanPham2 } from "@/assets/img";
 import View from "../../_component/View";
-const ProductsList = ({ products }: any) => {
+const ProductsList = ({ products, Wishlist, isPending }: any) => {
   // console.log(products);
+  const handleWishlist = (id: any) => {
+    Wishlist(id) as any;
+  };
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4">
@@ -28,9 +29,15 @@ const ProductsList = ({ products }: any) => {
                   {" "}
                   <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
                     <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
-                      <a href="#">
-                        <i className="z-20 fa-regular fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-                      </a>
+                      {isPending ? (
+                        <span>
+                          <i className="z-20 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                        </span>
+                      ) : (
+                        <span onClick={() => handleWishlist(product.id)}>
+                          <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                        </span>
+                      )}
                       <a href="#">
                         <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                       </a>
@@ -50,9 +57,7 @@ const ProductsList = ({ products }: any) => {
                           {/* )} */}
                         </div>{" "}
                       </Link>
-                      {/* <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
-                      Thêm vào giỏ hàng
-                    </button> */}
+                      <View id={product?.id} />
                     </div>
                     <Link to={`/product-detail/${product.id}`}>
                       <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
