@@ -214,26 +214,28 @@ const Header = () => {
                   </Modal>
                 </div>
               </span>
-              <span>
-                <a href="/mywishlist">
-                  <i className="fa-regular fa-heart text-xl"></i>
-                </a>
-              </span>
-              <span>
-                <a href="/gio-hang">
-                  <i className="fa-regular fa-bag-shopping text-xl relative">
-                    <span
-                      className={`${
-                        menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                      } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
-                    >
-                      0
-                    </span>
-                  </i>
-                </a>
-              </span>
+
               {member ? (
                 <>
+                  {" "}
+                  <span>
+                    <a href="/mywishlist">
+                      <i className="fa-regular fa-heart text-xl"></i>
+                    </a>
+                  </span>
+                  <span>
+                    <a href="/gio-hang">
+                      <i className="fa-regular fa-bag-shopping text-xl relative">
+                        <span
+                          className={`${
+                            menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                          } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                        >
+                          0
+                        </span>
+                      </i>
+                    </a>
+                  </span>
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
                     <AvatarImage src={member?.anh_nguoi_dung} />
                     <AvatarFallback>CN</AvatarFallback>
@@ -247,7 +249,7 @@ const Header = () => {
                       <ul>
                         <li className="mb-1">
                           <a
-                            href=""
+                            href="/myprofile"
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                           >
                             <img

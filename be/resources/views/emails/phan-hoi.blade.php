@@ -58,7 +58,6 @@
             color: #999;
         }
 
-        /* Button Styling */
         .btn {
             background-color: #ffd700;
             color: #1a1a2e;

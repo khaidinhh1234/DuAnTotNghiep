@@ -1,8 +1,14 @@
-import { ellipse, hello, sanPham2 } from "@/assets/img";
-import { Link } from "react-router-dom";
-import Sidebar from "./../../_component/Slibar";
+import { sanPham2 } from "@/assets/img";
 
-const MyWishlistsPage = () => {
+import Sidebar from "./../../_component/Slibar";
+import { Link } from "react-router-dom";
+import View from "../../_component/View";
+
+const MyWishlistsPage = ({ yeuthich, onAdd }: any) => {
+  // console.log(yeuthich);
+  const handleclick = (id: any) => {
+    onAdd(id);
+  };
   return (
     <>
       <main>
@@ -21,157 +27,58 @@ const MyWishlistsPage = () => {
               </div>
               <div className="lg:col-span-9  col-span-8 mx-auto">
                 {/* Content */}
-                <div className=" grid grid-cols-12 gap-7">
-                  <div className="col-span-4 mb-2 ">
-                    <div className="product-card hover:bg-zinc-100">
-                      <div className="w-[250px] h-[330px] relative ">
-                        <a href="#">
-                          <i className="fa-solid fa-trash-can text-red-500 bg-white  px-3 py-[10px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300" />
-                        </a>
-                        <img src={sanPham2} alt="" className=" w-full h-full" />
-                        <button className="hover:bg-blackL hover:text-white absolute px-16 py-3 left-4 rounded-lg bottom-5 bg-white  invisible opacity-30 transition-opacity btn duration-300">
-                          Move to Cart
-                        </button>
-                      </div>
-                      <div className="bg-white pt-4">
-                        <a href="#">
-                          <h5 className="font-bold">Allen Solly</h5>
-                        </a>
-                        <p className="my-1">Women Texttured Handheld Bag</p>
-                        <p className="font-medium">
-                          $80.00{" "}
-                          <span className="text-black/20 line-through px-1">
-                            $100.00
+                <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14">
+                  {yeuthich?.map((product: any, index: any) => (
+                    <div
+                      className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
+                      key={index}
+                    >
+                      <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
+                        <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
+                          <span onClick={() => handleclick(product.id)}>
+                            <i className="fa-solid fa-trash-can text-red-500 bg-white  hover:bg-slate-200 px-3 py-[10px] rounded-full absolute top-3 right-4 btn invisible opacity-0 transition-opacity duration-300" />
                           </span>
-                        </p>
+                          <img
+                            src={product?.anh_san_pham}
+                            alt=""
+                            className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
+                          />
+                          <View id={product?.id} />
+                        </div>
+                        <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
+                          <Link to={`/product-detail/${product.id}`}>
+                            {" "}
+                            <h5 className=" text-base truncate w-60 font-medium hover:text-red-500">
+                              {product?.ten_san_pham}
+                            </h5>
+                          </Link>
+
+                          <p className="font-semibold text-lg">
+                            {/* {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
+                            <>
+                              {(product?.gia_cao_nhat ?? 0).toLocaleString(
+                                "vi-VN"
+                              )}{" "}
+                              đ
+                            </>
+                          ) : (
+                            <> */}
+                            {/* {(product?.gia_thap_nhat ?? 0).toLocaleString(
+                                "vi-VN"
+                              )}{" "} */}{" "}
+                            12341243214 đ
+                            <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
+                            {/* {(product?.gia_cao_nhat ?? 0).toLocaleString(
+                                "vi-VN"
+                              )}{" "} */}
+                            1231294u324 đ
+                            {/* </>
+                          )} */}
+                          </p>
+                        </div>{" "}
                       </div>
                     </div>
-                  </div>
-                  <div className="col-span-4 mb-2 ">
-                    <div className="product-card hover:bg-zinc-100">
-                      <div className="w-[250px] h-[330px] relative ">
-                        <a href="#">
-                          <i className="fa-solid fa-trash-can text-red-500 bg-white  px-3 py-[10px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300" />
-                        </a>
-                        <img src={sanPham2} alt="" className=" w-full h-full" />
-                        <button className="hover:bg-blackL hover:text-white absolute px-16 py-3 left-4 rounded-lg bottom-5 bg-white  invisible opacity-30 transition-opacity btn duration-300">
-                          Move to Cart
-                        </button>
-                      </div>
-                      <div className="bg-white pt-4">
-                        <a href="#">
-                          <h5 className="font-bold">Allen Solly</h5>
-                        </a>
-                        <p className="my-1">Women Texttured Handheld Bag</p>
-                        <p className="font-medium">
-                          $80.00{" "}
-                          <span className="text-black/20 line-through px-1">
-                            $100.00
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-4 mb-2 ">
-                    <div className="product-card hover:bg-zinc-100">
-                      <div className="w-[250px] h-[330px] relative ">
-                        <a href="#">
-                          <i className="fa-solid fa-trash-can text-red-500 bg-white  px-3 py-[10px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300" />
-                        </a>
-                        <img src={sanPham2} alt="" className=" w-full h-full" />
-                        <button className="hover:bg-blackL hover:text-white absolute px-16 py-3 left-4 rounded-lg bottom-5 bg-white  invisible opacity-30 transition-opacity btn duration-300">
-                          Move to Cart
-                        </button>
-                      </div>
-                      <div className="bg-white pt-4">
-                        <a href="#">
-                          <h5 className="font-bold">Allen Solly</h5>
-                        </a>
-                        <p className="my-1">Women Texttured Handheld Bag</p>
-                        <p className="font-medium">
-                          $80.00{" "}
-                          <span className="text-black/20 line-through px-1">
-                            $100.00
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-4 mb-2 ">
-                    <div className="product-card hover:bg-zinc-100">
-                      <div className="w-[250px] h-[330px] relative ">
-                        <a href="#">
-                          <i className="fa-solid fa-trash-can text-red-500 bg-white  px-3 py-[10px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300" />
-                        </a>
-                        <img src={sanPham2} alt="" className=" w-full h-full" />
-                        <button className="hover:bg-blackL hover:text-white absolute px-16 py-3 left-4 rounded-lg bottom-5 bg-white  invisible opacity-30 transition-opacity btn duration-300">
-                          Move to Cart
-                        </button>
-                      </div>
-                      <div className="bg-white pt-4">
-                        <a href="#">
-                          <h5 className="font-bold">Allen Solly</h5>
-                        </a>
-                        <p className="my-1">Women Texttured Handheld Bag</p>
-                        <p className="font-medium">
-                          $80.00{" "}
-                          <span className="text-black/20 line-through px-1">
-                            $100.00
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-4 mb-2 ">
-                    <div className="product-card hover:bg-zinc-100">
-                      <div className="w-[250px] h-[330px] relative ">
-                        <a href="#">
-                          <i className="fa-solid fa-trash-can text-red-500 bg-white  px-3 py-[10px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300" />
-                        </a>
-                        <img src={sanPham2} alt="" className=" w-full h-full" />
-                        <button className="hover:bg-blackL hover:text-white absolute px-16 py-3 left-4 rounded-lg bottom-5 bg-white  invisible opacity-30 transition-opacity btn duration-300">
-                          Move to Cart
-                        </button>
-                      </div>
-                      <div className="bg-white pt-4">
-                        <a href="#">
-                          <h5 className="font-bold">Allen Solly</h5>
-                        </a>
-                        <p className="my-1">Women Texttured Handheld Bag</p>
-                        <p className="font-medium">
-                          $80.00{" "}
-                          <span className="text-black/20 line-through px-1">
-                            $100.00
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-span-4 mb-2 ">
-                    <div className="product-card hover:bg-zinc-100">
-                      <div className="w-[250px] h-[330px] relative ">
-                        <a href="#">
-                          <i className="fa-solid fa-trash-can text-red-500 bg-white  px-3 py-[10px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300" />
-                        </a>
-                        <img src={sanPham2} alt="" className=" w-full h-full" />
-                        <button className="hover:bg-blackL hover:text-white absolute px-16 py-3 left-4 rounded-lg bottom-5 bg-white  invisible opacity-30 transition-opacity btn duration-300">
-                          Move to Cart
-                        </button>
-                      </div>
-                      <div className="bg-white pt-4">
-                        <a href="#">
-                          <h5 className="font-bold">Allen Solly</h5>
-                        </a>
-                        <p className="my-1">Women Texttured Handheld Bag</p>
-                        <p className="font-medium">
-                          $80.00{" "}
-                          <span className="text-black/20 line-through px-1">
-                            $100.00
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>

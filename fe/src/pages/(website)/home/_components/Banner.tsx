@@ -35,7 +35,7 @@ const Banner = ({ banner }: any) => {
                   <img
                     src={item?.duong_dan_anh || banner1}
                     alt={item?.duong_dan_anh || banner1}
-                    className="md:w-full h-[900px] object-cover bg-center bg-no-repeat"
+                    className="md:w-full lg:h-[700px] object-cover bg-center bg-no-repeat"
                   />
                   <div className="absolute top-[200px] w-[1150px] text-start left-20">
                     <div className="mb-4">

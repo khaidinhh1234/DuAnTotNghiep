@@ -890,15 +890,15 @@ class ThongKeTongQuanController extends Controller
         $ngayBatDau = Carbon::today();
         $ngayKetThuc = Carbon::tomorrow();
 
-        $trangThaiBoQua = [
-            DonHang::TTDH_DH,
-            DonHang::TTDH_HTDH,
-            DonHang::TTDH_DHTB,
-            DonHang::TTDH_HH
-        ];
+        // $trangThaiBoQua = [
+        //     DonHang::TTDH_DH,
+        //     DonHang::TTDH_HTDH,
+        //     DonHang::TTDH_DHTB,
+        //     DonHang::TTDH_HH
+        // ];
 
-        $donHangs = DonHang::whereNotIn('trang_thai_don_hang',  $trangThaiBoQua)
-            ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+        $donHangs = DonHang::where('trang_thai_don_hang',  DonHang::TTDH_HTDH)
+            ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
             ->get();
 
         $tongSoDonHang = $donHangs->count();

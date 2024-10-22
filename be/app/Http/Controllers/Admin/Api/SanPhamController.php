@@ -397,20 +397,59 @@ class SanPhamController extends Controller
         return Excel::download(new SanPhamExports, 'sanpham.xlsx');
     }
 
-    public function sanPhamYeuThich($id)
+    public function danhSachSanPhamYeuThich()
     {
         try {
             if (Auth::guard('api')->check()) {
-                $user = User::findOrFail(Auth::guard('api')->id());
+                $userId = Auth::guard('api')->id();
+                $user = User::findOrFail($userId);
+                $data = $user->sanPhamYeuThich()->with([
+                    'danhMuc',
+                    'bienTheSanPham.anhBienThe',
+                    'bienTheSanPham.mauBienThe',
+                    'bienTheSanPham.kichThuocBienThe',
+                    'boSuuTapSanPham'
+                ])->get();
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $data,
+                ], 200);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 401,
+                    'message' => 'Vui lòng đăng nhập để xem danh sách sản phẩm yêu thích',
+                ], 401);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy dữ liệu',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function sanPhamYeuThich(string $id)
+    {
+        try {
+            if (Auth::guard('api')->check()) {
+                $userId = Auth::guard('api')->id();
+                $user = User::findOrFail($userId);
                 if (!$user->sanPhamYeuThich()->where('san_pham_id', $id)->exists()) {
                     $user->sanPhamYeuThich()->attach($id);
                     $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
                     $status = true;
                     $status_code = 200;
                 } else {
-                    $mess = 'Sản phẩm đã có trong danh sách yêu thích';
-                    $status = false;
-                    $status_code = 409;
+                    $user->sanPhamYeuThich()->detach($id);
+                    $mess = 'Sản phẩm đã được xóa khỏi danh sách yêu thích';
+                    $status = true;
+                    $status_code = 200;
                 }
                 return response()->json([
                     'status' => $status,
