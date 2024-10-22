@@ -9,13 +9,11 @@ import { Button, Image, Rate } from "antd";
 import { message } from 'antd';
 import SizeGuideModal from "./SizeGuide";
 import { EyeOutlined } from "@ant-design/icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThumbsUp as farThumbsUp } from '@fortawesome/free-regular-svg-icons';
-import { faThumbsUp as fasThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { toast } from "react-toastify";
 import instanceClient from "@/configs/client";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import View from "../../_component/View";
+import RelatedProducts from "./RelatedProducts";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -62,6 +60,22 @@ interface ProductData {
     anh_bien_the: Array<{
       duong_dan_anh: string;
     }>;
+    id: number
+    so_sao_san_pham: number;
+    chat_luong_san_pham: string;
+    user: {
+      ho: string;
+      ten: string;
+      anh_nguoi_dung: string;
+      anh_danh_gia: string;
+    };
+    created_at: string;
+    anh_danh_gia?: string;
+    huu_ich: boolean;
+    phan_hoi: string;
+    mo_ta: string;
+    trang_thai_danh_gia_nguoi_dung: boolean;
+    danh_gia_huu_ich_count: number;
   }>;
 }
 interface RelatedProduct {
@@ -103,6 +117,7 @@ const ProductDetail: React.FC = () => {
   const access_token = user.access_token || localStorage.getItem("access_token");
   const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
   const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(null);
+  // const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
@@ -113,7 +128,7 @@ const ProductDetail: React.FC = () => {
   }, []);
   const queryClient = useQueryClient();
 
-  const { data: product, isLoading, isError } = useQuery<ProductData>({
+  const { data: product,  } = useQuery<ProductData>({
     queryKey: ['product', id],
     queryFn: () => fetchProduct(id!),
 
@@ -306,8 +321,8 @@ const ProductDetail: React.FC = () => {
   const toggleDescription = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
-  if (isLoading) return <div>Đang tải...</div>;
-  if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
+  // if (isLoading) return <div>Đang tải...</div>;
+  // if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
 
   return (
     <>
@@ -351,7 +366,7 @@ const ProductDetail: React.FC = () => {
                     loop={true}
                     spaceBetween={10}
                   >
-                    {currentImages.map((image, index) => (
+                    {currentImages?.map((image, index) => (
                       <SwiperSlide key={index}>
                         <img
                           src={image}
@@ -361,8 +376,9 @@ const ProductDetail: React.FC = () => {
                             top: '300px',
                             cursor: "pointer",
                             width: '665px',
-                            height: 'auto',
+                            height: '600px',
                             objectFit: 'cover',
+                            borderRadius: '8px',
                           }} />
                       </SwiperSlide>
                     ))}
@@ -381,16 +397,19 @@ const ProductDetail: React.FC = () => {
                     modules={[FreeMode, Navigation, Thumbs]}
                     className="mySwiper1"
                   >
-                    {currentImages.map((image, index) => (
+                    {currentImages?.map((image, index) => (
                       <SwiperSlide key={`thumb-${index}`}>
                         <div className="  md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] flex justify-center items-center">
                           <img src={image} alt="" style={{
-                            cursor: "pointer",
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            borderRadius: 'inherit'
-                          }} />
+                          cursor: "pointer",
+                          objectFit: "cover",
+                          objectPosition: "top",
+                          width: "100%",
+                          height: "100%",
+                          imageRendering: "auto",
+                          }}                                 className="w-full h-full py-1 rounded-2xl"
+                          />
+                          
                         </div>
                       </SwiperSlide>
                     ))}
@@ -426,35 +445,37 @@ const ProductDetail: React.FC = () => {
                     </button>
 
 
-                    <div className="stars_reviews flex mt-1">
+                    <div className="stars_reviews flex mt-1 ">
                       <Rate disabled value={averageRating} allowHalf />
                       <span className="px-2 text-[#A4A1AA] mt-1">
                         {averageRating.toFixed(1)} <span className="px-[2px]">({product?.danh_gias.length})</span>
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 mb-2">
                     <EyeOutlined style={{ fontSize: '24px' }} />
-                    <span className="font-bold text-base">{product?.luot_xem}</span>
-                    <span>Người đã xem sản phẩm này</span>
+                    <span className="font-bold text-lg">{product?.luot_xem}</span>
+                    <span className="text-lg ">Người đã xem sản phẩm này</span>
                   </div>
 
 
-                  <h4 className="mb-3 text-2xl font-normal">{product?.mo_ta_ngan}</h4>
 
                 </div>
-                <div className="mb-5 text-xl font-medium">
+                <div className="mb-3 text-xl font-medium">
                   {displayPrice && (
                     <>
-                      <span className="text-red-600 font-bold">{displayPrice.currentPrice}</span>
-                      {displayPrice.originalPrice && (
+                      <span className="text-red-600 font-bold text-3xl">{displayPrice?.currentPrice}</span>
+                      {displayPrice?.originalPrice && (
                         <del className="text-[#A4A1AA] ml-2 text-sm">
-                          {displayPrice.originalPrice}
+                          {displayPrice?.originalPrice}
                         </del>
                       )}
                     </>
                   )}
+
                 </div>
+                <h4 className="mb-3 text-lg font-normal">{product?.mo_ta_ngan}</h4>
+
                 <div className="mb-4">
                   <h3 className="text-gray-900 mb-2 font-bold text-lg">
                     Màu sắc: {selectedColorDisplay ? <span className="font-normal">{selectedColorDisplay}</span> : null}
@@ -680,10 +701,8 @@ const ProductDetail: React.FC = () => {
                         onClick={() => handleReviewLike(review.id, review.trang_thai_danh_gia_nguoi_dung)}
                         disabled={likeMutation.isLoading}
                       >
-                        <FontAwesomeIcon
-                          icon={review.trang_thai_danh_gia_nguoi_dung ? fasThumbsUp : farThumbsUp}
-                          className={review.trang_thai_danh_gia_nguoi_dung ? 'text-blue-500' : 'text-gray-500'}
-                        />
+                       <i className={review.trang_thai_danh_gia_nguoi_dung ? "fa-solid fa-thumbs-up text-blue-500" : "fa-regular fa-thumbs-up text-gray-500"}></i>
+
                         <span>
                           {likeMutation.isLoading ? (
                             'Đang xử lý...'
@@ -805,82 +824,9 @@ const ProductDetail: React.FC = () => {
         </div>
       </div> */}
 
-<div className="container mb-28">
-  <div className="flex justify-center mb-5">
-    <h1 className="md:text-4xl text-3xl font-semibold tracking-[1px]">
-      Sản phẩm cùng loại
-    </h1>
-  </div>
-
-  <div className="grid grid-cols-12 justify-center gap-7">
-    {relatedProducts?.data.map((product: any, index: any) => (
-      <div
-        className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
-        key={index}
-      >
-        <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
-          <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
-            <span>
-              <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-            </span>
-            <a href="#">
-              <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-            </a>
-
-            <View id={product?.id} />
-            <Link to={`/product-detail/${product.id}`}>
-              <div className="relative">
-                <img
-                  src={product?.anh_san_pham}
-                  alt=""
-                  className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
-                />
-              
-              </div>
-            </Link>
-            {/* <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
-              Thêm vào giỏ hàng
-            </button> */}
-          </div>
-
-          <Link to={`/product-detail/${product.id}`}>
-            <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
-              <h5 className="text-base truncate w-60 font-medium">
-                {product?.ten_san_pham}
-              </h5>
-
-              <p className="font-semibold text-lg">
-                {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
-                  <>
-                    {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")} đ
-                  </>
-                ) : (
-                  <>
-                    {(product?.gia_thap_nhat ?? 0).toLocaleString("vi-VN")} đ
-                    <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
-                    {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")} đ
-                  </>
-                )}
-              </p>
-
-              <p className="font-bold text-lg flex items-center">
-                {product?.bien_the?.map((item: any, index: any) => (
-                  <button
-                    key={index}
-                    className="w-7 h-7 rounded-full border-1 inline-block mr-1"
-                    style={{
-                      backgroundColor: item?.ma_mau_sac,
-                    }}
-                  />
-                ))}
-              </p>
-            </div>
-          </Link>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+{product && (
+        <RelatedProducts productId={product.id} />
+      )}
 
       <section>
 
