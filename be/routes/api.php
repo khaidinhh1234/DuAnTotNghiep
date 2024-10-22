@@ -102,6 +102,10 @@ Route::middleware([])
         Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
         Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
 
+        // Trang bộ sưu tập
+
+        Route::get('bo-suu-tap/{slug}', [App\Http\Controllers\Client\Api\BoSuuTapController::class, 'show']);
+
         Route::middleware('auth.sanctum')->group(function () {
             // Giỏ hàng
             Route::get('/gio-hang', [GioHangController::class, 'index']);
@@ -116,6 +120,7 @@ Route::middleware([])
             Route::get('ma-khuyen-mai', [KhuyenMaiController::class, 'layMaKhuyenMaiTheoHangThanhVien']);
             Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
             Route::get('ma-uu-dai-cho-nguoi-dung-cu-the', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoNguoiDung']);
+            Route::get('tim-kiem-ma-khuyen-mai', [KhuyenMaiController::class, 'timKiemMaKhuyenMai']);
 
             Route::post('ap-dung-ma-khuyen-mai', [GioHangController::class, 'apDungMaGiamGia']);
 
