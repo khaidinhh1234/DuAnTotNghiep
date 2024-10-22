@@ -1,5 +1,26 @@
+import instanceClient from "@/configs/client";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+
 const ContactPage = ({ user }: any) => {
-  console.log(user);
+  const { register, handleSubmit } = useForm();
+  const { mutate } = useMutation({
+    mutationFn: async (data: any) => {
+      try {
+        const response = await instanceClient.post("lienhe", data);
+        toast.success("Gửi thông tin thành công");
+        return response.data;
+      } catch (error) {
+        toast.error("Lỗi khi gửi thông tin");
+        throw new Error("Lỗi khi gửi thông tin");
+      }
+    },
+  });
+  const onSubmit = (data: any) => {
+    mutate(data);
+    // console.log(data);
+  };
   return (
     <>
       <main className="pt-10">
@@ -33,37 +54,61 @@ const ContactPage = ({ user }: any) => {
                   </span>
                 </div>
               </div>
-              <form action="" className="space-y-5">
+              <form
+                action=""
+                className="space-y-5"
+                onSubmit={handleSubmit(onSubmit)}
+              >
                 <div className="flex flex-col space-y-2">
                   <label htmlFor="name" className="text-lg">
-                    Tên
+                    Họ và Tên
                   </label>
                   <input
                     type="text"
-                    value={user?.user?.name}
-                    id="name"
+                    {...register("name")}
                     placeholder="Tên của bạn"
                     className="border border-stone-500 rounded-lg px-3 py-2"
                   />
                 </div>
-                <div className="flex flex-col space-y-2">
-                  <label htmlFor="email" className="text-lg">
-                    Email hoặc số điện thoại
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    placeholder="Email / Số điện thoại  của bạn"
-                    className="border border-stone-500 rounded-lg px-3 py-2"
-                  />
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="email" className="text-lg">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      {...register("email")}
+                      placeholder="Email / Số điện thoại  của bạn"
+                      className="border border-stone-500 rounded-lg px-3 py-2"
+                    />
+                  </div>{" "}
+                  <div className="flex flex-col space-y-2">
+                    <label htmlFor="loai_lien_he" className="text-lg">
+                      Loại Liên Hệ
+                    </label>
+                    <select
+                      {...register("loai_lien_he")}
+                      id="loai_lien_he"
+                      className="border border-stone-500 rounded-lg px-3 py-2"
+                    >
+                      <option value="ho_tro">Hỗ trợ</option>
+                      <option value="bao_gia">Báo giá</option>
+                      <option value="phan_hoi">Phản hồi</option>
+                      <option value="thong_bao_san_pham_moi">
+                        Thông báo sản phẩm mới
+                      </option>
+                      <option value="bo_suu_tap">Bộ sưu tập</option>
+                      <option value="khac">Khác</option>
+                    </select>
+                  </div>
                 </div>
                 <div className="flex flex-col space-y-2">
                   <label htmlFor="message" className="text-lg">
                     Tin Nhắn
                   </label>
                   <textarea
-                    name=""
-                    id="message"
+                    {...register("noi_dung_lien_he")}
+                    id="noi_dung_lien_he"
                     cols={20}
                     rows={5}
                     placeholder="Tin nhắn của bạn"
@@ -71,7 +116,10 @@ const ContactPage = ({ user }: any) => {
                     defaultValue={""}
                   />
                 </div>
-                <button className="btn-black lg:text-lg lg:py-2 lg:px-7 py-2 px-5 font-medium rounded-lg">
+                <button
+                  type="submit"
+                  className="btn-black lg:text-lg lg:py-2 lg:px-7 py-2 px-5 font-medium rounded-lg"
+                >
                   <span> Gửi yêu cầu hỗ trợ</span>
                 </button>
               </form>

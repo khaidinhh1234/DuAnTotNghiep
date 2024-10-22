@@ -130,6 +130,7 @@ import PrivateRoute from "./PrivateRoute";
 import ChuongTrinhUuDaiRemote from "@/pages/(dashboard)/vourcher/banner/remote";
 import IntroCard from "@/pages/(dashboard)/adminProfile/profile/IntroCard";
 import Shipper from "@/pages/(van_chuyen)/shipper";
+import MyProfileedit from "@/pages/(website)/myprofile/MyProfileedit";
 
 const Router = () => {
   //
@@ -146,6 +147,7 @@ const Router = () => {
           <Route path="/product-detail/:id" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           <Route path="/myprofile" element={<MyProfile />} />
+          <Route path="/myprofileedit" element={<MyProfileedit />} />
           <Route path="/mywishlist" element={<MyWishlists />} />
           <Route path="/manageaddresses" element={<ManageAddresses />} />
           <Route path="/notification" element={<Notification />} />

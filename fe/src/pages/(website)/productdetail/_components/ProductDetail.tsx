@@ -65,7 +65,7 @@ interface ProductData {
     anh_bien_the: Array<{
       duong_dan_anh: string;
     }>;
-    id: number
+    id: number;
     so_sao_san_pham: number;
     chat_luong_san_pham: string;
     user: {
@@ -124,9 +124,14 @@ const ProductDetail: React.FC = () => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [user] = useLocalStorage("user" as any, {});
-  const access_token = user.access_token || localStorage.getItem("access_token");
-  const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
-  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(null);
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
+  const [selectedColorDisplay, setSelectedColorDisplay] = useState<
+    string | null
+  >(null);
+  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
+    null
+  );
   // const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -138,9 +143,6 @@ const ProductDetail: React.FC = () => {
     }
   }, []);
   const queryClient = useQueryClient();
-
-  const { data: product, } = useQuery<ProductData>({
-    queryKey: ['product', id],
     queryFn: () => fetchProduct(id!),
   });
 
@@ -419,11 +421,12 @@ const ProductDetail: React.FC = () => {
                           style={{
                             top: "300px",
                             cursor: "pointer",
-                            width: '665px',
-                            height: '600px',
-                            objectFit: 'cover',
-                            borderRadius: '8px',
-                          }} />
+                            width: "665px",
+                            height: "600px",
+                            objectFit: "cover",
+                            borderRadius: "8px",
+                          }}
+                        />
                       </SwiperSlide>
                     ))}
                   </Swiper>
@@ -496,7 +499,6 @@ const ProductDetail: React.FC = () => {
                       {/* Điều chỉnh kích thước và khoảng cách */}
                     </button>
 
-
                     <div className="stars_reviews flex mt-1 ">
                       <Rate disabled value={averageRating} allowHalf />
                       <span className="px-2 text-[#A4A1AA] mt-1">
@@ -508,18 +510,19 @@ const ProductDetail: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2 mb-2">
-                    <EyeOutlined style={{ fontSize: '24px' }} />
-                    <span className="font-bold text-lg">{product?.luot_xem}</span>
-                    <span className="text-lg ">Người đã xem sản phẩm này</span>
+                    <EyeOutlined style={{ fontSize: "24px" }} />
+                    <span className="font-bold text-lg">
+                      {product?.luot_xem}
+                    </span>
+                    <span className="text-lg ">Người đã xem</span>
                   </div>
-
-
-
                 </div>
                 <div className="mb-3 text-xl font-medium">
                   {displayPrice && (
                     <>
-                      <span className="text-red-600 font-bold text-3xl">{displayPrice?.currentPrice}</span>
+                      <span className="text-red-600 font-bold text-3xl">
+                        {displayPrice?.currentPrice}
+                      </span>
                       {displayPrice?.originalPrice && (
                         <del className="text-[#A4A1AA] ml-2 text-sm">
                           {displayPrice?.originalPrice}
@@ -528,9 +531,10 @@ const ProductDetail: React.FC = () => {
                       )}
                     </>
                   )}
-
                 </div>
-                <h4 className="mb-3 text-lg font-normal">{product?.mo_ta_ngan}</h4>
+                <h4 className="mb-3 text-lg font-normal">
+                  {product?.mo_ta_ngan}
+                </h4>
 
                 <div className="mb-4">
                   <h3 className="text-gray-900 mb-2 font-bold text-lg">
@@ -812,6 +816,7 @@ const ProductDetail: React.FC = () => {
                       >
                         <i className={review.trang_thai_danh_gia_nguoi_dung ? "fa-solid fa-thumbs-up text-blue-500" : "fa-regular fa-thumbs-up text-gray-500"}></i>
 
+
                         <span>
                           {likeMutation?.isLoading ? (
                             "Đang xử lý..."
@@ -936,6 +941,7 @@ const ProductDetail: React.FC = () => {
       {product && (
         <RelatedProducts productId={product?.id} />
       )}
+
 
       <section>
         <div className="container">

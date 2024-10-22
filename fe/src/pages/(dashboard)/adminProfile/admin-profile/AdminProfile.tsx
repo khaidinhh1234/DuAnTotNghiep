@@ -19,16 +19,13 @@ const AdminProfile = () => {
               <Col span={24}>
                 <IntroCard />
               </Col>
-              <Col span={24}>
-                {/* <PhotosCard /> */}
-              </Col>
+              <Col span={24}>{/* <PhotosCard /> */}</Col>
             </Row>
           </Col>
 
-          
           <Col xs={24} lg={16}>
             {/* <Post /> */}
-            <ChangePasswordAdmin/>
+            <ChangePasswordAdmin />
           </Col>
         </Row>
       </div>
