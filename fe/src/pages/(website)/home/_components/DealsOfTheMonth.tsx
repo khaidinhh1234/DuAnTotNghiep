@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 // import React from 'react'
 
 const DealsOfTheMonth = ({ chuong_trinh_uu_dai }: any) => {
-  // console.log(chuong_trinh_uu_dai);
+  console.log(chuong_trinh_uu_dai);
   return (
     <>
       <section className="bg-white">

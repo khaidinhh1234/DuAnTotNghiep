@@ -80,7 +80,7 @@ const View = ({ id }: any) => {
       anh_san_pham: variant?.anh_bien_the,
     }));
 
-  console.log(sanpham);
+  // console.log(sanpham);
   //   const showLoading = () => {
   //     setOpen(true);
   //   };
@@ -128,7 +128,9 @@ const View = ({ id }: any) => {
   return (
     <>
       <Link to={``} type="primary" onClick={() => setOpen(true)}>
-        <i className="z-20 fa-regular fa-eye text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[115px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+        <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+          Thêm vào giỏ hàng
+        </button>
       </Link>
       <Modal
         width={1300}
@@ -170,7 +172,7 @@ const View = ({ id }: any) => {
                         Thumbs,
                         FreeMode,
                       ]}
-                      className="mySwiper2 w-[555px]  swiper-with-hover"
+                      className="mySwiper2 lg:w-[555px] lg:h-auto w-[300px] h-[400px] swiper-with-hover"
                       loop={true}
                       spaceBetween={10}
                     >
@@ -179,19 +181,19 @@ const View = ({ id }: any) => {
                           <SwiperSlide key={index}>
                             <img
                               src={image?.duong_dan_anh}
-                              alt=""
+                              alt={image?.duong_dan_anh}
                               onClick={() =>
                                 handlePreview(image?.duong_dan_anh)
                               }
                               style={{ cursor: "pointer" }}
-                              className="mx-auto h-[550px] w-[450px]"
+                              className="mx-auto h-[490px] lg:h-[550px] lg:w-[450px] w-[400px] object-cover object-center rounded-2xl  mt-10"
                             />
                           </SwiperSlide>
                         ))
                       )}
                     </Swiper>
                   </div>
-                  <div className="w-[500px] mx-auto">
+                  <div className="w-[500px] mx-auto mt-5 lg:mt-2">
                     <Swiper
                       onSwiper={(swiperInstance) =>
                         setThumbsSwiper(swiperInstance as any)
@@ -207,7 +209,7 @@ const View = ({ id }: any) => {
                       {sanpham?.map((item: any) =>
                         item?.anh_san_pham?.map((image: any, index: any) => (
                           <SwiperSlide key={index}>
-                            <div className="md:w-[100px] md:h-[100px] w-[62px] h-[60px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] flex justify-center items-center ">
+                            <div className="md:w-[100px] md:h-[100px] w-[100px] h-[100px] bg-[#F4F4F4] rounded-2xl px-1 border border-[#F4F4F4] flex justify-center items-center ">
                               <img
                                 src={image?.duong_dan_anh}
                                 alt={image?.duong_dan_anh}
