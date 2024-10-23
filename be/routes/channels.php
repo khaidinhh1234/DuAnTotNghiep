@@ -17,12 +17,17 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
-
-Broadcast::channel('thongbao', function(){
+//
+Broadcast::channel('thong-bao', function(){
     return true;
 });
+//
+//Broadcast::channel('ma-khuyen-mai', function ($user, MaKhuyenMai $maKhuyenMai) {
+//    return (new App\Policies\MaKhuyenMaiPolicy)->join($user, $maKhuyenMai->hang_thanh_vien_ids);
+//});
 
-Broadcast::channel('ma-khuyen-mai', function ($user, MaKhuyenMai $maKhuyenMai) {
-    return (new App\Policies\MaKhuyenMaiPolicy)->join($user, $maKhuyenMai->hang_thanh_vien_ids);
-});
+//Broadcast::channel('users.{userId}', function ($user, $userId) {
+//    return (int) $user->id === (int) $userId;
+//});
+
 

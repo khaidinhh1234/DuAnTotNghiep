@@ -77,7 +77,7 @@ const Bestseller = ({ products }: any) => {
                         <i className="z-20 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                       </span>
                     ) : (
-                      <span onClick={() => mutate(product.id)}>
+                      <span onClick={() => mutate(product.duong_dan)}>
                         <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                       </span>
                     )}

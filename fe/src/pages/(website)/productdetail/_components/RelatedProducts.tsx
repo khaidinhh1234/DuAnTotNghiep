@@ -39,6 +39,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
     enabled: !!productId,
   });
 
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (id: any) => {
       try {
@@ -71,6 +72,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
   };
+
 
   if (!relatedProducts?.data || relatedProducts.data.length === 0) {
     return null;
