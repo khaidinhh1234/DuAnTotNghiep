@@ -5,7 +5,7 @@ import ProductsList from "./ProductsList";
 import { useQuery } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 
-const ProductCategories = () => {
+const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
   const [showcolor, setShowcolor] = useState(false);
   const [showprice, setShowprice] = useState(false);
@@ -25,7 +25,7 @@ const ProductCategories = () => {
     },
   });
   const products = data?.data || [];
-  console.log(products);
+  // console.log(products);
   return (
     <div>
       {" "}
@@ -271,7 +271,11 @@ const ProductCategories = () => {
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-              <ProductsList products={products} />
+              <ProductsList
+                products={products}
+                Wishlist={handleWishlist}
+                isPending={isPending}
+              />
             </div>
           </div>
         </div>
