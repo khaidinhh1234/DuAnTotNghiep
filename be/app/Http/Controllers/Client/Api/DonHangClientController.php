@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Client\Api;
 
 use App\Events\HoanTatDonHang;
 use App\Events\SendMail;
+use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
-use App\Mail\DonHangDuocTaoMail;
 use App\Models\BienTheSanPham;
 use App\Models\DonHang;
 use App\Models\DonHangChiTiet;
@@ -305,7 +305,7 @@ class DonHangClientController extends Controller
             //            event(new HoanTatDonHang($donHang, $request->email_nguoi_dat_hang));
 
 
-            ThongBao::create([
+            $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Đơn hàng đã được đặt',
                 'noi_dung' => 'Đơn hàng đã được đặt',
@@ -314,6 +314,9 @@ class DonHangClientController extends Controller
                 'loai_duong_dan' => 'don-hang',
                 'id_duong_dan' => $donHang->id,
             ]);
+
+            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
             DB::commit();
 
             return response()->json([
