@@ -233,48 +233,70 @@ class TrangSanPhamController extends Controller
 
             // Gộp thông tin màu sắc, kích thước và ảnh biến thể
             $sanPhams->getCollection()->transform(function ($sanPham) {
-                // Lấy thông tin sản phẩm
-                $sanPhamData = [
+                // Lấy giá thấp nhất và cao nhất của sản phẩm
+                $giaThapNhat = $sanPham->bienTheSanPham->min('gia_hien_tai');
+                $giaCaoNhat = $sanPham->bienTheSanPham->max('gia_hien_tai');
+
+                // Lấy thông tin biến thể sản phẩm
+                $bienTheData = $sanPham->bienTheSanPham->map(function ($bienThe) {
+                    // Lấy thông tin màu sắc, kích thước, và ảnh
+                    $mauBienThe = $bienThe->mauBienThe;
+                    $kichThuocBienThe = $bienThe->kichThuocBienThe;
+                    $anhBienThe = $bienThe->anhBienThe->map(function ($anh) {
+                        return [
+                            'id' => $anh->id,
+                            'bien_the_san_pham_id' => $anh->bien_the_san_pham_id,
+                            'duong_dan_anh' => $anh->duong_dan_anh,
+                            'created_at' => $anh->created_at,
+                            'updated_at' => $anh->updated_at,
+                            'deleted_at' => $anh->deleted_at,
+                        ];
+                    });
+
+                    return [
+                        'id' => $bienThe->id,
+                        'san_pham_id' => $bienThe->san_pham_id,
+                        'so_luong_bien_the' => $bienThe->so_luong_bien_the,
+                        'ten_mau_sac' => $mauBienThe ? $mauBienThe->ten_mau_sac : null,
+                        'ma_mau_sac' => $mauBienThe ? $mauBienThe->ma_mau_sac : null,
+                        'kich_thuoc' => $kichThuocBienThe ? $kichThuocBienThe->kich_thuoc : null,
+                        'gia_chua_giam' => $bienThe->gia_chua_giam,
+                        'gia_hien_tai' => $bienThe->gia_hien_tai,
+                        'anh_bien_the' => $anhBienThe->toArray() // Đưa ra ảnh biến thể đúng định dạng
+                    ];
+                })->toArray();
+
+                // Gộp thông tin sản phẩm
+                return [
                     'id' => $sanPham->id,
-                    'danh_muc_id' => $sanPham->danh_muc_id,
                     'ten_san_pham' => $sanPham->ten_san_pham,
-                    'anh_san_pham' => $sanPham->anh_san_pham,
-                    'ma_san_pham' => $sanPham->ma_san_pham,
                     'duong_dan' => $sanPham->duong_dan,
-                    'mo_ta_ngan' => $sanPham->mo_ta_ngan,
-                    'noi_dung' => $sanPham->noi_dung,
-                    'luot_xem' => $sanPham->luot_xem,
-                    'trang_thai' => $sanPham->trang_thai,
-                    'gia_tot' => $sanPham->gia_tot,
+                    'anh_san_pham' => $sanPham->anh_san_pham,
                     'hang_moi' => $sanPham->hang_moi,
-                    'created_at' => $sanPham->created_at,
-                    'updated_at' => $sanPham->updated_at,
-                    'mau_va_hinh_anh' => $sanPham->bienTheSanPham->map(function ($bienThe) {
-                        // Lấy thông tin màu sắc và ảnh
+                    'gia_tot' => $sanPham->gia_tot,
+                    'gia_thap_nhat' => $giaThapNhat,
+                    'gia_cao_nhat' => $giaCaoNhat,
+                    'bien_the' => $bienTheData, // Đưa ra thông tin biến thể
+                    'mau_sac_va_anh' => $sanPham->bienTheSanPham->map(function ($bienThe) {
                         $mauBienThe = $bienThe->mauBienThe;
-                        $anhBienThe = $bienThe->anhBienThe->first(); // Lấy ảnh đầu tiên
+                        $anhBienThe = $bienThe->anhBienThe->first(); // Lấy ảnh đầu tiên nếu có
 
                         return [
-                            'mau_sac' => $mauBienThe ? $mauBienThe->ten_mau_sac : null,
                             'ma_mau_sac' => $mauBienThe ? $mauBienThe->ma_mau_sac : null,
+                            'ten_mau_sac' => $mauBienThe ? $mauBienThe->ten_mau_sac : null,
                             'hinh_anh' => $anhBienThe ? $anhBienThe->duong_dan_anh : null
                         ];
                     })->unique(function ($item) {
-                        // Loại bỏ các màu và ảnh trùng lặp
-                        return $item['mau_sac'] . $item['ma_mau_sac'];
+                        return $item['ma_mau_sac']; // Loại bỏ màu trùng lặp
                     })->values()->toArray(), // Chuyển thành mảng
 
-                    'kich_thuoc' => $sanPham->bienTheSanPham->map(function ($bienThe) {
-                        // Lấy thông tin kích thước
+                    'kich_thuocs' => $sanPham->bienTheSanPham->map(function ($bienThe) {
                         $kichThuocBienThe = $bienThe->kichThuocBienThe;
-
                         return [
                             'kich_thuoc' => $kichThuocBienThe ? $kichThuocBienThe->kich_thuoc : null,
                         ];
-                    })->unique('kich_thuoc')->values()->toArray() // Loại bỏ các kích thước trùng lặp và chuyển thành mảng
+                    })->unique('kich_thuoc')->values()->toArray() // Loại bỏ kích thước trùng lặp và chuyển thành mảng
                 ];
-
-                return $sanPhamData;
             });
 
 
@@ -298,6 +320,7 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
 
 
 
