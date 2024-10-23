@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Client\Api;
 
 use App\Events\HoanTatDonHang;
 use App\Events\SendMail;
+use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
-use App\Mail\DonHangDuocTaoMail;
 use App\Models\BienTheSanPham;
 use App\Models\DonHang;
 use App\Models\DonHangChiTiet;
@@ -85,57 +85,23 @@ class DonHangClientController extends Controller
 
         return redirect()->to($jsonResult['payUrl']);
     }
-
     public function donHangUser()
     {
         try {
             $user = Auth::guard('api')->user();
-            $donHang = DonHang::query()
-                // with(['bienTheSanPhams' => function($query) {
-                //     $query->select('san_pham_id')->with('sanPham');
-                // }])
-                ->where('user_id', $user->id)
-                ->orderByDesc('created_at')
-                ->get()
-                ->makeHidden(['bien_the_san_phams']);;
-
-            //Sản phẩm trong đơn hàng
-            $sanPhams = [];
-            foreach ($donHang as $dh) {
-                $sanPham = DB::table('don_hang_chi_tiets')
-                    ->join('bien_the_san_phams', 'don_hang_chi_tiets.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
-                    ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
-                    ->where('don_hang_id', $dh->id)
-                    ->select(
-                        'san_phams.ten_san_pham',
-                        'san_phams.anh_san_pham',
-                        'san_phams.ma_san_pham',
-                        'san_phams.duong_dan',
-                        'san_phams.noi_dung',
-                        'san_phams.luot_xem',
-                        'san_phams.trang_thai',
-                        'san_phams.gia_tot',
-                        'san_phams.hang_moi',
-                        'bien_the_san_phams.bien_the_mau_sac_id',
-                        'bien_the_san_phams.bien_the_kich_thuoc_id',
-                        'bien_the_san_phams.so_luong_bien_the',
-                        'bien_the_san_phams.gia_ban',
-                        'bien_the_san_phams.gia_khuyen_mai',
-                        'bien_the_san_phams.gia_khuyen_mai_tam_thoi',
-                    )
-                    ->get();
-                array_push($sanPhams, $sanPham);
-            }
-
-            $data = [
-                'don_hang' => $donHang,
-                'san_pham' => $sanPhams
-            ];
+            $donHang = DonHang::where('user_id', $user->id)->with([
+                'chiTietDonHangs.bienTheSanPham.mauBienThe',
+                'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
+                'user.hangThanhVien',
+                'vanChuyen',
+                'bienTheSanPhams'
+            ])
+                ->orderByDesc('created_at')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy danh sách đơn hàng thành công',
-                'data' => $data
+                'data' => $donHang
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -146,13 +112,16 @@ class DonHangClientController extends Controller
             ]);
         }
     }
-
     public function donHangUserDetail(string $maDonHang)
     {
         try {
-            $donHang = DonHang::query()->with(['chiTietDonHangs.bienTheSanPham.mauBienThe',
+            $donHang = DonHang::query()->with([
+                'chiTietDonHangs.bienTheSanPham.mauBienThe',
                 'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
-                'user.hangThanhVien', 'vanChuyen', 'bienTheSanPhams'])->where('ma_don_hang', $maDonHang)->first();
+                'user.hangThanhVien',
+                'vanChuyen',
+                'bienTheSanPhams'
+            ])->where('ma_don_hang', $maDonHang)->first();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -163,7 +132,7 @@ class DonHangClientController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => '',
+                'message' => 'Lấy chi tiết đơn hàng thất bại',
                 'error' => $e->getMessage()
             ]);
         }
@@ -305,7 +274,7 @@ class DonHangClientController extends Controller
             //            event(new HoanTatDonHang($donHang, $request->email_nguoi_dat_hang));
 
 
-            ThongBao::create([
+            $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Đơn hàng đã được đặt',
                 'noi_dung' => 'Đơn hàng đã được đặt',
@@ -314,6 +283,9 @@ class DonHangClientController extends Controller
                 'loai_duong_dan' => 'don-hang',
                 'id_duong_dan' => $donHang->id,
             ]);
+
+            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
             DB::commit();
 
             return response()->json([
