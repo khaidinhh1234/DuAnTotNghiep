@@ -1,13 +1,14 @@
-import { EyeOutlined } from "@ant-design/icons";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Image, message, Rate } from "antd";
 import React, {
-  useCallback,
+  useState,
   useEffect,
   useMemo,
+  useCallback,
   useRef,
-  useState,
 } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, Image, message, Rate } from "antd";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -17,12 +18,17 @@ import {
   Pagination,
   Thumbs,
 } from "swiper/modules";
+import { Button, Image, Rate } from "antd";
+import { message } from "antd";
 import SizeGuideModal from "./SizeGuide";
+import { EyeOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 
-import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
+import { useLocalStorage } from "@/components/hook/useStoratge";
+import View from "../../_component/View";
 import RelatedProducts from "./RelatedProducts";
-import { SwiperSlide } from "swiper/react";
+import SizeGuideModal from "./SizeGuide";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -97,7 +103,7 @@ interface ProductData {
 // }
 
 const fetchProduct = async (id: string) => {
-  const response = await instanceClient.get(`/chi-tiet-san-pham/${id}`);
+  const response = await instance.get(`/chi-tiet-san-pham/${id}`);
   return response.data.data;
 };
 
@@ -182,8 +188,8 @@ const ProductDetail: React.FC = () => {
         throw new Error("Bạn cần đăng nhập để thực hiện hành động này");
       }
       return isLiked
-        ? instanceClient.delete(`/danh-gia/${reviewId}/unlike`)
-        : instanceClient.post(`/danh-gia/${reviewId}/like`);
+        ? instance.delete(`/danh-gia/${reviewId}/unlike`)
+        : instance.post(`/danh-gia/${reviewId}/like`);
     },
     onSuccess: (_: any, variables: { reviewId: number; isLiked: boolean }) => {
       queryClient.setQueryData<ProductData>(["product", id], (oldProduct) => {
