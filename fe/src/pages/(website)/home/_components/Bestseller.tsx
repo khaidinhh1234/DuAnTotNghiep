@@ -3,6 +3,14 @@
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
 import { useState } from "react";
+import instanceClient from "@/configs/client";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { message } from "antd";
 
 const Bestseller = ({ products }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
@@ -14,19 +22,34 @@ const Bestseller = ({ products }: any) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
   };
-  // const { data } = useQuery({
-  //   queryKey: ["PRODUCTS_KEYS"],
-  //   queryFn: async () => {
-  //     const response = await instance.get("trangchu");
-  //     if (response.data.status_code !== 200) {
-  //       throw new Error("Error fetching product");
-  //     }
-  //     return response.data;
-  //   },
-  // });
-  // // console.log(data);
-  // const products = data?.danh_sach_san_pham_moi || [];
-  // console.log(products);
+  const queryclient = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (id: any) => {
+      try {
+        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+        // console.log(response.data);
+        if (
+          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+        ) {
+          message.success("Xóa sản phẩm yêu thích thành công");
+        }
+        if (
+          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+        ) {
+          message.success("Thêm sản phẩm yêu thích thành công");
+        }
+
+        return response.data;
+      } catch (error) {
+        message.error("Xóa sản phẩm yêu thích thất bại");
+        console.error("API error", error); // Thêm log lỗi API
+        throw new Error("Xóa sản phẩm yêu thích thất bại");
+      }
+    },
+    onSuccess: () => {
+      queryclient.invalidateQueries({ queryKey: ["SANPHAM_YEUTHICH"] });
+    },
+  });
 
   return (
     <>
@@ -49,9 +72,15 @@ const Bestseller = ({ products }: any) => {
                 {" "}
                 <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
                   <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
-                    <span>
-                      <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-                    </span>
+                    {isPending ? (
+                      <span>
+                        <i className="z-20 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                      </span>
+                    ) : (
+                      <span onClick={() => mutate(product.id)}>
+                        <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                      </span>
+                    )}
                     <a href="#">
                       <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                     </a>

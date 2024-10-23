@@ -1,6 +1,6 @@
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
-import { Modal, Rate } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { message, Modal, Rate } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -28,6 +28,34 @@ const View = ({ id }: any) => {
       } catch (error) {
         throw new Error("Lỗi khi lấy thông tin");
       }
+    },
+  });
+  const queryclient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async (id: any) => {
+      try {
+        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+        // console.log(response.data);
+        if (
+          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+        ) {
+          message.success("Xóa sản phẩm yêu thích thành công");
+        }
+        if (
+          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+        ) {
+          message.success("Thêm sản phẩm yêu thích thành công");
+        }
+
+        return response.data;
+      } catch (error) {
+        message.error("Xóa sản phẩm yêu thích thất bại");
+        console.error("API error", error); // Thêm log lỗi API
+        throw new Error("Xóa sản phẩm yêu thích thất bại");
+      }
+    },
+    onSuccess: () => {
+      queryclient.invalidateQueries({ queryKey: ["SANPHAM_YEUTHICH"] });
     },
   });
   const product = data?.data;
@@ -102,8 +130,9 @@ const View = ({ id }: any) => {
 
   // const sizes = ["S", "M", "L", "XL", "XXL"];
 
-  const handleClickHeart = () => {
+  const handleClickHeart = (id: number) => {
     setIsHeart(!isHeart);
+    mutate(id);
   };
   const handlePreview = (imageUrl: string) => {
     setPreviewImage(imageUrl);
@@ -367,7 +396,7 @@ const View = ({ id }: any) => {
                       Thêm vào giỏ hàng
                     </button>
                     <button
-                      onClick={handleClickHeart}
+                      onClick={() => handleClickHeart(id)}
                       className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
                  
                       `}

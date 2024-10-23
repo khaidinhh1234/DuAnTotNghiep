@@ -27,13 +27,12 @@ const DetailTransport = ({ record }: any) => {
   const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
-  const [isWebcamVisible, setIsWebcamVisible] = useState<boolean>(
-    () => JSON.parse(localStorage.getItem("isWebcamVisible") || "false")
+  const [isWebcamVisible, setIsWebcamVisible] = useState<boolean>(() => 
+    JSON.parse(localStorage.getItem("isWebcamVisible") || "false")
   );
   const [isImageSaved, setIsImageSaved] = useState(false);
-  const [notes, setNotes] = useState<string[]>([]); // Array to store all notes
-  const [isConfirmFailureVisible, setIsConfirmFailureVisible] = useState(false); // Control visibility of confirm failure button
-
+  const [notes, setNotes] = useState<{ lan1?: string; lan2?: string; lan3?: string }>({});
+  const [isConfirmFailureVisible, setIsConfirmFailureVisible] = useState(false);
   const [note, setNote] = useState("");
   const [showNoteInput, setShowNoteInput] = useState(false);
   const webcamRef = useRef<Webcam>(null);
@@ -44,12 +43,12 @@ const DetailTransport = ({ record }: any) => {
     facingMode: "user",
   };
 
-  // Lưu trạng thái camera vào localStorage
+  // Lưu trạng thái webcam vào localStorage
   useEffect(() => {
     localStorage.setItem("isWebcamVisible", JSON.stringify(isWebcamVisible));
   }, [isWebcamVisible]);
 
-  // Hiện camera chỉ khi trạng thái là "Đang giao hàng" và ảnh chưa được lưu
+  // Hiện webcam chỉ khi trạng thái là "Đang giao hàng" và chưa lưu ảnh
   useEffect(() => {
     if (record.trang_thai_van_chuyen === "Đang giao hàng" && !isImageSaved) {
       setIsWebcamVisible(true);
@@ -58,7 +57,7 @@ const DetailTransport = ({ record }: any) => {
     }
   }, [record.trang_thai_van_chuyen, isImageSaved]);
 
-  // Hàm chụp ảnh bằng webcam
+  // Chụp ảnh bằng webcam
   const capturePhoto = () => {
     if (record.trang_thai_van_chuyen !== "Đang giao hàng") {
       alert("Chỉ có thể chụp ảnh khi trạng thái là 'Đang giao hàng'.");
@@ -70,50 +69,77 @@ const DetailTransport = ({ record }: any) => {
       setUrl(imageSrc);
     }
   };
+
+  // Xử lý giao hàng thất bại
+  const handleDeliveryFailure = () => {
+    const newFailedAttempts = failedAttempts + 1;
+    setFailedAttempts(newFailedAttempts);
+    setShowNoteInput(true); // Hiện trường ghi chú cho mỗi lần giao hàng thất bại
+
+    if (newFailedAttempts >= 3) {
+      setIsConfirmFailureVisible(true); // Hiện nút xác nhận thất bại sau lần thất bại thứ 3
+      setIsWebcamVisible(false); // Ẩn webcam sau 3 lần thất bại
+    } else {
+      alert(`Giao hàng thất bại lần ${newFailedAttempts}.`);
+    }
+  };
+
+  // Lưu ghi chú cho lần giao hàng thất bại hiện tại
+  const handleSaveNote = () => {
+    if (!note.trim()) {
+      alert("Vui lòng nhập ghi chú.");
+      return;
+    }
+
+    // Lưu ghi chú cho lần giao hàng thất bại tương ứng
+    const updatedNotes = { ...notes };
+    if (failedAttempts === 1) updatedNotes.lan1 = note.trim();
+    if (failedAttempts === 2) updatedNotes.lan2 = note.trim();
+    if (failedAttempts === 3) updatedNotes.lan3 = note.trim();
+
+    setNotes(updatedNotes);
+    setNote(""); // Xóa trường nhập
+    setShowNoteInput(false); // Ẩn trường ghi chú sau khi lưu
+  };
+
+  // Xử lý xác nhận giao hàng thành công hoặc thất bại
   const handleSave = async () => {
     try {
       setLoading(true);
       let imageUrl = null;
 
-      // Kiểm tra nếu đang gửi ghi chú sau 3 lần giao hàng thất bại, không cần upload ảnh
-      if (!showNoteInput) {
-        if (url) {
-          const response = await fetch(url);
-          const blob = await response.blob();
-          const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+      if (!url) {
+        alert("Vui lòng chụp ảnh trước khi xác nhận giao hàng.");
+        return;
+      }
 
-          // Upload ảnh lên Cloudinary hoặc dịch vụ lưu trữ khác
-          imageUrl = await uploadToCloudinary(file);
+      const fetchResponse = await fetch(url);
+      const blob = await fetchResponse.blob();
+      const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
 
-          if (!imageUrl) {
-            alert("Lỗi khi upload ảnh. Vui lòng thử lại.");
-            return;
-          }
-        } else {
-          alert("Vui lòng chụp ảnh trước khi xác nhận giao hàng.");
-          return;
-        }
+      // Tải ảnh lên Cloudinary hoặc dịch vụ khác
+      imageUrl = await uploadToCloudinary(file);
+
+      if (!imageUrl) {
+        alert("Lỗi khi upload ảnh. Vui lòng thử lại.");
+        return;
       }
 
       const response: any = await mutate({
         id: record.id,
         action: "Xác nhận giao hàng",
         imageUrl: imageUrl,
-        note: notes, // Send the notes array here
+        ghi_chu: notes, // Gửi ghi chú cho mỗi lần thất bại
         failedAttempts: failedAttempts,
       });
 
       if (response && response.data) {
-        // Add note to the notes array on successful save
-        if (note) {
-          setNotes((prevNotes) => [...prevNotes, note]); // Add the new note to the array
-          setNote(""); // Clear the current note input
-        }
-
-        alert(showNoteInput ? "Ghi chú đã được gửi thành công!" : "Đã lưu ảnh và xác nhận giao hàng thành công!");
-        setIsImageSaved(true); // Đánh dấu ảnh đã được lưu nếu không phải ghi chú
-        setFailedAttempts(0);
-        setShowNoteInput(false); // Ẩn ô nhập ghi chú nếu có
+        alert("Đã lưu ảnh và xác nhận giao hàng thành công!");
+        setIsImageSaved(true); // Đánh dấu ảnh đã lưu
+        setFailedAttempts(0); // Đặt lại số lần thất bại
+        setNotes({}); // Xóa ghi chú
+        setUrl(null); // Xóa ảnh sau khi gửi
+        setIsWebcamVisible(false); // Ẩn webcam sau khi lưu
       } else {
         alert("Có lỗi xảy ra trong quá trình xác nhận giao hàng.");
       }
@@ -124,24 +150,6 @@ const DetailTransport = ({ record }: any) => {
       setLoading(false);
     }
   };
-
-
-  // Hàm xử lý khi giao hàng thất bại
-  const handleDeliveryFailure = () => {
-    const newFailedAttempts = failedAttempts + 1;
-    setFailedAttempts(newFailedAttempts);
-
-    if (newFailedAttempts < 3) {
-      alert(`Giao hàng thất bại lần ${newFailedAttempts}.`);
-      setShowNoteInput(true); // Show note input for each failed attempt
-    } else if (newFailedAttempts === 3) {
-      alert("Giao hàng thất bại 3 lần. Vui lòng nhập ghi chú và xác nhận.");
-      setShowNoteInput(true); // Show note input for the third attempt
-      setIsConfirmFailureVisible(true); // Show confirm failure button
-      setIsWebcamVisible(false); // Hide webcam after 3 failed attempts
-    }
-  };
-
 
   const formatDate = (dateString: any) => {
     if (!dateString) return "";
@@ -180,7 +188,7 @@ const DetailTransport = ({ record }: any) => {
   };
 
   const { mutate } = useMutation({
-    mutationFn: async ({ id, action, imageUrl, note, failedAttempts }: any) => {
+    mutationFn: async ({ id, action, imageUrl, ghi_chu, failedAttempts }: any) => {
       try {
         let response;
 
@@ -190,7 +198,7 @@ const DetailTransport = ({ record }: any) => {
           response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
             anh_xac_thuc: imageUrl,
             shipper_xac_nhan: shipperXacNhan,
-            ghi_chu: note,
+            ghi_chu: ghi_chu, // Gửi ghi chú dưới dạng đối tượng { lan1, lan2, lan3 }
           });
         } else {
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
@@ -201,7 +209,7 @@ const DetailTransport = ({ record }: any) => {
 
         return response.data;
       } catch (error) {
-        console.error("Error during API request:", error);
+        console.error("Lỗi khi thực hiện yêu cầu API:", error);
         message.error("Không thể cập nhật trạng thái đơn hàng!");
       }
     },
@@ -211,6 +219,7 @@ const DetailTransport = ({ record }: any) => {
       });
     },
   });
+
   return (
     <div>
       {" "}
@@ -456,7 +465,7 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
-                {/* Hiển thị webcam nếu điều kiện cho phép */}
+                {/* Display the webcam if the conditions allow */}
                 {isWebcamVisible && !isImageSaved && (
                   <div className="relative mx-auto mt-6">
                     {url ? (
@@ -476,6 +485,7 @@ const DetailTransport = ({ record }: any) => {
                           <button
                             onClick={capturePhoto}
                             className="px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                            title="Capture Photo"
                           >
                             <i className="fa-regular fa-camera"></i>
                           </button>
@@ -485,7 +495,7 @@ const DetailTransport = ({ record }: any) => {
                   </div>
                 )}
 
-                {/* Hiện ô nhập ghi chú nếu giao hàng thất bại */}
+                {/* Show note input if delivery failed */}
                 {showNoteInput && (
                   <textarea
                     rows={3}
@@ -497,18 +507,16 @@ const DetailTransport = ({ record }: any) => {
                 )}
 
                 {/* Render all notes */}
-                {notes.length > 0 && (
-                  <div className="mt-4">
-                    <h4 className="font-bold">Ghi chú đã nhập:</h4>
-                    <ul className="list-disc pl-5">
-                      {notes.map((n, index) => (
-                        <li key={index}>{n}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <div className="mt-4">
+                  <h4 className="font-bold">Ghi chú thất bại:</h4>
+                  <ul className="list-disc pl-5">
+                    {notes.lan1 && <li>Lần 1: {notes.lan1}</li>}
+                    {notes.lan2 && <li>Lần 2: {notes.lan2}</li>}
+                    {notes.lan3 && <li>Lần 3: {notes.lan3}</li>}
+                  </ul>
+                </div>
 
-                {/* Nút xử lý giao hàng */}
+                {/* Buttons for handling delivery */}
                 {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
                   <button
                     className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
@@ -525,15 +533,7 @@ const DetailTransport = ({ record }: any) => {
                       <>
                         {showNoteInput ? (
                           <button
-                            onClick={() => {
-                              if (note.trim()) {
-                                setNotes((prevNotes) => [...prevNotes, note.trim()]);
-                                setNote(""); // Clear the note input
-                                setShowNoteInput(false); // Hide the note input
-                              } else {
-                                alert("Vui lòng nhập ghi chú.");
-                              }
-                            }}
+                            onClick={handleSaveNote}
                             className="w-full py-2 border bg-green-600 rounded-lg text-white hover:bg-green-700 mt-7"
                           >
                             Gửi ghi chú
@@ -549,10 +549,7 @@ const DetailTransport = ({ record }: any) => {
                             </button>
                             <button
                               className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                              onClick={() => {
-                                setFailedAttempts((prev) => prev + 1);
-                                setShowNoteInput(true); // Show note input after marking as failed
-                              }}
+                              onClick={handleDeliveryFailure}
                             >
                               Giao hàng thất bại
                             </button>
@@ -563,16 +560,14 @@ const DetailTransport = ({ record }: any) => {
                       <button
                         className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
                         onClick={async () => {
-                          // Confirm delivery failure with all notes
                           await mutate({
                             id: record.id,
                             action: "Xác nhận giao hàng thất bại",
-                            note: notes, // Send all notes as an array
+                            ghi_chu: notes, // Send all notes as an object { lan1, lan2, lan3 }
                           });
-                          // Reset states after confirming failure
-                          setFailedAttempts(0);
-                          setNotes([]); // Clear notes after confirmation
-                          setShowNoteInput(false);
+                          setFailedAttempts(0); // Reset attempts
+                          setNotes({}); // Clear notes after confirmation
+                          setShowNoteInput(false); // Hide input
                         }}
                       >
                         Xác nhận giao hàng thất bại
@@ -581,7 +576,6 @@ const DetailTransport = ({ record }: any) => {
                   </>
                 ) : null}
               </div>
-
             </div>{" "}
             <div className=" bg-slate-100 p-5 border rounded-lg my-2">
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
