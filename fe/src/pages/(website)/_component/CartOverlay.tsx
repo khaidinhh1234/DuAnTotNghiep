@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instance from '@/configs/client';
+import { Link } from 'react-router-dom';
 
 interface CartItem {
   id: number;
@@ -27,7 +28,7 @@ const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
-const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
+const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible  }) => {
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
@@ -70,21 +71,37 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
   if (isError) {
     return <div>Error loading cart data</div>;
   }
-
+  
   const allItems = [...(cartData?.san_pham_giam_gia || []), ...(cartData?.san_pham_nguyen_gia || [])];
   const displayItems = allItems.slice(0, 3);
+  const totalUniqueProducts = allItems.length;
 
   const subtotal = displayItems.reduce((sum, item) => sum + item.gia_hien_tai * item.so_luong, 0);
+  if (totalUniqueProducts=== 0) {
+    return (
+<div className="absolute top-full right-64 w-3/12 bg-white shadow-lg p-8 rounded-lg z-50 flex flex-col items-center">
+  <div className="p-6">
+    <img src="/public/image.png" alt="No Product" className="w-32 h-32" />
+  </div>
+  <p className="mt-3 text-xl text-gray-700 font-medium">Chưa Có Sản Phẩm</p>
+</div>
 
+  
+    );
+  }
   return (
     <div className="absolute top-full right-60 w-85 bg-white shadow-lg p-4 rounded-lg z-50">
-      <h2 className="text-lg font-semibold mb-3">Bạn có {cartData?.tong_so_luong || 0} sản phẩm trong giỏ hàng</h2>
+      <h2 className="text-lg font-semibold mb-3">Bạn có {totalUniqueProducts} sản phẩm trong giỏ hàng</h2>
       <div className="space-y-5">
         {displayItems.map((item) => (
           <div key={item.id} className="flex items-center py-2 border-b">
             <img src={item.hinh_anh} alt={item.ten_san_pham} className="w-16 h-16 object-cover mr-3 rounded-[6px]" />
             <div className="flex-grow">
-              <h3 className="text-sm font-medium hover:text-[#FF7262] truncate">{item.ten_san_pham}</h3>
+            <Link to={`/product-detail/${item.bien_the_san_pham_id}`}>
+      <h3 className="text-sm font-medium hover:text-[#FF7262] truncate">
+        {item.ten_san_pham}
+      </h3>
+    </Link>
               <p className="text-xs text-gray-500 mt-[-10px]">
                 {item.so_luong} x {formatCurrency(item.gia_hien_tai)}
               </p>

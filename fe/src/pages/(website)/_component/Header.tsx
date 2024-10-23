@@ -327,7 +327,7 @@ const Header = () => {
                   {" "}
                   <span>
                     <a href="/mywishlist">
-                      <i className="fa-regular fa-heart text-xl"></i>
+                    <i className="fa-regular fa-heart text-xl">{}</i>
                     </a>
                   </span>
                   <span
