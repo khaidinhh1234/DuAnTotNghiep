@@ -41,8 +41,8 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
                       <a href="#">
                         <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                       </a>
-                      <View id={product.id} />
-                      <Link to={`/product-detail/${product.id}`}>
+                      <View id={product.duong_dan} />
+                      <Link to={`/product-detail/${product.duong_dan}`}>
                         <div className="relative">
                           <img
                             src={product?.anh_san_pham}
