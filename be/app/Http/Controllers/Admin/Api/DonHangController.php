@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Events\ThongBaoMoi;
 use App\Exports\DonHangExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateDonHangRequest;
 use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Models\DonHang;
+use App\Models\ThongBao;
 use App\Models\User;
 use App\Models\VanChuyen;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -160,33 +162,32 @@ class DonHangController extends Controller
         }
     }
 
-    // Cập nhập trạng thái đơn hàng
+    // Cập nhật trạng thái đơn hàng
     public function capNhatTrangThaiDonHang(UpdateDonHangRequest $request)
     {
         try {
             // Bắt đầu transaction
-            foreach ($request->id as $id) {
-                DB::beginTransaction();
+            DB::beginTransaction();
 
+            // Biến lưu trữ thông báo
+            $messages = [];
+
+            foreach ($request->id as $id) {
                 // Tìm đơn hàng theo ID
                 $donHang = DonHang::findOrFail($id);
-                $shippers = User::with('vaiTros')->whereHas('vaiTros', callback: function ($query) {
+                $shippers = User::with('vaiTros')->whereHas('vaiTros', function ($query) {
                     $query->where('ten_vai_tro', 'Người giao hàng');
                 })->get();
 
+                // Kiểm tra trạng thái đơn hàng
                 if ($donHang->trang_thai_don_hang === DonHang::TTDH_DGH || $donHang->trang_thai_don_hang === DonHang::TTDH_CKHCN) {
                     if ($request->trang_thai_don_hang === DonHang::TTDH_DH) {
-                        $mess = 'Không thể hủy đơn hàng khi đơn hàng đang được giao hoặc đã giao thành công.';
-                    }
-
-                    if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH && $request->trang_thai_don_hang === DonHang::TTDH_HH) {
-                        $donHang->update([
-                            'trang_thai_don_hang' => $request->trang_thai_don_hang,
-                        ]);
-                        $mess = "Cập nhật trạng thái hoàn hàng thành công";
+                        $messages[] = 'Không thể hủy đơn hàng khi đơn hàng đang được giao hoặc đã giao thành công.';
+                        continue; // Bỏ qua cập nhật trạng thái cho đơn hàng này
                     }
                 }
 
+                // Kiểm tra trạng thái cập nhật hợp lệ
                 $validTransitions = [
                     DonHang::TTDH_CXH => [DonHang::TTDH_DXH, DonHang::TTDH_DH],
                     DonHang::TTDH_DXH => [DonHang::TTDH_DXL, DonHang::TTDH_DH],
@@ -197,46 +198,47 @@ class DonHangController extends Controller
                 ];
 
                 if (
-                    !isset($validTransitions[$donHang->trang_thai_don_hang])
-                    || !in_array($request->trang_thai_don_hang, $validTransitions[$donHang->trang_thai_don_hang])
+                    !isset($validTransitions[$donHang->trang_thai_don_hang]) ||
+                    !in_array($request->trang_thai_don_hang, $validTransitions[$donHang->trang_thai_don_hang])
                 ) {
-                    $mess = 'Không thể cập nhật trạng thái ngược lại hoặc trạng thái không hợp lệ.';
-                } else {
-                    $donHang->update([
-                        'trang_thai_don_hang' => $request->trang_thai_don_hang,
-                    ]);
-
-                    if ($donHang->trang_thai_don_hang === DonHang::TTDH_DXL) {
-                        if ($shippers->isEmpty()) {
-                            throw new \Exception('Không có shipper nào trong hệ thống');
-                        }
-                        $shipper = $shippers->sortBy(function ($shipper) {
-                            return $shipper->vanChuyens->count();
-                        })->first();
-
-                        $vanChuyenData = [
-                            'don_hang_id' => $donHang->id,
-                            'user_id' => $donHang->user_id,
-                            'shipper_id' => $shipper->id,
-                            'ngay_tao' => Carbon::now(),
-                            'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
-                            'cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? VanChuyen::TTCOD_KT : VanChuyen::TTCOD_CN,
-                            'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? null : $donHang->tong_tien_don_hang,
-                        ];
-
-                        VanChuyen::create($vanChuyenData);
-                    }
-                    $mess = "Cập nhật trạng thái đơn hàng thành công";
+                    $messages[] = 'Không thể cập nhật trạng thái ngược lại hoặc trạng thái không hợp lệ.';
+                    continue; // Bỏ qua cập nhật trạng thái cho đơn hàng này
                 }
 
-                // Lưu thay đổi
-                DB::commit();
+                // Cập nhật trạng thái đơn hàng
+                $oldStatus = $donHang->trang_thai_don_hang; // Lưu trạng thái cũ
+                $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
+
+                $statusMessages = [
+                    DonHang::TTDH_DH => 'Đơn hàng của bạn đã được đặt.',
+                    DonHang::TTDH_DGH => 'Đơn hàng của bạn đang được giao.',
+                    DonHang::TTDH_HTDH => 'Đơn hàng của bạn đã hoàn thành.',
+                    DonHang::TTDH_HH => 'Đơn hàng của bạn đã bị hủy.',
+                ];
+
+                $newStatusMessage = isset($statusMessages[$request->trang_thai_don_hang]) ? $statusMessages[$request->trang_thai_don_hang] : 'Trạng thái đơn hàng đã được cập nhật.';
+
+                $thongBao = ThongBao::create([
+                    'user_id' => $donHang->user_id,
+                    'tieu_de' => 'Cập nhật trạng thái đơn hàng',
+                    'noi_dung' => $newStatusMessage,
+                    'loai' => 'Đơn hàng',
+                    'duong_dan' => 'don-hang',
+                    'loai_duong_dan' => 'don-hang',
+                    'id_duong_dan' => $donHang->id,
+                ]);
+
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
             }
+
+            // Kết thúc transaction
+            DB::commit();
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => $mess,
-                'data' => $donHang
+                'message' => 'Cập nhật trạng thái đơn hàng thành công.',
+                'data' => $messages,
             ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -244,10 +246,11 @@ class DonHangController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi khi cập nhật trạng thái đơn hàng.',
-                'error' => $exception->getMessage()
+                'error' => $exception->getMessage(),
             ], 500);
         }
     }
+
 
     public function export()
     {
