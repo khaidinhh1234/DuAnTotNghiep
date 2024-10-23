@@ -1,14 +1,16 @@
+import instance from "@/configs/client";
+import { EyeOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, Image, message, Rate } from "antd";
 import React, {
-  useState,
+  useCallback,
   useEffect,
   useMemo,
-  useCallback,
   useRef,
+  useState,
 } from "react";
-import { Link, useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/client";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Autoplay,
   FreeMode,
@@ -16,15 +18,11 @@ import {
   Pagination,
   Thumbs,
 } from "swiper/modules";
-import { Button, Image, Rate } from "antd";
-import { message } from "antd";
+import { Swiper, SwiperSlide } from "swiper/react";
 import SizeGuideModal from "./SizeGuide";
-import { EyeOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
 
-import instanceClient from "@/configs/client";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import View from "../../_component/View";
+import instanceClient from "@/configs/client";
 import RelatedProducts from "./RelatedProducts";
 interface ProductData {
   id: number;
@@ -131,7 +129,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  
+
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
     user.access_token || localStorage.getItem("access_token");
@@ -174,13 +172,7 @@ const ProductDetail: React.FC = () => {
   //   refetch();
   // }, [id, refetch]);
   const likeMutation = useMutation({
-    mutationFn: ({
-      reviewId,
-      isLiked,
-    }: {
-      reviewId: number;
-      isLiked: boolean;
-    }) => {
+    mutationFn: ({ reviewId, isLiked }: { reviewId: any; isLiked: any }) => {
       if (!token) {
         throw new Error("Bạn cần đăng nhập để thực hiện hành động này");
       }
@@ -220,7 +212,7 @@ const ProductDetail: React.FC = () => {
       productId,
       currentQuantity,
     }: {
-      productId: string;
+      productId: any;
       currentQuantity: number;
     }) => {
       await instanceClient.put(
@@ -248,7 +240,7 @@ const ProductDetail: React.FC = () => {
       productId,
       currentQuantity,
     }: {
-      productId: string;
+      productId: any;
       currentQuantity: number;
     }) => {
       await instanceClient.put(

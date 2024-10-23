@@ -58,9 +58,9 @@ const ProductItem = ({
           </div>
           {chi_tiet_don_hangs && chi_tiet_don_hangs.length >= 2 && (
             <div className="text-center font-bold ml-20 mt-3">
-              <button>
+              <Link to={`/mypro/myorder/${ma_don_hang}`}>
                 <i className="fa-solid fa-share"></i> Xem thêm ...
-              </button>
+              </Link>
             </div>
           )}
         </div>
