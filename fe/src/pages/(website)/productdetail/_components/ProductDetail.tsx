@@ -123,6 +123,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
     user.access_token || localStorage.getItem("access_token");
@@ -144,7 +145,7 @@ const ProductDetail: React.FC = () => {
   }, []);
   const queryClient = useQueryClient();
 
-  const { data: product } = useQuery<ProductData>({
+  const { data: product, isLoading } = useQuery<ProductData>({
     queryKey: ["product", id],
     queryFn: () => fetchProduct(id!),
   });
@@ -371,7 +372,7 @@ const ProductDetail: React.FC = () => {
   const toggleDescription = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
-  // if (isLoading) return <div>Đang tải...</div>;
+  if (isLoading) return <div>Đang tải...</div>;
   // if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
 
   return (
