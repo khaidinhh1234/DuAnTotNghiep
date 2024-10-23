@@ -85,16 +85,18 @@ class DonHangClientController extends Controller
 
         return redirect()->to($jsonResult['payUrl']);
     }
-
     public function donHangUser()
     {
         try {
             $user = Auth::guard('api')->user();
-            $donHang = DonHang::query()
-                ->with('bienTheSanPhams.sanPham', 'bienTheSanPhams.mauBienThe', 'bienTheSanPhams.kichThuocBienThe')
-                ->where('user_id', $user->id)
-                ->orderByDesc('created_at')
-                ->get();
+            $donHang = DonHang::where('user_id', $user->id)->with([
+                'chiTietDonHangs.bienTheSanPham.mauBienThe',
+                'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
+                'user.hangThanhVien',
+                'vanChuyen',
+                'bienTheSanPhams'
+            ])
+                ->orderByDesc('created_at')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -110,7 +112,6 @@ class DonHangClientController extends Controller
             ]);
         }
     }
-
     public function donHangUserDetail(string $maDonHang)
     {
         try {
