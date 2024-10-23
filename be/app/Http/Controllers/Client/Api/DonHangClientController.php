@@ -85,14 +85,17 @@ class DonHangClientController extends Controller
 
         return redirect()->to($jsonResult['payUrl']);
     }
-
     public function donHangUser()
     {
         try {
             $user = Auth::guard('api')->user();
-            $donHang = DonHang::where('user_id', $user->id)->with(['chiTietDonHangs.bienTheSanPham.mauBienThe',
+            $donHang = DonHang::where('user_id', $user->id)->with([
+                'chiTietDonHangs.bienTheSanPham.mauBienThe',
                 'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
-                'user.hangThanhVien', 'vanChuyen', 'bienTheSanPhams'])
+                'user.hangThanhVien',
+                'vanChuyen',
+                'bienTheSanPhams'
+            ])
                 ->orderByDesc('created_at')->get();
             return response()->json([
                 'status' => true,
@@ -109,13 +112,16 @@ class DonHangClientController extends Controller
             ]);
         }
     }
-
     public function donHangUserDetail(string $maDonHang)
     {
         try {
-            $donHang = DonHang::query()->with(['chiTietDonHangs.bienTheSanPham.mauBienThe',
+            $donHang = DonHang::query()->with([
+                'chiTietDonHangs.bienTheSanPham.mauBienThe',
                 'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
-                'user.hangThanhVien', 'vanChuyen', 'bienTheSanPhams'])->where('ma_don_hang', $maDonHang)->first();
+                'user.hangThanhVien',
+                'vanChuyen',
+                'bienTheSanPhams'
+            ])->where('ma_don_hang', $maDonHang)->first();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -126,7 +132,7 @@ class DonHangClientController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => '',
+                'message' => 'Lấy chi tiết đơn hàng thất bại',
                 'error' => $e->getMessage()
             ]);
         }
@@ -265,7 +271,7 @@ class DonHangClientController extends Controller
                 ->where('chon', 1)
                 ->update(['deleted_at' => now()]);
 
-//            event(new HoanTatDonHang($donHang, $request->email_nguoi_dat_hang));
+            //            event(new HoanTatDonHang($donHang, $request->email_nguoi_dat_hang));
 
 
             ThongBao::create([
@@ -284,7 +290,6 @@ class DonHangClientController extends Controller
                 'message' => 'Đơn hàng đã được tạo thành công!',
                 'data' => $donHang
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -293,7 +298,4 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
-
-
-
 }

@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
-import CartOverlay from './CartOverlay'
+import CartOverlay from "./CartOverlay";
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -14,12 +14,11 @@ interface Category {
   children: Category[];
 }
 
-
 const Header = () => {
   const [check, setcheck] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  
+
   const [isCartVisible, setIsCartVisible] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
 
@@ -30,15 +29,14 @@ const Header = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-
         const response = await instance.get("/load-danh-muc");
 
         const result = response.data;
@@ -46,9 +44,7 @@ const Header = () => {
           setCategories(result.data);
         }
       } catch (error) {
-
         console.error("Error fetching categories:", error);
-
       }
     };
 
@@ -241,55 +237,66 @@ const Header = () => {
             </div>
 
             <nav className="hidden lg:block order-3">
-
-        <ul className="flex items-center space-x-4">
-          {MenuList.map((item, index) => (
-            <li
-              key={index}
-              className="mt-2 relative"
-              onMouseEnter={item.name === "Sản phẩm" ? handleMouseEnterProduct : undefined}
-              onMouseLeave={item.name === "Sản phẩm" ? handleMouseLeaveProduct : undefined}
-            >
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
-                    !isActive
-                      ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
-                      : "text-white bg-black"
-                  }`
-                }
-              >
-                {item.name}
-              </NavLink>
-              {item.name === "Sản phẩm" && isProductMenuVisible && (
-                <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50 ">
-    <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 rounded-md bg-white bg-opacity-100 ">
-
-{categories.map((category) => (
-                      <div key={category.id} className="border-r border-gray-240">
-                        <h3 className="font-bold mb-4 text-lg">{category.ten_danh_muc}</h3>
-                        <ul className="space-y-2">
-                          {category.children.map((subCategory) => (
-                            <li key={subCategory.id}>
-                              <a
-                                href={`/shop/${category.duong_dan}/${subCategory.duong_dan}`}
-                                className="block text-gray-700 text-lg whitespace-nowrap hover:text-red-600"
-                                >
-                                {subCategory.ten_danh_muc}
-                              </a>
-                            </li>
+              <ul className="flex items-center space-x-4">
+                {MenuList.map((item, index) => (
+                  <li
+                    key={index}
+                    className="mt-2 relative"
+                    onMouseEnter={
+                      item.name === "Sản phẩm"
+                        ? handleMouseEnterProduct
+                        : undefined
+                    }
+                    onMouseLeave={
+                      item.name === "Sản phẩm"
+                        ? handleMouseLeaveProduct
+                        : undefined
+                    }
+                  >
+                    <NavLink
+                      to={item.path}
+                      className={({ isActive }) =>
+                        `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
+                          !isActive
+                            ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
+                            : "text-white bg-black"
+                        }`
+                      }
+                    >
+                      {item.name}
+                    </NavLink>
+                    {item.name === "Sản phẩm" && isProductMenuVisible && (
+                      <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50 ">
+                        <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 rounded-md bg-white bg-opacity-100 ">
+                          {categories.map((category) => (
+                            <div
+                              key={category.id}
+                              className="border-r border-gray-240"
+                            >
+                              <h3 className="font-bold mb-4 text-lg">
+                                {category.ten_danh_muc}
+                              </h3>
+                              <ul className="space-y-2">
+                                {category.children.map((subCategory) => (
+                                  <li key={subCategory.id}>
+                                    <a
+                                      href={`/shop/${category.duong_dan}/${subCategory.duong_dan}`}
+                                      className="block text-gray-700 text-lg whitespace-nowrap hover:text-red-600"
+                                    >
+                                      {subCategory.ten_danh_muc}
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
                           ))}
-                        </ul>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </nav>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
             <div className="order-4 flex items-center space-x-6 cursor-pointer">
               <span>
@@ -320,14 +327,16 @@ const Header = () => {
                   {" "}
                   <span>
                     <a href="/mywishlist">
-                      <i className="fa-regular fa-heart text-xl"></i>
+                    <i className="fa-regular fa-heart text-xl">{}</i>
                     </a>
                   </span>
                   <span
-          ref={cartRef}
-          onMouseEnter={() => setIsCartVisible(true)}
-          onMouseLeave={() => setIsCartVisible(false)}
-        >                    <a href="/gio-hang">
+                    ref={cartRef}
+                    onMouseEnter={() => setIsCartVisible(true)}
+                    onMouseLeave={() => setIsCartVisible(false)}
+                  >
+                    {" "}
+                    <a href="/gio-hang">
                       <i className="fa-regular fa-bag-shopping text-xl relative">
                         <span
                           className={`${
@@ -339,8 +348,8 @@ const Header = () => {
                       </i>
                     </a>
                     <div className="absolute top-full left-0 pt-4 w-full">
-            <CartOverlay isVisible={isCartVisible} />
-          </div>
+                      <CartOverlay isVisible={isCartVisible} />
+                    </div>
                   </span>
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
                     <AvatarImage src={member?.anh_nguoi_dung} />
@@ -355,7 +364,7 @@ const Header = () => {
                       <ul>
                         <li className="mb-1">
                           <a
-                            href="/myprofile"
+                            href="/mypro/myprofile"
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                           >
                             <img

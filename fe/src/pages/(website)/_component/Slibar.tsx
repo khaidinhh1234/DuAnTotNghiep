@@ -33,7 +33,7 @@ const Slibar = () => {
         <ul className="space-y-2">
           <li>
             <Link
-              to="/myprofile"
+              to="/mypro/myprofile"
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-user mr-3" />
@@ -42,7 +42,7 @@ const Slibar = () => {
           </li>
           <li>
             <Link
-              to="/myorder"
+              to="/mypro/myorder"
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-box mr-3" />
@@ -51,7 +51,7 @@ const Slibar = () => {
           </li>
           <li>
             <Link
-              to="/mywishlist"
+              to="/mypro/mywishlist"
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-heart mr-3" />
@@ -60,7 +60,7 @@ const Slibar = () => {
           </li>
           <li>
             <Link
-              to="/manageaddresses"
+              to="/mypro/manageaddresses"
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-location-dot mr-3" />
@@ -69,7 +69,7 @@ const Slibar = () => {
           </li>
           <li>
             <Link
-              to="/savedcard"
+              to="/mypro/savedcard"
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-light fa-credit-card mr-3" />
@@ -78,7 +78,7 @@ const Slibar = () => {
           </li>
           <li>
             <Link
-              to="/notification"
+              to="/mypro/notification"
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-bell mr-3" />
@@ -87,7 +87,7 @@ const Slibar = () => {
           </li>
           <li>
             <Link
-              to="/setting"
+              to="/mypro/setting"
               className="hover:bg-black hover:text-white w-full  px-5 py-3 flex items-center"
             >
               <i className="fa-regular fa-gear mr-3" />

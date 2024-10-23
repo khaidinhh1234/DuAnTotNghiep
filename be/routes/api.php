@@ -65,7 +65,7 @@ Route::middleware([])
         //Client Sản Phẩm
 
         // Client trang chi tiết sản phẩm
-        Route::get('/chi-tiet-san-pham/{id}', [TrangChiTietSpController::class, 'chiTietSanPham']);
+        Route::get('/chi-tiet-san-pham/{duong_dan}', [TrangChiTietSpController::class, 'chiTietSanPham']);
         Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']);
 
         //Trang sản phẩm

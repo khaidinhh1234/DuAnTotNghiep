@@ -127,7 +127,6 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
     queryFn: () => fetchRelatedProducts(productId),
     enabled: !!productId,
   });
-  // console.log("Related Product ID:", productId);
 
   if (!relatedProducts?.data || relatedProducts.data.length === 0) {
     return null;

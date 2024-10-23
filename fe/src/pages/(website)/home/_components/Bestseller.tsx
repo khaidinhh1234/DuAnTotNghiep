@@ -77,7 +77,7 @@ const Bestseller = ({ products }: any) => {
                         <i className="z-20 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                       </span>
                     ) : (
-                      <span onClick={() => mutate(product.id)}>
+                      <span onClick={() => mutate(product.duong_dan)}>
                         <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                       </span>
                     )}
@@ -85,7 +85,7 @@ const Bestseller = ({ products }: any) => {
                       <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                     </a>
 
-                    <Link to={`/product-detail/${product.id}`}>
+                    <Link to={`/product-detail/${product.duong_dan}`}>
                       <div className="relative">
                         <img
                           src={
@@ -105,10 +105,10 @@ const Bestseller = ({ products }: any) => {
                         )}
                       </div>{" "}
                     </Link>
-                    <View id={product?.id} />
+                    <View id={product?.duong_dan} />
                   </div>
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
-                    <Link to={`/product-detail/${product.id}`}>
+                    <Link to={`/product-detail/${product.duong_dan}`}>
                       {" "}
                       <h5 className=" text-base truncate w-60 font-medium hover:text-red-500">
                         {product?.ten_san_pham}

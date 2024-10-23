@@ -12,12 +12,19 @@ import {
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 const View = ({ id }: any) => {
+  console.log(id);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isHeart, setIsHeart] = useState(false);
+  const [selectedColorDisplay, setSelectedColorDisplay] = useState<
+    string | null
+  >(null);
+  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
+    null
+  );
   //   console.log(id);
   const { data } = useQuery({
     queryKey: ["PRODUCT_DETAIL", id],
@@ -105,7 +112,14 @@ const View = ({ id }: any) => {
       gia_khuyen_mai: variant?.gia_khuyen_mai,
       anh_san_pham: variant?.anh_bien_the,
     }));
-
+  const uniqueColors = useMemo(() => {
+    if (!product?.bien_the_san_pham) return new Set();
+    return new Set(
+      product.bien_the_san_pham.map(
+        (variant: any) => variant.mau_bien_the.ma_mau_sac
+      )
+    );
+  }, [product]);
   // console.log(sanpham);
   //   const showLoading = () => {
   //     setOpen(true);
@@ -114,18 +128,15 @@ const View = ({ id }: any) => {
 
   const handleColorClick = (color: any) => {
     setSelectedColor(color);
+    const selectedVariant = product?.bien_the_san_pham?.find(
+      (v: any) => v?.mau_bien_the?.ma_mau_sac === color
+    );
+    setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
   };
 
-  // const colors = [
-  //   "bg-red-500",
-  //   "bg-blue-500",
-  //   "bg-purple-500",
-  //   "bg-black",
-  //   "bg-yellow-500",
-  //   "bg-green-500",
-  // ];
   const handleSizeClick = (size: string) => {
     setSelectedSize(size);
+    setSelectedSizeDisplay(size);
   };
 
   // const sizes = ["S", "M", "L", "XL", "XXL"];
@@ -150,6 +161,8 @@ const View = ({ id }: any) => {
       const firstVariant = product?.bien_the_san_pham[0];
       setSelectedColor(firstVariant?.mau_bien_the?.ma_mau_sac);
       setSelectedSize(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
+      setSelectedColorDisplay(firstVariant?.mau_bien_the?.ten_mau_sac);
+      setSelectedSizeDisplay(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
     }
   }, [product]);
   return (
@@ -325,42 +338,39 @@ const View = ({ id }: any) => {
                     {product?.mo_ta_ngan}
                   </p>
                   <div className="mb-4">
-                    <h3 className="  text-gray-900 mb-2 font-bold text-lg">
-                      Color{" "}
+                    <h3 className="text-gray-900 mb-2 font-bold text-lg">
+                      Màu sắc:{" "}
+                      {selectedColorDisplay ? (
+                        <span className="font-normal">
+                          {selectedColorDisplay}
+                        </span>
+                      ) : null}
                     </h3>
-                    {/* <div className="flex space-x-2">
-                  <button className="w-9 h-9 bg-red-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-blue-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-purple-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-black rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-yellow-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-green-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                </div> */}
                     <div className="flex space-x-2">
-                      {product?.bien_the_san_pham?.map(
-                        (color: any, index: number) => (
-                          <button
-                            key={index}
-                            className={`w-9 h-9 rounded-md border-2 ${
-                              selectedColor === color?.mau_bien_the?.ma_mau_sac
-                                ? "border-black"
-                                : ""
-                            } 
-                          
-                        `}
-                            style={{
-                              backgroundColor: color?.mau_bien_the?.ma_mau_sac,
-                            }}
-                            onClick={() =>
-                              handleColorClick(color?.mau_bien_the?.ma_mau_sac)
-                            }
-                          />
-                        )
-                      )}
+                      {Array.from(uniqueColors).map((color, index) => (
+                        <button
+                          key={index}
+                          className={`w-9 h-9 rounded-md border-2 ${
+                            selectedColor === color ? "border-black" : ""
+                          }`}
+                          style={{
+                            backgroundColor: color as string,
+                          }}
+                          onClick={() => handleColorClick(color)}
+                        />
+                      ))}
                     </div>
                   </div>
-                  <div className=" items-center mt-4 mb-3">
-                    <h3 className=" mr-4 font-bold text-lg">Size </h3>
+
+                  <div className="items-center mt-4 mb-3">
+                    <h3 className="mr-4 font-bold text-lg">
+                      Kích thước:{" "}
+                      {selectedSizeDisplay ? (
+                        <span className="font-normal">
+                          {selectedSizeDisplay}
+                        </span>
+                      ) : null}
+                    </h3>
                     <div className="flex mt-3">
                       {sizesForSelectedColor?.map((size: any) => (
                         <button
