@@ -131,6 +131,8 @@ import ChuongTrinhUuDaiRemote from "@/pages/(dashboard)/vourcher/banner/remote";
 import IntroCard from "@/pages/(dashboard)/adminProfile/profile/IntroCard";
 import Shipper from "@/pages/(van_chuyen)/shipper";
 import MyProfileedit from "@/pages/(website)/myprofile/MyProfileedit";
+import LayoutMyPro from "@/pages/(website)/layoutmypro";
+import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
 
 const Router = () => {
   //
@@ -146,27 +148,37 @@ const Router = () => {
           <Route path="/shop" element={<Page />} />
           <Route path="/product-detail/:id" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          <Route path="/myprofile" element={<MyProfile />} />
-          <Route path="/myprofileedit" element={<MyProfileedit />} />
-          <Route path="/mywishlist" element={<MyWishlists />} />
-          <Route path="/manageaddresses" element={<ManageAddresses />} />
-          <Route path="/notification" element={<Notification />} />
-          <Route path="/savedcard" element={<SavedCard />} />
-          <Route path="/setting" element={<Setting />} />
+          {/* <Route path="/myprofile" element={<MyProfile />} /> */}
           <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} />
           <Route path="/minicard" element={<Minicard />} />
           <Route path="/vourcher" element={<Voucher />} />
-          <Route path="/myorder" element={<MyOrder />} />
+          {/* <Route path="/myorder" element={<MyOrder />} /> */}
           <Route path="/ordersummary" element={<Ordersummary />} />
+          <Route path="/payment" element={<Payment />} />{" "}
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/gio-hang" element={<Cart />} />{" "}
+          <Route path="/test" element={<SheetSide />} />{" "}
           <Route
             path="/ShippingAddressPage"
             element={<ShippingAddressPage />}
           />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/gio-hang" element={<Cart />} />{" "}
-          <Route path="/test" element={<SheetSide />} />
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/mypro" element={<LayoutMyPro />}>
+            <Route path="/mypro/myprofile" element={<MyProfile />} />{" "}
+            <Route path="/mypro/myprofileedit" element={<MyProfileedit />} />{" "}
+            <Route path="/mypro/myorder" element={<MyOrder />} />{" "}
+            <Route path="/mypro/myorder/:slug" element={<MyOrderdetail />} />{" "}
+            <Route path="/mypro/myorderdetail" element={<MyOrderdetail />} />{" "}
+            <Route path="/mypro/mywishlist" element={<MyWishlists />} />{" "}
+            <Route path="/mypro/savedcard" element={<SavedCard />} />{" "}
+            <Route path="/mypro/notification" element={<Notification />} />{" "}
+            <Route path="/mypro/setting" element={<Setting />} />
+            <Route
+              path="/mypro/manageaddresses"
+              element={<ManageAddresses />}
+            />{" "}
+            <Route path="***" element={<NotFoundPage />} />
+          </Route>
         </Route>
         {/* TRang admin */}
         <Route

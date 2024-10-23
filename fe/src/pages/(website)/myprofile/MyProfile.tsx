@@ -9,7 +9,7 @@ const MyProfile = () => {
   return (
     <>
       {/* <MyProfilePage member={member} /> */}
-      <ListMyProfile member={member} />
+      <ListMyProfile />
     </>
   );
 };
