@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instance from '@/configs/client';
+import { Link } from 'react-router-dom';
 
 interface CartItem {
   id: number;
@@ -84,7 +85,11 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
           <div key={item.id} className="flex items-center py-2 border-b">
             <img src={item.hinh_anh} alt={item.ten_san_pham} className="w-16 h-16 object-cover mr-3 rounded-[6px]" />
             <div className="flex-grow">
-              <h3 className="text-sm font-medium hover:text-[#FF7262] truncate">{item.ten_san_pham}</h3>
+            <Link to={`/product-detail/${item.id}`}>
+      <h3 className="text-sm font-medium hover:text-[#FF7262] truncate">
+        {item.ten_san_pham}
+      </h3>
+    </Link>
               <p className="text-xs text-gray-500 mt-[-10px]">
                 {item.so_luong} x {formatCurrency(item.gia_hien_tai)}
               </p>
