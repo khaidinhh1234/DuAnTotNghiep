@@ -1,72 +1,41 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thông tin liên hệ</title>
+    <title>Phản Hồi Khách Hàng</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Arial', sans-serif;
             background-color: #1a1a2e;
             color: #fff;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        .email-container {
-            width: 100%;
-            max-width: 500px;
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
             background-color: #2e2e4e;
             border-radius: 10px;
+            padding: 20px;
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
             text-align: center;
-            padding: 20px;
-            margin: auto;
         }
 
-        .header {
-            background-color: #ffd700;
-            padding: 20px;
-        }
-        .gif-credit {
-        text-align: center;
-        font-size: 12px;
-        color: #666;
-        margin: 10px 0;
-    }
-
-    .gif-credit a {
-        color: #0073e6;
-        text-decoration: none;
-    }
-        .header img {
-            width: 80px;
-            height: auto;
-        }
-
-        h2 {
+        h1 {
             color: #ffd700;
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 28px;
         }
 
         .content p {
+        p {
             font-size: 16px;
             line-height: 1.6;
-            margin-bottom: 20px;
             color: #b3b3cc;
         }
 
-        .message {
+        blockquote {
             background-color: #1f1f3d;
             padding: 15px;
             border-radius: 8px;
@@ -113,28 +82,44 @@
         blockquote {
             color: black;
             margin: 5px auto;
+            margin: 20px auto;
             padding: 10px 15px;
             font-style: italic;
             font-size: 14px;
             width: 80%;
             border-radius: 5px;
         }
-       
+
         .signature {
             margin-top: 30px;
-align-items: center;        }
-        .loi{
-            border-top: 1px solid #ddd;
-            align-items: center;
-            display: flex;
-            flex-direction: column;
+            font-weight: bold;
+            color: #ffd700;
         }
-        .loll{
-            margin-top: -13px;
+
+        .footer {
+            margin-top: 50px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .btn {
+            background-color: #ffd700;
+            color: #1a1a2e;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 20px;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: #e6c300;
+            color: #fff;
         }
     </style>
 </head>
-
 <body>
     <div class="email-container">
         <div class="header">
@@ -146,6 +131,12 @@ align-items: center;        }
             <p>Email: {{ $email }}</p>
             <p>Cảm ơn bạn đã liên hệ với chúng tôi từ Glow Clothing. Chúng tôi đã nhận được yêu cầu của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
 
+    <div class="container">
+        <h1>Xin chào {{ $name }},</h1>
+        <p>liên hệ của bạn: {{$email}}</p>
+
+        <p>Cảm ơn bạn đã liên hệ với chúng tôi! Chúng tôi đã nhận được phản hồi của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
+
             <div class="message">
                 <strong>Nội dung liên hệ:</strong><br>
                 {{ $noidung }}
@@ -154,10 +145,19 @@ align-items: center;        }
             <a href="https://example.com" class="cta-button">Truy cập trang của chúng tôi</a>
         </div>
 
+        <p>Nội dung phản hồi của bạn:</p>
+        <blockquote>
+            {{ $noi_dung }}
+        </blockquote>
+
+        <p class="signature">Trân trọng,<br>Đội ngũ hỗ trợ khách hàng</p>
+
+        <a href="http://localhost:5173/" class="btn">Quay lại trang chủ</a>
+
         <div class="footer">
-            <p>Bằng cách liên hệ với chúng tôi, bạn đồng ý với <a href="#">Điều khoản & Điều kiện</a> và <a href="#">Chính sách bảo mật</a>.</p>
+            <p>&copy; 2024 Glow Clothing</p>
         </div>
     </div>
-</body>
 
+</body>
 </html>

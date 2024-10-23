@@ -10,13 +10,15 @@ const Slibar = () => {
       {" "}
       <div className="flex items-center p-5 border-b border-hrBlack">
         <img
-          src={ellipse}
+          src={member?.anh_nguoi_dung}
           alt=""
           className="rounded-full md:w-[51px] md:h-[51px]"
         />
-        <div className="px-4 py-2">
-          <span className=""></span>
-          <img src={hello} className="px-[2px]" alt="" />
+        <div className="px-4 py-2 mt-2">
+          <div className="flex items-center gap-1">
+            <span className="text-sm">Xin chào</span>
+            <span className="text-xl">👋</span>
+          </div>
           <h4 className="font-bold text-lg">
             {member?.ho + " " + member?.ten}
           </h4>

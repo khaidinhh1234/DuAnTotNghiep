@@ -1,6 +1,6 @@
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
-import { Modal, Rate } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { message, Modal, Rate } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -18,6 +18,8 @@ const View = ({ id }: any) => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isHeart, setIsHeart] = useState(false);
+  const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
+  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(null);
   //   console.log(id);
   const { data } = useQuery({
     queryKey: ["PRODUCT_DETAIL", id],
@@ -28,6 +30,34 @@ const View = ({ id }: any) => {
       } catch (error) {
         throw new Error("Lỗi khi lấy thông tin");
       }
+    },
+  });
+  const queryclient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async (id: any) => {
+      try {
+        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+        // console.log(response.data);
+        if (
+          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+        ) {
+          message.success("Xóa sản phẩm yêu thích thành công");
+        }
+        if (
+          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+        ) {
+          message.success("Thêm sản phẩm yêu thích thành công");
+        }
+
+        return response.data;
+      } catch (error) {
+        message.error("Xóa sản phẩm yêu thích thất bại");
+        console.error("API error", error); // Thêm log lỗi API
+        throw new Error("Xóa sản phẩm yêu thích thất bại");
+      }
+    },
+    onSuccess: () => {
+      queryclient.invalidateQueries({ queryKey: ["SANPHAM_YEUTHICH"] });
     },
   });
   const product = data?.data;
@@ -77,7 +107,14 @@ const View = ({ id }: any) => {
       gia_khuyen_mai: variant?.gia_khuyen_mai,
       anh_san_pham: variant?.anh_bien_the,
     }));
-
+    const uniqueColors = useMemo(() => {
+      if (!product?.bien_the_san_pham) return new Set();
+      return new Set(
+        product.bien_the_san_pham.map(
+          (variant: any) => variant.mau_bien_the.ma_mau_sac
+        )
+      );
+    }, [product]);
   // console.log(sanpham);
   //   const showLoading = () => {
   //     setOpen(true);
@@ -86,24 +123,22 @@ const View = ({ id }: any) => {
 
   const handleColorClick = (color: any) => {
     setSelectedColor(color);
+    const selectedVariant = product?.bien_the_san_pham?.find(
+      (v: any) => v?.mau_bien_the?.ma_mau_sac === color
+    );
+    setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
   };
 
-  // const colors = [
-  //   "bg-red-500",
-  //   "bg-blue-500",
-  //   "bg-purple-500",
-  //   "bg-black",
-  //   "bg-yellow-500",
-  //   "bg-green-500",
-  // ];
   const handleSizeClick = (size: string) => {
     setSelectedSize(size);
+    setSelectedSizeDisplay(size);
   };
 
   // const sizes = ["S", "M", "L", "XL", "XXL"];
 
-  const handleClickHeart = () => {
+  const handleClickHeart = (id: number) => {
     setIsHeart(!isHeart);
+    mutate(id);
   };
   const handlePreview = (imageUrl: string) => {
     setPreviewImage(imageUrl);
@@ -116,11 +151,14 @@ const View = ({ id }: any) => {
 
   // const images = [product, products1, products2, sanPham2];
 
+
   useEffect(() => {
     if (product && product.bien_the_san_pham.length > 0) {
       const firstVariant = product?.bien_the_san_pham[0];
       setSelectedColor(firstVariant?.mau_bien_the?.ma_mau_sac);
       setSelectedSize(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
+      setSelectedColorDisplay(firstVariant?.mau_bien_the?.ten_mau_sac);
+      setSelectedSizeDisplay(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
     }
   }, [product]);
   return (
@@ -296,56 +334,43 @@ const View = ({ id }: any) => {
                     {product?.mo_ta_ngan}
                   </p>
                   <div className="mb-4">
-                    <h3 className="  text-gray-900 mb-2 font-bold text-lg">
-                      Color{" "}
-                    </h3>
-                    {/* <div className="flex space-x-2">
-                  <button className="w-9 h-9 bg-red-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-blue-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-purple-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-black rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-yellow-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                  <button className="w-9 h-9 bg-green-500 rounded-md border-2 border-transparent hover:border-blackL" />
-                </div> */}
-                    <div className="flex space-x-2">
-                      {product?.bien_the_san_pham?.map(
-                        (color: any, index: number) => (
-                          <button
-                            key={index}
-                            className={`w-9 h-9 rounded-md border-2 ${
-                              selectedColor === color?.mau_bien_the?.ma_mau_sac
-                                ? "border-black"
-                                : ""
-                            } 
-                          
-                        `}
-                            style={{
-                              backgroundColor: color?.mau_bien_the?.ma_mau_sac,
-                            }}
-                            onClick={() =>
-                              handleColorClick(color?.mau_bien_the?.ma_mau_sac)
-                            }
-                          />
-                        )
-                      )}
-                    </div>
-                  </div>
-                  <div className=" items-center mt-4 mb-3">
-                    <h3 className=" mr-4 font-bold text-lg">Size </h3>
-                    <div className="flex mt-3">
-                      {sizesForSelectedColor?.map((size: any) => (
-                        <button
-                          key={size}
-                          onClick={() => handleSizeClick(size)}
-                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
-                            selectedSize === size ? "bg-blackL text-white" : ""
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+      <h3 className="text-gray-900 mb-2 font-bold text-lg">
+        Màu sắc: {selectedColorDisplay ? <span className="font-normal">{selectedColorDisplay}</span> : null}
+      </h3>
+      <div className="flex space-x-2">
+        {Array.from(uniqueColors).map((color, index) => (
+          <button
+            key={index}
+            className={`w-9 h-9 rounded-md border-2 ${
+              selectedColor === color ? "border-black" : ""
+            }`}
+            style={{
+              backgroundColor: color as string,
+            }}
+            onClick={() => handleColorClick(color)}
+          />
+        ))}
+      </div>
+    </div>
+
+    <div className="items-center mt-4 mb-3">
+      <h3 className="mr-4 font-bold text-lg">
+        Kích thước: {selectedSizeDisplay ? <span className="font-normal">{selectedSizeDisplay}</span> : null}
+      </h3>
+      <div className="flex mt-3">
+        {sizesForSelectedColor?.map((size: any) => (
+          <button
+            key={size}
+            onClick={() => handleSizeClick(size)}
+            className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
+              selectedSize === size ? "bg-blackL text-white" : ""
+            }`}
+          >
+            {size}
+          </button>
+        ))}
+      </div>
+    </div>
                   <div className="mt-12 flex gap-5">
                     <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                       <button className="py-2 pr-2">
@@ -367,7 +392,7 @@ const View = ({ id }: any) => {
                       Thêm vào giỏ hàng
                     </button>
                     <button
-                      onClick={handleClickHeart}
+                      onClick={() => handleClickHeart(id)}
                       className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
                  
                       `}
