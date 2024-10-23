@@ -146,7 +146,7 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
-          <Route path="/product-detail/:id" element={<PageProductDetail />} />
+          <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/myprofile" element={<MyProfile />} /> */}
           <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} />

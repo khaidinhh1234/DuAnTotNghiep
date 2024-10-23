@@ -99,7 +99,7 @@ const ProductItem = ({
 const ProductList = ({ donhang }: any) => {
   console.log(donhang);
   const chi_tiet_don_hangs = donhang?.map((item: any) => {
-    return item?.chi_tiet_don_hangs[0]; // Trả về chi tiết của từng đơn hàng
+    return item?.bien_the_san_phams[0]; // Trả về chi tiết của từng đơn hàng
   });
 
   const chitiet = chi_tiet_don_hangs[0];
@@ -109,7 +109,7 @@ const ProductList = ({ donhang }: any) => {
       {donhang?.map((item: any, index: number) => (
         <ProductItem
           status={item?.trang_thai_don_hang}
-          price={chitiet?.thanh_tien}
+          price={chitiet?.thanh_tien ?? 0}
           img={
             "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729223981/ao-khoac-nu-SKN7004-DEN_1_jjbtoe.webp"
           }
