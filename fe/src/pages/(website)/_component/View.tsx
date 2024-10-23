@@ -12,14 +12,19 @@ import {
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 const View = ({ id }: any) => {
+  console.log(id);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isHeart, setIsHeart] = useState(false);
-  const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
-  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(null);
+  const [selectedColorDisplay, setSelectedColorDisplay] = useState<
+    string | null
+  >(null);
+  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
+    null
+  );
   //   console.log(id);
   const { data } = useQuery({
     queryKey: ["PRODUCT_DETAIL", id],
@@ -107,14 +112,14 @@ const View = ({ id }: any) => {
       gia_khuyen_mai: variant?.gia_khuyen_mai,
       anh_san_pham: variant?.anh_bien_the,
     }));
-    const uniqueColors = useMemo(() => {
-      if (!product?.bien_the_san_pham) return new Set();
-      return new Set(
-        product.bien_the_san_pham.map(
-          (variant: any) => variant.mau_bien_the.ma_mau_sac
-        )
-      );
-    }, [product]);
+  const uniqueColors = useMemo(() => {
+    if (!product?.bien_the_san_pham) return new Set();
+    return new Set(
+      product.bien_the_san_pham.map(
+        (variant: any) => variant.mau_bien_the.ma_mau_sac
+      )
+    );
+  }, [product]);
   // console.log(sanpham);
   //   const showLoading = () => {
   //     setOpen(true);
@@ -150,7 +155,6 @@ const View = ({ id }: any) => {
   // +
 
   // const images = [product, products1, products2, sanPham2];
-
 
   useEffect(() => {
     if (product && product.bien_the_san_pham.length > 0) {
@@ -334,43 +338,53 @@ const View = ({ id }: any) => {
                     {product?.mo_ta_ngan}
                   </p>
                   <div className="mb-4">
-      <h3 className="text-gray-900 mb-2 font-bold text-lg">
-        Màu sắc: {selectedColorDisplay ? <span className="font-normal">{selectedColorDisplay}</span> : null}
-      </h3>
-      <div className="flex space-x-2">
-        {Array.from(uniqueColors).map((color, index) => (
-          <button
-            key={index}
-            className={`w-9 h-9 rounded-md border-2 ${
-              selectedColor === color ? "border-black" : ""
-            }`}
-            style={{
-              backgroundColor: color as string,
-            }}
-            onClick={() => handleColorClick(color)}
-          />
-        ))}
-      </div>
-    </div>
+                    <h3 className="text-gray-900 mb-2 font-bold text-lg">
+                      Màu sắc:{" "}
+                      {selectedColorDisplay ? (
+                        <span className="font-normal">
+                          {selectedColorDisplay}
+                        </span>
+                      ) : null}
+                    </h3>
+                    <div className="flex space-x-2">
+                      {Array.from(uniqueColors).map((color, index) => (
+                        <button
+                          key={index}
+                          className={`w-9 h-9 rounded-md border-2 ${
+                            selectedColor === color ? "border-black" : ""
+                          }`}
+                          style={{
+                            backgroundColor: color as string,
+                          }}
+                          onClick={() => handleColorClick(color)}
+                        />
+                      ))}
+                    </div>
+                  </div>
 
-    <div className="items-center mt-4 mb-3">
-      <h3 className="mr-4 font-bold text-lg">
-        Kích thước: {selectedSizeDisplay ? <span className="font-normal">{selectedSizeDisplay}</span> : null}
-      </h3>
-      <div className="flex mt-3">
-        {sizesForSelectedColor?.map((size: any) => (
-          <button
-            key={size}
-            onClick={() => handleSizeClick(size)}
-            className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
-              selectedSize === size ? "bg-blackL text-white" : ""
-            }`}
-          >
-            {size}
-          </button>
-        ))}
-      </div>
-    </div>
+                  <div className="items-center mt-4 mb-3">
+                    <h3 className="mr-4 font-bold text-lg">
+                      Kích thước:{" "}
+                      {selectedSizeDisplay ? (
+                        <span className="font-normal">
+                          {selectedSizeDisplay}
+                        </span>
+                      ) : null}
+                    </h3>
+                    <div className="flex mt-3">
+                      {sizesForSelectedColor?.map((size: any) => (
+                        <button
+                          key={size}
+                          onClick={() => handleSizeClick(size)}
+                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
+                            selectedSize === size ? "bg-blackL text-white" : ""
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <div className="mt-12 flex gap-5">
                     <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                       <button className="py-2 pr-2">
