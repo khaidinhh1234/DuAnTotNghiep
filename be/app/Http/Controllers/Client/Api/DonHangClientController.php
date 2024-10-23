@@ -163,7 +163,7 @@ class DonHangClientController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => '',
+                'message' => 'Lấy chi tiết đơn hàng thất bại',
                 'error' => $e->getMessage()
             ]);
         }

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class TrangChiTietSpController extends Controller
 {
-    public function chiTietSanPham($id)
+    public function chiTietSanPham($duongDan)
     {
         try {
             $userId = Auth::id();
@@ -31,7 +31,7 @@ class TrangChiTietSpController extends Controller
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
                 'boSuuTapSanPham',
-            ])->findOrFail($id);
+            ])->where('duong_dan', $duongDan)->first();
 
             foreach ($chiTietSanPham->danhGias as $danhGia) {
                 $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->where('user_id', $userId)->exists();
