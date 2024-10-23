@@ -440,21 +440,25 @@ class SanPhamController extends Controller
             if (Auth::guard('api')->check()) {
                 $userId = Auth::guard('api')->id();
                 $user = User::findOrFail($userId);
+                $sanPham = SanPham::findOrFail($id);
                 if (!$user->sanPhamYeuThich()->where('san_pham_id', $id)->exists()) {
                     $user->sanPhamYeuThich()->attach($id);
                     $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
                     $status = true;
                     $status_code = 200;
+                    $sanPham->increment('yeu_thich');
                 } else {
                     $user->sanPhamYeuThich()->detach($id);
                     $mess = 'Sản phẩm đã được xóa khỏi danh sách yêu thích';
                     $status = true;
                     $status_code = 200;
+                    $sanPham->decrement('yeu_thich');
                 }
                 return response()->json([
                     'status' => $status,
                     'status_code' => $status_code,
                     'mess' => $mess,
+                    'data' => $sanPham,
                 ], $status_code);
             } else {
                 return response()->json([
