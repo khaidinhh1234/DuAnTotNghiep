@@ -182,61 +182,103 @@ class TrangSanPhamController extends Controller
         }
     }
 
-
-    public function locSanPham(Request $request)
-    {
-        DB::beginTransaction();  // Bắt đầu transaction
-
+    public function locSanPham(Request $request) {
+        DB::beginTransaction(); // Bắt đầu giao dịch
         try {
-            // Lấy các tham số lọc từ request
+            // Lấy các tham số lọc từ yêu cầu
             $danhMucIds = $request->danh_muc_ids ?? [];
             $mauSacIds = $request->mau_sac_ids ?? [];
             $kichThuocIds = $request->kich_thuoc_ids ?? [];
             $giaDuoi = $request->gia_duoi ?? null;
             $giaTren = $request->gia_tren ?? null;
 
-            // Tạo query
+            // Tạo truy vấn sản phẩm
             $query = SanPham::query();
 
             // Lọc theo danh mục cha và con
             if (!empty($danhMucIds) && is_array($danhMucIds)) {
                 $query->whereHas('danhMuc', function ($query) use ($danhMucIds) {
-                    $query
-                        ->whereIn('id', $danhMucIds)
-                        ->orWhereIn('cha_id', $danhMucIds);  // Lấy danh mục cha và con
+                    $query->whereIn('id', $danhMucIds)
+                          ->orWhereIn('cha_id', $danhMucIds); // Lấy danh mục cha và con
                 });
             }
 
             // Lọc theo màu sắc sản phẩm
             if (!empty($mauSacIds) && is_array($mauSacIds)) {
                 $query->whereHas('bienTheSanPham.mauBienThe', function ($query) use ($mauSacIds) {
-                    $query->whereIn('id', $mauSacIds);  // Lọc theo màu sắc
+                    $query->whereIn('id', $mauSacIds); // Lọc theo màu
                 });
             }
 
             // Lọc theo kích thước sản phẩm
             if (!empty($kichThuocIds) && is_array($kichThuocIds)) {
                 $query->whereHas('bienTheSanPham.kichThuocBienThe', function ($query) use ($kichThuocIds) {
-                    $query->whereIn('id', $kichThuocIds);  // Lọc theo kích thước
+                    $query->whereIn('id', $kichThuocIds); // Lọc theo kích thước
                 });
             }
 
             // Lọc theo khoảng giá
             if (!is_null($giaDuoi) && !is_null($giaTren)) {
                 $query->whereHas('bienTheSanPham', function ($query) use ($giaDuoi, $giaTren) {
-                    $query->whereBetween('gia_ban', [$giaDuoi, $giaTren]);
+                    $query->whereBetween('gia_ban', [$giaDuoi, $giaTren]); // Lọc theo giá
                 });
             }
 
-            // Lấy dữ liệu sản phẩm với thông tin biến thể sản phẩm và ảnh biến thể
+            // Lấy dữ liệu sản phẩm với thông tin biến thể
             $sanPhams = $query->with([
                 'bienTheSanPham' => function ($query) {
-                    $query->with(['anhBienThe', 'mauBienThe', 'kichThuocBienThe']);  // Lấy ảnh và thông tin màu, kích thước
+                    $query->with(['anhBienThe', 'mauBienThe', 'kichThuocBienThe']);
                 }
-            ])
-            ->paginate(10);
+            ])->paginate(10);
 
-            DB::commit();  // Commit transaction
+            // Gộp thông tin màu sắc, kích thước và ảnh biến thể
+            $sanPhams->getCollection()->transform(function ($sanPham) {
+                // Lấy thông tin sản phẩm
+                $sanPhamData = [
+                    'id' => $sanPham->id,
+                    'danh_muc_id' => $sanPham->danh_muc_id,
+                    'ten_san_pham' => $sanPham->ten_san_pham,
+                    'anh_san_pham' => $sanPham->anh_san_pham,
+                    'ma_san_pham' => $sanPham->ma_san_pham,
+                    'duong_dan' => $sanPham->duong_dan,
+                    'mo_ta_ngan' => $sanPham->mo_ta_ngan,
+                    'noi_dung' => $sanPham->noi_dung,
+                    'luot_xem' => $sanPham->luot_xem,
+                    'trang_thai' => $sanPham->trang_thai,
+                    'gia_tot' => $sanPham->gia_tot,
+                    'hang_moi' => $sanPham->hang_moi,
+                    'created_at' => $sanPham->created_at,
+                    'updated_at' => $sanPham->updated_at,
+                    'mau_va_hinh_anh' => $sanPham->bienTheSanPham->map(function ($bienThe) {
+                        // Lấy thông tin màu sắc và ảnh
+                        $mauBienThe = $bienThe->mauBienThe;
+                        $anhBienThe = $bienThe->anhBienThe->first(); // Lấy ảnh đầu tiên
+
+                        return [
+                            'mau_sac' => $mauBienThe ? $mauBienThe->ten_mau_sac : null,
+                            'ma_mau_sac' => $mauBienThe ? $mauBienThe->ma_mau_sac : null,
+                            'hinh_anh' => $anhBienThe ? $anhBienThe->duong_dan_anh : null
+                        ];
+                    })->unique(function ($item) {
+                        // Loại bỏ các màu và ảnh trùng lặp
+                        return $item['mau_sac'] . $item['ma_mau_sac'];
+                    })->values()->toArray(), // Chuyển thành mảng
+
+                    'kich_thuoc' => $sanPham->bienTheSanPham->map(function ($bienThe) {
+                        // Lấy thông tin kích thước
+                        $kichThuocBienThe = $bienThe->kichThuocBienThe;
+
+                        return [
+                            'kich_thuoc' => $kichThuocBienThe ? $kichThuocBienThe->kich_thuoc : null,
+                        ];
+                    })->unique('kich_thuoc')->values()->toArray() // Loại bỏ các kích thước trùng lặp và chuyển thành mảng
+                ];
+
+                return $sanPhamData;
+            });
+
+
+            DB::commit(); // Giao dịch cam kết
 
             // Trả về kết quả
             return response()->json([
@@ -245,9 +287,9 @@ class TrangSanPhamController extends Controller
                 'message' => 'Lấy dữ liệu thành công.',
                 'data' => $sanPhams
             ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();  // Rollback nếu có lỗi xảy ra
 
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback nếu có lỗi
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -256,5 +298,8 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
+
+
 
 }
