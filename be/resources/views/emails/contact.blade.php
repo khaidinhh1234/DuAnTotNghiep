@@ -60,7 +60,6 @@
         }
 
         .content p {
-<<<<<<< HEAD
             font-size: 16px;
             line-height: 1.6;
             margin-bottom: 20px;
@@ -73,18 +72,6 @@
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
-=======
-
-            font-size: 14px;
-            /* margin-bottom: 15px; */
-        }
- 
-        .content p.reply {
-            color: black;
-        } 
-
-        .content a {
->>>>>>> 76e71af0a37fc51063596af4064c4789ff5d7595
             color: #fff;
             border-left: 4px solid #ffd700;
         }
@@ -124,9 +111,7 @@
             padding-left: 15px;
         }
         blockquote {
-            /* background-color: #3B0F13; */
             color: black;
-            /* border-left: 4px solid #ed4b4d; */
             margin: 5px auto;
             padding: 10px 15px;
             font-style: italic;
@@ -152,57 +137,23 @@ align-items: center;        }
 
 <body>
     <div class="email-container">
-        <!-- Header Section -->
         <div class="header">
             <img src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1726411972/Screenshot_2024-09-15_215232_d3dt3j.png"
                 alt="Company Logo">
         </div>
-<<<<<<< HEAD
-
-        <!-- Content Section -->
         <div class="content">
             <h2>Xin chào, {{ $name }}</h2>
             <p>Email: {{ $email }}</p>
             <p>Cảm ơn bạn đã liên hệ với chúng tôi từ Glow Clothing. Chúng tôi đã nhận được yêu cầu của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
 
-            <!-- Displaying the user's message -->
             <div class="message">
                 <strong>Nội dung liên hệ:</strong><br>
                 {{ $noidung }}
             </div>
 
-            <!-- CTA Button -->
             <a href="https://example.com" class="cta-button">Truy cập trang của chúng tôi</a>
         </div>
 
-        <!-- Footer Section -->
-=======
-        <div class="gif-credit">
-            <p><a href="" class="text-underline font-size-sm" target="_blank">Confirmation email</a> by <a href=""
-                    class="text-underline font-size-sm" target="_blank">Creative Stall</a></p>
-        </div>
-        <div class="content">
-            <h2>Xin chào:{{ $name }}</h2>
-            <p class="reply">Cảm ơn bạn đã liên hệ với chúng tôi. Chúng tôi sẽ trả lời email của bạn trong thời gian sớm nhất.</p>
-            <p class="reply">Thông tin liên hệ của bạn: {{ $email }}</p>
-            <!-- <div class="contact-customers"><strong>Nội dung:</strong>{{ $noidung }}</div> -->
-        
-        </div>
-        <div>
-                        <div class="contact-customers"><strong>Nội dung:</strong></div>
-
-            <blockquote>
-                {{ $noi_dung}}
-            </blockquote>
-            <div class="loi">
-                <p class="signature">Trân trọng,</p>
-                <p class="loll">Đội ngũ hỗ trợ khách hàng</p>
-    
-            </div>
-        </div>
-    
-      
->>>>>>> 76e71af0a37fc51063596af4064c4789ff5d7595
         <div class="footer">
             <p>Bằng cách liên hệ với chúng tôi, bạn đồng ý với <a href="#">Điều khoản & Điều kiện</a> và <a href="#">Chính sách bảo mật</a>.</p>
         </div>
