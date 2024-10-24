@@ -1,19 +1,42 @@
-import {
-  CheckCircleOutlined,
-  GiftOutlined,
-  SmileOutlined,
-  TruckOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import instanceClient from "@/configs/client";
+import { SmileOutlined, TruckOutlined, UserOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import { Steps } from "antd";
-import React from "react";
 import { Link, useParams } from "react-router-dom";
 
 const MyOrderdetail = () => {
   const { slug } = useParams();
   // console.log(slug);
-  const trang_thai_don_hang = "Đã hoàn thành"; // Define the variable
-  const current = trang_thai_don_hang === "Đã hoàn thành" ? 4 : 0;
+  const { data } = useQuery({
+    queryKey: ["chi_tiet_don_hang", slug],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get(`don-hang/${slug}`);
+        if (response.data.status_code !== 200) {
+          return false;
+        }
+        return response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  });
+  const chitiet = data?.data;
+  const chitietsanpham = data?.data?.chi_tiet_don_hangs;
+  console.log(chitietsanpham);
+  const current =
+    chitiet?.trang_thai_don_hang === "Hoàn tất đơn hàng"
+      ? 4
+      : chitiet?.trang_thai_don_hang === "Chờ khách hàng xác nhận"
+        ? 3
+        : chitiet?.trang_thai_don_hang === "Đang giao hàng"
+          ? 2
+          : chitiet?.trang_thai_don_hang === "Đang xử lý" ||
+              chitiet?.trang_thai_don_hang === "Đã xác nhận"
+            ? 1
+            : chitiet?.trang_thai_don_hang === "Chờ xử lý"
+              ? 0
+              : 0;
   const items = [
     {
       title: "Đơn hàng đã đặt",
@@ -78,13 +101,47 @@ const MyOrderdetail = () => {
         <div className="flex gap-5 ">
           <h1>MÃ ĐƠN HÀNG.{slug}</h1>{" "}
           <h1 className="border-l-2 pl-5 text-green-500 font-semibold">
-            Đơn hàng đã hoàn thành
+            {chitiet?.trang_thai_don_hang}
           </h1>
-          <a className="border-l-2 px-2 text-red-500 font-semibold">Đánh giá</a>
+          {chitiet?.trang_thai_don_hang == "Hoàn tất đơn hàng" && (
+            <a className="border-l-2 px-2 text-red-500 font-semibold">
+              Đánh giá
+            </a>
+          )}
         </div>
       </div>
       <div className="border-x  px-5 py-4">
-        <Steps current={current} labelPlacement="vertical" items={items} />
+        {chitiet?.trang_thai_don_hang !== "Đơn hàng bị từ chối nhân" && (
+          <>
+            {chitiet?.trang_thai_don_hang !== "Hủy hàng" &&
+              chitiet?.trang_thai_don_hang !== "Hoàn hàng" && (
+                <Steps
+                  current={current}
+                  labelPlacement="vertical"
+                  items={items}
+                />
+              )}
+            {(chitiet?.trang_thai_don_hang === "Hủy hàng" ||
+              chitiet?.trang_thai_don_hang === "Hoàn hàng") && (
+              <Steps
+                progressDot
+                current={1}
+                items={[
+                  { title: "Gửi yêu cầu" },
+                  { title: "Được chấp nhận" },
+                  { title: "Đã hoàn tiền" },
+                ]}
+              />
+            )}
+          </>
+        )}
+        {chitiet?.trang_thai_don_hang === "Đơn hàng bị từ chối nhân" ? (
+          <div className="text-xl uppercase text-red-500">
+            Khách hàng từ chối nhận
+          </div>
+        ) : (
+          ""
+        )}
       </div>
       <div className="border p-5">
         <div className="py-6 grid grid-cols-7  border-b border-hrBlack">
@@ -117,8 +174,16 @@ const MyOrderdetail = () => {
                   <span className="">Sản phẩm của bạn đã đang xử lý</span>
                 </div>
               </div>{" "}
-              <div className={`text-center py-8 font-bold md:block  hidden`}>
-                <p>3.453.465₫</p>
+              <div
+                className={`text-center py-8 font-bold md:block  hidden mr-5`}
+              >
+                <p>
+                  {" "}
+                  <span className="text-gray-400 line-through">
+                    {(10000).toLocaleString("vi-VN")} đ{" "}
+                  </span>
+                  {(10000).toLocaleString("vi-VN")} đ
+                </p>
               </div>
             </div>
             {/* {chi_tiet_don_hangs && chi_tiet_don_hangs.length >= 2 && (
@@ -143,16 +208,19 @@ const MyOrderdetail = () => {
           <div>
             <h1 className="text-xl font-semibold">
               Địa chỉ nhận hàng{" "}
-              <Link
-                to={
-                  "https://asset.cloudinary.com/dcvu7e7ps/6f1977e298bde704fe55379ef638bb9c"
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 text-sm underline cursor-pointer "
-              >
-                Xem ảnh giao hàng
-              </Link>
+              {chitiet?.trang_thai_don_hang === "Hoàn tất đơn hàng" ||
+                (chitiet?.trang_thai_don_hang === "Chờ khách hàng xác nhận" && (
+                  <Link
+                    to={
+                      "https://asset.cloudinary.com/dcvu7e7ps/6f1977e298bde704fe55379ef638bb9c"
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 text-sm underline cursor-pointer "
+                  >
+                    Xem ảnh giao hàng
+                  </Link>
+                ))}
             </h1>
             <p>
               <UserOutlined /> Nguyễn đình khải
@@ -183,10 +251,19 @@ const MyOrderdetail = () => {
             </div>
           </div>
         </div>
-        <div className="text-end border-t pt-4">
-          Phương thức Thanh toán{" "}
-          <span className="ml-10">Thanh toán khi nhận hàng</span>
-        </div>
+        {chitiet?.trang_thai_don_hang !== "Hủy hàng" &&
+        chitiet?.trang_thai_don_hang !== "Hoàn hàng" &&
+        chitiet?.trang_thai_don_hang !== "Đơn hàng bị từ chối nhân" ? (
+          <div className="text-end border-t pt-4">
+            Phương thức Thanh toán{" "}
+            <span className="ml-10">{chitiet?.phuong_thuc_thanh_toan}</span>
+          </div>
+        ) : (
+          <div className="text-start border-t pt-4">
+            Lý do
+            <span className="ml-10">Lý do khác</span>
+          </div>
+        )}
       </div>
     </div>
   );
