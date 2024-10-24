@@ -90,19 +90,80 @@ class DonHangClientController extends Controller
         try {
             $user = Auth::guard('api')->user();
             $donHang = DonHang::where('user_id', $user->id)->with([
-                'chiTietDonHangs.bienTheSanPham.mauBienThe',
-                'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
-                'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
-                'chiTietDonHangs.bienTheSanPham.anhBienThe',
-                'user.hangThanhVien',
+                'chiTiets.bienTheSanPham.sanPham', // Lấy sản phẩm từ biến thể
+                'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
+                'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
+                'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
+                'danhGias.user', // Lấy đánh giá của đơn hàng
                 'vanChuyen',
-                'bienTheSanPhams',
-
             ])
                 ->orderByDesc('created_at')->get();
 
+            // Tính toán tổng số lượng và tổng tiền
+
             $donHang->map(function ($item) {
                 $item['tong_tien_da_giam'] = $item['tong_tien_don_hang'] - $item['so_tien_giam_gia'];
+                $item['tongSoLuong'] = $item->chiTiets->sum('so_luong');
+                $item['tongTienSanPham'] = $item->chiTiets->sum('thanh_tien');
+            });
+
+            // Chuẩn bị dữ liệu đơn hàng chi tiết với tên sản phẩm, ảnh, số lượng và giá
+            $chiTietDonHang = $donHang->flatMap(function ($order) {
+                return $order->chiTiets->map(function ($chiTiet) {
+                    // Lấy các đường dẫn ảnh biến thể từ bảng anh_bien_thes
+                    $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
+
+                    // Lấy ảnh sản phẩm (giả sử có một trường duong_dan_anh trong bảng san_phams)
+                    $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
+
+                    $gia_giam = $chiTiet->bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban;
+                    return [
+                        'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
+                        'anh_san_pham' => $anhSanPham, // Ảnh sản phẩm
+                        'anh_bien_the' => $anhBienThe, // Ảnh biến thể
+                        'mau_bien_the' => $chiTiet->bienTheSanPham->mauBienThe->ten_mau_sac,
+                        'kich_thuoc_bien_the' => $chiTiet->bienTheSanPham->kichThuocBienThe->kich_thuoc,
+                        'so_luong' => $chiTiet->so_luong,
+                        'gia_giam' => $gia_giam,
+                        'gia' => $chiTiet->gia,
+                        'thanh_tien' => $gia_giam * $chiTiet->so_luong ,
+                    ];
+                });
+            });
+
+            // Lấy đánh giá của đơn hàng
+            $danhGiaDonHang = $donHang->flatMap(function ($order) {
+                return $order->danhGias;
+            });
+            $danhGiaData = null;
+            if ($danhGiaDonHang->isNotEmpty()) {
+                $danhGiaData = $danhGiaDonHang->map(function ($danhGia) {
+                    return [
+                        'so_sao_san_pham' => $danhGia->so_sao_san_pham,
+                        'so_sao_dich_vu_van_chuyen' => $danhGia->so_sao_dich_vu_van_chuyen,
+                        'chat_luong_san_pham' => $danhGia->chat_luong_san_pham,
+                        'mo_ta' => $danhGia->mo_ta,
+                        'phan_hoi' => $danhGia->phan_hoi,
+                        'huu_ich' => $danhGia->huu_ich
+                    ];
+                });
+            }
+
+            //Thong tin user
+            $thongTin = $donHang->map(function ($order) {
+                if (
+                    $order->ten_nguoi_dat_hang == ""
+                    && $order->so_dien_thoai_nguoi_dat_hang == ""
+                    && $order->dia_chi_nguoi_dat_hang == ""
+                ) {
+                    return $order->user;
+                } else {
+                    return [
+                        'ten_nguoi_dat_hang' => $order->ten_nguoi_dat_hang === "" ? ($order->user->ho . " " . $order->user->ten) : $order->ten_nguoi_dat_hang,
+                        'so_dien_thoai_nguoi_dat_hang' => $order->so_dien_thoai_nguoi_dat_hang === "" ? $order->user->so_dien_thoai : $order->so_dien_thoai_nguoi_dat_hang,
+                        'dia_chi_nguoi_dat_hang' => $order->dia_chi_nguoi_dat_hang === "" ? $order->user->dia_chi : $order->dia_chi_nguoi_dat_hang
+                    ];
+                }
             });
 
             // Tính toán tổng số lượng và tổng tiền

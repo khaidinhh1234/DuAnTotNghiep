@@ -310,12 +310,24 @@ class DataMasterSeeder extends Seeder
             'updated_at' => Carbon::now(),
         ]);
 
-        if ($admin) {
-            $admin->vaiTros()->sync([2]);
-        } elseif ($user) {
-            $user->vaiTros()->sync([1]);
-        }
+        //shipper
 
+        $shipper = User::create([
+            'ho' => 'Nguyễn Văn',
+            'ten' => 'A',
+            'email' => 'nguyenvana@gmail.com',
+            'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png',
+            'password' => Hash::make('Ship1234'), // Mã hóa mật khẩu
+            'so_dien_thoai' => '0123456789',
+            'dia_chi' => '123 Đường ABC, TP XYZ',
+            'ngay_sinh' => Carbon::parse('1990-01-01'),
+            'email_verified_at' => Carbon::now(),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+        $admin->vaiTros()->sync([2]);
+        $user->vaiTros()->sync([1]);
+        $shipper->vaiTros()->sync([3]);
 
         //Sản phẩm
         $sanPhams = [
