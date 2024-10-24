@@ -127,7 +127,8 @@ class DonHangClientController extends Controller
                 'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
                 'user.hangThanhVien',
                 'vanChuyen',
-                'bienTheSanPhams'
+                'bienTheSanPhams',
+                'danhGias'
             ])->where('ma_don_hang', $maDonHang)->first();
             return response()->json([
                 'status' => true,
