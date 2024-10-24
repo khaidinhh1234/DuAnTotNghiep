@@ -92,11 +92,18 @@ class DonHangClientController extends Controller
             $donHang = DonHang::where('user_id', $user->id)->with([
                 'chiTietDonHangs.bienTheSanPham.mauBienThe',
                 'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
+                'chiTietDonHangs.bienTheSanPham.kichThuocBienThe',
+                'chiTietDonHangs.bienTheSanPham.anhBienThe',
                 'user.hangThanhVien',
                 'vanChuyen',
                 'bienTheSanPhams'
             ])
                 ->orderByDesc('created_at')->get();
+
+            $donHang->map(function ($item) {
+                $item['tong_tien_da_giam'] = $item['tong_tien_don_hang'] - $item['so_tien_giam_gia'];
+            });
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
