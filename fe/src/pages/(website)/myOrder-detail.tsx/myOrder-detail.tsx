@@ -6,7 +6,17 @@ import { Link, useParams } from "react-router-dom";
 
 const MyOrderdetail = () => {
   const { slug } = useParams();
-  // console.log(slug);
+  const { data: order } = useQuery({
+    queryKey: ["MyOrder"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get("don-hang");
+        return response.data;
+      } catch (error) {
+        throw new Error("Lỗi khi lấy thông tin");
+      }
+    },
+  });
   const { data } = useQuery({
     queryKey: ["chi_tiet_don_hang", slug],
     queryFn: async () => {
@@ -21,9 +31,11 @@ const MyOrderdetail = () => {
       }
     },
   });
+  const orders = order?.data;
+  // console.log(orders);
   const chitiet = data?.data;
   const chitietsanpham = data?.data?.chi_tiet_don_hangs;
-  console.log(chitietsanpham);
+  // console.log(chitietsanpham);
   const current =
     chitiet?.trang_thai_don_hang === "Hoàn tất đơn hàng"
       ? 4
