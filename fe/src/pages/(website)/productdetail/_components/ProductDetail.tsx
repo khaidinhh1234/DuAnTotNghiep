@@ -117,7 +117,8 @@ const formatCurrency = (amount: number) => {
 // };
 const ProductDetail: React.FC = () => {
   const swiperRef = useRef<any | null>(null);
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams();
+
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -158,8 +159,8 @@ const ProductDetail: React.FC = () => {
   const queryClient = useQueryClient();
 
   const { data: product, isLoading } = useQuery<ProductData>({
-    queryKey: ["product", id],
-    queryFn: () => fetchProduct(id!),
+    queryKey: ["product", slug],
+    queryFn: () => fetchProduct(slug!),
   });
 
   // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
@@ -181,7 +182,7 @@ const ProductDetail: React.FC = () => {
         : instance.post(`/danh-gia/${reviewId}/like`);
     },
     onSuccess: (_: any, variables: { reviewId: number; isLiked: boolean }) => {
-      queryClient.setQueryData<ProductData>(["product", id], (oldProduct) => {
+      queryClient.setQueryData<ProductData>(["product", slug], (oldProduct) => {
         if (!oldProduct) return oldProduct;
         return {
           ...oldProduct,
@@ -743,7 +744,7 @@ const ProductDetail: React.FC = () => {
               Đánh giá của khách hàng
             </h2>
 
-            {activeTab === "reviews" && product && (
+            {activeTab === "reviews" && (
               <div className="space-y-6">
                 {product?.danh_gias?.map((review: any) => (
                   <div

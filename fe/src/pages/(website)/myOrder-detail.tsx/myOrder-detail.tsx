@@ -8,11 +8,12 @@ import {
 import { Steps } from "antd";
 import React from "react";
 import { Link, useParams } from "react-router-dom";
-const description = "This is a description.";
+
 const MyOrderdetail = () => {
   const { slug } = useParams();
   // console.log(slug);
-  const current = 2; // Define the current variable
+  const trang_thai_don_hang = "Đã hoàn thành"; // Define the variable
+  const current = trang_thai_don_hang === "Đã hoàn thành" ? 4 : 0;
   const items = [
     {
       title: "Đơn hàng đã đặt",
@@ -57,10 +58,9 @@ const MyOrderdetail = () => {
     {
       title: "Đơn hàng đã được Đánh Giá",
 
-      status: "wait" as "wait",
       icon:
         current >= 4 ? (
-          <SmileOutlined />
+          <SmileOutlined className="text-blue-500" />
         ) : (
           <SmileOutlined className="opacity-50" />
         ),
@@ -141,7 +141,19 @@ const MyOrderdetail = () => {
         </div>{" "}
         <div className="grid grid-cols-2 mt-5">
           <div>
-            <h1 className="text-xl font-semibold">Địa chỉ nhận hàng</h1>
+            <h1 className="text-xl font-semibold">
+              Địa chỉ nhận hàng{" "}
+              <Link
+                to={
+                  "https://asset.cloudinary.com/dcvu7e7ps/6f1977e298bde704fe55379ef638bb9c"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 text-sm underline cursor-pointer "
+              >
+                Xem ảnh giao hàng
+              </Link>
+            </h1>
             <p>
               <UserOutlined /> Nguyễn đình khải
             </p>
