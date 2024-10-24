@@ -139,7 +139,7 @@ class DonHangClientController extends Controller
                 'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
                 'danhGias.user', // Lấy đánh giá của đơn hàng
                 'vanChuyen',
-                // 'user'
+
             ])->where('ma_don_hang', $maDonHang)->first();
 
             // Tính toán tổng số lượng và tổng tiền
