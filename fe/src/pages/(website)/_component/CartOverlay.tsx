@@ -91,44 +91,51 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible  }) => {
   }
   return (
     <div className="absolute top-full right-60 w-85 bg-white shadow-lg p-4 rounded-lg z-50">
-      <h2 className="text-lg font-semibold mb-3">Bạn có {totalUniqueProducts} sản phẩm trong giỏ hàng</h2>
-      <div className="space-y-5">
-        {displayItems.map((item) => (
-          <div key={item.id} className="flex items-center py-2 border-b">
-            <img src={item.hinh_anh} alt={item.ten_san_pham} className="w-16 h-16 object-cover mr-3 rounded-[6px]" />
-            <div className="flex-grow">
-            <Link to={`/product-detail/${item.bien_the_san_pham_id}`}>
-      <h3 className="text-sm font-medium hover:text-[#FF7262] truncate">
-        {item.ten_san_pham}
-      </h3>
-    </Link>
-              <p className="text-xs text-gray-500 mt-[-10px]">
-                {item.so_luong} x {formatCurrency(item.gia_hien_tai)}
-              </p>
-              <p className="text-xs text-gray-500 mt-[-10px]">Loại: {item.kich_thuoc}, {item.mau_sac}</p>
-            </div>
-            <button
-              className="text-red-500 hover:text-red-700 ml-2"
-              onClick={() => handleDelete(item.id)}
-              disabled={deleteMutation.isLoading}
-            >
-              <i className="fa-regular fa-trash-can pr-2"></i>
-            </button>
+    <h2 className="text-lg font-semibold mb-3">Bạn có {totalUniqueProducts} sản phẩm</h2>
+    <div className="space-y-5">
+      {displayItems.map((item) => (
+        <div key={item.id} className="flex items-center py-2 border-b last:border-b-0">
+          <img src={item.hinh_anh} alt={item.ten_san_pham} className="w-16 h-16 object-cover mr-3 rounded-[6px]" />
+          <div className="flex-grow">
+            <Link to={`/product-detail/${item.duong_dan}`}>
+              <h3 className="text-sm font-medium hover:text-[#FF7262] truncate">
+                {item.ten_san_pham}
+              </h3>
+            </Link>
+            <p className="text-xs text-gray-500 mt-[-10px]">
+              {item.so_luong} x {formatCurrency(item.gia_hien_tai)}
+            </p>
+            <p className="text-xs text-gray-500 mt-[-10px]">Loại: {item.kich_thuoc}, {item.mau_sac}</p>
           </div>
-        ))}
-      </div>
-      <div className="flex justify-between items-center mt-3 pt-3 border-t">
-        <span className="font-semibold">Tổng cộng</span>
-        <span className="font-semibold">{formatCurrency(subtotal)}</span>
-      </div>
-      
-      <button className="w-full bg-white text-black border border-gray-300 py-2 px-4 rounded mt-3 hover:bg-black hover:text-white text-sm">
-      <a href="/gio-hang">Xem giỏ hàng</a>
-      </button>
-      <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
-      Thanh toán
-      </button>
+          <button
+            className="text-red-500 hover:text-red-700 ml-2"
+            onClick={() => handleDelete(item.id)}
+            disabled={deleteMutation.isLoading}
+          >
+            <i className="fa-regular fa-trash-can pr-2"></i>
+          </button>
+        </div>
+      ))}
     </div>
+    <div className="text-center mt-1">
+      <Link to={`/gio-hang`} className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center">
+        <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
+      </Link> 
+    </div>
+  
+    <div className="flex justify-between items-center mt-3 pt-3 border-t">
+      <span className="font-semibold">Tổng cộng</span>
+      <span className="font-semibold">{formatCurrency(subtotal)}</span>
+    </div>
+  
+    <button className="w-full bg-white text-black border border-gray-300 py-2 px-4 rounded mt-3 hover:bg-black hover:text-white text-sm">
+      <a href="/gio-hang">Xem giỏ hàng</a>
+    </button>
+    <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
+      Thanh toán
+    </button>
+  </div>
+  
   );
 };
 

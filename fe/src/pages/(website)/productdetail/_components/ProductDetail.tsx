@@ -24,6 +24,7 @@ import SizeGuideModal from "./SizeGuide";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import RelatedProducts from "./RelatedProducts";
+import { debounce } from "lodash";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -264,13 +265,13 @@ const ProductDetail: React.FC = () => {
   });
 
   const handleReviewLike = useCallback(
-    (reviewId: number, isLiked: boolean) => {
+    debounce((reviewId: number, isLiked: boolean) => {
       if (!token) {
         toast.warning("Bạn cần đăng nhập để thực hiện hành động này");
         return;
       }
       likeMutation.mutate({ reviewId, isLiked });
-    },
+    }, 1000),
     [likeMutation, token]
   );
 
