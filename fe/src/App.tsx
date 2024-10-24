@@ -18,8 +18,6 @@ function App() {
     useEffect(() => {
         window.Pusher = Pusher;
 
-        console.log("Connecting to Pusher...");
-
         const echo = new Echo({
             broadcaster: "pusher",
             key: "f62e9799c7e13f6841a6",
@@ -27,38 +25,36 @@ function App() {
             encrypted: true,
         });
 
-        echo.connector.pusher.connection.bind('state_change', (states) => {
-            console.log('Pusher state changed:', states);
-        });
-
         const user = localStorage.getItem("user");
-
         if (!user) {
-            console.log("User does not exist");
+            console.log("Người dùng không tồn tại");
             return;
         }
 
-        const parsedUser = JSON.parse(user);
-        const user_id = parsedUser.user.id;
-        console.log("User ID:", user_id);
+        let userId: number;
+        try {
+            const parsedUser = JSON.parse(user);
+            userId = parsedUser.user.id;
+            console.log("ID người dùng:", userId);
+        } catch (error) {
+            console.error("Lỗi khi phân tích dữ liệu người dùng:", error);
+            return;
+        }
 
-        const channelName = `thong-bao.${user_id}`;
-        console.log(`Listening to channel: ${channelName}`);
+        const channelName = `thong-bao`;
+        console.log(`Đang lắng nghe kênh: ${channelName}`);
 
-        const notificationListener = echo.private(channelName).listen("ThongBaoMoi", (event) => {
-            const toastMessage = `${event.tieu_de}: ${event.noi_dung}`;
-            console.log('Received event on channel ' + channelName, event);
-            toast(toastMessage);
-            setNotifications((prevNotifications) => [
-                ...prevNotifications,
-                toastMessage,
-            ]);
+        echo.channel(channelName).listen("ThongBaoMoi", (event: { user_id: number; tieu_de: string; noi_dung: string }) => {
+            if (event.user_id === userId) {
+                const toastMessage = `${event.tieu_de}: ${event.noi_dung}`;
+                toast(toastMessage);
+                setNotifications(prev => [...prev, toastMessage]);
+            }
         });
 
         return () => {
             echo.leave(channelName);
             echo.disconnect();
-            console.log(`Stopped listening to channel: ${channelName}`);
         };
     }, []);
 
