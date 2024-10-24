@@ -397,7 +397,7 @@ class DonHangClientController extends Controller
             }
 
 
-            $donHang = DonHang::with(['chiTietDonHangs'])
+            $donHang = DonHang::with(['chiTiets'])
                 ->where('id', $donHang->id)
                 ->first();
 
@@ -407,7 +407,6 @@ class DonHangClientController extends Controller
                 ->update(['deleted_at' => now()]);
 
             //            event(new HoanTatDonHang($donHang, $request->email_nguoi_dat_hang));
-
 
             $thongBao = ThongBao::create([
                 'user_id' => $userId,

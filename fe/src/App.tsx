@@ -18,17 +18,37 @@ function App() {
     useEffect(() => {
         window.Pusher = Pusher;
 
+        console.log("Connecting to Pusher...");
+
         const echo = new Echo({
             broadcaster: "pusher",
-            key: "f62e9799c7e13f6841a6", // Sử dụng khóa Pusher của bạn
-            cluster: "ap1", // Sử dụng cluster Pusher của bạn
+            key: "f62e9799c7e13f6841a6",
+            cluster: "ap1",
             encrypted: true,
         });
 
-        echo.channel('thong-bao').listen("ThongBaoMoi", (event) => {
-            console.log('Event received:', event); // Log sự kiện nhận được
+        echo.connector.pusher.connection.bind('state_change', (states) => {
+            console.log('Pusher state changed:', states);
+        });
+
+        const user = localStorage.getItem("user");
+
+        if (!user) {
+            console.log("User does not exist");
+            return;
+        }
+
+        const parsedUser = JSON.parse(user);
+        const user_id = parsedUser.user.id;
+        console.log("User ID:", user_id);
+
+        const channelName = `thong-bao.${user_id}`;
+        console.log(`Listening to channel: ${channelName}`);
+
+        const notificationListener = echo.private(channelName).listen("ThongBaoMoi", (event) => {
             const toastMessage = `${event.tieu_de}: ${event.noi_dung}`;
-            toast(toastMessage); // Hiển thị thông báo
+            console.log('Received event on channel ' + channelName, event);
+            toast(toastMessage);
             setNotifications((prevNotifications) => [
                 ...prevNotifications,
                 toastMessage,
@@ -36,7 +56,9 @@ function App() {
         });
 
         return () => {
+            echo.leave(channelName);
             echo.disconnect();
+            console.log(`Stopped listening to channel: ${channelName}`);
         };
     }, []);
 

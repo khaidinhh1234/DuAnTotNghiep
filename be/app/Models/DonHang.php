@@ -89,4 +89,43 @@ class DonHang extends Model
             $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
         });
     }
+
+
+    public static function getPhuongThucThanhToan($phuongThucThanhToan)
+    {
+        $phuongThucThanhToanNames = [
+            self::PTTT_TT => 'Thanh toán khi nhận hàng',
+            self::PTTT_MM => 'Thanh toán qua Momo',
+            self::PTTT_NH => 'Thanh toán qua ngân hàng',
+        ];
+
+        return $phuongThucThanhToanNames[$phuongThucThanhToan] ?? 'Phương thức thanh toán không xác định';
+    }
+
+    public static function getTrangThaiThanhToan($trangThaiThanhToan)
+    {
+        $trangThaiThanhToanNames = [
+            self::TTTT_CTT => 'Chưa thanh toán',
+            self::TTTT_DTT => 'Đã thanh toán',
+        ];
+
+        return $trangThaiThanhToanNames[$trangThaiThanhToan] ?? 'Trạng thái thanh toán không xác định';
+    }
+
+    public static function getTrangThaiDonHang($trangThaiDonHang)
+    {
+        $trangThaiDonHangNames = [
+            self::TTDH_CXH => 'Chờ xác nhận',
+            self::TTDH_DXH => 'Đã xác nhận',
+            self::TTDH_DXL => 'Đang xử lý',
+            self::TTDH_DH => 'Hủy hàng',
+            self::TTDH_DGH => 'Đang giao hàng',
+            self::TTDH_CKHCN => 'Chờ khách hàng xác nhận',
+            self::TTDH_HTDH => 'Hoàn tất đơn hàng',
+            self::TTDH_DHTB => 'Đơn hàng bị từ chối nhận',
+            self::TTDH_HH => 'Hoàn hàng',
+        ];
+
+        return $trangThaiDonHangNames[$trangThaiDonHang] ?? 'Trạng thái đơn hàng không xác định';
+    }
 }
