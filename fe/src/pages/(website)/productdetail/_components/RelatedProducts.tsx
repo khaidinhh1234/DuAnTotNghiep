@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,13 +23,17 @@ interface RelatedProductsProps {
 }
 
 const fetchRelatedProducts = async (productId: number) => {
-  const response = await instance.get(`/danh-sach-san-pham-cung-loai/${productId}`);
+  const response = await instance.get(
+    `/danh-sach-san-pham-cung-loai/${productId}`
+  );
   return response.data;
 };
 
 const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
-  const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(null);
+  const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
+    null
+  );
   const queryClient = useQueryClient();
 
   const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
@@ -38,7 +41,6 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
     queryFn: () => fetchRelatedProducts(productId),
     enabled: !!productId,
   });
-
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (id: any) => {
@@ -73,7 +75,6 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
     setHoveredVariantIndex(variantIndex);
   };
 
-
   if (!relatedProducts?.data || relatedProducts.data.length === 0) {
     return null;
   }
@@ -87,7 +88,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
       </div>
 
       <div className="grid grid-cols-12 justify-center gap-7">
-        {relatedProducts?.data.map((product) => (
+        {relatedProducts?.data?.map((product, index) => (
           <div
             key={product.id}
             className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
@@ -107,11 +108,12 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
                   <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                 </a>
 
-                <Link to={`/product-detail/${product.duong_dan}`} >
+                <Link to={`/product-detail/${product.duong_dan}`}>
                   <div className="relative">
                     <img
                       src={
-                        hoveredProductId === product.id && hoveredVariantIndex !== null
+                        hoveredProductId === product.id &&
+                        hoveredVariantIndex !== null
                           ? product.mau_sac_va_anh[hoveredVariantIndex].hinh_anh
                           : product.anh_san_pham
                       }
@@ -131,7 +133,9 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
 
                   <p className="font-semibold text-lg">
                     {product.gia_thap_nhat === product.gia_cao_nhat ? (
-                      <>{(product.gia_cao_nhat ?? 0).toLocaleString("vi-VN")} đ</>
+                      <>
+                        {(product.gia_cao_nhat ?? 0).toLocaleString("vi-VN")} đ
+                      </>
                     ) : (
                       <>
                         {(product.gia_thap_nhat ?? 0).toLocaleString("vi-VN")} đ
@@ -146,7 +150,8 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
                       <button
                         key={index}
                         className={`w-7 h-7 rounded-full border mr-1 ${
-                          hoveredProductId === product.id && hoveredVariantIndex === index
+                          hoveredProductId === product.id &&
+                          hoveredVariantIndex === index
                             ? "border-black"
                             : "border-gray-300 hover:border-black"
                         }`}

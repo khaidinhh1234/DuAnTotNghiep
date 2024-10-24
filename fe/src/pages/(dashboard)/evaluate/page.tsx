@@ -329,11 +329,31 @@ const EvaluateAdmin = () => {
         pagination={{ pageSize: 10, className: "my-5" }}
         loading={isLoading}
       />
-      <Modal
+      {/* <Modal
         // title="Chi tiết đánh giá"
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+      > */}
+                 <Modal
+        open={isModalOpen}
+        onCancel={handleCancel}
+        width={800}
+        footer={[
+          <button
+            key="cancel"
+            onClick={handleCancel}
+            className="bg-gray-300 text-black px-4 py-2 mr-2 rounded hover:bg-gray-400"
+          >
+            Hủy
+          </button>,
+          <button
+            key="ok"
+            onClick={handleOk}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Gửi    </button>,
+        ]}
       >
         <h1 className="text-3xl font-bold">Chi tiết đánh giá</h1>
         {currentEvaluate && (
