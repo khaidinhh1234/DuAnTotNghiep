@@ -34,6 +34,7 @@ const MyOrderdetail = () => {
   const orders = order?.data;
   // console.log(orders);
   const chitiet = data?.data;
+  console.log(chitiet);
   const chitietsanpham = data?.data?.chi_tiet_don_hangs;
   // console.log(chitietsanpham);
   const current =

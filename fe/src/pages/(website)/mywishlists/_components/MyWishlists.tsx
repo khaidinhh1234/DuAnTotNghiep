@@ -53,12 +53,12 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
                         src={product?.anh_san_pham}
                         alt=""
                         className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
-                      />{" "}
+                      />
                     </Link>
                     <View id={product?.id} />
                   </div>
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
-                    <Link to={`/product-detail/${product.id}`}>
+                    <Link to={`/product-detail/${product.duong_dan}`}>
                       {" "}
                       <h5 className=" text-base truncate w-60 font-medium hover:text-red-500">
                         {product?.ten_san_pham}
