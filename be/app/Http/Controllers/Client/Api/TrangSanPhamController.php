@@ -186,7 +186,8 @@ class TrangSanPhamController extends Controller
         DB::beginTransaction(); // Bắt đầu giao dịch
         try {
             // Lấy các tham số lọc từ yêu cầu
-            $danhMucIds = $request->danh_muc_ids ?? [];
+            $danhMucChaIds = $request->danh_muc_cha_ids ?? []; // Mảng ID danh mục cha
+            $danhMucConIds = $request->danh_muc_con_ids ?? []; // Mảng ID danh mục con
             $mauSacIds = $request->mau_sac_ids ?? [];
             $kichThuocIds = $request->kich_thuoc_ids ?? [];
             $giaDuoi = $request->gia_duoi ?? null;
@@ -195,18 +196,32 @@ class TrangSanPhamController extends Controller
             // Tạo truy vấn sản phẩm
             $query = SanPham::query();
 
-            // Lọc theo danh mục cha và con
-            if (!empty($danhMucIds) && is_array($danhMucIds)) {
-                $query->whereHas('danhMuc', function ($query) use ($danhMucIds) {
-                    $query->whereIn('id', $danhMucIds)
-                          ->orWhereIn('cha_id', $danhMucIds); // Lấy danh mục cha và con
+            // Lọc theo nhiều danh mục cha và danh mục con
+            if (!empty($danhMucChaIds) || !empty($danhMucConIds)) {
+                $query->whereHas('danhMuc', function ($query) use ($danhMucChaIds, $danhMucConIds) {
+                    // Nếu có cả danh mục cha và con
+                    if (!empty($danhMucChaIds) && !empty($danhMucConIds)) {
+                        $query->where(function ($query) use ($danhMucChaIds, $danhMucConIds) {
+                            $query->whereIn('cha_id', $danhMucChaIds) // Danh mục con có cha là danh mục cha
+                                  ->whereIn('id', $danhMucConIds);   // Lọc theo ID danh mục con
+                        });
+                    }
+                    // Nếu chỉ có danh mục cha
+                    elseif (!empty($danhMucChaIds)) {
+                        $query->whereIn('cha_id', $danhMucChaIds) // Lọc theo danh mục cha
+                              ->orWhereIn('id', $danhMucChaIds);  // Lọc theo ID danh mục cha
+                    }
+                    // Nếu chỉ có danh mục con
+                    elseif (!empty($danhMucConIds)) {
+                        $query->whereIn('id', $danhMucConIds); // Lọc theo ID danh mục con
+                    }
                 });
             }
 
             // Lọc theo màu sắc sản phẩm
             if (!empty($mauSacIds) && is_array($mauSacIds)) {
                 $query->whereHas('bienTheSanPham.mauBienThe', function ($query) use ($mauSacIds) {
-                    $query->whereIn('id', $mauSacIds); // Lọc theo màu
+                    $query->whereIn('id', $mauSacIds); // Lọc theo màu sắc
                 });
             }
 
@@ -298,7 +313,6 @@ class TrangSanPhamController extends Controller
                     })->unique('kich_thuoc')->values()->toArray() // Loại bỏ kích thước trùng lặp và chuyển thành mảng
                 ];
             });
-
 
             DB::commit(); // Giao dịch cam kết
 
