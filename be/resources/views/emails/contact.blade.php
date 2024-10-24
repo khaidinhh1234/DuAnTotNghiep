@@ -80,13 +80,13 @@
 
     <div class="container">
         <h1>Xin chào {{ $name }},</h1>
-        <p>liên hệ của bạn: {{$email}}</p>
+        <p>Liên hệ của bạn: {{$email}}</p>
 
-        <p>Cảm ơn bạn đã liên hệ với chúng tôi! Chúng tôi đã nhận được phản hồi của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
+        <p>Cảm ơn bạn đã liên hệ với chúng tôi! Chúng tôi đã nhận được liên hệ của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
 
-        <p>Nội dung phản hồi của bạn:</p>
+        <p>Nội dung liên hệ của bạn:</p>
         <blockquote>
-            {{ $noi_dung }}
+            {{ $noidung }}
         </blockquote>
 
         <p class="signature">Trân trọng,<br>Đội ngũ hỗ trợ khách hàng</p>
