@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
 const ProductsList = ({ products, Wishlist, isPending }: any) => {
-  // console.log(products);
+  console.log(products);
   const handleWishlist = (id: any) => {
     Wishlist(id) as any;
   };

@@ -6,6 +6,7 @@ import View from "../../_component/View";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { toast } from "react-toastify";
+import { message } from "antd";
 
 const MyWishlistsPage = ({ yeuthich }: any) => {
   const queryClient = useQueryClient();
@@ -13,7 +14,7 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
     mutationFn: async (id: any) => {
       try {
         const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
-        toast.success("Xóa sản phẩm yêu thích thành công");
+        message.success("Xóa sản phẩm yêu thích thành công");
         return response.data;
       } catch (error) {
         console.error("API error", error); // Thêm log lỗi API
@@ -37,25 +38,25 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
                 key={index}
               >
                 <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
-                  <Link to={`/product-detail/${product.id}`}>
-                    <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
-                      {isPending ? (
-                        <span>
-                          <i className="fa-sharp-duotone fa-solid fa-loader fa-spin-pulse px-3 py-[10px] rounded-full absolute top-3 right-4 btn invisible opacity-0 transition-opacity duration-300"></i>
-                        </span>
-                      ) : (
-                        <span onClick={() => mutate(product.id)}>
-                          <i className="fa-solid fa-trash-can text-red-500 bg-white  hover:bg-slate-200 px-3 py-[10px] rounded-full absolute top-3 right-4 btn invisible opacity-0 transition-opacity duration-300" />
-                        </span>
-                      )}
+                  <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
+                    {isPending ? (
+                      <span>
+                        <i className="fa-sharp-duotone fa-solid fa-loader fa-spin-pulse px-3 py-[10px] rounded-full absolute top-3 right-4 btn invisible opacity-0 transition-opacity duration-300"></i>
+                      </span>
+                    ) : (
+                      <span onClick={() => mutate(product.id)}>
+                        <i className="fa-solid fa-trash-can text-red-500 bg-white  hover:bg-slate-200 px-3 py-[10px] rounded-full absolute top-3 right-4 btn invisible opacity-0 transition-opacity duration-300" />
+                      </span>
+                    )}
+                    <Link to={`/product-detail/${product.duong_dan}`}>
                       <img
                         src={product?.anh_san_pham}
                         alt=""
                         className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
-                      />
-                      <View id={product?.id} />
-                    </div>
-                  </Link>
+                      />{" "}
+                    </Link>
+                    <View id={product?.id} />
+                  </div>
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
                     <Link to={`/product-detail/${product.id}`}>
                       {" "}
@@ -96,7 +97,7 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
                 <img
                   src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729595866/rb_3715_j1zqey.png"
                   alt=""
-                  className="w-[85%] h-full mx-auto"
+                  className="w-[75%] h-full mx-auto"
                 />
               </div>
             </>

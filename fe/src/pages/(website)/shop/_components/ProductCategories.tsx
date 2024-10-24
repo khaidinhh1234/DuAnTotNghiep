@@ -11,10 +11,10 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showprice, setShowprice] = useState(false);
   const [showsize, setShowsize] = useState(false);
   const { data } = useQuery({
-    queryKey: ["PRODUCTSSHOP_KEYS"],
+    queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get("san-pham-all");
+        const response = await instanceClient.post("loc-san-pham");
         if (response.data.status_code !== 200) {
           throw new Error("Error fetching product");
         }
@@ -24,8 +24,9 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  const products = data?.data || [];
-  // console.log(products);
+
+  const products = data?.data?.data;
+  console.log(products);
   return (
     <div>
       {" "}

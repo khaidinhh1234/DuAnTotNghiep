@@ -1,14 +1,16 @@
+import instance from "@/configs/client";
+import { EyeOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, Image, message, Rate } from "antd";
 import React, {
-  useState,
+  useCallback,
   useEffect,
   useMemo,
-  useCallback,
   useRef,
+  useState,
 } from "react";
-import { Link, useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import instance from "@/configs/client";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Autoplay,
   FreeMode,
@@ -16,15 +18,11 @@ import {
   Pagination,
   Thumbs,
 } from "swiper/modules";
-import { Button, Image, Rate } from "antd";
-import { message } from "antd";
+import { Swiper, SwiperSlide } from "swiper/react";
 import SizeGuideModal from "./SizeGuide";
-import { EyeOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
 
-import instanceClient from "@/configs/client";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import View from "../../_component/View";
+import instanceClient from "@/configs/client";
 import RelatedProducts from "./RelatedProducts";
 import { debounce } from "lodash";
 interface ProductData {
@@ -120,7 +118,8 @@ const formatCurrency = (amount: number) => {
 // };
 const ProductDetail: React.FC = () => {
   const swiperRef = useRef<any | null>(null);
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams();
+
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -132,7 +131,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [token, setToken] = useState<string | null>(null);
-  
+
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
     user.access_token || localStorage.getItem("access_token");
@@ -161,8 +160,8 @@ const ProductDetail: React.FC = () => {
   const queryClient = useQueryClient();
 
   const { data: product, isLoading } = useQuery<ProductData>({
-    queryKey: ["product", id],
-    queryFn: () => fetchProduct(id!),
+    queryKey: ["product", slug],
+    queryFn: () => fetchProduct(slug!),
   });
 
   // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
@@ -175,13 +174,7 @@ const ProductDetail: React.FC = () => {
   //   refetch();
   // }, [id, refetch]);
   const likeMutation = useMutation({
-    mutationFn: ({
-      reviewId,
-      isLiked,
-    }: {
-      reviewId: number;
-      isLiked: boolean;
-    }) => {
+    mutationFn: ({ reviewId, isLiked }: { reviewId: any; isLiked: any }) => {
       if (!token) {
         throw new Error("Bạn cần đăng nhập để thực hiện hành động này");
       }
@@ -190,7 +183,7 @@ const ProductDetail: React.FC = () => {
         : instance.post(`/danh-gia/${reviewId}/like`);
     },
     onSuccess: (_: any, variables: { reviewId: number; isLiked: boolean }) => {
-      queryClient.setQueryData<ProductData>(["product", id], (oldProduct) => {
+      queryClient.setQueryData<ProductData>(["product", slug], (oldProduct) => {
         if (!oldProduct) return oldProduct;
         return {
           ...oldProduct,
@@ -221,7 +214,7 @@ const ProductDetail: React.FC = () => {
       productId,
       currentQuantity,
     }: {
-      productId: string;
+      productId: any;
       currentQuantity: number;
     }) => {
       await instanceClient.put(
@@ -249,7 +242,7 @@ const ProductDetail: React.FC = () => {
       productId,
       currentQuantity,
     }: {
-      productId: string;
+      productId: any;
       currentQuantity: number;
     }) => {
       await instanceClient.put(
@@ -752,7 +745,7 @@ const ProductDetail: React.FC = () => {
               Đánh giá của khách hàng
             </h2>
 
-            {activeTab === "reviews" && product && (
+            {activeTab === "reviews" && (
               <div className="space-y-6">
                 {product?.danh_gias?.map((review: any) => (
                   <div
