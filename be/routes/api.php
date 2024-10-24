@@ -40,6 +40,7 @@ use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
 use App\Http\Controllers\Client\Api\DanhGiaHuuIchController;
+use App\Http\Controllers\Client\Api\TaiKhoanController as ApiTaiKhoanController;
 use Illuminate\Support\Facades\Route;
 
 // Auth
@@ -131,7 +132,7 @@ Route::middleware([])
             // Đơn hàng
             Route::get('/don-hang', [DonHangClientController::class, 'donHangUser']);
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
-            Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang'])->middleware('auth:sanctum');
+            Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang']);
         });
 
         //Sản phẩm yêu thích
@@ -139,7 +140,7 @@ Route::middleware([])
         Route::post('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
 
         //Tài khoản
-        Route::post('/cap-nhat-thong-tin', [\App\Http\Controllers\Client\Api\TaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
+        Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
 
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
 

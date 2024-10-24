@@ -14,6 +14,7 @@ use App\Models\ThongTinWeb;
 use App\Models\TinTuc;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -116,6 +117,15 @@ class TrangChuController extends Controller
                 return $sanPham;
             });
 
+        //User
+        $user = Auth::guard('api')->user();
+        if ($user) {
+            // Thêm thông tin yêu thích vào từng sản phẩm
+            $dataDanhSachSanPhamMoi->map(function ($sanPham) use ($user) {
+                $sanPham['yeu_thich'] = $sanPham->khachHangYeuThich->contains($user->id); // Sản phẩm được yêu thích
+                return $sanPham;
+            });
+        }
 
         $boSuuTapUaChuongs = BoSuuTap::query()
             ->select(
@@ -153,9 +163,9 @@ class TrangChuController extends Controller
                             'bien_the_mau_sacs.ma_mau_sac',
                             'bien_the_kich_thuocs.kich_thuoc',
                             DB::raw('(SELECT anh_bien_thes.duong_dan_anh
-                          FROM anh_bien_thes
-                          WHERE anh_bien_thes.bien_the_san_pham_id = bien_the_san_phams.id
-                          LIMIT 1) as duong_dan_anh'),
+                            FROM anh_bien_thes
+                            WHERE anh_bien_thes.bien_the_san_pham_id = bien_the_san_phams.id
+                            LIMIT 1) as duong_dan_anh'),
                             DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'),
                             DB::raw('CASE
                                 WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
@@ -276,7 +286,8 @@ class TrangChuController extends Controller
         return response()->json($goiY);
     }
 
-    public function loadDanhMuc (){
+    public function loadDanhMuc()
+    {
         try {
             $danhMucs = DanhMuc::whereNull('cha_id')->with('children.children')->get();
             return response()->json(

@@ -104,13 +104,13 @@ const ProductItem = ({
 
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang }: any) => {
-  // console.log(donhang);
+  console.log(donhang);
   const chi_tiet_don_hangs = donhang?.map((item: any) => {
     return item?.chi_tiet_don_hangs[0]; // Trả về chi tiết của từng đơn hàng
   });
 
   const chitiet = chi_tiet_don_hangs[0];
-  console.log(chitiet);
+  // console.log(chitiet);
   return (
     <div className="lg:col-span-9 col-span-8 lg:pl-9">
       {donhang?.map((item: any, index: number) => (
