@@ -22,15 +22,10 @@ class ThongBaoMoi implements ShouldBroadcast
         Log::info('Thông báo mới được khởi tạo:', $this->broadcastWith());
     }
 
-//    public function broadcastOn()
-//    {
-//        Log::info('Đang phát thông báo trên kênh:', ['channel' => 'users.' . $this->thongBao->user_id]);
-//        return new PrivateChannel('users.' . $this->thongBao->user_id);
-//    }
-
     public function broadcastOn()
     {
-        return new Channel('thong-bao');
+        Log::info('Thông báo được phát: thong-bao.'. $this->thongBao->user_id);
+        return new PrivateChannel('thong-bao.' . $this->thongBao->user_id);
     }
 
     public function broadcastWith()
@@ -49,3 +44,4 @@ class ThongBaoMoi implements ShouldBroadcast
         return $data;
     }
 }
+
