@@ -7,6 +7,7 @@ import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
+import Notifications from './Notifications';
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -21,7 +22,20 @@ const Header = () => {
 
   const [isCartVisible, setIsCartVisible] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
-
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+  
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cartRef.current && !cartRef.current.contains(event.target as Node)) {
@@ -84,6 +98,7 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  
   const handleMouseLeave = () => {
     setTimeout(() => {
       setMenu(false);
@@ -330,6 +345,26 @@ const Header = () => {
                       <i className="fa-regular fa-heart text-xl">{}</i>
                     </a>
                   </span>
+    <span 
+  ref={notificationRef}
+  className="relative"
+  onMouseEnter={() => setShowNotifications(true)}
+  onMouseLeave={() => setShowNotifications(false)}
+>
+  <i className="fa-regular fa-bell text-xl relative cursor-pointer">
+    <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+      0
+    </span>
+  </i>
+  
+  <div 
+    className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${
+      showNotifications ? 'opacity-100' : 'opacity-0 pointer-events-none'
+    }`}
+  >
+    <Notifications />
+  </div>
+</span>
                   <span
                     ref={cartRef}
                     onMouseEnter={() => setIsCartVisible(true)}

@@ -50,7 +50,7 @@ const ListMyProfile = ({ member }: any) => {
       setAvatarImage(imageUrl);
       setTempImageUrl("");
       refetch();
-      toast.success('Cập nhật ảnh đại diện thành công');
+      // toast.success('Cập nhật ảnh đại diện thành công');
     },
     onError: () => {
       setTempImageUrl("");
