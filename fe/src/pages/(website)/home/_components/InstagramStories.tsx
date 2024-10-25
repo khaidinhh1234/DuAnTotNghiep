@@ -16,50 +16,50 @@ const InstagramStories = () => {
               <div className="grid grid-cols-12 gap-3 mb-24 mt-10">
                 <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
                   <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
-                    <i className="fa-brands fa-instagram text-2xl"></i>
+                    <i className="fa-solid fa-blog text-2xl"></i>
                   </button>
                   <img
                     src={
-                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729841385/d6pakzldkm8uu6xnz8dm.jpg"
+                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729841526/hruli44upyhqo4fpra1i.webp"
                     }
                     alt=""
-                    className="w-full h-full"
+                    className="w-full h-full bg-center bg-cover bg-no-repeat"
                   />
                 </div>
                 <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
                   <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
-                    <i className="fa-brands fa-instagram text-2xl"></i>
+                    <i className="fa-solid fa-blog text-2xl"></i>
                   </button>
                   <img
                     src={
-                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729841526/pmpqmrwvzll0sru0azkz.jpg"
+                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729853519/magazine-5cdb5120-f54c-4e52-9768-988ababfaf7c_q8urnz.webp"
                     }
                     alt=""
-                    className="w-full h-full"
+                    className="w-full h-full  bg-center bg-cover bg-no-repeat"
                   />
                 </div>
                 <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
                   <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
-                    <i className="fa-brands fa-instagram text-2xl"></i>
+                    <i className="fa-solid fa-blog text-2xl"></i>
                   </button>
                   <img
                     src={
-                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729841526/zuwtobf0ndzf7ovji1up.jpg"
+                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729853519/jonah-hill_iofwv0.webp"
                     }
                     alt=""
-                    className="w-full h-full"
+                    className="w-full h-full bg-center bg-cover bg-no-repeat"
                   />
                 </div>
                 <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
                   <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
-                    <i className="fa-brands fa-instagram text-2xl"></i>
+                    <i className="fa-solid fa-blog text-2xl"></i>
                   </button>
                   <img
                     src={
                       "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729841388/sgc0spzc57o5ur8ufeoe.jpg"
                     }
                     alt=""
-                    className="w-full h-full"
+                    className="w-full h-full  bg-center bg-cover bg-no-repeat"
                   />
                 </div>
               </div>
