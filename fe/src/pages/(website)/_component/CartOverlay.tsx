@@ -89,11 +89,16 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible  }) => {
   const subtotal = displayItems.reduce((sum, item) => sum + item.gia_hien_tai * item.so_luong, 0);
   if (totalUniqueProducts=== 0) {
     return (
-<div className="absolute top-full right-64 w-3/12 bg-white shadow-lg p-8 rounded-lg z-50 flex flex-col items-center">
+<div className="absolute top-full right-64 w-96 bg-white shadow-lg p-8 rounded-lg z-50 flex flex-col items-center">
+<h1 className="text-2xl font-bold mb-4">Giỏ hàng</h1>
+<p className="text-gray-500 mb-6">Không có sản phẩm trong giỏ hàng.</p>
   <div className="p-6">
-    <img src="/public/image.png" alt="No Product" className="w-32 h-32" />
+    <img src="/public/Shop.png" alt="No Product" className="w-52 h-44" />
   </div>
-  <p className="mt-3 text-xl text-gray-700 font-medium">Chưa Có Sản Phẩm</p>
+      
+  <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
+  Mua sắm ngay
+    </button>
 </div>
 
   

@@ -130,7 +130,7 @@ const ProductDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState("descriptions");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
+  // const [token, setToken] = useState<string | null>(null);
 
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
@@ -175,7 +175,7 @@ const ProductDetail: React.FC = () => {
   // }, [id, refetch]);
   const likeMutation = useMutation({
     mutationFn: ({ reviewId, isLiked }: { reviewId: any; isLiked: any }) => {
-      if (!token) {
+      if (!access_token) {
         throw new Error("Bạn cần đăng nhập để thực hiện hành động này");
       }
       return isLiked
@@ -266,13 +266,13 @@ const ProductDetail: React.FC = () => {
 
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {
-      if (!token) {
+      if (!access_token) {
         toast.warning("Bạn cần đăng nhập để thực hiện hành động này");
         return;
       }
       likeMutation.mutate({ reviewId, isLiked });
     }, 1000),
-    [likeMutation, token]
+    [likeMutation, access_token]
   );
 
   const toggleModal = () => {
