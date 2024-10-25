@@ -42,7 +42,6 @@ function App() {
         }
 
         const channelName = `thong-bao`;
-        console.log(`Đang lắng nghe kênh: ${channelName}`);
 
         echo.channel(channelName).listen("ThongBaoMoi", (event: { user_id: number; tieu_de: string; noi_dung: string }) => {
             if (event.user_id === userId) {
