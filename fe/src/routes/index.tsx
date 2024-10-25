@@ -133,6 +133,7 @@ import Shipper from "@/pages/(van_chuyen)/shipper";
 import MyProfileedit from "@/pages/(website)/myprofile/MyProfileedit";
 import LayoutMyPro from "@/pages/(website)/layoutmypro";
 import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
+import Notifications from "@/pages/(website)/_component/Notifications";
 
 const Router = () => {
   //
@@ -149,7 +150,7 @@ const Router = () => {
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
-          {/* <Route path="/minicard" element={<Minicard />} /> */}
+          <Route path="/minicard" element={<Notifications />} />
           <Route path="/vourcher" element={<Voucher />} />
           {/* <Route path="/myorder" element={<MyOrder />} /> */}
           <Route path="/ordersummary" element={<Ordersummary />} />

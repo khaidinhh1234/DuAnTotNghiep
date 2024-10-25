@@ -176,7 +176,7 @@ const ProductDetail: React.FC = () => {
   // }, [id, refetch]);
   const likeMutation = useMutation({
     mutationFn: ({ reviewId, isLiked }: { reviewId: any; isLiked: any }) => {
-      if (!token) {
+      if (!access_token) {
         throw new Error("Bạn cần đăng nhập để thực hiện hành động này");
       }
       return isLiked
@@ -210,11 +210,11 @@ const ProductDetail: React.FC = () => {
   const [quantity, setQuantity] = useState<number>(1)
 
   const { mutate: addToCart } = useMutation({
-    mutationFn: async (variantId) => { // Thêm variantId vào tham số
+      mutationFn: async (variantId: number) => { 
       const response = await instanceClient.post(
         '/gio-hang',
         {
-          bien_the_san_pham_id: variantId, // Sử dụng variantId
+          bien_the_san_pham_id: variantId, 
           so_luong: quantity,
         },
         {
@@ -254,13 +254,13 @@ const ProductDetail: React.FC = () => {
 
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {
-      if (!token) {
+      if (!access_token) {
         toast.warning("Bạn cần đăng nhập để thực hiện hành động này");
         return;
       }
       likeMutation.mutate({ reviewId, isLiked });
     }, 1000),
-    [likeMutation, token]
+    [likeMutation, access_token]
   );
 
   const toggleModal = () => {
