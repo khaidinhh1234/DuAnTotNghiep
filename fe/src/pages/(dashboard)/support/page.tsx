@@ -101,7 +101,7 @@ const PageSupport: React.FC = () => {
         setFilteredData(support);
       } else {
         const filtered = support.filter(
-          (item) => item.trang_thai_lien_he === activeTab 
+          (item) => item.trang_thai_lien_he === activeTab
         );
         setFilteredData(filtered);
       }
@@ -226,7 +226,7 @@ const PageSupport: React.FC = () => {
     //     </span>
     //   ),
     // },
-    
+
     {
       title: 'Trạng thái',
       dataIndex: 'trang_thai_lien_he',
@@ -294,11 +294,11 @@ const PageSupport: React.FC = () => {
         <h1 className="font-semibold md:text-3xl">Liên hệ khách hàng</h1>
       </div>
       <Tabs
-            defaultActiveKey="Tất cả"
-            activeKey={activeTab}
-            onChange={(key: any) => setActiveTab(key)}
-            items={tabItems}
-          />
+        defaultActiveKey="Tất cả"
+        activeKey={activeTab}
+        onChange={(key: any) => setActiveTab(key)}
+        items={tabItems}
+      />
       <Search
         placeholder="Tìm kiếm"
         onSearch={(value) => console.log(value)}
@@ -313,12 +313,27 @@ const PageSupport: React.FC = () => {
         loading={isLoading}
       />
       <Modal
-        // className='max-w-7xl'
         open={isModalOpen}
-        onOk={handleOk}
         onCancel={handleCancel}
         width={800}
+        footer={[
+          <button
+            key="cancel"
+            onClick={handleCancel}
+            className="bg-gray-300 text-black px-4 py-2 mr-2 rounded hover:bg-gray-400"
+          >
+            Hủy
+          </button>,
+          <button
+            key="ok"
+            onClick={handleOk}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Gửi    </button>,
+        ]}
       >
+
+
         <h1 className="text-3xl font-bold">Chi tiết nội dung liên hệ</h1>
         {currentEvaluate && (
           <div className="grid grid-cols-12 gap-4">

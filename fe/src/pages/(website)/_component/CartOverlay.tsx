@@ -33,7 +33,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible  }) => {
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
 
-  const { data: cartData, isLoading, isError } = useQuery({
+  const { data: cartData, isLoading,  } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
       try {
@@ -68,9 +68,19 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible  }) => {
 
   if (!isVisible || isLoading) return null;
 
-  if (isError) {
-    return <div>Error loading cart data</div>;
-  }
+  // if (isError) {
+  //   return (
+  //     <div className="absolute top-full right-64 w-3/12 bg-white shadow-lg p-8 rounded-lg z-50 flex flex-col items-center">
+  //       <div className="p-6">
+  //         <img src="/public/data.png" alt="No Product" className="w-32 h-32" />
+  //       </div>
+  //       <p className=" text-xl text-gray-700 font-medium">Chưa có dữ liệu</p>
+  //     </div>
+      
+        
+  //         );
+  // }
+  
   
   const allItems = [...(cartData?.san_pham_giam_gia || []), ...(cartData?.san_pham_nguyen_gia || [])];
   const displayItems = allItems.slice(0, 3);

@@ -40,6 +40,7 @@ use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
 use App\Http\Controllers\Client\Api\DanhGiaHuuIchController;
+use App\Http\Controllers\Client\Api\TaiKhoanController as ApiTaiKhoanController;
 use Illuminate\Support\Facades\Route;
 
 // Auth
@@ -70,18 +71,21 @@ Route::middleware([])
 
         //Trang sản phẩm
         // lấy tất cả sản phẩm
-        Route::get('/san-pham-all', [TrangSanPhamController::class, 'layTatCaSanPham']);
+        Route::group([], function () {
+            Route::get('/san-pham-all', [TrangSanPhamController::class, 'layTatCaSanPham']);
 
-        // Lấy ra danh mục cha
-        Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
+            // Lấy ra danh mục cha
+            Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
 
-        // Lấy ra màu sắc
-        Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
+            // Lấy ra màu sắc
+            Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
 
-        // lấy kích thước
-        Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
+            // lấy kích thước
+            Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
 
-        Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
+            Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
+        })->middleware('throttle:100,1');
+
 
         //Client Chi tiết sản phẩm
         // Captcha
@@ -131,7 +135,7 @@ Route::middleware([])
             // Đơn hàng
             Route::get('/don-hang', [DonHangClientController::class, 'donHangUser']);
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
-            Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang'])->middleware('auth:sanctum');
+            Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang']);
         });
 
         //Sản phẩm yêu thích
@@ -139,7 +143,7 @@ Route::middleware([])
         Route::post('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
 
         //Tài khoản
-        Route::post('/cap-nhat-thong-tin', [\App\Http\Controllers\Client\Api\TaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
+        Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
 
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
 

@@ -4,8 +4,8 @@ import ListMyProfile from "./_components/Listmyprofile";
 
 const MyProfileedit = () => {
   const [user] = useLocalStorage("user" as any, {});
-  const member = user.user;
-  // console.log(member);
+  const member = user?.user;
+    // console.log(member);
   return (
     <>
       <MyProfilePage member={member} />

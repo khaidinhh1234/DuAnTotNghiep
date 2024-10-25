@@ -1,16 +1,50 @@
+import type { PaginationProps } from "antd";
+import { Pagination } from "antd";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
 const ProductsList = ({ products, Wishlist, isPending }: any) => {
+  const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
+  const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
+    null
+  );
+  const handleMouseEnter = (productId: number, variantIndex: any) => {
+    setHoveredProductId(productId);
+    setHoveredVariantIndex(variantIndex);
+  };
   // console.log(products);
   const handleWishlist = (id: any) => {
     Wishlist(id) as any;
+  };
+  const itemRender: PaginationProps["itemRender"] = (
+    _,
+    type,
+    originalElement
+  ) => {
+    if (type === "prev") {
+      return <a>Trước</a>;
+    }
+    if (type === "next") {
+      return <a>Tiếp</a>;
+    }
+
+    return originalElement;
+  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12); // Số lượng sản phẩm mỗi trang
+
+  const onChange = (page: number, pageSize: number) => {
+    setCurrentPage(page);
+    setPageSize(pageSize);
+    console.log(`Page: ${page}, PageSize: ${pageSize}`);
+    // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
   };
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4">
         <div className="sm:flex items-center mt-2">
           <div className="mx-5">
-            <p className="text-gray-700">17 sản phẩm</p>
+            <p className="text-gray-700">{products?.length ?? 0} sản phẩm</p>
           </div>
         </div>
         <div className="w-0.5/4 sm:text-base text-sm flex items-center">
@@ -19,9 +53,9 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
       </div>
       <section className="">
         <div className="container">
-          <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14">
-            {products &&
-              products?.map((product: any, index: any) => (
+          <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14 mx-auto">
+            {products && products.length !== 0 ? (
+              products.map((product: any, index: any) => (
                 <div
                   className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6  lg:w-[300px] w-[350px] mx-auto lg:mx-0"
                   key={index}
@@ -45,7 +79,13 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
                       <Link to={`/product-detail/${product.duong_dan}`}>
                         <div className="relative">
                           <img
-                            src={product?.anh_san_pham}
+                            src={
+                              hoveredProductId === product.id &&
+                              hoveredVariantIndex !== null
+                                ? product.mau_sac_va_anh[hoveredVariantIndex]
+                                    .hinh_anh
+                                : product.anh_san_pham
+                            }
                             // src={sanPham2}
                             alt=""
                             className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
@@ -57,7 +97,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
                           {/* )} */}
                         </div>{" "}
                       </Link>
-                      <View id={product?.id} />
+                      <View id={product?.duong_dan} />
                     </div>
                     <Link to={`/product-detail/${product.id}`}>
                       <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
@@ -89,133 +129,57 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
 
                         <p className="font-bold text-lg flex items-center">
                           {" "}
-                          {product?.bien_the?.length !== 0 ? (
-                            product?.bien_the?.map((item: any, index: any) => (
+                          {product?.mau_sac_va_anh?.map(
+                            (item: any, indexs: any) => (
                               <button
-                                key={index}
-                                className="w-7 h-7 rounded-full border-1 inline-block mr-1"
+                                key={indexs}
+                                className={`w-7 h-7 rounded-full border mr-1 
+                             ${
+                               hoveredProductId === product?.id &&
+                               hoveredVariantIndex === indexs
+                                 ? "border-black"
+                                 : "border-gray-300 hover:border-black"
+                             }`}
                                 style={{
                                   backgroundColor: item?.ma_mau_sac,
                                 }}
+                                onMouseEnter={() =>
+                                  handleMouseEnter(product?.id, indexs)
+                                }
                               />
-                            ))
-                          ) : (
-                            <button className="mr-1 text-red-500 font-light">
-                              Hết hàng
-                            </button>
+                            )
                           )}
                         </p>
                       </div>{" "}
                     </Link>
                   </div>
                 </div>
-              ))}
+              ))
+            ) : (
+              <>
+                <div className="w-full flex flex-col items-center justify-center col-span-12">
+                  <img
+                    src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729832531/m5xu2paczoiy6rmlu4vm.png"
+                    alt="No products"
+                    className="w-[500px] mb-4" // Add margin-bottom to space the text from the image
+                  />
+                  <span className="text-center font-bold text-2xl text-yellow-500 ">
+                    Không có sản phẩm nào
+                  </span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* <!-- Pagination --> */}
-          <div className="flex justify-end mt-8">
-            <div className="flex items-center justify-between border-gray-200 bg-white px-4 py-3 sm:px-6">
-              <div className="flex flex-1 justify-between sm:hidden">
-                <a
-                  href="#"
-                  className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Previous
-                </a>
-                <a
-                  href="#"
-                  className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Next
-                </a>
-              </div>
-              <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                <div>
-                  <nav
-                    className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-                    aria-label="Pagination"
-                  >
-                    <a
-                      href="#"
-                      className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                    >
-                      <span className="sr-only">Previous</span>
-                      <svg
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                        />
-                      </svg>
-                    </a>
-                    {/* <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" --> */}
-                    <a
-                      href="#"
-                      aria-current="page"
-                      className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                    >
-                      1
-                    </a>
-                    <a
-                      href="#"
-                      className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                    >
-                      2
-                    </a>
-                    <a
-                      href="#"
-                      className="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
-                    >
-                      3
-                    </a>
-                    <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
-                      ...
-                    </span>
-                    <a
-                      href="#"
-                      className="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
-                    >
-                      8
-                    </a>
-                    <a
-                      href="#"
-                      className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                    >
-                      9
-                    </a>
-                    <a
-                      href="#"
-                      className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                    >
-                      10
-                    </a>
-                    <a
-                      href="#"
-                      className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                    >
-                      <span className="sr-only">Next</span>
-                      <svg
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </a>
-                  </nav>
-                </div>
-              </div>
-            </div>
+          <div className="flex justify-end mt-10">
+            <Pagination
+              total={100}
+              current={currentPage}
+              pageSize={pageSize}
+              itemRender={itemRender}
+              onChange={onChange}
+            />
           </div>
         </div>
       </section>

@@ -102,3 +102,12 @@ export interface ICategories {
   id?: number | string;
   duong_dan_anh: string;
 }
+export interface lienhetype {
+  id?: number | string;
+  email: string;
+  name: string;
+  noi_dung_lien_he: string;
+  dia_chi?: string;
+  sdt_lien_he?: string;
+  loai_lien_he: string;
+}

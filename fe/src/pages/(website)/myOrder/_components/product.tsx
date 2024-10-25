@@ -14,6 +14,7 @@ const ProductItem = ({
   chi_tiet_don_hangs,
   tong_tien,
   ma_don_hang,
+  pricesale,
 }: any) => {
   // console.log(chi_tiet_don_hangs);
   // console.log(status);
@@ -53,14 +54,20 @@ const ProductItem = ({
               </div>{" "}
             </div>
             <div className={`text-center py-8 font-bold md:block  hidden`}>
-              <p>{price.toLocaleString("vi-VN")} đ</p>
+              <p>
+                {" "}
+                <span className="text-gray-400 line-through">
+                  {price.toLocaleString("vi-VN")} đ{" "}
+                </span>
+                {pricesale.toLocaleString("vi-VN")} đ
+              </p>
             </div>
           </div>
           {chi_tiet_don_hangs && chi_tiet_don_hangs.length >= 2 && (
             <div className="text-center font-bold ml-20 mt-3">
-              <button>
+              <Link to={`/mypro/myorder/${ma_don_hang}`}>
                 <i className="fa-solid fa-share"></i> Xem thêm ...
-              </button>
+              </Link>
             </div>
           )}
         </div>
@@ -97,7 +104,7 @@ const ProductItem = ({
 
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang }: any) => {
-  // console.log(donhang);
+  console.log(donhang);
   const chi_tiet_don_hangs = donhang?.map((item: any) => {
     return item?.chi_tiet_don_hangs[0]; // Trả về chi tiết của từng đơn hàng
   });
@@ -108,35 +115,28 @@ const ProductList = ({ donhang }: any) => {
     <div className="lg:col-span-9 col-span-8 lg:pl-9">
       {donhang?.map((item: any, index: number) => (
         <ProductItem
-          status={item?.trang_thai_don_hang}
-          price={chitiet?.thanh_tien}
+          status={item?.trang_thai_don_hang ?? "Đang xử lý"}
+          pricesale={chitiet?.thanh_tien ?? 0}
+          price={chitiet?.gia ?? 0}
           img={
             "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729223981/ao-khoac-nu-SKN7004-DEN_1_jjbtoe.webp"
           }
           name="Váy In Họa Tiết Moana Hồng"
-          size={chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc}
-          gender={
-            chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.loai_kich_thuoc
+          size={
+            chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc ?? "M"
           }
-          mau={chitiet?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
-          quantity={chitiet?.so_luong}
+          gender={
+            chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.loai_kich_thuoc ??
+            ""
+          }
+          mau={chitiet?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac ?? "Đen"}
+          quantity={chitiet?.so_luong ?? 1}
           key={index}
-          chi_tiet_don_hangs={item?.chi_tiet_don_hangs}
-          tong_tien={item?.tong_tien_don_hang}
-          ma_don_hang={item?.ma_don_hang}
+          chi_tiet_don_hangs={item?.chi_tiet_don_hangs ?? []}
+          tong_tien={item?.tong_tien_don_hang ?? 0}
+          ma_don_hang={item?.ma_don_hang ?? ""}
         />
       ))}
-      <ProductItem
-        status="đang được xử lý"
-        price={8000000}
-        img={
-          "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729223981/ao-khoac-nu-SKN7004-DEN_1_jjbtoe.webp"
-        }
-        name="Váy In Họa Tiết Moana Hồng"
-        size="M"
-        mau="Đỏ"
-        quantity={1}
-      />
     </div>
   );
 };
