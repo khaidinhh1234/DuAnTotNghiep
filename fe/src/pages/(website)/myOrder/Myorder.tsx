@@ -1,10 +1,8 @@
 // import React from 'react'
 import { useQuery } from "@tanstack/react-query";
-import Sidebar from "./../_component/Slibar";
 
-import ProductList from "./_components/product";
-import SearchSection from "./_components/sheach";
 import instanceClient from "@/configs/client";
+import ProductList from "./_components/product";
 
 const MyOrder = () => {
   const { data, isLoading, isError } = useQuery({
