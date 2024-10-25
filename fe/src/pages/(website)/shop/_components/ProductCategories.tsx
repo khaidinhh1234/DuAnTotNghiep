@@ -8,16 +8,24 @@ import { Slider } from "antd";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [parentIds, setParentIds] = useState<number[]>([]);
-  console.log(parentIds);
+  // console.log(parentIds);
   const [childIds, setChildIds] = useState<number[]>([]);
-  console.log(childIds);
+  const [price, setPrice] = useState([0, 1000000]);
+
+  const [showcate, setShowcate] = useState(true);
+  const [showcolor, setShowcolor] = useState(false);
+  const [showprice, setShowprice] = useState(false);
+  const [showsize, setShowsize] = useState(false);
+  // console.log(childIds);
   // Removed unused variable and fixed condition
   const datas = {
     // danh_muc_cha_ids: [...parentIds],
     ...(parentIds.length > 0 && { danh_muc_cha_ids: [...parentIds] }),
     ...(childIds.length > 0 && { danh_muc_con_ids: [...childIds] }),
+    ...(price.length > 0 && { gia_duoi: price[0] }),
+    ...(price.length > 0 && { gia_tren: price[1] }),
   };
-  // console.log(datas);
+  console.log(datas);
   const [expanded, setExpanded] = useState<number[]>([]);
   const [parentChecked, setParentChecked] = useState<{
     [key: number]: boolean;
@@ -88,12 +96,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     }
   };
 
-  const [price, setPrice] = useState([0, 1000000]);
-  // console.log(price);
-  const [showcate, setShowcate] = useState(true);
-  const [showcolor, setShowcolor] = useState(false);
-  const [showprice, setShowprice] = useState(false);
-  const [showsize, setShowsize] = useState(false);
   // list All products
   const { data, refetch } = useQuery({
     queryKey: ["PRODUCTSLOC"],
@@ -109,7 +111,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  console.log("data", data);
+  // console.log("data", data);
   const { data: danhmuc } = useQuery({
     queryKey: ["DANHMUCCLIENT"],
     queryFn: async () => {
