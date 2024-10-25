@@ -113,7 +113,7 @@ class GioHangController extends Controller
                     'status' => false,
                     'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
                 ], 400);
-            }
+            }   
 
             $gioHang = GioHang::updateOrCreate(
                 [

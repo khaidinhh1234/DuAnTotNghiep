@@ -28,6 +28,7 @@
             font-size: 28px;
         }
 
+        .content p {
         p {
             font-size: 16px;
             line-height: 1.6;
@@ -36,8 +37,51 @@
 
         blockquote {
             background-color: #1f1f3d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
             color: #fff;
             border-left: 4px solid #ffd700;
+        }
+
+        .cta-button {
+            display: inline-block;
+            text-align: center;
+            background-color: #ffd700;
+            color: #1a1a2e;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .cta-button:hover {
+            background-color: #e6c300;
+            color: #fff;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+        .contact-customers {
+            font-size: 15px;
+            border-top: 1px solid #ddd;
+            margin-bottom: 5px;
+            padding-left: 15px;
+        }
+        blockquote {
+            color: black;
+            margin: 5px auto;
             margin: 20px auto;
             padding: 10px 15px;
             font-style: italic;
@@ -77,6 +121,15 @@
     </style>
 </head>
 <body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1726411972/Screenshot_2024-09-15_215232_d3dt3j.png"
+                alt="Company Logo">
+        </div>
+        <div class="content">
+            <h2>Xin chào, {{ $name }}</h2>
+            <p>Email: {{ $email }}</p>
+            <p>Cảm ơn bạn đã liên hệ với chúng tôi từ Glow Clothing. Chúng tôi đã nhận được yêu cầu của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
 
     <div class="container">
         <h1>Xin chào {{ $name }},</h1>
