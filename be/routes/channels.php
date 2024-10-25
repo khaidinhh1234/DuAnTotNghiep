@@ -30,4 +30,8 @@ Broadcast::channel('thong-bao', function(){
 //    return (int) $user->id === (int) $userId;
 //});
 
+//Broadcast::channel('thong-bao.{userId}', function ($user, $userId) {
+//    return (int) $user->id === (int) $userId;
+//});
+
 

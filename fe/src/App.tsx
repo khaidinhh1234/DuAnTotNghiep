@@ -20,22 +20,40 @@ function App() {
 
         const echo = new Echo({
             broadcaster: "pusher",
-            key: "f62e9799c7e13f6841a6", // Sử dụng khóa Pusher của bạn
-            cluster: "ap1", // Sử dụng cluster Pusher của bạn
+            key: "f62e9799c7e13f6841a6",
+            cluster: "ap1",
             encrypted: true,
         });
 
-        echo.channel('thong-bao').listen("ThongBaoMoi", (event) => {
-            console.log('Event received:', event); // Log sự kiện nhận được
-            const toastMessage = `${event.tieu_de}: ${event.noi_dung}`;
-            toast(toastMessage); // Hiển thị thông báo
-            setNotifications((prevNotifications) => [
-                ...prevNotifications,
-                toastMessage,
-            ]);
+        const user = localStorage.getItem("user");
+        if (!user) {
+            console.log("Người dùng không tồn tại");
+            return;
+        }
+
+        let userId: number;
+        try {
+            const parsedUser = JSON.parse(user);
+            userId = parsedUser.user.id;
+            console.log("ID người dùng:", userId);
+        } catch (error) {
+            console.error("Lỗi khi phân tích dữ liệu người dùng:", error);
+            return;
+        }
+
+        const channelName = `thong-bao`;
+        console.log(`Đang lắng nghe kênh: ${channelName}`);
+
+        echo.channel(channelName).listen("ThongBaoMoi", (event: { user_id: number; tieu_de: string; noi_dung: string }) => {
+            if (event.user_id === userId) {
+                const toastMessage = `${event.tieu_de}: ${event.noi_dung}`;
+                toast(toastMessage);
+                setNotifications(prev => [...prev, toastMessage]);
+            }
         });
 
         return () => {
+            echo.leave(channelName);
             echo.disconnect();
         };
     }, []);

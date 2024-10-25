@@ -120,16 +120,11 @@ class TrangChuController extends Controller
         //User
         $user = Auth::guard('api')->user();
         if ($user) {
-            // Lọc sản phẩm yêu thích của user hiện tại
-            $dataDanhSachSanPhamYeuThich = $dataDanhSachSanPhamMoi->filter(function ($sanPham) use ($user) {
-                return $sanPham->khachHangYeuThich->contains($user->id);
+            // Thêm thông tin yêu thích vào từng sản phẩm
+            $dataDanhSachSanPhamMoi->map(function ($sanPham) use ($user) {
+                $sanPham['yeu_thich'] = $sanPham->khachHangYeuThich->contains($user->id); // Sản phẩm được yêu thích
+                return $sanPham;
             });
-            // dd($dataDanhSachSanPhamYeuThich);
-            // // Thêm thông tin yêu thích vào từng sản phẩm
-            // $dataDanhSachSanPhamYeuThich->map(function ($sanPham) {
-            //     $sanPham['yeu_thich'] = true; // Sản phẩm được yêu thích
-            //     return $sanPham;
-            // });
         }
 
         $boSuuTapUaChuongs = BoSuuTap::query()
