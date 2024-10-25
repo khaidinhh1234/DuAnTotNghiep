@@ -7,6 +7,7 @@ use App\Models\BienTheKichThuoc;
 use App\Models\BienTheMauSac;
 use App\Models\DanhMuc;
 use App\Models\SanPham;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -47,7 +48,10 @@ class TrangSanPhamController extends Controller
             DB::beginTransaction();
 
             // Lấy tất cả màu sắc
-            $mauSac = BienTheMauSac::query()->get();
+            $mauSacs = BienTheMauSac::query()->get();
+            $mauSacs->map(function ($mauSac) {
+                $mauSac->setAttribute('so_luong_san_pham', $mauSac->sanPhams->groupBy('ten_san_pham')->count());
+            });
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -55,7 +59,7 @@ class TrangSanPhamController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'mauSac' => $mauSac
+                'mauSac' => $mauSacs
             ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
@@ -76,6 +80,9 @@ class TrangSanPhamController extends Controller
         try {
             // Lấy tất cả màu sắc
             $kichThuoc = BienTheKichThuoc::query()->get();
+            $kichThuoc->map(function ($kichThuoc) {
+                $kichThuoc->setAttribute('so_luong_san_pham', $kichThuoc->sanPhams->groupBy('ten_san_pham')->count());
+            });
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -170,7 +177,6 @@ class TrangSanPhamController extends Controller
                     'per_page' => $sanPhams->perPage(),
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             // Trả về lỗi nếu có exception
             return response()->json([
@@ -182,12 +188,13 @@ class TrangSanPhamController extends Controller
         }
     }
 
-    public function locSanPham(Request $request) {
+    public function locSanPham(Request $request)
+    {
         DB::beginTransaction(); // Bắt đầu giao dịch
         try {
             // Lấy các tham số lọc từ yêu cầu
-            $danhMucChaIds = $request->danh_muc_cha_ids ?? []; // Mảng ID danh mục cha
-            $danhMucConIds = $request->danh_muc_con_ids ?? []; // Mảng ID danh mục con
+            $danhMucChaIds = $request->danh_muc_cha_ids ?? [];
+            $danhMucConIds = $request->danh_muc_con_ids ?? [];
             $mauSacIds = $request->mau_sac_ids ?? [];
             $kichThuocIds = $request->kich_thuoc_ids ?? [];
             $giaDuoi = $request->gia_duoi ?? null;
@@ -196,48 +203,58 @@ class TrangSanPhamController extends Controller
             // Tạo truy vấn sản phẩm
             $query = SanPham::query();
 
-            // Lọc theo nhiều danh mục cha và danh mục con
+            // Lọc theo danh mục cha và con
             if (!empty($danhMucChaIds) || !empty($danhMucConIds)) {
                 $query->whereHas('danhMuc', function ($query) use ($danhMucChaIds, $danhMucConIds) {
-                    // Nếu có cả danh mục cha và con
                     if (!empty($danhMucChaIds) && !empty($danhMucConIds)) {
                         $query->where(function ($query) use ($danhMucChaIds, $danhMucConIds) {
-                            $query->whereIn('cha_id', $danhMucChaIds) // Danh mục con có cha là danh mục cha
-                                  ->whereIn('id', $danhMucConIds);   // Lọc theo ID danh mục con
+                            $query->whereIn('cha_id', $danhMucChaIds)
+                                ->whereIn('id', $danhMucConIds);
                         });
-                    }
-                    // Nếu chỉ có danh mục cha
-                    elseif (!empty($danhMucChaIds)) {
-                        $query->whereIn('cha_id', $danhMucChaIds) // Lọc theo danh mục cha
-                              ->orWhereIn('id', $danhMucChaIds);  // Lọc theo ID danh mục cha
-                    }
-                    // Nếu chỉ có danh mục con
-                    elseif (!empty($danhMucConIds)) {
-                        $query->whereIn('id', $danhMucConIds); // Lọc theo ID danh mục con
+                    } elseif (!empty($danhMucChaIds)) {
+                        $query->whereIn('cha_id', $danhMucChaIds)
+                            ->orWhereIn('id', $danhMucChaIds);
+                    } elseif (!empty($danhMucConIds)) {
+                        $query->whereIn('id', $danhMucConIds);
                     }
                 });
             }
 
-            // Lọc theo màu sắc sản phẩm
+            // Lọc theo màu sắc
             if (!empty($mauSacIds) && is_array($mauSacIds)) {
                 $query->whereHas('bienTheSanPham.mauBienThe', function ($query) use ($mauSacIds) {
-                    $query->whereIn('id', $mauSacIds); // Lọc theo màu sắc
+                    $query->whereIn('id', $mauSacIds);
                 });
             }
 
-            // Lọc theo kích thước sản phẩm
+            // Lọc theo kích thước
             if (!empty($kichThuocIds) && is_array($kichThuocIds)) {
                 $query->whereHas('bienTheSanPham.kichThuocBienThe', function ($query) use ($kichThuocIds) {
-                    $query->whereIn('id', $kichThuocIds); // Lọc theo kích thước
+                    $query->whereIn('id', $kichThuocIds);
                 });
             }
 
-            // Lọc theo khoảng giá
             if (!is_null($giaDuoi) && !is_null($giaTren)) {
                 $query->whereHas('bienTheSanPham', function ($query) use ($giaDuoi, $giaTren) {
-                    $query->whereBetween('gia_ban', [$giaDuoi, $giaTren]); // Lọc theo giá
+                    $query->where(function ($query) use ($giaDuoi, $giaTren) {
+                        $query->whereBetween(DB::raw('COALESCE(gia_khuyen_mai_tam_thoi, gia_khuyen_mai, gia_ban)'), [$giaDuoi, $giaTren]);
+                    });
                 });
             }
+
+            // Sửa lại phần tính giá để tránh lỗi SQL
+            $query->select([
+                'san_phams.id',
+                'san_phams.ten_san_pham',
+                'san_phams.duong_dan',
+                'san_phams.anh_san_pham',
+                'san_phams.hang_moi',
+                DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
+                DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat'),
+
+            ])
+                ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+                ->groupBy('san_phams.id');
 
             // Lấy dữ liệu sản phẩm với thông tin biến thể
             $sanPhams = $query->with([
@@ -248,13 +265,7 @@ class TrangSanPhamController extends Controller
 
             // Gộp thông tin màu sắc, kích thước và ảnh biến thể
             $sanPhams->getCollection()->transform(function ($sanPham) {
-                // Lấy giá thấp nhất và cao nhất của sản phẩm
-                $giaThapNhat = $sanPham->bienTheSanPham->min('gia_hien_tai');
-                $giaCaoNhat = $sanPham->bienTheSanPham->max('gia_hien_tai');
-
-                // Lấy thông tin biến thể sản phẩm
                 $bienTheData = $sanPham->bienTheSanPham->map(function ($bienThe) {
-                    // Lấy thông tin màu sắc, kích thước, và ảnh
                     $mauBienThe = $bienThe->mauBienThe;
                     $kichThuocBienThe = $bienThe->kichThuocBienThe;
                     $anhBienThe = $bienThe->anhBienThe->map(function ($anh) {
@@ -275,26 +286,24 @@ class TrangSanPhamController extends Controller
                         'ten_mau_sac' => $mauBienThe ? $mauBienThe->ten_mau_sac : null,
                         'ma_mau_sac' => $mauBienThe ? $mauBienThe->ma_mau_sac : null,
                         'kich_thuoc' => $kichThuocBienThe ? $kichThuocBienThe->kich_thuoc : null,
-                        'gia_chua_giam' => $bienThe->gia_chua_giam,
-                        'gia_hien_tai' => $bienThe->gia_hien_tai,
-                        'anh_bien_the' => $anhBienThe->toArray() // Đưa ra ảnh biến thể đúng định dạng
+                        'gia_chua_giam' => $bienThe->gia_ban  ?? 0, // Thay đổi để đảm bảo không null
+                        'gia_hien_tai' => $bienThe->gia_khuyen_mai_tam_thoi ?? $bienThe->gia_khuyen_mai ?? $bienThe->gia_ban ?? 0, // Ưu tiên theo thứ tự giá
+                        'anh_bien_the' => $anhBienThe->toArray()
                     ];
                 })->toArray();
 
-                // Gộp thông tin sản phẩm
                 return [
                     'id' => $sanPham->id,
                     'ten_san_pham' => $sanPham->ten_san_pham,
                     'duong_dan' => $sanPham->duong_dan,
                     'anh_san_pham' => $sanPham->anh_san_pham,
                     'hang_moi' => $sanPham->hang_moi,
-                    'gia_tot' => $sanPham->gia_tot,
-                    'gia_thap_nhat' => $giaThapNhat,
-                    'gia_cao_nhat' => $giaCaoNhat,
-                    'bien_the' => $bienTheData, // Đưa ra thông tin biến thể
+                    'gia_thap_nhat' => $sanPham->gia_thap_nhat,
+                    'gia_cao_nhat' => $sanPham->gia_cao_nhat,
+                    'bien_the' => $bienTheData,
                     'mau_sac_va_anh' => $sanPham->bienTheSanPham->map(function ($bienThe) {
                         $mauBienThe = $bienThe->mauBienThe;
-                        $anhBienThe = $bienThe->anhBienThe->first(); // Lấy ảnh đầu tiên nếu có
+                        $anhBienThe = $bienThe->anhBienThe->first();
 
                         return [
                             'ma_mau_sac' => $mauBienThe ? $mauBienThe->ma_mau_sac : null,
@@ -302,41 +311,27 @@ class TrangSanPhamController extends Controller
                             'hinh_anh' => $anhBienThe ? $anhBienThe->duong_dan_anh : null
                         ];
                     })->unique(function ($item) {
-                        return $item['ma_mau_sac']; // Loại bỏ màu trùng lặp
-                    })->values()->toArray(), // Chuyển thành mảng
-
+                        return $item['ma_mau_sac'];
+                    })->values()->toArray(),
                     'kich_thuocs' => $sanPham->bienTheSanPham->map(function ($bienThe) {
                         $kichThuocBienThe = $bienThe->kichThuocBienThe;
-                        return [
-                            'kich_thuoc' => $kichThuocBienThe ? $kichThuocBienThe->kich_thuoc : null,
-                        ];
-                    })->unique('kich_thuoc')->values()->toArray() // Loại bỏ kích thước trùng lặp và chuyển thành mảng
+                        return $kichThuocBienThe ? $kichThuocBienThe->kich_thuoc : null;
+                    })->unique()->values()->toArray()
                 ];
             });
-
             DB::commit(); // Giao dịch cam kết
 
             // Trả về kết quả
             return response()->json([
                 'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công.',
                 'data' => $sanPhams
-            ], 200);
-
+            ]);
         } catch (\Exception $e) {
-            DB::rollBack(); // Rollback nếu có lỗi
+            DB::rollBack(); // Hoàn tác nếu có lỗi
             return response()->json([
                 'status' => false,
-                'status_code' => 500,
-                'message' => 'Có lỗi xảy ra, vui lòng thử lại!',
-                'error' => $e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }
-
-
-
-
-
 }

@@ -148,9 +148,8 @@ const Router = () => {
           <Route path="/shop" element={<Page />} />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          {/* <Route path="/myprofile" element={<MyProfile />} /> */}
-          <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} />
-          <Route path="/minicard" element={<Minicard />} />
+          {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
+          {/* <Route path="/minicard" element={<Minicard />} /> */}
           <Route path="/vourcher" element={<Voucher />} />
           {/* <Route path="/myorder" element={<MyOrder />} /> */}
           <Route path="/ordersummary" element={<Ordersummary />} />

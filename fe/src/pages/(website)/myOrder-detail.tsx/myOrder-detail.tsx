@@ -6,17 +6,17 @@ import { Link, useParams } from "react-router-dom";
 
 const MyOrderdetail = () => {
   const { slug } = useParams();
-  const { data: order } = useQuery({
-    queryKey: ["MyOrder"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("don-hang");
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
+  // const { data: order } = useQuery({
+  //   queryKey: ["MyOrder"],
+  //   queryFn: async () => {
+  //     try {
+  //       const response = await instanceClient.get("don-hang");
+  //       return response.data;
+  //     } catch (error) {
+  //       throw new Error("Lỗi khi lấy thông tin");
+  //     }
+  //   },
+  // });
   const { data } = useQuery({
     queryKey: ["chi_tiet_don_hang", slug],
     queryFn: async () => {
@@ -31,23 +31,30 @@ const MyOrderdetail = () => {
       }
     },
   });
-  const orders = order?.data;
+  // const orders = order?.data;
   // console.log(orders);
   const chitiet = data?.data;
-  console.log(chitiet);
+  // console.log(chitiet);
   const chitietsanpham = data?.data?.chi_tiet_don_hangs;
-  // console.log(chitietsanpham);
+  const thongtin = data?.data?.thong_tin;
+  // console.log(thongtin);
+  const donhang = data?.data?.don_hang;
+  // console.log(donhang);
+  const phoneNumber =
+    donhang?.so_dien_thoai_nguoi_dat_hang ?? thongtin?.so_dien_thoai;
+  const formattedPhoneNumber = phoneNumber.replace(/^0/, "(+84)");
+  // console.log(formattedPhoneNumber);
   const current =
-    chitiet?.trang_thai_don_hang === "Hoàn tất đơn hàng"
+    donhang?.trang_thai_don_hang === "Hoàn tất đơn hàng"
       ? 4
-      : chitiet?.trang_thai_don_hang === "Chờ khách hàng xác nhận"
+      : donhang?.trang_thai_don_hang === "Chờ khách hàng xác nhận"
         ? 3
-        : chitiet?.trang_thai_don_hang === "Đang giao hàng"
+        : donhang?.trang_thai_don_hang === "Đang giao hàng"
           ? 2
-          : chitiet?.trang_thai_don_hang === "Đang xử lý" ||
-              chitiet?.trang_thai_don_hang === "Đã xác nhận"
+          : donhang?.trang_thai_don_hang === "Đang xử lý" ||
+              donhang?.trang_thai_don_hang === "Đã xác nhận"
             ? 1
-            : chitiet?.trang_thai_don_hang === "Chờ xử lý"
+            : donhang?.trang_thai_don_hang === "Chờ xử lý"
               ? 0
               : 0;
   const items = [
@@ -114,9 +121,9 @@ const MyOrderdetail = () => {
         <div className="flex gap-5 ">
           <h1>MÃ ĐƠN HÀNG.{slug}</h1>{" "}
           <h1 className="border-l-2 pl-5 text-green-500 font-semibold">
-            {chitiet?.trang_thai_don_hang}
+            {donhang?.trang_thai_don_hang}
           </h1>
-          {chitiet?.trang_thai_don_hang == "Hoàn tất đơn hàng" && (
+          {donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng" && (
             <a className="border-l-2 px-2 text-red-500 font-semibold">
               Đánh giá
             </a>
@@ -124,18 +131,18 @@ const MyOrderdetail = () => {
         </div>
       </div>
       <div className="border-x  px-5 py-4">
-        {chitiet?.trang_thai_don_hang !== "Đơn hàng bị từ chối nhân" && (
+        {donhang?.trang_thai_don_hang !== "Đơn hàng bị từ chối nhân" && (
           <>
-            {chitiet?.trang_thai_don_hang !== "Hủy hàng" &&
-              chitiet?.trang_thai_don_hang !== "Hoàn hàng" && (
+            {donhang?.trang_thai_don_hang !== "Hủy hàng" &&
+              donhang?.trang_thai_don_hang !== "Hoàn hàng" && (
                 <Steps
                   current={current}
                   labelPlacement="vertical"
                   items={items}
                 />
               )}
-            {(chitiet?.trang_thai_don_hang === "Hủy hàng" ||
-              chitiet?.trang_thai_don_hang === "Hoàn hàng") && (
+            {(donhang?.trang_thai_don_hang === "Hủy hàng" ||
+              donhang?.trang_thai_don_hang === "Hoàn hàng") && (
               <Steps
                 progressDot
                 current={1}
@@ -148,7 +155,7 @@ const MyOrderdetail = () => {
             )}
           </>
         )}
-        {chitiet?.trang_thai_don_hang === "Đơn hàng bị từ chối nhân" ? (
+        {donhang?.trang_thai_don_hang === "Đơn hàng bị từ chối nhân" ? (
           <div className="text-xl uppercase text-red-500">
             Khách hàng từ chối nhận
           </div>
@@ -159,53 +166,56 @@ const MyOrderdetail = () => {
       <div className="border p-5">
         <div className="py-6 grid grid-cols-7  border-b border-hrBlack">
           <div className="col-span-7 ">
-            <div className="flex justify-between ">
-              <div className="flex gap-5 items-center ">
-                <div className=" rounded-md text-center">
-                  {" "}
-                  <img
-                    src={
-                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729223981/ao-khoac-nu-SKN7004-DEN_1_jjbtoe.webp"
-                    }
-                    alt="Sản phẩm"
-                    className="w-20 h-24 rounded-md mb-5"
-                  />
-                  <span
-                    className={`text-xs px-3 py-1 rounded-sm ${status == "Hoàn tất đơn hàng" ? "delivered" : "inprocrass"}`}
+            {chitiet.chi_tiet_cua_don_hang &&
+              chitiet.chi_tiet_cua_don_hang.map((item: any, index: number) => (
+                <div className="flex justify-between mb-1" key={index}>
+                  <div className="flex gap-5 items-center ">
+                    <div className=" rounded-md text-center">
+                      {" "}
+                      <img
+                        src={item.anh_bien_the[0]}
+                        alt="Sản phẩm"
+                        className="w-20 h-24 rounded-md mb-5"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <h3 className="font-bold my-1">{item.ten_san_pham}</h3>
+                      <p className={`font-bold  block md:hidden`}>
+                        Giá: ${345345}
+                      </p>
+                      <p className="mb-2">
+                        Size:{" "}
+                        <span>{/* {size} {gender && ` / ${gender}`} */}</span>
+                        {/* , Màu: <span>{mau}</span> */}
+                      </p>
+                      <p className="mb-10">Số lượng: {item.so_luong}</p>{" "}
+                    </div>
+                  </div>{" "}
+                  <div
+                    className={`text-center py-8 font-bold md:block  hidden mr-5`}
                   >
-                    đang xử lý
-                  </span>
+                    <p>
+                      {" "}
+                      <span className="text-gray-400 line-through">
+                        {(10000).toLocaleString("vi-VN")} đ{" "}
+                      </span>
+                      {(10000).toLocaleString("vi-VN")} đ
+                    </p>
+                  </div>
                 </div>
-                <div className="px-1">
-                  <h3 className="font-bold my-1">ádfsdfsd</h3>
-                  <p className={`font-bold  block md:hidden`}>Giá: ${345345}</p>
-                  <p className="mb-2">
-                    Size: <span>{/* {size} {gender && ` / ${gender}`} */}</span>
-                    {/* , Màu: <span>{mau}</span> */}
-                  </p>
-                  <p className="mb-10">Số lượng: {123}</p>{" "}
-                  <span className="">Sản phẩm của bạn đã đang xử lý</span>
-                </div>
-              </div>{" "}
-              <div
-                className={`text-center py-8 font-bold md:block  hidden mr-5`}
+              ))}
+            {/* {chi_tiet_don_hangs && chi_tiet_don_hangs.length >= 2 && ( */}
+            <div className="text-start font-bold  mb-0  ">
+              <span
+                className={`text-xs px-3 py-1 rounded-sm ${status == "Hoàn tất đơn hàng" ? "delivered" : "inprocrass"}`}
               >
-                <p>
-                  {" "}
-                  <span className="text-gray-400 line-through">
-                    {(10000).toLocaleString("vi-VN")} đ{" "}
-                  </span>
-                  {(10000).toLocaleString("vi-VN")} đ
-                </p>
-              </div>
+                đang xử lý
+              </span>{" "}
+              <span className="px-10 font-medium">
+                Sản phẩm của bạn đã đang xử lý
+              </span>
             </div>
-            {/* {chi_tiet_don_hangs && chi_tiet_don_hangs.length >= 2 && (
-            <div className="text-center font-bold ml-20 mt-3">
-              <button>
-                <i className="fa-solid fa-share"></i> Xem thêm ...
-              </button>
-            </div>
-          )} */}
+            {/* )} */}
           </div>
 
           {/* <div className="col-span-7 text-end border-t mt-2 py-3">
@@ -236,14 +246,16 @@ const MyOrderdetail = () => {
                 ))}
             </h1>
             <p>
-              <UserOutlined /> Nguyễn đình khải
+              <UserOutlined />{" "}
+              {donhang.ten_nguoi_dat_hang ?? thongtin.ho + " " + thongtin.ten}
             </p>
             <p>
-              <i className="fa-solid fa-phone"></i> (+84) 974943593
+              <i className="fa-solid fa-phone mr-1"></i>
+              {formattedPhoneNumber ?? 0}
             </p>
             <p>
-              <i className="fa-solid fa-map-marker-alt"></i> Đường đê mới Long
-              Châu châu phụng châu, Xã Phụng Châu, Huyện Chương Mỹ, Hà Nội
+              <i className="fa-solid fa-map-marker-alt"></i>{" "}
+              {donhang?.dia_chi_nguoi_dat_hang ?? thongtin.dia_chi}
             </p>
           </div>
           <div className="border-l px-5 flex justify-between">
@@ -258,9 +270,14 @@ const MyOrderdetail = () => {
             <div className="text-right">
               {" "}
               <p>₫109.000</p>
+              <p>{chitiet.tong_thanh_tien_san_pham !== 0 ? "₫25.000" : 0} </p>
               <p>₫109.000</p>
-              <p>₫109.000</p>
-              <p className="text-red-600 font-semibold text-2xl">₫109.000</p>
+              <p className="text-red-600 font-semibold text-2xl">
+                {(chitiet.tong_thanh_tien_san_pham ?? 0).toLocaleString(
+                  "vi-VN"
+                )}{" "}
+                đ
+              </p>
             </div>
           </div>
         </div>
@@ -268,8 +285,8 @@ const MyOrderdetail = () => {
         chitiet?.trang_thai_don_hang !== "Hoàn hàng" &&
         chitiet?.trang_thai_don_hang !== "Đơn hàng bị từ chối nhân" ? (
           <div className="text-end border-t pt-4">
-            Phương thức Thanh toán{" "}
-            <span className="ml-10">{chitiet?.phuong_thuc_thanh_toan}</span>
+            Phương thức Thanh toán
+            <span className="ml-10">{donhang?.phuong_thuc_thanh_toan}</span>
           </div>
         ) : (
           <div className="text-start border-t pt-4">

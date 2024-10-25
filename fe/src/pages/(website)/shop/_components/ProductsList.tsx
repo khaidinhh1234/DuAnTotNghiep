@@ -12,7 +12,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
   };
-  console.log(products);
+  // console.log(products);
   const handleWishlist = (id: any) => {
     Wishlist(id) as any;
   };
@@ -44,7 +44,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
       <div className="flex justify-between sm:items-center items-start mb-4">
         <div className="sm:flex items-center mt-2">
           <div className="mx-5">
-            <p className="text-gray-700">17 sản phẩm</p>
+            <p className="text-gray-700">{products?.length ?? 0} sản phẩm</p>
           </div>
         </div>
         <div className="w-0.5/4 sm:text-base text-sm flex items-center">
@@ -53,9 +53,9 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
       </div>
       <section className="">
         <div className="container">
-          <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14">
-            {products &&
-              products?.map((product: any, index: any) => (
+          <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14 mx-auto">
+            {products && products.length !== 0 ? (
+              products.map((product: any, index: any) => (
                 <div
                   className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6  lg:w-[300px] w-[350px] mx-auto lg:mx-0"
                   key={index}
@@ -154,7 +154,21 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
                     </Link>
                   </div>
                 </div>
-              ))}
+              ))
+            ) : (
+              <>
+                <div className="w-full flex flex-col items-center justify-center col-span-12">
+                  <img
+                    src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729832531/m5xu2paczoiy6rmlu4vm.png"
+                    alt="No products"
+                    className="w-[500px] mb-4" // Add margin-bottom to space the text from the image
+                  />
+                  <span className="text-center font-bold text-2xl text-yellow-500 ">
+                    Không có sản phẩm nào
+                  </span>
+                </div>
+              </>
+            )}
           </div>
 
           {/* <!-- Pagination --> */}
