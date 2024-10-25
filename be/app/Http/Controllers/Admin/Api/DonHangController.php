@@ -223,14 +223,14 @@ class DonHangController extends Controller
 
                 $thongBao = ThongBao::create([
                     'user_id' => $donHang->user_id,
-                    'tieu_de' => 'Cập nhật trạng thái đơn hàng',
+                    'tieu_de' => 'Đơn hàng của bạn đã có cập nhật mới',
                     'noi_dung' => 'Đơn hàng #' . $donHang->ma_don_hang . ' đã được cập nhật từ trạng thái ' .
                         DonHang::getTrangThaiDonHang($trangThaiCu) . ' sang ' .
                         DonHang::getTrangThaiDonHang($request->trang_thai_don_hang),
                     'loai' => 'Đơn hàng',
                     'duong_dan' => 'don-hang',
-                    'loai_duong_dan' => 'don-hang',
                     'id_duong_dan' => $donHang->id,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
