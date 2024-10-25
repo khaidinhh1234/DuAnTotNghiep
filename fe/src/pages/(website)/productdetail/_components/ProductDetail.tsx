@@ -1,14 +1,8 @@
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef,
-} from "react";
-import { Link, useParams } from "react-router-dom";
+
+import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -18,17 +12,13 @@ import {
   Pagination,
   Thumbs,
 } from "swiper/modules";
-import { Button, Image, Rate } from "antd";
-import { message } from "antd";
 import SizeGuideModal from "./SizeGuide";
-import { EyeOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
 
-import instanceClient from "@/configs/client";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import View from "../../_component/View";
+import instanceClient from "@/configs/client";
+import { debounce } from "lodash";
 import RelatedProducts from "./RelatedProducts";
-import SizeGuideModal from "./SizeGuide";
+import { Swiper, SwiperSlide } from "swiper/react";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -103,7 +93,7 @@ interface ProductData {
 // }
 
 const fetchProduct = async (id: string) => {
-  const response = await instance.get(`/chi-tiet-san-pham/${id}`);
+  const response = await instanceClient.get(`/chi-tiet-san-pham/${id}`);
   return response.data.data;
 };
 
@@ -188,8 +178,8 @@ const ProductDetail: React.FC = () => {
         throw new Error("Bạn cần đăng nhập để thực hiện hành động này");
       }
       return isLiked
-        ? instance.delete(`/danh-gia/${reviewId}/unlike`)
-        : instance.post(`/danh-gia/${reviewId}/like`);
+        ? instanceClient.delete(`/danh-gia/${reviewId}/unlike`)
+        : instanceClient.post(`/danh-gia/${reviewId}/like`);
     },
     onSuccess: (_: any, variables: { reviewId: number; isLiked: boolean }) => {
       queryClient.setQueryData<ProductData>(["product", id], (oldProduct) => {
@@ -274,13 +264,13 @@ const ProductDetail: React.FC = () => {
   });
 
   const handleReviewLike = useCallback(
-    (reviewId: number, isLiked: boolean) => {
+    debounce((reviewId: number, isLiked: boolean) => {
       if (!token) {
         toast.warning("Bạn cần đăng nhập để thực hiện hành động này");
         return;
       }
       likeMutation.mutate({ reviewId, isLiked });
-    },
+    }, 1000),
     [likeMutation, token]
   );
 
@@ -631,14 +621,7 @@ const ProductDetail: React.FC = () => {
               <div className="mt-12 flex gap-5">
                 <div className="border rounded-lg border-black xl:w-32 xl:h-14 ld:w-24 lg:h-10 md:w-32 md:h-14 w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                   <button
-                    onClick={() => {
-                      if (quantity > 1) {
-                        decreaseQuantity({
-                          productId: product?.id?.toString(),
-                          currentQuantity: quantity,
-                        });
-                      }
-                    }}
+                    
                     className="py-2 pr-2"
                     disabled={quantity <= 1} // Ngăn không cho số lượng giảm dưới 1
                   >
@@ -647,18 +630,13 @@ const ProductDetail: React.FC = () => {
 
                   <input
                     type="number"
-                    value={quantity} // Liên kết giá trị với state
+                    value={quantity} 
                     readOnly
                     className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
                   />
 
                   <button
-                    onClick={() =>
-                      increaseQuantity({
-                        productId: product?.id?.toString(),
-                        currentQuantity: quantity,
-                      })
-                    }
+                    
                     className="py-2 pl-2"
                   >
                     <i className="fa-solid fa-plus" />
