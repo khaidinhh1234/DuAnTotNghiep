@@ -47,7 +47,10 @@ class TrangSanPhamController extends Controller
             DB::beginTransaction();
 
             // Lấy tất cả màu sắc
-            $mauSac = BienTheMauSac::query()->get();
+            $mauSacs = BienTheMauSac::query()->get();
+            $mauSacs->map(function ($mauSac) {
+                $mauSac->setAttribute('so_luong_san_pham', $mauSac->sanPhams->groupBy('ten_san_pham')->count());
+            });
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -55,7 +58,7 @@ class TrangSanPhamController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'mauSac' => $mauSac
+                'mauSac' => $mauSacs
             ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
@@ -76,6 +79,9 @@ class TrangSanPhamController extends Controller
         try {
             // Lấy tất cả màu sắc
             $kichThuoc = BienTheKichThuoc::query()->get();
+            $kichThuoc->map(function ($kichThuoc) {
+                $kichThuoc->setAttribute('so_luong_san_pham', $kichThuoc->sanPhams->groupBy('ten_san_pham')->count());
+            });
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -170,7 +176,6 @@ class TrangSanPhamController extends Controller
                     'per_page' => $sanPhams->perPage(),
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             // Trả về lỗi nếu có exception
             return response()->json([
@@ -182,7 +187,8 @@ class TrangSanPhamController extends Controller
         }
     }
 
-    public function locSanPham(Request $request) {
+    public function locSanPham(Request $request)
+    {
         DB::beginTransaction(); // Bắt đầu giao dịch
         try {
             // Lấy các tham số lọc từ yêu cầu
@@ -203,13 +209,13 @@ class TrangSanPhamController extends Controller
                     if (!empty($danhMucChaIds) && !empty($danhMucConIds)) {
                         $query->where(function ($query) use ($danhMucChaIds, $danhMucConIds) {
                             $query->whereIn('cha_id', $danhMucChaIds)
-                                  ->whereIn('id', $danhMucConIds);
+                                ->whereIn('id', $danhMucConIds);
                         });
                     }
                     // Nếu chỉ có danh mục cha
                     elseif (!empty($danhMucChaIds)) {
                         $query->whereIn('cha_id', $danhMucChaIds)
-                              ->orWhereIn('id', $danhMucChaIds);
+                            ->orWhereIn('id', $danhMucChaIds);
                     }
                     // Nếu chỉ có danh mục con
                     elseif (!empty($danhMucConIds)) {
@@ -248,8 +254,8 @@ class TrangSanPhamController extends Controller
                 DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
                 DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
             ])
-            ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id') // Tham gia với bảng biến thể
-            ->groupBy('san_phams.id');
+                ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id') // Tham gia với bảng biến thể
+                ->groupBy('san_phams.id');
 
             // Lấy dữ liệu sản phẩm với thông tin biến thể
             $sanPhams = $query->with([
@@ -327,7 +333,7 @@ class TrangSanPhamController extends Controller
                 'status' => true,
                 'data' => $sanPhams
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack(); // Hoàn tác nếu có lỗi
             return response()->json([
                 'status' => false,
@@ -335,10 +341,4 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-
-
-
-
-
-
 }
