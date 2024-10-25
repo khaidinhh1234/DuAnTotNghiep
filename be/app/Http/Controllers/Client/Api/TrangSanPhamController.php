@@ -48,7 +48,10 @@ class TrangSanPhamController extends Controller
             DB::beginTransaction();
 
             // Lấy tất cả màu sắc
-            $mauSac = BienTheMauSac::query()->get();
+            $mauSacs = BienTheMauSac::query()->get();
+            $mauSacs->map(function ($mauSac) {
+                $mauSac->setAttribute('so_luong_san_pham', $mauSac->sanPhams->groupBy('ten_san_pham')->count());
+            });
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -56,7 +59,7 @@ class TrangSanPhamController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'mauSac' => $mauSac
+                'mauSac' => $mauSacs
             ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
@@ -77,6 +80,9 @@ class TrangSanPhamController extends Controller
         try {
             // Lấy tất cả màu sắc
             $kichThuoc = BienTheKichThuoc::query()->get();
+            $kichThuoc->map(function ($kichThuoc) {
+                $kichThuoc->setAttribute('so_luong_san_pham', $kichThuoc->sanPhams->groupBy('ten_san_pham')->count());
+            });
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -171,7 +177,6 @@ class TrangSanPhamController extends Controller
                     'per_page' => $sanPhams->perPage(),
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             // Trả về lỗi nếu có exception
             return response()->json([
@@ -314,12 +319,19 @@ class TrangSanPhamController extends Controller
                     })->unique()->values()->toArray()
                 ];
             });
+            DB::commit(); // Giao dịch cam kết
 
-            DB::commit(); // Cam kết giao dịch
-            return response()->json($sanPhams, 200);
-        } catch (Exception $e) {
-            DB::rollBack(); // Khôi phục giao dịch nếu có lỗi
-            return response()->json(['error' => $e->getMessage()], 500);
+            // Trả về kết quả
+            return response()->json([
+                'status' => true,
+                'data' => $sanPhams
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Hoàn tác nếu có lỗi
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }
