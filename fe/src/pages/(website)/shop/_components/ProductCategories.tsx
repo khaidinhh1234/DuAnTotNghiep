@@ -128,7 +128,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  console.log("data", data);
+  // console.log("data", data);
   // danh mục
   const { data: danhmuc } = useQuery({
     queryKey: ["DANHMUCCLIENT"],
