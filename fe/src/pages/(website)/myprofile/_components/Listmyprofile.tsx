@@ -5,21 +5,21 @@ import Sidebar from "./../../_component/Slibar";
 import { Upload } from "antd";
 import { useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { uploadToCloudinary } from "@/configs/cloudinary";
 
 const ListMyProfile = ({ member }: any) => {
   const [avatarImage, setAvatarImage] = useState<string>("");
-  const [{ user }] = useLocalStorage("user" as any, {});
+  const [{ user }, setUser] = useLocalStorage("user" as any, {});
+  const [tempImageUrl, setTempImageUrl] = useState<string>("");
+
+
   const url = user.anh_nguoi_dung;
-  const handleAvatarChange = (info: any) => {
-    if (info.file && info.file.originFileObj) {
-      const file = URL.createObjectURL(info.file.originFileObj);
-      setAvatarImage(file);
-    }
-  };
-  const { data } = useQuery({
+
+  const { data, refetch  } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       try {
@@ -30,6 +30,40 @@ const ListMyProfile = ({ member }: any) => {
       }
     },
   });
+
+  const updateAvatarMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const imageUrl = await uploadToCloudinary(file);
+      await instanceClient.post("cap-nhat-thong-tin", {
+        duong_dan: imageUrl
+      });
+      return imageUrl;
+    },
+    onSuccess: (imageUrl) => {
+      setUser((prev: any) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          anh_nguoi_dung: imageUrl
+        }
+      }));
+      setAvatarImage(imageUrl);
+      setTempImageUrl("");
+      refetch();
+      toast.success('Cập nhật ảnh đại diện thành công');
+    },
+    onError: () => {
+      setTempImageUrl("");
+      toast.error('Không thể cập nhật ảnh đại diện');
+    }
+  });
+  
+  const handleAvatarChange = async (info: any) => {
+    if (info.file?.originFileObj) {
+      setTempImageUrl(URL.createObjectURL(info.file.originFileObj));
+      updateAvatarMutation.mutate(info.file.originFileObj);
+    }
+  };
   console.log(data);
   function convertDateToVietnameseFormat(dateString: any) {
     if (!dateString) return ""; // Kiểm tra nếu không có dữ liệu
@@ -47,26 +81,38 @@ const ListMyProfile = ({ member }: any) => {
     100;
   return (
     <>
-      {/* Nội dung */}
       <div className="flex justify-between items-center">
         <div className="flex gap-5 items-center">
           <div className="relative">
             <Avatar
-              src={avatarImage || url}
-              size={100}
+      src={tempImageUrl || avatarImage || url}
+      size={100}
               className="border-4 border-white shadow-lg bg-top bg-no-repeat"
+
             />
+          {updateAvatarMutation.isPending && (
+      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+        <div className="flex gap-1">
+          <span className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]">.</span>
+          <span className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.2s]">.</span>
+          <span className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.1s]">.</span>
+        </div>
+      </div>
+    )}
             <Upload
               showUploadList={false}
               onChange={handleAvatarChange}
               className="absolute bottom-0 right-0 "
+              disabled={updateAvatarMutation.isPending}
             >
               <Button
                 type="primary"
                 shape="circle"
                 icon={<CameraOutlined />}
-                className="bg-blue-400 hover:bg-blue-500 text-white p-2"
-              />
+                disabled={updateAvatarMutation.isPending}
+                className={`${
+                  updateAvatarMutation.isPending ? 'bg-gray-400' : 'bg-blue-400 hover:bg-blue-500'
+                } text-white p-2`}              />
             </Upload>
           </div>
           <div>
