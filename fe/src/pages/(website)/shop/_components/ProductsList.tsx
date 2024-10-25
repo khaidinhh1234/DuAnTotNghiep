@@ -12,7 +12,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
   };
-  console.log(products);
+  // console.log(products);
   const handleWishlist = (id: any) => {
     Wishlist(id) as any;
   };
@@ -44,7 +44,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
       <div className="flex justify-between sm:items-center items-start mb-4">
         <div className="sm:flex items-center mt-2">
           <div className="mx-5">
-            <p className="text-gray-700">17 sản phẩm</p>
+            <p className="text-gray-700">{products?.length ?? 0} sản phẩm</p>
           </div>
         </div>
         <div className="w-0.5/4 sm:text-base text-sm flex items-center">
