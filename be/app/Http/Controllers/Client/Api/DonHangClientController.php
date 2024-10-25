@@ -385,10 +385,10 @@ class DonHangClientController extends Controller
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Đơn hàng đã được đặt',
-                'noi_dung' => 'Đơn hàng đã được đặt',
+                'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là sau: ' . $donHang->ma_don_hang,
                 'loai' => 'Đơn hàng',
                 'duong_dan' => 'don-hang',
-                'loai_duong_dan' => 'don-hang',
+                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 'id_duong_dan' => $donHang->id,
             ]);
 

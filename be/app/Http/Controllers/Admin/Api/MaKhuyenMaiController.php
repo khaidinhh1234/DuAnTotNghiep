@@ -90,15 +90,6 @@ class MaKhuyenMaiController extends Controller
 
             $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
 
-            $now = Carbon::now();
-            $ngayBatDauSuuTam = Carbon::parse($request->ngay_bat_dau_suu_tam);
-            $ngayKetThuc = Carbon::parse($request->ngay_ket_thuc);
-
-//            if (($now->isToday() || $now->isPast()) && $ngayKetThuc->isFuture()) {
-                broadcast(new MaKhuyenMaiCreated($maKhuyenMai, $request->hang_thanh_vien))->toOthers();
-//            }
-
-            // Gán sản phẩm và danh mục cho mã khuyến mãi
             if (!empty($dataKhuyenMaiDanhMuc)) {
                 $maKhuyenMai->danhMucs()->sync($dataKhuyenMaiDanhMuc);
             } else {
@@ -109,7 +100,6 @@ class MaKhuyenMaiController extends Controller
                 $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
             }
 
-            // Gán hạng thành viên cho mã khuyến mãi
             $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
 
             DB::commit();
