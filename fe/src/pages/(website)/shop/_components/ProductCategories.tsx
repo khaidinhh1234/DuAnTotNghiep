@@ -49,7 +49,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
   };
-  // console.log(datas);
+  console.log(datas);
   // lọc danh mục
   const [expanded, setExpanded] = useState<number[]>([]);
   const [parentChecked, setParentChecked] = useState<{
@@ -119,7 +119,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     queryFn: async () => {
       try {
         const response = await instanceClient.post("loc-san-pham", datas); // Gửi datas cho API
-        if (response.data.status_code !== 200) {
+        if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
         return response.data;
@@ -128,7 +128,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  // console.log("data", data);
+  console.log("data", data?.data?.data);
   // danh mục
   const { data: danhmuc } = useQuery({
     queryKey: ["DANHMUCCLIENT"],
@@ -181,7 +181,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     mutationFn: async () => {
       try {
         const response = await instanceClient.post("loc-san-pham", datas);
-        if (response.data.status_code !== 200) {
+        if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
         return response.data;

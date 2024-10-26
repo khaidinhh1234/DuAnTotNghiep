@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Slibar = () => {
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-  console.log(member);
+  // console.log(member);
   return (
     <div className="lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] lg:h-[524px] rounded-lg">
       {" "}
