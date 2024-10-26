@@ -122,16 +122,13 @@ const Footer = () => {
             <div>
               <img src={bank} alt="" className="h-7" />
             </div>
-            <div>© 2024 Krist All Rights are Reserved.</div>
+            <div>© 2024 Glow Clothing.</div>
             <div className="*:text-2xl *:px-3">
             <a href={websiteInfo?.link_facebook} target="_blank" rel="noopener noreferrer">
                 <i className="fa-brands fa-facebook" style={{ color: "#ffffff" }} />
               </a>
               <a href={websiteInfo?.link_instagram} target="_blank" rel="noopener noreferrer">
                 <i className="fa-brands fa-instagram" />
-              </a>
-              <a href={websiteInfo?.link_youtube} target="_blank" rel="noopener noreferrer">
-                <i className="fa-brands fa-youtube" style={{ color: "#ffffff" }} />
               </a>
               <a href={websiteInfo?.link_youtube} target="_blank" rel="noopener noreferrer">
                 <i className="fa-brands fa-youtube" style={{ color: "#ffffff" }} />

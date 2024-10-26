@@ -15,7 +15,7 @@ class TrangChiTietSpController extends Controller
     public function chiTietSanPham($duongDan)
     {
         try {
-            $userId = Auth::id();
+            $user = Auth::guard('api')->user();
 
             $chiTietSanPham = SanPham::with([
                 'danhMuc',
@@ -34,7 +34,12 @@ class TrangChiTietSpController extends Controller
             ])->where('duong_dan', $duongDan)->first();
 
             foreach ($chiTietSanPham->danhGias as $danhGia) {
-                $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->where('user_id', $userId)->exists();
+                $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->where('user_id', $user->id)->exists();
+            }
+            if ($chiTietSanPham->khachHangYeuThich->pluck('id')->first() == $user->id) {
+                $chiTietSanPham['trang_thai_yeu_thich'] = true;
+            }else{
+                $chiTietSanPham['trang_thai_yeu_thich'] = false;
             }
 
             return response()->json([
