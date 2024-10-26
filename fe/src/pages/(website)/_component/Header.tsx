@@ -380,7 +380,9 @@ const Header = () => {
                       <i className="fa-regular fa-bag-shopping text-xl relative">
                         <span
                           className={`${
-                            menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                            menu == true
+                              ? "bg-opacity-100 text-opacity-100"
+                              : ""
                           } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                         >
                           0

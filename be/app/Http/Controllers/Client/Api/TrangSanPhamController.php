@@ -122,6 +122,7 @@ class TrangSanPhamController extends Controller
                         );
                 }
             ])
+                ->where('san_phams.trang_thai', 1)
                 ->select( // lấy dữ liệu của của  sản phẩm
                     'san_phams.id', // Chỉ định rõ bảng san_phams cho cột id
                     'san_phams.ten_san_pham',
@@ -135,6 +136,7 @@ class TrangSanPhamController extends Controller
                     DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'), // Giá thấp nhất
                     DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')  // Giá cao nhất
                 ])
+                ->where('san_phams.trang_thai', 1)
                 ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
                 ->groupBy('san_phams.id') // Chỉ định rõ bảng san_phams cho cột id
                 ->orderBy('san_phams.created_at', 'desc')  // Sắp xếp theo thời gian tạo mới nhất
