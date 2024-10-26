@@ -1,8 +1,10 @@
+import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message, Modal, Rate } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Autoplay,
   FreeMode,
@@ -17,7 +19,7 @@ const View = ({ id, ID }: { id: string; ID: string }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isHeart, setIsHeart] = useState(false);
   const [selectedColorDisplay, setSelectedColorDisplay] = useState<
@@ -26,6 +28,12 @@ const View = ({ id, ID }: { id: string; ID: string }) => {
   const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
     null
   );
+  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null); //laybienthe
+  const [currentImages, setCurrentImages] = useState<string[]>([]);
+
+
+  const [user] = useLocalStorage("user" as any, {});
+  const access_token = user.access_token || localStorage.getItem("access_token");
   //   console.log(id);
   const { data } = useQuery({
     queryKey: ["PRODUCT_DETAIL", id],
@@ -127,19 +135,49 @@ const View = ({ id, ID }: { id: string; ID: string }) => {
   //   };
   //   const [activeTab, setActiveTab] = useState("descriptions"); // State to manage active tab
 
-  const handleColorClick = (color: any) => {
+  // const handleColorClick = (color: any) => {
+  //   setSelectedColor(color);
+  //   const selectedVariant = product?.bien_the_san_pham?.find(
+  //     (v: any) => v?.mau_bien_the?.ma_mau_sac === color
+  //   );
+  //   setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
+  // };
+
+  // const handleSizeClick = (size: string) => {
+  //   setSelectedSize(size);
+  //   setSelectedSizeDisplay(size);
+  // };
+  const handleColorClick = (color: string) => {
     setSelectedColor(color);
     const selectedVariant = product?.bien_the_san_pham?.find(
-      (v: any) => v?.mau_bien_the?.ma_mau_sac === color
+      (v: Variant) => v?.mau_bien_the?.ma_mau_sac === color
     );
+    setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
+    updateImages(color, selectedSize);
   };
 
   const handleSizeClick = (size: string) => {
     setSelectedSize(size);
+    const selectedVariant = product?.bien_the_san_pham?.find(
+      (v: Variant) => v?.kich_thuoc_bien_the?.kich_thuoc === size
+    );
+    setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedSizeDisplay(size);
+    updateImages(selectedColor, size);
   };
-
+  const updateImages = (color: string | null, size: string | null) => {
+    if (color && size && product) {
+      const variant = product?.bien_the_san_pham?.find(
+        (v: Variant) =>
+          v?.mau_bien_the?.ma_mau_sac === color &&
+          v?.kich_thuoc_bien_the?.kich_thuoc === size
+      );
+      if (variant) {
+        setCurrentImages(variant.anh_bien_the.map((img: { duong_dan_anh: string }) => img?.duong_dan_anh));
+      }
+    }
+  };
   // const sizes = ["S", "M", "L", "XL", "XXL"];
 
   const handleClickHeart = (id: number) => {
@@ -166,6 +204,52 @@ const View = ({ id, ID }: { id: string; ID: string }) => {
       setSelectedSizeDisplay(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
     }
   }, [product]);
+  // add to cart
+  const [quantity, setQuantity] = useState<number>(1)
+
+  const { mutate: addToCart } = useMutation({
+    mutationFn: async (variantId: number) => {
+      const response = await instanceClient.post(
+        '/gio-hang',
+        {
+          bien_the_san_pham_id: variantId,
+          so_luong: quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.status) {
+        toast.success(data.message);
+        queryclient.invalidateQueries({ queryKey: ['cart', access_token] }); // Làm mới giỏ hàng
+      } else {
+        toast.error(data.message);
+      }
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message || 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.'
+      );
+    },
+  });
+
+  const handleAddToCart = () => {
+    if (quantity < 1) {
+      toast.error('Số lượng phải lớn hơn hoặc bằng 1');
+      return;
+    }
+    if (!selectedVariantId) {
+      toast.error('Vui lòng chọn biến thể sản phẩm.');
+      return;
+    }
+    addToCart(selectedVariantId); // Truyền ID của biến thể
+  };
+
   return (
     <>
       <Link to={``} type="primary" onClick={() => setOpen(true)}>
@@ -388,7 +472,9 @@ const View = ({ id, ID }: { id: string; ID: string }) => {
                   </div>
                   <div className="mt-12 flex gap-5">
                     <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
-                      <button className="py-2 pr-2">
+                      <button
+                      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                      className="py-2 pr-2">
                         <i className="fa-solid fa-minus" />
                       </button>
                       <input
@@ -397,13 +483,19 @@ const View = ({ id, ID }: { id: string; ID: string }) => {
                         defaultValue={1}
                         min={1}
                         max={100}
+                        value={quantity}
+                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)))}
                         className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                       />
-                      <button className="py-2 pl-2">
+                      <button
+                      onClick={() => setQuantity((prev) => prev + 1)}
+                      className="py-2 pl-2">
                         <i className="fa-solid fa-plus" />
                       </button>
                     </div>
-                    <button className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg text-lg font-medium">
+                    <button
+                    onClick={handleAddToCart}
+                    className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg text-lg font-medium">
                       Thêm vào giỏ hàng
                     </button>
                     <button

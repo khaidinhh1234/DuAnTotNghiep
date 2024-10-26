@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const PaymentForm = () => {
   return (
     <div className="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]">
@@ -142,11 +144,10 @@ const PaymentForm = () => {
               Thanh toán khi nhận hàng
             </label>
           </div>
-          <a href="ordersummary.html">
-            <button className="btn-black px-10 w-[320px] py-4 rounded-lg mb-5 text-md font-medium">
+          
+            <Link to="/ordersummary" className="btn-black px-10 w-[320px] py-4 rounded-lg mb-5 text-md font-medium">
               Tiếp tục
-            </button>
-          </a>
+            </Link>
         </form>
       </div>
     </div>

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const ShippingAddress = () => {
   return (
     <>
@@ -82,9 +84,9 @@ const ShippingAddress = () => {
           </div>
         </div>
       </div>
-      <button className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium">
+      <Link to="/payment"  className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium">
         Giao ngay
-      </button>
+      </Link>
     </>
   );
 };

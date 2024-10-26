@@ -27,14 +27,20 @@ const Subtotal = () => (
         <h4>Tổng cộng</h4>
         <span>$205.00</span>
       </div>
-      <a href="paymentmethod.html">
+      {/* <a href="paymentmethod.html">
         <button
           type="submit"
           className="lg:hidden block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
         >
           Thêm địa chỉ mới
         </button>
-      </a>
+      </a> */}
+      <button
+                  type="submit"
+                  className="block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
+                >
+                  Đặt hàng
+                </button>
     </div>
   </div>
 );

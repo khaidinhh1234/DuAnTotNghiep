@@ -4,14 +4,14 @@ import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CheckOut = () => {
+  const nav = useNavigate()
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
-
-  const [selectedProducts, setSelectedProducts] = useState<number[]>([]); // Lưu trữ các sản phẩm được chọn
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
   const [selectAllRegular, setSelectAllRegular] = useState(false);
   const { data } = useQuery({
@@ -50,15 +50,10 @@ const CheckOut = () => {
   });
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      if (currentQuantity === 1) {
-        // Xóa sản phẩm khi số lượng giảm về 0
-        await instanceClient.delete(`/gio-hang/${productId}`, {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        });
+      if (currentQuantity <= 1) {
+        toast.error("Không thể giảm số lượng xuống dưới 1.");
+        return;
       } else {
-        // Giảm số lượng sản phẩm
         await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, { so_luong: currentQuantity - 1 },
           {
             headers: {
@@ -72,9 +67,10 @@ const CheckOut = () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error("Thao tác quá nhanh vui lòng chậm lại");
+      toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
+  
 
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId) => {
@@ -111,8 +107,8 @@ const CheckOut = () => {
   }, 0);
   console.log(totalSelectedPrice)
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
-  const shippingFee = 20000; 
-  const discountShipping = 20000; 
+  const shippingFee = 20000;
+  const discountShipping = 20000;
   const finalTotal = totalSelectedPrice - discountShipping + shippingFee;
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
@@ -135,21 +131,28 @@ const CheckOut = () => {
         ...data.san_pham_nguyen_gia.map((product: { id: number }) => product.id)
       ];
       setSelectedProducts(allProductIds);
-      setSelectAllDiscounted(true); // Đánh dấu chọn tất cả sản phẩm giảm giá
-      setSelectAllRegular(true); // Đánh dấu chọn tất cả sản phẩm nguyên giá
+      setSelectAllDiscounted(true); 
+      setSelectAllRegular(true); 
     } else {
       setSelectedProducts([]);
-      setSelectAllDiscounted(false); // Bỏ đánh dấu chọn tất cả sản phẩm giảm giá
-      setSelectAllRegular(false); // Bỏ đánh dấu chọn tất cả sản phẩm nguyên giá
+      setSelectAllDiscounted(false); 
+      setSelectAllRegular(false);
     }
   };
 
-  const handleCheckout = (productIds: any) => {
-    // Thực hiện thanh toán cho các sản phẩm được chọn
-    console.log("Thanh toán cho các sản phẩm:", productIds);
-    // Thực hiện logic thanh toán ở đây
+  
+  const handleCheckout = () => {
+    if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
+      toast.error("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.");
+      return;
+    }
+    if (!selectedProducts.length) {
+      toast.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+      return;
+    }
+    nav('/shippingAddressPage')
+    console.log("Thanh toán cho các sản phẩm:", selectedProducts);
   };
-
   return (
     <section className="container">
 
@@ -271,8 +274,8 @@ const CheckOut = () => {
                           <input
                             type="checkbox"
                             className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                            checked={selectedProducts.includes(product.id)} 
-                            onChange={() => handleSelectProduct(product.id)} 
+                            checked={selectedProducts.includes(product.id)}
+                            onChange={() => handleSelectProduct(product.id)}
                             title="Select all products"
                           />
                         </td>
@@ -369,13 +372,15 @@ const CheckOut = () => {
               </div>
 
               <div className="flex justify-center">
-                {/* <a href="shippingaddress.html"> */}
-                  <button
-                    onClick={() => handleCheckout(selectedProducts)}
-                    className="btn-black rounded-lg mb-4 w-[320px] h-[56px]">
+                {/* <Link to="/ordersummary"> */}
+                  <Button
+                    onClick={handleCheckout}
+                    className="btn-black rounded-lg mb-4 w-[320px] h-[56px]"
+                    disabled={!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length}
+                  >
                     Tiến hành thanh toán
-                  </button>
-                {/* </a> */}
+                  </Button>
+                {/* </Link> */}
               </div>
             </div>
           </div>
