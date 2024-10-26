@@ -10,10 +10,6 @@ import CartOverlay from "./CartOverlay";
 import Notifications from './Notifications';
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-<<<<<<< HEAD
-=======
-
->>>>>>> 816f614e7eb32fca74294e34623b8c7686d7377d
 interface Category {
   id: number;
   ten_danh_muc: string;
