@@ -100,7 +100,6 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-
     public function locSanPham(Request $request)
     {
         DB::beginTransaction(); // Bắt đầu giao dịch
