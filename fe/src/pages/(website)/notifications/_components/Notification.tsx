@@ -5,6 +5,11 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { Pagination } from 'antd';
 
+interface NotificationResponse {
+  data: Notification[];
+  thong_bao_chua_doc: number;
+}
+
 interface Notification {
   id: number;
   user_id: number;
@@ -12,18 +17,18 @@ interface Notification {
   noi_dung: string;
   loai: string;
   duong_dan: string;
-  loai_duong_dan: string;
+  loai_duong_dan: string | null;
   id_duong_dan: string;
   da_doc: string;
   trang_thai_da_doc: string;
-  hinh_thu_nho: string | null;
+  hinh_thu_nho: string;
   created_at: string;
   updated_at: string;
 }
 
 const ITEMS_PER_PAGE = 4;
 
-const getNotifications = async (): Promise<Notification[]> => {
+const getNotifications = async (): Promise<NotificationResponse> => {
   const response = await instanceClient.get('/thong-bao');
   return response.data;
 };
@@ -49,7 +54,7 @@ const NotificationPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const queryClient = useQueryClient();
 
-  const { data: notifications, isLoading } = useQuery({
+  const { data: notificationResponse, isLoading } = useQuery({
     queryKey: ['notifications'],
     queryFn: getNotifications
   });
@@ -62,7 +67,7 @@ const NotificationPage = () => {
   });
 
   const markAllAsReadMutation = useMutation({
-    mutationFn: () => markAllAsRead(notifications),
+    mutationFn: () => markAllAsRead(notificationResponse?.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
@@ -76,7 +81,8 @@ const NotificationPage = () => {
 
   if (isLoading) return <div></div>;
 
-  const orderNotifications = notifications?.filter(notif => notif.loai === "Đơn hàng") || [];
+  const notifications = notificationResponse?.data || [];
+  const orderNotifications = notifications.filter(notif => notif.loai === "Đơn hàng");
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedNotifications = orderNotifications.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
@@ -94,9 +100,8 @@ const NotificationPage = () => {
   };
 
   const hasUnreadNotifications = orderNotifications.some(
-    notification => notification.trang_thai_da_doc === "0"
-  );
-
+         notification => notification.trang_thai_da_doc === "0"
+       );
   if (orderNotifications.length === 0) {
     return (
       <div className="lg:col-span-9 col-span-8 lg:pl-5">
@@ -180,4 +185,3 @@ const NotificationPage = () => {
 };
 
 export default NotificationPage;
- 
