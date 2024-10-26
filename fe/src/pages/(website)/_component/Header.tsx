@@ -160,6 +160,9 @@ const Header = () => {
       }
     },
   });
+
+
+
   const MenuList = [
     {
       name: "Trang chủ",
@@ -371,7 +374,7 @@ const Header = () => {
                   >
                     <i className="fa-regular fa-bell text-xl relative cursor-pointer">
                       <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                        0
+                        vlxx
                       </span>
                     </i>
 
