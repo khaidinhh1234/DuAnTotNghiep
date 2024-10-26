@@ -7,9 +7,13 @@ import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
+<<<<<<< HEAD
 import Notifications from './Notifications';
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
+=======
+import Notifications from "./Notifications";
+>>>>>>> efcbf48510ec1c7055817d0ab39a7e6725b5cb0a
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -27,7 +31,10 @@ const Header = () => {
   const notificationRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
         setShowNotifications(false);
       }
     };
@@ -354,12 +361,35 @@ const Header = () => {
 
               {member ? (
                 <>
-                  {" "}
+                  {/* {" "}
                   <span>
                     <a href="/mywishlist">
                       <i className="fa-regular fa-heart text-xl">{ }</i>
                     </a>
+                  </span> */}
+                  <span
+                    ref={notificationRef}
+                    className="relative"
+                    onMouseEnter={() => setShowNotifications(true)}
+                    onMouseLeave={() => setShowNotifications(false)}
+                  >
+                    <i className="fa-regular fa-bell text-xl relative cursor-pointer">
+                      <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                        0
+                      </span>
+                    </i>
+
+                    <div
+                      className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${
+                        showNotifications
+                          ? "opacity-100"
+                          : "opacity-0 pointer-events-none"
+                      }`}
+                    >
+                      <Notifications />
+                    </div>
                   </span>
+<<<<<<< HEAD
                   <span
                     ref={notificationRef}
                     className="relative"
@@ -379,6 +409,8 @@ const Header = () => {
                       <Notifications />
                     </div>
                   </span>
+=======
+>>>>>>> efcbf48510ec1c7055817d0ab39a7e6725b5cb0a
                   <span
                     ref={cartRef}
                     onMouseEnter={() => setIsCartVisible(true)}

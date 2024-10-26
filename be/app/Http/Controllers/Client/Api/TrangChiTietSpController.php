@@ -38,7 +38,7 @@ class TrangChiTietSpController extends Controller
             }
             if ($chiTietSanPham->khachHangYeuThich->pluck('id')->first() == $user->id) {
                 $chiTietSanPham['trang_thai_yeu_thich'] = true;
-            }else{
+            } else {
                 $chiTietSanPham['trang_thai_yeu_thich'] = false;
             }
 

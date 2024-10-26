@@ -3,7 +3,6 @@ import instance from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
-
 const Footer = () => {
   const {
     data: apiResponse,
@@ -13,7 +12,7 @@ const Footer = () => {
     queryKey: ["websiteInfo"],
     queryFn: async () => {
       const response = await instance.get("/thong-tin-web");
-      console.log("Raw API Response:", response.data);
+      // console.log("Raw API Response:", response.data);
       return response.data;
     },
   });
@@ -21,7 +20,7 @@ const Footer = () => {
   useEffect(() => {
     if (apiResponse && apiResponse.data) {
       // Store the data in local storage
-      localStorage.setItem('websiteInfo', JSON.stringify(apiResponse.data));
+      localStorage.setItem("websiteInfo", JSON.stringify(apiResponse.data));
     }
   }, [apiResponse]);
 
@@ -45,7 +44,9 @@ const Footer = () => {
               <div className="my-[39px] space-y-5 w-[261px]">
                 <div className="*:px-1">
                   <i className="fa-regular fa-phone-volume text-lg" />
-                  <span className="text-base">{websiteInfo?.so_dien_thoai_dat_hang}</span>
+                  <span className="text-base">
+                    {websiteInfo?.so_dien_thoai_dat_hang}
+                  </span>
                 </div>
                 <div className="*:px-1">
                   <i className="fa-light fa-envelope text-lg" />
@@ -54,7 +55,7 @@ const Footer = () => {
                 <div className="*:px-1 flex">
                   <i className="fa-regular fa-location-dot text-lg" />
                   <span className="mx-2 lg:w-full w-48">
-                  {websiteInfo?.dia_chi}
+                    {websiteInfo?.dia_chi}
                   </span>
                 </div>
               </div>
@@ -101,10 +102,7 @@ const Footer = () => {
             </div>
             <div className="lg:col-span-4 col-span-6">
               <h1 className="text-xl font-semibold mb-4">Đăng ký</h1>
-              <p className="lg:w-80 mb-5">
-              {websiteInfo?.cau_noi}
-
-              </p>
+              <p className="lg:w-80 mb-5">{websiteInfo?.cau_noi}</p>
               <div className="relative">
                 <i className="fa-regular fa-envelope absolute top-2 left-4 text-2xl" />
                 <input
@@ -124,20 +122,55 @@ const Footer = () => {
             </div>
             <div>© 2024 Glow Clothing.</div>
             <div className="*:text-2xl *:px-3">
-            <a href={websiteInfo?.link_facebook} target="_blank" rel="noopener noreferrer">
-                <i className="fa-brands fa-facebook" style={{ color: "#ffffff" }} />
+              <a
+                href={websiteInfo?.link_facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i
+                  className="fa-brands fa-facebook"
+                  style={{ color: "#ffffff" }}
+                />
               </a>
-              <a href={websiteInfo?.link_instagram} target="_blank" rel="noopener noreferrer">
+              <a
+                href={websiteInfo?.link_instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fa-brands fa-instagram" />
               </a>
-              <a href={websiteInfo?.link_youtube} target="_blank" rel="noopener noreferrer">
-                <i className="fa-brands fa-youtube" style={{ color: "#ffffff" }} />
+              <a
+                href={websiteInfo?.link_youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i
+                  className="fa-brands fa-youtube"
+                  style={{ color: "#ffffff" }}
+                />
               </a>
-              <a href={websiteInfo?.link_youtube} target="_blank" rel="noopener noreferrer">
-              <i className="fa-brands fa-tiktok" style={{ color: "#ffffff" }} />
+              <a
+                href={websiteInfo?.link_youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i
+                  className="fa-brands fa-youtube"
+                  style={{ color: "#ffffff" }}
+                />
+              </a>
+              <a
+                href={websiteInfo?.link_youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i
+                  className="fa-brands fa-tiktok"
+                  style={{ color: "#ffffff" }}
+                />
               </a>
             </div>
-          </div>  
+          </div>
         </div>
       </footer>
     </div>
