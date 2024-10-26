@@ -19,9 +19,7 @@ return new class extends Migration
             $table->string('noi_dung');
             $table->string('loai');
             $table->string('duong_dan')->nullable();
-            $table->string('loai_duong_dan')->nullable();
             $table->string('id_duong_dan')->nullable();
-            $table->string('da_doc')->default(0);
             $table->string('trang_thai_da_doc')->default(0);
             $table->string('hinh_thu_nho')->nullable();
             $table->timestamps();

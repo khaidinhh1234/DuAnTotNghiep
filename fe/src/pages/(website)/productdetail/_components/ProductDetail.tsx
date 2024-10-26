@@ -18,13 +18,13 @@ import {
   Pagination,
   Thumbs,
 } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
 import SizeGuideModal from "./SizeGuide";
 
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
-import RelatedProducts from "./RelatedProducts";
 import { debounce } from "lodash";
+import RelatedProducts from "./RelatedProducts";
+import { Swiper, SwiperSlide } from "swiper/react";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -99,7 +99,7 @@ interface ProductData {
 // }
 
 const fetchProduct = async (id: string) => {
-  const response = await instance.get(`/chi-tiet-san-pham/${id}`);
+  const response = await instanceClient.get(`/chi-tiet-san-pham/${id}`);
   return response.data.data;
 };
 
@@ -131,6 +131,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null); //laybienthe
 
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
@@ -175,12 +176,12 @@ const ProductDetail: React.FC = () => {
   // }, [id, refetch]);
   const likeMutation = useMutation({
     mutationFn: ({ reviewId, isLiked }: { reviewId: any; isLiked: any }) => {
-      if (!token) {
+      if (!access_token) {
         throw new Error("Bạn cần đăng nhập để thực hiện hành động này");
       }
       return isLiked
-        ? instance.delete(`/danh-gia/${reviewId}/unlike`)
-        : instance.post(`/danh-gia/${reviewId}/like`);
+        ? instanceClient.delete(`/danh-gia/${reviewId}/unlike`)
+        : instanceClient.post(`/danh-gia/${reviewId}/like`);
     },
     onSuccess: (_: any, variables: { reviewId: number; isLiked: boolean }) => {
       queryClient.setQueryData<ProductData>(["product", slug], (oldProduct) => {
@@ -190,12 +191,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                  ...review,
-                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                  danh_gia_huu_ich_count: variables.isLiked
-                    ? review.danh_gia_huu_ich_count - 1
-                    : review.danh_gia_huu_ich_count + 1,
-                }
+                ...review,
+                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                danh_gia_huu_ich_count: variables.isLiked
+                  ? review.danh_gia_huu_ich_count - 1
+                  : review.danh_gia_huu_ich_count + 1,
+              }
               : review
           ),
         };
@@ -206,73 +207,60 @@ const ProductDetail: React.FC = () => {
     },
   });
 
-  const [quantity, setQuantity] = useState<number>(product?.so_luong || 1);
+  const [quantity, setQuantity] = useState<number>(1)
 
-  // tăng số lượng
-  const { mutate: increaseQuantity } = useMutation({
-    mutationFn: async ({
-      productId,
-      currentQuantity,
-    }: {
-      productId: any;
-      currentQuantity: number;
-    }) => {
-      await instanceClient.put(
-        `/gio-hang/tang-so-luong/${productId}`,
-        { so_luong: currentQuantity + 1 },
+  const { mutate: addToCart } = useMutation({
+      mutationFn: async (variantId: number) => { 
+      const response = await instanceClient.post(
+        '/gio-hang',
+        {
+          bien_the_san_pham_id: variantId, 
+          so_luong: quantity,
+        },
         {
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
         }
       );
+      return response.data;
     },
-    onSuccess: () => {
-      setQuantity((prev) => prev + 1); // Cập nhật số lượng hiển thị
-      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    onSuccess: (data) => {
+      if (data.status) {
+        toast.success(data.message);
+        queryClient.invalidateQueries({ queryKey: ['cart', access_token] }); // Làm mới giỏ hàng
+      } else {
+        toast.error(data.message);
+      }
     },
     onError: (error: any) => {
-      toast.error(error.message || "Có lỗi xảy ra khi tăng số lượng sản phẩm.");
+      toast.error(
+        error.response?.data?.message || 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.'
+      );
     },
   });
 
-  // giảm số lượng
-  const { mutate: decreaseQuantity } = useMutation({
-    mutationFn: async ({
-      productId,
-      currentQuantity,
-    }: {
-      productId: any;
-      currentQuantity: number;
-    }) => {
-      await instanceClient.put(
-        `/gio-hang/giam-so-luong/${productId}`,
-        { so_luong: currentQuantity - 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
-    },
-    onSuccess: () => {
-      setQuantity((prev) => prev - 1); // Cập nhật số lượng hiển thị
-      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Có lỗi xảy ra khi giảm số lượng sản phẩm.");
-    },
-  });
+  const handleAddToCart = () => {
+    if (quantity < 1) {
+        toast.error('Số lượng phải lớn hơn hoặc bằng 1');
+        return;
+    }
+    if (!selectedVariantId) {
+        toast.error('Vui lòng chọn biến thể sản phẩm.');
+        return;
+    }
+    addToCart(selectedVariantId); // Truyền ID của biến thể
+};
 
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {
-      if (!token) {
+      if (!access_token) {
         toast.warning("Bạn cần đăng nhập để thực hiện hành động này");
         return;
       }
       likeMutation.mutate({ reviewId, isLiked });
     }, 1000),
-    [likeMutation, token]
+    [likeMutation, access_token]
   );
 
   const toggleModal = () => {
@@ -328,21 +316,26 @@ const ProductDetail: React.FC = () => {
       );
     }
   }, [product]);
-
   const handleColorClick = (color: string) => {
     setSelectedColor(color);
-    updateImages(color, selectedSize);
     const selectedVariant = product?.bien_the_san_pham?.find(
       (v) => v?.mau_bien_the?.ma_mau_sac === color
     );
+    setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
-  };
+    updateImages(color, selectedSize);
+};
 
-  const handleSizeClick = (size: string) => {
+const handleSizeClick = (size: string) => {
     setSelectedSize(size);
-    updateImages(selectedColor, size);
+    const selectedVariant = product?.bien_the_san_pham?.find(
+      (v) => v?.kich_thuoc_bien_the?.kich_thuoc === size
+    );
+    setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedSizeDisplay(size);
-  };
+    updateImages(selectedColor, size);
+};
+
 
   const updateImages = (color: string | null, size: string | null) => {
     if (color && size && product) {
@@ -493,11 +486,10 @@ const ProductDetail: React.FC = () => {
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${
-                          selectedVariant?.so_luong_bien_the > 0
-                            ? "bg-[#3CD139]/10 text-[#3CD139]"
-                            : "bg-red-500 text-white"
-                        }`}
+                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                          ? "bg-[#3CD139]/10 text-[#3CD139]"
+                          : "bg-red-500 text-white"
+                          }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -622,48 +614,36 @@ const ProductDetail: React.FC = () => {
               <div className="mt-12 flex gap-5">
                 <div className="border rounded-lg border-black xl:w-32 xl:h-14 ld:w-24 lg:h-10 md:w-32 md:h-14 w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                   <button
-                    onClick={() => {
-                      if (quantity > 1) {
-                        decreaseQuantity({
-                          productId: product?.id?.toString(),
-                          currentQuantity: quantity,
-                        });
-                      }
-                    }}
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
                     className="py-2 pr-2"
-                    disabled={quantity <= 1} // Ngăn không cho số lượng giảm dưới 1
+                    disabled={quantity <= 1}
                   >
                     <i className="fa-solid fa-minus" />
                   </button>
 
                   <input
                     type="number"
-                    value={quantity} // Liên kết giá trị với state
+                    value={quantity}
                     readOnly
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)))}
                     className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
                   />
 
                   <button
-                    onClick={() =>
-                      increaseQuantity({
-                        productId: product?.id?.toString(),
-                        currentQuantity: quantity,
-                      })
-                    }
+                    onClick={() => setQuantity((prev) => prev + 1)}
                     className="py-2 pl-2"
                   >
                     <i className="fa-solid fa-plus" />
                   </button>
                 </div>
 
-                <button className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
+                <button onClick={handleAddToCart} className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
                   Thêm vào giỏ hàng
                 </button>
                 <button
                   onClick={handleClickHeart}
-                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${
-                    isHeart ? "bg-red-600" : ""
-                  }`}
+                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${isHeart ? "bg-red-600" : ""
+                    }`}
                 >
                   <i
                     className={`fa-regular fa-heart text-2xl ${isHeart ? "text-white" : "text-red-600"}`}
@@ -700,9 +680,8 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${
-                isDescriptionExpanded ? "" : "line-clamp-3"
-              }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${isDescriptionExpanded ? "" : "line-clamp-3"
+                }`}
               dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
             />
             <div className="flex justify-center">

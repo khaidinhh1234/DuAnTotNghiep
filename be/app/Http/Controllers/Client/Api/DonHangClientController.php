@@ -183,63 +183,48 @@ class DonHangClientController extends Controller
     {
         try {
             $donHang = DonHang::query()->with([
-                'chiTiets.bienTheSanPham.sanPham', // Lấy sản phẩm từ biến thể
-                'chiTiets.bienTheSanPham.mauBienThe', // Lấy màu biến thể
-                'chiTiets.bienTheSanPham.kichThuocBienThe', // Lấy kích thước biến thể
-                'chiTiets.bienTheSanPham.anhBienThe', // Lấy ảnh biến thể
-                'danhGias.user', // Lấy đánh giá của đơn hàng
+                'chiTiets.bienTheSanPham.sanPham',
+                'chiTiets.bienTheSanPham.mauBienThe',
+                'chiTiets.bienTheSanPham.kichThuocBienThe',
+                'chiTiets.bienTheSanPham.anhBienThe',
+                'danhGias.user',
                 'vanChuyen',
+            ])->where('ma_don_hang', $maDonHang)->firstOrFail();
 
-            ])->where('ma_don_hang', $maDonHang)->first();
-
-            // Tính toán tổng số lượng và tổng tiền
             $tongSoLuong = $donHang->chiTiets->sum('so_luong');
             $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
 
-            // Chuẩn bị dữ liệu đơn hàng chi tiết với tên sản phẩm, ảnh, số lượng và giá
             $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
-                // Lấy các đường dẫn ảnh biến thể từ bảng anh_bien_thes
                 $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
-
-                // Lấy ảnh sản phẩm (giả sử có một trường duong_dan_anh trong bảng san_phams)
                 $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
 
                 return [
                     'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
-                    'anh_san_pham' => $anhSanPham, // Ảnh sản phẩm
-                    'anh_bien_the' => $anhBienThe, // Ảnh biến thể
+                    'anh_san_pham' => $anhSanPham,
+                    'anh_bien_the' => $anhBienThe,
                     'so_luong' => $chiTiet->so_luong,
                     'gia' => $chiTiet->gia,
                     'thanh_tien' => $chiTiet->thanh_tien,
                 ];
             });
-            // Lấy đánh giá của đơn hàng
-            $danhGiaDonHang = $donHang->danhGia;
-            $danhGiaData = null;
-            if ($danhGiaDonHang) {
-                $danhGiaData = [
-                    'so_sao_san_pham' => $danhGiaDonHang->so_sao_san_pham,
-                    'so_sao_dich_vu_van_chuyen' => $danhGiaDonHang->so_sao_dich_vu_van_chuyen,
-                    'chat_luong_san_pham' => $danhGiaDonHang->chat_luong_san_pham,
-                    'mo_ta' => $danhGiaDonHang->mo_ta,
-                    'phan_hoi' => $danhGiaDonHang->phan_hoi,
-                    'huu_ich' => $danhGiaDonHang->huu_ich
-                ];
-            }
 
-            if (
-                $donHang->ten_nguoi_dat_hang == ""
-                && $donHang->so_dien_thoai_nguoi_dat_hang == ""
-                && $donHang->dia_chi_nguoi_dat_hang == ""
-            ) {
-                $thongTin = $donHang->user;
-            } else {
-                $thongTin = [
-                    'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang === "" ? ($donHang->user->ho . " " . $donHang->user->ten) : $donHang->ten_nguoi_dat_hang,
-                    'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang === "" ? $donHang->user->so_dien_thoai : $donHang->so_dien_thoai_nguoi_dat_hang,
-                    'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang === "" ? $donHang->user->dia_chi : $donHang->dia_chi_nguoi_dat_hang
+            $danhGiaDonHang = $donHang->danhGias->map(function ($danhGia) {
+                return [
+                    'so_sao_san_pham' => $danhGia->so_sao_san_pham,
+                    'so_sao_dich_vu_van_chuyen' => $danhGia->so_sao_dich_vu_van_chuyen,
+                    'chat_luong_san_pham' => $danhGia->chat_luong_san_pham,
+                    'mo_ta' => $danhGia->mo_ta,
+                    'phan_hoi' => $danhGia->phan_hoi,
+                    'huu_ich' => $danhGia->huu_ich
                 ];
-            }
+            });
+
+            $thongTin = [
+                'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang ?: ($donHang->user->ho . " " . $donHang->user->ten),
+                'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang ?: $donHang->user->so_dien_thoai,
+                'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang ?: $donHang->user->dia_chi
+            ];
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -249,7 +234,7 @@ class DonHangClientController extends Controller
                     'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
-                    'danh_gia' => $danhGiaData // Thông tin đánh giá
+                    'danh_gia' => $danhGiaDonHang
                 ]
             ], 200);
         } catch (\Exception $e) {
@@ -400,10 +385,10 @@ class DonHangClientController extends Controller
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Đơn hàng đã được đặt',
-                'noi_dung' => 'Đơn hàng đã được đặt',
+                'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là sau: ' . $donHang->ma_don_hang,
                 'loai' => 'Đơn hàng',
                 'duong_dan' => 'don-hang',
-                'loai_duong_dan' => 'don-hang',
+                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 'id_duong_dan' => $donHang->id,
             ]);
 

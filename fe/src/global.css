@@ -32,6 +32,33 @@ input[id="numberInput"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+/* Add these styles to customize Ant Design Menu */
+.ant-menu-inline {
+  border-right: none !important;
+}
+
+.ant-menu-submenu-title:hover,
+.ant-menu-item:hover {
+  background-color: black !important;
+  color: white !important;
+}
+
+.ant-menu-submenu-arrow::before,
+.ant-menu-submenu-arrow::after {
+  background-color: currentColor !important;
+}
+
+.ant-menu-item a:hover {
+  color: white !important;
+}
+
+.ant-menu-submenu-title {
+  padding-left: 20px !important;
+}
+
+.ant-menu-sub.ant-menu-inline {
+  background: transparent !important;
+}
 
 .rotated-header-table .ant-table-thead > tr > th {
   height: 150px; /* Điều chỉnh giá trị này theo nhu cầu của bạn */

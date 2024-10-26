@@ -42,7 +42,7 @@ function App() {
     }
 
     const channelName = `thong-bao`;
-    // console.log(`Đang lắng nghe kênh: ${channelName}`);
+    console.log(`Đang lắng nghe kênh: ${channelName}`);
 
     echo
       .channel(channelName)

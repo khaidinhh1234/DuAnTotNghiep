@@ -12,20 +12,6 @@ class ThongBaoController extends Controller
 {
     /**
      */
-    public function index()
-    {
-        try {
-            $data = ThongBao::where('user_id', Auth::id())
-                ->orderByDesc('id')
-                ->get();
-
-            return response()->json($data);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'message' => $exception->getMessage()
-            ], 500);
-        }
-    }
 
     /**
      */
@@ -68,12 +54,12 @@ class ThongBaoController extends Controller
                 ], 404);
             }
 
-            $thongBao->da_doc = 1;
+            $thongBao->trang_thai_da_doc = 1;
             $thongBao->save();
 
             return response()->json([
                 'message' => 'Thông báo đã được đánh dấu là đã xem.',
-                'thong_bao' => $thongBao
+                'thong_bao' => $thongBao,
             ]);
         } catch (\Exception $exception) {
             return response()->json([
@@ -81,4 +67,6 @@ class ThongBaoController extends Controller
             ], 500);
         }
     }
+
+
 }
