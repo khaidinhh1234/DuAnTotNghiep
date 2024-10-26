@@ -22,11 +22,8 @@ class GioHangController extends Controller
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
                 ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                 ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
-                ->leftJoin('anh_bien_thes', function($join) {
-                    $join->on('bien_the_san_phams.id', '=', 'anh_bien_thes.bien_the_san_pham_id')
-                        ->whereRaw('anh_bien_thes.id = (SELECT MIN(id) FROM anh_bien_thes WHERE bien_the_san_pham_id = bien_the_san_phams.id)');
-                })
                 ->where("gio_hangs.deleted_at", null)
+                ->where('gio_hangs.user_id', $userId)
                 ->select(
                     'gio_hangs.id',
                     'gio_hangs.bien_the_san_pham_id',
@@ -39,13 +36,17 @@ class GioHangController extends Controller
                     'bien_the_san_phams.gia_khuyen_mai',
                     'bien_the_san_phams.gia_khuyen_mai_tam_thoi',
                     'bien_the_mau_sacs.ten_mau_sac as mau_sac',
-                    'bien_the_kich_thuocs.kich_thuoc',
-                    'anh_bien_thes.duong_dan_anh as hinh_anh'
+                    'bien_the_kich_thuocs.kich_thuoc'
                 )
-                ->where('gio_hangs.user_id', $userId)
                 ->get();
 
             $gioHangs->transform(function($item) {
+                $bienThe = BienTheSanPham::with(['anhBienThe' => function($query) {
+                    $query->first();
+                }])->find($item->bien_the_san_pham_id);
+
+                $item->hinh_anh = optional($bienThe->anhBienThe->first())->duong_dan_anh;
+
                 $item->gia_hien_tai = $item->gia_ban;
                 $item->gia_cu = null;
 
@@ -56,8 +57,6 @@ class GioHangController extends Controller
                     $item->gia_hien_tai = $item->gia_khuyen_mai;
                     $item->gia_cu = $item->gia_ban;
                 }
-
-
 
                 return $item;
             });
@@ -90,7 +89,6 @@ class GioHangController extends Controller
         }
     }
 
-
     public function store(Request $request)
     {
         try {
@@ -113,7 +111,7 @@ class GioHangController extends Controller
                     'status' => false,
                     'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
                 ], 400);
-            }   
+            }
 
             $gioHang = GioHang::updateOrCreate(
                 [
