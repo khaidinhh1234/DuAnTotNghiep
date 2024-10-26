@@ -132,12 +132,14 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible  }) => {
         </div>
       ))}
     </div>
-    <div className="text-center mt-1">
-      <Link to={`/gio-hang`} className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center">
-        <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
-      </Link> 
-    </div>
-  
+    {totalUniqueProducts > 3 && (
+      <div className="text-center mt-1">
+        <Link to={`/gio-hang`} className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center">
+          <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
+        </Link>
+      </div>
+    )}
+
     <div className="flex justify-between items-center mt-3 pt-3 border-t">
       <span className="font-semibold">Tổng cộng</span>
       <span className="font-semibold">{formatCurrency(subtotal)}</span>
