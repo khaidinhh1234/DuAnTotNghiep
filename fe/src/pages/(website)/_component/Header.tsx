@@ -7,13 +7,10 @@ import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
-<<<<<<< HEAD
 import Notifications from './Notifications';
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-=======
-import Notifications from "./Notifications";
->>>>>>> efcbf48510ec1c7055817d0ab39a7e6725b5cb0a
+
 interface Category {
   id: number;
   ten_danh_muc: string;
