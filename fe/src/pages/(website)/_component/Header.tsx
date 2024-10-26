@@ -389,28 +389,6 @@ const Header = () => {
                       <Notifications />
                     </div>
                   </span>
-<<<<<<< HEAD
-                  <span
-                    ref={notificationRef}
-                    className="relative"
-                    onMouseEnter={() => setShowNotifications(true)}
-                    onMouseLeave={() => setShowNotifications(false)}
-                  >
-                    <i className="fa-regular fa-bell text-xl relative cursor-pointer">
-                      <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                        0
-                      </span>
-                    </i>
-
-                    <div
-                      className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                        }`}
-                    >
-                      <Notifications />
-                    </div>
-                  </span>
-=======
->>>>>>> efcbf48510ec1c7055817d0ab39a7e6725b5cb0a
                   <span
                     ref={cartRef}
                     onMouseEnter={() => setIsCartVisible(true)}
