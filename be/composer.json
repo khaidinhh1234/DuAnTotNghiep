@@ -9,7 +9,7 @@
         "barryvdh/laravel-dompdf": "^3.0",
         "cloudinary-labs/cloudinary-laravel": "^2.2",
         "gregwar/captcha": "^1.2",
-        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
