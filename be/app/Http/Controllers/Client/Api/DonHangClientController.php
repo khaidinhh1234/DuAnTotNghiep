@@ -191,9 +191,6 @@ class DonHangClientController extends Controller
                 'vanChuyen',
             ])->where('ma_don_hang', $maDonHang)->firstOrFail();
 
-            $tongSoLuong = $donHang->chiTiets->sum('so_luong');
-            $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
-
             $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
                 $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
                 $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
@@ -201,10 +198,12 @@ class DonHangClientController extends Controller
                 return [
                     'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
                     'anh_san_pham' => $anhSanPham,
+                    'mau_bien_the' => $chiTiet->bienTheSanPham->mauBienThe->ten_mau_sac,
+                    'kich_thuoc_bien_the' => $chiTiet->bienTheSanPham->kichThuocBienThe->kich_thuoc,
                     'anh_bien_the' => $anhBienThe,
                     'so_luong' => $chiTiet->so_luong,
-                    'gia' => $chiTiet->gia,
-                    'thanh_tien' => $chiTiet->thanh_tien,
+                    'gia' => $chiTiet->bianTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban,
+                    'thanh_tien' => $chiTiet->so_luong * ($chiTiet->bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban),
                 ];
             });
 
@@ -224,6 +223,9 @@ class DonHangClientController extends Controller
                 'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang ?: $donHang->user->so_dien_thoai,
                 'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang ?: $donHang->user->dia_chi
             ];
+
+            $tongSoLuong = $donHang->chiTiets->sum('so_luong');
+            $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
 
             return response()->json([
                 'status' => true,

@@ -84,7 +84,7 @@ Route::middleware([])
             Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
 
             Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
-        })->middleware('throttle:100,1');
+        })->middleware('throttle:10000,1');
 
 
         //Client Chi tiết sản phẩm
