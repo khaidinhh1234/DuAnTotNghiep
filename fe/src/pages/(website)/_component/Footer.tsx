@@ -120,7 +120,7 @@ const Footer = () => {
             <div>
               <img src={bank} alt="" className="h-7" />
             </div>
-            <div>© 2024 Krist All Rights are Reserved.</div>
+            <div>© 2024 Glow Clothing.</div>
             <div className="*:text-2xl *:px-3">
               <a
                 href={websiteInfo?.link_facebook}

@@ -36,6 +36,11 @@ class TrangChiTietSpController extends Controller
             foreach ($chiTietSanPham->danhGias as $danhGia) {
                 $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->where('user_id', $user->id)->exists();
             }
+            if ($chiTietSanPham->khachHangYeuThich->pluck('id')->first() == $user->id) {
+                $chiTietSanPham['trang_thai_yeu_thich'] = true;
+            } else {
+                $chiTietSanPham['trang_thai_yeu_thich'] = false;
+            }
 
             return response()->json([
                 'status' => true,
