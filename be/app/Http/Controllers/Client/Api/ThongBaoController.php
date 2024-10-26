@@ -12,6 +12,20 @@ class ThongBaoController extends Controller
 {
     /**
      */
+    public function index()
+    {
+        try {
+            $data = ThongBao::where('user_id', Auth::id())
+                ->orderByDesc('id')
+                ->get();
+
+            return response()->json($data);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'message' => $exception->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      */
