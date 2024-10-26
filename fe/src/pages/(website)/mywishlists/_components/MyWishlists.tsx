@@ -25,7 +25,7 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
       queryClient.invalidateQueries({ queryKey: ["SANPHAM_YEUTHICH"] });
     },
   });
-
+  console.log(yeuthich);
   return (
     <>
       <div className="lg:col-span-9  col-span-8 mx-auto">
@@ -55,7 +55,7 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
                         className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
                       />
                     </Link>
-                    <View id={product?.id} />
+                    <View id={product?.duong_dan} ID={product?.id} />
                   </div>
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
                     <Link to={`/product-detail/${product.duong_dan}`}>
@@ -66,26 +66,22 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
                     </Link>
 
                     <p className="font-semibold text-lg">
-                      {/* {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
-                            <>
-                              {(product?.gia_cao_nhat ?? 0).toLocaleString(
-                                "vi-VN"
-                              )}{" "}
-                              đ
-                            </>
-                          ) : (
-                            <> */}
-                      {/* {(product?.gia_thap_nhat ?? 0).toLocaleString(
-                                "vi-VN"
-                              )}{" "} */}{" "}
-                      12341243214 đ
-                      <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
-                      {/* {(product?.gia_cao_nhat ?? 0).toLocaleString(
-                                "vi-VN"
-                              )}{" "} */}
-                      1231294u324 đ
-                      {/* </>
-                          )} */}
+                      {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
+                        <>
+                          {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")}{" "}
+                          đ
+                        </>
+                      ) : (
+                        <>
+                          {(product?.gia_thap_nhat ?? 0).toLocaleString(
+                            "vi-VN"
+                          )}{" "}
+                          12341243214 đ
+                          <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
+                          {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")}{" "}
+                          1231294u324 đ
+                        </>
+                      )}
                     </p>
                   </div>{" "}
                 </div>

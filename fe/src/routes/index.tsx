@@ -68,7 +68,7 @@ import Contact from "@/pages/(website)/contact/Contact";
 import HomePage from "@/pages/(website)/home/page";
 import LayoutWebsite from "@/pages/(website)/layout";
 import ManageAddresses from "@/pages/(website)/manageaddresses/ManageAddresses";
-import Minicard from "@/pages/(website)/MInicard/Minicard";
+// import Minicard from "@/pages/(website)/MInicard/Minicard";
 import MyOrder from "@/pages/(website)/myOrder/Myorder";
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
 import MyWishlists from "@/pages/(website)/mywishlists/MyWishlists";
@@ -134,6 +134,8 @@ import MyProfileedit from "@/pages/(website)/myprofile/MyProfileedit";
 import LayoutMyPro from "@/pages/(website)/layoutmypro";
 import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
 import Notifications from "@/pages/(website)/_component/Notifications";
+import NewDetail from "@/pages/(website)/newdetail/NewDetail";
+import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 
 const Router = () => {
   //
@@ -152,14 +154,14 @@ const Router = () => {
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
           <Route path="/minicard" element={<Notifications />} />
           <Route path="/vourcher" element={<Voucher />} />
-          {/* <Route path="/myorder" element={<MyOrder />} /> */}
+          <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
           <Route path="/payment" element={<Payment />} />{" "}
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<SheetSide />} />{" "}
           <Route
-            path="/ShippingAddressPage"
+            path="/shippingAddressPage"
             element={<ShippingAddressPage />}
           />
           <Route path="*" element={<NotFoundPage />} />
@@ -172,6 +174,8 @@ const Router = () => {
             <Route path="/mypro/mywishlist" element={<MyWishlists />} />{" "}
             <Route path="/mypro/savedcard" element={<SavedCard />} />{" "}
             <Route path="/mypro/notification" element={<Notification />} />{" "}
+            <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
+
             <Route path="/mypro/setting" element={<Setting />} />
             <Route
               path="/mypro/manageaddresses"
@@ -179,6 +183,8 @@ const Router = () => {
             />{" "}
             <Route path="***" element={<NotFoundPage />} />
           </Route>
+          {/* chi tiết bài viêt */}
+          <Route path="/new-detail" element={<NewDetail/>}/>
         </Route>
         {/* TRang admin */}
         <Route

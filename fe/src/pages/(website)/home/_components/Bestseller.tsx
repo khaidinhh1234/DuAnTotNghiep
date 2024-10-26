@@ -27,7 +27,7 @@ const Bestseller = ({ products }: any) => {
     mutationFn: async (id: any) => {
       try {
         const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
-        // console.log(response.data);
+
         if (
           response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
         ) {
@@ -47,14 +47,15 @@ const Bestseller = ({ products }: any) => {
       }
     },
     onSuccess: () => {
-      queryclient.invalidateQueries({ queryKey: ["SANPHAM_YEUTHICH"] });
+      queryclient.invalidateQueries({
+        queryKey: ["PRODUCTS_KEY"],
+      });
     },
   });
-
+  console.log(products);
   return (
     <>
       <section>
-        {/* <!-- Our Bestseller --> */}
         <div className="container mb-28">
           <div className="flex justify-center mb-5">
             <h1 className="md:text-4xl text-3xl font-semibold tracking-[1px]">
@@ -74,15 +75,19 @@ const Bestseller = ({ products }: any) => {
                   <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
                     {isPending ? (
                       <span>
-                        <i className="z-20 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                        <i className="z-10 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                       </span>
                     ) : (
-                      <span onClick={() => mutate(product.duong_dan)}>
-                        <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                      <span onClick={() => mutate(product?.id)}>
+                        <i
+                          className={`${product?.yeu_thich ? "text-red-500" : "text-black hover:text-white"} z-10 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black  w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
+                        />
                       </span>
                     )}
                     <a href="#">
-                      <i className="z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                      <i
+                        className={`z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
+                      />
                     </a>
 
                     <Link to={`/product-detail/${product.duong_dan}`}>
@@ -105,7 +110,7 @@ const Bestseller = ({ products }: any) => {
                         )}
                       </div>{" "}
                     </Link>
-                    <View id={product?.duong_dan} />
+                    <View id={product?.duong_dan} ID={product?.id} />
                   </div>
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
                     <Link to={`/product-detail/${product.duong_dan}`}>

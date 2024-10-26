@@ -35,7 +35,7 @@ const markAsRead = async (id: number) => {
 
 const markAllAsRead = async (notifications: Notification[] | undefined) => {
   const unreadNotifications = notifications?.filter(
-    notif => notif.trang_thai_da_doc === "0" && notif.loai === "Đơn hàng"
+    notif => notif.trang_thai_da_doc === "0" && notif.loai === "Khuyến mãi"
   ) || [];
   
   const promises = unreadNotifications.map(notification => 
@@ -74,9 +74,9 @@ const NotificationPage = () => {
     }
   };
 
-  if (isLoading) return <div></div>;
+  if (isLoading) return <div>Loading...</div>;
 
-  const orderNotifications = notifications?.filter(notif => notif.loai === "Đơn hàng") || [];
+  const orderNotifications = notifications?.filter(notif => notif.loai === "Khuyến mãi") || [];
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedNotifications = orderNotifications.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
@@ -104,7 +104,7 @@ const NotificationPage = () => {
           <h1 className="text-xl font-bold">Thông báo Đơn hàng</h1>
         </div>
         <div className="flex flex-col items-center justify-center py-10 pt-36">
-          <img src="/public/Shop.png" alt="No Product" className="w-48 h-48" />
+          <img src="/public/tb.png" alt="No Product" className="w-32 h-32" />
           <p className="text-gray-500 mt-10">Chưa có thông báo đơn hàng nào</p>
         </div>
       </div>
@@ -133,8 +133,8 @@ const NotificationPage = () => {
               key={notification.id} 
               className={`flex justify-between items-end border-b border-hrBlack pb-5 mb-5 cursor-pointer transition-colors duration-200 ${
                 notification.trang_thai_da_doc === "0" 
-                  ? 'bg-gray-100 hover:bg-white' 
-                  : 'bg-white hover:bg-gray-100'
+                ? 'bg-gray-100 hover:bg-white' 
+                : 'bg-white hover:bg-gray-100'
               }`}
               onClick={() => handleNotificationClick(notification)}
             >

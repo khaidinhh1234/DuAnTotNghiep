@@ -1,4 +1,5 @@
 import { story } from "@/assets/img";
+import { Link } from "react-router-dom";
 
 const InstagramStories = () => {
   return (
@@ -18,6 +19,7 @@ const InstagramStories = () => {
                   <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">
                     <i className="fa-solid fa-blog text-2xl"></i>
                   </button>
+                  <Link to='/new-detail'>
                   <img
                     src={
                       "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729841526/hruli44upyhqo4fpra1i.webp"
@@ -25,6 +27,7 @@ const InstagramStories = () => {
                     alt=""
                     className="w-full h-full bg-center bg-cover bg-no-repeat"
                   />
+                  </Link>
                 </div>
                 <div className="xl:col-span-3 lg:col-span-4 md:col-span-6 col-span-12 relative w-[300px] h-[300px] product-card mx-auto">
                   <button className="btn absolute w-11 h-11 px-2  bg-white top-[120px] left-[120px] rounded-full invisible opacity-0 transition-opacity duration-300">

@@ -16,7 +16,7 @@ const ProductItem = ({
   ma_don_hang,
   pricesale,
 }: any) => {
-  // console.log(chi_tiet_don_hangs);
+  console.log(chi_tiet_don_hangs);
   // console.log(status);
   return (
     <>
@@ -33,9 +33,31 @@ const ProductItem = ({
                     className="w-20 h-24 rounded-md mb-5"
                   />
                   <span
-                    className={`text-xs px-3 py-1 rounded-sm ${status == "Hoàn tất đơn hàng" ? "delivered" : "inprocrass"}`}
+                    className={`text-xs px-2 py-1 rounded-sm ${
+                      status == "Chờ xác nhận"
+                        ? "inprocrass"
+                        : status == "Đã xác nhận"
+                          ? "bg-orange-100 text-orange-500 rounded-md"
+                          : status == "Đang xử lý"
+                            ? "bg-blue-100 text-blue-500 rounded-md"
+                            : status == "Đang giao hàng"
+                              ? "bg-violet-100 text-violet-500 rounded-md"
+                              : status == "Chờ khách hàng xác nhận"
+                                ? "bg-yellow-100 text-yellow-500 rounded-md"
+                                : status == "Hoàn tất đơn hàng"
+                                  ? "delivered"
+                                  : status == "Đơn hàng bị từ chối nhân"
+                                    ? "bg-red-100 text-red-500 rounded-md"
+                                    : "bg-red-100 text-red-500 rounded-md"
+                    }`}
                   >
-                    {status}
+                    {status === "Đang xử lý"
+                      ? "Chờ lấy hàng"
+                      : status == "Chờ khách hàng xác nhận"
+                        ? "Giao thành công"
+                        : status == "Đơn hàng bị từ chối nhân"
+                          ? "Hoàn hàng"
+                          : status}
                   </span>
                 </div>
                 <div className="px-1">
@@ -49,16 +71,25 @@ const ProductItem = ({
                     , Màu: <span>{mau}</span>
                   </p>
                   <p className="mb-10">Số lượng: {quantity}</p>{" "}
-                  <span className="">Sản phẩm của bạn đã {status}</span>
+                  <span className="">
+                    Sản phẩm của bạn đã{" "}
+                    {status === "Đang xử lý"
+                      ? "Chờ lấy hàng"
+                      : status == "Chờ khách hàng xác nhận"
+                        ? "Giao thành công"
+                        : status == "Đơn hàng bị từ chối nhân"
+                          ? "từ chối nhân"
+                          : status}
+                  </span>
                 </div>
               </div>{" "}
             </div>
             <div className={`text-center py-8 font-bold md:block  hidden`}>
               <p>
                 {" "}
-                <span className="text-gray-400 line-through">
+                {/* <span className="text-gray-400 line-through">
                   {price.toLocaleString("vi-VN")} đ{" "}
-                </span>
+                </span> */}
                 {pricesale.toLocaleString("vi-VN")} đ
               </p>
             </div>
@@ -79,15 +110,25 @@ const ProductItem = ({
             </button>
           </Link>
           <br />
-          <button
-            className={`${
-              status === "Hoàn tất đơn hàng"
-                ? "bg-black hover:bg-black/50"
-                : "bg-[#FF7262] hover:bg-[#e9b2ac]"
-            } shadow-lg shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg`}
-          >
-            {status === "Hoàn tất đơn hàng" ? "Đánh giá" : "Hủy Đơn Hàng"}
-          </button>
+          {(status === "Chờ xác nhận" ||
+            status === "Đã xác nhận" ||
+            status === "Hoàn tất đơn hàng" ||
+            status === "Chờ khách hàng xác nhận") && (
+            <button
+              className={`${
+                status === "Hoàn tất đơn hàng" ||
+                status === "Chờ khách hàng xác nhận"
+                  ? "bg-black hover:bg-black/50"
+                  : "bg-[#FF7262] hover:bg-[#e9b2ac]"
+              } shadow-lg shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg`}
+            >
+              {status === "Hoàn tất đơn hàng"
+                ? "Đánh giá"
+                : status === "Chờ khách hàng xác nhận"
+                  ? "Đã nhận hàng"
+                  : "Hủy Đơn Hàng"}
+            </button>
+          )}
         </div>
         <div className="col-span-7 text-end border-t mt-2 py-3">
           {" "}
@@ -104,22 +145,24 @@ const ProductItem = ({
 
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang }: any) => {
-  console.log(donhang);
-  const chi_tiet_don_hangs = donhang?.map((item: any) => {
-    return item?.chi_tiet_don_hangs[0]; // Trả về chi tiết của từng đơn hàng
+  const don_hang = donhang.don_hang;
+  // console.log(don_hang);
+  const chi_tiet_don_hangs = don_hang?.map((item: any) => {
+    return item?.chi_tiets[0]; // Trả về chi tiết của từng đơn hàng
   });
 
   const chitiet = chi_tiet_don_hangs[0];
-  // console.log(chitiet);
+  console.log(chitiet);
   return (
     <div className="lg:col-span-9 col-span-8 lg:pl-9">
-      {donhang?.map((item: any, index: number) => (
+      {don_hang?.map((item: any, index: number) => (
         <ProductItem
           status={item?.trang_thai_don_hang ?? "Đang xử lý"}
           pricesale={chitiet?.thanh_tien ?? 0}
           price={chitiet?.gia ?? 0}
           img={
-            "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729223981/ao-khoac-nu-SKN7004-DEN_1_jjbtoe.webp"
+            chitiet?.bien_the_san_pham?.anh_bien_the[0].duong_dan_anh ??
+            sanPham2
           }
           name="Váy In Họa Tiết Moana Hồng"
           size={
@@ -132,7 +175,7 @@ const ProductList = ({ donhang }: any) => {
           mau={chitiet?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac ?? "Đen"}
           quantity={chitiet?.so_luong ?? 1}
           key={index}
-          chi_tiet_don_hangs={item?.chi_tiet_don_hangs ?? []}
+          chi_tiet_don_hangs={item?.chi_tiets ?? []}
           tong_tien={item?.tong_tien_don_hang ?? 0}
           ma_don_hang={item?.ma_don_hang ?? ""}
         />

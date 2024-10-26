@@ -10,6 +10,9 @@ const MyOrder = () => {
     queryFn: async () => {
       try {
         const response = await instanceClient.get("don-hang");
+        if (response.status !== 200) {
+          throw new Error("Lỗi khi lấy thông tin");
+        }
         return response.data;
       } catch (error) {
         throw new Error("Lỗi khi lấy thông tin");
@@ -22,9 +25,9 @@ const MyOrder = () => {
   if (isError) {
     return <div>Error</div>;
   }
-  // console.log(data?.data);
+  // console.log("data", data);
   const donhang = data?.data || [];
-  // console.log(donhang);
+  // console.log("donhang", donhang);
   return (
     <>
       {/* <section className="container ">
