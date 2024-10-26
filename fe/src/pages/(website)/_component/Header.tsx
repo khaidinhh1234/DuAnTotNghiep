@@ -164,6 +164,27 @@ const Header = () => {
       }
     },
   });
+
+  const { data: dataCount, error, isLoading } = useQuery({
+    queryKey: ['thong_bao'],
+    queryFn: async () => {
+      const response = await instanceClient.get(`/thong-bao`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+      if (!response?.data?.thong_bao_chua_doc) {
+        throw new Error("No thong_bao_chua_doc data found");
+      }
+      return response.data.thong_bao_chua_doc;
+    },
+    onError: (error) => {
+      console.error("Error fetching thong_bao data:", error);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+
   const MenuList = [
     {
       name: "Trang chủ",
@@ -375,7 +396,7 @@ const Header = () => {
                   >
                     <i className="fa-regular fa-bell text-xl relative cursor-pointer">
                       <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                        0
+                        {dataCount}
                       </span>
                     </i>
 
