@@ -19,7 +19,7 @@ const Voucher = () => {
   // ];
   const [activeTab, setActiveTab] = useState("account");
 
-  console.log(activeTab);
+  // console.log(activeTab);
   return (
     <div>
       <div>
@@ -238,8 +238,8 @@ const Voucher = () => {
                           spaceBetween: 30,
                         },
                       }}
-                      onSwiper={(swiper) => console.log(swiper)}
-                      onSlideChange={() => console.log("slide change")}
+                      // onSwiper={(swiper) => console.log(swiper)}
+                      // onSlideChange={() => console.log("slide change")}
                     >
                       <SwiperSlide>
                         {" "}
@@ -250,38 +250,38 @@ const Voucher = () => {
                               alt=""
                             />
                           </div>
-                          <div className="absolute top-7     left-5 grid grid-cols-6 ">
+                          <div className="absolute top-7 left-5 grid grid-cols-6">
                             <div className="md:w-[125px] col-span-2 text-center">
-                              <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
+                              <div className="border border-black w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
                                 <img
-                                  src="../assets/images/Logo.svg "
+                                  src="../assets/images/Logo.svg"
                                   alt=""
                                   className="w-10 h-10 px-1"
                                 />
                               </div>
-                              <h3 className="md:text-xl  text-base font-bold h-10 text-[#fe4960]">
+                              <h3 className="md:text-lg text-base font-bold h-10 text-[#fe4960]">
                                 Nệm Thuần Việt
                               </h3>
                             </div>
                             <div className="col-span-4 px-4 text-[#fe4960]">
-                              <h5 className="font-bold md:text-3xl text-xl">
+                              <h5 className="font-bold md:text-2xl text-lg mb-0">
                                 $80.00
                               </h5>
-                              <p className="md:text-xl  text-base">
-                                Min. spend <span>$120.00</span>
+                              <p className="md:text-lg text-base mb-0">
+                                Chi tiêu tối thiểu <span>$120.00</span>
                               </p>
-                              <p className="md:text-xl  text-base">
-                                Valid till <span> 10 Jul, 11:59PM </span>
+                              <p className="md:text-lg text-base mb-0 md:mb-2">
+                                Hạn sử dụng đến <span>10 Tháng 7, 11:59PM</span>
                               </p>
                               <div className="flex justify-between items-center">
                                 <a
                                   href="#"
-                                  className="bg-pink-200 rounded-lg px-2 mr-1 text-xs"
+                                  className="bg-[#fe4960] text-white rounded-lg px-2 mr-1 md:text-base text-sm"
                                 >
-                                  T&amp;C
+                                  T &amp; C
                                 </a>
-                                <button className="bg-gradient-to-r from-orange-600 to-pink-500 px-7 py-1 rounded-lg font-bold md:text-2xl text-white">
-                                  Collect
+                                <button className="bg-gradient-to-r from-orange-600 to-black/50 px-3 py-1 rounded-lg font-bold md:text-xl text-white">
+                                  Thu nhập mã
                                 </button>
                               </div>
                             </div>
@@ -299,7 +299,7 @@ const Voucher = () => {
                           </div>
                           <div className="absolute top-7     left-5 grid grid-cols-6 ">
                             <div className="md:w-[125px] col-span-2 text-center">
-                              <div className="border border-pink-400 w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
+                              <div className="border border-black w-12 h-12 flex justify-center items-center md:mx-10 mx-5 mb-3">
                                 <img
                                   src="../assets/images/Logo.svg "
                                   alt=""
@@ -323,11 +323,11 @@ const Voucher = () => {
                               <div className="flex justify-between items-center">
                                 <a
                                   href="#"
-                                  className="bg-pink-200 rounded-lg px-2 mr-1 text-xs"
+                                  className="bg-black rounded-lg px-2 mr-1 text-xs"
                                 >
                                   T&amp;C
                                 </a>
-                                <button className="bg-gradient-to-r from-orange-600 to-pink-500 px-7 py-1 rounded-lg font-bold md:text-2xl text-white">
+                                <button className="bg-gradient-to-r from-orange-600 to-black px-7 py-1 rounded-lg font-bold md:text-2xl text-white">
                                   Collect
                                 </button>
                               </div>
