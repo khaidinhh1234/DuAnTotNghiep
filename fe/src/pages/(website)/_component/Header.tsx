@@ -10,6 +10,7 @@ import CartOverlay from "./CartOverlay";
 import Notifications from './Notifications';
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
+
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -25,6 +26,7 @@ const Header = () => {
   const cartRef = useRef<HTMLDivElement>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -102,6 +104,8 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0)
+
 
   const handleMouseLeave = () => {
     setTimeout(() => {
@@ -160,7 +164,8 @@ const Header = () => {
       }
     },
   });
-
+  const allItems = [...(data?.san_pham_giam_gia || []), ...(data?.san_pham_nguyen_gia || [])];
+  const totalUniqueProducts = allItems.length;
 
 
   const MenuList = [
@@ -373,19 +378,20 @@ const Header = () => {
                     onMouseLeave={() => setShowNotifications(false)}
                   >
                     <i className="fa-regular fa-bell text-xl relative cursor-pointer">
-                      <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                        vlxx
-                      </span>
+                      {unreadCount > 0 && (
+                        <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                          {unreadCount}
+                        </span>
+                      )}
                     </i>
 
                     <div
-                      className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${
-                        showNotifications
+                      className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications
                           ? "opacity-100"
                           : "opacity-0 pointer-events-none"
-                      }`}
+                        }`}
                     >
-                      <Notifications />
+                      <Notifications onUnreadCountChange={setUnreadCount} />
                     </div>
                   </span>
                   <span
@@ -400,8 +406,7 @@ const Header = () => {
                           className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
                             } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                         >
-                          {data?.tong_so_luong}
-                        </span>
+                          {totalUniqueProducts || 0}                        </span>
                       </i>
                     </a>
                     {/* <div className="absolute top-full left-0 pt-4 w-full"> */}

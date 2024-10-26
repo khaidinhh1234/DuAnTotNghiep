@@ -1,16 +1,25 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import instance from '@/configs/client';
-
+interface NotificationsProps {
+  onUnreadCountChange: (count: number) => void;
+}
 interface Notification {
   id: number;
   tieu_de: string;
   noi_dung: string;
-  hinh_thu_nho: string | null;
+  hinh_thu_nho: string;
   trang_thai_da_doc: "0" | "1";
-  duong_dan: string | null;
+  duong_dan: string;
+  id_duong_dan: string;
   created_at: string;
+}
+
+interface NotificationResponse {
+  data: Notification[];
+  thong_bao_chua_doc: number;
 }
 
 interface NotificationItemProps {
@@ -57,51 +66,51 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onNot
   </li>
 );
 
-const fetchNotifications = async (): Promise<Notification[]> => {
-  const response = await instance.get<Notification[]>('/thong-bao');
-  return response.data.slice(0, 4);};
+const fetchNotifications = async (): Promise<NotificationResponse> => {
+  const response = await instance.get<NotificationResponse>('/thong-bao');
+  return response.data;
+};
 
 const markAsRead = async (notificationId: number): Promise<void> => {
   await instance.post(`/thong-bao/da-doc/${notificationId}`);
 };
 
-
-
-const Notifications: React.FC = () => {
+const Notifications: React.FC<NotificationsProps> = ({ onUnreadCountChange }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  
-  const { data: notifications, isLoading, error } = useQuery<Notification[], Error>({
+
+  const { data: notificationResponse, isLoading, error } = useQuery<NotificationResponse, Error>({
     queryKey: ['notifications'],
     queryFn: fetchNotifications,
     refetchInterval: 30000
   });
-
+  useEffect(() => {
+    if (notificationResponse?.thong_bao_chua_doc !== undefined) {
+      onUnreadCountChange(notificationResponse.thong_bao_chua_doc);
+    }
+  }, [notificationResponse?.thong_bao_chua_doc, onUnreadCountChange]);
   const handleNotificationClick = async (notification: Notification): Promise<void> => {
     if (notification.trang_thai_da_doc === "0") {
       await markAsRead(notification.id);
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     }
     if (notification.duong_dan) {
-      navigate(`/${notification.duong_dan}`);
+      navigate(`/${notification.duong_dan}/${notification.id_duong_dan}`);
     }
   };
 
-
   return (
-<div className="relative w-96 -right-3 bg-white rounded-lg shadow-xl border border-gray-200">
-<div className="absolute -top-2 right-1 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-stone-500"></div>  
-    <div className="p-4 border-b border-gray-200">
+    <div className="relative w-96 -right-3 bg-white rounded-lg shadow-xl border border-gray-200">
+      <div className="absolute -top-2 right-1 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-stone-500"></div>
+      <div className="p-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-gray-900">Thông báo</h2>
-          
+      
         </div>
       </div>
 
-      
       {isLoading ? (
         <div className="p-4 text-center text-gray-500">Đang tải thông báo...</div>
-      ) : error || !notifications?.length ? (
+      ) : error || !notificationResponse?.data.length ? (
         <div className="p-8 text-center">
           <div className="flex flex-col items-center justify-center">
             <svg 
@@ -124,7 +133,7 @@ const Notifications: React.FC = () => {
       ) : (
         <>
           <ul className="divide-y divide-gray-200 max-h-[400px] overflow-y-auto">
-            {notifications.map((notification) => (
+            {notificationResponse.data.map((notification) => (
               <NotificationItem 
                 key={notification.id} 
                 notification={notification}
@@ -136,7 +145,7 @@ const Notifications: React.FC = () => {
           <div className="p-4 border-t border-gray-200">
             <a 
               href="/mypro/notification" 
-              className="block text-center text-sm  text-black-600 hover:text-blue-800"
+              className="block text-center text-sm text-black-600 hover:text-blue-800"
             >
               Xem tất cả
             </a>
