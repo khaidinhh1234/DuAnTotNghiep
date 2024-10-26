@@ -24,11 +24,12 @@ class ThongBaoController extends Controller
                 ->where('trang_thai_da_doc', 0)
                 ->count();
 
-            $thongBaoChuaDocArray = ['thong_bao_chua_doc' => $thongBaoChuaDoc];
+            $json = [
+                'data' => $data,
+                'thong_bao_chua_doc' => $thongBaoChuaDoc
+            ];
 
-            $response = array_merge($data, [$thongBaoChuaDocArray]);
-
-            return response()->json($response);
+            return response()->json($json);
         } catch (\Exception $exception) {
             return response()->json([
                 'message' => $exception->getMessage()

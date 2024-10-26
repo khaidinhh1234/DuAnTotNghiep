@@ -2,51 +2,59 @@
 
 namespace App\Console\Commands;
 
-use App\Models\MaKhuyenMai;
+use App\Models\ChuongTrinhUuDai;
 use App\Models\ThongBao;
+use App\Models\User;
+use App\Models\VaiTro; // Đảm bảo import mô hình VaiTro
 use App\Events\ThongBaoMoi;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 
 class GuiThongBaoKhuyenMai extends Command
 {
-    protected $signature = 'khuyenmai:guithongbao';
-    protected $description = 'Gửi thông báo khi đến ngày sưu tập hoặc ngày bắt đầu của mã khuyến mãi';
+    protected $signature = 'chuongtrinh:guithongbao';
+    protected $description = 'Gửi thông báo khi đến ngày bắt đầu hoặc ngày hiện của chương trình ưu đãi';
 
     public function handle()
     {
         $now = Carbon::now();
 
-        $khuyenMaiSuuTam = MaKhuyenMai::whereDate('ngay_bat_dau_suu_tam', $now->toDateString())
-            ->where('trang_thai', 1)
+        $chuongTrinhUuDai = ChuongTrinhUuDai::where(function ($query) use ($now) {
+            $query->whereDate('ngay_bat_dau', $now->toDateString())
+                ->orWhereDate('ngay_hien_thi', $now->toDateString());
+        })
             ->get();
 
-        foreach ($khuyenMaiSuuTam as $maKhuyenMai) {
-            $thongBao = ThongBao::create([
-                'user_id' => 1,
-                'tieu_de' => 'Sưu tập mã khuyến mãi',
-                'noi_dung' => "Mã khuyến mãi {$maKhuyenMai->ma_code} đã có thể sưu tập!",
-                'loai' => 'khuyen_mai',
-                'duong_dan' => '/khuyen-mai/' . $maKhuyenMai->id
-            ]);
-            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+        foreach ($chuongTrinhUuDai as $chuongTrinh) {
+            $this->sendNotification(
+                'Chương trình ưu đãi mới',
+                "Chương trình ưu đãi '{$chuongTrinh->ten_uu_dai}' đã bắt đầu hoặc đến hạn vào ngày hôm nay!",
+                '/chuong-trinh/' . $chuongTrinh->duong_dan
+            );
         }
 
-        $khuyenMaiBatDau = MaKhuyenMai::whereDate('ngay_bat_dau', $now->toDateString())
-            ->where('trang_thai', 1)
-            ->get();
+        $this->info('Thông báo chương trình ưu đãi đã được gửi.');
+    }
 
-        foreach ($khuyenMaiBatDau as $maKhuyenMai) {
+    /**
+     */
+    private function sendNotification($title, $content, $link)
+    {
+        $users = User::whereHas('vaiTros', function($query) {
+            $query->where('vai_tros.ten_vai_tro', 'Khách hàng');
+        })->get();
+
+        foreach ($users as $user) {
             $thongBao = ThongBao::create([
-                'user_id' => 1, // Thay 1 bằng ID người nhận nếu có thể
-                'tieu_de' => 'Mã khuyến mãi bắt đầu',
-                'noi_dung' => "Mã khuyến mãi {$maKhuyenMai->ma_code} đã bắt đầu!",
-                'loai' => 'khuyen_mai',
-                'duong_dan' => '/khuyen-mai/' . $maKhuyenMai->id
+                'user_id' => $user->id,
+                'tieu_de' => $title,
+                'noi_dung' => $content,
+                'loai' => 'uu_dai',
+                'duong_dan' => $link,
+                'hinh_thu_nho'=> 'https://cuoihoihungthinh.com/wp-content/uploads/2021/09/icon-uu-dai.png'
             ]);
+
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
         }
-
-        $this->info('Thông báo khuyến mãi đã được gửi.');
     }
 }
