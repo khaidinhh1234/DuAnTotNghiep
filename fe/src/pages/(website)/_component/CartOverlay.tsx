@@ -4,21 +4,21 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instance from '@/configs/client';
 import { Link } from 'react-router-dom';
 
-interface CartItem {
-  id: number;
-  ten_san_pham: string;
-  gia_hien_tai: number;
-  so_luong: number;
-  kich_thuoc: string;
-  hinh_anh: string;
-  mau_sac: string;
-}
+// interface CartItem {
+//   id: number;
+//   ten_san_pham: string;
+//   gia_hien_tai: number;
+//   so_luong: number;
+//   kich_thuoc: string;
+//   hinh_anh: string;
+//   mau_sac: string;
+// }
 
-interface CartData {
-  san_pham_giam_gia: CartItem[];
-  san_pham_nguyen_gia: CartItem[];
-  tong_so_luong: number;
-}
+// interface CartData {
+//   san_pham_giam_gia: CartItem[];
+//   san_pham_nguyen_gia: CartItem[];
+//   tong_so_luong: number;
+// }
 
 interface CartOverlayProps {
   isVisible: boolean;
@@ -125,19 +125,21 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible  }) => {
           <button
             className="text-red-500 hover:text-red-700 ml-2"
             onClick={() => handleDelete(item.id)}
-            disabled={deleteMutation.isLoading}
+            disabled={deleteMutation.isPending}
           >
             <i className="fa-regular fa-trash-can pr-2"></i>
           </button>
         </div>
       ))}
     </div>
-    <div className="text-center mt-1">
-      <Link to={`/gio-hang`} className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center">
-        <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
-      </Link> 
-    </div>
-  
+    {totalUniqueProducts > 3 && (
+      <div className="text-center mt-1">
+        <Link to={`/gio-hang`} className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center">
+          <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
+        </Link>
+      </div>
+    )}
+
     <div className="flex justify-between items-center mt-3 pt-3 border-t">
       <span className="font-semibold">Tổng cộng</span>
       <span className="font-semibold">{formatCurrency(subtotal)}</span>

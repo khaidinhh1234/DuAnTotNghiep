@@ -68,7 +68,7 @@ import Contact from "@/pages/(website)/contact/Contact";
 import HomePage from "@/pages/(website)/home/page";
 import LayoutWebsite from "@/pages/(website)/layout";
 import ManageAddresses from "@/pages/(website)/manageaddresses/ManageAddresses";
-import Minicard from "@/pages/(website)/MInicard/Minicard";
+// import Minicard from "@/pages/(website)/MInicard/Minicard";
 import MyOrder from "@/pages/(website)/myOrder/Myorder";
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
 import MyWishlists from "@/pages/(website)/mywishlists/MyWishlists";
@@ -135,6 +135,7 @@ import LayoutMyPro from "@/pages/(website)/layoutmypro";
 import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
 import Notifications from "@/pages/(website)/_component/Notifications";
 import NewDetail from "@/pages/(website)/newdetail/NewDetail";
+import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 
 const Router = () => {
   //
@@ -173,6 +174,8 @@ const Router = () => {
             <Route path="/mypro/mywishlist" element={<MyWishlists />} />{" "}
             <Route path="/mypro/savedcard" element={<SavedCard />} />{" "}
             <Route path="/mypro/notification" element={<Notification />} />{" "}
+            <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
+
             <Route path="/mypro/setting" element={<Setting />} />
             <Route
               path="/mypro/manageaddresses"
