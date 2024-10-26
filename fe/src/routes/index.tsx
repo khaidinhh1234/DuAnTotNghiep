@@ -152,14 +152,14 @@ const Router = () => {
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
           <Route path="/minicard" element={<Notifications />} />
           <Route path="/vourcher" element={<Voucher />} />
-          {/* <Route path="/myorder" element={<MyOrder />} /> */}
+          <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
           <Route path="/payment" element={<Payment />} />{" "}
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<SheetSide />} />{" "}
           <Route
-            path="/ShippingAddressPage"
+            path="/shippingAddressPage"
             element={<ShippingAddressPage />}
           />
           <Route path="*" element={<NotFoundPage />} />
