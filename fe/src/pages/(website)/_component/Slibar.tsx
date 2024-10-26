@@ -1,4 +1,3 @@
-
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -13,7 +12,9 @@ const Slibar = () => {
   };
 
   return (
-    <div className={`lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] rounded-lg transition-all duration-300 ${showNotificationMenu ? 'lg:h-[600px]' : 'lg:h-[524px]'}`}>
+    <div
+      className={`lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] rounded-lg transition-all duration-300 ${showNotificationMenu ? "lg:h-[600px]" : "lg:h-[524px]"}`}
+    >
       <div className="flex items-center p-5 border-b border-hrBlack">
         <img
           src={member?.anh_nguoi_dung}
@@ -91,7 +92,9 @@ const Slibar = () => {
                 <i className="fa-regular fa-bell mr-3" />
                 Thông Báo
               </div>
-              <i className={`fa-solid fa-chevron-${showNotificationMenu ? 'up' : 'down'}`} />
+              <i
+                className={`fa-solid fa-chevron-${showNotificationMenu ? "up" : "down"}`}
+              />
             </button>
             {showNotificationMenu && (
               <ul className="pl-8 bg-gray-50">

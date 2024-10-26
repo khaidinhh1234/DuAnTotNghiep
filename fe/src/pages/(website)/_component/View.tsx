@@ -13,8 +13,9 @@ import {
   Thumbs,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-const View = ({ id }: any) => {
+const View = ({ id, ID }: { id: string; ID: number }) => {
   // console.log(id);
+  // console.log(ID);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -27,12 +28,14 @@ const View = ({ id }: any) => {
   const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
     null
   );
-  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null); //laybienthe
+  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
+    null
+  ); //laybienthe
   const [currentImages, setCurrentImages] = useState<string[]>([]);
 
-
   const [user] = useLocalStorage("user" as any, {});
-  const access_token = user.access_token || localStorage.getItem("access_token");
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
   //   console.log(id);
   const { data } = useQuery({
     queryKey: ["PRODUCT_DETAIL", id],
@@ -120,9 +123,9 @@ const View = ({ id }: any) => {
       gia_khuyen_mai: variant?.gia_khuyen_mai,
       anh_san_pham: variant?.anh_bien_the,
     }));
-  const uniqueColors = useMemo(() => {
-    if (!product?.bien_the_san_pham) return new Set();
-    return new Set(
+  const uniqueColors = useMemo<Set<string>>(() => {
+    if (!product?.bien_the_san_pham) return new Set<string>();
+    return new Set<string>(
       product.bien_the_san_pham.map(
         (variant: any) => variant.mau_bien_the.ma_mau_sac
       )
@@ -173,7 +176,11 @@ const View = ({ id }: any) => {
           v?.kich_thuoc_bien_the?.kich_thuoc === size
       );
       if (variant) {
-        setCurrentImages(variant.anh_bien_the.map((img: { duong_dan_anh: string }) => img?.duong_dan_anh));
+        setCurrentImages(
+          variant.anh_bien_the.map(
+            (img: { duong_dan_anh: string }) => img?.duong_dan_anh
+          )
+        );
       }
     }
   };
@@ -204,12 +211,12 @@ const View = ({ id }: any) => {
     }
   }, [product]);
   // add to cart
-  const [quantity, setQuantity] = useState<number>(1)
+  const [quantity, setQuantity] = useState<number>(1);
 
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
       const response = await instanceClient.post(
-        '/gio-hang',
+        "/gio-hang",
         {
           bien_the_san_pham_id: variantId,
           so_luong: quantity,
@@ -225,25 +232,26 @@ const View = ({ id }: any) => {
     onSuccess: (data) => {
       if (data.status) {
         toast.success(data.message);
-        queryclient.invalidateQueries({ queryKey: ['cart', access_token] }); // Làm mới giỏ hàng
+        queryclient.invalidateQueries({ queryKey: ["cart", access_token] }); // Làm mới giỏ hàng
       } else {
         toast.error(data.message);
       }
     },
     onError: (error: any) => {
       toast.error(
-        error.response?.data?.message || 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.'
+        error.response?.data?.message ||
+          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
 
   const handleAddToCart = () => {
     if (quantity < 1) {
-      toast.error('Số lượng phải lớn hơn hoặc bằng 1');
+      toast.error("Số lượng phải lớn hơn hoặc bằng 1");
       return;
     }
     if (!selectedVariantId) {
-      toast.error('Vui lòng chọn biến thể sản phẩm.');
+      toast.error("Vui lòng chọn biến thể sản phẩm.");
       return;
     }
     addToCart(selectedVariantId); // Truyền ID của biến thể
@@ -472,8 +480,11 @@ const View = ({ id }: any) => {
                   <div className="mt-12 flex gap-5">
                     <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                       <button
-                      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
-                      className="py-2 pr-2">
+                        onClick={() =>
+                          setQuantity((prev) => Math.max(1, prev - 1))
+                        }
+                        className="py-2 pr-2"
+                      >
                         <i className="fa-solid fa-minus" />
                       </button>
                       <input
@@ -483,22 +494,26 @@ const View = ({ id }: any) => {
                         min={1}
                         max={100}
                         value={quantity}
-                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)))}
+                        onChange={(e) =>
+                          setQuantity(Math.max(1, parseInt(e.target.value, 10)))
+                        }
                         className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                       />
                       <button
-                      onClick={() => setQuantity((prev) => prev + 1)}
-                      className="py-2 pl-2">
+                        onClick={() => setQuantity((prev) => prev + 1)}
+                        className="py-2 pl-2"
+                      >
                         <i className="fa-solid fa-plus" />
                       </button>
                     </div>
                     <button
-                    onClick={handleAddToCart}
-                    className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg text-lg font-medium">
+                      onClick={handleAddToCart}
+                      className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg text-lg font-medium"
+                    >
                       Thêm vào giỏ hàng
                     </button>
                     <button
-                      onClick={() => handleClickHeart(id)}
+                      onClick={() => handleClickHeart(ID)}
                       className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
                  
                       `}
