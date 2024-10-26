@@ -134,11 +134,8 @@ const ProductDetail: React.FC = () => {
   const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null); //laybienthe
 
   const [user] = useLocalStorage("user" as any, {});
-  const access_token =
-    user.access_token || localStorage.getItem("access_token");
-  const [selectedColorDisplay, setSelectedColorDisplay] = useState<
-    string | null
-  >(null);
+  const access_token = user.access_token || localStorage.getItem("access_token");
+  const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
   const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
     null
   );
@@ -206,15 +203,15 @@ const ProductDetail: React.FC = () => {
       message.error(error.message || "Có lỗi xảy ra khi thực hiện hành động");
     },
   });
-
+// add to cart
   const [quantity, setQuantity] = useState<number>(1)
 
   const { mutate: addToCart } = useMutation({
-      mutationFn: async (variantId: number) => { 
+    mutationFn: async (variantId: number) => {
       const response = await instanceClient.post(
         '/gio-hang',
         {
-          bien_the_san_pham_id: variantId, 
+          bien_the_san_pham_id: variantId,
           so_luong: quantity,
         },
         {
@@ -242,15 +239,15 @@ const ProductDetail: React.FC = () => {
 
   const handleAddToCart = () => {
     if (quantity < 1) {
-        toast.error('Số lượng phải lớn hơn hoặc bằng 1');
-        return;
+      toast.error('Số lượng phải lớn hơn hoặc bằng 1');
+      return;
     }
     if (!selectedVariantId) {
-        toast.error('Vui lòng chọn biến thể sản phẩm.');
-        return;
+      toast.error('Vui lòng chọn biến thể sản phẩm.');
+      return;
     }
     addToCart(selectedVariantId); // Truyền ID của biến thể
-};
+  };
 
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {
@@ -324,9 +321,9 @@ const ProductDetail: React.FC = () => {
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
     updateImages(color, selectedSize);
-};
+  };
 
-const handleSizeClick = (size: string) => {
+  const handleSizeClick = (size: string) => {
     setSelectedSize(size);
     const selectedVariant = product?.bien_the_san_pham?.find(
       (v) => v?.kich_thuoc_bien_the?.kich_thuoc === size
@@ -334,7 +331,7 @@ const handleSizeClick = (size: string) => {
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedSizeDisplay(size);
     updateImages(selectedColor, size);
-};
+  };
 
 
   const updateImages = (color: string | null, size: string | null) => {
