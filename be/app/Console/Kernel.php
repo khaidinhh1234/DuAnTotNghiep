@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('khuyenmai:update-gia-tam-thoi')->hourly();
         $schedule->command('app:cap-nhat-khach-hang-xac-nhan')->daily();
         $schedule->command('giohang:cap-nhat-gia')->everyMinute();
-
+        $schedule->command('chuongtrinh:guithongbao')->daily();
     }
 
     /**

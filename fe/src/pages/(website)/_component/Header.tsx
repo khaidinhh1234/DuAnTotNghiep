@@ -10,10 +10,6 @@ import CartOverlay from "./CartOverlay";
 import Notifications from './Notifications';
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-<<<<<<< HEAD
-=======
-
->>>>>>> 816f614e7eb32fca74294e34623b8c7686d7377d
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -165,24 +161,6 @@ const Header = () => {
     },
   });
 
-  const { data: dataCount, error, isLoading } = useQuery({
-    queryKey: ['thong_bao'],
-    queryFn: async () => {
-      const response = await instanceClient.get(`/thong-bao`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-      if (!response?.data?.thong_bao_chua_doc) {
-        throw new Error("No thong_bao_chua_doc data found");
-      }
-      return response.data.thong_bao_chua_doc;
-    },
-    onError: (error) => {
-      console.error("Error fetching thong_bao data:", error);
-    },
-    staleTime: 5 * 60 * 1000,
-  });
 
 
   const MenuList = [
@@ -396,7 +374,7 @@ const Header = () => {
                   >
                     <i className="fa-regular fa-bell text-xl relative cursor-pointer">
                       <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                        {dataCount}
+                        vlxx
                       </span>
                     </i>
 
