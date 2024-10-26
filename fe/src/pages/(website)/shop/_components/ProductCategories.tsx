@@ -341,13 +341,13 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                         range
                         defaultValue={[0, 1000000]}
                         max={1000000}
-                        onChange={(value) => {
+                        onAfterChange={(value) => {
                           setPrice(value as [number, number]);
                           mutate();
                         }}
                         tipFormatter={(value: any) =>
                           `${value.toLocaleString()} đ`
-                        } // Định dạng số với dấu phẩy
+                        }
                       />
                     </div>{" "}
                   </div>

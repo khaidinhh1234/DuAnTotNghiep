@@ -152,7 +152,7 @@ const ProductList = ({ donhang }: any) => {
   });
 
   const chitiet = chi_tiet_don_hangs[0];
-  // console.log(chitiet);
+  console.log(chitiet);
   return (
     <div className="lg:col-span-9 col-span-8 lg:pl-9">
       {don_hang?.map((item: any, index: number) => (
@@ -160,7 +160,10 @@ const ProductList = ({ donhang }: any) => {
           status={item?.trang_thai_don_hang ?? "Đang xử lý"}
           pricesale={chitiet?.thanh_tien ?? 0}
           price={chitiet?.gia ?? 0}
-          img={chitiet?.bien_the_san_pham?.san_pham?.anh_san_pham ?? sanPham2}
+          img={
+            chitiet?.bien_the_san_pham?.anh_bien_the[0].duong_dan_anh ??
+            sanPham2
+          }
           name="Váy In Họa Tiết Moana Hồng"
           size={
             chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc ?? "M"

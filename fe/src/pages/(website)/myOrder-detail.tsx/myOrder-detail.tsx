@@ -41,7 +41,7 @@ const MyOrderdetail = () => {
   // console.log(donhang);
   const phoneNumber =
     donhang?.so_dien_thoai_nguoi_dat_hang ?? thongtin?.so_dien_thoai;
-  const formattedPhoneNumber = phoneNumber.replace(/^0/, "(+84)");
+  const formattedPhoneNumber = phoneNumber?.replace(/^0/, "(+84)");
   // console.log(formattedPhoneNumber);
   const current =
     donhang?.trang_thai_don_hang === "Hoàn tất đơn hàng"

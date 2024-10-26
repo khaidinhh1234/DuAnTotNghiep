@@ -5,7 +5,12 @@ import { useState } from "react";
 const Slibar = () => {
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-  console.log(member);
+  const [showNotificationMenu, setShowNotificationMenu] = useState(false);
+
+  const toggleNotificationMenu = () => {
+    setShowNotificationMenu(!showNotificationMenu);
+  };
+
   return (
     <div
       className={`lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] rounded-lg transition-all duration-300 ${showNotificationMenu ? "lg:h-[600px]" : "lg:h-[524px]"}`}

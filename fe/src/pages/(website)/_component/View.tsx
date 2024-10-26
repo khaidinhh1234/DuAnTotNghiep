@@ -11,8 +11,9 @@ import {
   Thumbs,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-const View = ({ id }: any) => {
+const View = ({ id, ID }: { id: string; ID: string }) => {
   // console.log(id);
+  // console.log(ID);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -406,7 +407,7 @@ const View = ({ id }: any) => {
                       Thêm vào giỏ hàng
                     </button>
                     <button
-                      onClick={() => handleClickHeart(id)}
+                      onClick={() => handleClickHeart(ID)}
                       className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
                  
                       `}

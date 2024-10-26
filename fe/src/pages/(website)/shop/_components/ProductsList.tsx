@@ -12,7 +12,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
   };
-  // console.log(products);
+  console.log(products);
   const handleWishlist = (id: any) => {
     Wishlist(id) as any;
   };
@@ -75,8 +75,8 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
                       <a href="#">
                         <i className="z-10 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                       </a>
-                      <View id={product.duong_dan} />
-                      <Link to={`/product-detail/${product.duong_dan}`}>
+                      {/* <View id={product?.duong_dan} ID={product?.id} /> */}
+                      <Link to={`/product-detail/${product?.duong_dan}`}>
                         <div className="relative">
                           <img
                             src={
@@ -97,7 +97,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
                           {/* )} */}
                         </div>{" "}
                       </Link>
-                      <View id={product?.duong_dan} />
+                      <View id={product?.duong_dan} ID={product?.id} />
                     </div>
                     <Link to={`/product-detail/${product.id}`}>
                       <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
