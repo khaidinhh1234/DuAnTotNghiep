@@ -7,7 +7,13 @@ import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
+<<<<<<< HEAD
+import Notifications from './Notifications';
+import instanceClient from "@/configs/client";
+import { useMutation, useQuery } from "@tanstack/react-query";
+=======
 import Notifications from "./Notifications";
+>>>>>>> efcbf48510ec1c7055817d0ab39a7e6725b5cb0a
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -19,7 +25,6 @@ const Header = () => {
   const [check, setcheck] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-
   const [isCartVisible, setIsCartVisible] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -143,6 +148,22 @@ const Header = () => {
     };
   }, [ref]);
 
+  const access_token = user.access_token || localStorage.getItem("access_token");
+  const { data } = useQuery({
+    queryKey: ["cart", access_token],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get(`/gio-hang`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        throw new Error("Error fetching cart data");
+      }
+    },
+  });
   const MenuList = [
     {
       name: "Trang chủ",
@@ -169,9 +190,8 @@ const Header = () => {
     <header className="h-12 relative">
       <div className="bg-white w-full">
         <div
-          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${
-            menu ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${menu ? "translate-x-0" : "-translate-x-full"
+            }`}
           style={{
             backgroundColor: menu ? "rgba(0, 0, 0, 0.4)" : "transparent",
           }}
@@ -274,10 +294,9 @@ const Header = () => {
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
-                          !isActive
-                            ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
-                            : "text-white bg-black"
+                        `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${!isActive
+                          ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
+                          : "text-white bg-black"
                         }`
                       }
                     >
@@ -345,7 +364,7 @@ const Header = () => {
                   {/* {" "}
                   <span>
                     <a href="/mywishlist">
-                      <i className="fa-regular fa-heart text-xl">{}</i>
+                      <i className="fa-regular fa-heart text-xl">{ }</i>
                     </a>
                   </span> */}
                   <span
@@ -370,6 +389,28 @@ const Header = () => {
                       <Notifications />
                     </div>
                   </span>
+<<<<<<< HEAD
+                  <span
+                    ref={notificationRef}
+                    className="relative"
+                    onMouseEnter={() => setShowNotifications(true)}
+                    onMouseLeave={() => setShowNotifications(false)}
+                  >
+                    <i className="fa-regular fa-bell text-xl relative cursor-pointer">
+                      <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                        0
+                      </span>
+                    </i>
+
+                    <div
+                      className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                        }`}
+                    >
+                      <Notifications />
+                    </div>
+                  </span>
+=======
+>>>>>>> efcbf48510ec1c7055817d0ab39a7e6725b5cb0a
                   <span
                     ref={cartRef}
                     onMouseEnter={() => setIsCartVisible(true)}
@@ -379,11 +420,10 @@ const Header = () => {
                     <a href="/gio-hang">
                       <i className="fa-regular fa-bag-shopping text-xl relative">
                         <span
-                          className={`${
-                            menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                          } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                          className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
+                            } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                         >
-                          0
+                          {data?.tong_so_luong}
                         </span>
                       </i>
                     </a>
@@ -481,9 +521,8 @@ const Header = () => {
               ) : (
                 <Link to="/login">
                   <button
-                    className={`${
-                      menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                    } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
+                    className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                      } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
                   >
                     Đăng nhập
                   </button>
