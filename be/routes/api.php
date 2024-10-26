@@ -141,7 +141,7 @@ Route::middleware([])
 
         //Sản phẩm yêu thích
         Route::get('sanpham/yeuthich', [SanPhamController::class, 'danhSachSanPhamYeuThich'])->middleware('auth:sanctum');
-        Route::post('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
+        Route::post('sanpham/yeuthich/{duong_dan}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
 
         //Tài khoản
         Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');

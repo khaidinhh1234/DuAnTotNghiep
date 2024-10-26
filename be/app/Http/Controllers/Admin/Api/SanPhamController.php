@@ -434,21 +434,21 @@ class SanPhamController extends Controller
         }
     }
 
-    public function sanPhamYeuThich(string $id)
+    public function sanPhamYeuThich(string $duong_dan)
     {
         try {
             if (Auth::guard('api')->check()) {
                 $userId = Auth::guard('api')->id();
                 $user = User::findOrFail($userId);
-                $sanPham = SanPham::findOrFail($id);
-                if (!$user->sanPhamYeuThich()->where('san_pham_id', $id)->exists()) {
-                    $user->sanPhamYeuThich()->attach($id);
+                $sanPham = SanPham::where('duong_dan',$duong_dan)->pluck('id')->first();
+                if (!$user->sanPhamYeuThich()->where('san_pham_id', $sanPham)->exists()) {
+                    $user->sanPhamYeuThich()->attach($sanPham);
                     $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
                     $status = true;
                     $status_code = 200;
 
                 } else {
-                    $user->sanPhamYeuThich()->detach($id);
+                    $user->sanPhamYeuThich()->detach($sanPham);
                     $mess = 'Sản phẩm đã được xóa khỏi danh sách yêu thích';
                     $status = true;
                     $status_code = 200;
@@ -458,7 +458,7 @@ class SanPhamController extends Controller
                     'status' => $status,
                     'status_code' => $status_code,
                     'mess' => $mess,
-                    'data' => $sanPham,
+                    // 'data' => $sanPham,
                 ], $status_code);
             } else {
                 return response()->json([
