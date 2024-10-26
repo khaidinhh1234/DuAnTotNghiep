@@ -11,6 +11,7 @@ use App\Models\DonHang;
 use App\Models\DonHangChiTiet;
 use App\Models\GioHang;
 use App\Models\MaKhuyenMai;
+use App\Models\SanPham;
 use App\Models\ThongBao;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -296,10 +297,11 @@ class DonHangClientController extends Controller
 
             $sanPhamDuocChon = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
+                ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
                 ->where('gio_hangs.user_id', $userId)
                 ->where('gio_hangs.chon', 1)
-                ->where("gio_hangs.deleted_at", null)
-                ->select('bien_the_san_phams.id as bien_the_san_pham_id', 'gio_hangs.so_luong')
+                ->whereNull("gio_hangs.deleted_at")
+                ->select('san_phams.id as san_pham_id', 'bien_the_san_phams.id as bien_the_san_pham_id', 'gio_hangs.so_luong')
                 ->get();
 
             if ($sanPhamDuocChon->isEmpty()) {
@@ -322,18 +324,88 @@ class DonHangClientController extends Controller
                 }
 
                 $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
-
                 $tongTienDonHang += $gia * $sanPham->so_luong;
             }
 
-            if (!empty($request->ma_giam_gia)) {
+            if ($request->filled('ma_giam_gia')) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
+
                 if ($maGiamGia) {
-                    if ($maGiamGia->loai === 'phan_tram') {
-                        $soTienGiamGia = $tongTienDonHang * ($maGiamGia->giam_gia / 100);
+                    $isValid = true;
+                    $errorMessages = [];
+
+                    $sanPhamIds = $sanPhamDuocChon->pluck('san_pham_id')->toArray();
+
+                    $sanPhamDanhMucIds = SanPham::whereIn('id', $sanPhamIds)
+                        ->pluck('danh_muc_id')
+                        ->unique()
+                        ->toArray();
+
+                    if (empty($sanPhamDanhMucIds)) {
+                        if ($maGiamGia->danhMucs()->whereIn('id', $sanPhamDanhMucIds)->doesntExist()) {
+                            $isValid = false;
+                            $errorMessages[] = 'Mã giảm giá không áp dụng cho danh mục sản phẩm.';
+                        }
                     } else {
-                        $soTienGiamGia = $maGiamGia->giam_gia;
+                        if ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
+                            $isValid = false;
+                            $errorMessages[] = 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.';
+                        }
                     }
+
+                    $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
+                    if ($maGiamGia->hangThanhViens()->where('id', $userHangThanhVienId)->doesntExist()) {
+                        $isValid = false;
+                        $errorMessages[] = 'Mã giảm giá không áp dụng cho hạng thành viên của bạn.';
+                    }
+
+                    if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
+                        $isValid = false;
+                        $errorMessages[] = 'Mã giảm giá không áp dụng cho người dùng này.';
+                    }
+
+                    if ($isValid) {
+                        if ($maGiamGia->loai === 'phan_tram') {
+                            $soTienGiamGia = $tongTienDonHang * ($maGiamGia->giam_gia / 100);
+                        } else {
+                            $soTienGiamGia = $maGiamGia->giam_gia;
+                        }
+
+                        $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
+                            ->where('user_id', $userId)
+                            ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                            ->where('da_su_dung', true)
+                            ->exists();
+
+                        if ($daSuDung) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => 'Mã giảm giá này đã được sử dụng.',
+                            ], 400);
+                        } else {
+                            DB::table('nguoi_dung_ma_khuyen_mai')->updateOrInsert(
+                                [
+                                    'user_id' => $userId,
+                                    'ma_khuyen_mai_id' => $maGiamGia->id
+                                ],
+                                [
+                                    'da_su_dung' => true,
+                                    'ngay_su_dung' => now(),
+                                ]
+                            );
+                        }
+                    } else {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Mã giảm giá không áp dụng.',
+                            'details' => $errorMessages,
+                        ], 400);
+                    }
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Mã giảm giá không hợp lệ.',
+                    ], 400);
                 }
             }
 
@@ -387,7 +459,7 @@ class DonHangClientController extends Controller
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Đơn hàng đã được đặt',
-                'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là sau: ' . $donHang->ma_don_hang,
+                'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
                 'loai' => 'Đơn hàng',
                 'duong_dan' => 'don-hang',
                 'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
@@ -395,20 +467,24 @@ class DonHangClientController extends Controller
             ]);
 
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
-
             DB::commit();
 
             return response()->json([
                 'status' => true,
-                'message' => 'Đơn hàng đã được tạo thành công!',
-                'data' => $donHang
-            ], 201);
+                'message' => 'Đặt hàng thành công.',
+                'tong_tien' => $tongTienDonHang,
+                'so_tien_giam_gia' => $soTienGiamGia,
+            ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+                'message' => 'Đã xảy ra lỗi.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
+
+
 }
