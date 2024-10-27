@@ -3,6 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import instanceClient from "@/configs/client";
 import { Carousel } from 'antd';
 import { bannervoucher } from "@/assets/img";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
 console.log('Fallback banner:', bannervoucher); // Add this line temporarily to verify the import
 
 
