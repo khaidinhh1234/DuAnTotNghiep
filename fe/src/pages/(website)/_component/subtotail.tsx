@@ -25,16 +25,16 @@ const Subtotal = () => (
       </div>
       <div className="flex justify-between font-bold mb-8">
         <h4>Tổng cộng</h4>
-        <span>$205.00</span>
+        <span>205.00</span>
       </div>
-      <a href="/payment">
+      {/* <a href="/payment">
         <button
           type="submit"
           className=" block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
         >
           Thanh toán đơn hàng
         </button>
-      </a>
+      </a> */}
     </div>
   </div>
 );
