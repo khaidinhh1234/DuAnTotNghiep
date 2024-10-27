@@ -233,22 +233,18 @@ class TrangChiTietSpController extends Controller
 
     public function goiY(Request $request)
     {
-        // Validate the incoming request
         $request->validate([
             'chieu_cao' => 'required|numeric|min:0',
             'can_nang' => 'required|numeric|min:0',
-            'san_pham_id' => 'required|exists:san_phams,id',
+            'san_pham_id' => 'required|exists:san_phams,id'
         ]);
 
-        // Get input values
         $chieuCao = $request->input('chieu_cao');
         $canNang = $request->input('can_nang');
         $sanPhamId = $request->input('san_pham_id');
 
-        // Find the product with its category
         $sanPham = SanPham::with('danhMuc')->find($sanPhamId);
 
-        // Check if the product or its category exists
         if (!$sanPham || !$sanPham->danhMuc) {
             return response()->json([
                 'status' => false,
@@ -256,26 +252,21 @@ class TrangChiTietSpController extends Controller
             ], 404);
         }
 
-        // Get the category and check if it's a child category
         $danhMuc = $sanPham->danhMuc;
         if ($danhMuc->cha_id !== null) {
             $danhMuc = DanhMuc::find($danhMuc->cha_id);
         }
 
-        // Get the name of the category
-        $tenDanhMuc = $danhMuc->ten_danh_muc;
+        $tenDanhMuc = strtolower($danhMuc->ten_danh_muc);
+        $gioiTinh = $danhMuc->gioi_tinh;
 
-        // Determine the size based on height and weight
-        $kichThuoc = BienTheKichThuoc::where('loai_kich_thuoc', strtolower($tenDanhMuc))
-            ->where(function($query) use ($chieuCao, $canNang) {
-                $query->where('chieu_cao_toi_thieu', '<=', $chieuCao)
-                    ->where('chieu_cao_toi_da', '>=', $chieuCao)
-                    ->where('can_nang_toi_thieu', '<=', $canNang)
-                    ->where('can_nang_toi_da', '>=', $canNang);
-            })
+        $kichThuoc = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
+            ->where('chieu_cao_toi_thieu', '<=', $chieuCao)
+            ->where('chieu_cao_toi_da', '>=', $chieuCao)
+            ->where('can_nang_toi_thieu', '<=', $canNang)
+            ->where('can_nang_toi_da', '>=', $canNang)
             ->first();
 
-        // Check if a size was found
         if (!$kichThuoc) {
             return response()->json([
                 'status' => false,
@@ -283,14 +274,49 @@ class TrangChiTietSpController extends Controller
             ], 404);
         }
 
-        // Retrieve all color variations
-        $mauSac = BienTheMauSac::all();
+        $bienTheSanPham = BienTheSanPham::where('san_pham_id', $sanPhamId)
+            ->where('bien_the_kich_thuoc_id', $kichThuoc->id)
+            ->with('mauBienThe')
+            ->get(['bien_the_mau_sac_id', 'so_luong_bien_the', 'gia_ban', 'gia_khuyen_mai']);
 
-        // Return the response with size and color variations
+        if ($bienTheSanPham->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy biến thể sản phẩm phù hợp.',
+                'debug' => [
+                    'san_pham_id' => $sanPhamId,
+                    'kich_thuoc_id' => $kichThuoc->id,
+                ]
+            ], 404);
+        }
+
+        $result = $bienTheSanPham->map(function ($variant) {
+            return [
+                'bien_the_mau_sac' => $variant->mauBienThe,
+                'so_luong' => $variant->so_luong_bien_the,
+                'gia_ban' => $variant->gia_ban,
+                'gia_khuyen_mai' => $variant->gia_khuyen_mai ? $variant->gia_khuyen_mai : null,
+                'co_san_kho' => $variant->so_luong_bien_the > 0,
+            ];
+        });
+
+        $kichThuocGoiY = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
+            ->where(function ($query) use ($chieuCao, $canNang) {
+                $query->whereBetween('chieu_cao_toi_thieu', [$chieuCao - 10, $chieuCao + 10])
+                    ->whereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
+                    ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
+                    ->whereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
+            })
+            ->pluck('kich_thuoc');
+
         return response()->json([
             'status' => true,
             'kich_thuoc' => $kichThuoc->kich_thuoc,
-            'mau_sac' => $mauSac,
+            'bien_the_san_pham' => $result,
+            'goi_y' => [
+                'kich_thuoc_duoc_goi_y' => $kichThuocGoiY,
+                'huong_dan_cham_soc' => 'Giặt tay trong nước lạnh, không sử dụng chất tẩy. Phơi khô tự nhiên.'
+            ],
         ]);
     }
 
