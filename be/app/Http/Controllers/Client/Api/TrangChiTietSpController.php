@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BienTheKichThuoc;
+use App\Models\BienTheMauSac;
 use App\Models\BienTheSanPham;
 use App\Models\DanhGia;
+use App\Models\DanhMuc;
 use App\Models\SanPham;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -227,4 +230,68 @@ class TrangChiTietSpController extends Controller
             ], 500);
         }
     }
+
+    public function goiY(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'chieu_cao' => 'required|numeric|min:0',
+            'can_nang' => 'required|numeric|min:0',
+            'san_pham_id' => 'required|exists:san_phams,id',
+        ]);
+
+        // Get input values
+        $chieuCao = $request->input('chieu_cao');
+        $canNang = $request->input('can_nang');
+        $sanPhamId = $request->input('san_pham_id');
+
+        // Find the product with its category
+        $sanPham = SanPham::with('danhMuc')->find($sanPhamId);
+
+        // Check if the product or its category exists
+        if (!$sanPham || !$sanPham->danhMuc) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Sản phẩm không tồn tại hoặc không có danh mục.',
+            ], 404);
+        }
+
+        // Get the category and check if it's a child category
+        $danhMuc = $sanPham->danhMuc;
+        if ($danhMuc->cha_id !== null) {
+            $danhMuc = DanhMuc::find($danhMuc->cha_id);
+        }
+
+        // Get the name of the category
+        $tenDanhMuc = $danhMuc->ten_danh_muc;
+
+        // Determine the size based on height and weight
+        $kichThuoc = BienTheKichThuoc::where('loai_kich_thuoc', strtolower($tenDanhMuc))
+            ->where(function($query) use ($chieuCao, $canNang) {
+                $query->where('chieu_cao_toi_thieu', '<=', $chieuCao)
+                    ->where('chieu_cao_toi_da', '>=', $chieuCao)
+                    ->where('can_nang_toi_thieu', '<=', $canNang)
+                    ->where('can_nang_toi_da', '>=', $canNang);
+            })
+            ->first();
+
+        // Check if a size was found
+        if (!$kichThuoc) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy kích thước phù hợp.',
+            ], 404);
+        }
+
+        // Retrieve all color variations
+        $mauSac = BienTheMauSac::all();
+
+        // Return the response with size and color variations
+        return response()->json([
+            'status' => true,
+            'kich_thuoc' => $kichThuoc->kich_thuoc,
+            'mau_sac' => $mauSac,
+        ]);
+    }
+
 }
