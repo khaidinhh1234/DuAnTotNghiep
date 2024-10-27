@@ -1,43 +1,10 @@
+import React from "react";
 import { Link } from "react-router-dom";
 
-const PaymentForm = () => {
+const Payment = () => {
   return (
-    <div className="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]">
-      {/* <div className="mb-7">
-        <div className="flex items-center space-x-0">
-          <div className="pl-1">
-            <Link to={"/shippingAddressPage"}>
-              <i
-                className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-                style={{ color: "#ffffff" }}
-              ></i>
-            </Link>
-          </div>
-          <hr className="m-0 dashed-black" />
-          <div className="text-center">
-            <Link to={"/payment"}>
-              {" "}
-              <i className="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
-            </Link>
-          </div>
-          <hr className="m-0 dashed-line" />
-          <div className="pr-1 text-center">
-            <i className="fa-light fa-file-invoice bg-stone-100 w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
-          </div>
-        </div>
-        <div className="flex justify-between space-x-0">
-          <div className="text-center">
-            <span>Địa chỉ</span>
-          </div>
-          <div className="text-center">
-            <span>Phương thức thanh toán</span>
-          </div>
-          <div className="text-center">
-            <span>Đánh giá</span>
-          </div>
-        </div>
-      </div> */}
-
+    <div>
+      {" "}
       <div className="mt-[30px]">
         <h3 className="title-h3">Chọn phương thức thanh toán</h3>
 
@@ -162,24 +129,4 @@ const PaymentForm = () => {
   );
 };
 
-export default PaymentForm;
-{
-  /* <div className="flex justify-around gap-3 my-4">
-  <button className="bg-slate-200 hover:bg-blackL hover:text-white border border-slate-300 hover:border-transparent rounded-md px-4 py-1 text-sm max-w-[120px]">
-    <i className="fa-regular fa-pen-to-square lowercase"></i> Edit
-  </button>
-  <button className="bg-rose-100 text-red-400 hover:bg-[#FF7262] hover:text-white border border-rose-200 hover:border-transparent rounded-md px-4 py-1 text-sm max-w-[120px]">
-    <i className="fa-regular fa-trash-can"></i> Delete
-  </button>
-</div> */
-}
-//<div className="flex justify-around gap-3 my-4">
-{
-  /* <button className="bg-slate-200 hover:bg-blackL hover:text-white border border-slate-300 hover:border-transparent rounded-md px-2 py-1 text-sm">
-<i className="fa-regular fa-pen-to-square lowercase"></i> Edit
-</button>
-<button className="bg-rose-100 text-red-400 hover:bg-[#FF7262] hover:text-white border border-rose-200 hover:border-transparent rounded-md px-2 py-1 text-sm">
-<i className="fa-regular fa-trash-can"></i> Delete
-</button>
-</div> */
-}
+export default Payment;

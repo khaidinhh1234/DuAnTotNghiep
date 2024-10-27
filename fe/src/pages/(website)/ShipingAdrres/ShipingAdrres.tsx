@@ -12,7 +12,7 @@ const ShippingAddressPage = () => (
             <ShippingAddress />
             <AddressForm />
           </div>
-          <Subtotal />
+          {/* <Subtotal /> */}
         </div>
       </div>
     </section>

@@ -136,6 +136,7 @@ import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
 import Notifications from "@/pages/(website)/_component/Notifications";
 import NewDetail from "@/pages/(website)/newdetail/NewDetail";
 import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
+import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
 
 const Router = () => {
   //
@@ -160,10 +161,11 @@ const Router = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<SheetSide />} />{" "}
-          <Route
+          <Route path="/checkout" element={<Layoutcheckout />} />{" "}
+          {/* <Route
             path="/shippingAddressPage"
             element={<ShippingAddressPage />}
-          />
+          /> */}
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/mypro" element={<LayoutMyPro />}>
             <Route path="/mypro/myprofile" element={<MyProfile />} />{" "}

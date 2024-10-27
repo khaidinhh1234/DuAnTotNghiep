@@ -461,7 +461,7 @@ const CheckOut = () => {
               </div>
 
               <div className="flex justify-center">
-                <Link to="/shippingAddressPage">
+                <Link to="/checkout">
                   <Button
                     onClick={handleCheckout}
                     className="btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold"

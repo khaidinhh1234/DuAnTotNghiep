@@ -146,7 +146,7 @@ const ProductItem = ({
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang }: any) => {
   const don_hang = donhang.don_hang;
-  console.log(don_hang);
+  // console.log(don_hang);
   const chi_tiet_don_hangs = don_hang?.map((item: any) => {
     return item?.chi_tiets[0]; // Trả về chi tiết của từng đơn hàng
   });
