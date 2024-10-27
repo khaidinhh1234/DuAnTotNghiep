@@ -33,6 +33,10 @@ class BienTheKichThuocController extends Controller
         $validator = Validator::make($request->all(), [
             'kich_thuoc' => 'required|string|max:255',
             'loai_kich_thuoc' => 'required|in:nam,nu,tre_em',
+            'chieu_cao_toi_thieu' => 'nullable|integer|min:0',
+            'chieu_cao_toi_da' => 'nullable|integer|min:0',
+            'can_nang_toi_thieu' => 'nullable|integer|min:0',
+            'can_nang_toi_da' => 'nullable|integer|min:0',
         ]);
 
         $data = $request->all();
@@ -47,12 +51,39 @@ class BienTheKichThuocController extends Controller
                 $validator->errors()->add('kich_thuoc', 'Kích thước đã tồn tại cho loại này.');
             }
 
-            if ($data['loai_kich_thuoc'] === 'nu' && !in_array($data['kich_thuoc'], ['XS', 'S', 'M', 'L', 'XL', 'XXL'])) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước cho nữ chỉ được phép từ XS đến XXL.');
-            } elseif ($data['loai_kich_thuoc'] === 'nam' && !in_array($data['kich_thuoc'], ['S', 'M', 'L', 'XL', 'XXL'])) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước cho nam chỉ được phép từ S đến XXL.');
-            } elseif ($data['loai_kich_thuoc'] === 'tre_em' && (!is_numeric($data['kich_thuoc']) || $data['kich_thuoc'] < 1 || $data['kich_thuoc'] > 9)) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước cho trẻ em phải là số từ 1 đến 9.');
+            $overlapCheck = BienTheKichThuoc::where('loai_kich_thuoc', $data['loai_kich_thuoc'])
+                ->where(function ($query) use ($data) {
+                    $query->whereBetween('chieu_cao_toi_thieu', [$data['chieu_cao_toi_thieu'], $data['chieu_cao_toi_da']])
+                        ->orWhereBetween('chieu_cao_toi_da', [$data['chieu_cao_toi_thieu'], $data['chieu_cao_toi_da']])
+                        ->orWhere(function ($subQuery) use ($data) {
+                            $subQuery->where('chieu_cao_toi_thieu', '<=', $data['chieu_cao_toi_thieu'])
+                                ->where('chieu_cao_toi_da', '>=', $data['chieu_cao_toi_da']);
+                        });
+                })
+                ->orWhere(function ($query) use ($data) {
+                    $query->whereBetween('can_nang_toi_thieu', [$data['can_nang_toi_thieu'], $data['can_nang_toi_da']])
+                        ->orWhereBetween('can_nang_toi_da', [$data['can_nang_toi_thieu'], $data['can_nang_toi_da']])
+                        ->orWhere(function ($subQuery) use ($data) {
+                            $subQuery->where('can_nang_toi_thieu', '<=', $data['can_nang_toi_thieu'])
+                                ->where('can_nang_toi_da', '>=', $data['can_nang_toi_da']);
+                        });
+                })
+                ->exists();
+
+            if ($overlapCheck) {
+                $validator->errors()->add('chieu_cao', 'Khoảng chiều cao hoặc cân nặng đã tồn tại cho loại này.');
+            }
+
+            if ($data['chieu_cao_toi_thieu'] && $data['chieu_cao_toi_da']) {
+                if ($data['chieu_cao_toi_thieu'] > $data['chieu_cao_toi_da']) {
+                    $validator->errors()->add('chieu_cao', 'Chiều cao tối thiểu phải nhỏ hơn chiều cao tối đa.');
+                }
+            }
+
+            if ($data['can_nang_toi_thieu'] && $data['can_nang_toi_da']) {
+                if ($data['can_nang_toi_thieu'] > $data['can_nang_toi_da']) {
+                    $validator->errors()->add('can_nang', 'Cân nặng tối thiểu phải nhỏ hơn cân nặng tối đa.');
+                }
             }
         });
 
@@ -77,37 +108,15 @@ class BienTheKichThuocController extends Controller
         }
     }
 
-    public function show(string $id)
-    {
-        try {
-            $bienTheKichThuoc = BienTheKichThuoc::find($id);
-            if (!$bienTheKichThuoc) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 404,
-                    'message' => 'Biến thể kích thước không tồn tại',
-                ], 404);
-            }
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công',
-                'data' => $bienTheKichThuoc
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Lấy dữ liệu thất bại',
-            ], 500);
-        }
-    }
-
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
             'kich_thuoc' => 'required|string|max:255',
             'loai_kich_thuoc' => 'required|in:nam,nu,tre_em',
+            'chieu_cao_toi_thieu' => 'nullable|integer|min:0',
+            'chieu_cao_toi_da' => 'nullable|integer|min:0',
+            'can_nang_toi_thieu' => 'nullable|integer|min:0',
+            'can_nang_toi_da' => 'nullable|integer|min:0',
         ]);
 
         $data = $request->all();
@@ -122,12 +131,41 @@ class BienTheKichThuocController extends Controller
             if ($exists) {
                 $validator->errors()->add('kich_thuoc', 'Kích thước đã tồn tại cho loại này.');
             }
-            if ($data['loai_kich_thuoc'] === 'nu' && !in_array($data['kich_thuoc'], ['XS', 'S', 'M', 'L', 'XL', 'XXL'])) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước cho nữ chỉ được phép từ XS đến XXL.');
-            } elseif ($data['loai_kich_thuoc'] === 'nam' && !in_array($data['kich_thuoc'], ['S', 'M', 'L', 'XL', 'XXL'])) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước cho nam chỉ được phép từ S đến XXL.');
-            } elseif ($data['loai_kich_thuoc'] === 'tre_em' && (!is_numeric($data['kich_thuoc']) || $data['kich_thuoc'] < 1 || $data['kich_thuoc'] > 9)) {
-                $validator->errors()->add('kich_thuoc', 'Kích thước cho trẻ em phải là số từ 1 đến 9.');
+
+            $overlapCheck = BienTheKichThuoc::where('loai_kich_thuoc', $data['loai_kich_thuoc'])
+                ->where('id', '!=', $id)
+                ->where(function ($query) use ($data) {
+                    $query->whereBetween('chieu_cao_toi_thieu', [$data['chieu_cao_toi_thieu'], $data['chieu_cao_toi_da']])
+                        ->orWhereBetween('chieu_cao_toi_da', [$data['chieu_cao_toi_thieu'], $data['chieu_cao_toi_da']])
+                        ->orWhere(function ($subQuery) use ($data) {
+                            $subQuery->where('chieu_cao_toi_thieu', '<=', $data['chieu_cao_toi_thieu'])
+                                ->where('chieu_cao_toi_da', '>=', $data['chieu_cao_toi_da']);
+                        });
+                })
+                ->orWhere(function ($query) use ($data) {
+                    $query->whereBetween('can_nang_toi_thieu', [$data['can_nang_toi_thieu'], $data['can_nang_toi_da']])
+                        ->orWhereBetween('can_nang_toi_da', [$data['can_nang_toi_thieu'], $data['can_nang_toi_da']])
+                        ->orWhere(function ($subQuery) use ($data) {
+                            $subQuery->where('can_nang_toi_thieu', '<=', $data['can_nang_toi_thieu'])
+                                ->where('can_nang_toi_da', '>=', $data['can_nang_toi_da']);
+                        });
+                })
+                ->exists();
+
+            if ($overlapCheck) {
+                $validator->errors()->add('chieu_cao', 'Khoảng chiều cao hoặc cân nặng đã tồn tại cho loại này.');
+            }
+
+            if ($data['chieu_cao_toi_thieu'] && $data['chieu_cao_toi_da']) {
+                if ($data['chieu_cao_toi_thieu'] > $data['chieu_cao_toi_da']) {
+                    $validator->errors()->add('chieu_cao', 'Chiều cao tối thiểu phải nhỏ hơn chiều cao tối đa.');
+                }
+            }
+
+            if ($data['can_nang_toi_thieu'] && $data['can_nang_toi_da']) {
+                if ($data['can_nang_toi_thieu'] > $data['can_nang_toi_da']) {
+                    $validator->errors()->add('can_nang', 'Cân nặng tối thiểu phải nhỏ hơn cân nặng tối đa.');
+                }
             }
         });
 

@@ -70,7 +70,7 @@ Route::middleware([])
         // Client trang chi tiết sản phẩm
         Route::get('/chi-tiet-san-pham/{duong_dan}', [TrangChiTietSpController::class, 'chiTietSanPham']);
         Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']);
-
+        Route::post('goi-y-kich-thuoc', [TrangChiTietSpController::class, 'goiY']);
         //Trang sản phẩm
         // lấy tất cả sản phẩm
         Route::group([], function () {
