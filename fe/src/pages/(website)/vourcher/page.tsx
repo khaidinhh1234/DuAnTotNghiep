@@ -787,9 +787,10 @@ const Voucher = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <main>
-        <section className="container py-6">
+        <section className="container py-6 mt-10">
           <div className="flex items-center gap-2 text-gray-600 px-4">
-            <span className="hover:text-pink-500 cursor-pointer">Home</span>
+            <a href="/">            <span className="hover:text-pink-500 cursor-pointer">Home</span>
+            </a>
             <i className="fa-light fa-chevron-right text-sm" />
             <span className="text-pink-500">Khuyến mãi</span>
           </div>

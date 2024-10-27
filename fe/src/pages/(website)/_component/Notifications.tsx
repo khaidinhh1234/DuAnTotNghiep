@@ -104,7 +104,7 @@ const Notifications: React.FC<NotificationsProps> = ({ onUnreadCountChange }) =>
       <div className="absolute -top-2 right-1 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-stone-500"></div>
       <div className="p-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
-      
+      <h2 className='font-bold '>Thông báo</h2>
         </div>
       </div>
 
