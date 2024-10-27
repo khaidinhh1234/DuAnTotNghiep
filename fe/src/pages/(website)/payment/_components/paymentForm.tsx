@@ -6,14 +6,19 @@ const PaymentForm = () => {
       <div className="mb-7">
         <div className="flex items-center space-x-0">
           <div className="pl-1">
-            <i
-              className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-              style={{ color: "#ffffff" }}
-            ></i>
+            <Link to={"/shippingAddressPage"}>
+              <i
+                className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
+                style={{ color: "#ffffff" }}
+              ></i>
+            </Link>
           </div>
           <hr className="m-0 dashed-black" />
           <div className="text-center">
-            <i className="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
+            <Link to={"/payment"}>
+              {" "}
+              <i className="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
+            </Link>
           </div>
           <hr className="m-0 dashed-line" />
           <div className="pr-1 text-center">
@@ -144,10 +149,13 @@ const PaymentForm = () => {
               Thanh toán khi nhận hàng
             </label>
           </div>
-          
-            <Link to="/ordersummary" className="btn-black px-10 w-[320px] py-4 rounded-lg mb-5 text-md font-medium">
-              Tiếp tục
-            </Link>
+
+          <Link
+            to="/ordersummary"
+            className="btn-black px-10 w-[320px] py-4 rounded-lg mb-5 text-md font-medium"
+          >
+            Tiếp tục
+          </Link>
         </form>
       </div>
     </div>

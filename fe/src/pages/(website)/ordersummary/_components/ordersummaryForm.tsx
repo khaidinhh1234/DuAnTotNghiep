@@ -28,7 +28,7 @@ const Order = () => {
             <span>Phương thức thanh toán</span>
           </div>
           <div className="text-center">
-            <span>Đánh giá</span>
+            <span className="">Đặt hàng</span>
           </div>
         </div>
       </div>

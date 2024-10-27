@@ -6,10 +6,12 @@ const ShippingAddress = () => {
       <div className="mb-7">
         <div className="flex items-center space-x-0">
           <div className="pl-1">
-            <i
-              className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-              style={{ color: "#ffffff" }}
-            ></i>
+            <Link to={"/shippingAddressPage"}>
+              <i
+                className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
+                style={{ color: "#ffffff" }}
+              ></i>
+            </Link>
           </div>
           <hr className="m-0 dashed-line" />
           <div className="text-center">
@@ -84,7 +86,10 @@ const ShippingAddress = () => {
           </div>
         </div>
       </div>
-      <Link to="/payment"  className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium">
+      <Link
+        to="/payment"
+        className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium"
+      >
         Giao ngay
       </Link>
     </>

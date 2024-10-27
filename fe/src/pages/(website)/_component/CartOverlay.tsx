@@ -97,78 +97,88 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
   );
   if (totalUniqueProducts === 0) {
     return (
-      <div className="absolute top-full right-64 w-96 bg-white shadow-lg p-8 rounded-lg z-50 flex flex-col items-center">
-        <h1 className="text-2xl font-bold mb-4">Giỏ hàng</h1>
-        <p className="text-gray-500 mb-6">Không có sản phẩm trong giỏ hàng.</p>
-        <div className="p-6">
-          <img src="/public/Shop.png" alt="No Product" className="w-52 h-44" />
+      <div className="absolute top-14 right-64 pt-5 ">
+        <div className="p-4  w-96 bg-white shadow-lg rounded-lg z-50 flex flex-col items-center">
+          {" "}
+          <h1 className="text-2xl font-bold mb-4">Giỏ hàng</h1>
+          <p className="text-gray-500 mb-6">
+            Không có sản phẩm trong giỏ hàng.
+          </p>
+          <div className="p-6">
+            <img
+              src="/public/Shop.png"
+              alt="No Product"
+              className="w-52 h-44"
+            />
+          </div>
+          <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
+            Mua sắm ngay
+          </button>
         </div>
-
-        <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
-          Mua sắm ngay
-        </button>
       </div>
     );
   }
   return (
-    <div className="absolute top-full right-60 w-96 bg-white shadow-lg p-4 rounded-lg z-50">
-      <h2 className="text-lg font-semibold mb-3">
-        Bạn có {totalUniqueProducts} sản phẩm
-      </h2>
-      <div className="space-y-5">
-        {displayItems.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center py-2 border-b last:border-b-0"
-          >
-            <img
-              src={item.hinh_anh}
-              alt={item.ten_san_pham}
-              className="w-16 h-16 object-cover mr-3 rounded-[6px]"
-            />
-            <div className="flex-grow">
-              <Link to={`/product-detail/${item.duong_dan}`}>
-                <h3 className="text-sm font-medium hover:text-[#FF7262] truncate">
-                  {item.ten_san_pham}
-                </h3>
-              </Link>
-              <p className="text-xs text-gray-500 mt-[-10px]">
-                {item.so_luong} x {formatCurrency(item.gia_hien_tai)}
-              </p>
-              <p className="text-xs text-gray-500 mt-[-10px]">
-                Loại: {item.kich_thuoc}, {item.mau_sac}
-              </p>
-            </div>
-            <button
-              className="text-red-500 hover:text-red-700 ml-2"
-              onClick={() => handleDelete(item.id)}
-              disabled={deleteMutation.isLoading}
+    <div className="absolute top-14 right-60 pt-10">
+      <div className="w-96 bg-white shadow-lg p-4 rounded-lg ">
+        <h2 className="text-lg font-semibold mb-3">
+          Bạn có {totalUniqueProducts} sản phẩm
+        </h2>
+        <div className="space-y-5">
+          {displayItems.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center py-2 border-b last:border-b-0"
             >
-              <i className="fa-regular fa-trash-can pr-2"></i>
-            </button>
-          </div>
-        ))}
-      </div>
-      <div className="text-center mt-1">
-        <Link
-          to={`/gio-hang`}
-          className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center"
-        >
-          <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
-        </Link>
-      </div>
+              <img
+                src={item.hinh_anh}
+                alt={item.ten_san_pham}
+                className="w-16 h-16 object-cover mr-3 rounded-[6px]"
+              />
+              <div className="flex-grow">
+                <Link to={`/product-detail/${item.duong_dan}`}>
+                  <h3 className="text-sm font-medium hover:text-[#FF7262] truncate">
+                    {item.ten_san_pham}
+                  </h3>
+                </Link>
+                <p className="text-xs text-gray-500 mt-[-10px]">
+                  {item.so_luong} x {formatCurrency(item.gia_hien_tai)}
+                </p>
+                <p className="text-xs text-gray-500 mt-[-10px]">
+                  Loại: {item.kich_thuoc}, {item.mau_sac}
+                </p>
+              </div>
+              <button
+                className="text-red-500 hover:text-red-700 ml-2"
+                onClick={() => handleDelete(item.id)}
+                disabled={deleteMutation.isLoading}
+              >
+                <i className="fa-regular fa-trash-can pr-2"></i>
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="text-center mt-1">
+          <Link
+            to={`/gio-hang`}
+            className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center"
+          >
+            <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
+          </Link>
+        </div>
 
-      <div className="flex justify-between items-center mt-3 pt-3 border-t">
-        <span className="font-semibold">Tổng cộng</span>
-        <span className="font-semibold">{formatCurrency(subtotal)}</span>
-      </div>
+        <div className="flex justify-between items-center mt-3 pt-3 border-t">
+          <span className="font-semibold">Tổng cộng</span>
+          <span className="font-semibold">{formatCurrency(subtotal)}</span>
+        </div>
 
-      <button className="w-full bg-white text-black border border-gray-300 py-2 px-4 rounded mt-3 hover:bg-black hover:text-white text-sm">
-        <a href="/gio-hang">Xem giỏ hàng</a>
-      </button>
-      <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
-        Thanh toán
-      </button>
+        <button className="w-full bg-white text-black border border-gray-300 py-2 px-4 rounded mt-3 hover:bg-black hover:text-white text-sm">
+          <a href="/gio-hang">Xem giỏ hàng</a>
+        </button>
+        <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
+          Thanh toán
+        </button>
+      </div>
     </div>
   );
 };

@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
 import Notifications from "./Notifications";
+import instanceClient from "@/configs/client";
+import { useMutation, useQuery } from "@tanstack/react-query";
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -19,7 +21,6 @@ const Header = () => {
   const [check, setcheck] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-
   const [isCartVisible, setIsCartVisible] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -143,6 +144,24 @@ const Header = () => {
     };
   }, [ref]);
 
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
+  const { data } = useQuery({
+    queryKey: ["cart", access_token],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get(`/gio-hang`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        throw new Error("Error fetching cart data");
+      }
+    },
+  });
+  // console.log(data);
   const MenuList = [
     {
       name: "Trang chủ",
@@ -235,7 +254,7 @@ const Header = () => {
             <i className="fa-solid fa-x"></i>
           </button>
         </div>
-        <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-4 opacity-90">
+        <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-4 ">
           <div className="max-w-7xl mx-auto flex justify-between items-center ">
             <div className="lg:hidden order-1 relative">
               <button
@@ -316,7 +335,7 @@ const Header = () => {
               </ul>
             </nav>
 
-            <div className="order-4 flex items-center space-x-6 cursor-pointer">
+            <div className="order-4 flex items-center space-x-2 cursor-pointer">
               <span>
                 <div className="relative">
                   <SearchOutlined
@@ -345,7 +364,7 @@ const Header = () => {
                   {/* {" "}
                   <span>
                     <a href="/mywishlist">
-                      <i className="fa-regular fa-heart text-xl">{}</i>
+                      <i className="fa-regular fa-heart text-xl">{ }</i>
                     </a>
                   </span> */}
                   <span
@@ -361,7 +380,7 @@ const Header = () => {
                     </i>
 
                     <div
-                      className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${
+                      className={`absolute -right-2 px-3 mt-2 z-50 transition-opacity duration-300 ${
                         showNotifications
                           ? "opacity-100"
                           : "opacity-0 pointer-events-none"
@@ -377,15 +396,13 @@ const Header = () => {
                   >
                     {" "}
                     <a href="/gio-hang">
-                      <i className="fa-regular fa-bag-shopping text-xl relative">
+                      <i className="fa-regular fa-bag-shopping text-xl relative px-3">
                         <span
                           className={`${
-                            menu == true
-                              ? "bg-opacity-100 text-opacity-100"
-                              : ""
-                          } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                            menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                          } -bottom-1 right-1 w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                         >
-                          0
+                          {data?.tong_so_luong}
                         </span>
                       </i>
                     </a>

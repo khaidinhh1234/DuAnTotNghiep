@@ -134,6 +134,7 @@ import MyProfileedit from "@/pages/(website)/myprofile/MyProfileedit";
 import LayoutMyPro from "@/pages/(website)/layoutmypro";
 import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
 import Notifications from "@/pages/(website)/_component/Notifications";
+import NewDetail from "@/pages/(website)/newdetail/NewDetail";
 
 const Router = () => {
   //
@@ -179,6 +180,8 @@ const Router = () => {
             />{" "}
             <Route path="***" element={<NotFoundPage />} />
           </Route>
+          {/* chi tiết bài viêt */}
+          <Route path="/new-detail" element={<NewDetail/>}/>
         </Route>
         {/* TRang admin */}
         <Route
