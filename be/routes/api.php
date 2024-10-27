@@ -147,6 +147,7 @@ Route::get('/payment/momo/callback', [MoMoController::class, 'momoCallback'])->n
             Route::post('thong-bao/da-doc/{id}', [ThongBaoController::class, 'daXem']);
 
             // Đơn hàng
+            Route::post('don-hang/huy-don-hang', [DonHangClientController::class, 'huyDonHang']);
             Route::get('/don-hang', [DonHangClientController::class, 'donHangUser']);
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
             Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang']);
