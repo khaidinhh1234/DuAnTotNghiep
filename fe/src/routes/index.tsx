@@ -181,7 +181,7 @@ const Router = () => {
             <Route path="***" element={<NotFoundPage />} />
           </Route>
           {/* chi tiết bài viêt */}
-          <Route path="/new-detail" element={<NewDetail/>}/>
+          <Route path="/tin-tuc-theo-danh-muc/:duong_dan" element={<NewDetail/>}/>
         </Route>
         {/* TRang admin */}
         <Route
