@@ -918,7 +918,22 @@ const Voucher = () => {
               </TabsContent>
 
               <TabsContent value="password">
-                {/* Similar Swiper content for password tab */}
+              <div className="flex items-center bg-white border border-gray-200 rounded-lg p-4 shadow-md max-w-sm">
+  <div className="flex-grow">
+    <h2 className="text-lg font-semibold">Voucher 50K</h2>
+    <p className="text-sm text-gray-600">Voucher 50k cho đơn từ 599k</p>
+    <div className="bg-blue-100 text-blue-600 text-sm font-semibold px-2 py-1 rounded mt-2 inline-block">CANIFA50</div>
+    <p className="text-red-500 text-sm mt-2">Sắp hết hạn: Còn 1 ngày</p>
+    <a href="#" className="text-gray-700 text-sm font-medium mt-2 inline-block">Điều kiện</a>
+  </div>
+  
+  <div className="border-r border-dashed h-full mx-4"></div>
+  
+  <div className="flex-shrink-0">
+    <button className="bg-teal-400 text-white font-semibold py-2 px-4 rounded">Lưu mã</button>
+  </div>
+</div>
+
               </TabsContent>
             </Tabs>
           </div>

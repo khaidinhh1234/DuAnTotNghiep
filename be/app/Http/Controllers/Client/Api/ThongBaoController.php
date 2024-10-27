@@ -40,32 +40,6 @@ class ThongBaoController extends Controller
 
     /**
      */
-    public function store(Request $request)
-    {
-        try {
-            $thongBao = ThongBao::create([
-                'user_id' => $request->user_id,
-                'tieu_de' => $request->tieu_de,
-                'noi_dung' => $request->noi_dung,
-                'loai' => $request->loai,
-                'duong_dan' => $request->duong_dan,
-            ]);
-
-            broadcast(new ThongBaoMoi($thongBao))->toOthers();
-
-            return response()->json([
-                'message' => 'Thông báo được gửi thành công!',
-                'thong_bao' => $thongBao
-            ]);
-        } catch (\Exception $exception) {
-            return response()->json([
-                'message' => $exception->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     */
     public function daXem($id)
     {
         try {
