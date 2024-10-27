@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class KhuyenMaiController extends Controller
@@ -119,14 +120,22 @@ class KhuyenMaiController extends Controller
 
             $hangThanhVien = $user->hangThanhVien;
 
+            if (!$hangThanhVien) {
+                return response()->json(['status' => false, 'message' => 'Bạn chưa được phân loại vào hạng thành viên.'], 400);
+            }
+
             $maKhuyenMais = MaKhuyenMai::whereHas('hangThanhViens', function ($query) use ($hangThanhVien) {
                 $query->where('hang_thanh_vien_id', $hangThanhVien->id);
             })
                 ->where('trang_thai', 1)
                 ->where('ngay_bat_dau_suu_tam', '<=', now())
                 ->where('ngay_ket_thuc', '>=', now())
-                ->where('so_luong_da_su_dung', '<', 'so_luong')
+                ->whereColumn('so_luong_da_su_dung', '<', 'so_luong')
                 ->get();
+
+            if ($maKhuyenMais->isEmpty()) {
+                return response()->json(['status' => false, 'message' => 'Không có mã khuyến mãi nào cho hạng thành viên của bạn.'], 404);
+            }
 
             foreach ($maKhuyenMais as $maKhuyenMai) {
                 $maKhuyenMai->da_thu_thap = $maKhuyenMai->user()->where('id', $user->id)->exists() ? 1 : 0;
@@ -134,9 +143,17 @@ class KhuyenMaiController extends Controller
 
             return response()->json(['status' => true, 'data' => $maKhuyenMais]);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy mã khuyến mãi.', 'error' => $e->getMessage()], 500);
+            Log::error('Lỗi khi lấy mã khuyến mãi: '.$e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra khi lấy mã khuyến mãi.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
+
+
 
     public function thuThapMaKhuyenMai($maCode)
     {
