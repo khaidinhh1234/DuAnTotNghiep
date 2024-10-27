@@ -290,9 +290,18 @@ class DonHangClientController extends Controller
 
     public function taoDonHang(Request $request)
     {
+        $request->validate([
+            'ghi_chu' => 'nullable|string|max:255',
+            'phuong_thuc_thanh_toan' => 'required|string|max:100',
+            'ten_nguoi_dat_hang' => 'required|string|max:255',
+            'email_nguoi_dat_hang' => 'required|email|max:255',
+            'so_dien_thoai_nguoi_dat_hang' => 'required|string|max:15',
+            'dia_chi_nguoi_dat_hang' => 'required|string|max:255',
+            'ma_giam_gia' => 'nullable|string|max:100',
+        ]);
+
         try {
             DB::beginTransaction();
-
             $userId = Auth::id();
 
             $sanPhamDuocChon = DB::table('gio_hangs')
@@ -333,9 +342,7 @@ class DonHangClientController extends Controller
                 if ($maGiamGia) {
                     $isValid = true;
                     $errorMessages = [];
-
                     $sanPhamIds = $sanPhamDuocChon->pluck('san_pham_id')->toArray();
-
                     $sanPhamDanhMucIds = SanPham::whereIn('id', $sanPhamIds)
                         ->pluck('danh_muc_id')
                         ->unique()
@@ -444,7 +451,6 @@ class DonHangClientController extends Controller
                 ]);
             }
 
-
             $donHang = DonHang::with(['chiTiets'])
                 ->where('id', $donHang->id)
                 ->first();
@@ -453,8 +459,6 @@ class DonHangClientController extends Controller
                 ->where('user_id', $userId)
                 ->where('chon', 1)
                 ->update(['deleted_at' => now()]);
-
-            //            event(new HoanTatDonHang($donHang, $request->email_nguoi_dat_hang));
 
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
@@ -486,5 +490,97 @@ class DonHangClientController extends Controller
     }
 
 
+    public function huyDonHang(Request $request)
+    {
+        $request->validate([
+            'ma_don_hang' => 'required|string|exists:don_hangs,ma_don_hang'
+        ]);
+
+        $userId = Auth::id();
+        $maDonHang = $request->input('ma_don_hang');
+
+        DB::beginTransaction();
+
+        try {
+            $donHang = DonHang::where('ma_don_hang', $maDonHang)
+                ->where('user_id', $userId)
+                ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH])
+                ->first();
+
+            if (!$donHang) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Đơn hàng không tồn tại hoặc không thể hủy.',
+                ], 400);
+            }
+
+            $donHang->trang_thai_don_hang = DonHang::TTDH_DH;
+            $donHang->save();
+
+            foreach ($donHang->chiTiets as $chiTiet) {
+                $bienTheSanPham = BienTheSanPham::find($chiTiet->bien_the_san_pham_id);
+                if ($bienTheSanPham) {
+                    $bienTheSanPham->so_luong_bien_the += $chiTiet->so_luong;
+                    $bienTheSanPham->save();
+
+                    $gioHangItem = DB::table('gio_hangs')
+                        ->where('user_id', $userId)
+                        ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
+                        ->whereNull('deleted_at')
+                        ->first();
+
+                    if ($gioHangItem) {
+                        DB::table('gio_hangs')
+                            ->where('user_id', $userId)
+                            ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
+                            ->update([
+                                'so_luong' => $gioHangItem->so_luong + $chiTiet->so_luong,
+                                'deleted_at' => null, // Khôi phục trạng thái giỏ hàng
+                            ]);
+
+                        DB::table('gio_hangs')
+                            ->where('user_id', $userId)
+                            ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
+                            ->where('id', '!=', $gioHangItem->id) // Giữ lại bản ghi hiện tại
+                            ->delete();
+                    } else {
+                        DB::table('gio_hangs')->insert([
+                            'user_id' => $userId,
+                            'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
+                            'so_luong' => $chiTiet->so_luong,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+            }
+            $thongBao = ThongBao::create([
+                'user_id' => $userId,
+                'tieu_de' => 'Đơn hàng đã hủy',
+                'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hủy.',
+                'loai' => 'Đơn hàng',
+                'duong_dan' => 'don-hang',
+                'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                'id_duong_dan' => $donHang->id,
+            ]);
+
+            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Đơn hàng đã được hủy thành công.',
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Đã xảy ra lỗi khi hủy đơn hàng.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
 }
