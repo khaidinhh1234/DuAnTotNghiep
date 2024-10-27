@@ -461,10 +461,10 @@ const EditProducts: React.FC = () => {
   name="danh_muc_id"
   rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
 >
-  <CategorySelect 
-    categories={categoriesData?.data || []} 
-    onChange={(value: any) => form.setFieldsValue({ danh_muc_id: value })}
-  />
+<CategorySelect 
+  categoriesData={categoriesData}
+  onChange={(value) => form.setFieldsValue({ danh_muc_id: value })}
+/>
 </Form.Item>
           </div>
           <div className="grid grid-cols-1 gap-5">

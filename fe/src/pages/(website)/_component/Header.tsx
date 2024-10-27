@@ -10,6 +10,7 @@ import CartOverlay from "./CartOverlay";
 import Notifications from "./Notifications";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
+
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -25,6 +26,7 @@ const Header = () => {
   const cartRef = useRef<HTMLDivElement>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -102,6 +104,7 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const handleMouseLeave = () => {
     setTimeout(() => {
@@ -161,7 +164,12 @@ const Header = () => {
       }
     },
   });
-  // console.log(data);
+  const allItems = [
+    ...(data?.san_pham_giam_gia || []),
+    ...(data?.san_pham_nguyen_gia || []),
+  ];
+  const totalUniqueProducts = allItems.length;
+
   const MenuList = [
     {
       name: "Trang chủ",
@@ -336,7 +344,7 @@ const Header = () => {
             </nav>
 
             <div className="order-4 flex items-center space-x-2 cursor-pointer">
-              <span>
+              <span className="px-1">
                 <div className="relative">
                   <SearchOutlined
                     className="text-xl cursor-pointer"
@@ -373,20 +381,22 @@ const Header = () => {
                     onMouseEnter={() => setShowNotifications(true)}
                     onMouseLeave={() => setShowNotifications(false)}
                   >
-                    <i className="fa-regular fa-bell text-xl relative cursor-pointer">
-                      <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                        0
-                      </span>
+                    <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
+                      {unreadCount > 0 && (
+                        <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                          {unreadCount}
+                        </span>
+                      )}
                     </i>
 
                     <div
-                      className={`absolute -right-2 px-3 mt-2 z-50 transition-opacity duration-300 ${
+                      className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
                         showNotifications
                           ? "opacity-100"
                           : "opacity-0 pointer-events-none"
                       }`}
                     >
-                      <Notifications />
+                      <Notifications onUnreadCountChange={setUnreadCount} />
                     </div>
                   </span>
                   <span
@@ -396,13 +406,13 @@ const Header = () => {
                   >
                     {" "}
                     <a href="/gio-hang">
-                      <i className="fa-regular fa-bag-shopping text-xl relative px-3">
+                      <i className="fa-regular fa-bag-shopping text-xl relative px-1">
                         <span
                           className={`${
                             menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                          } -bottom-1 right-1 w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                          } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                         >
-                          {data?.tong_so_luong}
+                          {totalUniqueProducts || 0}{" "}
                         </span>
                       </i>
                     </a>

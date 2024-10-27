@@ -40,6 +40,7 @@ use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
 use App\Http\Controllers\Client\Api\DanhGiaHuuIchController;
+use App\Http\Controllers\Client\Api\MoMoController;
 use App\Http\Controllers\Client\Api\TaiKhoanController as ApiTaiKhoanController;
 use App\Http\Controllers\Client\Api\TinTucController as ApiTinTucController;
 use Illuminate\Support\Facades\Route;
@@ -91,6 +92,12 @@ Route::middleware([])
         Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layTatCaDanhMuc']);
 
         Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
+        Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
+
+// thanh toán qr :
+// routes/web.php
+Route::post('/payment/momo', [MoMoController::class, 'createMomoPayment']);
+Route::get('/payment/momo/callback', [MoMoController::class, 'momoCallback'])->name('payment.momo.callback');
 
 
         //Client Chi tiết sản phẩm

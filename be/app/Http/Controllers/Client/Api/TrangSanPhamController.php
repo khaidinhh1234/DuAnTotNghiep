@@ -100,6 +100,7 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+<<<<<<< HEAD
     public function layTatCaSanPham(Request $request)
     {
         try {
@@ -190,6 +191,8 @@ class TrangSanPhamController extends Controller
         }
     }
 
+=======
+>>>>>>> 0d08918a50b76782ebdd1437621ecf468aee48a8
     public function locSanPham(Request $request)
     {
         DB::beginTransaction(); // Bắt đầu giao dịch
@@ -203,7 +206,7 @@ class TrangSanPhamController extends Controller
             $giaTren = $request->gia_tren ?? null;
 
             // Tạo truy vấn sản phẩm
-            $query = SanPham::query();
+            $query = SanPham::query()->where('trang_thai', 1);
 
             // Lọc theo danh mục cha và con
             if (!empty($danhMucChaIds) || !empty($danhMucConIds)) {

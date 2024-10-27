@@ -130,8 +130,7 @@ const ProductDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState("descriptions");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
-  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null); //laybienthe
+  // const [token, setToken] = useState<string | null>(null);
 
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
@@ -535,7 +534,7 @@ const ProductDetail: React.FC = () => {
                     {displayPrice?.originalPrice && (
                       <del className="text-[#A4A1AA] ml-2 text-sm">
                         {displayPrice?.originalPrice}
-                        {displayPrice?.originalPrice}
+                        {/* {displayPrice?.originalPrice} */}
                       </del>
                     )}
                   </>
@@ -673,21 +672,26 @@ const ProductDetail: React.FC = () => {
             Đánh giá{" "}
           </button>
         </div>
-
         {activeTab === "descriptions" && (
-          <div className="mb-4">
-            <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${isDescriptionExpanded ? "" : "line-clamp-3"
-                }`}
-              dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
-            />
-            <div className="flex justify-center">
-              <Button onClick={toggleDescription} className="mb-4">
-                {isDescriptionExpanded ? "Thu gọn" : "Xem thêm"}
-              </Button>
-            </div>
-          </div>
-        )}
+  <div className="mb-4">
+    <div
+      className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
+        isDescriptionExpanded ? "h-auto" : "max-h-[500px] overflow-hidden"
+      }`}
+    >
+      <div dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }} />
+      {!isDescriptionExpanded && (
+        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
+      )}
+    </div>
+    <div className="flex justify-center">
+      <Button onClick={toggleDescription} className="mb-4">
+        {isDescriptionExpanded ? "Thu gọn" : "Xem thêm"}
+      </Button>
+    </div>
+  </div>
+)}
+
         {activeTab === "additionalInfo" && (
           <div className="mb-4">
             <h3 className="text-gray-900 mb-2 font-bold text-lg">Màu</h3>

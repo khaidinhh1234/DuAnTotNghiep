@@ -4,21 +4,21 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instance from "@/configs/client";
 import { Link } from "react-router-dom";
 
-interface CartItem {
-  id: number;
-  ten_san_pham: string;
-  gia_hien_tai: number;
-  so_luong: number;
-  kich_thuoc: string;
-  hinh_anh: string;
-  mau_sac: string;
-}
+// interface CartItem {
+//   id: number;
+//   ten_san_pham: string;
+//   gia_hien_tai: number;
+//   so_luong: number;
+//   kich_thuoc: string;
+//   hinh_anh: string;
+//   mau_sac: string;
+// }
 
-interface CartData {
-  san_pham_giam_gia: CartItem[];
-  san_pham_nguyen_gia: CartItem[];
-  tong_so_luong: number;
-}
+// interface CartData {
+//   san_pham_giam_gia: CartItem[];
+//   san_pham_nguyen_gia: CartItem[];
+//   tong_so_luong: number;
+// }
 
 interface CartOverlayProps {
   isVisible: boolean;
@@ -97,30 +97,22 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
   );
   if (totalUniqueProducts === 0) {
     return (
-      <div className="absolute top-14 right-64 pt-5 ">
-        <div className="p-4  w-96 bg-white shadow-lg rounded-lg z-50 flex flex-col items-center">
-          {" "}
-          <h1 className="text-2xl font-bold mb-4">Giỏ hàng</h1>
-          <p className="text-gray-500 mb-6">
-            Không có sản phẩm trong giỏ hàng.
-          </p>
-          <div className="p-6">
-            <img
-              src="/public/Shop.png"
-              alt="No Product"
-              className="w-52 h-44"
-            />
-          </div>
-          <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
-            Mua sắm ngay
-          </button>
+      <div className="absolute top-full right-64 w-96 bg-white shadow-lg p-8 rounded-lg z-50 flex flex-col items-center">
+        <h1 className="text-2xl font-bold mb-4">Giỏ hàng</h1>
+        <p className="text-gray-500 mb-6">Không có sản phẩm trong giỏ hàng.</p>
+        <div className="p-6">
+          <img src="/public/Shop.png" alt="No Product" className="w-52 h-44" />
         </div>
+
+        <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
+          Mua sắm ngay
+        </button>
       </div>
     );
   }
   return (
-    <div className="absolute top-14 right-60 pt-10">
-      <div className="w-96 bg-white shadow-lg p-4 rounded-lg ">
+    <div className="absolute top-14 right-60 w-96 ">
+      <div className="mt-2 bg-white shadow-lg border p-4 rounded-lg z-30">
         <h2 className="text-lg font-semibold mb-3">
           Bạn có {totalUniqueProducts} sản phẩm
         </h2>
@@ -151,21 +143,23 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
               <button
                 className="text-red-500 hover:text-red-700 ml-2"
                 onClick={() => handleDelete(item.id)}
-                disabled={deleteMutation.isLoading}
+                disabled={deleteMutation.isPending}
               >
                 <i className="fa-regular fa-trash-can pr-2"></i>
               </button>
             </div>
           ))}
         </div>
-        <div className="text-center mt-1">
-          <Link
-            to={`/gio-hang`}
-            className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center"
-          >
-            <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
-          </Link>
-        </div>
+        {totalUniqueProducts > 3 && (
+          <div className="text-center mt-1">
+            <Link
+              to={`/gio-hang`}
+              className="text-sm font-semibold hover:text-[#FF7262] inline-flex items-center"
+            >
+              <i className="fa-solid fa-share pr-2"></i> Xem thêm ...
+            </Link>
+          </div>
+        )}
 
         <div className="flex justify-between items-center mt-3 pt-3 border-t">
           <span className="font-semibold">Tổng cộng</span>

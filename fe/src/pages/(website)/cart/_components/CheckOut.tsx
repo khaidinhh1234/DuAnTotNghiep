@@ -7,10 +7,11 @@ import { Button } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
 const CheckOut = () => {
-  const nav = useNavigate()
+  const nav = useNavigate();
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
-  const access_token = user.access_token || localStorage.getItem("access_token");
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
   const [selectAllRegular, setSelectAllRegular] = useState(false);
@@ -30,8 +31,15 @@ const CheckOut = () => {
     },
   });
   const { mutate: increaseQuantity } = useMutation({
-    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`,
+    mutationFn: async ({
+      productId,
+      currentQuantity,
+    }: {
+      productId: string;
+      currentQuantity: number;
+    }) => {
+      await instanceClient.put(
+        `/gio-hang/tang-so-luong/${productId}`,
         { so_luong: currentQuantity + 1 },
         {
           headers: {
@@ -39,7 +47,6 @@ const CheckOut = () => {
           },
         }
       );
-
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
@@ -49,12 +56,20 @@ const CheckOut = () => {
     },
   });
   const { mutate: decreaseQuantity } = useMutation({
-    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+    mutationFn: async ({
+      productId,
+      currentQuantity,
+    }: {
+      productId: string;
+      currentQuantity: number;
+    }) => {
       if (currentQuantity <= 1) {
         toast.error("Không thể giảm số lượng xuống dưới 1.");
         return;
       } else {
-        await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, { so_luong: currentQuantity - 1 },
+        await instanceClient.put(
+          `/gio-hang/giam-so-luong/${productId}`,
+          { so_luong: currentQuantity - 1 },
           {
             headers: {
               Authorization: `Bearer ${access_token}`,
@@ -70,53 +85,58 @@ const CheckOut = () => {
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
-  
 
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId) => {
-      await instanceClient.delete(`/gio-hang/${productId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      )
+      await instanceClient.delete(`/gio-hang/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Có lỗi xảy ra khi xóa sản phẩm.');
+      toast.error(error.message || "Có lỗi xảy ra khi xóa sản phẩm.");
     },
-  })
+  });
   const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
-    const productInDiscounts = data?.san_pham_giam_gia.find((product: any) => product.id === productId);
-    const productInRegular = data?.san_pham_nguyen_gia.find((product: { id: number }) => product.id === productId);
+    const productInDiscounts = data?.san_pham_giam_gia.find(
+      (product: any) => product.id === productId
+    );
+    const productInRegular = data?.san_pham_nguyen_gia.find(
+      (product: { id: number }) => product.id === productId
+    );
 
-    const quantity = productInDiscounts?.so_luong || productInRegular?.so_luong || 0;
+    const quantity =
+      productInDiscounts?.so_luong || productInRegular?.so_luong || 0;
     console.log("đâsd", quantity);
     if (productInDiscounts) {
-      return total + (productInDiscounts.gia_hien_tai * quantity);
+      return total + productInDiscounts.gia_hien_tai * quantity;
     }
 
     if (productInRegular) {
-      return total + (productInRegular.gia_hien_tai * quantity);
+      return total + productInRegular.gia_hien_tai * quantity;
     }
 
     return total;
   }, 0);
-  console.log(totalSelectedPrice)
+  console.log(totalSelectedPrice);
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
   const shippingFee = 20000;
   const discountShipping = 20000;
   const finalTotal = totalSelectedPrice - discountShipping + shippingFee;
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
   };
   const handleSelectProduct = (productId: any) => {
     setSelectedProducts((prevSelected) => {
       if (prevSelected.includes(productId)) {
-        return prevSelected.filter(id => id !== productId);
+        return prevSelected.filter((id) => id !== productId);
       } else {
         return [...prevSelected, productId];
       }
@@ -128,36 +148,37 @@ const CheckOut = () => {
     if (isChecked) {
       const allProductIds = [
         ...data.san_pham_giam_gia.map((product: { id: number }) => product.id),
-        ...data.san_pham_nguyen_gia.map((product: { id: number }) => product.id)
+        ...data.san_pham_nguyen_gia.map(
+          (product: { id: number }) => product.id
+        ),
       ];
       setSelectedProducts(allProductIds);
-      setSelectAllDiscounted(true); 
-      setSelectAllRegular(true); 
+      setSelectAllDiscounted(true);
+      setSelectAllRegular(true);
     } else {
       setSelectedProducts([]);
-      setSelectAllDiscounted(false); 
+      setSelectAllDiscounted(false);
       setSelectAllRegular(false);
     }
   };
 
-  
   const handleCheckout = () => {
     if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
-      toast.error("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.");
+      toast.error(
+        "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
+      );
       return;
     }
     if (!selectedProducts.length) {
       toast.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
       return;
     }
-    nav('/shippingAddressPage')
+    nav("/shippingAddressPage");
     console.log("Thanh toán cho các sản phẩm:", selectedProducts);
   };
   return (
     <section className="container">
-
       <div className="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
-
         <h1 className="h1cart">Giỏ hàng</h1>
         <div className="grid lg:grid-cols-12 gap-4 px-0 justify-center">
           <div className="lg:col-span-8 col-span-6 md:px-0 px-3">
@@ -172,16 +193,23 @@ const CheckOut = () => {
                       title="Select all products"
                     />
                   </th>
-                  <th className="font-semibold text-gray-700 px-4 py-2">Sản phẩm</th>
+                  <th className="font-semibold text-gray-700 px-4 py-2">
+                    Sản phẩm
+                  </th>
                   <th className="font-semibold text-gray-700 px-4 py-2">Giá</th>
-                  <th className="lg:text-center hidden lg:table-cell font-semibold text-gray-700 px-4 py-2">Số lượng</th>
-                  <th className="font-semibold text-gray-700 px-4 py-2">Tổng tiền</th>
+                  <th className="lg:text-center hidden lg:table-cell font-semibold text-gray-700 px-4 py-2">
+                    Số lượng
+                  </th>
+                  <th className="font-semibold text-gray-700 px-4 py-2">
+                    Tổng tiền
+                  </th>
                   {/* <th className="font-semibold text-gray-700 px-4 py-2">Xóa</th> */}
                 </tr>
               </thead>
 
               <tbody>
-                {data?.san_pham_giam_gia?.length === 0 && data?.san_pham_nguyen_gia?.length === 0 ? (
+                {data?.san_pham_giam_gia?.length === 0 &&
+                data?.san_pham_nguyen_gia?.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center py-8">
                       <div className="flex flex-col items-center justify-center">
@@ -203,7 +231,10 @@ const CheckOut = () => {
                   <>
                     {/* sản phẩm giảm giá */}
                     {data?.san_pham_giam_gia?.map((product: any) => (
-                      <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-100">
+                      <tr
+                        key={product.id}
+                        className="border-b border-gray-200 hover:bg-gray-100"
+                      >
                         <td className="px-4 py-2">
                           <input
                             type="checkbox"
@@ -221,18 +252,30 @@ const CheckOut = () => {
                               className="w-12 h-12 object-cover"
                             />
                             <div>
-                              <h3 className="font-semibold text-gray-700">{product.ten_san_pham}</h3>
-                              <p className="text-gray-500">{product.mau_sac}, {product.kich_thuoc}</p>
+                              <h3 className="font-semibold text-gray-700">
+                                {product.ten_san_pham}
+                              </h3>
+                              <p className="text-gray-500">
+                                {product.mau_sac}, {product.kich_thuoc}
+                              </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-2">{formatCurrency(product.gia_hien_tai)}</td>
+                        <td className="px-4 py-2">
+                          {formatCurrency(product.gia_hien_tai)}
+                        </td>
                         <td className="hidden lg:block px-4 py-2">
                           <div className="flex items-center justify-center border rounded-lg">
                             <button
-                              onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                              onClick={() =>
+                                decreaseQuantity({
+                                  productId: product.id,
+                                  currentQuantity: product.so_luong,
+                                })
+                              }
                               className="py-1 px-3 rounded-l-lg"
-                              title="Decrease quantity">
+                              title="Decrease quantity"
+                            >
                               <i className="fa-solid fa-minus" />
                             </button>
                             <input
@@ -245,15 +288,25 @@ const CheckOut = () => {
                               title="Product Quantity"
                             />
                             <button
-                              onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                              onClick={() =>
+                                increaseQuantity({
+                                  productId: product.id,
+                                  currentQuantity: product.so_luong,
+                                })
+                              }
                               className="py-1 px-3 rounded-r-lg"
-                              title="Increase quantity">
+                              title="Increase quantity"
+                            >
                               <i className="fa-solid fa-plus" />
                             </button>
                           </div>
                         </td>
 
-                        <td className="px-4 py-2">{formatCurrency(product.gia_hien_tai * product.so_luong)}</td>
+                        <td className="px-4 py-2">
+                          {formatCurrency(
+                            product.gia_hien_tai * product.so_luong
+                          )}
+                        </td>
                         <td className="px-4 py-2">
                           <button
                             onClick={() => Delete(product.id)}
@@ -269,7 +322,10 @@ const CheckOut = () => {
 
                     {/* sản phẩm nguyên giá */}
                     {data?.san_pham_nguyen_gia?.map((product: any) => (
-                      <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-100">
+                      <tr
+                        key={product.id}
+                        className="border-b border-gray-200 hover:bg-gray-100"
+                      >
                         <td className="px-4 py-2">
                           <input
                             type="checkbox"
@@ -287,18 +343,30 @@ const CheckOut = () => {
                               className="w-12 h-12 object-cover"
                             />
                             <div>
-                              <h3 className="font-semibold text-gray-700">{product.ten_san_pham}</h3>
-                              <p className="text-gray-500">{product.mau_sac}, {product.kich_thuoc}</p>
+                              <h3 className="font-semibold text-gray-700">
+                                {product.ten_san_pham}
+                              </h3>
+                              <p className="text-gray-500">
+                                {product.mau_sac}, {product.kich_thuoc}
+                              </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-2">{formatCurrency(product.gia_hien_tai)}</td>
+                        <td className="px-4 py-2">
+                          {formatCurrency(product.gia_hien_tai)}
+                        </td>
                         <td className="hidden lg:block px-4 py-2">
                           <div className="flex items-center justify-center border rounded-lg">
                             <button
-                              onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                              onClick={() =>
+                                decreaseQuantity({
+                                  productId: product.id,
+                                  currentQuantity: product.so_luong,
+                                })
+                              }
                               className="py-1 px-3 rounded-l-lg"
-                              title="Decrease quantity">
+                              title="Decrease quantity"
+                            >
                               <i className="fa-solid fa-minus" />
                             </button>
                             <input
@@ -311,15 +379,25 @@ const CheckOut = () => {
                               title="Product Quantity"
                             />
                             <button
-                              onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                              onClick={() =>
+                                increaseQuantity({
+                                  productId: product.id,
+                                  currentQuantity: product.so_luong,
+                                })
+                              }
                               className="py-1 px-3 rounded-r-lg"
-                              title="Increase quantity">
+                              title="Increase quantity"
+                            >
                               <i className="fa-solid fa-plus" />
                             </button>
                           </div>
                         </td>
 
-                        <td className="px-4 py-2">{formatCurrency(product.gia_hien_tai * product.so_luong)}</td>
+                        <td className="px-4 py-2">
+                          {formatCurrency(
+                            product.gia_hien_tai * product.so_luong
+                          )}
+                        </td>
                         <td className="px-4 py-2">
                           <button
                             onClick={() => Delete(product.id)}
@@ -341,28 +419,39 @@ const CheckOut = () => {
           {/* CHI TIẾT */}
           <div className="lg:col-span-4 col-span-6">
             <div className="border px-4 py-1 lg:w-[359px] rounded-md">
-              <div className="flex justify-between font-bold border-hrBlack border-b py-4">
-                <h4>Tổng tiền sản phẩm</h4>
-                <span className="px-2">{formatCurrency(totalSelectedPrice)}</span>
+              <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
+              <div className="flex justify-between font-bold border-hrBlack border-b ">
+                <h4>Tổng giá trị sản phẩm</h4>
+                <span className="px-2">
+                  {totalSelectedPrice.toLocaleString("vn-VN")} ₫
+                </span>
               </div>
 
               <div className="py-4">
-                <label className="text-xs">Nhập mã giảm giá</label>
-                <div className="flex mt-1">
-                  <input
-                    type="text"
-                    placeholder="FLAT50"
-                    className="lg:w-[218px] w-[300px] h-[56px] px-4 rounded-s-lg focus:outline-none border border-l-2 border-t-2 border-blackL border-r-0"
-                  />
-                  <button className="bg-black hover:bg-stone-700 w-[101px] h-[55px] border border-black rounded-r-lg text-white">
-                    Áp dụng
-                  </button>
+                {/* <label className="text-xs">Nhập mã giảm giá</label> */}
+                <div className=" flex justify-between font-medium border-hrBlack">
+                  <p>Tiết kiệm</p>
+                  {/* <span className="px-2">{formatCurrency(finalTotal)}</span> */}
+                  <span className="px-2 text-red-500">
+                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}{" "}
+                    ₫
+                  </span>
                 </div>
 
-                <div className="py-4 flex justify-between font-medium border-b border-hrBlack">
+                <div className="flex justify-between font-medium mb-0 border-hrBlack">
                   <p>Phí giao hàng</p>
                   {/* <span className="px-2">{formatCurrency(finalTotal)}</span> */}
-                  <span className="px-2">{shippingFee}</span>
+                  <span className="px-2">
+                    {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0} ₫
+                  </span>
+                </div>
+                <div className="flex justify-between font-medium border-b border-hrBlack">
+                  <p>Giảm giá vận chuyển</p>
+                  {/* <span className="px-2">{formatCurrency(finalTotal)}</span> */}
+                  <span className="px-2 text-red-500">
+                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}{" "}
+                    ₫
+                  </span>
                 </div>
               </div>
 
@@ -372,19 +461,21 @@ const CheckOut = () => {
               </div>
 
               <div className="flex justify-center">
-                {/* <Link to="/ordersummary"> */}
+                <Link to="/shippingAddressPage">
                   <Button
                     onClick={handleCheckout}
-                    className="btn-black rounded-lg mb-4 w-[320px] h-[56px]"
-                    disabled={!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length}
+                    className="btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold"
+                    disabled={
+                      !data?.san_pham_giam_gia.length &&
+                      !data?.san_pham_nguyen_gia.length
+                    }
                   >
-                    Tiến hành thanh toán
+                    Mua hàng ({data?.tong_so_luong})
                   </Button>
-                {/* </Link> */}
+                </Link>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>

@@ -17,15 +17,26 @@ class ThongBaoController extends Controller
         try {
             $data = ThongBao::where('user_id', Auth::id())
                 ->orderByDesc('id')
-                ->get();
+                ->get()
+                ->toArray();
 
-            return response()->json($data);
+            $thongBaoChuaDoc = ThongBao::where('user_id', Auth::id())
+                ->where('trang_thai_da_doc', 0)
+                ->count();
+
+            $json = [
+                'data' => $data,
+                'thong_bao_chua_doc' => $thongBaoChuaDoc
+            ];
+
+            return response()->json($json);
         } catch (\Exception $exception) {
             return response()->json([
                 'message' => $exception->getMessage()
             ], 500);
         }
     }
+
 
     /**
      */
@@ -82,5 +93,22 @@ class ThongBaoController extends Controller
         }
     }
 
+    public function daXemTatCa()
+    {
+        try {
+            $thongBao = ThongBao::where('user_id', Auth::id())
+                ->update([
+                    'trang_thai_da_doc' => 1
+                ]);
 
+            return response()->json([
+                'message' => 'Thong bao da doc thanh cong',
+                'thong_bao' => $thongBao
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'message' => $exception->getMessage()
+            ], 500);
+        }
+    }
 }
