@@ -1,38 +1,10 @@
 import { sanPham2 } from "@/assets/img";
+import { Button, message } from "antd";
+import React from "react";
 
-const Order = () => {
+const Ordercreate = ({ current, steps, next, prev }: any) => {
   return (
-    <div className="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]">
-      {/* <div className="mb-7">
-        <div className="flex items-center space-x-0">
-          <div className="pl-1">
-            <i
-              className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-              style={{ color: "#ffffff" }}
-            ></i>
-          </div>
-          <hr className="m-0 dashed-black" />
-          <div className="text-center">
-            <i className="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
-          </div>
-          <hr className="m-0 dashed-black" />
-          <div className="pr-1 text-center">
-            <i className="fa-light fa-file-invoice bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
-          </div>
-        </div>
-        <div className="flex justify-between space-x-0">
-          <div className="text-center">
-            <span>Địa chỉ</span>
-          </div>
-          <div className="text-center">
-            <span>Phương thức thanh toán</span>
-          </div>
-          <div className="text-center">
-            <span className="">Đặt hàng</span>
-          </div>
-        </div>
-      </div> */}
-
+    <div>
       <div className="mt-[30px]">
         <h3 className="title-h3">Dự kiến giao hàng: 22 Tháng 2, 2024</h3>
 
@@ -80,8 +52,16 @@ const Order = () => {
           </div>
         </div>
       </div>
+      {current === steps.length - 1 && (
+        <Button
+          type="primary"
+          onClick={() => message.success("ok ok ok ok oko ko ko")}
+        >
+          Mua hàng
+        </Button>
+      )}
     </div>
   );
 };
 
-export default Order;
+export default Ordercreate;

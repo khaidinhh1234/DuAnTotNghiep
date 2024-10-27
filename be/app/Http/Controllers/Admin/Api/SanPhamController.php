@@ -434,39 +434,37 @@ class SanPhamController extends Controller
         }
     }
 
-    public function sanPhamYeuThich(string $duong_dan)
+    public function sanPhamYeuThich(string $id)
     {
         try {
-            if (Auth::guard('api')->check()) {
-                $userId = Auth::guard('api')->id();
-                $user = User::findOrFail($userId);
-                $sanPham = SanPham::where('duong_dan',$duong_dan)->pluck('id')->first();
-                if (!$user->sanPhamYeuThich()->where('san_pham_id', $sanPham)->exists()) {
-                    $user->sanPhamYeuThich()->attach($sanPham);
-                    $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
-                    $status = true;
-                    $status_code = 200;
-
-                } else {
-                    $user->sanPhamYeuThich()->detach($sanPham);
-                    $mess = 'Sản phẩm đã được xóa khỏi danh sách yêu thích';
-                    $status = true;
-                    $status_code = 200;
-
-                }
-                return response()->json([
-                    'status' => $status,
-                    'status_code' => $status_code,
-                    'mess' => $mess,
-                    // 'data' => $sanPham,
-                ], $status_code);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 401,
-                    'mess' => 'Vui lòng đăng nhập để thêm sản phẩm yêu thích',
-                ], 401);
+            if (!Auth::guard('api')->check()) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 401,
+                'mess' => 'Vui lòng đăng nhập để thêm sản phẩm yêu thích',
+            ], 401);
             }
+
+            $userId = Auth::guard('api')->id();
+            $user = User::findOrFail($userId);
+            $sanPham = SanPham::findOrFail($id);
+
+            $isFavorite = $user->sanPhamYeuThich()->where('san_pham_id', $id)->exists();
+
+            if ($isFavorite) {
+            $user->sanPhamYeuThich()->detach($id);
+            $mess = 'Sản phẩm đã được xóa khỏi danh sách yêu thích';
+            } else {
+            $user->sanPhamYeuThich()->attach($id);
+            $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
+            }
+
+            return response()->json([
+            'status' => true,
+            'status_code' => 200,
+            'mess' => $mess,
+            'data' => $sanPham,
+            ], 200);
         } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
