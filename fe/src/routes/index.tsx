@@ -162,10 +162,10 @@ const Router = () => {
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<SheetSide />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
-          {/* <Route
+          <Route
             path="/shippingAddressPage"
             element={<ShippingAddressPage />}
-          /> */}
+          />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/mypro" element={<LayoutMyPro />}>
             <Route path="/mypro/myprofile" element={<MyProfile />} />{" "}

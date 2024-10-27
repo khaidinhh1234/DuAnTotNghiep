@@ -2,8 +2,10 @@ import { Button, message, Steps } from "antd";
 import { useState } from "react";
 import Subtotal from "../ordersummary/_components/subtotail";
 // import AddAddressForm from "../ShipingAdrres/_components/AddAdrres";
-import ShippingAddress from "../ShipingAdrres/_components/ShippingAddress";
+
 import AddAddressForm from "./_component/shipping/AddAdrres";
+import Payment from "./_component/payment/payment";
+import ShippingAddress from "./_component/shipping/ShippingAddress";
 
 // import ShippingAddress from "../ShipingAdrres/_components/ShippingAddress";
 const Layoutcheckout = () => {
@@ -20,13 +22,11 @@ const Layoutcheckout = () => {
   const Diachi = () => (
     <>
       <ShippingAddress current={current} steps={steps} next={next} />
-      <AddAddressForm />
     </>
   );
   const Thanhtoan = () => (
     <>
-      <ShippingAddress current={current} steps={steps} next={next} />
-      <AddAddressForm />
+      <Payment current={current} steps={steps} next={next} prev={prev} />
     </>
   );
   const steps = [
@@ -50,7 +50,11 @@ const Layoutcheckout = () => {
     },
     {
       title: "Thanh toán ",
-      content: "Đã xác nhận ",
+      content: (
+        <>
+          <Thanhtoan />
+        </>
+      ),
 
       icon:
         current >= 1 ? (
@@ -122,11 +126,6 @@ const Layoutcheckout = () => {
                   onClick={() => message.success("ok ok ok ok oko ko ko")}
                 >
                   Mua hàng
-                </Button>
-              )}
-              {current > 0 && (
-                <Button className="mx-2" onClick={prev}>
-                  Quay lại
                 </Button>
               )}
             </div>

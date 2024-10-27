@@ -1,16 +1,16 @@
 const AddAddressForm = () => {
   return (
-    <div className="mt-[60px]">
+    <div className="">
       <h3 className="title-h3">Thêm địa chỉ mới</h3>
       <form className="my-7">
         <div className="my-5">
           <label htmlFor="name" className="text-md px-1">
-            Tên
+            Họ và Tên
           </label>
           <br />
           <input
             type="text"
-            placeholder="Nhập tên"
+            placeholder="Nhập họ và tên"
             className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
           />
         </div>
@@ -27,15 +27,16 @@ const AddAddressForm = () => {
         </div>
         <div className="my-5">
           <label htmlFor="addressLine1" className="text-md px-3">
-            Căn hộ, Số nhà, Tòa nhà, Công ty, Căn hộ
+            Địa chỉ nhận hàng
           </label>
           <br />
           <input
             type="text"
+            placeholder="Nhập địa chỉ nhận hàng"
             className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
           />
         </div>
-        <div className="my-5">
+        {/* <div className="my-5">
           <label htmlFor="addressLine2" className="text-md px-3">
             Khu vực, Xóm, Đường, Khu vực, Làng
           </label>
@@ -44,8 +45,8 @@ const AddAddressForm = () => {
             type="text"
             className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
           />
-        </div>
-        <div className="my-5">
+        </div> */}
+        {/* <div className="my-5">
           <label htmlFor="city" className="text-md px-3">
             Thành phố
           </label>
@@ -58,19 +59,20 @@ const AddAddressForm = () => {
             <option value="2">Huế</option>
             <option value="3">Hồ Chí Minh</option>
           </select>
-        </div>
+        </div> */}
         <div className="my-5">
           <label htmlFor="pinCode" className="text-md px-3">
-            Mã vùng
+            Ghi chú
           </label>
           <br />
-          <input
-            type="text"
-            placeholder="Nhập mã vùng"
+          <textarea
+            rows={4}
+            cols={50}
+            placeholder="Ghi chú"
             className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
-          />
+          ></textarea>
         </div>
-        <div className="my-5">
+        {/* <div className="my-5">
           <label htmlFor="state" className="text-md px-3">
             Tỉnh/Thành
           </label>
@@ -83,19 +85,19 @@ const AddAddressForm = () => {
             <option value="2">Huế</option>
             <option value="3">Hồ Chí Minh</option>
           </select>
-        </div>
-        <div className="my-5 flex items-center px-2">
+        </div> */}
+        {/* <div className="my-5 flex items-center px-2">
           <input type="checkbox" id="useDefault" className="dashed-line" />
           <label htmlFor="useDefault" className="text-md px-3">
             Sử dụng làm địa chỉ mặc định
           </label>
-        </div>
-        <a
+        </div> */}
+        {/* <a
           href="paymentmethod.html"
           className="text-center hidden lg:block btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium"
         >
           Thêm địa chỉ mới
-        </a>
+        </a> */}
       </form>
     </div>
   );

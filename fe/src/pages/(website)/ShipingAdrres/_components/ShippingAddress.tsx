@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Routecheckout from "../../_component/routecheckout";
 import { Button } from "antd";
 
-const ShippingAddress = ({ current, next, steps }: any) => {
+const ShippingAddress = () => {
   return (
     <>
       {/* <Routecheckout /> */}
@@ -62,14 +62,14 @@ const ShippingAddress = ({ current, next, steps }: any) => {
       >
         Giao ngay
       </Link> */}
-      {current < steps.length - 1 && (
+      {/* {current < steps.length - 1 && (
         <button
           onClick={next}
           className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium"
         >
           Tiếp theo
         </button>
-      )}
+      )} */}
     </>
   );
 };
