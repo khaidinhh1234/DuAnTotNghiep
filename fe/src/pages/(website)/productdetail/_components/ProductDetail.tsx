@@ -1,3 +1,4 @@
+import instance from "@/configs/client";
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
@@ -22,8 +23,8 @@ import SizeGuideModal from "./SizeGuide";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { debounce } from "lodash";
-import { Swiper, SwiperSlide } from "swiper/react";
 import RelatedProducts from "./RelatedProducts";
+import { Swiper, SwiperSlide } from "swiper/react";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -206,7 +207,7 @@ const ProductDetail: React.FC = () => {
     },
   });
 // add to cart
-const handleAddToCart = () => {
+  const handleAddToCart = () => {
   if (quantity < 1) {
     toast.error('Số lượng phải lớn hơn hoặc bằng 1');
     return;

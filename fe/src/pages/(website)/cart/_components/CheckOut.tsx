@@ -12,7 +12,6 @@ const CheckOut = () => {
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
   const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
-    // Retrieve saved selection from localStorage on initial load
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
