@@ -154,7 +154,7 @@ const ProductList = ({ donhang }: any) => {
   const chitiet = chi_tiet_don_hangs[0];
   // console.log(chitiet);
   return (
-    <div className="lg:col-span-9 col-span-8 lg:pl-9 mx-auto border h-full">
+    <div className="lg:col-span-9 col-span-8 lg:pl-9 mx-auto h-full">
       {don_hang && don_hang.length !== 0 ? (
         don_hang?.map((item: any, index: number) => (
           <ProductItem

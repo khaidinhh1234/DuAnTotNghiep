@@ -1,8 +1,30 @@
-const AddAddressForm = () => {
+import { useEffect } from "react";
+
+const AddAddressForm = ({
+  register,
+  handleSubmit,
+  watch,
+  onAddAddress,
+}: any) => {
+  const name = watch("name");
+  const mobileNumber = watch("mobileNumber");
+  const addressLine1 = watch("addressLine1");
+  const note = watch("note");
+  useEffect(() => {
+    // Kiểm tra nếu cả 4 trường có dữ liệu
+    if (name && mobileNumber && addressLine1 && note) {
+      const formData = { name, mobileNumber, addressLine1, note };
+      onAddAddress(formData);
+      // Gửi dữ liệu đến API hoặc xử lý dữ liệu
+
+      // Thực hiện gửi dữ liệu formData ở đây
+      // Ví dụ: gửi dữ liệu qua hàm submitData(formData);
+    }
+  }, [name, mobileNumber, addressLine1, note]);
   return (
     <div className="">
       <h3 className="title-h3">Thêm địa chỉ mới</h3>
-      <form className="my-7">
+      <form className="my-7" onSubmit={(e) => e.preventDefault()}>
         <div className="my-5">
           <label htmlFor="name" className="text-md px-1">
             Họ và Tên
@@ -10,6 +32,7 @@ const AddAddressForm = () => {
           <br />
           <input
             type="text"
+            {...register("name")}
             placeholder="Nhập họ và tên"
             className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
           />
@@ -21,6 +44,7 @@ const AddAddressForm = () => {
           <br />
           <input
             type="number"
+            {...register("mobileNumber")}
             placeholder="Nhập số điện thoại"
             className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
           />
@@ -32,6 +56,7 @@ const AddAddressForm = () => {
           <br />
           <input
             type="text"
+            {...register("addressLine1")}
             placeholder="Nhập địa chỉ nhận hàng"
             className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
           />
@@ -68,6 +93,7 @@ const AddAddressForm = () => {
           <textarea
             rows={4}
             cols={50}
+            {...register("note")}
             placeholder="Ghi chú"
             className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
           ></textarea>
