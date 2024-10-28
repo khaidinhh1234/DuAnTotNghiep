@@ -20,7 +20,9 @@ export interface Voucher {
   mo_ta: string;
   ap_dung: string;
   da_thu_thap: number;
+  so_luong_da_su_dung: any;
 }
+
 
 export interface VoucherResponse {
   data: Voucher[];
@@ -103,7 +105,7 @@ const Voucher = () => {
                 >
                   <div className="absolute top-2 -right-1 flex items-center">
                     <div className="bg-red-100 text-red-500 font-bold text-sm px-2 py-1 rounded-l-full shadow-md relative">
-                      x {voucher.so_luong}
+                      x {voucher.so_luong - voucher.so_luong_da_su_dung}
                     </div>
                     <div className="absolute -bottom-1 -right-0 w-1 h-1 bg-[#fe9f8c]" style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}></div>
                   </div>

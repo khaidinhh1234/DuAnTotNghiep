@@ -8,7 +8,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-console.log('Fallback banner:', bannervoucher); // Add this line temporarily to verify the import
+console.log('Fallback banner:', bannervoucher); 
 
 
 interface Promotion {
@@ -49,7 +49,7 @@ const Banner = () => {
                 <div key={promotion?.id}>
                   <a href={`/${promotion?.duong_dan}`}>
                     <img
-                      src={promotion?.duong_dan_anh || bannervoucher}
+ src={promotion?.duong_dan_anh || bannervoucher} 
                       alt={promotion?.ten_uu_dai}
                       className="w-full md:bg-center bg-top bg-cover md:h-[550px] h-[250px] rounded cursor-pointer"
                     />
