@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Payment = ({ current, steps, next, prev }: any) => {
+const Payment = () => {
   return (
     <div>
       {" "}
@@ -83,7 +83,7 @@ const Payment = ({ current, steps, next, prev }: any) => {
         </form> */}
 
         <form>
-          {/* <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio">
+          <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio">
             <input
               type="radio"
               id="googlePay"
@@ -91,9 +91,9 @@ const Payment = ({ current, steps, next, prev }: any) => {
               className="bg-blackL"
             />
             <label htmlFor="googlePay" className="title-h3 px-3">
-              Google Pay
+              Thanh toán bằng thẻ MoMo
             </label>
-          </div> */}
+          </div>
           <div className="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio">
             <input
               type="radio"
@@ -102,7 +102,7 @@ const Payment = ({ current, steps, next, prev }: any) => {
               className="bg-blackL"
             />
             <label htmlFor="paypal" className="title-h3 px-3">
-              MoMo Pay
+              MoMo Quét mã QR
             </label>
           </div>
           <div className="border-t border-hrBlack pt-4 mb-7 flex items-center custom-radio">
@@ -122,26 +122,6 @@ const Payment = ({ current, steps, next, prev }: any) => {
           >
             Tiếp tục
           </Link>{" "} */}
-          <div className="flex ">
-            {" "}
-            {current > 0 && (
-              <button
-                className="btn-black px-10 w-[200px] py-4 rounded-lg text-md font-medium mx-5 flex items-center "
-                onClick={prev}
-              >
-                <i className="fa-solid fa-arrow-left mr-2 text-xl"></i> Quay lại
-              </button>
-            )}
-            {current < steps.length - 1 && (
-              <button
-                onClick={next}
-                className="btn-black px-10 w-[200px] py-4 rounded-lg text-md font-medium flex items-center "
-              >
-                Thanh toán{" "}
-                <i className="fa-solid fa-arrow-right ml-2 text-xl"></i>
-              </button>
-            )}
-          </div>
         </form>
       </div>
     </div>

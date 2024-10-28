@@ -512,7 +512,7 @@ const CheckOut = () => {
                   <p>Giảm giá vận chuyển</p>
                   {/* <span className="px-2">{formatCurrency(finalTotal)}</span> */}
                   <span className="px-2 text-red-500">
-                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}{" "}
+                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}
                     ₫
                   </span>
                 </div>

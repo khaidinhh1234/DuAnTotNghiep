@@ -7,6 +7,7 @@ import AddAddressForm from "./_component/shipping/AddAdrres";
 import Payment from "./_component/payment/payment";
 import ShippingAddress from "./_component/shipping/ShippingAddress";
 import Ordercreate from "./_component/check/ordercreate";
+import { useForm } from "react-hook-form";
 
 // import ShippingAddress from "../ShipingAdrres/_components/ShippingAddress";
 const Layoutcheckout = () => {
@@ -19,28 +20,23 @@ const Layoutcheckout = () => {
   const prev = () => {
     setCurrent(current - 1);
   };
-  // const current = 1;
-  const Diachi = () => (
-    <>
-      <ShippingAddress current={current} steps={steps} next={next} />
-    </>
-  );
-  const Thanhtoan = () => (
-    <>
-      <Payment current={current} steps={steps} next={next} prev={prev} />
-    </>
-  );
-  const Order = () => (
-    <>
-      <Ordercreate current={current} steps={steps} next={next} prev={prev} />
-    </>
-  );
+  const { register, handleSubmit, watch } = useForm();
+
+  // Sử dụng watch để theo dõi các giá trị từ form mà không cần submit
+  const AddAddressForm = (data: any) => {
+    console.log(data);
+  };
   const steps = [
     {
       title: "Địa chỉ",
       content: (
         <>
-          <Diachi />
+          <ShippingAddress
+            register={register}
+            handleSubmit={handleSubmit}
+            watch={watch}
+            onAddAddress={AddAddressForm}
+          />
         </>
       ),
 
@@ -58,7 +54,7 @@ const Layoutcheckout = () => {
       title: "Thanh toán ",
       content: (
         <>
-          <Thanhtoan />
+          <Payment />
         </>
       ),
 
@@ -73,7 +69,7 @@ const Layoutcheckout = () => {
       title: "Mua  ",
       content: (
         <>
-          <Order />
+          <Ordercreate />
         </>
       ),
       icon:

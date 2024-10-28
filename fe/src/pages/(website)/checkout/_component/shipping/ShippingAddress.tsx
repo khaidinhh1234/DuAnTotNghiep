@@ -1,6 +1,11 @@
 import AddAddressForm from "./AddAdrres";
 
-const ShippingAddress = ({ current, next, steps }: any) => {
+const ShippingAddress = ({
+  register,
+  handleSubmit,
+  watch,
+  onAddAddress,
+}: any) => {
   return (
     <>
       {/* <Routecheckout /> */}
@@ -60,15 +65,12 @@ const ShippingAddress = ({ current, next, steps }: any) => {
       >
         Giao ngay
       </Link> */}
-      <AddAddressForm />{" "}
-      {current < steps.length - 1 && (
-        <button
-          onClick={next}
-          className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium flex items-center justify-center"
-        >
-          Giao hàng <i className="fa-solid fa-arrow-right ml-2 text-xl"></i>
-        </button>
-      )}
+      <AddAddressForm
+        register={register}
+        handleSubmit={handleSubmit}
+        watch={watch}
+        onAddAddress={onAddAddress}
+      />{" "}
     </>
   );
 };
