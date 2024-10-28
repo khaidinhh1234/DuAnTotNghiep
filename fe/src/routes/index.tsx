@@ -137,6 +137,7 @@ import Notifications from "@/pages/(website)/_component/Notifications";
 import NewDetail from "@/pages/(website)/newdetail/NewDetail";
 import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
+import Page1 from "@/pages/(website)/Shopuudai/shop";
 
 const Router = () => {
   //
@@ -154,6 +155,8 @@ const Router = () => {
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
           {/* <Route path="/minicard" element={<Notifications />} /> */}
+          <Route path="/shop/:slug" element={<Page1 />} />
+
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
