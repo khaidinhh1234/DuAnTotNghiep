@@ -91,11 +91,14 @@ Route::middleware([])
         // Client Tin tức
         Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layTatCaDanhMuc']);
 
-        Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
+        Route::get('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
 
-        //Thanh toán MoMo
-        Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
+// thanh toán qr :
+// routes/web.php
+Route::post('/payment/momo', [MoMoController::class, 'createMomoPayment']);
+Route::get('/payment/momo/callback', [MoMoController::class, 'momoCallback'])->name('payment.momo.callback');
+
 
         //Client Chi tiết sản phẩm
         // Captcha

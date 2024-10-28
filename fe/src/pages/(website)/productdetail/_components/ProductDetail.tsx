@@ -1,4 +1,3 @@
-import instance from "@/configs/client";
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
@@ -23,8 +22,8 @@ import SizeGuideModal from "./SizeGuide";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { debounce } from "lodash";
-import RelatedProducts from "./RelatedProducts";
 import { Swiper, SwiperSlide } from "swiper/react";
+import RelatedProducts from "./RelatedProducts";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -135,9 +134,13 @@ const ProductDetail: React.FC = () => {
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
   const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState<number>(1);
   const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
     null
   );
+  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
+    null
+  ); //laybienthe
   // const [isReady, setIsReady] = useState(false);
 
   // useEffect(() => {
@@ -203,50 +206,54 @@ const ProductDetail: React.FC = () => {
     },
   });
 // add to cart
-  const [quantity, setQuantity] = useState<number>(1)
+const handleAddToCart = () => {
+  if (quantity < 1) {
+    toast.error('Số lượng phải lớn hơn hoặc bằng 1');
+    return;
+  }
+  if (!selectedVariantId) {
+    toast.error('Vui lòng chọn biến thể sản phẩm.');
+    return;
+  }
+  
+  console.log("Thêm vào giỏ hàng với ID biến thể:", selectedVariantId);
+  addToCart(selectedVariantId);
+};
 
-  const { mutate: addToCart } = useMutation({
-    mutationFn: async (variantId: number) => {
-      const response = await instanceClient.post(
-        '/gio-hang',
-        {
-          bien_the_san_pham_id: variantId,
-          so_luong: quantity,
+const { mutate: addToCart } = useMutation({
+  mutationFn: async (variantId: number) => {
+    const response = await instanceClient.post(
+      '/gio-hang',
+      {
+        bien_the_san_pham_id: variantId,
+        so_luong: quantity,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
-      return response.data;
-    },
-    onSuccess: (data) => {
-      if (data.status) {
-        toast.success(data.message);
-        queryClient.invalidateQueries({ queryKey: ['cart', access_token] }); // Làm mới giỏ hàng
-      } else {
-        toast.error(data.message);
       }
-    },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.'
-      );
-    },
-  });
+    );
+    console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
+    return response.data;
+  },
+  onSuccess: (data) => {
+    console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
+    if (data.status) {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ['cart', access_token] });
+    } else {
+      toast.error(data.message);
+    }
+  },
+  onError: (error: any) => {
+    console.error("Lỗi khi thêm vào giỏ hàng:", error); // Kiểm tra lỗi
+    toast.error(
+      error.response?.data?.message || 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.'
+    );
+  },
+});
 
-  const handleAddToCart = () => {
-    if (quantity < 1) {
-      toast.error('Số lượng phải lớn hơn hoặc bằng 1');
-      return;
-    }
-    if (!selectedVariantId) {
-      toast.error('Vui lòng chọn biến thể sản phẩm.');
-      return;
-    }
-    addToCart(selectedVariantId); // Truyền ID của biến thể
-  };
 
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {

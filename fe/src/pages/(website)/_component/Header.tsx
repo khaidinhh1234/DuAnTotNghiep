@@ -412,8 +412,7 @@ const Header = () => {
                             menu == true ? "bg-opacity-60 text-opacity-60" : ""
                           } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                         >
-                          {totalUniqueProducts || 0}{" "}
-                        </span>
+                          {totalUniqueProducts || 0}                        </span>
                       </i>
                     </a>
                     {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
