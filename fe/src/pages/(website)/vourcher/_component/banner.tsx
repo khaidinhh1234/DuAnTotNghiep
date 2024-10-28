@@ -47,7 +47,7 @@ const Banner = () => {
             >
               {promotions?.map((promotion) => (
                 <div key={promotion?.id}>
-                  <a href={`/${promotion?.duong_dan}`}>
+                  <a href={`/shop/${promotion?.duong_dan}`}>
                     <img
  src={promotion?.duong_dan_anh || bannervoucher} 
                       alt={promotion?.ten_uu_dai}
