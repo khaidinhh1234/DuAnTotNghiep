@@ -138,6 +138,7 @@ import NewDetail from "@/pages/(website)/newdetail/NewDetail";
 import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
 import Page1 from "@/pages/(website)/Shopuudai/shop";
+import CheckBar from "@/pages/(website)/productdetail/_components/checkbar";
 
 const Router = () => {
   //
@@ -152,6 +153,8 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
+          <Route path="/checkber" element={<CheckBar />} />
+
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
           {/* <Route path="/minicard" element={<Notifications />} /> */}
