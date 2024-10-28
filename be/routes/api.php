@@ -153,6 +153,13 @@ Route::get('/payment/momo/callback', [MoMoController::class, 'momoCallback'])->n
             Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang']);
         });
 
+
+        Route::post('/gio-hang-local/them', [GioHangController::class, 'themVaoGioHang']);
+        Route::patch('/gio-hang-local/tang-so-luong', [GioHangController::class, 'tangSoLuongLocal']);
+        Route::patch('/gio-hang-local/giam-so-luong', [GioHangController::class, 'giamSoLuongLocal']);
+        Route::delete('/gio-hang-local/xoa/{bien_the_san_pham_id}', [GioHangController::class, 'xoaKhoiGioHang']);
+        Route::get('/gio-hang-local', [GioHangController::class, 'layGioHang']);
+
         //Sản phẩm yêu thích
         Route::get('sanpham/yeuthich', [SanPhamController::class, 'danhSachSanPhamYeuThich'])->middleware('auth:sanctum');
         Route::post('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
