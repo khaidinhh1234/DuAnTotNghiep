@@ -1,4 +1,6 @@
-const Subtotal = () => (
+import { Button, message } from "antd";
+
+const Subtotal = ({ current, steps, next, prev }: any) => (
   <div className="lg:col-span-4 col-span-6">
     <div className="border px-4 py-1 lg:w-[359px] rounded-md">
       <div className="flex justify-between font-bold border-hrBlack border-b py-4">
@@ -24,7 +26,7 @@ const Subtotal = () => (
         </div>
       </div>
       <div className="flex justify-between font-bold mb-8">
-        <h4>Tổng cộng</h4>
+        <h4 className="font-bold">Tổng cộng</h4>
         <span>$205.00</span>
       </div>
       {/* <a href="paymentmethod.html">
@@ -35,12 +37,16 @@ const Subtotal = () => (
           Thêm địa chỉ mới
         </button>
       </a> */}
-      <button
-                  type="submit"
-                  className="block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
-                >
-                  Đặt hàng
-                </button>
+
+      {current === steps.length - 1 && (
+        <button
+          type="submit"
+          className="block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
+          onClick={() => message.success("ok ok ok ok oko ko ko")}
+        >
+          Đặt hàng ngay
+        </button>
+      )}
     </div>
   </div>
 );

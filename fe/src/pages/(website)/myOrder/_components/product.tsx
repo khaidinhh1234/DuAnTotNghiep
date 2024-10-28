@@ -152,34 +152,44 @@ const ProductList = ({ donhang }: any) => {
   });
 
   const chitiet = chi_tiet_don_hangs[0];
-  console.log(chitiet);
+  // console.log(chitiet);
   return (
-    <div className="lg:col-span-9 col-span-8 lg:pl-9">
-      {don_hang?.map((item: any, index: number) => (
-        <ProductItem
-          status={item?.trang_thai_don_hang ?? "Đang xử lý"}
-          pricesale={chitiet?.thanh_tien ?? 0}
-          price={chitiet?.gia ?? 0}
-          img={
-            chitiet?.bien_the_san_pham?.anh_bien_the[0].duong_dan_anh ??
-            sanPham2
-          }
-          name="Váy In Họa Tiết Moana Hồng"
-          size={
-            chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc ?? "M"
-          }
-          gender={
-            chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.loai_kich_thuoc ??
-            ""
-          }
-          mau={chitiet?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac ?? "Đen"}
-          quantity={chitiet?.so_luong ?? 1}
-          key={index}
-          chi_tiet_don_hangs={item?.chi_tiets ?? []}
-          tong_tien={item?.tong_tien_don_hang ?? 0}
-          ma_don_hang={item?.ma_don_hang ?? ""}
-        />
-      ))}
+    <div className="lg:col-span-9 col-span-8 lg:pl-9 mx-auto border h-full">
+      {don_hang && don_hang.length !== 0 ? (
+        don_hang?.map((item: any, index: number) => (
+          <ProductItem
+            status={item?.trang_thai_don_hang ?? "Đang xử lý"}
+            pricesale={chitiet?.thanh_tien ?? 0}
+            price={chitiet?.gia ?? 0}
+            img={
+              chitiet?.bien_the_san_pham?.anh_bien_the[0].duong_dan_anh ??
+              sanPham2
+            }
+            name="Váy In Họa Tiết Moana Hồng"
+            size={
+              chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc ?? "M"
+            }
+            gender={
+              chitiet?.bien_the_san_pham?.kich_thuoc_bien_the
+                ?.loai_kich_thuoc ?? ""
+            }
+            mau={chitiet?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac ?? "Đen"}
+            quantity={chitiet?.so_luong ?? 1}
+            key={index}
+            chi_tiet_don_hangs={item?.chi_tiets ?? []}
+            tong_tien={item?.tong_tien_don_hang ?? 0}
+            ma_don_hang={item?.ma_don_hang ?? ""}
+          />
+        ))
+      ) : (
+        <div className="col-span-9 h-[430px] ">
+          <img
+            src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730026893/cach-huy-don-hang-tren-shopee-04-removebg-preview_2_db7yq1.png"
+            alt="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730026778/cach-huy-don-hang-tren-shopee-04-removebg-preview_1_im54s0.png"
+            className="w-[50%] h-full mx-auto"
+          />
+        </div>
+      )}
     </div>
   );
 };

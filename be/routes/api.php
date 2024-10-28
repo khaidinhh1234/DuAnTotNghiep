@@ -94,10 +94,10 @@ Route::middleware([])
         Route::get('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
 
-        // thanh toán qr :
-        // routes/web.php
-        Route::post('/payment/momo', [MoMoController::class, 'createMomoPayment']);
-        Route::get('/payment/momo/callback', [MoMoController::class, 'momoCallback'])->name('payment.momo.callback');
+// thanh toán qr :
+// routes/web.php
+Route::post('/payment/momo', [MoMoController::class, 'createMomoPayment']);
+Route::get('/payment/momo/callback', [MoMoController::class, 'momoCallback'])->name('payment.momo.callback');
 
 
         //Client Chi tiết sản phẩm
@@ -161,10 +161,6 @@ Route::middleware([])
         Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
 
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
-
-        //Thanh toán
-        //Thanh toán Momo
-        Route::get('thanhtoan/momo', [DonHangClientController::class, 'thanhToanMomo']);
     });
 
 
