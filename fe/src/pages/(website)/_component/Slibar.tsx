@@ -104,12 +104,12 @@ const Slibar = () => {
                     className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
                   >
                     <i className="fa-regular fa-box mr-3" />
-                    Đơn Hàng
+                    Cập nhập Đơn Hàng
                   </Link>
                 </li>
                 <li>
                   <Link
-                    to="/mypro/notification/promotions"
+                    to="/mypro/notificationKm"
                     className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
                   >
                     <i className="fa-regular fa-tag mr-3" />
