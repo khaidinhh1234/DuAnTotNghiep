@@ -7,7 +7,7 @@ import { Link, NavLink } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
-import Notifications from './Notifications';
+import Notifications from "./Notifications";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -104,8 +104,7 @@ const Header = () => {
   const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0)
-
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const handleMouseLeave = () => {
     setTimeout(() => {
@@ -148,7 +147,8 @@ const Header = () => {
     };
   }, [ref]);
 
-  const access_token = user.access_token || localStorage.getItem("access_token");
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -164,9 +164,11 @@ const Header = () => {
       }
     },
   });
-  const allItems = [...(data?.san_pham_giam_gia || []), ...(data?.san_pham_nguyen_gia || [])];
+  const allItems = [
+    ...(data?.san_pham_giam_gia || []),
+    ...(data?.san_pham_nguyen_gia || []),
+  ];
   const totalUniqueProducts = allItems.length;
-
 
   const MenuList = [
     {
@@ -194,8 +196,9 @@ const Header = () => {
     <header className="h-12 relative">
       <div className="bg-white w-full">
         <div
-          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${menu ? "translate-x-0" : "-translate-x-full"
-            }`}
+          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${
+            menu ? "translate-x-0" : "-translate-x-full"
+          }`}
           style={{
             backgroundColor: menu ? "rgba(0, 0, 0, 0.4)" : "transparent",
           }}
@@ -259,7 +262,7 @@ const Header = () => {
             <i className="fa-solid fa-x"></i>
           </button>
         </div>
-        <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-4 opacity-90">
+        <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-4 ">
           <div className="max-w-7xl mx-auto flex justify-between items-center ">
             <div className="lg:hidden order-1 relative">
               <button
@@ -298,9 +301,10 @@ const Header = () => {
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${!isActive
-                          ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
-                          : "text-white bg-black"
+                        `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
+                          !isActive
+                            ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
+                            : "text-white bg-black"
                         }`
                       }
                     >
@@ -339,8 +343,8 @@ const Header = () => {
               </ul>
             </nav>
 
-            <div className="order-4 flex items-center space-x-6 cursor-pointer">
-              <span>
+            <div className="order-4 flex items-center space-x-2 cursor-pointer">
+              <span className="px-1">
                 <div className="relative">
                   <SearchOutlined
                     className="text-xl cursor-pointer"
@@ -377,7 +381,7 @@ const Header = () => {
                     onMouseEnter={() => setShowNotifications(true)}
                     onMouseLeave={() => setShowNotifications(false)}
                   >
-                    <i className="fa-regular fa-bell text-xl relative cursor-pointer">
+                    <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
                       {unreadCount > 0 && (
                         <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
                           {unreadCount}
@@ -386,10 +390,11 @@ const Header = () => {
                     </i>
 
                     <div
-                      className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications
+                      className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
+                        showNotifications
                           ? "opacity-100"
                           : "opacity-0 pointer-events-none"
-                        }`}
+                      }`}
                     >
                       <Notifications onUnreadCountChange={setUnreadCount} />
                     </div>
@@ -401,10 +406,11 @@ const Header = () => {
                   >
                     {" "}
                     <a href="/gio-hang">
-                      <i className="fa-regular fa-bag-shopping text-xl relative">
+                      <i className="fa-regular fa-bag-shopping text-xl relative px-1">
                         <span
-                          className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
-                            } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                          className={`${
+                            menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                          } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                         >
                           {totalUniqueProducts || 0}                        </span>
                       </i>
@@ -503,8 +509,9 @@ const Header = () => {
               ) : (
                 <Link to="/login">
                   <button
-                    className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                      } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
+                    className={`${
+                      menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                    } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
                   >
                     Đăng nhập
                   </button>

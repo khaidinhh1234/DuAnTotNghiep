@@ -2,7 +2,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 import { useState } from "react";
 import "swiper/css";
-const Categories = ({ bo_suu_tap }: any) => {
+const   Categories = ({ bo_suu_tap }: any) => {
   const [activeTab, setActiveTab] = useState<number>(0);
   // const categories = [
   //   {
@@ -53,9 +53,7 @@ const Categories = ({ bo_suu_tap }: any) => {
               ))}
             </div>
           </div>
-
           {/* {bo_suu_tap?.map((item: any, index: number) => ( */}
-
           <Swiper
             spaceBetween={100}
             slidesPerView={4}
