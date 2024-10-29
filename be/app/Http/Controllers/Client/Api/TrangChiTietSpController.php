@@ -39,6 +39,7 @@ class TrangChiTietSpController extends Controller
             foreach ($chiTietSanPham->danhGias as $danhGia) {
                 $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
             }
+
             if (Auth::guard('api')->check()) {
                 $user = Auth::guard('api')->user();
                 if ($chiTietSanPham->khachHangYeuThich->pluck('id')->first() == $user->id) {
@@ -47,6 +48,7 @@ class TrangChiTietSpController extends Controller
                     $chiTietSanPham['trang_thai_yeu_thich'] = false;
                 }
             }
+
 
             return response()->json([
                 'status' => true,
