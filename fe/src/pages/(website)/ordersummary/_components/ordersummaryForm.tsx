@@ -3,7 +3,7 @@ import { sanPham2 } from "@/assets/img";
 const Order = () => {
   return (
     <div className="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]">
-      <div className="mb-7">
+      {/* <div className="mb-7">
         <div className="flex items-center space-x-0">
           <div className="pl-1">
             <i
@@ -28,10 +28,10 @@ const Order = () => {
             <span>Phương thức thanh toán</span>
           </div>
           <div className="text-center">
-            <span>Đánh giá</span>
+            <span className="">Đặt hàng</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="mt-[30px]">
         <h3 className="title-h3">Dự kiến giao hàng: 22 Tháng 2, 2024</h3>

@@ -1,39 +1,11 @@
 import { Link } from "react-router-dom";
+import Routecheckout from "../../_component/routecheckout";
+import { Button } from "antd";
 
 const ShippingAddress = () => {
   return (
     <>
-      <div className="mb-7">
-        <div className="flex items-center space-x-0">
-          <div className="pl-1">
-            <i
-              className="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
-              style={{ color: "#ffffff" }}
-            ></i>
-          </div>
-          <hr className="m-0 dashed-line" />
-          <div className="text-center">
-            <i className="fa-light fa-credit-card bg-stone-100 w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
-          </div>
-          <hr className="m-0 dashed-line" />
-          <div className="pr-1 text-center">
-            <i className="fa-light fa-file-invoice bg-stone-100 w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"></i>
-          </div>
-        </div>
-        <div className="flex justify-between space-x-0">
-          <div className="text-center">
-            <span className="">Địa chỉ</span>
-          </div>
-
-          <div className="text-center">
-            <span>Phương thức thanh toán</span>
-          </div>
-
-          <div className="text-center">
-            <span>Xem xét</span>
-          </div>
-        </div>
-      </div>
+      {/* <Routecheckout /> */}
       <div className="my-5">
         <h3 className="title-h3">Chọn địa chỉ giao hàng</h3>
         <span className="text-[13px]">
@@ -84,9 +56,20 @@ const ShippingAddress = () => {
           </div>
         </div>
       </div>
-      <Link to="/payment"  className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium">
+      {/* <Link
+        to="/payment"
+        className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium"
+      >
         Giao ngay
-      </Link>
+      </Link> */}
+      {/* {current < steps.length - 1 && (
+        <button
+          onClick={next}
+          className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium"
+        >
+          Tiếp theo
+        </button>
+      )} */}
     </>
   );
 };

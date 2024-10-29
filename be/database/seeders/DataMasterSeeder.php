@@ -223,63 +223,124 @@ class DataMasterSeeder extends Seeder
             ]);
         }
 
-        // Size
-        $kichThuoc = [
+        $maleSizes = [
             [
                 'kich_thuoc' => 'S',
                 'loai_kich_thuoc' => 'nam',
+                'chieu_cao_toi_thieu' => 170,
+                'chieu_cao_toi_da' => 175,
+                'can_nang_toi_thieu' => 60,
+                'can_nang_toi_da' => 70,
             ],
             [
                 'kich_thuoc' => 'M',
                 'loai_kich_thuoc' => 'nam',
+                'chieu_cao_toi_thieu' => 175,
+                'chieu_cao_toi_da' => 180,
+                'can_nang_toi_thieu' => 70,
+                'can_nang_toi_da' => 80,
             ],
             [
                 'kich_thuoc' => 'L',
                 'loai_kich_thuoc' => 'nam',
+                'chieu_cao_toi_thieu' => 180,
+                'chieu_cao_toi_da' => 185,
+                'can_nang_toi_thieu' => 80,
+                'can_nang_toi_da' => 90,
             ],
             [
                 'kich_thuoc' => 'XL',
                 'loai_kich_thuoc' => 'nam',
+                'chieu_cao_toi_thieu' => 185,
+                'chieu_cao_toi_da' => 190,
+                'can_nang_toi_thieu' => 90,
+                'can_nang_toi_da' => 100,
             ],
-            [
-                'kich_thuoc' => 'S',
-                'loai_kich_thuoc' => 'nu',
-            ],
-            [
-                'kich_thuoc' => 'M',
-                'loai_kich_thuoc' => 'nu',
-            ],
-            [
-                'kich_thuoc' => 'L',
-                'loai_kich_thuoc' => 'nu',
-            ],
-            [
-                'kich_thuoc' => 'XL',
-                'loai_kich_thuoc' => 'nu',
-            ],
-            [
-                'kich_thuoc' => '1',
-                'loai_kich_thuoc' => 'tre_em',
-            ],
-            [
-                'kich_thuoc' => '2',
-                'loai_kich_thuoc' => 'tre_em',
-            ],
-            [
-                'kich_thuoc' => '3',
-                'loai_kich_thuoc' => 'tre_em',
-            ],
-            [
-                'kich_thuoc' => '4',
-                'loai_kich_thuoc' => 'tre_em',
-            ]
         ];
 
-        foreach ($kichThuoc as $size) {
-            BienTheKichThuoc::create([
-                'kich_thuoc' => $size['kich_thuoc'],
-                'loai_kich_thuoc' => $size['loai_kich_thuoc'],
-            ]);
+        // Sample data for female sizes
+        $femaleSizes = [
+            [
+                'kich_thuoc' => 'XS',
+                'loai_kich_thuoc' => 'nu',
+                'chieu_cao_toi_thieu' => 150,
+                'chieu_cao_toi_da' => 155,
+                'can_nang_toi_thieu' => 40,
+                'can_nang_toi_da' => 50,
+            ],
+            [
+                'kich_thuoc' => 'S',
+                'loai_kich_thuoc' => 'nu',
+                'chieu_cao_toi_thieu' => 155,
+                'chieu_cao_toi_da' => 160,
+                'can_nang_toi_thieu' => 50,
+                'can_nang_toi_da' => 60,
+            ],
+            [
+                'kich_thuoc' => 'M',
+                'loai_kich_thuoc' => 'nu',
+                'chieu_cao_toi_thieu' => 160,
+                'chieu_cao_toi_da' => 165,
+                'can_nang_toi_thieu' => 60,
+                'can_nang_toi_da' => 70,
+            ],
+            [
+                'kich_thuoc' => 'L',
+                'loai_kich_thuoc' => 'nu',
+                'chieu_cao_toi_thieu' => 165,
+                'chieu_cao_toi_da' => 170,
+                'can_nang_toi_thieu' => 70,
+                'can_nang_toi_da' => 80,
+            ],
+        ];
+
+        // Sample data for children sizes
+        $childrenSizes = [
+            [
+                'kich_thuoc' => 'XS',
+                'loai_kich_thuoc' => 'tre_em',
+                'chieu_cao_toi_thieu' => 100,
+                'chieu_cao_toi_da' => 110,
+                'can_nang_toi_thieu' => 20,
+                'can_nang_toi_da' => 25,
+            ],
+            [
+                'kich_thuoc' => 'S',
+                'loai_kich_thuoc' => 'tre_em',
+                'chieu_cao_toi_thieu' => 110,
+                'chieu_cao_toi_da' => 120,
+                'can_nang_toi_thieu' => 25,
+                'can_nang_toi_da' => 30,
+            ],
+            [
+                'kich_thuoc' => 'M',
+                'loai_kich_thuoc' => 'tre_em',
+                'chieu_cao_toi_thieu' => 120,
+                'chieu_cao_toi_da' => 130,
+                'can_nang_toi_thieu' => 30,
+                'can_nang_toi_da' => 35,
+            ],
+            [
+                'kich_thuoc' => 'L',
+                'loai_kich_thuoc' => 'tre_em',
+                'chieu_cao_toi_thieu' => 130,
+                'chieu_cao_toi_da' => 140,
+                'can_nang_toi_thieu' => 35,
+                'can_nang_toi_da' => 40,
+            ],
+        ];
+
+        // Insert all sizes into the database
+        foreach ($maleSizes as $size) {
+            BienTheKichThuoc::create($size);
+        }
+
+        foreach ($femaleSizes as $size) {
+            BienTheKichThuoc::create($size);
+        }
+
+        foreach ($childrenSizes as $size) {
+            BienTheKichThuoc::create($size);
         }
 
         $admin = User::create([

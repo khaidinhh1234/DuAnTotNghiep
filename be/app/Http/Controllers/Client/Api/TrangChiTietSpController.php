@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BienTheKichThuoc;
+use App\Models\BienTheMauSac;
 use App\Models\BienTheSanPham;
 use App\Models\DanhGia;
+use App\Models\DanhMuc;
 use App\Models\SanPham;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -15,7 +18,7 @@ class TrangChiTietSpController extends Controller
     public function chiTietSanPham($duongDan)
     {
         try {
-            $user = Auth::guard('api')->user();
+            // $user = Auth::guard('api')->user();
 
             $chiTietSanPham = SanPham::with([
                 'danhMuc',
@@ -34,13 +37,18 @@ class TrangChiTietSpController extends Controller
             ])->where('duong_dan', $duongDan)->first();
 
             foreach ($chiTietSanPham->danhGias as $danhGia) {
-                $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->where('user_id', $user->id)->exists();
+                $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
             }
-            if ($chiTietSanPham->khachHangYeuThich->pluck('id')->first() == $user->id) {
-                $chiTietSanPham['trang_thai_yeu_thich'] = true;
-            } else {
-                $chiTietSanPham['trang_thai_yeu_thich'] = false;
+
+            if (Auth::guard('api')->check()) {
+                $user = Auth::guard('api')->user();
+                if ($chiTietSanPham->khachHangYeuThich->pluck('id')->first() == $user->id) {
+                    $chiTietSanPham['trang_thai_yeu_thich'] = true;
+                } else {
+                    $chiTietSanPham['trang_thai_yeu_thich'] = false;
+                }
             }
+
 
             return response()->json([
                 'status' => true,
@@ -226,5 +234,94 @@ class TrangChiTietSpController extends Controller
                 'error' => $exception->getMessage()
             ], 500);
         }
+    }
+
+    public function goiY(Request $request)
+    {
+        $request->validate([
+            'chieu_cao' => 'required|numeric|min:0',
+            'can_nang' => 'required|numeric|min:0',
+            'san_pham_id' => 'required|exists:san_phams,id'
+        ]);
+
+        $chieuCao = $request->input('chieu_cao');
+        $canNang = $request->input('can_nang');
+        $sanPhamId = $request->input('san_pham_id');
+
+        $sanPham = SanPham::with('danhMuc')->find($sanPhamId);
+
+        if (!$sanPham || !$sanPham->danhMuc) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Sản phẩm không tồn tại hoặc không có danh mục.',
+            ], 404);
+        }
+
+        $danhMuc = $sanPham->danhMuc;
+        if ($danhMuc->cha_id !== null) {
+            $danhMuc = DanhMuc::find($danhMuc->cha_id);
+        }
+
+        $tenDanhMuc = strtolower($danhMuc->ten_danh_muc);
+        $gioiTinh = $danhMuc->gioi_tinh;
+
+        $kichThuoc = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
+            ->where('chieu_cao_toi_thieu', '<=', $chieuCao)
+            ->where('chieu_cao_toi_da', '>=', $chieuCao)
+            ->where('can_nang_toi_thieu', '<=', $canNang)
+            ->where('can_nang_toi_da', '>=', $canNang)
+            ->first();
+
+        if (!$kichThuoc) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy kích thước phù hợp.',
+            ], 404);
+        }
+
+        $bienTheSanPham = BienTheSanPham::where('san_pham_id', $sanPhamId)
+            ->where('bien_the_kich_thuoc_id', $kichThuoc->id)
+            ->with('mauBienThe')
+            ->get(['bien_the_mau_sac_id', 'so_luong_bien_the', 'gia_ban', 'gia_khuyen_mai']);
+
+        if ($bienTheSanPham->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy biến thể sản phẩm phù hợp.',
+                'debug' => [
+                    'san_pham_id' => $sanPhamId,
+                    'kich_thuoc_id' => $kichThuoc->id,
+                ]
+            ], 404);
+        }
+
+        $result = $bienTheSanPham->map(function ($variant) {
+            return [
+                'bien_the_mau_sac' => $variant->mauBienThe,
+                'so_luong' => $variant->so_luong_bien_the,
+                'gia_ban' => $variant->gia_ban,
+                'gia_khuyen_mai' => $variant->gia_khuyen_mai ? $variant->gia_khuyen_mai : null,
+                'co_san_kho' => $variant->so_luong_bien_the > 0,
+            ];
+        });
+
+        $kichThuocGoiY = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
+            ->where(function ($query) use ($chieuCao, $canNang) {
+                $query->whereBetween('chieu_cao_toi_thieu', [$chieuCao - 10, $chieuCao + 10])
+                    ->whereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
+                    ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
+                    ->whereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
+            })
+            ->pluck('kich_thuoc');
+
+        return response()->json([
+            'status' => true,
+            'kich_thuoc' => $kichThuoc->kich_thuoc,
+            'bien_the_san_pham' => $result,
+            'goi_y' => [
+                'kich_thuoc_duoc_goi_y' => $kichThuocGoiY,
+                'huong_dan_cham_soc' => 'Giặt tay trong nước lạnh, không sử dụng chất tẩy. Phơi khô tự nhiên.'
+            ],
+        ]);
     }
 }
