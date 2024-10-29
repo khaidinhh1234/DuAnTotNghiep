@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import { Button } from "antd";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Subtotal from "../../ShipingAdrres/_components/subtotail";
 
 const CheckOut = () => {
   const nav = useNavigate();
@@ -13,14 +13,13 @@ const CheckOut = () => {
   const access_token =
     user.access_token || localStorage.getItem("access_token");
   const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
-    // Retrieve saved selection from localStorage on initial load
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
 
-  const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
-  const [selectAllRegular, setSelectAllRegular] = useState(false);
-
+  // const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
+  // const [selectAllRegular, setSelectAllRegular] = useState(false);
+  
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -54,13 +53,47 @@ const CheckOut = () => {
         }
       );
     },
+    // Thực hiện cập nhật lạc quan (optimistic update)
+    onMutate: ({ productId, currentQuantity }) => {
+      const previousCartData = queryClient.getQueryData(["cart", access_token]);
+      queryClient.setQueryData(["cart", access_token], (oldData: { san_pham_giam_gia: any[], san_pham_nguyen_gia: any[] }) => {
+        const updatedProducts = oldData.san_pham_giam_gia.map((product: any) => {
+          if (product.id === productId) {
+            return { ...product, so_luong: currentQuantity + 1 };
+          }
+          return product;
+        });
+        
+        const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(product => {
+          if (product.id === productId) {
+            return { ...product, so_luong: currentQuantity + 1 };
+          }
+          return product;
+        });
+  
+        return { 
+          ...oldData, 
+          san_pham_giam_gia: updatedProducts,
+          san_pham_nguyen_gia: updatedOriginalProducts
+        };
+      });
+      return { previousCartData };
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
-    onError: (error: any) => {
-      toast.error("Thao tác quá nhanh vui lòng chậm lại");
+    onError: (error: any, _, context) => {
+      if (context?.previousCartData) {
+        if (context?.previousCartData) {
+          if (context?.previousCartData) {
+            queryClient.setQueryData(["cart", access_token], context.previousCartData);
+          }
+        }
+      }
+      toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
+  
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({
       productId,
@@ -84,14 +117,44 @@ const CheckOut = () => {
         );
       }
     },
+    // Thực hiện cập nhật lạc quan (optimistic update)
+    onMutate: ({ productId, currentQuantity }) => {
+      const previousCartData = queryClient.getQueryData(["cart", access_token]);
+      queryClient.setQueryData(["cart", access_token], (oldData: { san_pham_giam_gia: any[], san_pham_nguyen_gia: any[] }) => {
+        const updatedProducts = oldData.san_pham_giam_gia.map(product => {
+          if (product.id === productId) {
+            return { ...product, so_luong: currentQuantity - 1 };
+          }
+          return product;
+        });
+        
+        const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(product => {
+          if (product.id === productId) {
+            return { ...product, so_luong: currentQuantity - 1 };
+          }
+          return product;
+        });
+  
+        return { 
+          ...oldData, 
+          san_pham_giam_gia: updatedProducts,
+          san_pham_nguyen_gia: updatedOriginalProducts
+        };
+      });
+  
+      // Trả về dữ liệu cũ để có thể khôi phục
+      return { previousCartData };
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
-    onError: (error: any) => {
+    onError: (error: any, { productId, currentQuantity }, context) => {
+      queryClient.setQueryData(["cart", access_token], context.previousCartData);
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
-
+  
+  
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId) => {
       await instanceClient.delete(`/gio-hang/${productId}`, {
@@ -140,49 +203,89 @@ const CheckOut = () => {
       currency: "VND",
     }).format(amount);
   };
-  // const handleSelectProduct = (productId: any) => {
-  //   setSelectedProducts((prevSelected) => {
-  //     if (prevSelected.includes(productId)) {
-  //       return prevSelected.filter((id) => id !== productId);
-  //     } else {
-  //       return [...prevSelected, productId];
-  //     }
-  //   });
-  // };
-
-  // Xử lý khi chọn tất cả
-  const handleSelectAll = (isChecked: any) => {
-    if (isChecked) {
-      const allProductIds = [
-        ...data.san_pham_giam_gia.map((product: { id: number }) => product.id),
-        ...data.san_pham_nguyen_gia.map(
-          (product: { id: number }) => product.id
-        ),
-      ];
-      setSelectedProducts(allProductIds);
-      setSelectAllDiscounted(true);
-      setSelectAllRegular(true);
-    } else {
-      setSelectedProducts([]);
-      setSelectAllDiscounted(false);
-      setSelectAllRegular(false);
-    }
-  };
+  
 
   const handleCheckout = () => {
     if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
-      toast.error(
-        "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
-      );
+      toast.error("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.");
       return;
     }
+  
+    // Kiểm tra xem có sản phẩm nào được chọn hay không
     if (!selectedProducts.length) {
       toast.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
       return;
     }
+  
+    // Tính toán chi tiết giỏ hàng
+    const cartDetails = selectedProducts.map((productId) => {
+      const productInDiscounts = data?.san_pham_giam_gia.find((product: any) => product.id === productId);
+      const productInRegular = data?.san_pham_nguyen_gia.find((product: { id: number }) => product.id === Number(productId));
+      const product = productInDiscounts || productInRegular;
+  
+      // Nếu sản phẩm không tồn tại trong cả hai danh sách
+      if (!product) {
+        return {
+          id: productId,
+          name: "Sản phẩm không tồn tại",
+          quantity: 0,
+          price: 0,
+          total: 0,
+        };
+      }
+  
+      const quantity = product?.so_luong || 1; 
+      const price = product?.gia_hien_tai || 0; 
+  
+      return {
+        id: productId,
+        name: product?.ten_san_pham || "Sản phẩm không xác định",
+        quantity,
+        price,
+        total: price * quantity, 
+      };
+    });
+  
+    // Tính tổng giá trị giỏ hàng
+    const cartTotal = {
+      totalSelectedPrice: totalSelectedPrice,
+      shippingFee: finalTotal > 0 ? shippingFee : 0,
+      discount: finalTotal > 0 ? shippingFee : 0,
+      finalTotal: finalTotal,
+      details: cartDetails,
+    };
+  
+    // Lưu cartTotal vào localStorage
+    localStorage.setItem("cartTotal", JSON.stringify(cartTotal));
+  
     nav("/shippingAddressPage");
-    console.log("Thanh toán cho các sản phẩm:", selectedProducts);
   };
+ // Xử lý khi chọn tất cả
+ const handleSelectAll = (isChecked: boolean) => {
+  if (isChecked) {
+    const allProductIds = [
+      ...data?.san_pham_giam_gia.map((product: any) => product.id),
+      ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
+    ];
+    setSelectedProducts(allProductIds);
+    localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
+
+    // Gọi SelectedProduct với tất cả ID
+    SelectedProduct({ gioHangIds: allProductIds, isChecked: true });
+  } else {
+    const allProductIds = [
+      ...data?.san_pham_giam_gia.map((product: any) => product.id),
+      ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
+    ];
+    setSelectedProducts([]); // Cập nhật trạng thái không chọn
+    localStorage.setItem('selectedProducts', JSON.stringify([]));
+
+    // Gọi SelectedProduct với tất cả ID và trạng thái không chọn
+    SelectedProduct({ gioHangIds: allProductIds, isChecked: false });
+  }
+};
+
+
   // chọn sản phẩm
   const { mutate: SelectedProduct } = useMutation({
     mutationFn: async ({
@@ -277,7 +380,6 @@ const CheckOut = () => {
                   {/* <th className="font-semibold text-gray-700 px-4 py-2">Xóa</th> */}
                 </tr>
               </thead>
-
               <tbody>
                 {data?.san_pham_giam_gia?.length === 0 &&
                 data?.san_pham_nguyen_gia?.length === 0 ? (
@@ -488,7 +590,7 @@ const CheckOut = () => {
           </div>
 
           {/* CHI TIẾT */}
-          <div className="lg:col-span-4 col-span-6">
+          {/* <div className="lg:col-span-4 col-span-6">
             <div className="border px-4 py-1 lg:w-[359px] rounded-md">
               <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
               <div className="flex justify-between font-bold border-hrBlack border-b ">
@@ -499,10 +601,8 @@ const CheckOut = () => {
               </div>
 
               <div className="py-4">
-                {/* <label className="text-xs">Nhập mã giảm giá</label> */}
                 <div className=" flex justify-between font-medium border-hrBlack">
                   <p>Tiết kiệm</p>
-                  {/* <span className="px-2">{formatCurrency(finalTotal)}</span> */}
                   <span className="px-2 text-red-500">
                     - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}{" "}
                     ₫
@@ -511,14 +611,12 @@ const CheckOut = () => {
 
                 <div className="flex justify-between font-medium mb-0 border-hrBlack">
                   <p>Phí giao hàng</p>
-                  {/* <span className="px-2">{formatCurrency(finalTotal)}</span> */}
                   <span className="px-2">
                     {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0} ₫
                   </span>
                 </div>
                 <div className="flex justify-between font-medium border-b border-hrBlack">
-                  <p>Giảm giá vận chuyển</p>
-                  {/* <span className="px-2">{formatCurrency(finalTotal)}</span> */}
+                  <p>Giảm giá vận chuyển</p>\
                   <span className="px-2 text-red-500">
                     - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}
                     ₫
@@ -546,7 +644,8 @@ const CheckOut = () => {
                 </Link>
               </div>
             </div>
-          </div>
+          </div> */}
+          <Subtotal/>
         </div>
       </div>
     </section>

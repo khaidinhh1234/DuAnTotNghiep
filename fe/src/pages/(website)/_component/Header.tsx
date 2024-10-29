@@ -366,26 +366,20 @@ const Header = () => {
                   </Modal>
                 </div>
               </span>
-
-              {/* {" "}
-                  <span>
-                    <a href="/mywishlist">
-                      <i className="fa-regular fa-heart text-xl">{ }</i>
-                    </a>
-                  </span> */}
               <span
-                ref={notificationRef}
-                className="relative"
-                onMouseEnter={() => setShowNotifications(true)}
-                onMouseLeave={() => setShowNotifications(false)}
-              >
-                <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
-                  {unreadCount > 0 && (
-                    <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                      {unreadCount}
-                    </span>
-                  )}
-                </i>
+                    ref={notificationRef}
+                    className="relative"
+                    onMouseEnter={() => setShowNotifications(true)}
+                    onMouseLeave={() => setShowNotifications(false)}
+                  >
+                    <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
+                      {unreadCount > 0 && (
+                        <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </i>
+
 
                 <div
                   className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
@@ -410,17 +404,39 @@ const Header = () => {
                         menu == true ? "bg-opacity-60 text-opacity-60" : ""
                       } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
-                      {totalUniqueProducts || 0}{" "}
-                    </span>
-                  </i>
-                </a>
-                {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
-                <CartOverlay isVisible={isCartVisible} />
-                {/* </div> */}
-              </span>
+                      <Notifications onUnreadCountChange={setUnreadCount} />
+                    </div>
+                  </span>
+                 
+              <span
+                    ref={cartRef}
+                    onMouseEnter={() => setIsCartVisible(true)}
+                    onMouseLeave={() => setIsCartVisible(false)}
+                  >
+                    {" "}
+                    <a href="/gio-hang">
+                      <i className="fa-regular fa-bag-shopping text-xl relative px-1">
+                        <span
+                          className={`${
+                            menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                          } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                        >
+                          {totalUniqueProducts || 0}                        </span>
+                      </i>
+                    </a>
+                    {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
+                    <CartOverlay isVisible={isCartVisible} />
+                    {/* </div> */}
+                  </span>
               {member ? (
                 <>
-                  {" "}
+                  {/* {" "}
+                  <span>
+                    <a href="/mywishlist">
+                      <i className="fa-regular fa-heart text-xl">{ }</i>
+                    </a>
+                  </span> */}
+  
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
                     <AvatarImage src={member?.anh_nguoi_dung} />
                     <AvatarFallback>CN</AvatarFallback>
