@@ -10,7 +10,8 @@ const CheckOut = () => {
   const nav = useNavigate();
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
-  const access_token = user.access_token || localStorage.getItem("access_token");
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
   const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
@@ -168,7 +169,7 @@ const CheckOut = () => {
     onError: (error: any) => {
       toast.error(error.message || "Có lỗi xảy ra khi xóa sản phẩm.");
     },
-  })
+  });
   // Tính tổng tiền
 
   const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
@@ -287,8 +288,15 @@ const CheckOut = () => {
 
   // chọn sản phẩm
   const { mutate: SelectedProduct } = useMutation({
-    mutationFn: async ({ gioHangIds, isChecked }: { gioHangIds: string[]; isChecked: boolean }) => {
-      await instanceClient.post(`/gio-hang/chon-san-pham`,
+    mutationFn: async ({
+      gioHangIds,
+      isChecked,
+    }: {
+      gioHangIds: string[];
+      isChecked: boolean;
+    }) => {
+      await instanceClient.post(
+        `/gio-hang/chon-san-pham`,
         { gio_hang_ids: gioHangIds, chon: isChecked ? 1 : 0 },
         {
           headers: {
@@ -301,7 +309,7 @@ const CheckOut = () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Có lỗi xảy ra khi chọn sản phẩm.');
+      toast.error(error.message || "Có lỗi xảy ra khi chọn sản phẩm.");
     },
   });
 
@@ -310,14 +318,17 @@ const CheckOut = () => {
 
     // Cập nhật trạng thái selectedProducts
     const updatedSelectedProducts = isChecked
-      ? selectedProducts.filter(id => id !== productId) // Bỏ chọn sản phẩm
+      ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn sản phẩm
       : [...selectedProducts, productId]; // Chọn sản phẩm
 
     setSelectedProducts(updatedSelectedProducts);
-    console.log('check:', isChecked)
+    console.log("check:", isChecked);
     // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
     SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
-    localStorage.setItem('selectedProducts', JSON.stringify(updatedSelectedProducts));
+    localStorage.setItem(
+      "selectedProducts",
+      JSON.stringify(updatedSelectedProducts)
+    );
   };
   useEffect(() => {
     // Retrieve saved selection from localStorage on component mount
@@ -329,7 +340,7 @@ const CheckOut = () => {
 
   // Tải sản phẩm từ localStorage khi component khởi tạo
   useEffect(() => {
-    const storedProducts = localStorage.getItem('selectedProducts');
+    const storedProducts = localStorage.getItem("selectedProducts");
     if (storedProducts) {
       setSelectedProducts(JSON.parse(storedProducts));
     }
@@ -337,7 +348,7 @@ const CheckOut = () => {
 
   // Lưu sản phẩm vào localStorage khi có sự thay đổi
   useEffect(() => {
-    localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
   }, [selectedProducts]);
   return (
     <section className="container">
@@ -464,7 +475,6 @@ const CheckOut = () => {
                           </div>
                         </td>
 
-
                         <td className="px-4 py-2">
                           {formatCurrency(
                             product.gia_hien_tai * product.so_luong
@@ -556,7 +566,6 @@ const CheckOut = () => {
                           </div>
                         </td>
 
-
                         <td className="px-4 py-2">
                           {formatCurrency(
                             product.gia_hien_tai * product.so_luong
@@ -621,8 +630,7 @@ const CheckOut = () => {
               </div>
 
               <div className="flex justify-center">
-
-                <Link to="/checkout">
+                <Link to="/shippingAddressPage">
                   <Button
                     onClick={handleCheckout}
                     className="btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold"

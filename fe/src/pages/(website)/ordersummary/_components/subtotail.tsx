@@ -1,6 +1,6 @@
 import { Button, message } from "antd";
 
-const Subtotal = ({ current, steps, next, prev }: any) => (
+const Subtotal = ({ current, steps, next, prev, handleSubmit }: any) => (
   <div className="lg:col-span-4 col-span-6">
     <div className="border px-4 py-1 lg:w-[359px] rounded-md">
       <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
@@ -54,7 +54,10 @@ const Subtotal = ({ current, steps, next, prev }: any) => (
       <div className="">
         {current < steps.length - 1 && current == 0 && (
           <button
-            onClick={next}
+            onClick={() => {
+              next();
+              handleSubmit();
+            }}
             className=" btn-black px-10 w-[320px] my-4 mx-auto py-3 rounded-lg text-md font-medium flex items-center justify-center"
           >
             Giao hàng <i className="fa-solid fa-arrow-right ml-2 text-xl"></i>

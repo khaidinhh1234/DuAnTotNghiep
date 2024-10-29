@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\GioHang;
 use App\Models\BienTheSanPham;
 use App\Models\MaKhuyenMai;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GioHangController extends Controller
 {
@@ -88,7 +90,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
     public function store(Request $request)
     {
         try {
@@ -117,11 +118,11 @@ class GioHangController extends Controller
                 [
                     'user_id' => Auth::id(),
                     'bien_the_san_pham_id' => $request->bien_the_san_pham_id,
-                    // 'chon' => 1
+                    'chon' => 1
                 ],
                 [
                     'so_luong' => $tongSoLuong,
-                    // 'chon' => 1
+                    'chon' => 1
                 ]
             );
 
@@ -137,8 +138,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
-
     public function tangSoLuong($id)
     {
         try {
@@ -171,7 +170,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
     public function giamSoLuong($id)
     {
         try {
@@ -202,7 +200,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 
     public function destroy($id)
     {
@@ -360,10 +357,6 @@ class GioHangController extends Controller
         }
     }
 
-
-
-
-
     public function updateSelection(Request $request)
     {
         try {
@@ -494,7 +487,9 @@ class GioHangController extends Controller
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
             ], 500);
         }
-         // local
+    }
+
+    // local
     public function themVaoGioHang(Request $request)
     {
         $request->validate([
@@ -668,6 +663,5 @@ class GioHangController extends Controller
             Log::error('Lỗi khi lấy giỏ hàng:', ['error' => $e->getMessage()]);
             return response()->json(['status' => false, 'error' => 'Có lỗi xảy ra khi lấy giỏ hàng: ' . $e->getMessage()], 500);
         }
-
     }
 }
