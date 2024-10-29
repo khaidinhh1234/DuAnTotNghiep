@@ -380,12 +380,29 @@ const Header = () => {
                       )}
                     </i>
 
-                    <div
-                      className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
-                        showNotifications
-                          ? "opacity-100"
-                          : "opacity-0 pointer-events-none"
-                      }`}
+
+                <div
+                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
+                    showNotifications
+                      ? "opacity-100"
+                      : "opacity-0 pointer-events-none"
+                  }`}
+                >
+                  <Notifications onUnreadCountChange={setUnreadCount} />
+                </div>
+              </span>
+              <span
+                ref={cartRef}
+                onMouseEnter={() => setIsCartVisible(true)}
+                onMouseLeave={() => setIsCartVisible(false)}
+              >
+                {" "}
+                <a href="/gio-hang">
+                  <i className="fa-regular fa-bag-shopping text-xl relative px-1">
+                    <span
+                      className={`${
+                        menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                      } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
                       <Notifications onUnreadCountChange={setUnreadCount} />
                     </div>
@@ -419,7 +436,7 @@ const Header = () => {
                       <i className="fa-regular fa-heart text-xl">{ }</i>
                     </a>
                   </span> */}
-                 
+  
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
                     <AvatarImage src={member?.anh_nguoi_dung} />
                     <AvatarFallback>CN</AvatarFallback>

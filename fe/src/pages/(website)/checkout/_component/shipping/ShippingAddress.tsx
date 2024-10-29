@@ -5,6 +5,7 @@ const ShippingAddress = ({
   handleSubmit,
   watch,
   onAddAddress,
+  errors,
 }: any) => {
   return (
     <>
@@ -70,6 +71,7 @@ const ShippingAddress = ({
         handleSubmit={handleSubmit}
         watch={watch}
         onAddAddress={onAddAddress}
+        errors={errors}
       />{" "}
     </>
   );
