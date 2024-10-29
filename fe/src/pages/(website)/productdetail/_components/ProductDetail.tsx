@@ -1,3 +1,4 @@
+import instance from "@/configs/client";
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
@@ -22,8 +23,8 @@ import SizeGuideModal from "./SizeGuide";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { debounce } from "lodash";
-import { Swiper, SwiperSlide } from "swiper/react";
 import RelatedProducts from "./RelatedProducts";
+import { Swiper, SwiperSlide } from "swiper/react";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -216,11 +217,34 @@ const handleAddToCart = () => {
     toast.error('Vui lòng chọn biến thể sản phẩm.');
     return;
   }
-  
+
   console.log("Thêm vào giỏ hàng với ID biến thể:", selectedVariantId);
-  addToCart(selectedVariantId);
+
+  // Kiểm tra nếu không có access_token thì lưu vào localStorage
+  if (!access_token) {
+    // Lấy giỏ hàng từ localStorage hoặc khởi tạo một mảng trống
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    
+    // Kiểm tra xem sản phẩm đã tồn tại trong giỏ chưa
+    const existingItem = cart.find((item: { variantId: number; quantity: number }) => item.variantId === selectedVariantId);
+    if (existingItem) {
+      // Nếu sản phẩm đã tồn tại, tăng số lượng
+      existingItem.quantity += quantity;
+    } else {
+      // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ
+      cart.push({ variantId: selectedVariantId, quantity });
+    }
+    
+    // Cập nhật giỏ hàng trong localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    toast.success('Sản phẩm đã được thêm vào giỏ hàng trong localStorage.');
+  } else {
+    // Nếu có access_token (người dùng đã đăng nhập), gọi API để thêm sản phẩm vào giỏ trên server
+    addToCart(selectedVariantId);
+  }
 };
 
+// useMutation thêm sản phẩm vào giỏ hàng trên server khi có access_token
 const { mutate: addToCart } = useMutation({
   mutationFn: async (variantId: number) => {
     const response = await instanceClient.post(
@@ -254,6 +278,7 @@ const { mutate: addToCart } = useMutation({
     );
   },
 });
+
 
 
   const handleReviewLike = useCallback(
