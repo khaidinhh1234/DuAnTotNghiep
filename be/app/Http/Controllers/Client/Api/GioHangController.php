@@ -90,7 +90,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
     public function store(Request $request)
     {
         try {
@@ -119,11 +118,11 @@ class GioHangController extends Controller
                 [
                     'user_id' => Auth::id(),
                     'bien_the_san_pham_id' => $request->bien_the_san_pham_id,
-                    // 'chon' => 1
+                    'chon' => 1
                 ],
                 [
                     'so_luong' => $tongSoLuong,
-                    // 'chon' => 1
+                    'chon' => 1
                 ]
             );
 
@@ -139,8 +138,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
-
     public function tangSoLuong($id)
     {
         try {
@@ -173,7 +170,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
     public function giamSoLuong($id)
     {
         try {
@@ -204,7 +200,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 
     public function destroy($id)
     {
@@ -338,11 +333,6 @@ class GioHangController extends Controller
                 $soTienGiamGia = $tongGiaTriGioHang;
             }
 
-            DB::table('nguoi_dung_ma_khuyen_mai')
-                ->where('user_id', $userId)
-                ->where('ma_khuyen_mai_id', $maGiamGia->id)
-                ->update(['da_su_dung' => true, 'ngay_su_dung' => now()]);
-
             return response()->json([
                 'status' => true,
                 'message' => 'Mã giảm giá đã được áp dụng thành công.',
@@ -361,10 +351,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
-
-
-
 
     public function updateSelection(Request $request)
     {
@@ -497,7 +483,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 
     // local
     public function themVaoGioHang(Request $request)
@@ -674,7 +659,4 @@ class GioHangController extends Controller
             return response()->json(['status' => false, 'error' => 'Có lỗi xảy ra khi lấy giỏ hàng: ' . $e->getMessage()], 500);
         }
     }
-
-
-
 }

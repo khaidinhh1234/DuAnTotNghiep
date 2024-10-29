@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('an_danh')->default(0);
+        Schema::table('gio_hangs', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->uuid('user_id')->nullable()->change();
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('an_danh');
+        Schema::table('gio_hangs', function (Blueprint $table) {
+            $table->foreignId('user_id')->nullable()->change();
+
         });
     }
 };
