@@ -11,13 +11,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class GioHangController extends Controller
 {
+    private function getUserIdOrSessionId()
+    {
+        if (Auth::check()) {
+            return Auth::id();
+        } else {
+            if (!Session::has('tam_thoi_id')) {
+                Session::put('tam_thoi_id', uniqid('user_'));
+            }
+            return Session::get('tam_thoi_id');
+        }
+    }
+
     public function index()
     {
         try {
-            $userId = Auth::id();
+            $userId = $this->getUserIdOrSessionId();
 
             $gioHangs = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
@@ -90,6 +103,7 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
     public function store(Request $request)
     {
         try {
@@ -100,7 +114,9 @@ class GioHangController extends Controller
 
             $bienTheSanPham = BienTheSanPham::findOrFail($request->bien_the_san_pham_id);
 
-            $gioHangHienTai = GioHang::where('user_id', Auth::id())
+            $userId = $this->getUserIdOrSessionId();
+
+            $gioHangHienTai = GioHang::where('user_id', $userId)
                 ->where('bien_the_san_pham_id', $request->bien_the_san_pham_id)
                 ->first();
 
@@ -116,7 +132,7 @@ class GioHangController extends Controller
 
             $gioHang = GioHang::updateOrCreate(
                 [
-                    'user_id' => Auth::id(),
+                    'user_id' => $userId,
                     'bien_the_san_pham_id' => $request->bien_the_san_pham_id,
                     'chon' => 1
                 ],
@@ -126,6 +142,7 @@ class GioHangController extends Controller
                 ]
             );
 
+            Log::info('Thêm vào giỏ hàng: ' . Session::get('tam_thoi_id'));
             return response()->json([
                 'status' => true,
                 'message' => 'Sản phẩm đã được thêm vào giỏ hàng thành công!',
@@ -138,94 +155,97 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
     public function tangSoLuong($id)
     {
         try {
             $gioHang = GioHang::findOrFail($id);
+            $currentUserId = $this->getUserIdOrSessionId();
 
-            if ($gioHang->user_id !== Auth::id()) {
-                return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
+            if ($gioHang->user_id !== $currentUserId) {
+                return response()->json(['status' => false, 'message' => 'Không có quyền truy cập.'], 403);
             }
 
-            $bienTheSanPham = BienTheSanPham::findOrFail($gioHang->bien_the_san_pham_id);
+            $bienTheSanPham = BienTheSanPham::find($gioHang->bien_the_san_pham_id);
+            if (!$bienTheSanPham) {
+                return response()->json(['status' => false, 'message' => 'Không tìm thấy biến thể sản phẩm.'], 404);
+            }
 
             if ($gioHang->so_luong + 1 > $bienTheSanPham->so_luong_bien_the) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
-                ], 400);
+                return response()->json(['status' => false, 'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'], 400);
             }
 
             $gioHang->increment('so_luong');
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Đã tăng số lượng sản phẩm thành công!',
-                'data' => $gioHang
-            ]);
+            return response()->json(['status' => true, 'message' => 'Đã tăng số lượng sản phẩm thành công!', 'data' => $gioHang]);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-            ], 500);
+            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }
     }
+
     public function giamSoLuong($id)
     {
         try {
             $gioHang = GioHang::findOrFail($id);
+            $currentUserId = $this->getUserIdOrSessionId();
 
-            if ($gioHang->user_id !== Auth::id()) {
-                return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
+            if ($gioHang->user_id !== $currentUserId) {
+                return response()->json(['status' => false, 'message' => 'Không có quyền truy cập.'], 403);
             }
 
             if ($gioHang->so_luong - 1 < 1) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Số lượng không thể nhỏ hơn 1.'
-                ], 400);
+                return response()->json(['status' => false, 'message' => 'Số lượng không thể nhỏ hơn 1.'], 400);
             }
 
             $gioHang->decrement('so_luong');
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Đã giảm số lượng sản phẩm thành công!',
-                'data' => $gioHang
-            ]);
+            return response()->json(['status' => true, 'message' => 'Đã giảm số lượng sản phẩm thành công!', 'data' => $gioHang]);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-            ], 500);
+            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function destroy($id)
     {
         try {
             $gioHang = GioHang::findOrFail($id);
+            $currentUserId = $this->getUserIdOrSessionId();
 
-            if ($gioHang->user_id !== Auth::id()) {
-                return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
+            if ($gioHang->user_id !== $currentUserId) {
+                return response()->json(['status' => false, 'message' => 'Không có quyền truy cập.'], 403);
             }
 
             $gioHang->delete();
 
-            return response()->json(['status' => true, 'message' => 'Sản phẩm đã xóa khỏi giỏ hàng']);
+            return response()->json(['status' => true, 'message' => 'Sản phẩm đã xóa khỏi giỏ hàng.']);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-            ], 500);
+            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function syncCart(Request $request)
     {
         try {
-            $cartItems = $request->input('cartItems');
             $userId = Auth::id();
+
+            if ($userId) {
+                $temporaryCartId = Session::get('tam_thoi_id');
+
+                if ($temporaryCartId) {
+                    $temporaryCartItems = GioHang::where('user_id', $temporaryCartId)->get();
+
+                    foreach ($temporaryCartItems as $item) {
+                        $item->user_id = $userId;
+                        $item->save();
+                    }
+
+                    Session::forget('tam_thoi_id');
+                }
+            }
+
+            $cartItems = $request->cartItems;
 
             $bienTheSanPhamIds = collect($cartItems)->pluck('bien_the_san_pham_id')->toArray();
             $bienTheSanPhams = BienTheSanPham::whereIn('id', $bienTheSanPhamIds)->get()->keyBy('id');
@@ -264,6 +284,8 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
+
 
     public function apDungMaGiamGia(Request $request)
     {
@@ -357,12 +379,12 @@ class GioHangController extends Controller
         }
     }
 
-    public function updateSelection(Request $request)
+    public function updateSelection()
     {
         try {
-            $userId = Auth::id();
-            $gioHangIds = $request->input('gio_hang_ids');
-            $isSelected = $request->input('chon');
+            $currentUserId = $this->getUserIdOrSessionId();
+            $gioHangIds = request()->get('gio_hang_ids');
+            $isSelected = request()->get('chon');
 
             if (!is_array($gioHangIds) || empty($gioHangIds)) {
                 return response()->json([
@@ -373,7 +395,7 @@ class GioHangController extends Controller
 
             $gioHangs = DB::table('gio_hangs')
                 ->whereIn('id', $gioHangIds)
-                ->where('user_id', $userId)
+                ->where('user_id', $currentUserId)
                 ->get();
 
             if ($gioHangs->isEmpty()) {
@@ -385,7 +407,7 @@ class GioHangController extends Controller
 
             DB::table('gio_hangs')
                 ->whereIn('id', $gioHangIds)
-                ->where('user_id', $userId)
+                ->where('user_id', $currentUserId)
                 ->update(['chon' => $isSelected]);
 
             return response()->json([
@@ -400,10 +422,11 @@ class GioHangController extends Controller
         }
     }
 
-    public function calculateTotal(Request $request)
+
+    public function calculateTotal()
     {
         try {
-            $userId = Auth::id();
+            $currentUserId = $this->getUserIdOrSessionId();
 
             $gioHangs = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
@@ -430,7 +453,7 @@ class GioHangController extends Controller
                     'anh_bien_thes.duong_dan_anh as hinh_anh'
                 )
                 ->where("gio_hangs.deleted_at", null)
-                ->where('gio_hangs.user_id', $userId)
+                ->where('gio_hangs.user_id', $currentUserId)
                 ->where('gio_hangs.chon', 1)
                 ->get();
 
@@ -489,179 +512,5 @@ class GioHangController extends Controller
         }
     }
 
-    // local
-    public function themVaoGioHang(Request $request)
-    {
-        $request->validate([
-            'bien_the_san_pham_id' => 'required|integer|exists:bien_the_san_phams,id',
-            'so_luong' => 'required|integer|min:1',
-        ]);
 
-        try {
-            $bien_the_san_pham_id = $request->bien_the_san_pham_id;
-            $so_luong = $request->so_luong;
-            $gioHang = session()->get('gio_hang', []);
-
-            $bienTheSanPham = DB::table('bien_the_san_phams')->find($bien_the_san_pham_id);
-
-            if (!$bienTheSanPham) {
-                return response()->json(['error' => 'Biến thể sản phẩm không tồn tại'], 404);
-            }
-
-            if ($so_luong > $bienTheSanPham->so_luong_bien_the) {
-                return response()->json(['error' => 'Số lượng yêu cầu vượt quá số lượng có sẵn'], 400);
-            }
-
-            if (isset($gioHang[$bien_the_san_pham_id])) {
-                $gioHang[$bien_the_san_pham_id]['so_luong'] += $so_luong;
-
-                if ($gioHang[$bien_the_san_pham_id]['so_luong'] > $bienTheSanPham->so_luong_bien_the) {
-                    return response()->json(['error' => 'Số lượng trong giỏ hàng vượt quá số lượng có sẵn'], 400);
-                }
-            } else {
-                $gioHang[$bien_the_san_pham_id] = [
-                    'bien_the_san_pham_id' => $bien_the_san_pham_id,
-                    'so_luong' => $so_luong,
-                ];
-            }
-
-            session()->put('gio_hang', $gioHang);
-            Log::info('lấy giỏ hàng:', session()->get('gio_hang'));
-            return response()->json(['message' => 'Đã thêm vào giỏ hàng thành công']);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi thêm vào giỏ hàng:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Có lỗi xảy ra khi thêm vào giỏ hàng: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function tangSoLuongLocal(Request $request)
-    {
-        $request->validate([
-            'bien_the_san_pham_id' => 'required|integer|exists:bien_the_san_phams,id',
-        ]);
-
-        try {
-            $bien_the_san_pham_id = $request->bien_the_san_pham_id;
-            $gioHang = session()->get('gio_hang', []);
-
-            if (isset($gioHang[$bien_the_san_pham_id])) {
-                $bienTheSanPham = DB::table('bien_the_san_phams')->find($bien_the_san_pham_id);
-
-                if (!$bienTheSanPham) {
-                    return response()->json(['error' => 'Biến thể sản phẩm không tồn tại'], 404);
-                }
-
-                $gioHang[$bien_the_san_pham_id]['so_luong'] += 1;
-
-                if ($gioHang[$bien_the_san_pham_id]['so_luong'] > $bienTheSanPham->so_luong_bien_the) {
-                    return response()->json(['error' => 'Số lượng trong giỏ hàng vượt quá số lượng có sẵn'], 400);
-                }
-
-                session()->put('gio_hang', $gioHang);
-                return response()->json(['message' => 'Đã tăng số lượng sản phẩm thành công']);
-            }
-
-            return response()->json(['error' => 'Sản phẩm không tồn tại trong giỏ hàng'], 404);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi tăng số lượng:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Có lỗi xảy ra khi tăng số lượng: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function giamSoLuongLocal(Request $request)
-    {
-        $request->validate([
-            'bien_the_san_pham_id' => 'required|integer|exists:bien_the_san_phams,id',
-        ]);
-
-        try {
-            $bien_the_san_pham_id = $request->bien_the_san_pham_id;
-            $gioHang = session()->get('gio_hang', []);
-
-            if (isset($gioHang[$bien_the_san_pham_id])) {
-                $gioHang[$bien_the_san_pham_id]['so_luong'] -= 1;
-
-                if ($gioHang[$bien_the_san_pham_id]['so_luong'] <= 0) {
-                    unset($gioHang[$bien_the_san_pham_id]);
-                }
-
-                session()->put('gio_hang', $gioHang);
-                return response()->json(['message' => 'Đã giảm số lượng sản phẩm thành công']);
-            }
-
-            return response()->json(['error' => 'Sản phẩm không tồn tại trong giỏ hàng'], 404);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi giảm số lượng:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Có lỗi xảy ra khi giảm số lượng: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function xoaKhoiGioHang(Request $request)
-    {
-        $request->validate([
-            'bien_the_san_pham_id' => 'required|integer|exists:bien_the_san_phams,id',
-        ]);
-
-        try {
-            $bien_the_san_pham_id = $request->bien_the_san_pham_id;
-            $gioHang = session()->get('gio_hang', []);
-
-            if (isset($gioHang[$bien_the_san_pham_id])) {
-                unset($gioHang[$bien_the_san_pham_id]);
-                session()->put('gio_hang', $gioHang);
-                return response()->json(['message' => 'Đã xóa sản phẩm khỏi giỏ hàng thành công']);
-            }
-
-            return response()->json(['error' => 'Sản phẩm không tồn tại trong giỏ hàng'], 404);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function layGioHang()
-    {
-        try {
-            $gioHang = session()->get('gio_hang', []);
-            $tongSoLuong = 0;
-            $chiTietGioHang = [];
-
-            foreach ($gioHang as $item) {
-                $bienTheSanPham = DB::table('bien_the_san_phams')
-                    ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
-                    ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
-                    ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
-                    ->where('bien_the_san_phams.id', $item['bien_the_san_pham_id'])
-                    ->select(
-                        'bien_the_san_phams.id as bien_the_san_pham_id',
-                        'san_phams.ten_san_pham',
-                        'san_phams.duong_dan',
-                        'bien_the_san_phams.gia_ban',
-                        'bien_the_san_phams.gia_khuyen_mai',
-                        'bien_the_mau_sacs.ten_mau_sac as mau_sac',
-                        'bien_the_kich_thuocs.kich_thuoc'
-                    )
-                    ->first();
-
-                if ($bienTheSanPham) {
-                    $bienTheSanPham->so_luong = $item['so_luong'];
-                    $bienTheSanPham->gia_hien_tai = $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
-                    $bienTheSanPham->gia_cu = $bienTheSanPham->gia_khuyen_mai ? $bienTheSanPham->gia_ban : null;
-
-                    $tongSoLuong += $item['so_luong'];
-                    $chiTietGioHang[] = $bienTheSanPham;
-                }
-            }
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Danh sách giỏ hàng đã được lấy thành công.',
-                'tong_so_luong' => $tongSoLuong,
-                'gio_hang' => $chiTietGioHang,
-            ]);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi lấy giỏ hàng:', ['error' => $e->getMessage()]);
-            return response()->json(['status' => false, 'error' => 'Có lỗi xảy ra khi lấy giỏ hàng: ' . $e->getMessage()], 500);
-        }
-    }
 }
