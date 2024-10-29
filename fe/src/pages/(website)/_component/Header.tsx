@@ -366,16 +366,7 @@ const Header = () => {
                   </Modal>
                 </div>
               </span>
-
-              {member ? (
-                <>
-                  {/* {" "}
-                  <span>
-                    <a href="/mywishlist">
-                      <i className="fa-regular fa-heart text-xl">{ }</i>
-                    </a>
-                  </span> */}
-                  <span
+              <span
                     ref={notificationRef}
                     className="relative"
                     onMouseEnter={() => setShowNotifications(true)}
@@ -399,7 +390,8 @@ const Header = () => {
                       <Notifications onUnreadCountChange={setUnreadCount} />
                     </div>
                   </span>
-                  <span
+                 
+              <span
                     ref={cartRef}
                     onMouseEnter={() => setIsCartVisible(true)}
                     onMouseLeave={() => setIsCartVisible(false)}
@@ -419,6 +411,15 @@ const Header = () => {
                     <CartOverlay isVisible={isCartVisible} />
                     {/* </div> */}
                   </span>
+              {member ? (
+                <>
+                  {/* {" "}
+                  <span>
+                    <a href="/mywishlist">
+                      <i className="fa-regular fa-heart text-xl">{ }</i>
+                    </a>
+                  </span> */}
+                 
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
                     <AvatarImage src={member?.anh_nguoi_dung} />
                     <AvatarFallback>CN</AvatarFallback>
