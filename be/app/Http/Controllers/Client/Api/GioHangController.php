@@ -333,11 +333,6 @@ class GioHangController extends Controller
                 $soTienGiamGia = $tongGiaTriGioHang;
             }
 
-            DB::table('nguoi_dung_ma_khuyen_mai')
-                ->where('user_id', $userId)
-                ->where('ma_khuyen_mai_id', $maGiamGia->id)
-                ->update(['da_su_dung' => true, 'ngay_su_dung' => now()]);
-
             return response()->json([
                 'status' => true,
                 'message' => 'Mã giảm giá đã được áp dụng thành công.',
