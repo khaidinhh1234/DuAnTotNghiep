@@ -237,6 +237,8 @@ Route::middleware(['auth.sanctum'])
                 Route::get('donhang/export', [DonHangController::class, 'export'])->name('donhang.export');
                 Route::get('donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
                 Route::get('donhang/lay-thong-tin-don', [DonHangController::class, 'layThongTinDon'])->withoutMiddleware('auth.checkrole');
+                Route::get('donhang/lay-thong-tin-don-hoan', [DonHangController::class, 'danhSachDonHangHoan']);
+
             });
 
         //Vận chuyển
