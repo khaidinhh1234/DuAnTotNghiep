@@ -1,16 +1,38 @@
 
 import React, { useState } from 'react';
-import { Modal, Tabs } from 'antd';
+import { Modal, Tabs, Slider, Row, Col } from 'antd';
+import { useMutation } from '@tanstack/react-query';
+import instanceClient from '@/configs/client';
 
 const { TabPane } = Tabs;
 
 interface SizeGuideModalProps {
   isOpen: boolean;
   onClose: () => void;
+  categoryId: number;
+  productDetailId: number;
 }
 
-const SizeGuideModal = ({ isOpen, onClose }: SizeGuideModalProps) => {
+const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGuideModalProps) => {
   const [activeTab, setActiveTab] = useState('1');
+  const [height, setHeight] = useState(160);
+  const [weight, setWeight] = useState(55);
+
+  const sizeMutation = useMutation({
+    mutationFn: (data: { chieu_cao: number; can_nang: number; san_pham_id: number }) => 
+      instanceClient.post('/goi-y-kich-thuoc', data),
+    onSuccess: (data) => {
+      console.log('Size suggestion:', data);
+    }
+  });
+
+  const handleGetSizeSuggestion = () => {
+    sizeMutation.mutate({
+      chieu_cao: height,
+      can_nang: weight,
+      san_pham_id: productDetailId
+    });
+  };
 
   const renderTable = (data: any) => (
     <table className="min-w-full bg-white border border-gray-300">
@@ -65,25 +87,223 @@ const SizeGuideModal = ({ isOpen, onClose }: SizeGuideModalProps) => {
     { SIZE: '9', 'Chiều cao (cm)': '130-140', 'Cân nặng (kg)': '30-35', 'Tuổi': '9' },
   ];
 
+  const renderSizeSelector = () => {
+    switch(categoryId) {
+      case 1: // Nam
+        return (
+          <div>
+            <Row>
+              <Col span={14} offset={3}>
+                <span>Chiều cao</span>
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "10px" }}>
+              <Col span={3}></Col>
+              <Col span={14}>
+                <Slider
+                  min={160}
+                  max={185}
+                  value={height}
+                  onChange={(value) => setHeight(value)}
+                  marks={{
+                    160: "1m60",
+                    185: "1m85",
+                  }}
+                />
+              </Col>
+              <Col span={4}>{(height / 100).toFixed(2)}m</Col>
+            </Row>
+
+            <Row>
+              <Col span={14} offset={3}>
+                <span>Cân nặng</span>
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "10px" }}>
+              <Col span={3}></Col>
+              <Col span={14}>
+                <Slider
+                  min={55}
+                  max={100}
+                  value={weight}
+                  onChange={(value) => setWeight(value)}
+                  marks={{
+                    55: "55kg",
+                    100: "100kg",
+                  }}
+                />
+              </Col>
+              <Col span={4}>{weight}kg</Col>
+            </Row>
+          </div>
+        );
+
+      case 2: // Nữ
+        return (
+          <div>
+            <Row>
+              <Col span={14} offset={3}>
+                <span>Chiều cao</span>
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "10px" }}>
+              <Col span={3}></Col>
+              <Col span={14}>
+                <Slider
+                  min={150}
+                  max={170}
+                  value={height}
+                  onChange={(value) => setHeight(value)}
+                  marks={{
+                    150: "1m50",
+                    170: "1m70",
+                  }}
+                />
+              </Col>
+              <Col span={4}>{(height / 100).toFixed(2)}m</Col>
+            </Row>
+
+            <Row>
+              <Col span={14} offset={3}>
+                <span>Cân nặng</span>
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "10px" }}>
+              <Col span={3}></Col>
+              <Col span={14}>
+                <Slider
+                  min={45}
+                  max={70}
+                  value={weight}
+                  onChange={(value) => setWeight(value)}
+                  marks={{
+                    45: "45kg",
+                    70: "70kg",
+                  }}
+                />
+              </Col>
+              <Col span={4}>{weight}kg</Col>
+            </Row>
+          </div>
+        );
+
+      case 3: // Trẻ em
+        return (
+          <div>
+            <Row>
+              <Col span={14} offset={3}>
+                <span>Chiều cao</span>
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "10px" }}>
+              <Col span={3}></Col>
+              <Col span={14}>
+                <Slider
+                  min={75}
+                  max={140}
+                  value={height}
+                  onChange={(value) => setHeight(value)}
+                  marks={{
+                    75: "75cm",
+                    140: "140cm",
+                  }}
+                />
+              </Col>
+              <Col span={4}>{height}cm</Col>
+            </Row>
+
+            <Row>
+              <Col span={14} offset={3}>
+                <span>Cân nặng</span>
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: "10px" }}>
+              <Col span={3}></Col>
+              <Col span={14}>
+                <Slider
+                  min={8}
+                  max={35}
+                  value={weight}
+                  onChange={(value) => setWeight(value)}
+                  marks={{
+                    8: "8kg",
+                    35: "35kg",
+                  }}
+                />
+              </Col>
+              <Col span={4}>{weight}kg</Col>
+            </Row>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <Modal
-      title="Bảng Hướng Dẫn Chọn Size"
-      visible={isOpen}
+      title="Hướng Dẫn Chọn Size"
+      open={isOpen}
       onCancel={onClose}
       footer={null}
       width={800}
-      style={{ top: 260 }}
+      style={{ top: 20 }}
     >
       <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <TabPane tab="Nam" key="1">
+        <TabPane tab="Công cụ chọn size" key="1">
+          {renderSizeSelector()}
+          <div className="text-center mt-6">
+            <p className="font-bold text-sm">Glow Clothing gợi ý bạn</p>
+            <div className="flex justify-center space-x-2 mt-2">
+              <button 
+                onClick={handleGetSizeSuggestion}
+                className="bg-blue-900 text-white py-2 px-4 rounded-full"
+              >
+                {sizeMutation.isPending ? 'Đang tính...' : 'Gợi ý size'}
+              </button>
+            </div>
+            {sizeMutation.data && (
+              <div>
+               {/* <div className="mt-2">
+        Size phù hợp: {sizeMutation.data.data.kich_thuoc}
+        </div> */}
+        <div className="mt-4 flex items-center justify-center">
+  <div className="text-lg">Size phù hợp: </div>
+  <div className="ml-2 flex space-x-1">
+    {Array.isArray(sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y) ? (
+      sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y.map((size :any , index :any) => (
+        <span 
+          key={index} 
+          className="bg-blue-900 text-white px-3 py-1 rounded-md font-bold"
+        >
+          {size}
+        </span>
+      ))
+    ) : (
+      <span className="bg-blue-900 text-white px-3 py-1 rounded-md font-bold">
+        {sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y}
+      </span>
+    )}
+  </div>
+</div>
+
+        <div className="text-sm text-gray-600">
+        {sizeMutation.data.data.goi_y.huong_dan_cham_soc}
+      </div>
+        </div>
+            )}
+          </div>
+        </TabPane>
+        <TabPane tab="Size Nam" key="2">
           <h3 className="text-xl font-semibold mb-2">Bảng size Nam</h3>
           {renderTable(menSizeData)}
         </TabPane>
-        <TabPane tab="Nữ" key="2">
+        <TabPane tab="Size Nữ" key="3">
           <h3 className="text-xl font-semibold mb-2">Bảng size Nữ</h3>
           {renderTable(womenSizeData)}
         </TabPane>
-        <TabPane tab="Trẻ em" key="3">
+        <TabPane tab="Size Trẻ em" key="4">
           <h3 className="text-xl font-semibold mb-2">Bảng size Trẻ em</h3>
           {renderTable(childrenSizeData)}
         </TabPane>

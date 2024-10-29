@@ -73,7 +73,7 @@ import MyOrder from "@/pages/(website)/myOrder/Myorder";
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
 import MyWishlists from "@/pages/(website)/mywishlists/MyWishlists";
 import Notification from "@/pages/(website)/notifications/Notification";
-import OrderPlaceSuccess from "@/pages/(website)/OrderPlaceSuccessfully/OrderPlaceSuccessfully";
+// import OrderPlaceSuccess from "@/pages/(website)/OrderPlaceSuccessfully/OrderPlaceSuccessfully";
 import Ordersummary from "@/pages/(website)/ordersummary/ordersummary";
 import Payment from "@/pages/(website)/payment/PayMent";
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
@@ -133,10 +133,11 @@ import Shipper from "@/pages/(van_chuyen)/shipper";
 import MyProfileedit from "@/pages/(website)/myprofile/MyProfileedit";
 import LayoutMyPro from "@/pages/(website)/layoutmypro";
 import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
-import Notifications from "@/pages/(website)/_component/Notifications";
+// import Notifications from "@/pages/(website)/_component/Notifications";
 import NewDetail from "@/pages/(website)/newdetail/NewDetail";
 import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
+import Page1 from "@/pages/(website)/Shopuudai/shop";
 
 const Router = () => {
   //
@@ -151,9 +152,12 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
+
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
           {/* <Route path="/minicard" element={<Notifications />} /> */}
+          <Route path="/shop/:slug" element={<Page1 />} />
+
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />

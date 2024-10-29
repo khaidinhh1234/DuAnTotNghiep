@@ -117,11 +117,11 @@ const Notifications: React.FC<NotificationsProps> = ({
   };
 
   return (
-    <div className="relative w-96 -right-3 pt-4 -top-4">
-      <div className="bg-white rounded-lg shadow-xl border border-gray-200 ">
-        {/* <div className="absolute -top-2 right-1 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-stone-500"></div> */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex justify-between items-center"></div>
+    <div className="relative w-96 -right-3 bg-white rounded-lg shadow-xl border border-gray-200">
+      <div className="absolute -top-2 right-1 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-stone-500"></div>
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex justify-between items-center">
+      <h2 className='font-bold '>Thông báo</h2>
         </div>
 
         {isLoading ? (

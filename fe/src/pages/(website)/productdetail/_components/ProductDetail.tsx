@@ -37,6 +37,7 @@ interface ProductData {
   luot_xem: number;
   danh_muc: {
     ten_danh_muc: string;
+    cha_id?: number;
   };
   danh_gias: Array<{
     id: number;
@@ -616,8 +617,8 @@ const { mutate: addToCart } = useMutation({
                     <i className="fa-solid fa-pen-ruler mr-2"></i>Bảng kích
                     thước
                   </p>
-
-                  <SizeGuideModal isOpen={isModalOpen} onClose={toggleModal} />
+                  <SizeGuideModal isOpen={isModalOpen} onClose={toggleModal}   categoryId={product?.danh_muc?.cha_id ?? 0}   productDetailId={product?.id ?? 0}
+ />
                 </div>
 
                 <div className="flex mt-3">
