@@ -1,11 +1,11 @@
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Subtotal from "../../ShipingAdrres/_components/subtotail";
-import { Button } from "antd";
 
 const CheckOut = () => {
   const nav = useNavigate();
@@ -254,6 +254,9 @@ const CheckOut = () => {
           quantity: 0,
           price: 0,
           total: 0,
+          kich_thuoc: "",
+          mau_sac: "",
+          hinh_anh: "",
         };
       }
 
@@ -266,6 +269,9 @@ const CheckOut = () => {
         quantity,
         price,
         total: price * quantity,
+        kich_thuoc: product?.kich_thuoc || "Kích thước không xác định",
+        mau_sac: product?.mau_sac || "Màu sắc không xác định",
+        hinh_anh: product?.hinh_anh || "Hình ảnh không sác định",
       };
     });
 

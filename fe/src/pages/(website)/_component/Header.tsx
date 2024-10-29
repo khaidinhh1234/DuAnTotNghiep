@@ -195,6 +195,7 @@ const Header = () => {
   return (
     <header className="h-12 relative">
       <div className="bg-white w-full">
+        {/* Add the corresponding closing tag for this div */}
         <div
           className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${
             menu ? "translate-x-0" : "-translate-x-full"

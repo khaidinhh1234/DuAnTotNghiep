@@ -9,7 +9,7 @@ const ShippingAddressPage = () => {
   const products = cartTotal.details;
   const { register, handleSubmit } = useForm();
   const onsubmit = (data: any) => {
-    console.log(data);
+    console.log({ data, cartTotal });
   };
   return (
     <>
@@ -22,7 +22,7 @@ const ShippingAddressPage = () => {
                 {/* <ShippingAddress /> */}
                 <AddressForm register={register} products={products} />
               </div>
-              <Subtotal />
+              <Subtotal cartTotal={cartTotal} />
             </div>
           </form>
         </div>
