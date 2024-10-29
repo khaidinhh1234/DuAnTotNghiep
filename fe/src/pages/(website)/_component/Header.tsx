@@ -26,7 +26,21 @@ const Header = () => {
   const cartRef = useRef<HTMLDivElement>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
-
+  const [user] = useLocalStorage("user" as any, {});
+  const member = user?.user;
+  console.log( user?.user?.anh_nguoi_dung)
+  const [anh_nguoi_dung] = useState(member?.anh_nguoi_dung);
+  const { data    } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.post("cap-nhat-thong-tin");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    },
+  });
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -83,9 +97,9 @@ const Header = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [ref]);
-  const [user] = useLocalStorage("user" as any, {});
+  // const [user] = useLocalStorage("user" as any, {});
   // const nav = useNavigate();
-  const member = user.user;
+  // const member = user.user;
   const phanquyen = user?.user?.vai_tros?.filter(
     (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
   );
@@ -149,7 +163,7 @@ const Header = () => {
 
   const access_token =
     user.access_token || localStorage.getItem("access_token");
-  const { data } = useQuery({
+  const { data: data1 } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
       try {
@@ -165,8 +179,8 @@ const Header = () => {
     },
   });
   const allItems = [
-    ...(data?.san_pham_giam_gia || []),
-    ...(data?.san_pham_nguyen_gia || []),
+    ...(data1?.san_pham_giam_gia || []),
+    ...(data1?.san_pham_nguyen_gia || []),
   ];
   const totalUniqueProducts = allItems.length;
 
@@ -420,7 +434,8 @@ const Header = () => {
                     {/* </div> */}
                   </span>
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
-                    <AvatarImage src={member?.anh_nguoi_dung} />
+                    <AvatarImage           src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
+ />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   {check && (
