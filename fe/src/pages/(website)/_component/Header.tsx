@@ -406,7 +406,7 @@ const Header = () => {
                       } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
                       <Notifications onUnreadCountChange={setUnreadCount} />
-                    </div>
+                    </span>
                   </span>
                  
               <span
@@ -539,6 +539,7 @@ const Header = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </header>
   );
