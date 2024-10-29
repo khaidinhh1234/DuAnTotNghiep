@@ -2,8 +2,11 @@ import { useForm } from "react-hook-form";
 import AddressForm from "./_components/AddAdrres";
 import ShippingAddress from "./_components/ShippingAddress";
 import Subtotal from "./_components/subtotail";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 
 const ShippingAddressPage = () => {
+  const [cartTotal] = useLocalStorage("cartTotal" as any, 0);
+  const products = cartTotal.details;
   const { register, handleSubmit } = useForm();
   const onsubmit = (data: any) => {
     console.log(data);
@@ -17,7 +20,7 @@ const ShippingAddressPage = () => {
             <div className="grid lg:grid-cols-12 lg:gap-20 px-0 justify-center">
               <div className="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]">
                 {/* <ShippingAddress /> */}
-                <AddressForm register={register} />
+                <AddressForm register={register} products={products} />
               </div>
               <Subtotal />
             </div>

@@ -1,6 +1,6 @@
 import { sanPham2 } from "@/assets/img";
 
-const AddAddressForm = ({ register }: any) => {
+const AddAddressForm = ({ register, products }: any) => {
   return (
     <div className="">
       <h3 className="title-h3">Sản phẩm đã đặt</h3>
@@ -35,35 +35,41 @@ const AddAddressForm = ({ register }: any) => {
         </thead>
 
         <tbody>
-          {" "}
-          <tr
-            // key={product.id}
-            className="border-b border-gray-200 hover:bg-gray-100"
-          >
-            <td className="px-4 py-2">
-              <div className="flex items-center gap-4">
-                <img
-                  src={"product.hinh_anh"}
-                  alt={"product.ten_san_pham"}
-                  className="w-12 h-12 object-cover"
-                />
-                <div>
-                  <h3 className="font-semibold text-gray-700">
-                    'sdifhsiudfng'
-                  </h3>
-                  <p className="text-gray-500">{345}, 'XV'</p>
-                </div>
-              </div>
-            </td>
-            <td className="px-4 py-2">{6345}</td>
-            <td className="px-4 py-2">
-              <div className="flex items-center justify-center  rounded-lg">
-                {12312}
-              </div>
-            </td>
+          {products &&
+            products?.map((product: any) => (
+              <tr
+                key={product?.id}
+                className="border-b border-gray-200 hover:bg-gray-100"
+              >
+                <td className="px-4 py-2">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={"product.hinh_anh"}
+                      alt={"product.ten_san_pham"}
+                      className="w-12 h-12 object-cover"
+                    />
+                    <div>
+                      <h3 className="font-semibold text-gray-700">
+                        {product?.name ?? ""}
+                      </h3>
+                      <p className="text-gray-500">{345}, 'XV'</p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-2">
+                  {(product?.price ?? 0).toLocaleString("vi-VN")}₫
+                </td>
+                <td className="px-4 py-2">
+                  <div className="flex items-center justify-center  rounded-lg">
+                    {(product?.quantity ?? 0).toLocaleString("vi-VN")}
+                  </div>
+                </td>
 
-            <td className="px-4 py-2">{12312}</td>
-          </tr>
+                <td className="px-4 py-2">
+                  {(product?.total ?? 0).toLocaleString("vi-VN")}₫
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
 
