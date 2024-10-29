@@ -71,6 +71,7 @@ Route::middleware([])
         Route::get('/chi-tiet-san-pham/{duong_dan}', [TrangChiTietSpController::class, 'chiTietSanPham']);
         Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']);
         Route::post('goi-y-kich-thuoc', [TrangChiTietSpController::class, 'goiY']);
+        Route::get('load-kick-thuoc', [TrangChiTietSpController::class, 'loadKichThuoc']);
         //Trang sản phẩm
         // lấy tất cả sản phẩm
         Route::group([], function () {
@@ -237,6 +238,8 @@ Route::middleware(['auth.sanctum'])
                 Route::get('donhang/export', [DonHangController::class, 'export'])->name('donhang.export');
                 Route::get('donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
                 Route::get('donhang/lay-thong-tin-don', [DonHangController::class, 'layThongTinDon'])->withoutMiddleware('auth.checkrole');
+                Route::get('donhang/lay-thong-tin-don-hoan', [DonHangController::class, 'danhSachDonHangHoan']);
+
             });
 
         //Vận chuyển

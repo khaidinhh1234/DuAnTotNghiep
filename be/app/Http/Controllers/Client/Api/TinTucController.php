@@ -22,7 +22,7 @@ class TinTucController extends Controller
                     'tinTuc' => function ($query) {
                         $query->select('id', 'anh_tin_tuc', 'danh_muc_tin_tuc_id')
                             ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo mới nhất
-                            ->limit(1); // Lấy duy nhất 1 bài viết
+                            ->get();
                     }
                 ])
                 ->get();

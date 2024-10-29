@@ -25,6 +25,8 @@ class DonHang extends Model
     const TTDH_HTDH = 'Hoàn tất đơn hàng';
     const TTDH_DHTB = 'Đơn hàng bị từ chối nhân';
     const TTDH_HH = 'Hoàn hàng';
+    const TTDH_CXNHH = 'Chờ xác nhận hoàn hàng ';
+
 
     // Lí do hủy hàng
     const HH_TDTT = 'Thay đổi thông tin';
@@ -40,6 +42,7 @@ class DonHang extends Model
     // Trạng thái thanh toán
     const TTTT_CTT = 'Chưa thanh toán';
     const TTTT_DTT = 'Đã thanh toán';
+     const TTTT_DHT = "Đã hoàn hàng";
 
     protected $fillable = [
         'user_id',
@@ -56,6 +59,9 @@ class DonHang extends Model
         'ngay_hoan_thanh_don',
         'trang_thai_thanh_toan',
         'trang_thai_van_chuyen',
+        'li_do_hoan_hang',
+        'li_do_huy_hang'
+
 
     ];
 
