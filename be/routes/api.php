@@ -91,11 +91,14 @@ Route::middleware([])
         // Client Tin tức
         Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layTatCaDanhMuc']);
 
-        Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
+        Route::get('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
 
-        //Thanh toán MoMo
-        Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
+// thanh toán qr :
+// routes/web.php
+Route::post('/payment/momo', [MoMoController::class, 'createMomoPayment']);
+Route::get('/payment/momo/callback', [MoMoController::class, 'momoCallback'])->name('payment.momo.callback');
+
 
         //Client Chi tiết sản phẩm
         // Captcha
@@ -149,6 +152,13 @@ Route::middleware([])
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
             Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang']);
         });
+
+
+        Route::post('/gio-hang-local/them', [GioHangController::class, 'themVaoGioHang']);
+        Route::patch('/gio-hang-local/tang-so-luong', [GioHangController::class, 'tangSoLuongLocal']);
+        Route::patch('/gio-hang-local/giam-so-luong', [GioHangController::class, 'giamSoLuongLocal']);
+        Route::delete('/gio-hang-local/xoa/{bien_the_san_pham_id}', [GioHangController::class, 'xoaKhoiGioHang']);
+        Route::get('/gio-hang-local', [GioHangController::class, 'layGioHang']);
 
         //Sản phẩm yêu thích
         Route::get('sanpham/yeuthich', [SanPhamController::class, 'danhSachSanPhamYeuThich'])->middleware('auth:sanctum');

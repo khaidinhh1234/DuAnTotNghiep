@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -10,11 +10,16 @@ const CheckOut = () => {
   const nav = useNavigate();
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
-  const access_token =
-    user.access_token || localStorage.getItem("access_token");
-  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+  const access_token = user.access_token || localStorage.getItem("access_token");
+  const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
+    // Retrieve saved selection from localStorage on initial load
+    const savedSelectedProducts = localStorage.getItem("selectedProducts");
+    return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
+  });
+
   const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
   const [selectAllRegular, setSelectAllRegular] = useState(false);
+
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -100,15 +105,16 @@ const CheckOut = () => {
     onError: (error: any) => {
       toast.error(error.message || "Có lỗi xảy ra khi xóa sản phẩm.");
     },
-  });
+  })
+  // Tính tổng tiền
+
   const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
     const productInDiscounts = data?.san_pham_giam_gia.find(
       (product: any) => product.id === productId
     );
     const productInRegular = data?.san_pham_nguyen_gia.find(
-      (product: { id: number }) => product.id === productId
+      (product: { id: number }) => product.id === Number(productId)
     );
-
     const quantity =
       productInDiscounts?.so_luong || productInRegular?.so_luong || 0;
     console.log("đâsd", quantity);
@@ -133,15 +139,15 @@ const CheckOut = () => {
       currency: "VND",
     }).format(amount);
   };
-  const handleSelectProduct = (productId: any) => {
-    setSelectedProducts((prevSelected) => {
-      if (prevSelected.includes(productId)) {
-        return prevSelected.filter((id) => id !== productId);
-      } else {
-        return [...prevSelected, productId];
-      }
-    });
-  };
+  // const handleSelectProduct = (productId: any) => {
+  //   setSelectedProducts((prevSelected) => {
+  //     if (prevSelected.includes(productId)) {
+  //       return prevSelected.filter((id) => id !== productId);
+  //     } else {
+  //       return [...prevSelected, productId];
+  //     }
+  //   });
+  // };
 
   // Xử lý khi chọn tất cả
   const handleSelectAll = (isChecked: any) => {
@@ -176,6 +182,60 @@ const CheckOut = () => {
     nav("/shippingAddressPage");
     console.log("Thanh toán cho các sản phẩm:", selectedProducts);
   };
+  // chọn sản phẩm
+  const { mutate: SelectedProduct } = useMutation({
+    mutationFn: async ({ gioHangIds, isChecked }: { gioHangIds: string[]; isChecked: boolean }) => {
+      await instanceClient.post(`/gio-hang/chon-san-pham`,
+        { gio_hang_ids: gioHangIds, chon: isChecked ? 1 : 0 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Có lỗi xảy ra khi chọn sản phẩm.');
+    },
+  });
+
+  const handleSelectProduct = (productId: string) => {
+    const isChecked = selectedProducts.includes(productId);
+
+    // Cập nhật trạng thái selectedProducts
+    const updatedSelectedProducts = isChecked
+      ? selectedProducts.filter(id => id !== productId) // Bỏ chọn sản phẩm
+      : [...selectedProducts, productId]; // Chọn sản phẩm
+
+    setSelectedProducts(updatedSelectedProducts);
+    console.log('check:', isChecked)
+    // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
+    SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
+    localStorage.setItem('selectedProducts', JSON.stringify(updatedSelectedProducts));
+  };
+  useEffect(() => {
+    // Retrieve saved selection from localStorage on component mount
+    const savedSelectedProducts = localStorage.getItem("selectedProducts");
+    if (savedSelectedProducts) {
+      setSelectedProducts(JSON.parse(savedSelectedProducts));
+    }
+  }, []);
+
+  // Tải sản phẩm từ localStorage khi component khởi tạo
+  useEffect(() => {
+    const storedProducts = localStorage.getItem('selectedProducts');
+    if (storedProducts) {
+      setSelectedProducts(JSON.parse(storedProducts));
+    }
+  }, []);
+
+  // Lưu sản phẩm vào localStorage khi có sự thay đổi
+  useEffect(() => {
+    localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+  }, [selectedProducts]);
   return (
     <section className="container">
       <div className="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
@@ -229,7 +289,7 @@ const CheckOut = () => {
                   </tr>
                 ) : (
                   <>
-                    {/* sản phẩm giảm giá */}
+                    {/* Sản phẩm giảm giá */}
                     {data?.san_pham_giam_gia?.map((product: any) => (
                       <tr
                         key={product.id}
@@ -240,10 +300,12 @@ const CheckOut = () => {
                             type="checkbox"
                             className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                             checked={selectedProducts.includes(product.id)}
+                            // checked={product.chon == 1}
                             onChange={() => handleSelectProduct(product.id)}
-                            title="Select all products"
+                            title="Select discount product"
                           />
                         </td>
+                        {/* Thông tin sản phẩm */}
                         <td className="px-4 py-2">
                           <div className="flex items-center gap-4">
                             <img
@@ -279,8 +341,6 @@ const CheckOut = () => {
                               <i className="fa-solid fa-minus" />
                             </button>
                             <input
-                              // type="number"
-                              id="numberInput"
                               value={product.so_luong}
                               className="w-7 h-10 text-center"
                               placeholder="Quantity"
@@ -302,6 +362,7 @@ const CheckOut = () => {
                           </div>
                         </td>
 
+
                         <td className="px-4 py-2">
                           {formatCurrency(
                             product.gia_hien_tai * product.so_luong
@@ -318,9 +379,9 @@ const CheckOut = () => {
                         </td>
                       </tr>
                     ))}
-                    {/* end sản phẩm giảm giá */}
+                    {/* End sản phẩm giảm giá */}
 
-                    {/* sản phẩm nguyên giá */}
+                    {/* Sản phẩm nguyên giá */}
                     {data?.san_pham_nguyen_gia?.map((product: any) => (
                       <tr
                         key={product.id}
@@ -331,10 +392,12 @@ const CheckOut = () => {
                             type="checkbox"
                             className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                             checked={selectedProducts.includes(product.id)}
+                            // checked={product.chon == 1}
                             onChange={() => handleSelectProduct(product.id)}
-                            title="Select all products"
+                            title="Select regular price product"
                           />
                         </td>
+                        {/* Thông tin sản phẩm */}
                         <td className="px-4 py-2">
                           <div className="flex items-center gap-4">
                             <img
@@ -370,8 +433,6 @@ const CheckOut = () => {
                               <i className="fa-solid fa-minus" />
                             </button>
                             <input
-                              // type="number"
-                              id="numberInput"
                               value={product.so_luong}
                               className="w-7 h-10 text-center"
                               placeholder="Quantity"
@@ -393,6 +454,7 @@ const CheckOut = () => {
                           </div>
                         </td>
 
+
                         <td className="px-4 py-2">
                           {formatCurrency(
                             product.gia_hien_tai * product.so_luong
@@ -409,10 +471,11 @@ const CheckOut = () => {
                         </td>
                       </tr>
                     ))}
-                    {/* end sản phẩm nguyên giá */}
+                    {/* End sản phẩm nguyên giá */}
                   </>
                 )}
               </tbody>
+
             </table>
           </div>
 
@@ -449,7 +512,7 @@ const CheckOut = () => {
                   <p>Giảm giá vận chuyển</p>
                   {/* <span className="px-2">{formatCurrency(finalTotal)}</span> */}
                   <span className="px-2 text-red-500">
-                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}{" "}
+                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}
                     ₫
                   </span>
                 </div>
@@ -461,6 +524,7 @@ const CheckOut = () => {
               </div>
 
               <div className="flex justify-center">
+
                 <Link to="/checkout">
                   <Button
                     onClick={handleCheckout}
