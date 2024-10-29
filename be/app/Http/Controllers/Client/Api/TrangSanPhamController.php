@@ -100,7 +100,6 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-<<<<<<< HEAD
     public function layTatCaSanPham(Request $request)
     {
         try {
@@ -191,8 +190,6 @@ class TrangSanPhamController extends Controller
         }
     }
 
-=======
->>>>>>> 0d08918a50b76782ebdd1437621ecf468aee48a8
     public function locSanPham(Request $request)
     {
         DB::beginTransaction(); // Bắt đầu giao dịch
