@@ -12,17 +12,17 @@ class MoMoController extends Controller
     public function createMomoPayment(Request $request)
     {
         $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-        $partnerCode = env('MOMO_PARTNER_CODE'); // Lấy Partner Code từ .env
-        $accessKey = env('MOMO_ACCESS_KEY');     // Lấy Access Key từ .env
-        $secretKey = env('MOMO_SECRET_KEY');     // Lấy Secret Key từ .env
+        $partnerCode = env('MOMO_PARTNER_CODE');
+        $accessKey = env('MOMO_ACCESS_KEY');
+        $secretKey = env('MOMO_SECRET_KEY');
 
-        $orderId = time() . ""; // ID đơn hàng, có thể là một chuỗi duy nhất
-        $amount = $request->input('amount'); // Số tiền thanh toán
+        $orderId = time() . ""; // ID đơn hàng duy nhất
+        $amount = $request->input('amount');
         $orderInfo = "Thanh toán đơn hàng " . $orderId;
-        $redirectUrl = env('MOMO_REDIRECT_URL'); // URL callback sau khi thanh toán
-        $ipnUrl = env('MOMO_IPN_URL'); // URL IPN
+        $redirectUrl = env('MOMO_REDIRECT_URL');
+        $ipnUrl = env('MOMO_IPN_URL');
         $requestId = time() . "";
-        $extraData = ""; // Thêm dữ liệu tùy chỉnh (nếu có)
+        $extraData = "";
 
         // Tạo chuỗi ký
         $rawHash = "accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=captureWallet";
@@ -43,7 +43,6 @@ class MoMoController extends Controller
             'signature' => $signature,
         ]);
 
-        // Kiểm tra phản hồi và trả về mã QR nếu thành công
         if ($response->successful()) {
             $data = $response->json();
             return redirect($data['payUrl']); // Chuyển hướng người dùng đến URL thanh toán QR
@@ -54,38 +53,50 @@ class MoMoController extends Controller
 
     public function momoCallback(Request $request)
     {
-        // Lấy các tham số từ callback
+        // Lấy các tham số từ callback của MoMo
         $partnerCode = $request->input('partnerCode');
         $orderId = $request->input('orderId');
         $requestId = $request->input('requestId');
         $amount = $request->input('amount');
         $orderInfo = $request->input('orderInfo');
-        $orderType = $request->input('orderType');
-        $transId = $request->input('transId');
         $resultCode = $request->input('resultCode');
-        $message = $request->input('message');
-        $payType = $request->input('payType');
-        $responseTime = $request->input('responseTime');
+        $transId = $request->input('transId');
         $extraData = $request->input('extraData');
         $signature = $request->input('signature');
 
-        // Kiểm tra tính hợp lệ của chữ ký
-        $rawHash = "accessKey=" . env('MOMO_ACCESS_KEY') . "&amount=$amount&extraData=$extraData&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&requestId=$requestId&resultCode=$resultCode&transId=$transId";
+        // Tạo chuỗi ký `rawHash` để xác nhận chữ ký
+        $rawHash = "accessKey=" . env('MOMO_ACCESS_KEY') .
+                   "&amount=" . $amount .
+                   "&extraData=" . $extraData .
+                   "&orderId=" . $orderId .
+                   "&orderInfo=" . $orderInfo .
+                   "&partnerCode=" . $partnerCode .
+                   "&requestId=" . $requestId .
+                   "&resultCode=" . $resultCode .
+                   "&transId=" . $transId;
+
+        // Tạo chữ ký từ `rawHash`
         $expectedSignature = hash_hmac("sha256", $rawHash, env('MOMO_SECRET_KEY'));
 
-        // So sánh chữ ký
+        // Kiểm tra chữ ký và các bước xử lý
         if ($signature !== $expectedSignature) {
+            // Debug chữ ký và chuỗi ký để kiểm tra giá trị
+            // dd($rawHash, $expectedSignature, $signature);
             return response()->json(['message' => 'Chữ ký không hợp lệ'], 401);
         }
 
-        // Kiểm tra nếu thanh toán thành công (resultCode = 0)
         if ($resultCode == 0) {
-            // Cập nhật trạng thái đơn hàng hoặc xử lý logic thanh toán thành công
-            // Ví dụ: Cập nhật cơ sở dữ liệu ở đây
-
+            // Xử lý logic khi thanh toán thành công
             return response()->json(['message' => 'Thanh toán thành công'], 200);
         } else {
-            return response()->json(['message' => 'Thanh toán thất bại', 'resultCode' => $resultCode, 'message' => $message], 400);
+            // Xử lý khi thanh toán thất bại
+            return response()->json([
+                'message' => 'Thanh toán thất bại',
+                'resultCode' => $resultCode,
+                // 'error' => $message,
+            ], 400);
         }
     }
+
+
 }
