@@ -90,7 +90,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
     public function store(Request $request)
     {
         try {
@@ -139,8 +138,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
-
     public function tangSoLuong($id)
     {
         try {
@@ -173,7 +170,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
     public function giamSoLuong($id)
     {
         try {
@@ -204,7 +200,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 
     public function destroy($id)
     {
@@ -362,10 +357,6 @@ class GioHangController extends Controller
         }
     }
 
-
-
-
-
     public function updateSelection(Request $request)
     {
         try {
@@ -497,7 +488,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 
     // local
     public function themVaoGioHang(Request $request)
@@ -674,7 +664,4 @@ class GioHangController extends Controller
             return response()->json(['status' => false, 'error' => 'Có lỗi xảy ra khi lấy giỏ hàng: ' . $e->getMessage()], 500);
         }
     }
-
-
-
 }

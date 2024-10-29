@@ -26,6 +26,17 @@ class DonHang extends Model
     const TTDH_DHTB = 'Đơn hàng bị từ chối nhân';
     const TTDH_HH = 'Hoàn hàng';
 
+    // Lí do hủy hàng
+    const HH_TDTT = 'Thay đổi thông tin';
+    const HH_TDSP = 'Thay đổi sản phẩm';
+    const HH_TTRR = 'Thanh toán rắc rối';
+    const HH_TDNMH = 'Thay đổi nơi mua hàng';
+
+
+    // lí do hoàn hàng
+    const HH_SPL = 'Sản phẩm lỗi';
+    const HH_SPSMT = 'Sản phẩm sai mô tả';
+    const HH_SPQH = 'Sản phẩm quá hạn';
     // Trạng thái thanh toán
     const TTTT_CTT = 'Chưa thanh toán';
     const TTTT_DTT = 'Đã thanh toán';
