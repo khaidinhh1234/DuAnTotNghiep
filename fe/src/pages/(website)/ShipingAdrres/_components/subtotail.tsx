@@ -41,12 +41,12 @@ const Subtotal = () => (
       <div className="flex justify-end text-red-500 mb-8">
         <span>Bạn đã tiết kiệm được 469.100 đ</span>
       </div>
-      <a href="/payment">
+      <a href="/shippingAddressPage">
         <button
           type="submit"
           className=" block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
         >
-          Thanh toán đơn hàng
+          Đặt hàng ngay
         </button>
       </a>
     </div>
