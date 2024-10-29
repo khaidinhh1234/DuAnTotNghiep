@@ -1,0 +1,67 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\MaKhuyenMai;
+use App\Models\ThongBao;
+use App\Models\User;
+use App\Events\ThongBaoMoi;
+use Illuminate\Console\Command;
+use Carbon\Carbon;
+
+class GuiThongBaoKhuyenMai extends Command
+{
+    protected $signature = 'khuyenmai:guithongbao';
+    protected $description = 'Gửi thông báo khi đến ngày bắt đầu sưu tập hoặc ngày bắt đầu của chương trình khuyến mãi';
+
+    public function handle()
+    {
+        $now = Carbon::now();
+
+        $khuyenMaiSuuTam = MaKhuyenMai::whereDate('ngay_bat_dau_suu_tam', $now->toDateString())
+            ->where('trang_thai', 1)
+            ->get();
+
+        foreach ($khuyenMaiSuuTam as $maKhuyenMai) {
+            $this->sendNotification(
+                'Sưu tập mã khuyến mãi',
+                "Mã khuyến mãi {$maKhuyenMai->ma_code} đã có thể sưu tập!",
+                '/khuyen-mai/' . $maKhuyenMai->id
+            );
+        }
+
+        $khuyenMaiBatDau = MaKhuyenMai::whereDate('ngay_bat_dau', $now->toDateString())
+            ->where('trang_thai', 1)
+            ->get();
+
+        foreach ($khuyenMaiBatDau as $maKhuyenMai) {
+            $this->sendNotification(
+                'Mã khuyến mãi bắt đầu',
+                "Mã khuyến mãi {$maKhuyenMai->ma_code} đã bắt đầu áp dụng!",
+                '/khuyen-mai/' . $maKhuyenMai->id
+            );
+        }
+
+        $this->info('Thông báo khuyến mãi đã được gửi.');
+    }
+
+    /**
+     * Hàm hỗ trợ gửi thông báo cho người dùng
+     */
+    private function sendNotification($title, $content, $link)
+    {
+        $users = User::all();
+        foreach ($users as $user) {
+            $thongBao = ThongBao::create([
+                'user_id' => $user->id,
+                'tieu_de' => $title,
+                'noi_dung' => $content,
+                'loai' => 'khuyen_mai',
+                'duong_dan' => $link,
+                'trang_thai_da_doc' => 0
+            ]);
+
+            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+        }
+    }
+}
