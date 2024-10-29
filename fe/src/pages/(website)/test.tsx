@@ -21,9 +21,9 @@ const Test: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("1");
   const [selectedProvince, setSelectedProvince] = useState("");
-  console.log(selectedProvince);
+  // console.log(selectedProvince);
   const [selectedDistrict, setSelectedDistrict] = useState("");
-  console.log(selectedDistrict);
+  // console.log(selectedDistrict);
 
   const handleProvinceSelect = (province: string) => {
     setSelectedProvince(province);
