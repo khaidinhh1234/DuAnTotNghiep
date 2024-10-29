@@ -1,6 +1,7 @@
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -231,6 +232,9 @@ const CheckOut = () => {
           quantity: 0,
           price: 0,
           total: 0,
+          kich_thuoc: "",
+          mau_sac: "",
+          hinh_anh: ""
         };
       }
   
@@ -243,6 +247,9 @@ const CheckOut = () => {
         quantity,
         price,
         total: price * quantity, 
+        kich_thuoc: product?.kich_thuoc || "Kích thước không xác định",
+        mau_sac: product?.mau_sac || "Màu sắc không xác định",
+        hinh_anh: product?.hinh_anh || "Hình ảnh không sác định"
       };
     });
   
@@ -590,7 +597,7 @@ const CheckOut = () => {
           </div>
 
           {/* CHI TIẾT */}
-          {/* <div className="lg:col-span-4 col-span-6">
+          <div className="lg:col-span-4 col-span-6">
             <div className="border px-4 py-1 lg:w-[359px] rounded-md">
               <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
               <div className="flex justify-between font-bold border-hrBlack border-b ">
@@ -644,8 +651,8 @@ const CheckOut = () => {
                 </Link>
               </div>
             </div>
-          </div> */}
-          <Subtotal/>
+          </div>
+          {/* <Subtotal/> */}
         </div>
       </div>
     </section>

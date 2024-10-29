@@ -1,10 +1,135 @@
-const Subtotal = () => (
-  <div className="lg:col-span-4 col-span-6">
+import { useLocalStorage } from "@/components/hook/useStoratge";
+import instanceClient from "@/configs/client";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+const Subtotal = () => {
+  const nav = useNavigate()
+  const [user] = useLocalStorage("user" as any, {});
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
+    const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
+      const savedSelectedProducts = localStorage.getItem("selectedProducts");
+      return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
+    });
+  
+  const { data } = useQuery({
+    queryKey: ["cart", access_token],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get(`/gio-hang`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        throw new Error("Error fetching cart data");
+      }
+    },
+  });
+   // Tính tổng tiền
+
+   const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
+    const productInDiscounts = data?.san_pham_giam_gia.find(
+      (product: any) => product.id === productId
+    );
+    const productInRegular = data?.san_pham_nguyen_gia.find(
+      (product: { id: number }) => product.id === Number(productId)
+    );
+    const quantity =
+      productInDiscounts?.so_luong || productInRegular?.so_luong || 0;
+    console.log("đâsd", quantity);
+    if (productInDiscounts) {
+      return total + productInDiscounts.gia_hien_tai * quantity;
+    }
+
+    if (productInRegular) {
+      return total + productInRegular.gia_hien_tai * quantity;
+    }
+
+    return total;
+  }, 0);
+  console.log(totalSelectedPrice);
+  // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
+  const shippingFee = 20000;
+  const discountShipping = 20000;
+  const finalTotal = totalSelectedPrice - discountShipping + shippingFee;
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
+  };
+  
+
+  const handleCheckout = () => {
+    if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
+      toast.error("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.");
+      return;
+    }
+  
+    // Kiểm tra xem có sản phẩm nào được chọn hay không
+    if (!selectedProducts.length) {
+      toast.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+      return;
+    }
+  
+    // Tính toán chi tiết giỏ hàng
+    const cartDetails = selectedProducts.map((productId) => {
+      const productInDiscounts = data?.san_pham_giam_gia.find((product: any) => product.id === productId);
+      const productInRegular = data?.san_pham_nguyen_gia.find((product: { id: number }) => product.id === Number(productId));
+      const product = productInDiscounts || productInRegular;
+  
+      // Nếu sản phẩm không tồn tại trong cả hai danh sách
+      if (!product) {
+        return {
+          id: productId,
+          name: "Sản phẩm không tồn tại",
+          quantity: 0,
+          price: 0,
+          total: 0,
+        };
+      }
+  
+      const quantity = product?.so_luong || 1; 
+      const price = product?.gia_hien_tai || 0; 
+  
+      return {
+        id: productId,
+        name: product?.ten_san_pham || "Sản phẩm không xác định",
+        quantity,
+        price,
+        total: price * quantity, 
+      };
+    });
+  
+    // Tính tổng giá trị giỏ hàng
+    const cartTotal = {
+      totalSelectedPrice: totalSelectedPrice,
+      shippingFee: finalTotal > 0 ? shippingFee : 0,
+      discount: finalTotal > 0 ? shippingFee : 0,
+      finalTotal: finalTotal,
+      details: cartDetails,
+    };
+  
+    // Lưu cartTotal vào localStorage
+    localStorage.setItem("cartTotal", JSON.stringify(cartTotal));
+  
+    nav("/shippingAddressPage");
+  };
+  
+  return (
+    <div className="lg:col-span-4 col-span-6">
     <div className="border px-4 py-1 lg:w-[359px] rounded-md">
       <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
       <div className="flex justify-between font-bold border-hrBlack border-b ">
         <h4>Tổng giá trị sản phẩm</h4>
-        <span className="px-2">$200.00</span>
+        <span className="px-2">
+                  {totalSelectedPrice.toLocaleString("vn-VN")} ₫
+                </span>
       </div>
       <div className="py-4">
         <label className="text-xs">Nhập mã giảm giá</label>
@@ -35,7 +160,7 @@ const Subtotal = () => (
         </div>
         <div className="flex justify-between font-bold ">
           <h4>Tổng cộng</h4>
-          <span>$205.00</span>
+          <span>{formatCurrency(finalTotal)}</span>
         </div>
       </div>
       <div className="flex justify-end text-red-500 mb-8">
@@ -51,6 +176,6 @@ const Subtotal = () => (
       </a>
     </div>
   </div>
-);
-
+  )
+}
 export default Subtotal;
