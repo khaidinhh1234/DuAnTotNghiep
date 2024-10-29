@@ -1,8 +1,9 @@
 const Subtotal = () => (
   <div className="lg:col-span-4 col-span-6">
     <div className="border px-4 py-1 lg:w-[359px] rounded-md">
-      <div className="flex justify-between font-bold border-hrBlack border-b py-4">
-        <h4>Tạm tính</h4>
+      <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
+      <div className="flex justify-between font-bold border-hrBlack border-b ">
+        <h4>Tổng giá trị sản phẩm</h4>
         <span className="px-2">$200.00</span>
       </div>
       <div className="py-4">
@@ -18,14 +19,27 @@ const Subtotal = () => (
             Áp dụng
           </button>
         </div>
-        <div className="py-4 flex justify-between font-medium border-b border-hrBlack">
-          <p>Phí giao hàng</p>
-          <span className="px-2">$5.00</span>
+        <div className="py-4">
+          <div className=" flex justify-between font-medium border-hrBlack">
+            <p>Tiết kiệm</p>
+            <span className="px-2 text-red-500">$5.00</span>
+          </div>
+          <div className=" flex justify-between font-medium border-hrBlack">
+            <p>Phí giao hàng</p>
+            <span className="px-2">$5.00</span>
+          </div>
+          <div className=" flex justify-between font-medium border-hrBlack">
+            <p>Giảm giá vận chuyển</p>
+            <span className="px-2 text-red-500">$5.00</span>
+          </div>
+        </div>
+        <div className="flex justify-between font-bold ">
+          <h4>Tổng cộng</h4>
+          <span>$205.00</span>
         </div>
       </div>
-      <div className="flex justify-between font-bold mb-8">
-        <h4>Tổng cộng</h4>
-        <span>$205.00</span>
+      <div className="flex justify-end text-red-500 mb-8">
+        <span>Bạn đã tiết kiệm được 469.100 đ</span>
       </div>
       <a href="/payment">
         <button
