@@ -39,6 +39,7 @@ class TrangChiTietSpController extends Controller
             foreach ($chiTietSanPham->danhGias as $danhGia) {
                 $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
             }
+
             if (Auth::guard('api')->check()) {
                 $user = Auth::guard('api')->user();
                 if ($chiTietSanPham->khachHangYeuThich->pluck('id')->first() == $user->id) {
@@ -47,6 +48,7 @@ class TrangChiTietSpController extends Controller
                     $chiTietSanPham['trang_thai_yeu_thich'] = false;
                 }
             }
+
 
             return response()->json([
                 'status' => true,
@@ -321,5 +323,25 @@ class TrangChiTietSpController extends Controller
                 'huong_dan_cham_soc' => 'Giặt tay trong nước lạnh, không sử dụng chất tẩy. Phơi khô tự nhiên.'
             ],
         ]);
+    }
+
+    public function loadKichThuoc()
+    {
+        try {
+            $kichThuocs = BienTheKichThuoc::all()->groupBy('loai_kich_thuoc');
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Danh sách kích thước theo loại',
+                'data' => $kichThuocs
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh sách kích thước',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
     }
 }

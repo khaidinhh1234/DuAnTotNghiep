@@ -8,6 +8,8 @@ import Payment from "./_component/payment/payment";
 import ShippingAddress from "./_component/shipping/ShippingAddress";
 import Ordercreate from "./_component/check/ordercreate";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { checkout_address } from "@/common/validations/checkout";
 
 // import ShippingAddress from "../ShipingAdrres/_components/ShippingAddress";
 const Layoutcheckout = () => {
@@ -20,7 +22,14 @@ const Layoutcheckout = () => {
   const prev = () => {
     setCurrent(current - 1);
   };
-  const { register, handleSubmit, watch } = useForm();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(checkout_address),
+  });
 
   // Sử dụng watch để theo dõi các giá trị từ form mà không cần submit
   const AddAddressForm = (data: any) => {
@@ -36,6 +45,7 @@ const Layoutcheckout = () => {
             handleSubmit={handleSubmit}
             watch={watch}
             onAddAddress={AddAddressForm}
+            errors={errors}
           />
         </>
       ),
@@ -126,7 +136,13 @@ const Layoutcheckout = () => {
               <div className="">{steps[current].content}</div>
             </div>
           </div>
-          <Subtotal current={current} steps={steps} next={next} prev={prev} />
+          <Subtotal
+            current={current}
+            steps={steps}
+            next={next}
+            prev={prev}
+            handleSubmit={handleSubmit(AddAddressForm)}
+          />
         </div>
       </div>
     </section>

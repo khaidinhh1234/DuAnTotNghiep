@@ -287,7 +287,6 @@ class DonHangClientController extends Controller
     }
 
 
-
     public function taoDonHang(Request $request)
     {
         $request->validate([
@@ -416,6 +415,15 @@ class DonHangClientController extends Controller
                 }
             }
 
+            $chi_tieu_toi_thieu = $maGiamGia ? $maGiamGia->chi_tieu_toi_thieu : 0;
+
+            if ($tongTienDonHang < $chi_tieu_toi_thieu) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tổng giá đơn hàng phải lớn hơn hoặc bằng ' . number_format($chi_tieu_toi_thieu) . ' VNĐ.',
+                ], 400);
+            }
+
             $maDonHang = 'DH' . strtoupper(uniqid());
             $donHang = DonHang::create([
                 'ma_don_hang' => $maDonHang,
@@ -476,15 +484,13 @@ class DonHangClientController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Đặt hàng thành công.',
-                'tong_tien' => $tongTienDonHang,
-                'so_tien_giam_gia' => $soTienGiamGia,
+                'don_hang' => $donHang,
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Đã xảy ra lỗi.',
-                'error' => $e->getMessage(),
+                'message' => 'Có lỗi xảy ra. Vui lòng thử lại sau.',
             ], 500);
         }
     }

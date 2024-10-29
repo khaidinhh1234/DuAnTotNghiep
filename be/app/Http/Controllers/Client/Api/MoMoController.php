@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Momo;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MoMoController extends Controller
 {
@@ -67,7 +69,8 @@ class MoMoController extends Controller
                 'requestType' => $requestType,
                 'signature' => $signature
             ];
-
+            // Lưu thông tin thanh toán
+            $this->savePaymentInfo($data);
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
 
@@ -110,7 +113,8 @@ class MoMoController extends Controller
                 'requestType' => $requestType,
                 'signature' => $signature
             ];
-
+            // Lưu thông tin thanh toán
+            $this->savePaymentInfo( $data);
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
 
@@ -121,6 +125,25 @@ class MoMoController extends Controller
             }
         } else {
             return response()->json(['message' => 'Invalid payment type'], 400);
+        }
+    }
+
+    public function savePaymentInfo($data)
+    {
+        try {
+            Momo::create([
+                'partnerCode' => $data['partnerCode'],
+                'orderId' => $data['orderId'],
+                'requestId' => $data['requestId'],
+                'amount' => $data['amount'],
+                'orderInfo' => $data['orderInfo'],
+                'orderType' => $data['requestType'],
+                'transId' => $data['transId'] ?? null,
+                'payType' => $data['payType'] ?? 'N/A',
+                'signature' => $data['signature']
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
         }
     }
 }

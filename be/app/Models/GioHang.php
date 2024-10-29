@@ -14,7 +14,7 @@ class GioHang extends Model
         'user_id',
         'bien_the_san_pham_id',
         'so_luong',
-        'chon'
+        'chon',
         ];
 
 
