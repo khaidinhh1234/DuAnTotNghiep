@@ -324,4 +324,24 @@ class TrangChiTietSpController extends Controller
             ],
         ]);
     }
+
+    public function loadKichThuoc()
+    {
+        try {
+            $kichThuocs = BienTheKichThuoc::all()->groupBy('loai_kich_thuoc');
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Danh sách kích thước theo loại',
+                'data' => $kichThuocs
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh sách kích thước',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
 }
