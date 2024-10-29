@@ -76,6 +76,15 @@ const Slibar = () => {
           </li>
           <li>
             <Link
+              to="/mypro/vocher"
+              className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
+            >
+<i className="fa-light fa-ticket" />
+                   Vocher của tôi
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/mypro/mywishlist"
               className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
             >
