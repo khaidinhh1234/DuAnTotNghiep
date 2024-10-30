@@ -1,6 +1,6 @@
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
-import { Button, Modal } from "antd";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Button, message, Modal } from "antd";
 import React, { useState } from "react";
 
 interface VoucheruserProps {
@@ -10,23 +10,54 @@ interface VoucheruserProps {
   }: {
     giam_gia: number | null;
     index: string | null;
-  }) => void; // Define the prop type
+  }) => void;
 }
 
 const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
-  const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null); // State for selected discount
-  // console.log(selectedDiscount);
+  const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const [clickedIndex, setClickedIndex] = useState<string | null>(null);
+
   const handleCancel = () => {
     setOpen(false);
   };
-  const [code, setCode] = useState("");
+
+  const { mutate } = useMutation({
+    mutationFn: async (index: any) => {
+      try {
+        await instanceClient.post(`/ap-dung-ma-khuyen-mai`, {
+          ma_giam_gia: index,
+        });
+        message.success("Áp dụng mã giảm giá thành công");
+      } catch (error) {
+        message.error("Có lỗi xảy ra khi áp dụng mã giảm giá");
+        throw new Error("Error applying voucher");
+      }
+    },
+    onError: (error) => {
+      console.error(error);
+      alert("Có lỗi xảy ra khi áp dụng mã giảm giá. Vui lòng thử lại!");
+    },
+  });
+
+  const handleApply = () => {
+    if (selectedDiscount !== null && clickedIndex !== null) {
+      mutate(clickedIndex, {
+        onSuccess: () => {
+          onSelectVoucher({ giam_gia: selectedDiscount, index: clickedIndex });
+          handleCancel();
+        },
+      });
+    } else {
+      alert("Vui lòng chọn mã giảm giá trước khi áp dụng.");
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value.toUpperCase());
   };
 
-  const [clickedIndex, setClickedIndex] = useState<string | null>(null);
   const handleClick = ({
     index,
     giam_gia,
@@ -36,14 +67,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
   }) => {
     const newIndex = clickedIndex === index ? null : index;
     setClickedIndex(newIndex);
-    // Call the prop function to pass the giam_gia value
-    if (newIndex) {
-      setSelectedDiscount(giam_gia ?? null);
-      onSelectVoucher({ giam_gia, index }); // Pass the discount value
-    } else {
-      setSelectedDiscount(null);
-      onSelectVoucher({ giam_gia: null, index: null }); // Pass null values when deselected
-    }
+    setSelectedDiscount(newIndex ? giam_gia : null);
   };
 
   const { data } = useQuery({
@@ -53,6 +77,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
         const response = await instanceClient.get(
           `/ma-uu-dai-cho-nguoi-dung-cu-the`
         );
+
         return response.data;
       } catch (error) {
         throw new Error("Error fetching cart data");
@@ -170,9 +195,9 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
             <div className="mt-5">
               <button
                 className="bg-red-600 text-white w-full py-3 font-semibold hover:bg-red-700"
-                onClick={handleCancel}
+                onClick={handleApply}
               >
-                Tiếp tục
+                Áp dụng
               </button>
             </div>
           </div>

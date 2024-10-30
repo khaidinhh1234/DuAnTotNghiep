@@ -3,7 +3,7 @@ import { Avatar, Button, Progress } from "antd";
 import Sidebar from "./../../_component/Slibar";
 // import ProfileTab from './ProfileTab';
 import { Upload } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
@@ -16,14 +16,28 @@ const ListMyProfile = ({ member }: any) => {
   const [{ user }, setUser] = useLocalStorage("user" as any, {});
   const [tempImageUrl, setTempImageUrl] = useState<string>("");
 
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'user') {
+        const newUser = JSON.parse(event.newValue || '{}');
+        setUser(newUser);
+      }
+    };
 
+    window.addEventListener('storage', handleStorageChange);
+
+    // Dọn dẹp khi component unmount
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [setUser]);
   const url = user.anh_nguoi_dung;
 
   const { data, refetch  } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post("cap-nhat-thong-tin");
+        const response = await instanceClient.post("/cap-nhat-thong-tin");
         return response.data;
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -34,8 +48,8 @@ const ListMyProfile = ({ member }: any) => {
   const updateAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
       const imageUrl = await uploadToCloudinary(file);
-      await instanceClient.post("cap-nhat-thong-tin", {
-        duong_dan: imageUrl
+      await instanceClient.post("/cap-nhat-thong-tin", {
+        anh_nguoi_dung: imageUrl
       });
       return imageUrl;
     },

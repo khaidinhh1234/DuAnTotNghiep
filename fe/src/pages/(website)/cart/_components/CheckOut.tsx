@@ -189,7 +189,6 @@ const CheckOut = () => {
     },
   });
   // Tính tổng tiền
-
   const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
     const productInDiscounts = data?.san_pham_giam_gia.find(
       (product: any) => product.id === productId
@@ -212,9 +211,8 @@ const CheckOut = () => {
   }, 0);
   console.log(totalSelectedPrice);
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
-  const shippingFee = 20000;
-  const discountShipping = 20000;
-  const finalTotal = totalSelectedPrice - discountShipping + shippingFee;
+  const shippingFee = totalSelectedPrice > 500000 ? 0 : 20000;
+  const finalTotal = totalSelectedPrice + shippingFee;
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -398,14 +396,12 @@ const CheckOut = () => {
                   <th className="font-semibold text-gray-700 px-4 py-2">
                     Sản phẩm
                   </th>
-                  <th className="font-semibold text-gray-700 px-4 py-2">Giá</th>
                   <th className="lg:text-center hidden lg:table-cell font-semibold text-gray-700 px-4 py-2">
                     Số lượng
                   </th>
                   <th className="font-semibold text-gray-700 px-4 py-2">
                     Tổng tiền
                   </th>
-                  {/* <th className="font-semibold text-gray-700 px-4 py-2">Xóa</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -448,11 +444,11 @@ const CheckOut = () => {
                         </td>
                         {/* Thông tin sản phẩm */}
                         <td className="px-4 py-2">
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-start gap-4">
                             <img
                               src={product.hinh_anh}
                               alt={product.ten_san_pham}
-                              className="w-12 h-12 object-cover"
+                              className="w-32 h-40 object-cover rounded-md"
                             />
                             <div>
                               <h3 className="font-semibold text-gray-700">
@@ -461,14 +457,31 @@ const CheckOut = () => {
                               <p className="text-gray-500">
                                 {product.mau_sac}, {product.kich_thuoc}
                               </p>
+                              <div className="flex items-center">
+                                <p className="text-red-500 font-bold mr-2">
+                                  {product.gia_khuyen_mai} ₫
+                                </p>
+                                <p className="text-gray-400 line-through">
+                                  {product.gia_cu} ₫
+                                </p>
+                              </div>
+                              <p
+                                className="text-xs text-red-500 relative inline-block font-semibold tracking-wide"
+                                style={{
+                                  padding: "2px 10px",
+                                  border: "2px solid red",
+                                  clipPath: "inset(0 10px)",
+                                  borderRadius: "16px",
+                                }}
+                              >
+                                Đã tiết kiệm{" "}
+                                {product.tiet_kiem.toLocaleString()} ₫
+                              </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-2">
-                          {formatCurrency(product.gia_hien_tai)}
-                        </td>
-                        <td className="hidden lg:block px-4 py-2">
-                          <div className="flex items-center justify-center border rounded-lg">
+                        <td className="hidden lg:table-cell px-4 py-2 text-center align-middle">
+                          <div className="flex items-center justify-center border rounded-lg mx-auto w-fit">
                             <button
                               onClick={() =>
                                 decreaseQuantity({
@@ -539,11 +552,11 @@ const CheckOut = () => {
                         </td>
                         {/* Thông tin sản phẩm */}
                         <td className="px-4 py-2">
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-start gap-4">
                             <img
                               src={product.hinh_anh}
                               alt={product.ten_san_pham}
-                              className="w-12 h-12 object-cover"
+                              className="w-32 h-40 object-cover rounded-md"
                             />
                             <div>
                               <h3 className="font-semibold text-gray-700">
@@ -552,14 +565,14 @@ const CheckOut = () => {
                               <p className="text-gray-500">
                                 {product.mau_sac}, {product.kich_thuoc}
                               </p>
+                              <p className="text-gray-700 font-semibold mt-1">
+                                {formatCurrency(product.gia_hien_tai)}
+                              </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-2">
-                          {formatCurrency(product.gia_hien_tai)}
-                        </td>
-                        <td className="hidden lg:block px-4 py-2">
-                          <div className="flex items-center justify-center border rounded-lg">
+                        <td className="hidden lg:table-cell px-4 py-2 text-center align-middle">
+                          <div className="flex items-center justify-center border rounded-lg mx-auto w-fit">
                             <button
                               onClick={() =>
                                 decreaseQuantity({
@@ -629,27 +642,29 @@ const CheckOut = () => {
               </div>
 
               <div className="py-4">
-                <div className=" flex justify-between font-medium border-hrBlack">
-                  <p>Tiết kiệm</p>
-                  <span className="px-2 text-red-500">
-                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}{" "}
-                    ₫
-                  </span>
-                </div>
-
+                {data?.san_pham_giam_gia.map((product: any) => (
+                  <div
+                    key={product.id}
+                    className=" flex justify-between font-medium border-hrBlack"
+                  >
+                    <p>Tiết kiệm</p>
+                    <span className="px-2 text-red-500">
+                      {product.tiet_kiem} ₫
+                    </span>
+                  </div>
+                ))}
                 <div className="flex justify-between font-medium mb-0 border-hrBlack">
                   <p>Phí giao hàng</p>
-                  <span className="px-2">
-                    {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0} ₫
-                  </span>
+                  <span className="px-2">{formatCurrency(20000)}</span>
                 </div>
-                <div className="flex justify-between font-medium border-b border-hrBlack">
-                  <p>Giảm giá vận chuyển</p>\
-                  <span className="px-2 text-red-500">
-                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}
-                    ₫
-                  </span>
-                </div>
+                {totalSelectedPrice > 500000 && (
+                  <div className="flex justify-between font-medium border-b border-hrBlack">
+                    <p>Giảm giá vận chuyển</p>
+                    <span className="px-2 text-red-500">
+                      - {formatCurrency(20000)}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-between font-bold mb-8">
@@ -673,7 +688,7 @@ const CheckOut = () => {
               </div>
             </div>
           </div>
-          {/* <Subtotal/> */}
+          {/* <Subtotal /> */}
         </div>
       </div>
     </section>
