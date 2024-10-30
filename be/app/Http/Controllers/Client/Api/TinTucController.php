@@ -109,23 +109,25 @@ class TinTucController extends Controller
                 ], 404);
             }
 
-            // Lấy bài viết mới nhất
-            $baiVietMoiNhat = TinTuc::where('danh_muc_tin_tuc_id', $danhMuc->id)
+            // Lấy bài viết mới nhất của danh mục
+            $baiVietMoiNhat = TinTuc::with('danhMucTinTuc') // Thêm `with` để lấy quan hệ danh mục
+                ->where('danh_muc_tin_tuc_id', $danhMuc->id)
                 ->orderBy('created_at', 'desc')
                 ->first();
 
-
-            $baiVietKhac = TinTuc::where('danh_muc_tin_tuc_id', $danhMuc->id)
-                ->where('id', '<>', optional($baiVietMoiNhat)->id) // Loại trừ bài viết mới nhất
+            // Lấy các bài viết khác trong danh mục (loại trừ bài viết mới nhất)
+            $baiVietKhac = TinTuc::with('danhMucTinTuc') // Thêm `with` để lấy quan hệ danh mục
+                ->where('danh_muc_tin_tuc_id', $danhMuc->id)
+                ->where('id', '<>', optional($baiVietMoiNhat)->id)
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
             // Lấy top 5 bài viết có lượt xem cao nhất
-            $baiVietTopLuotXem = TinTuc::orderBy('luot_xem', 'desc')
-                ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at')
-                ->limit(5)
-                ->get();
-
+            $baiVietTopLuotXem = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
+            ->orderBy('luot_xem', 'desc')
+            ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at','danh_muc_tin_tuc_id')
+            ->limit(5)
+            ->get();
 
             DB::commit();
 
@@ -151,6 +153,7 @@ class TinTucController extends Controller
         }
     }
 
+
     public function xemBaiViet(Request $request, $duong_dan)
     {
         try {
@@ -172,11 +175,12 @@ class TinTucController extends Controller
                 ->where('id', '<>', $baiVietDetail->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
-                 // Lấy top 5 bài viết có lượt xem cao nhất
-            $baiVietTopLuotXem = TinTuc::orderBy('luot_xem', 'desc')
-            ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at')
-            ->limit(5)
-            ->get();
+             // Lấy top 5 bài viết có lượt xem cao nhất
+             $baiVietTopLuotXem = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
+             ->orderBy('luot_xem', 'desc')
+             ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at','danh_muc_tin_tuc_id')
+             ->limit(5)
+             ->get();
 
             DB::commit();
 
