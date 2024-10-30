@@ -60,16 +60,19 @@ const AddAddressForm = ({ register, products }: any) => {
                   </div>
                 </td>
                 <td className="px-4 py-2">
-                  {(product?.price ?? 0).toLocaleString("vi-VN")}₫
+                  {(product?.gia_hien_tai ?? 0).toLocaleString("vi-VN")}₫
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex items-center justify-center  rounded-lg">
-                    {(product?.quantity ?? 0).toLocaleString("vi-VN")}
+                    {(product?.so_luong ?? 0).toLocaleString("vi-VN")}
                   </div>
                 </td>
 
                 <td className="px-4 py-2">
-                  {(product?.total ?? 0).toLocaleString("vi-VN")}₫
+                  {(product?.gia_hien_tai * product?.so_luong).toLocaleString(
+                    "vi-VN"
+                  )}
+                  ₫
                 </td>
               </tr>
             ))}
@@ -169,7 +172,7 @@ const AddAddressForm = ({ register, products }: any) => {
             Sử dụng làm địa chỉ mặc định
           </label>
         </div> */}
-      <h3 className="title-h3">Phương thức vận chuyển</h3>
+      {/* <h3 className="title-h3">Phương thức vận chuyển</h3>
       <p className="text-gray-500">
         Lựa chọn phương thức thanh toán phù hợp nhất cho bạn
       </p>
@@ -202,7 +205,7 @@ const AddAddressForm = ({ register, products }: any) => {
           </label>{" "}
         </div>
         <h1 className="title-h3">40.000 đ</h1>
-      </div>
+      </div> */}
       <h3 className="title-h3">Phương thức thanh toán</h3>
       <p className="text-gray-500">
         Lựa chọn phương thức thanh toán phù hợp nhất cho bạn

@@ -1,131 +1,22 @@
-import { useLocalStorage } from "@/components/hook/useStoratge";
-import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 import Voucheruser from "./voucheruser";
 
-const Subtotal = ({ cartTotal }: any) => {
-  const nav = useNavigate();
-  const [user] = useLocalStorage("user" as any, {});
-  const access_token =
-    user.access_token || localStorage.getItem("access_token");
-  const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
-    const savedSelectedProducts = localStorage.getItem("selectedProducts");
-    return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
-  });
-
-  const { data } = useQuery({
-    queryKey: ["cart", access_token],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get(`/gio-hang`, {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        });
-        return response.data;
-      } catch (error) {
-        throw new Error("Error fetching cart data");
-      }
-    },
-  });
-  // Tính tổng tiền
-
-  const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
-    const productInDiscounts = data?.san_pham_giam_gia.find(
-      (product: any) => product.id === productId
-    );
-    const productInRegular = data?.san_pham_nguyen_gia.find(
-      (product: { id: number }) => product.id === Number(productId)
-    );
-    const quantity =
-      productInDiscounts?.so_luong || productInRegular?.so_luong || 0;
-    // console.log("đâsd", quantity);
-    if (productInDiscounts) {
-      return total + productInDiscounts.gia_hien_tai * quantity;
-    }
-
-    if (productInRegular) {
-      return total + productInRegular.gia_hien_tai * quantity;
-    }
-
-    return total;
-  }, 0);
-  console.log(totalSelectedPrice);
-  // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
-  const shippingFee = 20000;
-  const discountShipping = 20000;
-  const finalTotal = totalSelectedPrice - discountShipping + shippingFee;
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount);
+const Subtotal = ({ tong_tien }: any) => {
+  const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
+  const [macode, setmacode] = useState<number | any>("");
+  console.log(macode);
+  useEffect(() => {
+    if (selectedDiscount === null) return;
+  }, [selectedDiscount]);
+  const handleSelectVoucher = (data: number | any) => {
+    setSelectedDiscount(data.giam_gia);
+    setmacode(data.index);
+    console.log(data);
   };
-
-  const handleCheckout = () => {
-    if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
-      toast.error(
-        "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
-      );
-      return;
-    }
-
-    // Kiểm tra xem có sản phẩm nào được chọn hay không
-    if (!selectedProducts.length) {
-      toast.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
-      return;
-    }
-
-    // Tính toán chi tiết giỏ hàng
-    const cartDetails = selectedProducts.map((productId) => {
-      const productInDiscounts = data?.san_pham_giam_gia.find(
-        (product: any) => product.id === productId
-      );
-      const productInRegular = data?.san_pham_nguyen_gia.find(
-        (product: { id: number }) => product.id === Number(productId)
-      );
-      const product = productInDiscounts || productInRegular;
-
-      // Nếu sản phẩm không tồn tại trong cả hai danh sách
-      if (!product) {
-        return {
-          id: productId,
-          name: "Sản phẩm không tồn tại",
-          quantity: 0,
-          price: 0,
-          total: 0,
-        };
-      }
-
-      const quantity = product?.so_luong || 1;
-      const price = product?.gia_hien_tai || 0;
-
-      return {
-        id: productId,
-        name: product?.ten_san_pham || "Sản phẩm không xác định",
-        quantity,
-        price,
-        total: price * quantity,
-      };
-    });
-
-    // Tính tổng giá trị giỏ hàng
-    const cartTotal = {
-      totalSelectedPrice: totalSelectedPrice,
-      shippingFee: finalTotal > 0 ? shippingFee : 0,
-      discount: finalTotal > 0 ? shippingFee : 0,
-      finalTotal: finalTotal,
-      details: cartDetails,
-    };
-
-    // Lưu cartTotal vào localStorage
-    localStorage.setItem("cartTotal", JSON.stringify(cartTotal));
-
-    nav("/shippingAddressPage");
-  };
+  const giamgia =
+    (selectedDiscount ?? 0) > 100
+      ? (selectedDiscount ?? 0)
+      : tong_tien?.tong_gia_tri_san_pham * ((selectedDiscount ?? 0) / 100);
 
   return (
     <div className="lg:col-span-4 col-span-6">
@@ -134,7 +25,7 @@ const Subtotal = ({ cartTotal }: any) => {
         <div className="flex justify-between font-bold border-hrBlack border-b ">
           <h4>Tổng giá trị sản phẩm</h4>
           <span className="px-2">
-            {(cartTotal?.finalTotal ?? 0)?.toLocaleString("vn-VN")} ₫
+            {(tong_tien?.tong_gia_tri_san_pham ?? 0)?.toLocaleString("vn-VN")} ₫
           </span>
         </div>
         <div className="py-4">
@@ -147,41 +38,55 @@ const Subtotal = ({ cartTotal }: any) => {
               className="lg:w-[218px] w-[300px] h-[56px] px-4 rounded-s-lg focus:outline-none border border-l-2 border-t-2 border-blackL border-r-0"
             /> */}
 
-            <Voucheruser />
+            <Voucheruser onSelectVoucher={handleSelectVoucher} />
           </div>
           <div className="py-4">
+            {selectedDiscount && (
+              <div className=" flex justify-between font-medium border-hrBlack">
+                <p>
+                  Giảm giá{" "}
+                  {(selectedDiscount ?? 0) > 100
+                    ? selectedDiscount.toLocaleString() + "₫"
+                    : selectedDiscount + "%"}
+                </p>
+                <span className="px-2 text-red-500">
+                  {" "}
+                  - {giamgia.toLocaleString()}₫
+                </span>
+              </div>
+            )}
             <div className=" flex justify-between font-medium border-hrBlack">
               <p>Tiết kiệm</p>
               <span className="px-2 text-red-500">
                 {" "}
-                - {(cartTotal?.discount).toLocaleString("vi-VN")}₫
+                - {(tong_tien?.tong_tiet_kiem ?? 0).toLocaleString("vi-VN")}₫
               </span>
             </div>
             <div className=" flex justify-between font-medium border-hrBlack">
               <p>Phí giao hàng</p>
               <span className="px-2">
-                {(cartTotal?.shippingFee).toLocaleString("vi-VN")}₫
+                {(tong_tien?.van_chuyen ?? 0).toLocaleString("vi-VN")}₫
               </span>
             </div>
             <div className=" flex justify-between font-medium border-hrBlack">
               <p>Giảm giá vận chuyển</p>
               <span className="px-2 text-red-500">
                 {" "}
-                -{(cartTotal?.shippingFee).toLocaleString("vi-VN")}₫
+                {(tong_tien?.giam_gia_van_chuyen ?? 0).toLocaleString("vi-VN")}₫
               </span>
             </div>
           </div>
           <div className="flex justify-between font-bold ">
             <h4>Tổng cộng</h4>
             <span>
-              {(cartTotal?.totalSelectedPrice).toLocaleString("vi-VN")} ₫
+              {(tong_tien?.tong_thanh_toan - giamgia).toLocaleString("vi-VN")} ₫
             </span>
           </div>
         </div>
         <div className="flex justify-end text-red-500 mb-8">
           <span>
             Bạn đã tiết kiệm được{" "}
-            {(cartTotal?.discount).toLocaleString("vi-VN")}₫
+            {(tong_tien?.tiet_kiem + giamgia).toLocaleString("vi-VN")}₫
           </span>
         </div>
         <a href="/shippingAddressPage">

@@ -3,13 +3,29 @@ import AddressForm from "./_components/AddAdrres";
 import ShippingAddress from "./_components/ShippingAddress";
 import Subtotal from "./_components/subtotail";
 import { useLocalStorage } from "@/components/hook/useStoratge";
+import { useQuery } from "@tanstack/react-query";
+import instanceClient from "@/configs/client";
 
 const ShippingAddressPage = () => {
-  const [cartTotal] = useLocalStorage("cartTotal" as any, 0);
-  const products = cartTotal.details;
+  // const [cartTotal] = useLocalStorage("cartTotal" as any, 0);
+  // const products = cartTotal.details;
+  const { data: checkout } = useQuery({
+    queryKey: ["Checkout"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get(`/gio-hang/chi-tiet`);
+        return response.data;
+      } catch (error) {
+        throw new Error("Error fetching cart data");
+      }
+    },
+  });
+  const tong_tien = checkout?.chi_tiet_don_hang;
+  const products = checkout?.chi_tiet_don_hang?.san_pham;
+
   const { register, handleSubmit } = useForm();
   const onsubmit = (data: any) => {
-    console.log({ data, cartTotal });
+    console.log({ data });
   };
   return (
     <>
@@ -20,9 +36,13 @@ const ShippingAddressPage = () => {
             <div className="grid lg:grid-cols-12 lg:gap-20 px-0 justify-center">
               <div className="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]">
                 {/* <ShippingAddress /> */}
-                <AddressForm register={register} products={products} />
+                <AddressForm
+                  register={register}
+                  products={products}
+                  checkout={checkout}
+                />
               </div>
-              <Subtotal cartTotal={cartTotal} />
+              <Subtotal tong_tien={tong_tien} />
             </div>
           </form>
         </div>
