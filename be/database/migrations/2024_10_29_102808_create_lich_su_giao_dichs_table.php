@@ -20,6 +20,7 @@ return new class extends Migration
             $table->dateTime('ngay_thay_doi');
             $table->string('mo_ta', 255)->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
