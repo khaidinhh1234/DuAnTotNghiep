@@ -50,14 +50,12 @@ class GioHangController extends Controller
                 $item->hinh_anh = optional($bienThe->anhBienThe->first())->duong_dan_anh;
 
                 $item->gia_hien_tai = $item->gia_ban;
-                $item->gia_cu = null;
+                $item->gia_cu =  $item->gia_ban;
 
                 if (isset($item->gia_khuyen_mai_tam_thoi) && $item->gia_khuyen_mai_tam_thoi) {
                     $item->gia_hien_tai = $item->gia_khuyen_mai_tam_thoi;
-                    $item->gia_cu = $item->gia_khuyen_mai;
                 } elseif (isset($item->gia_khuyen_mai) && $item->gia_khuyen_mai) {
                     $item->gia_hien_tai = $item->gia_khuyen_mai;
-                    $item->gia_cu = $item->gia_ban;
                 }
 
                 return $item;
