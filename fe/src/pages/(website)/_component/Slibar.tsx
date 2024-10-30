@@ -1,15 +1,33 @@
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import instanceClient from "@/configs/client";
 
 const Slibar = () => {
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
+  console.log( user?.user?.anh_nguoi_dung)
+  const [anh_nguoi_dung] = useState(member?.anh_nguoi_dung);
+
+  const { data,   } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.post("cap-nhat-thong-tin");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    },
+  });
   const [showNotificationMenu, setShowNotificationMenu] = useState(false);
 
   const toggleNotificationMenu = () => {
     setShowNotificationMenu(!showNotificationMenu);
   };
+
+// console.log('data....',data)
 
   return (
     <div
@@ -17,7 +35,7 @@ const Slibar = () => {
     >
       <div className="flex items-center p-5 border-b border-hrBlack">
         <img
-          src={member?.anh_nguoi_dung}
+          src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
           alt=""
           className="rounded-full md:w-[51px] md:h-[51px]"
         />

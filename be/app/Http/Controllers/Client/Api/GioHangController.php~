@@ -6,26 +6,39 @@ use App\Http\Controllers\Controller;
 use App\Models\GioHang;
 use App\Models\BienTheSanPham;
 use App\Models\MaKhuyenMai;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class GioHangController extends Controller
 {
+    private function getUserIdOrSessionId()
+    {
+        if (Auth::check()) {
+            return Auth::id();
+        } else {
+            if (!Session::has('tam_thoi_id')) {
+                Session::put('tam_thoi_id', uniqid('user_'));
+            }
+            return Session::get('tam_thoi_id');
+        }
+    }
+
     public function index()
     {
         try {
-            $userId = Auth::id();
+            $userId = $this->getUserIdOrSessionId();
 
             $gioHangs = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
                 ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                 ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
-                ->leftJoin('anh_bien_thes', function($join) {
-                    $join->on('bien_the_san_phams.id', '=', 'anh_bien_thes.bien_the_san_pham_id')
-                        ->whereRaw('anh_bien_thes.id = (SELECT MIN(id) FROM anh_bien_thes WHERE bien_the_san_pham_id = bien_the_san_phams.id)');
-                })
+                ->where("gio_hangs.deleted_at", null)
+                ->where('gio_hangs.user_id', $userId)
                 ->select(
                     'gio_hangs.id',
                     'gio_hangs.bien_the_san_pham_id',
@@ -38,13 +51,17 @@ class GioHangController extends Controller
                     'bien_the_san_phams.gia_khuyen_mai',
                     'bien_the_san_phams.gia_khuyen_mai_tam_thoi',
                     'bien_the_mau_sacs.ten_mau_sac as mau_sac',
-                    'bien_the_kich_thuocs.kich_thuoc',
-                    'anh_bien_thes.duong_dan_anh as hinh_anh'
+                    'bien_the_kich_thuocs.kich_thuoc'
                 )
-                ->where('gio_hangs.user_id', $userId)
                 ->get();
 
             $gioHangs->transform(function($item) {
+                $bienThe = BienTheSanPham::with(['anhBienThe' => function($query) {
+                    $query->first();
+                }])->find($item->bien_the_san_pham_id);
+
+                $item->hinh_anh = optional($bienThe->anhBienThe->first())->duong_dan_anh;
+
                 $item->gia_hien_tai = $item->gia_ban;
                 $item->gia_cu = null;
 
@@ -55,8 +72,6 @@ class GioHangController extends Controller
                     $item->gia_hien_tai = $item->gia_khuyen_mai;
                     $item->gia_cu = $item->gia_ban;
                 }
-
-
 
                 return $item;
             });
@@ -89,7 +104,6 @@ class GioHangController extends Controller
         }
     }
 
-
     public function store(Request $request)
     {
         try {
@@ -100,7 +114,9 @@ class GioHangController extends Controller
 
             $bienTheSanPham = BienTheSanPham::findOrFail($request->bien_the_san_pham_id);
 
-            $gioHangHienTai = GioHang::where('user_id', Auth::id())
+            $userId = $this->getUserIdOrSessionId();
+
+            $gioHangHienTai = GioHang::where('user_id', $userId)
                 ->where('bien_the_san_pham_id', $request->bien_the_san_pham_id)
                 ->first();
 
@@ -116,14 +132,17 @@ class GioHangController extends Controller
 
             $gioHang = GioHang::updateOrCreate(
                 [
-                    'user_id' => Auth::id(),
+                    'user_id' => $userId,
                     'bien_the_san_pham_id' => $request->bien_the_san_pham_id,
+                    'chon' => 1
                 ],
                 [
                     'so_luong' => $tongSoLuong,
+                    'chon' => 1
                 ]
             );
 
+            Log::info('Thêm vào giỏ hàng: ' . Session::get('tam_thoi_id'));
             return response()->json([
                 'status' => true,
                 'message' => 'Sản phẩm đã được thêm vào giỏ hàng thành công!',
@@ -137,37 +156,30 @@ class GioHangController extends Controller
         }
     }
 
-
     public function tangSoLuong($id)
     {
         try {
             $gioHang = GioHang::findOrFail($id);
+            $currentUserId = $this->getUserIdOrSessionId();
 
-            if ($gioHang->user_id !== Auth::id()) {
-                return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
+            if ($gioHang->user_id !== $currentUserId) {
+                return response()->json(['status' => false, 'message' => 'Không có quyền truy cập.'], 403);
             }
 
-            $bienTheSanPham = BienTheSanPham::findOrFail($gioHang->bien_the_san_pham_id);
+            $bienTheSanPham = BienTheSanPham::find($gioHang->bien_the_san_pham_id);
+            if (!$bienTheSanPham) {
+                return response()->json(['status' => false, 'message' => 'Không tìm thấy biến thể sản phẩm.'], 404);
+            }
 
             if ($gioHang->so_luong + 1 > $bienTheSanPham->so_luong_bien_the) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
-                ], 400);
+                return response()->json(['status' => false, 'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'], 400);
             }
 
             $gioHang->increment('so_luong');
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Đã tăng số lượng sản phẩm thành công!',
-                'data' => $gioHang
-            ]);
+            return response()->json(['status' => true, 'message' => 'Đã tăng số lượng sản phẩm thành công!', 'data' => $gioHang]);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-            ], 500);
+            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }
     }
 
@@ -175,30 +187,21 @@ class GioHangController extends Controller
     {
         try {
             $gioHang = GioHang::findOrFail($id);
+            $currentUserId = $this->getUserIdOrSessionId();
 
-            if ($gioHang->user_id !== Auth::id()) {
-                return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
+            if ($gioHang->user_id !== $currentUserId) {
+                return response()->json(['status' => false, 'message' => 'Không có quyền truy cập.'], 403);
             }
 
             if ($gioHang->so_luong - 1 < 1) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Số lượng không thể nhỏ hơn 1.'
-                ], 400);
+                return response()->json(['status' => false, 'message' => 'Số lượng không thể nhỏ hơn 1.'], 400);
             }
 
             $gioHang->decrement('so_luong');
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Đã giảm số lượng sản phẩm thành công!',
-                'data' => $gioHang
-            ]);
+            return response()->json(['status' => true, 'message' => 'Đã giảm số lượng sản phẩm thành công!', 'data' => $gioHang]);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-            ], 500);
+            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }
     }
 
@@ -207,27 +210,42 @@ class GioHangController extends Controller
     {
         try {
             $gioHang = GioHang::findOrFail($id);
+            $currentUserId = $this->getUserIdOrSessionId();
 
-            if ($gioHang->user_id !== Auth::id()) {
-                return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
+            if ($gioHang->user_id !== $currentUserId) {
+                return response()->json(['status' => false, 'message' => 'Không có quyền truy cập.'], 403);
             }
 
             $gioHang->delete();
 
-            return response()->json(['status' => true, 'message' => 'Sản phẩm đã xóa khỏi giỏ hàng']);
+            return response()->json(['status' => true, 'message' => 'Sản phẩm đã xóa khỏi giỏ hàng.']);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
-            ], 500);
+            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function syncCart(Request $request)
     {
         try {
-            $cartItems = $request->input('cartItems');
             $userId = Auth::id();
+
+            if ($userId) {
+                $temporaryCartId = Session::get('tam_thoi_id');
+
+                if ($temporaryCartId) {
+                    $temporaryCartItems = GioHang::where('user_id', $temporaryCartId)->get();
+
+                    foreach ($temporaryCartItems as $item) {
+                        $item->user_id = $userId;
+                        $item->save();
+                    }
+
+                    Session::forget('tam_thoi_id');
+                }
+            }
+
+            $cartItems = $request->cartItems;
 
             $bienTheSanPhamIds = collect($cartItems)->pluck('bien_the_san_pham_id')->toArray();
             $bienTheSanPhams = BienTheSanPham::whereIn('id', $bienTheSanPhamIds)->get()->keyBy('id');
@@ -267,13 +285,13 @@ class GioHangController extends Controller
         }
     }
 
+
+
     public function apDungMaGiamGia(Request $request)
     {
         try {
             $validatedData = $request->validate([
                 'ma_giam_gia' => 'required|string|exists:ma_khuyen_mais,ma_code',
-                'san_pham_chon' => 'required|array',
-                'san_pham_chon.*.gio_hang_id' => 'required|exists:gio_hangs,id',
             ]);
 
             $maGiamGia = MaKhuyenMai::where('ma_code', $validatedData['ma_giam_gia'])->first();
@@ -283,64 +301,75 @@ class GioHangController extends Controller
             }
 
             $userId = Auth::id();
-            $nguoiDungMaKhuyenMai = DB::table('nguoi_dung_ma_khuyen_mais')->where('user_id', $userId)
+
+            $sanPhamTrongGioHang = DB::table('gio_hangs')
+                ->where('user_id', $userId)
+                ->whereNull('deleted_at')
+                ->select('id as gio_hang_id', 'bien_the_san_pham_id', 'so_luong')
+                ->get();
+
+            if ($sanPhamTrongGioHang->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không có sản phẩm nào trong giỏ hàng.',
+                ], 400);
+            }
+
+            $nguoiDungMaKhuyenMai = DB::table('nguoi_dung_ma_khuyen_mai')
+                ->where('user_id', $userId)
                 ->where('ma_khuyen_mai_id', $maGiamGia->id)
                 ->first();
 
             if (!$nguoiDungMaKhuyenMai) {
-                return response()->json(['status' => false, 'message' => 'Bạn chưa lưu mã giảm giá này.'], 400);
-            }
-
-            if ($nguoiDungMaKhuyenMai->da_su_dung) {
+                DB::table('nguoi_dung_ma_khuyen_mai')->insert([
+                    'user_id' => $userId,
+                    'ma_khuyen_mai_id' => $maGiamGia->id,
+                    'da_su_dung' => false,
+                    'ngay_su_dung' => null,
+                ]);
+            } else if ($nguoiDungMaKhuyenMai->da_su_dung) {
                 return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
             }
 
-            $appliedDiscounts = [];
+            $tongGiaTriGioHang = 0;
 
-            foreach ($validatedData['san_pham_chon'] as $item) {
-                $gioHangItem = GioHang::find($item['gio_hang_id']);
+            foreach ($sanPhamTrongGioHang as $gioHangItem) {
                 $bienTheSanPham = BienTheSanPham::find($gioHangItem->bien_the_san_pham_id);
 
                 if (!$bienTheSanPham) {
                     continue;
                 }
 
-                $isCategoryInPromotion = DB::table('khuyen_mai_danh_muc')
-                    ->join('danh_mucs', 'khuyen_mai_danh_muc.danh_muc_id', '=', 'danh_mucs.id')
-                    ->where('danh_mucs.id', $bienTheSanPham->danh_muc_id)
-                    ->where('khuyen_mai_danh_muc.ma_khuyen_mai_id', $maGiamGia->id)
-                    ->exists();
-
-                if (!$isCategoryInPromotion) {
-                    $isProductInPromotion = DB::table('khuyen_mai_san_pham')
-                        ->where('san_pham_id', $bienTheSanPham->id)
-                        ->where('ma_khuyen_mai_id', $maGiamGia->id)
-                        ->exists();
-
-                    if (!$isProductInPromotion) {
-                        continue;
-                    }
-                }
-
-                $discountAmount = $maGiamGia->loai === 'phan_tram'
-                    ? ($gioHangItem->gia * $maGiamGia->giam_gia / 100)
-                    : $maGiamGia->giam_gia;
-
-                $appliedDiscounts[] = [
-                    'gio_hang_id' => $gioHangItem->id,
-                    'bien_the_san_pham_id' => $bienTheSanPham->id,
-                    'giam_gia' => $discountAmount,
-                ];
+                $tongGiaTriGioHang += $bienTheSanPham->gia_ban * $gioHangItem->so_luong;
             }
 
-            if (empty($appliedDiscounts)) {
-                return response()->json(['status' => false, 'message' => 'Không có sản phẩm nào đủ điều kiện áp dụng mã giảm giá này.'], 400);
+            if ($tongGiaTriGioHang == 0) {
+                return response()->json(['status' => false, 'message' => 'Giỏ hàng trống.'], 400);
             }
+
+            $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                ? ($tongGiaTriGioHang * $maGiamGia->giam_gia / 100)
+                : $maGiamGia->giam_gia;
+
+            if ($soTienGiamGia > $tongGiaTriGioHang) {
+                $soTienGiamGia = $tongGiaTriGioHang;
+            }
+
+            DB::table('nguoi_dung_ma_khuyen_mai')
+                ->where('user_id', $userId)
+                ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                ->update(['da_su_dung' => true, 'ngay_su_dung' => now()]);
 
             return response()->json([
                 'status' => true,
                 'message' => 'Mã giảm giá đã được áp dụng thành công.',
-                'applied_discounts' => $appliedDiscounts,
+                'tong_gia_tri_gio_hang' => $tongGiaTriGioHang,
+                'so_tien_giam_gia' => $soTienGiamGia,
+                'tong_gia_tri_sau_giam' => $tongGiaTriGioHang - $soTienGiamGia,
+                'ap_dung_ma_giam_gia' => [
+                    'ma_giam_gia' => $validatedData['ma_giam_gia'],
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -350,12 +379,12 @@ class GioHangController extends Controller
         }
     }
 
-    public function updateSelection(Request $request)
+    public function updateSelection()
     {
         try {
-            $userId = Auth::id();
-            $gioHangIds = $request->input('gio_hang_ids');
-            $isSelected = $request->input('chon');
+            $currentUserId = $this->getUserIdOrSessionId();
+            $gioHangIds = request()->get('gio_hang_ids');
+            $isSelected = request()->get('chon');
 
             if (!is_array($gioHangIds) || empty($gioHangIds)) {
                 return response()->json([
@@ -366,7 +395,7 @@ class GioHangController extends Controller
 
             $gioHangs = DB::table('gio_hangs')
                 ->whereIn('id', $gioHangIds)
-                ->where('user_id', $userId)
+                ->where('user_id', $currentUserId)
                 ->get();
 
             if ($gioHangs->isEmpty()) {
@@ -378,7 +407,7 @@ class GioHangController extends Controller
 
             DB::table('gio_hangs')
                 ->whereIn('id', $gioHangIds)
-                ->where('user_id', $userId)
+                ->where('user_id', $currentUserId)
                 ->update(['chon' => $isSelected]);
 
             return response()->json([
@@ -393,10 +422,11 @@ class GioHangController extends Controller
         }
     }
 
-    public function calculateTotal(Request $request)
+
+    public function calculateTotal()
     {
         try {
-            $userId = Auth::id();
+            $currentUserId = $this->getUserIdOrSessionId();
 
             $gioHangs = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
@@ -422,7 +452,8 @@ class GioHangController extends Controller
                     'bien_the_kich_thuocs.kich_thuoc',
                     'anh_bien_thes.duong_dan_anh as hinh_anh'
                 )
-                ->where('gio_hangs.user_id', $userId)
+                ->where("gio_hangs.deleted_at", null)
+                ->where('gio_hangs.user_id', $currentUserId)
                 ->where('gio_hangs.chon', 1)
                 ->get();
 
@@ -453,9 +484,13 @@ class GioHangController extends Controller
             });
 
             $vanChuyen = 20000;
-            $giamGiaVanChuyen = 20000;
-            $tongThanhToan = $tongGiaTriSanPham - $tongTietKiem + $vanChuyen - $giamGiaVanChuyen;
+            $giamGiaVanChuyen = 0;
 
+            if ($tongGiaTriSanPham > 500000) {
+                $giamGiaVanChuyen = $vanChuyen;
+            }
+
+            $tongThanhToan = $tongGiaTriSanPham - $tongTietKiem + $vanChuyen - $giamGiaVanChuyen;
             return response()->json([
                 'status' => true,
                 'message' => 'Tính tổng giá trị đơn hàng thành công.',
@@ -476,5 +511,9 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-    
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/kienlt/be
 }
