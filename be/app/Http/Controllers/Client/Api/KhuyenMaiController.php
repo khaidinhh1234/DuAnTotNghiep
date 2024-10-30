@@ -197,7 +197,6 @@ class KhuyenMaiController extends Controller
         }
     }
 
-
     public function timKiemMaKhuyenMai(Request $request)
     {
         try {

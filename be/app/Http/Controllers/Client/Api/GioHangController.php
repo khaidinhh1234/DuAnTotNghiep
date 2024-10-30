@@ -310,6 +310,9 @@ class GioHangController extends Controller
             }
 
             $tongGiaTriGioHang = 0;
+            $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
+            $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
+            $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
 
             foreach ($sanPhamTrongGioHang as $gioHangItem) {
                 $bienTheSanPham = BienTheSanPham::find($gioHangItem->bien_the_san_pham_id);
@@ -318,7 +321,16 @@ class GioHangController extends Controller
                     continue;
                 }
 
-                $tongGiaTriGioHang += $bienTheSanPham->gia_ban * $gioHangItem->so_luong;
+                $sanPhamId = $bienTheSanPham->san_pham_id;
+
+                $sanPham = DB::table('san_phams')
+                    ->where('id', $sanPhamId)
+                    ->whereIn('danh_muc_id', $allDanhMucIds)
+                    ->first();
+
+                if ($sanPham) {
+                    $tongGiaTriGioHang += $bienTheSanPham->gia_ban * $gioHangItem->so_luong;
+                }
             }
 
             if ($tongGiaTriGioHang == 0) {
@@ -351,6 +363,7 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
 
     public function updateSelection(Request $request)
     {
@@ -462,7 +475,7 @@ class GioHangController extends Controller
                 $giamGiaVanChuyen = $vanChuyen;
             }
 
-            $tongThanhToan = $tongGiaTriSanPham - $tongTietKiem + $vanChuyen - $giamGiaVanChuyen;
+            $tongThanhToan = $tongGiaTriSanPham + $vanChuyen - $giamGiaVanChuyen;
             return response()->json([
                 'status' => true,
                 'message' => 'Tính tổng giá trị đơn hàng thành công.',

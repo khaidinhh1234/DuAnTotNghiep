@@ -347,7 +347,11 @@ class DonHangClientController extends Controller
                         ->unique()
                         ->toArray();
 
-                    if (empty($sanPhamDanhMucIds) && $maGiamGia->danhMucs()->whereIn('id', $sanPhamDanhMucIds)->doesntExist()) {
+                    $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
+                    $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
+                    $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
+
+                    if (empty($sanPhamDanhMucIds) || !array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) {
                         $isValid = false;
                         $errorMessages[] = 'Mã giảm giá không áp dụng cho danh mục sản phẩm.';
                     } elseif ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
@@ -488,6 +492,7 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
+
 
 
 
