@@ -18,6 +18,9 @@ const CheckOut = () => {
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
 
+  // const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
+  // const [selectAllRegular, setSelectAllRegular] = useState(false);
+
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -54,27 +57,34 @@ const CheckOut = () => {
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(["cart", access_token], (oldData: { san_pham_giam_gia: any[], san_pham_nguyen_gia: any[] }) => {
-        const updatedProducts = oldData.san_pham_giam_gia.map((product: any) => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity + 1 };
-          }
-          return product;
-        });
+      queryClient.setQueryData(
+        ["cart", access_token],
+        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
+          const updatedProducts = oldData.san_pham_giam_gia.map(
+            (product: any) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity + 1 };
+              }
+              return product;
+            }
+          );
 
-        const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity + 1 };
-          }
-          return product;
-        });
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
+            (product) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity + 1 };
+              }
+              return product;
+            }
+          );
 
-        return {
-          ...oldData,
-          san_pham_giam_gia: updatedProducts,
-          san_pham_nguyen_gia: updatedOriginalProducts
-        };
-      });
+          return {
+            ...oldData,
+            san_pham_giam_gia: updatedProducts,
+            san_pham_nguyen_gia: updatedOriginalProducts,
+          };
+        }
+      );
       return { previousCartData };
     },
     onSuccess: () => {
@@ -84,7 +94,10 @@ const CheckOut = () => {
       if (context?.previousCartData) {
         if (context?.previousCartData) {
           if (context?.previousCartData) {
-            queryClient.setQueryData(["cart", access_token], context.previousCartData);
+            queryClient.setQueryData(
+              ["cart", access_token],
+              context.previousCartData
+            );
           }
         }
       }
@@ -118,27 +131,32 @@ const CheckOut = () => {
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(["cart", access_token], (oldData: { san_pham_giam_gia: any[], san_pham_nguyen_gia: any[] }) => {
-        const updatedProducts = oldData.san_pham_giam_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity - 1 };
-          }
-          return product;
-        });
+      queryClient.setQueryData(
+        ["cart", access_token],
+        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
+          const updatedProducts = oldData.san_pham_giam_gia.map((product) => {
+            if (product.id === productId) {
+              return { ...product, so_luong: currentQuantity - 1 };
+            }
+            return product;
+          });
 
-        const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity - 1 };
-          }
-          return product;
-        });
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
+            (product) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity - 1 };
+              }
+              return product;
+            }
+          );
 
-        return {
-          ...oldData,
-          san_pham_giam_gia: updatedProducts,
-          san_pham_nguyen_gia: updatedOriginalProducts
-        };
-      });
+          return {
+            ...oldData,
+            san_pham_giam_gia: updatedProducts,
+            san_pham_nguyen_gia: updatedOriginalProducts,
+          };
+        }
+      );
 
       // Trả về dữ liệu cũ để có thể khôi phục
       return { previousCartData };
@@ -147,11 +165,13 @@ const CheckOut = () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any, { productId, currentQuantity }, context) => {
-      queryClient.setQueryData(["cart", access_token], context.previousCartData);
+      queryClient.setQueryData(
+        ["cart", access_token],
+        context.previousCartData
+      );
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
-
 
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId) => {
@@ -200,10 +220,11 @@ const CheckOut = () => {
     }).format(amount);
   };
 
-
   const handleCheckout = () => {
     if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
-      toast.error("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.");
+      toast.error(
+        "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
+      );
       return;
     }
 
@@ -214,51 +235,55 @@ const CheckOut = () => {
     }
 
     // Tính toán chi tiết giỏ hàng
-    // const cartDetails = selectedProducts.map((productId) => {
-    //   const productInDiscounts = data?.san_pham_giam_gia.find((product: any) => product.id === productId);
-    //   const productInRegular = data?.san_pham_nguyen_gia.find((product: { id: number }) => product.id === Number(productId));
-    //   const product = productInDiscounts || productInRegular;
+    const cartDetails = selectedProducts.map((productId) => {
+      const productInDiscounts = data?.san_pham_giam_gia.find(
+        (product: any) => product.id === productId
+      );
+      const productInRegular = data?.san_pham_nguyen_gia.find(
+        (product: { id: number }) => product.id === Number(productId)
+      );
+      const product = productInDiscounts || productInRegular;
 
       // Nếu sản phẩm không tồn tại trong cả hai danh sách
-      // if (!product) {
-      //   return {
-      //     id: productId,
-      //     name: "Sản phẩm không tồn tại",
-      //     quantity: 0,
-      //     price: 0,
-      //     total: 0,
-      //     kich_thuoc: "",
-      //     mau_sac: "",
-      //     hinh_anh: ""
-      //   };
-      // }
+      if (!product) {
+        return {
+          id: productId,
+          name: "Sản phẩm không tồn tại",
+          quantity: 0,
+          price: 0,
+          total: 0,
+          kich_thuoc: "",
+          mau_sac: "",
+          hinh_anh: "",
+        };
+      }
 
-      // const quantity = product?.so_luong || 1;
-      // const price = product?.gia_hien_tai || 0;
+      const quantity = product?.so_luong || 1;
+      const price = product?.gia_hien_tai || 0;
 
-      // return {
-      //   id: productId,
-      //   name: product?.ten_san_pham || "Sản phẩm không xác định",
-      //   quantity,
-      //   price,
-      //   total: price * quantity,
-      //   kich_thuoc: product?.kich_thuoc || "Kích thước không xác định",
-      //   mau_sac: product?.mau_sac || "Màu sắc không xác định",
-      //   hinh_anh: product?.hinh_anh || "Hình ảnh không sác định"
-      // };
-    // });
+      return {
+        id: productId,
+        name: product?.ten_san_pham || "Sản phẩm không xác định",
+        quantity,
+        price,
+        total: price * quantity,
+        kich_thuoc: product?.kich_thuoc || "Kích thước không xác định",
+        mau_sac: product?.mau_sac || "Màu sắc không xác định",
+        hinh_anh: product?.hinh_anh || "Hình ảnh không sác định",
+      };
+    });
 
     // Tính tổng giá trị giỏ hàng
-    // const cartTotal = {
-    //   totalSelectedPrice: totalSelectedPrice,
-    //   shippingFee: finalTotal > 0 ? shippingFee : 0,
-    //   discount: finalTotal > 0 ? shippingFee : 0,
-    //   finalTotal: finalTotal,
-    //   details: cartDetails,
-    // };
+    const cartTotal = {
+      totalSelectedPrice: totalSelectedPrice,
+      shippingFee: finalTotal > 0 ? shippingFee : 0,
+      discount: finalTotal > 0 ? shippingFee : 0,
+      finalTotal: finalTotal,
+      details: cartDetails,
+    };
 
     // Lưu cartTotal vào localStorage
-    // localStorage.setItem("cartTotal", JSON.stringify(cartTotal));
+    localStorage.setItem("cartTotal", JSON.stringify(cartTotal));
 
     nav("/shippingAddressPage");
   };
@@ -270,7 +295,7 @@ const CheckOut = () => {
         ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
       ];
       setSelectedProducts(allProductIds);
-      localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
+      localStorage.setItem("selectedProducts", JSON.stringify(allProductIds));
 
       // Gọi SelectedProduct với tất cả ID
       SelectedProduct({ gioHangIds: allProductIds, isChecked: true });
@@ -280,13 +305,12 @@ const CheckOut = () => {
         ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
       ];
       setSelectedProducts([]); // Cập nhật trạng thái không chọn
-      localStorage.setItem('selectedProducts', JSON.stringify([]));
+      localStorage.setItem("selectedProducts", JSON.stringify([]));
 
       // Gọi SelectedProduct với tất cả ID và trạng thái không chọn
       SelectedProduct({ gioHangIds: allProductIds, isChecked: false });
     }
   };
-
 
   // chọn sản phẩm
   const { mutate: SelectedProduct } = useMutation({
@@ -382,7 +406,7 @@ const CheckOut = () => {
               </thead>
               <tbody>
                 {data?.san_pham_giam_gia?.length === 0 &&
-                  data?.san_pham_nguyen_gia?.length === 0 ? (
+                data?.san_pham_nguyen_gia?.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-center py-8">
                       <div className="flex flex-col items-center justify-center">
@@ -424,7 +448,7 @@ const CheckOut = () => {
                             <img
                               src={product.hinh_anh}
                               alt={product.ten_san_pham}
-                              className="w-32 h-40 object-cover rounded-md" 
+                              className="w-32 h-40 object-cover rounded-md"
                             />
                             <div>
                               <h3 className="font-semibold text-gray-700">
@@ -444,13 +468,14 @@ const CheckOut = () => {
                               <p
                                 className="text-xs text-red-500 relative inline-block font-semibold tracking-wide"
                                 style={{
-                                  padding: '2px 10px',
-                                  border: '2px solid red',
-                                  clipPath: 'inset(0 10px)',
-                                  borderRadius: '16px',
+                                  padding: "2px 10px",
+                                  border: "2px solid red",
+                                  clipPath: "inset(0 10px)",
+                                  borderRadius: "16px",
                                 }}
                               >
-                                Đã tiết kiệm {product.tiet_kiem.toLocaleString()} ₫
+                                Đã tiết kiệm{" "}
+                                {product.tiet_kiem.toLocaleString()} ₫
                               </p>
                             </div>
                           </div>
@@ -618,7 +643,10 @@ const CheckOut = () => {
 
               <div className="py-4">
                 {data?.san_pham_giam_gia.map((product: any) => (
-                  <div key={product.id} className=" flex justify-between font-medium border-hrBlack">
+                  <div
+                    key={product.id}
+                    className=" flex justify-between font-medium border-hrBlack"
+                  >
                     <p>Tiết kiệm</p>
                     <span className="px-2 text-red-500">
                       {product.tiet_kiem} ₫
@@ -627,9 +655,7 @@ const CheckOut = () => {
                 ))}
                 <div className="flex justify-between font-medium mb-0 border-hrBlack">
                   <p>Phí giao hàng</p>
-                  <span className="px-2">
-                    {formatCurrency(20000)}
-                  </span>
+                  <span className="px-2">{formatCurrency(20000)}</span>
                 </div>
                 {totalSelectedPrice > 500000 && (
                   <div className="flex justify-between font-medium border-b border-hrBlack">
