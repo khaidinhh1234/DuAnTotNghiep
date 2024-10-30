@@ -138,6 +138,7 @@ import NewDetail from "@/pages/(website)/newdetail/NewDetail";
 import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
 import Page1 from "@/pages/(website)/Shopuudai/shop";
+import MyVoucher from "@/pages/(website)/myvocher/myvocher";
 
 const Router = () => {
   //
@@ -175,6 +176,7 @@ const Router = () => {
             <Route path="/mypro/myprofile" element={<MyProfile />} />{" "}
             <Route path="/mypro/myprofileedit" element={<MyProfileedit />} />{" "}
             <Route path="/mypro/myorder" element={<MyOrder />} />{" "}
+            <Route path="/mypro/vocher" element={<MyVoucher />} />{" "}
             <Route path="/mypro/myorder/:slug" element={<MyOrderdetail />} />{" "}
             <Route path="/mypro/myorderdetail" element={<MyOrderdetail />} />{" "}
             <Route path="/mypro/mywishlist" element={<MyWishlists />} />{" "}

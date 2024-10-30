@@ -4,7 +4,7 @@ import Pusher from "pusher-js";
 import Router from "./routes";
 import "react-toastify/dist/ReactToastify.css";
 
-const notificationSoundUrl = "/explosion-42132.mp3";
+const notificationSoundUrl = "/lon.mp3";
 
 const Banner = ({ notifications = [], onDelete }) => {
     const notificationList = Array.isArray(notifications) ? notifications : [];
