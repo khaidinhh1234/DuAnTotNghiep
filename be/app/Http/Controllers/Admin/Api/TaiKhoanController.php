@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateTaiKhoanRequest;
 use App\Models\HangThanhVien;
 use App\Models\User;
 use App\Models\VaiTro;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -78,6 +79,13 @@ class TaiKhoanController extends Controller
                 'ngay_sinh' => $request->ngay_sinh,
                 'gioi_tinh' => $request->gioi_tinh,
                 'hang_thanh_vien_id' => $hangThanhVien->id
+            ]);
+
+            DB::table('vi_tiens')->insert([
+                'user_id' => $taiKhoan->id,
+                'so_du' => 0,
+                'crated_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
             ]);
 
             if ($request->vai_tros == []) {

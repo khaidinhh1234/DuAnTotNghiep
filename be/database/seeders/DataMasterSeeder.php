@@ -371,6 +371,13 @@ class DataMasterSeeder extends Seeder
             'updated_at' => Carbon::now(),
         ]);
 
+        DB::table('vi_tiens')->insert([
+            'user_id' => $user->id,
+            'so_du' => 0,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
         //shipper
 
         $shipper = User::create([
@@ -391,331 +398,305 @@ class DataMasterSeeder extends Seeder
         $shipper->vaiTros()->sync([3]);
 
         //Sản phẩm
-        // $sanPhams = [
-        //     [
-        //         'danh_muc_id' => 3,
-        //         'ten_san_pham' => 'Áo polo nam mắt chim in tràn hình học',
-        //         'anh_san_pham' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729909719/ao-polo-nam-apm5193-tra-1-yodyvn_pxx7d7.webp',
-        //         'ma_san_pham' => 'APM5193-TRA-3XL',
-        //         'duong_dan' => 'ao-polo-nam-mat-chim-in-tran-hinh-hoc',
-        //         'mo_ta_ngan' => 'Tạo ấn tượng mới với thiết kế áo polo nam phối màu trẻ trung, hiện đại. Thiết kế dáng áo cơ bản những phần cổ được xử lý tinh tế hơn. Phối màu hiện đại khiến chiếc áo polo nam của bạn không còn nhàm chán.',
-        //         'noi_dung' => 'Áo polo nam mắt chim in tràn hình học',
-        //         'luot_xem' => 0,
-        //         'trang_thai' => 1,
-        //         'gia_tot' => 0,
-        //         'hang_moi' => 1,
-        //     ],
-        //     [
-        //         'danh_muc_id' => 3,
-        //         'ten_san_pham' => 'Áo polo nam mắt chim in tràn hình học',
-        //         'anh_san_pham' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729909719/ao-polo-nam-yody-apm5193-xh1-1_rw2ftz.webp',
-        //         'ma_san_pham' => 'APM5193-XH1-3XL',
-        //         'duong_dan' => 'ao-polo-nam-mat-chim-in-tran-hinh-hoc',
-        //         'mo_ta_ngan' => 'Tạo ấn tượng mới với thiết kế áo polo nam phối màu trẻ trung, hiện đại. Thiết kế dáng áo cơ bản nhưng phần cổ được xử lý tinh tế hơn. Phối màu hiện đại khiến chiếc áo polo nam của bạn không còn nhàm chán.',
-        //         'noi_dung' => 'Áo polo nam mắt chim in tràn hình học',
-        //         'luot_xem' => 0,
-        //         'trang_thai' => 1,
-        //         'gia_tot' => 0,
-        //         'hang_moi' => 1,
-        //     ],
-        //     [
-        //         'danh_muc_id' => 3,
-        //         'ten_san_pham' => 'Áo Polo Nam In Vương Miện',
-        //         'anh_san_pham' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729909929/ao-polo-nam-yody-apm6243-tny-qjm6065-xtu-3_o6otwd.webp',
-        //         'ma_san_pham' => 'APM6243-TXR-M',
-        //         'duong_dan' => 'ao-polo-nam-in-vuong-mien',
-        //         'mo_ta_ngan' => 'Tạo ấn tượng mới với thiết kế áo polo nam phối màu trẻ trung, hiện đại. Thiết kế dáng áo cơ bản những phần cổ được xử lý tinh tế hơn. Phối màu hiện đại khiến chiếc áo polo nam của bạn không còn nhàm chán.',
-        //         'noi_dung' => 'Áo Polo Nam In Vương Miện',
-        //         'luot_xem' => 0,
-        //         'trang_thai' => 1,
-        //         'gia_tot' => 0,
-        //         'hang_moi' => 1,
-        //     ],
-        //     [
-        //         'danh_muc_id' => 3,
-        //         'ten_san_pham' => 'Áo Polo Nam In Vương Miện',
-        //         'anh_san_pham' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729909929/ao-polo-nam-yody-apm6243-txr-1_grpkua.webp',
-        //         'ma_san_pham' => 'APM6243-TNY-M',
-        //         'duong_dan' => 'ao-polo-nam-in-vuong-mien',
-        //         'mo_ta_ngan' => 'Tạo ấn tượng mới với thiết kế áo polo nam phối màu trẻ trung, hiện đại. Thiết kế dáng áo cơ bản nhưng phần cổ được xử lý tinh tế hơn. Phối màu hiện đại khiến chiếc áo polo nam của bạn không còn nhàm chán.',
-        //         'noi_dung' => 'Áo Polo Nam In Vương Miện',
-        //         'luot_xem' => 0,
-        //         'trang_thai' => 1,
-        //         'gia_tot' => 0,
-        //         'hang_moi' => 1,
-        //     ],
-        // ];
+        $sanPhams = [
+            [
+                'danh_muc_id' => 3,
+                'ten_san_pham' => 'Áo polo nam mắt chim in tràn hình học',
+                'anh_san_pham' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729909719/ao-polo-nam-apm5193-tra-1-yodyvn_pxx7d7.webp',
+                'ma_san_pham' => 'APM5193-TRA-3XL',
+                'duong_dan' => 'ao-polo-nam-mat-chim-in-tran-hinh-hoc',
+                'mo_ta_ngan' => 'Tạo ấn tượng mới với thiết kế áo polo nam phối màu trẻ trung, hiện đại. Thiết kế dáng áo cơ bản những phần cổ được xử lý tinh tế hơn. Phối màu hiện đại khiến chiếc áo polo nam của bạn không còn nhàm chán.',
+                'noi_dung' => 'Áo polo nam mắt chim in tràn hình học',
+                'luot_xem' => 0,
+                'trang_thai' => 1,
+                'gia_tot' => 0,
+                'hang_moi' => 1,
+            ],
+            [
+                'danh_muc_id' => 3,
+                'ten_san_pham' => 'Áo Polo Nam In Vương Miện',
+                'anh_san_pham' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729909929/ao-polo-nam-yody-apm6243-tny-qjm6065-xtu-3_o6otwd.webp',
+                'ma_san_pham' => 'APM6243-TXR-M',
+                'duong_dan' => 'ao-polo-nam-in-vuong-mien',
+                'mo_ta_ngan' => 'Tạo ấn tượng mới với thiết kế áo polo nam phối màu trẻ trung, hiện đại. Thiết kế dáng áo cơ bản những phần cổ được xử lý tinh tế hơn. Phối màu hiện đại khiến chiếc áo polo nam của bạn không còn nhàm chán.',
+                'noi_dung' => 'Áo Polo Nam In Vương Miện',
+                'luot_xem' => 0,
+                'trang_thai' => 1,
+                'gia_tot' => 0,
+                'hang_moi' => 1,
+            ],
+        ];
 
-        // foreach ($sanPhams as $sanPham) {
-        //     $sanPham = \App\Models\SanPham::create([
-        //         'danh_muc_id' => $sanPham['danh_muc_id'],
-        //         'ten_san_pham' => $sanPham['ten_san_pham'],
-        //         'anh_san_pham' => $sanPham['anh_san_pham'],
-        //         'ma_san_pham' => $sanPham['ma_san_pham'],
-        //         'duong_dan' => $sanPham['duong_dan'],
-        //         'mo_ta_ngan' => $sanPham['mo_ta_ngan'],
-        //         'noi_dung' => $sanPham['noi_dung'],
-        //         'luot_xem' => $sanPham['luot_xem'],
-        //         'trang_thai' => $sanPham['trang_thai'],
-        //         'gia_tot' => $sanPham['gia_tot'],
-        //         'hang_moi' => $sanPham['hang_moi'],
-        //     ]);
-        // }
+        foreach ($sanPhams as $sanPham) {
+            $sanPham = \App\Models\SanPham::create([
+                'danh_muc_id' => $sanPham['danh_muc_id'],
+                'ten_san_pham' => $sanPham['ten_san_pham'],
+                'anh_san_pham' => $sanPham['anh_san_pham'],
+                'ma_san_pham' => $sanPham['ma_san_pham'],
+                'duong_dan' => $sanPham['duong_dan'],
+                'mo_ta_ngan' => $sanPham['mo_ta_ngan'],
+                'noi_dung' => $sanPham['noi_dung'],
+                'luot_xem' => $sanPham['luot_xem'],
+                'trang_thai' => $sanPham['trang_thai'],
+                'gia_tot' => $sanPham['gia_tot'],
+                'hang_moi' => $sanPham['hang_moi'],
+            ]);
+        }
 
-        // //Biến thể sản phẩm
+        //Biến thể sản phẩm
 
-        // $bienTheSanPhams = [
-        //     [
-        //         'san_pham_id' => 1,
-        //         'bien_the_kich_thuoc_id' => 1,
-        //         'bien_the_mau_sac_id' => 1,
-        //         'so_luong_bien_the' => 100,
-        //         'gia_ban' => 100000,
-        //         'chi_phi_san_xuat' => 50000,
-        //         'gia_khuyen_mai' => 90000,
-        //     ],
-        //     [
-        //         'san_pham_id' => 1,
-        //         'bien_the_kich_thuoc_id' => 1,
-        //         'bien_the_mau_sac_id' => 2,
-        //         'so_luong_bien_the' => 100,
-        //         'gia_ban' => 100000,
-        //         'chi_phi_san_xuat' => 50000,
-        //         'gia_khuyen_mai' => 90000,
-        //     ],
-        //     [
-        //         'san_pham_id' => 1,
-        //         'bien_the_kich_thuoc_id' => 2,
-        //         'bien_the_mau_sac_id' => 1,
-        //         'so_luong_bien_the' => 100,
-        //         'gia_ban' => 100000,
-        //         'chi_phi_san_xuat' => 50000,
-        //         'gia_khuyen_mai' => 90000,
-        //     ],
-        //     [
-        //         'san_pham_id' => 1,
-        //         'bien_the_kich_thuoc_id' => 2,
-        //         'bien_the_mau_sac_id' => 2,
-        //         'so_luong_bien_the' => 100,
-        //         'gia_ban' => 100000,
-        //         'chi_phi_san_xuat' => 50000,
-        //         'gia_khuyen_mai' => 90000,
-        //     ],
-        //     [
-        //         'san_pham_id' => 2,
-        //         'bien_the_kich_thuoc_id' => 1,
-        //         'bien_the_mau_sac_id' => 1,
-        //         'so_luong_bien_the' => 100,
-        //         'gia_ban' => 100000,
-        //         'chi_phi_san_xuat' => 50000,
-        //         'gia_khuyen_mai' => 90000,
-        //     ],
-        //     [
-        //         'san_pham_id' => 2,
-        //         'bien_the_kich_thuoc_id' => 1,
-        //         'bien_the_mau_sac_id' => 2,
-        //         'so_luong_bien_the' => 100,
-        //         'gia_ban' => 100000,
-        //         'chi_phi_san_xuat' => 50000,
-        //         'gia_khuyen_mai' => 90000,
-        //     ],
-        //     [
-        //         'san_pham_id' => 2,
-        //         'bien_the_kich_thuoc_id' => 2,
-        //         'bien_the_mau_sac_id' => 1,
-        //         'so_luong_bien_the' => 100,
-        //         'gia_ban' => 100000,
-        //         'chi_phi_san_xuat' => 50000,
-        //         'gia_khuyen_mai' => 90000,
-        //     ],
-        //     [
-        //         'san_pham_id' => 2,
-        //         'bien_the_kich_thuoc_id' => 2,
-        //         'bien_the_mau_sac_id' => 2,
-        //         'so_luong_bien_the' => 100,
-        //         'gia_ban' => 100000,
-        //         'chi_phi_san_xuat' => 50000,
-        //         'gia_khuyen_mai' => 90000,
-        //     ],
-        // ];
+        $bienTheSanPhams = [
+            [
+                'san_pham_id' => 1,
+                'bien_the_kich_thuoc_id' => 1,
+                'bien_the_mau_sac_id' => 1,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 1,
+                'bien_the_kich_thuoc_id' => 1,
+                'bien_the_mau_sac_id' => 2,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 1,
+                'bien_the_kich_thuoc_id' => 2,
+                'bien_the_mau_sac_id' => 1,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 1,
+                'bien_the_kich_thuoc_id' => 2,
+                'bien_the_mau_sac_id' => 2,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 2,
+                'bien_the_kich_thuoc_id' => 1,
+                'bien_the_mau_sac_id' => 1,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 2,
+                'bien_the_kich_thuoc_id' => 1,
+                'bien_the_mau_sac_id' => 2,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 2,
+                'bien_the_kich_thuoc_id' => 2,
+                'bien_the_mau_sac_id' => 1,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+            [
+                'san_pham_id' => 2,
+                'bien_the_kich_thuoc_id' => 2,
+                'bien_the_mau_sac_id' => 2,
+                'so_luong_bien_the' => 100,
+                'gia_ban' => 100000,
+                'chi_phi_san_xuat' => 50000,
+                'gia_khuyen_mai' => 90000,
+            ],
+        ];
 
-        // foreach ($bienTheSanPhams as $bienTheSanPham) {
-        //     \App\Models\BienTheSanPham::create([
-        //         'san_pham_id' => $bienTheSanPham['san_pham_id'],
-        //         'bien_the_kich_thuoc_id' => $bienTheSanPham['bien_the_kich_thuoc_id'],
-        //         'bien_the_mau_sac_id' => $bienTheSanPham['bien_the_mau_sac_id'],
-        //         'so_luong_bien_the' => $bienTheSanPham['so_luong_bien_the'],
-        //         'gia_ban' => $bienTheSanPham['gia_ban'],
-        //         'chi_phi_san_xuat' => $bienTheSanPham['chi_phi_san_xuat'],
-        //         'gia_khuyen_mai' => $bienTheSanPham['gia_khuyen_mai'],
-        //     ]);
-        // }
+        foreach ($bienTheSanPhams as $bienTheSanPham) {
+            \App\Models\BienTheSanPham::create([
+                'san_pham_id' => $bienTheSanPham['san_pham_id'],
+                'bien_the_kich_thuoc_id' => $bienTheSanPham['bien_the_kich_thuoc_id'],
+                'bien_the_mau_sac_id' => $bienTheSanPham['bien_the_mau_sac_id'],
+                'so_luong_bien_the' => $bienTheSanPham['so_luong_bien_the'],
+                'gia_ban' => $bienTheSanPham['gia_ban'],
+                'chi_phi_san_xuat' => $bienTheSanPham['chi_phi_san_xuat'],
+                'gia_khuyen_mai' => $bienTheSanPham['gia_khuyen_mai'],
+            ]);
+        }
 
-        // // Ảnh biến thể sản phẩm
-        // $anhBienThes = [
-        //     [
-        //         'bien_the_san_pham_id' => 1,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 1,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 1,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 1,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 2,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 2,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 2,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 2,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 3,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 3,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 3,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 3,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 4,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 4,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 4,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 4,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 5,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 5,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 5,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 5,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 6,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 6,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 6,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 6,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 7,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 7,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 7,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 7,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 8,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 8,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 8,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
-        //     ],
-        //     [
-        //         'bien_the_san_pham_id' => 8,
-        //         'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
-        //     ]
-        // ];
+        // Ảnh biến thể sản phẩm
+        $anhBienThes = [
+            [
+                'bien_the_san_pham_id' => 1,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 1,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 1,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 1,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 2,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 2,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 2,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 2,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 3,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 3,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 3,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 3,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 4,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 4,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 4,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 4,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 5,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 5,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 5,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 5,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 6,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 6,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 6,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 6,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 7,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 7,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 7,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 7,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ],
+            [
+                'bien_the_san_pham_id' => 8,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-4_jvrbhu.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 8,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347057/8tp24a005-sb067-xl-1-u_uqrhgh.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 8,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-thumb_frzzg6.webp',
+            ],
+            [
+                'bien_the_san_pham_id' => 8,
+                'duong_dan_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729347056/8tp24a005-sb067-xl-2_dcar1k.webp'
+            ]
+        ];
 
-        // foreach ($anhBienThes as $anhBienThe) {
-        //     AnhBienThe::create([
-        //         'bien_the_san_pham_id' => $anhBienThe['bien_the_san_pham_id'],
-        //         'duong_dan_anh' => $anhBienThe['duong_dan_anh'],
-        //     ]);
-        // }
+        foreach ($anhBienThes as $anhBienThe) {
+            AnhBienThe::create([
+                'bien_the_san_pham_id' => $anhBienThe['bien_the_san_pham_id'],
+                'duong_dan_anh' => $anhBienThe['duong_dan_anh'],
+            ]);
+        }
 
-        // //Đơn hàng
-        // DonHang::create([
-        //     'user_id' => 2,
-        //     'trang_thai_don_hang' => 'Chờ xác nhận',
-        //     'phuong_thuc_thanh_toan' => 'Thanh toán khi nhận hàng',
-        //     'tong_tien_don_hang' => 1000000,
-        //     'trang_thai_thanh_toan' => 'Chưa thanh toán',
-        // ]);
+        //Đơn hàng
+        DonHang::create([
+            'user_id' => 2,
+            'trang_thai_don_hang' => 'Chờ xác nhận',
+            'phuong_thuc_thanh_toan' => 'Thanh toán khi nhận hàng',
+            'tong_tien_don_hang' => 1000000,
+            'trang_thai_thanh_toan' => 'Chưa thanh toán',
+        ]);
 
-        // //Đơn hàng chi tiết
-        // DB::table('don_hang_chi_tiets')->insert([
-        //     [
-        //         'don_hang_id' => 1,
-        //         'bien_the_san_pham_id' => 1,
-        //         'so_luong' => 10,
-        //         'gia' => 100000,
-        //         'thanh_tien' => 1000000,
-        //     ],
-        //     [
-        //         'don_hang_id' => 1,
-        //         'bien_the_san_pham_id' => 5,
-        //         'so_luong' => 10,
-        //         'gia' => 100000,
-        //         'thanh_tien' => 1000000,
-        //     ],
-        // ]);
+        //Đơn hàng chi tiết
+        DB::table('don_hang_chi_tiets')->insert([
+            [
+                'don_hang_id' => 1,
+                'bien_the_san_pham_id' => 1,
+                'so_luong' => 10,
+                'gia' => 100000,
+                'thanh_tien' => 1000000,
+            ],
+            [
+                'don_hang_id' => 1,
+                'bien_the_san_pham_id' => 5,
+                'so_luong' => 10,
+                'gia' => 100000,
+                'thanh_tien' => 1000000,
+            ],
+        ]);
 
         DB::table('thong_tin_webs')->insert([
             'ten_website' => 'Glow Clothing',
