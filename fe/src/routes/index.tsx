@@ -104,7 +104,7 @@ import {
 
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
 
-import Test from "@/pages/(dashboard)/test";
+import Test from "@/pages/(website)/test2";
 // import PrivateRoute from "./PrivateRoute";
 // import List from "@/pages/(dashboard)/dashboard/test/page";
 
@@ -138,6 +138,7 @@ import NewDetail from "@/pages/(website)/newdetail/NewDetail";
 import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
 import Page1 from "@/pages/(website)/Shopuudai/shop";
+import MyVoucher from "@/pages/(website)/myvocher/myvocher";
 
 const Router = () => {
   //
@@ -152,19 +153,17 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
-
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
           {/* <Route path="/minicard" element={<Notifications />} /> */}
           <Route path="/shop/:slug" element={<Page1 />} />
-
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
           <Route path="/payment" element={<Payment />} />{" "}
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
-          <Route path="/test" element={<SheetSide />} />{" "}
+          <Route path="/test" element={<Test />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route
             path="/shippingAddressPage"
@@ -175,6 +174,7 @@ const Router = () => {
             <Route path="/mypro/myprofile" element={<MyProfile />} />{" "}
             <Route path="/mypro/myprofileedit" element={<MyProfileedit />} />{" "}
             <Route path="/mypro/myorder" element={<MyOrder />} />{" "}
+            <Route path="/mypro/vocher" element={<MyVoucher />} />{" "}
             <Route path="/mypro/myorder/:slug" element={<MyOrderdetail />} />{" "}
             <Route path="/mypro/myorderdetail" element={<MyOrderdetail />} />{" "}
             <Route path="/mypro/mywishlist" element={<MyWishlists />} />{" "}
@@ -189,7 +189,10 @@ const Router = () => {
             <Route path="***" element={<NotFoundPage />} />
           </Route>
           {/* chi tiết bài viêt */}
-          <Route path="/tin-tuc-theo-danh-muc/:duong_dan" element={<NewDetail/>}/>
+          <Route
+            path="/tin-tuc-theo-danh-muc/:duong_dan"
+            element={<NewDetail />}
+          />
         </Route>
         {/* TRang admin */}
         <Route

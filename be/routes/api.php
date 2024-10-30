@@ -68,6 +68,7 @@ Route::middleware([])
         Route::get('/chi-tiet-san-pham/{duong_dan}', [TrangChiTietSpController::class, 'chiTietSanPham']);
         Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']);
         Route::post('goi-y-kich-thuoc', [TrangChiTietSpController::class, 'goiY']);
+        Route::get('load-kick-thuoc', [TrangChiTietSpController::class, 'loadKichThuoc']);
         //Trang sản phẩm
         // lấy tất cả sản phẩm
         Route::group([], function () {
@@ -88,7 +89,7 @@ Route::middleware([])
         // Client Tin tức
         Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layTatCaDanhMuc']);
 
-        Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
+        Route::get('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
 
         //Thanh toán MoMo
@@ -117,6 +118,11 @@ Route::middleware([])
         // Trang bộ sưu tập
         Route::get('bo-suu-tap/{slug}', [App\Http\Controllers\Client\Api\BoSuuTapController::class, 'show']);
 
+
+
+
+
+
         Route::middleware('auth.sanctum')->group(function () {
             // Giỏ hàng
             Route::get('/gio-hang', [GioHangController::class, 'index']);
@@ -132,6 +138,7 @@ Route::middleware([])
             Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
             Route::get('ma-uu-dai-cho-nguoi-dung-cu-the', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoNguoiDung']);
             Route::get('tim-kiem-ma-khuyen-mai', [KhuyenMaiController::class, 'timKiemMaKhuyenMai']);
+            Route::get('ma-uu-dai-theo-gio-hang', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoSanPhamGioHang']);
 
             Route::post('ap-dung-ma-khuyen-mai', [GioHangController::class, 'apDungMaGiamGia']);
 
@@ -239,6 +246,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
                 Route::get('donhang/lay-thong-tin-don', [DonHangController::class, 'layThongTinDon'])->withoutMiddleware('auth.checkrole');
                 Route::put('donhang/xac-nhan-hoan-hang/{id}', [DonHangController::class, 'xacNhanHoanHang'])->withoutMiddleware('auth.checkrole');
+                Route::get('donhang/lay-thong-tin-don-hoan', [DonHangController::class, 'danhSachDonHangHoan']);
             });
 
         //Xác nhận rút tiền

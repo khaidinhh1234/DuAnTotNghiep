@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('gio_hangs', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class)->constrained();
+            $table->string('user_id')->nullable();
             $table->foreignIdFor(BienTheSanPham::class)->constrained();
             $table->integer('gia');
             $table->integer('so_luong');

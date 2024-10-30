@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateDonHangRequest;
 use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Models\DonHang;
+use App\Models\GiaoDichVi;
 use App\Models\HoanTien;
 use App\Models\ThongBao;
 use App\Models\User;
@@ -308,15 +309,15 @@ class DonHangController extends Controller
                     'tong_don_cho_xac_nhan' => $donChoXacNhan,
                     'tong_tien' => $tongTienDonChoXacNhan
                 ],
-                'choThanhToan' =>   [
+                'choThanhToan' => [
                     'tong_don_cho_thanh_toan' => $donChoThanhToan,
                     'tong_tien' => $tongTienChuaTT
                 ],
-                'chuaGiaoHang' =>  [
+                'chuaGiaoHang' => [
                     'tong_don_chua_giao_hang' => $donChuaGiaoHang,
                     'tong_tien' => $tongTienDonChuaGiao
                 ],
-                'donHoanHang' =>   [
+                'donHoanHang' => [
                     'tong_don_hoan_hang' => $donHoanHang,
                     'tong_tien' => $tongTienHoan
                 ],
@@ -334,7 +335,6 @@ class DonHangController extends Controller
             ], 500);
         }
     }
-
     public function hoanHang()
     {
         try {

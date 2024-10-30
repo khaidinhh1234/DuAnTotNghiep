@@ -26,7 +26,21 @@ const Header = () => {
   const cartRef = useRef<HTMLDivElement>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
-
+  const [user] = useLocalStorage("user" as any, {});
+  const member = user?.user;
+  console.log( user?.user?.anh_nguoi_dung)
+  const [anh_nguoi_dung] = useState(member?.anh_nguoi_dung);
+  const { data    } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.post("cap-nhat-thong-tin");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    },
+  });
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -83,9 +97,9 @@ const Header = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [ref]);
-  const [user] = useLocalStorage("user" as any, {});
+  // const [user] = useLocalStorage("user" as any, {});
   // const nav = useNavigate();
-  const member = user.user;
+  // const member = user.user;
   const phanquyen = user?.user?.vai_tros?.filter(
     (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
   );
@@ -149,7 +163,7 @@ const Header = () => {
 
   const access_token =
     user.access_token || localStorage.getItem("access_token");
-  const { data } = useQuery({
+  const { data: data1 } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
       try {
@@ -165,8 +179,8 @@ const Header = () => {
     },
   });
   const allItems = [
-    ...(data?.san_pham_giam_gia || []),
-    ...(data?.san_pham_nguyen_gia || []),
+    ...(data1?.san_pham_giam_gia || []),
+    ...(data1?.san_pham_nguyen_gia || []),
   ];
   const totalUniqueProducts = allItems.length;
 
@@ -195,6 +209,7 @@ const Header = () => {
   return (
     <header className="h-12 relative">
       <div className="bg-white w-full">
+        {/* Add the corresponding closing tag for this div */}
         <div
           className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${
             menu ? "translate-x-0" : "-translate-x-full"
@@ -367,60 +382,63 @@ const Header = () => {
                 </div>
               </span>
 
-              {member ? (
-                <>
-                  {/* {" "}
+              {/* {" "}
                   <span>
                     <a href="/mywishlist">
                       <i className="fa-regular fa-heart text-xl">{ }</i>
                     </a>
                   </span> */}
-                  <span
-                    ref={notificationRef}
-                    className="relative"
-                    onMouseEnter={() => setShowNotifications(true)}
-                    onMouseLeave={() => setShowNotifications(false)}
-                  >
-                    <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
-                      {unreadCount > 0 && (
-                        <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                          {unreadCount}
-                        </span>
-                      )}
-                    </i>
+              <span
+                ref={notificationRef}
+                className="relative"
+                onMouseEnter={() => setShowNotifications(true)}
+                onMouseLeave={() => setShowNotifications(false)}
+              >
+                <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
+                  {unreadCount > 0 && (
+                    <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </i>
 
-                    <div
-                      className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
-                        showNotifications
-                          ? "opacity-100"
-                          : "opacity-0 pointer-events-none"
-                      }`}
+                <div
+                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
+                    showNotifications
+                      ? "opacity-100"
+                      : "opacity-0 pointer-events-none"
+                  }`}
+                >
+                  <Notifications onUnreadCountChange={setUnreadCount} />
+                </div>
+              </span>
+              <span
+                ref={cartRef}
+                onMouseEnter={() => setIsCartVisible(true)}
+                onMouseLeave={() => setIsCartVisible(false)}
+              >
+                {" "}
+                <a href="/gio-hang">
+                  <i className="fa-regular fa-bag-shopping text-xl relative px-1">
+                    <span
+                      className={`${
+                        menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                      } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
-                      <Notifications onUnreadCountChange={setUnreadCount} />
-                    </div>
-                  </span>
-                  <span
-                    ref={cartRef}
-                    onMouseEnter={() => setIsCartVisible(true)}
-                    onMouseLeave={() => setIsCartVisible(false)}
-                  >
-                    {" "}
-                    <a href="/gio-hang">
-                      <i className="fa-regular fa-bag-shopping text-xl relative px-1">
-                        <span
-                          className={`${
-                            menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                          } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
-                        >
-                          {totalUniqueProducts || 0}                        </span>
-                      </i>
-                    </a>
-                    {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
-                    <CartOverlay isVisible={isCartVisible} />
-                    {/* </div> */}
-                  </span>
+                      {totalUniqueProducts || 0}{" "}
+                    </span>
+                  </i>
+                </a>
+                {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
+                <CartOverlay isVisible={isCartVisible} />
+                {/* </div> */}
+              </span>
+              {member ? (
+                <>
+                  {" "}
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
-                    <AvatarImage src={member?.anh_nguoi_dung} />
+                    <AvatarImage           src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
+ />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   {check && (

@@ -4,7 +4,7 @@ import Pusher from "pusher-js";
 import Router from "./routes";
 import "react-toastify/dist/ReactToastify.css";
 
-const notificationSoundUrl = "/explosion-42132.mp3";
+const notificationSoundUrl = "/lon.mp3";
 
 const Banner = ({ notifications = [], onDelete }) => {
     const notificationList = Array.isArray(notifications) ? notifications : [];
@@ -130,7 +130,9 @@ function App() {
 
                     const playSound = async () => {
                         try {
-                            await audioRef.current.play();
+                            if (audioRef.current) {
+                                await audioRef.current.play();
+                            }
                         } catch (error) {
                             console.error("Lỗi khi phát âm thanh:", error);
                         }
@@ -140,8 +142,10 @@ function App() {
             });
 
         return () => {
-            echo.leave(channelName);
-            echo.disconnect();
+            if (echo) {
+                echo.leave(channelName);
+                echo.disconnect();
+            }
         };
     }, []);
 

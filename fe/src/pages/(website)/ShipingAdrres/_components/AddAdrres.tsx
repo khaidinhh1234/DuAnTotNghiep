@@ -1,51 +1,133 @@
-const AddAddressForm = () => {
+import { sanPham2 } from "@/assets/img";
+
+const AddAddressForm = ({ register, products }: any) => {
   return (
-    <div className="mt-[60px]">
-      <h3 className="title-h3">Thêm địa chỉ mới</h3>
-      <form className="my-7">
-        <div className="my-5">
-          <label htmlFor="name" className="text-md px-1">
-            Tên
-          </label>
-          <br />
-          <input
-            type="text"
-            placeholder="Nhập tên"
-            className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
-          />
-        </div>
-        <div className="my-5">
-          <label htmlFor="mobileNumber" className="text-md px-1">
-            Số điện thoại
-          </label>
-          <br />
-          <input
-            type="number"
-            placeholder="Nhập số điện thoại"
-            className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
-          />
-        </div>
-        <div className="my-5">
-          <label htmlFor="addressLine1" className="text-md px-3">
-            Căn hộ, Số nhà, Tòa nhà, Công ty, Căn hộ
-          </label>
-          <br />
-          <input
-            type="text"
-            className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
-          />
-        </div>
-        <div className="my-5">
-          <label htmlFor="addressLine2" className="text-md px-3">
-            Khu vực, Xóm, Đường, Khu vực, Làng
-          </label>
-          <br />
-          <input
-            type="text"
-            className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
-          />
-        </div>
-        <div className="my-5">
+    <div className="">
+      <h3 className="title-h3">Sản phẩm đã đặt</h3>
+      {/* <div className="px-2 mb-8">
+        {[1, 2, 3].map((index) => (
+          <div
+            key={index}
+            className="flex gap-5 px-2 items-center border-b border-hrBlack py-5"
+          >
+            <img src={sanPham2} alt="Sản phẩm" className="w-12 h-12" />
+            <div className="px-1">
+              <h3 className="font-bold my-1">Đầm in Moana Hồng</h3>
+              <p>$80.00</p>
+              <p>
+                Size: <span>S</span>
+              </p>
+            </div>
+          </div>
+        ))}
+      </div> */}
+      <table className="min-w-full  ">
+        <thead>
+          <tr className="text-left border-b border-gray-200">
+            <th className="font-semibold text-gray-700 px-4 py-2">Sản phẩm</th>
+            <th className="font-semibold text-gray-700 px-4 py-2">Giá</th>
+            <th className="lg:text-center hidden lg:table-cell font-semibold text-gray-700 px-4 py-2">
+              Số lượng
+            </th>
+            <th className="font-semibold text-gray-700 px-4 py-2">Tổng tiền</th>
+            {/* <th className="font-semibold text-gray-700 px-4 py-2">Xóa</th> */}
+          </tr>
+        </thead>
+
+        <tbody>
+          {products &&
+            products?.map((product: any) => (
+              <tr
+                key={product?.id}
+                className="border-b border-gray-200 hover:bg-gray-100"
+              >
+                <td className="px-4 py-2">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={product?.hinh_anh ?? 0}
+                      alt={product?.ten_san_pham ?? ""}
+                      className="w-20 h-24 object-cover rounded-md "
+                    />
+                    <div>
+                      <h3 className="font-semibold text-gray-700 text-lg">
+                        {product?.name ?? ""}
+                      </h3>
+                      <p className="mb-2">
+                        Size: <span> {product?.kich_thuoc}</span>
+                        ,Màu: <span>{product?.mau_sac}</span>
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-2">
+                  {(product?.gia_hien_tai ?? 0).toLocaleString("vi-VN")}₫
+                </td>
+                <td className="px-4 py-2">
+                  <div className="flex items-center justify-center  rounded-lg">
+                    {(product?.so_luong ?? 0).toLocaleString("vi-VN")}
+                  </div>
+                </td>
+
+                <td className="px-4 py-2">
+                  {(product?.gia_hien_tai * product?.so_luong).toLocaleString(
+                    "vi-VN"
+                  )}
+                  ₫
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+      <h3 className="title-h3 mt-5">Địa chỉ giao hàng</h3>
+      <div className="my-5">
+        <label htmlFor="name" className="text-md px-1">
+          Tên
+        </label>
+        <br />
+        <input
+          type="text"
+          {...register("user_name")}
+          placeholder="Nhập tên"
+          className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+        />
+      </div>
+      <div className="my-5">
+        <label htmlFor="mobileNumber" className="text-md px-1">
+          Số điện thoại
+        </label>
+        <br />
+        <input
+          type="number"
+          {...register("mobileNumber")}
+          placeholder="Nhập số điện thoại"
+          className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+        />
+      </div>
+      <div className="my-5">
+        <label htmlFor="addressLine1" className="text-md px-3">
+          Địa chỉ giao hàng
+        </label>
+        <br />
+        <input
+          {...register("addressLine1")}
+          placeholder="Nhập địa chỉ"
+          type="text"
+          className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+        />
+      </div>
+      <div className="my-5">
+        <label htmlFor="ghichu" className="text-md px-3">
+          Ghi chú
+        </label>
+        <br />
+        <input
+          type="text"
+          placeholder="Nhập ghi chú"
+          {...register("ghichu")}
+          className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+        />
+      </div>
+      {/* <div className="my-5">
           <label htmlFor="city" className="text-md px-3">
             Thành phố
           </label>
@@ -89,14 +171,80 @@ const AddAddressForm = () => {
           <label htmlFor="useDefault" className="text-md px-3">
             Sử dụng làm địa chỉ mặc định
           </label>
+        </div> */}
+      {/* <h3 className="title-h3">Phương thức vận chuyển</h3>
+      <p className="text-gray-500">
+        Lựa chọn phương thức thanh toán phù hợp nhất cho bạn
+      </p>
+      <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio justify-between mr-20">
+        <div className="flex items-center">
+          {" "}
+          <input
+            type="radio"
+            value="giaohang"
+            {...register("shippingMethod")}
+            className="bg-blackL "
+          />
+          <label htmlFor="googlePay" className="title-h3 px-3">
+            Tiêu chuẩn ( 3-5 ngày )
+          </label>{" "}
         </div>
-        <a
-          href="paymentmethod.html"
-          className="text-center hidden lg:block btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium"
-        >
-          Thêm địa chỉ mới
-        </a>
-      </form>
+        <h1 className="title-h3">20.000 đ</h1>
+      </div>{" "}
+      <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio justify-between mr-20">
+        <div className="flex items-center">
+          {" "}
+          <input
+            type="radio"
+            value="hoatoc"
+            {...register("shippingMethod")}
+            className="bg-blackL "
+          />
+          <label htmlFor="googlePay" className="title-h3 px-3">
+            Giao hàng Hoả tốc ( 1-2 ngày )
+          </label>{" "}
+        </div>
+        <h1 className="title-h3">40.000 đ</h1>
+      </div> */}
+      <h3 className="title-h3">Phương thức thanh toán</h3>
+      <p className="text-gray-500">
+        Lựa chọn phương thức thanh toán phù hợp nhất cho bạn
+      </p>
+      <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio">
+        <input
+          type="radio"
+          value="MoMo_cart"
+          {...register("paymentMethod")}
+          className="bg-blackL"
+        />
+        <label htmlFor="googlePay" className="title-h3 px-3">
+          Thanh toán bằng thẻ MoMo
+        </label>
+      </div>
+      <div className="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio">
+        <input
+          type="radio"
+          id="paypal"
+          value="MoMo_QR"
+          {...register("paymentMethod")}
+          className="bg-blackL"
+        />
+        <label htmlFor="paypal" className="title-h3 px-3">
+          MoMo Quét mã QR
+        </label>
+      </div>
+      <div className="border-t border-hrBlack pt-4 mb-7 flex items-center custom-radio">
+        <input
+          type="radio"
+          id="cashOnDelivery"
+          value="COD"
+          {...register("paymentMethod")}
+          className="bg-blackL"
+        />
+        <label htmlFor="cashOnDelivery" className="title-h3 px-3">
+          Thanh toán khi nhận hàng
+        </label>
+      </div>
     </div>
   );
 };

@@ -118,11 +118,11 @@ class GioHangController extends Controller
                 [
                     'user_id' => Auth::id(),
                     'bien_the_san_pham_id' => $request->bien_the_san_pham_id,
-                    // 'chon' => 1
+                    'chon' => 1
                 ],
                 [
                     'so_luong' => $tongSoLuong,
-                    // 'chon' => 1
+                    'chon' => 1
                 ]
             );
 
@@ -332,11 +332,6 @@ class GioHangController extends Controller
             if ($soTienGiamGia > $tongGiaTriGioHang) {
                 $soTienGiamGia = $tongGiaTriGioHang;
             }
-
-            DB::table('nguoi_dung_ma_khuyen_mai')
-                ->where('user_id', $userId)
-                ->where('ma_khuyen_mai_id', $maGiamGia->id)
-                ->update(['da_su_dung' => true, 'ngay_su_dung' => now()]);
 
             return response()->json([
                 'status' => true,
