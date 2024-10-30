@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\HoanTien;
 
 
 class DonHang extends Model
@@ -95,6 +96,10 @@ class DonHang extends Model
             'id',                        // Khóa chính của DonHang
             'bien_the_san_pham_id'       // Khóa ngoại của DonHangChiTiet tham chiếu tới BienTheSanPham
         );
+    }
+
+    public function hoanTien(){
+        return $this->hasOne(HoanTien::class, 'don_hang_id', 'id');
     }
 
     protected static function boot()

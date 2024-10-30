@@ -1,29 +1,8 @@
-.search-overlay {
-    animation: slideDown 0.3s ease-out;
-  }
-  
-  @keyframes slideDown {
-    from {
-      transform: translateY(-100%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-  
-  .ant-input-affix-wrapper {
-    border-radius: 8px !important;
-  }
-  
-  .ant-input-affix-wrapper:focus,
-  .ant-input-affix-wrapper-focused {
-    box-shadow: none !important;
-    border-color: #d9d9d9 !important;
-  }
-  
-  .search-suggestions {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
-  
+.search-modal .ant-modal-content {
+  margin-top: 20px;
+  z-index: 1001;
+}
+
+.search-modal .ant-modal-mask {
+  z-index: 1200;
+}

@@ -20,7 +20,7 @@ const CheckOut = () => {
 
   // const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
   // const [selectAllRegular, setSelectAllRegular] = useState(false);
-  
+
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -57,27 +57,34 @@ const CheckOut = () => {
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(["cart", access_token], (oldData: { san_pham_giam_gia: any[], san_pham_nguyen_gia: any[] }) => {
-        const updatedProducts = oldData.san_pham_giam_gia.map((product: any) => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity + 1 };
-          }
-          return product;
-        });
-        
-        const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity + 1 };
-          }
-          return product;
-        });
-  
-        return { 
-          ...oldData, 
-          san_pham_giam_gia: updatedProducts,
-          san_pham_nguyen_gia: updatedOriginalProducts
-        };
-      });
+      queryClient.setQueryData(
+        ["cart", access_token],
+        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
+          const updatedProducts = oldData.san_pham_giam_gia.map(
+            (product: any) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity + 1 };
+              }
+              return product;
+            }
+          );
+
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
+            (product) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity + 1 };
+              }
+              return product;
+            }
+          );
+
+          return {
+            ...oldData,
+            san_pham_giam_gia: updatedProducts,
+            san_pham_nguyen_gia: updatedOriginalProducts,
+          };
+        }
+      );
       return { previousCartData };
     },
     onSuccess: () => {
@@ -87,14 +94,17 @@ const CheckOut = () => {
       if (context?.previousCartData) {
         if (context?.previousCartData) {
           if (context?.previousCartData) {
-            queryClient.setQueryData(["cart", access_token], context.previousCartData);
+            queryClient.setQueryData(
+              ["cart", access_token],
+              context.previousCartData
+            );
           }
         }
       }
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
-  
+
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({
       productId,
@@ -121,28 +131,33 @@ const CheckOut = () => {
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(["cart", access_token], (oldData: { san_pham_giam_gia: any[], san_pham_nguyen_gia: any[] }) => {
-        const updatedProducts = oldData.san_pham_giam_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity - 1 };
-          }
-          return product;
-        });
-        
-        const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity - 1 };
-          }
-          return product;
-        });
-  
-        return { 
-          ...oldData, 
-          san_pham_giam_gia: updatedProducts,
-          san_pham_nguyen_gia: updatedOriginalProducts
-        };
-      });
-  
+      queryClient.setQueryData(
+        ["cart", access_token],
+        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
+          const updatedProducts = oldData.san_pham_giam_gia.map((product) => {
+            if (product.id === productId) {
+              return { ...product, so_luong: currentQuantity - 1 };
+            }
+            return product;
+          });
+
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
+            (product) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity - 1 };
+              }
+              return product;
+            }
+          );
+
+          return {
+            ...oldData,
+            san_pham_giam_gia: updatedProducts,
+            san_pham_nguyen_gia: updatedOriginalProducts,
+          };
+        }
+      );
+
       // Trả về dữ liệu cũ để có thể khôi phục
       return { previousCartData };
     },
@@ -150,12 +165,14 @@ const CheckOut = () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any, { productId, currentQuantity }, context) => {
-      queryClient.setQueryData(["cart", access_token], context.previousCartData);
+      queryClient.setQueryData(
+        ["cart", access_token],
+        context.previousCartData
+      );
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
-  
-  
+
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId) => {
       await instanceClient.delete(`/gio-hang/${productId}`, {
@@ -172,7 +189,6 @@ const CheckOut = () => {
     },
   });
   // Tính tổng tiền
-
   const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
     const productInDiscounts = data?.san_pham_giam_gia.find(
       (product: any) => product.id === productId
@@ -195,35 +211,39 @@ const CheckOut = () => {
   }, 0);
   console.log(totalSelectedPrice);
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
-  const shippingFee = 20000;
-  const discountShipping = 20000;
-  const finalTotal = totalSelectedPrice - discountShipping + shippingFee;
+  const shippingFee = totalSelectedPrice > 500000 ? 0 : 20000;
+  const finalTotal = totalSelectedPrice + shippingFee;
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(amount);
   };
-  
 
   const handleCheckout = () => {
     if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
-      toast.error("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.");
+      toast.error(
+        "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
+      );
       return;
     }
-  
+
     // Kiểm tra xem có sản phẩm nào được chọn hay không
     if (!selectedProducts.length) {
       toast.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
       return;
     }
-  
+
     // Tính toán chi tiết giỏ hàng
     const cartDetails = selectedProducts.map((productId) => {
-      const productInDiscounts = data?.san_pham_giam_gia.find((product: any) => product.id === productId);
-      const productInRegular = data?.san_pham_nguyen_gia.find((product: { id: number }) => product.id === Number(productId));
+      const productInDiscounts = data?.san_pham_giam_gia.find(
+        (product: any) => product.id === productId
+      );
+      const productInRegular = data?.san_pham_nguyen_gia.find(
+        (product: { id: number }) => product.id === Number(productId)
+      );
       const product = productInDiscounts || productInRegular;
-  
+
       // Nếu sản phẩm không tồn tại trong cả hai danh sách
       if (!product) {
         return {
@@ -234,25 +254,25 @@ const CheckOut = () => {
           total: 0,
           kich_thuoc: "",
           mau_sac: "",
-          hinh_anh: ""
+          hinh_anh: "",
         };
       }
-  
-      const quantity = product?.so_luong || 1; 
-      const price = product?.gia_hien_tai || 0; 
-  
+
+      const quantity = product?.so_luong || 1;
+      const price = product?.gia_hien_tai || 0;
+
       return {
         id: productId,
         name: product?.ten_san_pham || "Sản phẩm không xác định",
         quantity,
         price,
-        total: price * quantity, 
+        total: price * quantity,
         kich_thuoc: product?.kich_thuoc || "Kích thước không xác định",
         mau_sac: product?.mau_sac || "Màu sắc không xác định",
-        hinh_anh: product?.hinh_anh || "Hình ảnh không sác định"
+        hinh_anh: product?.hinh_anh || "Hình ảnh không sác định",
       };
     });
-  
+
     // Tính tổng giá trị giỏ hàng
     const cartTotal = {
       totalSelectedPrice: totalSelectedPrice,
@@ -261,37 +281,36 @@ const CheckOut = () => {
       finalTotal: finalTotal,
       details: cartDetails,
     };
-  
+
     // Lưu cartTotal vào localStorage
     localStorage.setItem("cartTotal", JSON.stringify(cartTotal));
-  
+
     nav("/shippingAddressPage");
   };
- // Xử lý khi chọn tất cả
- const handleSelectAll = (isChecked: boolean) => {
-  if (isChecked) {
-    const allProductIds = [
-      ...data?.san_pham_giam_gia.map((product: any) => product.id),
-      ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
-    ];
-    setSelectedProducts(allProductIds);
-    localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
+  // Xử lý khi chọn tất cả
+  const handleSelectAll = (isChecked: boolean) => {
+    if (isChecked) {
+      const allProductIds = [
+        ...data?.san_pham_giam_gia.map((product: any) => product.id),
+        ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
+      ];
+      setSelectedProducts(allProductIds);
+      localStorage.setItem("selectedProducts", JSON.stringify(allProductIds));
 
-    // Gọi SelectedProduct với tất cả ID
-    SelectedProduct({ gioHangIds: allProductIds, isChecked: true });
-  } else {
-    const allProductIds = [
-      ...data?.san_pham_giam_gia.map((product: any) => product.id),
-      ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
-    ];
-    setSelectedProducts([]); // Cập nhật trạng thái không chọn
-    localStorage.setItem('selectedProducts', JSON.stringify([]));
+      // Gọi SelectedProduct với tất cả ID
+      SelectedProduct({ gioHangIds: allProductIds, isChecked: true });
+    } else {
+      const allProductIds = [
+        ...data?.san_pham_giam_gia.map((product: any) => product.id),
+        ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
+      ];
+      setSelectedProducts([]); // Cập nhật trạng thái không chọn
+      localStorage.setItem("selectedProducts", JSON.stringify([]));
 
-    // Gọi SelectedProduct với tất cả ID và trạng thái không chọn
-    SelectedProduct({ gioHangIds: allProductIds, isChecked: false });
-  }
-};
-
+      // Gọi SelectedProduct với tất cả ID và trạng thái không chọn
+      SelectedProduct({ gioHangIds: allProductIds, isChecked: false });
+    }
+  };
 
   // chọn sản phẩm
   const { mutate: SelectedProduct } = useMutation({
@@ -377,14 +396,12 @@ const CheckOut = () => {
                   <th className="font-semibold text-gray-700 px-4 py-2">
                     Sản phẩm
                   </th>
-                  <th className="font-semibold text-gray-700 px-4 py-2">Giá</th>
                   <th className="lg:text-center hidden lg:table-cell font-semibold text-gray-700 px-4 py-2">
                     Số lượng
                   </th>
                   <th className="font-semibold text-gray-700 px-4 py-2">
                     Tổng tiền
                   </th>
-                  {/* <th className="font-semibold text-gray-700 px-4 py-2">Xóa</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -427,11 +444,11 @@ const CheckOut = () => {
                         </td>
                         {/* Thông tin sản phẩm */}
                         <td className="px-4 py-2">
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-start gap-4">
                             <img
                               src={product.hinh_anh}
                               alt={product.ten_san_pham}
-                              className="w-12 h-12 object-cover"
+                              className="w-32 h-40 object-cover rounded-md"
                             />
                             <div>
                               <h3 className="font-semibold text-gray-700">
@@ -440,14 +457,31 @@ const CheckOut = () => {
                               <p className="text-gray-500">
                                 {product.mau_sac}, {product.kich_thuoc}
                               </p>
+                              <div className="flex items-center">
+                                <p className="text-red-500 font-bold mr-2">
+                                  {product.gia_khuyen_mai} ₫
+                                </p>
+                                <p className="text-gray-400 line-through">
+                                  {product.gia_cu} ₫
+                                </p>
+                              </div>
+                              <p
+                                className="text-xs text-red-500 relative inline-block font-semibold tracking-wide"
+                                style={{
+                                  padding: "2px 10px",
+                                  border: "2px solid red",
+                                  clipPath: "inset(0 10px)",
+                                  borderRadius: "16px",
+                                }}
+                              >
+                                Đã tiết kiệm{" "}
+                                {product.tiet_kiem.toLocaleString()} ₫
+                              </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-2">
-                          {formatCurrency(product.gia_hien_tai)}
-                        </td>
-                        <td className="hidden lg:block px-4 py-2">
-                          <div className="flex items-center justify-center border rounded-lg">
+                        <td className="hidden lg:table-cell px-4 py-2 text-center align-middle">
+                          <div className="flex items-center justify-center border rounded-lg mx-auto w-fit">
                             <button
                               onClick={() =>
                                 decreaseQuantity({
@@ -518,11 +552,11 @@ const CheckOut = () => {
                         </td>
                         {/* Thông tin sản phẩm */}
                         <td className="px-4 py-2">
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-start gap-4">
                             <img
                               src={product.hinh_anh}
                               alt={product.ten_san_pham}
-                              className="w-12 h-12 object-cover"
+                              className="w-32 h-40 object-cover rounded-md"
                             />
                             <div>
                               <h3 className="font-semibold text-gray-700">
@@ -531,14 +565,14 @@ const CheckOut = () => {
                               <p className="text-gray-500">
                                 {product.mau_sac}, {product.kich_thuoc}
                               </p>
+                              <p className="text-gray-700 font-semibold mt-1">
+                                {formatCurrency(product.gia_hien_tai)}
+                              </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-2">
-                          {formatCurrency(product.gia_hien_tai)}
-                        </td>
-                        <td className="hidden lg:block px-4 py-2">
-                          <div className="flex items-center justify-center border rounded-lg">
+                        <td className="hidden lg:table-cell px-4 py-2 text-center align-middle">
+                          <div className="flex items-center justify-center border rounded-lg mx-auto w-fit">
                             <button
                               onClick={() =>
                                 decreaseQuantity({
@@ -608,27 +642,29 @@ const CheckOut = () => {
               </div>
 
               <div className="py-4">
-                <div className=" flex justify-between font-medium border-hrBlack">
-                  <p>Tiết kiệm</p>
-                  <span className="px-2 text-red-500">
-                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}{" "}
-                    ₫
-                  </span>
-                </div>
-
+                {data?.san_pham_giam_gia.map((product: any) => (
+                  <div
+                    key={product.id}
+                    className=" flex justify-between font-medium border-hrBlack"
+                  >
+                    <p>Tiết kiệm</p>
+                    <span className="px-2 text-red-500">
+                      {product.tiet_kiem} ₫
+                    </span>
+                  </div>
+                ))}
                 <div className="flex justify-between font-medium mb-0 border-hrBlack">
                   <p>Phí giao hàng</p>
-                  <span className="px-2">
-                    {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0} ₫
-                  </span>
+                  <span className="px-2">{formatCurrency(20000)}</span>
                 </div>
-                <div className="flex justify-between font-medium border-b border-hrBlack">
-                  <p>Giảm giá vận chuyển</p>\
-                  <span className="px-2 text-red-500">
-                    - {finalTotal > 0 ? shippingFee.toLocaleString("vn-VN") : 0}
-                    ₫
-                  </span>
-                </div>
+                {totalSelectedPrice > 500000 && (
+                  <div className="flex justify-between font-medium border-b border-hrBlack">
+                    <p>Giảm giá vận chuyển</p>
+                    <span className="px-2 text-red-500">
+                      - {formatCurrency(20000)}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-between font-bold mb-8">
@@ -652,7 +688,7 @@ const CheckOut = () => {
               </div>
             </div>
           </div>
-          {/* <Subtotal/> */}
+          {/* <Subtotal /> */}
         </div>
       </div>
     </section>

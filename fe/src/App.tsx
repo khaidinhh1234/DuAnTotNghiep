@@ -130,7 +130,9 @@ function App() {
 
                     const playSound = async () => {
                         try {
-                            await audioRef.current.play();
+                            if (audioRef.current) {
+                                await audioRef.current.play();
+                            }
                         } catch (error) {
                             console.error("Lỗi khi phát âm thanh:", error);
                         }
@@ -140,8 +142,10 @@ function App() {
             });
 
         return () => {
-            echo.leave(channelName);
-            echo.disconnect();
+            if (echo) {
+                echo.leave(channelName);
+                echo.disconnect();
+            }
         };
     }, []);
 
