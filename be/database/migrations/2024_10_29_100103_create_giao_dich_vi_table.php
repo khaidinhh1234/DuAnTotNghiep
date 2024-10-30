@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('trang_thai', ['dang_xu_ly', 'thanh_cong', 'that_bai'])->default('dang_xu_ly');
             $table->dateTime('thoi_gian_giao_dich');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

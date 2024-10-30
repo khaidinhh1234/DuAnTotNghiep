@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ViTien extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -22,6 +23,11 @@ class ViTien extends Model
     public function giaoDich()
     {
         return $this->hasMany(GiaoDichVi::class, 'vi_tien_id', 'id');
+    }
+
+    public function lichSuGiaoDichs()
+    {
+        return $this->hasMany(LichSuGiaoDich::class, 'vi_tien_id', 'id');
     }
 
 }
