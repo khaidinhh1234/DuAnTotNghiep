@@ -20,8 +20,9 @@ return new class extends Migration
             $table->string('ten_chu_tai_khoan', 100);
             $table->string('ngan_hang', 100);
             $table->enum('phuong_thuc', ['ngan_hang', 'vi_dien_tu']);
-            $table->enum('trang_thai', ['cho_duyet', 'da_duyet', 'da_rut', 'that_bai'])->default('cho_duyet');
+            $table->enum('trang_thai', ['cho_duyet', 'da_rut', 'that_bai'])->default('cho_duyet');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

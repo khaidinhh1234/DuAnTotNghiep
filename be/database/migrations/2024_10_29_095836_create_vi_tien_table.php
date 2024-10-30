@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->integer('so_du')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

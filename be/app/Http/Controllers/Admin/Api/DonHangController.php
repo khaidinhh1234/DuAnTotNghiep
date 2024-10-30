@@ -13,10 +13,11 @@ use App\Models\HoanTien;
 use App\Models\ThongBao;
 use App\Models\User;
 use App\Models\VanChuyen;
-use App\Models\ViTien;
+use App\Models\YeuCauRutTien;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -259,8 +260,6 @@ class DonHangController extends Controller
         }
     }
 
-
-
     public function export()
     {
         // Tải xuống file Excel với tên 'donhang.xlsx'
@@ -336,5 +335,117 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+    public function hoanHang()
+    {
+        try {
+            $donHangs = HoanTien::query()
+                ->with('donHang', 'giaoDichVi')
+                ->get();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => $donHangs
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
+    public function xacNhanHoanHang(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'trang_thai' => 'required|string|in:hoan_thanh_cong,tu_choi'
+            ]);
+
+            DB::beginTransaction();
+            $hoanTien = HoanTien::findOrFail($id);
+            $giaoDichVi = $hoanTien->giaoDichVi;
+            $soDuTruoc = $giaoDichVi->viTien->so_du;
+
+            if ($validated['trang_thai'] === 'hoan_thanh_cong') {
+                $hoanTien->update(['trang_thai' => 'hoan_thanh_cong']);
+                $giaoDichVi->update(['trang_thai' => 'thanh_cong']);
+
+                //Lưu giao dịch
+                DB::table('lich_su_giao_dichs')->insert([
+                    'vi_tien_id' => $giaoDichVi->viTien->id,
+                    'so_du_truoc' => $soDuTruoc,
+                    'so_du_sau' => $soDuTruoc + $hoanTien->so_tien_hoan,
+                    'ngay_thay_doi' => Carbon::now(),
+                    'mo_ta' => 'Hoàn tiền đơn hàng #' . $hoanTien->donHang->ma_don_hang,
+                ]);
+                $giaoDichVi->viTien->increment('so_du', $hoanTien->so_tien_hoan);
+                $mess = 'Xác nhận hoàn hàng thành công.';
+            } else if ($validated['trang_thai'] === 'tu_choi') {
+                $hoanTien->update(['trang_thai' => 'tu_choi']);
+
+                //Lưu giao dịch
+                DB::table('lich_su_giao_dichs')->insert([
+                    'vi_tien_id' => $giaoDichVi->viTien->id,
+                    'so_du_truoc' => $soDuTruoc,
+                    'so_du_sau' => $giaoDichVi->viTien->so_du,
+                    'ngay_thay_doi' => Carbon::now(),
+                    'mo_ta' => 'Từ chối hoàn tiền đơn hàng #' . $hoanTien->donHang->ma_don_hang,
+                ]);
+                $giaoDichVi->update(['trang_thai' => 'that_bai']);
+                $mess = 'Từ chối hoàn hàng thành công.';
+            }
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => $mess,
+                'data' => $hoanTien
+            ], status: 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi xác nhận hoàn hàng.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function xacNhanYeuCauRutTien(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'trang_thai' => 'required|string|in:da_rut,that_bai'
+            ]);
+
+            DB::beginTransaction();
+            $yeuCauRutTien = YeuCauRutTien::findOrFail($id);
+
+            if ($validated['trang_thai'] === 'da_rut') {
+                $yeuCauRutTien->update(['trang_thai' => 'da_rut']);
+                $yeuCauRutTien->viTien->decrement('so_du', $yeuCauRutTien->so_tien);
+                $mess = 'Xác nhận yêu cầu rút tiền thành công.';
+            } else if ($validated['trang_thai'] === 'that_bai') {
+                $yeuCauRutTien->update(['trang_thai' => 'that_bai']);
+                $mess = 'Từ chối yêu cầu rút tiền thật bại.';
+            }
+
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => $mess,
+                'data' => $yeuCauRutTien
+            ], status: 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi xác nhận yêu cầu rút tiền.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

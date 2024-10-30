@@ -231,6 +231,8 @@ class VaiTroController extends Controller
                 'lienhe' => 'liên hệ',
                 'phanhoi' => 'Phản hồi',
                 'danhgia' => 'đánh giá',
+                'hoanhang' => 'hoàn hàng',
+                'rut-tien' => 'rút tiền',
                 'chuongtrinhuudai' => 'chương trình ưu đãi',
                 'thongtinweb' => 'thông tin website',
                 'danhmuctintuc' => 'danh mục tin tức',

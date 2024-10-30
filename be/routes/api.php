@@ -39,7 +39,6 @@ use App\Http\Controllers\Client\Api\TrangChiTietSpController;
 use App\Http\Controllers\Client\Api\TrangLienHeController;
 use App\Http\Controllers\Client\Api\TrangChuController;
 use App\Http\Controllers\Client\Api\TrangSanPhamController;
-use App\Http\Controllers\Client\Api\DanhGiaHuuIchController;
 use App\Http\Controllers\Client\Api\MoMoController;
 use App\Http\Controllers\Client\Api\TaiKhoanController as ApiTaiKhoanController;
 use App\Http\Controllers\Client\Api\TinTucController as ApiTinTucController;
@@ -64,9 +63,7 @@ Route::middleware([])
         Route::get('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
         Route::get('load-danh-muc', [TrangChuController::class, 'loadDanhMuc']);
 
-
         //Client Sản Phẩm
-
         // Client trang chi tiết sản phẩm
         Route::get('/chi-tiet-san-pham/{duong_dan}', [TrangChiTietSpController::class, 'chiTietSanPham']);
         Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']);
@@ -119,7 +116,6 @@ Route::middleware([])
         Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
 
         // Trang bộ sưu tập
-
         Route::get('bo-suu-tap/{slug}', [App\Http\Controllers\Client\Api\BoSuuTapController::class, 'show']);
 
 
@@ -137,7 +133,7 @@ Route::middleware([])
             Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
             Route::post('/gio-hang/chon-san-pham', [GioHangController::class, 'updateSelection']);
             Route::get('/gio-hang/chi-tiet', [GioHangController::class, 'calculateTotal']);
-            // mã khuyến mãi
+            // Mã khuyến mãi
             Route::get('ma-khuyen-mai', [KhuyenMaiController::class, 'layMaKhuyenMaiTheoHangThanhVien']);
             Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
             Route::get('ma-uu-dai-cho-nguoi-dung-cu-the', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoNguoiDung']);
@@ -155,6 +151,10 @@ Route::middleware([])
             Route::get('/don-hang', [DonHangClientController::class, 'donHangUser']);
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
             Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang']);
+            Route::post('/don-hang/hoan-hang/{ma_don_hang}', [DonHangClientController::class, 'hoanDonHang']);
+
+            //Yêu cầu rút tiền
+            Route::post('/rut-tien', [DonHangClientController::class, 'rutTienVi']);
         });
 
         //Sản phẩm yêu thích
@@ -242,11 +242,16 @@ Route::middleware(['auth.sanctum'])
                 Route::put('donhang/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
                 Route::put('donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
                 Route::get('donhang/export', [DonHangController::class, 'export'])->name('donhang.export');
+                Route::get('donhanghoan', [DonHangController::class, 'hoanHang'])->name('donhang.hoanhang');
                 Route::get('donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
                 Route::get('donhang/lay-thong-tin-don', [DonHangController::class, 'layThongTinDon'])->withoutMiddleware('auth.checkrole');
+                Route::put('donhang/xac-nhan-hoan-hang/{id}', [DonHangController::class, 'xacNhanHoanHang'])->withoutMiddleware('auth.checkrole');
                 Route::get('donhang/lay-thong-tin-don-hoan', [DonHangController::class, 'danhSachDonHangHoan']);
-
             });
+
+        //Xác nhận rút tiền
+        Route::post('rut-tien/xac-nhan/{id}', [DonHangController::class, 'xacNhanYeuCauRutTien'])->name('rut-tien.xacnhan')->middleware('auth.checkrole');
+
 
         //Vận chuyển
         Route::middleware('auth.checkrole')

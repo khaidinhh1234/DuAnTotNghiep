@@ -234,8 +234,6 @@ class KhuyenMaiController extends Controller
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi tìm kiếm mã khuyến mãi.', 'error' => $e->getMessage()], 500);
         }
     }
-
-
     public function danhSachMaKhuyenMaiTheoSanPhamGioHang(Request $request)
     {
         try {
@@ -311,6 +309,4 @@ class KhuyenMaiController extends Controller
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy danh sách mã khuyến mãi.', 'error' => $e->getMessage()], 500);
         }
     }
-
-
 }
