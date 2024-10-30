@@ -143,7 +143,7 @@ class KhuyenMaiController extends Controller
 
             return response()->json(['status' => true, 'data' => $maKhuyenMais]);
         } catch (\Exception $e) {
-            Log::error('Lỗi khi lấy mã khuyến mãi: '.$e->getMessage());
+            Log::error('Lỗi khi lấy mã khuyến mãi: ' . $e->getMessage());
 
             return response()->json([
                 'status' => false,
@@ -202,7 +202,7 @@ class KhuyenMaiController extends Controller
     {
         try {
             $validate = Validator::make($request->all(), [
-                'key' => 'required|string|max:255',
+                'ma' => 'required|string|max:255',
             ]);
 
             if ($validate->fails()) {
@@ -213,7 +213,7 @@ class KhuyenMaiController extends Controller
             $memberLevelId = $user->hang_thanh_vien_id;
 
             $maKhuyenMais = MaKhuyenMai::where('trang_thai', 1)
-                ->where('ma_code', $request->key)
+                ->where('ma_code', $request->ma)
                 ->where('ngay_bat_dau', '<=', now())
                 ->where('ngay_ket_thuc', '>=', now())
                 ->whereHas('hangThanhViens', function ($query) use ($memberLevelId) {
@@ -230,7 +230,6 @@ class KhuyenMaiController extends Controller
             }
 
             return response()->json(['status' => true, 'data' => $maKhuyenMais]);
-
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi tìm kiếm mã khuyến mãi.', 'error' => $e->getMessage()], 500);
         }
@@ -312,7 +311,6 @@ class KhuyenMaiController extends Controller
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy danh sách mã khuyến mãi.', 'error' => $e->getMessage()], 500);
         }
     }
-
 
 
 }
