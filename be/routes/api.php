@@ -124,23 +124,25 @@ Route::middleware([])
 
 
 
-        // Giỏ hàng
-        Route::get('/gio-hang', [GioHangController::class, 'index']);
-        Route::post('/gio-hang', [GioHangController::class, 'store']);
-        Route::put('/gio-hang/tang-so-luong/{id}', [GioHangController::class, 'tangSoLuong']);
-        Route::put('/gio-hang/giam-so-luong/{id}', [GioHangController::class, 'giamSoLuong']);
-        Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
-        Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
-        Route::post('/gio-hang/chon-san-pham', [GioHangController::class, 'updateSelection']);
+
 
 
         Route::middleware('auth.sanctum')->group(function () {
+            // Giỏ hàng
+            Route::get('/gio-hang', [GioHangController::class, 'index']);
+            Route::post('/gio-hang', [GioHangController::class, 'store']);
+            Route::put('/gio-hang/tang-so-luong/{id}', [GioHangController::class, 'tangSoLuong']);
+            Route::put('/gio-hang/giam-so-luong/{id}', [GioHangController::class, 'giamSoLuong']);
+            Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
+            Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
+            Route::post('/gio-hang/chon-san-pham', [GioHangController::class, 'updateSelection']);
             Route::get('/gio-hang/chi-tiet', [GioHangController::class, 'calculateTotal']);
             // mã khuyến mãi
             Route::get('ma-khuyen-mai', [KhuyenMaiController::class, 'layMaKhuyenMaiTheoHangThanhVien']);
             Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
             Route::get('ma-uu-dai-cho-nguoi-dung-cu-the', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoNguoiDung']);
             Route::get('tim-kiem-ma-khuyen-mai', [KhuyenMaiController::class, 'timKiemMaKhuyenMai']);
+            Route::get('ma-uu-dai-theo-gio-hang', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoSanPhamGioHang']);
 
             Route::post('ap-dung-ma-khuyen-mai', [GioHangController::class, 'apDungMaGiamGia']);
 
