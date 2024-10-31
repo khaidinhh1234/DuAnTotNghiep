@@ -9,11 +9,14 @@ use App\Http\Controllers\Controller;
 use App\Models\BienTheSanPham;
 use App\Models\DonHang;
 use App\Models\DonHangChiTiet;
+use App\Models\GiaoDichVi;
 use App\Models\GioHang;
+use App\Models\HoanTien;
 use App\Models\MaKhuyenMai;
 use App\Models\SanPham;
 use App\Models\ThongBao;
 use App\Models\User;
+use App\Models\YeuCauRutTien;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,48 +47,6 @@ class DonHangClientController extends Controller
         curl_close($ch);
         return $result;
     }
-
-    // public function thanhToanMomo(Request $request)
-    // {
-    //     $endpoint = env('MOMO_TEST_ENDPOINT');
-
-    //     $partnerCode = env('MOMO_PARTNER_CODE');
-    //     $accessKey = env('MOMO_ACCESS_KEY');
-    //     $secretKey = env('MOMO_SECRET_KEY');
-    //     $orderInfo = "Thanh toán qua MoMo";
-    //     $amount = "10000";
-    //     $orderId = 123;
-    //     $redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
-    //     $ipnUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
-    //     $extraData = "";
-
-    //     $requestId = time() . "";
-    //     $requestType = "payWithATM";
-    //     // $extraData = ($_POST["extraData"] ? $_POST["extraData"] : "");
-    //     //before sign HMAC SHA256 signature
-    //     $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $ipnUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $redirectUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
-    //     $signature = hash_hmac("sha256", $rawHash, $secretKey);
-    //     $data = array(
-    //         'partnerCode' => $partnerCode,
-    //         'partnerName' => "Test",
-    //         "storeId" => "MomoTestStore",
-    //         'requestId' => $requestId,
-    //         'amount' => $amount,
-    //         'orderId' => $orderId,
-    //         'orderInfo' => $orderInfo,
-    //         'redirectUrl' => $redirectUrl,
-    //         'ipnUrl' => $ipnUrl,
-    //         'lang' => 'vi',
-    //         'extraData' => $extraData,
-    //         'requestType' => $requestType,
-    //         'signature' => $signature
-    //     );
-    //     $result = $this->execPostRequest($endpoint, json_encode($data));
-    //     $jsonResult = json_decode($result, true);  // decode json
-
-
-    //     return redirect()->to($jsonResult['payUrl']);
-    // }
     public function donHangUser()
     {
         try {
@@ -285,8 +246,6 @@ class DonHangClientController extends Controller
             ]);
         }
     }
-
-
     public function taoDonHang(Request $request)
     {
         $request->validate([
@@ -347,16 +306,16 @@ class DonHangClientController extends Controller
                         ->unique()
                         ->toArray();
 
-                    if (empty($sanPhamDanhMucIds)) {
-                        if ($maGiamGia->danhMucs()->whereIn('id', $sanPhamDanhMucIds)->doesntExist()) {
-                            $isValid = false;
-                            $errorMessages[] = 'Mã giảm giá không áp dụng cho danh mục sản phẩm.';
-                        }
-                    } else {
-                        if ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
-                            $isValid = false;
-                            $errorMessages[] = 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.';
-                        }
+                    $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
+                    $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
+                    $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
+
+                    if (empty($sanPhamDanhMucIds) || !array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) {
+                        $isValid = false;
+                        $errorMessages[] = 'Mã giảm giá không áp dụng cho danh mục sản phẩm.';
+                    } elseif ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
+                        $isValid = false;
+                        $errorMessages[] = 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.';
                     }
 
                     $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
@@ -371,11 +330,9 @@ class DonHangClientController extends Controller
                     }
 
                     if ($isValid) {
-                        if ($maGiamGia->loai === 'phan_tram') {
-                            $soTienGiamGia = $tongTienDonHang * ($maGiamGia->giam_gia / 100);
-                        } else {
-                            $soTienGiamGia = $maGiamGia->giam_gia;
-                        }
+                        $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                            ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
+                            : $maGiamGia->giam_gia;
 
                         $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
                             ->where('user_id', $userId)
@@ -415,7 +372,7 @@ class DonHangClientController extends Controller
                 }
             }
 
-            $chi_tieu_toi_thieu = $maGiamGia ? $maGiamGia->chi_tieu_toi_thieu : 0;
+            $chi_tieu_toi_thieu = $maGiamGia->chi_tieu_toi_thieu ?? 0;
 
             if ($tongTienDonHang < $chi_tieu_toi_thieu) {
                 return response()->json([
@@ -494,16 +451,16 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
-
-
     public function huyDonHang(Request $request)
     {
         $request->validate([
-            'ma_don_hang' => 'required|string|exists:don_hangs,ma_don_hang'
+            'ma_don_hang' => 'required|string|exists:don_hangs,ma_don_hang',
+            'li_do_huy_hang' => 'required|string|max:255',
         ]);
 
         $userId = Auth::id();
         $maDonHang = $request->input('ma_don_hang');
+        $lidoHuyHang = $request->input('li_do_huy_hang');
 
         DB::beginTransaction();
 
@@ -519,7 +476,7 @@ class DonHangClientController extends Controller
                     'message' => 'Đơn hàng không tồn tại hoặc không thể hủy.',
                 ], 400);
             }
-
+            $donHang->li_do_huy_hang = $lidoHuyHang;
             $donHang->trang_thai_don_hang = DonHang::TTDH_DH;
             $donHang->save();
 
@@ -578,7 +535,6 @@ class DonHangClientController extends Controller
                 'status' => true,
                 'message' => 'Đơn hàng đã được hủy thành công.',
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -588,5 +544,112 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
+    public function hoanDonHang(Request $request, $ma_don_hang)
+    {
+        $validated = $request->validate([
+            'ly_do_hoan_don' => 'required|string|max:255',
+        ]);
 
+        $userId = Auth::id();
+        DB::beginTransaction();
+        try {
+            $donHang = DonHang::where('ma_don_hang', $ma_don_hang)
+                ->where('user_id', $userId)
+                ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                ->first();
+            if (!$donHang) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Đơn hàng không tồn tại hoặc không thể hoàn hàng.',
+                ], 400);
+            }
+            $viTienId = User::find($userId)->viTien->id;
+            $giaoDichVi = GiaoDichVi::create([
+                'vi_tien_id' => $viTienId,
+                'loai_giao_dich' => 'hoan_tien',
+                'so_tien' => $donHang->tong_tien_don_hang,
+                'mo_ta' => 'Hoàn tiền đơn hàng ' . $donHang->ma_don_hang,
+                'trang_thai' => 'dang_xu_ly',
+                'thoi_gian_giao_dich' => now(),
+            ]);
+
+            HoanTien::create([
+                'giao_dich_vi_id' => $giaoDichVi->id,
+                'don_hang_id' => $donHang->id,
+                'so_tien_hoan' => $donHang->tong_tien_don_hang,
+                'ly_do' => $validated['ly_do_hoan_don'],
+                'thoi_gian_hoan' => now(),
+            ]);
+
+            $thongBao = ThongBao::create([
+                'user_id' => $userId,
+                'tieu_de' => 'Đơn hàng đã hoàn',
+                'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hoàn.',
+                'loai' => 'Đơn hàng',
+                'duong_dan' => 'don-hang',
+                'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                'id_duong_dan' => $donHang->id,
+            ]);
+
+            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Yêu cầu hoàn hàng đã thành công.',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Đã xảy ra lỗi khi hoàn đơn hàng.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function rutTienVi(Request $request)
+    {
+        $validate = $request->validate([
+            'so_tien' => 'required|numeric|min:10000',
+            'taikhoan_ngan_hang' => 'required|string|max:255',
+            'ten_chu_tai_khoan' => 'required|string|max:255',
+            'ngan_hang' => 'required|string|max:255',
+        ]);
+        try {
+            $userId = Auth::id();
+            $viTien = User::find($userId)->viTien;
+            $soTien = $validate['so_tien'];
+            if ($soTien < $validate['so_tien']) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Số tiền trong ví không đủ để rút',
+                ]);
+            }
+
+            $giaoDichVi = YeuCauRutTien::create([
+                'vi_tien_id' => $viTien->id,
+                'so_tien' => $soTien,
+                'taikhoan_ngan_hang' => $validate['taikhoan_ngan_hang'],
+                'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
+                'ngan_hang' => $validate['ngan_hang'],
+                'phuong_thuc' => 'ngan_hang',
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Rút tiền thành công',
+                'data' => $giaoDichVi
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Rút tiền thất bại',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 }

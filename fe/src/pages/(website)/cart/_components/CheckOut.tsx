@@ -17,6 +17,9 @@ const CheckOut = () => {
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
 
+  // const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
+  // const [selectAllRegular, setSelectAllRegular] = useState(false);
+
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -53,27 +56,34 @@ const CheckOut = () => {
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(["cart", access_token], (oldData: { san_pham_giam_gia: any[], san_pham_nguyen_gia: any[] }) => {
-        const updatedProducts = oldData.san_pham_giam_gia.map((product: any) => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity + 1 };
-          }
-          return product;
-        });
+      queryClient.setQueryData(
+        ["cart", access_token],
+        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
+          const updatedProducts = oldData.san_pham_giam_gia.map(
+            (product: any) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity + 1 };
+              }
+              return product;
+            }
+          );
 
-        const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity + 1 };
-          }
-          return product;
-        });
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
+            (product) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity + 1 };
+              }
+              return product;
+            }
+          );
 
-        return {
-          ...oldData,
-          san_pham_giam_gia: updatedProducts,
-          san_pham_nguyen_gia: updatedOriginalProducts
-        };
-      });
+          return {
+            ...oldData,
+            san_pham_giam_gia: updatedProducts,
+            san_pham_nguyen_gia: updatedOriginalProducts,
+          };
+        }
+      );
       return { previousCartData };
     },
     onSuccess: () => {
@@ -83,7 +93,10 @@ const CheckOut = () => {
       if (context?.previousCartData) {
         if (context?.previousCartData) {
           if (context?.previousCartData) {
-            queryClient.setQueryData(["cart", access_token], context.previousCartData);
+            queryClient.setQueryData(
+              ["cart", access_token],
+              context.previousCartData
+            );
           }
         }
       }
@@ -117,27 +130,32 @@ const CheckOut = () => {
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(["cart", access_token], (oldData: { san_pham_giam_gia: any[], san_pham_nguyen_gia: any[] }) => {
-        const updatedProducts = oldData.san_pham_giam_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity - 1 };
-          }
-          return product;
-        });
+      queryClient.setQueryData(
+        ["cart", access_token],
+        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
+          const updatedProducts = oldData.san_pham_giam_gia.map((product) => {
+            if (product.id === productId) {
+              return { ...product, so_luong: currentQuantity - 1 };
+            }
+            return product;
+          });
 
-        const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(product => {
-          if (product.id === productId) {
-            return { ...product, so_luong: currentQuantity - 1 };
-          }
-          return product;
-        });
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
+            (product) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity - 1 };
+              }
+              return product;
+            }
+          );
 
-        return {
-          ...oldData,
-          san_pham_giam_gia: updatedProducts,
-          san_pham_nguyen_gia: updatedOriginalProducts
-        };
-      });
+          return {
+            ...oldData,
+            san_pham_giam_gia: updatedProducts,
+            san_pham_nguyen_gia: updatedOriginalProducts,
+          };
+        }
+      );
 
       // Trả về dữ liệu cũ để có thể khôi phục
       return { previousCartData };
@@ -146,11 +164,13 @@ const CheckOut = () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any, { productId, currentQuantity }, context) => {
-      queryClient.setQueryData(["cart", access_token], context.previousCartData);
+      queryClient.setQueryData(
+        ["cart", access_token],
+        context.previousCartData
+      );
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
-
 
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId) => {
@@ -201,7 +221,9 @@ const CheckOut = () => {
 
   const handleCheckout = () => {
     if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
-      toast.error("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán.");
+      toast.error(
+        "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
+      );
       return;
     }
     // Kiểm tra xem có sản phẩm nào được chọn hay không

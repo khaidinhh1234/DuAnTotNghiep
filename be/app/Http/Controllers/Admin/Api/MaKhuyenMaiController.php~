@@ -72,22 +72,32 @@ class MaKhuyenMaiController extends Controller
         try {
             DB::beginTransaction();
 
-            $dataMaKhuyenMai = $request->except(['khuyen_mai_san_pham', 'danh_mucs']);
-            $dataKhuyenMaiSanPham = $request->khuyen_mai_san_pham ?? [];
-            $dataKhuyenMaiDanhMuc = $request->khuyen_mai_danh_muc ?? [];
+            $dataMaKhuyenMai = $request->except(['san_phams', 'danh_mucs']);
+            $dataKhuyenMaiSanPham = $request->san_phams ?? [];
+            $dataKhuyenMaiDanhMuc = $request->danh_mucs ?? [];
 
-            if (!empty($dataKhuyenMaiSanPham)) {
+            $apDungText = '';
+
+            if (!empty($dataKhuyenMaiDanhMuc)) {
+                $danhMucDetails = DB::table('danh_mucs')
+                    ->whereIn('id', $dataKhuyenMaiDanhMuc)
+                    ->get();
+
+                $danhMucHierarchy = [];
+                foreach ($danhMucDetails as $danhMuc) {
+                    $hierarchy = $this->getDanhMucHierarchy($danhMuc->id);
+                    if ($hierarchy) {
+                        $danhMucHierarchy[] = $hierarchy;
+                    }
+                }
+
+                $apDungText = 'Áp dụng cho danh mục: ' . implode(', ', $danhMucHierarchy);
+            } elseif (!empty($dataKhuyenMaiSanPham)) {
                 $sanPhamNames = DB::table('san_phams')->whereIn('id', $dataKhuyenMaiSanPham)->pluck('ten_san_pham')->toArray();
                 if (empty($sanPhamNames)) {
                     throw new \Exception('Sản phẩm được chọn không hợp lệ.');
                 }
                 $apDungText = 'Áp dụng cho sản phẩm: ' . implode(', ', $sanPhamNames);
-            } elseif (!empty($dataKhuyenMaiDanhMuc)) {
-                $danhMucNames = DB::table('danh_mucs')->whereIn('id', $dataKhuyenMaiDanhMuc)->pluck('ten_danh_muc')->toArray();
-                if (empty($danhMucNames)) {
-                    throw new \Exception('Danh mục được chọn không hợp lệ.');
-                }
-                $apDungText = 'Áp dụng cho danh mục: ' . implode(', ', $danhMucNames);
             } else {
                 $apDungText = 'Áp dụng cho tất cả sản phẩm';
             }
@@ -100,6 +110,8 @@ class MaKhuyenMaiController extends Controller
                 $maKhuyenMai->danhMucs()->sync($dataKhuyenMaiDanhMuc);
             } else if (!empty($dataKhuyenMaiSanPham)) {
                 $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
+            } else {
+                $maKhuyenMai->sanPhams()->sync(DB::table('san_phams')->pluck('id'));
             }
 
             $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
@@ -121,6 +133,26 @@ class MaKhuyenMaiController extends Controller
             ], 500);
         }
     }
+
+    private function getDanhMucHierarchy($id)
+    {
+        $danhMuc = DB::table('danh_mucs')->find($id);
+
+        if (!$danhMuc) {
+            return null;
+        }
+
+        $parentName = '';
+        if ($danhMuc->cha_id) {
+            $parentName = $this->getDanhMucHierarchy($danhMuc->cha_id);
+            $parentName = $parentName ? $parentName . '(' . $danhMuc->ten_danh_muc . ')' : $danhMuc->ten_danh_muc;
+        } else {
+            $parentName = $danhMuc->ten_danh_muc;
+        }
+
+        return $parentName;
+    }
+
 
     public function show(string $id)
     {

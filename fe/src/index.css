@@ -1,0 +1,8 @@
+.search-modal .ant-modal-content {
+  margin-top: 20px;
+  z-index: 1001;
+}
+
+.search-modal .ant-modal-mask {
+  z-index: 1200;
+}

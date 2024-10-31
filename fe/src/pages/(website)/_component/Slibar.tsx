@@ -9,7 +9,6 @@ const Slibar = () => {
   const member = user?.user;
   console.log( user?.user?.anh_nguoi_dung)
   const [anh_nguoi_dung] = useState(member?.anh_nguoi_dung);
-
   const { data,   } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {

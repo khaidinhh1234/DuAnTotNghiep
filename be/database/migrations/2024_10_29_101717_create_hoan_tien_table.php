@@ -19,8 +19,10 @@ return new class extends Migration
             $table->foreignIdFor(GiaoDichVi::class)->constrained();
             $table->integer('so_tien_hoan');
             $table->string('ly_do', 255)->nullable();
+            $table->enum('trang_thai', ['cho_xac_nhan', 'hoan_thanh_cong', 'tu_choi'])->default('cho_xac_nhan');
             $table->dateTime('thoi_gian_hoan');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
