@@ -258,9 +258,11 @@ class DonHangClientController extends Controller
             'ma_giam_gia' => 'nullable|string|max:100',
         ]);
 
+
         try {
             DB::beginTransaction();
             $userId = Auth::id();
+
 
             $sanPhamDuocChon = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
@@ -271,6 +273,7 @@ class DonHangClientController extends Controller
                 ->select('san_phams.id as san_pham_id', 'bien_the_san_phams.id as bien_the_san_pham_id', 'gio_hangs.so_luong')
                 ->get();
 
+
             if ($sanPhamDuocChon->isEmpty()) {
                 return response()->json([
                     'status' => false,
@@ -278,8 +281,10 @@ class DonHangClientController extends Controller
                 ], 400);
             }
 
+
             $tongTienDonHang = 0;
             $soTienGiamGia = 0;
+
 
             foreach ($sanPhamDuocChon as $sanPham) {
                 $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
@@ -290,12 +295,15 @@ class DonHangClientController extends Controller
                     ], 400);
                 }
 
+
                 $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
                 $tongTienDonHang += $gia * $sanPham->so_luong;
             }
 
+
             if ($request->filled('ma_giam_gia')) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
+
 
                 if ($maGiamGia) {
                     $isValid = true;
@@ -306,10 +314,12 @@ class DonHangClientController extends Controller
                         ->unique()
                         ->toArray();
 
+
                     $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
                     if (!empty($danhMucIds)) {
                         $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
                         $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
+
 
                         if (empty($sanPhamDanhMucIds) || !array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) {
                             $isValid = false;
@@ -323,27 +333,32 @@ class DonHangClientController extends Controller
                         $errorMessages[] = 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.';
                     }
 
+
                     $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
                     if ($maGiamGia->hangThanhViens()->where('id', $userHangThanhVienId)->doesntExist()) {
                         $isValid = false;
                         $errorMessages[] = 'Mã giảm giá không áp dụng cho hạng thành viên của bạn.';
                     }
 
+
                     if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
                         $isValid = false;
                         $errorMessages[] = 'Mã giảm giá không áp dụng cho người dùng này.';
                     }
+
 
                     if ($isValid) {
                         $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
                             ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
                             : $maGiamGia->giam_gia;
 
+
                         $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
                             ->where('user_id', $userId)
                             ->where('ma_khuyen_mai_id', $maGiamGia->id)
                             ->where('da_su_dung', true)
                             ->exists();
+
 
                         if ($daSuDung) {
                             return response()->json([
@@ -386,6 +401,7 @@ class DonHangClientController extends Controller
                 ], 400);
             }
 
+
             $maDonHang = 'DH' . strtoupper(uniqid());
             $donHang = DonHang::create([
                 'ma_don_hang' => $maDonHang,
@@ -403,14 +419,18 @@ class DonHangClientController extends Controller
                 'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
             ]);
 
+
             foreach ($sanPhamDuocChon as $sanPham) {
                 $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
                 $soLuongMua = $sanPham->so_luong;
 
+
                 $bienTheSanPham->so_luong_bien_the -= $soLuongMua;
                 $bienTheSanPham->save();
 
+
                 $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
+
 
                 DonHangChiTiet::create([
                     'don_hang_id' => $donHang->id,
@@ -421,14 +441,17 @@ class DonHangClientController extends Controller
                 ]);
             }
 
+
             $donHang = DonHang::with(['chiTiets'])
                 ->where('id', $donHang->id)
                 ->first();
+
 
             DB::table('gio_hangs')
                 ->where('user_id', $userId)
                 ->where('chon', 1)
                 ->update(['deleted_at' => now()]);
+
 
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
@@ -440,8 +463,10 @@ class DonHangClientController extends Controller
                 'id_duong_dan' => $donHang->id,
             ]);
 
+
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
             DB::commit();
+
 
             return response()->json([
                 'status' => true,
