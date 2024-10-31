@@ -13,6 +13,7 @@ use App\Models\GiaoDichVi;
 use App\Models\GioHang;
 use App\Models\HoanTien;
 use App\Models\MaKhuyenMai;
+use App\Models\NganHang;
 use App\Models\SanPham;
 use App\Models\ThongBao;
 use App\Models\User;
@@ -642,36 +643,51 @@ class DonHangClientController extends Controller
     {
         $validate = $request->validate([
             'so_tien' => 'required|numeric|min:10000',
-            'taikhoan_ngan_hang' => 'required|string|max:255',
+            'tai_khoan_ngan_hang' => 'required|string|max:255',
             'ten_chu_tai_khoan' => 'required|string|max:255',
             'ngan_hang' => 'required|string|max:255',
         ]);
         try {
             $userId = Auth::id();
-            $viTien = User::find($userId)->viTien;
-            $soTien = $validate['so_tien'];
-            if ($soTien < $validate['so_tien']) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Số tiền trong ví không đủ để rút',
-                ]);
+            $user = User::find($userId);
+            $viTien = $user->viTien;
+            $nganHang = NganHang::firstOrCreate(
+            [
+                'user_id' => $userId,
+                'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
+                'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
+                'ngan_hang' => $validate['ngan_hang'],
+            ],
+            [
+                'user_id' => $userId,
+                'ngan_hang' => $validate['ngan_hang'],
+                'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
+                'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
+            ]
+            );
+
+            if ($viTien->so_du < $validate['so_tien']) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'Số tiền trong ví không đủ để rút',
+            ]);
             }
 
             $giaoDichVi = YeuCauRutTien::create([
-                'vi_tien_id' => $viTien->id,
-                'so_tien' => $soTien,
-                'taikhoan_ngan_hang' => $validate['taikhoan_ngan_hang'],
-                'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
-                'ngan_hang' => $validate['ngan_hang'],
-                'phuong_thuc' => 'ngan_hang',
+            'vi_tien_id' => $viTien->id,
+            'so_tien' => $validate['so_tien'],
+            'ngan_hang_id' => $nganHang->id,
             ]);
 
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Rút tiền thành công',
-                'data' => $giaoDichVi
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Rút tiền thành công',
+            'data' => [
+                'giao_dich_vi' => $giaoDichVi,
+                'ngan_hang' => $nganHang,
+            ]
             ]);
         } catch (\Exception $e) {
             return response()->json([

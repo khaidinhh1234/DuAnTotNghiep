@@ -67,4 +67,24 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+
+    public function nganHangUser(){
+        try {
+            $user = Auth::user();
+            $nganHang = $user->nganHang;
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy thông tin ngân hàng thành công',
+                'data' => $nganHang,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy thông tin ngân hàng',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
