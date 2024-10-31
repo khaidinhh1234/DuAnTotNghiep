@@ -14,6 +14,7 @@ class NganHang extends Model
         'tai_khoan_ngan_hang',
         'ten_chu_tai_khoan',
         'ngan_hang',
+        'logo_ngan_hang',
     ];
 
     public function yeuCauRutTien()
