@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\ThongBao;
 use App\Models\User;
-use App\Models\VaiTro; // Đảm bảo import mô hình VaiTro
+use App\Models\VaiTro;
 use App\Events\ThongBaoMoi;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
@@ -29,7 +29,8 @@ class GuiThongBaoKhuyenMai extends Command
             $this->sendNotification(
                 'Chương trình ưu đãi mới',
                 "Chương trình ưu đãi '{$chuongTrinh->ten_uu_dai}' đã bắt đầu hoặc đến hạn vào ngày hôm nay!",
-                '/chuong-trinh/' . $chuongTrinh->duong_dan
+                'chuong-trinh',
+                $chuongTrinh->duong_dan
             );
         }
 
@@ -38,7 +39,7 @@ class GuiThongBaoKhuyenMai extends Command
 
     /**
      */
-    private function sendNotification($title, $content, $link)
+    private function sendNotification($title, $content, $link, $duong_dan)
     {
         $users = User::whereHas('vaiTros', function($query) {
             $query->where('vai_tros.ten_vai_tro', 'Khách hàng');
@@ -49,8 +50,9 @@ class GuiThongBaoKhuyenMai extends Command
                 'user_id' => $user->id,
                 'tieu_de' => $title,
                 'noi_dung' => $content,
-                'loai' => 'uu_dai',
+                'loai' => 'uu-dai',
                 'duong_dan' => $link,
+                'id_duong_dan' => $duong_dan,
                 'hinh_thu_nho'=> 'https://cuoihoihungthinh.com/wp-content/uploads/2021/09/icon-uu-dai.png'
             ]);
 

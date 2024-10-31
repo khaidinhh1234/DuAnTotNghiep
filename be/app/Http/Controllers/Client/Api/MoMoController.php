@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DonHang;
 use App\Models\Momo;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class MoMoController extends Controller
     }
     public function thanhToanOnlineMomo(Request $request)
     {
-        if ($request->payment == 'cad') {
+        if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_MM_ATM) {
             $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
             $partnerCode = env('MOMO_PARTNER_CODE');
             $accessKey = env('MOMO_ACCESS_KEY');
@@ -79,7 +80,7 @@ class MoMoController extends Controller
             } else {
                 return response()->json(['message' => 'Không tạo được URL thanh toán'], 500);
             }
-        } elseif ($request->payment == 'qr') {
+        } elseif ($request->phuong_thuc_thanh_toan == DonHang::PTTT_MM_QR) {
             $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
             $partnerCode = env('MOMO_PARTNER_CODE');
             $accessKey = env('MOMO_ACCESS_KEY');

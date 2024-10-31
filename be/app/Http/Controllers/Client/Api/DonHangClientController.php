@@ -393,7 +393,7 @@ class DonHangClientController extends Controller
                 'loai' => 'Đơn hàng',
                 'duong_dan' => 'don-hang',
                 'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                'id_duong_dan' => $donHang->id,
+                'id_duong_dan' => $donHang->ma_don_hang,
             ]);
 
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
