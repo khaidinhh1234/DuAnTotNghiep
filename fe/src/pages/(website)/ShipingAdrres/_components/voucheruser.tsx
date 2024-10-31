@@ -1,7 +1,8 @@
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, message, Modal } from "antd";
-import React, { useState } from "react";
+import { Code2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 interface VoucheruserProps {
   onSelectVoucher: ({
@@ -30,14 +31,10 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
           ma_giam_gia: index,
         });
         message.success("Áp dụng mã giảm giá thành công");
-      } catch (error) {
-        message.error("Có lỗi xảy ra khi áp dụng mã giảm giá");
+      } catch (error: any) {
+        message.error(error.response.data.message);
         throw new Error("Error applying voucher");
       }
-    },
-    onError: (error) => {
-      console.error(error);
-      alert("Có lỗi xảy ra khi áp dụng mã giảm giá. Vui lòng thử lại!");
     },
   });
 
@@ -50,12 +47,24 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
         },
       });
     } else {
-      alert("Vui lòng chọn mã giảm giá trước khi áp dụng.");
+      message.error("Vui lòng chọn mã giảm giá trước khi áp dụng.");
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value.toUpperCase());
+    const value = e.target.value.toUpperCase();
+    if (value === "") {
+      refetch(); // Gọi lại API để hiển thị toàn bộ danh sách nếu code rỗng
+    }
+  };
+
+  const handleSearch = () => {
+    if (code.length >= 6) {
+      refetch(); // Refetch data when search button is clicked and code has a valid length
+    } else {
+      message.error("Mã phải có ít nhất 6 ký tự.");
+    }
   };
 
   const handleClick = ({
@@ -70,22 +79,37 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
     setSelectedDiscount(newIndex ? giam_gia : null);
   };
 
-  const { data } = useQuery({
-    queryKey: ["Voucher"],
+  const { data, refetch } = useQuery({
+    queryKey: ["Voucher_LIST"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get(
-          `/ma-uu-dai-cho-nguoi-dung-cu-the`
+        const datas = code ? { ma_code: code } : {};
+        const response = await instanceClient.post(
+          `/ma-uu-dai-theo-gio-hang`,
+          datas
         );
-
         return response.data;
       } catch (error) {
         throw new Error("Error fetching cart data");
       }
     },
+    // enabled: false, // Disable automatic fetch
   });
 
+  console.log(data);
   const voucher = data?.data;
+  const vouchertrue = voucher
+    ?.map((item: any) => {
+      const today = new Date();
+      const endDate = new Date(item.ma_khuyen_mai.ngay_ket_thuc);
+      const diffTime = endDate.getTime() - today.getTime();
+      const day = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return {
+        ...item,
+        day,
+      };
+    })
+    ?.filter((item: any) => item?.da_luu === true && item?.day > 0);
 
   return (
     <div>
@@ -116,7 +140,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
                 type="text"
                 placeholder="Nhập mã ưu đãi"
                 className="border border-gray-300 rounded-md px-4 py-2 w-full mr-2"
-                maxLength={6}
+                maxLength={8}
                 value={code}
                 onChange={handleChange}
               />
@@ -126,60 +150,75 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
                     ? "bg-teal-500 text-white"
                     : "bg-gray-200 text-gray-500 cursor-not-allowed"
                 }`}
-                disabled={code.length !== 6}
+                onClick={handleSearch}
+                // disabled={code.length < 6}
               >
-                Sử dụng
+                Tìm kiếm
               </button>
             </div>
             <div className="grid grid-cols-1 gap-5 overflow-y-auto h-96">
               {voucher && voucher.length > 0 ? (
-                voucher.map((item: any, index: number) => (
+                vouchertrue?.map((item: any, index: number) => (
                   <div
                     className={`border rounded-md px-4 flex justify-between items-center mb-4 ${
-                      clickedIndex === item?.ma_code
+                      item?.ap_dung
+                        ? "cursor-pointer"
+                        : "opacity-50 cursor-not-allowed"
+                    } ${
+                      clickedIndex === item?.ma_khuyen_mai?.ma_code
                         ? "border border-teal-500 bg-teal-50 shadow-md shadow-black/50"
                         : ""
                     }`}
+                    onClick={() =>
+                      item?.ap_dung &&
+                      handleClick({
+                        index: item?.ma_khuyen_mai?.ma_code,
+                        giam_gia: item?.ma_khuyen_mai?.giam_gia,
+                      })
+                    }
                     key={index}
                   >
                     <div>
                       <span className="bg-teal-500 text-white text-sm px-2 py-1 rounded">
                         Lựa chọn tốt nhất
                       </span>
-                      <h3 className="text-lg font-semibold mt-2">
-                        {item?.mo_ta}
+                      <h3 className="text-lg font-semibold mt-2 truncate w-80">
+                        {item?.ma_khuyen_mai?.mo_ta}
                       </h3>
                       <p className="text-sm text-gray-500">
                         Giảm{" "}
-                        {item?.giam_gia > 100
-                          ? item?.giam_gia.toLocaleString("vi-VN") + "k"
-                          : item?.giam_gia + "%"}{" "}
+                        {item?.ma_khuyen_mai?.giam_gia > 100
+                          ? item?.ma_khuyen_mai?.giam_gia.toLocaleString(
+                              "vi-VN"
+                            ) + "k"
+                          : item?.ma_khuyen_mai?.giam_gia + "%"}{" "}
                         cho đơn từ{" "}
-                        {item?.chi_tieu_toi_thieu.toLocaleString("vi-VN")}k
+                        {item?.ma_khuyen_mai?.chi_tieu_toi_thieu.toLocaleString(
+                          "vi-VN"
+                        )}
+                        k
                       </p>
                       <div className="font-mono bg-gray-100 text-gray-700 px-2 py-1 rounded mt-2">
-                        {item?.ma_code}
+                        {item?.ma_khuyen_mai?.ma_code}
                       </div>
                       <p className="text-sm text-red-500 mt-1">
-                        Sắp hết hạn: Còn 2 ngày
+                        Sắp hết hạn: Còn {item?.day} ngày
                       </p>
                     </div>
                     <div className="text-teal-500">
                       <button
                         className={`text-sm font-semibold ${
-                          clickedIndex === item?.ma_code ? "text-blue-500" : ""
+                          clickedIndex === item?.ma_khuyen_mai?.ma_code
+                            ? "text-blue-500"
+                            : ""
                         }`}
-                        onClick={() =>
-                          handleClick({
-                            index: item.ma_code,
-                            giam_gia: item.giam_gia,
-                          })
-                        }
                       >
                         Điều kiện
                       </button>
                       <span className="text-2xl ml-4">
-                        {clickedIndex === item?.ma_code ? "✔️" : ""}
+                        {clickedIndex === item?.ma_khuyen_mai?.ma_code
+                          ? "✔️"
+                          : ""}
                       </span>
                     </div>
                   </div>

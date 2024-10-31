@@ -3,12 +3,41 @@ import AddressForm from "./_components/AddAdrres";
 import ShippingAddress from "./_components/ShippingAddress";
 import Subtotal from "./_components/subtotail";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
+import { useState } from "react";
+import { message } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const ShippingAddressPage = () => {
-  // const [cartTotal] = useLocalStorage("cartTotal" as any, 0);
-  // const products = cartTotal.details;
+  const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
+  const [data, setData] = useState<any>({}); // Trạng thái cho dữ liệu giỏ hàng
+  const nav = useNavigate();
+  const { mutate } = useMutation({
+    mutationFn: async (data: any) => {
+      try {
+        const response = await instanceClient.post(`/don-hang`, data);
+        message.success("Order successful");
+        nav("/thankyou");
+        return response.data;
+      } catch (error) {
+        message.error("Lỗi khi đặt hàng");
+        throw new Error("Error fetching cart data");
+      }
+    },
+  });
+
+  const onsubmit = (formData: any) => {
+    const combinedData = { ...formData, macode }; // Kết hợp dữ liệu với mã khuyến mãi
+    setData(combinedData); // Cập nhật trạng thái dữ liệu giỏ hàng
+
+    // Gọi hàm mutate với dữ liệu đã kết hợp
+    mutate(combinedData);
+  };
+
+  const handleCode = (data: any) => {
+    setmacode(data ? data : ""); // Cập nhật trạng thái mã khuyến mãi
+  };
   const { data: checkout } = useQuery({
     queryKey: ["Checkout"],
     queryFn: async () => {
@@ -24,9 +53,6 @@ const ShippingAddressPage = () => {
   const products = checkout?.chi_tiet_don_hang?.san_pham;
 
   const { register, handleSubmit } = useForm();
-  const onsubmit = (data: any) => {
-    console.log({ data });
-  };
   return (
     <>
       <section className="container">
@@ -42,7 +68,7 @@ const ShippingAddressPage = () => {
                   checkout={checkout}
                 />
               </div>
-              <Subtotal tong_tien={tong_tien} />
+              <Subtotal tong_tien={tong_tien} Macode={handleCode} />
             </div>
           </form>
         </div>
