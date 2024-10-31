@@ -118,11 +118,6 @@ Route::middleware([])
         // Trang bộ sưu tập
         Route::get('bo-suu-tap/{slug}', [App\Http\Controllers\Client\Api\BoSuuTapController::class, 'show']);
 
-
-
-
-
-
         Route::middleware('auth.sanctum')->group(function () {
             // Giỏ hàng
             Route::get('/gio-hang', [GioHangController::class, 'index']);
@@ -163,6 +158,7 @@ Route::middleware([])
 
         //Tài khoản
         Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
+        Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan'])->middleware('auth:sanctum');
 
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
     });

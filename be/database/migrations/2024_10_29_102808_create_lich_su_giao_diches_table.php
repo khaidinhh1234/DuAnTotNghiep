@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lich_su_giao_dichs', function (Blueprint $table) {
+        Schema::create('lich_su_giao_diches', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(ViTien::class)->constrained();
             $table->integer('so_du_truoc');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lich_su_giao_dichs');
+        Schema::dropIfExists('lich_su_giao_diches');
     }
 };
