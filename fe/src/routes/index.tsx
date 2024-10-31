@@ -139,6 +139,8 @@ import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenma
 import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
 import Page1 from "@/pages/(website)/Shopuudai/shop";
 import MyVoucher from "@/pages/(website)/myvocher/myvocher";
+import TaiChinh from "@/pages/(website)/mywallet/wallte";
+import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 
 const Router = () => {
   //
@@ -182,6 +184,10 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
+            <Route path="/mypro/wallet" element={<TaiChinh />} />
+            <Route path="/mypro/doangthu" element={<RevenuePage />} />
+
+
             <Route
               path="/mypro/manageaddresses"
               element={<ManageAddresses />}

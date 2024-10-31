@@ -221,7 +221,8 @@ const MyProfilePage = () => {
               { type: 'email', message: 'Email không hợp lệ' }
             ]}
           >
-            <input type="email" className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200" />
+            <input type="email" className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200"     readOnly
+            />
           </Form.Item>
         </div>
 
