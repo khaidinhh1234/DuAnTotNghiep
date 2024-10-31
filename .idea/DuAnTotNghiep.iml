@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/be/app" isTestSource="false" packagePrefix="App\" />
+      <sourceFolder url="file://$MODULE_DIR$/be/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
+      <sourceFolder url="file://$MODULE_DIR$/be/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
+      <sourceFolder url="file://$MODULE_DIR$/be/tests" isTestSource="true" packagePrefix="Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/be/tests/Feature" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/be/tests/Unit" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/be/vendor/cloudinary-labs/cloudinary-laravel" />
+      <excludeFolder url="file://$MODULE_DIR$/be/vendor/cloudinary/cloudinary_php" />
+      <excludeFolder url="file://$MODULE_DIR$/be/vendor/cloudinary/transformation-builder-sdk" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

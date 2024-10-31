@@ -248,7 +248,6 @@ Route::middleware(['auth.sanctum'])
         //Xác nhận rút tiền
         Route::post('rut-tien/xac-nhan/{id}', [DonHangController::class, 'xacNhanYeuCauRutTien'])->name('rut-tien.xacnhan')->middleware('auth.checkrole');
 
-
         //Vận chuyển
         Route::middleware('auth.checkrole')
             ->group(function () {
