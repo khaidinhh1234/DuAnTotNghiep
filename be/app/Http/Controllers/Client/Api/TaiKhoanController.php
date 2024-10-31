@@ -55,7 +55,6 @@ class TaiKhoanController extends Controller
                 ], 404);
             }
             $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
-
             $data = [
                 'viUser' => $viUser,
                 'lichSuGiaoDich' => $lichSuGiaoDich,

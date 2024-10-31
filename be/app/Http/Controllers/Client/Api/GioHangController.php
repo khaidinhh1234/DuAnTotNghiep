@@ -42,15 +42,17 @@ class GioHangController extends Controller
                 )
                 ->get();
 
-            $gioHangs->transform(function($item) {
-                $bienThe = BienTheSanPham::with(['anhBienThe' => function($query) {
-                    $query->first();
-                }])->find($item->bien_the_san_pham_id);
+            $gioHangs->transform(function ($item) {
+                $bienThe = BienTheSanPham::with([
+                    'anhBienThe' => function ($query) {
+                        $query->first();
+                    }
+                ])->find($item->bien_the_san_pham_id);
 
                 $item->hinh_anh = optional($bienThe->anhBienThe->first())->duong_dan_anh;
 
                 $item->gia_hien_tai = $item->gia_ban;
-                $item->gia_cu =  $item->gia_ban;
+                $item->gia_cu = $item->gia_ban;
 
                 if (isset($item->gia_khuyen_mai_tam_thoi) && $item->gia_khuyen_mai_tam_thoi) {
                     $item->gia_hien_tai = $item->gia_khuyen_mai_tam_thoi;
@@ -61,14 +63,14 @@ class GioHangController extends Controller
                 return $item;
             });
 
-            $sanPhamGiamGia = $gioHangs->filter(function($item) {
+            $sanPhamGiamGia = $gioHangs->filter(function ($item) {
                 return isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu;
-            })->map(function($item) {
+            })->map(function ($item) {
                 $item->tiet_kiem = ($item->gia_cu - $item->gia_hien_tai) * $item->so_luong;
                 return $item;
             });
 
-            $sanPhamNguyenGia = $gioHangs->filter(function($item) {
+            $sanPhamNguyenGia = $gioHangs->filter(function ($item) {
                 return $item->gia_cu == null;
             });
 
@@ -270,19 +272,24 @@ class GioHangController extends Controller
                 'ma_giam_gia' => 'required|string|exists:ma_khuyen_mais,ma_code',
             ]);
 
+
             $maGiamGia = MaKhuyenMai::where('ma_code', $validatedData['ma_giam_gia'])->first();
+
 
             if (!$maGiamGia || $maGiamGia->trang_thai === 0) {
                 return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
             }
 
+
             $userId = Auth::id();
+
 
             $sanPhamTrongGioHang = DB::table('gio_hangs')
                 ->where('user_id', $userId)
                 ->whereNull('deleted_at')
                 ->select('id as gio_hang_id', 'bien_the_san_pham_id', 'so_luong')
                 ->get();
+
 
             if ($sanPhamTrongGioHang->isEmpty()) {
                 return response()->json([
@@ -291,10 +298,12 @@ class GioHangController extends Controller
                 ], 400);
             }
 
+
             $nguoiDungMaKhuyenMai = DB::table('nguoi_dung_ma_khuyen_mai')
                 ->where('user_id', $userId)
                 ->where('ma_khuyen_mai_id', $maGiamGia->id)
                 ->first();
+
 
             if (!$nguoiDungMaKhuyenMai) {
                 DB::table('nguoi_dung_ma_khuyen_mai')->insert([
@@ -307,41 +316,64 @@ class GioHangController extends Controller
                 return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
             }
 
+
             $tongGiaTriGioHang = 0;
             $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
-            $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
-            $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
+            $sanPhamIds = $maGiamGia->sanPhams()->pluck('id')->toArray();
+            $allDanhMucIds = [];
+
+
+            if (!empty($danhMucIds)) {
+                $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
+                $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
+            }
+
 
             foreach ($sanPhamTrongGioHang as $gioHangItem) {
                 $bienTheSanPham = BienTheSanPham::find($gioHangItem->bien_the_san_pham_id);
+
 
                 if (!$bienTheSanPham) {
                     continue;
                 }
 
+
                 $sanPhamId = $bienTheSanPham->san_pham_id;
 
-                $sanPham = DB::table('san_phams')
-                    ->where('id', $sanPhamId)
-                    ->whereIn('danh_muc_id', $allDanhMucIds)
-                    ->first();
 
-                if ($sanPham) {
+                if (empty($allDanhMucIds) && empty($sanPhamIds)) {
                     $tongGiaTriGioHang += $bienTheSanPham->gia_ban * $gioHangItem->so_luong;
+                } else {
+                    $sanPham = DB::table('san_phams')
+                        ->where('id', $sanPhamId)
+                        ->where(function ($query) use ($allDanhMucIds, $sanPhamIds) {
+                            $query->whereIn('danh_muc_id', $allDanhMucIds)
+                                ->orWhereIn('id', $sanPhamIds);
+                        })
+                        ->first();
+
+
+                    if ($sanPham) {
+                        $tongGiaTriGioHang += $bienTheSanPham->gia_ban * $gioHangItem->so_luong;
+                    }
                 }
             }
 
+
             if ($tongGiaTriGioHang == 0) {
-                return response()->json(['status' => false, 'message' => 'Giỏ hàng trống.'], 400);
+                return response()->json(['status' => false, 'message' => 'Giỏ hàng trống hoặc không có sản phẩm áp dụng mã giảm giá.'], 400);
             }
+
 
             $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
                 ? ($tongGiaTriGioHang * $maGiamGia->giam_gia / 100)
                 : $maGiamGia->giam_gia;
 
+
             if ($soTienGiamGia > $tongGiaTriGioHang) {
                 $soTienGiamGia = $tongGiaTriGioHang;
             }
+
 
             return response()->json([
                 'status' => true,
@@ -361,7 +393,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 
     public function updateSelection(Request $request)
     {
@@ -416,7 +447,7 @@ class GioHangController extends Controller
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
                 ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                 ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
-                ->leftJoin('anh_bien_thes', function($join) {
+                ->leftJoin('anh_bien_thes', function ($join) {
                     $join->on('bien_the_san_phams.id', '=', 'anh_bien_thes.bien_the_san_pham_id')
                         ->whereRaw('anh_bien_thes.id = (SELECT MIN(id) FROM anh_bien_thes WHERE bien_the_san_pham_id = bien_the_san_phams.id)');
                 })

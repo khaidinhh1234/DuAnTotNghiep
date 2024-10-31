@@ -1,4 +1,3 @@
-
 // import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 // import instanceClient from "@/configs/client";
 // import "swiper/css";
@@ -115,7 +114,7 @@
 //                     <p className="text-xs text-gray-600 max-w-[140px] break-words">
 //                       {voucher.loai === "tien_mat"
 //                         ? `Giảm: ${formatCurrency(voucher.giam_gia)}`
-//                         : `Giảm: ${voucher.giam_gia}%`} 
+//                         : `Giảm: ${voucher.giam_gia}%`}
 //                       cho đơn từ {formatCurrency(voucher.chi_tieu_toi_thieu)}
 //                     </p>
 
@@ -158,7 +157,7 @@
 //         </section>
 //       </main>
 
-//       <VoucherDetail 
+//       <VoucherDetail
 //         isOpen={!!selectedVoucher}
 //         onClose={() => setSelectedVoucher(null)}
 //         voucher={selectedVoucher}
@@ -176,14 +175,14 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import { useState } from 'react';
-import VoucherDetail from '../vourcher/_component/vourcherDeatil';
-import { Pagination } from 'antd';
+import { useState } from "react";
+import VoucherDetail from "../vourcher/_component/vourcherDeatil";
+import { Pagination } from "antd";
 
 export interface Voucher {
   id: number;
   ma_code: string;
-  loai: 'tien_mat' | 'phan_tram';
+  loai: "tien_mat" | "phan_tram";
   giam_gia: number;
   chi_tieu_toi_thieu: number;
   so_luong: number;
@@ -225,12 +224,17 @@ const MyVoucher = () => {
     queryFn: getVouchers,
   });
 
-  const activeVouchers = vouchersData?.data.filter((voucher: Voucher) => voucher.trang_thai === 1) || [];
-  
+  const activeVouchers =
+    vouchersData?.data.filter((voucher: Voucher) => voucher.trang_thai === 1) ||
+    [];
+
   const totalVouchers = activeVouchers.length;
   const indexOfLastVoucher = currentPage * pageSize;
   const indexOfFirstVoucher = indexOfLastVoucher - pageSize;
-  const currentVouchers = activeVouchers.slice(indexOfFirstVoucher, indexOfLastVoucher);
+  const currentVouchers = activeVouchers.slice(
+    indexOfFirstVoucher,
+    indexOfLastVoucher
+  );
 
   const [savedVouchers, setSavedVouchers] = useState<string[]>(() => {
     return activeVouchers
@@ -243,9 +247,9 @@ const MyVoucher = () => {
       return instanceClient.post(`/thu-thap-ma-khuyen-mai/${maCode}`);
     },
     onSuccess: (_, maCode) => {
-      setSavedVouchers(prev => [...prev, maCode]);
-      queryClient.invalidateQueries({ queryKey: ['vouchers'] });
-    }
+      setSavedVouchers((prev) => [...prev, maCode]);
+      queryClient.invalidateQueries({ queryKey: ["vouchers"] });
+    },
   });
 
   const handleSaveVoucher = (maCode: string) => {
@@ -264,7 +268,7 @@ const MyVoucher = () => {
     <div className="">
       <main>
         <section className="container">
-          <div className="space-y-6 px-4">
+          <div className="space-y-6 ">
             <h2 className="text-2xl font-bold text-black-500">
               Vocher của bạn
             </h2>
@@ -278,7 +282,10 @@ const MyVoucher = () => {
                     <div className="bg-red-100 text-red-500 font-bold text-xs px-2 py-0.5 rounded-l-full shadow-md relative">
                       x {voucher.so_luong - voucher.so_luong_da_su_dung}
                     </div>
-                    <div className="absolute -bottom-1 -right-0 w-1 h-1 bg-[#fe9f8c]" style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}></div>
+                    <div
+                      className="absolute -bottom-1 -right-0 w-1 h-1 bg-[#fe9f8c]"
+                      style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
+                    ></div>
                   </div>
 
                   <div className="absolute -top-2 right-28 w-3 h-3 bg-gray-100 rounded-full md:block hidden"></div>
@@ -294,7 +301,7 @@ const MyVoucher = () => {
                     <p className="text-xs text-gray-600 max-w-[180px] break-words">
                       {voucher.loai === "tien_mat"
                         ? `Giảm: ${formatCurrency(voucher.giam_gia)}`
-                        : `Giảm: ${voucher.giam_gia}%`} 
+                        : `Giảm: ${voucher.giam_gia}%`}
                       cho đơn từ {formatCurrency(voucher.chi_tieu_toi_thieu)}
                     </p>
 
@@ -323,17 +330,17 @@ const MyVoucher = () => {
                       disabled={voucher.da_thu_thap === 1}
                       className={`${
                         voucher.da_thu_thap === 1
-                          ? 'bg-gray-400'
-                          : 'bg-[#63b1bc]'
+                          ? "bg-gray-400"
+                          : "bg-[#63b1bc]"
                       } text-white font-semibold py-1.5 px-6 rounded text-sm whitespace-nowrap`}
                     >
-                      {voucher.da_thu_thap === 1 ? 'Đã lưu' : 'Lưu mã'}
+                      {voucher.da_thu_thap === 1 ? "Đã lưu" : "Lưu mã"}
                     </button>
                   </div>
                 </div>
               ))}
             </div>
-            
+
             {totalVouchers > 6 && (
               <div className="flex justify-center mt-6">
                 <Pagination
@@ -349,12 +356,16 @@ const MyVoucher = () => {
         </section>
       </main>
 
-      <VoucherDetail 
+      <VoucherDetail
         isOpen={!!selectedVoucher}
         onClose={() => setSelectedVoucher(null)}
         voucher={selectedVoucher}
         onSave={handleSaveVoucher}
-        isSaved={selectedVoucher ? savedVouchers.includes(selectedVoucher.ma_code) : false}
+        isSaved={
+          selectedVoucher
+            ? savedVouchers.includes(selectedVoucher.ma_code)
+            : false
+        }
       />
     </div>
   );

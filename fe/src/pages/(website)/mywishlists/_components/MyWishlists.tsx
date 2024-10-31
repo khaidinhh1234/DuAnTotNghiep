@@ -29,16 +29,19 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
   return (
     <>
       <div className="lg:col-span-9  col-span-8 mx-auto">
-        {/* Content */}
-        <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14">
+        {/* Content */}{" "}
+        <h2 className="text-2xl font-bold text-black-500 mx-4">
+          Sản phẩm yêu thích của bạn
+        </h2>
+        <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14 px-3">
           {yeuthich && yeuthich.length !== 0 ? (
             yeuthich?.map((product: any, index: any) => (
               <div
-                className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
+                className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[290px] w-[350px] mx-auto lg:mx-0"
                 key={index}
               >
                 <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
-                  <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
+                  <div className="relative lg:w-full w-[350px] lg:h-[335px] h-[400px]">
                     {isPending ? (
                       <span>
                         <i className="fa-sharp-duotone fa-solid fa-loader fa-spin-pulse px-3 py-[10px] rounded-full absolute top-3 right-4 btn invisible opacity-0 transition-opacity duration-300"></i>
@@ -52,7 +55,7 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
                       <img
                         src={product?.anh_san_pham}
                         alt=""
-                        className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
+                        className="lg:w-[300px] w-[500px] lg:h-[330px] h-[400px] rounded-t-md"
                       />
                     </Link>
                     <View id={product?.duong_dan} ID={product?.id} />
@@ -76,10 +79,8 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
                           {(product?.gia_thap_nhat ?? 0).toLocaleString(
                             "vi-VN"
                           )}{" "}
-                          12341243214 đ
                           <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
                           {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")}{" "}
-                          1231294u324 đ
                         </>
                       )}
                     </p>
@@ -91,9 +92,9 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
             <>
               <div className="col-span-9 h-[530px] ">
                 <img
-                  src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729595866/rb_3715_j1zqey.png"
+                  src="https://res.cloudinary.com/dpypwbeis/image/upload/v1730343472/zh60sofc5dxucpb9lv5i.png"
                   alt=""
-                  className="w-[75%] h-full mx-auto"
+                  className="w-[25%] h-auto mx-auto mt-24"
                 />
               </div>
             </>

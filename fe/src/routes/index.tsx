@@ -141,6 +141,7 @@ import Page1 from "@/pages/(website)/Shopuudai/shop";
 import MyVoucher from "@/pages/(website)/myvocher/myvocher";
 import TaiChinh from "@/pages/(website)/mywallet/wallte";
 import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
+import CreditCardForm from "@/pages/(website)/mywallet/cart";
 
 const Router = () => {
   //
@@ -166,6 +167,7 @@ const Router = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<Test />} />{" "}
+          {/* <Route path="/thankyou" element={<ThankYouPage />} />{" "} */}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route
             path="/shippingAddressPage"
@@ -185,6 +187,8 @@ const Router = () => {
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
             <Route path="/mypro/wallet" element={<TaiChinh />} />
+            <Route path="/mypro/cart" element={<CreditCardForm />} />
+
             <Route path="/mypro/doangthu" element={<RevenuePage />} />
 
 
