@@ -47,8 +47,15 @@ class TaiKhoanController extends Controller
             $userID = Auth::id();
             $user = User::find($userID);
             $viUser = $user->viTien;
+            if (!$viUser) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Người dùng chưa có ví tiền',
+                ], 404);
+            }
             $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
-            dd($lichSuGiaoDich);
+
             $data = [
                 'viUser' => $viUser,
                 'lichSuGiaoDich' => $lichSuGiaoDich,
@@ -69,3 +76,5 @@ class TaiKhoanController extends Controller
         }
     }
 }
+
+
