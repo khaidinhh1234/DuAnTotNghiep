@@ -481,6 +481,7 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
+
     public function huyDonHang(Request $request)
     {
         $request->validate([

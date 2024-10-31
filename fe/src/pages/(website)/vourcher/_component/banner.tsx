@@ -1,15 +1,13 @@
-
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
-import { Carousel } from 'antd';
+import { Carousel } from "antd";
 import { bannervoucher } from "@/assets/img";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-console.log('Fallback banner:', bannervoucher); 
-
+console.log("Fallback banner:", bannervoucher);
 
 interface Promotion {
   id: number;
@@ -21,14 +19,14 @@ interface Promotion {
   ngay_bat_dau: string;
   ngay_ket_thuc: string;
   gia_tri_uu_dai: number;
-  loai: 'tien' | 'phan_tram';
+  loai: "tien" | "phan_tram";
 }
 
 const Banner = () => {
   const { data: promotions = [] } = useQuery({
-    queryKey: ['promotions'],
+    queryKey: ["promotions"],
     queryFn: async () => {
-      const response = await instanceClient.get('/chuong-trinh-uu-dai');
+      const response = await instanceClient.get("/chuong-trinh-uu-dai");
       return response.data.data as Promotion[];
     },
   });
@@ -37,7 +35,7 @@ const Banner = () => {
     <div className="relative">
       <section>
         <div className="container">
-          <div className="[&_.slick-dots]:!bottom-4 [&_.slick-dots_li.slick-active_button]:!bg-white [&_.slick-dots_li_button]:!bg-white/50">
+          <div className="">
             <Carousel
               autoplay
               autoplaySpeed={3000}
@@ -45,17 +43,28 @@ const Banner = () => {
               arrows={true}
               effect="fade"
             >
-              {promotions?.map((promotion) => (
-                <div key={promotion?.id}>
-                  <a href={`/shop/${promotion?.duong_dan}`}>
-                    <img
- src={promotion?.duong_dan_anh || bannervoucher} 
-                      alt={promotion?.ten_uu_dai}
-                      className="w-full md:bg-center bg-top bg-cover md:h-[550px] h-[250px] rounded cursor-pointer"
-                    />
-                  </a>
-                </div>
-              ))}
+              {promotions.length != 0 ? (
+                promotions?.map((promotion) => (
+                  <div key={promotion?.id}>
+                    <a href={`/shop/${promotion?.duong_dan}`}>
+                      <img
+                        src={
+                          promotion?.duong_dan_anh ||
+                          "https://res.cloudinary.com/dpypwbeis/image/upload/v1730302252/nb5vfqzp02pwzjogckyl.png"
+                        }
+                        alt={promotion?.ten_uu_dai}
+                        className="w-full md:bg-center bg-top bg-cover md:h-[550px] h-[250px] rounded cursor-pointer"
+                      />
+                    </a>
+                  </div>
+                ))
+              ) : (
+                <img
+                  src="https://res.cloudinary.com/dpypwbeis/image/upload/v1730302252/nb5vfqzp02pwzjogckyl.png"
+                  alt="Promotion Banner"
+                  className="w-full md:bg-center bg-top bg-cover md:h-[550px] h-[250px] rounded cursor-pointer"
+                />
+              )}
             </Carousel>
           </div>
         </div>

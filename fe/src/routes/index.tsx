@@ -139,6 +139,7 @@ import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenma
 import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
 import Page1 from "@/pages/(website)/Shopuudai/shop";
 import MyVoucher from "@/pages/(website)/myvocher/myvocher";
+import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
 
 const Router = () => {
   //
@@ -164,6 +165,7 @@ const Router = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<Test />} />{" "}
+          <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route
             path="/shippingAddressPage"
