@@ -30,6 +30,7 @@ const MyWishlists = () => {
   //   }
   // }, [yeuthich1, refetch]);
   // console.log(data);
+  // console.log(data);
   const yeuthich = data?.data;
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error...</div>;

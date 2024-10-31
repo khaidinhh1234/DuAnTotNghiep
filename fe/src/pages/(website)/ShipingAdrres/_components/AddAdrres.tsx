@@ -226,24 +226,24 @@ const AddAddressForm = ({ register, products }: any) => {
       <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio">
         <input
           type="radio"
-          value="Thanh toán qua MoMo"
+          value="MoMo_QR"
           {...register("phuong_thuc_thanh_toan")}
           className="bg-blackL"
         />
         <label htmlFor="googlePay" className="title-h3 px-3">
-          Thanh toán bằng thẻ MoMo
+          Thanh toán qua MoMo QR
         </label>
       </div>
       <div className="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio">
         <input
           type="radio"
           id="paypal"
-          value="Thanh toán qua Ngân hàng"
+          value="Momo_ATM"
           {...register("phuong_thuc_thanh_toan")}
           className="bg-blackL"
         />
         <label htmlFor="paypal" className="title-h3 px-3">
-          MoMo Quét mã QR
+          Thanh toán qua MoMo ATM
         </label>
       </div>
       <div className="border-t border-hrBlack pt-4 mb-7 flex items-center custom-radio">

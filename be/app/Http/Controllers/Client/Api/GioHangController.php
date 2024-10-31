@@ -321,81 +321,79 @@ class GioHangController extends Controller
                 return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
             }
 
-        $tongGiaTriGioHang = 0;
+            $tongGiaTriGioHang = 0;
 
-        $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
-        $allDanhMucIds = $this->getAllDanhMucIds($danhMucIds);
-        $sanPhamIds = $maGiamGia->sanPhams()->pluck('id')->toArray();
+            $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
+            $allDanhMucIds = $this->getAllDanhMucIds($danhMucIds);
+            $sanPhamIds = $maGiamGia->sanPhams()->pluck('id')->toArray();
 
-        foreach ($sanPhamTrongGioHang as $gioHangItem) {
-            $bienTheSanPham = BienTheSanPham::find($gioHangItem->bien_the_san_pham_id);
+            foreach ($sanPhamTrongGioHang as $gioHangItem) {
+                $bienTheSanPham = BienTheSanPham::find($gioHangItem->bien_the_san_pham_id);
 
-            if (!$bienTheSanPham) {
-                continue;
-            }
+                if (!$bienTheSanPham) {
+                    continue;
+                }
 
-            $sanPhamId = $bienTheSanPham->san_pham_id;
+                $sanPhamId = $bienTheSanPham->san_pham_id;
 
-            $giaApDung = $bienTheSanPham->gia_khuyen_mai_tam_thoi
-                ?? $bienTheSanPham->gia_khuyen_mai
-                ?? $bienTheSanPham->gia_ban;
+                $giaApDung = $bienTheSanPham->gia_khuyen_mai_tam_thoi
+                    ?? $bienTheSanPham->gia_khuyen_mai
+                    ?? $bienTheSanPham->gia_ban;
 
-            if (empty($allDanhMucIds) && empty($sanPhamIds)) {
-                $tongGiaTriGioHang += $giaApDung * $gioHangItem->so_luong;
-            } else {
-                $sanPham = DB::table('san_phams')
-                    ->where('id', $sanPhamId)
-                    ->where(function ($query) use ($allDanhMucIds, $sanPhamIds) {
-                        $query->whereIn('danh_muc_id', $allDanhMucIds)
-                            ->orWhereIn('id', $sanPhamIds);
-                    })
-                    ->first();
-
-                if ($sanPham) {
+                if (empty($allDanhMucIds) && empty($sanPhamIds)) {
                     $tongGiaTriGioHang += $giaApDung * $gioHangItem->so_luong;
+                } else {
+                    $sanPham = DB::table('san_phams')
+                        ->where('id', $sanPhamId)
+                        ->where(function ($query) use ($allDanhMucIds, $sanPhamIds) {
+                            $query->whereIn('danh_muc_id', $allDanhMucIds)
+                                ->orWhereIn('id', $sanPhamIds);
+                        })
+                        ->first();
+
+                    if ($sanPham) {
+                        $tongGiaTriGioHang += $giaApDung * $gioHangItem->so_luong;
+                    }
                 }
             }
-        }
 
-        if ($tongGiaTriGioHang == 0) {
-            return response()->json(['status' => false, 'message' => 'Giỏ hàng trống hoặc không có sản phẩm áp dụng mã giảm giá.'], 400);
-        }
+            if ($tongGiaTriGioHang == 0) {
+                return response()->json(['status' => false, 'message' => 'Giỏ hàng trống hoặc không có sản phẩm áp dụng mã giảm giá.'], 400);
+            }
 
-        if ($maGiamGia->chi_tieu_toi_thieu && $tongGiaTriGioHang < $maGiamGia->chi_tieu_toi_thieu) {
+            if ($maGiamGia->chi_tieu_toi_thieu && $tongGiaTriGioHang < $maGiamGia->chi_tieu_toi_thieu) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tổng giá trị giỏ hàng chưa đạt mức chi tiêu tối thiểu để áp dụng mã giảm giá.',
+                ], 400);
+            }
+
+            $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                ? ($tongGiaTriGioHang * $maGiamGia->giam_gia / 100)
+                : $maGiamGia->giam_gia;
+
+            if ($soTienGiamGia > $tongGiaTriGioHang) {
+                $soTienGiamGia = $tongGiaTriGioHang;
+            }
+
             return response()->json([
-                'status' => false,
-                'message' => 'Tổng giá trị giỏ hàng chưa đạt mức chi tiêu tối thiểu để áp dụng mã giảm giá.',
-            ], 400);
-        }
-
-        $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-            ? ($tongGiaTriGioHang * $maGiamGia->giam_gia / 100)
-            : $maGiamGia->giam_gia;
-
-        if ($soTienGiamGia > $tongGiaTriGioHang) {
-            $soTienGiamGia = $tongGiaTriGioHang;
-        }
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Mã giảm giá đã được áp dụng thành công.',
-            'tong_gia_tri_gio_hang' => $tongGiaTriGioHang,
-            'so_tien_giam_gia' => $soTienGiamGia,
-            'tong_gia_tri_sau_giam' => $tongGiaTriGioHang - $soTienGiamGia,
-            'ap_dung_ma_giam_gia' => [
-                'ma_giam_gia' => $validatedData['ma_giam_gia'],
+                'status' => true,
+                'message' => 'Mã giảm giá đã được áp dụng thành công.',
+                'tong_gia_tri_gio_hang' => $tongGiaTriGioHang,
                 'so_tien_giam_gia' => $soTienGiamGia,
-            ],
-        ]);
-    } catch (\Exception $e) {
+                'tong_gia_tri_sau_giam' => $tongGiaTriGioHang - $soTienGiamGia,
+                'ap_dung_ma_giam_gia' => [
+                    'ma_giam_gia' => $validatedData['ma_giam_gia'],
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                ],
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
             ], 500);
         }
     }
-
-
 
     public function updateSelection(Request $request)
     {
@@ -528,5 +526,4 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 }
