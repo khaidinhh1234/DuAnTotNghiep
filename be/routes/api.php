@@ -159,6 +159,7 @@ Route::middleware([])
         //Tài khoản
         Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
         Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan'])->middleware('auth:sanctum');
+        Route::get('/danh-sach-ngan-hang',[ApiTaiKhoanController::class, 'nganHangUser'])->middleware('auth:sanctum');
 
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
     });
