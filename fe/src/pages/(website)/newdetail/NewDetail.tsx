@@ -35,6 +35,7 @@ const NewDetail = () => {
               className="w-full h-[700px] rounded-[5px] object-cover"
             />
             <div className="mt-4">
+            <span className="text-xs text-gray-400">{data.baiVietMoiNhatCuaDanhMuc.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span> 
               <h2 className="text-2xl font-bold mb-2">{data.baiVietMoiNhatCuaDanhMuc.tieu_de}</h2>
               <p className="text-gray-700 mb-4" dangerouslySetInnerHTML={{ __html: truncateContent(data.baiVietMoiNhatCuaDanhMuc.noi_dung, 400) }}></p>
               <span className="text-sm text-gray-400">Ngày tạo: {data.baiVietMoiNhatCuaDanhMuc.created_at}</span>
@@ -58,6 +59,7 @@ const NewDetail = () => {
                   className="w-20 h-20 rounded-lg object-cover"
                 />
                 <div>
+                <span className="text-xs text-gray-400">{article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span> 
                   <h3 className="text-lg font-medium">{article.tieu_de}</h3>
                   <span className="text-xs text-gray-400">{article.created_at}</span>
                 </div>
