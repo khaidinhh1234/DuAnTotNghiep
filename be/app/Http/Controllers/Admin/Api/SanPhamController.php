@@ -403,13 +403,42 @@ class SanPhamController extends Controller
             if (Auth::guard('api')->check()) {
                 $userId = Auth::guard('api')->id();
                 $user = User::findOrFail($userId);
-                $data = $user->sanPhamYeuThich()->with([
-                    'danhMuc',
-                    'bienTheSanPham.anhBienThe',
-                    'bienTheSanPham.mauBienThe',
-                    'bienTheSanPham.kichThuocBienThe',
-                    'boSuuTapSanPham'
-                ])->get();
+                $data = $user->sanPhamYeuThich()
+                    ->with([
+                        'danhMuc',
+                        'bienTheSanPham.anhBienThe',
+                        'bienTheSanPham.mauBienThe',
+                        'bienTheSanPham.kichThuocBienThe',
+                        'boSuuTapSanPham'
+                    ])
+                    ->select(
+                        'san_phams.id',
+                        'san_phams.ten_san_pham',
+                        'san_phams.anh_san_pham',
+                        'san_phams.created_at',
+                        'san_phams.ma_san_pham',
+                        'san_phams.duong_dan',
+                        'san_phams.hang_moi',
+                        'san_pham_yeu_thich.user_id as pivot_user_id',
+                        'san_pham_yeu_thich.san_pham_id as pivot_san_pham_id'
+                    )
+                    ->addSelect([
+                        DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
+                        DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
+                    ])
+                    ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+                    ->groupBy(
+                        'san_phams.id',
+                        'san_phams.ten_san_pham',
+                        'san_phams.anh_san_pham',
+                        'san_phams.created_at',
+                        'san_phams.ma_san_pham',
+                        'san_phams.duong_dan',
+                        'san_phams.hang_moi',
+                        'pivot_user_id',
+                        'pivot_san_pham_id'
+                    )
+                    ->get();
 
                 return response()->json([
                     'status' => true,
@@ -438,11 +467,11 @@ class SanPhamController extends Controller
     {
         try {
             if (!Auth::guard('api')->check()) {
-            return response()->json([
-                'status' => false,
-                'status_code' => 401,
-                'mess' => 'Vui lòng đăng nhập để thêm sản phẩm yêu thích',
-            ], 401);
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 401,
+                    'mess' => 'Vui lòng đăng nhập để thêm sản phẩm yêu thích',
+                ], 401);
             }
 
             $userId = Auth::guard('api')->id();
@@ -452,18 +481,18 @@ class SanPhamController extends Controller
             $isFavorite = $user->sanPhamYeuThich()->where('san_pham_id', $id)->exists();
 
             if ($isFavorite) {
-            $user->sanPhamYeuThich()->detach($id);
-            $mess = 'Sản phẩm đã được xóa khỏi danh sách yêu thích';
+                $user->sanPhamYeuThich()->detach($id);
+                $mess = 'Sản phẩm đã được xóa khỏi danh sách yêu thích';
             } else {
-            $user->sanPhamYeuThich()->attach($id);
-            $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
+                $user->sanPhamYeuThich()->attach($id);
+                $mess = 'Sản phẩm đã được thêm vào danh sách yêu thích';
             }
 
             return response()->json([
-            'status' => true,
-            'status_code' => 200,
-            'mess' => $mess,
-            'data' => $sanPham,
+                'status' => true,
+                'status_code' => 200,
+                'mess' => $mess,
+                'data' => $sanPham,
             ], 200);
         } catch (\Exception $exception) {
             return response()->json([
