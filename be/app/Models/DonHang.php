@@ -43,7 +43,7 @@ class DonHang extends Model
     // Trạng thái thanh toán
     const TTTT_CTT = 'Chưa thanh toán';
     const TTTT_DTT = 'Đã thanh toán';
-     const TTTT_DHT = "Đã hoàn hàng";
+    const TTTT_DHT = "Đã hoàn hàng";
 
     protected $fillable = [
         'user_id',
@@ -98,7 +98,8 @@ class DonHang extends Model
         );
     }
 
-    public function hoanTien(){
+    public function hoanTien()
+    {
         return $this->hasOne(HoanTien::class, 'don_hang_id', 'id');
     }
 
@@ -117,8 +118,8 @@ class DonHang extends Model
     {
         $phuongThucThanhToanNames = [
             self::PTTT_TT => 'Thanh toán khi nhận hàng',
-            self::PTTT_MM => 'Thanh toán qua Momo',
-            self::PTTT_NH => 'Thanh toán qua ngân hàng',
+            self::PTTT_MM_ATM => 'Thanh toán qua Momo ATM',
+            self::PTTT_MM_QR => 'Thanh toán qua MoMo QR',
         ];
 
         return $phuongThucThanhToanNames[$phuongThucThanhToan] ?? 'Phương thức thanh toán không xác định';
