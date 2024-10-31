@@ -87,4 +87,31 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+
+    public function huyLienKetNganHang($id){
+        try {
+            $user = Auth::user();
+            $nganHang = $user->nganHang->find($id);
+            if(!$nganHang){
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Không tìm thấy ngân hàng',
+                ], 404);
+            }
+            $nganHang->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Hủy liên kết ngân hàng thành công',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi hủy liên kết ngân hàng',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

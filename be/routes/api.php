@@ -160,6 +160,7 @@ Route::middleware([])
         Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
         Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan'])->middleware('auth:sanctum');
         Route::get('/danh-sach-ngan-hang',[ApiTaiKhoanController::class, 'nganHangUser'])->middleware('auth:sanctum');
+        Route::post('/huy-lien-ket-ngan-hang/{id}',[ApiTaiKhoanController::class, 'huyLienKetNganHang'])->middleware('auth:sanctum');
 
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
     });
