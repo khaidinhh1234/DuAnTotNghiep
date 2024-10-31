@@ -127,7 +127,7 @@ const Test = () => {
         <h1 className="text-3xl font-bold mb-6">Giỏ hàng</h1>
 
         {/* Thông báo */}
-        {/* <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+        <div className="bg-white shadow-md rounded-lg p-6 mb-8">
             <p className="font-bold text-green-600">
               Chúc mừng! Đơn hàng của bạn được{" "}
               <span className="text-green-700">Miễn phí vận chuyển</span>
@@ -135,7 +135,7 @@ const Test = () => {
             <div className="bg-green-100 rounded-full h-2 mt-3">
               <div className="bg-green-500 h-full w-full"></div>
             </div>
-          </div> */}
+          </div>
 
         {/* Khuyến mãi */}
         {/* <div className="flex items-center justify-between bg-red-100 text-red-600 px-6 py-4 rounded-lg mb-8">

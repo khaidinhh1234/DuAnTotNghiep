@@ -89,7 +89,7 @@ Route::middleware([])
         // Client Tin tức
         Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layTatCaDanhMuc']);
 
-        Route::get('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
+        Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
 
         //Thanh toán MoMo
@@ -117,11 +117,6 @@ Route::middleware([])
 
         // Trang bộ sưu tập
         Route::get('bo-suu-tap/{slug}', [App\Http\Controllers\Client\Api\BoSuuTapController::class, 'show']);
-
-
-
-
-
 
         Route::middleware('auth.sanctum')->group(function () {
             // Giỏ hàng
@@ -163,6 +158,7 @@ Route::middleware([])
 
         //Tài khoản
         Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
+        Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan'])->middleware('auth:sanctum');
 
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
     });
