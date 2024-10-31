@@ -76,7 +76,7 @@ class MoMoController extends Controller
             $jsonResult = json_decode($result, true);
 
             if (isset($jsonResult['payUrl'])) {
-                return redirect($jsonResult['payUrl']);
+                return response()->json(['payUrl' => $jsonResult['payUrl']]);
             } else {
                 return response()->json(['message' => 'Không tạo được URL thanh toán'], 500);
             }
@@ -120,7 +120,7 @@ class MoMoController extends Controller
             $jsonResult = json_decode($result, true);
 
             if (isset($jsonResult['payUrl'])) {
-                return redirect($jsonResult['payUrl']);
+                return response()->json(['payUrl' => $jsonResult['payUrl']]);
             } else {
                 return response()->json(['message' => 'Không tạo được URL thanh toán'], 500);
             }

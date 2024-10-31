@@ -118,8 +118,8 @@ class DonHang extends Model
     {
         $phuongThucThanhToanNames = [
             self::PTTT_TT => 'Thanh toán khi nhận hàng',
-            self::PTTT_MM => 'Thanh toán qua Momo',
-            self::PTTT_NH => 'Thanh toán qua ngân hàng',
+            self::PTTT_MM_ATM => 'Thanh toán qua Momo ATM',
+            self::PTTT_MM_QR => 'Thanh toán qua MoMo QR',
         ];
 
         return $phuongThucThanhToanNames[$phuongThucThanhToan] ?? 'Phương thức thanh toán không xác định';

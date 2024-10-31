@@ -43,20 +43,17 @@ class GioHangController extends Controller
                 ->get();
 
             $gioHangs->transform(function ($item) {
-                $bienThe = BienTheSanPham::with([
-                    'anhBienThe' => function ($query) {
-                        $query->first();
-                    }
-                ])->find($item->bien_the_san_pham_id);
+                $bienThe = BienTheSanPham::with(['anhBienThe' => function ($query) {
+                    $query->first();
+                }])->find($item->bien_the_san_pham_id);
 
                 $item->hinh_anh = optional($bienThe->anhBienThe->first())->duong_dan_anh;
-
                 $item->gia_hien_tai = $item->gia_ban;
                 $item->gia_cu = $item->gia_ban;
 
-                if (isset($item->gia_khuyen_mai_tam_thoi) && $item->gia_khuyen_mai_tam_thoi) {
+                if (!is_null($item->gia_khuyen_mai_tam_thoi) && $item->gia_khuyen_mai_tam_thoi > 0) {
                     $item->gia_hien_tai = $item->gia_khuyen_mai_tam_thoi;
-                } elseif (isset($item->gia_khuyen_mai) && $item->gia_khuyen_mai) {
+                } elseif (!is_null($item->gia_khuyen_mai) && $item->gia_khuyen_mai > 0) {
                     $item->gia_hien_tai = $item->gia_khuyen_mai;
                 }
 
@@ -71,7 +68,7 @@ class GioHangController extends Controller
             });
 
             $sanPhamNguyenGia = $gioHangs->filter(function ($item) {
-                return $item->gia_cu == null;
+                return is_null($item->gia_khuyen_mai) && is_null($item->gia_khuyen_mai_tam_thoi);
             });
 
             $tongSoLuong = $gioHangs->sum('so_luong');
@@ -90,6 +87,7 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
     public function store(Request $request)
     {
         try {
@@ -265,6 +263,20 @@ class GioHangController extends Controller
         }
     }
 
+    private function getAllDanhMucIds($danhMucIds)
+    {
+        $allIds = collect($danhMucIds);
+
+        foreach ($danhMucIds as $danhMucId) {
+            $children = DB::table('danh_mucs')->where('cha_id', $danhMucId)->pluck('id')->toArray();
+            if (!empty($children)) {
+                $allIds = $allIds->merge($this->getAllDanhMucIds($children));
+            }
+        }
+
+        return $allIds->unique()->toArray();
+    }
+
     public function apDungMaGiamGia(Request $request)
     {
         try {
@@ -272,24 +284,19 @@ class GioHangController extends Controller
                 'ma_giam_gia' => 'required|string|exists:ma_khuyen_mais,ma_code',
             ]);
 
-
             $maGiamGia = MaKhuyenMai::where('ma_code', $validatedData['ma_giam_gia'])->first();
-
 
             if (!$maGiamGia || $maGiamGia->trang_thai === 0) {
                 return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
             }
 
-
             $userId = Auth::id();
-
 
             $sanPhamTrongGioHang = DB::table('gio_hangs')
                 ->where('user_id', $userId)
                 ->whereNull('deleted_at')
                 ->select('id as gio_hang_id', 'bien_the_san_pham_id', 'so_luong')
                 ->get();
-
 
             if ($sanPhamTrongGioHang->isEmpty()) {
                 return response()->json([
@@ -298,12 +305,10 @@ class GioHangController extends Controller
                 ], 400);
             }
 
-
             $nguoiDungMaKhuyenMai = DB::table('nguoi_dung_ma_khuyen_mai')
                 ->where('user_id', $userId)
                 ->where('ma_khuyen_mai_id', $maGiamGia->id)
                 ->first();
-
 
             if (!$nguoiDungMaKhuyenMai) {
                 DB::table('nguoi_dung_ma_khuyen_mai')->insert([
@@ -316,33 +321,27 @@ class GioHangController extends Controller
                 return response()->json(['status' => false, 'message' => 'Bạn đã sử dụng mã giảm giá này.'], 400);
             }
 
-
             $tongGiaTriGioHang = 0;
+
             $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
+            $allDanhMucIds = $this->getAllDanhMucIds($danhMucIds);
             $sanPhamIds = $maGiamGia->sanPhams()->pluck('id')->toArray();
-            $allDanhMucIds = [];
-
-
-            if (!empty($danhMucIds)) {
-                $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
-                $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
-            }
-
 
             foreach ($sanPhamTrongGioHang as $gioHangItem) {
                 $bienTheSanPham = BienTheSanPham::find($gioHangItem->bien_the_san_pham_id);
-
 
                 if (!$bienTheSanPham) {
                     continue;
                 }
 
-
                 $sanPhamId = $bienTheSanPham->san_pham_id;
 
+                $giaApDung = $bienTheSanPham->gia_khuyen_mai_tam_thoi
+                    ?? $bienTheSanPham->gia_khuyen_mai
+                    ?? $bienTheSanPham->gia_ban;
 
                 if (empty($allDanhMucIds) && empty($sanPhamIds)) {
-                    $tongGiaTriGioHang += $bienTheSanPham->gia_ban * $gioHangItem->so_luong;
+                    $tongGiaTriGioHang += $giaApDung * $gioHangItem->so_luong;
                 } else {
                     $sanPham = DB::table('san_phams')
                         ->where('id', $sanPhamId)
@@ -352,28 +351,30 @@ class GioHangController extends Controller
                         })
                         ->first();
 
-
                     if ($sanPham) {
-                        $tongGiaTriGioHang += $bienTheSanPham->gia_ban * $gioHangItem->so_luong;
+                        $tongGiaTriGioHang += $giaApDung * $gioHangItem->so_luong;
                     }
                 }
             }
-
 
             if ($tongGiaTriGioHang == 0) {
                 return response()->json(['status' => false, 'message' => 'Giỏ hàng trống hoặc không có sản phẩm áp dụng mã giảm giá.'], 400);
             }
 
+            if ($maGiamGia->chi_tieu_toi_thieu && $tongGiaTriGioHang < $maGiamGia->chi_tieu_toi_thieu) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tổng giá trị giỏ hàng chưa đạt mức chi tiêu tối thiểu để áp dụng mã giảm giá.',
+                ], 400);
+            }
 
             $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
                 ? ($tongGiaTriGioHang * $maGiamGia->giam_gia / 100)
                 : $maGiamGia->giam_gia;
 
-
             if ($soTienGiamGia > $tongGiaTriGioHang) {
                 $soTienGiamGia = $tongGiaTriGioHang;
             }
-
 
             return response()->json([
                 'status' => true,
@@ -393,7 +394,6 @@ class GioHangController extends Controller
             ], 500);
         }
     }
-
 
     public function updateSelection(Request $request)
     {
@@ -524,182 +524,6 @@ class GioHangController extends Controller
                 'status' => false,
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
             ], 500);
-        }
-    }
-
-    // local
-    public function themVaoGioHang(Request $request)
-    {
-        $request->validate([
-            'bien_the_san_pham_id' => 'required|integer|exists:bien_the_san_phams,id',
-            'so_luong' => 'required|integer|min:1',
-        ]);
-
-        try {
-            $bien_the_san_pham_id = $request->bien_the_san_pham_id;
-            $so_luong = $request->so_luong;
-            $gioHang = session()->get('gio_hang', []);
-
-            $bienTheSanPham = DB::table('bien_the_san_phams')->find($bien_the_san_pham_id);
-
-            if (!$bienTheSanPham) {
-                return response()->json(['error' => 'Biến thể sản phẩm không tồn tại'], 404);
-            }
-
-            if ($so_luong > $bienTheSanPham->so_luong_bien_the) {
-                return response()->json(['error' => 'Số lượng yêu cầu vượt quá số lượng có sẵn'], 400);
-            }
-
-            if (isset($gioHang[$bien_the_san_pham_id])) {
-                $gioHang[$bien_the_san_pham_id]['so_luong'] += $so_luong;
-
-                if ($gioHang[$bien_the_san_pham_id]['so_luong'] > $bienTheSanPham->so_luong_bien_the) {
-                    return response()->json(['error' => 'Số lượng trong giỏ hàng vượt quá số lượng có sẵn'], 400);
-                }
-            } else {
-                $gioHang[$bien_the_san_pham_id] = [
-                    'bien_the_san_pham_id' => $bien_the_san_pham_id,
-                    'so_luong' => $so_luong,
-                ];
-            }
-
-            session()->put('gio_hang', $gioHang);
-            Log::info('lấy giỏ hàng:', session()->get('gio_hang'));
-            return response()->json(['message' => 'Đã thêm vào giỏ hàng thành công']);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi thêm vào giỏ hàng:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Có lỗi xảy ra khi thêm vào giỏ hàng: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function tangSoLuongLocal(Request $request)
-    {
-        $request->validate([
-            'bien_the_san_pham_id' => 'required|integer|exists:bien_the_san_phams,id',
-        ]);
-
-        try {
-            $bien_the_san_pham_id = $request->bien_the_san_pham_id;
-            $gioHang = session()->get('gio_hang', []);
-
-            if (isset($gioHang[$bien_the_san_pham_id])) {
-                $bienTheSanPham = DB::table('bien_the_san_phams')->find($bien_the_san_pham_id);
-
-                if (!$bienTheSanPham) {
-                    return response()->json(['error' => 'Biến thể sản phẩm không tồn tại'], 404);
-                }
-
-                $gioHang[$bien_the_san_pham_id]['so_luong'] += 1;
-
-                if ($gioHang[$bien_the_san_pham_id]['so_luong'] > $bienTheSanPham->so_luong_bien_the) {
-                    return response()->json(['error' => 'Số lượng trong giỏ hàng vượt quá số lượng có sẵn'], 400);
-                }
-
-                session()->put('gio_hang', $gioHang);
-                return response()->json(['message' => 'Đã tăng số lượng sản phẩm thành công']);
-            }
-
-            return response()->json(['error' => 'Sản phẩm không tồn tại trong giỏ hàng'], 404);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi tăng số lượng:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Có lỗi xảy ra khi tăng số lượng: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function giamSoLuongLocal(Request $request)
-    {
-        $request->validate([
-            'bien_the_san_pham_id' => 'required|integer|exists:bien_the_san_phams,id',
-        ]);
-
-        try {
-            $bien_the_san_pham_id = $request->bien_the_san_pham_id;
-            $gioHang = session()->get('gio_hang', []);
-
-            if (isset($gioHang[$bien_the_san_pham_id])) {
-                $gioHang[$bien_the_san_pham_id]['so_luong'] -= 1;
-
-                if ($gioHang[$bien_the_san_pham_id]['so_luong'] <= 0) {
-                    unset($gioHang[$bien_the_san_pham_id]);
-                }
-
-                session()->put('gio_hang', $gioHang);
-                return response()->json(['message' => 'Đã giảm số lượng sản phẩm thành công']);
-            }
-
-            return response()->json(['error' => 'Sản phẩm không tồn tại trong giỏ hàng'], 404);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi giảm số lượng:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Có lỗi xảy ra khi giảm số lượng: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function xoaKhoiGioHang(Request $request)
-    {
-        $request->validate([
-            'bien_the_san_pham_id' => 'required|integer|exists:bien_the_san_phams,id',
-        ]);
-
-        try {
-            $bien_the_san_pham_id = $request->bien_the_san_pham_id;
-            $gioHang = session()->get('gio_hang', []);
-
-            if (isset($gioHang[$bien_the_san_pham_id])) {
-                unset($gioHang[$bien_the_san_pham_id]);
-                session()->put('gio_hang', $gioHang);
-                return response()->json(['message' => 'Đã xóa sản phẩm khỏi giỏ hàng thành công']);
-            }
-
-            return response()->json(['error' => 'Sản phẩm không tồn tại trong giỏ hàng'], 404);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi xóa sản phẩm khỏi giỏ hàng:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng: ' . $e->getMessage()], 500);
-        }
-    }
-
-    public function layGioHang()
-    {
-        try {
-            $gioHang = session()->get('gio_hang', []);
-            $tongSoLuong = 0;
-            $chiTietGioHang = [];
-
-            foreach ($gioHang as $item) {
-                $bienTheSanPham = DB::table('bien_the_san_phams')
-                    ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
-                    ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
-                    ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
-                    ->where('bien_the_san_phams.id', $item['bien_the_san_pham_id'])
-                    ->select(
-                        'bien_the_san_phams.id as bien_the_san_pham_id',
-                        'san_phams.ten_san_pham',
-                        'san_phams.duong_dan',
-                        'bien_the_san_phams.gia_ban',
-                        'bien_the_san_phams.gia_khuyen_mai',
-                        'bien_the_mau_sacs.ten_mau_sac as mau_sac',
-                        'bien_the_kich_thuocs.kich_thuoc'
-                    )
-                    ->first();
-
-                if ($bienTheSanPham) {
-                    $bienTheSanPham->so_luong = $item['so_luong'];
-                    $bienTheSanPham->gia_hien_tai = $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
-                    $bienTheSanPham->gia_cu = $bienTheSanPham->gia_khuyen_mai ? $bienTheSanPham->gia_ban : null;
-
-                    $tongSoLuong += $item['so_luong'];
-                    $chiTietGioHang[] = $bienTheSanPham;
-                }
-            }
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Danh sách giỏ hàng đã được lấy thành công.',
-                'tong_so_luong' => $tongSoLuong,
-                'gio_hang' => $chiTietGioHang,
-            ]);
-        } catch (Exception $e) {
-            Log::error('Lỗi khi lấy giỏ hàng:', ['error' => $e->getMessage()]);
-            return response()->json(['status' => false, 'error' => 'Có lỗi xảy ra khi lấy giỏ hàng: ' . $e->getMessage()], 500);
         }
     }
 }

@@ -114,4 +114,7 @@ class User extends Authenticatable
     public function viTien(){
         return $this->hasOne(ViTien::class, 'user_id', 'id');
     }
+    public function nganHang(){
+        return $this->hasMany(NganHang::class, 'user_id', 'id');
+    }
 }

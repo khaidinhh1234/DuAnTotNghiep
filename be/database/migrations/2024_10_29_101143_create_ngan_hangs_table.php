@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\NganHang;
-use App\Models\ViTien;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,12 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('yeu_cau_rut_tiens', function (Blueprint $table) {
+        Schema::create('ngan_hangs', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(ViTien::class)->constrained();
-            $table->foreignIdFor(NganHang::class)->constrained();
-            $table->integer('so_tien');
-            $table->enum('trang_thai', ['cho_duyet', 'da_rut', 'that_bai'])->default('cho_duyet');
+            $table->foreignIdFor(User::class)->constrained();
+            $table->string('tai_khoan_ngan_hang', 100);
+            $table->string('ten_chu_tai_khoan', 100);
+            $table->string('ngan_hang', 100);
+            $table->string('logo_ngan_hang', 100);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('yeu_cau_rut_tiens');
+        Schema::dropIfExists('ngan_hangs');
     }
 };
