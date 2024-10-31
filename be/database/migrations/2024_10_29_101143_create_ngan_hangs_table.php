@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('tai_khoan_ngan_hang', 100);
             $table->string('ten_chu_tai_khoan', 100);
             $table->string('ngan_hang', 100);
+            $table->string('logo_ngan_hang', 100);
             $table->timestamps();
         });
     }

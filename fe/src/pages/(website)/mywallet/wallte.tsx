@@ -26,26 +26,22 @@ function TaiChinh() {
 
   return (
     <div className="p-4 min-h-screen">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <button className="text-red-500">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <h1 className="text-lg font-semibold">Tài chính</h1>
-        <SettingOutlined />      </div>
-
+      <div className="flex items-center align-center  mb-4">
+      
+        <h1 className="text-xl font-semibold ">Tài chính</h1>
+</div>
       {/* Container */}
-      <div className="bg-white rounded-lg p-4 shadow-sm">
-        {/* Tổng số dư */}
+      <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
+      {/* Tổng số dư */}
         <div className="flex justify-between items-center">
           <div>
             <span className="text-lg font-semibold">Tổng số dư</span>
           </div>
+          <Link to="/mypro/bank">
           <button className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-orange-600 active:bg-orange-700">
           Rút tiền
           </button>
+          </Link>
         </div>
 
         {/* Số dư */}
@@ -55,24 +51,24 @@ function TaiChinh() {
 
         {/* Doanh Thu Đơn Hàng */}
         <div className="flex items-center justify-between">
-          <Link to="/mypro/doangthu" className="flex items-center">
+          {/* <Link to="/mypro/doangthu" className="flex items-center">
             <div className="bg-red-500 text-white p-3 rounded-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
               </svg>
             </div>
             <span className="ml-4 text-xl font-semibold">Doanh Thu Đơn Hàng</span>
-          </Link>
+          </Link> */}
           <div className="text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-            </svg>
+            </svg> */}
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-4 shadow-sm mt-6">
-  <h2 className="text-lg font-semibold mb-4">Lịch sử Giao Dịch</h2>
+      <div className="bg-white rounded-lg p-4 shadow-sm mt-6 border border-gray-120">
+      <h2 className="text-lg font-semibold mb-4">Lịch sử Giao Dịch</h2>
   {data?.viUser?.lich_su_giao_dichs?.length > 0 ? (
     <ul>
       {data?.viUser?.lich_su_giao_dichs?.map((transaction: any, index: number) => (

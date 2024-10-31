@@ -1,99 +1,175 @@
-import React, { useState } from 'react';
-import '../../../index1.css'; // Đảm bảo có file CSS phù hợp
 
-function CreditCardForm() {
+import React, { useState } from 'react';
+import { useSpring, animated } from '@react-spring/web';
+interface BankData {
+  name: string;
+  logo: string;
+  accountNumber?: string;
+  accountHolder?: string;
+  bankName?: string;
+  id?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  userId?: string;
+
+}
+
+interface CreditCardFormProps {
+  bankData: BankData;
+}
+const AnimatedDigit = ({ digit,  }: { digit: string; className?: string }) => {
+  const animation = useSpring({
+    from: { opacity: 0, transform: 'translateY(20px)' },
+    to: { opacity: 1, transform: 'translateY(0)' },
+    config: { tension: 300, friction: 20 }
+  });
+
+  return (
+    <animated.span style={animation} className="inline-block">
+      {digit}
+    </animated.span>
+  );
+};
+
+const DisplayCardNumber = ({ number }: { number: string }) => {
+  const maskedNumber = number ? maskCardNumber(number) : '';
+  const emptyDisplay = '#### #### #### ####';
+  
+  return (
+    <div className="flex justify-center space-x-2">
+      {(maskedNumber || emptyDisplay).split('').map((digit: string, index: number) => (
+        <AnimatedDigit 
+          key={index + digit} 
+          digit={digit === ' ' ? '\u00A0' : digit} 
+          className={!number ? 'text-gray-400' : ''}
+        />
+      ))}
+    </div>
+  );
+};
+
+const maskCardNumber = (value : any) => {
+  const onlyNums = value.replace(/\D/g, '');
+  let maskedNumber = '';
+  
+  if (onlyNums.length <= 4) {
+    return onlyNums;
+  }
+  
+  maskedNumber = onlyNums.slice(0, 4);
+  
+  if (onlyNums.length > 4) {
+    maskedNumber += ' ';
+    for (let i = 4; i < Math.min(onlyNums.length, 12); i++) {
+      maskedNumber += '#';
+    }
+  }
+  
+  if (onlyNums.length > 8) {
+    maskedNumber += ' ';
+  }
+  
+  if (onlyNums.length > 12) {
+    maskedNumber += onlyNums.slice(12);
+  }
+  
+  return maskedNumber;
+};
+
+function CreditCardForm({ bankData }: CreditCardFormProps) {
   const [cardNumber, setCardNumber] = useState('');
   const [cardHolder, setCardHolder] = useState('');
-  const [expiryMonth, setExpiryMonth] = useState('');
-  const [expiryYear, setExpiryYear] = useState('');
-  const [cvv, setCvv] = useState('');
 
-  // Hàm định dạng số thẻ, chỉ hiển thị 4 số đầu và 4 số cuối, giữa là "#### ####"
-  const maskCardNumber = (value) => {
-    const onlyNums = value.replace(/\D/g, ''); // Loại bỏ các ký tự không phải số
-    if (onlyNums.length <= 4) return onlyNums; // Hiển thị trực tiếp nếu ít hơn 4 số
-    if (onlyNums.length <= 12) return `${onlyNums.slice(0, 4)} #### ####`; // Nếu chưa đủ 16 số, hiển thị các ký tự có sẵn
-    
-    return `${onlyNums.slice(0, 4)} #### #### ${onlyNums.slice(-4)}`; // Hiển thị 4 số đầu và cuối
+
+  const handleCardNumberChange = (e : any) => {
+    const input = e.target.value.replace(/\D/g, '');
+    if (input.length <= 16) {
+      setCardNumber(input);
+    }
   };
 
-  // Hàm xử lý khi người dùng nhập vào số thẻ
-  const handleCardNumberChange = (e) => {
-    const value = e.target.value.replace(/\s/g, ''); // Loại bỏ khoảng trắng
-    setCardNumber(value);
+  const formatDisplayCardNumber = (number : any) => {
+    return number.replace(/(.{4})/g, '$1 ').trim();
   };
 
   return (
-    <div className="container1">
-      {/* Mẫu thẻ tín dụng */}
-      <div className="card-preview">
-        <div className="card">
-          <div className="card-logo">VISA</div>
-          <div className="card-chip"></div>
-          <div className="card-number">
-            {maskCardNumber(cardNumber) || '#### #### #### ####'}
-          </div>
-          <div className="card-details">
-            <div className="card-holder">
-              Chủ Thẻ<br />
-              <strong>{cardHolder || 'TÊN ĐẦY ĐỦ'}</strong>
+    <div className="">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg ">
+        {/* Card Preview */}
+        <div className="mb-6">
+          <div 
+            className="relative h-56 w-full rounded-xl p-6 text-white shadow-md"
+            style={{
+              backgroundImage: "url('/istockphoto-1332736514-1024x1024.jpg')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          >
+            <div className="absolute right-6 top-6 text-xl font-bold italic tracking-wider text-white drop-shadow-lg">
+            <h2 className="text-lg font-semibold">{bankData.name}</h2>
+
             </div>
-            <div className="card-expiry">
-              Hết Hạn<br />
-              <strong>{expiryMonth && expiryYear ? `${expiryMonth}/${expiryYear}` : 'MM/YY'}</strong>
+            <div className="absolute left-6 top-4 h-14 w-20 rounded  from-gray-300 to-gray-100 shadow">   <img 
+          src={bankData.logo} 
+          alt={bankData.name} 
+          className=" h-14 w-20 object-contain mr-3" 
+        /></div>
+            
+            <div className="mt-16 text-center text-base tracking-widest drop-shadow-lg">
+              <DisplayCardNumber number={cardNumber} />
+            </div>
+            
+            <div className="mt-4 flex justify-between text-sm">
+              <div>
+                <div className="text-gray-200 drop-shadow-lg">Chủ Thẻ</div>
+                <div className="font-semibold uppercase drop-shadow-lg">
+                  {cardHolder || 'TÊN ĐẦY ĐỦ'}
+                </div>
+              </div>
+              <div>
+                <div className="text-gray-200 drop-shadow-lg">Hết Hạn</div>
+                <div className="font-semibold drop-shadow-lg">
+                  { 'MM/YY'}
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Form */}
+        <form className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Số Thẻ</label>
+            <input
+              type="text"
+              placeholder="1234 5678 9012 3456"
+              value={formatDisplayCardNumber(cardNumber)}
+              onChange={handleCardNumberChange}
+              className="mt-1 w-full rounded-md border border-gray-300 p-2.5 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Tên Chủ Thẻ</label>
+            <input
+              type="text"
+              placeholder="Tên Đầy Đủ"
+              value={cardHolder}
+              onChange={(e) => setCardHolder(e.target.value)}
+              className="mt-1 w-full rounded-md border border-gray-300 p-2.5 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
+            />
+          </div>
+
+
+          <button
+            type="submit"
+            className="mt-6 w-full rounded-md bg-blue-600 py-3 text-white transition duration-300 ease-in-out transform hover:scale-105 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Gửi
+          </button>
+        </form>
       </div>
-
-      {/* Form nhập liệu */}
-      <form className="card-form">
-        <label>Số Thẻ</label>
-        <input
-          type="text"
-          placeholder="1234 5678 9012 3456"
-          maxLength="19"
-          value={cardNumber.replace(/(.{4})/g, '$1 ')} // Hiển thị theo từng nhóm 4 số
-          onChange={handleCardNumberChange}
-        />
-
-        <label>Tên Chủ Thẻ</label>
-        <input
-          type="text"
-          placeholder="Tên Đầy Đủ"
-          value={cardHolder}
-          onChange={(e) => setCardHolder(e.target.value)}
-        />
-
-        <label>Ngày Hết Hạn</label>
-        <div className="expiry-cvv">
-          <select value={expiryMonth} onChange={(e) => setExpiryMonth(e.target.value)}>
-            <option value="">Tháng</option>
-            {[...Array(12)].map((_, i) => (
-              <option key={i} value={String(i + 1).padStart(2, '0')}>
-                {String(i + 1).padStart(2, '0')}
-              </option>
-            ))}
-          </select>
-          <select value={expiryYear} onChange={(e) => setExpiryYear(e.target.value)}>
-            <option value="">Năm</option>
-            {[...Array(10)].map((_, i) => (
-              <option key={i} value={2024 + i}>
-                {2024 + i}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="CVV"
-            maxLength="3"
-            value={cvv}
-            onChange={(e) => setCvv(e.target.value)}
-          />
-        </div>
-
-        <button type="submit">Gửi</button>
-      </form>
     </div>
   );
 }

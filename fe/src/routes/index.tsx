@@ -143,6 +143,8 @@ import TaiChinh from "@/pages/(website)/mywallet/wallte";
 import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 import CreditCardForm from "@/pages/(website)/mywallet/cart";
 import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
+import BankAccount from "@/pages/(website)/mywallet/nganhang";
+import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
 
 const Router = () => {
   //
@@ -188,7 +190,9 @@ const Router = () => {
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
             <Route path="/mypro/wallet" element={<TaiChinh />} />
-            <Route path="/mypro/cart" element={<CreditCardForm />} />
+            <Route path="/mypro/WithdrawPage" element={< WithdrawPage/>} />
+            <Route path="/mypro/bank" element={<BankAccount />} />
+
 
             <Route path="/mypro/doangthu" element={<RevenuePage />} />
 
