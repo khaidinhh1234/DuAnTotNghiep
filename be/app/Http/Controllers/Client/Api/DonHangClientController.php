@@ -392,7 +392,9 @@ class DonHangClientController extends Controller
                 }
             }
 
+
             $chi_tieu_toi_thieu = $maGiamGia->chi_tieu_toi_thieu ?? 0;
+
 
             if ($tongTienDonHang < $chi_tieu_toi_thieu) {
                 return response()->json([
@@ -478,9 +480,11 @@ class DonHangClientController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Có lỗi xảy ra. Vui lòng thử lại sau.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
+
 
     public function huyDonHang(Request $request)
     {

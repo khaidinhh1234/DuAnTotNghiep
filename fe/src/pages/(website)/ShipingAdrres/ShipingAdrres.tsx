@@ -15,9 +15,10 @@ const ShippingAddressPage = () => {
   const nav = useNavigate();
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
+      // console.log(data);
       try {
         const response = await instanceClient.post(`/don-hang`, data);
-        message.success("Order successful");
+        message.success("Đặt hàng thành công");
         nav("/thankyou");
         return response.data;
       } catch (error) {
@@ -26,13 +27,21 @@ const ShippingAddressPage = () => {
       }
     },
   });
-
   const onsubmit = (formData: any) => {
     const combinedData = { ...formData, macode }; // Kết hợp dữ liệu với mã khuyến mãi
     setData(combinedData); // Cập nhật trạng thái dữ liệu giỏ hàng
 
-    // Gọi hàm mutate với dữ liệu đã kết hợp
-    mutate(combinedData);
+    // Kiểm tra nếu tất cả các trường cần thiết trong combinedData đều có giá trị
+    const isDataComplete = Object.values(combinedData).every(
+      (value) => value !== undefined && value !== null && value !== ""
+    );
+
+    if (isDataComplete) {
+      // Gọi hàm mutate với dữ liệu đã kết hợp
+      mutate(combinedData);
+    } else {
+      console.log("Dữ liệu chưa đầy đủ");
+    }
   };
 
   const handleCode = (data: any) => {

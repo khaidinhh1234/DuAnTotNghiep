@@ -394,6 +394,7 @@ class GioHangController extends Controller
         }
     }
 
+
     public function updateSelection(Request $request)
     {
         try {
