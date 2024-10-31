@@ -48,7 +48,6 @@ class TaiKhoanController extends Controller
             $user = User::find($userID);
             $viUser = $user->viTien;
             $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
-            dd($lichSuGiaoDich);
             $data = [
                 'viUser' => $viUser,
                 'lichSuGiaoDich' => $lichSuGiaoDich,

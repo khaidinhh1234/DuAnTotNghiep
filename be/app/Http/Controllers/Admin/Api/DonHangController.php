@@ -373,7 +373,7 @@ class DonHangController extends Controller
                 $giaoDichVi->update(['trang_thai' => 'thanh_cong']);
 
                 //Lưu giao dịch
-                DB::table('lich_su_giao_dichs')->insert([
+                DB::table('lich_su_giao_diches')->insert([
                     'vi_tien_id' => $giaoDichVi->viTien->id,
                     'so_du_truoc' => $soDuTruoc,
                     'so_du_sau' => $soDuTruoc + $hoanTien->so_tien_hoan,
@@ -386,7 +386,7 @@ class DonHangController extends Controller
                 $hoanTien->update(['trang_thai' => 'tu_choi']);
 
                 //Lưu giao dịch
-                DB::table('lich_su_giao_dichs')->insert([
+                DB::table('lich_su_giao_diches')->insert([
                     'vi_tien_id' => $giaoDichVi->viTien->id,
                     'so_du_truoc' => $soDuTruoc,
                     'so_du_sau' => $giaoDichVi->viTien->so_du,
@@ -425,10 +425,26 @@ class DonHangController extends Controller
 
             if ($validated['trang_thai'] === 'da_rut') {
                 $yeuCauRutTien->update(['trang_thai' => 'da_rut']);
+                //Lưu giao dịch
+                DB::table('lich_su_giao_diches')->insert([
+                    'vi_tien_id' => $yeuCauRutTien->vi_tien_id,
+                    'so_du_truoc' => $yeuCauRutTien->viTien->so_du,
+                    'so_du_sau' => $yeuCauRutTien->viTien->so_du - $yeuCauRutTien->so_tien,
+                    'ngay_thay_doi' => Carbon::now(),
+                    'mo_ta' => 'Rút tiền từ ví',
+                ]);
                 $yeuCauRutTien->viTien->decrement('so_du', $yeuCauRutTien->so_tien);
                 $mess = 'Xác nhận yêu cầu rút tiền thành công.';
             } else if ($validated['trang_thai'] === 'that_bai') {
                 $yeuCauRutTien->update(['trang_thai' => 'that_bai']);
+                //Lưu giao dịch
+                DB::table('lich_su_giao_diches')->insert([
+                    'vi_tien_id' => $yeuCauRutTien->vi_tien_id,
+                    'so_du_truoc' => $yeuCauRutTien->viTien->so_du,
+                    'so_du_sau' => $yeuCauRutTien->viTien->so_du,
+                    'ngay_thay_doi' => Carbon::now(),
+                    'mo_ta' => 'Từ chối yêu cầu rút tiền',
+                ]);
                 $mess = 'Từ chối yêu cầu rút tiền thật bại.';
             }
 
