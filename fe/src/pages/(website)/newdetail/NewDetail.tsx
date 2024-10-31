@@ -1,6 +1,6 @@
 import instanceClient from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 
@@ -29,14 +29,18 @@ const NewDetail = () => {
       <div className="w-2/3 mt-20 ml-20 mr-10">
         {data?.baiVietMoiNhatCuaDanhMuc ? (
           <div key={data.baiVietMoiNhatCuaDanhMuc.id}>
+            <Link to={`/xem-bai-viet/${duong_dan}`}>
             <img
               src={data.baiVietMoiNhatCuaDanhMuc.anh_tin_tuc}
               alt={data.baiVietMoiNhatCuaDanhMuc.tieu_de || "Article"}
               className="w-full h-[700px] rounded-[5px] object-cover"
             />
+            </Link>
             <div className="mt-4">
             <span className="text-xs text-gray-400">{data.baiVietMoiNhatCuaDanhMuc.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span> 
-              <h2 className="text-2xl font-bold mb-2">{data.baiVietMoiNhatCuaDanhMuc.tieu_de}</h2>
+              <Link to={`/xem-bai-viet/${duong_dan}`}>
+              <h2 className="text-2xl hover:text-red-500 font-bold mb-2">{data.baiVietMoiNhatCuaDanhMuc.tieu_de}</h2>
+              </Link>
               <p className="text-gray-700 mb-4" dangerouslySetInnerHTML={{ __html: truncateContent(data.baiVietMoiNhatCuaDanhMuc.noi_dung, 400) }}></p>
               <span className="text-sm text-gray-400">Ngày tạo: {data.baiVietMoiNhatCuaDanhMuc.created_at}</span>
             </div>
@@ -53,14 +57,18 @@ const NewDetail = () => {
           {Array.isArray(data?.baiVietTop) && data.baiVietTop.length > 0 ? (
             data.baiVietTop.map((article: any) => (
               <div key={article.id} className="flex items-start space-x-3">
-                <img
+               <Link to={`/xem-bai-viet/${duong_dan}`}>
+               <img
                   src={article.anh_tin_tuc}
                   alt="Article Thumbnail"
                   className="w-20 h-20 rounded-lg object-cover"
                 />
+               </Link>
                 <div>
                 <span className="text-xs text-gray-400">{article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span> 
-                  <h3 className="text-lg font-medium">{article.tieu_de}</h3>
+                  <Link to={`/xem-bai-viet/${duong_dan}`}>
+                  <h3 className="text-lg font-medium hover:text-red-500">{article.tieu_de}</h3>
+                  </Link>
                   <span className="text-xs text-gray-400">{article.created_at}</span>
                 </div>
               </div>
@@ -83,12 +91,16 @@ const NewDetail = () => {
           {data.baiVietKhacCuaDanhMuc.data.map((article: any) => (
             <SwiperSlide key={article.id}>
               <div className="p-4 bg-white rounded-lg shadow-md">
+                <Link to={`/xem-bai-viet/${duong_dan}`}>
                 <img
                   src={article.anh_tin_tuc}
                   alt="Related Article Thumbnail"
                   className="w-full h-[250px] rounded-lg object-cover mb-3"
-                />
-                <h3 className="text-lg font-medium">{article.tieu_de}</h3>
+                />    
+                </Link>
+                <Link to={`/xem-bai-viet/${duong_dan}`}>
+                <h3 className="text-lg font-medium hover:text-red-500">{article.tieu_de}</h3>
+                </Link>
                 <span className="text-xs text-gray-400">{article.created_at}</span>
               </div>
             </SwiperSlide>
