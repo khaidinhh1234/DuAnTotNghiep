@@ -23,10 +23,20 @@ class KhuyenMaiController extends Controller
                 return response()->json(['status' => false, 'message' => 'Bạn cần đăng nhập để xem mã khuyến mãi.'], 401);
             }
 
+            $currentDate = now();
+
             $data = MaKhuyenMai::query()
                 ->join('nguoi_dung_ma_khuyen_mai', 'ma_khuyen_mais.id', '=', 'nguoi_dung_ma_khuyen_mai.ma_khuyen_mai_id')
                 ->where('nguoi_dung_ma_khuyen_mai.user_id', $user->id)
-                ->select('ma_khuyen_mais.*', 'nguoi_dung_ma_khuyen_mai.da_su_dung', 'nguoi_dung_ma_khuyen_mai.ngay_su_dung')
+                ->where('ma_khuyen_mais.ngay_bat_dau', '<=', $currentDate)
+                ->where('ma_khuyen_mais.ngay_ket_thuc', '>=', $currentDate)
+                ->where('trang_thai', 1)
+                ->select(
+                    'ma_khuyen_mais.*',
+                    'nguoi_dung_ma_khuyen_mai.da_su_dung',
+                    'nguoi_dung_ma_khuyen_mai.ngay_su_dung',
+                    DB::raw("IF(nguoi_dung_ma_khuyen_mai.da_su_dung, 'Đã sử dụng', 'Chưa sử dụng') as trang_thai_su_dung")
+                )
                 ->get();
 
             return response()->json([
@@ -35,9 +45,14 @@ class KhuyenMaiController extends Controller
                 'data' => $data
             ]);
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy danh sách mã khuyến mãi.', 'error' => $e->getMessage()], 500);
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra khi lấy danh sách mã khuyến mãi.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     public function danhSachChuongTrinhUuDai()
     {
@@ -138,7 +153,12 @@ class KhuyenMaiController extends Controller
             }
 
             foreach ($maKhuyenMais as $maKhuyenMai) {
-                $maKhuyenMai->da_thu_thap = $maKhuyenMai->user()->where('id', $user->id)->exists() ? 1 : 0;
+                $nguoiDungMaKhuyenMai = $maKhuyenMai->user()->where('id', $user->id)->first();
+
+                $maKhuyenMai->da_thu_thap = $nguoiDungMaKhuyenMai ? 1 : 0;
+                $maKhuyenMai->trang_thai_su_dung = $nguoiDungMaKhuyenMai && $nguoiDungMaKhuyenMai->pivot->da_su_dung
+                    ? 'Đã sử dụng'
+                    : 'Chưa sử dụng';
             }
 
             return response()->json(['status' => true, 'data' => $maKhuyenMais]);
@@ -152,7 +172,6 @@ class KhuyenMaiController extends Controller
             ], 500);
         }
     }
-
 
 
     public function thuThapMaKhuyenMai($maCode)
@@ -233,11 +252,11 @@ class KhuyenMaiController extends Controller
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi tìm kiếm mã khuyến mãi.', 'error' => $e->getMessage()], 500);
         }
     }
+
     public function danhSachMaKhuyenMaiTheoSanPhamGioHang(Request $request)
     {
         try {
             $user = $request->user();
-
             if (!$user) {
                 return response()->json(['status' => false, 'message' => 'Bạn cần đăng nhập để xem mã khuyến mãi.'], 401);
             }
@@ -256,27 +275,35 @@ class KhuyenMaiController extends Controller
             }
 
             $tongGiaTriGioHang = $sanPhamGioHang->reduce(function ($total, $item) {
-                $giaSanPham = $item->gia_khuyen_mai ?? $item->gia_ban;
+                $giaSanPham = $item->gia_khuyen_mai_tam_thoi ?? $item->gia_khuyen_mai ?? $item->gia_ban;
                 return $total + ($giaSanPham * $item->so_luong);
             }, 0);
 
             $sanPhamIds = $sanPhamGioHang->pluck('san_pham_id')->toArray();
             $danhMucIds = $sanPhamGioHang->pluck('danh_muc_id')->unique()->toArray();
 
-            $query = MaKhuyenMai::query();
+            $danhMucIdsWithSubCategories = [];
+            foreach ($danhMucIds as $id) {
+                $danhMucIdsWithSubCategories = array_merge($danhMucIdsWithSubCategories, $this->getDanhMucHierarchy($id));
+            }
+            $danhMucIdsWithSubCategories = array_unique($danhMucIdsWithSubCategories);
+
+            $query = MaKhuyenMai::query()
+                ->where('trang_thai', 1)
+                ->where('ngay_bat_dau_suu_tam', '<=', now())
+                ->where('ngay_ket_thuc', '>=', now())
+                ->whereDoesntHave('user', function ($q) use ($user) {
+                    $q->where('user_id', $user->id)->where('da_su_dung', true);
+                });
 
             if ($request->filled('ma_code')) {
                 $query->where('ma_code', 'LIKE', '%' . $request->ma_code . '%');
             }
 
-            $maKhuyenMai = $query->get()->map(function ($ma) use ($sanPhamIds, $danhMucIds, $tongGiaTriGioHang, $user) {
-                $daLuu = DB::table('nguoi_dung_ma_khuyen_mai')
-                    ->where('user_id', $user->id)
-                    ->where('ma_khuyen_mai_id', $ma->id)
-                    ->exists();
-
+            $maKhuyenMai = $query->get()->map(function ($ma) use ($sanPhamIds, $danhMucIdsWithSubCategories, $tongGiaTriGioHang) {
                 $apDung = true;
                 $errorMessages = [];
+                $soTienGiamGia = 0;
 
                 if ($ma->chi_tieu_toi_thieu > $tongGiaTriGioHang) {
                     $apDung = false;
@@ -284,20 +311,32 @@ class KhuyenMaiController extends Controller
                 }
 
                 $sanPhamKhongApDung = $ma->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist();
-                $danhMucKhongApDung = $ma->danhMucs()->whereIn('id', $danhMucIds)->doesntExist();
+                $danhMucKhongApDung = $ma->danhMucs()->whereIn('id', $danhMucIdsWithSubCategories)->doesntExist();
 
                 if ($sanPhamKhongApDung && $danhMucKhongApDung) {
                     $apDung = false;
-                    $errorMessages[] = 'Mã khuyến mãi không áp dụng cho sản phẩm hoặc danh mục.';
+                    $errorMessages[] = 'Mã khuyến mãi không áp dụng cho sản phẩm hoặc danh mục trong giỏ hàng.';
+                }
+
+                if ($apDung) {
+                    $soTienGiamGia = $ma->loai === 'phan_tram'
+                        ? ($tongGiaTriGioHang * $ma->giam_gia / 100)
+                        : $ma->giam_gia;
+
+                    if ($soTienGiamGia > $tongGiaTriGioHang) {
+                        $soTienGiamGia = $tongGiaTriGioHang;
+                    }
                 }
 
                 return [
                     'ma_khuyen_mai' => $ma,
-                    'da_luu' => $daLuu,
                     'ap_dung' => $apDung,
                     'error_messages' => $errorMessages,
+                    'so_tien_giam_gia' => $apDung ? $soTienGiamGia : 0,
                 ];
             });
+
+            $maKhuyenMai = $maKhuyenMai->sortByDesc('so_tien_giam_gia')->values();
 
             return response()->json([
                 'status' => true,
@@ -308,4 +347,22 @@ class KhuyenMaiController extends Controller
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy danh sách mã khuyến mãi.', 'error' => $e->getMessage()], 500);
         }
     }
+
+    private function getDanhMucHierarchy($id)
+    {
+        $danhMuc = DB::table('danh_mucs')->find($id);
+        if (!$danhMuc) {
+            return [];
+        }
+        $allDanhMucIds = [$danhMuc->id];
+
+        $children = DB::table('danh_mucs')->where('cha_id', $danhMuc->id)->pluck('id');
+
+        foreach ($children as $child) {
+            $allDanhMucIds = array_merge($allDanhMucIds, $this->getDanhMucHierarchy($child));
+        }
+
+        return $allDanhMucIds;
+    }
+
 }
