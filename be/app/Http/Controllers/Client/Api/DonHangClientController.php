@@ -307,13 +307,18 @@ class DonHangClientController extends Controller
                         ->toArray();
 
                     $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
-                    $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
-                    $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
+                    if (!empty($danhMucIds)) {
+                        $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
+                        $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
 
-                    if (empty($sanPhamDanhMucIds) || !array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) {
-                        $isValid = false;
-                        $errorMessages[] = 'Mã giảm giá không áp dụng cho danh mục sản phẩm.';
-                    } elseif ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
+                        if (empty($sanPhamDanhMucIds) || !array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) {
+                            $isValid = false;
+                            $errorMessages[] = 'Mã giảm giá không áp dụng cho danh mục sản phẩm.';
+                        }
+                    }
+
+
+                    if ($isValid && $maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
                         $isValid = false;
                         $errorMessages[] = 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.';
                     }
@@ -451,6 +456,7 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
+
     public function huyDonHang(Request $request)
     {
         $request->validate([
