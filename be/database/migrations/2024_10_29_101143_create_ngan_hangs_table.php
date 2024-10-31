@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('ngan_hang', 100);
             $table->string('logo_ngan_hang', 100);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
