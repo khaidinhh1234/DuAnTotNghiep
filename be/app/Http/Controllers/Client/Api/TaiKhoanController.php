@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\LichSuGiaoDich;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,32 @@ class TaiKhoanController extends Controller
                 'message' => 'Cập nhật thông tin thành công',
                 'data' => $user,
             ], 200);
+        }
+    }
+
+    public function viTaiKhoan(){
+        try {
+            $userID = Auth::id();
+            $user = User::find($userID);
+            $viUser = $user->viTien;
+            $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
+            $data = [
+                'viUser' => $viUser,
+                'lichSuGiaoDich' => $lichSuGiaoDich,
+            ];
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy thông tin ví thành công',
+                'data' => $data,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Lỗi không xác định',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

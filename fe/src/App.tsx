@@ -3,9 +3,12 @@ import Echo from "laravel-echo";
 
 import Router from "./routes";
 import "react-toastify/dist/ReactToastify.css";
+
 import Pusher from "pusher-js";
-import { Toaster } from "@/components/ui/toaster";
+
 import { ToastContainer } from "react-toastify";
+
+
 const notificationSoundUrl = "/lon.mp3";
 
 const Banner = ({ notifications = [], onDelete }) => {

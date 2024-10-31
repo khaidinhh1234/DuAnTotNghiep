@@ -32,8 +32,6 @@ class VanChuyenController extends Controller
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi khi lấy danh sách vận chuyển.',
                 'error' => $exception->getMessage(),
-                'data' =>  Auth::gruard('api')->user()
-
             ], 500);
         }
     }

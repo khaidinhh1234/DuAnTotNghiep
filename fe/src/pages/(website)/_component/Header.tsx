@@ -10,6 +10,7 @@ import CartOverlay from "./CartOverlay";
 import Notifications from "./Notifications";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import Search from "./Search";
 
 interface Category {
   id: number;
@@ -359,7 +360,7 @@ const Header = () => {
             </nav>
 
             <div className="order-4 flex items-center space-x-2 cursor-pointer">
-              <span className="px-1">
+              {/* <span className="px-1">
                 <div className="relative">
                   <SearchOutlined
                     className="text-xl cursor-pointer"
@@ -380,7 +381,11 @@ const Header = () => {
                     />
                   </Modal>
                 </div>
-              </span>
+              </span> */}
+
+<span className="px-1">
+  <Search />
+</span>
 
               {/* {" "}
                   <span>
