@@ -23,15 +23,15 @@ const ShippingAddressPage = () => {
         console.log(order);
 
         const orderID = await instanceClient.post(
-          `don-hang/${order.data.don_hang.ma_don_hang}`
+          `don-hang/${order.data.ma_don_hang}`
         );
         console.log(orderID.data);
-        message.success("Đặt hàng thành công");
+
         // Bước 2: Thực hiện thanh toán qua MoMo
         const momoPaymentData = {
           phuong_thuc_thanh_toan: "Momo_ATM",
           // order.data.phuong_thuc_thanh_toan,
-          ma_don_hang: order.data.don_hang.ma_don_hang,
+          ma_don_hang: order.data.ma_don_hang,
           // orderID.data.don_hang.ma_don_hang, // sử dụng orderId từ phản hồi đơn hàng nếu có
           amount: 120303124,
           // orderID.data.don_hang.tong_tien_don_hang, // tổng tiền từ dữ liệu đầu vào
@@ -58,6 +58,7 @@ const ShippingAddressPage = () => {
         //   message.error("Thanh toán MoMo thất bại");
         // }
         // console.log(order);
+        message.success("Đặt hàng thành công");
         return order.data;
       } catch (error) {
         console.log(error);
