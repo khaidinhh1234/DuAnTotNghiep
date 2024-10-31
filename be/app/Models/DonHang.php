@@ -13,8 +13,8 @@ class DonHang extends Model
     use HasFactory, SoftDeletes;
     // Phương thức thanh toán
     const PTTT_TT = 'Thanh toán khi nhận hàng';
-    const PTTT_MM = 'Thanh toán qua Momo';
-    const PTTT_NH = 'Thanh toán qua ngân hàng';
+    const PTTT_MM_ATM = 'Thanh toán qua Momo ATM';
+    const PTTT_MM_QR = 'Thanh toán qua MoMo QR';
 
     // Trạng thái đơn hàng
     const TTDH_CXH = 'Chờ xác nhận';
