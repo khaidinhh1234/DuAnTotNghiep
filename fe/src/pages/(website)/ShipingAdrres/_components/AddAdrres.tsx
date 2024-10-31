@@ -1,6 +1,7 @@
 import { sanPham2 } from "@/assets/img";
 
 const AddAddressForm = ({ register, products }: any) => {
+  // console.log("products", products);
   return (
     <div className="">
       <h3 className="title-h3">Sản phẩm đã đặt</h3>
@@ -50,7 +51,7 @@ const AddAddressForm = ({ register, products }: any) => {
                     />
                     <div>
                       <h3 className="font-semibold text-gray-700 text-lg">
-                        {product?.name ?? ""}
+                        {product?.ten_san_pham ?? ""}
                       </h3>
                       <p className="mb-2">
                         Size: <span> {product?.kich_thuoc}</span>
@@ -80,36 +81,48 @@ const AddAddressForm = ({ register, products }: any) => {
       </table>
       <h3 className="title-h3 mt-5">Địa chỉ giao hàng</h3>
       <div className="my-5">
-        <label htmlFor="name" className="text-md px-1">
+        <label htmlFor="ten_nguoi_dat_hang" className="text-md px-1">
           Tên
         </label>
         <br />
         <input
           type="text"
-          {...register("user_name")}
+          {...register("ten_nguoi_dat_hang")}
           placeholder="Nhập tên"
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
         />
       </div>
       <div className="my-5">
-        <label htmlFor="mobileNumber" className="text-md px-1">
+        <label htmlFor="so_dien_thoai_nguoi_dat_hang" className="text-md px-1">
           Số điện thoại
         </label>
         <br />
         <input
           type="number"
-          {...register("mobileNumber")}
+          {...register("so_dien_thoai_nguoi_dat_hang")}
           placeholder="Nhập số điện thoại"
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
         />
       </div>
       <div className="my-5">
-        <label htmlFor="addressLine1" className="text-md px-3">
+        <label htmlFor="email_nguoi_dat_hang" className="text-md px-1">
+          Email{" "}
+        </label>
+        <br />
+        <input
+          type="email"
+          {...register("email_nguoi_dat_hang")}
+          placeholder="Nhập Email"
+          className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+        />
+      </div>
+      <div className="my-5">
+        <label htmlFor="dia_chi_nguoi_dat_hang" className="text-md px-3">
           Địa chỉ giao hàng
         </label>
         <br />
         <input
-          {...register("addressLine1")}
+          {...register("dia_chi_nguoi_dat_hang")}
           placeholder="Nhập địa chỉ"
           type="text"
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
@@ -123,7 +136,7 @@ const AddAddressForm = ({ register, products }: any) => {
         <input
           type="text"
           placeholder="Nhập ghi chú"
-          {...register("ghichu")}
+          {...register("ghi_chu")}
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
         />
       </div>
@@ -213,8 +226,8 @@ const AddAddressForm = ({ register, products }: any) => {
       <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio">
         <input
           type="radio"
-          value="MoMo_cart"
-          {...register("paymentMethod")}
+          value="Thanh toán qua MoMo"
+          {...register("phuong_thuc_thanh_toan")}
           className="bg-blackL"
         />
         <label htmlFor="googlePay" className="title-h3 px-3">
@@ -225,8 +238,8 @@ const AddAddressForm = ({ register, products }: any) => {
         <input
           type="radio"
           id="paypal"
-          value="MoMo_QR"
-          {...register("paymentMethod")}
+          value="Thanh toán qua Ngân hàng"
+          {...register("phuong_thuc_thanh_toan")}
           className="bg-blackL"
         />
         <label htmlFor="paypal" className="title-h3 px-3">
@@ -237,8 +250,8 @@ const AddAddressForm = ({ register, products }: any) => {
         <input
           type="radio"
           id="cashOnDelivery"
-          value="COD"
-          {...register("paymentMethod")}
+          value="Thanh toán khi nhận hàng"
+          {...register("phuong_thuc_thanh_toan")}
           className="bg-blackL"
         />
         <label htmlFor="cashOnDelivery" className="title-h3 px-3">

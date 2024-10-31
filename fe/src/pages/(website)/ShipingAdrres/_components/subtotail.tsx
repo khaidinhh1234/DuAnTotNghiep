@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import Voucheruser from "./voucheruser";
 
-const Subtotal = ({ tong_tien }: any) => {
+const Subtotal = ({ tong_tien, Macode }: any) => {
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
   const [macode, setmacode] = useState<number | any>("");
-  console.log(macode);
+
   useEffect(() => {
     if (selectedDiscount === null) return;
   }, [selectedDiscount]);
   const handleSelectVoucher = (data: number | any) => {
     setSelectedDiscount(data.giam_gia);
     setmacode(data.index);
-    console.log(data);
+    Macode(data.index);
   };
   const giamgia =
     (selectedDiscount ?? 0) > 100
