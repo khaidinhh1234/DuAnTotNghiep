@@ -114,7 +114,7 @@ class MoMoController extends Controller
                 'signature' => $signature
             ];
             // Lưu thông tin thanh toán
-            $this->savePaymentInfo( $data);
+            $this->savePaymentInfo($data);
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
 
@@ -142,6 +142,10 @@ class MoMoController extends Controller
                 'payType' => $data['payType'] ?? 'N/A',
                 'signature' => $data['signature']
             ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Đặt hàng thành công.'
+            ], 200);
         } catch (\Exception $e) {
             Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
         }
