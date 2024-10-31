@@ -14,7 +14,7 @@ class DonHang extends Model
     // Phương thức thanh toán
     const PTTT_TT = 'Thanh toán khi nhận hàng';
     const PTTT_MM_ATM = 'Momo_ATM';
-    const PTTT_MM_QR = 'MoMo_QR';
+    const PTTT_MM_QR = 'Momo_QR';
 
     // Trạng thái đơn hàng
     const TTDH_CXH = 'Chờ xác nhận';
