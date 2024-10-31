@@ -8,37 +8,78 @@ import instanceClient from "@/configs/client";
 import { useState } from "react";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ShippingAddressPage = () => {
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
-  const [data, setData] = useState<any>({}); // Trạng thái cho dữ liệu giỏ hàng
+
   const nav = useNavigate();
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
-      // console.log(data);
+      console.log(data);
       try {
-        const response = await instanceClient.post(`/don-hang`, data);
+        // Bước 1: Tạo đơn hàng
+        const order = await instanceClient.post(`don-hang`, data);
+        console.log(order);
+
+        const orderID = await instanceClient.post(
+          `don-hang/${order.data.don_hang.ma_don_hang}`
+        );
+        console.log(orderID.data);
         message.success("Đặt hàng thành công");
-        nav("/thankyou");
-        return response.data;
+        // Bước 2: Thực hiện thanh toán qua MoMo
+        const momoPaymentData = {
+          phuong_thuc_thanh_toan: "Momo_ATM",
+          // order.data.phuong_thuc_thanh_toan,
+          ma_don_hang: order.data.don_hang.ma_don_hang,
+          // orderID.data.don_hang.ma_don_hang, // sử dụng orderId từ phản hồi đơn hàng nếu có
+          amount: 120303124,
+          // orderID.data.don_hang.tong_tien_don_hang, // tổng tiền từ dữ liệu đầu vào
+          // các trường khác nếu cần cho API thanh toán MoMo
+        };
+
+        const response = await instanceClient.post(
+          "payment/momo",
+          momoPaymentData
+        );
+        {
+          response.data.payUrl
+            ? (window.location.href = response.data.payUrl)
+            : toast.error("Thanh toán thất bại");
+        }
+
+        // if (momoResponse.data && momoResponse.data.payUrl) {
+        //   window.location.href = momoResponse.data.payUrl; // Chuyển hướng người dùng đến giao diện thanh toán của MoMo
+        // }
+        // if (momoResponse.status === 200) {
+        //   message.success("Thanh toán MoMo thành công");
+        //   nav("/thankyou");
+        // } else {
+        //   message.error("Thanh toán MoMo thất bại");
+        // }
+        // console.log(order);
+        return order.data;
       } catch (error) {
-        message.error("Lỗi khi đặt hàng");
-        throw new Error("Error fetching cart data");
+        console.log(error);
+        message.error("Lỗi khi đặt hàng hoặc thanh toán MoMo");
+        throw new Error("Error during order creation or MoMo payment");
       }
     },
   });
-  const onsubmit = (formData: any) => {
-    const combinedData = { ...formData, macode }; // Kết hợp dữ liệu với mã khuyến mãi
-    setData(combinedData); // Cập nhật trạng thái dữ liệu giỏ hàng
 
-    // Kiểm tra nếu tất cả các trường cần thiết trong combinedData đều có giá trị
-    const isDataComplete = Object.values(combinedData).every(
-      (value) => value !== undefined && value !== null && value !== ""
+  const onsubmit = (formData: any) => {
+    // Kết hợp dữ liệu với mã khuyến mãi
+
+    // Kiểm tra nếu tất cả các trường (ngoại trừ macode) đều có giá trị
+    const isDataComplete = Object.entries(formData).every(
+      ([key, value]) =>
+        key === "macode" ||
+        (value !== undefined && value !== null && value !== "")
     );
 
     if (isDataComplete) {
       // Gọi hàm mutate với dữ liệu đã kết hợp
-      mutate(combinedData);
+      mutate({ ...formData, macode });
     } else {
       console.log("Dữ liệu chưa đầy đủ");
     }

@@ -28,8 +28,8 @@ const ProductItem = ({
                 <div className=" rounded-md text-center">
                   {" "}
                   <img
-                    src={img}
-                    alt="Sản phẩm"
+                    src={img ?? sanPham2}
+                    alt={img ?? sanPham2}
                     className="w-20 h-24 rounded-md mb-5"
                   />
                   <span
@@ -145,62 +145,57 @@ const ProductItem = ({
 
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang }: any) => {
-  const don_hang = donhang.don_hang;
-  // console.log(don_hang);
-  const chi_tiet_don_hangs = don_hang?.map((item: any) => {
-    return item?.chi_tiets[0]; // Trả về chi tiết của từng đơn hàng
-  });
-
-  const chitiet = chi_tiet_don_hangs[0];
-  // console.log(chitiet);
+  const don_hang = donhang?.don_hang;
+  console.log(don_hang);
   return (
     <>
-      {" "}
       <h2 className="text-2xl font-bold text-black-500 mx-4">
         Đơn hàng của bạn
       </h2>
-      <div
-        className="lg:col-span-9 col
-    -span-8 lg:pl-4  h-full"
-      >
-        {don_hang && don_hang.length !== 0 ? (
-          don_hang?.map((item: any, index: number) => (
-            <ProductItem
-              status={item?.trang_thai_don_hang ?? "Đang xử lý"}
-              pricesale={chitiet?.thanh_tien ?? 0}
-              price={chitiet?.gia ?? 0}
-              img={
-                chitiet?.bien_the_san_pham?.anh_bien_the[0].duong_dan_anh ??
-                sanPham2
-              }
-              name="Váy In Họa Tiết Moana Hồng"
-              size={
-                chitiet?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc ??
-                "M"
-              }
-              gender={
-                chitiet?.bien_the_san_pham?.kich_thuoc_bien_the
-                  ?.loai_kich_thuoc ?? ""
-              }
-              mau={
-                chitiet?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac ?? "Đen"
-              }
-              quantity={chitiet?.so_luong ?? 1}
-              key={index}
-              chi_tiet_don_hangs={item?.chi_tiets ?? []}
-              tong_tien={item?.tong_tien_don_hang ?? 0}
-              ma_don_hang={item?.ma_don_hang ?? ""}
-            />
-          ))
-        ) : (
-          <div className="col-span-9 h-[430px] ">
-            <img
-              src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730026893/cach-huy-don-hang-tren-shopee-04-removebg-preview_2_db7yq1.png"
-              alt="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730026778/cach-huy-don-hang-tren-shopee-04-removebg-preview_1_im54s0.png"
-              className="w-[50%] h-full mx-auto"
-            />
-          </div>
-        )}
+      <div className="lg:col-span-9 col-span-8 lg:pl-4 h-full">
+        <form>
+          {don_hang && don_hang.length !== 0 ? (
+            don_hang.map((item: any, index: number) => (
+              <ProductItem
+                key={index}
+                status={item.trang_thai_don_hang ?? "Đang xử lý"}
+                pricesale={item.chi_tiets[0]?.thanh_tien ?? 0}
+                price={item.chi_tiets[0]?.gia ?? 0}
+                img={
+                  item?.chi_tiets[0]?.bien_the_san_pham?.anh_bien_the[0]
+                    ?.duong_dan_anh
+                }
+                name={
+                  item.chi_tiets[0]?.bien_the_san_pham?.san_pham?.ten_san_pham
+                }
+                size={
+                  item.chi_tiets[0]?.bien_the_san_pham?.kich_thuoc_bien_the
+                    ?.kich_thuoc ?? "M"
+                }
+                gender={
+                  item.chi_tiets[0]?.bien_the_san_pham?.kich_thuoc_bien_the
+                    ?.loai_kich_thuoc ?? ""
+                }
+                mau={
+                  item.chi_tiets[0]?.bien_the_san_pham?.mau_bien_the
+                    ?.ten_mau_sac ?? "Đen"
+                }
+                quantity={item.chi_tiets[0]?.so_luong ?? 1}
+                chi_tiet_don_hangs={item.chi_tiets ?? []}
+                tong_tien={item.tong_tien_don_hang ?? 0}
+                ma_don_hang={item.ma_don_hang ?? ""}
+              />
+            ))
+          ) : (
+            <div className="col-span-9 h-[430px] ">
+              <img
+                src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730026893/cach-huy-don-hang-tren-shopee-04-removebg-preview_2_db7yq1.png"
+                alt="No orders"
+                className="w-[50%] h-full mx-auto"
+              />
+            </div>
+          )}
+        </form>
       </div>
     </>
   );
