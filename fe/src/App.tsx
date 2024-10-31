@@ -9,7 +9,7 @@ import Pusher from "pusher-js";
 import { ToastContainer } from "react-toastify";
 
 
-const notificationSoundUrl = "/lon.mp3";
+const notificationSoundUrl = "/explosion-42132.mp3";
 
 const Banner = ({ notifications = [], onDelete }) => {
   const notificationList = Array.isArray(notifications) ? notifications : [];
