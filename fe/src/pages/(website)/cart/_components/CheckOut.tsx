@@ -2,6 +2,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "antd";
+import { FastForward, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -324,9 +325,9 @@ const CheckOut = () => {
         data?.san_pham_nguyen_gia?.length === 0 ? (
         <div className="flex flex-col items-center justify-center pt-32 pb-20">
           <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4G_QUeNpzKi5F8stqZB8TnaKax58iEnOuVA&s"
+            src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
             alt="No products"
-            className="w-[600px] h-[200px] md:w-[800px] md:h-[400px] object-cover"
+            className="w-[600px] h-[200px] md:w-[500px] md:h-[400px] object-cover"
           />
           <Link
             to="/shop"
@@ -339,8 +340,39 @@ const CheckOut = () => {
         <section className="container">
           <div className="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
             <h1 className="h1cart">Giỏ hàng</h1>
+            
             <div className="grid lg:grid-cols-12 gap-4 px-0 justify-center">
               <div className="lg:col-span-8 col-span-6 md:px-0 px-3">
+              <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-[770px]">
+              <p className="font-bold text-black">
+                {totalSelectedPrice >= 500000 ? (
+                  <>Chúc mừng! Đơn hàng của bạn được <span className="text-black">Miễn phí vận chuyển</span></>
+                ) : (
+                  <>Thêm {formatCurrency(500000 - totalSelectedPrice)} để được <span className="text-black">Miễn phí vận chuyển</span></>
+                )}
+              </p>
+              <div className="relative bg-gray-100 rounded-full h-2 mt-3">
+                <div
+                  className="bg-yellow-400 h-full"
+                  style={{
+                    width: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
+                  }}
+                >
+                  <div
+                    className="absolute top-0 flex items-center justify-center"
+                    style={{
+                      left: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
+                      transform: 'translate(-40%, -40%)',
+                      zIndex: 10,
+                    }}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-yellow-200 flex items-center justify-center">
+                      <Star className="text-yellow-500" size={16} /> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
                 <table className="min-w-full  ">
                   <thead>
                     <tr className="text-left border-b border-gray-200">
@@ -399,10 +431,10 @@ const CheckOut = () => {
                                 </p>
                                 <div className="flex items-center">
                                   <p className="text-red-500 font-bold mr-2">
-                                    {product.gia_hien_tai} ₫
+                                    {product.gia_hien_tai.toLocaleString()} ₫
                                   </p>
                                   <p className="text-gray-400 line-through">
-                                    {product.gia_cu} ₫
+                                    {product.gia_cu.toLocaleString()} ₫
                                   </p>
                                 </div>
                                 <p
@@ -575,7 +607,7 @@ const CheckOut = () => {
                   {selectedProducts.length === 0 ? (
                     // Hiển thị khi không có sản phẩm nào được chọn
                     <div className="text-center my-4">
-                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4G_QUeNpzKi5F8stqZB8TnaKax58iEnOuVA&s" alt="Empty cart" className="mx-auto my-4" />
+                      <img src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg" alt="Empty cart" className="mx-auto my-4" />
                       <p className="text-gray-500 mb-4">
                         Vui lòng chọn các sản phẩm trong giỏ hàng trước khi thanh toán.
                       </p>
@@ -635,7 +667,6 @@ const CheckOut = () => {
                   )}
                 </div>
               </div>
-
               {/* <Subtotal /> */}
             </div>
           </div>

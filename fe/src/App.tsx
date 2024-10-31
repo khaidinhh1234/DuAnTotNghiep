@@ -3,6 +3,7 @@ import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import Router from "./routes";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const notificationSoundUrl = "/lon.mp3";
 
