@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../../index.css'; // Đảm bảo có file CSS phù hợp
+import '../../../index1.css'; // Đảm bảo có file CSS phù hợp
 
 function CreditCardForm() {
   const [cardNumber, setCardNumber] = useState('');

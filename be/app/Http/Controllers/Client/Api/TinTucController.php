@@ -48,7 +48,7 @@ class TinTucController extends Controller
         }
     }
 
-    // public function layBaiVietTheoDanhMuc(Request $request, $duong_dan)
+
     // {
     //     try {
     //         DB::beginTransaction();
@@ -115,18 +115,58 @@ class TinTucController extends Controller
                 ->first();
 
             // Lấy các bài viết khác trong danh mục (loại trừ bài viết mới nhất)
-            $baiVietKhac = TinTuc::with('danhMucTinTuc') // Thêm `with` để lấy quan hệ danh mục
+            $baiVietLienQuan = TinTuc::with('danhMucTinTuc') // Thêm `with` để lấy quan hệ danh mục
                 ->where('danh_muc_tin_tuc_id', $danhMuc->id)
                 ->where('id', '<>', optional($baiVietMoiNhat)->id)
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
+                $baiVietKhac = $baiVietLienQuan->map(function($baiViet): array{
+                    return [
+                        'id' => $baiViet->id,
+                        'user_id' => $baiViet->user_id,
+                        'danh_muc_tin_tuc_id' => $baiViet->danh_muc_tin_tuc_id,
+                        'tieu_de' => $baiViet->tieu_de,
+                        'anh_tin_tuc' => $baiViet->anh_tin_tuc ?? 'default_image.jpg', // Gán ảnh mặc định nếu null,
+                        'noi_dung' => $baiViet->noi_dung,
+                        'duong_dan_bai_viet' => $baiViet->duong_dan,
+                        'created_at' => $baiViet->created_at,
+                        'updated_at' => $baiViet->updated_at,
+                        'deleted_at' => $baiViet->deleted_at,
+                        'luot_xem' => $baiViet->luot_xem,
+                        'danh_muc_tin_tuc' => $baiViet->danhMucTinTuc ? [
+                            'id' => $baiViet->danhMucTinTuc->id,
+                            'ten_danh_muc_tin_tuc' => $baiViet->danhMucTinTuc->ten_danh_muc_tin_tuc,
+                            'duong_dan' => $baiViet->danhMucTinTuc->duong_dan,
+                        ] : null,
+                    ];
+                });
             // Lấy top 5 bài viết có lượt xem cao nhất
-            $baiVietTopLuotXem = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
+            $baiVietTop5 = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
             ->orderBy('luot_xem', 'desc')
-            ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at','danh_muc_tin_tuc_id')
+            // ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at','danh_muc_tin_tuc_id')
             ->limit(5)
             ->get();
+            $baiVietTopLuotXem = $baiVietTop5->map(function($baiViet): array{
+                return [
+                    'id' => $baiViet->id,
+                    'user_id' => $baiViet->user_id,
+                    'danh_muc_tin_tuc_id' => $baiViet->danh_muc_tin_tuc_id,
+                    'tieu_de' => $baiViet->tieu_de,
+                    'anh_tin_tuc' => $baiViet->anh_tin_tuc ?? 'default_image.jpg', // Gán ảnh mặc định nếu null,
+                    'noi_dung' => $baiViet->noi_dung,
+                    'duong_dan_bai_viet' => $baiViet->duong_dan,
+                    'created_at' => $baiViet->created_at,
+                    'updated_at' => $baiViet->updated_at,
+                    'deleted_at' => $baiViet->deleted_at,
+                    'luot_xem' => $baiViet->luot_xem,
+                    'danh_muc_tin_tuc' => $baiViet->danhMucTinTuc ? [
+                        'id' => $baiViet->danhMucTinTuc->id,
+                        'ten_danh_muc_tin_tuc' => $baiViet->danhMucTinTuc->ten_danh_muc_tin_tuc,
+                        'duong_dan' => $baiViet->danhMucTinTuc->duong_dan,
+                    ] : null,
+                ];
+            });
 
             DB::commit();
 
@@ -153,13 +193,13 @@ class TinTucController extends Controller
     }
 
 
-    public function xemBaiViet(Request $request, $duong_dan)
+    public function xemBaiViet(Request $request, $duong_dan_tt)
     {
         try {
             // Bắt đầu transaction
             DB::beginTransaction();
 
-            $baiVietDetail = TinTuc::where('duong_dan', $duong_dan)->first();
+            $baiVietDetail = TinTuc::where('duong_dan', $duong_dan_tt)->first();
 
             if (!$baiVietDetail) {
                 return response()->json([

@@ -142,6 +142,7 @@ import MyVoucher from "@/pages/(website)/myvocher/myvocher";
 import TaiChinh from "@/pages/(website)/mywallet/wallte";
 import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 import CreditCardForm from "@/pages/(website)/mywallet/cart";
+import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 
 const Router = () => {
   //
@@ -202,6 +203,10 @@ const Router = () => {
           <Route
             path="/tin-tuc-theo-danh-muc/:duong_dan"
             element={<NewDetail />}
+          />
+          <Route
+            path="/xem-bai-viet/:duong_dan"
+            element={<DetailBlog />}
           />
         </Route>
         {/* TRang admin */}
