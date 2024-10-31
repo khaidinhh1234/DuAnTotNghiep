@@ -625,11 +625,13 @@ const CheckOut = () => {
               <div className="lg:col-span-4 col-span-6">
                 <div className="border px-4 py-1 lg:w-[359px] rounded-md">
                   <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
-
                   {selectedProducts.length === 0 ? (
-                    // Hiển thị khi không có sản phẩm nào được chọn
                     <div className="text-center my-4">
-                      <img src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg" alt="Empty cart" className="mx-auto my-4" />
+                      <img
+                        src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
+                        alt="Empty cart"
+                        className="mx-auto my-4"
+                      />
                       <p className="text-gray-500 mb-4">
                         Vui lòng chọn các sản phẩm trong giỏ hàng trước khi thanh toán.
                       </p>
@@ -641,26 +643,21 @@ const CheckOut = () => {
                       </Button>
                     </div>
                   ) : (
-                    // Hiển thị khi có sản phẩm được chọn
                     <div>
-                      <div className="flex justify-between font-bold border-hrBlack border-b ">
+                      <div className="flex justify-between font-bold border-b border-hrBlack">
                         <h4>Tổng giá trị sản phẩm</h4>
                         <span className="px-2">
                           {totalSelectedPrice.toLocaleString("vn-VN")} ₫
                         </span>
                       </div>
                       <div className="py-4">
-                        <div className="flex justify-between font-medium border-hrBlack">
+                        <div className="flex justify-between font-medium">
                           <p>Tiết kiệm</p>
-                          <span className="px-2 text-red-500">
-                            {totalSavings} ₫
-                          </span>
+                          <span className="px-2 text-red-500">{totalSavings.toLocaleString()} ₫</span>
                         </div>
-                        <div className="flex justify-between font-medium mb-0 border-hrBlack">
+                        <div className="flex justify-between font-medium mb-0">
                           <p>Phí giao hàng</p>
-                          <span className="px-2">
-                            {formatCurrency(20000)}
-                          </span>
+                          <span className="px-2">{formatCurrency(20000)}</span>
                         </div>
                         {totalSelectedPrice > 500000 && (
                           <div className="flex justify-between font-medium border-b border-hrBlack">
@@ -689,7 +686,6 @@ const CheckOut = () => {
                   )}
                 </div>
               </div>
-              {/* <Subtotal /> */}
             </div>
           </div>
         </section>

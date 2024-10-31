@@ -23,7 +23,15 @@ const NewDetail = () => {
   };
   if (isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading data.</p>;
-
+  const { duong_dan_tt } = useParams();
+  // const { data: ViewNew } = useQuery({
+  //   queryKey: ["baiVietTop"],
+  //   queryFn: async () => {
+  //     const response = await instanceClient.post(`/xem-bai-viet/${duong_dan_tt}`);
+  //     console.log("Response data:", response.data);
+  //     return response.data;
+  //   },
+  // })
   return (<>
     <div className="flex">
       <div className="w-2/3 mt-20 ml-20 mr-10">
@@ -38,7 +46,7 @@ const NewDetail = () => {
             </Link>
             <div className="mt-4">
             <span className="text-xs text-gray-400">{data.baiVietMoiNhatCuaDanhMuc.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span> 
-              <Link to={`/xem-bai-viet/${duong_dan}`}>
+              <Link to={`/xem-bai-viet/${duong_dan_tt}`}>
               <h2 className="text-2xl hover:text-red-500 font-bold mb-2">{data.baiVietMoiNhatCuaDanhMuc.tieu_de}</h2>
               </Link>
               <p className="text-gray-700 mb-4" dangerouslySetInnerHTML={{ __html: truncateContent(data.baiVietMoiNhatCuaDanhMuc.noi_dung, 400) }}></p>

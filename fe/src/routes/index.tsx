@@ -197,7 +197,7 @@ const Router = () => {
             element={<NewDetail />}
           />
           <Route
-            path="/xem-bai-viet/:duong_dan"
+            path="/xem-bai-viet/:duong_dan_tt"
             element={<DetailBlog />}
           />
         </Route>
