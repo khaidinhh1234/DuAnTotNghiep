@@ -140,6 +140,7 @@ import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
 import Page1 from "@/pages/(website)/Shopuudai/shop";
 import MyVoucher from "@/pages/(website)/myvocher/myvocher";
 import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
+import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 
 const Router = () => {
   //
@@ -194,6 +195,10 @@ const Router = () => {
           <Route
             path="/tin-tuc-theo-danh-muc/:duong_dan"
             element={<NewDetail />}
+          />
+          <Route
+            path="/xem-bai-viet/:duong_dan"
+            element={<DetailBlog />}
           />
         </Route>
         {/* TRang admin */}
