@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->foreignIdFor(User::class)->constrained();
             $table->text('ghi_chu')->nullable();
             $table->enum('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL, DonHang::TTDH_DGH, DonHang::TTDH_CKHCN, DonHang::TTDH_HTDH, DonHang::TTDH_DHTB, DonHang::TTDH_DH, DonHang::TTDH_HH,DonHang::TTDH_CXNHH, ])->nullable();
-            $table->enum('phuong_thuc_thanh_toan', [DonHang::PTTT_TT, DonHang::PTTT_NH, DonHang::PTTT_MM])->nullable();
+            $table->enum('phuong_thuc_thanh_toan', [DonHang::PTTT_TT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])->nullable();
             $table->integer('tong_tien_don_hang')->nullable();
             $table->string('ten_nguoi_dat_hang')->nullable();
             $table->string('so_dien_thoai_nguoi_dat_hang')->nullable();

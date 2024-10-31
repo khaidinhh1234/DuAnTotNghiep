@@ -16,7 +16,6 @@ class TinTucController extends Controller
             // Bắt đầu transaction
             DB::beginTransaction();
 
-            // Lấy danh mục có cha_id là null và lấy duy nhất 1 bài viết mới nhất trong mỗi danh mục
             $danhMucTinTuc = DanhMucTinTuc::query()
                 ->with([
                     'tinTuc' => function ($query) {
