@@ -18,6 +18,7 @@ use App\Models\SanPham;
 use App\Models\ThongBao;
 use App\Models\User;
 use App\Models\YeuCauRutTien;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -259,10 +260,10 @@ class DonHangClientController extends Controller
             'ma_giam_gia' => 'nullable|string|max:100',
         ]);
 
-        try {
-            DB::beginTransaction();
-            $userId = Auth::id();
+        DB::beginTransaction();
 
+        try {
+            $userId = Auth::id();
             $sanPhamDuocChon = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
@@ -272,85 +273,52 @@ class DonHangClientController extends Controller
                 ->select('san_phams.id as san_pham_id', 'bien_the_san_phams.id as bien_the_san_pham_id', 'gio_hangs.so_luong')
                 ->get();
 
-
             if ($sanPhamDuocChon->isEmpty()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Bạn chưa chọn sản phẩm nào để mua.',
-                ], 400);
+                return response()->json(['status' => false, 'message' => 'Bạn chưa chọn sản phẩm nào để mua.'], 400);
             }
-
 
             $tongTienDonHang = 0;
             $soTienGiamGia = 0;
 
-
             foreach ($sanPhamDuocChon as $sanPham) {
                 $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
-                if ($sanPham->so_luong > $bienTheSanPham->so_luong_bien_the) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Số lượng sản phẩm không hợp lệ.',
-                    ], 400);
-                }
 
+                if ($sanPham->so_luong > $bienTheSanPham->so_luong_bien_the) {
+                    return response()->json(['status' => false, 'message' => 'Số lượng sản phẩm không hợp lệ.'], 400);
+                }
 
                 $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
                 $tongTienDonHang += $gia * $sanPham->so_luong;
             }
 
-
             if ($request->filled('ma_giam_gia')) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
 
-
                 if ($maGiamGia) {
-                    $isValid = true;
-                    $errorMessages = [];
                     $sanPhamIds = $sanPhamDuocChon->pluck('san_pham_id')->toArray();
-                    $sanPhamDanhMucIds = SanPham::whereIn('id', $sanPhamIds)
-                        ->pluck('danh_muc_id')
-                        ->unique()
-                        ->toArray();
-
-
+                    $sanPhamDanhMucIds = SanPham::whereIn('id', $sanPhamIds)->pluck('danh_muc_id')->unique()->toArray();
                     $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
-                    if (!empty($danhMucIds)) {
-                        $danhMucConIds = DB::table('danh_mucs')->whereIn('cha_id', $danhMucIds)->pluck('id')->toArray();
-                        $allDanhMucIds = array_merge($danhMucIds, $danhMucConIds);
+                    $allDanhMucIds = $this->getAllDanhMucIds($danhMucIds);
 
-
-                        if (empty($sanPhamDanhMucIds) || !array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) {
-                            $isValid = false;
-                            $errorMessages[] = 'Mã giảm giá không áp dụng cho danh mục sản phẩm.';
+                    if (empty($allDanhMucIds) || (empty($sanPhamDanhMucIds) || count(array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) === 0)) {
+                        $soTienGiamGia = 0;
+                    } else {
+                        if ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
+                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.'], 400);
                         }
-                    }
 
+                        $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
+                        if ($maGiamGia->hangThanhViens()->where('id', $userHangThanhVienId)->doesntExist()) {
+                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho hạng thành viên của bạn.'], 400);
+                        }
 
-                    if ($isValid && $maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
-                        $isValid = false;
-                        $errorMessages[] = 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.';
-                    }
+                        if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
+                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho người dùng này.'], 400);
+                        }
 
-
-                    $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
-                    if ($maGiamGia->hangThanhViens()->where('id', $userHangThanhVienId)->doesntExist()) {
-                        $isValid = false;
-                        $errorMessages[] = 'Mã giảm giá không áp dụng cho hạng thành viên của bạn.';
-                    }
-
-
-                    if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
-                        $isValid = false;
-                        $errorMessages[] = 'Mã giảm giá không áp dụng cho người dùng này.';
-                    }
-
-
-                    if ($isValid) {
                         $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
                             ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
                             : $maGiamGia->giam_gia;
-
 
                         $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
                             ->where('user_id', $userId)
@@ -358,48 +326,26 @@ class DonHangClientController extends Controller
                             ->where('da_su_dung', true)
                             ->exists();
 
-
                         if ($daSuDung) {
-                            return response()->json([
-                                'status' => false,
-                                'message' => 'Mã giảm giá này đã được sử dụng.',
-                            ], 400);
+                            return response()->json(['status' => false, 'message' => 'Mã giảm giá này đã được sử dụng.'], 400);
                         } else {
                             DB::table('nguoi_dung_ma_khuyen_mai')->updateOrInsert(
-                                [
-                                    'user_id' => $userId,
-                                    'ma_khuyen_mai_id' => $maGiamGia->id
-                                ],
-                                [
-                                    'da_su_dung' => true,
-                                    'ngay_su_dung' => now(),
-                                ]
+                                ['user_id' => $userId, 'ma_khuyen_mai_id' => $maGiamGia->id],
+                                ['da_su_dung' => true, 'ngay_su_dung' => now()]
                             );
                         }
-                    } else {
-                        return response()->json([
-                            'status' => false,
-                            'message' => 'Mã giảm giá không áp dụng.',
-                            'details' => $errorMessages,
-                        ], 400);
+
+                        $chi_tieu_toi_thieu = $maGiamGia->chi_tieu_toi_thieu ?? 0;
+
+                        if ($tongTienDonHang < $chi_tieu_toi_thieu) {
+                            return response()->json(['status' => false, 'message' => 'Tổng giá đơn hàng phải lớn hơn hoặc bằng ' . number_format($chi_tieu_toi_thieu) . ' VNĐ.'], 400);
+                        }
                     }
+
                 } else {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Mã giảm giá không hợp lệ.',
-                    ], 400);
+                    return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
                 }
             }
-
-            $chi_tieu_toi_thieu = $maGiamGia->chi_tieu_toi_thieu ?? 0;
-
-            if ($tongTienDonHang < $chi_tieu_toi_thieu) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Tổng giá đơn hàng phải lớn hơn hoặc bằng ' . number_format($chi_tieu_toi_thieu) . ' VNĐ.',
-                ], 400);
-            }
-
 
             $maDonHang = 'DH' . strtoupper(uniqid());
             $donHang = DonHang::create([
@@ -418,18 +364,14 @@ class DonHangClientController extends Controller
                 'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
             ]);
 
-
             foreach ($sanPhamDuocChon as $sanPham) {
                 $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
                 $soLuongMua = $sanPham->so_luong;
 
-
                 $bienTheSanPham->so_luong_bien_the -= $soLuongMua;
                 $bienTheSanPham->save();
 
-
                 $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
-
 
                 DonHangChiTiet::create([
                     'don_hang_id' => $donHang->id,
@@ -440,17 +382,9 @@ class DonHangClientController extends Controller
                 ]);
             }
 
+            $donHang = DonHang::with(['chiTiets'])->where('id', $donHang->id)->first();
 
-            $donHang = DonHang::with(['chiTiets'])
-                ->where('id', $donHang->id)
-                ->first();
-
-
-            DB::table('gio_hangs')
-                ->where('user_id', $userId)
-                ->where('chon', 1)
-                ->update(['deleted_at' => now()]);
-
+            DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
 
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
@@ -462,25 +396,30 @@ class DonHangClientController extends Controller
                 'id_duong_dan' => $donHang->id,
             ]);
 
-
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
             DB::commit();
-
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Đặt hàng thành công.',
-                'don_hang' => $donHang,
-            ], 200);
+            return response()->json(['status' => true, 'message' => 'Đặt hàng thành công.', 'data' => $donHang], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'message' => 'Có lỗi xảy ra. Vui lòng thử lại sau.',
-                'error' => $e->getMessage()
-            ], 500);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    private function getAllDanhMucIds($danhMucIds)
+    {
+        $allIds = collect($danhMucIds);
+
+        foreach ($danhMucIds as $danhMucId) {
+            $children = DB::table('danh_mucs')->where('cha_id', $danhMucId)->pluck('id')->toArray();
+            if (!empty($children)) {
+                $allIds = $allIds->merge($this->getAllDanhMucIds($children));
+            }
+        }
+
+        return $allIds->unique()->toArray();
+    }
+
 
     public function huyDonHang(Request $request)
     {
