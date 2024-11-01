@@ -577,66 +577,69 @@ class DonHangClientController extends Controller
         }
     }
 
-    public function rutTienVi(Request $request)
+    public function yeuCauRutTien(Request $request, $id)
     {
-        $validate = $request->validate([
-            'so_tien' => 'required|numeric|min:10000',
-            'tai_khoan_ngan_hang' => 'required|string|max:255',
-            'ten_chu_tai_khoan' => 'required|string|max:255',
-            'ngan_hang' => 'required|string|max:255',
-            'logo_ngan_hang' => 'required|string|max:255',
+        $request->validate([
+            'so_tien' => 'required|numeric|min:1',
         ]);
-        try {
-            $userId = Auth::id();
-            $user = User::find($userId);
-            $viTien = $user->viTien;
-            $nganHang = NganHang::firstOrCreate(
-                [
-                    'user_id' => $userId,
-                    'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
-                    'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
-                    'ngan_hang' => $validate['ngan_hang'],
-                    'logo_ngan_hang' => $validate['logo_ngan_hang'],
-                ],
-                [
-                    'user_id' => $userId,
-                    'ngan_hang' => $validate['ngan_hang'],
-                    'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
-                    'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
-                    'logo_ngan_hang' => $validate['logo_ngan_hang'],
-                ]
-            );
 
-            if ($viTien->so_du < $validate['so_tien']) {
+        $userId = Auth::id();
+        $viTien = User::findOrFail($userId)->viTien;
+        $soTien = $request->input('so_tien');
+        $nganHangId = $id;
+
+        DB::beginTransaction();
+
+        try {
+            $user = User::findOrFail($userId);
+            if ($user->viTien->so_du < $soTien) {
                 return response()->json([
                     'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Số tiền trong ví không đủ để rút',
-                ]);
+                    'message' => 'Số dư trong ví tiền không đủ để rút.',
+                ], 400);
             }
 
-            $giaoDichVi = YeuCauRutTien::create([
+            $yeuCauRutTien = YeuCauRutTien::create([
                 'vi_tien_id' => $viTien->id,
-                'so_tien' => $validate['so_tien'],
-                'ngan_hang_id' => $nganHang->id,
+                'ngan_hang_id' => $nganHangId,
+                'so_tien' => (int)$soTien,
+                'trang_thai' => 'cho_duyet',
             ]);
 
+            GiaoDichVi::create([
+                'vi_tien_id' => $user->viTien->id,
+                'loai_giao_dich' => 'rut_tien',
+                'so_tien' => $soTien,
+                'mo_ta' => 'Rút tiền từ ví tiền',
+                'trang_thai' => 'dang_xu_ly',
+                'thoi_gian_giao_dich' => now(),
+            ]);
+
+            $thongBao = ThongBao::create([
+                'user_id' => $userId,
+                'tieu_de' => 'Yêu cầu rút tiền',
+                'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
+                'loai' => 'Rút tiền',
+                'duong_dan' => 'rut-tien',
+                'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                'id_duong_dan' => $yeuCauRutTien->id,
+            ]);
+
+            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+            DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Rút tiền thành công',
-                'data' => [
-                    'giao_dich_vi' => $giaoDichVi,
-                    'ngan_hang' => $nganHang,
-                ]
-            ]);
+                'message' => 'Yêu cầu rút tiền đã được gửi.',
+                'data' => $yeuCauRutTien,
+            ], 200);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'status' => false,
-                'status_code' => 500,
-                'message' => 'Rút tiền thất bại',
-                'error' => $e->getMessage()
-            ]);
+                'message' => 'Đã xảy ra lỗi khi gửi yêu cầu rút tiền.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }
