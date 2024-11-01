@@ -336,6 +336,18 @@ const CheckOut = () => {
   useEffect(() => {
     localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
   }, [selectedProducts]);
+  useEffect(() => {
+    if (data) {
+      const preSelectedProducts = [
+        ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id),
+        ...(data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id)
+      ];
+      
+      if (preSelectedProducts.length > 0) {
+        setSelectedProducts(prev => Array.from(new Set([...prev, ...preSelectedProducts])));
+      }
+    }
+  }, [data]);
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
