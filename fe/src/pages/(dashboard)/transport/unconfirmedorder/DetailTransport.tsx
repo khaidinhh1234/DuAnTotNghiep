@@ -216,7 +216,7 @@ const DetailTransport = ({ record }: any) => {
             id: [id],
           });
         }
-  
+  // console.log(response);
         return response.data; // Trả về dữ liệu phản hồi
       } catch (error) {
         console.error("Lỗi khi thực hiện yêu cầu API:", error);
