@@ -582,15 +582,22 @@ class DonHangClientController extends Controller
     {
         $request->validate([
             'so_tien' => 'required|numeric|min:1',
-            'ma_xac_thuc' => 'required|string|min:6|max:6',
+            'ma_xac_minh' => 'required|string|min:6|max:6',
         ]);
 
         $userId = Auth::id();
-        $viTien = User::findOrFail($userId)->viTien;
-        $maXacThuc = $request->input('ma_xac_thuc');
+        $user = User::findOrFail($userId);
+        $viTien = $user->viTien;
+
+        if (!$viTien) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Ví tiền không tồn tại.',
+            ], 400);
+        }
+        $maXacThuc = $request->input('ma_xac_minh');
         $soTien = $request->input('so_tien');
         $nganHangId = $id;
-
         DB::beginTransaction();
 
         try {
@@ -601,7 +608,7 @@ class DonHangClientController extends Controller
                     'message' => 'Số dư trong ví tiền không đủ để rút.',
                 ], 400);
             }
-            if (Hash::check($maXacThuc, $user->ma_xac_thuc)) {
+            if (Hash::check($maXacThuc, $user->viTien->ma_xac_minh)) {
                 $yeuCauRutTien = YeuCauRutTien::create([
                     'vi_tien_id' => $viTien->id,
                     'ngan_hang_id' => $nganHangId,
