@@ -149,16 +149,23 @@ Route::middleware([])
             Route::post('/don-hang/hoan-hang/{ma_don_hang}', [DonHangClientController::class, 'hoanDonHang']);
 
             //Yêu cầu rút tiền
-            Route::post('/rut-tien', [DonHangClientController::class, 'rutTienVi']);
+            Route::post('/rut-tien/{id}', [DonHangClientController::class, 'yeuCauRutTien']);
         });
 
-        //Sản phẩm yêu thích
-        Route::get('sanpham/yeuthich', [SanPhamController::class, 'danhSachSanPhamYeuThich'])->middleware('auth:sanctum');
-        Route::post('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich'])->middleware('auth:sanctum');
+        Route::group([], function () {
+            //Sản phẩm yêu thích
+            Route::get('sanpham/yeuthich', [SanPhamController::class, 'danhSachSanPhamYeuThich']);
+            Route::post('sanpham/yeuthich/{id}', [SanPhamController::class, 'sanPhamYeuThich']);
 
-        //Tài khoản
-        Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin'])->middleware('auth:sanctum');
-        Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan'])->middleware('auth:sanctum');
+            //Tài khoản
+            Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin']);
+            Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan']);
+            Route::post('/thiet-lap-ma-xac-minh', [ApiTaiKhoanController::class, 'thietLapMaXacMinh']);
+            Route::get('/danh-sach-ngan-hang', [ApiTaiKhoanController::class, 'nganHangUser']);
+            Route::post('/them-ngan-hang', [ApiTaiKhoanController::class, 'themTaiKhoanNganHang']);
+            Route::post('/huy-lien-ket-ngan-hang/{id}', [ApiTaiKhoanController::class, 'huyLienKetNganHang']);
+        })->middleware('auth.sanctum');
+
 
         Route::post('/don-hang', [DonHangClientController::class, 'taoDonHang']);
     });

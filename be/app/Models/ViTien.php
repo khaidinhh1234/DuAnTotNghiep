@@ -13,6 +13,15 @@ class ViTien extends Model
     protected $fillable = [
         'user_id',
         'so_du',
+        'ma_xac_minh',
+    ];
+
+    protected $hidden = [
+        'ma_xac_minh',
+    ];
+
+    protected $casts = [
+        'ma_xac_minh' => 'hashed',
     ];
 
     public function user()

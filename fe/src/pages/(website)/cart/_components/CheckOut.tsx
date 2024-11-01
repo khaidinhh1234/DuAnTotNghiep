@@ -17,10 +17,6 @@ const CheckOut = () => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
-
-  // const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
-  // const [selectAllRegular, setSelectAllRegular] = useState(false);
-
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -96,7 +92,7 @@ const CheckOut = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
-    onError: (error: any, _, context: { previousCartData?: unknown }) => {
+    onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
       if (context?.previousCartData) {
         queryClient.setQueryData(
           ["cart", access_token],
@@ -213,21 +209,22 @@ const CheckOut = () => {
     const productInRegular = data?.san_pham_nguyen_gia.find(
       (product: { id: number }) => product.id === Number(productId)
     );
-    const quantity =
-      productInDiscounts?.so_luong || productInRegular?.so_luong || 0;// console.log("đâsd", quantity);
+    
+    // Đặt mặc định là 1 nếu không tìm thấy số lượng
+    const quantity = (productInDiscounts?.so_luong || productInRegular?.so_luong) || 1;
+  
     if (productInDiscounts) {
       return total + productInDiscounts.gia_hien_tai * quantity;
     }
-
+  
     if (productInRegular) {
       return total + productInRegular.gia_hien_tai * quantity;
     }
-
-    return total;
-  }, 0);
-  console.log(totalSelectedPrice);
+  
+    return total; // Nếu không có sản phẩm nào, trả về tổng không thay đổi
+  }, 0);  
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
-  const shippingFee = totalSelectedPrice > 500000 ? 0 : 20000;
+  const shippingFee = totalSelectedPrice > 498000 ? 0 : 20000;
   const finalTotal = totalSelectedPrice + shippingFee;
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -351,7 +348,8 @@ const CheckOut = () => {
           />
           <Link
             to="/shop"
-            className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md shadow hover:bg-blue-600 transition duration-200"
+            // className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md shadow hover:bg-blue-600 transition duration-200"
+            className="px-20 py-4 mt-4 btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold transition duration-200"
           >
             Quay lại cửa hàng
           </Link>
@@ -371,6 +369,7 @@ const CheckOut = () => {
                       <>Thêm {formatCurrency(500000 - totalSelectedPrice)} để được <span className="text-black">Miễn phí vận chuyển</span></>
                     )}
                   </p>
+
                   <div className="relative bg-gray-100 rounded-full h-2 mt-3">
                     <div
                       className="bg-yellow-400 h-full"
@@ -393,6 +392,7 @@ const CheckOut = () => {
                     </div>
                   </div>
                 </div>
+
                 <table className="min-w-full  ">
                   <thead>
                     <tr className="text-left border-b border-gray-200">
@@ -400,7 +400,7 @@ const CheckOut = () => {
                         <input
                           type="checkbox"
                           // checked={selectedProducts.length === data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length}
-                          checked={selectedProducts.length === data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length}
+                          checked={data?.chon === 1 || selectedProducts.length === (data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length)}
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                           onChange={(e) => handleSelectAll(e.target.checked)}
                           title="Select all products"
@@ -431,7 +431,6 @@ const CheckOut = () => {
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                               checked={product.chon === 1 || selectedProducts.includes(product.id)}
-
                               onChange={() => handleSelectProduct(product.id)}
                               title="Select discount product"
                             />
@@ -687,7 +686,7 @@ const CheckOut = () => {
                           <p>Phí giao hàng</p>
                           <span className="px-2">{formatCurrency(20000)}</span>
                         </div>
-                        {totalSelectedPrice > 500000 && (
+                        {totalSelectedPrice > 498000 && (
                           <div className="flex justify-between font-medium border-b border-hrBlack">
                             <p>Giảm giá vận chuyển</p>
                             <span className="px-2 text-red-500">

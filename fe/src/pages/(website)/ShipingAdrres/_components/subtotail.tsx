@@ -3,14 +3,13 @@ import Voucheruser from "./voucheruser";
 
 const Subtotal = ({ tong_tien, Macode }: any) => {
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
-  const [macode, setmacode] = useState<number | any>("");
 
   useEffect(() => {
     if (selectedDiscount === null) return;
   }, [selectedDiscount]);
   const handleSelectVoucher = (data: number | any) => {
     setSelectedDiscount(data.giam_gia);
-    setmacode(data.index);
+
     Macode(data.index);
   };
   const giamgia =

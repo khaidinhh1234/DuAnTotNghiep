@@ -13,16 +13,18 @@ class YeuCauRutTien extends Model
     protected $fillable = [
         'vi_tien_id',
         'so_tien',
-        'taikhoan_ngan_hang',
-        'ten_chu_tai_khoan',
-        'ngan_hang',
-        'phuong_thuc',
+        'ngan_hang_id',
         'trang_thai',
     ];
 
     public function viTien()
     {
         return $this->belongsTo(ViTien::class);
+    }
+
+    public function nganHang()
+    {
+        return $this->belongsTo(NganHang::class);
     }
     public function getTrangThaiAttribute($value)
     {
