@@ -226,7 +226,7 @@ const AddAddressForm = ({ register, products }: any) => {
       <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio">
         <input
           type="radio"
-          value="MoMo_QR"
+          value="Momo_QR"
           {...register("phuong_thuc_thanh_toan")}
           className="bg-blackL"
         />

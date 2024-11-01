@@ -69,6 +69,11 @@ const DetailTransport = ({ record }: any) => {
       setUrl(imageSrc);
     }
   };
+  const deletePhoto = () => {
+    setUrl(null); // Đặt lại giá trị ảnh về null
+    setShowNoteInput(false); // Ẩn trường ghi chú nếu đang hiển thị
+    message.success("Đã xóa ảnh thành công.");
+  };
 
   // Xử lý giao hàng thất bại
   const handleDeliveryFailure = () => {
@@ -87,7 +92,7 @@ const DetailTransport = ({ record }: any) => {
   // Lưu ghi chú cho lần giao hàng thất bại hiện tại
   const handleSaveNote = () => {
     if (!note.trim()) {
-      message.error ("Vui lòng nhập ghi chú.");
+      message.error("Vui lòng nhập ghi chú.");
       return;
     }
 
@@ -100,7 +105,7 @@ const DetailTransport = ({ record }: any) => {
     setNotes((prevNotes) => ({
       ...prevNotes,
       [`lan${failedAttempts}`]: note.trim(),
-   }));
+    }));
     setNote(""); // Xóa trường nhập
     setShowNoteInput(false); // Ẩn trường ghi chú sau khi lưu
   };
@@ -135,7 +140,7 @@ const DetailTransport = ({ record }: any) => {
         imageUrl: imageUrl,
         ghi_chu: ghi_chu_string,  // Gửi ghi chú dưới dạng mảng hoặc đối tượng JSON
         failedAttempts: failedAttempts,
-    });
+      });
 
       if (response && response.data) {
         alert("Đã lưu ảnh và xác nhận giao hàng thành công!");
@@ -196,7 +201,7 @@ const DetailTransport = ({ record }: any) => {
       try {
         let response;
         const shipperXacNhan = failedAttempts >= 3 ? "2" : "1"; // Xác định trạng thái xác nhận của shipper
-  
+
         // Gọi API xác nhận giao hàng
         if (action === "Xác nhận giao hàng") {
           response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
@@ -210,13 +215,13 @@ const DetailTransport = ({ record }: any) => {
             trang_thai_van_chuyen: action,
             id: [id],
           });
-          
+
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
             trang_thai_van_chuyen: action,
             id: [id],
           });
         }
-  // console.log(response);
+        // console.log(response);
         return response.data; // Trả về dữ liệu phản hồi
       } catch (error) {
         console.error("Lỗi khi thực hiện yêu cầu API:", error);
@@ -228,7 +233,7 @@ const DetailTransport = ({ record }: any) => {
       queryClient.invalidateQueries({ queryKey: ["vanchuyen"] }); // Làm mới dữ liệu sau khi thành công
     },
   });
-  
+
 
   return (
     <div>
@@ -269,8 +274,8 @@ const DetailTransport = ({ record }: any) => {
                       "Đã giao hàng thành công"
                       ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
                       : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-                      ? "text-red-500" // Giao hàng thất bại: màu đ��
-                      : ``
+                        ? "text-red-500" // Giao hàng thất bại: màu đ��
+                        : ``
                   }`}
               >
                 <div
@@ -282,8 +287,8 @@ const DetailTransport = ({ record }: any) => {
                         "Giao hàng thành công"
                         ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-                        ? "bg-red-500" // Giao hàng thất bại: màu đ��
-                        :"bg-red-500" // Các trạng thái khác: màu đỏ
+                          ? "bg-red-500" // Giao hàng thất bại: màu đ��
+                          : "bg-red-500" // Các trạng thái khác: màu đỏ
                     } text-white px-2 py-1 font-bold rounded-lg`}
                 >
                   {record.trang_thai_van_chuyen === "Chờ xử lý"
@@ -294,9 +299,9 @@ const DetailTransport = ({ record }: any) => {
                         "Giao hàng thành công"
                         ? "Giao hàng thành công"
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-                        ? "Giao hàng thất bại"
-                        : ""
-                        }
+                          ? "Giao hàng thất bại"
+                          : ""
+                  }
                 </div>
               </div>
             </div>
@@ -395,9 +400,9 @@ const DetailTransport = ({ record }: any) => {
                               "Giao hàng thành công"
                               ? "bg-green-500"
                               : record.trang_thai_van_chuyen == "Giao hàng thất bại"
-                               ? "bg-red-500"
-                               :record
-                            }
+                                ? "bg-red-500"
+                                : record
+                          }
                         } text-white px-2 font-bold rounded-lg h-6`}
                       >
                         {" "}
@@ -411,9 +416,9 @@ const DetailTransport = ({ record }: any) => {
                                 "Giao hàng thành công"
                                 ? "Giao hàng thành công"
                                 : record.trang_thai_van_chuyen == "Giao hàng thất bại"
-                                 ? "Giao hàng thất bại"
+                                  ? "Giao hàng thất bại"
                                   : record
-                                }
+                        }
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -491,10 +496,23 @@ const DetailTransport = ({ record }: any) => {
                 {isWebcamVisible && !isImageSaved && (
                   <div className="relative mx-auto mt-6">
                     {url ? (
-                      <div>
+                      // Khi ảnh đã được chụp, hiển thị ảnh và nút xóa
+                      <div className="relative">
                         <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
+
+                        {/* Nút Xóa ảnh */}
+                        <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
+                          <button
+                            onClick={deletePhoto}
+                            className="px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                            title="Xóa ảnh"
+                          >
+                            <i className="fa-regular fa-trash-can"></i>
+                          </button>
+                        </div>
                       </div>
                     ) : (
+                      // Khi chưa có ảnh, hiển thị webcam và nút chụp ảnh
                       <div className="relative">
                         <Webcam
                           ref={webcamRef}
@@ -503,11 +521,13 @@ const DetailTransport = ({ record }: any) => {
                           className="w-60 rounded-lg"
                           audio={false}
                         />
+
+                        {/* Nút Chụp ảnh */}
                         <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
                           <button
                             onClick={capturePhoto}
                             className="px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
-                            title="Capture Photo"
+                            title="Chụp ảnh"
                           >
                             <i className="fa-regular fa-camera"></i>
                           </button>
@@ -516,6 +536,7 @@ const DetailTransport = ({ record }: any) => {
                     )}
                   </div>
                 )}
+
 
                 {/* Show note input if delivery failed */}
                 {showNoteInput && (

@@ -336,6 +336,7 @@ const CheckOut = () => {
   useEffect(() => {
     localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
   }, [selectedProducts]);
+  // 
   useEffect(() => {
     if (data) {
       const preSelectedProducts = [
