@@ -258,11 +258,9 @@ class DonHangClientController extends Controller
             'ma_giam_gia' => 'nullable|string|max:100',
         ]);
 
-
         try {
             DB::beginTransaction();
             $userId = Auth::id();
-
 
             $sanPhamDuocChon = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
@@ -478,6 +476,7 @@ class DonHangClientController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Có lỗi xảy ra. Vui lòng thử lại sau.',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

@@ -3,7 +3,7 @@ import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
 import { FastForward, Star } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -44,15 +44,21 @@ const CheckOut = () => {
       productId: string;
       currentQuantity: number;
     }) => {
-      await instanceClient.put(
-        `/gio-hang/tang-so-luong/${productId}`,
-        { so_luong: currentQuantity + 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
+      // Kiểm tra nếu số lượng hiện tại nhỏ hơn 10
+      if (currentQuantity < 10) {
+        await instanceClient.put(
+          `/gio-hang/tang-so-luong/${productId}`,
+          { so_luong: currentQuantity + 1 },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+      } else {
+        toast.error("Thêm tối đa 10 sản phẩm");
+        // throw new Error("Số lượng tối đa là 10"); 
+      }
     },
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
@@ -97,9 +103,10 @@ const CheckOut = () => {
           context.previousCartData
         );
       }
-      toast.error("Thao tác quá nhanh, vui lòng chậm lại");
+      toast.error(error.message || "Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
+
 
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({
@@ -180,7 +187,24 @@ const CheckOut = () => {
       toast.error(error.message || "Có lỗi xảy ra khi xóa sản phẩm.");
     },
   });
-  const totalSavings = data?.san_pham_giam_gia.reduce((sum: number, product: any) => sum + product.tiet_kiem, 0);
+  // tiet kiem
+  const totalSavings = useMemo(() => {
+    return data?.san_pham_giam_gia
+      .filter((product: any) => selectedProducts.includes(product.id))
+      .reduce((sum: number, product: any) => sum + product.tiet_kiem, 0);
+  }, [data, selectedProducts]);
+  // tong sanpham
+  const tongSoLuong = useMemo(() => {
+    return (
+      data?.san_pham_giam_gia
+        .filter((product: any) => selectedProducts.includes(product.id))
+        .reduce((sum: number, product: any) => sum + product.so_luong, 0) +
+      data?.san_pham_nguyen_gia
+        .filter((product: any) => selectedProducts.includes(product.id))
+        .reduce((sum: number, product: any) => sum + product.so_luong, 0)
+    );
+  }, [data, selectedProducts]);
+
   // Tính tổng tiền
   const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
     const productInDiscounts = data?.san_pham_giam_gia.find(
@@ -375,6 +399,8 @@ const CheckOut = () => {
                       <th className="px-4 py-2">
                         <input
                           type="checkbox"
+                          // checked={selectedProducts.length === data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length}
+                          checked={selectedProducts.length === data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length}
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                           onChange={(e) => handleSelectAll(e.target.checked)}
                           title="Select all products"
@@ -404,8 +430,8 @@ const CheckOut = () => {
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                              checked={selectedProducts.includes(product.id)}
-                              // checked={product.chon == 1}
+                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
+
                               onChange={() => handleSelectProduct(product.id)}
                               title="Select discount product"
                             />
@@ -523,8 +549,7 @@ const CheckOut = () => {
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                              checked={selectedProducts.includes(product.id)}
-                              // checked={product.chon == 1}
+                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
                               onChange={() => handleSelectProduct(product.id)}
                               title="Select regular price product"
                             />
@@ -653,8 +678,11 @@ const CheckOut = () => {
                       <div className="py-4">
                         <div className="flex justify-between font-medium">
                           <p>Tiết kiệm</p>
-                          <span className="px-2 text-red-500">{totalSavings.toLocaleString()} ₫</span>
+                          <span className="px-2 text-red-500">
+                            {totalSavings ? totalSavings.toLocaleString("vn-VN") : "0"} ₫
+                          </span>
                         </div>
+
                         <div className="flex justify-between font-medium mb-0">
                           <p>Phí giao hàng</p>
                           <span className="px-2">{formatCurrency(20000)}</span>
@@ -678,10 +706,11 @@ const CheckOut = () => {
                             onClick={handleCheckout}
                             className="btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold"
                           >
-                            Mua hàng ({data?.tong_so_luong})
+                            Mua hàng ({tongSoLuong})
                           </Button>
                         </Link>
                       </div>
+
                     </div>
                   )}
                 </div>

@@ -142,7 +142,17 @@ const ProductDetail: React.FC = () => {
   );
   const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
     null
-  ); 
+  ); //laybienthe
+  // const [isReady, setIsReady] = useState(false);
+
+  // useEffect(() => {
+  //   const storedToken = localStorage.getItem("accessToken");
+  //   if (storedToken) {
+  //     setToken(storedToken);
+  //     instance.defaults.headers.common["Authorization"] =
+  //       `Bearer ${storedToken}`;
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (swiperRef.current) {
@@ -155,6 +165,16 @@ const ProductDetail: React.FC = () => {
     queryKey: ["product", slug],
     queryFn: () => fetchProduct(slug!),
   });
+
+  // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
+  //   queryKey: ["relatedProducts", id],
+  //   queryFn: () => fetchRelatedProducts(Number(id)),
+  //   enabled: !!product,
+  // });
+  // console.log(product);
+  // useEffect(() => {
+  //   refetch();
+  // }, [id, refetch]);
   const likeMutation = useMutation({
     mutationFn: ({ reviewId, isLiked }: { reviewId: any; isLiked: any }) => {
       if (!access_token) {
@@ -320,9 +340,9 @@ const { mutate: addToCart } = useMutation({
       const defaultVariant = product?.bien_the_san_pham[0];
       setSelectedColor(defaultVariant?.mau_bien_the?.ma_mau_sac);
       setSelectedSize(defaultVariant?.kich_thuoc_bien_the?.kich_thuoc);
-      setCurrentImages(defaultVariant?.anh_bien_the.map((img) => img?.duong_dan_anh));
-      setSelectedColorDisplay(defaultVariant?.mau_bien_the?.ten_mau_sac);
-      setSelectedSizeDisplay(defaultVariant?.kich_thuoc_bien_the?.kich_thuoc);
+      setCurrentImages(
+        defaultVariant?.anh_bien_the.map((img) => img?.duong_dan_anh)
+      );
     }
   }, [product]);
   const handleColorClick = (color: string) => {
