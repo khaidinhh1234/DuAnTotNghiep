@@ -1,12 +1,11 @@
 
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useRef, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import instanceClient from "@/configs/client";
 import CreditCardForm from "./cart";
 import { Checkbox } from 'antd';
-import { CheckboxProps } from 'antd/lib';
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
 const banks = [
   { name: 'Agribank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Agribank_dk6etr.png' },
   { name: 'BIDV', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Remove-bg.ai_1730368278163_z2amlh.png' },
@@ -46,12 +45,19 @@ const BankAccount = () => {
   const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
   const [selectedBanks, setSelectedBanks] = useState<string[]>([]);
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [selectedBankToDelete, setSelectedBankToDelete] = useState<string | null>(null);
+  const [pins, setPins] = useState(['', '', '', '', '', '']);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { data: linkedBanks = [], isLoading, isError } = useQuery({
     queryKey: ['linkedBanks'],
     queryFn: fetchLinkedBanks,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0
   });
-
+  
   const handleBankClick = (bankId: any) => {
     setSelectedBankId(selectedBankId === bankId ? null : bankId);
   };
@@ -69,6 +75,11 @@ const BankAccount = () => {
   });
   setShowCreditCardModal(true);
   setShowBankSelection(false);
+};
+const handleModalClose = () => {
+  setShowCreditCardModal(false);
+  // Optionally refetch the data
+  queryClient.invalidateQueries({ queryKey: ['linkedBanks'] });
 };
 const handleWithdraw = () => {
   if (selectedBanks.length === 1) {
@@ -97,14 +108,70 @@ const handleCheckboxChange = (bankId: string, checked: boolean) => {
     setShowBankSelection(true);
   };
 
-  // const onChange: CheckboxProps['onChange'] = (e) => {
-  //   console.log(`checked = ${e.target.checked}`);
-  // };
+  const deleteBankMutation = useMutation({
+    mutationFn: (data: { bankId: string, ma_xac_minh: string }) => {
+      return instanceClient.post(`/huy-lien-ket-ngan-hang/${data.bankId}`, {
+        ma_xac_minh: data.ma_xac_minh
+      });
+    },
+    
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['linkedBanks'] });
+      toast.success('Xóa tài khoản ngân hàng thành công');
+      setShowPinModal(false);
+      setSelectedBankToDelete(null);
+      resetPins();
+    },
+    onError: () => {
+      toast.error('Có lỗi xảy ra khi xóa tài khoản');
+      resetPins();
+
+    }
+  });
+  
+  const handleDeleteBank = (bankId: string) => {
+    setSelectedBankToDelete(bankId);
+    setShowPinModal(true);
+  };
+  
+  const resetPins = () => {
+    setPins(['', '', '', '', '', '']);
+    inputRefs.current[0]?.focus();
+  };
+  
+  const handleChange = (index: number, value: string) => {
+    if (value.match(/^[0-9]$/)) {
+      const newPins = [...pins];
+      newPins[index] = value;
+      setPins(newPins);
+      if (index < 5) {
+        inputRefs.current[index + 1]?.focus();
+      }
+    }
+  };
+  
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !pins[index] && index > 0) {
+      const newPins = [...pins];
+      newPins[index - 1] = '';
+      setPins(newPins);
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+  
+  const handlePinSubmit = () => {
+    if (selectedBankToDelete) {
+      deleteBankMutation.mutate({
+        bankId: selectedBankToDelete,
+        ma_xac_minh: pins.join('')
+      });
+    }
+  };
 
   if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full  h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -139,8 +206,8 @@ const handleCheckboxChange = (bankId: string, checked: boolean) => {
   <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
     <div className="bg-white rounded-lg w-full max-w-lg p-6 relative">
       <button 
-        onClick={() => setShowCreditCardModal(false)}
-        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+  onClick={handleModalClose}
+  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
       >
         <i className="fa-solid fa-times text-xl"></i>
       </button>
@@ -192,10 +259,10 @@ const handleCheckboxChange = (bankId: string, checked: boolean) => {
                   <button 
                     className="w-full py-2.5 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                     onClick={(e) => {
-                      e.stopPropagation();
-                      console.log('Xóa liên kết:', bank.id);
-                    }}
-                  >
+                        e.stopPropagation();
+                        handleDeleteBank(bank.id);
+                      }}
+                    >
                     Xóa liên kết
                   </button>
                 </div>
@@ -239,6 +306,51 @@ const handleCheckboxChange = (bankId: string, checked: boolean) => {
           </div>
         </div>
       )}
+      {showPinModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-lg p-6 w-96">
+      <h2 className="text-xl font-semibold mb-4">Xác nhận mật khẩu ví</h2>
+      <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
+
+      <div className="mb-6">
+        <div className="flex justify-between space-x-2">
+          {pins.map((pin, index) => (
+            <input
+              key={index}
+              type="password"
+              maxLength={1}
+              value={pin}
+              ref={(el) => (inputRefs.current[index] = el)}
+              onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-3">
+        <button
+          onClick={() => {
+            resetPins();
+            setShowPinModal(false);
+            setSelectedBankToDelete(null);
+          }}
+          className="px-4 py-2 text-gray-600 hover:text-gray-800"
+        >
+          Hủy
+        </button>
+        <button
+          onClick={handlePinSubmit}
+          disabled={pins.some(pin => !pin) || deleteBankMutation.isPending}
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+        >
+          {deleteBankMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

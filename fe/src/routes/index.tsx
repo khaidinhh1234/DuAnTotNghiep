@@ -145,6 +145,7 @@ import CreditCardForm from "@/pages/(website)/mywallet/cart";
 import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 import BankAccount from "@/pages/(website)/mywallet/nganhang";
 import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
+import RegisterWalletPassword from "@/pages/(website)/mywallet/RegisterWalletPassword";
 
 const Router = () => {
   //
@@ -192,6 +193,8 @@ const Router = () => {
             <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={< WithdrawPage/>} />
             <Route path="/mypro/bank" element={<BankAccount />} />
+            <Route path="/mypro/mk" element={<RegisterWalletPassword />} />
+
 
 
             <Route path="/mypro/doangthu" element={<RevenuePage />} />
