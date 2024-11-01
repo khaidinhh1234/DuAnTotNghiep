@@ -1,23 +1,20 @@
 import { logo } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { default as instance, default as instanceClient } from "@/configs/client";
 import { SearchOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import { Input, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
 import Notifications from "./Notifications";
-import instanceClient from "@/configs/client";
-import { useMutation, useQuery } from "@tanstack/react-query";
-
 interface Category {
     id: number;
     ten_danh_muc: string;
     duong_dan: string;
     children: Category[];
 }
-
 const Header = () => {
     const [check, setcheck] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -25,6 +22,7 @@ const Header = () => {
     const [isCartVisible, setIsCartVisible] = useState(false);
     const cartRef = useRef<HTMLDivElement>(null);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [hoveredMenu, setHoveredMenu] = useState(null);
     const notificationRef = useRef<HTMLDivElement>(null);
     const [user] = useLocalStorage("user" as any, {});
     const member = user?.user;
@@ -62,7 +60,6 @@ const Header = () => {
                 setIsCartVisible(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -81,7 +78,6 @@ const Header = () => {
                 console.error("Error fetching categories:", error);
             }
         };
-
         fetchCategories();
     }, []);
     useEffect(() => {
@@ -91,35 +87,23 @@ const Header = () => {
                 setcheck(false);
             }
         };
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [ref]);
-    // const [user] = useLocalStorage("user" as any, {});
-    // const nav = useNavigate();
-    // const member = user.user;
     const phanquyen = user?.user?.vai_tros?.filter(
         (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
     );
-    // console.log(member);
-    // console.log("member", member);
-    // console.log("member", member);
-
-    // console.log("giaohang", giaohangs);
     const logout = () => {
-        // nav("/login");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
-        // setUser(null);
     };
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const [menu, setMenu] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
-
     const handleMouseLeave = () => {
         setTimeout(() => {
             setMenu(false);
@@ -146,7 +130,6 @@ const Header = () => {
     const handleMouseLeaveProduct = () => {
         setIsProductMenuVisible(false);
     };
-
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as any)) {
@@ -160,7 +143,6 @@ const Header = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [ref]);
-
     const access_token =
         user.access_token || localStorage.getItem("access_token");
     const { data: data1 } = useQuery({
@@ -192,18 +174,44 @@ const Header = () => {
         {
             name: "Nam",
             path: "/shop",
+            subCategories: [
+                {
+                    name: "Áo",
+                    subItems: ["Áo Polo", "Áo Mikeni"],
+                },
+                {
+                    name: "Quần",
+                    subItems: ["Quần Polo", "Quần MLB"],
+                },
+            ],
         },
         {
             name: "Nữ",
             path: "/shop",
+            subCategories: [
+                {
+                    name: "Áo",
+                    subItems: ["Áo Blazer", "Áo Crop"],
+                },
+                {
+                    name: "Quần",
+                    subItems: ["Quần Legging", "Quần Jean"],
+                },
+            ],
         },
         {
             name: "Trẻ em",
             path: "/shop",
-        },
-        {
-            name: "Giới thiệu",
-            path: "/ourstory",
+            subCategories: [
+                {
+                    name: "Áo",
+                    subItems: ["Áo Trẻ Em", "Áo Khoác"],
+                },
+                {
+                    name: "Quần",
+                    subItems: ["Quần Trẻ Em", "Quần Shorts"],
+                },
+            ],
         },
         {
             name: "Khuyến mãi",
@@ -214,6 +222,7 @@ const Header = () => {
             path: "/contact",
         },
     ];
+
     return (
         <header className="h-12 relative">
             <div className="bg-white w-full">
@@ -233,15 +242,15 @@ const Header = () => {
                         <div className="grid">
                             <div className="my-10 text-2xl">
                                 <a href="" className="font-bold text-xl">
-                                    Nam
+                                    Áo
                                 </a>{" "}
                                 |
                                 <a className="font-bold text-2xl" href="">
-                                    Nữ
+                                    Quần
                                 </a>
                                 |
                                 <a href="" className="font-bold text-2xl">
-                                    Trẻ em
+                                    Áo thu đông
                                 </a>
                             </div>
                             <nav className="h-full my-5 px-2 ">
@@ -306,60 +315,44 @@ const Header = () => {
                         <nav className="hidden lg:block order-3">
                             <ul className="flex items-center space-x-4">
                                 {MenuList.map((item, index) => (
-                                    <li
+                                    <div
                                         key={index}
-                                        className="mt-2 relative"
-                                        onMouseEnter={
-                                            item.name === "Sản phẩm"
-                                                ? handleMouseEnterProduct
-                                                : undefined
-                                        }
-                                        onMouseLeave={
-                                            item.name === "Sản phẩm"
-                                                ? handleMouseLeaveProduct
-                                                : undefined
-                                        }
+                                        onMouseEnter={() => setHoveredMenu(item.name)}
+                                        onMouseLeave={() => setHoveredMenu(null)}
+                                        className="relative"
                                     >
                                         <NavLink
                                             to={item.path}
-                                            className={({ isActive }) =>
-                                                `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${!isActive
-                                                    ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
-                                                    : "text-white bg-black"
-                                                }`
-                                            }
+                                            className="text-lg font-medium hover:text-blue-500"
                                         >
                                             {item.name}
                                         </NavLink>
-                                        {item.name === "Sản phẩm" && isProductMenuVisible && (
-                                            <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50 ">
-                                                <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 rounded-md bg-white bg-opacity-100 ">
-                                                    {categories.map((category) => (
-                                                        <div
-                                                            key={category.id}
-                                                            className="border-r border-gray-240"
-                                                        >
-                                                            <h3 className="font-bold mb-4 text-lg">
-                                                                {category.ten_danh_muc}
-                                                            </h3>
-                                                            <ul className="space-y-2">
-                                                                {category.children.map((subCategory) => (
-                                                                    <li key={subCategory.id}>
-                                                                        <a
-                                                                            href={`/shop/${category.duong_dan}/${subCategory.duong_dan}`}
-                                                                            className="block text-gray-700 text-lg whitespace-nowrap hover:text-red-600"
-                                                                        >
-                                                                            {subCategory.ten_danh_muc}
-                                                                        </a>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                    ))}
-                                                </div>
+
+                                        {/* Dropdown Menu */}
+                                        {item.subCategories && hoveredMenu === item.name && (
+                                            <div className="absolute top-full left-0 w-[300px] p-4 bg-white shadow-lg rounded-md z-50">
+                                                {item.subCategories.map((subCategory, idx) => (
+                                                    <div key={idx} className="mb-3">
+                                                        <h3 className="font-semibold text-md mb-2">
+                                                            {subCategory.name}
+                                                        </h3>
+                                                        <ul className="space-y-1 text-gray-700">
+                                                            {subCategory.subItems.map((subItem, i) => (
+                                                                <li key={i}>
+                                                                    <NavLink
+                                                                        to={`/shop/${item.name.toLowerCase()}/${subCategory.name.toLowerCase()}/${subItem.toLowerCase().replace(" ", "-")}`}
+                                                                        className="hover:text-blue-600"
+                                                                    >
+                                                                        {subItem}
+                                                                    </NavLink>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
+                                                ))}
                                             </div>
                                         )}
-                                    </li>
+                                    </div>
                                 ))}
                             </ul>
                         </nav>
@@ -387,13 +380,6 @@ const Header = () => {
                                     </Modal>
                                 </div>
                             </span>
-
-                            {/* {" "}
-                  <span>
-                    <a href="/mywishlist">
-                      <i className="fa-regular fa-heart text-xl">{ }</i>
-                    </a>
-                  </span> */}
                             <span
                                 ref={notificationRef}
                                 className="relative"
@@ -433,9 +419,7 @@ const Header = () => {
                                         </span>
                                     </i>
                                 </a>
-                                {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
                                 <CartOverlay isVisible={isCartVisible} />
-                                {/* </div> */}
                             </span>
                             {member ? (
                                 <>

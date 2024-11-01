@@ -213,34 +213,39 @@ const handleAddToCart = () => {
     toast.error('Số lượng phải lớn hơn hoặc bằng 1');
     return;
   }
-  if (!selectedVariantId) {
-    toast.error('Vui lòng chọn biến thể sản phẩm.');
+
+  // Nếu người dùng chưa chọn biến thể, lấy biến thể đầu tiên
+  const firstVariant = product?.bien_the_san_pham[0];
+  const variantIdToUse = selectedVariantId || firstVariant?.id;
+
+  // Kiểm tra nếu không có biến thể nào
+  if (!variantIdToUse) {
+    toast.error('Không có biến thể nào để thêm vào giỏ hàng.');
     return;
   }
 
-  console.log("Thêm vào giỏ hàng với ID biến thể:", selectedVariantId);
+  console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
 
   // Kiểm tra nếu không có access_token thì lưu vào localStorage
   if (!access_token) {
-    // Lấy giỏ hàng từ localStorage hoặc khởi tạo một mảng trống
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    
+
     // Kiểm tra xem sản phẩm đã tồn tại trong giỏ chưa
-    const existingItem = cart.find((item: { variantId: number; quantity: number }) => item.variantId === selectedVariantId);
+    const existingItem = cart.find((item: { variantId: number; quantity: number }) => item.variantId === variantIdToUse);
     if (existingItem) {
       // Nếu sản phẩm đã tồn tại, tăng số lượng
       existingItem.quantity += quantity;
     } else {
       // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ
-      cart.push({ variantId: selectedVariantId, quantity });
+      cart.push({ variantId: variantIdToUse, quantity });
     }
-    
+
     // Cập nhật giỏ hàng trong localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
     toast.success('Sản phẩm đã được thêm vào giỏ hàng trong localStorage.');
   } else {
     // Nếu có access_token (người dùng đã đăng nhập), gọi API để thêm sản phẩm vào giỏ trên server
-    addToCart(selectedVariantId);
+    addToCart(variantIdToUse);
   }
 };
 
@@ -343,6 +348,8 @@ const { mutate: addToCart } = useMutation({
       setCurrentImages(
         defaultVariant?.anh_bien_the.map((img) => img?.duong_dan_anh)
       );
+      setSelectedColorDisplay(defaultVariant?.mau_bien_the?.ten_mau_sac);
+      setSelectedSizeDisplay(defaultVariant?.kich_thuoc_bien_the?.kich_thuoc);
     }
   }, [product]);
   const handleColorClick = (color: string) => {
