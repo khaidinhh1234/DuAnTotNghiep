@@ -32,8 +32,6 @@ import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 import OrderAdmin from "@/pages/(dashboard)/order/page";
-// import ProductsAdd from "@/pages/(dashboard)/products/add/page";
-// import ProductsEdit from "@/pages/(dashboard)/products/edit/page";
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
 import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
 import RevenueAdmin from "@/pages/(dashboard)/revenue/page";
@@ -68,30 +66,25 @@ import Contact from "@/pages/(website)/contact/Contact";
 import HomePage from "@/pages/(website)/home/page";
 import LayoutWebsite from "@/pages/(website)/layout";
 import ManageAddresses from "@/pages/(website)/manageaddresses/ManageAddresses";
-// import Minicard from "@/pages/(website)/MInicard/Minicard";
 import MyOrder from "@/pages/(website)/myOrder/Myorder";
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
 import MyWishlists from "@/pages/(website)/mywishlists/MyWishlists";
 import Notification from "@/pages/(website)/notifications/Notification";
-// import OrderPlaceSuccess from "@/pages/(website)/OrderPlaceSuccessfully/OrderPlaceSuccessfully";
 import Ordersummary from "@/pages/(website)/ordersummary/ordersummary";
 import Payment from "@/pages/(website)/payment/PayMent";
 import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail";
 import SavedCard from "@/pages/(website)/savedcards/SavedCard";
 import Setting from "@/pages/(website)/settings/Setting";
 import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
-import SheetSide from "@/pages/(website)/test";
 import Voucher from "@/pages/(website)/vourcher/page";
 import { Navigate } from "react-router";
 import { Route, Routes } from "react-router-dom";
 import Bienthe from "../pages/(dashboard)/bienthe/bienthe";
 import PageOur from "../pages/(website)/ourstory/pageOur";
 import Page from "./../pages/(website)/shop/shop";
-
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import PageTransport from "@/pages/(dashboard)/transport/page";
 import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
-// import Detail from "@/pages/(dashboard)/products/detail/page";
 import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
 import PageSupport from "@/pages/(dashboard)/support/page";
@@ -100,30 +93,15 @@ import {
   default as ShowNhanvien,
   default as ShowUser,
 } from "@/pages/(dashboard)/user/khachhang/show/showUser";
-// import Productsadd from "@/pages/(dashboard)/products/fix";
-
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
-
 import Test from "@/pages/(website)/test2";
-// import PrivateRoute from "./PrivateRoute";
-// import List from "@/pages/(dashboard)/dashboard/test/page";
-
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
 import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
-// import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
-// import PrivateRoute from "./PrivateRoute";
-
-// import Dashboard from "@/pages/(dashboard)/dashboard/tongquan/page";
-
-// import Test from "@/pages/(dashboard)/test";
-// import showVoucher from "./../pages/(dashboard)/vourcher/show";
 import { List } from "./../pages/(dashboard)/dashboard/list/page";
 import EditProducts from "@/pages/(dashboard)/products/Editt/page";
-
 import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
 import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
-
 import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
 import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
 import PrivateRoute from "./PrivateRoute";
@@ -133,7 +111,6 @@ import Shipper from "@/pages/(van_chuyen)/shipper";
 import MyProfileedit from "@/pages/(website)/myprofile/MyProfileedit";
 import LayoutMyPro from "@/pages/(website)/layoutmypro";
 import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
-// import Notifications from "@/pages/(website)/_component/Notifications";
 import NewDetail from "@/pages/(website)/newdetail/NewDetail";
 import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
@@ -141,11 +118,11 @@ import Page1 from "@/pages/(website)/Shopuudai/shop";
 import MyVoucher from "@/pages/(website)/myvocher/myvocher";
 import TaiChinh from "@/pages/(website)/mywallet/wallte";
 import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
-import CreditCardForm from "@/pages/(website)/mywallet/cart";
-import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 import BankAccount from "@/pages/(website)/mywallet/nganhang";
 import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
-
+import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
+// import CreditCardForm from "@/pages/(website)/mywallet/cart";
+// import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 const Router = () => {
   //
 
@@ -170,7 +147,7 @@ const Router = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<Test />} />{" "}
-          {/* <Route path="/thankyou" element={<ThankYouPage />} />{" "} */}
+          <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route
             path="/shippingAddressPage"
@@ -190,13 +167,9 @@ const Router = () => {
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
             <Route path="/mypro/wallet" element={<TaiChinh />} />
-            <Route path="/mypro/WithdrawPage" element={< WithdrawPage/>} />
+            <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
-
-
             <Route path="/mypro/doangthu" element={<RevenuePage />} />
-
-
             <Route
               path="/mypro/manageaddresses"
               element={<ManageAddresses />}
