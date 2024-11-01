@@ -208,10 +208,10 @@ const Router = () => {
             path="/tin-tuc-theo-danh-muc/:duong_dan"
             element={<NewDetail />}
           />
-          <Route
+          {/* <Route
             path="/xem-bai-viet/:duong_dan"
             element={<DetailBlog />}
-          />
+          /> */}
         </Route>
         {/* TRang admin */}
         <Route
