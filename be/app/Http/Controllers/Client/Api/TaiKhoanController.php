@@ -62,6 +62,7 @@ class TaiKhoanController extends Controller
             $data = [
                 'viUser' => $viUser,
                 'lichSuGiaoDich' => $lichSuGiaoDich,
+                'trang_thai_ma_xac_minh' => $viUser->ma_xac_minh ? true : false,
             ];
             return response()->json([
                 'status' => true,
