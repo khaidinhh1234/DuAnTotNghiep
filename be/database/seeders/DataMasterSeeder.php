@@ -374,6 +374,7 @@ class DataMasterSeeder extends Seeder
         DB::table('vi_tiens')->insert([
             'user_id' => $user->id,
             'so_du' => 0,
+            'ma_xac_minh' => Hash::make('123456'),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
