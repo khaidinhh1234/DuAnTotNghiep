@@ -7,6 +7,7 @@ use App\Events\PhanHoiLienHe;
 use App\Events\SendMail;
 use App\Listeners\GuiMailHoanTatDonHang;
 use App\Listeners\SendMailContact;
+use App\Listeners\SendMailForgotMaXacMinh;
 use App\Listeners\SendMailForgotPassword;
 use App\Listeners\SendMailPhanHoiLienHe;
 use App\Listeners\SendNewProductMailListener;
@@ -30,6 +31,7 @@ class EventServiceProvider extends ServiceProvider
             SendMailForgotPassword::class,
             SendMailContact::class,
             SendMailPhanHoiLienHe::class,
+            SendMailForgotMaXacMinh::class,
         ],
 
         HoanTatDonHang::class => [
