@@ -41,10 +41,10 @@ class MoMoController extends Controller
             $partnerCode = env('MOMO_PARTNER_CODE');
             $accessKey = env('MOMO_ACCESS_KEY');
             $secretKey = env('MOMO_SECRET_KEY');
-
+            $maDonHang = $request->ma_don_hang;
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            $orderId = $request->ma_don_hang;
+            $orderId = random_int(100000, 999999);
             $redirectUrl = env('MOMO_REDIRECT_URL');
             $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
@@ -52,7 +52,7 @@ class MoMoController extends Controller
             $requestId = time() . "";
             $requestType = "payWithATM";
 
-            $rawHash = "accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType";
+            $rawHash = "accessKey=$accessKey&maDonHang=$maDonHang&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType";
             $signature = hash_hmac("sha256", $rawHash, $secretKey);
 
             $data = [
@@ -62,6 +62,7 @@ class MoMoController extends Controller
                 'requestId' => $requestId,
                 'amount' => $amount,
                 'orderId' => $orderId,
+                'maDonHang' => $maDonHang,
                 'orderInfo' => $orderInfo,
                 'redirectUrl' => $redirectUrl,
                 'ipnUrl' => $ipnUrl,
@@ -88,7 +89,7 @@ class MoMoController extends Controller
 
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            $orderId = $request->ma_don_hang;
+            $orderId = random_int(100000, 999999);
             $redirectUrl = env('MOMO_REDIRECT_URL');
             $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
@@ -151,4 +152,47 @@ class MoMoController extends Controller
             Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
         }
     }
+
+    public function checkDonHang(Request $request)
+    {
+        try {
+            $trangThai = $request->resultCode ?? null;
+            $maOrderMomo = $request->orderId ?? null;
+            $maDonHang = explode("-", $maOrderMomo)[0];
+            $donHang = DonHang::where('ma_don_hang',  $maDonHang)->first();
+
+            if (!$donHang) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Đơn hàng không tồn tại.'
+                ], 404);
+            }
+
+            if ($trangThai === 0) {
+                $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_DTT]);
+                $message = 'Cập nhật thành công.';
+            } elseif ($trangThai === 1006) {
+                $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                $message = 'Cập nhật thành công.';
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Trạng thái không hợp lệ.'
+                ], 400);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => $message
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Lỗi hệ thống. Vui lòng thử lại sau.'
+            ], 500);
+        }
+    }
+
+
 }
