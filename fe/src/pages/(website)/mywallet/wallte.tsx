@@ -26,10 +26,10 @@ function TaiChinh() {
 
   return (
     <div className="p-4 min-h-screen">
-      <div className="flex items-center align-center  mb-4">
+      <div className="flex items-center align-center justify-between  mb-4">
       
         <h1 className="text-xl font-semibold ">Tài chính</h1>
-</div>
+        <i className="fa-regular fa-gear"></i></div>
       {/* Container */}
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
       {/* Tổng số dư */}
