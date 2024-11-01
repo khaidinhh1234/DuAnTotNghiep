@@ -193,13 +193,13 @@ class TinTucController extends Controller
     }
 
 
-    public function xemBaiViet(Request $request, $duong_dan_tt)
+    public function xemBaiViet(Request $request, $duong_dan)
     {
         try {
             // Bắt đầu transaction
             DB::beginTransaction();
 
-            $baiVietDetail = TinTuc::where('duong_dan', $duong_dan_tt)->first();
+            $baiVietDetail = TinTuc::where('duong_dan', $duong_dan)->first();
 
             if (!$baiVietDetail) {
                 return response()->json([
