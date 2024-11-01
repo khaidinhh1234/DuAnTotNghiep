@@ -113,7 +113,6 @@ const DetailTransport = ({ record }: any) => {
       ...prevNotes,
       [`lan${failedAttempts}`]: note.trim(),
     }));
-    }));
     setNote(""); // Xóa trường nhập
     setShowNoteInput(false); // Ẩn trường ghi chú sau khi lưu
   };
@@ -148,7 +147,6 @@ const DetailTransport = ({ record }: any) => {
         imageUrl: imageUrl,
         ghi_chu: ghi_chu_string, // Gửi ghi chú dưới dạng mảng hoặc đối tượng JSON
         failedAttempts: failedAttempts,
-      });
       });
 
       if (response && response.data) {
@@ -219,7 +217,6 @@ const DetailTransport = ({ record }: any) => {
         let response;
         const shipperXacNhan = failedAttempts >= 3 ? "2" : "1"; // Xác định trạng thái xác nhận của shipper
 
-
         // Gọi API xác nhận giao hàng
         if (action === "Xác nhận giao hàng") {
           response = await instance.put(
@@ -237,13 +234,11 @@ const DetailTransport = ({ record }: any) => {
             id: [id],
           });
 
-
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
             trang_thai_van_chuyen: action,
             id: [id],
           });
         }
-        // console.log(response);
         // console.log(response);
         return response.data; // Trả về dữ liệu phản hồi
       } catch (error) {
@@ -436,7 +431,7 @@ const DetailTransport = ({ record }: any) => {
                             : record.trang_thai_van_chuyen == "Đang giao hàng"
                               ? "Đang giao hàng"
                               : record.trang_thai_van_chuyen ==
-                                  "Giao hàng thành công"
+                                "Giao hàng thành công"
                                 ? "Giao hàng thành công"
                                 : record.trang_thai_van_chuyen == "Giao hàng thất bại"
                                   ? "Giao hàng thất bại"
@@ -480,8 +475,8 @@ const DetailTransport = ({ record }: any) => {
                     <span>
                       {data?.data?.van_chuyen?.don_hang?.so_tien_giam_gia
                         ? data?.data?.van_chuyen?.don_hang?.so_tien_giam_gia.toLocaleString(
-                            "vi-VN"
-                          )
+                          "vi-VN"
+                        )
                         : 0}{" "}
                       VNĐ
                     </span>
@@ -555,8 +550,6 @@ const DetailTransport = ({ record }: any) => {
                     )}
                   </div>
                 )}
-
-
                 {/* Show note input if delivery failed */}
                 {showNoteInput && (
                   <textarea
