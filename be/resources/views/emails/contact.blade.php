@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +30,6 @@
         }
 
         .content p {
-        p {
             font-size: 16px;
             line-height: 1.6;
             color: #b3b3cc;
@@ -73,12 +73,14 @@
             color: #ffd700;
             text-decoration: none;
         }
+
         .contact-customers {
             font-size: 15px;
             border-top: 1px solid #ddd;
             margin-bottom: 5px;
             padding-left: 15px;
         }
+
         blockquote {
             color: black;
             margin: 5px auto;
@@ -120,6 +122,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="email-container">
         <div class="header">
@@ -129,27 +132,30 @@
         <div class="content">
             <h2>Xin chào, {{ $name }}</h2>
             <p>Email: {{ $email }}</p>
-            <p>Cảm ơn bạn đã liên hệ với chúng tôi từ Glow Clothing. Chúng tôi đã nhận được yêu cầu của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
+            <p>Cảm ơn bạn đã liên hệ với chúng tôi từ Glow Clothing. Chúng tôi đã nhận được yêu cầu của bạn và sẽ phản
+                hồi lại trong thời gian sớm nhất.</p>
 
-    <div class="container">
-        <h1>Xin chào {{ $name }},</h1>
-        <p>Liên hệ của bạn: {{$email}}</p>
+            <div class="container">
+                <h1>Xin chào {{ $name }},</h1>
+                <p>Liên hệ của bạn: {{ $email }}</p>
 
-        <p>Cảm ơn bạn đã liên hệ với chúng tôi! Chúng tôi đã nhận được liên hệ của bạn và sẽ phản hồi lại trong thời gian sớm nhất.</p>
+                <p>Cảm ơn bạn đã liên hệ với chúng tôi! Chúng tôi đã nhận được liên hệ của bạn và sẽ phản hồi lại trong
+                    thời gian sớm nhất.</p>
 
-        <p>Nội dung liên hệ của bạn:</p>
-        <blockquote>
-            {{ $noidung }}
-        </blockquote>
+                <p>Nội dung liên hệ của bạn:</p>
+                <blockquote>
+                    {{ $noidung }}
+                </blockquote>
 
-        <p class="signature">Trân trọng,<br>Đội ngũ hỗ trợ khách hàng</p>
+                <p class="signature">Trân trọng,<br>Đội ngũ hỗ trợ khách hàng</p>
 
-        <a href="http://localhost:5173/" class="btn">Quay lại trang chủ</a>
+                <a href="http://localhost:5173/" class="btn">Quay lại trang chủ</a>
 
-        <div class="footer">
-            <p>&copy; 2024 Glow Clothing</p>
-        </div>
-    </div>
+                <div class="footer">
+                    <p>&copy; 2024 Glow Clothing</p>
+                </div>
+            </div>
 
 </body>
+
 </html>
