@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\LichSuGiaoDich;
+use App\Models\NganHang;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class TaiKhoanController extends Controller
 {
@@ -42,7 +44,8 @@ class TaiKhoanController extends Controller
         }
     }
 
-    public function viTaiKhoan(){
+    public function viTaiKhoan()
+    {
         try {
             $userID = Auth::id();
             $user = User::find($userID);
@@ -75,7 +78,61 @@ class TaiKhoanController extends Controller
         }
     }
 
-    public function nganHangUser(){
+    public function themTaiKhoanNganHang(Request $request)
+    {
+        $validate = $request->validate([
+            'tai_khoan_ngan_hang' => 'required|string|max:255',
+            'ten_chu_tai_khoan' => 'required|string|max:255',
+            'ngan_hang' => 'required|string|max:255',
+            'logo_ngan_hang' => 'required|string|max:255',
+            'ma_xac_minh' => 'required|string|max:6',
+        ]);
+        try {
+            $userId = Auth::id();
+            $user = User::find($userId);
+            $maXacMinh = $validate['ma_xac_minh'];
+            if (Hash::check($maXacMinh, $user->viTien->ma_xac_minh)) {
+                $nganHang = NganHang::firstOrCreate(
+                    [
+                        'user_id' => $userId,
+                        'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
+                        'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
+                        'ngan_hang' => $validate['ngan_hang'],
+                        'logo_ngan_hang' => $validate['logo_ngan_hang'],
+                    ],
+                    [
+                        'user_id' => $userId,
+                        'ngan_hang' => $validate['ngan_hang'],
+                        'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
+                        'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
+                        'logo_ngan_hang' => $validate['logo_ngan_hang'],
+                    ]
+                );
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Mã xác minh không chính xác',
+                ], 400);
+            }
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Thêm tài khoản ngân hàng thành công',
+                'data' => $nganHang
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Thêm tài khoản ngân hàng thất bại',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function nganHangUser()
+    {
         try {
             $user = Auth::user();
             $nganHang = $user->nganHang;
@@ -95,18 +152,31 @@ class TaiKhoanController extends Controller
         }
     }
 
-    public function huyLienKetNganHang($id){
+    public function huyLienKetNganHang(Request $request, $id)
+    {
+        $request->validate([
+            'ma_xac_minh' => 'required|string|max:6',
+        ]);
         try {
             $user = Auth::user();
+            $maXacMinh = $request->ma_xac_minh;
             $nganHang = $user->nganHang->find($id);
-            if(!$nganHang){
+            if (!$nganHang) {
                 return response()->json([
                     'status' => false,
                     'status_code' => 404,
                     'message' => 'Không tìm thấy ngân hàng',
                 ], 404);
             }
-            $nganHang->delete();
+            if (Hash::check($maXacMinh, $user->viTien->ma_xac_minh)) {
+                $nganHang->delete();
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Mã xác minh không chính xác',
+                ], 400);
+            }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -121,6 +191,29 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+
+    public function thietLapMaXacMinh(Request $request)
+    {
+        $validate = $request->validate([
+            'ma_xac_minh' => 'required|string|max:6',
+        ]);
+        try {
+            $user = Auth::user();
+            $user->viTien->update([
+                'ma_xac_minh' => $validate['ma_xac_minh'],
+            ]);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Thiết lập mã xác minh thành công',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi thiết lập mã xác minh',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
-
-

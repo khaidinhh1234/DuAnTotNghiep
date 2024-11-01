@@ -3,7 +3,7 @@ import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
 import { FastForward, Star } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -17,10 +17,6 @@ const CheckOut = () => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
-
-  // const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
-  // const [selectAllRegular, setSelectAllRegular] = useState(false);
-
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -44,15 +40,21 @@ const CheckOut = () => {
       productId: string;
       currentQuantity: number;
     }) => {
-      await instanceClient.put(
-        `/gio-hang/tang-so-luong/${productId}`,
-        { so_luong: currentQuantity + 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
+      // Kiểm tra nếu số lượng hiện tại nhỏ hơn 10
+      if (currentQuantity < 10) {
+        await instanceClient.put(
+          `/gio-hang/tang-so-luong/${productId}`,
+          { so_luong: currentQuantity + 1 },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+      } else {
+        toast.error("Thêm tối đa 10 sản phẩm");
+        // throw new Error("Số lượng tối đa là 10"); 
+      }
     },
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
@@ -90,16 +92,17 @@ const CheckOut = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
-    onError: (error: any, _, context: { previousCartData?: unknown }) => {
+    onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
       if (context?.previousCartData) {
         queryClient.setQueryData(
           ["cart", access_token],
           context.previousCartData
         );
       }
-      toast.error("Thao tác quá nhanh, vui lòng chậm lại");
+      toast.error(error.message || "Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
+
 
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({
@@ -180,7 +183,24 @@ const CheckOut = () => {
       toast.error(error.message || "Có lỗi xảy ra khi xóa sản phẩm.");
     },
   });
-  const totalSavings = data?.san_pham_giam_gia.reduce((sum: number, product: any) => sum + product.tiet_kiem, 0);
+  // tiet kiem
+  const totalSavings = useMemo(() => {
+    return data?.san_pham_giam_gia
+      .filter((product: any) => selectedProducts.includes(product.id))
+      .reduce((sum: number, product: any) => sum + product.tiet_kiem, 0);
+  }, [data, selectedProducts]);
+  // tong sanpham
+  const tongSoLuong = useMemo(() => {
+    return (
+      data?.san_pham_giam_gia
+        .filter((product: any) => selectedProducts.includes(product.id))
+        .reduce((sum: number, product: any) => sum + product.so_luong, 0) +
+      data?.san_pham_nguyen_gia
+        .filter((product: any) => selectedProducts.includes(product.id))
+        .reduce((sum: number, product: any) => sum + product.so_luong, 0)
+    );
+  }, [data, selectedProducts]);
+
   // Tính tổng tiền
   const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
     const productInDiscounts = data?.san_pham_giam_gia.find(
@@ -189,21 +209,22 @@ const CheckOut = () => {
     const productInRegular = data?.san_pham_nguyen_gia.find(
       (product: { id: number }) => product.id === Number(productId)
     );
-    const quantity =
-      productInDiscounts?.so_luong || productInRegular?.so_luong || 0;// console.log("đâsd", quantity);
+    
+    // Đặt mặc định là 1 nếu không tìm thấy số lượng
+    const quantity = (productInDiscounts?.so_luong || productInRegular?.so_luong) || 1;
+  
     if (productInDiscounts) {
       return total + productInDiscounts.gia_hien_tai * quantity;
     }
-
+  
     if (productInRegular) {
       return total + productInRegular.gia_hien_tai * quantity;
     }
-
-    return total;
-  }, 0);
-  console.log(totalSelectedPrice);
+  
+    return total; // Nếu không có sản phẩm nào, trả về tổng không thay đổi
+  }, 0);  
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
-  const shippingFee = totalSelectedPrice > 500000 ? 0 : 20000;
+  const shippingFee = totalSelectedPrice > 498000 ? 0 : 20000;
   const finalTotal = totalSelectedPrice + shippingFee;
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -315,6 +336,18 @@ const CheckOut = () => {
   useEffect(() => {
     localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
   }, [selectedProducts]);
+  useEffect(() => {
+    if (data) {
+      const preSelectedProducts = [
+        ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id),
+        ...(data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id)
+      ];
+      
+      if (preSelectedProducts.length > 0) {
+        setSelectedProducts(prev => Array.from(new Set([...prev, ...preSelectedProducts])));
+      }
+    }
+  }, [data]);
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
@@ -327,7 +360,8 @@ const CheckOut = () => {
           />
           <Link
             to="/shop"
-            className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md shadow hover:bg-blue-600 transition duration-200"
+            // className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md shadow hover:bg-blue-600 transition duration-200"
+            className="px-20 py-4 mt-4 btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold transition duration-200"
           >
             Quay lại cửa hàng
           </Link>
@@ -347,6 +381,7 @@ const CheckOut = () => {
                       <>Thêm {formatCurrency(500000 - totalSelectedPrice)} để được <span className="text-black">Miễn phí vận chuyển</span></>
                     )}
                   </p>
+
                   <div className="relative bg-gray-100 rounded-full h-2 mt-3">
                     <div
                       className="bg-yellow-400 h-full"
@@ -369,12 +404,15 @@ const CheckOut = () => {
                     </div>
                   </div>
                 </div>
+
                 <table className="min-w-full  ">
                   <thead>
                     <tr className="text-left border-b border-gray-200">
                       <th className="px-4 py-2">
                         <input
                           type="checkbox"
+                          // checked={selectedProducts.length === data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length}
+                          checked={data?.chon === 1 || selectedProducts.length === (data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length)}
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                           onChange={(e) => handleSelectAll(e.target.checked)}
                           title="Select all products"
@@ -404,8 +442,7 @@ const CheckOut = () => {
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                              checked={selectedProducts.includes(product.id)}
-                              // checked={product.chon == 1}
+                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
                               onChange={() => handleSelectProduct(product.id)}
                               title="Select discount product"
                             />
@@ -523,8 +560,7 @@ const CheckOut = () => {
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                              checked={selectedProducts.includes(product.id)}
-                              // checked={product.chon == 1}
+                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
                               onChange={() => handleSelectProduct(product.id)}
                               title="Select regular price product"
                             />
@@ -625,11 +661,13 @@ const CheckOut = () => {
               <div className="lg:col-span-4 col-span-6">
                 <div className="border px-4 py-1 lg:w-[359px] rounded-md">
                   <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
-
                   {selectedProducts.length === 0 ? (
-                    // Hiển thị khi không có sản phẩm nào được chọn
                     <div className="text-center my-4">
-                      <img src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg" alt="Empty cart" className="mx-auto my-4" />
+                      <img
+                        src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
+                        alt="Empty cart"
+                        className="mx-auto my-4"
+                      />
                       <p className="text-gray-500 mb-4">
                         Vui lòng chọn các sản phẩm trong giỏ hàng trước khi thanh toán.
                       </p>
@@ -641,28 +679,26 @@ const CheckOut = () => {
                       </Button>
                     </div>
                   ) : (
-                    // Hiển thị khi có sản phẩm được chọn
                     <div>
-                      <div className="flex justify-between font-bold border-hrBlack border-b ">
+                      <div className="flex justify-between font-bold border-b border-hrBlack">
                         <h4>Tổng giá trị sản phẩm</h4>
                         <span className="px-2">
                           {totalSelectedPrice.toLocaleString("vn-VN")} ₫
                         </span>
                       </div>
                       <div className="py-4">
-                        <div className="flex justify-between font-medium border-hrBlack">
+                        <div className="flex justify-between font-medium">
                           <p>Tiết kiệm</p>
                           <span className="px-2 text-red-500">
-                            {totalSavings} ₫
+                            {totalSavings ? totalSavings.toLocaleString("vn-VN") : "0"} ₫
                           </span>
                         </div>
-                        <div className="flex justify-between font-medium mb-0 border-hrBlack">
+
+                        <div className="flex justify-between font-medium mb-0">
                           <p>Phí giao hàng</p>
-                          <span className="px-2">
-                            {formatCurrency(20000)}
-                          </span>
+                          <span className="px-2">{formatCurrency(20000)}</span>
                         </div>
-                        {totalSelectedPrice > 500000 && (
+                        {totalSelectedPrice > 498000 && (
                           <div className="flex justify-between font-medium border-b border-hrBlack">
                             <p>Giảm giá vận chuyển</p>
                             <span className="px-2 text-red-500">
@@ -681,15 +717,15 @@ const CheckOut = () => {
                             onClick={handleCheckout}
                             className="btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold"
                           >
-                            Mua hàng ({data?.tong_so_luong})
+                            Mua hàng ({tongSoLuong})
                           </Button>
                         </Link>
                       </div>
+
                     </div>
                   )}
                 </div>
               </div>
-              {/* <Subtotal /> */}
             </div>
           </div>
         </section>
