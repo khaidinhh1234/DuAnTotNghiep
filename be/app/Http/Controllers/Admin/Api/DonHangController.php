@@ -433,7 +433,17 @@ class DonHangController extends Controller
                     'ngay_thay_doi' => Carbon::now(),
                     'mo_ta' => 'Rút tiền từ ví',
                 ]);
-                $yeuCauRutTien->viTien->decrement('so_du', $yeuCauRutTien->so_tien);
+                $thongbao = ThongBao::create([
+                    'user_id' => $yeuCauRutTien->user_id,
+                    'tieu_de' => 'Yêu cầu rút tiền của bạn đã được xác nhận',
+                    'noi_dung' => 'Yêu cầu rút tiền từ ví của bạn đã được xác nhận. Vui lòng kiểm tra lại tài khoản ngân hàng của bạn.',
+                    'loai' => 'Yêu cầu rút tiền',
+                    'duong_dan' => 'yeu-cau-rut-tien',
+                    'id_duong_dan' => $yeuCauRutTien->id,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+
+                broadcast(new ThongBaoMoi($thongbao))->toOthers();
                 $mess = 'Xác nhận yêu cầu rút tiền thành công.';
             } else if ($validated['trang_thai'] === 'that_bai') {
                 $yeuCauRutTien->update(['trang_thai' => 'that_bai']);
@@ -445,9 +455,20 @@ class DonHangController extends Controller
                     'ngay_thay_doi' => Carbon::now(),
                     'mo_ta' => 'Từ chối yêu cầu rút tiền',
                 ]);
+                $yeuCauRutTien->viTien->increment('so_du', $yeuCauRutTien->so_tien);
+                $thongbao = ThongBao::create([
+                    'user_id' => $yeuCauRutTien->user_id,
+                    'tieu_de' => 'Yêu cầu rút tiền của bạn đã bị từ chối',
+                    'noi_dung' => 'Yêu cầu rút tiền từ ví của bạn đã bị từ chối. Vui lòng kiểm tra lại thông tin và thử lại.',
+                    'loai' => 'Yêu cầu rút tiền',
+                    'duong_dan' => 'yeu-cau-rut-tien',
+                    'id_duong_dan' => $yeuCauRutTien->id,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+
+                broadcast(new ThongBaoMoi($thongbao))->toOthers();
                 $mess = 'Từ chối yêu cầu rút tiền thật bại.';
             }
-
             DB::commit();
             return response()->json([
                 'status' => true,

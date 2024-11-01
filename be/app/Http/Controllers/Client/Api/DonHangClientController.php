@@ -22,6 +22,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -581,10 +582,12 @@ class DonHangClientController extends Controller
     {
         $request->validate([
             'so_tien' => 'required|numeric|min:1',
+            'ma_xac_thuc' => 'required|string|min:6|max:6',
         ]);
 
         $userId = Auth::id();
         $viTien = User::findOrFail($userId)->viTien;
+        $maXacThuc = $request->input('ma_xac_thuc');
         $soTien = $request->input('so_tien');
         $nganHangId = $id;
 
@@ -598,34 +601,44 @@ class DonHangClientController extends Controller
                     'message' => 'Số dư trong ví tiền không đủ để rút.',
                 ], 400);
             }
+            if (Hash::check($maXacThuc, $user->ma_xac_thuc)) {
+                $yeuCauRutTien = YeuCauRutTien::create([
+                    'vi_tien_id' => $viTien->id,
+                    'ngan_hang_id' => $nganHangId,
+                    'so_tien' => (int)$soTien,
+                    'trang_thai' => 'cho_duyet',
+                ]);
 
-            $yeuCauRutTien = YeuCauRutTien::create([
-                'vi_tien_id' => $viTien->id,
-                'ngan_hang_id' => $nganHangId,
-                'so_tien' => (int)$soTien,
-                'trang_thai' => 'cho_duyet',
-            ]);
+                $user->viTien->so_du -= $soTien;
+                $user->viTien->save();
 
-            GiaoDichVi::create([
-                'vi_tien_id' => $user->viTien->id,
-                'loai_giao_dich' => 'rut_tien',
-                'so_tien' => $soTien,
-                'mo_ta' => 'Rút tiền từ ví tiền',
-                'trang_thai' => 'dang_xu_ly',
-                'thoi_gian_giao_dich' => now(),
-            ]);
+                GiaoDichVi::create([
+                    'vi_tien_id' => $user->viTien->id,
+                    'loai_giao_dich' => 'rut_tien',
+                    'so_tien' => $soTien,
+                    'mo_ta' => 'Rút tiền từ ví tiền',
+                    'trang_thai' => 'dang_xu_ly',
+                    'thoi_gian_giao_dich' => now(),
+                ]);
 
-            $thongBao = ThongBao::create([
-                'user_id' => $userId,
-                'tieu_de' => 'Yêu cầu rút tiền',
-                'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
-                'loai' => 'Rút tiền',
-                'duong_dan' => 'rut-tien',
-                'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
-                'id_duong_dan' => $yeuCauRutTien->id,
-            ]);
+                $thongBao = ThongBao::create([
+                    'user_id' => $userId,
+                    'tieu_de' => 'Yêu cầu rút tiền',
+                    'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
+                    'loai' => 'Rút tiền',
+                    'duong_dan' => 'rut-tien',
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    'id_duong_dan' => $yeuCauRutTien->id,
+                ]);
 
-            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Mã xác thực không chính xác.',
+                ], 400);
+            }
+
             DB::commit();
             return response()->json([
                 'status' => true,
