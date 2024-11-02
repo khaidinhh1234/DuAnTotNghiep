@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Client\Api;
 
 use App\Events\SendMail;
 use App\Http\Controllers\Controller;
+use App\Models\DonHang;
 use App\Models\LichSuGiaoDich;
+use App\Models\Momo;
 use App\Models\NganHang;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -198,21 +200,34 @@ class TaiKhoanController extends Controller
     {
         $validate = $request->validate([
             'ma_xac_minh' => 'required|string|max:6',
+            'ma_xac_minh_moi' => 'nullable|string|max:6',
         ]);
         try {
             $user = Auth::user();
-            if (!isset($user->viTien->ma_xac_minh) || Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)) {
+            if ($user->viTien->ma_xac_minh == "") {
                 $user->viTien->update([
-                    'ma_xac_minh' => $validate['ma_xac_minh'],
+                    'ma_xac_minh' => Hash::make($validate['ma_xac_minh']),
                 ]);
+                $mess = 'Thiết lập mã xác minh thành công';
+            } else if (Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)){
+                $user->viTien->update([
+                    'ma_xac_minh' => Hash::make($validate['ma_xac_minh_moi']),
+                ]);
+                $mess = 'Đổi mã xác minh thành công';
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Mã xác minh không chính xác',
+                ], 400);
             }
 
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Thiết lập mã xác minh thành công',
-                'data' => $user->viTien,
-            ], 200);
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => $mess,
+                    'data' => $user->viTien,
+                ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -245,4 +260,31 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+    public function getTransactionHistory(Request $request)
+    {
+        // Lấy user đang đăng nhập
+        $user = $request->user();
+
+        // Lấy ra tất cả đơn hàng của user
+        $userOrders = DonHang::where('user_id', $user->id)->pluck('ma_don_hang')->toArray();
+
+        // Lấy ra các giao dịch tương ứng với các orderId trong bảng Momo
+        $transactions = Momo::with('donHang')
+            ->whereIn('orderId', $userOrders)->get();
+
+        // Kiểm tra xem có giao dịch nào không
+        if ($transactions->isEmpty()) {
+            return response()->json([
+                'message' => 'Không có giao dịch nào cho đơn hàng của bạn.',
+                'data' => []
+            ], 404);
+        }
+
+        // Trả về dữ liệu giao dịch
+        return response()->json([
+            'message' => 'Lịch sử giao dịch.',
+            'data' => $transactions
+        ]);
+    }
+
 }

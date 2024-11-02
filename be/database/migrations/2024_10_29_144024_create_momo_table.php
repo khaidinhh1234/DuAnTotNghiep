@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('momo', function (Blueprint $table) {
             $table->id();
-            $table->string('partnerCode',50)->comment('Mã đối tác');
-            $table->string('orderId',50)->unique()->comment('ID đơn hàng');
-            $table->string('requestId',50)->comment('ID yêu cầu');
-            $table->string('amount',50)->comment('Số tiền thanh toán');
-            $table->string('orderInfo',50)->comment('Thông tin đơn hàng');
-            $table->string('orderType',50)->comment('Loại đơn hàng');
-            $table->string('transId',50)->unique()->comment('ID giao dịch');
-            $table->string('payType',50)->comment('Loại thanh toán');
-            $table->string('signature',50)->comment('Chữ ký bảo mật');
+            $table->string('partnerCode', 255)->comment('Mã đối tác');
+            $table->string('orderId', 255)->unique()->comment('ID đơn hàng');
+            $table->unsignedBigInteger('requestId')->comment('ID yêu cầu');
+            $table->unsignedBigInteger('amount')->comment('Số tiền thanh toán');
+            $table->unsignedBigInteger('transId')->unique()->comment('ID giao dịch');
+            $table->string('orderInfo', 255)->comment('Thông tin đơn hàng');
+            $table->string('orderType', 255)->comment('Loại đơn hàng');
+            $table->string('payType', 255)->comment('Loại thanh toán');
+            $table->string('signature', 255)->comment('Chữ ký bảo mật');
             $table->timestamps();
         });
     }

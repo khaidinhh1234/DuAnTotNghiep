@@ -92,6 +92,10 @@ Route::middleware([])
 
         //Thanh toán MoMo
         Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
+        Route::post('check-trang-thai', [MoMoController::class, 'checkDonHang']);
+        Route::post('luu-thanh-toan-vao-momo', [MoMoController::class, 'savePaymentInfo']);
+
+
 
         //Client Chi tiết sản phẩm
         // Captcha
@@ -163,6 +167,7 @@ Route::middleware([])
             Route::get('/danh-sach-ngan-hang', [ApiTaiKhoanController::class, 'nganHangUser']);
             Route::post('/them-ngan-hang', [ApiTaiKhoanController::class, 'themTaiKhoanNganHang']);
             Route::post('/huy-lien-ket-ngan-hang/{id}', [ApiTaiKhoanController::class, 'huyLienKetNganHang']);
+            Route::get('/momo-transactions', [ApiTaiKhoanController::class, 'getTransactionHistory']);
         })->middleware('auth.sanctum');
 
 
@@ -318,6 +323,8 @@ Route::middleware(['auth.sanctum'])
                 Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
                 Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
                 Route::post('taikhoan/cap-nhat-mat-khau', [TaiKhoanController::class, 'doiMatKhau'])->withoutMiddleware('auth.checkrole');
+                
+
             });
 
         //Hạng thành viên
