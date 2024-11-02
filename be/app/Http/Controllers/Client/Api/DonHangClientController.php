@@ -634,17 +634,17 @@ class DonHangClientController extends Controller
                     'thoi_gian_giao_dich' => now(),
                 ]);
 
-                $thongBao = ThongBao::create([
-                    'user_id' => $userId,
-                    'tieu_de' => 'Yêu cầu rút tiền',
-                    'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
-                    'loai' => 'Rút tiền',
-                    'duong_dan' => 'rut-tien',
-                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                    'id_duong_dan' => $yeuCauRutTien->id,
-                ]);
+                // $thongBao = ThongBao::create([
+                //     'user_id' => $userId,
+                //     'tieu_de' => 'Yêu cầu rút tiền',
+                //     'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
+                //     'loai' => 'Rút tiền',
+                //     'duong_dan' => 'rut-tien',
+                //     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                //     'id_duong_dan' => $yeuCauRutTien->id,
+                // ]);
 
-                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                // broadcast(new ThongBaoMoi($thongBao))->toOthers();
             } else {
                 return response()->json([
                     'status' => false,
