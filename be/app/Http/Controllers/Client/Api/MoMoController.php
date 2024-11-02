@@ -42,10 +42,9 @@ class MoMoController extends Controller
             $partnerCode = env('MOMO_PARTNER_CODE');
             $accessKey = env('MOMO_ACCESS_KEY');
             $secretKey = env('MOMO_SECRET_KEY');
-
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            $orderId = $request->ma_don_hang;
+            $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
             $redirectUrl = env('MOMO_REDIRECT_URL');
             $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
@@ -90,7 +89,7 @@ class MoMoController extends Controller
 
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            $orderId = $request->ma_don_hang;
+            $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
             $redirectUrl = env('MOMO_REDIRECT_URL');
             $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
@@ -184,8 +183,10 @@ class MoMoController extends Controller
     {
         try {
             $trangThai = $request->resultCode ?? null;
-            $maDonHang = $request->orderId ?? null;
-            // $maDonHang = explode("-", $maOrderMomo)[0];
+
+            $maOrderMomo = $request->orderId ?? null;
+            $maDonHang = explode("-", $maOrderMomo)[0];
+
             // Tìm đơn hàng dựa vào mã đơn hàng
             $donHang = DonHang::where('ma_don_hang', $maDonHang)->first();
 
