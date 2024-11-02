@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Client\Api;
 
 use App\Events\SendMail;
 use App\Http\Controllers\Controller;
+use App\Models\DonHang;
 use App\Models\LichSuGiaoDich;
+use App\Models\Momo;
 use App\Models\NganHang;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -245,4 +247,31 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+    public function getTransactionHistory(Request $request)
+    {
+        // Lấy user đang đăng nhập
+        $user = $request->user();
+
+        // Lấy ra tất cả đơn hàng của user
+        $userOrders = DonHang::where('user_id', $user->id)->pluck('ma_don_hang')->toArray();
+
+        // Lấy ra các giao dịch tương ứng với các orderId trong bảng Momo
+        $transactions = Momo::with('donHang')
+            ->whereIn('orderId', $userOrders)->get();
+
+        // Kiểm tra xem có giao dịch nào không
+        if ($transactions->isEmpty()) {
+            return response()->json([
+                'message' => 'Không có giao dịch nào cho đơn hàng của bạn.',
+                'data' => []
+            ], 404);
+        }
+
+        // Trả về dữ liệu giao dịch
+        return response()->json([
+            'message' => 'Lịch sử giao dịch.',
+            'data' => $transactions
+        ]);
+    }
+
 }
