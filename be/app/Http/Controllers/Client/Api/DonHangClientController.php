@@ -608,13 +608,13 @@ class DonHangClientController extends Controller
 
         try {
             $user = User::findOrFail($userId);
-            if ($user->viTien->so_du < $soTien) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Số dư trong ví tiền không đủ để rút.',
-                ], 400);
-            }
             if (Hash::check($maXacThuc, $user->viTien->ma_xac_minh)) {
+                if ($user->viTien->so_du < $soTien) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Số dư trong ví tiền không đủ để rút.',
+                    ], 400);
+                }
                 $yeuCauRutTien = YeuCauRutTien::create([
                     'vi_tien_id' => $viTien->id,
                     'ngan_hang_id' => $nganHangId,
