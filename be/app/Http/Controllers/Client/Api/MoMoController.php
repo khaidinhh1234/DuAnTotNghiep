@@ -135,11 +135,12 @@ class MoMoController extends Controller
     {
         try {
             $trangThai = $request->resultCode ?? null;
-
+            $maOrderMomo = $request->orderId ?? null;
+            $maDonHang = explode("-", $maOrderMomo)[0];
             // Lấy dữ liệu từ request
             $data = [
                 'partnerCode' => $request->partnerCode,
-                'orderId' => $request->orderId,
+                'orderId' => $request->maDonHang,
                 'requestId' => $request->requestId,
                 'amount' => $request->amount,
                 'orderInfo' => $request->orderInfo,
