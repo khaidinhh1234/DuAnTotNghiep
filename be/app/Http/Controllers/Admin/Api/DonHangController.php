@@ -221,7 +221,7 @@ class DonHangController extends Controller
                         'ngay_tao' => Carbon::now(),
                         'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
                         'cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? VanChuyen::TTCOD_KT : VanChuyen::TTCOD_CN,
-                        'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? null : $donHang->tong_tien_don_hang,
+                        'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? 0 : $donHang->tong_tien_don_hang,
                     ];
                     VanChuyen::create($vanChuyenData);
                 }

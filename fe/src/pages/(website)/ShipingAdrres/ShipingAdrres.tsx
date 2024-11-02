@@ -20,14 +20,14 @@ const ShippingAddressPage = () => {
       try {
         // Bước 1: Tạo đơn hàng
         const order = await instanceClient.post(`don-hang`, data);
-
+        console.log(order);
         // Bước 2: Thực hiện thanh toán qua MoMo
         const momoPaymentData = {
           phuong_thuc_thanh_toan: data.phuong_thuc_thanh_toan,
           ma_don_hang: order.data.data.ma_don_hang,
           amount: order.data.data.tong_tien_don_hang,
         };
-
+        console.log(momoPaymentData);
         const response = await instanceClient.post(
           "payment/momo",
           momoPaymentData
@@ -38,12 +38,13 @@ const ShippingAddressPage = () => {
         }
         if (response.status === 200) {
           message.success("Thanh toán MoMo thành công");
+          toast.success("Đặt hàng thành công");
           // nav("/thankyou");
         } else {
           message.error("Thanh toán MoMo thất bại");
         }
         // console.log(order);
-        message.success("Đặt hàng thành công");
+
         return order.data;
       } catch (error) {
         console.log(error);

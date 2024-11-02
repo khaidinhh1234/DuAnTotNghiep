@@ -41,6 +41,8 @@ function TaiChinh() {
       <SettingsModal 
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+        trang_thai_ma_xac_minh={data?.trang_thai_ma_xac_minh}
+
       />
       {/* Container */}
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
