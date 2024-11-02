@@ -52,7 +52,7 @@ const Bestseller = ({ products }: any) => {
       });
     },
   });
-  console.log(products);
+  // console.log(products);
   return (
     <>
       <section>

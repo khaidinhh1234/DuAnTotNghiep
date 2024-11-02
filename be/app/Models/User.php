@@ -119,7 +119,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(NganHang::class, 'user_id', 'id');
     }
-
     public function momoTransactions()
     {
         return $this->hasManyThrough(
@@ -131,5 +130,4 @@ class User extends Authenticatable
             'id'              // Khóa chính của DonHang
         )->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]);
     }
-
 }

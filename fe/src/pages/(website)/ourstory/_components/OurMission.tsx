@@ -6,17 +6,18 @@ const OurMission = () => {
       <section id="OurMission" className="mb-16 bg-neutral-200 pt-10 pb-20">
         <div className="container">
           <h2 className="lg:text-4xl text-2xl font-semibold mb-10 text-center">
-            Our Mission
+            Sứ Mệnh Của Chúng Tôi
           </h2>
           <div className="grid grid-cols-12 gap-10">
             <div className="col-span-6">
               <h3 className="lg:text-[40px] text-2xl font-semibold py-3">
-                Fashion and Comfort
+                Thời Trang và Sự Thoải Mái
               </h3>
               <p className="lg:text-lg lg:max-w-lg my-3 font-medium">
-                We are dedicated to offering stylish and comfortable clothing to
-                our customers. Our goal is to blend fashion trends with everyday
-                comfort, ensuring that our apparel enhances both style and ease.
+                Chúng tôi cam kết mang đến cho khách hàng những trang phục thời
+                trang và thoải mái. Mục tiêu của chúng tôi là kết hợp xu hướng
+                thời trang với sự thoải mái hàng ngày, đảm bảo rằng trang phục
+                của chúng tôi nâng cao cả phong cách và sự dễ chịu.
               </p>
               <img
                 src={our1}
@@ -31,13 +32,13 @@ const OurMission = () => {
                 className="lg:w-[560px] lg:h-[648px] w-[260px] h-[348px] py-3"
               />
               <h3 className="lg:text-[40px] text-2xl font-semibold py-3">
-                Quality and Confidence
+                Chất Lượng và Sự Tự Tin
               </h3>
               <p className="lg:text-lg lg:max-w-lg my-3 font-medium">
-                We strive to deliver garments of exceptional quality that
-                inspire confidence. Each piece is crafted with meticulous
-                attention to detail, ensuring not only aesthetic appeal but also
-                durability and satisfaction for our customers
+                Chúng tôi nỗ lực mang đến những trang phục chất lượng cao,
+                truyền cảm hứng tự tin. Mỗi sản phẩm được chế tác với sự chú ý
+                tỉ mỉ đến từng chi tiết, đảm bảo không chỉ vẻ đẹp thẩm mỹ mà còn
+                độ bền và sự hài lòng cho khách hàng của chúng tôi.
               </p>
             </div>
           </div>

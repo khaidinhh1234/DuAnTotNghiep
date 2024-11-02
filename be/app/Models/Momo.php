@@ -22,13 +22,11 @@ class Momo extends Model
         'payType',
         'signature',
     ];
-
-    /**
-     * Thiết lập quan hệ với model DonHang
-     */
     public function donHang()
     {
         return $this->belongsTo(DonHang::class, 'orderId', 'ma_don_hang');
     }
+    /**
+     * Thiết lập quan hệ với model DonHang
+     */
 }
-

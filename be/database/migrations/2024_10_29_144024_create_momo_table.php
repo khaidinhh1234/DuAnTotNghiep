@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('partnerCode', 255)->comment('Mã đối tác');
             $table->string('orderId', 255)->unique()->comment('ID đơn hàng');
-            $table->unsignedBigInteger('requestId')->comment('ID yêu cầu');
-            $table->unsignedBigInteger('amount')->comment('Số tiền thanh toán');
-            $table->unsignedBigInteger('transId')->unique()->comment('ID giao dịch');
+            $table->string('requestId')->comment('ID yêu cầu');
+            $table->string('amount')->comment('Số tiền thanh toán');
+            $table->string('transId')->unique()->comment('ID giao dịch');
             $table->string('orderInfo', 255)->comment('Thông tin đơn hàng');
             $table->string('orderType', 255)->comment('Loại đơn hàng');
             $table->string('payType', 255)->comment('Loại thanh toán');

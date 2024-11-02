@@ -209,7 +209,7 @@ class TaiKhoanController extends Controller
                     'ma_xac_minh' => Hash::make($validate['ma_xac_minh']),
                 ]);
                 $mess = 'Thiết lập mã xác minh thành công';
-            } else if (Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)){
+            } else if (Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)) {
                 $user->viTien->update([
                     'ma_xac_minh' => Hash::make($validate['ma_xac_minh_moi']),
                 ]);
@@ -222,12 +222,12 @@ class TaiKhoanController extends Controller
                 ], 400);
             }
 
-                return response()->json([
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => $mess,
-                    'data' => $user->viTien,
-                ], 200);
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => $mess,
+                'data' => $user->viTien,
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -286,5 +286,4 @@ class TaiKhoanController extends Controller
             'data' => $transactions
         ]);
     }
-
 }

@@ -39,6 +39,7 @@ interface ProductData {
     ten_danh_muc: string;
     cha_id?: number;
   };
+  trang_thai_yeu_thich: boolean;
   danh_gias: Array<{
     id: number;
     so_sao_san_pham: number;
@@ -134,8 +135,11 @@ const ProductDetail: React.FC = () => {
   // const [token, setToken] = useState<string | null>(null);
 
   const [user] = useLocalStorage("user" as any, {});
-  const access_token = user.access_token || localStorage.getItem("access_token");
-  const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
+  const [selectedColorDisplay, setSelectedColorDisplay] = useState<
+    string | null
+  >(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
     null
@@ -192,12 +196,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                ...review,
-                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                danh_gia_huu_ich_count: variables.isLiked
-                  ? review.danh_gia_huu_ich_count - 1
-                  : review.danh_gia_huu_ich_count + 1,
-              }
+                  ...review,
+                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                  danh_gia_huu_ich_count: variables.isLiked
+                    ? review.danh_gia_huu_ich_count - 1
+                    : review.danh_gia_huu_ich_count + 1,
+                }
               : review
           ),
         };
@@ -207,84 +211,86 @@ const ProductDetail: React.FC = () => {
       message.error(error.message || "Có lỗi xảy ra khi thực hiện hành động");
     },
   });
-// add to cart
-const handleAddToCart = () => {
-  if (quantity < 1) {
-    toast.error('Số lượng phải lớn hơn hoặc bằng 1');
-    return;
-  }
-
-  // Nếu người dùng chưa chọn biến thể, lấy biến thể đầu tiên
-  const firstVariant = product?.bien_the_san_pham[0];
-  const variantIdToUse = selectedVariantId || firstVariant?.id;
-
-  // Kiểm tra nếu không có biến thể nào
-  if (!variantIdToUse) {
-    toast.error('Không có biến thể nào để thêm vào giỏ hàng.');
-    return;
-  }
-
-  console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
-
-  // Kiểm tra nếu không có access_token thì lưu vào localStorage
-  if (!access_token) {
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    // Kiểm tra xem sản phẩm đã tồn tại trong giỏ chưa
-    const existingItem = cart.find((item: { variantId: number; quantity: number }) => item.variantId === variantIdToUse);
-    if (existingItem) {
-      // Nếu sản phẩm đã tồn tại, tăng số lượng
-      existingItem.quantity += quantity;
-    } else {
-      // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ
-      cart.push({ variantId: variantIdToUse, quantity });
+  // add to cart
+  const handleAddToCart = () => {
+    if (quantity < 1) {
+      toast.error("Số lượng phải lớn hơn hoặc bằng 1");
+      return;
     }
 
-    // Cập nhật giỏ hàng trong localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-    toast.success('Sản phẩm đã được thêm vào giỏ hàng trong localStorage.');
-  } else {
-    // Nếu có access_token (người dùng đã đăng nhập), gọi API để thêm sản phẩm vào giỏ trên server
-    addToCart(variantIdToUse);
-  }
-};
+    // Nếu người dùng chưa chọn biến thể, lấy biến thể đầu tiên
+    const firstVariant = product?.bien_the_san_pham[0];
+    const variantIdToUse = selectedVariantId || firstVariant?.id;
 
-// useMutation thêm sản phẩm vào giỏ hàng trên server khi có access_token
-const { mutate: addToCart } = useMutation({
-  mutationFn: async (variantId: number) => {
-    const response = await instanceClient.post(
-      '/gio-hang',
-      {
-        bien_the_san_pham_id: variantId,
-        so_luong: quantity,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
+    // Kiểm tra nếu không có biến thể nào
+    if (!variantIdToUse) {
+      toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
+      return;
+    }
+
+    console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
+
+    // Kiểm tra nếu không có access_token thì lưu vào localStorage
+    if (!access_token) {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      // Kiểm tra xem sản phẩm đã tồn tại trong giỏ chưa
+      const existingItem = cart.find(
+        (item: { variantId: number; quantity: number }) =>
+          item.variantId === variantIdToUse
+      );
+      if (existingItem) {
+        // Nếu sản phẩm đã tồn tại, tăng số lượng
+        existingItem.quantity += quantity;
+      } else {
+        // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ
+        cart.push({ variantId: variantIdToUse, quantity });
       }
-    );
-    console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
-    return response.data;
-  },
-  onSuccess: (data) => {
-    console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
-    if (data.status) {
-      toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: ['cart', access_token] });
+
+      // Cập nhật giỏ hàng trong localStorage
+      localStorage.setItem("cart", JSON.stringify(cart));
+      toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
     } else {
-      toast.error(data.message);
+      // Nếu có access_token (người dùng đã đăng nhập), gọi API để thêm sản phẩm vào giỏ trên server
+      addToCart(variantIdToUse);
     }
-  },
-  onError: (error: any) => {
-    console.error("Lỗi khi thêm vào giỏ hàng:", error); // Kiểm tra lỗi
-    toast.error(
-      error.response?.data?.message || 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.'
-    );
-  },
-});
+  };
 
-
+  // useMutation thêm sản phẩm vào giỏ hàng trên server khi có access_token
+  const { mutate: addToCart } = useMutation({
+    mutationFn: async (variantId: number) => {
+      const response = await instanceClient.post(
+        "/gio-hang",
+        {
+          bien_the_san_pham_id: variantId,
+          so_luong: quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
+      return response.data;
+    },
+    onSuccess: (data) => {
+      console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
+      if (data.status) {
+        toast.success(data.message);
+        queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+      } else {
+        toast.error(data.message);
+      }
+    },
+    onError: (error: any) => {
+      console.error("Lỗi khi thêm vào giỏ hàng:", error); // Kiểm tra lỗi
+      toast.error(
+        error.response?.data?.message ||
+          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+      );
+    },
+  });
 
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {
@@ -372,7 +378,6 @@ const { mutate: addToCart } = useMutation({
     updateImages(selectedColor, size);
   };
 
-
   const updateImages = (color: string | null, size: string | null) => {
     if (color && size && product) {
       const variant = product?.bien_the_san_pham?.find(
@@ -390,8 +395,33 @@ const { mutate: addToCart } = useMutation({
     setPreviewImage(imageUrl);
     setPreviewOpen(true);
   };
-  const handleClickHeart = () => {
-    setIsHeart(!isHeart);
+  const { mutate: toggleFavorite } = useMutation({
+    mutationFn: async (id) => {
+      const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+      if (
+        response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+      ) {
+        message.success("Xóa sản phẩm yêu thích thành công");
+      }
+      if (
+        response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+      ) {
+        message.success("Thêm sản phẩm yêu thích thành công");
+      }
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["product", slug],
+      });
+    },
+    onError: (error) => {
+      message.error("Xóa sản phẩm yêu thích thất bại");
+      console.error("API error", error);
+    },
+  });
+  const handleClickHeart = (id: any) => {
+    toggleFavorite(id);
   };
   const handleCopy = () => {
     if (product?.ma_san_pham) {
@@ -411,7 +441,7 @@ const { mutate: addToCart } = useMutation({
   };
   if (isLoading) return <div>Đang tải...</div>;
   // if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
-
+  // console.log(product);
   return (
     <>
       <section>
@@ -522,10 +552,11 @@ const { mutate: addToCart } = useMutation({
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
-                          ? "bg-[#3CD139]/10 text-[#3CD139]"
-                          : "bg-red-500 text-white"
-                          }`}
+                        className={` text-sm px-2 py-1 rounded-sm ${
+                          selectedVariant?.so_luong_bien_the > 0
+                            ? "bg-[#3CD139]/10 text-[#3CD139]"
+                            : "bg-red-500 text-white"
+                        }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -624,8 +655,12 @@ const { mutate: addToCart } = useMutation({
                     <i className="fa-solid fa-pen-ruler mr-2"></i>Bảng kích
                     thước
                   </p>
-                  <SizeGuideModal isOpen={isModalOpen} onClose={toggleModal}   categoryId={product?.danh_muc?.cha_id ?? 0}   productDetailId={product?.id ?? 0}
- />
+                  <SizeGuideModal
+                    isOpen={isModalOpen}
+                    onClose={toggleModal}
+                    categoryId={product?.danh_muc?.cha_id ?? 0}
+                    productDetailId={product?.id ?? 0}
+                  />
                 </div>
 
                 <div className="flex mt-3">
@@ -661,7 +696,9 @@ const { mutate: addToCart } = useMutation({
                     type="number"
                     value={quantity}
                     readOnly
-                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)))}
+                    onChange={(e) =>
+                      setQuantity(Math.max(1, parseInt(e.target.value, 10)))
+                    }
                     className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
                   />
 
@@ -673,16 +710,19 @@ const { mutate: addToCart } = useMutation({
                   </button>
                 </div>
 
-                <button onClick={handleAddToCart} className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg">
+                <button
+                  onClick={handleAddToCart}
+                  className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
+                >
                   Thêm vào giỏ hàng
                 </button>
                 <button
-                  onClick={handleClickHeart}
-                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 ${isHeart ? "bg-red-600" : ""
-                    }`}
+                  onClick={() => handleClickHeart(product?.id)}
+                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
+`}
                 >
                   <i
-                    className={`fa-regular fa-heart text-2xl ${isHeart ? "text-white" : "text-red-600"}`}
+                    className={`fa-heart text-3xl text-red-600 ${product?.trang_thai_yeu_thich ? "fa-solid " : "fa-regular "}`}
                   />
                 </button>
               </div>
@@ -713,24 +753,28 @@ const { mutate: addToCart } = useMutation({
           </button>
         </div>
         {activeTab === "descriptions" && (
-  <div className="mb-4">
-    <div
-      className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
-        isDescriptionExpanded ? "h-auto" : "max-h-[500px] overflow-hidden"
-      }`}
-    >
-      <div dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }} />
-      {!isDescriptionExpanded && (
-        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
-      )}
-    </div>
-    <div className="flex justify-center">
-      <Button onClick={toggleDescription} className="mb-4">
-        {isDescriptionExpanded ? "Thu gọn" : "Xem thêm"}
-      </Button>
-    </div>
-  </div>
-)}
+          <div className="mb-4">
+            <div
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
+                isDescriptionExpanded
+                  ? "h-auto"
+                  : "max-h-[500px] overflow-hidden"
+              }`}
+            >
+              <div
+                dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
+              />
+              {!isDescriptionExpanded && (
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent" />
+              )}
+            </div>
+            <div className="flex justify-center">
+              <Button onClick={toggleDescription} className="mb-4">
+                {isDescriptionExpanded ? "Thu gọn" : "Xem thêm"}
+              </Button>
+            </div>
+          </div>
+        )}
 
         {activeTab === "additionalInfo" && (
           <div className="mb-4">

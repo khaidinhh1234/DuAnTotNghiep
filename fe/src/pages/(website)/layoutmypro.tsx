@@ -14,12 +14,12 @@ const LayoutMyPro = () => {
                 Thông Tin Cá Nhân
               </h1>
             </div>
-            <div className="grid lg:grid-cols-12 grid-cols-8 lg:gap-8 gap-2 lg:my-12 my-6">
+            <div className="grid lg:grid-cols-12 grid-cols-8 lg:gap-8 gap-2 lg:my-12 mt-6 ">
               {/* Thanh bên */}
               <div className="lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] lg:h-[524px] rounded-lg">
                 <Sidebar />
               </div>
-              <div className="lg:col-span-9  col-span-8 lg:pl-5">
+              <div className="lg:col-span-9  col-span-8 lg:pl-5 mb-10">
                 <Outlet />
               </div>
             </div>

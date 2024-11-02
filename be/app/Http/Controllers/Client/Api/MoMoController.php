@@ -162,7 +162,6 @@ class MoMoController extends Controller
                 $message = 'Lưu thông tin thanh toán thành công.';
             } else {
                 $message = 'Lưu thông tin thanh toán thất bại.';
-
             }
             return response()->json([
                 'status' => true,
@@ -184,8 +183,10 @@ class MoMoController extends Controller
     {
         try {
             $trangThai = $request->resultCode ?? null;
+
             $maOrderMomo = $request->orderId ?? null;
             $maDonHang = explode("-", $maOrderMomo)[0];
+
             // Tìm đơn hàng dựa vào mã đơn hàng
             $donHang = DonHang::where('ma_don_hang', $maDonHang)->first();
 
@@ -269,7 +270,4 @@ class MoMoController extends Controller
             ], 500);
         }
     }
-
-
-
 }
