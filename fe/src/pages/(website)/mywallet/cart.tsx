@@ -235,7 +235,7 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
             
             <div className="mt-4 flex justify-between text-sm">
               <div>
-                <div className="text-gray-200 drop-shadow-lg">Chủ Thẻ</div>
+                <div className="text-gray-200 drop-shadow-lg">Chủ Tài Khoản</div>
                 <div className="font-semibold uppercase drop-shadow-lg">
                   {cardHolder || 'TÊN ĐẦY ĐỦ'}
                 </div>
@@ -250,7 +250,7 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Số Thẻ</label>
+            <label className="block text-sm font-medium text-gray-700">Số Tài Khoản</label>
             <input
               type="text"
               placeholder="1234 5678 9012 3456"
@@ -266,7 +266,7 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Tên Chủ Thẻ</label>
+            <label className="block text-sm font-medium text-gray-700">Tên Chủ Tài Khoản</label>
             <input
               type="text"
               placeholder="Tên Đầy Đủ"
