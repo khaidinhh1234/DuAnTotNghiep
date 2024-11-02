@@ -7,9 +7,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { toast } from "react-toastify";
 import { message } from "antd";
+import { useState } from "react";
 
 const MyWishlistsPage = ({ yeuthich }: any) => {
   const queryClient = useQueryClient();
+  const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
+  const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
+    null
+  );
+  const handleMouseEnter = (productId: number, variantIndex: any) => {
+    setHoveredProductId(productId);
+    setHoveredVariantIndex(variantIndex);
+  };
   const { mutate, isPending } = useMutation({
     mutationFn: async (id: any) => {
       try {
@@ -82,6 +91,28 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
                           <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
                           {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")}{" "}
                         </>
+                      )}
+                    </p>
+                    <p className="font-bold text-lg flex items-center">
+                      {product?.mau_sac_va_anh?.map(
+                        (item: any, indexs: any) => (
+                          <button
+                            key={indexs}
+                            className={`w-7 h-7 rounded-full border mr-1 
+                             ${
+                               hoveredProductId === product?.id &&
+                               hoveredVariantIndex === indexs
+                                 ? "border-black"
+                                 : "border-gray-300 hover:border-black"
+                             }`}
+                            style={{
+                              backgroundColor: item?.ma_mau_sac,
+                            }}
+                            onMouseEnter={() =>
+                              handleMouseEnter(product?.id, indexs)
+                            }
+                          />
+                        )
                       )}
                     </p>
                   </div>{" "}

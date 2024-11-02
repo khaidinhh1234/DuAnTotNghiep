@@ -48,6 +48,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       }
     },
   });
+  console.log(data);
   const queryclient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
@@ -105,6 +106,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     };
     gia_ban: number;
     gia_khuyen_mai: number;
+    gia_khuyen_mai_tam_thoi: number;
     anh_bien_the: string[];
   }
 
@@ -121,6 +123,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     ?.map((variant: Variant) => ({
       gia_ban: variant?.gia_ban,
       gia_khuyen_mai: variant?.gia_khuyen_mai,
+      gia_khuyen_mai_tam_thoi: variant?.gia_khuyen_mai_tam_thoi,
+
       anh_san_pham: variant?.anh_bien_the,
     }));
   const uniqueColors = useMemo<Set<string>>(() => {
@@ -184,6 +188,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       }
     }
   };
+
   // const sizes = ["S", "M", "L", "XL", "XXL"];
 
   const handleClickHeart = (id: number) => {
@@ -404,14 +409,22 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     >
                       {gia?.gia_khuyen_mai != null ? (
                         <>
-                          {gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ?? 0} đ
+                          {gia?.gia_khuyen_mai_tam_thoi
+                            ? gia?.gia_khuyen_mai_tam_thoi.toLocaleString(
+                                "vi-VN"
+                              )
+                            : (gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ??
+                              0)}{" "}
+                          đ
                           <del className="text-[#acabad] text-xl mx-2 mt-1">
                             {gia?.gia_ban?.toLocaleString("vi-VN")} đ
                           </del>
                           <span className="text-sm bg-red-100 text-red-600 px-2 rounded-full font-normal py-[2px]">
                             -
                             {Math.floor(
-                              ((gia?.gia_ban - gia?.gia_khuyen_mai) /
+                              ((gia?.gia_khuyen_mai_tam_thoi
+                                ? gia?.gia_ban - gia?.gia_khuyen_mai_tam_thoi
+                                : gia?.gia_ban - gia?.gia_khuyen_mai) /
                                 gia?.gia_ban) *
                                 100
                             )}
