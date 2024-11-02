@@ -52,7 +52,7 @@ class TinTucController extends Controller
             $validatedTinTuc = $request->validate([
                 'danh_muc_tin_tuc_id' => 'required|exists:danh_muc_tin_tucs,id',
                 'tieu_de' => 'required|unique:tin_tucs,tieu_de|max:255',
-                'anh_tin_tuc' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'anh_tin_tuc' => 'nullable',
                 'noi_dung' => 'required|string',
                 'duong_dan' => 'nullable',
             ]);
