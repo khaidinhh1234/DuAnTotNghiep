@@ -167,6 +167,7 @@ Route::middleware([])
             Route::get('/danh-sach-ngan-hang', [ApiTaiKhoanController::class, 'nganHangUser']);
             Route::post('/them-ngan-hang', [ApiTaiKhoanController::class, 'themTaiKhoanNganHang']);
             Route::post('/huy-lien-ket-ngan-hang/{id}', [ApiTaiKhoanController::class, 'huyLienKetNganHang']);
+            Route::get('/momo-transactions', [ApiTaiKhoanController::class, 'getTransactionHistory']);
         })->middleware('auth.sanctum');
 
 

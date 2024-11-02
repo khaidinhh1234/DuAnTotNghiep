@@ -27,9 +27,12 @@ function TaiChinh() {
     <div className="p-4 min-h-screen">
       <div className="flex items-center justify-between  mb-4">
         <h1 className="text-xl font-semibold ">Tài chính</h1>
-        <p className="hover:text-blue-500 underline cursor-pointer">
+        <Link
+          to={"/mypro/lichsu"}
+          className="hover:text-blue-500 underline cursor-pointer"
+        >
           Lịch sử giao dịch
-        </p>
+        </Link>
       </div>
       {/* Container */}
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
