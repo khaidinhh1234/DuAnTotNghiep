@@ -32,11 +32,9 @@ class EventServiceProvider extends ServiceProvider
             SendMailContact::class,
             SendMailPhanHoiLienHe::class,
             SendMailForgotMaXacMinh::class,
-        ],
-
-        HoanTatDonHang::class => [
             GuiMailHoanTatDonHang::class,
-        ]
+
+        ],
     ];
 
     /**
