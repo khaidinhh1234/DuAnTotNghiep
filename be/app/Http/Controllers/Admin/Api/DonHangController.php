@@ -434,7 +434,7 @@ class DonHangController extends Controller
                     'mo_ta' => 'Rút tiền từ ví',
                 ]);
                 $thongbao = ThongBao::create([
-                    'user_id' => $yeuCauRutTien->user_id,
+                    'user_id' => $yeuCauRutTien->viTien->user_id,
                     'tieu_de' => 'Yêu cầu rút tiền của bạn đã được xác nhận',
                     'noi_dung' => 'Yêu cầu rút tiền từ ví của bạn đã được xác nhận. Vui lòng kiểm tra lại tài khoản ngân hàng của bạn.',
                     'loai' => 'Yêu cầu rút tiền',
@@ -457,7 +457,7 @@ class DonHangController extends Controller
                 ]);
                 $yeuCauRutTien->viTien->increment('so_du', $yeuCauRutTien->so_tien);
                 $thongbao = ThongBao::create([
-                    'user_id' => $yeuCauRutTien->user_id,
+                    'user_id' => $yeuCauRutTien->viTien->user_id,
                     'tieu_de' => 'Yêu cầu rút tiền của bạn đã bị từ chối',
                     'noi_dung' => 'Yêu cầu rút tiền từ ví của bạn đã bị từ chối. Vui lòng kiểm tra lại thông tin và thử lại.',
                     'loai' => 'Yêu cầu rút tiền',
