@@ -145,10 +145,11 @@ class MoMoController extends Controller
                 'amount' => $request->amount,
                 'orderInfo' => $request->orderInfo,
                 'orderType' => $request->orderType,
-                'transId' => $request->transId ?? null, // kiểm tra transId có thể không tồn tại
+                'transId' => $request->transId ?? null, // kiểm tra tran    sId có thể không tồn tại
                 'payType' => $request->payType ?? 'N/A', // kiểm tra payType có thể không tồn tại
                 'signature' => $request->signature
             ];
+            // Kiểm tra nếu đơn hàng đã tồn tại
             $existingOrder = Momo::where('orderId', $request->orderId)->first();
             if ($existingOrder) {
                 return response()->json([
