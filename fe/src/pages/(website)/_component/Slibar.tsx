@@ -7,9 +7,9 @@ import instanceClient from "@/configs/client";
 const Slibar = () => {
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-  console.log( user?.user?.anh_nguoi_dung)
+  console.log(user?.user?.anh_nguoi_dung);
   const [anh_nguoi_dung] = useState(member?.anh_nguoi_dung);
-  const { data,   } = useQuery({
+  const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       try {
@@ -26,11 +26,11 @@ const Slibar = () => {
     setShowNotificationMenu(!showNotificationMenu);
   };
 
-// console.log('data....',data)
+  // console.log('data....',data)
 
   return (
     <div
-      className={`lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] rounded-lg transition-all duration-300 ${showNotificationMenu ? "lg:h-[600px]" : "lg:h-[524px]"}`}
+      className={`lg:col-span-3 col-span-3 border border-hrblack xl:w-[262px] lg:w-[222px] w-[262px] rounded-lg transition-all duration-300  ${showNotificationMenu ? "lg:h-[610px]" : "lg:h-[525px]"}`}
     >
       <div className="flex items-center p-5 border-b border-hrBlack">
         <img
@@ -78,7 +78,7 @@ const Slibar = () => {
               to="/mypro/wallet"
               className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
             >
-<i className="fa-light fa-wallet"></i>
+              <i className="fa-light fa-wallet mr-3"></i>
               Ví của tôi
             </Link>
           </li>
@@ -87,8 +87,8 @@ const Slibar = () => {
               to="/mypro/vocher"
               className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
             >
-<i className="fa-light fa-ticket" />
-                   Vocher của tôi
+              <i className="fa-light fa-ticket mr-3" />
+              Voucher của tôi
             </Link>
           </li>
           <li>
@@ -100,7 +100,7 @@ const Slibar = () => {
               Danh Sách Yêu Thích
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="/mypro/manageaddresses"
               className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
@@ -108,8 +108,8 @@ const Slibar = () => {
               <i className="fa-regular fa-location-dot mr-3" />
               Quản Lý Địa Chỉ
             </Link>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <Link
               to="/mypro/savedcard"
               className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
@@ -117,7 +117,7 @@ const Slibar = () => {
               <i className="fa-light fa-credit-card mr-3" />
               Thẻ Đã Lưu
             </Link>
-          </li>
+          </li> */}
           <li className="relative">
             <button
               onClick={toggleNotificationMenu}

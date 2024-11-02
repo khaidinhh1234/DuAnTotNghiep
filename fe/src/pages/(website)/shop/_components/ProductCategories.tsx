@@ -49,7 +49,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
   };
-  console.log(datas);
+  // console.log(datas);
   // lọc danh mục
   const [expanded, setExpanded] = useState<number[]>([]);
   const [parentChecked, setParentChecked] = useState<{
@@ -128,7 +128,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  console.log("data", data?.data?.data);
+  // console.log("data", data?.data?.data);
   // danh mục
   const { data: danhmuc } = useQuery({
     queryKey: ["DANHMUCCLIENT"],
@@ -175,6 +175,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   // console.log(mausac);
 
   const sizes = size?.kichThuoc;
+  // console.log(sizes);
   // lọc
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
@@ -388,7 +389,9 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                           ></span>
                           <span>{item.ten_mau_sac}</span>
                         </div>
-                        <span className="px-3">(10)</span>
+                        <span className="px-3">
+                          ({item?.so_luong_san_pham})
+                        </span>
                       </div>
                     ))}
                     {/* <div className="flex justify-between items-center mt-3">
@@ -464,7 +467,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                               ? "Nữ"
                               : "Trẻ em"}
                         </label>
-                        <span>(6)</span>
+                        <span>({item?.so_luong_san_pham})</span>
                       </div>
                     ))}
                     {/* <div className="flex justify-between items-center my-4">
@@ -504,6 +507,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
               <ProductsList
+                data={data}
                 products={products}
                 Wishlist={handleWishlist}
                 isPending={isPending}

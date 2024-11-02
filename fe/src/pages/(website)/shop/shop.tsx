@@ -32,7 +32,7 @@ const Page = () => {
       }
     },
     onSuccess: () => {
-      queryclient.invalidateQueries({ queryKey: ["SANPHAM_YEUTHICH"] });
+      queryclient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
     },
   });
   const handleWishlist = (id: any) => {

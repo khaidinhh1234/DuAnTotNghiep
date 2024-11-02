@@ -121,8 +121,14 @@ import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 import BankAccount from "@/pages/(website)/mywallet/nganhang";
 import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
 import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
+<<<<<<< HEAD
 import SearchResultsPage from "@/pages/(website)/_component/SearchResultsPage";
 
+=======
+import History from "@/pages/(website)/mywallet/history";
+// import CreditCardForm from "@/pages/(website)/mywallet/cart";
+// import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
+>>>>>>> f9c675f0d318eb45c93ddc6088a655148c820838
 const Router = () => {
   //
 
@@ -176,6 +182,7 @@ const Router = () => {
 
 
             <Route path="/mypro/doangthu" element={<RevenuePage />} />
+            <Route path="/mypro/lichsu" element={<History />} />
             <Route
               path="/mypro/manageaddresses"
               element={<ManageAddresses />}
