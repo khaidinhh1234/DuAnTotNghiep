@@ -40,7 +40,7 @@ const markAsRead = async (id: number) => {
 
 const markAllAsRead = async (notifications: Notification[] | undefined) => {
   const unreadNotifications = notifications?.filter(
-    notif => notif.trang_thai_da_doc === "0" && notif.loai === "uu-dai"
+    notif => notif.trang_thai_da_doc === "0" && notif.loai === "Ưu đãi"
   ) || [];
   
   const promises = unreadNotifications.map(notification => 
@@ -82,7 +82,7 @@ const NotificationPage = () => {
   if (isLoading) return <div></div>;
 
   const notifications = notificationResponse?.data || [];
-  const orderNotifications = notifications.filter(notif => notif.loai === "uu-dai");
+  const orderNotifications = notifications.filter(notif => notif.loai === "Ưu đãi");
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedNotifications = orderNotifications.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 

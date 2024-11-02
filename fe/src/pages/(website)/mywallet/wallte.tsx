@@ -1,8 +1,17 @@
+<<<<<<< HEAD
+
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import instanceClient from "@/configs/client";
+import SettingsModal from './RegisterWalletPassword';
+=======
 import React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { SettingOutlined } from "@ant-design/icons";
+>>>>>>> f9c675f0d318eb45c93ddc6088a655148c820838
 
 export const fetchFinanceData = async () => {
   const response = await instanceClient.get(`/vi-tai-khoan`);
@@ -10,11 +19,18 @@ export const fetchFinanceData = async () => {
   return response.data?.data;
 };
 function TaiChinh() {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const location = useLocation();
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["financeData"],
     queryFn: fetchFinanceData,
   });
-
+  useEffect(() => {
+    if (location.state?.openSettings) {
+      setIsSettingsOpen(true);
+    }
+  }, [location.state]);
   if (isLoading) {
     return <div className="p-4">Loading...</div>;
   }
@@ -25,6 +41,24 @@ function TaiChinh() {
 
   return (
     <div className="p-4 min-h-screen">
+<<<<<<< HEAD
+      <div className="flex items-center align-center justify-between  mb-4">
+      
+        <h1 className="text-xl font-semibold ">Tài chính</h1>
+        <button 
+          onClick={() => setIsSettingsOpen(true)}
+          className="hover:text-gray-700"
+        >
+          <i className="fa-regular fa-gear"></i>
+        </button>
+      </div>
+      <SettingsModal 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        trang_thai_ma_xac_minh={data?.trang_thai_ma_xac_minh}
+
+      />
+=======
       <div className="flex items-center justify-between  mb-4">
         <h1 className="text-xl font-semibold ">Tài chính</h1>
         <Link
@@ -34,6 +68,7 @@ function TaiChinh() {
           Lịch sử giao dịch
         </Link>
       </div>
+>>>>>>> f9c675f0d318eb45c93ddc6088a655148c820838
       {/* Container */}
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
         {/* Tổng số dư */}
