@@ -121,7 +121,7 @@ import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 import BankAccount from "@/pages/(website)/mywallet/nganhang";
 import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
 import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
-import History from "@/pages/(website)/mywallet/history";
+import History from "@/pages/(website)/myOrder/_components/history";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 const Router = () => {

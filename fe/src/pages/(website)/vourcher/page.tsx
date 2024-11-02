@@ -27,10 +27,6 @@ export interface VoucherResponse {
   status: number;
   message: string;
 }
-const getVouchers = async () => {
-  const response = await instanceClient.get("/ma-khuyen-mai");
-  return response.data;
-};
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -45,8 +41,12 @@ const Voucher = () => {
 
   const { data: vouchersData } = useQuery({
     queryKey: ["vouchers"],
-    queryFn: getVouchers,
+    queryFn: async () => {
+      const response = await instanceClient.get("/ma-khuyen-mai");
+      return response.data;
+    },
   });
+  console.log("vouchersData", vouchersData);
   const [savedVouchers, setSavedVouchers] = useState<string[]>(() => {
     return (
       vouchersData?.data
@@ -54,6 +54,7 @@ const Voucher = () => {
         .map((v: Voucher) => v.ma_code) || []
     );
   });
+  console.log("savedVouchers", savedVouchers);
   const saveMutation = useMutation({
     mutationFn: (maCode: string) => {
       return instanceClient.post(`/thu-thap-ma-khuyen-mai/${maCode}`);

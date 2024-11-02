@@ -31,19 +31,30 @@ const ThankYouPage = () => {
     payType: payType,
     signature: signature,
   };
+  console.log(datas);
   const { data } = useQuery({
     queryKey: ["checkbill"],
     queryFn: async () => {
-      const response = await instanceClient.post(`check-trang-thai`, {
-        orderId: orderId,
-        resultCode: resultCode,
-      });
-      const lichsu = await instanceClient.post(
-        `luu-thanh-toan-vao-momo`,
-        datas
-      );
-      toast.success("Đặt hàng thành công");
-      return response.data;
+      if (resultCode === 0) {
+        const response = await instanceClient.post(`check-trang-thai`, {
+          orderId: orderId,
+          resultCode: resultCode,
+        });
+        const lichsu = await instanceClient.post(
+          `luu-thanh-toan-vao-momo`,
+          datas
+        );
+        toast.success("Đặt hàng thành công");
+        return response.data;
+      }
+      if (resultCode !== 0) {
+        const response = await instanceClient.post(`check-trang-thai`, {
+          orderId: orderId,
+          resultCode: resultCode,
+        });
+        toast.error("Đặt hàng thất bại");
+        return response.data;
+      }
     },
   });
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);

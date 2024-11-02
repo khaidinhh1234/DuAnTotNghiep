@@ -177,11 +177,15 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const sizes = size?.kichThuoc;
   // console.log(sizes);
   // lọc
+  const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async () => {
       try {
-        const response = await instanceClient.post("loc-san-pham", datas);
+        const response = await instanceClient.post(
+          `loc-san-pham?page=${page}`,
+          datas
+        );
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
@@ -194,6 +198,9 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       queryClient.setQueryData(["PRODUCTSLOC"], data);
     },
   });
+  const onPage = (page: number) => {
+    setPage(page);
+  };
   const danh_muc = danhmuc?.data;
   // console.log(danh_muc);
   const products = data?.data?.data;
@@ -207,7 +214,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ) {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price]);
+  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
 
   return (
     <div>
@@ -508,6 +515,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             <div className="sm:w-4/5 w-3/4 px-5">
               <ProductsList
                 data={data}
+                onPage={onPage}
                 products={products}
                 Wishlist={handleWishlist}
                 isPending={isPending}

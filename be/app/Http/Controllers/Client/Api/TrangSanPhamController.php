@@ -175,7 +175,7 @@ class TrangSanPhamController extends Controller
                 'bienTheSanPham' => function ($query) {
                     $query->with(['anhBienThe', 'mauBienThe', 'kichThuocBienThe']);
                 }
-            ])->paginate(10);
+            ])->paginate(9);
 
             // Gộp thông tin màu sắc, kích thước và ảnh biến thể
             $sanPhams->getCollection()->transform(function ($sanPham) {

@@ -3,7 +3,7 @@ import { Pagination } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
-const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
+const ProductsList = ({ products, Wishlist, isPending, data, onPage }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
@@ -36,6 +36,7 @@ const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
   const onChange = (page: number, pageSize: number) => {
     setCurrentPage(page);
     setPageSize(pageSize);
+    onPage(page);
     console.log(`Page: ${page}, PageSize: ${pageSize}`);
     // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
   };
@@ -102,7 +103,7 @@ const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
                       </Link>
                       <View id={product?.duong_dan} ID={product?.id} />
                     </div>
-                    <Link to={`/product-detail/${product.id}`}>
+                    <Link to={`/product-detail/${product?.duong_dan}`}>
                       <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
                         <h5 className=" text-base truncate w-60 font-medium">
                           {product?.ten_san_pham}
@@ -177,7 +178,7 @@ const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
           {/* <!-- Pagination --> */}
           <div className="flex justify-end mt-10">
             <Pagination
-              total={data?.total ?? 0}
+              total={data?.data?.total ?? 0}
               current={currentPage}
               pageSize={pageSize}
               itemRender={itemRender}
