@@ -447,7 +447,9 @@ class SanPhamController extends Controller
                                 'ma_mau_sac' => optional($bienThe->mauBienThe)->ma_mau_sac,
                                 'ten_mau_sac' => optional($bienThe->mauBienThe)->ten_mau_sac,
                             ];
-                        });
+                        })->unique(function ($item) {
+                            return $item['ma_mau_sac'];
+                        })->values()->toArray();
                         return $sanPham;
                     });
 
