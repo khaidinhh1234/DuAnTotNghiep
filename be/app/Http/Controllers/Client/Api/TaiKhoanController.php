@@ -200,21 +200,34 @@ class TaiKhoanController extends Controller
     {
         $validate = $request->validate([
             'ma_xac_minh' => 'required|string|max:6',
+            'ma_xac_minh_moi' => 'nullable|string|max:6',
         ]);
         try {
             $user = Auth::user();
-            if (!isset($user->viTien->ma_xac_minh) || Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)) {
+            if ($user->viTien->ma_xac_minh == "") {
                 $user->viTien->update([
-                    'ma_xac_minh' => $validate['ma_xac_minh'],
+                    'ma_xac_minh' => Hash::make($validate['ma_xac_minh']),
                 ]);
+                $mess = 'Thiết lập mã xác minh thành công';
+            } else if (Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)){
+                $user->viTien->update([
+                    'ma_xac_minh' => Hash::make($validate['ma_xac_minh_moi']),
+                ]);
+                $mess = 'Đổi mã xác minh thành công';
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Mã xác minh không chính xác',
+                ], 400);
             }
 
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Thiết lập mã xác minh thành công',
-                'data' => $user->viTien,
-            ], 200);
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => $mess,
+                    'data' => $user->viTien,
+                ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
