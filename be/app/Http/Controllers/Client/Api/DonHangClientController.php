@@ -382,10 +382,15 @@ class DonHangClientController extends Controller
                 ]);
             }
 
-            $donHang = DonHang::with(['chiTiets'])->where('id', $donHang->id)->first();
+            $donHangTmp = DonHang::query()->with([
+                'chiTiets',
+                'chiTiets.bienTheSanPham.sanPham',
+                'chiTiets.bienTheSanPham.mauBienThe',
+                'chiTiets.bienTheSanPham.kichThuocBienThe',
+                'chiTiets.bienTheSanPham.anhBienThe',
+            ])->where('id', $donHang->id)->first();
 
             DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
-
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Đơn hàng đã được đặt',
@@ -398,8 +403,9 @@ class DonHangClientController extends Controller
 
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
+            event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
             DB::commit();
-            return response()->json(['status' => true, 'message' => 'Đặt hàng thành công.', 'data' => $donHang], 201);
+            return response()->json(['status' => true, 'message' => 'Đặt hàng thành công.', 'data' => $donHangTmp], 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
@@ -602,13 +608,13 @@ class DonHangClientController extends Controller
 
         try {
             $user = User::findOrFail($userId);
-            if ($user->viTien->so_du < $soTien) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Số dư trong ví tiền không đủ để rút.',
-                ], 400);
-            }
             if (Hash::check($maXacThuc, $user->viTien->ma_xac_minh)) {
+                if ($user->viTien->so_du < $soTien) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Số dư trong ví tiền không đủ để rút.',
+                    ], 400);
+                }
                 $yeuCauRutTien = YeuCauRutTien::create([
                     'vi_tien_id' => $viTien->id,
                     'ngan_hang_id' => $nganHangId,

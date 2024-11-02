@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Nette\Utils\Random;
 
 class MoMoController extends Controller
 {
@@ -41,10 +42,9 @@ class MoMoController extends Controller
             $partnerCode = env('MOMO_PARTNER_CODE');
             $accessKey = env('MOMO_ACCESS_KEY');
             $secretKey = env('MOMO_SECRET_KEY');
-
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            $orderId = $request->ma_don_hang;
+            $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
             $redirectUrl = env('MOMO_REDIRECT_URL');
             $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
@@ -70,12 +70,13 @@ class MoMoController extends Controller
                 'requestType' => $requestType,
                 'signature' => $signature
             ];
-            // Lưu thông tin thanh toán
-            $this->savePaymentInfo($data);
+
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
 
             if (isset($jsonResult['payUrl'])) {
+
+
                 return response()->json(['payUrl' => $jsonResult['payUrl']]);
             } else {
                 return response()->json(['message' => 'Không tạo được URL thanh toán'], 500);
@@ -88,7 +89,7 @@ class MoMoController extends Controller
 
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            $orderId = $request->ma_don_hang;
+            $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
             $redirectUrl = env('MOMO_REDIRECT_URL');
             $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
@@ -114,12 +115,13 @@ class MoMoController extends Controller
                 'requestType' => $requestType,
                 'signature' => $signature
             ];
-            // Lưu thông tin thanh toán
-            $this->savePaymentInfo($data);
+
+
             $result = $this->execPostRequest($endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
 
             if (isset($jsonResult['payUrl'])) {
+
                 return response()->json(['payUrl' => $jsonResult['payUrl']]);
             } else {
                 return response()->json(['message' => 'Không tạo được URL thanh toán'], 500);
@@ -129,26 +131,144 @@ class MoMoController extends Controller
         }
     }
 
-    public function savePaymentInfo($data)
+    public function savePaymentInfo(Request $request)
     {
         try {
-            Momo::create([
-                'partnerCode' => $data['partnerCode'],
-                'orderId' => $data['orderId'],
-                'requestId' => $data['requestId'],
-                'amount' => $data['amount'],
-                'orderInfo' => $data['orderInfo'],
-                'orderType' => $data['requestType'],
-                'transId' => $data['transId'] ?? null,
-                'payType' => $data['payType'] ?? 'N/A',
-                'signature' => $data['signature']
-            ]);
+            $trangThai = $request->resultCode ?? null;
+            $maOrderMomo = $request->orderId ?? null;
+            $maDonHang = explode("-", $maOrderMomo)[0];
+            // Lấy dữ liệu từ request
+            $data = [
+                'partnerCode' => $request->partnerCode,
+                'orderId' => $request->maDonHang,
+                'requestId' => $request->requestId,
+                'amount' => $request->amount,
+                'orderInfo' => $request->orderInfo,
+                'orderType' => $request->orderType,
+                'transId' => $request->transId ?? null, // kiểm tra tran    sId có thể không tồn tại
+                'payType' => $request->payType ?? 'N/A', // kiểm tra payType có thể không tồn tại
+                'signature' => $request->signature
+            ];
+            // Kiểm tra nếu đơn hàng đã tồn tại
+            $existingOrder = Momo::where('orderId', $request->orderId)->first();
+            if ($existingOrder) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Đơn hàng đã tồn tại.',
+                ], 409); // HTTP status code 409: Conflict
+            }
+            if ($trangThai === 0) {
+                // Lưu vào bảng Momo
+                Momo::create($data);
+                $message = 'Lưu thông tin thanh toán thành công.';
+            } else {
+                $message = 'Lưu thông tin thanh toán thất bại.';
+            }
             return response()->json([
                 'status' => true,
-                'message' => 'Đặt hàng thành công.'
+                'message' => $message
             ], 200);
         } catch (\Exception $e) {
             Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Lỗi lưu thông tin thanh toán.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function checkDonHang(Request $request)
+    {
+        try {
+            $trangThai = $request->resultCode ?? null;
+
+            $maOrderMomo = $request->orderId ?? null;
+            $maDonHang = explode("-", $maOrderMomo)[0];
+
+            // Tìm đơn hàng dựa vào mã đơn hàng
+            $donHang = DonHang::where('ma_don_hang', $maDonHang)->first();
+
+            if (!$donHang) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Đơn hàng không tồn tại.'
+                ], 404);
+            }
+
+            $message = '';
+
+            switch ($trangThai) {
+                case 0:
+                    // Nếu resultCode là 0, cập nhật trạng thái "Đã thanh toán"
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_DTT]);
+                    $message = 'Thanh toán thành công.';
+                    break;
+
+                case 4:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Giao dịch bị hủy bởi người dùng.';
+                    break;
+
+                case 5:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Số tiền không hợp lệ.';
+                    break;
+
+                case 6:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Tài khoản MoMo không đủ tiền.';
+                    break;
+
+                case 7:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Giao dịch đã hết hạn.';
+                    break;
+
+                case 8:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Giao dịch không hợp lệ.';
+                    break;
+
+                case 49:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Lỗi chữ ký - Dữ liệu hoặc khóa bí mật không khớp.';
+                    break;
+
+                case 1001:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Địa chỉ IP không được phép.';
+                    break;
+
+                case 1006:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Yêu cầu trùng lặp - Yêu cầu đã được xử lý.';
+                    break;
+
+                case 9000:
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    $message = 'Lỗi nội bộ - Đã xảy ra lỗi máy chủ không mong muốn.';
+                    break;
+
+                default:
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Trạng thái không hợp lệ.'
+                    ], 400);
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => $message
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
+            return response()->json([
+                'status' => false,
+                'message' => 'Lỗi hệ thống. Vui lòng thử lại sau.'
+            ], 500);
         }
     }
 }

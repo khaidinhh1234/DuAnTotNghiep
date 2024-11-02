@@ -1,10 +1,8 @@
-import { sanPham2 } from "@/assets/img";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import ProductsList from "./ProductsList";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Slider } from "antd";
+import SearchResultsPage from "./SearchResultsPage";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
@@ -506,7 +504,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-              <ProductsList
+              <SearchResultsPage
                 data={data}
                 products={products}
                 Wishlist={handleWishlist}

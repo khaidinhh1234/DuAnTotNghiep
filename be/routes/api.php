@@ -72,8 +72,7 @@ Route::middleware([])
         //Trang sản phẩm
         // lấy tất cả sản phẩm
         Route::group([], function () {
-            Route::get('/san-pham-all', [TrangSanPhamController::class, 'layTatCaSanPham']);
-
+            Route::get('lay-tat-ca-san-pham', [TrangSanPhamController::class, 'layTatCaSanPham']);
             // Lấy ra danh mục cha
             Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
 
@@ -93,7 +92,10 @@ Route::middleware([])
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
 
         //Thanh toán MoMo
+        //Thanh toán MoMo
         Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
+        Route::post('check-trang-thai', [MoMoController::class, 'checkDonHang']);
+        Route::post('luu-thanh-toan-vao-momo', [MoMoController::class, 'savePaymentInfo']);
 
         //Client Chi tiết sản phẩm
         // Captcha
@@ -161,9 +163,11 @@ Route::middleware([])
             Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin']);
             Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan']);
             Route::post('/thiet-lap-ma-xac-minh', [ApiTaiKhoanController::class, 'thietLapMaXacMinh']);
+            Route::get('/quen-ma-xac-minh', [ApiTaiKhoanController::class, 'quenMaXacMinh']);
             Route::get('/danh-sach-ngan-hang', [ApiTaiKhoanController::class, 'nganHangUser']);
             Route::post('/them-ngan-hang', [ApiTaiKhoanController::class, 'themTaiKhoanNganHang']);
             Route::post('/huy-lien-ket-ngan-hang/{id}', [ApiTaiKhoanController::class, 'huyLienKetNganHang']);
+            Route::get('/momo-transactions', [ApiTaiKhoanController::class, 'getTransactionHistory']);
         })->middleware('auth.sanctum');
 
 

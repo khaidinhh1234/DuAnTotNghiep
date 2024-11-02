@@ -204,7 +204,7 @@ class GioHangController extends Controller
         try {
             $gioHang = GioHang::findOrFail($id);
 
-            if ($gioHang->user_id !== Auth::id()) {
+            if ($gioHang->user_id != Auth::id()) {
                 return response()->json(['status' => false, 'message' => 'Unauthorized'], 403);
             }
 

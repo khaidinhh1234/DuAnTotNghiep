@@ -34,19 +34,17 @@ class TrangChiTietSpController extends Controller
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
                 'boSuuTapSanPham',
+                'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
 
             foreach ($chiTietSanPham->danhGias as $danhGia) {
                 $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
             }
 
+            $chiTietSanPham['trang_thai_yeu_thich'] = false;
             if (Auth::guard('api')->check()) {
                 $user = Auth::guard('api')->user();
-                if ($chiTietSanPham->khachHangYeuThich->pluck('id')->first() == $user->id) {
-                    $chiTietSanPham['trang_thai_yeu_thich'] = true;
-                } else {
-                    $chiTietSanPham['trang_thai_yeu_thich'] = false;
-                }
+                $chiTietSanPham['trang_thai_yeu_thich'] = $chiTietSanPham->khachHangYeuThich->contains('id', $user->id);
             }
 
 

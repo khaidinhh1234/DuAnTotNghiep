@@ -3,7 +3,7 @@ import { Pagination } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
-const ProductsList = ({ products, Wishlist, isPending }: any) => {
+const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
@@ -12,7 +12,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
   };
-  console.log(products);
+
   const handleWishlist = (id: any) => {
     Wishlist(id) as any;
   };
@@ -30,8 +30,8 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
 
     return originalElement;
   };
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12); // Số lượng sản phẩm mỗi trang
+  const [currentPage, setCurrentPage] = useState(data?.current_page ?? 1); // Trang hiện tại
+  const [pageSize, setPageSize] = useState(data?.per_page); // Số lượng sản phẩm mỗi trang
 
   const onChange = (page: number, pageSize: number) => {
     setCurrentPage(page);
@@ -39,6 +39,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
     console.log(`Page: ${page}, PageSize: ${pageSize}`);
     // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
   };
+
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4">
@@ -48,7 +49,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
           </div>
         </div>
         <div className="w-0.5/4 sm:text-base text-sm flex items-center">
-          Short by latest <i className="fa-solid fa-chevron-down pl-1"></i>
+          {/* Short by latest <i className="fa-solid fa-chevron-down pl-1"></i> */}
         </div>
       </div>
       <section className="">
@@ -69,7 +70,9 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
                         </span>
                       ) : (
                         <span onClick={() => handleWishlist(product.id)}>
-                          <i className="z-10 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                          <i
+                            className={`${product?.trang_thai_yeu_thich ? "text-red-500" : "text-black hover:text-white"} z-10 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black  w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
+                          />
                         </span>
                       )}
                       <a href="#">
@@ -174,7 +177,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
           {/* <!-- Pagination --> */}
           <div className="flex justify-end mt-10">
             <Pagination
-              total={100}
+              total={data?.total ?? 0}
               current={currentPage}
               pageSize={pageSize}
               itemRender={itemRender}

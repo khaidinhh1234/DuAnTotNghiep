@@ -48,6 +48,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       }
     },
   });
+  console.log(data);
   const queryclient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
@@ -73,7 +74,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       }
     },
     onSuccess: () => {
-      queryclient.invalidateQueries({ queryKey: ["SANPHAM_YEUTHICH"] });
+      queryclient.invalidateQueries({
+        queryKey: ["PRODUCT_DETAIL", id],
+      });
     },
   });
   const product = data?.data;
@@ -105,6 +108,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     };
     gia_ban: number;
     gia_khuyen_mai: number;
+    gia_khuyen_mai_tam_thoi: number;
     anh_bien_the: string[];
   }
 
@@ -121,6 +125,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     ?.map((variant: Variant) => ({
       gia_ban: variant?.gia_ban,
       gia_khuyen_mai: variant?.gia_khuyen_mai,
+      gia_khuyen_mai_tam_thoi: variant?.gia_khuyen_mai_tam_thoi,
+
       anh_san_pham: variant?.anh_bien_the,
     }));
   const uniqueColors = useMemo<Set<string>>(() => {
@@ -184,6 +190,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       }
     }
   };
+
   // const sizes = ["S", "M", "L", "XL", "XXL"];
 
   const handleClickHeart = (id: number) => {
@@ -247,28 +254,31 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
   const handleAddToCart = () => {
     if (quantity < 1) {
-      toast.error('Số lượng phải lớn hơn hoặc bằng 1');
+      toast.error("Số lượng phải lớn hơn hoặc bằng 1");
       return;
     }
-  
+
     // Nếu người dùng chưa chọn biến thể, lấy biến thể đầu tiên
     const firstVariant = product?.bien_the_san_pham[0];
     const variantIdToUse = selectedVariantId || firstVariant?.id;
-  
+
     // Kiểm tra nếu không có biến thể nào
     if (!variantIdToUse) {
-      toast.error('Không có biến thể nào để thêm vào giỏ hàng.');
+      toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
-  
+
     console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
-  
+
     // Kiểm tra nếu không có access_token thì lưu vào localStorage
     if (!access_token) {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
       // Kiểm tra xem sản phẩm đã tồn tại trong giỏ chưa
-      const existingItem = cart.find((item: { variantId: number; quantity: number }) => item.variantId === variantIdToUse);
+      const existingItem = cart.find(
+        (item: { variantId: number; quantity: number }) =>
+          item.variantId === variantIdToUse
+      );
       if (existingItem) {
         // Nếu sản phẩm đã tồn tại, tăng số lượng
         existingItem.quantity += quantity;
@@ -276,10 +286,10 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
         // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ
         cart.push({ variantId: variantIdToUse, quantity });
       }
-  
+
       // Cập nhật giỏ hàng trong localStorage
-      localStorage.setItem('cart', JSON.stringify(cart));
-      toast.success('Sản phẩm đã được thêm vào giỏ hàng trong localStorage.');
+      localStorage.setItem("cart", JSON.stringify(cart));
+      toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
     } else {
       // Nếu có access_token (người dùng đã đăng nhập), gọi API để thêm sản phẩm vào giỏ trên server
       addToCart(variantIdToUse);
@@ -433,14 +443,22 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     >
                       {gia?.gia_khuyen_mai != null ? (
                         <>
-                          {gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ?? 0} đ
+                          {gia?.gia_khuyen_mai_tam_thoi
+                            ? gia?.gia_khuyen_mai_tam_thoi.toLocaleString(
+                                "vi-VN"
+                              )
+                            : (gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ??
+                              0)}{" "}
+                          đ
                           <del className="text-[#acabad] text-xl mx-2 mt-1">
                             {gia?.gia_ban?.toLocaleString("vi-VN")} đ
                           </del>
                           <span className="text-sm bg-red-100 text-red-600 px-2 rounded-full font-normal py-[2px]">
                             -
                             {Math.floor(
-                              ((gia?.gia_ban - gia?.gia_khuyen_mai) /
+                              ((gia?.gia_khuyen_mai_tam_thoi
+                                ? gia?.gia_ban - gia?.gia_khuyen_mai_tam_thoi
+                                : gia?.gia_ban - gia?.gia_khuyen_mai) /
                                 gia?.gia_ban) *
                                 100
                             )}
@@ -548,7 +566,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       `}
                     >
                       <i
-                        className={`fa-heart text-3xl text-red-600 ${isHeart ? "fa-solid " : "fa-regular "}`}
+                        className={`fa-heart text-3xl text-red-600 ${product?.trang_thai_yeu_thich ? "fa-solid " : "fa-regular "}`}
                       />
                     </button>
                   </div>

@@ -29,9 +29,9 @@ const Header = () => {
   const notificationRef = useRef<HTMLDivElement>(null);
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-  console.log( user?.user?.anh_nguoi_dung)
+  console.log(user?.user?.anh_nguoi_dung);
   const [anh_nguoi_dung] = useState(member?.anh_nguoi_dung);
-  const { data    } = useQuery({
+  const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       try {
@@ -290,11 +290,13 @@ const Header = () => {
               </button>
             </div>
             <div className="order-2 lg:w-60">
-              <img
-                src={logo}
-                alt="Logo"
-                className="lg:w-[130px] lg:h-[40px] w-32 h-9"
-              />
+              <Link to="/">
+                <img
+                  src={logo}
+                  alt="Logo"
+                  className="lg:w-[130px] lg:h-[40px] w-32 h-9"
+                />
+              </Link>
             </div>
 
             <nav className="hidden lg:block order-3">
@@ -383,9 +385,9 @@ const Header = () => {
                 </div>
               </span> */}
 
-<span className="px-1">
-  <Search />
-</span>
+              <span className="px-1">
+                <Search />
+              </span>
 
               {/* {" "}
                   <span>
@@ -442,8 +444,9 @@ const Header = () => {
                 <>
                   {" "}
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
-                    <AvatarImage           src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
- />
+                    <AvatarImage
+                      src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
+                    />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   {check && (

@@ -10,6 +10,7 @@ use App\Models\SanPham;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class TrangSanPhamController extends Controller
 {
@@ -96,95 +97,6 @@ class TrangSanPhamController extends Controller
             // Trả về lỗi
             return response()->json([
                 'message' => 'Có lỗi xảy ra, vui lòng thử lại!',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-    public function layTatCaSanPham(Request $request)
-    {
-        try {
-            // Số lượng sản phẩm hiển thị mỗi trang, mặc định là 5
-            $soLuongSanPhamMoiTrang = $request->get('per_page', 5);
-
-            // Lấy tất cả sản phẩm cùng với biến thể sản phẩm, màu sắc và kích thước
-            $sanPhams = SanPham::with([
-                'bienTheSanPham' => function ($query) {
-                    $query->with(['mauBienThe', 'kichThuocBienThe']) // Lấy cả thông tin màu sắc và kích thước
-                        ->select( // lấy dữ liệu của  biến thể sản phẩm
-                            'id',
-                            'san_pham_id',
-                            'bien_the_mau_sac_id',   // Thêm trường màu sắc
-                            'bien_the_kich_thuoc_id', // Thêm trường kích thước
-                            'so_luong_bien_the',
-                            'gia_ban',
-                            'gia_khuyen_mai',
-                            'gia_khuyen_mai_tam_thoi'
-                        );
-                }
-            ])
-                ->where('san_phams.trang_thai', 1)
-                ->select( // lấy dữ liệu của của  sản phẩm
-                    'san_phams.id', // Chỉ định rõ bảng san_phams cho cột id
-                    'san_phams.ten_san_pham',
-                    'san_phams.anh_san_pham',
-                    'san_phams.created_at',
-                    'san_phams.ma_san_pham',
-                    'san_phams.duong_dan',
-                    'san_phams.hang_moi'
-                )
-                ->addSelect([
-                    DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'), // Giá thấp nhất
-                    DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')  // Giá cao nhất
-                ])
-                ->where('san_phams.trang_thai', 1)
-                ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
-                ->groupBy('san_phams.id') // Chỉ định rõ bảng san_phams cho cột id
-                ->orderBy('san_phams.created_at', 'desc')  // Sắp xếp theo thời gian tạo mới nhất
-                ->paginate($soLuongSanPhamMoiTrang);  // Phân trang
-
-            // Xử lý dữ liệu trả về cho API
-            $result = $sanPhams->map(function ($sanPham) {
-                return [
-                    'id' => $sanPham->id,
-                    'ten_san_pham' => $sanPham->ten_san_pham,
-                    'duong_dan' => $sanPham->duong_dan,
-                    'anh_san_pham' => $sanPham->anh_san_pham ?? 'default_image.jpg', // Gán ảnh mặc định nếu null
-                    'hang_moi' => $sanPham->hang_moi,
-                    'gia_thap_nhat' => $sanPham->gia_thap_nhat,
-                    'gia_cao_nhat' => $sanPham->gia_cao_nhat,
-                    'bien_the' => $sanPham->bienTheSanPham->map(function ($bienThe) {
-                        return [
-                            'id' => $bienThe->id,
-                            'so_luong_bien_the' => $bienThe->so_luong_bien_the ?? 0, // Gán giá trị 0 nếu null
-                            'gia_ban' => $bienThe->gia_ban ?? 0, // Gán giá trị 0 nếu null
-                            'gia_khuyen_mai' => $bienThe->gia_khuyen_mai ?? $bienThe->gia_ban, // Nếu null thì dùng giá bán
-                            'gia_khuyen_mai_tam_thoi' => $bienThe->gia_khuyen_mai_tam_thoi ?? null,
-                            'mau_sac' => $bienThe->mauBienThe->ten_mau_sac ?? 'Không xác định', // Lấy thông tin màu sắc
-                            'kich_thuoc' => $bienThe->kichThuocBienThe->kich_thuoc ?? 'Không xác định', // Lấy thông tin kích thước
-                        ];
-                    })
-                ];
-            });
-
-            // Trả về API dữ liệu phân trang
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy tất cả sản phẩm thành công.',
-                'data' => $result,
-                'pagination' => [
-                    'total' => $sanPhams->total(),
-                    'current_page' => $sanPhams->currentPage(),
-                    'last_page' => $sanPhams->lastPage(),
-                    'per_page' => $sanPhams->perPage(),
-                ]
-            ], 200);
-        } catch (\Exception $e) {
-            // Trả về lỗi nếu có exception
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Có lỗi xảy ra khi lấy tất cả sản phẩm.',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -294,6 +206,12 @@ class TrangSanPhamController extends Controller
                     ];
                 })->toArray();
 
+                // Kiểm tra trạng thái yêu thích
+                $trangThaiYeuthich = false;
+                if (Auth::guard('api')->check()) {
+                    $user = Auth::guard('api')->user();
+                    $trangThaiYeuthich = $sanPham->khachHangYeuThich->contains('id', $user->id);
+                }
                 return [
                     'id' => $sanPham->id,
                     'ten_san_pham' => $sanPham->ten_san_pham,
@@ -315,6 +233,7 @@ class TrangSanPhamController extends Controller
                     })->unique(function ($item) {
                         return $item['ma_mau_sac'];
                     })->values()->toArray(),
+                    'trang_thai_yeu_thich' => $trangThaiYeuthich,
                     'kich_thuocs' => $sanPham->bienTheSanPham->map(function ($bienThe) {
                         $kichThuocBienThe = $bienThe->kichThuocBienThe;
                         return $kichThuocBienThe ? $kichThuocBienThe->kich_thuoc : null;
@@ -333,6 +252,109 @@ class TrangSanPhamController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function layTatCaSanPham(Request $request)
+    {
+        try {
+            $soLuongSanPhamMoiTrang = $request->get('per_page', 8);
+            // Nạp quan hệ khachHangYeuThich để kiểm tra trạng thái yêu thích
+            $sanPhams = SanPham::with([
+                'bienTheSanPham' => function ($query) {
+                    $query->with(['mauBienThe', 'kichThuocBienThe', 'anhBienThe'])
+                        ->select(
+                            'id',
+                            'san_pham_id',
+                            'bien_the_mau_sac_id',
+                            'bien_the_kich_thuoc_id',
+                            'so_luong_bien_the',
+                            'gia_ban',
+                            'gia_khuyen_mai',
+                            'gia_khuyen_mai_tam_thoi'
+                        );
+                },
+                'khachHangYeuThich' // Nạp trước quan hệ khachHangYeuThich
+            ])
+                ->where('san_phams.trang_thai', 1)
+                ->select(
+                    'san_phams.id',
+                    'san_phams.ten_san_pham',
+                    'san_phams.anh_san_pham',
+                    'san_phams.created_at',
+                    'san_phams.ma_san_pham',
+                    'san_phams.duong_dan',
+                    'san_phams.hang_moi'
+                )
+                ->addSelect([
+                    DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
+                    DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
+                ])
+                ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+                ->groupBy('san_phams.id')
+                ->orderBy('san_phams.created_at', 'desc')
+                ->paginate($soLuongSanPhamMoiTrang);
+
+            $result = $sanPhams->map(function ($sanPham) {
+                $mauSacVaAnh = $sanPham->bienTheSanPham->flatMap(function ($bienThe) {
+                    return $bienThe->anhBienThe->map(function ($anh) use ($bienThe) {
+                        return [
+                            'hinh_anh' => optional($bienThe->anhBienThe->first())->duong_dan_anh,
+                            'ma_mau_sac' => optional($bienThe->mauBienThe)->ma_mau_sac,
+                            'ten_mau_sac' => optional($bienThe->mauBienThe)->ten_mau_sac,
+                        ];
+                    });
+                })->unique('ma_mau_sac')->values();
+
+                $trangThaiYeuthich = false;
+                if (Auth::guard('api')->check()) {
+                    $user = Auth::guard('api')->user();
+                    $trangThaiYeuthich = $sanPham->khachHangYeuThich->contains('id', $user->id);
+                }
+
+                return [
+                    'id' => $sanPham->id,
+                    'ten_san_pham' => $sanPham->ten_san_pham,
+                    'duong_dan' => $sanPham->duong_dan,
+                    'anh_san_pham' => $sanPham->anh_san_pham ?? 'default_image.jpg',
+                    'hang_moi' => $sanPham->hang_moi,
+                    'gia_thap_nhat' => $sanPham->gia_thap_nhat,
+                    'gia_cao_nhat' => $sanPham->gia_cao_nhat,
+                    'bien_the' => $sanPham->bienTheSanPham->map(function ($bienThe) {
+                        return [
+                            'id' => $bienThe->id,
+                            'so_luong_bien_the' => $bienThe->so_luong_bien_the ?? 0,
+                            'gia_ban' => $bienThe->gia_ban ?? 0,
+                            'gia_khuyen_mai' => $bienThe->gia_khuyen_mai ?? $bienThe->gia_ban,
+                            'gia_khuyen_mai_tam_thoi' => $bienThe->gia_khuyen_mai_tam_thoi ?? null,
+                            'mau_sac' => $bienThe->mauBienThe->ten_mau_sac ?? 'Không xác định',
+                            'kich_thuoc' => $bienThe->kichThuocBienThe->kich_thuoc ?? 'Không xác định',
+                        ];
+                    }),
+                    'mau_sac_va_anh' => $mauSacVaAnh,
+                    'trang_thai_yeu_thich' => $trangThaiYeuthich,
+                ];
+            });
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy tất cả sản phẩm thành công.',
+                'data' => $result,
+                'pagination' => [
+                    'total' => $sanPhams->total(),
+                    'current_page' => $sanPhams->currentPage(),
+                    'last_page' => $sanPhams->lastPage(),
+                    'per_page' => $sanPhams->perPage(),
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Có lỗi xảy ra khi lấy tất cả sản phẩm.',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

@@ -111,10 +111,23 @@ class User extends Authenticatable
         return $this->belongsToMany(DanhGia::class, 'danh_gia_huu_ich', 'user_id', 'danh_gia_id');
     }
 
-    public function viTien(){
+    public function viTien()
+    {
         return $this->hasOne(ViTien::class, 'user_id', 'id');
     }
-    public function nganHang(){
+    public function nganHang()
+    {
         return $this->hasMany(NganHang::class, 'user_id', 'id');
+    }
+    public function momoTransactions()
+    {
+        return $this->hasManyThrough(
+            Momo::class,
+            DonHang::class,
+            'user_id',        // Khóa ngoại trong bảng DonHang tham chiếu đến bảng User
+            'orderId',        // Khóa ngoại trong bảng MoMo tham chiếu đến bảng DonHang
+            'id',             // Khóa chính của User
+            'id'              // Khóa chính của DonHang
+        )->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]);
     }
 }

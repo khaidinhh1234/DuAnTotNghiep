@@ -22,8 +22,11 @@ class Momo extends Model
         'payType',
         'signature',
     ];
-
+    public function donHang()
+    {
+        return $this->belongsTo(DonHang::class, 'orderId', 'ma_don_hang');
+    }
     /**
-     * Define any relationships or custom logic for the Momo model here
+     * Thiết lập quan hệ với model DonHang
      */
 }
