@@ -105,6 +105,7 @@ class TrangSanPhamController extends Controller
     {
         try {
             $soLuongSanPhamMoiTrang = $request->get('per_page', 5);
+            // Nạp quan hệ khachHangYeuThich để kiểm tra trạng thái yêu thích
             $sanPhams = SanPham::with([
                 'bienTheSanPham' => function ($query) {
                     $query->with(['mauBienThe', 'kichThuocBienThe', 'anhBienThe'])
@@ -118,26 +119,27 @@ class TrangSanPhamController extends Controller
                             'gia_khuyen_mai',
                             'gia_khuyen_mai_tam_thoi'
                         );
-                }
+                },
+                'khachHangYeuThich' // Nạp trước quan hệ khachHangYeuThich
             ])
-                ->where('san_phams.trang_thai', 1)
-                ->select(
-                    'san_phams.id',
-                    'san_phams.ten_san_pham',
-                    'san_phams.anh_san_pham',
-                    'san_phams.created_at',
-                    'san_phams.ma_san_pham',
-                    'san_phams.duong_dan',
-                    'san_phams.hang_moi'
-                )
-                ->addSelect([
-                    DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
-                    DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
-                ])
-                ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
-                ->groupBy('san_phams.id')
-                ->orderBy('san_phams.created_at', 'desc')
-                ->paginate($soLuongSanPhamMoiTrang);
+            ->where('san_phams.trang_thai', 1)
+            ->select(
+                'san_phams.id',
+                'san_phams.ten_san_pham',
+                'san_phams.anh_san_pham',
+                'san_phams.created_at',
+                'san_phams.ma_san_pham',
+                'san_phams.duong_dan',
+                'san_phams.hang_moi'
+            )
+            ->addSelect([
+                DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
+                DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
+            ])
+            ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+            ->groupBy('san_phams.id')
+            ->orderBy('san_phams.created_at', 'desc')
+            ->paginate($soLuongSanPhamMoiTrang);
     
             $result = $sanPhams->map(function ($sanPham) {
                 $mauSacVaAnh = $sanPham->bienTheSanPham->flatMap(function ($bienThe) {
@@ -150,7 +152,7 @@ class TrangSanPhamController extends Controller
                     });
                 })->unique('ma_mau_sac')->values();
     
-                $trangThaiYeuthich = false; 
+                $trangThaiYeuthich = false;
                 if (Auth::guard('api')->check()) {
                     $user = Auth::guard('api')->user();
                     $trangThaiYeuthich = $sanPham->khachHangYeuThich->contains('id', $user->id);
@@ -202,7 +204,6 @@ class TrangSanPhamController extends Controller
         }
     }
     
-
     public function locSanPham(Request $request)
     {
         DB::beginTransaction(); // Bắt đầu giao dịch
