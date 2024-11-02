@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Client\Api;
 
+use App\Events\SendMail;
 use App\Http\Controllers\Controller;
 use App\Models\LichSuGiaoDich;
 use App\Models\NganHang;
@@ -61,6 +62,7 @@ class TaiKhoanController extends Controller
             $data = [
                 'viUser' => $viUser,
                 'lichSuGiaoDich' => $lichSuGiaoDich,
+                'trang_thai_ma_xac_minh' => $viUser->ma_xac_minh ? true : false,
             ];
             return response()->json([
                 'status' => true,
@@ -199,19 +201,46 @@ class TaiKhoanController extends Controller
         ]);
         try {
             $user = Auth::user();
-            $user->viTien->update([
-                'ma_xac_minh' => $validate['ma_xac_minh'],
-            ]);
+            if (!isset($user->viTien->ma_xac_minh) || Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)) {
+                $user->viTien->update([
+                    'ma_xac_minh' => $validate['ma_xac_minh'],
+                ]);
+            }
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Thiết lập mã xác minh thành công',
+                'data' => $user->viTien,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi khi thiết lập mã xác minh',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function quenMaXacMinh()
+    {
+        try {
+            $user = Auth::user();
+            $email = $user->email;
+            $name = $user->ho . ' ' . $user->ten;
+            event(new SendMail($email, $name, 'forgotMaXacMinh'));
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Gửi mã xác minh thành công',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi đổi mã xác minh',
                 'error' => $e->getMessage(),
             ], 500);
         }

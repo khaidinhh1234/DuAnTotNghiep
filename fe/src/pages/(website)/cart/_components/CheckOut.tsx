@@ -336,6 +336,7 @@ const CheckOut = () => {
   useEffect(() => {
     localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
   }, [selectedProducts]);
+  // 
   useEffect(() => {
     if (data) {
       const preSelectedProducts = [
@@ -412,7 +413,7 @@ const CheckOut = () => {
                         <input
                           type="checkbox"
                           // checked={selectedProducts.length === data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length}
-                          checked={data?.chon === 1 || selectedProducts.length === (data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length)}
+                          checked={selectedProducts.length === (data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length)}
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                           onChange={(e) => handleSelectAll(e.target.checked)}
                           title="Select all products"

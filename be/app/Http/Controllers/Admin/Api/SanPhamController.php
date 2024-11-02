@@ -438,7 +438,18 @@ class SanPhamController extends Controller
                         'pivot_user_id',
                         'pivot_san_pham_id'
                     )
-                    ->get();
+                    ->get()
+                    ->map(function ($sanPham) {
+                        $sanPham->mau_sac_va_anh = $sanPham->bienTheSanPham->map(function ($bienThe) {
+                            return [
+                                // Lấy URL của ảnh đầu tiên trong bộ sưu tập `anhBienThe`
+                                'hinh_anh' => optional($bienThe->anhBienThe->first())->duong_dan_anh,
+                                'ma_mau_sac' => optional($bienThe->mauBienThe)->ma_mau_sac,
+                                'ten_mau_sac' => optional($bienThe->mauBienThe)->ten_mau_sac,
+                            ];
+                        });
+                        return $sanPham;
+                    });
 
                 return response()->json([
                     'status' => true,
