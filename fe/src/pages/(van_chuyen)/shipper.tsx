@@ -16,10 +16,11 @@ import {
   Tabs,
 } from "antd";
 import React, { useEffect, useState } from "react";
+import DetailTS from "./DetailTS";
+import { useParams } from "react-router-dom";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
-// const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 interface TransportData extends Transport {
@@ -52,6 +53,9 @@ const datas = [
 
 const Shipper: React.FC = () => {
   const queryClient = useQueryClient();
+  // const { id } = useParams()
+  // console.log("Current ID:", id);
+
   const [trangthai, setTrangThai] = useState<string>();
   const [filteredData, setFilteredData] = useState<Transport[]>([]);
   const [formcheck, setFormCheck] = useState(false);
@@ -126,7 +130,20 @@ const Shipper: React.FC = () => {
     },
   });
   // console.log(data);
-
+  // const { data: ttShipper, isLoading: isLoadingShipper } = useQuery({
+  //   queryKey: ["shipper"],
+  //   queryFn: async () => {
+  //     const response = await instance.get(`/vanchuyen/${id}`);
+  //     return response.data;
+  //   },
+  // });
+  
+  // if (isLoading || isLoadingShipper) {
+  //   return <div>Loading...</div>; // Hoặc bạn có thể hiện thị một loader khác
+  // }
+  // const shipperTT = data?.data?.van_chuyen?.shipper
+  // console.log(shipperTT)
+  
   const start = () => {
     setFormCheck(!formcheck);
   };
@@ -243,7 +260,7 @@ const Shipper: React.FC = () => {
     },
     {
       title: "Tổng tiền",
-      dataIndex: "tien_cod",
+      dataIndex: "tien_cod", 
       // key: "tien_cod",
       render: (_, record) => {
         return (
@@ -261,7 +278,9 @@ const Shipper: React.FC = () => {
       key: "action",
       render: (_, record) => (
         // console.log(record),
-        <Space size="middle">{/* <DetailTransport record={record} /> */}</Space>
+        <Space size="middle">
+          <DetailTS record={record} />
+        </Space>
       ),
     },
   ];
@@ -294,13 +313,13 @@ const Shipper: React.FC = () => {
             Giao Hàng Glow Express{" "}
           </h1>
         </div>
-        <div>
+        {/* <div>
           <h1 className="font-semibold md:text-2xl">Thông tin giao hàng</h1>
           <h1 className="font-semibold md:text-xl ">
-            Người giao hàng : Ngô Đình Toản
+            Người giao hàng : !3223434
           </h1>
           <h1 className="font-semibold md:text-xl">ID : VN-DC01432</h1>
-        </div>
+        </div> */}
       </div>
       {/* <div className="flex items-center justify-between">
         <div>
@@ -373,7 +392,7 @@ const Shipper: React.FC = () => {
           <Table<Transport>
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={[]}
+            dataSource={dataSource}
             loading={isLoading}
             pagination={{ pageSize: 10, className: "my-5" }}
           />

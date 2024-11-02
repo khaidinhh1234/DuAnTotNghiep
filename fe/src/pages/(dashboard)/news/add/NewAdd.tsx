@@ -1,8 +1,10 @@
 import { INew } from "@/common/types/new";
 import instance from "@/configs/admin";
+import { uploadToCloudinary } from "@/configs/cloudinary";
+import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Editor } from "@tinymce/tinymce-react";
-import { Button, Form, Input, message, Select } from "antd";
+import { Button, Form, Input, message, Select, Upload } from "antd";
 import { useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -58,15 +60,33 @@ const NewAdd = () => {
   }, [form]);
 
   // Handle form submission
-  const onFinish = (values: any) => {
-    const categoryData: INew = {
-      ...values,
-      noi_dung: editorContent, 
-      user_id: values.user_id,
-    };
-    mutate(categoryData);
-  };
+  // const onFinish = (values: any) => {
+  //   const categoryData: INew = {
+  //     ...values,
+  //     noi_dung: editorContent, 
+  //     user_id: values.user_id,
+  //   };
+  //   mutate(categoryData);
+  // };
 
+  const onFinish = async (values: any) => {
+    try {
+      let imageUrl = null;
+      if (values.imageFile && values.imageFile[0]) {
+        imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
+      }
+
+      const categoryData: INew = {
+            ...values,
+            noi_dung: editorContent, 
+            user_id: values.user_id,
+            anh_tin_tuc: imageUrl,
+          };
+          mutate(categoryData);
+    } catch (error) {
+      message.error("Lỗi khi tải ảnh lên");
+    }
+  };
   // Handle loading and error states
   if (isLoading) {
     return <div>Đang tải...</div>;
@@ -155,7 +175,21 @@ const NewAdd = () => {
                   )}
                 </Select>
               </Form.Item>
-
+              <Form.Item
+                label="Thêm ảnh"
+                name="imageFile"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
+              >
+                <Upload
+                  listType="picture"
+                  maxCount={1}
+                  beforeUpload={() => false}
+                >
+                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                </Upload>
+              </Form.Item>
               <div className="grid grid-cols-1 gap-5">
                 <Form.Item
                   label="Nội dung"

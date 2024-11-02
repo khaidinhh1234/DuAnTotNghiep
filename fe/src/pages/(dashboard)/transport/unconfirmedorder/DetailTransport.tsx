@@ -83,9 +83,20 @@ const DetailTransport = ({ record }: any) => {
 
   // Xử lý giao hàng thất bại
   const handleDeliveryFailure = () => {
+    setShowNoteInput(true); // Hiện trường ghi chú cho lần giao hàng thất bại
+
+    if (note.trim() === "") {
+      message.warning("Vui lòng nhập ghi chú trước khi tiếp tục.");
+      return;
+    }
+
     const newFailedAttempts = failedAttempts + 1;
     setFailedAttempts(newFailedAttempts);
-    setShowNoteInput(true); // Hiện trường ghi chú cho mỗi lần giao hàng thất bại
+    setNotes((prevNotes) => ({
+      ...prevNotes,
+      [`lan${newFailedAttempts}`]: note,
+    })); // Lưu ghi chú vào đối tượng notes
+    setNote(""); // Xóa nội dung ghi chú sau khi lưu
 
     if (newFailedAttempts >= 3) {
       setIsConfirmFailureVisible(true); // Hiện nút xác nhận thất bại sau lần thất bại thứ 3
@@ -95,10 +106,11 @@ const DetailTransport = ({ record }: any) => {
     }
   };
 
+
+
   // Lưu ghi chú cho lần giao hàng thất bại hiện tại
   const handleSaveNote = () => {
     if (!note.trim()) {
-      message.error("Vui lòng nhập ghi chú.");
       message.error("Vui lòng nhập ghi chú.");
       return;
     }
@@ -216,7 +228,6 @@ const DetailTransport = ({ record }: any) => {
       try {
         let response;
         const shipperXacNhan = failedAttempts >= 3 ? "2" : "1"; // Xác định trạng thái xác nhận của shipper
-
         // Gọi API xác nhận giao hàng
         if (action === "Xác nhận giao hàng") {
           response = await instance.put(
@@ -239,7 +250,6 @@ const DetailTransport = ({ record }: any) => {
             id: [id],
           });
         }
-        // console.log(response);
         return response.data; // Trả về dữ liệu phản hồi
       } catch (error) {
         console.error("Lỗi khi thực hiện yêu cầu API:", error);
@@ -506,15 +516,11 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
-                {/* Display the webcam if the conditions allow */}
                 {isWebcamVisible && !isImageSaved && (
                   <div className="relative mx-auto mt-6">
                     {url ? (
-                      // Khi ảnh đã được chụp, hiển thị ảnh và nút xóa
                       <div className="relative">
                         <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
-
-                        {/* Nút Xóa ảnh */}
                         <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
                           <button
                             onClick={deletePhoto}
@@ -526,7 +532,6 @@ const DetailTransport = ({ record }: any) => {
                         </div>
                       </div>
                     ) : (
-                      // Khi chưa có ảnh, hiển thị webcam và nút chụp ảnh
                       <div className="relative">
                         <Webcam
                           ref={webcamRef}
@@ -535,8 +540,6 @@ const DetailTransport = ({ record }: any) => {
                           className="w-60 rounded-lg"
                           audio={false}
                         />
-
-                        {/* Nút Chụp ảnh */}
                         <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
                           <button
                             onClick={capturePhoto}
@@ -550,7 +553,7 @@ const DetailTransport = ({ record }: any) => {
                     )}
                   </div>
                 )}
-                {/* Show note input if delivery failed */}
+
                 {showNoteInput && (
                   <textarea
                     rows={3}
@@ -561,7 +564,6 @@ const DetailTransport = ({ record }: any) => {
                   />
                 )}
 
-                {/* Render all notes */}
                 <div className="mt-4">
                   <h4 className="font-bold">Ghi chú thất bại:</h4>
                   <ul className="list-disc pl-5">
@@ -571,7 +573,6 @@ const DetailTransport = ({ record }: any) => {
                   </ul>
                 </div>
 
-                {/* Buttons for handling delivery */}
                 {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
                   <button
                     className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
@@ -586,7 +587,6 @@ const DetailTransport = ({ record }: any) => {
                   <button
                     className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
                     onClick={() => {
-                      // Xử lý khi nhấn nút giao hàng khi trạng thái là "Chờ lấy hàng"
                       setIsWebcamVisible(true);
                       mutate({ id: record.id, action: "Đang giao hàng" });
                     }}
@@ -629,11 +629,11 @@ const DetailTransport = ({ record }: any) => {
                           await mutate({
                             id: record.id,
                             action: "Giao hàng thất bại",
-                            ghi_chu: notes, // Send all notes as an object { lan1, lan2, lan3 }
+                            ghi_chu: notes,
                           });
-                          setFailedAttempts(0); // Reset attempts
-                          setNotes({}); // Clear notes after confirmation
-                          setShowNoteInput(false); // Hide input
+                          setFailedAttempts(0);
+                          setNotes({});
+                          setShowNoteInput(false);
                         }}
                       >
                         Xác nhận giao hàng thất bại
@@ -642,6 +642,7 @@ const DetailTransport = ({ record }: any) => {
                   </>
                 ) : null}
               </div>
+
             </div>{" "}
             <div className=" bg-slate-100 p-5 border rounded-lg my-2">
               <h5 className="text-blue-800 text-lg">Thông tin khách hàng</h5>
