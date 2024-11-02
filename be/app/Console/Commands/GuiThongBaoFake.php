@@ -18,12 +18,12 @@ class GuiThongBaoFake extends Command
     public function handle()
     {
         $users = User::get();
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             foreach ($users as $user) {
                 $thongBao = ThongBao::create([
                     'user_id' => $user->id,
-                    'tieu_de' => fake()->sentence(),
-                    'noi_dung' => fake()->sentence(),
+                    'tieu_de' => 'đmmm',
+                    'noi_dung' => 'dmm',
                     'loai' => 'uu_dai',
                     'duong_dan' => fake()->url(),
                     'hinh_thu_nho'=> 'https://cuoihoihungthinh.com/wp-content/uploads/2021/09/icon-uu-dai.png'
