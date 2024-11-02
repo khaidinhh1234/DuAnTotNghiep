@@ -120,7 +120,8 @@ import TaiChinh from "@/pages/(website)/mywallet/wallte";
 import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 import BankAccount from "@/pages/(website)/mywallet/nganhang";
 import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
-import SettingsModal from "@/pages/(website)/mywallet/RegisterWalletPassword";
+import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
+import SearchResultsPage from "@/pages/(website)/_component/SearchResultsPage";
 
 const Router = () => {
   //
@@ -146,8 +147,10 @@ const Router = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<Test />} />{" "}
-          {/* <Route path="/thankyou" element={<ThankYouPage />} />{" "} */}
+          <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
+          <Route path="/search-results" element={<SearchResultsPage />} />
+
           <Route
             path="/shippingAddressPage"
             element={<ShippingAddressPage />}
@@ -168,7 +171,7 @@ const Router = () => {
             <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
-            <Route path="/mypro/mk" element={<SettingsModal isOpen={true} onClose={() => {}} />} />
+            {/* <Route path="/mypro/mk" element={<SettingsModal/>} /> */}
 
 
 

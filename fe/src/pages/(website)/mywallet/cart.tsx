@@ -166,18 +166,26 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
       setCardNumber('');
       setCardHolder('');
     },
-    onError: () => {
-      toast.error('Có lỗi xảy ra khi thêm ngân hàng');
-    }
+    onError: (error : any) => {
+      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+      toast.error(errorMessage);    }
   });
   
+
+  const [error, setError] = useState('');
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value.replace(/\D/g, '');
     if (input.length <= 16) {
       setCardNumber(input);
+      if (input.length > 0 && input.length < 6) {
+        setError('Số thẻ phải có ít nhất 6 chữ số');
+      } else {
+        setError('');
+      }
     }
   };
+  
 
   const formatDisplayCardNumber = (number: string) => {
     return number.replace(/(.{4})/g, '$1 ').trim();
@@ -250,6 +258,11 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
               onChange={handleCardNumberChange}
               className="mt-1 w-full rounded-md border border-gray-300 p-2.5 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
             />
+              {error && (
+    <p className="mt-1 text-sm text-red-500">
+      {error}
+    </p>
+  )}
           </div>
 
           <div>
@@ -258,6 +271,7 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
               type="text"
               placeholder="Tên Đầy Đủ"
               value={cardHolder}
+              maxLength={25}
               onChange={(e) => setCardHolder(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 p-2.5 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
             />

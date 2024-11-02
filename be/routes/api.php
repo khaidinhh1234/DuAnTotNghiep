@@ -72,8 +72,6 @@ Route::middleware([])
         //Trang sản phẩm
         // lấy tất cả sản phẩm
         Route::group([], function () {
-            Route::get('/san-pham-all', [TrangSanPhamController::class, 'layTatCaSanPham']);
-
             // Lấy ra danh mục cha
             Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
 

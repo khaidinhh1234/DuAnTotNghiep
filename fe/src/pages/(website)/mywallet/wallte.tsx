@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import instanceClient from "@/configs/client";
 import SettingsModal from './RegisterWalletPassword';
@@ -12,12 +12,17 @@ export const fetchFinanceData = async () => {
   };
 function TaiChinh() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const location = useLocation();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['financeData'],
     queryFn: fetchFinanceData,
   });
-
+  useEffect(() => {
+    if (location.state?.openSettings) {
+      setIsSettingsOpen(true);
+    }
+  }, [location.state]);
   if (isLoading) {
     return <div className="p-4">Loading...</div>;
   }
