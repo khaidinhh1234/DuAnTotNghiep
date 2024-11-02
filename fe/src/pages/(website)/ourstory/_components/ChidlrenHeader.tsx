@@ -10,7 +10,7 @@ const ChidlrenHeader = () => {
                   href="#OurStory"
                   className="lg:text-base text-sm px-3 py-1 hover:bg-black/50 hover:text-white rounded-xl bg-white border border-black font-semibold hover:border-white"
                 >
-                  Our Story
+                  Câu Chuyện Của Chúng Tôi
                 </a>
               </li>
               <li>
@@ -18,7 +18,7 @@ const ChidlrenHeader = () => {
                   href="#OurMission"
                   className="lg:text-base text-sm px-3 py-1 hover:bg-black/50 hover:text-white rounded-xl bg-white border border-black font-semibold hover:border-white"
                 >
-                  Our Mission
+                  Sứ Mệnh Của Chúng Tôi
                 </a>
               </li>
               <li>
@@ -26,7 +26,7 @@ const ChidlrenHeader = () => {
                   href="#OurValues"
                   className="lg:text-base text-sm px-3 py-1 hover:bg-black/50 hover:text-white rounded-xl bg-white border border-black font-semibold hover:border-white"
                 >
-                  Our Values
+                  Giá Trị Của Chúng Tôi
                 </a>
               </li>
               <li>
@@ -34,7 +34,7 @@ const ChidlrenHeader = () => {
                   href="#OurJourney"
                   className="lg:text-base text-sm px-3 py-1 hover:bg-black/50 hover:text-white rounded-xl bg-white border border-black font-semibold hover:border-white"
                 >
-                  Our Journey
+                  Hành Trình Của Chúng Tôi
                 </a>
               </li>
             </ul>

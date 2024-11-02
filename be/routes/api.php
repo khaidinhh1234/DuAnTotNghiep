@@ -72,6 +72,7 @@ Route::middleware([])
         //Trang sản phẩm
         // lấy tất cả sản phẩm
         Route::group([], function () {
+            Route::get('lay-tat-ca-san-pham', [TrangSanPhamController::class, 'layTatCaSanPham']);
             // Lấy ra danh mục cha
             Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
 
@@ -91,7 +92,10 @@ Route::middleware([])
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
 
         //Thanh toán MoMo
+        //Thanh toán MoMo
         Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
+        Route::post('check-trang-thai', [MoMoController::class, 'checkDonHang']);
+        Route::post('luu-thanh-toan-vao-momo', [MoMoController::class, 'savePaymentInfo']);
 
         //Client Chi tiết sản phẩm
         // Captcha

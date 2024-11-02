@@ -3,14 +3,15 @@ const OurStory = () => {
     <>
       <section id="OurStory" className="my-16">
         <h2 className="lg:text-4xl text-2xl font-semibold mb-6 text-center">
-          Our Story
+          Câu Chuyện Của Chúng Tôi
         </h2>
         <p className="lg:text-lg lg:max-w-3xl max-w-lg mx-auto mb-6">
-          Founded with a passion for fashion and a commitment to quality, Krist
-          Clothing Shop offers a wide range of stylish apparel. We believe in
-          empowering individuals to feel confident and comfortable in their own
-          skin. Our journey began with a simple idea: to create clothing that
-          blends style, comfort, and quality seamlessly.
+          Được thành lập với niềm đam mê thời trang và cam kết về chất lượng,
+          Krist Clothing Shop cung cấp một loạt các trang phục phong cách. Chúng
+          tôi tin tưởng vào việc trao quyền cho mọi người để cảm thấy tự tin và
+          thoải mái trong làn da của chính mình. Hành trình của chúng tôi bắt
+          đầu với một ý tưởng đơn giản: tạo ra quần áo kết hợp phong cách, sự
+          thoải mái và chất lượng một cách liền mạch.
         </p>
       </section>
     </>
