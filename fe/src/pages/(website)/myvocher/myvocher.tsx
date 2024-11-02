@@ -54,9 +54,12 @@ const MyVoucher = () => {
     queryFn: getVouchers,
   });
 
-  const activeVouchers =
-    vouchersData?.data.filter((voucher: Voucher) => voucher.trang_thai === 1) ||
-    [];
+
+  const activeVouchers = vouchersData?.data.filter(
+    (voucher: Voucher) => 
+      voucher.trang_thai === 1 && 
+      voucher.da_thu_thap === 1
+  ) || [];
 
   const totalVouchers = activeVouchers.length;
   const indexOfLastVoucher = currentPage * pageSize;
@@ -71,6 +74,7 @@ const MyVoucher = () => {
       .filter((v: Voucher) => v.da_thu_thap === 1)
       .map((v: Voucher) => v.ma_code);
   });
+ 
 
   const saveMutation = useMutation({
     mutationFn: (maCode: string) => {
