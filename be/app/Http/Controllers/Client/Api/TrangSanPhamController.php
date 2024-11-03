@@ -406,44 +406,39 @@ class TrangSanPhamController extends Controller
     public function laySanPhamTheoDanhMuc($slug)
     {
         try {
-            // Tìm danh mục theo đường dẫn
-            $danhMucs = DanhMuc::where('duong_dan', $slug)->first();
+            $danhMuc = DanhMuc::where('duong_dan', $slug)->first();
     
-            if (!$danhMucs) {
+            if (!$danhMuc) {
                 return response()->json([
                     'message' => 'Không tìm thấy danh mục'
                 ], 404);
             }
     
+            // Xác định nếu đây là danh mục chính "nam"
+            $danhMucIds = [$danhMuc->id];
+            if ($danhMuc->duong_dan === 'nam') {
+                // Lấy danh sách ID của tất cả danh mục con thuộc "nam"
+                $danhMucIds = DanhMuc::where('cha_id', $danhMuc->id)->pluck('id')->toArray();
+                $danhMucIds[] = $danhMuc->id; // Thêm ID của danh mục chính "nam"
+            }
+    
             $soLuongSanPhamMoiTrang = request()->get('per_page', 8);
-            
-            // Lấy tất cả sản phẩm thuộc danh mục
+    
             $sanPhams = SanPham::with([
                 'bienTheSanPham' => function ($query) {
                     $query->with(['mauBienThe', 'kichThuocBienThe', 'anhBienThe'])
                         ->select(
-                            'id',
-                            'san_pham_id',
-                            'bien_the_mau_sac_id',
-                            'bien_the_kich_thuoc_id',
-                            'so_luong_bien_the',
-                            'gia_ban',
-                            'gia_khuyen_mai',
-                            'gia_khuyen_mai_tam_thoi'
+                            'id', 'san_pham_id', 'bien_the_mau_sac_id', 'bien_the_kich_thuoc_id',
+                            'so_luong_bien_the', 'gia_ban', 'gia_khuyen_mai', 'gia_khuyen_mai_tam_thoi'
                         );
                 },
-                'khachHangYeuThich'
+                'khachHangYeuThich' 
             ])
-            ->where('danh_muc_id', $danhMucs->id)
-            ->where('san_phams.trang_thai', 1)
+            ->whereIn('danh_muc_id', $danhMucIds) 
+            ->where('san_phams.trang_thai', 1) 
             ->select(
-                'san_phams.id',
-                'san_phams.ten_san_pham',
-                'san_phams.anh_san_pham',
-                'san_phams.created_at',
-                'san_phams.ma_san_pham',
-                'san_phams.duong_dan',
-                'san_phams.hang_moi'
+                'san_phams.id', 'san_phams.ten_san_pham', 'san_phams.anh_san_pham',
+                'san_phams.created_at', 'san_phams.ma_san_pham', 'san_phams.duong_dan', 'san_phams.hang_moi'
             )
             ->addSelect([
                 DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
@@ -451,7 +446,7 @@ class TrangSanPhamController extends Controller
             ])
             ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
             ->groupBy('san_phams.id')
-            ->orderBy('san_phams.created_at', 'desc')
+            ->orderBy('san_phams.created_at', 'desc') 
             ->paginate($soLuongSanPhamMoiTrang);
     
             $result = $sanPhams->map(function ($sanPham) {
@@ -500,7 +495,7 @@ class TrangSanPhamController extends Controller
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công',
                 'data' => [
-                    'Danh_muc' => $danhMucs,
+                    'Danh_muc' => $danhMuc,
                     'San_pham' => $result
                 ],
             ], 200);
