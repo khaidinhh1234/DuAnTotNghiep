@@ -116,7 +116,7 @@ const Header = () => {
     // setUser(null);
   };
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
+  // const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -132,12 +132,12 @@ const Header = () => {
     // Add your search logic here
     setIsModalVisible(false);
   };
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+  // const showModal = () => {
+  //   setIsModalVisible(true);
+  // };
+  // const handleCancel = () => {
+  //   setIsModalVisible(false);
+  // };
   const [isProductMenuVisible, setIsProductMenuVisible] = useState(false);
 
   const handleMouseEnterProduct = () => {
