@@ -226,7 +226,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
             </button>
-            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0">
+            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0    sticky top-20 ">
               {/* <!-- Product Categories --> */}
               <div className="mb-5">
                 <div

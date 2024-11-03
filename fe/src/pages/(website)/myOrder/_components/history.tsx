@@ -1,6 +1,5 @@
 import instanceClient from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
 
 const History = () => {
   const { data } = useQuery({

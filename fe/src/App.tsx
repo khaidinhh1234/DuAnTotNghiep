@@ -8,7 +8,6 @@ import Pusher from "pusher-js";
 
 import { ToastContainer } from "react-toastify";
 
-
 const notificationSoundUrl = "/huhu.mp3";
 
 const Banner = ({ notifications = [], onDelete }) => {
@@ -158,7 +157,7 @@ function App() {
 
     return () => {
       if (echo) {
-        echo.leave(channelName);
+        // echo.leave(channelName);
         echo.disconnect();
       }
     };

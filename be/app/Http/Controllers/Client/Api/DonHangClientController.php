@@ -50,11 +50,11 @@ class DonHangClientController extends Controller
         curl_close($ch);
         return $result;
     }
-    public function donHangUser(Request $request) 
+    public function donHangUser(Request $request)
     {
         try {
             $user = Auth::guard('api')->user();
-            
+
             $pageSize = $request->get('pageSize', 2);
             $donHang = DonHang::where('user_id', $user->id)->with([
                 'chiTiets.bienTheSanPham.sanPham',
@@ -64,14 +64,14 @@ class DonHangClientController extends Controller
                 'danhGias.user',
                 'vanChuyen',
             ])->orderByDesc('created_at')->paginate($pageSize);
-    
+
             // Thực hiện các tính toán cho từng đơn hàng
             $donHang->each(function ($item) {
                 $item['tong_tien_da_giam'] = $item['tong_tien_don_hang'] - $item['so_tien_giam_gia'];
                 $item['tongSoLuong'] = $item->chiTiets->sum('so_luong');
                 $item['tongTienSanPham'] = $item->chiTiets->sum('thanh_tien');
             });
-    
+
             // Xử lý dữ liệu chi tiết đơn hàng và đánh giá
             $chiTietDonHang = $donHang->flatMap(function ($order) {
                 return $order->chiTiets->map(function ($chiTiet) {
@@ -91,11 +91,11 @@ class DonHangClientController extends Controller
                     ];
                 });
             });
-    
+
             $danhGiaDonHang = $donHang->flatMap(function ($order) {
                 return $order->danhGias;
             });
-    
+
             $danhGiaData = $danhGiaDonHang->isNotEmpty() ? $danhGiaDonHang->map(function ($danhGia) {
                 return [
                     'so_sao_san_pham' => $danhGia->so_sao_san_pham,
@@ -106,7 +106,7 @@ class DonHangClientController extends Controller
                     'huu_ich' => $danhGia->huu_ich
                 ];
             }) : null;
-    
+
             // Tổng số lượng và tổng tiền sản phẩm
             $tongSoLuong = $donHang->sum(function ($order) {
                 return $order->chiTiets->sum('so_luong');
@@ -114,7 +114,7 @@ class DonHangClientController extends Controller
             $tongTienSanPham = $donHang->sum(function ($order) {
                 return $order->chiTiets->sum('thanh_tien');
             });
-    
+
             $data = [
                 'don_hang' => $donHang->items(),
                 'tong_so_luong' => $tongSoLuong,
@@ -127,7 +127,7 @@ class DonHangClientController extends Controller
                     'has_more_pages' => $donHang->hasMorePages(),
                 ]
             ];
-    
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -143,7 +143,7 @@ class DonHangClientController extends Controller
             ]);
         }
     }
-    
+
     public function donHangUserDetail(string $maDonHang)
     {
         try {
