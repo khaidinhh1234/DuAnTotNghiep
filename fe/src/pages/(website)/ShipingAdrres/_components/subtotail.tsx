@@ -88,14 +88,14 @@ const Subtotal = ({ tong_tien, Macode }: any) => {
             {(tong_tien?.tiet_kiem + giamgia).toLocaleString("vi-VN")}₫
           </span>
         </div>
-        <a href="/shippingAddressPage">
-          <button
-            type="submit"
-            className=" block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
-          >
-            Đặt hàng ngay
-          </button>
-        </a>
+        {/* <a href="/shippingAddressPage"> */}
+        <button
+          type="submit"
+          className=" block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
+        >
+          Đặt hàng ngay
+        </button>
+        {/* </a> */}
       </div>
     </div>
   );

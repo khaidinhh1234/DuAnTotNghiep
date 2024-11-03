@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import AddAddressForm from "./AddAdrres";
 
 const ShippingAddress = ({
@@ -10,7 +11,7 @@ const ShippingAddress = ({
   return (
     <>
       {/* <Routecheckout /> */}
-      {/* <div className="my-5">
+      <div className="my-5">
         <h3 className="title-h3">Chọn địa chỉ giao hàng</h3>
         <span className="text-[13px]">
           Tôi hoàn toàn yêu thích TopShelfBC; giá cả phải chăng với mọi ngân
@@ -59,13 +60,13 @@ const ShippingAddress = ({
             </button>
           </div>
         </div>
-      </div> */}
-      {/* <Link
+      </div>
+      <Link
         to="/payment"
         className="btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium"
       >
         Giao ngay
-      </Link> */}
+      </Link>
       <AddAddressForm
         register={register}
         handleSubmit={handleSubmit}

@@ -121,9 +121,12 @@ import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 import BankAccount from "@/pages/(website)/mywallet/nganhang";
 import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
 import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
+
+import History from "@/pages/(website)/myOrder/_components/history";
+
 import SearchResultsPage from "@/pages/(website)/_component/SearchResultsPage";
 
-import History from "@/pages/(website)/mywallet/history";
+// import History from "@/pages/(website)/mywallet/history";
 import WithdrawalRequests from "@/pages/(dashboard)/dohoan/ruttien";
 import Page2 from "@/pages/(website)/_component/shop";
 import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
