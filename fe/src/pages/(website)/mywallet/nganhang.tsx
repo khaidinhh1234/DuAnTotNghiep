@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useRef, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import instanceClient from "@/configs/client";
 import CreditCardForm from "./cart";
 import { Checkbox } from 'antd';
-import { CheckboxProps } from 'antd/lib';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const banks = [
   { name: 'Agribank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Agribank_dk6etr.png' },
@@ -45,61 +45,187 @@ const BankAccount = () => {
   const [showCreditCardModal, setShowCreditCardModal] = useState(false);
   const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
   const [selectedBanks, setSelectedBanks] = useState<string[]>([]);
+  const [showPinRegistrationModal, setShowPinRegistrationModal] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data: walletData } = useQuery({
+    queryKey: ['walletStatus'],
+    queryFn: async () => {
+      const response = await instanceClient.get('/vi-tai-khoan');
+      return response.data?.data;
+    }
+  });
 
   const { data: linkedBanks = [], isLoading, isError } = useQuery({
     queryKey: ['linkedBanks'],
     queryFn: fetchLinkedBanks,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 0
   });
+
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [selectedBankToDelete, setSelectedBankToDelete] = useState<string | null>(null);
+  const [pins, setPins] = useState(['', '', '', '', '', '']);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleBankClick = (bankId: any) => {
     setSelectedBankId(selectedBankId === bankId ? null : bankId);
   };
 
- const handleBankSelection = (bank: any) => {
-  setSelectedBank({
-    name: bank?.name,
-    logo: bank?.logo,
-    accountNumber: bank?.accountNumber,
-    accountHolder: bank?.accountHolder,
-    bankName: bank?.bankName,
-    id: bank?.id,
-    userId: bank?.userId,
-   
-  });
-  setShowCreditCardModal(true);
-  setShowBankSelection(false);
-};
-const handleWithdraw = () => {
-  if (selectedBanks.length === 1) {
-    const selectedBank = linkedBanks.find((bank: { id: string }) => bank.id === selectedBanks[0]);
+  const handleBankSelection = (bank: any) => {
+    if (!walletData?.trang_thai_ma_xac_minh) {
+      setShowPinRegistrationModal(true);
+      return;
+    }
+    setSelectedBank({
+      name: bank?.name,
+      logo: bank?.logo,
+      accountNumber: bank?.accountNumber,
+      accountHolder: bank?.accountHolder,
+      bankName: bank?.bankName,
+      id: bank?.id,
+      userId: bank?.userId,
+    });
+    setShowCreditCardModal(true);
+    setShowBankSelection(false);
+  };
+
+  const handleModalClose = () => {
+    setShowCreditCardModal(false);
+    queryClient.invalidateQueries({ queryKey: ['linkedBanks'] });
+  };
+
+  const handleWithdraw = () => {
+    if (!walletData?.trang_thai_ma_xac_minh) {
+      setShowPinRegistrationModal(true);
+      return;
+    }
+    const selectedBankId = selectedBanks[0];
+    
+    const selectedBank = linkedBanks.find((bank: { id: string }) => bank.id === selectedBankId);
+  
     navigate('/mypro/WithdrawPage', { 
       state: { 
         bankData: {
+          id: selectedBankId, // Pass the selected bank ID
           bankName: selectedBank?.bankName,
           accountNumber: selectedBank?.accountNumber,
           accountHolder: selectedBank?.accountHolder,
           logo: selectedBank?.logo,
-
         }
       } 
     });
-  }
-};
+  };
+  
+
 const handleCheckboxChange = (bankId: string, checked: boolean) => {
-  setSelectedBanks(prev => 
-    checked 
-      ? [...prev, bankId]
-      : prev.filter(id => id !== bankId)
-  );
+  setSelectedBanks(checked ? [bankId] : []);
 };
+
   const handleAddBankClick = () => {
+    if (!walletData?.trang_thai_ma_xac_minh) {
+      setShowPinRegistrationModal(true);
+      return;
+    }
     setShowBankSelection(true);
   };
 
-  // const onChange: CheckboxProps['onChange'] = (e) => {
-  //   console.log(`checked = ${e.target.checked}`);
-  // };
+  const deleteBankMutation = useMutation({
+    mutationFn: (data: { bankId: string, ma_xac_minh: string }) => {
+      return instanceClient.post(`/huy-lien-ket-ngan-hang/${data.bankId}`, {
+        ma_xac_minh: data.ma_xac_minh
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['linkedBanks'] });
+      toast.success('Xóa tài khoản ngân hàng thành công');
+      setShowPinModal(false);
+      setSelectedBankToDelete(null);
+      resetPins();
+    },
+    onError: (error : any) => {
+     
+      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+      toast.error(errorMessage);    
+         resetPins();
+    }
+  });
+
+  const handleDeleteBank = (bankId: string) => {
+    if (walletData?.trang_thai_ma_xac_minh) {
+      setSelectedBankToDelete(bankId);
+      setShowPinModal(true);
+    } else {
+      setShowPinRegistrationModal(true);
+    }
+  };
+
+  const resetPins = () => {
+    setPins(['', '', '', '', '', '']);
+    inputRefs.current[0]?.focus();
+  };
+
+  const handleChange = (index: number, value: string) => {
+    if (value.match(/^[0-9]$/)) {
+      const newPins = [...pins];
+      newPins[index] = value;
+      setPins(newPins);
+      if (index < 5) {
+        inputRefs.current[index + 1]?.focus();
+      }
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !pins[index] && index > 0) {
+      const newPins = [...pins];
+      newPins[index - 1] = '';
+      setPins(newPins);
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePinSubmit = () => {
+    if (selectedBankToDelete) {
+      deleteBankMutation.mutate({
+        bankId: selectedBankToDelete,
+        ma_xac_minh: pins.join('')
+      });
+    }
+  };
+
+  const PinRegistrationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+    if (!isOpen) return null;
+  
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-96">
+          <h2 className="text-xl font-semibold mb-4">Chưa đăng ký mã PIN</h2>
+          <p className="text-gray-600 mb-6">Bạn cần đăng ký mã PIN để thực hiện thao tác này</p>
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            >
+              Đóng
+            </button>
+            <button
+              onClick={() => {
+                navigate('/mypro/wallet', {
+                  state: { openSettings: true }
+                });                onClose();
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Đăng ký PIN
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -119,36 +245,34 @@ const handleCheckboxChange = (bankId: string, checked: boolean) => {
 
   return (
     <div className="w-full h-screen relative">
-    <div className="flex items-center justify-between px-4 py-4 bg-white font-bold text-lg border-b border-gray-200">
-      <div className="flex items-center">
-        <i className="fa-light fa-wallet mr-2"></i>
-        Tài khoản Ngân hàng liên kết
+      <div className="flex items-center justify-between px-4 py-4 bg-white font-bold text-lg border-b border-gray-200">
+        <div className="flex items-center">
+          <i className="fa-light fa-wallet mr-2"></i>
+          Tài khoản Ngân hàng liên kết
+        </div>
+        {selectedBanks.length > 0 && (
+          <button 
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+            onClick={handleWithdraw}
+          >
+            Rút tiền
+          </button>
+        )}
       </div>
-      {selectedBanks.length > 0 && (
-      <button 
-        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
-        onClick={handleWithdraw}
-      >
-        Rút tiền
-      </button>
-    )}
-    </div>
 
-
-{showCreditCardModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-    <div className="bg-white rounded-lg w-full max-w-lg p-6 relative">
-      <button 
-        onClick={() => setShowCreditCardModal(false)}
-        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-      >
-        <i className="fa-solid fa-times text-xl"></i>
-      </button>
-      {selectedBank && <CreditCardForm bankData={selectedBank} />}
-    </div>
-  </div>
-)}
-
+      {showCreditCardModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg w-full max-w-lg p-6 relative">
+            <button 
+              onClick={handleModalClose}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <i className="fa-solid fa-times text-xl"></i>
+            </button>
+            {selectedBank && <CreditCardForm bankData={selectedBank} />}
+          </div>
+        </div>
+      )}
 
       {!showBankSelection && (
         <>
@@ -158,11 +282,12 @@ const handleCheckboxChange = (bankId: string, checked: boolean) => {
                 className="flex items-center px-2 py-2 bg-white border-b border-gray-200 cursor-pointer hover:bg-gray-100"
                 onClick={() => handleBankClick(bank.id)}
               >
-  <Checkbox 
+                <Checkbox 
                   onClick={(event) => event.stopPropagation()} 
                   onChange={(e) => handleCheckboxChange(bank.id, e.target.checked)}
                   checked={selectedBanks.includes(bank.id)}
-                />                <img src={bank.logo} alt={bank.bankName} className="w-12 h-12 mr-3 object-contain" />
+                />
+                <img src={bank.logo} alt={bank.bankName} className="w-12 h-12 mr-3 object-contain" />
                 <div className="flex-1">
                   <div className="font-medium">{bank.bankName}</div>
                   <div className="text-sm text-gray-500">{bank.accountHolder}</div>
@@ -193,7 +318,7 @@ const handleCheckboxChange = (bankId: string, checked: boolean) => {
                     className="w-full py-2.5 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log('Xóa liên kết:', bank.id);
+                      handleDeleteBank(bank.id);
                     }}
                   >
                     Xóa liên kết
@@ -239,6 +364,57 @@ const handleCheckboxChange = (bankId: string, checked: boolean) => {
           </div>
         </div>
       )}
+
+      {showPinModal && walletData?.trang_thai_ma_xac_minh && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Xác nhận mật khẩu ví</h2>
+            <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
+
+            <div className="mb-6">
+              <div className="flex justify-between space-x-2">
+                {pins.map((pin, index) => (
+                  <input
+                    key={index}
+                    type="password"
+                    maxLength={1}
+                    value={pin}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  resetPins();
+                  setShowPinModal(false);
+                  setSelectedBankToDelete(null);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handlePinSubmit}
+                disabled={pins.some(pin => !pin) || deleteBankMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {deleteBankMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <PinRegistrationModal 
+        isOpen={showPinRegistrationModal} 
+        onClose={() => setShowPinRegistrationModal(false)} 
+      />
     </div>
   );
 };

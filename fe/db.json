@@ -1,194 +1,50 @@
 {
-  "products": [
+  "donhang": [
     {
-      "id": 1,
-      "name": "Product 1",
-      "price": 100000,
-      "image": "https://picsum.photos/id/10/300/300",
-      "description": "This is product 1",
-      "discount": 30,
-      "quantity": 100,
-      "featured": true
-    },
-    {
-      "id": 2,
-      "name": "Product 2",
-      "price": 19.99,
-      "image": "https://picsum.photos/id/11/300/300",
-      "description": "This is product 2",
-      "discount": 0.1,
-      "quantity": 50,
-      "featured": false
-    },
-    {
-      "id": 3,
-      "name": "Product 3",
-      "price": 5.99,
-      "image": "https://picsum.photos/id/12/300/300",
-      "description": "This is product 3",
-      "discount": 0,
-      "quantity": 200,
-      "featured": true
-    },
-    {
-      "id": 4,
-      "name": "Product 4",
-      "price": 14.99,
-      "image": "https://picsum.photos/id/13/300/300",
-      "description": "This is product 4",
-      "discount": 0.2,
-      "quantity": 75,
-      "featured": true
-    },
-    {
-      "id": 5,
-      "name": "Product 5",
-      "price": 9.99,
-      "image": "https://picsum.photos/id/14/300/300",
-      "description": "This is product 5",
-      "discount": 0,
-      "quantity": 150,
-      "featured": false
-    },
-    {
-      "id": 6,
-      "name": "Product 6",
-      "price": 7.99,
-      "image": "https://picsum.photos/id/15/300/300",
-      "description": "This is product 6",
-      "discount": 0.15,
-      "quantity": 100,
-      "featured": false
-    },
-    {
-      "id": 7,
-      "name": "Product 7",
-      "price": 12.99,
-      "image": "https://picsum.photos/id/16/300/300",
-      "description": "This is product 7",
-      "discount": 0,
-      "quantity": 50,
-      "featured": true
-    },
-    {
-      "id": 8,
-      "name": "Product 8",
-      "price": 17.99,
-      "image": "https://picsum.photos/id/17/300/300",
-      "description": "This is product 8",
-      "discount": 0.1,
-      "quantity": 80,
-      "featured": true
-    },
-    {
-      "id": 9,
-      "name": "Product 9",
-      "price": 6.99,
-      "image": "https://picsum.photos/id/18/300/300",
-      "description": "This is product 9",
-      "discount": 0,
-      "quantity": 120,
-      "featured": false
-    },
-    {
-      "id": 10,
-      "name": "Product 10",
-      "price": 11.99,
-      "image": "https://picsum.photos/id/19/300/300",
-      "description": "This is product 10",
-      "discount": 0.25,
-      "quantity": 90,
-      "featured": true
-    }
-  ],
-  "images": [
-    {
-      "id": 2,
-      "title": "Image 1",
-      "url": "https://picsum.photos/id/35/200/300",
-      "random": "sdgfsgfdsgfdgdfhfdh"
-    },
-    {
-      "id": 1,
-      "title": "Image 2",
-      "url": "https://picsum.photos/id/36/200/300",
-      "random": "sdgfsgfdsgfdgdfhfdh"
-    },
-    {
-      "id": 3,
-      "title": "Image 3",
-      "url": "https://picsum.photos/id/37/200/300",
-      "random": "sdgfsgfdsgfdgdfhfdh"
-    },
-    {
-      "id": 4,
-      "title": "Image 4",
-      "url": "https://picsum.photos/id/38/200/300",
-      "random": "sdgfsgfdsgfdgdfhfdh"
-    },
-    {
-      "id": 5,
-      "title": "Image 5",
-      "url": "https://picsum.photos/id/39/200/300",
-      "random": "sdgfsgfdsgfdgdfhfdh"
-    }
-  ],
-  "users": [
-    {
-      "email": "khaidinhh2@gmail.com",
-      "password": "$2a$10$oEkVVPPnAShbLzKNrF.rh.drcaPWRAaGq0fNSBn0NnbX7PYBNsJ96",
-      "first_name": "Nguyễn",
-      "last_name": "Khải",
-      "confirmPassword": "khaidinhh2@gmail.comA",
-      "checkboxs": true,
-      "id": 1
-    },
-    {
-      "email": "khaidinhh21@gmail.com",
-      "password": "$2a$10$qz3bMqiFeSWW/.zxxevAjubLvs8K5aEyOwFkVMNcnP2PQLVFCLlBi",
-      "first_name": "2345",
-      "last_name": "234",
-      "confirmPassword": "khaidinhh2@gmail.comA",
-      "checkboxs": true,
-      "id": 2
-    }
-  ],
-  "reviews": [
-    {
-      "id": 1,
-      "reviewerName": "John Brown",
-      "reviewerEmail": "john@example.com",
-      "product": "Sản phẩm 1",
-      "rating": 4,
-      "comment": "Sản phẩm tốt, giao hàng nhanh.",
-      "status": "Đã duyệt"
-    },
-    {
-      "id": 2,
-      "reviewerName": "Jane Smith",
-      "reviewerEmail": "jane@example.com",
-      "product": "Sản phẩm 2",
-      "rating": 2,
-      "comment": "Sản phẩm không như mong đợi.",
-      "status": "Chưa duyệt"
-    },
-    {
-      "id": 3,
-      "reviewerName": "Alice Johnson",
-      "reviewerEmail": "alice@example.com",
-      "product": "Sản phẩm 3",
-      "rating": 5,
-      "comment": "Tuyệt vời, rất hài lòng.",
-      "status": "Đã duyệt"
-    },
-    {
-      "id": 4,
-      "reviewerName": "Bob Williams",
-      "reviewerEmail": "bob@example.com",
-      "product": "Sản phẩm 4",
-      "rating": 3,
-      "comment": "Chấp nhận được.",
-      "status": "Chưa duyệt"
+      "status": true,
+      "status_code": 200,
+      "message": "Lấy danh sách đơn hàng thành công",
+      "data": {
+        "don_hang": [
+          {
+            "id": 8,
+            "ma_don_hang": "DH67266093C82FA",
+            "user_id": 2,
+            "ghi_chu": "0986758",
+            "trang_thai_don_hang": "Chờ xác nhận",
+            "phuong_thuc_thanh_toan": "Momo_QR",
+            "tong_tien_don_hang": 3240000,
+            "ten_nguoi_dat_hang": "kjhgfds",
+            "so_dien_thoai_nguoi_dat_hang": "08967867876",
+            "dia_chi_nguoi_dat_hang": "Long châu , ạibsdnhfsd sdfsdv",
+            "ma_giam_gia": null,
+            "so_tien_giam_gia": 0
+          },
+          {
+            "id": 2,
+            "ma_don_hang": "DH67266093C82FA",
+            "user_id": 2,
+            "ghi_chu": "0986758",
+            "trang_thai_don_hang": "Chờ xác nhận",
+            "phuong_thuc_thanh_toan": "Momo_QR",
+            "tong_tien_don_hang": 3240000,
+            "ten_nguoi_dat_hang": "kjhgfds",
+            "so_dien_thoai_nguoi_dat_hang": "08967867876",
+            "dia_chi_nguoi_dat_hang": "Long châu , ạibsdnhfsd sdfsdv",
+            "ma_giam_gia": null,
+            "so_tien_giam_gia": 0
+          }
+        ],
+        "tong_so_luong": 101,
+        "tong_thanh_tien_san_pham": 9290000,
+        "pagination": {
+          "current_page": 1,
+          "last_page": 1,
+          "per_page": 20,
+          "total": 8,
+          "has_more_pages": false
+        }
+      }
     }
   ]
 }

@@ -1,5 +1,6 @@
 @keyframes custom-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -9,4 +10,42 @@
 
 .animate-bounce {
   animation: custom-bounce 0.3s ease-in-out;
+}
+@keyframes load91371 {
+  0%,
+  10%,
+  100% {
+    width: 0;
+  }
+  10%,
+  20%,
+  30%,
+  40%,
+  50%,
+  60%,
+  70%,
+  80%,
+  90%,
+  100% {
+    border-right-color: transparent;
+  }
+  11%,
+  21%,
+  31%,
+  41%,
+  51%,
+  61%,
+  71%,
+  81%,
+  91% {
+    border-right-color: #17feff;
+  }
+  60%,
+  80% {
+    width: 100%;
+  }
+}
+
+.animate-load {
+  animation: load91371 2s linear infinite;
 }

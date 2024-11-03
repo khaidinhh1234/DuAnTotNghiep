@@ -1,10 +1,8 @@
-import { sanPham2 } from "@/assets/img";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import ProductsList from "./ProductsList";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Slider } from "antd";
+import SearchResultsPage from "./SearchResultsPage";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
@@ -177,15 +175,11 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const sizes = size?.kichThuoc;
   // console.log(sizes);
   // lọc
-  const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async () => {
       try {
-        const response = await instanceClient.post(
-          `loc-san-pham?page=${page}`,
-          datas
-        );
+        const response = await instanceClient.post("loc-san-pham", datas);
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
@@ -198,9 +192,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       queryClient.setQueryData(["PRODUCTSLOC"], data);
     },
   });
-  const onPage = (page: number) => {
-    setPage(page);
-  };
   const danh_muc = danhmuc?.data;
   // console.log(danh_muc);
   const products = data?.data?.data;
@@ -214,7 +205,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ) {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
+  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price]);
 
   return (
     <div>
@@ -226,7 +217,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
             </button>
-            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0    sticky top-20 ">
+            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0">
               {/* <!-- Product Categories --> */}
               <div className="mb-5">
                 <div
@@ -513,9 +504,8 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-              <ProductsList
+              <SearchResultsPage
                 data={data}
-                onPage={onPage}
                 products={products}
                 Wishlist={handleWishlist}
                 isPending={isPending}
