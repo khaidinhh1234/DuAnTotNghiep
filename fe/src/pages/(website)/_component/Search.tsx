@@ -228,13 +228,10 @@ const Search = () => {
             <div className="grid grid-cols-4 justify-center gap-4">
               {searchResults.slice(0, 4).map(renderProductCard)}
             </div>
-<<<<<<< HEAD
-            
-            {searchResults.length > 0 && (
-=======
+            {/* {searchResults.length > 0 && ( */}
+
 
             {searchResults.length > 4 && (
->>>>>>> f9c675f0d318eb45c93ddc6088a655148c820838
               <div className="text-center mt-6">
                 <Link
                   to={`/search-results?query=${encodeURIComponent(searchValue)}`}

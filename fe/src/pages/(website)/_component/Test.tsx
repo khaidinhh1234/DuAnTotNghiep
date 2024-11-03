@@ -1,14 +1,15 @@
 import { logo } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { default as instance, default as instanceClient } from "@/configs/client";
 import { SearchOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
 import { Input, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
 import Notifications from "./Notifications";
+import instanceClient from "@/configs/client";
+import { useMutation, useQuery } from "@tanstack/react-query";
 interface Category {
     id: number;
     ten_danh_muc: string;
@@ -22,7 +23,6 @@ const Header = () => {
     const [isCartVisible, setIsCartVisible] = useState(false);
     const cartRef = useRef<HTMLDivElement>(null);
     const [showNotifications, setShowNotifications] = useState(false);
-    const [hoveredMenu, setHoveredMenu] = useState(null);
     const notificationRef = useRef<HTMLDivElement>(null);
     const [user] = useLocalStorage("user" as any, {});
     const member = user?.user;
@@ -60,6 +60,7 @@ const Header = () => {
                 setIsCartVisible(false);
             }
         };
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -69,10 +70,28 @@ const Header = () => {
         const fetchCategories = async () => {
             try {
                 const response = await instance.get("/load-danh-muc");
-
                 const result = response.data;
                 if (result.status) {
-                    setCategories(result.data);
+                    const namCategory = result.data.find((category: Category) => category.ten_danh_muc === "Nam");
+                    const updatedMenuList = MenuList.map(item => {
+                        if (item.name === "Nam") {
+                            return {
+                                ...item,
+                                id: namCategory?.id || 0,
+                                ten_danh_muc: namCategory?.ten_danh_muc || "Nam",
+                                duong_dan: namCategory?.duong_dan || "",
+                                children: namCategory ? namCategory.children : []
+                            };
+                        }
+                        return {
+                            ...item,
+                            id: 0,
+                            ten_danh_muc: item.name,
+                            duong_dan: item.path,
+                            children: item.children || []
+                        };
+                    });
+                    setCategories(updatedMenuList);
                 }
             } catch (error) {
                 console.error("Error fetching categories:", error);
@@ -80,6 +99,7 @@ const Header = () => {
         };
         fetchCategories();
     }, []);
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as any)) {
@@ -121,15 +141,15 @@ const Header = () => {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-    const [isProductMenuVisible, setIsProductMenuVisible] = useState(false);
+    // const [isProductMenuVisible, setIsProductMenuVisible] = useState(false);
 
-    const handleMouseEnterProduct = () => {
-        setIsProductMenuVisible(true);
-    };
+    // const handleMouseEnterProduct = () => {
+    //     setIsProductMenuVisible(true);
+    // };
 
-    const handleMouseLeaveProduct = () => {
-        setIsProductMenuVisible(false);
-    };
+    // const handleMouseLeaveProduct = () => {
+    //     setIsProductMenuVisible(false);
+    // };
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as any)) {
@@ -143,6 +163,7 @@ const Header = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [ref]);
+
     const access_token =
         user.access_token || localStorage.getItem("access_token");
     const { data: data1 } = useQuery({
@@ -167,51 +188,28 @@ const Header = () => {
     const totalUniqueProducts = allItems.length;
 
     const MenuList = [
-        {
-            name: "Trang chủ",
-            path: "/",
-        },
+        // {
+        //     name: "Trang chủ",
+        //     path: "/",
+        // },
         {
             name: "Nam",
-            path: "/shop",
-            subCategories: [
-                {
-                    name: "Áo",
-                    subItems: ["Áo Polo", "Áo Mikeni"],
-                },
-                {
-                    name: "Quần",
-                    subItems: ["Quần Polo", "Quần MLB"],
-                },
-            ],
+            path: "/shop/nam",
+            children: [], // Sẽ lấy dữ liệu động từ `categories`
         },
         {
             name: "Nữ",
-            path: "/shop",
-            subCategories: [
-                {
-                    name: "Áo",
-                    subItems: ["Áo Blazer", "Áo Crop"],
-                },
-                {
-                    name: "Quần",
-                    subItems: ["Quần Legging", "Quần Jean"],
-                },
-            ],
+            path: "/shop/nu",
+            children: []
         },
         {
             name: "Trẻ em",
-            path: "/shop",
-            subCategories: [
-                {
-                    name: "Áo",
-                    subItems: ["Áo Trẻ Em", "Áo Khoác"],
-                },
-                {
-                    name: "Quần",
-                    subItems: ["Quần Trẻ Em", "Quần Shorts"],
-                },
-            ],
+            path: "/shop/tre-em",
+            children: []
+        },
+        {
+            name: "Giới thiệu",
+            path: "/ourstory",
         },
         {
             name: "Khuyến mãi",
@@ -222,7 +220,19 @@ const Header = () => {
             path: "/contact",
         },
     ];
+    const [isProductMenuVisible, setIsProductMenuVisible] = useState(false);
+const [selectedCategory, setSelectedCategory] = useState(null);
 
+    const handleMouseEnterProduct = (category) => {
+        setSelectedCategory(category);
+        setIsProductMenuVisible(true);
+      };
+      
+      const handleMouseLeaveProduct = () => {
+        setIsProductMenuVisible(false);
+        setSelectedCategory(null);
+      };
+      
     return (
         <header className="h-12 relative">
             <div className="bg-white w-full">
@@ -305,55 +315,65 @@ const Header = () => {
                             </button>
                         </div>
                         <div className="order-2 lg:w-60">
+                            <Link to='/'>
                             <img
                                 src={logo}
                                 alt="Logo"
                                 className="lg:w-[130px] lg:h-[40px] w-32 h-9"
-                            />
+                            /></Link>
                         </div>
 
                         <nav className="hidden lg:block order-3">
                             <ul className="flex items-center space-x-4">
                                 {MenuList.map((item, index) => (
-                                    <div
+                                    <li
                                         key={index}
-                                        onMouseEnter={() => setHoveredMenu(item.name)}
-                                        onMouseLeave={() => setHoveredMenu(null)}
-                                        className="relative"
+                                        className="mt-2 relative"
+                                        onMouseEnter={["Nam", "Nữ", "Trẻ em"].includes(item.name) ? () => handleMouseEnterProduct(item.name) : undefined}
+                                        onMouseLeave={["Nam", "Nữ", "Trẻ em"].includes(item.name) ? handleMouseLeaveProduct : undefined}
                                     >
                                         <NavLink
                                             to={item.path}
-                                            className="text-lg font-medium hover:text-blue-500"
+                                            className={({ isActive }) =>
+                                                `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${!isActive ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0" : "text-white bg-black"
+                                                }`
+                                            }
                                         >
                                             {item.name}
                                         </NavLink>
 
-                                        {/* Dropdown Menu */}
-                                        {item.subCategories && hoveredMenu === item.name && (
-                                            <div className="absolute top-full left-0 w-[300px] p-4 bg-white shadow-lg rounded-md z-50">
-                                                {item.subCategories.map((subCategory, idx) => (
-                                                    <div key={idx} className="mb-3">
-                                                        <h3 className="font-semibold text-md mb-2">
-                                                            {subCategory.name}
-                                                        </h3>
-                                                        <ul className="space-y-1 text-gray-700">
-                                                            {subCategory.subItems.map((subItem, i) => (
-                                                                <li key={i}>
-                                                                    <NavLink
-                                                                        to={`/shop/${item.name.toLowerCase()}/${subCategory.name.toLowerCase()}/${subItem.toLowerCase().replace(" ", "-")}`}
-                                                                        className="hover:text-blue-600"
-                                                                    >
-                                                                        {subItem}
-                                                                    </NavLink>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                ))}
+                                        {/* Hiển thị menu con khi hover vào Nam, Nữ, hoặc Trẻ em */}
+                                        {["Nam", "Nữ", "Trẻ em"].includes(item.name) && isProductMenuVisible && selectedCategory === item.name && (
+                                            <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50">
+                                                <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 rounded-md bg-white bg-opacity-100">
+                                                    {item.children.map((category) => (
+                                                        <div
+                                                            key={category.id}
+                                                            className="border-r border-gray-240"
+                                                        >
+                                                            <h3 className="font-bold mb-4 text-lg">
+                                                                {category.ten_danh_muc}
+                                                            </h3>
+                                                            <ul className="space-y-2">
+                                                                {category.children.map((subCategory) => (
+                                                                    <li key={subCategory.id}>
+                                                                        <a
+                                                                            href={`/shop/${item.name.toLowerCase()}/${category.duong_dan}/${subCategory.duong_dan}`}
+                                                                            className="block text-gray-700 text-lg whitespace-nowrap hover:text-red-600"
+                                                                        >
+                                                                            {subCategory.ten_danh_muc}
+                                                                        </a>
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
-                                    </div>
+                                    </li>
                                 ))}
+
                             </ul>
                         </nav>
 
@@ -380,6 +400,13 @@ const Header = () => {
                                     </Modal>
                                 </div>
                             </span>
+
+                            {/* {" "}
+                  <span>
+                    <a href="/mywishlist">
+                      <i className="fa-regular fa-heart text-xl">{ }</i>
+                    </a>
+                  </span> */}
                             <span
                                 ref={notificationRef}
                                 className="relative"
@@ -419,7 +446,9 @@ const Header = () => {
                                         </span>
                                     </i>
                                 </a>
+                                {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
                                 <CartOverlay isVisible={isCartVisible} />
+                                {/* </div> */}
                             </span>
                             {member ? (
                                 <>
