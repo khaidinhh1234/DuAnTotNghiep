@@ -6,8 +6,7 @@ import { useEffect, useRef } from "react";
 const Test2 = () => {
   const {
     data,
-    isLoading,
-    isError,
+
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
