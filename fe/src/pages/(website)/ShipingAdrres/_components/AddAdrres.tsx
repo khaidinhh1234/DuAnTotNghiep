@@ -1,5 +1,3 @@
-import { sanPham2 } from "@/assets/img";
-
 const AddAddressForm = ({ register, products, errors }: any) => {
   // console.log("products", products);
   return (

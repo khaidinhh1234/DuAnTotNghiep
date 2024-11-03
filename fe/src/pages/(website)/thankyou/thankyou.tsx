@@ -85,7 +85,7 @@ const ThankYouPage = () => {
         return response.data;
       } catch (error) {
         message.error("Xóa sản phẩm yêu thích thất bại");
-        console.error("API error", error); // Thêm log lỗi API
+        // console.error("API error", error); // Thêm log lỗi API
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
     },

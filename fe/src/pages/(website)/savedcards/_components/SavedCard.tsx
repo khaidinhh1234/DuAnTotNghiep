@@ -1,6 +1,4 @@
-import { ellipse, hello, master, visa } from "@/assets/img";
-import { Link } from "react-router-dom";
-import Sidebar from "./../../_component/Slibar";
+import { master, visa } from "@/assets/img";
 
 const SavedCardPage = () => {
   return (

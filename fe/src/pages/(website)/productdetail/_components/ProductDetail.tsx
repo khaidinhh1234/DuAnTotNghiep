@@ -1,16 +1,9 @@
-import instance from "@/configs/client";
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -24,13 +17,13 @@ import SizeGuideModal from "./SizeGuide";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { debounce } from "lodash";
-import RelatedProducts from "./RelatedProducts";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
+import { Swiper, SwiperSlide } from "swiper/react";
 import Footer from "./Footer";
+import RelatedProducts from "./RelatedProducts";
 interface ProductData {
   id: number;
   ten_san_pham: string;
