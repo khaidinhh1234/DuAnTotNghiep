@@ -503,12 +503,6 @@ class TrangSanPhamController extends Controller
                     'Danh_muc' => $danhMucs,
                     'San_pham' => $result
                 ],
-                'pagination' => [
-                    'total' => $sanPhams->total(),
-                    'current_page' => $sanPhams->currentPage(),
-                    'last_page' => $sanPhams->lastPage(),
-                    'per_page' => $sanPhams->perPage(),
-                ]
             ], 200);
         } catch (Exception $exception) {
             return response()->json([
