@@ -36,12 +36,14 @@ function TaiChinh() {
       <div className="flex items-center align-center justify-between  mb-4">
       
         <h1 className="text-xl font-semibold ">Tài chính</h1>
+
         <button 
           onClick={() => setIsSettingsOpen(true)}
           className="hover:text-gray-700"
         >
           <i className="fa-regular fa-gear"></i>
         </button>
+
       </div>
       <SettingsModal 
         isOpen={isSettingsOpen}

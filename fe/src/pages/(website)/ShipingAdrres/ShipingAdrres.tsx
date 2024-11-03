@@ -9,6 +9,8 @@ import { useState } from "react";
 import { message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { checkout_address } from "@/common/validations/checkout";
 
 const ShippingAddressPage = () => {
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
@@ -20,14 +22,14 @@ const ShippingAddressPage = () => {
       try {
         // Bước 1: Tạo đơn hàng
         const order = await instanceClient.post(`don-hang`, data);
-        console.log(order);
+        // console.log(order);
         // Bước 2: Thực hiện thanh toán qua MoMo
         const momoPaymentData = {
           phuong_thuc_thanh_toan: data.phuong_thuc_thanh_toan,
           ma_don_hang: order.data.data.ma_don_hang,
           amount: order.data.data.tong_tien_don_hang,
         };
-        console.log(momoPaymentData);
+        // console.log(momoPaymentData);
         const response = await instanceClient.post(
           "payment/momo",
           momoPaymentData
@@ -55,15 +57,13 @@ const ShippingAddressPage = () => {
   });
 
   const onsubmit = (formData: any) => {
+    console.log(formData);
     // Kết hợp dữ liệu với mã khuyến mãi
-
     // Kiểm tra nếu tất cả các trường (ngoại trừ macode) đều có giá trị
     const isDataComplete = Object.entries(formData).every(
       ([key, value]) =>
-        key === "macode" ||
-        (value !== undefined && value !== null && value !== "")
+        key === "macode" || (value !== undefined && value !== null)
     );
-
     if (isDataComplete) {
       // Gọi hàm mutate với dữ liệu đã kết hợp
       mutate({ ...formData, macode });
@@ -89,7 +89,13 @@ const ShippingAddressPage = () => {
   const tong_tien = checkout?.chi_tiet_don_hang;
   const products = checkout?.chi_tiet_don_hang?.san_pham;
 
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(checkout_address),
+  });
   return (
     <>
       <section className="container">
@@ -101,6 +107,7 @@ const ShippingAddressPage = () => {
                 {/* <ShippingAddress /> */}
                 <AddressForm
                   register={register}
+                  errors={errors}
                   products={products}
                   checkout={checkout}
                 />

@@ -228,7 +228,7 @@ const ProductDetail: React.FC = () => {
       return;
     }
 
-    console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
+    // console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
 
     // Kiểm tra nếu không có access_token thì lưu vào localStorage
     if (!access_token) {
@@ -271,11 +271,11 @@ const ProductDetail: React.FC = () => {
           },
         }
       );
-      console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
+      // console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
+      // console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
       if (data.status) {
         toast.success(data.message);
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
