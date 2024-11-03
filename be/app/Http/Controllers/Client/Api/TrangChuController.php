@@ -8,6 +8,7 @@ use App\Models\BoSuuTap;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\DanhGia;
 use App\Models\DanhMuc;
+use App\Models\DanhMucTinTuc;
 use App\Models\DonHang;
 use App\Models\SanPham;
 use App\Models\ThongTinWeb;
@@ -233,7 +234,15 @@ class TrangChuController extends Controller
             ->unique('sanPham.id')
             ->take(8);
 
-        $dataTinTucMoi = TinTuc::query()->orderByDesc('id')->limit('4')->get();
+        $dataTinTucMoi = TinTuc::query()
+            ->whereNotIn('id', function ($query) {
+                $query->select('id')
+                    ->from('danh_muc_tin_tucs')
+                    ->whereIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng','Về chúng tôi']);
+            })
+            ->orderByDesc('id')
+            ->limit(4)
+            ->get();
 
         return response()->json([
             'status' => true,
@@ -254,6 +263,8 @@ class TrangChuController extends Controller
             $data = ThongTinWeb::query()
                 ->first()
                 ->makeHidden(['banner']);
+            $data['footer_blogs'] = DanhMucTinTuc::query()->whereIn('ten_danh_muc_tin_tuc',['Dịch vụ khách hàng','Về chúng tôi'])
+                ->with('tinTuc')->get();
 
             return response()->json([
                 'status' => true,

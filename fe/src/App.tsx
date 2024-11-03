@@ -77,7 +77,7 @@ const Banner = ({ notifications = [], onDelete }) => {
               transition: "background 0.3s",
             }}
           >
-            Xóa
+            Ẩn
           </button>
         </div>
       ))}
