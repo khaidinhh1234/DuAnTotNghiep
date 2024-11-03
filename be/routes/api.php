@@ -73,14 +73,16 @@ Route::middleware([])
         // lấy tất cả sản phẩm
         Route::group([], function () {
             Route::get('lay-tat-ca-san-pham', [TrangSanPhamController::class, 'layTatCaSanPham']);
-            // Lấy ra danh mục cha
-            Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
 
-            // Lấy ra màu sắc
-            Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
+            Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
+            // // Lấy ra danh mục cha
+            // Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
 
-            // lấy kích thước
-            Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
+            // // Lấy ra màu sắc
+            // Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
+
+            // // lấy kích thước
+            // Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
 
             Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
         })->middleware('throttle:10000,1');

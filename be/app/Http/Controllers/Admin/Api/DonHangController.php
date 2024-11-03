@@ -346,6 +346,7 @@ class DonHangController extends Controller
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
+                'message' => 'Lấy danh sách đơn hàng hoàn hàng thành công.',
                 'data' => $donHangs
             ], 200);
         } catch (\Exception $e) {
@@ -419,7 +420,7 @@ class DonHangController extends Controller
     public function danhSachYeuCauRutTien()
     {
         try {
-            $yeuCauRutTiens = YeuCauRutTien::with('viTien')->get();
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien', 'nganHang')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
