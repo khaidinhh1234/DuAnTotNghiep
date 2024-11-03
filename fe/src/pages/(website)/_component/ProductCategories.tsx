@@ -1,10 +1,8 @@
-import { sanPham2 } from "@/assets/img";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import ProductsList from "./ProductsList";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Slider } from "antd";
+import SearchResultsPage from "./SearchResultsPage";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
@@ -226,7 +224,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
             </button>
-            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0    sticky top-20 ">
+            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0">
               {/* <!-- Product Categories --> */}
               <div className="mb-5">
                 <div
@@ -513,7 +511,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-              <ProductsList
+              <SearchResultsPage
                 data={data}
                 onPage={onPage}
                 products={products}

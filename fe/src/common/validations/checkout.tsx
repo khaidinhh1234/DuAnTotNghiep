@@ -1,17 +1,23 @@
 import { z } from "zod";
 
 export const checkout_address = z.object({
-  name: z
+  ten_nguoi_dat_hang: z
     .string()
     .min(2, { message: "Vui lòng nhập Tên lớn hơn 2 ký tự" })
     .max(50, { message: "Tên không được quá 50 ký tự" }),
-  mobileNumber: z
+  so_dien_thoai_nguoi_dat_hang: z
     .string()
     .regex(/^\d+$/, { message: "Số điện thoại chỉ bao gồm chữ số" }) // Ensures numeric string
     .min(10, { message: "Số điện thoại phải có ít nhất 10 ký tự" })
     .max(11, { message: "Số điện thoại không được quá 11 ký tự" }),
-  addressLine1: z.string().min(2, {
-    message: "Vui lòng nhập Địa chỉ nhận hàng lớn hơn 2 ký tự",
+  email_nguoi_dat_hang: z.string().email({
+    message: "Vui lòng nhập Địa chỉ email hợp lệ",
   }),
-  note: z.string().optional(),
+  dia_chi_nguoi_dat_hang: z
+    .string()
+    .min(2, { message: "Vui lòng nhập Địa chỉ nhận hàng lớn hơn 2 ký tự" }),
+  phuong_thuc_thanh_toan: z.string().min(2, {
+    message: "Vui lòng chọn phương thức thanh toán",
+  }),
+  ghi_chu: z.string(),
 });

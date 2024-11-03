@@ -14,6 +14,8 @@ interface SizeGuideModalProps {
 }
 
 const SizeGuideModal = ({ isOpen, onClose, categoryId, productDetailId }: SizeGuideModalProps) => {
+  console.log('Category ID:', categoryId); // Add this line
+
   const [activeTab, setActiveTab] = useState('1');
   const [height, setHeight] = useState(160);
   const [weight, setWeight] = useState(55);

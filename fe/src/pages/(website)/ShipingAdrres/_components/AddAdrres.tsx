@@ -1,6 +1,6 @@
 import { sanPham2 } from "@/assets/img";
 
-const AddAddressForm = ({ register, products }: any) => {
+const AddAddressForm = ({ register, products, errors }: any) => {
   // console.log("products", products);
   return (
     <div className="">
@@ -87,10 +87,15 @@ const AddAddressForm = ({ register, products }: any) => {
         <br />
         <input
           type="text"
-          {...register("ten_nguoi_dat_hang")}
+          {...register("ten_nguoi_dat_hang", { required: true })}
           placeholder="Nhập tên"
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
         />
+        {errors.ten_nguoi_dat_hang && (
+          <p className="text-red-600 mt-1">
+            {errors.ten_nguoi_dat_hang?.message}
+          </p>
+        )}
       </div>
       <div className="my-5">
         <label htmlFor="so_dien_thoai_nguoi_dat_hang" className="text-md px-1">
@@ -99,10 +104,15 @@ const AddAddressForm = ({ register, products }: any) => {
         <br />
         <input
           type="number"
-          {...register("so_dien_thoai_nguoi_dat_hang")}
+          {...register("so_dien_thoai_nguoi_dat_hang", { required: true })}
           placeholder="Nhập số điện thoại"
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
         />
+        {errors.so_dien_thoai_nguoi_dat_hang && (
+          <p className="text-red-600 mt-1">
+            {errors.so_dien_thoai_nguoi_dat_hang?.message}
+          </p>
+        )}
       </div>
       <div className="my-5">
         <label htmlFor="email_nguoi_dat_hang" className="text-md px-1">
@@ -111,10 +121,15 @@ const AddAddressForm = ({ register, products }: any) => {
         <br />
         <input
           type="email"
-          {...register("email_nguoi_dat_hang")}
+          {...register("email_nguoi_dat_hang", { required: true })}
           placeholder="Nhập Email"
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
         />
+        {errors.email_nguoi_dat_hang && (
+          <p className="text-red-600 mt-1">
+            {errors.email_nguoi_dat_hang?.message}
+          </p>
+        )}
       </div>
       <div className="my-5">
         <label htmlFor="dia_chi_nguoi_dat_hang" className="text-md px-3">
@@ -122,24 +137,31 @@ const AddAddressForm = ({ register, products }: any) => {
         </label>
         <br />
         <input
-          {...register("dia_chi_nguoi_dat_hang")}
+          {...register("dia_chi_nguoi_dat_hang", { required: true })}
           placeholder="Nhập địa chỉ"
           type="text"
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
         />
+        {errors.dia_chi_nguoi_dat_hang && (
+          <p className="text-red-600 mt-1">
+            {errors.dia_chi_nguoi_dat_hang?.message}
+          </p>
+        )}
       </div>
       <div className="my-5">
         <label htmlFor="ghichu" className="text-md px-3">
           Ghi chú
         </label>
         <br />
-        <input
-          type="text"
-          placeholder="Nhập ghi chú"
+
+        <textarea
           {...register("ghi_chu")}
+          placeholder="Nhập ghi chú"
+          rows={5}
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
-        />
+        ></textarea>
       </div>
+
       {/* <div className="my-5">
           <label htmlFor="city" className="text-md px-3">
             Thành phố
@@ -219,7 +241,15 @@ const AddAddressForm = ({ register, products }: any) => {
         </div>
         <h1 className="title-h3">40.000 đ</h1>
       </div> */}
-      <h3 className="title-h3">Phương thức thanh toán</h3>
+      <div className="flex ">
+        {" "}
+        <h3 className="title-h3">Phương thức thanh toán</h3>
+        {errors.phuong_thuc_thanh_toan && (
+          <h3 className="title-h3 text-lg font-medium mx-10 text-red-500">
+            Vui lòng chọn phương thức thanh toán
+          </h3>
+        )}
+      </div>
       <p className="text-gray-500">
         Lựa chọn phương thức thanh toán phù hợp nhất cho bạn
       </p>
@@ -227,7 +257,7 @@ const AddAddressForm = ({ register, products }: any) => {
         <input
           type="radio"
           value="Momo_QR"
-          {...register("phuong_thuc_thanh_toan")}
+          {...register("phuong_thuc_thanh_toan", { required: true })}
           className="bg-blackL"
         />
         <label htmlFor="googlePay" className="title-h3 px-3">
@@ -239,7 +269,7 @@ const AddAddressForm = ({ register, products }: any) => {
           type="radio"
           id="paypal"
           value="Momo_ATM"
-          {...register("phuong_thuc_thanh_toan")}
+          {...register("phuong_thuc_thanh_toan", { required: true })}
           className="bg-blackL"
         />
         <label htmlFor="paypal" className="title-h3 px-3">
@@ -251,7 +281,7 @@ const AddAddressForm = ({ register, products }: any) => {
           type="radio"
           id="cashOnDelivery"
           value="Thanh toán khi nhận hàng"
-          {...register("phuong_thuc_thanh_toan")}
+          {...register("phuong_thuc_thanh_toan", { required: true })}
           className="bg-blackL"
         />
         <label htmlFor="cashOnDelivery" className="title-h3 px-3">

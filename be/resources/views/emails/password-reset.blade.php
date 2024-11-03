@@ -122,8 +122,7 @@
         </div>
 
         <div class="gif-credit">
-            <p><a href="" class="text-underline font-size-sm" target="_blank">Confirmation email</a> by <a href=""
-                    class="text-underline font-size-sm" target="_blank">Creative Stall</a></p>
+            <p>Email đổi mật khẩu  Glow Clothing </p>
         </div>
 
         <div class="content">
@@ -140,7 +139,6 @@
         <div class="footer">
             <p>Bằng cách tương tác với email này, bạn đồng ý với <a href="#">Điều Khoản & Điều Kiện</a> và <a
                     href="#">Chính Sách Bảo Mật</a> của chúng tôi.</p>
-            <p><a href="#">Quản lý tài khoản của bạn</a> • <a href="#">Hủy đăng ký</a></p>
         </div>
     </div>
 </body>

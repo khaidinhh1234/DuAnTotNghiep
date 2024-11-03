@@ -344,7 +344,7 @@ class ThongKeTongQuanController extends Controller
         ];
 
         $donHangs = DonHang::whereNotIn('trang_thai_don_hang', $trangThaiBiLoaiBo)
-            ->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM, DonHang::PTTT_NH])
+            ->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
             ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
             ->get();
 
@@ -356,7 +356,7 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
         $donHangsTruoc = DonHang::whereNotIn('trang_thai_don_hang', $trangThaiBiLoaiBo)
-            ->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM, DonHang::PTTT_NH])
+            ->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
             ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
             ->get();
 
@@ -746,8 +746,8 @@ class ThongKeTongQuanController extends Controller
             // Lấy tổng doanh thu và số lượng đơn có phương thức thanh toán online (momo, ngân hàng) trong ngày hiện tại
             $donHangQuery = DonHang::whereNotIn('trang_thai_don_hang', $trangThaiBoQua )
                 ->whereIn('phuong_thuc_thanh_toan', [
-                    DonHang::PTTT_MM, // Momo
-                    DonHang::PTTT_NH  // Ngân hàng
+                    DonHang::PTTT_MM_ATM, // Momo
+                    DonHang::PTTT_MM_QR  // Ngân hàng
                 ])
                 ->whereDate('created_at', $today);
 
@@ -859,7 +859,7 @@ class ThongKeTongQuanController extends Controller
         foreach ($intervals as $interval) {
             // Lấy tất cả các đơn hàng trong khoảng thời gian này
             $donHangs = DonHang::query()
-                ->where('trang_thai_don_hang', DonHang::TTDH_HTDH) // Đơn hàng đã hoàn tất
+                ->where('trang_thai_don_hang', DonHang::TTDH_CXH) // Đơn hàng đã hoàn tất
                 ->whereBetween('ngay_hoan_thanh_don', values: [$interval['start'], $interval['end']])
                 ->get();
 
@@ -890,14 +890,15 @@ class ThongKeTongQuanController extends Controller
         $ngayBatDau = Carbon::today();
         $ngayKetThuc = Carbon::tomorrow();
 
-        // $trangThaiBoQua = [
-        //     DonHang::TTDH_DH,
-        //     DonHang::TTDH_HTDH,
-        //     DonHang::TTDH_DHTB,
-        //     DonHang::TTDH_HH
-        // ];
+        $trangThaiBoQua = [
+            DonHang::TTDH_DH,   // Hủy hàng
+            DonHang::TTDH_HTDH, // Hoàn tất đơn hàng
+            DonHang::TTDH_DHTB, // Đơn hàng bị từ chối nhận
+            DonHang::TTDH_HH    // Hoàn hàng
+        ];
 
-        $donHangs = DonHang::where('trang_thai_don_hang',  DonHang::TTDH_HTDH)
+        $donHangs = DonHang::whereNotIn('trang_thai_don_hang', $trangThaiBoQua)
+
             ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
             ->get();
 

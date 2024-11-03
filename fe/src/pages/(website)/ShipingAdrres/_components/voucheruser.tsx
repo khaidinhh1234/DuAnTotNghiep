@@ -85,7 +85,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
       try {
         const datas = code ? { ma_code: code } : {};
         const response = await instanceClient.post(
-          `/ma-uu-dai-theo-gio-hang`,
+          `ma-uu-dai-theo-gio-hang`,
           datas
         );
         return response.data;
@@ -96,7 +96,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
     // enabled: false, // Disable automatic fetch
   });
 
-  console.log(data);
+  // console.log(data);
   const voucher = data?.data;
   const vouchertrue = voucher
     ?.map((item: any) => {
@@ -104,13 +104,14 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
       const endDate = new Date(item.ma_khuyen_mai.ngay_ket_thuc);
       const diffTime = endDate.getTime() - today.getTime();
       const day = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      console.log(day);
       return {
         ...item,
         day,
       };
     })
-    ?.filter((item: any) => item?.da_luu === true && item?.day > 0);
-
+    ?.filter((item: any) => item?.day > 0);
+  console.log(vouchertrue);
   return (
     <div>
       <button
