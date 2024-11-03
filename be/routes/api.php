@@ -61,8 +61,8 @@ Route::middleware([])
         Route::get('trangchu', [TrangChuController::class, 'index']);
         Route::get('thong-tin-web', [TrangChuController::class, 'thongTinWeb']);
         Route::get('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
-        Route::get('load-danh-muc', [TrangChuController::class, 'loadDanhMuc']);
-
+        Route::get('load-danh-muc-con-chau/{id}', [TrangChuController::class, 'loadDanhMucConChau']);
+        Route::get('load-danh-muc-cha', [TrangChuController::class, 'loadDanhMucSanPhamCha']);
         //Client Sản Phẩm
         // Client trang chi tiết sản phẩm
         Route::get('/chi-tiet-san-pham/{duong_dan}', [TrangChiTietSpController::class, 'chiTietSanPham']);
