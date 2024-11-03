@@ -1,7 +1,3 @@
-import { Link } from "react-router-dom";
-import Routecheckout from "../../_component/routecheckout";
-import { Button } from "antd";
-
 const ShippingAddress = () => {
   return (
     <>
