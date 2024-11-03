@@ -140,7 +140,7 @@ class MoMoController extends Controller
             // Lấy dữ liệu từ request
             $data = [
                 'partnerCode' => $request->partnerCode,
-                'orderId' => $request->maDonHang,
+                'orderId' => $maDonHang,
                 'requestId' => $request->requestId,
                 'amount' => $request->amount,
                 'orderInfo' => $request->orderInfo,
