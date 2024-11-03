@@ -98,8 +98,8 @@ const Voucher = () => {
           <div className="space-y-8 px-4">
             <h2 className="text-3xl font-bold text-black-500">Tất cả ưu đãi</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vouchersData && vouchersData.length ? (
-                vouchersData?.data.map((voucher: Voucher) => (
+            {vouchersData?.data && vouchersData.data.length > 0 ? (
+  vouchersData.data.map((voucher: Voucher) => (
                   <div
                     key={voucher.id}
                     className="flex items-center bg-white border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative"

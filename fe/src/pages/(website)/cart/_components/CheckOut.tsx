@@ -11,12 +11,12 @@ const CheckOut = () => {
   const nav = useNavigate();
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
-  const access_token =
-    user.access_token || localStorage.getItem("access_token");
+  const access_token = user.access_token || localStorage.getItem("access_token");
   const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
+  
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -26,7 +26,7 @@ const CheckOut = () => {
             Authorization: `Bearer ${access_token}`,
           },
         });
-        return response.data;
+        return response.data; 
       } catch (error) {
         throw new Error("Error fetching cart data");
       }

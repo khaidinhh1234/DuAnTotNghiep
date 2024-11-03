@@ -250,13 +250,13 @@ Route::middleware(['auth.sanctum'])
                 Route::put('donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
                 Route::get('donhang/export', [DonHangController::class, 'export'])->name('donhang.export');
                 Route::get('donhanghoan', [DonHangController::class, 'hoanHang'])->name('donhang.hoanhang');
-                Route::get('donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
-                Route::get('donhang/lay-thong-tin-don', [DonHangController::class, 'layThongTinDon'])->withoutMiddleware('auth.checkrole');
+                Route::get('lay-thong-tin-don', [DonHangController::class, 'layThongTinDon'])->withoutMiddleware('auth.checkrole');
                 Route::put('donhang/xac-nhan-hoan-hang/{id}', [DonHangController::class, 'xacNhanHoanHang'])->withoutMiddleware('auth.checkrole');
                 Route::get('donhang/lay-thong-tin-don-hoan', [DonHangController::class, 'danhSachDonHangHoan']);
             });
 
         //Xác nhận rút tiền
+        Route::get('danh-sach-yeu-cau-rut-tien', [DonHangController::class, 'danhSachYeuCauRutTien'])->name('rut-tien.index')->withoutMiddleware('auth.checkrole');
         Route::post('rut-tien/xac-nhan/{id}', [DonHangController::class, 'xacNhanYeuCauRutTien'])->name('rut-tien.xacnhan')->middleware('auth.checkrole');
 
         //Vận chuyển

@@ -1,10 +1,11 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal, message } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback} from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import View from "./View";
+import debounce from "lodash/debounce";
 
 interface SearchResult {
   id: number;
@@ -75,6 +76,15 @@ const Search = () => {
         localStorage.setItem("searchHistory", JSON.stringify(newHistory));
       }
     }
+  };
+  const debouncedSearch = useCallback(
+    debounce((value: string) => handleSearch(value), 300),
+    [searchHistory]
+  );
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    debouncedSearch(value);
   };
 
   const clearHistory = () => {
@@ -218,8 +228,8 @@ const Search = () => {
             <div className="grid grid-cols-4 justify-center gap-4">
               {searchResults.slice(0, 4).map(renderProductCard)}
             </div>
-
-            {searchResults.length > 4 && (
+            
+            {searchResults.length > 0 && (
               <div className="text-center mt-6">
                 <Link
                   to={`/search-results?query=${encodeURIComponent(searchValue)}`}
@@ -259,7 +269,7 @@ const Search = () => {
             placeholder="Tìm kiếm"
             size="large"
             value={searchValue}
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={ onSearchChange}
             style={{
               borderRadius: "9999px",
               padding: "8px 16px",

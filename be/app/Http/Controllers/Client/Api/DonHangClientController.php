@@ -50,10 +50,12 @@ class DonHangClientController extends Controller
         curl_close($ch);
         return $result;
     }
-    public function donHangUser()
+    public function donHangUser(Request $request) 
     {
         try {
             $user = Auth::guard('api')->user();
+            
+            $pageSize = $request->get('pageSize', 2);
             $donHang = DonHang::where('user_id', $user->id)->with([
                 'chiTiets.bienTheSanPham.sanPham',
                 'chiTiets.bienTheSanPham.mauBienThe',
@@ -61,14 +63,16 @@ class DonHangClientController extends Controller
                 'chiTiets.bienTheSanPham.anhBienThe',
                 'danhGias.user',
                 'vanChuyen',
-            ])->orderByDesc('created_at')->get();
-
+            ])->orderByDesc('created_at')->paginate($pageSize);
+    
+            // Thực hiện các tính toán cho từng đơn hàng
             $donHang->each(function ($item) {
                 $item['tong_tien_da_giam'] = $item['tong_tien_don_hang'] - $item['so_tien_giam_gia'];
                 $item['tongSoLuong'] = $item->chiTiets->sum('so_luong');
                 $item['tongTienSanPham'] = $item->chiTiets->sum('thanh_tien');
             });
-
+    
+            // Xử lý dữ liệu chi tiết đơn hàng và đánh giá
             $chiTietDonHang = $donHang->flatMap(function ($order) {
                 return $order->chiTiets->map(function ($chiTiet) {
                     $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
@@ -87,11 +91,11 @@ class DonHangClientController extends Controller
                     ];
                 });
             });
-
+    
             $danhGiaDonHang = $donHang->flatMap(function ($order) {
                 return $order->danhGias;
             });
-
+    
             $danhGiaData = $danhGiaDonHang->isNotEmpty() ? $danhGiaDonHang->map(function ($danhGia) {
                 return [
                     'so_sao_san_pham' => $danhGia->so_sao_san_pham,
@@ -102,33 +106,28 @@ class DonHangClientController extends Controller
                     'huu_ich' => $danhGia->huu_ich
                 ];
             }) : null;
-
-            $thongTin = $donHang->map(function ($order) {
-                if (empty($order->ten_nguoi_dat_hang) && empty($order->so_dien_thoai_nguoi_dat_hang) && empty($order->dia_chi_nguoi_dat_hang)) {
-                    return $order->user;
-                } else {
-                    return [
-                        'ten_nguoi_dat_hang' => empty($order->ten_nguoi_dat_hang) ? ($order->user->ho . " " . $order->user->ten) : $order->ten_nguoi_dat_hang,
-                        'so_dien_thoai_nguoi_dat_hang' => empty($order->so_dien_thoai_nguoi_dat_hang) ? $order->user->so_dien_thoai : $order->so_dien_thoai_nguoi_dat_hang,
-                        'dia_chi_nguoi_dat_hang' => empty($order->dia_chi_nguoi_dat_hang) ? $order->user->dia_chi : $order->dia_chi_nguoi_dat_hang
-                    ];
-                }
-            });
-
+    
+            // Tổng số lượng và tổng tiền sản phẩm
             $tongSoLuong = $donHang->sum(function ($order) {
                 return $order->chiTiets->sum('so_luong');
             });
-
             $tongTienSanPham = $donHang->sum(function ($order) {
                 return $order->chiTiets->sum('thanh_tien');
             });
-
+    
             $data = [
-                'don_hang' => $donHang,
+                'don_hang' => $donHang->items(),
                 'tong_so_luong' => $tongSoLuong,
                 'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                'pagination' => [
+                    'current_page' => $donHang->currentPage(),
+                    'last_page' => $donHang->lastPage(),
+                    'per_page' => $donHang->perPage(),
+                    'total' => $donHang->total(),
+                    'has_more_pages' => $donHang->hasMorePages(),
+                ]
             ];
-
+    
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -144,6 +143,7 @@ class DonHangClientController extends Controller
             ]);
         }
     }
+    
     public function donHangUserDetail(string $maDonHang)
     {
         try {
@@ -634,17 +634,17 @@ class DonHangClientController extends Controller
                     'thoi_gian_giao_dich' => now(),
                 ]);
 
-                $thongBao = ThongBao::create([
-                    'user_id' => $userId,
-                    'tieu_de' => 'Yêu cầu rút tiền',
-                    'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
-                    'loai' => 'Rút tiền',
-                    'duong_dan' => 'rut-tien',
-                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                    'id_duong_dan' => $yeuCauRutTien->id,
-                ]);
+                // $thongBao = ThongBao::create([
+                //     'user_id' => $userId,
+                //     'tieu_de' => 'Yêu cầu rút tiền',
+                //     'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
+                //     'loai' => 'Rút tiền',
+                //     'duong_dan' => 'rut-tien',
+                //     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                //     'id_duong_dan' => $yeuCauRutTien->id,
+                // ]);
 
-                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                // broadcast(new ThongBaoMoi($thongBao))->toOthers();
             } else {
                 return response()->json([
                     'status' => false,
