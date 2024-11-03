@@ -287,21 +287,21 @@ class DonHangController extends Controller
             // Kiểm tra số lượng đơn hàng theo trạng thái
             $donChoXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->count();
             $tongTienDonChoXacNhan = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->sum('tong_tien_don_hang') ?? 0;
-    
+
             // Kiểm tra số lượng đơn hàng theo trạng thái thanh toán
             $donChoThanhToan = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->count();
             $tongTienChuaTT = (int) DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->sum('tong_tien_don_hang') ?? 0;
-    
+
             // Kiểm tra các trạng thái đơn hàng khác
             $donChuaGiaoHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
             $tongTienDonChuaGiao = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->sum('tong_tien_don_hang') ?? 0;
-    
+
             $donHoanHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
             $tongTienHoan = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->sum('tong_tien_don_hang') ?? 0;
-    
+
             $daThanhToan = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_DTT)->count();
             $tongTienThanhToan = (int) DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_DTT)->sum('tong_tien_don_hang') ?? 0;
-    
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -335,7 +335,7 @@ class DonHangController extends Controller
             ], 500);
         }
     }
-    
+
 
     public function hoanHang()
     {
@@ -411,6 +411,25 @@ class DonHangController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi khi xác nhận hoàn hàng.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function danhSachYeuCauRutTien()
+    {
+        try {
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien')->get();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => $yeuCauRutTiens
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách yêu cầu rút tiền.',
                 'error' => $e->getMessage()
             ], 500);
         }
