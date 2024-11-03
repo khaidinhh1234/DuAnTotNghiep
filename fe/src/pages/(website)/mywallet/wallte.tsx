@@ -1,9 +1,8 @@
-
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import instanceClient from "@/configs/client";
-import SettingsModal from './RegisterWalletPassword';
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import SettingsModal from "./RegisterWalletPassword";
 
 export const fetchFinanceData = async () => {
   const response = await instanceClient.get(`/vi-tai-khoan`);
@@ -34,22 +33,19 @@ function TaiChinh() {
   return (
     <div className="p-4 min-h-screen">
       <div className="flex items-center align-center justify-between  mb-4">
-      
         <h1 className="text-xl font-semibold ">Tài chính</h1>
 
-        <button 
+        <button
           onClick={() => setIsSettingsOpen(true)}
           className="hover:text-gray-700"
         >
           <i className="fa-regular fa-gear"></i>
         </button>
-
       </div>
-      <SettingsModal 
+      <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         trang_thai_ma_xac_minh={data?.trang_thai_ma_xac_minh}
-
       />
       {/* Container */}
       <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
