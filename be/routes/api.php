@@ -73,14 +73,16 @@ Route::middleware([])
         // lấy tất cả sản phẩm
         Route::group([], function () {
             Route::get('lay-tat-ca-san-pham', [TrangSanPhamController::class, 'layTatCaSanPham']);
-            // Lấy ra danh mục cha
-            Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
 
-            // Lấy ra màu sắc
-            Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
+            Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
+            // // Lấy ra danh mục cha
+            // Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
 
-            // lấy kích thước
-            Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
+            // // Lấy ra màu sắc
+            // Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
+
+            // // lấy kích thước
+            // Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
 
             Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
         })->middleware('throttle:10000000,1');
@@ -135,8 +137,7 @@ Route::middleware([])
             Route::post('thu-thap-ma-khuyen-mai/{ma_code}', [KhuyenMaiController::class, 'thuThapMaKhuyenMai']);
             Route::get('ma-uu-dai-cho-nguoi-dung-cu-the', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoNguoiDung']);
             Route::get('tim-kiem-ma-khuyen-mai', [KhuyenMaiController::class, 'timKiemMaKhuyenMai']);
-            Route::post('ma-uu-dai-theo-gio-hang', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoSanPhamGioHang']);
-
+            Route::match(['post', 'get'], 'ma-uu-dai-theo-gio-hang', [KhuyenMaiController::class, 'danhSachMaKhuyenMaiTheoSanPhamGioHang']);
             Route::post('ap-dung-ma-khuyen-mai', [GioHangController::class, 'apDungMaGiamGia']);
 
             // Thông báo người dùng
@@ -265,7 +266,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
                 Route::get('vanchuyen/{id}', [VanChuyenController::class, 'show'])->name('vanchuyen.show');
                 Route::put('vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
-                Route::get('vanchuyen/lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen'])->withoutMiddleware('auth.checkrole');
+                Route::get('lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen'])->withoutMiddleware('auth.checkrole');
                 Route::put('vanchuyen/xac-nhan-van-chuyen/{id}', [VanChuyenController::class, 'xacNhanVanChuyen'])->name('vanchuyen.xacnhan');
             });
 
