@@ -29,7 +29,7 @@ const Header = () => {
   const notificationRef = useRef<HTMLDivElement>(null);
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-  console.log(user?.user?.anh_nguoi_dung);
+  // console.log(user?.user?.anh_nguoi_dung);
   const [anh_nguoi_dung] = useState(member?.anh_nguoi_dung);
   const { data } = useQuery({
     queryKey: ["profile"],

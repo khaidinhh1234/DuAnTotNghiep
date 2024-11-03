@@ -22,42 +22,46 @@ const ShippingAddressPage = () => {
   } = useForm({
     resolver: zodResolver(checkout_address),
   });
-  // const nav = useNavigate
+  const nav = useNavigate();
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
-      // console.log(data);
+      console.log(data);
       try {
         // Bước 1: Tạo đơn hàng
         const order = await instanceClient.post(`don-hang`, data);
         // console.log(order);
         // Bước 2: Thực hiện thanh toán qua MoMo
-        const momoPaymentData = {
-          phuong_thuc_thanh_toan: data.phuong_thuc_thanh_toan,
-          ma_don_hang: order.data.data.ma_don_hang,
-          amount: order.data.data.tong_tien_don_hang,
-        };
-        // console.log(momoPaymentData);
-        const response = await instanceClient.post(
-          "payment/momo",
-          momoPaymentData
-        );
+        if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
+          const momoPaymentData = {
+            phuong_thuc_thanh_toan: data.phuong_thuc_thanh_toan,
+            ma_don_hang: order.data.data.ma_don_hang,
+            amount: order.data.data.tong_tien_don_hang,
+          };
+          // console.log(momoPaymentData);
+          const response = await instanceClient.post(
+            "payment/momo",
+            momoPaymentData
+          );
 
-        if (response.data && response.data.payUrl) {
-          window.location.href = response.data.payUrl; // Chuyển hướng người dùng đến giao diện thanh toán của MoMo
-        }
-        if (response.status === 200) {
-          // message.success("Thanh toán MoMo thành công");
-          // toast.success("Đặt hàng thành công");
-          // nav("/thankyou");
+          if (response.data && response.data.payUrl) {
+            window.location.href = response.data.payUrl; // Chuyển hướng người dùng đến giao diện thanh toán của MoMo
+          }
+          if (response.status === 200) {
+            // message.success("Thanh toán MoMo thành công");
+            toast.success("Đặt hàng thành công");
+          }
+        } else if (data.phuong_thuc_thanh_toan === "Thanh toán khi nhận hàng") {
+          toast.success("Đặt hàng thành công");
+          nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
         } else {
-          message.error("Thanh toán MoMo thất bại");
+          message.error("Đặt hàng thất bại");
+          throw new Error("Error during order creation or MoMo payment");
         }
-        // console.log(order);
 
         return order.data;
       } catch (error) {
         // console.log(error);
-        message.error("Lỗi khi đặt hàng hoặc thanh toán MoMo");
+        message.error("Đặt hàng thất bại");
         throw new Error("Error during order creation or MoMo payment");
       }
     },
