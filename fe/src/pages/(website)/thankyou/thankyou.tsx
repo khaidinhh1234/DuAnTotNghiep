@@ -95,7 +95,7 @@ const ThankYouPage = () => {
       });
     },
   });
-  console.log(data);
+  // console.log(data);
   const { data: sanpham, isError } = useQuery({
     queryKey: ["suggestedProducts"],
     queryFn: async () => {
@@ -110,24 +110,24 @@ const ThankYouPage = () => {
       <header className=" bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 text-white rounded-lg p-10 text-center mt-12  mx-auto shadow-2xl transform transition-all duration-500 ease-out hover:scale-105">
         <h2 className="text-3xl font-extrabold flex items-center justify-center mb-6 tracking-wide">
           {resultCode !== 0 ? (
-            <>
-              <div className="flex items-center justify-center">
-                {" "}
-                <span className="text-yellow-400 mr-3 animate-bounce">
-                  🔔
-                </span>{" "}
-                <p className="mt-5"> Đặt hàng thất bại</p>
-              </div>
-            </>
+            <div className="flex items-center justify-center">
+              <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
+              <p className="mt-5">Đặt hàng thất bại</p>
+            </div>
+          ) : resultCode === 1006 ? (
+            <div className="flex items-center justify-center">
+              <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3">
+                ✔
+              </span>
+              <p className="mt-5">Thanh toán thất bại</p>
+            </div>
           ) : (
-            <>
-              <div className="flex items-center justify-center">
-                <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3 ">
-                  ✔
-                </span>{" "}
-                <p className="mt-5"> Đặt hàng thành công</p>{" "}
-              </div>
-            </>
+            <div className="flex items-center justify-center">
+              <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3">
+                ✔
+              </span>
+              <p className="mt-5">Đặt hàng thành công</p>
+            </div>
           )}
         </h2>
         <p className="text-base mb-8 max-w-xl mx-auto leading-relaxed">
