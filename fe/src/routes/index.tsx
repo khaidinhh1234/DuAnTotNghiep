@@ -126,6 +126,10 @@ import History from "@/pages/(website)/myOrder/_components/history";
 
 import SearchResultsPage from "@/pages/(website)/_component/SearchResultsPage";
 
+// import History from "@/pages/(website)/mywallet/history";
+import WithdrawalRequests from "@/pages/(dashboard)/dohoan/ruttien";
+import Page2 from "@/pages/(website)/_component/shop";
+import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 const Router = () => {
@@ -154,7 +158,7 @@ const Router = () => {
           <Route path="/test" element={<Test />} />{" "}
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
-          <Route path="/search-results" element={<SearchResultsPage />} />
+          <Route path="/search-results" element={<Page2 />} />
 
           <Route
             path="/shippingAddressPage"
@@ -262,6 +266,10 @@ const Router = () => {
             path="orders/uncomfirmedorder"
             element={<TableUncomfirmedOrder />}
           />
+                    <Route path="orders/ruttien" element={<WithdrawalRequests />} />
+                    <Route path="orders/donhoan" element={<RefundRequests />} />
+
+
           <Route path="orders/collect" element={<Collect />} />
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}

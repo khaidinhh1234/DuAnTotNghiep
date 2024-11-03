@@ -43,7 +43,7 @@ const ProductsList = ({ products, Wishlist, isPending, data, onPage }: any) => {
 
   return (
     <>
-      <div className="flex justify-between sm:items-center items-start mb-4">
+      <div className="flex justify-between sm:items-center items-start mb-4  overflow-hidden">
         <div className="sm:flex items-center mt-2">
           <div className="mx-5">
             <p className="text-gray-700">{products?.length ?? 0} sản phẩm</p>
@@ -184,6 +184,9 @@ const ProductsList = ({ products, Wishlist, isPending, data, onPage }: any) => {
               itemRender={itemRender}
               onChange={onChange}
             />
+            {/* {hasNextPage && (
+        <button onClick={() => fetchNextPage()}>Tải thêm đơn hàng</button>
+      )} */}
           </div>
         </div>
       </section>

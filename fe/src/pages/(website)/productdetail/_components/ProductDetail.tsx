@@ -9,7 +9,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useParams } from "react-router-dom";
+
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -25,6 +26,11 @@ import instanceClient from "@/configs/client";
 import { debounce } from "lodash";
 import RelatedProducts from "./RelatedProducts";
 import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/free-mode";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
+import Footer from "./Footer";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -100,11 +106,6 @@ interface ProductData {
 //   gia_goc: string;
 // }
 
-const fetchProduct = async (id: string) => {
-  const response = await instanceClient.get(`/chi-tiet-san-pham/${id}`);
-  return response.data.data;
-};
-
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -119,16 +120,16 @@ const formatCurrency = (amount: number) => {
 //   return response.data;
 // };
 const ProductDetail: React.FC = () => {
-  const swiperRef = useRef<any | null>(null);
   const { slug } = useParams();
 
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [thumbsSwiper, setThumbsSwiper] = useState<any | null>(null);
+  console.log(thumbsSwiper);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
-  const [isHeart, setIsHeart] = useState(false);
+
   const [activeTab, setActiveTab] = useState("descriptions");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -158,18 +159,16 @@ const ProductDetail: React.FC = () => {
   //   }
   // }, []);
 
-  useEffect(() => {
-    if (swiperRef.current) {
-      swiperRef.current.swiper.update();
-    }
-  }, []);
   const queryClient = useQueryClient();
 
   const { data: product, isLoading } = useQuery<ProductData>({
     queryKey: ["product", slug],
-    queryFn: () => fetchProduct(slug!),
+    queryFn: async () => {
+      const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`);
+      return response.data.data;
+    },
   });
-
+  console.log(product);
   // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
   //   queryKey: ["relatedProducts", id],
   //   queryFn: () => fetchRelatedProducts(Number(id)),
@@ -276,7 +275,7 @@ const ProductDetail: React.FC = () => {
     },
     onSuccess: (data) => {
       // console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
-      if (data.status) {
+      if (data?.status) {
         toast.success(data.message);
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
@@ -286,7 +285,7 @@ const ProductDetail: React.FC = () => {
     onError: (error: any) => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error); // Kiểm tra lỗi
       toast.error(
-        error.response?.data?.message ||
+        error?.response?.data?.message ||
           "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
@@ -463,7 +462,6 @@ const ProductDetail: React.FC = () => {
               {/* <div className="bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60"> */}
               <div className="mt-8 xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl">
                 <Swiper
-                  ref={swiperRef}
                   style={
                     {
                       "--swiper-navigation-color": "#000000",
@@ -509,17 +507,17 @@ const ProductDetail: React.FC = () => {
               </div>
               <div className=" mt-2 w-[500px] mx-auto">
                 <Swiper
-                  ref={swiperRef}
-                  onSwiper={(swiperInstance) =>
-                    setThumbsSwiper(swiperInstance as any)
-                  }
+                  // onSwiper={(swiperInstance) => {
+                  //   return setThumbsSwiper(swiperInstance);
+                  // }}
+                  thumbs={{ swiper: thumbsSwiper }}
                   loop={true}
                   spaceBetween={31}
                   slidesPerView={4}
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                  className="mySwiper1"
+                  // className="mySwiper1"
                 >
                   {currentImages?.map((image, index) => (
                     <SwiperSlide key={`thumb-${index}`}>
@@ -1033,39 +1031,9 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div> */}
-      {product && <RelatedProducts productId={product?.id} />}
+      <RelatedProducts productId={product?.id ?? 0} />
 
-      <section>
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 mt-12 mb-24">
-            <div className="mx-auto">
-              <i className="fa-regular fa-box text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">
-                Miễn phí giao hàng
-              </h3>
-              <p>Với đơn hàng trên 599.000đ.</p>
-            </div>
-            <div className="mx-auto">
-              <i className="fa-regular fa-circle-dollar text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">Đảm bảo tiền</h3>
-              <p>Trong vòng 30 ngày để đổi trả</p>
-            </div>
-            <div className="mx-auto">
-              <i className="fa-regular fa-headphones text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">Hỗ trợ trực tuyến</h3>
-              <p>24 giờ một ngày, 7 ngày một tuần</p>
-            </div>
-            <div className="mx-auto">
-              <i className="fa-light fa-credit-card text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">
-                Thanh toán linh hoạt
-              </h3>
-              <p>Thanh toán bằng nhiều thẻ tín dụng</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <Footer />
       {previewImage && (
         <Image
           style={{ display: "none" }}

@@ -110,13 +110,25 @@ const ThankYouPage = () => {
       <header className=" bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 text-white rounded-lg p-10 text-center mt-12  mx-auto shadow-2xl transform transition-all duration-500 ease-out hover:scale-105">
         <h2 className="text-3xl font-extrabold flex items-center justify-center mb-6 tracking-wide">
           {resultCode !== 0 ? (
-            <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
+            <>
+              <div className="flex items-center justify-center">
+                {" "}
+                <span className="text-yellow-400 mr-3 animate-bounce">
+                  🔔
+                </span>{" "}
+                <p className="mt-5"> Đặt hàng thất bại</p>
+              </div>
+            </>
           ) : (
-            <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3 ">
-              ✔
-            </span>
+            <>
+              <div className="flex items-center justify-center">
+                <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3 ">
+                  ✔
+                </span>{" "}
+                <p className="mt-5"> Đặt hàng thành công</p>{" "}
+              </div>
+            </>
           )}
-          Đặt hàng thành công
         </h2>
         <p className="text-base mb-8 max-w-xl mx-auto leading-relaxed">
           Cùng Shopee bảo vệ quyền lợi của bạn - Thường xuyên kiểm tra tin nhắn
@@ -124,12 +136,16 @@ const ThankYouPage = () => {
           thái "Đang giao hàng".
         </p>
         <div className="flex justify-center space-x-8">
-          <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
-            Trang chủ
-          </button>
-          <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
-            Đơn mua
-          </button>
+          <Link to="/">
+            <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
+              Trang chủ
+            </button>
+          </Link>
+          <Link to={`/mypro/myorder/${orderId}`}>
+            <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
+              Đơn mua
+            </button>{" "}
+          </Link>
         </div>
       </header>
 
@@ -140,11 +156,11 @@ const ThankYouPage = () => {
         <h3 className="text-gray-700 font-bold my-5 text-3xl ">
           Có thể bạn cũng thích
         </h3>
-        <div className="grid grid-cols-12 justify-center lg:gap-20 gap-14 mx-auto">
+        <div className="grid grid-cols-12 justify-center lg:gap-20 gap-14 mx-auto my-10">
           {isError ? (
             <p className="text-red-500">Lỗi khi lấy thông tin sản phẩm</p>
           ) : products && products.length !== 0 ? (
-            products?.map((product: any, index: any) => (
+            products?.slice(0, 8).map((product: any, index: any) => (
               <div
                 className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
                 key={index}

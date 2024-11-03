@@ -1,61 +1,77 @@
-import React, { useState } from "react";
-import type { PaginationProps } from "antd";
-import { Pagination, List } from "antd";
+import instanceClient from "@/configs/client";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import ProductList from "./myOrder/_components/product";
+import { useEffect, useRef } from "react";
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-}
+const Test2 = () => {
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ["MyOrder_LISTas"],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await instanceClient.get(`don-hang?page=${pageParam}`);
+      if (response.status !== 200) {
+        throw new Error("Lỗi khi lấy danh sách đơn hàng");
+      }
+      return response.data; // Giả sử response.data chứa cấu trúc như bạn đã cung cấp
+    },
+    getNextPageParam: (lastPage) => {
+      return lastPage.data.pagination.has_more_pages
+        ? lastPage.data.pagination.current_page + 1
+        : undefined;
+    },
+    initialPageParam: 1,
+  });
 
-const products: Product[] = Array.from({ length: 500 }, (_, index) => ({
-  id: index + 1,
-  name: `Sản phẩm ${index + 1}`,
-  price: Math.floor(Math.random() * 100) + 1, // Giá ngẫu nhiên từ 1 đến 100
-}));
+  const loadMoreRef = useRef(null);
 
-const Test2: React.FC = () => {
-  const [current, setCurrent] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1.0 }
+    );
 
-  const total = products.length; // Tổng số sản phẩm
+    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
 
-  const onChange: PaginationProps["onChange"] = (page) => {
-    setCurrent(page);
-  };
+    return () => {
+      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
-    current,
-    size
-  ) => {
-    setCurrent(current);
-    setPageSize(size);
-  };
+  if (status === "pending") return <p>Loading...</p>;
+  if (status === "error") return <p>Error fetching data</p>;
 
-  // Tính toán các sản phẩm hiển thị dựa trên trang hiện tại và kích thước trang
-  const startIndex = (current - 1) * pageSize;
-  const currentProducts = products.slice(startIndex, startIndex + pageSize);
-
+  // const donhang =
+  //   data?.pages.map((page) => {
+  //     return { ...page, chitiet: page.data };
+  //   }) || [];
+  const orders = data?.pages.flatMap((page) => page.data.don_hang) || [];
+  // console.log("34", orders);
+  // const orders = donhang[0].chitiet;
+  // console.log(orders);
   return (
-    <>
-      <List
-        bordered
-        dataSource={currentProducts}
-        renderItem={(item) => (
-          <List.Item>
-            ID: {item.id}, Tên: {item.name}, Giá: {item.price} VNĐ
-          </List.Item>
-        )}
+    <div>
+      {/* Hiển thị danh sách đơn hàng */}
+      <ProductList donhang={orders} />
+      {/* Nút tải thêm nếu còn trang tiếp theo */}
+      <div
+        ref={loadMoreRef}
+        style={{ height: "20px", backgroundColor: "transparent" }}
       />
-      <Pagination
-        current={current}
-        pageSize={pageSize}
-        showSizeChanger
-        onShowSizeChange={onShowSizeChange}
-        onChange={onChange}
-        total={total}
-      />
-    </>
+
+      {/* Trạng thái tải thêm dữ liệu */}
+      {isFetchingNextPage && <p>Loading more...</p>}
+    </div>
   );
 };
 

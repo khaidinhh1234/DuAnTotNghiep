@@ -229,12 +229,11 @@ class DonHangController extends Controller
                 $thongBao = ThongBao::create([
                     'user_id' => $donHang->user_id,
                     'tieu_de' => 'Đơn hàng của bạn đã có cập nhật mới',
-                    'noi_dung' => 'Đơn hàng #' . $donHang->ma_don_hang . ' đã được cập nhật từ trạng thái ' .
+                    'noi_dung' => 'Đơn hàng ' . $donHang->ma_don_hang . ' đã được cập nhật từ trạng thái ' .
                         DonHang::getTrangThaiDonHang($trangThaiCu) . ' sang ' .
                         DonHang::getTrangThaiDonHang($request->trang_thai_don_hang),
                     'loai' => 'Đơn hàng',
-                    'duong_dan' => 'don-hang',
-                    'id_duong_dan' => $donHang->id,
+                    'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
 
@@ -419,7 +418,7 @@ class DonHangController extends Controller
     public function danhSachYeuCauRutTien()
     {
         try {
-            $yeuCauRutTiens = YeuCauRutTien::with('viTien')->get();
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien','nganHang')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -442,7 +441,7 @@ class DonHangController extends Controller
             ]);
 
             DB::beginTransaction();
-            $yeuCauRutTien = YeuCauRutTien::findOrFail($id);
+            $yeuCauRutTien = YeuCauRutTien::with('nganHang')->findOrFail($id);
 
             if ($validated['trang_thai'] === 'da_rut') {
                 $yeuCauRutTien->update(['trang_thai' => 'da_rut']);

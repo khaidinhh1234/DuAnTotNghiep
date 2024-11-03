@@ -12,13 +12,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('promo:update-status')->hourly();
-        $schedule->command('chuongtrinh:delete-expired')->daily();
-        $schedule->command('sanpham:cap-nhat-hang-moi')->daily();
-        $schedule->command('khuyenmai:update-gia-tam-thoi')->hourly();
-        $schedule->command('app:cap-nhat-khach-hang-xac-nhan')->daily();
-        $schedule->command('chuongtrinh:guithongbao')->daily();
-        $schedule->command('app:cap-nhat-trang-thai-tu-choi-rut-tien')->daily();
+        $schedule->command('promo:update-status')->everyMinute();
+        $schedule->command('chuongtrinh:delete-expired')->everyMinute();
+        $schedule->command('sanpham:cap-nhat-hang-moi')->everyMinute();
+        $schedule->command('khuyenmai:update-gia-tam-thoi')->everyMinute();
+        $schedule->command('app:cap-nhat-khach-hang-xac-nhan')->everyMinute();
+        $schedule->command('chuongtrinh:guithongbao')->everyMinute();
+        $schedule->command('app:cap-nhat-trang-thai-tu-choi-rut-tien')->everyMinute();
+        $schedule->command('fake:thongbao')->everyMinute();
     }
 
     /**

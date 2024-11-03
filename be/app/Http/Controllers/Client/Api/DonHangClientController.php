@@ -50,11 +50,11 @@ class DonHangClientController extends Controller
         curl_close($ch);
         return $result;
     }
-    public function donHangUser(Request $request) 
+    public function donHangUser(Request $request)
     {
         try {
             $user = Auth::guard('api')->user();
-            
+
             $pageSize = $request->get('pageSize', 2);
             $donHang = DonHang::where('user_id', $user->id)->with([
                 'chiTiets.bienTheSanPham.sanPham',
@@ -64,14 +64,14 @@ class DonHangClientController extends Controller
                 'danhGias.user',
                 'vanChuyen',
             ])->orderByDesc('created_at')->paginate($pageSize);
-    
+
             // Thực hiện các tính toán cho từng đơn hàng
             $donHang->each(function ($item) {
                 $item['tong_tien_da_giam'] = $item['tong_tien_don_hang'] - $item['so_tien_giam_gia'];
                 $item['tongSoLuong'] = $item->chiTiets->sum('so_luong');
                 $item['tongTienSanPham'] = $item->chiTiets->sum('thanh_tien');
             });
-    
+
             // Xử lý dữ liệu chi tiết đơn hàng và đánh giá
             $chiTietDonHang = $donHang->flatMap(function ($order) {
                 return $order->chiTiets->map(function ($chiTiet) {
@@ -91,11 +91,11 @@ class DonHangClientController extends Controller
                     ];
                 });
             });
-    
+
             $danhGiaDonHang = $donHang->flatMap(function ($order) {
                 return $order->danhGias;
             });
-    
+
             $danhGiaData = $danhGiaDonHang->isNotEmpty() ? $danhGiaDonHang->map(function ($danhGia) {
                 return [
                     'so_sao_san_pham' => $danhGia->so_sao_san_pham,
@@ -106,7 +106,7 @@ class DonHangClientController extends Controller
                     'huu_ich' => $danhGia->huu_ich
                 ];
             }) : null;
-    
+
             // Tổng số lượng và tổng tiền sản phẩm
             $tongSoLuong = $donHang->sum(function ($order) {
                 return $order->chiTiets->sum('so_luong');
@@ -114,7 +114,7 @@ class DonHangClientController extends Controller
             $tongTienSanPham = $donHang->sum(function ($order) {
                 return $order->chiTiets->sum('thanh_tien');
             });
-    
+
             $data = [
                 'don_hang' => $donHang->items(),
                 'tong_so_luong' => $tongSoLuong,
@@ -127,7 +127,7 @@ class DonHangClientController extends Controller
                     'has_more_pages' => $donHang->hasMorePages(),
                 ]
             ];
-    
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -143,7 +143,7 @@ class DonHangClientController extends Controller
             ]);
         }
     }
-    
+
     public function donHangUserDetail(string $maDonHang)
     {
         try {
@@ -390,20 +390,21 @@ class DonHangClientController extends Controller
                 'chiTiets.bienTheSanPham.anhBienThe',
             ])->where('id', $donHang->id)->first();
 
-            DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
-            $thongBao = ThongBao::create([
-                'user_id' => $userId,
-                'tieu_de' => 'Đơn hàng đã được đặt',
-                'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
-                'loai' => 'Đơn hàng',
-                'duong_dan' => 'don-hang',
-                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                'id_duong_dan' => $donHang->ma_don_hang,
-            ]);
+            if($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT){
+                DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
+                $thongBao = ThongBao::create([
+                    'user_id' => $userId,
+                    'tieu_de' => 'Đơn hàng đã được đặt',
+                    'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
+                    'loai' => 'Đơn hàng',
+                    'duong_dan' => 'don-hang',
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    'id_duong_dan' => $donHang->ma_don_hang,
+                ]);
 
-            broadcast(new ThongBaoMoi($thongBao))->toOthers();
-
-            event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
+            }
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Đặt hàng thành công.', 'data' => $donHangTmp], 201);
         } catch (\Exception $e) {
@@ -498,9 +499,8 @@ class DonHangClientController extends Controller
                 'tieu_de' => 'Đơn hàng đã hủy',
                 'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hủy.',
                 'loai' => 'Đơn hàng',
-                'duong_dan' => 'don-hang',
+                'duong_dan' => $donHang->ma_don_hang,
                 'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
-                'id_duong_dan' => $donHang->id,
             ]);
 
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
@@ -562,9 +562,8 @@ class DonHangClientController extends Controller
                 'tieu_de' => 'Đơn hàng đã hoàn',
                 'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hoàn.',
                 'loai' => 'Đơn hàng',
-                'duong_dan' => 'don-hang',
+                'duong_dan' => $donHang->ma_don_hang,
                 'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
-                'id_duong_dan' => $donHang->id,
             ]);
 
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
@@ -634,17 +633,16 @@ class DonHangClientController extends Controller
                     'thoi_gian_giao_dich' => now(),
                 ]);
 
-                // $thongBao = ThongBao::create([
-                //     'user_id' => $userId,
-                //     'tieu_de' => 'Yêu cầu rút tiền',
-                //     'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
-                //     'loai' => 'Rút tiền',
-                //     'duong_dan' => 'rut-tien',
-                //     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                //     'id_duong_dan' => $yeuCauRutTien->id,
-                // ]);
+                $thongBao = ThongBao::create([
+                    'user_id' => $userId,
+                    'tieu_de' => 'Yêu cầu rút tiền',
+                    'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
+                    'loai' => 'Rút tiền',
+                    'duong_dan' => $yeuCauRutTien->id,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
 
-                // broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
             } else {
                 return response()->json([
                     'status' => false,
