@@ -266,7 +266,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('vanchuyen', [VanChuyenController::class, 'index'])->name('vanchuyen.index');
                 Route::get('vanchuyen/{id}', [VanChuyenController::class, 'show'])->name('vanchuyen.show');
                 Route::put('vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
-                Route::get('vanchuyen/lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen'])->withoutMiddleware('auth.checkrole');
+                Route::get('lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen'])->withoutMiddleware('auth.checkrole');
                 Route::put('vanchuyen/xac-nhan-van-chuyen/{id}', [VanChuyenController::class, 'xacNhanVanChuyen'])->name('vanchuyen.xacnhan');
             });
 
