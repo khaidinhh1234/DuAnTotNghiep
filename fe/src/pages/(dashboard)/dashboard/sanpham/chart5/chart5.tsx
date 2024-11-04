@@ -22,7 +22,7 @@ dayjs.extend(timezone);
 dayjs.locale("vi");
 
 const Chart5 = ({ datestart, dateend, top }: any) => {
-  console.log(datestart, dateend, top);
+  // console.log(datestart, dateend, top);
   const date =
     datestart && dateend && top
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend, top: top }
