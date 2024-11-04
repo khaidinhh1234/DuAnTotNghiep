@@ -39,6 +39,7 @@ const ProductsList = ({ products, Wishlist, isPending }: any) => {
     console.log(`Page: ${page}, PageSize: ${pageSize}`);
     // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
   };
+  
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4">

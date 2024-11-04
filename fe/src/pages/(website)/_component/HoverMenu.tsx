@@ -51,7 +51,7 @@ const HoverMenu: React.FC<HoverMenuProps> = ({ parentId, onClose }) => {
                 {subCategories.map((subCategory, index) => (
                     <div key={subCategory.id} className="relative group" style={{ marginLeft: '150px' }}>
                         <a
-                            href={subCategory.path}
+                            href={subCategory.path} // Đường dẫn cho danh mục cha
                             className="pl-4 pr-10 py-4 block whitespace-nowrap text-lg text-left"
                         >
                             {subCategory.name}
@@ -61,7 +61,8 @@ const HoverMenu: React.FC<HoverMenuProps> = ({ parentId, onClose }) => {
                                 {subCategory.con.map((conConCategory) => (
                                     <li key={conConCategory.id} className="whitespace-nowrap">
                                         <a
-                                            href={`/${conConCategory.duong_dan}`}
+                                            // Cập nhật đường dẫn cho danh mục con để điều hướng đến trang sản phẩm
+                                            href={`/sanpham/danhmuc/${subCategory.name}/${conConCategory.ten_danh_muc}`}
                                             className="px-4 py-1 block text-left text-gray-600 hover:bg-gray-200"
                                         >
                                             {conConCategory.ten_danh_muc}
@@ -80,6 +81,7 @@ const HoverMenu: React.FC<HoverMenuProps> = ({ parentId, onClose }) => {
                         )}
                     </div>
                 ))}
+
             </div>
         </div>
     );

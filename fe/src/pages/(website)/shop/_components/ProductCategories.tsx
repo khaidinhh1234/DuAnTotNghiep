@@ -188,7 +188,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
   }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
-
+  
   return (
     <div>
       {" "}
@@ -279,18 +279,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                         </div>
                       ))}
                     </>
-                    {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Nữ
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Trẻ em
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div> */}
                   </div>
                 ) : null}
               </div>
