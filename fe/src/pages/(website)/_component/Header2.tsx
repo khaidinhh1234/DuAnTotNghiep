@@ -298,7 +298,7 @@ const Header2 = () => {
                                         onMouseEnter={() => setHoveredCategory(category.id)}
                                         onMouseLeave={() => setHoveredCategory(null)}
                                     >
-                                        <a href={category.path} className="px-4 py-2 block hover:bg-gray-100">
+                                        <a href={`/sanpham/danhmuc/${category.name}`} className="px-4 py-2 block hover:bg-gray-100">
                                             {category.name}
                                         </a>
                                         {hoveredCategory === category.id && (
