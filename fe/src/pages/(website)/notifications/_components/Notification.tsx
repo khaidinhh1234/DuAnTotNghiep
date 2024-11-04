@@ -9,7 +9,7 @@ const NOTIFICATION_TYPES = {
   ALL: 'Tất cả',
   ORDER: 'Đơn hàng',
   PROMOTION: 'Khuyến mãi',
-  WALLET: 'Ví'
+  WALLET: 'Yêu cầu rút tiền'
 } as const;
 
 interface NotificationResponse {
