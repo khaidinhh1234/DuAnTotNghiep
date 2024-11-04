@@ -1,4 +1,3 @@
-
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -7,7 +6,7 @@ import { lienhe } from "@/common/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { lienhetype } from "@/common/types/product";
 
-const ContactPage = ({  }) => {
+const ContactPage = ({}) => {
   const {
     register,
     handleSubmit,
@@ -20,7 +19,7 @@ const ContactPage = ({  }) => {
     queryKey: ["websiteInfo"],
     queryFn: async () => {
       const response = await instanceClient.get("/thong-tin-web");
-      console.log("Raw API Response:", response.data);
+      // console.log("Raw API Response:", response.data);
       return response.data.data;
     },
   });
@@ -47,8 +46,7 @@ const ContactPage = ({  }) => {
 
   return (
     <>
-    
-      <main className="pt-10">
+      <main className="py-10">
         <div className="container my-10">
           <div className="grid grid-cols-12 gap-8 mx-14">
             <div className="col-span-12">
@@ -64,10 +62,12 @@ const ContactPage = ({  }) => {
                   <h1 className="text-2xl font-semibold mb-5">
                     Thông Tin Liên Hệ
                   </h1>
-                  
+
                   <div className="flex items-center space-x-3 py-[2px]">
                     <i className="fa-regular fa-phone-volume text-lg" />
-                    <span className="text-lg">                    {websiteInfo?.so_dien_thoai_khieu_nai || "Đang cập nhật"}
+                    <span className="text-lg">
+                      {" "}
+                      {websiteInfo?.so_dien_thoai_khieu_nai || "Đang cập nhật"}
                     </span>
                   </div>
                   <div className="flex items-center space-x-3 py-[2px]">
@@ -76,9 +76,7 @@ const ContactPage = ({  }) => {
                   </div>
                   <div className="flex items-center space-x-3 py-[2px]">
                     <i className="fa-regular fa-location-dot text-lg" />
-                    <span className="text-lg mx-3">
-                    {websiteInfo?.dia_chi}
-                    </span>
+                    <span className="text-lg mx-3">{websiteInfo?.dia_chi}</span>
                   </div>
                 </div>
               </div>
@@ -115,7 +113,9 @@ const ContactPage = ({  }) => {
                       }`}
                     />
                     {errors.email && (
-                      <p className="text-red-600 mt-1">{errors.email.message}</p>
+                      <p className="text-red-600 mt-1">
+                        {errors.email.message}
+                      </p>
                     )}
                   </div>
 
@@ -148,7 +148,9 @@ const ContactPage = ({  }) => {
                     rows={5}
                     placeholder="Tin nhắn của bạn"
                     className={`border rounded-lg px-3 py-2 ${
-                      errors.noi_dung_lien_he ? "border-red-600" : "border-stone-500"
+                      errors.noi_dung_lien_he
+                        ? "border-red-600"
+                        : "border-stone-500"
                     }`}
                   />
                   {errors.noi_dung_lien_he && (

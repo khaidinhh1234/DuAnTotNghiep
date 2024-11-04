@@ -37,7 +37,7 @@ const ProductsList = ({ products, Wishlist, isPending, data, onPage }: any) => {
     setCurrentPage(page);
     setPageSize(pageSize);
     onPage(page);
-    console.log(`Page: ${page}, PageSize: ${pageSize}`);
+    // console.log(`Page: ${page}, PageSize: ${pageSize}`);
     // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
   };
 
