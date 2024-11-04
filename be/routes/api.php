@@ -380,7 +380,7 @@ Route::middleware(['auth.sanctum'])
             Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang'])->middleware(['throttle:100,1']);
             Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang'])->middleware(['throttle:100,1']);
             Route::post('don-hang/chot', [ThongKeTongQuanController::class, 'thongKeDonHangChot'])->middleware(['throttle:100,1']);
-            Route::post('san-pham/ton-kho', [ThongKeTongQuanController::class, 'thongKeSanPhamTonKho'])->middleware(['throttle:100,1']);
+            Route::post('san-pham/ton-kho', [ThongKeTongQuanController::class, 'thongKeTongSanPham'])->middleware(['throttle:100,1']);
             Route::post('doanh-thu/tong', [ThongKeTongQuanController::class, 'thongKeDoanhThuTong'])->middleware(['throttle:100,1']);
             Route::post('loi-nhuan', [ThongKeTongQuanController::class, 'thongKeLoiNhuan'])->middleware(['throttle:100,1']);
             Route::post('doanh-thu/thanh-toan-online', [ThongKeTongQuanController::class, 'thongKeThanhToanOnline'])->middleware(['throttle:100,1']);
