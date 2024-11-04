@@ -207,18 +207,21 @@ const SearchResultsPage = ({ Wishlist, isPending }: any) => {
 
   return (
     <>
-      <div className="mt-10"></div>
+      {/* <div className="mt-10"></div> */}
+      
       <section>
         <div className="container">
           {" "}
+          <div className="-mt-16">
           <h1 className="font-bold text-xl text-gray-600">
             Kết quả tìm kiếm cho
           </h1>
           <h2 className="font-bold text-xl text-gray-600">{query}</h2>
-          <p className="text-gray-700 font-bold text-xl mt-10">
+          <p className="text-gray-700 font-bold text-xl mt-5">
             {products.length} sản phẩm
           </p>
-          <div className="grid grid-cols-12 justify-center lg:gap-20 gap-14 mx-auto">
+          </div>
+          <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14 mx-auto">
             {displayedProducts.length > 0 ? (
               displayedProducts.map((product: any) => (
                 <div

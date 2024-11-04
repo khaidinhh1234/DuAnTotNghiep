@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     Table, Tag, Space, Button, Input, DatePicker,
     message, Flex, Tabs,
+    Popconfirm,
 } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
 // import type { FilterDropdownProps } from "antd/es/table/interface";
@@ -187,26 +188,53 @@ const RefundRequests: React.FC = () => {
             render: (_, record) => (
                 <Space>
                     {record.trang_thai === "cho_xac_nhan" && (
-                <>
-                    <Button
-                        className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
-                        onClick={() => mutate({ ids: [record.id], status: "accept" })}
-                    >
-                        Xác nhận
-                    </Button>
-                    <Button
-                        className="bg-gradient-to-l from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-bold border border-red-300"
-                        onClick={() => mutate({ ids: [record.id], status: "reject" })}
-                    >
-                        Từ chối
-                    </Button>
-
+                        <>
+                            <Popconfirm
+                                title="Xác nhận yêu cầu"
+                                description="Bạn có chắc chắn muốn xác nhận yêu cầu này?"
+                                onConfirm={() => mutate({ ids: [record.id], status: "accept" })}
+                                okButtonProps={{
+                                    className: "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium"
+                                }}
+                                cancelButtonProps={{
+                                    className: "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium"
+                                }}
+                                okText="Xác nhận"
+                                cancelText="Hủy"
+                            >
+                                <Button
+                                    className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+                                >
+                                    Xác nhận
+                                </Button>
+                            </Popconfirm>
+        
+                            <Popconfirm
+                                title="Từ chối yêu cầu"
+                                description="Bạn có chắc chắn muốn từ chối yêu cầu này?"
+                                onConfirm={() => mutate({ ids: [record.id], status: "reject" })}
+                                okButtonProps={{
+                                    className: "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium"
+                                }}
+                                cancelButtonProps={{
+                                    className: "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium"
+                                }}
+                                okText="Xác nhận"
+                                cancelText="Hủy"
+                            >
+                                <Button
+                                    className="bg-gradient-to-l from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-bold border border-red-300"
+                                >
+                                    Từ chối
+                                </Button>
+                            </Popconfirm>
                         </>
                     )}
                     <RefundDetail record={record} />
                 </Space>
             ),
-        },
+        }
+        
     ];
 
     const rowSelection: TableRowSelection<RefundRequest> = {

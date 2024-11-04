@@ -33,7 +33,7 @@ const CategoriesAdd = () => {
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
       form.resetFields();
-      nav("/admin/categories");
+      nav("/admin/categories/add");
     },
     onError: (error) => {
       message.error(error.message);
@@ -122,7 +122,7 @@ const CategoriesAdd = () => {
                 name="imageFile"
                 valuePropName="fileList"
                 getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
-                rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
+                // rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
               >
                 <Upload
                   listType="picture"

@@ -1,6 +1,6 @@
 import { sanPham2 } from "@/assets/img";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ProductsList from "./ProductsList";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
@@ -112,7 +112,22 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       setChildIds((prevState) => prevState.filter((id) => id !== childId));
     }
   };
-
+  const { tenDanhMucCha, tenDanhMucCon } = useParams();
+  const [_, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+        try {
+            const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
+            if (response.data.status) {
+                setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy sản phẩm:", error);
+        }
+    };
+    
+    fetchProducts();
+}, [tenDanhMucCha, tenDanhMucCon]);
   // ALL sản phẩm
   const { data } = useQuery({
     queryKey: ["PRODUCTSLOC"],
@@ -188,13 +203,13 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
   }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
-
+  
   return (
     <div>
       {" "}
       <section>
         <div className="container">
-          <div className="flex flex-wrap items-start w-full">
+          <div className="flex flex-wrap items-start w-full mt-16">
             {/* <!-- Sidebar Filters --> */}
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
@@ -279,18 +294,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                         </div>
                       ))}
                     </>
-                    {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Nữ
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Trẻ em
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div> */}
                   </div>
                 ) : null}
               </div>

@@ -2,6 +2,7 @@ import { bank, logofooter } from "@/assets/img";
 import instance from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const {
@@ -61,43 +62,37 @@ const Footer = () => {
               </div>
             </div>
             <div className="lg:col-span-2 col-span-6">
-              <h1 className="text-xl font-semibold mb-3">Information</h1>
+              <h1 className="text-xl font-semibold mb-3">Thông tin</h1>
               <ul>
                 <li className="mb-3">
-                  <a href="">My Acount</a>
+                  <a href="/mypro/myprofile">Tài khoản</a>
                 </li>
                 <li className="mb-3">
-                  <a href="">Login</a>
+                  <a href="/login">Đăng nhập</a>
                 </li>
                 <li className="mb-3">
-                  <a href="">My Cart</a>
+                  <a href="/gio-hang">Giỏ hàng</a>
                 </li>
                 <li className="mb-3">
-                  <a href="">My Wishlist</a>
+                  <a href="/vourcher">Khuyến mãi</a>
+
                 </li>
                 <li className="mb-3">
-                  <a href="">Checkout</a>
+                  <a href="">Liên hệ</a>
+
                 </li>
               </ul>
             </div>
             <div className="lg:col-span-2 col-span-6">
-              <h1 className="text-xl font-semibold mb-3">Dịch vụ</h1>
+              <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
               <ul>
-                <li className="mb-3">
-                  <a href="">About Us</a>
-                </li>
-                <li className="mb-3">
-                  <a href="">Careers</a>
-                </li>
-                <li className="mb-3">
-                  <a href="">Delivery Information</a>
-                </li>
-                <li className="mb-3">
-                  <a href="">Privacy Policy</a>
-                </li>
-                <li className="mb-3">
-                  <a href="">Terms &amp; Conditions</a>
-                </li>
+                {websiteInfo?.footer_blogs.slice(0, 5).map((category: any) => (
+                  <li key={category.id} className="mb-3">
+                    <Link to={`/tin-tuc/${category.duong_dan}`}>
+                      {category.ten_danh_muc_tin_tuc}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="lg:col-span-4 col-span-6">
