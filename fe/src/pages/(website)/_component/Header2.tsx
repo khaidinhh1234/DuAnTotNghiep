@@ -281,11 +281,12 @@ const Header2 = () => {
                             </button>
                         </div>
                         <div className="order-2 lg:w-60">
+                            <Link to='/'>
                             <img
                                 src={logo}
                                 alt="Logo"
                                 className="lg:w-[130px] lg:h-[40px] w-32 h-9"
-                            />
+                            /></Link>
                         </div>
 
                         <nav className="hidden lg:block order-3">

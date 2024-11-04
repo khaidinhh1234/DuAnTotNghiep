@@ -131,6 +131,7 @@ import WithdrawalRequests from "@/pages/(dashboard)/dohoan/ruttien";
 import Page2 from "@/pages/(website)/_component/shop";
 import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
 import ProductsList from "@/pages/(website)/Shopuudai/_components/ProductsList";
+import ProductCategories from "@/pages/(website)/shop/_components/ProductCategories";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 const Router = () => {
@@ -145,7 +146,7 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
-          <Route path="/sanpham/danhmuc/:tenDanhMucCha/:tenDanhMucCon?" element={<ProductsList/>}/>
+          <Route path="/sanpham/danhmuc/:tenDanhMucCha/:tenDanhMucCon?" element={<ProductCategories/>}/>
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
