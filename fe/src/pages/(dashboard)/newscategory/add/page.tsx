@@ -18,7 +18,7 @@ const NewCategoriesAdd = () => {
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
       form.resetFields();
-      nav("/admin/newcategory");
+      nav("/admin/newcategory/add");
     },
     onError: (error) => {
       message.error(error.message);
