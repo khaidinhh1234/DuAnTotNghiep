@@ -191,12 +191,12 @@ const Header = () => {
       path: "/",
     },
     {
-      name: "Sản phẩm",
-      path: "/shop",
-    },
-    {
       name: "Giới thiệu",
       path: "/ourstory",
+    },
+    {
+      name: "Sản phẩm",
+      path: "/shop",
     },
     {
       name: "Khuyến mãi",

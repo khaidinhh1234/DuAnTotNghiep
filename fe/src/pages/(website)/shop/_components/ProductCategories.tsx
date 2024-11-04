@@ -1,6 +1,6 @@
 import { sanPham2 } from "@/assets/img";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ProductsList from "./ProductsList";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
@@ -112,7 +112,22 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       setChildIds((prevState) => prevState.filter((id) => id !== childId));
     }
   };
-
+  const { tenDanhMucCha, tenDanhMucCon } = useParams();
+  const [_, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+        try {
+            const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
+            if (response.data.status) {
+                setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy sản phẩm:", error);
+        }
+    };
+    
+    fetchProducts();
+}, [tenDanhMucCha, tenDanhMucCon]);
   // ALL sản phẩm
   const { data } = useQuery({
     queryKey: ["PRODUCTSLOC"],
@@ -130,11 +145,11 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   });
   // console.log("data", data?.data?.data);
   // danh mục
-  const { data: danhmuc } = useQuery({
-    queryKey: ["DANHMUCCLIENT"],
+  const { data: locsanpham } = useQuery({
+    queryKey: ["LOCSLIBAR"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get("load-danh-muc");
+        const response = await instanceClient.get("lay-dm-ms-kt");
         if (response.data.status_code !== 200) {
           throw new Error("Error fetching product");
         }
@@ -144,37 +159,10 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  // mắc  sắc
-  const { data: mausac } = useQuery({
-    queryKey: ["MAUSACCLIENT"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("mau-sac");
-        if (response.data.status_code !== 200) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
-  const mau_sac = mausac?.mauSac;
-  const { data: size } = useQuery({
-    queryKey: ["KICHTHUOCCLIENT"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("kich-thuoc");
 
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
-  // console.log(mausac);
+  const mau_sac = locsanpham?.mauSac;
 
-  const sizes = size?.kichThuoc;
+  const sizes = locsanpham?.kichThuoc;
   // console.log(sizes);
   // lọc
   const [page, setPage] = useState(1);
@@ -201,7 +189,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const onPage = (page: number) => {
     setPage(page);
   };
-  const danh_muc = danhmuc?.data;
+  const danh_muc = locsanpham?.danhMucCha;
   // console.log(danh_muc);
   const products = data?.data?.data;
   // console.log(products);
@@ -215,7 +203,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
   }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
-
+  
   return (
     <div>
       {" "}
@@ -306,18 +294,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                         </div>
                       ))}
                     </>
-                    {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Nữ
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Trẻ em
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div> */}
                   </div>
                 ) : null}
               </div>

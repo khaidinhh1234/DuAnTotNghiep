@@ -100,6 +100,15 @@ const Slibar = () => {
               Danh Sách Yêu Thích
             </Link>
           </li>
+          <li>
+            <Link
+              to="/mypro/notification"
+              className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center"
+            >
+                <i className="fa-regular fa-bell mr-3" />
+                Thông báo
+            </Link>
+          </li>
           {/* <li>
             <Link
               to="/mypro/manageaddresses"
@@ -118,7 +127,7 @@ const Slibar = () => {
               Thẻ Đã Lưu
             </Link>
           </li> */}
-          <li className="relative">
+          {/* <li className="relative">
             <button
               onClick={toggleNotificationMenu}
               className="hover:bg-black hover:text-white w-full px-5 py-3 flex items-center justify-between"
@@ -153,7 +162,7 @@ const Slibar = () => {
                 </li>
               </ul>
             )}
-          </li>
+          </li> */}
           <li>
             <Link
               to="/mypro/setting"

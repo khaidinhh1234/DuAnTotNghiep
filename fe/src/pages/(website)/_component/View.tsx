@@ -48,7 +48,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       }
     },
   });
-  console.log(data);
+  // console.log(data);
   const queryclient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
@@ -545,18 +545,20 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                       />
                       <button
-                    onClick={() => {
-                      if (quantity >= MAX_QUANTITY) {
-                        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
-                      } else {
-                        setQuantity((prev) => prev + 1);
-                      }
-                    }}
-                    className="py-2 pl-2"
-                    disabled={quantity >= MAX_QUANTITY}
-                  >
-                    <i className="fa-solid fa-plus" />
-                  </button>
+                        onClick={() => {
+                          if (quantity >= MAX_QUANTITY) {
+                            toast.error(
+                              `Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`
+                            );
+                          } else {
+                            setQuantity((prev) => prev + 1);
+                          }
+                        }}
+                        className="py-2 pl-2"
+                        disabled={quantity >= MAX_QUANTITY}
+                      >
+                        <i className="fa-solid fa-plus" />
+                      </button>
                     </div>
                     <button
                       onClick={handleAddToCart}
