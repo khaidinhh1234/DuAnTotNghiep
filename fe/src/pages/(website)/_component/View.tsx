@@ -252,50 +252,48 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     },
   });
 
+  const MAX_QUANTITY = 10;
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
       return;
     }
 
-    // Nếu người dùng chưa chọn biến thể, lấy biến thể đầu tiên
     const firstVariant = product?.bien_the_san_pham[0];
     const variantIdToUse = selectedVariantId || firstVariant?.id;
 
-    // Kiểm tra nếu không có biến thể nào
     if (!variantIdToUse) {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
 
-    console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
-
-    // Kiểm tra nếu không có access_token thì lưu vào localStorage
     if (!access_token) {
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      // Kiểm tra xem sản phẩm đã tồn tại trong giỏ chưa
       const existingItem = cart.find(
         (item: { variantId: number; quantity: number }) =>
           item.variantId === variantIdToUse
       );
+
+      const currentQuantity = existingItem ? existingItem.quantity : 0;
+
+      if (currentQuantity + quantity > MAX_QUANTITY) {
+        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
+        return;
+      }
+
       if (existingItem) {
-        // Nếu sản phẩm đã tồn tại, tăng số lượng
         existingItem.quantity += quantity;
       } else {
-        // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ
         cart.push({ variantId: variantIdToUse, quantity });
       }
 
-      // Cập nhật giỏ hàng trong localStorage
       localStorage.setItem("cart", JSON.stringify(cart));
       toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
     } else {
-      // Nếu có access_token (người dùng đã đăng nhập), gọi API để thêm sản phẩm vào giỏ trên server
       addToCart(variantIdToUse);
     }
   };
-
   return (
     <>
       <Link to={``} type="primary" onClick={() => setOpen(true)}>
@@ -547,11 +545,18 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                       />
                       <button
-                        onClick={() => setQuantity((prev) => prev + 1)}
-                        className="py-2 pl-2"
-                      >
-                        <i className="fa-solid fa-plus" />
-                      </button>
+                    onClick={() => {
+                      if (quantity >= MAX_QUANTITY) {
+                        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
+                      } else {
+                        setQuantity((prev) => prev + 1);
+                      }
+                    }}
+                    className="py-2 pl-2"
+                    disabled={quantity >= MAX_QUANTITY}
+                  >
+                    <i className="fa-solid fa-plus" />
+                  </button>
                     </div>
                     <button
                       onClick={handleAddToCart}
