@@ -40,8 +40,6 @@ const CheckOut = () => {
       productId: string;
       currentQuantity: number;
     }) => {
-      // Kiểm tra nếu số lượng hiện tại nhỏ hơn 10
-      if (currentQuantity < 10) {
         await instanceClient.put(
           `/gio-hang/tang-so-luong/${productId}`,
           { so_luong: currentQuantity + 1 },
@@ -51,10 +49,7 @@ const CheckOut = () => {
             },
           }
         );
-      } else {
-        toast.error("Thêm tối đa 10 sản phẩm");
-        // throw new Error("Số lượng tối đa là 10"); 
-      }
+      
     },
     // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
