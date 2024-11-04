@@ -287,7 +287,7 @@ class ThongKeTongQuanController extends Controller
                 DonHang::TTDH_HH    // Hoàn hàng
             ];
             // Lấy danh sách đơn hàng hoàn tất trong khoảng thời gian
-            $donHangs = DonHang::whereNotIn('trang_thai_don_hang',  $trangThaiBiLoaiBo)
+            $donHangs = DonHang::whereNotIn('trang_thai_don_hang', $trangThaiBiLoaiBo)
                 ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
                 ->get();
 
@@ -303,7 +303,7 @@ class ThongKeTongQuanController extends Controller
             $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
             // Lấy danh sách đơn hàng trong khoảng thời gian trước
-            $donHangsTruoc = DonHang::whereNotIn('trang_thai_don_hang',  $trangThaiBiLoaiBo)
+            $donHangsTruoc = DonHang::whereNotIn('trang_thai_don_hang', $trangThaiBiLoaiBo)
                 ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
                 ->get();
 
@@ -638,7 +638,9 @@ class ThongKeTongQuanController extends Controller
 
         // Lấy đơn hàng hủy (TTDH_DH, TTDH_HH)
         $donHangHoan = DonHang::whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc]) // Sửa 'updated_at' thành 'ngay_huy'
+
             ->where('trang_thai_don_hang',   DonHang::TTDH_HH)
+
             ->get();
 
         // Tính tổng doanh thu cho đơn hàng hủy
@@ -649,7 +651,9 @@ class ThongKeTongQuanController extends Controller
         for ($i = 0; $i <= $khoangThoiGian; $i++) {
             $ngay = $ngayBatDau->copy()->addDays($i);
             $doanhThuNgayHoan = DonHang::whereDate('ngay_hoan', $ngay) // Sửa 'updated_at' thành 'ngay_huy'
+
                 ->where('trang_thai_don_hang',   DonHang::TTDH_HH)
+
                 ->sum('tong_tien_don_hang');
             $doanhThuHoanTheoNgay[] = $doanhThuNgayHoan;
         }
@@ -710,7 +714,9 @@ class ThongKeTongQuanController extends Controller
                 DonHang::TTDH_CKHCN, //
             ];
             // Lấy tổng doanh thu và số lượng đơn có trạng thái "Thanh toán khi nhận hàng" trong ngày hiện tại
+
             $donHangQuery = DonHang::whereIn('trang_thai_don_hang',  $trangThaiBoQua)
+
                 ->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT) // Điều kiện thanh toán khi nhận hàng
                 ->whereDate('ngay_hoan_thanh_don', $today);
 
@@ -749,7 +755,9 @@ class ThongKeTongQuanController extends Controller
                 DonHang::TTDH_CKHCN, //
             ];
             // Lấy tổng doanh thu và số lượng đơn có phương thức thanh toán online (momo, ngân hàng) trong ngày hiện tại
+
             $donHangQuery = DonHang::whereIn('trang_thai_don_hang', $trangThaiBoQua)
+
                 ->whereIn('phuong_thuc_thanh_toan', [
                     DonHang::PTTT_MM_ATM, // Momo
                     DonHang::PTTT_MM_QR  // Ngân hàng
