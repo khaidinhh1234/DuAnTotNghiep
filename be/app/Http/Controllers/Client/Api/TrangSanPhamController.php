@@ -403,37 +403,37 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-    public function laySanPhamTheoDanhMuc($parentName, $childName = null, $subChildName = null)
+    public function laySanPhamTheoDanhMuc($tenDanhMucCha, $tenDanhMucCon = null, $tenDanhMucConCapBa = null)
     {
         try {
             $query = DanhMuc::with('sanPhams')
-                ->where('duong_dan', $parentName);
+                ->where('duong_dan', $tenDanhMucCha);
 
             // Nếu có chọn danh mục con cụ thể
-            if ($childName) {
-                $childDanhMuc = DanhMuc::where('duong_dan', $childName)->first();
-
-                if (!$childDanhMuc) {
+            if ($tenDanhMucCon) {
+                $danhMucCon = DanhMuc::where('duong_dan', $tenDanhMucCon)->first();
+            
+                if (!$danhMucCon) {
                     return response()->json(['message' => 'Danh mục con không tồn tại'], 404);
                 }
-                if ($subChildName) {
-                    $subChildDanhMuc = DanhMuc::where('duong_dan', $subChildName)->first();
-
-                    if (!$subChildDanhMuc) {
+                if ($tenDanhMucConCapBa) {
+                    $danhMucConCapBa = DanhMuc::where('duong_dan', $tenDanhMucConCapBa)->first();
+            
+                    if (!$danhMucConCapBa) {
                         return response()->json(['message' => 'Danh mục con cấp ba không tồn tại'], 404);
                     }
-                    $sanPhams = SanPham::where('danh_muc_id', $subChildDanhMuc->id);
+                    $sanPhams = SanPham::where('danh_muc_id', $danhMucConCapBa->id);
                 } else {
-                    $sanPhams = SanPham::where('danh_muc_id', $childDanhMuc->id);
+                    $sanPhams = SanPham::where('danh_muc_id', $danhMucCon->id);
                 }
             } else {
-                $danhMuc = $query->first();
-
-                if (!$danhMuc) {
+                $danhMucCha = $query->first();
+            
+                if (!$danhMucCha) {
                     return response()->json(['message' => 'Không tìm thấy danh mục'], 404);
                 }
-
-                $danhMucIds = $this->layDanhMucIds($danhMuc);
+            
+                $danhMucIds = $this->layDanhMucIds($danhMucCha);
                 $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucIds);
             }
 
