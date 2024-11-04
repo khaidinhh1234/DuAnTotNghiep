@@ -1,4 +1,3 @@
-import { banner2 } from "@/assets/img";
 import { Link } from "react-router-dom";
 // import React from 'react'
 

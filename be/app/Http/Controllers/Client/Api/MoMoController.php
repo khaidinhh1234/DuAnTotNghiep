@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Client\Api;
 
+use App\Events\SendMail;
+use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
 use App\Models\DonHang;
 use App\Models\Momo;
+use App\Models\ThongBao;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Nette\Utils\Random;
@@ -180,15 +184,105 @@ class MoMoController extends Controller
     }
 
 
+//    public function checkDonHang(Request $request)
+//    {
+//        try {
+//            $trangThai = $request->resultCode ?? null;
+//
+//            $maOrderMomo = $request->orderId ?? null;
+//            $maDonHang = explode("-", $maOrderMomo)[0];
+//
+//            // Tìm đơn hàng dựa vào mã đơn hàng
+//            $donHang = DonHang::where('ma_don_hang', $maDonHang)->first();
+//
+//            if (!$donHang) {
+//                return response()->json([
+//                    'status' => false,
+//                    'message' => 'Đơn hàng không tồn tại.'
+//                ], 404);
+//            }
+//
+//            $message = '';
+//
+//            switch ($trangThai) {
+//                case 0:
+//                    // Nếu resultCode là 0, cập nhật trạng thái "Đã thanh toán"
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_DTT]);
+//                    $message = 'Thanh toán thành công.';
+//                    break;
+//
+//                case 4:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Giao dịch bị hủy bởi người dùng.';
+//                    break;
+//
+//                case 5:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Số tiền không hợp lệ.';
+//                    break;
+//
+//                case 6:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Tài khoản MoMo không đủ tiền.';
+//                    break;
+//
+//                case 7:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Giao dịch đã hết hạn.';
+//                    break;
+//
+//                case 8:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Giao dịch không hợp lệ.';
+//                    break;
+//
+//                case 49:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Lỗi chữ ký - Dữ liệu hoặc khóa bí mật không khớp.';
+//                    break;
+//
+//                case 1001:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Địa chỉ IP không được phép.';
+//                    break;
+//
+//                case 1006:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Yêu cầu trùng lặp - Yêu cầu đã được xử lý.';
+//                    break;
+//
+//                case 9000:
+//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+//                    $message = 'Lỗi nội bộ - Đã xảy ra lỗi máy chủ không mong muốn.';
+//                    break;
+//
+//                default:
+//                    return response()->json([
+//                        'status' => false,
+//                        'message' => 'Trạng thái không hợp lệ.'
+//                    ], 400);
+//            }
+//
+//            return response()->json([
+//                'status' => true,
+//                'message' => $message
+//            ], 200);
+//        } catch (\Exception $e) {
+//            Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
+//            return response()->json([
+//                'status' => false,
+//                'message' => 'Lỗi hệ thống. Vui lòng thử lại sau.'
+//            ], 500);
+//        }
+//    }
+
     public function checkDonHang(Request $request)
     {
         try {
             $trangThai = $request->resultCode ?? null;
-
             $maOrderMomo = $request->orderId ?? null;
             $maDonHang = explode("-", $maOrderMomo)[0];
 
-            // Tìm đơn hàng dựa vào mã đơn hàng
             $donHang = DonHang::where('ma_don_hang', $maDonHang)->first();
 
             if (!$donHang) {
@@ -198,71 +292,76 @@ class MoMoController extends Controller
                 ], 404);
             }
 
-            $message = '';
-
-            switch ($trangThai) {
-                case 0:
-                    // Nếu resultCode là 0, cập nhật trạng thái "Đã thanh toán"
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_DTT]);
-                    $message = 'Thanh toán thành công.';
-                    break;
-
-                case 4:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Giao dịch bị hủy bởi người dùng.';
-                    break;
-
-                case 5:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Số tiền không hợp lệ.';
-                    break;
-
-                case 6:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Tài khoản MoMo không đủ tiền.';
-                    break;
-
-                case 7:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Giao dịch đã hết hạn.';
-                    break;
-
-                case 8:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Giao dịch không hợp lệ.';
-                    break;
-
-                case 49:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Lỗi chữ ký - Dữ liệu hoặc khóa bí mật không khớp.';
-                    break;
-
-                case 1001:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Địa chỉ IP không được phép.';
-                    break;
-
-                case 1006:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Yêu cầu trùng lặp - Yêu cầu đã được xử lý.';
-                    break;
-
-                case 9000:
-                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-                    $message = 'Lỗi nội bộ - Đã xảy ra lỗi máy chủ không mong muốn.';
-                    break;
-
-                default:
+            if ($trangThai == 0) {
+                if ($donHang->trang_thai_thanh_toan === DonHang::TTTT_DTT) {
                     return response()->json([
-                        'status' => false,
-                        'message' => 'Trạng thái không hợp lệ.'
-                    ], 400);
+                        'status' => true,
+                        'message' => 'Đơn hàng đã được thanh toán trước đó.'
+                    ], 200);
+                }
+
+                $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_DTT]);
+                DB::table('gio_hangs')->where('user_id', $donHang->user_id)->where('chon', 1)->update(['deleted_at' => now()]);
+
+                $thongBao = ThongBao::create([
+                    'user_id' => $donHang->user_id,
+                    'tieu_de' => 'Đơn hàng đã được thanh toán',
+                    'noi_dung' => 'Cảm ơn bạn đã ' . DonHang::TTTT_DTT . ' mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
+                    'loai' => 'Đơn hàng',
+                    'duong_dan' => 'don-hang',
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    'id_duong_dan' => $donHang->ma_don_hang,
+                ]);
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                event(new SendMail($donHang->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHang));
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Thanh toán thành công.'
+                ], 200);
+            }
+
+            $trangThaiMessages = [
+                4 => 'Giao dịch đã bị hủy bởi bạn.',
+                5 => 'Số tiền bạn nhập không hợp lệ.',
+                6 => 'Tài khoản MoMo của bạn không đủ số dư.',
+                7 => 'Giao dịch đã hết hạn và không thể hoàn tất.',
+                8 => 'Giao dịch không hợp lệ. Vui lòng kiểm tra lại.',
+                49 => 'Lỗi xác thực - Dữ liệu hoặc khóa bí mật không khớp.',
+                1001 => 'Địa chỉ IP của bạn không được phép truy cập.',
+                1006 => 'Yêu cầu của bạn đã được xử lý trước đó.',
+                9000 => 'Lỗi hệ thống - Đã xảy ra sự cố không mong muốn.'
+            ];
+
+            if (array_key_exists($trangThai, $trangThaiMessages)) {
+                if ($donHang->trang_thai_thanh_toan === DonHang::TTTT_CTT) {
+                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+
+                    $message = $trangThaiMessages[$trangThai];
+                    $thongBao = ThongBao::create([
+                        'user_id' => $donHang->user_id,
+                        'tieu_de' => 'Đơn hàng chưa được thanh toán',
+                        'noi_dung' => $message,
+                        'loai' => 'Đơn hàng',
+                        'duong_dan' => 'don-hang',
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                        'id_duong_dan' => $donHang->ma_don_hang,
+                    ]);
+
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                }
+
+                return response()->json([
+                    'status' => true,
+                    'message' => $message
+                ], 200);
             }
 
             return response()->json([
-                'status' => true,
-                'message' => $message
-            ], 200);
+                'status' => false,
+                'message' => 'Trạng thái không hợp lệ.'
+            ], 400);
+
         } catch (\Exception $e) {
             Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
             return response()->json([
@@ -271,4 +370,5 @@ class MoMoController extends Controller
             ], 500);
         }
     }
+
 }

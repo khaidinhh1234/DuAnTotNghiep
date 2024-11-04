@@ -53,7 +53,7 @@ const VoucherAdmin: React.FC = () => {
       return response.data;
     },
   });
-  // console.log(voucher);
+
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async ({ record, action }: any) => {
@@ -236,11 +236,13 @@ const VoucherAdmin: React.FC = () => {
   const columns: TableColumnsType<PromotionType> = [
     {
       title: "STT",
-      dataIndex: "key",
+
       key: "key",
       width: "5%",
       className: "text-center",
-      render: (index) => index + 1,
+      render: (index) => (
+        <span className="text-gray-600 text-md">{index + 1}</span>
+      ),
     },
     {
       title: "Khuyến Mãi",

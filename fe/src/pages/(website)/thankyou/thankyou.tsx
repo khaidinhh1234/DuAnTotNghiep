@@ -85,7 +85,7 @@ const ThankYouPage = () => {
         return response.data;
       } catch (error) {
         message.error("Xóa sản phẩm yêu thích thất bại");
-        console.error("API error", error); // Thêm log lỗi API
+        // console.error("API error", error); // Thêm log lỗi API
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
     },
@@ -95,7 +95,7 @@ const ThankYouPage = () => {
       });
     },
   });
-  console.log(data);
+  // console.log(data);
   const { data: sanpham, isError } = useQuery({
     queryKey: ["suggestedProducts"],
     queryFn: async () => {
@@ -110,13 +110,25 @@ const ThankYouPage = () => {
       <header className=" bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 text-white rounded-lg p-10 text-center mt-12  mx-auto shadow-2xl transform transition-all duration-500 ease-out hover:scale-105">
         <h2 className="text-3xl font-extrabold flex items-center justify-center mb-6 tracking-wide">
           {resultCode !== 0 ? (
-            <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
+            <div className="flex items-center justify-center">
+              <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
+              <p className="mt-5">Đặt hàng thất bại</p>
+            </div>
+          ) : resultCode === 1006 ? (
+            <div className="flex items-center justify-center">
+              <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3">
+                ✔
+              </span>
+              <p className="mt-5">Thanh toán thất bại</p>
+            </div>
           ) : (
-            <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3 ">
-              ✔
-            </span>
+            <div className="flex items-center justify-center">
+              <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3">
+                ✔
+              </span>
+              <p className="mt-5">Đặt hàng thành công</p>
+            </div>
           )}
-          Đặt hàng thành công
         </h2>
         <p className="text-base mb-8 max-w-xl mx-auto leading-relaxed">
           Cùng Shopee bảo vệ quyền lợi của bạn - Thường xuyên kiểm tra tin nhắn
@@ -124,33 +136,37 @@ const ThankYouPage = () => {
           thái "Đang giao hàng".
         </p>
         <div className="flex justify-center space-x-8">
-          <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
-            Trang chủ
-          </button>
-          <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
-            Đơn mua
-          </button>
+          <Link to="/">
+            <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
+              Trang chủ
+            </button>
+          </Link>
+          <Link to={`/mypro/myorder/${orderId}`}>
+            <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
+              Đơn mua
+            </button>{" "}
+          </Link>
         </div>
       </header>
 
       {/* Spinner Section */}
 
       {/* Suggested Products Section */}
-      <section className="mt-6 px-4">
+      <section className="mt-6 ">
         <h3 className="text-gray-700 font-bold my-5 text-3xl ">
           Có thể bạn cũng thích
         </h3>
-        <div className="grid grid-cols-12 justify-center lg:gap-20 gap-14 mx-auto">
+        <div className="grid grid-cols-12 justify-center lg:gap-5 gap-14 mx-auto my-10">
           {isError ? (
             <p className="text-red-500">Lỗi khi lấy thông tin sản phẩm</p>
           ) : products && products.length !== 0 ? (
-            products?.map((product: any, index: any) => (
+            products?.slice(0, 8).map((product: any, index: any) => (
               <div
-                className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
+                className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 lg:w-[290px] w-[350px] mx-auto lg:mx-0"
                 key={index}
               >
                 <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
-                  <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
+                  <div className="relative lg:w-full w-[350px] lg:h-[355px] h-[400px]">
                     {isPending ? (
                       <span>
                         <i className="z-10 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
@@ -176,9 +192,9 @@ const ThankYouPage = () => {
                               : product.anh_san_pham
                           }
                           alt=""
-                          className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
+                          className="lg:w-[300px] w-[500px] lg:h-[360px] h-[400px] rounded-t-md"
                         />
-                        {product?.hang_moi == 1 && (
+                        {product?.hang_moi === 1 && (
                           <span className="absolute top-3 left-4 bg-red-500 text-white px-3 py-[2px] rounded-md font-bold">
                             Mới
                           </span>
@@ -247,6 +263,37 @@ const ThankYouPage = () => {
               </span>
             </div>
           )}
+        </div>
+      </section>
+      <section>
+        {/* <!-- End Main --> */}
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 mt-12 mb-24">
+            <div className="mx-auto">
+              <i className="fa-regular fa-box text-3xl"></i>
+              <h3 className="font-bold text-xl mt-3 mb-2">
+                Miễn phí vận chuyển
+              </h3>
+              <p>Miễn phí vận chuyển cho đơn hàng trên $150</p>
+            </div>
+            <div className="mx-auto">
+              <i className="fa-regular fa-circle-dollar text-3xl"></i>
+              <h3 className="font-bold text-xl mt-3 mb-2">Đảm bảo hoàn tiền</h3>
+              <p>Trong vòng 30 ngày để đổi hàng</p>
+            </div>
+            <div className="mx-auto">
+              <i className="fa-regular fa-headphones text-3xl"></i>
+              <h3 className="font-bold text-xl mt-3 mb-2">Hỗ trợ trực tuyến</h3>
+              <p>24 giờ một ngày, 7 ngày một tuần</p>
+            </div>
+            <div className="mx-auto">
+              <i className="fa-light fa-credit-card text-3xl"></i>
+              <h3 className="font-bold text-xl mt-3 mb-2">
+                Thanh toán linh hoạt
+              </h3>
+              <p>Thanh toán bằng nhiều thẻ tín dụng</p>
+            </div>
+          </div>
         </div>
       </section>
     </div>
