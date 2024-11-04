@@ -292,7 +292,8 @@ class MoMoController extends Controller
                 ], 404);
             }
 
-            if ($trangThai == 0) {
+            if ($trangThai == 0 && $donHang->phuong_thuc_thanh_toan === DonHang::PTTT_MM_ATM
+                && $donHang->trang_thai_thanh_toan === DonHang::PTTT_MM_QR) {
                 if ($donHang->trang_thai_thanh_toan === DonHang::TTTT_DTT) {
                     return response()->json([
                         'status' => true,
@@ -308,9 +309,8 @@ class MoMoController extends Controller
                     'tieu_de' => 'Đơn hàng đã được thanh toán',
                     'noi_dung' => 'Cảm ơn bạn đã ' . DonHang::TTTT_DTT . ' mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
                     'loai' => 'Đơn hàng',
-                    'duong_dan' => 'don-hang',
+                    'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                    'id_duong_dan' => $donHang->ma_don_hang,
                 ]);
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($donHang->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHang));
@@ -343,9 +343,8 @@ class MoMoController extends Controller
                         'tieu_de' => 'Đơn hàng chưa được thanh toán',
                         'noi_dung' => $message,
                         'loai' => 'Đơn hàng',
-                        'duong_dan' => 'don-hang',
+                        'duong_dan' => $donHang->ma_don_hang,
                         'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                        'id_duong_dan' => $donHang->ma_don_hang,
                     ]);
 
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
@@ -370,5 +369,4 @@ class MoMoController extends Controller
             ], 500);
         }
     }
-
 }
