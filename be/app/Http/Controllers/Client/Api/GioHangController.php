@@ -24,15 +24,17 @@ class GioHangController extends Controller
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
                 ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                 ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
-                ->where("gio_hangs.deleted_at", null)
                 ->where('gio_hangs.user_id', $userId)
+                ->where("gio_hangs.deleted_at", null)
                 ->select(
                     'gio_hangs.id',
+                    'gio_hangs.deleted_at',
                     'gio_hangs.bien_the_san_pham_id',
                     'gio_hangs.so_luong',
                     'gio_hangs.chon',
                     'san_phams.ten_san_pham',
                     'san_phams.duong_dan',
+                    'san_phams.trang_thai',
                     'bien_the_san_phams.so_luong_bien_the as kho_hang',
                     'bien_the_san_phams.gia_ban',
                     'bien_the_san_phams.gia_khuyen_mai',
@@ -43,6 +45,14 @@ class GioHangController extends Controller
                 ->get();
 
             $gioHangs->transform(function ($item) {
+                if ($item->so_luong > $item->kho_hang) {
+                    $item->so_luong = $item->kho_hang;
+
+                    DB::table('gio_hangs')
+                        ->where('id', $item->id)
+                        ->update(['so_luong' => $item->kho_hang]);
+                }
+
                 $bienThe = BienTheSanPham::with(['anhBienThe' => function ($query) {
                     $query->first();
                 }])->find($item->bien_the_san_pham_id);
@@ -55,6 +65,12 @@ class GioHangController extends Controller
                     $item->gia_hien_tai = $item->gia_khuyen_mai_tam_thoi;
                 } elseif (!is_null($item->gia_khuyen_mai) && $item->gia_khuyen_mai > 0) {
                     $item->gia_hien_tai = $item->gia_khuyen_mai;
+                }
+
+                if ($item->trang_thai === 0) {
+                    DB::table('gio_hangs')
+                        ->where('id', $item->id)
+                        ->update(['deleted_at' => now()]);
                 }
 
                 return $item;
