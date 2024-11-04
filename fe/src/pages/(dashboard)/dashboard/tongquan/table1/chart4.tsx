@@ -18,7 +18,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
       : null;
   // console.log(date);
-  const { data: doanhso, refetch } = useQuery({
+  const { data: doanhso, refetch: refetch7 } = useQuery({
     queryKey: ["tongquandoanhso", datestart, dateend],
     queryFn: async () => {
       const response = await instance.post("thong-ke/doanh-so-san-pham", date);
@@ -26,7 +26,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  console.log(doanhso);
+  // console.log(doanhso);
   const {
     data: loinhuan,
 
@@ -63,11 +63,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  const {
-    data: Chart1,
-
-    refetch: chart1,
-  } = useQuery({
+  const { data: Chart1, refetch } = useQuery({
     queryKey: ["table1chart1", datestart, dateend],
     queryFn: async () => {
       const response = await instance.post("thong-ke/doanh-thu/so-sanh", date);
@@ -75,7 +71,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  // console.log(Chart1);
+  console.log(Chart1);
   // console.log(doanhso);
   const doanh_so = doanhso?.ti_le_tang_giam_don_hang > 0;
   // console.log(doanh_so);
@@ -97,9 +93,9 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
   // }
   useEffect(() => {
     if (datestart && dateend) {
-      refetch();
+      refetch7();
     }
-  }, [datestart, dateend, refetch]);
+  }, [datestart, dateend, refetch7]);
   useEffect(() => {
     if (datestart && dateend) {
       refetch2();
@@ -117,9 +113,9 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
   }, [datestart, dateend, refetch4]);
   useEffect(() => {
     if (datestart && dateend) {
-      chart1();
+      refetch();
     }
-  }, [datestart, dateend, chart1]);
+  }, [datestart, dateend, refetch]);
   // const date2 = Chart1?.ngay_trong_khoang.map((item: any) => item);
   // console.log(date2);
   const chartData = {

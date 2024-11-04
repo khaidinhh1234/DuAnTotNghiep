@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\ThongBao;
 use App\Models\User;
-use App\Models\VaiTro; // Đảm bảo import mô hình VaiTro
 use App\Events\ThongBaoMoi;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
@@ -18,32 +17,51 @@ class GuiThongBaoKhuyenMai extends Command
     public function handle()
     {
         $now = Carbon::now();
+        $today = $now->toDateString();
+        $tomorrow = $now->addDay()->toDateString();
 
-        $chuongTrinhUuDai = ChuongTrinhUuDai::where(function ($query) use ($now) {
-            $query->whereDate('ngay_bat_dau', $now->toDateString())
-                ->orWhereDate('ngay_hien_thi', $now->toDateString());
-        })
-            ->get();
+        $chuongTrinhUuDai = ChuongTrinhUuDai::where(function ($query) use ($today, $tomorrow) {
+            $query->whereDate('ngay_bat_dau', $today)
+                ->orWhereDate('ngay_hien_thi', $today)
+                ->orWhereDate('ngay_ket_thuc', $tomorrow);
+        })->get();
 
         foreach ($chuongTrinhUuDai as $chuongTrinh) {
-            $this->sendNotification(
-                'Chương trình ưu đãi mới',
-                "Chương trình ưu đãi '{$chuongTrinh->ten}' đã bắt đầu hoặc đến hạn vào ngày hôm nay!",
-                '/chuong-trinh/' . $chuongTrinh->duong_dan
-            );
+            if ($chuongTrinh->ngay_bat_dau == $today) {
+                $this->sendNotification(
+                    'Chương trình ưu đãi ' . $chuongTrinh->ten_uu_dai,
+                    "Chương trình ưu đãi '{$chuongTrinh->ten_uu_dai}' đang diễn ra hôm nay!",
+                    'chuong-trinh',
+                    $chuongTrinh->duong_dan
+                );
+            }
+
+            if ($chuongTrinh->ngay_hien_thi == $tomorrow) {
+                $this->sendNotification(
+                    'Chương trình ưu đãi ' . $chuongTrinh->ten_uu_dai,
+                    "Chương trình ưu đãi '{$chuongTrinh->ten_uu_dai}' sẽ bắt đầu vào ngày mai!",
+                    'chuong-trinh',
+                    $chuongTrinh->duong_dan
+                );
+            }
+
+            if ($chuongTrinh->ngay_ket_thuc == $tomorrow) {
+                $this->sendNotification(
+                    'Chương trình ưu đãi sắp kết thúc',
+                    "Chương trình ưu đãi '{$chuongTrinh->ten_uu_dai}' sẽ kết thúc vào ngày mai!",
+                    'chuong-trinh',
+                    $chuongTrinh->duong_dan
+                );
+            }
         }
 
         $this->info('Thông báo chương trình ưu đãi đã được gửi.');
     }
 
-    /**
-     * Hàm hỗ trợ gửi thông báo cho người dùng
-     */
-    private function sendNotification($title, $content, $link)
+    private function sendNotification($title, $content, $link, $duong_dan)
     {
-        // Chỉ lấy những người dùng có vai trò 'Khách hàng'
         $users = User::whereHas('vaiTros', function($query) {
-            $query->where('vai_tros.ten', 'Khách hàng'); // Thay 'Khách hàng' bằng tên vai trò thực tế
+            $query->where('vai_tros.ten_vai_tro', 'Khách hàng');
         })->get();
 
         foreach ($users as $user) {
@@ -51,9 +69,9 @@ class GuiThongBaoKhuyenMai extends Command
                 'user_id' => $user->id,
                 'tieu_de' => $title,
                 'noi_dung' => $content,
-                'loai' => 'uu_dai',
-                'duong_dan' => $link,
-                'trang_thai_da_doc' => 0
+                'loai' => 'uu-dai',
+                'duong_dan' => $duong_dan,
+                'hinh_thu_nho'=> 'https://cuoihoihungthinh.com/wp-content/uploads/2021/09/icon-uu-dai.png'
             ]);
 
             broadcast(new ThongBaoMoi($thongBao))->toOthers();

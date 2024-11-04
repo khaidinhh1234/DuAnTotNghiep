@@ -122,7 +122,7 @@ const CategoriesAdd = () => {
                 name="imageFile"
                 valuePropName="fileList"
                 getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
-                rules={[{ required: false, message: "Vui lòng chọn ảnh!" }]}
+                // rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
               >
                 <Upload
                   listType="picture"
