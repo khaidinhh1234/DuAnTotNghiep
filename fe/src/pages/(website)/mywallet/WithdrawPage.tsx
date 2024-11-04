@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import instanceClient from '@/configs/client';
@@ -23,10 +22,10 @@ const WithdrawPage = () => {
   const [amount, setAmount] = useState<number>(0);
   const [useFullBalance, setUseFullBalance] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showForgotPinModal, setShowForgotPinModal] = useState(false);
   const [pins, setPins] = useState(['', '', '', '', '', '']);
-  const [error, setError] = useState<string | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-console.log('bankData', bankData.id);
+
   const { data } = useQuery({
     queryKey: ['financeData'],
     queryFn: () => instanceClient.get('/vi-tai-khoan').then(res => res.data?.data)
@@ -43,13 +42,28 @@ console.log('bankData', bankData.id);
       setUseFullBalance(false);
       resetPins();
       toast.success('Rút tiền thành công');
-      
       navigate(-1);
     },
     onError: (error: any) => {
-      setError(error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
     }
   });
+
+  const forgotPinMutation = useMutation({
+    mutationFn: async () => {
+      const response = await instanceClient.get('/quen-ma-xac-minh');
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Yêu cầu Lấy lại mã PIN đã được gửi đến email của bạn');
+      setShowForgotPinModal(false);
+    },
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+      toast.error(errorMessage);
+    }
+  });
+
   const handleInitialSubmit = () => {
     if (amount < 50000) {
       toast.error('Số tiền rút tối thiểu là 50.000₫');
@@ -57,7 +71,6 @@ console.log('bankData', bankData.id);
     }
     setShowVerificationModal(true);
   };
-    
 
   const walletBalance = data?.viUser?.so_du || 0;
 
@@ -93,18 +106,12 @@ console.log('bankData', bankData.id);
 
   const resetPins = () => {
     setPins(['', '', '', '', '', '']);
-    setError(null);
   };
-
-
 
   const handleFinalSubmit = () => {
     const verificationCode = pins.join('');
-    
     withdrawalMutation.mutate({
-   
       so_tien: amount,
-     
       ma_xac_minh: verificationCode
     });
   };
@@ -170,7 +177,6 @@ console.log('bankData', bankData.id);
           <a href="#" className="text-blue-500 underline">Điều khoản sử dụng</a>{' '}
           và{' '}
           <a href="#" className="text-blue-500 underline">Chính sách bảo mật</a>
-
         </div>
 
         <div className="flex items-center justify-between">
@@ -182,17 +188,16 @@ console.log('bankData', bankData.id);
           </div>
 
           <button
-  onClick={handleInitialSubmit}
-  disabled={amount < 50000}
-  className={`py-2 px-6 rounded-lg text-lg font-semibold transition-colors ${
-    amount >= 50000 
-      ? 'bg-blue-500 text-white hover:bg-blue-600' 
-      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-  }`}
->
-  Tiếp tục
-</button>
-
+            onClick={handleInitialSubmit}
+            disabled={amount < 50000}
+            className={`py-2 px-6 rounded-lg text-lg font-semibold transition-colors ${
+              amount >= 50000 
+                ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            Tiếp tục
+          </button>
         </div>
       </div>
 
@@ -202,11 +207,7 @@ console.log('bankData', bankData.id);
             <h2 className="text-xl font-semibold mb-4">Xác nhận mật khẩu ví</h2>
             <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
 
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md">
-                {error}
-              </div>
-            )}
+          
 
             <div className="mb-6">
               <div className="flex justify-between space-x-2">
@@ -223,6 +224,12 @@ console.log('bankData', bankData.id);
                   />
                 ))}
               </div>
+              <button 
+                onClick={() => setShowForgotPinModal(true)}
+                className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+              >
+                Quên mật khẩu?
+              </button>
             </div>
 
             <div className="flex justify-end space-x-3">
@@ -241,6 +248,33 @@ console.log('bankData', bankData.id);
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
                 {withdrawalMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showForgotPinModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
+            <p className="text-gray-600 mb-6">
+              Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi mã đến email của bạn.
+            </p>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowForgotPinModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={() => forgotPinMutation.mutate()}
+                disabled={forgotPinMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {forgotPinMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
               </button>
             </div>
           </div>
