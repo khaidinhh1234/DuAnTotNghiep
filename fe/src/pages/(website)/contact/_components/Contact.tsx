@@ -1,10 +1,11 @@
 import instanceClient from "@/configs/client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { lienhe } from "@/common/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { lienhetype } from "@/common/types/product";
+import { useEffect, useState } from "react";
 
 const ContactPage = ({}) => {
   const {
@@ -15,14 +16,29 @@ const ContactPage = ({}) => {
   } = useForm<lienhetype>({
     resolver: zodResolver(lienhe),
   });
-  const { data: websiteInfo } = useQuery({
-    queryKey: ["websiteInfo"],
-    queryFn: async () => {
-      const response = await instanceClient.get("/thong-tin-web");
-      // console.log("Raw API Response:", response.data);
-      return response.data.data;
-    },
-  });
+  // const { data: websiteInfo } = useQuery({
+  //   queryKey: ["websiteInfo"],
+  //   queryFn: async () => {
+  //     const response = await instanceClient.get("/thong-tin-web");
+  //     console.log("Raw API Response:", response.data);
+  //     return response.data.data;
+  //   },
+  // });
+  interface WebsiteInfo {
+    so_dien_thoai_khieu_nai?: string;
+    email?: string;
+    dia_chi?: string;
+  }
+  
+  const [websiteInfo, setWebsiteInfo] = useState<WebsiteInfo | null>(null);
+  
+  useEffect(() => {
+    const storedInfo = localStorage.getItem("websiteInfo");
+    if (storedInfo) {
+      setWebsiteInfo(JSON.parse(storedInfo));
+    }
+  }, []);
+
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       try {
