@@ -1,7 +1,3 @@
-import { ellipse, hello } from "@/assets/img";
-import { Link } from "react-router-dom";
-import Sidebar from "./../../_component/Slibar";
-
 const SettingPage = () => {
   return (
     <>

@@ -145,13 +145,21 @@ const ProductItem = ({
 
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang }: any) => {
-  const don_hang = donhang?.don_hang;
-  console.log(don_hang);
+  const don_hang = donhang;
+  // console.log(don_hang);
   return (
     <>
-      <h2 className="text-2xl font-bold text-black-500 mx-4">
-        Đơn hàng của bạn
-      </h2>
+      <div className="flex justify-between items-cennter ">
+        <h2 className="text-2xl font-bold text-black-500 mx-4">
+          Đơn hàng của bạn
+        </h2>
+        <Link
+          to={"/mypro/lichsu"}
+          className="hover:text-blue-500 underline cursor-pointer pt-2"
+        >
+          Lịch sử giao dịch
+        </Link>
+      </div>
       <div className="lg:col-span-9 col-span-8 lg:pl-4 h-full">
         <form>
           {don_hang && don_hang.length !== 0 ? (

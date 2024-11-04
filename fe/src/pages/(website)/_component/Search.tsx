@@ -1,6 +1,6 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal, message } from "antd";
-import { useEffect, useState, useCallback} from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
@@ -122,7 +122,7 @@ const Search = () => {
                       ? product.mau_sac_va_anh?.[hoveredVariantIndex].hinh_anh
                       : product.anh_san_pham
                   }
-                  alt={product.ten_san_pham}
+                  alt=""
                   className="w-full h-[300px] object-cover rounded-t-md"
                 />
                 {product.hang_moi === 1 && (
@@ -228,10 +228,8 @@ const Search = () => {
             <div className="grid grid-cols-4 justify-center gap-4">
               {searchResults.slice(0, 4).map(renderProductCard)}
             </div>
-            {/* {searchResults.length > 0 && ( */}
 
-
-            {searchResults.length > 4 && (
+            {searchResults.length > 0 && (
               <div className="text-center mt-6">
                 <Link
                   to={`/search-results?query=${encodeURIComponent(searchValue)}`}
@@ -271,7 +269,7 @@ const Search = () => {
             placeholder="Tìm kiếm"
             size="large"
             value={searchValue}
-            onChange={ onSearchChange}
+            onChange={onSearchChange}
             style={{
               borderRadius: "9999px",
               padding: "8px 16px",

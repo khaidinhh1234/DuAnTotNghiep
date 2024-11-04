@@ -1,6 +1,4 @@
 import { sanPham2 } from "@/assets/img";
-import { Button, message } from "antd";
-import React from "react";
 
 const Ordercreate = () => {
   return (

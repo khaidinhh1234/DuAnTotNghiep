@@ -1,11 +1,9 @@
-import { sanPham2 } from "@/assets/img";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import ProductsList from "./ProductsList";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Slider } from "antd";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ProductsList from "./ProductsList";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
@@ -20,7 +18,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       const response = await instanceClient.get(`chuong-trinh-uu-dai/${slug}`);
       return response.data;
     },
-    enabled: !!slug
+    enabled: !!slug,
   });
   // lọc danh mục
   const [parentIds, setParentIds] = useState<number[]>([]);
@@ -207,7 +205,9 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const danh_muc = danhmuc?.data;
   // console.log(danh_muc);
   const products = data?.data?.data;
-  const displayProducts = slug ? promotionalData?.data?.san_phams : data?.data?.data;
+  const displayProducts = slug
+    ? promotionalData?.data?.san_phams
+    : data?.data?.data;
 
   // console.log(products);
   useEffect(() => {
@@ -516,7 +516,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-            <ProductsList
+              <ProductsList
                 products={displayProducts}
                 Wishlist={handleWishlist}
                 isPending={isPending}

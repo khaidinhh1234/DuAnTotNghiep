@@ -8,6 +8,7 @@ use App\Models\BoSuuTap;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\DanhGia;
 use App\Models\DanhMuc;
+use App\Models\DanhMucTinTuc;
 use App\Models\DonHang;
 use App\Models\SanPham;
 use App\Models\ThongTinWeb;
@@ -233,7 +234,15 @@ class TrangChuController extends Controller
             ->unique('sanPham.id')
             ->take(8);
 
-        $dataTinTucMoi = TinTuc::query()->orderByDesc('id')->limit('4')->get();
+        $dataTinTucMoi = TinTuc::query()
+            ->whereNotIn('id', function ($query) {
+                $query->select('id')
+                    ->from('danh_muc_tin_tucs')
+                    ->whereIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng','Về chúng tôi']);
+            })
+            ->orderByDesc('id')
+            ->limit(4)
+            ->get();
 
         return response()->json([
             'status' => true,
@@ -254,6 +263,8 @@ class TrangChuController extends Controller
             $data = ThongTinWeb::query()
                 ->first()
                 ->makeHidden(['banner']);
+            $data['footer_blogs'] = DanhMucTinTuc::query()->whereIn('ten_danh_muc_tin_tuc',['Dịch vụ khách hàng','Về chúng tôi'])
+                ->with('tinTuc')->get();
 
             return response()->json([
                 'status' => true,
@@ -352,19 +363,43 @@ class TrangChuController extends Controller
         return response()->json($goiY);
     }
 
-    public function loadDanhMuc()
+    public function loadDanhMucConChau($chaId)
     {
         try {
-            $danhMucs = DanhMuc::whereNull('cha_id')->with('children.children')->get();
-            return response()->json(
-                [
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => 'Lấy dữ liệu thành công',
-                    'data' => $danhMucs,
-                ],
-                200
-            );
+            $danhMucCha = DanhMuc::where('id', $chaId)
+                ->with('children.children')
+                ->first();
+
+            if (!$danhMucCha) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Danh mục cha không tồn tại',
+                ], 404);
+            }
+
+            $formattedData = $danhMucCha->children->map(function ($child) {
+                return [
+                    'id' => $child->id,
+                    'ten_danh_muc' => $child->ten_danh_muc,
+                    'duong_dan' => $child->duong_dan,
+                    'con' => $child->children->map(function ($grandChild) {
+                        return [
+                            'id' => $grandChild->id,
+                            'ten_danh_muc' => $grandChild->ten_danh_muc,
+                            'duong_dan' => $grandChild->duong_dan,
+                        ];
+                    }),
+                ];
+            });
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $formattedData,
+            ], 200);
+
         } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
@@ -374,4 +409,27 @@ class TrangChuController extends Controller
             ], 500);
         }
     }
+
+    public function loadDanhMucSanPhamCha(){
+        try {
+            $danhMucs = DanhMuc::whereNull('cha_id')
+                ->get();
+            return response()->json(
+                [
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy dữ liệu thành công',
+                    'data' => $danhMucs,
+                ]
+            ,200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
 }

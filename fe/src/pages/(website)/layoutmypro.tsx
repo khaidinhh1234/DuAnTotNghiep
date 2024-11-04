@@ -1,5 +1,3 @@
-import Footer from "@/pages/(website)/_component/Footer";
-import Header from "@/pages/(website)/_component/Header";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./_component/Slibar";
 const LayoutMyPro = () => {

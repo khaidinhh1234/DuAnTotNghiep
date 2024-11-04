@@ -86,7 +86,7 @@
     "react-webcam": "^7.2.0",
     "recharts": "^2.12.7",
     "socket.io": "^4.7.5",
-    "swiper": "^10.3.1",
+    "swiper": "^11.1.14",
     "tailwind-merge": "^2.4.0",
     "uuid": "^10.0.0",
     "vite-tsconfig-paths": "^4.3.2",

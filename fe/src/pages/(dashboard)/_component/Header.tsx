@@ -28,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [user] = useLocalStorage("user" as any, {});
@@ -36,7 +36,13 @@ const Header = () => {
     user?.user?.vai_tros?.map((item: any) => item.ten_vai_tro) || [];
   const ten = user?.user?.ho + " " + user?.user?.ten;
   const anh = user?.user?.anh_nguoi_dung;
-
+  const nav = useNavigate();
+  const logout = () => {
+    nav("/login");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    // setUser(null);
+  };
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b bg-white px-4 lg:h-[60px] lg:px-6">
       <Sheet>
@@ -148,7 +154,9 @@ const Header = () => {
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => logout()}>
+            Đăng xuất
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

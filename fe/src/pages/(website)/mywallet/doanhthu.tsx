@@ -1,6 +1,5 @@
-import React from "react";
-import { Tabs } from "antd";
 import { LeftOutlined, MoreOutlined, WalletOutlined } from "@ant-design/icons";
+import { Tabs } from "antd";
 
 const RevenuePage = () => {
   return (
@@ -28,7 +27,9 @@ const RevenuePage = () => {
               label: <span className="text-red-500">Chưa thanh toán</span>,
               children: (
                 <div className="flex flex-col items-center justify-center h-96 md:h-80 lg:h-96">
-                  <p className="text-4xl md:text-5xl font-bold text-red-500">₫0</p>
+                  <p className="text-4xl md:text-5xl font-bold text-red-500">
+                    ₫0
+                  </p>
                   <div className="flex items-center mt-1 text-gray-500 text-sm md:text-base">
                     <WalletOutlined className="mr-1" />
                     Shopee Đảm Bảo
@@ -48,7 +49,9 @@ const RevenuePage = () => {
                         d="M3 12l2-2m0 0l7-7 7 7M5 10v10a2 2 0 002 2h10a2 2 0 002-2V10M9 21h6"
                       />
                     </svg>
-                    <p className="mt-2 md:text-lg">Không có lịch sử giao dịch</p>
+                    <p className="mt-2 md:text-lg">
+                      Không có lịch sử giao dịch
+                    </p>
                   </div>
                 </div>
               ),
