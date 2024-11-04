@@ -1,16 +1,9 @@
-import instance from "@/configs/client";
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -24,13 +17,13 @@ import SizeGuideModal from "./SizeGuide";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { debounce } from "lodash";
-import RelatedProducts from "./RelatedProducts";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
+import { Swiper, SwiperSlide } from "swiper/react";
 import Footer from "./Footer";
+import RelatedProducts from "./RelatedProducts";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -195,12 +188,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                  ...review,
-                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                  danh_gia_huu_ich_count: variables.isLiked
-                    ? review.danh_gia_huu_ich_count - 1
-                    : review.danh_gia_huu_ich_count + 1,
-                }
+                ...review,
+                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                danh_gia_huu_ich_count: variables.isLiked
+                  ? review.danh_gia_huu_ich_count - 1
+                  : review.danh_gia_huu_ich_count + 1,
+              }
               : review
           ),
         };
@@ -211,50 +204,48 @@ const ProductDetail: React.FC = () => {
     },
   });
   // add to cart
+  const MAX_QUANTITY = 10;
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
       return;
     }
 
-    // Nếu người dùng chưa chọn biến thể, lấy biến thể đầu tiên
     const firstVariant = product?.bien_the_san_pham[0];
     const variantIdToUse = selectedVariantId || firstVariant?.id;
 
-    // Kiểm tra nếu không có biến thể nào
     if (!variantIdToUse) {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
 
-    // console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
-
-    // Kiểm tra nếu không có access_token thì lưu vào localStorage
     if (!access_token) {
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      // Kiểm tra xem sản phẩm đã tồn tại trong giỏ chưa
       const existingItem = cart.find(
         (item: { variantId: number; quantity: number }) =>
           item.variantId === variantIdToUse
       );
+
+      const currentQuantity = existingItem ? existingItem.quantity : 0;
+
+      if (currentQuantity + quantity > MAX_QUANTITY) {
+        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
+        return;
+      }
+
       if (existingItem) {
-        // Nếu sản phẩm đã tồn tại, tăng số lượng
         existingItem.quantity += quantity;
       } else {
-        // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ
         cart.push({ variantId: variantIdToUse, quantity });
       }
 
-      // Cập nhật giỏ hàng trong localStorage
       localStorage.setItem("cart", JSON.stringify(cart));
       toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
     } else {
-      // Nếu có access_token (người dùng đã đăng nhập), gọi API để thêm sản phẩm vào giỏ trên server
       addToCart(variantIdToUse);
     }
   };
-
   // useMutation thêm sản phẩm vào giỏ hàng trên server khi có access_token
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
@@ -285,8 +276,8 @@ const ProductDetail: React.FC = () => {
     onError: (error: any) => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error); // Kiểm tra lỗi
       toast.error(
-        error?.response?.data?.message ||
-          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        error.response?.data?.message ||
+        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
@@ -550,11 +541,10 @@ const ProductDetail: React.FC = () => {
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${
-                          selectedVariant?.so_luong_bien_the > 0
-                            ? "bg-[#3CD139]/10 text-[#3CD139]"
-                            : "bg-red-500 text-white"
-                        }`}
+                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                          ? "bg-[#3CD139]/10 text-[#3CD139]"
+                          : "bg-red-500 text-white"
+                          }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -681,33 +671,41 @@ const ProductDetail: React.FC = () => {
               </div>
 
               <div className="mt-12 flex gap-5">
-                <div className="border rounded-lg border-black xl:w-32 xl:h-14 ld:w-24 lg:h-10 md:w-32 md:h-14 w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
+                <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                   <button
-                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    onClick={() =>
+                      setQuantity((prev) => Math.max(1, prev - 1))
+                    }
                     className="py-2 pr-2"
-                    disabled={quantity <= 1}
                   >
                     <i className="fa-solid fa-minus" />
                   </button>
-
                   <input
                     type="number"
+                    id="numberInput"
+                    defaultValue={1}
+                    min={1}
+                    max={100}
                     value={quantity}
-                    readOnly
                     onChange={(e) =>
                       setQuantity(Math.max(1, parseInt(e.target.value, 10)))
                     }
-                    className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
+                    className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                   />
-
                   <button
-                    onClick={() => setQuantity((prev) => prev + 1)}
+                    onClick={() => {
+                      if (quantity >= MAX_QUANTITY) {
+                        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
+                      } else {
+                        setQuantity((prev) => prev + 1);
+                      }
+                    }}
                     className="py-2 pl-2"
+                    disabled={quantity >= MAX_QUANTITY}
                   >
                     <i className="fa-solid fa-plus" />
                   </button>
                 </div>
-
                 <button
                   onClick={handleAddToCart}
                   className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
@@ -753,11 +751,10 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
-                isDescriptionExpanded
-                  ? "h-auto"
-                  : "max-h-[500px] overflow-hidden"
-              }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${isDescriptionExpanded
+                ? "h-auto"
+                : "max-h-[500px] overflow-hidden"
+                }`}
             >
               <div
                 dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}

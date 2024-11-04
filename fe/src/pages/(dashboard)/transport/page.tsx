@@ -6,14 +6,14 @@ const PageTransport = () => {
   const { data: chodon } = useQuery({
     queryKey: ["tongquan"],
     queryFn: async () => {
-      const res = await instance.get("donhang/lay-thong-tin-don");
+      const res = await instance.get("lay-thong-tin-don");
       return res.data;
     },
   });
   const { data: cholay } = useQuery({
     queryKey: ["tongquan2"],
     queryFn: async () => {
-      const res = await instance.get("vanchuyen/lay-thong-tin-van-chuyen");
+      const res = await instance.get("lay-thong-tin-van-chuyen");
       return res.data;
     },
   });

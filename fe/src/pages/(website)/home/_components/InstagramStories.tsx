@@ -2,7 +2,6 @@ import { story } from "@/assets/img";
 import instanceClient from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { to } from './../../../../../node_modules/@typescript-eslint/eslint-plugin/dist/rules/consistent-type-exports';
 
 const InstagramStories = () => {
   const { data } = useQuery({
@@ -49,7 +48,10 @@ const InstagramStories = () => {
                           {newsItem.ten_danh_muc_tin_tuc}
                         </h1>
                         {/* Nút xem chi tiết với icon */}
-                        <Link to={`/tin-tuc-theo-danh-muc/${newsItem.duong_dan}`} className="btn w-12 h-12 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <Link
+                          to={`/tin-tuc-theo-danh-muc/${newsItem.duong_dan}`}
+                          className="btn w-12 h-12 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        >
                           <i className="fa-solid fa-eye text-black text-lg"></i>
                         </Link>
                       </div>
