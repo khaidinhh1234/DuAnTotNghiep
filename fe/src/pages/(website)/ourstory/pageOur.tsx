@@ -1,3 +1,4 @@
+import Method from "../_component/Method";
 import BannerOurStory from "./_components/BannerOurStory";
 import ChidlrenHeader from "./_components/ChidlrenHeader";
 import OurJourney from "./_components/OurJourney";
@@ -14,6 +15,7 @@ const PageOur = () => {
       <OurMission />
       <OurValues />
       <OurJourney />
+      <Method />
     </>
   );
 };
