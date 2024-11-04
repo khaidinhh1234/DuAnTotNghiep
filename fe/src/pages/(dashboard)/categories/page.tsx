@@ -299,7 +299,17 @@
 
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Input, InputRef, message, Popconfirm, Space, Spin, Table, TableColumnsType } from "antd";
+import {
+  Button,
+  Input,
+  InputRef,
+  message,
+  Popconfirm,
+  Space,
+  Spin,
+  Table,
+  TableColumnsType,
+} from "antd";
 import type { FilterDropdownProps, ColumnsType } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
@@ -314,7 +324,9 @@ const CategoriesAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<string>("");
   const searchInput = useRef<InputRef>(null);
   const [searchText, setSearchText] = useState<string>("");
-  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(new Map());
+  const [categoriesMap, setCategoriesMap] = useState<Map<string, string>>(
+    new Map()
+  );
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
   const queryClient = useQueryClient();
 
@@ -337,10 +349,11 @@ const CategoriesAdmin: React.FC = () => {
     },
   });
 
-  const dataSource = data?.data.map((category: ICategories) => ({
-    key: category.id,
-    ...category,
-  })) || [];
+  const dataSource =
+    data?.data.map((category: ICategories) => ({
+      key: category.id,
+      ...category,
+    })) || [];
 
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
@@ -461,6 +474,7 @@ const CategoriesAdmin: React.FC = () => {
       width: "10%",
       key: "id",
       dataIndex: "id",
+      // render: (text: string) => console.log(text),
     },
     {
       title: "Tên danh mục",
@@ -508,7 +522,8 @@ const CategoriesAdmin: React.FC = () => {
       dataIndex: "created_at",
       sorter: (a: any, b: any) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      render: (text: string) => (text ? new Date(text).toLocaleDateString() : ""),
+      render: (text: string) =>
+        text ? new Date(text).toLocaleDateString() : "",
     },
     {
       title: "Quản trị",
@@ -542,7 +557,7 @@ const CategoriesAdmin: React.FC = () => {
         setExpandedRowKeys([...expandedRowKeys, record.id]);
       }
     } else {
-      setExpandedRowKeys(expandedRowKeys.filter(key => key !== record.id));
+      setExpandedRowKeys(expandedRowKeys.filter((key) => key !== record.id));
     }
   };
 
@@ -584,13 +599,12 @@ const CategoriesAdmin: React.FC = () => {
         </div>
       </div>
       <Table
-      columns={columns}
-      dataSource={dataSource}
-      rowKey="id"
-      pagination={{ pageSize: 5 }}
-      loading={isLoading}
-    />
-
+        columns={columns}
+        dataSource={dataSource}
+        rowKey="id"
+        pagination={{ pageSize: 5 }}
+        loading={isLoading}
+      />
     </main>
   );
 };
