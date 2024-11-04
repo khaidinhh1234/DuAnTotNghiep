@@ -1,9 +1,10 @@
 import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import View from "../../_component/View";
-const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
+import instanceClient from "@/configs/client";
+const ProductsList = ({ products, Wishlist, isPending, data, onPage }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
@@ -36,13 +37,29 @@ const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
   const onChange = (page: number, pageSize: number) => {
     setCurrentPage(page);
     setPageSize(pageSize);
-    console.log(`Page: ${page}, PageSize: ${pageSize}`);
+    onPage(page);
+    // console.log(`Page: ${page}, PageSize: ${pageSize}`);
     // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
   };
+  const { tenDanhMucCha, tenDanhMucCon } = useParams();
+  const [_, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+        try {
+            const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
+            if (response.data.status) {
+                setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy sản phẩm:", error);
+        }
+    };
 
+    fetchProducts();
+}, [tenDanhMucCha, tenDanhMucCon]);
   return (
     <>
-      <div className="flex justify-between sm:items-center items-start mb-4">
+      <div className="flex justify-between sm:items-center items-start mb-4  overflow-hidden">
         <div className="sm:flex items-center mt-2">
           <div className="mx-5">
             <p className="text-gray-700">{products?.length ?? 0} sản phẩm</p>
@@ -102,7 +119,7 @@ const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
                       </Link>
                       <View id={product?.duong_dan} ID={product?.id} />
                     </div>
-                    <Link to={`/product-detail/${product.id}`}>
+                    <Link to={`/product-detail/${product?.duong_dan}`}>
                       <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
                         <h5 className=" text-base truncate w-60 font-medium">
                           {product?.ten_san_pham}
@@ -177,12 +194,15 @@ const ProductsList = ({ products, Wishlist, isPending, data }: any) => {
           {/* <!-- Pagination --> */}
           <div className="flex justify-end mt-10">
             <Pagination
-              total={data?.total ?? 0}
+              total={data?.data?.total ?? 0}
               current={currentPage}
               pageSize={pageSize}
               itemRender={itemRender}
               onChange={onChange}
             />
+            {/* {hasNextPage && (
+        <button onClick={() => fetchNextPage()}>Tải thêm đơn hàng</button>
+      )} */}
           </div>
         </div>
       </section>

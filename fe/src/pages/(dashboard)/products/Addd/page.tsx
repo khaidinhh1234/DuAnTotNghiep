@@ -342,10 +342,13 @@ const AddProducts: React.FC = () => {
       name="danh_muc_id"
       rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
     >
-   <CategorySelect 
-  categoriesData={categoriesData}
-  onChange={(value) => form.setFieldsValue({ danh_muc_id: value })}
-/>
+       <CategorySelect 
+      categoriesData={categoriesData}
+      onChange={(value) => {
+        console.log('Category selected:', value);
+        form.setFieldsValue({ danh_muc_id: value });
+      }}
+    />
 
     </Form.Item>
         </div>{" "}

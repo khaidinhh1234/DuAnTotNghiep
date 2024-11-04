@@ -9,7 +9,7 @@ interface Article {
   [x: string]: any;
   id: number;
   anh_tin_tuc: string;
-  
+
   created_at: string;
   danh_muc_tin_tuc: {
     ten_danh_muc_tin_tuc: string;
@@ -27,7 +27,7 @@ interface Data {
 const NewDetail = () => {
   const { duong_dan } = useParams();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null); 
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["baiviet", duong_dan],
     queryFn: async () => {
@@ -48,7 +48,7 @@ const NewDetail = () => {
   };
 
   const handleArticleClick = (article: Article) => {
-    setSelectedArticle(article); 
+    setSelectedArticle(article);
     refetch();
 
     // Cuộn lên phần bài viết mới nhất
@@ -56,7 +56,11 @@ const NewDetail = () => {
   };
 
   const noi_dung = selectedArticle ? selectedArticle.noi_dung : data?.baiVietMoiNhatCuaDanhMuc?.noi_dung || "";
-
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('vi-VN', options).format(date);
+  };
   return (
     <>
       <div className="flex">
@@ -79,10 +83,10 @@ const NewDetail = () => {
                     {isExpanded ? 'Thu gọn' : 'Xem thêm'}
                   </button>
                 )} <br />
-                <span className="text-sm text-gray-400">Ngày tạo: {selectedArticle.created_at}</span>
+                <span className="text-sm text-gray-400">Ngày tạo: {formatDate(selectedArticle.created_at)}</span>
               </div>
             </div>
-          ) : data?.baiVietMoiNhatCuaDanhMuc ? ( 
+          ) : data?.baiVietMoiNhatCuaDanhMuc ? (
             <div key={data.baiVietMoiNhatCuaDanhMuc.id}>
               <img
                 src={data.baiVietMoiNhatCuaDanhMuc.anh_tin_tuc}
@@ -100,7 +104,7 @@ const NewDetail = () => {
                     {isExpanded ? 'Thu gọn' : 'Xem thêm'}
                   </button>
                 )} <br />
-                <span className="text-sm text-gray-400">Ngày tạo: {data.baiVietMoiNhatCuaDanhMuc.created_at}</span>
+                <span className="text-sm text-gray-400">Ngày tạo: {formatDate(data.baiVietMoiNhatCuaDanhMuc.created_at)}</span>
               </div>
             </div>
           ) : (
@@ -118,12 +122,12 @@ const NewDetail = () => {
                   <img
                     src={article.anh_tin_tuc}
                     alt="Article Thumbnail"
-                    className="w-20 h-20 rounded-lg object-cover cursor-pointer"
+                    className="w-36 h-18 rounded-lg object-cover cursor-pointer"
                   />
                   <div>
-                    <span className="text-xs text-gray-400">{article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span>
-                    <h3 className="text-lg font-medium">{article.tieu_de}</h3>
-                    <span className="text-xs text-gray-400">{article.created_at}</span>
+                    <span className="text-xs text-gray-400 ">{article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span>
+                    <h3 className="text-lg font-medium hover:text-red-500">{article.tieu_de}</h3>
+                    <span className="text-xs text-gray-400">{formatDate(article.created_at)}</span>
                   </div>
                 </div>
               ))
@@ -136,13 +140,13 @@ const NewDetail = () => {
       </div>
       <div className="mt-10 pl-20 pb-20">
         <h2 className="text-xl font-semibold mb-4">Bài Viết Liên Quan</h2>
-        {Array.isArray(data?.baiVietKhacCuaDanhMuc.data) && data.baiVietKhacCuaDanhMuc.data.length > 0 ? (
+        {Array.isArray(data?.baiVietKhacCuaDanhMuc) && data.baiVietKhacCuaDanhMuc.length > 0 ? (
           <Swiper
             spaceBetween={20}
             slidesPerView={5}
             className="related-articles-slider"
           >
-            {data.baiVietKhacCuaDanhMuc.data.map((article: any) => (
+            {data.baiVietKhacCuaDanhMuc.map((article: Article) => (
               <SwiperSlide key={article.id}>
                 <div className="p-4 bg-white rounded-lg shadow-md" onClick={() => handleArticleClick(article)}>
                   <img
@@ -150,17 +154,18 @@ const NewDetail = () => {
                     alt="Related Article Thumbnail"
                     className="w-full h-[250px] rounded-lg object-cover mb-3 cursor-pointer"
                   />
-                  <h3 className="text-lg font-medium">{article.tieu_de}</h3>
-                  <span className="text-xs text-gray-400">{article.created_at}</span>
+                  <span className="text-xs text-gray-400 text-left block">{article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span>
+                  <h3 className="text-lg font-medium hover:text-red-500 text-left">{article.tieu_de}</h3>
+                  <span className="text-xs text-gray-400 text-left block">{formatDate(article.created_at)}</span>
                 </div>
               </SwiperSlide>
             ))}
-
           </Swiper>
         ) : (
           <p>Chưa có bài viết nào.</p>
         )}
       </div>
+
     </>
   );
 };

@@ -283,24 +283,24 @@ class DonHangController extends Controller
     public function layThongTinDon()
     {
         try {
-            //
+            // Kiểm tra số lượng đơn hàng theo trạng thái
             $donChoXacNhan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->count();
             $tongTienDonChoXacNhan = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXH)->sum('tong_tien_don_hang') ?? 0;
 
-            //
+            // Kiểm tra số lượng đơn hàng theo trạng thái thanh toán
             $donChoThanhToan = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->count();
             $tongTienChuaTT = (int) DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_CTT)->sum('tong_tien_don_hang') ?? 0;
 
-            //
+            // Kiểm tra các trạng thái đơn hàng khác
             $donChuaGiaoHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->count();
             $tongTienDonChuaGiao = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_DXL)->sum('tong_tien_don_hang') ?? 0;
 
-            //
             $donHoanHang = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
             $tongTienHoan = (int) DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)->sum('tong_tien_don_hang') ?? 0;
-            //
+
             $daThanhToan = DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_DTT)->count();
             $tongTienThanhToan = (int) DonHang::where('trang_thai_thanh_toan', DonHang::TTTT_DTT)->sum('tong_tien_don_hang') ?? 0;
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -334,6 +334,8 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+
+
     public function hoanHang()
     {
         try {
@@ -412,6 +414,24 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+    public function danhSachYeuCauRutTien()
+    {
+        try {
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien','nganHang')->get();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => $yeuCauRutTiens
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách yêu cầu rút tiền.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function xacNhanYeuCauRutTien(Request $request, $id)
     {
         try {
@@ -420,7 +440,7 @@ class DonHangController extends Controller
             ]);
 
             DB::beginTransaction();
-            $yeuCauRutTien = YeuCauRutTien::findOrFail($id);
+            $yeuCauRutTien = YeuCauRutTien::with('nganHang')->findOrFail($id);
 
             if ($validated['trang_thai'] === 'da_rut') {
                 $yeuCauRutTien->update(['trang_thai' => 'da_rut']);
@@ -433,7 +453,7 @@ class DonHangController extends Controller
                     'mo_ta' => 'Rút tiền từ ví',
                 ]);
                 $thongbao = ThongBao::create([
-                    'user_id' => $yeuCauRutTien->user_id,
+                    'user_id' => $yeuCauRutTien->viTien->user_id,
                     'tieu_de' => 'Yêu cầu rút tiền của bạn đã được xác nhận',
                     'noi_dung' => 'Yêu cầu rút tiền từ ví của bạn đã được xác nhận. Vui lòng kiểm tra lại tài khoản ngân hàng của bạn.',
                     'loai' => 'Yêu cầu rút tiền',
@@ -456,7 +476,7 @@ class DonHangController extends Controller
                 ]);
                 $yeuCauRutTien->viTien->increment('so_du', $yeuCauRutTien->so_tien);
                 $thongbao = ThongBao::create([
-                    'user_id' => $yeuCauRutTien->user_id,
+                    'user_id' => $yeuCauRutTien->viTien->user_id,
                     'tieu_de' => 'Yêu cầu rút tiền của bạn đã bị từ chối',
                     'noi_dung' => 'Yêu cầu rút tiền từ ví của bạn đã bị từ chối. Vui lòng kiểm tra lại thông tin và thử lại.',
                     'loai' => 'Yêu cầu rút tiền',

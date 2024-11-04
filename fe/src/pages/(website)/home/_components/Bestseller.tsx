@@ -1,16 +1,11 @@
 // import { sanPham2 } from "@/assets/img";
 
+import instanceClient from "@/configs/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { message } from "antd";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
-import { useState } from "react";
-import instanceClient from "@/configs/client";
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import { message } from "antd";
 
 const Bestseller = ({ products }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);

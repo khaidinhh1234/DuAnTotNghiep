@@ -4,104 +4,15 @@ import { useState } from "react";
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
 
-  //   const { data } = useQuery({
-  //     queryKey: ["ORDER_DETAIL", record.id],
-  //     queryFn: async () => {
-  //       const response = await instance.get(`/donhang/${record.id}`);
-  //       return response.data;
-  //     },
-  //   });
-  // const { data: vanchuyen, isLoading } = useQuery({
-  //   queryKey: ["vanchuyen"],
-  //   queryFn: async () => {
-  //     const response = await instance.get("/vanchuyen");
-  //     return response.data;
-  //   },
-  // });
-  // const { data: danhgia  } = useQuery({
-  //   queryKey: ["danhgiasanpham"],
-  //   queryFn: async () => {
-  //     const response = await instance.get(`/danhsachdanhgia`);
-  //     return response.data;
-  //   },
-  // });
-  //   const mutation = useMutation({
-  //     mutationFn: async ({
-  //       id,
-  //       phan_hoi,
-  //     }: {
-  //       id: number | string;
-  //       phan_hoi: string;
-  //     }) => {
-  //       const response = await instance.post(`/danhsachdanhgia/${id}`, {
-  //         phan_hoi,
-  //       });
-  //       return response.data;
-  //     },
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ["ORDER_DETAIL"] });
-  //     },
-  //     onError: (error) => {
-  //       console.error("Error:", error);
-  //     },
-  //   });
-  //   const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
-  //     return {
-  //       ...item,
-  //     };
-  //   });
-  //   // console.log(record, "toan");
-  //   // const donhang = data?.data;
-  //   const thongtin = data?.data.thong_tin;
-
-  // console.log("data", products);
-  // console.log(vanchuyen, "vanchuyen");
   const handleCancel = () => {
     setOpen(false);
   };
-
-  //   const { mutate } = useMutation({
-  //     mutationFn: async ({ id, action }: any) => {
-  //       // console.log("data", id, action);
-
-  //       try {
-  //         const response = await instance.put("/donhang/trang-thai-don-hang", {
-  //           trang_thai_don_hang: action,
-  //           id: [id],
-  //         });
-  //         const error = response.data.message;
-
-  //         if (error === "Cập nhật trạng thái đơn hàng thành công") {
-  //           message.open({
-  //             type: "success",
-  //             content: error,
-  //           });
-  //         } else {
-  //           message.open({
-  //             type: "success",
-  //             content: error,
-  //           });
-  //         }
-  //         return response.data;
-  //       } catch (error) {
-  //         message.open({
-  //           type: "error",
-  //           content: "Không thể cập nhật trạng thái đơn hàng!",
-  //         });
-  //       }
-  //     },
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({
-  //         queryKey: ["ORDERS"],
-  //       });
-  //     },
-  //   });
 
   const ngayKhongThoiGian = record?.ngay_bat_dau.split(" ")[0];
   const ngayketthucThoiGian = record?.ngay_ket_thuc.split(" ")[0];
   const ngay_bat_dau_suu_tam = record?.ngay_bat_dau_suu_tam.split(" ")[0];
 
-  console.log(record);
+  // console.log(record);
   return (
     <div>
       {" "}

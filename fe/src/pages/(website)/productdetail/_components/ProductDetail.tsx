@@ -1,14 +1,8 @@
-import instance from "@/configs/client";
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
@@ -23,8 +17,13 @@ import SizeGuideModal from "./SizeGuide";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { debounce } from "lodash";
-import RelatedProducts from "./RelatedProducts";
+import "swiper/css";
+import "swiper/css/free-mode";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
 import { Swiper, SwiperSlide } from "swiper/react";
+import Footer from "./Footer";
+import RelatedProducts from "./RelatedProducts";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -100,11 +99,6 @@ interface ProductData {
 //   gia_goc: string;
 // }
 
-const fetchProduct = async (id: string) => {
-  const response = await instanceClient.get(`/chi-tiet-san-pham/${id}`);
-  return response.data.data;
-};
-
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -119,16 +113,16 @@ const formatCurrency = (amount: number) => {
 //   return response.data;
 // };
 const ProductDetail: React.FC = () => {
-  const swiperRef = useRef<any | null>(null);
   const { slug } = useParams();
 
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [thumbsSwiper, setThumbsSwiper] = useState<any | null>(null);
+  console.log(thumbsSwiper);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
-  const [isHeart, setIsHeart] = useState(false);
+
   const [activeTab, setActiveTab] = useState("descriptions");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -158,18 +152,16 @@ const ProductDetail: React.FC = () => {
   //   }
   // }, []);
 
-  useEffect(() => {
-    if (swiperRef.current) {
-      swiperRef.current.swiper.update();
-    }
-  }, []);
   const queryClient = useQueryClient();
 
   const { data: product, isLoading } = useQuery<ProductData>({
     queryKey: ["product", slug],
-    queryFn: () => fetchProduct(slug!),
+    queryFn: async () => {
+      const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`);
+      return response.data.data;
+    },
   });
-
+  console.log(product);
   // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
   //   queryKey: ["relatedProducts", id],
   //   queryFn: () => fetchRelatedProducts(Number(id)),
@@ -196,12 +188,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                  ...review,
-                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                  danh_gia_huu_ich_count: variables.isLiked
-                    ? review.danh_gia_huu_ich_count - 1
-                    : review.danh_gia_huu_ich_count + 1,
-                }
+                ...review,
+                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                danh_gia_huu_ich_count: variables.isLiked
+                  ? review.danh_gia_huu_ich_count - 1
+                  : review.danh_gia_huu_ich_count + 1,
+              }
               : review
           ),
         };
@@ -212,50 +204,48 @@ const ProductDetail: React.FC = () => {
     },
   });
   // add to cart
+  const MAX_QUANTITY = 10;
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
       return;
     }
 
-    // Nếu người dùng chưa chọn biến thể, lấy biến thể đầu tiên
     const firstVariant = product?.bien_the_san_pham[0];
     const variantIdToUse = selectedVariantId || firstVariant?.id;
 
-    // Kiểm tra nếu không có biến thể nào
     if (!variantIdToUse) {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
 
-    console.log("Thêm vào giỏ hàng với ID biến thể:", variantIdToUse);
-
-    // Kiểm tra nếu không có access_token thì lưu vào localStorage
     if (!access_token) {
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-      // Kiểm tra xem sản phẩm đã tồn tại trong giỏ chưa
       const existingItem = cart.find(
         (item: { variantId: number; quantity: number }) =>
           item.variantId === variantIdToUse
       );
+
+      const currentQuantity = existingItem ? existingItem.quantity : 0;
+
+      if (currentQuantity + quantity > MAX_QUANTITY) {
+        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
+        return;
+      }
+
       if (existingItem) {
-        // Nếu sản phẩm đã tồn tại, tăng số lượng
         existingItem.quantity += quantity;
       } else {
-        // Nếu sản phẩm chưa tồn tại, thêm sản phẩm mới vào giỏ
         cart.push({ variantId: variantIdToUse, quantity });
       }
 
-      // Cập nhật giỏ hàng trong localStorage
       localStorage.setItem("cart", JSON.stringify(cart));
       toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
     } else {
-      // Nếu có access_token (người dùng đã đăng nhập), gọi API để thêm sản phẩm vào giỏ trên server
       addToCart(variantIdToUse);
     }
   };
-
   // useMutation thêm sản phẩm vào giỏ hàng trên server khi có access_token
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
@@ -271,12 +261,12 @@ const ProductDetail: React.FC = () => {
           },
         }
       );
-      console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
+      // console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
-      if (data.status) {
+      // console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
+      if (data?.status) {
         toast.success(data.message);
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
@@ -287,7 +277,7 @@ const ProductDetail: React.FC = () => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error); // Kiểm tra lỗi
       toast.error(
         error.response?.data?.message ||
-          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
@@ -463,7 +453,6 @@ const ProductDetail: React.FC = () => {
               {/* <div className="bg-[#FAFAFB] xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl shadow shadow-zinc-300/60"> */}
               <div className="mt-8 xl:w-[555px] xl:h-[535px] lg:w-[455px] lg:h-[455px] md:h-[555px] md:w-[655px] w-[405px] h-[325px] inline-flex justify-center items-center mb-5 rounded-2xl">
                 <Swiper
-                  ref={swiperRef}
                   style={
                     {
                       "--swiper-navigation-color": "#000000",
@@ -509,17 +498,17 @@ const ProductDetail: React.FC = () => {
               </div>
               <div className=" mt-2 w-[500px] mx-auto">
                 <Swiper
-                  ref={swiperRef}
-                  onSwiper={(swiperInstance) =>
-                    setThumbsSwiper(swiperInstance as any)
-                  }
+                  // onSwiper={(swiperInstance) => {
+                  //   return setThumbsSwiper(swiperInstance);
+                  // }}
+                  thumbs={{ swiper: thumbsSwiper }}
                   loop={true}
                   spaceBetween={31}
                   slidesPerView={4}
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                  className="mySwiper1"
+                  // className="mySwiper1"
                 >
                   {currentImages?.map((image, index) => (
                     <SwiperSlide key={`thumb-${index}`}>
@@ -552,11 +541,10 @@ const ProductDetail: React.FC = () => {
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${
-                          selectedVariant?.so_luong_bien_the > 0
-                            ? "bg-[#3CD139]/10 text-[#3CD139]"
-                            : "bg-red-500 text-white"
-                        }`}
+                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                          ? "bg-[#3CD139]/10 text-[#3CD139]"
+                          : "bg-red-500 text-white"
+                          }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -683,33 +671,41 @@ const ProductDetail: React.FC = () => {
               </div>
 
               <div className="mt-12 flex gap-5">
-                <div className="border rounded-lg border-black xl:w-32 xl:h-14 ld:w-24 lg:h-10 md:w-32 md:h-14 w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
+                <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                   <button
-                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    onClick={() =>
+                      setQuantity((prev) => Math.max(1, prev - 1))
+                    }
                     className="py-2 pr-2"
-                    disabled={quantity <= 1}
                   >
                     <i className="fa-solid fa-minus" />
                   </button>
-
                   <input
                     type="number"
+                    id="numberInput"
+                    defaultValue={1}
+                    min={1}
+                    max={100}
                     value={quantity}
-                    readOnly
                     onChange={(e) =>
                       setQuantity(Math.max(1, parseInt(e.target.value, 10)))
                     }
-                    className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center"
+                    className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                   />
-
                   <button
-                    onClick={() => setQuantity((prev) => prev + 1)}
+                    onClick={() => {
+                      if (quantity >= MAX_QUANTITY) {
+                        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
+                      } else {
+                        setQuantity((prev) => prev + 1);
+                      }
+                    }}
                     className="py-2 pl-2"
+                    disabled={quantity >= MAX_QUANTITY}
                   >
                     <i className="fa-solid fa-plus" />
                   </button>
                 </div>
-
                 <button
                   onClick={handleAddToCart}
                   className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
@@ -755,11 +751,10 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
-                isDescriptionExpanded
-                  ? "h-auto"
-                  : "max-h-[500px] overflow-hidden"
-              }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${isDescriptionExpanded
+                ? "h-auto"
+                : "max-h-[500px] overflow-hidden"
+                }`}
             >
               <div
                 dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
@@ -1033,39 +1028,9 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div> */}
-      {product && <RelatedProducts productId={product?.id} />}
+      <RelatedProducts productId={product?.id ?? 0} />
 
-      <section>
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 mt-12 mb-24">
-            <div className="mx-auto">
-              <i className="fa-regular fa-box text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">
-                Miễn phí giao hàng
-              </h3>
-              <p>Với đơn hàng trên 599.000đ.</p>
-            </div>
-            <div className="mx-auto">
-              <i className="fa-regular fa-circle-dollar text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">Đảm bảo tiền</h3>
-              <p>Trong vòng 30 ngày để đổi trả</p>
-            </div>
-            <div className="mx-auto">
-              <i className="fa-regular fa-headphones text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">Hỗ trợ trực tuyến</h3>
-              <p>24 giờ một ngày, 7 ngày một tuần</p>
-            </div>
-            <div className="mx-auto">
-              <i className="fa-light fa-credit-card text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">
-                Thanh toán linh hoạt
-              </h3>
-              <p>Thanh toán bằng nhiều thẻ tín dụng</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <Footer />
       {previewImage && (
         <Image
           style={{ display: "none" }}

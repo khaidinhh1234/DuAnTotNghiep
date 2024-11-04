@@ -130,11 +130,11 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   });
   // console.log("data", data?.data?.data);
   // danh mục
-  const { data: danhmuc } = useQuery({
-    queryKey: ["DANHMUCCLIENT"],
+  const { data: locsanpham } = useQuery({
+    queryKey: ["LOCSLIBAR"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get("load-danh-muc");
+        const response = await instanceClient.get("lay-dm-ms-kt");
         if (response.data.status_code !== 200) {
           throw new Error("Error fetching product");
         }
@@ -144,44 +144,21 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  // mắc  sắc
-  const { data: mausac } = useQuery({
-    queryKey: ["MAUSACCLIENT"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("mau-sac");
-        if (response.data.status_code !== 200) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
-  const mau_sac = mausac?.mauSac;
-  const { data: size } = useQuery({
-    queryKey: ["KICHTHUOCCLIENT"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("kich-thuoc");
 
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
-  // console.log(mausac);
+  const mau_sac = locsanpham?.mauSac;
 
-  const sizes = size?.kichThuoc;
+  const sizes = locsanpham?.kichThuoc;
   // console.log(sizes);
   // lọc
+  const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async () => {
       try {
-        const response = await instanceClient.post("loc-san-pham", datas);
+        const response = await instanceClient.post(
+          `loc-san-pham?page=${page}`,
+          datas
+        );
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
@@ -194,7 +171,10 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       queryClient.setQueryData(["PRODUCTSLOC"], data);
     },
   });
-  const danh_muc = danhmuc?.data;
+  const onPage = (page: number) => {
+    setPage(page);
+  };
+  const danh_muc = locsanpham?.danhMucCha;
   // console.log(danh_muc);
   const products = data?.data?.data;
   // console.log(products);
@@ -207,8 +187,8 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ) {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price]);
-
+  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
+  
   return (
     <div>
       {" "}
@@ -219,7 +199,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
             </button>
-            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0">
+            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0    sticky top-20 ">
               {/* <!-- Product Categories --> */}
               <div className="mb-5">
                 <div
@@ -299,18 +279,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                         </div>
                       ))}
                     </>
-                    {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Nữ
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Trẻ em
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div> */}
                   </div>
                 ) : null}
               </div>
@@ -508,6 +476,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             <div className="sm:w-4/5 w-3/4 px-5">
               <ProductsList
                 data={data}
+                onPage={onPage}
                 products={products}
                 Wishlist={handleWishlist}
                 isPending={isPending}

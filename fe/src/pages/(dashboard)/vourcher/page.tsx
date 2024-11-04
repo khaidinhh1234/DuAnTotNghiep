@@ -53,7 +53,11 @@ const VoucherAdmin: React.FC = () => {
       return response.data;
     },
   });
-  // console.log(voucher);
+  const vouchers = voucher?.data?.map((voucher: any, index: number) => ({
+    index: index + 1,
+    ...voucher,
+  }));
+
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async ({ record, action }: any) => {
@@ -103,8 +107,8 @@ const VoucherAdmin: React.FC = () => {
 
   // Cập nhật dữ liệu khi nhận được từ API
   useEffect(() => {
-    if (voucher?.data) {
-      setFilteredData(voucher?.data);
+    if (vouchers) {
+      setFilteredData(vouchers);
     }
   }, [voucher]);
 
@@ -114,7 +118,7 @@ const VoucherAdmin: React.FC = () => {
     setSearchText(value);
     // console.log(value);
     if (value) {
-      const filtered = voucher?.data?.filter(
+      const filtered = vouchers?.filter(
         (item: PromotionType) =>
           // Tìm kiếm trong các trường mong muốn
           item.mo_ta.toLowerCase().includes((value as string).toLowerCase()) ||
@@ -131,7 +135,7 @@ const VoucherAdmin: React.FC = () => {
 
       setFilteredData(filtered);
     } else {
-      setFilteredData(voucher?.data);
+      setFilteredData(vouchers);
     }
   };
 
@@ -236,11 +240,13 @@ const VoucherAdmin: React.FC = () => {
   const columns: TableColumnsType<PromotionType> = [
     {
       title: "STT",
-      dataIndex: "key",
-      key: "key",
+
+      // key: "key",
       width: "5%",
       className: "text-center",
-      render: (index) => index + 1,
+      render: (index) => (
+        <span className="text-gray-600 text-md">{index.index}</span>
+      ),
     },
     {
       title: "Khuyến Mãi",
@@ -250,50 +256,6 @@ const VoucherAdmin: React.FC = () => {
       className: "text-center",
       render: (record) => <Detail record={record} />,
     },
-    // {
-    //   title: "Khuyến mãi",
-    //   key: "ma_code",
-    //   width: "18%",
-    //   ...getColumnSearchProps("mo_ta"), // Sử dụng tính năng tìm kiếm cho "mo_ta"
-    //   onFilter: (value: boolean | React.Key, record: PromotionType) =>
-    //     record.mo_ta.toLowerCase().includes(String(value).toLowerCase()) ||
-    //     record.ma_code.toLowerCase().includes(String(value).toLowerCase()),
-    //   sorter: (a: any, b: any) => a.ma_code.localeCompare(b.ma_code),
-    //   render: (record) => (
-    //     <div>
-    //       <h5>{record.mo_ta}</h5>
-
-    //       <span className="text-gray-600 text-sm">Mã: {record.ma_code}</span>
-    //     </div>
-    //   ),
-    // },
-    // {
-    //   title: "Thời gian thu thập - Thời gian quy đổi",
-    //   key: "ngay_bat_dau",
-    //   width: "20%",
-    //   ...getColumnSearchProps("ngay_bat_dau"),
-    //   onFilter: (value: boolean | React.Key, record: any) =>
-    //     new Date(record.ngay_bat_dau)
-    //       .toLocaleDateString("vi-VN")
-    //       .includes(String(value)) ||
-    //     new Date(record.ngay_ket_thuc)
-    //       .toLocaleDateString("vi-VN")
-    //       .includes(String(value)), // Tìm kiếm trong cả ngay_bat_dau và ngay_ket_thuc
-    //   sorter: (a: any, b: any) =>
-    //     new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(), // Sắp xếp theo thời gian
-    //   render: (record) => (
-    //     <>
-    //       <span>
-    //         Từ: {new Date(record.ngay_bat_dau).toLocaleDateString("vi-VN")}
-    //       </span>{" "}
-    //       <br />
-    //       Đến:{" "}
-    //       <span>
-    //         {new Date(record.ngay_ket_thuc).toLocaleDateString("vi-VN")}
-    //       </span>
-    //     </>
-    //   ),
-    // },
 
     {
       title: "Số lượng",
@@ -316,95 +278,6 @@ const VoucherAdmin: React.FC = () => {
       ),
     },
 
-    // {
-    //   title: "Loại khuyến mãi",
-    //   // dataIndex: "loai_khuyen_mai",
-    //   key: "loai",
-    //   width: "15%",
-    //   sorter: (a: any, b: any) => a.loai.localeCompare(b.loai),
-    //   render: (record) => (
-    //     <Tag
-    //       color={record.loai === "phần trăm" ? "#1cb5e0" : "#155799"}
-    //       className="font-semibold px-2  rounded-lg"
-    //     >
-    //       {record.loai === "phan_tram" ? "phần trăm" : "tiền"}
-    //     </Tag>
-    //   ),
-    // },
-    // {
-    //   title: "Hạng thành viên",
-    //   key: "hang_thanh_viens",
-    //   ...getColumnSearchProps("hang_thanh_viens"),
-    //   onFilter: (value: boolean | React.Key, record: any) =>
-    //     record.hang_thanh_viens
-    //       .map((hang: any) =>
-    //         hang.ten_hang_thanh_vien === "Vàng"
-    //           ? "Vàng"
-    //           : hang.ten_hang_thanh_vien === "Bạc"
-    //             ? "Bạc"
-    //             : "Đồng"
-    //       )
-    //       .join(", ")
-    //       .includes(String(value)), // Tìm kiếm trong cả hang_thanh_viens
-    //   sorter: (a: any, b: any) =>
-    //     a.hang_thanh_viens.length - b.hang_thanh_viens.length,
-    //   width: "15%",
-    //   render: (record) => (
-    //     console.log(record),
-    //     (
-    //       <>
-    //         <span className="text-gray-600 text-md">
-    //           {record.hang_thanh_viens
-    //             .map((hang: any) =>
-    //               hang.ten_hang_thanh_vien === "Vàng"
-    //                 ? "Vàng"
-    //                 : hang.ten_hang_thanh_vien === "Bạc"
-    //                   ? "Bạc"
-    //                   : "Đồng"
-    //             )
-    //             .join(", ")}
-    //         </span>
-    //       </>
-    //     )
-    //   ),
-    // },
-    // {
-    //   title: "Chi tiết khuyến mãi",
-
-    //   key: " chi_tieu_toi_thieu",
-    //   width: "25%",
-    //   ...getColumnSearchProps("chi_tieu_toi_thieu"),
-    //   onFilter: (value: boolean | React.Key, record: any) =>
-    //     record.chi_tieu_toi_thieu
-    //       .map((chi_tieu_toi_thieu: any) =>
-    //         chi_tieu_toi_thieu === 0
-    //           ? "Áp dụng cho tất cả sản phẩm"
-    //           : "   Giá trị đơn hàng tối thiểu  " +
-    //             chi_tieu_toi_thieu.toLocaleString() +
-    //             " VNĐ"
-    //       )
-    //       .join(", ")
-    //       .includes(String(value)), // Tìm kiếm trong cả chi_tieu_toi_thieu
-    //   sorter: (a: any, b: any) => a.chi_tieu_toi_thieu - b.chi_tieu_toi_thieu,
-
-    //   render: (record) => (
-    //     // console.log(record),
-    //     <div>
-    //       <h5>
-    //         Mức giảm giá: {record.giam_gia.toLocaleString()}{" "}
-    //         {record.loai === "tien_mat" ? "VNĐ" : "%"}
-    //         <br />
-    //         {record.chi_tieu_toi_thieu === 0
-    //           ? "Áp dụng cho tất cả sản phẩm"
-    //           : "   Giá trị đơn hàng tối thiểu  " +
-    //             record.chi_tieu_toi_thieu.toLocaleString() +
-    //             " VNĐ"}
-    //         {/* :{record.dieu_kien_ap_dung.toLocaleString("vn-VN")}
-    //         VND */}
-    //       </h5>
-    //     </div>
-    //   ),
-    // },
     {
       title: "Trạng thái",
       dataIndex: "trang_thai",

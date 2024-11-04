@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { useState } from "react";
 import VoucherDetail from "./_component/vourcherDeatil";
+import Method from "../_component/Method";
 export interface Voucher {
   id: number;
   ma_code: string;
@@ -27,10 +28,6 @@ export interface VoucherResponse {
   status: number;
   message: string;
 }
-const getVouchers = async () => {
-  const response = await instanceClient.get("/ma-khuyen-mai");
-  return response.data;
-};
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -45,8 +42,12 @@ const Voucher = () => {
 
   const { data: vouchersData } = useQuery({
     queryKey: ["vouchers"],
-    queryFn: getVouchers,
+    queryFn: async () => {
+      const response = await instanceClient.get("/ma-khuyen-mai");
+      return response.data;
+    },
   });
+  // console.log("vouchersData", vouchersData);
   const [savedVouchers, setSavedVouchers] = useState<string[]>(() => {
     return (
       vouchersData?.data
@@ -54,6 +55,7 @@ const Voucher = () => {
         .map((v: Voucher) => v.ma_code) || []
     );
   });
+  // console.log("savedVouchers", savedVouchers);
   const saveMutation = useMutation({
     mutationFn: (maCode: string) => {
       return instanceClient.post(`/thu-thap-ma-khuyen-mai/${maCode}`);
@@ -97,8 +99,8 @@ const Voucher = () => {
           <div className="space-y-8 px-4">
             <h2 className="text-3xl font-bold text-black-500">Tất cả ưu đãi</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vouchersData && vouchersData.length ? (
-                vouchersData?.data.map((voucher: Voucher) => (
+              {vouchersData?.data && vouchersData.data.length > 0 ? (
+                vouchersData.data.map((voucher: Voucher) => (
                   <div
                     key={voucher.id}
                     className="flex items-center bg-white border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative"
@@ -189,6 +191,7 @@ const Voucher = () => {
             : false
         }
       />
+      <Method />
     </div>
   );
 };

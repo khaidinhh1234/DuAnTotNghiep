@@ -125,17 +125,13 @@
 
 <body>
     <div class="email-container">
-        <div class="header">
-            <img src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1726411972/Screenshot_2024-09-15_215232_d3dt3j.png"
-                alt="Company Logo">
-        </div>
-        <div class="content">
-            <h2>Xin chào, {{ $name }}</h2>
-            <p>Email: {{ $email }}</p>
-            <p>Cảm ơn bạn đã liên hệ với chúng tôi từ Glow Clothing. Chúng tôi đã nhận được yêu cầu của bạn và sẽ phản
-                hồi lại trong thời gian sớm nhất.</p>
 
+        <div class="content">
             <div class="container">
+                <div class="header">
+                    <img src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1726411972/Screenshot_2024-09-15_215232_d3dt3j.png"
+                        alt="Company Logo" style="mix-blend-mode: multiply">
+                </div>
                 <h1>Xin chào {{ $name }},</h1>
                 <p>Liên hệ của bạn: {{ $email }}</p>
 

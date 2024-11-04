@@ -7,7 +7,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-console.log("Fallback banner:", bannervoucher);
+// console.log("Fallback banner:", bannervoucher);
 
 interface Promotion {
   id: number;

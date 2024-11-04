@@ -4,6 +4,7 @@ export interface INew {
     danh_muc_tin_tuc_id: number | string
     tieu_de: string,
     noi_dung: string,
+    anh_tin_tuc: string
     trang_thai: boolean,
     created_at: Date,
     updated_at: Date,

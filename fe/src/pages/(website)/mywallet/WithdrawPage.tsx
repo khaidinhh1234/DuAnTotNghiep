@@ -1,44 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { toast } from 'react-toastify';
 import instanceClient from '@/configs/client';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface WithdrawPageProps {
   bankData: {
-    bankName: string;
-    accountNumber: string;
-    logo?: string;
-    accountHolder: string;
-  };
+    id: string,
+    bankName: string,
+    accountNumber: string,
+    logo?: string,
+    accountHolder: string,
+  }
 }
 
-export const fetchFinanceData = async () => {
-  const response = await instanceClient.get(`/vi-tai-khoan`);
-  return response.data?.data;
-};
-
-const submitWithdrawal = async (withdrawalData: {
-  ngan_hang: string;
-  tai_khoan_ngan_hang: string;
-  so_tien: number;
-  ten_chu_tai_khoan: string;
-}) => {
-  const response = await instanceClient.post('/rut-tien', withdrawalData);
-  return response.data;
-};
-
-function WithdrawPage() {
+const WithdrawPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { bankData } = location.state as { bankData: WithdrawPageProps['bankData'] };
   
   const [amount, setAmount] = useState<number>(0);
   const [useFullBalance, setUseFullBalance] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showForgotPinModal, setShowForgotPinModal] = useState(false);
+  const [pins, setPins] = useState(['', '', '', '', '', '']);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const { data } = useQuery({
     queryKey: ['financeData'],
-    queryFn: fetchFinanceData,
+    queryFn: () => instanceClient.get('/vi-tai-khoan').then(res => res.data?.data)
   });
+
+  const withdrawalMutation = useMutation({
+    mutationFn: (withdrawalData: {
+      so_tien: number,
+      ma_xac_minh: string,
+    }) => instanceClient.post(`/rut-tien/${bankData.id}`, withdrawalData).then(res => res.data),
+    onSuccess: () => {
+      setShowVerificationModal(false);
+      setAmount(0);
+      setUseFullBalance(false);
+      resetPins();
+      toast.success('Rút tiền thành công');
+      navigate(-1);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
+    }
+  });
+
+  const forgotPinMutation = useMutation({
+    mutationFn: async () => {
+      const response = await instanceClient.get('/quen-ma-xac-minh');
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Yêu cầu Lấy lại mã PIN đã được gửi đến email của bạn');
+      setShowForgotPinModal(false);
+    },
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+      toast.error(errorMessage);
+    }
+  });
+
+  const handleInitialSubmit = () => {
+    if (amount < 50000) {
+      toast.error('Số tiền rút tối thiểu là 50.000₫');
+      return;
+    }
+    setShowVerificationModal(true);
+  };
 
   const walletBalance = data?.viUser?.so_du || 0;
 
@@ -56,25 +88,36 @@ function WithdrawPage() {
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      const withdrawalData = {
-        ngan_hang: bankData.bankName,
-        tai_khoan_ngan_hang: bankData.accountNumber,
-        so_tien: amount,
-        ten_chu_tai_khoan: bankData.accountHolder,
-        logo_ngan_hang: bankData.logo
-      };
-      
-      const result = await submitWithdrawal(withdrawalData);
-      console.log('Withdrawal successful:', result);
-    } catch (error) {
-      console.error('Withdrawal failed:', error);
+  const handlePinChange = (index: number, value: string) => {
+    const newPins = [...pins];
+    newPins[index] = value;
+    setPins(newPins);
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !pins[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const resetPins = () => {
+    setPins(['', '', '', '', '', '']);
+  };
+
+  const handleFinalSubmit = () => {
+    const verificationCode = pins.join('');
+    withdrawalMutation.mutate({
+      so_tien: amount,
+      ma_xac_minh: verificationCode
+    });
+  };
+
   return (
-    <div className="">
+    <div className="max-w-2xl mx-auto p-4">
       <div className="w-full h-full">
         <div className="flex items-center justify-between mb-6">
           <button 
@@ -100,7 +143,6 @@ function WithdrawPage() {
           <span className="text-gray-700 font-semibold text-lg">
             {bankData.bankName} *{bankData.accountNumber.slice(-4)}
           </span>
-          
         </div>
 
         <div className="mb-6">
@@ -112,7 +154,7 @@ function WithdrawPage() {
               value={amount}
               onChange={handleAmountChange}
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-gray-700 text-2xl tracking-widest shadow-sm focus:outline-none focus:border-blue-500"
-              placeholder="0"
+              placeholder="Nhập số tiền"
             />
           </div>
         </div>
@@ -131,7 +173,7 @@ function WithdrawPage() {
         </div>
 
         <div className="text-gray-500 text-sm mb-6">
-          Nhấn "Tiếp tục", bạn đã đồng ý tuân theo{' '}
+          Nhấn "Tiếp tục", bạn đã đồng ý tuân theo{'           Số tiền rút tối thiểu là 50.0000đ  '}
           <a href="#" className="text-blue-500 underline">Điều khoản sử dụng</a>{' '}
           và{' '}
           <a href="#" className="text-blue-500 underline">Chính sách bảo mật</a>
@@ -146,10 +188,10 @@ function WithdrawPage() {
           </div>
 
           <button
-            onClick={handleSubmit}
-            disabled={amount === 0}
+            onClick={handleInitialSubmit}
+            disabled={amount < 50000}
             className={`py-2 px-6 rounded-lg text-lg font-semibold transition-colors ${
-              amount > 0 
+              amount >= 50000 
                 ? 'bg-blue-500 text-white hover:bg-blue-600' 
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
@@ -158,8 +200,88 @@ function WithdrawPage() {
           </button>
         </div>
       </div>
+
+      {showVerificationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Xác nhận mật khẩu ví</h2>
+            <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
+
+          
+
+            <div className="mb-6">
+              <div className="flex justify-between space-x-2">
+                {pins.map((pin, index) => (
+                  <input
+                    key={index}
+                    type="password"
+                    maxLength={1}
+                    value={pin}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    onChange={(e) => handlePinChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                ))}
+              </div>
+              <button 
+                onClick={() => setShowForgotPinModal(true)}
+                className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+              >
+                Quên mật khẩu?
+              </button>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  resetPins();
+                  setShowVerificationModal(false);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleFinalSubmit}
+                disabled={pins.some(pin => !pin) || withdrawalMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {withdrawalMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showForgotPinModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
+            <p className="text-gray-600 mb-6">
+              Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi mã đến email của bạn.
+            </p>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowForgotPinModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={() => forgotPinMutation.mutate()}
+                disabled={forgotPinMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {forgotPinMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default WithdrawPage;

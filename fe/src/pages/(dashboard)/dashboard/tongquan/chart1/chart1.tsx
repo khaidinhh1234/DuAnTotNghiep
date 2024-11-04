@@ -12,7 +12,7 @@ interface ChartProps {
 }
 
 const Chart1 = ({ datestart, dateend }: ChartProps) => {
-  console.log(datestart, dateend);
+  // console.log(datestart, dateend);
   const date =
     datestart && dateend
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
@@ -45,7 +45,7 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
       refetch();
     }
   }, [datestart, dateend, refetch]);
-  console.log(data);
+  // console.log(data);
   return (
     <Card className="shadow-md px-1 rounded-lg bg-white flex flex-col">
       <div className="flex items-center mb-2">

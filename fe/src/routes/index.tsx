@@ -121,7 +121,16 @@ import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 import BankAccount from "@/pages/(website)/mywallet/nganhang";
 import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
 import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
-import History from "@/pages/(website)/mywallet/history";
+
+import History from "@/pages/(website)/myOrder/_components/history";
+
+import SearchResultsPage from "@/pages/(website)/_component/SearchResultsPage";
+
+// import History from "@/pages/(website)/mywallet/history";
+import WithdrawalRequests from "@/pages/(dashboard)/dohoan/ruttien";
+import Page2 from "@/pages/(website)/_component/shop";
+import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
+import ProductsList from "@/pages/(website)/Shopuudai/_components/ProductsList";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 const Router = () => {
@@ -136,6 +145,7 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
+          <Route path="/sanpham/danhmuc/:tenDanhMucCha/:tenDanhMucCon?" element={<ProductsList/>}/>
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
@@ -150,6 +160,8 @@ const Router = () => {
           <Route path="/test" element={<Test />} />{" "}
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
+          <Route path="/search-results" element={<Page2 />} />
+
           <Route
             path="/shippingAddressPage"
             element={<ShippingAddressPage />}
@@ -170,6 +182,10 @@ const Router = () => {
             <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
+            {/* <Route path="/mypro/mk" element={<SettingsModal/>} /> */}
+
+
+
             <Route path="/mypro/doangthu" element={<RevenuePage />} />
             <Route path="/mypro/lichsu" element={<History />} />
             <Route
@@ -220,6 +236,7 @@ const Router = () => {
           {/* <Route path="products/detaile" element={<Detail item={{
             id: 0
           }} />} /> */}
+        
           {/* Biến thể */}
           <Route path="products/bienthe" element={<Bienthe />} />
           <Route path="products/bienthecolor/edit/:id" element={<Color />} />
@@ -252,6 +269,10 @@ const Router = () => {
             path="orders/uncomfirmedorder"
             element={<TableUncomfirmedOrder />}
           />
+                    <Route path="orders/ruttien" element={<WithdrawalRequests />} />
+                    <Route path="orders/donhoan" element={<RefundRequests />} />
+
+
           <Route path="orders/collect" element={<Collect />} />
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
