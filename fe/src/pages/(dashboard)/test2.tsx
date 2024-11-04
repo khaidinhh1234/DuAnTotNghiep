@@ -1,66 +1,53 @@
-import React, { useRef } from "react";
-import Webcam from "react-webcam";
+import React from "react";
+import Chart from "react-apexcharts";
 
-const videoConstraints = {
-  width: 540,
-  facingMode: "environment",
-};
-
-const AllCameras = () => {
-  const webcamRef = useRef<Webcam>(null);
-  const [url, setUrl] = React.useState<string | null>(null);
-
-  const capturePhoto = React.useCallback(async () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      setUrl(imageSrc);
-      // console.log(imageSrc);
-    }
-  }, [webcamRef]);
-
-  const onUserMedia = (e: any) => {
-    console.log(e);
+const Test = () => {
+  const options = {
+    chart: {
+      height: 350,
+      type: "area",
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      curve: "smooth",
+    },
+    xaxis: {
+      type: "datetime",
+      categories: [
+        "2018-09-19T00:00:00.000Z",
+        "2018-09-19T01:30:00.000Z",
+        "2018-09-19T02:30:00.000Z",
+        "2018-09-19T03:30:00.000Z",
+        "2018-09-19T04:30:00.000Z",
+        "2018-09-19T05:30:00.000Z",
+        "2018-09-19T06:30:00.000Z",
+      ],
+    },
+    tooltip: {
+      x: {
+        format: "dd/MM/yy HH:mm",
+      },
+    },
   };
-  console.log(url, "url");
-  return (
-    <div className="mx-auto">
-      {" "}
-      {url ? null : (
-        <Webcam
-          ref={webcamRef}
-          screenshotFormat="image/jpeg"
-          videoConstraints={videoConstraints}
-          onUserMedia={onUserMedia}
-          className="w-60"
-          audio={false}
-        />
-      )}
-      {url ? (
-        <div>
-          <img src={url} alt="Screenshot" className="w-60" />
-        </div>
-      ) : null}{" "}
-      <div className="">
-        {url ? null : (
-          <button
-            onClick={capturePhoto}
-            className="px-3 py-2 rounded-full text-3xl bg-white mx-2 "
-          >
-            <i className="fa-regular fa-camera"></i>
-          </button>
-        )}
 
-        {url ? (
-          <button
-            onClick={() => setUrl(null)}
-            className="px-4 py-2 rounded-full text-2xl bg-white mx-2 "
-          >
-            <i className="fa-regular fa-trash"></i>
-          </button>
-        ) : null}
-      </div>
+  const series = [
+    {
+      name: "series1",
+      data: [31, 40, 28, 51, 42, 109, 100],
+    },
+    {
+      name: "series2",
+      data: [11, 32, 45, 32, 34, 52, 41],
+    },
+  ];
+
+  return (
+    <div id="chart">
+      <Chart options={options} series={series} type="area" height={350} />
     </div>
   );
 };
 
-export default AllCameras;
+export default Test;

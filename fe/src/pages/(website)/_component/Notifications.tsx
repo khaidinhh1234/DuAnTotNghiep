@@ -117,59 +117,61 @@ const Notifications: React.FC<NotificationsProps> = ({
   };
 
   return (
-    <div className="relative w-96 -right-3 bg-white rounded-lg shadow-xl border border-gray-200">
-      <div className="absolute -top-2 right-1 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-stone-500"></div>
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-      <h2 className='font-bold '>Thông báo</h2>
+    <div className="relative w-96 -top-5 -right-3   pt-7 ">
+      <div className="bg-white rounded-lg shadow-xl border border-gray-200">
+        <div className="absolute top-5 right-2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-stone-500"></div>
+        <div className="p-4 border-b border-gray-200 ">
+          <div className="flex justify-between items-center">
+            <h2 className="font-bold ">Thông báo</h2>
+          </div>
+
+          {isLoading ? (
+            <div className="p-4 text-center text-gray-500">
+              Đang tải thông báo...
+            </div>
+          ) : error || !notificationResponse?.data.length ? (
+            <div className="p-8 text-center">
+              <div className="flex flex-col items-center justify-center">
+                <svg
+                  className="w-16 h-16 text-gray-400 mb-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+                <p className="text-gray-500 text-lg">Không có thông báo nào</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <ul className="divide-y divide-gray-200 max-h-[400px] overflow-y-auto">
+                {notificationResponse.data.map((notification) => (
+                  <NotificationItem
+                    key={notification.id}
+                    notification={notification}
+                    onNotificationClick={handleNotificationClick}
+                  />
+                ))}
+              </ul>
+
+              <div className="p-4 border-t border-gray-200">
+                <a
+                  href="/mypro/notification"
+                  className="block text-center text-sm text-black-600 hover:text-blue-800"
+                >
+                  Xem tất cả
+                </a>
+              </div>
+            </>
+          )}
         </div>
-
-        {isLoading ? (
-          <div className="p-4 text-center text-gray-500">
-            Đang tải thông báo...
-          </div>
-        ) : error || !notificationResponse?.data.length ? (
-          <div className="p-8 text-center">
-            <div className="flex flex-col items-center justify-center">
-              <svg
-                className="w-16 h-16 text-gray-400 mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                />
-              </svg>
-              <p className="text-gray-500 text-lg">Không có thông báo nào</p>
-            </div>
-          </div>
-        ) : (
-          <>
-            <ul className="divide-y divide-gray-200 max-h-[400px] overflow-y-auto">
-              {notificationResponse.data.map((notification) => (
-                <NotificationItem
-                  key={notification.id}
-                  notification={notification}
-                  onNotificationClick={handleNotificationClick}
-                />
-              ))}
-            </ul>
-
-            <div className="p-4 border-t border-gray-200">
-              <a
-                href="/mypro/notification"
-                className="block text-center text-sm text-black-600 hover:text-blue-800"
-              >
-                Xem tất cả
-              </a>
-            </div>
-          </>
-        )}
       </div>
     </div>
   );

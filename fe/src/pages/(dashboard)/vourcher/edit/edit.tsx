@@ -592,16 +592,16 @@ const EditVoucher = () => {
               </div>
             </div>
             <div className="bg-white p-8 shadow-lg rounded-lg w-full my-5">
-              <h1>Voucher Thông Minh</h1>{" "}
+              <h1 className="text-xl">Giá trị khuyến mãi </h1>{" "}
               <Form.Item className="flex items-center whitespace-nowrap">
-                <Button
+                {/* <Button
                   type="primary"
                   disabled
                   className={`mr-2 whitespace-nowrap text-slate-400 `}
                   // onClick={() => setTabKey(true)}
                 >
                   <span className="text-sm">Áp dụng voucher thông minh</span>
-                </Button>
+                </Button> */}
                 <p className="flex items-center whitespace-nowrap">
                   Thông số được tạo bởi Smart AI. Mức độ hiệu quả hiện tại:{" "}
                   <span
