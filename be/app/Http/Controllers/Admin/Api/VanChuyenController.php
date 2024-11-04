@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
 use App\Models\DonHang;
+use App\Models\ThongBao;
 use App\Models\VanChuyen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -116,6 +118,16 @@ class VanChuyenController extends Controller
                 $vanChuyen->update([
                     'trang_thai_van_chuyen' => $validate['trang_thai_van_chuyen'],
                 ]);
+
+                $thongBao = ThongBao::create([
+                    'tieu_de' => 'Cập nhật trạng thái vận chuyển',
+                    'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' đã được cập nhật trạng thái vận chuyển',
+                    'loai' => 'Vận chuyển',
+                    'duong_dan' => $vanChuyen->ma_van_chuyen,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
             }
             DB::commit();
             return response()->json([
