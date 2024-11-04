@@ -378,24 +378,25 @@ Route::middleware(['auth.sanctum'])
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai'])->name("don-hang-theo-trang-thai.thong-ke");
 
             // Thống kê tổng quan
-            Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang'])->middleware(['throttle:100,1']);
-            Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang'])->middleware(['throttle:100,1']);
-            Route::post('don-hang/chot', [ThongKeTongQuanController::class, 'thongKeDonHangChot'])->middleware(['throttle:100,1']);
-            Route::post('san-pham/ton-kho', [ThongKeTongQuanController::class, 'thongKeTongSanPham'])->middleware(['throttle:100,1']);
-            Route::post('doanh-thu/tong', [ThongKeTongQuanController::class, 'thongKeDoanhThuTong'])->middleware(['throttle:100,1']);
-            Route::post('loi-nhuan', [ThongKeTongQuanController::class, 'thongKeLoiNhuan'])->middleware(['throttle:100,1']);
-            Route::post('doanh-thu/thanh-toan-online', [ThongKeTongQuanController::class, 'thongKeThanhToanOnline'])->middleware(['throttle:100,1']);
-            Route::post('doanh-thu/thanh-toan-off', [ThongKeTongQuanController::class, 'thongKeThanhToanOff'])->middleware(['throttle:100,1']);
-            Route::post('doanh-so-san-pham', [ThongKeTongQuanController::class, 'thongKeDoanhSoSanPham'])->middleware(['throttle:100,1']);
-            Route::post('doanh-thu/tb', [ThongKeTongQuanController::class, 'thongKeDoanhThuTB'])->middleware(['throttle:100,1']);
-            Route::post('don-hang/trang-thai', [ThongKeTongQuanController::class, 'trangThaiKhoangDonSoSanh'])->middleware(['throttle:100,1']);
-            Route::post('doanh-thu/so-sanh', [ThongKeTongQuanController::class, 'doanhThuTheoKhoang'])->middleware(['throttle:100,1']);
-            Route::get('thanh-toan-tien-mat-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanTienMatTheoNgay'])->middleware(['throttle:100,1']);
-            Route::get('thanh-toan-online-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanOnlineTheoNgay'])->middleware(['throttle:100,1']);
-            Route::get('tong-quan-theo-ngay', [ThongKeTongQuanController::class, 'thongKeTongQuanTrongNgay'])->middleware(['throttle:100,1']);
-            Route::get('doanh-thu-loi-nhuan-theo-ngay', [ThongKeTongQuanController::class, 'doanhThuLoiNhuanRoi'])->middleware(['throttle:100,1']);
-            Route::get('doanh-thu-va-don-theo-ngay', [ThongKeTongQuanController::class, 'thongKeDoanhThuTrongNgay'])->middleware(['throttle:100,1']);
-
+            Route::group([], function () {
+                Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
+                Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
+                Route::post('don-hang/chot', [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
+                Route::post('san-pham/ton-kho', [ThongKeTongQuanController::class, 'thongKeTongSanPham']);
+                Route::post('doanh-thu/tong', [ThongKeTongQuanController::class, 'thongKeDoanhThuTong']);
+                Route::post('loi-nhuan', [ThongKeTongQuanController::class, 'thongKeLoiNhuan']);
+                Route::post('doanh-thu/thanh-toan-online', [ThongKeTongQuanController::class, 'thongKeThanhToanOnline']);
+                Route::post('doanh-thu/thanh-toan-off', [ThongKeTongQuanController::class, 'thongKeThanhToanOff']);
+                Route::post('doanh-so-san-pham', [ThongKeTongQuanController::class, 'thongKeDoanhSoSanPham']);
+                Route::post('doanh-thu/tb', [ThongKeTongQuanController::class, 'thongKeDoanhThuTB']);
+                Route::post('don-hang/trang-thai', [ThongKeTongQuanController::class, 'trangThaiKhoangDonSoSanh']);
+                Route::post('doanh-thu/so-sanh', [ThongKeTongQuanController::class, 'doanhThuTheoKhoang']);
+                Route::get('thanh-toan-tien-mat-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanTienMatTheoNgay']);
+                Route::get('thanh-toan-online-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanOnlineTheoNgay']);
+                Route::get('tong-quan-theo-ngay', [ThongKeTongQuanController::class, 'thongKeTongQuanTrongNgay']);
+                Route::get('doanh-thu-loi-nhuan-theo-ngay', [ThongKeTongQuanController::class, 'doanhThuLoiNhuanRoi']);
+                Route::get('doanh-thu-va-don-theo-ngay', [ThongKeTongQuanController::class, 'thongKeDoanhThuTrongNgay']);
+            })->middleware(middleware: 'throttle:10000000,1');
 
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai']);
 
