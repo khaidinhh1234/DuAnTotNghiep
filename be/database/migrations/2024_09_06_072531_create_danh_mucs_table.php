@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('danh_mucs', function (Blueprint $table) {
             $table->id();
-            $table->string('ten_danh_muc')->unique();
+            $table->string('ten_danh_muc');
             $table->unsignedBigInteger('cha_id')->index()->nullable();
             $table->string('anh_danh_muc')->nullable();
             $table->string('duong_dan')->nullable();

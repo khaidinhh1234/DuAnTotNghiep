@@ -403,52 +403,85 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-    public function laySanPhamTheoDanhMuc($slug)
+    public function laySanPhamTheoDanhMuc($parentName, $childName = null, $subChildName = null)
     {
         try {
-            $danhMuc = DanhMuc::where('duong_dan', $slug)->first();
-    
+            // Khởi tạo query danh mục và lọc theo đường dẫn danh mục cha
+            $query = DanhMuc::with('sanPhams')
+                ->where('duong_dan', $parentName)
+                ->when($childName, function ($q) use ($childName) {
+                    $q->whereHas('children', function ($query) use ($childName) {
+                        $query->where('duong_dan', $childName);
+                    });
+                })
+                ->when($subChildName, function ($q) use ($subChildName) {
+                    $q->whereHas('children.children', function ($query) use ($subChildName) {
+                        $query->where('duong_dan', $subChildName);
+                    });
+                });
+
+            $danhMuc = $query->first();
+
             if (!$danhMuc) {
-                return response()->json([
-                    'message' => 'Không tìm thấy danh mục'
-                ], 404);
+                return response()->json(['message' => 'Không tìm thấy danh mục'], 404);
             }
-    
-            // Xác định nếu đây là danh mục chính "nam"
-            $danhMucIds = [$danhMuc->id];
-            if ($danhMuc->duong_dan === 'nam') {
-                // Lấy danh sách ID của tất cả danh mục con thuộc "nam"
-                $danhMucIds = DanhMuc::where('cha_id', $danhMuc->id)->pluck('id')->toArray();
-                $danhMucIds[] = $danhMuc->id; // Thêm ID của danh mục chính "nam"
-            }
-    
+
+            $danhMucIds = $this->layDanhMucIds($danhMuc);
+
             $soLuongSanPhamMoiTrang = request()->get('per_page', 8);
-    
+
             $sanPhams = SanPham::with([
                 'bienTheSanPham' => function ($query) {
                     $query->with(['mauBienThe', 'kichThuocBienThe', 'anhBienThe'])
                         ->select(
-                            'id', 'san_pham_id', 'bien_the_mau_sac_id', 'bien_the_kich_thuoc_id',
-                            'so_luong_bien_the', 'gia_ban', 'gia_khuyen_mai', 'gia_khuyen_mai_tam_thoi'
+                            'id',
+                            'san_pham_id',
+                            'bien_the_mau_sac_id',
+                            'bien_the_kich_thuoc_id',
+                            'so_luong_bien_the',
+                            'gia_ban',
+                            'gia_khuyen_mai',
+                            'gia_khuyen_mai_tam_thoi'
                         );
                 },
-                'khachHangYeuThich' 
-            ])
-            ->whereIn('danh_muc_id', $danhMucIds) 
-            ->where('san_phams.trang_thai', 1) 
-            ->select(
-                'san_phams.id', 'san_phams.ten_san_pham', 'san_phams.anh_san_pham',
-                'san_phams.created_at', 'san_phams.ma_san_pham', 'san_phams.duong_dan', 'san_phams.hang_moi'
-            )
-            ->addSelect([
-                DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
-                DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
-            ])
-            ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
-            ->groupBy('san_phams.id')
-            ->orderBy('san_phams.created_at', 'desc') 
-            ->paginate($soLuongSanPhamMoiTrang);
-    
+                'khachHangYeuThich'
+            ]);
+
+            // Nếu có chọn danh mục con cụ thể (ví dụ: "nam/ao_polo")
+            if ($childName) {
+                // Tìm danh mục con theo đường dẫn
+                $childDanhMuc = DanhMuc::where('duong_dan', $childName)->first();
+                if ($childDanhMuc) {
+                    // Lấy sản phẩm trong danh mục con
+                    $sanPhams = $sanPhams->where('danh_muc_id', $childDanhMuc->id);
+                } else {
+                    // Nếu danh mục con không tồn tại, trả về thông báo lỗi
+                    return response()->json(['message' => 'Danh mục con không tồn tại'], 404);
+                }
+            } else {
+                // Nếu không chọn danh mục con, lấy sản phẩm trong tất cả danh mục con của danh mục cha
+                $sanPhams = $sanPhams->whereIn('danh_muc_id', $danhMucIds);
+            }
+
+            $sanPhams = $sanPhams->where('san_phams.trang_thai', 1)
+                ->select(
+                    'san_phams.id',
+                    'san_phams.ten_san_pham',
+                    'san_phams.anh_san_pham',
+                    'san_phams.created_at',
+                    'san_phams.ma_san_pham',
+                    'san_phams.duong_dan',
+                    'san_phams.hang_moi'
+                )
+                ->addSelect([
+                    DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
+                    DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
+                ])
+                ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+                ->groupBy('san_phams.id')
+                ->orderBy('san_phams.created_at', 'desc')
+                ->paginate($soLuongSanPhamMoiTrang);
+
             $result = $sanPhams->map(function ($sanPham) {
                 $mauSacVaAnh = $sanPham->bienTheSanPham->flatMap(function ($bienThe) {
                     return $bienThe->anhBienThe->map(function ($anh) use ($bienThe) {
@@ -459,13 +492,13 @@ class TrangSanPhamController extends Controller
                         ];
                     });
                 })->unique('ma_mau_sac')->values();
-    
+
                 $trangThaiYeuthich = false;
                 if (Auth::guard('api')->check()) {
                     $user = Auth::guard('api')->user();
                     $trangThaiYeuthich = $sanPham->khachHangYeuThich->contains('id', $user->id);
                 }
-    
+
                 return [
                     'id' => $sanPham->id,
                     'ten_san_pham' => $sanPham->ten_san_pham,
@@ -489,14 +522,36 @@ class TrangSanPhamController extends Controller
                     'trang_thai_yeu_thich' => $trangThaiYeuthich,
                 ];
             });
-    
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công',
                 'data' => [
-                    'Danh_muc' => $danhMuc,
-                    'San_pham' => $result
+                    'Danh_muc' => [
+                        'id' => $danhMuc->id,
+                        'ten_danh_muc' => $danhMuc->ten_danh_muc,
+                        'cha_id' => $danhMuc->cha_id,
+                        'anh_danh_muc' => $danhMuc->anh_danh_muc,
+                        'duong_dan' => $danhMuc->duong_dan,
+                        'created_at' => $danhMuc->created_at,
+                        'updated_at' => $danhMuc->updated_at,
+                        'deleted_at' => $danhMuc->deleted_at,
+                        'children' => $danhMuc->children->map(function ($child) {
+                            return [
+                                'id' => $child->id,
+                                'ten_danh_muc' => $child->ten_danh_muc,
+                                'cha_id' => $child->cha_id,
+                                'anh_danh_muc' => $child->anh_danh_muc,
+                                'duong_dan' => $child->duong_dan,
+                                'created_at' => $child->created_at,
+                                'updated_at' => $child->updated_at,
+                                'deleted_at' => $child->deleted_at,
+                                'children' => $child->children,
+                            ];
+                        }),
+                    ],
+                    'San_pham' => $result,
                 ],
             ], 200);
         } catch (Exception $exception) {
@@ -508,5 +563,14 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-    
+
+    // Hàm đệ quy để lấy tất cả ID danh mục con
+    protected function layDanhMucIds($danhMuc)
+    {
+        $ids = [$danhMuc->id];
+        foreach ($danhMuc->children as $child) {
+            $ids = array_merge($ids, $this->layDanhMucIds($child));
+        }
+        return $ids;
+    }
 }
