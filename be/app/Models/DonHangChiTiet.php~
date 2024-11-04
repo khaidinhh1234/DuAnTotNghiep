@@ -14,8 +14,6 @@ class DonHangChiTiet extends Model
         'bien_the_san_pham_id',
         'so_luong',
         'gia',
-        'ten_mau_bien_the_san_pham',
-        'ten_kich_thuoc_bien_the_san_pham',
         'thanh_tien'
     ];
 
@@ -32,5 +30,5 @@ class DonHangChiTiet extends Model
     {
         return $this->belongsTo(SanPham::class, 'san_pham_id', 'id');
     }
-    
+
 }
