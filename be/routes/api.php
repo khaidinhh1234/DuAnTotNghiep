@@ -396,7 +396,11 @@ Route::middleware(['auth.sanctum'])
                 Route::get('tong-quan-theo-ngay', [ThongKeTongQuanController::class, 'thongKeTongQuanTrongNgay']);
                 Route::get('doanh-thu-loi-nhuan-theo-ngay', [ThongKeTongQuanController::class, 'doanhThuLoiNhuanRoi']);
                 Route::get('doanh-thu-va-don-theo-ngay', [ThongKeTongQuanController::class, 'thongKeDoanhThuTrongNgay']);
+<<<<<<< HEAD
             })->middleware( 'throttle:10000000,1');
+=======
+            })->middleware('throttle:10000000,1');
+>>>>>>> de0dec49d980d094a175176138de32a6ca7440fa
 
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai']);
 
