@@ -571,6 +571,7 @@ import Notifications from "./Notifications";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Search from "./Search";
+import HoverMenu from "./HoverMenu";
 
 interface Category {
     id: number;
@@ -579,7 +580,7 @@ interface Category {
     children: Category[];
 }
 
-const Header = () => {
+const Test = () => {
     const [check, setcheck] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -634,15 +635,11 @@ const Header = () => {
         id: number;
         name: string;
         path: string;
-        subCategories?: MenuItem[];
-        con?: MenuItem[];
-        ten_danh_muc?: string;
-        duong_dan?: string; // Add this line
     }
     const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-    const [subCategories, setSubCategories] = useState<{ [key: number]: MenuItem[] }>({});
+    const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
 
-    // Hàm để lấy danh mục cha
+    // Fetch parent categories
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -662,28 +659,6 @@ const Header = () => {
 
         fetchCategories();
     }, []);
-
-    // Hàm để lấy danh mục con
-    const fetchSubCategories = async (parentId: number) => {
-        if (subCategories[parentId]) return; // Tránh gọi API lại nếu danh mục con đã tồn tại
-
-        try {
-            const response = await instanceClient.get(`/load-danh-muc-con-chau/${parentId}`);
-            if (response.data.status) {
-                setSubCategories((prev) => ({
-                    ...prev,
-                    [parentId]: response.data.data.map((sub: any) => ({
-                        id: sub.id,
-                        name: sub.ten_danh_muc,
-                        path: `/${sub.duong_dan}`,
-                        con: sub.con || [], // Lưu trữ danh mục con ở đây
-                    })),
-                }));
-            }
-        } catch (error) {
-            console.error('Lỗi khi lấy danh mục con:', error);
-        }
-    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -785,35 +760,28 @@ const Header = () => {
     ];
     const totalUniqueProducts = allItems.length;
 
-    // const MenuList = [
-    //     {
-    //         name: "Trang chủ",
-    //         path: "/",
-    //     },
-    //     {
-    //         name: "Sản phẩm",
-    //         path: "/shop",
-    //     },
-    //     {
-    //         name: "Giới thiệu",
-    //         path: "/ourstory",
-    //     },
-    //     {
-    //         name: "Khuyến mãi",
-    //         path: "/vourcher",
-    //     },
-    //     {
-    //         name: "Liên Hệ",
-    //         path: "/contact",
-    //     },
-    // ];
-    const [hoveredImage, setHoveredImage] = useState(null); // State for the image URL
-
-    const categoryImages = {
-        Nam: 'path_to_nam_image.png',
-        Nu: 'path_to_nu_image.png',
-        TreEm: 'path_to_treem_image.png'
-    };
+    const MenuList = [
+        {
+            name: "Trang chủ",
+            path: "/",
+        },
+        {
+            name: "Sản phẩm",
+            path: "/shop",
+        },
+        {
+            name: "Giới thiệu",
+            path: "/ourstory",
+        },
+        {
+            name: "Khuyến mãi",
+            path: "/vourcher",
+        },
+        {
+            name: "Liên Hệ",
+            path: "/contact",
+        },
+    ];
     return (
         <header className="h-12 relative">
             <div className="bg-white w-full">
@@ -830,7 +798,23 @@ const Header = () => {
                         style={{ transform: menu ? "translateX(0)" : "translateX(-100%)" }}
                         onMouseLeave={handleMouseLeave}
                     >
-
+                        <nav className="h-full my-5 px-2 ">
+                            <ul className="space-y-4 text-xl font-bold ">
+                                {MenuList.map((item, index) => (
+                                    <li key={index}>
+                                        <NavLink
+                                            to={item.path}
+                                            onClick={() => setMenu(!menu)}
+                                            className={({ isActive }) =>
+                                                isActive ? "underline decoration-sky-500" : ""
+                                            }
+                                        >
+                                            {item.name}
+                                        </NavLink>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
                         <div className="fixed bottom-0 py-5">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2 text-xl font-semibold">
@@ -876,54 +860,36 @@ const Header = () => {
 
                         <nav className="hidden lg:block order-3">
                             <ul className="flex items-center space-x-4">
-
                                 {menuItems.map((category) => (
                                     <li
                                         key={category.id}
                                         className="relative group"
-                                        onMouseEnter={() => fetchSubCategories(category.id)}
+                                        onMouseEnter={() => setHoveredCategory(category.id)}
+                                        onMouseLeave={() => setHoveredCategory(null)}
                                     >
                                         <a href={category.path} className="px-4 py-2 block hover:bg-gray-100">
                                             {category.name}
                                         </a>
-
-                                        
-
-                                        {subCategories[category.id] && (
-                                            <ul className="absolute left-0 top-full mt-2 hidden group-hover:flex bg-gray-100 border border-gray-200 rounded shadow-lg h-auto w-auto">
-                                                {subCategories[category.id].map((subCategory) => (
-                                                    <li key={subCategory.id} className="relative group">
-                                                        <a href={subCategory.path} className="px-6 py-3 block hover:bg-gray-100 whitespace-nowrap">
-                                                            {subCategory.name}
-                                                        </a>
-
-                                                        {subCategory.con && subCategory.con.length > 0 && (
-                                                            <ul className="absolute top-10 mt-0 hidden group-hover:flex flex-col">
-                                                                {subCategory.con.map((conConCategory) => (
-                                                                    <li key={conConCategory.id}>
-                                                                        <a href={`/${conConCategory.duong_dan}`} className="px-6 py-3 block hover:bg-gray-100 whitespace-nowrap">
-                                                                            {conConCategory.ten_danh_muc}
-                                                                        </a>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        )}
-
-                                                        {subCategory.con && subCategory.con.length === 0 && (
-                                                            <span className="px-6 py-3 block text-gray-500">
-                                                                Không có sản phẩm
-                                                            </span>
-                                                        )}
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                        {hoveredCategory === category.id && (
+                                            <HoverMenu
+                                                parentId={category.id}
+                                                onClose={() => setHoveredCategory(null)}
+                                            />
                                         )}
                                     </li>
                                 ))}
 
-
+                                <li>
+                                    <a href="/bai-viet" className="px-4 py-2 block hover:bg-gray-100">Bài viết</a>
+                                </li>
+                                <li>
+                                    <a href="/khuyen-mai" className="px-4 py-2 block hover:bg-gray-100">Khuyến mại</a>
+                                </li>
+                                <li>
+                                    <a href="/lien-he" className="px-4 py-2 block hover:bg-gray-100">Liên hệ</a>
+                                </li>
                             </ul>
-                            
+
                         </nav>
 
                         <div className="order-4 flex items-center space-x-2 cursor-pointer">
@@ -1082,4 +1048,4 @@ const Header = () => {
         </header>
     );
 };
-export default Header;
+export default Test;
