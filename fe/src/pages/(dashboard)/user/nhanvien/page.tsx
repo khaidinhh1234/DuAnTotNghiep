@@ -63,7 +63,7 @@ const UsersAdminNhanvien: React.FC = () => {
       return res.data;
     },
   });
-  console.log(data);
+  // console.log(data);
   const user = data?.data
     ?.filter((item: any) =>
       item?.vai_tros?.some((role: any) => role.ten_vai_tro !== "Khách hàng")
@@ -74,7 +74,7 @@ const UsersAdminNhanvien: React.FC = () => {
       index: index,
     }));
 
-  console.log(user);
+  // console.log(user);
 
   // const [searchText, setSearchText] = useState
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -237,70 +237,73 @@ const UsersAdminNhanvien: React.FC = () => {
       key: "thong_tin",
       width: "25%",
       render: (record) => (
-        <Link
-          to={`show/${record.key}`}
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              border: "1px solid #e0e0e0",
-              height: "120px",
-              padding: "15px",
-              borderRadius: "15px",
-              backgroundColor: "#f7fafd",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              transition: "background-color 0.3s ease",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#e0f7fa";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#f7fafd";
-            }}
+        console.log(record),
+        (
+          <Link
+            to={`show/${record.key}`}
+            style={{ textDecoration: "none", color: "inherit" }}
           >
-            {record.anh_nguoi_dung ? (
-              <img
-                src={record.anh_nguoi_dung}
-                alt="Avatar"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  borderRadius: "12px",
-                  marginRight: "20px",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  borderRadius: "12px",
-                  backgroundColor: "#ccc",
-                  marginRight: "20px",
-                }}
-              />
-            )}
-            <div>
-              <div
-                style={{
-                  fontWeight: "bold",
-                  marginBottom: "8px",
-                  fontSize: "16px",
-                }}
-              >
-                {" "}
-                {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
-              </div>
-              <div style={{ color: "#888", fontSize: "16px" }}>
-                {" "}
-                {record.email ? record.email : "Chưa có dữ liệu"}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                border: "1px solid #e0e0e0",
+                height: "120px",
+                padding: "15px",
+                borderRadius: "15px",
+                backgroundColor: "#f7fafd",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                transition: "background-color 0.3s ease",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = "#e0f7fa";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = "#f7fafd";
+              }}
+            >
+              {record.anh_nguoi_dung ? (
+                <img
+                  src={record.anh_nguoi_dung}
+                  alt="Avatar"
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "12px",
+                    marginRight: "20px",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "12px",
+                    backgroundColor: "#ccc",
+                    marginRight: "20px",
+                  }}
+                />
+              )}
+              <div>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    marginBottom: "8px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {" "}
+                  {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+                </div>
+                <div style={{ color: "#888", fontSize: "16px" }}>
+                  {" "}
+                  {record.email ? record.email : "Chưa có dữ liệu"}
+                </div>
               </div>
             </div>
-          </div>
-        </Link>
+          </Link>
+        )
       ),
     },
 
