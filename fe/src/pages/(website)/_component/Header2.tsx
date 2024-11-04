@@ -310,9 +310,12 @@ const Header2 = () => {
                                     </li>
                                 ))}
 
-                                {/* <li>
-                                    <a href="/bai-viet" className="px-4 py-2 block hover:bg-gray-100">Bài viết</a>
-                                </li> */}
+                                <li>
+                                    <a href="/ourstory" className="px-4 py-2 block hover:bg-gray-100">Giới thiệu</a>
+                                </li>
+                                <li>
+                                    <a href="/vourcher" className="px-4 py-2 block hover:bg-gray-100">Bài viết</a>
+                                </li>
                                 <li>
                                     <a href="/vourcher" className="px-4 py-2 block hover:bg-gray-100">Khuyến mại</a>
                                 </li>

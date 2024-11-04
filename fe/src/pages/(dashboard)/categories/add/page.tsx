@@ -33,7 +33,7 @@ const CategoriesAdd = () => {
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
       form.resetFields();
-      nav("/admin/categories");
+      nav("/admin/categories/add");
     },
     onError: (error) => {
       message.error(error.message);

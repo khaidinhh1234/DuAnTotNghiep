@@ -42,7 +42,9 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
           <i className="fa-regular fa-box-check text-white text-xl"></i>
         </div>
         <div className="flex ">
-          <h3 className="text-lg font-bold">Sản phẩm trong kho: </h3>{" "}
+
+          <h3 className="text-lg font-bold">Tổng Số Lượng Sản phẩm: </h3>{" "}
+
           <h3 className="text-lg font-bold mx-1">
             {data?.tong_so_luong_ton_kho || 0} sản phẩm
           </h3>
