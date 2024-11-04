@@ -1,3 +1,4 @@
+import { useLocalStorage } from "@/components/hook/useStoratge";
 import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -63,12 +64,15 @@ const UsersAdminNhanvien: React.FC = () => {
       return res.data;
     },
   });
-  console.log(data);
+
   const user = data?.data
     ?.filter((item: any) =>
       item?.vai_tros?.some((role: any) => role.ten_vai_tro !== "Khách hàng")
     )
     .map((item: any, index: string) => ({
+      giaohanng: item?.vai_tros?.some(
+        (role: any) => role.ten_vai_tro === "Người giao hàng"
+      ),
       ...item,
       key: item.id,
       index: index,
@@ -236,11 +240,8 @@ const UsersAdminNhanvien: React.FC = () => {
       title: "Thông tin",
       key: "thong_tin",
       width: "25%",
-      render: (record) => (
-        <Link
-          to={`show/${record.key}`}
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
+      render: (record) =>
+        record.giaohanng ? (
           <div
             style={{
               display: "flex",
@@ -291,17 +292,71 @@ const UsersAdminNhanvien: React.FC = () => {
                   fontSize: "16px",
                 }}
               >
-                {" "}
                 {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
               </div>
               <div style={{ color: "#888", fontSize: "16px" }}>
-                {" "}
                 {record.email ? record.email : "Chưa có dữ liệu"}
               </div>
             </div>
           </div>
-        </Link>
-      ),
+        ) : (
+          <Link
+            to={`show/${record.key}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                border: "1px solid #e0e0e0",
+                height: "120px",
+                padding: "15px",
+                borderRadius: "15px",
+                backgroundColor: "#f7fafd",
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              {/* Same content as above without the link */}
+              {record.anh_nguoi_dung ? (
+                <img
+                  src={record.anh_nguoi_dung}
+                  alt="Avatar"
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "12px",
+                    marginRight: "20px",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "12px",
+                    backgroundColor: "#ccc",
+                    marginRight: "20px",
+                  }}
+                />
+              )}
+              <div>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    marginBottom: "8px",
+                    fontSize: "16px",
+                  }}
+                >
+                  {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+                </div>
+                <div style={{ color: "#888", fontSize: "16px" }}>
+                  {record.email ? record.email : "Chưa có dữ liệu"}
+                </div>
+              </div>
+            </div>
+          </Link>
+        ),
     },
 
     {
