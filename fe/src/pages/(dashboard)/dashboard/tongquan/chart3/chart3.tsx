@@ -42,7 +42,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
           <i className="fa-regular fa-box-check text-white text-xl"></i>
         </div>
         <div className="flex ">
-          <h3 className="text-lg font-bold">Sản phẩm tồn kho: </h3>{" "}
+          <h3 className="text-lg font-bold">Sản phẩm trong kho: </h3>{" "}
           <h3 className="text-lg font-bold mx-1">
             {data?.tong_so_luong_ton_kho || 0} sản phẩm
           </h3>
@@ -83,7 +83,11 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
             Giá bán : <br />
             <span className="text-2xl font-bold text-black">
               {" "}
-              <Statistic value={data?.tong_gia_ban} formatter={formatter} />
+              <Statistic
+                value={data?.tong_gia_ban}
+                formatter={formatter}
+                suffix="đ"
+              />
             </span>
           </div>
           {/* <div
