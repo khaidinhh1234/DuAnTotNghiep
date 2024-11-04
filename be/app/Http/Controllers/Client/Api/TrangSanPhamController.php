@@ -406,63 +406,41 @@ class TrangSanPhamController extends Controller
     public function laySanPhamTheoDanhMuc($parentName, $childName = null, $subChildName = null)
     {
         try {
-            // Khởi tạo query danh mục và lọc theo đường dẫn danh mục cha
             $query = DanhMuc::with('sanPhams')
-                ->where('duong_dan', $parentName)
-                ->when($childName, function ($q) use ($childName) {
-                    $q->whereHas('children', function ($query) use ($childName) {
-                        $query->where('duong_dan', $childName);
-                    });
-                })
-                ->when($subChildName, function ($q) use ($subChildName) {
-                    $q->whereHas('children.children', function ($query) use ($subChildName) {
-                        $query->where('duong_dan', $subChildName);
-                    });
-                });
+                ->where('duong_dan', $parentName);
 
-            $danhMuc = $query->first();
-
-            if (!$danhMuc) {
-                return response()->json(['message' => 'Không tìm thấy danh mục'], 404);
-            }
-
-            $danhMucIds = $this->layDanhMucIds($danhMuc);
-
-            $soLuongSanPhamMoiTrang = request()->get('per_page', 8);
-
-            $sanPhams = SanPham::with([
-                'bienTheSanPham' => function ($query) {
-                    $query->with(['mauBienThe', 'kichThuocBienThe', 'anhBienThe'])
-                        ->select(
-                            'id',
-                            'san_pham_id',
-                            'bien_the_mau_sac_id',
-                            'bien_the_kich_thuoc_id',
-                            'so_luong_bien_the',
-                            'gia_ban',
-                            'gia_khuyen_mai',
-                            'gia_khuyen_mai_tam_thoi'
-                        );
-                },
-                'khachHangYeuThich'
-            ]);
-
-            // Nếu có chọn danh mục con cụ thể (ví dụ: "nam/ao_polo")
+            // Nếu có chọn danh mục con cụ thể
             if ($childName) {
-                // Tìm danh mục con theo đường dẫn
                 $childDanhMuc = DanhMuc::where('duong_dan', $childName)->first();
-                if ($childDanhMuc) {
-                    // Lấy sản phẩm trong danh mục con
-                    $sanPhams = $sanPhams->where('danh_muc_id', $childDanhMuc->id);
-                } else {
-                    // Nếu danh mục con không tồn tại, trả về thông báo lỗi
+
+                if (!$childDanhMuc) {
                     return response()->json(['message' => 'Danh mục con không tồn tại'], 404);
                 }
+                if ($subChildName) {
+                    $subChildDanhMuc = DanhMuc::where('duong_dan', $subChildName)->first();
+
+                    if (!$subChildDanhMuc) {
+                        return response()->json(['message' => 'Danh mục con cấp ba không tồn tại'], 404);
+                    }
+                    $sanPhams = SanPham::where('danh_muc_id', $subChildDanhMuc->id);
+                } else {
+                    $sanPhams = SanPham::where('danh_muc_id', $childDanhMuc->id);
+                }
             } else {
-                // Nếu không chọn danh mục con, lấy sản phẩm trong tất cả danh mục con của danh mục cha
-                $sanPhams = $sanPhams->whereIn('danh_muc_id', $danhMucIds);
+                $danhMuc = $query->first();
+
+                if (!$danhMuc) {
+                    return response()->json(['message' => 'Không tìm thấy danh mục'], 404);
+                }
+
+                $danhMucIds = $this->layDanhMucIds($danhMuc);
+                $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucIds);
             }
 
+            // Số lượng sản phẩm mỗi trang
+            $soLuongSanPhamMoiTrang = request()->get('per_page', 8);
+
+            // Cập nhật điều kiện lọc sản phẩm
             $sanPhams = $sanPhams->where('san_phams.trang_thai', 1)
                 ->select(
                     'san_phams.id',
@@ -482,6 +460,7 @@ class TrangSanPhamController extends Controller
                 ->orderBy('san_phams.created_at', 'desc')
                 ->paginate($soLuongSanPhamMoiTrang);
 
+            // Xử lý kết quả trả về
             $result = $sanPhams->map(function ($sanPham) {
                 $mauSacVaAnh = $sanPham->bienTheSanPham->flatMap(function ($bienThe) {
                     return $bienThe->anhBienThe->map(function ($anh) use ($bienThe) {
@@ -529,15 +508,15 @@ class TrangSanPhamController extends Controller
                 'message' => 'Lấy dữ liệu thành công',
                 'data' => [
                     'Danh_muc' => [
-                        'id' => $danhMuc->id,
-                        'ten_danh_muc' => $danhMuc->ten_danh_muc,
-                        'cha_id' => $danhMuc->cha_id,
-                        'anh_danh_muc' => $danhMuc->anh_danh_muc,
-                        'duong_dan' => $danhMuc->duong_dan,
-                        'created_at' => $danhMuc->created_at,
-                        'updated_at' => $danhMuc->updated_at,
-                        'deleted_at' => $danhMuc->deleted_at,
-                        'children' => $danhMuc->children->map(function ($child) {
+                        'id' => $query->first()->id,
+                        'ten_danh_muc' => $query->first()->ten_danh_muc,
+                        'cha_id' => $query->first()->cha_id,
+                        'anh_danh_muc' => $query->first()->anh_danh_muc,
+                        'duong_dan' => $query->first()->duong_dan,
+                        'created_at' => $query->first()->created_at,
+                        'updated_at' => $query->first()->updated_at,
+                        'deleted_at' => $query->first()->deleted_at,
+                        'children' => $query->first()->children->map(function ($child) {
                             return [
                                 'id' => $child->id,
                                 'ten_danh_muc' => $child->ten_danh_muc,
