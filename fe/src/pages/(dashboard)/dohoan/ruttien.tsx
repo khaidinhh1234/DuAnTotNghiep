@@ -66,7 +66,21 @@ const WithdrawalRequests: React.FC = () => {
       message.error("Xác nhận rút tiền thất bại");
     },
   });
-
+  const { mutate: rejectWithdrawal } = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
+        trang_thai: "tu_choi"
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      message.success("Từ chối yêu cầu rút tiền thành công");
+      queryClient.invalidateQueries({ queryKey: ["withdrawal-requests"] });
+    },
+    onError: () => {
+      message.error("Từ chối yêu cầu rút tiền thất bại");
+    },
+  });
   const showBankModal = (bankInfo: BankInfo) => {
     setSelectedBank(bankInfo);
     setIsModalVisible(true);
@@ -89,17 +103,19 @@ const WithdrawalRequests: React.FC = () => {
       currency: 'VND' 
     }).format(amount);
   };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Đã rút":
         return "green";
       case "Chờ duyệt":
         return "blue";
+      case "Từ chối":
+        return "red";
       default:
         return "default";
     }
   };
+  
 
   const columns: TableColumnsType<WithdrawalRequest> = [
     {
@@ -152,30 +168,61 @@ const WithdrawalRequests: React.FC = () => {
       width: "15%",
     },
     {
-      title: "Thao tác",
-      key: "action",
-      width: "13%",
-      render: (_, record) => (
-        <Space>
-          {record.trang_thai === "Chờ duyệt" && (
-            <Popconfirm
-              title="Xác nhận rút tiền"
-              description="Bạn có chắc chắn muốn xác nhận yêu cầu rút tiền này?"
-              onConfirm={() => confirmWithdrawal(record.id)}
-              okText="Xác nhận"
-              cancelText="Hủy"
-            >
-              <Button 
-                type="primary"
-                className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
-              >
-                Xác nhận rút tiền
-              </Button>
-            </Popconfirm>
-          )}
-        </Space>
-      ),
-    },
+        title: "Thao tác",
+        key: "action",
+        width: "20%",
+        render: (_, record) => (
+          <Space>
+            {record.trang_thai === "Chờ duyệt" && (
+              <>
+                <Popconfirm
+                  title="Xác nhận rút tiền"
+                  description="Bạn có chắc chắn muốn xác nhận yêu cầu rút tiền này?"
+                  onConfirm={() => confirmWithdrawal(record.id)}
+                  okButtonProps={{
+                    className: "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium"
+                }}
+                cancelButtonProps={{
+                    className: "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium"
+                }}
+                  okText="Xác nhận"
+                  cancelText="Hủy"
+                >
+                  <Button 
+                    type="primary"
+                    className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+                  >
+                    Xác nhận rút tiền
+                  </Button>
+                </Popconfirm>
+                
+                <Popconfirm
+                  title="Từ chối rút tiền"
+                  description="Bạn có chắc chắn muốn từ chối yêu cầu rút tiền này?"
+                  onConfirm={() => rejectWithdrawal(record.id)}
+                  okButtonProps={{
+                    className: "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium"
+                }}
+                cancelButtonProps={{
+                    className: "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium"
+                }}
+                  okText="Xác nhận"
+                  cancelText="Hủy"
+                >
+                  <Button 
+                    danger
+                    type="primary"
+                    className="bg-gradient-to-l from-red-400 to-red-500 text-white hover:from-red-500 hover:to-red-600 border border-red-300 font-bold"
+                  >
+                    Từ chối
+                  </Button>
+                </Popconfirm>
+              </>
+            )}
+          </Space>
+        ),
+      },
+      
   ];
 
   return (

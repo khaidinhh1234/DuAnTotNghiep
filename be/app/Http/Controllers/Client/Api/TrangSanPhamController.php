@@ -403,52 +403,64 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-    public function laySanPhamTheoDanhMuc($slug)
+    public function laySanPhamTheoDanhMuc($tenDanhMucCha, $tenDanhMucCon = null, $tenDanhMucConCapBa = null)
     {
         try {
-            $danhMuc = DanhMuc::where('duong_dan', $slug)->first();
-    
-            if (!$danhMuc) {
-                return response()->json([
-                    'message' => 'Không tìm thấy danh mục'
-                ], 404);
+            $query = DanhMuc::with('sanPhams')
+                ->where('duong_dan', $tenDanhMucCha);
+
+            // Nếu có chọn danh mục con cụ thể
+            if ($tenDanhMucCon) {
+                $danhMucCon = DanhMuc::where('duong_dan', $tenDanhMucCon)->first();
+            
+                if (!$danhMucCon) {
+                    return response()->json(['message' => 'Danh mục con không tồn tại'], 404);
+                }
+                if ($tenDanhMucConCapBa) {
+                    $danhMucConCapBa = DanhMuc::where('duong_dan', $tenDanhMucConCapBa)->first();
+            
+                    if (!$danhMucConCapBa) {
+                        return response()->json(['message' => 'Danh mục con cấp ba không tồn tại'], 404);
+                    }
+                    $sanPhams = SanPham::where('danh_muc_id', $danhMucConCapBa->id);
+                } else {
+                    $sanPhams = SanPham::where('danh_muc_id', $danhMucCon->id);
+                }
+            } else {
+                $danhMucCha = $query->first();
+            
+                if (!$danhMucCha) {
+                    return response()->json(['message' => 'Không tìm thấy danh mục'], 404);
+                }
+            
+                $danhMucIds = $this->layDanhMucIds($danhMucCha);
+                $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucIds);
             }
-    
-            // Xác định nếu đây là danh mục chính "nam"
-            $danhMucIds = [$danhMuc->id];
-            if ($danhMuc->duong_dan === 'nam') {
-                // Lấy danh sách ID của tất cả danh mục con thuộc "nam"
-                $danhMucIds = DanhMuc::where('cha_id', $danhMuc->id)->pluck('id')->toArray();
-                $danhMucIds[] = $danhMuc->id; // Thêm ID của danh mục chính "nam"
-            }
-    
+
+            // Số lượng sản phẩm mỗi trang
             $soLuongSanPhamMoiTrang = request()->get('per_page', 8);
-    
-            $sanPhams = SanPham::with([
-                'bienTheSanPham' => function ($query) {
-                    $query->with(['mauBienThe', 'kichThuocBienThe', 'anhBienThe'])
-                        ->select(
-                            'id', 'san_pham_id', 'bien_the_mau_sac_id', 'bien_the_kich_thuoc_id',
-                            'so_luong_bien_the', 'gia_ban', 'gia_khuyen_mai', 'gia_khuyen_mai_tam_thoi'
-                        );
-                },
-                'khachHangYeuThich' 
-            ])
-            ->whereIn('danh_muc_id', $danhMucIds) 
-            ->where('san_phams.trang_thai', 1) 
-            ->select(
-                'san_phams.id', 'san_phams.ten_san_pham', 'san_phams.anh_san_pham',
-                'san_phams.created_at', 'san_phams.ma_san_pham', 'san_phams.duong_dan', 'san_phams.hang_moi'
-            )
-            ->addSelect([
-                DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
-                DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
-            ])
-            ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
-            ->groupBy('san_phams.id')
-            ->orderBy('san_phams.created_at', 'desc') 
-            ->paginate($soLuongSanPhamMoiTrang);
-    
+
+            // Cập nhật điều kiện lọc sản phẩm
+            $sanPhams = $sanPhams->where('san_phams.trang_thai', 1)
+                ->select(
+                    'san_phams.id',
+                    'san_phams.ten_san_pham',
+                    'san_phams.anh_san_pham',
+                    'san_phams.created_at',
+                    'san_phams.ma_san_pham',
+                    'san_phams.duong_dan',
+                    'san_phams.hang_moi'
+                )
+                ->addSelect([
+                    DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
+                    DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
+                ])
+                ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
+                ->groupBy('san_phams.id')
+                ->orderBy('san_phams.created_at', 'desc')
+                ->paginate($soLuongSanPhamMoiTrang);
+
+            // Xử lý kết quả trả về
             $result = $sanPhams->map(function ($sanPham) {
                 $mauSacVaAnh = $sanPham->bienTheSanPham->flatMap(function ($bienThe) {
                     return $bienThe->anhBienThe->map(function ($anh) use ($bienThe) {
@@ -459,13 +471,13 @@ class TrangSanPhamController extends Controller
                         ];
                     });
                 })->unique('ma_mau_sac')->values();
-    
+
                 $trangThaiYeuthich = false;
                 if (Auth::guard('api')->check()) {
                     $user = Auth::guard('api')->user();
                     $trangThaiYeuthich = $sanPham->khachHangYeuThich->contains('id', $user->id);
                 }
-    
+
                 return [
                     'id' => $sanPham->id,
                     'ten_san_pham' => $sanPham->ten_san_pham,
@@ -489,14 +501,36 @@ class TrangSanPhamController extends Controller
                     'trang_thai_yeu_thich' => $trangThaiYeuthich,
                 ];
             });
-    
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công',
                 'data' => [
-                    'Danh_muc' => $danhMuc,
-                    'San_pham' => $result
+                    'Danh_muc' => [
+                        'id' => $query->first()->id,
+                        'ten_danh_muc' => $query->first()->ten_danh_muc,
+                        'cha_id' => $query->first()->cha_id,
+                        'anh_danh_muc' => $query->first()->anh_danh_muc,
+                        'duong_dan' => $query->first()->duong_dan,
+                        'created_at' => $query->first()->created_at,
+                        'updated_at' => $query->first()->updated_at,
+                        'deleted_at' => $query->first()->deleted_at,
+                        'children' => $query->first()->children->map(function ($child) {
+                            return [
+                                'id' => $child->id,
+                                'ten_danh_muc' => $child->ten_danh_muc,
+                                'cha_id' => $child->cha_id,
+                                'anh_danh_muc' => $child->anh_danh_muc,
+                                'duong_dan' => $child->duong_dan,
+                                'created_at' => $child->created_at,
+                                'updated_at' => $child->updated_at,
+                                'deleted_at' => $child->deleted_at,
+                                'children' => $child->children,
+                            ];
+                        }),
+                    ],
+                    'San_pham' => $result,
                 ],
             ], 200);
         } catch (Exception $exception) {
@@ -508,5 +542,14 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-    
+
+    // Hàm đệ quy để lấy tất cả ID danh mục con
+    protected function layDanhMucIds($danhMuc)
+    {
+        $ids = [$danhMuc->id];
+        foreach ($danhMuc->children as $child) {
+            $ids = array_merge($ids, $this->layDanhMucIds($child));
+        }
+        return $ids;
+    }
 }

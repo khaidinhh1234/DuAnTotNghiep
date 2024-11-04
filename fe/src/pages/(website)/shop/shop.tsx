@@ -1,4 +1,4 @@
-import Method from "../home/_components/Method";
+import Method from "../_component/Method";
 import AllProduct from "./_components/AllProduct";
 import ProductCategories from "./_components/ProductCategories";
 // import { sanPham2 } from "@/assets/img";

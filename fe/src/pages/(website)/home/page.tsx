@@ -5,7 +5,7 @@ import Categories from "./_components/Categories";
 import Customer from "./_components/Customer";
 import DealsOfTheMonth from "./_components/DealsOfTheMonth";
 import InstagramStories from "./_components/InstagramStories";
-import Method from "./_components/Method";
+import Method from "../_component/Method";
 import instanceClient from "@/configs/client";
 
 const HomePage = () => {
