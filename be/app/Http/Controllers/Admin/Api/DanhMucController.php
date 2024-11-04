@@ -71,14 +71,14 @@ class DanhMucController extends Controller
         try {
             DB::beginTransaction();
             $validateDanhMuc = $request->validate([
-                'ten_danh_muc' => 'required|unique:danh_mucs|max:255',
+                'ten_danh_muc' => 'required|max:255',
                 'cha_id' => 'nullable',
                 'anh_danh_muc' => 'nullable' ,
                 'duong_dan' => 'nullable',
 
             ]);
 
-            $validateDanhMuc['anh_danh_muc'] = $request->anh_danh_muc ?? 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729323699/logo_%C3%A1o_sesub6.jpg';
+            $validateDanhMuc['anh_danh_muc'] = $request->anh_danh_muc;
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc = DanhMuc::create($validateDanhMuc);
             DB::commit();
@@ -144,7 +144,7 @@ class DanhMucController extends Controller
 
             $danhMuc = DanhMuc::findOrFail($id);
 
-            $validateDanhMuc['anh_danh_muc'] = $request->anh_danh_muc ?? 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729323699/logo_%C3%A1o_sesub6.jpg';
+            $validateDanhMuc['anh_danh_muc'] = $request->anh_danh_muc;
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
             $danhMuc->update($validateDanhMuc);
             DB::commit();
