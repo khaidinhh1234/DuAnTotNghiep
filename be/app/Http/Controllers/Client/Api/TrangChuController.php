@@ -388,20 +388,23 @@ class TrangChuController extends Controller
                 return $path;
             };
 
-            $formattedData = $danhMucCha->children->map(function ($child) use ($getFullPath) {
-                return [
-                    'id' => $child->id,
-                    'ten_danh_muc' => $child->ten_danh_muc,
-                    'duong_dan' => $getFullPath($child),
-                    'con' => $child->children->map(function ($grandChild) use ($getFullPath) {
-                        return [
-                            'id' => $grandChild->id,
-                            'ten_danh_muc' => $grandChild->ten_danh_muc,
-                            'duong_dan' => $getFullPath($grandChild),
-                        ];
-                    }),
-                ];
-            });
+            $formattedData = [
+                'danh_muc' => $danhMucCha->children->map(function ($child) use ($getFullPath) {
+                    return [
+                        'id' => $child->id,
+                        'ten_danh_muc' => $child->ten_danh_muc,
+                        'duong_dan' => $getFullPath($child),
+                        'con' => $child->children->map(function ($grandChild) use ($getFullPath) {
+                            return [
+                                'id' => $grandChild->id,
+                                'ten_danh_muc' => $grandChild->ten_danh_muc,
+                                'duong_dan' => $getFullPath($grandChild),
+                            ];
+                        })->toArray(),
+                    ];
+                })->toArray(),
+                'anh_danh_muc_cha' => $danhMucCha->duong_dan_anh,
+            ];
 
             return response()->json([
                 'status' => true,
@@ -415,10 +418,11 @@ class TrangChuController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
-                'error' => $exception->getMessage()
+                'error' => $exception->getMessage(),
             ], 500);
         }
     }
+
 
 
     public function loadDanhMucSanPhamCha(){

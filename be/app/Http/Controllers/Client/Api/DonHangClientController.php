@@ -363,6 +363,7 @@ class DonHangClientController extends Controller
                 'ma_giam_gia' => $request->ma_giam_gia ?? null,
                 'so_tien_giam_gia' => $soTienGiamGia,
                 'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
+                'mien_phi_van_chuyen' => $tongTienDonHang >= 500000 ? 1 : 0
             ]);
 
             foreach ($sanPhamDuocChon as $sanPham) {
@@ -398,9 +399,8 @@ class DonHangClientController extends Controller
                     'tieu_de' => 'Đơn hàng đã được đặt',
                     'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
                     'loai' => 'Đơn hàng',
-                    'duong_dan' => 'don-hang',
+                    'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                    'id_duong_dan' => $donHang->ma_don_hang,
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
@@ -417,9 +417,8 @@ class DonHangClientController extends Controller
                     'tieu_de' => 'Đơn hàng đã được đặt',
                     'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
                     'loai' => 'Đơn hàng',
-                    'duong_dan' => 'don-hang',
+                    'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                    'id_duong_dan' => $donHang->ma_don_hang,
                 ]);
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
