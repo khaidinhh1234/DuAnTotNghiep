@@ -52,9 +52,6 @@ class TaiKhoanController extends Controller
 
     public function viTaiKhoan(Request $request)
     {
-        $request->validate([
-            'ma_xac_minh' => 'required|string|max:6',
-        ]);
         try {
             $userID = Auth::id();
             $user = User::find($userID);
@@ -67,28 +64,38 @@ class TaiKhoanController extends Controller
                     'message' => 'Người dùng chưa có ví tiền',
                 ], 404);
             }
-
-            if (!Hash::check($request->ma_xac_minh, $viUser->ma_xac_minh)) {
+            if (($viUser->ma_xac_minh == "")) {
                 return response()->json([
                     'status' => false,
                     'status_code' => 400,
-                    'message' => 'Mã xác minh không chính xác',
+                    'message' => 'Vui lòng thiết lập mã xác minh',
                 ], 400);
+            }else{
+                $request->validate([
+                    'ma_xac_minh' => 'required|string|max:6',
+                ]);
+
+                if (!Hash::check($request->ma_xac_minh, $viUser->ma_xac_minh)) {
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 400,
+                        'message' => 'Mã xác minh không chính xác',
+                    ], 400);
+                }
+
+                $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
+                $data = [
+                    'viUser' => $viUser,
+                    'lichSuGiaoDich' => $lichSuGiaoDich,
+                ];
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy thông tin ví thành công',
+                    'data' => $data,
+                ], 200);
             }
-
-            $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
-            $data = [
-                'viUser' => $viUser,
-                'lichSuGiaoDich' => $lichSuGiaoDich,
-                'trang_thai_ma_xac_minh' => $viUser->ma_xac_minh ? true : false,
-            ];
-
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy thông tin ví thành công',
-                'data' => $data,
-            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
