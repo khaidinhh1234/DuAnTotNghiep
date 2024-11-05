@@ -18,6 +18,8 @@ import { Link, useNavigate } from "react-router-dom";
 import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import AddCategorySelect from "@/components/AddCaterogySelect";
+import { codinh, giamgiaphantram } from "@/assets/img";
 
 const AddVoucher = () => {
   const [form] = Form.useForm();
@@ -62,7 +64,7 @@ const AddVoucher = () => {
             : error?.response?.data?.errors?.ma_code?.[0]
               ? error?.response?.data?.errors?.ma_code?.[0]
               : error?.response?.data?.errors?.loai?.[0] == "phan_tram" ||
-                  error?.response?.data?.errors?.giam_gia?.[0]
+                error?.response?.data?.errors?.giam_gia?.[0]
                 ? "Giảm giá phải lớn hơn 0% và không quá 50%"
                 : "Có lỗi xảy ra",
         });
@@ -119,16 +121,16 @@ const AddVoucher = () => {
   const handleSubmit = (values: any) => {
     const endDate = values.ngay_ket_thuc
       ? DateTime.fromJSDate(values.ngay_ket_thuc.toDate()).toFormat(
-          "yyyy/MM/dd"
-        )
+        "yyyy/MM/dd"
+      )
       : null;
     const start = values.ngay_bat_dau
       ? DateTime.fromJSDate(values.ngay_bat_dau.toDate()).toFormat("yyyy/MM/dd")
       : null;
     const suutam = values.ngay_bat_dau_suu_tam
       ? DateTime.fromJSDate(values.ngay_bat_dau_suu_tam.toDate()).toFormat(
-          "yyyy/MM/dd"
-        )
+        "yyyy/MM/dd"
+      )
       : null;
     const san_phams = key.map((item) => item.match(/\d+/g)?.join("") || null);
     const danh_mucs = danhm.map((item) => item.match(/\d+/g)?.join("") || null);
@@ -522,6 +524,11 @@ const AddVoucher = () => {
                                 </div>
                               )}
                             />{" "}
+                            {/* <AddCategorySelect
+                              categoriesData={dm} // Pass the categories data here
+                              onChange={(value: string[]) => handleChange1(value)} // Handle the change
+                              value={selectedValues1} // Set the selected value
+                            /> */}
                           </div>
                         </div>
                       ) : (
@@ -575,8 +582,8 @@ const AddVoucher = () => {
                      ${tabKey ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
-                      <img src="" alt="" className="w-10 h-10 " />
-                      <p>khaidinh</p>
+                      <img src={codinh} alt="" className="w-14 h-14 " />
+                      {/* <p>khaidinh</p> */}
                     </div>
                     <div className="col-span-3 leading-[15px]">
                       <p className="font-bold text-2xl">
@@ -610,8 +617,8 @@ const AddVoucher = () => {
                     className={`grid grid-cols-5  px-3 py-5 text-slate-900 rounded-lg  ${tabKey == false ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
-                      <img src="" alt="" className="w-10 h-10 " />
-                      <p>khaidinh</p>
+                      <img src={giamgiaphantram} alt="" className="w-16 h-16 " />
+                      {/* <p>khaidinh</p> */}
                     </div>
                     <div className="col-span-3 leading-[15px]">
                       <p className="font-bold text-2xl">

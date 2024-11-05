@@ -3,7 +3,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instance from "@/configs/client";
 import CartOverlay from "./CartOverlay";
@@ -29,6 +29,7 @@ const Header = () => {
   const notificationRef = useRef<HTMLDivElement>(null);
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
+  const nav = useNavigate();
   // console.log(user?.user?.anh_nguoi_dung);
   const [anh_nguoi_dung] = useState(member?.anh_nguoi_dung);
   const { data } = useQuery({
@@ -110,9 +111,9 @@ const Header = () => {
 
   // console.log("giaohang", giaohangs);
   const logout = () => {
-    // nav("/login");
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
+    localStorage.removeItem("user"); //
+    nav("/");
     // setUser(null);
   };
   const [isModalVisible, setIsModalVisible] = useState(false);

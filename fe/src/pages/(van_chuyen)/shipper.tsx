@@ -137,13 +137,13 @@ const Shipper: React.FC = () => {
   //     return response.data;
   //   },
   // });
-  
+
   // if (isLoading || isLoadingShipper) {
   //   return <div>Loading...</div>; // Hoặc bạn có thể hiện thị một loader khác
   // }
   // const shipperTT = data?.data?.van_chuyen?.shipper
   // console.log(shipperTT)
-  
+
   const start = () => {
     setFormCheck(!formcheck);
   };
@@ -260,7 +260,7 @@ const Shipper: React.FC = () => {
     },
     {
       title: "Tổng tiền",
-      dataIndex: "tien_cod", 
+      dataIndex: "tien_cod",
       // key: "tien_cod",
       render: (_, record) => {
         return (

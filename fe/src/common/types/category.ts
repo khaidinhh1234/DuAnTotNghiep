@@ -8,5 +8,5 @@ export interface ICategories {
   deletool?: boolean;
   created_at?: Date;
   updatedAt?: Date;
-  // children?: ICategories[];
+  children?: ICategories[];
 }

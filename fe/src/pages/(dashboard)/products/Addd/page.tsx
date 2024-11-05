@@ -22,6 +22,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Link, useNavigate } from "react-router-dom";
 import CategorySelect from '../../../../components/CategorySelect';
+import AddCategorySelect from "@/components/AddCaterogySelect";
 const { TextArea } = Input;
 
 export interface VariantType {
