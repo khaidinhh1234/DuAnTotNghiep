@@ -1,118 +1,259 @@
-import React, { useState } from "react";
+
+import React, { useState, useRef } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+// import { useNavigate } from "react-router-dom";
 import { Checkbox } from 'antd';
-import type { CheckboxProps } from 'antd';
+import instanceClient from "@/configs/client";
+import { Link } from "react-router-dom";
 
-const onChange: CheckboxProps['onChange'] = (e) => {
-  console.log(`checked = ${e.target.checked}`);
-};
 const NapTien: React.FC = () => {
-  const [amount, setAmount] = useState("100.000");
+  // const navigate = useNavigate();
+  const [amount, setAmount] = useState<string>("");
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showForgotPinModal, setShowForgotPinModal] = useState(false);
+  const [pins, setPins] = useState(['', '', '', '', '', '']);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
+  const depositMutation = useMutation({
+    mutationFn: async (data: {
+      so_tien: number,
+      ma_xac_minh: string,
+    }) => {
+      const depositResponse = await instanceClient.post('/nap-tien', data);
+      console.log(depositResponse);
+      const paymentData = {
+        phuong_thuc_thanh_toan: selectedPaymentMethod,
+        amount: data.so_tien,
+        ma_giao_dich: depositResponse?.data?.data.ma_giao_dich
+      };
+      console.log(paymentData);
 
-  const handleAmountChange = (value: string) => {
-    setAmount(value);
-  };
+      const momoResponse = await instanceClient.post('/payment/momo', paymentData);
+      return momoResponse.data;
+    },
+    onSuccess: (response) => {
+      if (response.payUrl) {
+        window.location.href = response.payUrl;
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra');
+      resetPins();
+
+    }
+  });
+  const forgotPinMutation = useMutation({
+    mutationFn: () => instanceClient.get('/quen-ma-xac-minh').then(res => res.data),
+    onSuccess: () => {
+      toast.success('Yêu cầu lấy lại mã PIN đã được gửi đến email của bạn');
+      setShowForgotPinModal(false);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra');
+    }
+  });
 
   const handleQuickAmountSelect = (value: string) => {
-    setAmount(value);
+    const numberValue = Number(value.replace(/\./g, ''));
+    setAmount(numberValue.toString());
   };
 
   const clearAmount = () => {
     setAmount("");
   };
+  const handleInitialSubmit = () => {
+    const numberAmount = Number(amount);
+    if (numberAmount < 50000) {
+      toast.error('Số tiền nạp tối thiểu là 50.000₫');
+      return;
+    }
+    setShowVerificationModal(true);
+  };
+  const resetPins = () => {
+    setPins(['', '', '', '', '', '']);
+  };
+  const handlePinChange = (index: number, value: string) => {
+    const newPins = [...pins];
+    newPins[index] = value;
+    setPins(newPins);
 
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleFinalSubmit = () => {
+    const verificationCode = pins.join('');
+    depositMutation.mutate({
+      so_tien: Number(amount),
+      ma_xac_minh: verificationCode
+    });
+  };
+  const formatAmount = (value: string) => {
+    return Number(value).toLocaleString('vi-VN');
+  };
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setAmount(value);
+  };
   return (
     <div className="w-full max-w-[860px] mx-auto bg-white p-4 rounded-lg shadow-md overflow-hidden">
-      {/* Tiêu đề */}
-      <h2 className="text-center text-xl font-semibold mb-2">Nạp tiền</h2>
+      <div className="flex items-center mb-2">
+      <Link to="/mypro/wallet">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+    </svg>
+  </Link>
+        <h2 className="flex-grow text-center text-xl font-semibold">Nạp tiền</h2>
+      </div>
 
-      {/* Nhập số tiền */}
+
       <div className="mb-2">
         <label className="block text-gray-600 mb-1 text-base">Nhập số tiền (đ)</label>
         <div className="flex items-center border border-gray-300 rounded-lg p-2">
           <span className="text-lg font-medium text-gray-500">đ</span>
           <input
             type="text"
-            value={amount}
-            onChange={(e) => handleAmountChange(e.target.value)}
+            value={amount ? Number(amount).toLocaleString('vi-VN') : ''}
+            onChange={handleAmountChange}
             className="flex-1 text-right text-xl font-bold text-black outline-none"
           />
           <button onClick={clearAmount} className="text-gray-500 text-lg">✕</button>
         </div>
       </div>
 
-      {/* Số dư ví hiện tại */}
-      <p className="text-gray-500 mb-2 text-sm">Số dư Ví hiện tại: đ1.290</p>
-
-      {/* Các lựa chọn số tiền */}
       <div className="flex justify-between mb-2">
-        <button
-          onClick={() => handleQuickAmountSelect("100.000")}
-          className={`flex-1 mx-1 py-2 rounded-lg text-base font-semibold ${
-            amount === "100.000" ? "border-2 border-red-500 text-red-500" : "border border-gray-300 text-gray-700"
-          }`}
-        >
-          100.000
-        </button>
-        <button
-          onClick={() => handleQuickAmountSelect("200.000")}
-          className={`flex-1 mx-1 py-2 rounded-lg text-base font-semibold ${
-            amount === "200.000" ? "border-2 border-red-500 text-red-500" : "border border-gray-300 text-gray-700"
-          }`}
-        >
-          200.000
-        </button>
-        <button
-          onClick={() => handleQuickAmountSelect("500.000")}
-          className={`flex-1 mx-1 py-2 rounded-lg text-base font-semibold ${
-            amount === "500.000" ? "border-2 border-red-500 text-red-500" : "border border-gray-300 text-gray-700"
-          }`}
-        >
-          500.000
-        </button>
+        {["100.000", "200.000", "500.000"].map((value) => (
+          <button
+            key={value}
+            onClick={() => handleQuickAmountSelect(value)}
+            className={`flex-1 mx-1 py-2 rounded-lg text-base font-semibold ${amount === value ? "border-2 border-red-500 text-red-500" : "border border-gray-300 text-gray-700"
+              }`}
+          >
+            {value}
+          </button>
+        ))}
       </div>
 
-      {/* Phương thức thanh toán */}
-      <div className="flex items-center border border-gray-200 rounded-lg p-2 mb-2">
-      <img src="https://res.cloudinary.com/dpundwxg1/image/upload/v1730777845/Remove-bg.ai_1730777674094_yxs3kc.png" alt="Star" className="w-12 h-12" />
-      <div className="ml-6">
-          <p className="text-gray-700 text-sm -mb-1">Phương thức thanh toán</p>
-          <p className="font-semibold text-base -mb-1">Thanh toán AtM MoMo</p>
-        </div>
-        <button className="ml-auto text-gray-500 text-lg">
-        <Checkbox onChange={onChange}></Checkbox>
-</button>
+      {/* Bank Selection Section */}
+      <div className="space-y-3 mb-4">
+        <div className="flex items-center border border-gray-200 rounded-lg p-2">
+          <img src="https://res.cloudinary.com/dpundwxg1/image/upload/v1730777845/Remove-bg.ai_1730777674094_yxs3kc.png" alt="MoMo ATM" className="w-12 h-12" />
+          <div className="ml-6">
+            <p className="text-gray-700 text-sm -mb-1">Phương thức thanh toán</p>
+            <p className="font-semibold text-base -mb-1">Thanh toán ATM MoMo</p>
+          </div>
+          <Checkbox
+            onChange={() => setSelectedPaymentMethod("Momo_ATM")}
+            checked={selectedPaymentMethod === "Momo_ATM"}
+            className="ml-auto"
+          />        </div>
+
+        <div className="flex items-center border border-gray-200 rounded-lg p-2">
+          <img src="https://res.cloudinary.com/dpundwxg1/image/upload/v1730777845/Remove-bg.ai_1730777674094_yxs3kc.png" alt="MoMo QR" className="w-12 h-12" />
+          <div className="ml-6">
+            <p className="text-gray-700 text-sm -mb-1">Phương thức thanh toán</p>
+            <p className="font-semibold text-base -mb-1">Thanh toán Momo QR</p>
+          </div>
+          <Checkbox
+            onChange={() => setSelectedPaymentMethod("Momo_QR")}
+            checked={selectedPaymentMethod === "Momo_QR"}
+            className="ml-auto"
+          />        </div>
       </div>
-      <div className="flex items-center border border-gray-200 rounded-lg p-2 mb-2">
-      <img src="https://res.cloudinary.com/dpundwxg1/image/upload/v1730777845/Remove-bg.ai_1730777674094_yxs3kc.png" alt="Star" className="w-12 h-12" />
-      <div className="ml-6">
-          <p className="text-gray-700 text-sm -mb-1">Phương thức thanh toán</p>
-          <p className="font-semibold text-base -mb-1">Thanh toán Momo Qr</p>
-        </div>
-        <button className="ml-auto text-gray-500 text-lg">
-        <Checkbox onChange={onChange}></Checkbox>
-</button>
-      </div>
-      {/* Thông tin thanh toán */}
       <div className="border-t border-gray-200 pt-2 mb-2">
         <p className="flex justify-between text-gray-700 text-base">
           <span>Nạp tiền</span>
-          <span>đ{amount}</span>
+          <span>đ{formatAmount(amount)}</span>
         </p>
         <p className="flex justify-between text-xl font-semibold text-red-500 mt-1">
           <span>Tổng thanh toán</span>
-          <span>đ{amount}</span>
+          <span>đ{formatAmount(amount)}</span>
         </p>
       </div>
+      <button
+        onClick={handleInitialSubmit}
+        className="w-full bg-red-500 text-white text-lg font-semibold py-2 rounded-lg mt-5"
+      >
+        Nạp tiền ngay
+      </button>
 
-      {/* Lưu ý */}
-      <p className="text-xs text-gray-500 mb-2">
-        Nhấn "Nạp tiền ngay", bạn đã đồng ý tuân theo{" "}
-        <a href="#" className="text-blue-500">Điều khoản sử dụng</a> và{" "}
-        <a href="#" className="text-blue-500">Chính sách bảo mật</a>.
-      </p>
+      {/* Verification Modal */}
+      {showVerificationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Xác nhận mật khẩu ví</h2>
+            <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
 
-      {/* Nút xác nhận */}
-      <button className="w-full bg-red-500 text-white text-lg font-semibold py-2 rounded-lg mt-10">Nạp tiền ngay</button>
+            <div className="mb-6">
+              <div className="flex justify-between space-x-2">
+                {pins.map((pin, index) => (
+                  <input
+                    key={index}
+                    type="password"
+                    maxLength={1}
+                    value={pin}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    onChange={(e) => handlePinChange(index, e.target.value)}
+                    className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                ))}
+              </div>
+              <button
+                onClick={() => setShowForgotPinModal(true)}
+                className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+              >
+                Quên mật khẩu?
+              </button>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowVerificationModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleFinalSubmit}
+                disabled={pins.some(pin => !pin)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Forgot PIN Modal */}
+      {showForgotPinModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
+            <p className="text-gray-600 mb-6">
+              Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi mã đến email của bạn.
+            </p>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowForgotPinModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={() => forgotPinMutation.mutate()}
+                disabled={forgotPinMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

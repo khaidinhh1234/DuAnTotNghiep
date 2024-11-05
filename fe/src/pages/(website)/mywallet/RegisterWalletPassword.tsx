@@ -8,13 +8,13 @@ import { Link } from 'react-router-dom';
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  trang_thai_ma_xac_minh: boolean;
+  status: boolean;
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ 
   isOpen, 
   onClose,
-  trang_thai_ma_xac_minh 
+  status 
 }) => {
   const [showRegistration, setShowRegistration] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -151,7 +151,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         </button>
       </div>
       <div className="space-y-4">
-        {!trang_thai_ma_xac_minh ? (
+        {status ? (
           <button 
             onClick={() => {
               resetPasswordFields();

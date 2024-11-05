@@ -248,17 +248,11 @@ class TinTucController extends Controller
     {
         try {
             $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
-                ->with([
-                    'tinTuc' => function ($query) {
-                        $query->select('id', 'anh_tin_tuc', 'danh_muc_tin_tuc_id')
-                            ->orderBy('created_at', 'desc');
-                    }
-                ])->get();
-    
+                ->orderBy('created_at', 'desc')->get();
+
             $baiViet = TinTuc::orderBy('created_at', 'desc')
-                ->limit(5)
-                ->get();
-                
+                ->paginate(10);
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -274,5 +268,5 @@ class TinTucController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-    }    
+    }
 }

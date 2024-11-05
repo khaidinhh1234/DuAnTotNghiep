@@ -163,7 +163,7 @@ Route::middleware([])
 
             //Tài khoản
             Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin']);
-            Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan']);
+            Route::match(['get', 'post'], '/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan']);
             Route::post('/thiet-lap-ma-xac-minh', [ApiTaiKhoanController::class, 'thietLapMaXacMinh']);
             Route::get('/quen-ma-xac-minh', [ApiTaiKhoanController::class, 'quenMaXacMinh']);
             Route::post('/nap-tien', [ApiTaiKhoanController::class, 'napTienVi']);

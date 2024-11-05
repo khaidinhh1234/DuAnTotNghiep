@@ -1,4 +1,5 @@
 import { ICategories } from "@/common/types/category";
+import CategorySelect from "@/components/CategorySelect";
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadOutlined } from "@ant-design/icons";
@@ -109,13 +110,20 @@ const CategoriesAdd = () => {
                 name="category"
                 rules={[{ required: false }]}
               >
-                <Select placeholder="Chọn danh mục cha" allowClear>
+                {/* <Select placeholder="Chọn danh mục cha" allowClear>
                   {allCategories.map((category) => (
                     <Select.Option key={category.id} value={category.id}>
                       {category.ten_danh_muc}
                     </Select.Option>
                   ))}
-                </Select>
+                </Select> */}
+                <CategorySelect
+                categoriesData={allCategoriesData}
+                onChange={(value) => {
+                  console.log('Category selected:', value);
+                  form.setFieldsValue({ danh_muc_id: value });
+                }}
+              />
               </Form.Item>
               <Form.Item
                 label="Thêm ảnh"

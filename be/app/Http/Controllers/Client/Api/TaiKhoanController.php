@@ -52,9 +52,6 @@ class TaiKhoanController extends Controller
 
     public function viTaiKhoan(Request $request)
     {
-        $request->validate([
-            'ma_xac_minh' => 'required|string|max:6',
-        ]);
         try {
             $userID = Auth::id();
             $user = User::find($userID);
@@ -67,28 +64,47 @@ class TaiKhoanController extends Controller
                     'message' => 'Người dùng chưa có ví tiền',
                 ], 404);
             }
-
-            if (!Hash::check($request->ma_xac_minh, $viUser->ma_xac_minh)) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Mã xác minh không chính xác',
-                ], 400);
+            if($request->method() == 'GET'){
+                if (($viUser->ma_xac_minh == "")) {
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 400,
+                    ], 400);
+                } else if (isset($viUser->ma_xac_minh)) {
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => 200,
+                    ], 200);
+                }
             }
 
-            $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
-            $data = [
-                'viUser' => $viUser,
-                'lichSuGiaoDich' => $lichSuGiaoDich,
-                'trang_thai_ma_xac_minh' => $viUser->ma_xac_minh ? true : false,
-            ];
 
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy thông tin ví thành công',
-                'data' => $data,
-            ], 200);
+            if ($request->method() == 'POST') {
+                $request->validate([
+                    'ma_xac_minh' => 'required|string|max:6',
+                ]);
+
+                if (!Hash::check($request->ma_xac_minh, $viUser->ma_xac_minh)) {
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 400,
+                        'message' => 'Mã xác minh không chính xác',
+                    ], 400);
+                }
+
+                $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
+                $data = [
+                    'viUser' => $viUser,
+                    'lichSuGiaoDich' => $lichSuGiaoDich,
+                ];
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy thông tin ví thành công',
+                    'data' => $data,
+                ], 200);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -98,7 +114,6 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
-
     public function themTaiKhoanNganHang(Request $request)
     {
         $validate = $request->validate([
@@ -314,6 +329,7 @@ class TaiKhoanController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Yêu cầu nạp tiền thành công',
+                'data' => $giaoDichVi,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
