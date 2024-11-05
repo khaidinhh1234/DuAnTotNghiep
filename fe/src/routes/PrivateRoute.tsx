@@ -14,6 +14,7 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
   // Lấy thông tin người dùng từ localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = user?.access_token;
+  // console.log(token);
   instance.interceptors.request.use(
     (config) => {
       if (token) {
