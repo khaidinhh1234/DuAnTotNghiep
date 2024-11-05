@@ -94,7 +94,7 @@ import {
   default as ShowUser,
 } from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
-import Test from "@/pages/(website)/test2";
+import Test from "@/pages/(van_chuyen)/test2";
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
 import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
@@ -135,6 +135,7 @@ import ProductCategories from "@/pages/(website)/shop/_components/ProductCategor
 import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
+import Test4 from "@/pages/(van_chuyen)/test";
 const Router = () => {
   //
 
@@ -147,7 +148,10 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
-          <Route path="/sanpham/danhmuc/:tenDanhMucCha/:tenDanhMucCon?" element={<ProductCategories/>}/>
+          <Route
+            path="/sanpham/danhmuc/:tenDanhMucCha/:tenDanhMucCon?"
+            element={<ProductCategories />}
+          />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
@@ -163,7 +167,6 @@ const Router = () => {
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route path="/search-results" element={<Page2 />} />
-
           <Route
             path="/shippingAddressPage"
             element={<ShippingAddressPage />}
@@ -238,7 +241,6 @@ const Router = () => {
           {/* <Route path="products/detaile" element={<Detail item={{
             id: 0
           }} />} /> */}
-        
           {/* Biến thể */}
           <Route path="products/bienthe" element={<Bienthe />} />
           <Route path="products/bienthecolor/edit/:id" element={<Color />} />
@@ -271,10 +273,8 @@ const Router = () => {
             path="orders/uncomfirmedorder"
             element={<TableUncomfirmedOrder />}
           />
-                    <Route path="orders/ruttien" element={<WithdrawalRequests />} />
-                    <Route path="orders/donhoan" element={<RefundRequests />} />
-
-
+          <Route path="orders/ruttien" element={<WithdrawalRequests />} />
+          <Route path="orders/donhoan" element={<RefundRequests />} />
           <Route path="orders/collect" element={<Collect />} />
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
@@ -397,6 +397,7 @@ const Router = () => {
         <Route path="/changePassword" element={<ChangePassword />} />
         <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />
         <Route path="/shipper" element={<Shipper />} />
+        <Route path="/test2" element={<Test4 />} />
       </Routes>
     </>
   );

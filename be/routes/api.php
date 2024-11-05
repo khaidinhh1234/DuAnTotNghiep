@@ -89,7 +89,7 @@ Route::middleware([])
         })->middleware('throttle:10000000,1');
 
         // Client Tin tức
-        Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layTatCaDanhMuc']);
+        Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layBaiVietMoiNhat']);
         Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
         Route::get('load-bai-viet-va-danh-muc', [ApiTinTucController::class, 'loadBaiVietVaDanhMuc']);

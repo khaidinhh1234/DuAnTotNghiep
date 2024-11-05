@@ -1,13 +1,19 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Space, Table } from "antd";
+import { Button, message, Space, Table } from "antd";
 import React from "react";
 
 import instance from "@/configs/admin";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+
+const categoriesMap = new Map<string, string>([
+  // Add your category mappings here
+  ["1", "Category 1"],
+  ["2", "Category 2"],
+  // Add more mappings as needed
+]);
 
 const CategoriesRemote: React.FC = () => {
-  const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
+  const queryClient = useQueryClient(); 
   // const { id } = useParams();
 
   const { data, isLoading } = useQuery({
@@ -26,11 +32,17 @@ const CategoriesRemote: React.FC = () => {
   const handleRestore = async (id: string) => {
     try {
       await instance.post(`/danhmuc/thung-rac/${id}`);
-      toast.success("Khôi phục danh mục thành công");
+      message.open({
+        type: "success",
+        content: "Khôi phục danh mục thành công",
+      });
       queryClient.invalidateQueries({ queryKey: ["danhmuc-remote"] });
     } catch (error) {
       console.error("Error restoring category:", error);
-      toast.error("Khôi phục danh mục thất bại");
+      message.open({
+        type: "error",
+        content: "Khôi phục danh mục thất bại",
+      });
     }
   };
 
@@ -49,18 +61,23 @@ const CategoriesRemote: React.FC = () => {
       title: "Ảnh danh mục",
       key: "anh_danh_muc",
       dataIndex: "anh_danh_muc",
-      render: (anh_danh_muc: string) => (
-        <img
-          src={anh_danh_muc}
-          alt="Ảnh danh mục"
-          style={{ width: "50px", height: "50px", objectFit: "cover" }}
-        />
-      ),
+      render: (anh_danh_muc: string) =>
+        anh_danh_muc ? (
+          <img
+            src={anh_danh_muc}
+            alt="Ảnh danh mục"
+            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+          />
+        ) : (
+          <span>Ảnh không có</span>
+        ),
     },
     {
       title: "Danh mục cha",
       key: "cha_id",
       dataIndex: "cha_id",
+      sorter: (a: any, b: any) => a.cha_id.localeCompare(b.cha_id),
+      render: (text: string) => categoriesMap.get(text) || "________",
     },
     {
       title: "Thời gian tạo",

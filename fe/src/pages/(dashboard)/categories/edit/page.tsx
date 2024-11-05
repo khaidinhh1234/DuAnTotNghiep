@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, Select, Upload, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { uploadToCloudinary } from "@/configs/cloudinary";
+import AddCategorySelect from "@/components/AddCaterogySelect";
 
 const CategoriesEdit = () => {
   const { id } = useParams();
@@ -150,13 +151,18 @@ const CategoriesEdit = () => {
                   <Input placeholder="Nhập tên danh mục" />
                 </Form.Item>
                 <Form.Item label="Chọn danh mục cha" name="cha_id">
-                  <Select placeholder="Chọn danh mục cha" allowClear>
-                    {parentCategories.map((category) => (
-                      <Select.Option key={category.id} value={category.id}>
-                        {category.ten_danh_muc}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                {allCategoriesData ? (
+                  <AddCategorySelect
+                    categoriesData={allCategoriesData}
+                    onChange={(value) => {
+                      console.log('Category selected:', value);
+                      form.setFieldsValue({ category: value });
+                    }}
+                    value={form.getFieldValue('category')}
+                  />
+                ) : (
+                  <Select disabled placeholder="Đang tải danh mục..." />
+                )}
                 </Form.Item>
                 <Form.Item
                   label="Thêm ảnh"
