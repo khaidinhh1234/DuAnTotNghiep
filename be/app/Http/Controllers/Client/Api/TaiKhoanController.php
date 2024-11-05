@@ -64,13 +64,22 @@ class TaiKhoanController extends Controller
                     'message' => 'Người dùng chưa có ví tiền',
                 ], 404);
             }
-            if (($viUser->ma_xac_minh == "")) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Vui lòng thiết lập mã xác minh',
-                ], 400);
-            }else{
+            if($request->method() == 'GET'){
+                if (($viUser->ma_xac_minh == "")) {
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 400,
+                    ], 400);
+                } else if (isset($viUser->ma_xac_minh)) {
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => 200,
+                    ], 200);
+                }
+            }
+
+
+            if ($request->method() == 'POST') {
                 $request->validate([
                     'ma_xac_minh' => 'required|string|max:6',
                 ]);
@@ -321,6 +330,7 @@ class TaiKhoanController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Yêu cầu nạp tiền thành công',
+                'data' => $giaoDichVi,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

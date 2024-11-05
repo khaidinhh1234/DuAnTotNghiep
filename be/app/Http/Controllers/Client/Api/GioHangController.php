@@ -132,7 +132,7 @@ class GioHangController extends Controller
                 [
                     'user_id' => Auth::id(),
                     'bien_the_san_pham_id' => $request->bien_the_san_pham_id,
-                   'chon' => 1
+                    'chon' => 1
                 ],
                 [
                     'so_luong' => $tongSoLuong,

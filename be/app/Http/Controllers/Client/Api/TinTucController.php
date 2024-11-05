@@ -10,22 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class TinTucController extends Controller
 {
-    public function layTatCaDanhMuc(Request $request)
+    public function layBaiVietMoiNhat()
     {
         try {
             // Bắt đầu transaction
             DB::beginTransaction();
 
-            $danhMucTinTuc = DanhMucTinTuc::query()
-                ->with([
-                    'tinTuc' => function ($query) {
-                        $query->select('id', 'anh_tin_tuc', 'danh_muc_tin_tuc_id')
-                            ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo mới nhất
-                            ->get();
-                    }
-                ])
-                ->get();
-
+            $baiViet = TinTuc::with('danhMucTinTuc')->orderBy('created_at', 'desc')
+                ->limit(4)->get(  );
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -33,7 +25,7 @@ class TinTucController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'danhMucCha' => $danhMucTinTuc,
+                'data' => $baiViet,
             ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
