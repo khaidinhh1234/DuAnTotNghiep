@@ -378,16 +378,26 @@ class TrangChuController extends Controller
                 ], 404);
             }
 
-            $formattedData = $danhMucCha->children->map(function ($child) {
+            $getFullPath = function ($danhMuc) {
+                $path = $danhMuc->duong_dan;
+                $parent = $danhMuc->parent;
+                while ($parent) {
+                    $path = $parent->duong_dan . '/' . $path;
+                    $parent = $parent->parent;
+                }
+                return $path;
+            };
+
+            $formattedData = $danhMucCha->children->map(function ($child) use ($getFullPath) {
                 return [
                     'id' => $child->id,
                     'ten_danh_muc' => $child->ten_danh_muc,
-                    'duong_dan' => $child->duong_dan,
-                    'con' => $child->children->map(function ($grandChild) {
+                    'duong_dan' => $getFullPath($child),
+                    'con' => $child->children->map(function ($grandChild) use ($getFullPath) {
                         return [
                             'id' => $grandChild->id,
                             'ten_danh_muc' => $grandChild->ten_danh_muc,
-                            'duong_dan' => $grandChild->duong_dan,
+                            'duong_dan' => $getFullPath($grandChild),
                         ];
                     }),
                 ];
@@ -409,6 +419,7 @@ class TrangChuController extends Controller
             ], 500);
         }
     }
+
 
     public function loadDanhMucSanPhamCha(){
         try {

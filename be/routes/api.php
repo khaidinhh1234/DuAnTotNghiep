@@ -90,9 +90,9 @@ Route::middleware([])
 
         // Client Tin tức
         Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layTatCaDanhMuc']);
-
         Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
+        Route::get('load-bai-viet-va-danh-muc', [ApiTinTucController::class, 'loadBaiVietVaDanhMuc']);
 
         //Thanh toán MoMo
         //Thanh toán MoMo
@@ -166,6 +166,8 @@ Route::middleware([])
             Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan']);
             Route::post('/thiet-lap-ma-xac-minh', [ApiTaiKhoanController::class, 'thietLapMaXacMinh']);
             Route::get('/quen-ma-xac-minh', [ApiTaiKhoanController::class, 'quenMaXacMinh']);
+            Route::post('/nap-tien', [ApiTaiKhoanController::class, 'napTienVi']);
+            Route::post('xac-nhan-nap-tien', [ApiTaiKhoanController::class, 'xacNhanNapTien']);
             Route::get('/danh-sach-ngan-hang', [ApiTaiKhoanController::class, 'nganHangUser']);
             Route::post('/them-ngan-hang', [ApiTaiKhoanController::class, 'themTaiKhoanNganHang']);
             Route::post('/huy-lien-ket-ngan-hang/{id}', [ApiTaiKhoanController::class, 'huyLienKetNganHang']);

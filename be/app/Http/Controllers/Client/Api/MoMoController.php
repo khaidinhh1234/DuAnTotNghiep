@@ -46,9 +46,15 @@ class MoMoController extends Controller
             $partnerCode = env('MOMO_PARTNER_CODE');
             $accessKey = env('MOMO_ACCESS_KEY');
             $secretKey = env('MOMO_SECRET_KEY');
+
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
+            if (isset($request->ma_don_hang)) {
+                $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
+            } elseif (isset($request->ma_giao_dich)) {
+                $orderId = $request->ma_giao_dich . '-' . random_int(100000, 999999);
+            }
+
             $redirectUrl = env('MOMO_REDIRECT_URL');
             $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
@@ -93,7 +99,11 @@ class MoMoController extends Controller
 
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
+            if (isset($request->ma_don_hang)) {
+                $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
+            } elseif (isset($request->ma_giao_dich)) {
+                $orderId = $request->ma_giao_dich . '-' . random_int(100000, 999999);
+            }
             $redirectUrl = env('MOMO_REDIRECT_URL');
             $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
@@ -131,7 +141,7 @@ class MoMoController extends Controller
                 return response()->json(['message' => 'Không tạo được URL thanh toán'], 500);
             }
         } else {
-            return response()->json(['message' => 'Invalid payment type'], 400);
+            return response()->json(['message' => 'Loại thanh toán không hợp lệ'], 400);
         }
     }
 
@@ -184,97 +194,97 @@ class MoMoController extends Controller
     }
 
 
-//    public function checkDonHang(Request $request)
-//    {
-//        try {
-//            $trangThai = $request->resultCode ?? null;
-//
-//            $maOrderMomo = $request->orderId ?? null;
-//            $maDonHang = explode("-", $maOrderMomo)[0];
-//
-//            // Tìm đơn hàng dựa vào mã đơn hàng
-//            $donHang = DonHang::where('ma_don_hang', $maDonHang)->first();
-//
-//            if (!$donHang) {
-//                return response()->json([
-//                    'status' => false,
-//                    'message' => 'Đơn hàng không tồn tại.'
-//                ], 404);
-//            }
-//
-//            $message = '';
-//
-//            switch ($trangThai) {
-//                case 0:
-//                    // Nếu resultCode là 0, cập nhật trạng thái "Đã thanh toán"
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_DTT]);
-//                    $message = 'Thanh toán thành công.';
-//                    break;
-//
-//                case 4:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Giao dịch bị hủy bởi người dùng.';
-//                    break;
-//
-//                case 5:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Số tiền không hợp lệ.';
-//                    break;
-//
-//                case 6:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Tài khoản MoMo không đủ tiền.';
-//                    break;
-//
-//                case 7:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Giao dịch đã hết hạn.';
-//                    break;
-//
-//                case 8:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Giao dịch không hợp lệ.';
-//                    break;
-//
-//                case 49:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Lỗi chữ ký - Dữ liệu hoặc khóa bí mật không khớp.';
-//                    break;
-//
-//                case 1001:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Địa chỉ IP không được phép.';
-//                    break;
-//
-//                case 1006:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Yêu cầu trùng lặp - Yêu cầu đã được xử lý.';
-//                    break;
-//
-//                case 9000:
-//                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
-//                    $message = 'Lỗi nội bộ - Đã xảy ra lỗi máy chủ không mong muốn.';
-//                    break;
-//
-//                default:
-//                    return response()->json([
-//                        'status' => false,
-//                        'message' => 'Trạng thái không hợp lệ.'
-//                    ], 400);
-//            }
-//
-//            return response()->json([
-//                'status' => true,
-//                'message' => $message
-//            ], 200);
-//        } catch (\Exception $e) {
-//            Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
-//            return response()->json([
-//                'status' => false,
-//                'message' => 'Lỗi hệ thống. Vui lòng thử lại sau.'
-//            ], 500);
-//        }
-//    }
+    //    public function checkDonHang(Request $request)
+    //    {
+    //        try {
+    //            $trangThai = $request->resultCode ?? null;
+    //
+    //            $maOrderMomo = $request->orderId ?? null;
+    //            $maDonHang = explode("-", $maOrderMomo)[0];
+    //
+    //            // Tìm đơn hàng dựa vào mã đơn hàng
+    //            $donHang = DonHang::where('ma_don_hang', $maDonHang)->first();
+    //
+    //            if (!$donHang) {
+    //                return response()->json([
+    //                    'status' => false,
+    //                    'message' => 'Đơn hàng không tồn tại.'
+    //                ], 404);
+    //            }
+    //
+    //            $message = '';
+    //
+    //            switch ($trangThai) {
+    //                case 0:
+    //                    // Nếu resultCode là 0, cập nhật trạng thái "Đã thanh toán"
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_DTT]);
+    //                    $message = 'Thanh toán thành công.';
+    //                    break;
+    //
+    //                case 4:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Giao dịch bị hủy bởi người dùng.';
+    //                    break;
+    //
+    //                case 5:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Số tiền không hợp lệ.';
+    //                    break;
+    //
+    //                case 6:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Tài khoản MoMo không đủ tiền.';
+    //                    break;
+    //
+    //                case 7:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Giao dịch đã hết hạn.';
+    //                    break;
+    //
+    //                case 8:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Giao dịch không hợp lệ.';
+    //                    break;
+    //
+    //                case 49:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Lỗi chữ ký - Dữ liệu hoặc khóa bí mật không khớp.';
+    //                    break;
+    //
+    //                case 1001:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Địa chỉ IP không được phép.';
+    //                    break;
+    //
+    //                case 1006:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Yêu cầu trùng lặp - Yêu cầu đã được xử lý.';
+    //                    break;
+    //
+    //                case 9000:
+    //                    $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+    //                    $message = 'Lỗi nội bộ - Đã xảy ra lỗi máy chủ không mong muốn.';
+    //                    break;
+    //
+    //                default:
+    //                    return response()->json([
+    //                        'status' => false,
+    //                        'message' => 'Trạng thái không hợp lệ.'
+    //                    ], 400);
+    //            }
+    //
+    //            return response()->json([
+    //                'status' => true,
+    //                'message' => $message
+    //            ], 200);
+    //        } catch (\Exception $e) {
+    //            Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
+    //            return response()->json([
+    //                'status' => false,
+    //                'message' => 'Lỗi hệ thống. Vui lòng thử lại sau.'
+    //            ], 500);
+    //        }
+    //    }
 
     public function checkDonHang(Request $request)
     {
@@ -292,7 +302,10 @@ class MoMoController extends Controller
                 ], 404);
             }
 
-            if ($trangThai == 0) {
+            if (
+                $trangThai == 0 && $donHang->phuong_thuc_thanh_toan === DonHang::PTTT_MM_ATM
+                && $donHang->trang_thai_thanh_toan === DonHang::PTTT_MM_QR
+            ) {
                 if ($donHang->trang_thai_thanh_toan === DonHang::TTTT_DTT) {
                     return response()->json([
                         'status' => true,
@@ -308,9 +321,8 @@ class MoMoController extends Controller
                     'tieu_de' => 'Đơn hàng đã được thanh toán',
                     'noi_dung' => 'Cảm ơn bạn đã ' . DonHang::TTTT_DTT . ' mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
                     'loai' => 'Đơn hàng',
-                    'duong_dan' => 'don-hang',
+                    'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                    'id_duong_dan' => $donHang->ma_don_hang,
                 ]);
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($donHang->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHang));
@@ -343,9 +355,8 @@ class MoMoController extends Controller
                         'tieu_de' => 'Đơn hàng chưa được thanh toán',
                         'noi_dung' => $message,
                         'loai' => 'Đơn hàng',
-                        'duong_dan' => 'don-hang',
+                        'duong_dan' => $donHang->ma_don_hang,
                         'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                        'id_duong_dan' => $donHang->ma_don_hang,
                     ]);
 
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
@@ -361,7 +372,6 @@ class MoMoController extends Controller
                 'status' => false,
                 'message' => 'Trạng thái không hợp lệ.'
             ], 400);
-
         } catch (\Exception $e) {
             Log::error("Lỗi lưu thông tin thanh toán MoMo: " . $e->getMessage());
             return response()->json([
@@ -370,5 +380,4 @@ class MoMoController extends Controller
             ], 500);
         }
     }
-
 }
