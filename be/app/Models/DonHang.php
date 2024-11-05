@@ -15,6 +15,7 @@ class DonHang extends Model
     const PTTT_TT = 'Thanh toán khi nhận hàng';
     const PTTT_MM_ATM = 'Momo_ATM';
     const PTTT_MM_QR = 'Momo_QR';
+    const PTTT_VT = 'Ví tiền';
 
     // Trạng thái đơn hàng
     const TTDH_CXH = 'Chờ xác nhận';
@@ -120,6 +121,7 @@ class DonHang extends Model
             self::PTTT_TT => 'Thanh toán khi nhận hàng',
             self::PTTT_MM_ATM => 'Thanh toán qua Momo ATM',
             self::PTTT_MM_QR => 'Thanh toán qua MoMo QR',
+            self::PTTT_VT => 'Thanh toán qua ví tiền',
         ];
 
         return $phuongThucThanhToanNames[$phuongThucThanhToan] ?? 'Phương thức thanh toán không xác định';
