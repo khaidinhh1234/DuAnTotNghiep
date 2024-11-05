@@ -22,6 +22,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Link, useNavigate } from "react-router-dom";
 import CategorySelect from '../../../../components/CategorySelect';
+import AddCategorySelect from "@/components/AddCaterogySelect";
 const { TextArea } = Input;
 
 export interface VariantType {
@@ -342,7 +343,7 @@ const AddProducts: React.FC = () => {
               name="danh_muc_id"
               rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
             >
-              <CategorySelect
+              <AddCategorySelect
                 categoriesData={categoriesData}
                 onChange={(value) => {
                   console.log('Category selected:', value);
