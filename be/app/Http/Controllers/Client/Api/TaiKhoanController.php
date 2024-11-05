@@ -114,7 +114,6 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
-
     public function themTaiKhoanNganHang(Request $request)
     {
         $validate = $request->validate([

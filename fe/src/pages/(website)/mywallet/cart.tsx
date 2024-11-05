@@ -59,9 +59,26 @@ const maskCardNumber = (value: string) => {
   
   return maskedNumber;
 };
+
 const PinModal = ({ isOpen, onClose, onSubmit, isLoading }: any) => {
   const [pins, setPins] = useState(['', '', '', '', '', '']);
+  const [showForgotPinModal, setShowForgotPinModal] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const forgotPinMutation = useMutation({
+    mutationFn: async () => {
+      const response = await instanceClient.get('/quen-ma-xac-minh');
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Yêu cầu lấy lại mã PIN đã được gửi đến email của bạn');
+      setShowForgotPinModal(false);
+    },
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+      toast.error(errorMessage);
+    }
+  });
 
   useEffect(() => {
     if (isOpen) {
@@ -123,6 +140,12 @@ const PinModal = ({ isOpen, onClose, onSubmit, isLoading }: any) => {
               />
             ))}
           </div>
+          <button 
+            onClick={() => setShowForgotPinModal(true)}
+            className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+          >
+            Quên mật khẩu?
+          </button>
         </div>
 
         <div className="flex justify-end space-x-3">
@@ -144,10 +167,36 @@ const PinModal = ({ isOpen, onClose, onSubmit, isLoading }: any) => {
           </button>
         </div>
       </div>
+
+      {showForgotPinModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
+            <p className="text-gray-600 mb-6">
+              Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi đến email của bạn.
+            </p>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowForgotPinModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={() => forgotPinMutation.mutate()}
+                disabled={forgotPinMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {forgotPinMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
 
 function CreditCardForm({ bankData }: { bankData: BankData }) {
   const [cardNumber, setCardNumber] = useState('');
@@ -166,11 +215,11 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
       setCardNumber('');
       setCardHolder('');
     },
-    onError: (error : any) => {
+    onError: (error: any) => {
       const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
-      toast.error(errorMessage);    }
+      toast.error(errorMessage);
+    }
   });
-  
 
   const [error, setError] = useState('');
 
@@ -185,7 +234,6 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
       }
     }
   };
-  
 
   const formatDisplayCardNumber = (number: string) => {
     return number.replace(/(.{4})/g, '$1 ').trim();
@@ -205,6 +253,7 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
       ma_xac_minh: pin
     });
   };
+
   const isFormValid = () => {
     return cardNumber.length >= 6 && cardHolder.trim().length > 0;
   };
@@ -259,46 +308,45 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
               placeholder="1234 5678 9012 3456"
               value={formatDisplayCardNumber(cardNumber)}
               onChange={handleCardNumberChange}
-              className="mt-1 w-full rounded-md border border-gray-300 p-2.5 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
-            />
-              {error && (
-    <p className="mt-1 text-sm text-red-500">
-      {error}
-    </p>
-  )}
-          </div>
+className="mt-1 w-full rounded-md border border-gray-300 p-2.5 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
+/>
+{error && (
+  <p className="mt-1 text-sm text-red-500">
+    {error}
+  </p>
+)}
+</div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Tên Chủ Tài Khoản</label>
-            <input
-              type="text"
-              placeholder="Tên Đầy Đủ"
-              value={cardHolder}
-              maxLength={25}
-              onChange={(e) => setCardHolder(e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 p-2.5 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
-            />
-          </div>
+<div>
+<label className="block text-sm font-medium text-gray-700">Tên Chủ Tài Khoản</label>
+<input
+  type="text"
+  placeholder="Tên Đầy Đủ"
+  value={cardHolder}
+  maxLength={25}
+  onChange={(e) => setCardHolder(e.target.value)}
+  className="mt-1 w-full rounded-md border border-gray-300 p-2.5 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition duration-300 ease-in-out transform hover:scale-105"
+/>
+</div>
 
-        
-      <button
-        type="submit"
-        disabled={!isFormValid()}
-        className="mt-6 w-full rounded-md bg-blue-600 py-3 text-white transition duration-300 ease-in-out transform hover:scale-105 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-blue-600"
-      >
-        Gửi
-      </button>
-        </form>
-      </div>
+<button
+type="submit"
+disabled={!isFormValid()}
+className="mt-6 w-full rounded-md bg-blue-600 py-3 text-white transition duration-300 ease-in-out transform hover:scale-105 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-blue-600"
+>
+Gửi
+</button>
+</form>
+</div>
 
-      <PinModal
-        isOpen={showPinModal}
-        onClose={() => setShowPinModal(false)}
-        onSubmit={handlePinSubmit}
-        isLoading={addBankMutation.isPending}
-      />
-    </div>
-  );
+<PinModal
+isOpen={showPinModal}
+onClose={() => setShowPinModal(false)}
+onSubmit={handlePinSubmit}
+isLoading={addBankMutation.isPending}
+/>
+</div>
+);
 }
 
 export default CreditCardForm;
