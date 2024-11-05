@@ -47,7 +47,7 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
   }
 
   if (isDeliveryPerson) {
-    nav("/admin/orders/uncomfirmedorder");
+    nav("/shipp");
   }
   // if (isAuthenticated) {
   //   toast.success("Đăng nhập thành công");

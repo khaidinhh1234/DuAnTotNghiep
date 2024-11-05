@@ -4,6 +4,7 @@ import instance from "@/configs/auth";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { message } from "antd";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -27,8 +28,23 @@ const LoginForm = () => {
       localStorage.setItem("user", JSON.stringify(data));
       // console.log(data);
       localStorage.setItem("accessToken", data?.access_token);
-      nav("/");
-      toast.success("Đăng nhập thành công");
+      const users = JSON.parse(localStorage.getItem("user") || "{}");
+      const isDeliveryPerson = users?.user?.vai_tros?.some(
+        (vai_tro: any) => vai_tro?.ten_vai_tro === "Người giao hàng"
+      );
+      const hasPermission = users?.user?.vai_tros?.some(
+        (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
+      );
+      if (isDeliveryPerson) {
+        message.success("Đăng nhập thành công");
+        return nav("/shipper");
+      } else if (hasPermission && !isDeliveryPerson) {
+        message.success("Đăng nhập thành công");
+        return nav("/admin/dashboard/list");
+      } else {
+        toast.success(" Glow Clothing Xin chào bạn");
+        return nav("/");
+      }
     },
 
     onError: (error: any) => {
