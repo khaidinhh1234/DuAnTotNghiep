@@ -323,28 +323,17 @@ const DetailTS = ({ record }: any) => {
             <span>Thông tin đơn hàng</span>
           </div>
           {/* Order Status */}
-          <div className="bg-green-600 text-white rounded-md p-3 mt-4">
-            <p className="text-sm font-semibold">Đơn hàng đã hoàn thành</p>
+          <div className="bg-teal-600 text-hite rounded-t-md px-3 pt-3 pb-1 mt-4">
+            <p className="text-lg font-semibold text-white">
+              Đơn hàng đã hoàn thành
+            </p>
           </div>
           {/* Shipping Info */}
           <div className="bg-white rounded-md shadow-md p-4 mt-4">
             <p className="text-gray-700 font-semibold">Thông tin vận chuyển</p>
             <p className="text-gray-500 text-sm">
-              SPX Express: SPXVN042195340009
+              Glow clothing Express: SPXVN042195340009
             </p>
-            <div className="flex items-center space-x-2 mt-2">
-              <svg
-                className="w-5 h-5 text-green-500"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="text-green-500 font-semibold">
-                Giao hàng thành công
-              </p>
-            </div>
-            <p className="text-gray-500 text-sm">12-09-2024 18:20</p>
           </div>
           {/* Address Info */}
           <div className="bg-white rounded-md shadow-md p-4 mt-4">
@@ -354,86 +343,63 @@ const DetailTS = ({ record }: any) => {
             </p>
             <p className="text-gray-500 text-sm">
               Đường đê mới Long Châu xã phùng châu...
+            </p>{" "}
+            <p className="text-gray-500 text-sm">
+              ghi chú :skdnkbdbndfkjb kbdbndfkjbns jgn
             </p>
           </div>
           {/* Product Info */}
           <div className="bg-white rounded-md shadow-md p-4 mt-4">
-            <div className="flex items-center justify-between">
-              <p className="text-red-500 bg-red-100 px-2 py-1 rounded text-xs">
-                Yêu thích
-              </p>
-              <p className="font-semibold text-gray-700">
-                SHOP PT - PHỤ KIỆN CÔNG NGHỆ
-              </p>
-            </div>
-            <div className="flex mt-2">
+            <p className="text-gray-700 font-semibold mb-2 text-base">
+              Mã đơn hàng : <span>VC-HJDBHV7587dfg</span>
+            </p>{" "}
+            <div className="flex items-start space-x-4 mb-2 border-b pb-5">
               <img
-                src="path_to_image.jpg"
+                src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729223981/ao-khoac-nu-SKN7004-DEN_1_jjbtoe.webp"
                 alt="Product Image"
-                className="w-16 h-16 object-cover rounded mr-4"
+                className="md:w-24 md:h-28 w-20 h-20 object-cover rounded"
               />
-              <div className="flex-1">
-                <p className="text-gray-700 font-semibold">
-                  COMBO Giá Treo Màn Hình NB-F160 17...
-                </p>
-                <p className="text-xs text-gray-500">F160 + FP2</p>
-                <span className="px-2 py-1 border border-red-500 text-red-500 rounded text-xs">
-                  Trả hàng miễn phí
-                </span>
-                <p className="text-sm text-gray-400 line-through mt-2">
-                  ₫1.050.000
-                </p>
-                <p className="text-red-500 font-semibold">₫825.000</p>
+              <div>
+                {/* <DetailTS /> */}
+                <h3 className="md:text-lg  text-sm font-semibold md:w-full w-64 truncate hover:text-red-500 cursor-pointer ">
+                  SHOP PT - PHỤ KIỆN CÔNG NGHỆ fsd dg dfg fdg fdxg
+                </h3>{" "}
+                <div className="flex md:justify-start justify-between items-center">
+                  {" "}
+                  <span className="md:text-base  text-xs text-gray-500">
+                    Size: <span>XL</span>, Màu: <span>đỏ</span>
+                  </span>
+                  <span className="md:text-lg  text-xs text-gray-500 mx-2">
+                    x1
+                  </span>
+                </div>{" "}
+                <div className="flex items-end md:justify-start justify-end ">
+                  <span className="md:text-xl text-base font-semibold text-red-500 ml-1 ">
+                    <span className="md:text-base text-xs text-gray-500 line-through">
+                      ₫1.050.000
+                    </span>{" "}
+                    ₫825.000
+                  </span>
+                </div>
               </div>
             </div>
-            <p className="text-right text-gray-700 mt-2">
+            <p className=" md:text-lg text-right text-gray-700 mt-2">
               Thành tiền:{" "}
               <span className="font-semibold text-red-500">₫724.300</span>
+            </p>{" "}
+            <p className=" md:text-lg text-right font-bold text-gray-700 mt-2">
+              Tổng tiền COD :
+              <span className="font-bold text-red-500">₫10.094.300</span>
             </p>
           </div>
-          {/* Support Section */}
-          <div className="bg-white rounded-md shadow-md p-4 mt-4">
-            <p className="text-gray-700 font-semibold">Bạn cần hỗ trợ?</p>
-            <ul className="mt-2 space-y-2 text-gray-500">
-              <li className="flex items-center space-x-2">
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M19 11H5v2h14v-2z" />
-                </svg>
-                <span>Gửi yêu cầu Trả hàng/Hoàn tiền</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M9 21V8H4l8-8 8 8h-5v13H9z" />
-                </svg>
-                <span>Liên hệ Shop</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M3 17h18v2H3v-2zm0-5h18v2H3v-2zm0-5h18v2H3V7z" />
-                </svg>
-                <span>Trung tâm Hỗ trợ</span>
-              </li>
-            </ul>
-          </div>
+
           {/* Action Buttons */}
           <div className="flex justify-between mt-4">
             <button className="w-full py-2 text-center bg-gray-100 text-gray-700 font-semibold rounded-md mr-2">
-              Xem Đánh giá
+              Giao hàng thất bại
             </button>
             <button className="w-full py-2 text-center bg-red-500 text-white font-semibold rounded-md ml-2">
-              Mua lại
+              Nhận hàng
             </button>
           </div>
         </div>
