@@ -73,7 +73,7 @@ class GuiThongBaoKhuyenMai extends Command
                 'user_id' => $user->id,
                 'tieu_de' => $title,
                 'noi_dung' => $content,
-                'loai' => 'uu-dai',
+                'loai' => 'Ưu đãi',
                 'duong_dan' => $duong_dan,
                 'hinh_thu_nho'=> 'https://cuoihoihungthinh.com/wp-content/uploads/2021/09/icon-uu-dai.png'
             ]);
