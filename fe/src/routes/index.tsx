@@ -132,6 +132,7 @@ import Page2 from "@/pages/(website)/_component/shop";
 import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
 import ProductsList from "@/pages/(website)/Shopuudai/_components/ProductsList";
 import ProductCategories from "@/pages/(website)/shop/_components/ProductCategories";
+import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 const Router = () => {
@@ -183,7 +184,7 @@ const Router = () => {
             <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
-            {/* <Route path="/mypro/mk" element={<SettingsModal/>} /> */}
+            <Route path="/mypro/naptien" element={<NapTien/>} />
 
 
 
