@@ -343,7 +343,7 @@ const AddProducts: React.FC = () => {
               name="danh_muc_id"
               rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
             >
-              <AddCategorySelect
+              <CategorySelect
                 categoriesData={categoriesData}
                 onChange={(value) => {
                   console.log('Category selected:', value);

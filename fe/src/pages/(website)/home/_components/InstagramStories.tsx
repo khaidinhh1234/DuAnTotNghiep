@@ -24,7 +24,7 @@ const InstagramStories = () => {
             </div>
             <div className="container">
               <div className="grid grid-cols-12 gap-3 mb-24 mt-10">
-                {data?.danhMucCha?.slice(0, 4).map((newsItem: any) => {
+                {data?.danhMucCha?.map((newsItem: any) => {
                   // Lấy id và hình ảnh của tin tức đầu tiên trong danh mục
                   const tinTucDauTien = newsItem.tin_tuc[0];
                   const idTinTucDauTien = tinTucDauTien?.id;
