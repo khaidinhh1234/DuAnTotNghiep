@@ -313,7 +313,6 @@ class TaiKhoanController extends Controller
 
                 LichSuGiaoDich::create([
                     'vi_tien_id' => $viUser->id,
-                    'loai_giao_dich' => 'nap_tien',
                     'so_du_truoc' => $viUser->so_du,
                     'so_du_sau' => $viUser->so_du + $request->so_tien,
                     'ngay_thay_doi' => now(),
