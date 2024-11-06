@@ -645,7 +645,6 @@ class DonHangClientController extends Controller
 
                 LichSuGiaoDich::create([
                     'vi_tien_id' => $viTien->id,
-                    'loai_giao_dich' => 'rut_tien',
                     'so_du_truoc' => $viTien->so_du,
                     'so_du_sau' => $viTien->so_du - $soTien,
                     'ngay_thay_doi' => now(),
