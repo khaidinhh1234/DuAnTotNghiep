@@ -179,7 +179,6 @@ class DonHangController extends Controller
                 $shippers = User::query()->with('vaiTros')->whereHas('vaiTros', function ($query) {
                     $query->where('ten_vai_tro', 'Người giao hàng');
                 })->get();
-
                 if (in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DGH, DonHang::TTDH_CKHCN]) && $request->trang_thai_don_hang === DonHang::TTDH_DH) {
                     $messages[] = 'Không thể hủy đơn hàng khi đơn hàng đang được giao hoặc đã giao thành công.';
                     continue;
@@ -211,10 +210,12 @@ class DonHangController extends Controller
                     if ($shippers->isEmpty()) {
                         throw new \Exception('Không có shipper nào trong hệ thống');
                     }
-                    $shipper = $shippers->sortBy(function ($shipper) {
-                        return $shipper->vanChuyens->count();
-                    })->first();
-                    $vanChuyenData = [
+
+                    $minDonHangCount = $shippers->min(fn($shipper) => $shipper->vanChuyens->count());
+                    $shippersWithMinDonHang = $shippers->filter(fn($shipper) => $shipper->vanChuyens->count() == $minDonHangCount);
+                    $shipper = $shippersWithMinDonHang->random();
+
+                    $vanChuyen = VanChuyen::create([
                         'don_hang_id' => $donHang->id,
                         'user_id' => $donHang->user_id,
                         'shipper_id' => $shipper->id,
@@ -222,10 +223,10 @@ class DonHangController extends Controller
                         'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
                         'cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? VanChuyen::TTCOD_KT : VanChuyen::TTCOD_CN,
                         'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? 0 : $donHang->tong_tien_don_hang,
-                    ];
-                    VanChuyen::create($vanChuyenData);
+                    ]);
+                    $thongBaoTele = new ThongBaoTelegramController();
 
-                    
+                    $thongBaoTele->thongBaoDonHangMoi($vanChuyen->id);
                 }
 
                 $thongBao = ThongBao::create([
@@ -419,7 +420,7 @@ class DonHangController extends Controller
     public function danhSachYeuCauRutTien()
     {
         try {
-            $yeuCauRutTiens = YeuCauRutTien::with('viTien','nganHang')->get();
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien', 'nganHang')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

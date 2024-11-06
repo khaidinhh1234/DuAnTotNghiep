@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Events\DonHangHoanTat;
 use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
 use App\Models\DonHang;
@@ -199,6 +200,8 @@ class VanChuyenController extends Controller
                         'trang_thai_thanh_toan' => DonHang::TTTT_DTT,
                         'trang_thai_don_hang' => DonHang::TTDH_CKHCN
                     ]);
+                    $thongBaoGiaoHangThanhCong = new ThongBaoTelegramController();
+                    $thongBaoGiaoHangThanhCong->thongBaoHoanTatGiaoHang( $vanChuyen->id);
                     DB::commit();
                     return response()->json([
                         'status' => true,
