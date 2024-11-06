@@ -14,6 +14,9 @@ import { checkout_address } from "@/common/validations/checkout";
 
 const ShippingAddressPage = () => {
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
+  const [user] = useLocalStorage("user" as any, {});
+  const member = user?.user;
+  console.log(member);
   const {
     register,
     handleSubmit,
@@ -21,6 +24,12 @@ const ShippingAddressPage = () => {
     reset,
   } = useForm({
     resolver: zodResolver(checkout_address),
+    defaultValues: {
+      ten_nguoi_dat_hang: member?.ho + " " + member?.ten || "",
+      so_dien_thoai_nguoi_dat_hang: member?.so_dien_thoai || "",
+      dia_chi_nguoi_dat_hang: member?.dia_chi || "",
+      email_nguoi_dat_hang: member?.email || "",
+    },
   });
   const nav = useNavigate();
   const { mutate } = useMutation({

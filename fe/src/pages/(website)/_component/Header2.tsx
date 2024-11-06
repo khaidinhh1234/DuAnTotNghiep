@@ -820,8 +820,6 @@ const Header2 = () => {
                 )}
             </div>
         </header>
-
-
     );
 };
 export default Header2;
