@@ -1,4 +1,6 @@
 import { ICategories } from "@/common/types/category";
+import AddCategorySelect from "@/components/AddCaterogySelect";
+import CategorySelect from "@/components/CategorySelect";
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadOutlined } from "@ant-design/icons";
@@ -33,7 +35,7 @@ const CategoriesAdd = () => {
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
       form.resetFields();
-      nav("/admin/categories");
+      nav("/admin/categories/add");
     },
     onError: (error) => {
       message.error(error.message);
@@ -109,20 +111,25 @@ const CategoriesAdd = () => {
                 name="category"
                 rules={[{ required: false }]}
               >
-                <Select placeholder="Chọn danh mục cha" allowClear>
-                  {allCategories.map((category) => (
-                    <Select.Option key={category.id} value={category.id}>
-                      {category.ten_danh_muc}
-                    </Select.Option>
-                  ))}
-                </Select>
+                {allCategoriesData ? (
+                  <AddCategorySelect
+                    categoriesData={allCategoriesData}
+                    onChange={(value) => {
+                      console.log('Category selected:', value);
+                      form.setFieldsValue({ category: value });
+                    }}
+                    value={form.getFieldValue('category')}
+                  />
+                ) : (
+                  <Select disabled placeholder="Đang tải danh mục..." />
+                )}
               </Form.Item>
+
               <Form.Item
                 label="Thêm ảnh"
                 name="imageFile"
                 valuePropName="fileList"
                 getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
-                // rules={[{ required: true, message: "Vui lòng chọn ảnh!" }]}
               >
                 <Upload
                   listType="picture"

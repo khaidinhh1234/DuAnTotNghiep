@@ -49,37 +49,37 @@ const HoverMenu: React.FC<HoverMenuProps> = ({ parentId, onClose }) => {
         >
             <div className="flex">
                 {subCategories.map((subCategory, index) => (
-                    <div key={subCategory.id} className="relative group" style={{ marginLeft: '150px' }}>
-                        <a
-                            href={subCategory.path} // Đường dẫn cho danh mục cha
-                            className="pl-4 pr-10 py-4 block whitespace-nowrap text-lg text-left"
-                        >
-                            {subCategory.name}
-                        </a>
-                        {subCategory.con && subCategory.con.length > 0 ? (
-                            <ul className="absolute left-0 mt-1 hidden group-hover:flex flex-col">
-                                {subCategory.con.map((conConCategory) => (
-                                    <li key={conConCategory.id} className="whitespace-nowrap">
-                                        <a
-                                            // Cập nhật đường dẫn cho danh mục con để điều hướng đến trang sản phẩm
-                                            href={`/sanpham/danhmuc/${subCategory.name}/${conConCategory.ten_danh_muc}`}
-                                            className="px-4 py-1 block text-left text-gray-600 hover:bg-gray-200"
-                                        >
-                                            {conConCategory.ten_danh_muc}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <span className="pl-4 pr-8 py-1 block text-left text-gray-400">
-                                Chưa có danh mục
-                            </span>
-                        )}
-
-                        {index < subCategories.length - 1 && (
-                            <div className="absolute right-0 top-0 h-full w-px bg-gray-200" />
-                        )}
-                    </div>
+                    <div key={subCategory.id} className="relative group" style={{ marginRight: '100px' }}>
+                    <a
+                        href={`/sanpham/danhmuc/${subCategory.name}`} 
+                        className="pl-4 pr-10 py-4 block whitespace-nowrap text-lg text-left"
+                    >
+                        {subCategory.name}
+                    </a>
+                    {subCategory.con && subCategory.con.length > 0 ? (
+                        <ul className="absolute left-0 mt-1 hidden group-hover:flex flex-col bg-white shadow-lg">
+                            {subCategory.con.map((conConCategory) => (
+                                <li key={conConCategory.id} className="whitespace-nowrap">
+                                    <a
+                                        href={`/sanpham/danhmuc/${subCategory.name}/${conConCategory.ten_danh_muc}`}
+                                        className="px-4 py-1 block text-left text-gray-600 hover:bg-gray-200"
+                                    >
+                                        {conConCategory.ten_danh_muc}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <span className="pl-4 pr-8 py-1 block text-left text-gray-400">
+                            Chưa có danh mục
+                        </span>
+                    )}
+                
+                    {index < subCategories.length - 1 && (
+                        <div className="absolute right-0 top-0 h-full w-px bg-gray-200" />
+                    )}
+                </div>
+                
                 ))}
 
             </div>

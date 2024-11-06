@@ -27,6 +27,26 @@ class BienTheKichThuocController extends Controller
             ], 500);
         }
     }
+    public function show(string $id)
+    {
+        try {
+            $data = BienTheKichThuoc::findOrFail($id);
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công',
+                'data' => $data
+            ];
+            return response()->json($json, 200);
+        } catch (\Exception $e) {
+            $json = [
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Lấy dữ liệu thất bại',
+            ];
+            return response()->json($json, 500);
+        }
+    }
 
     public function store(Request $request)
     {

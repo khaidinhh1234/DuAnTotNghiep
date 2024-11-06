@@ -209,7 +209,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       {" "}
       <section>
         <div className="container">
-          <div className="flex flex-wrap items-start w-full">
+          <div className="flex flex-wrap items-start w-full mt-16">
             {/* <!-- Sidebar Filters --> */}
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>

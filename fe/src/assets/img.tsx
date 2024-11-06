@@ -37,6 +37,9 @@ import imglogin2 from "@/assets/images/lognin/login2.png";
 import imglogin3 from "@/assets/images/lognin/login3.png";
 import imglogin4 from "@/assets/images/lognin/login4.png";
 import time from "@/assets/images/lognin/time.png";
+import giamgiaphantram from "@/assets/images/pngegg (2).png"
+// import codinh from "@/assets/images/pngegg1.png"
+import codinh from "@/assets/images/pngegg (1).png"
 export {
   banner1,
   banner6,
@@ -76,4 +79,6 @@ export {
   imglogin3,
   imglogin4,
   time,
+  giamgiaphantram,
+  codinh
 };

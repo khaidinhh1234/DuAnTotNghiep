@@ -134,17 +134,17 @@ class TrangChuController extends Controller
                 'bo_suu_taps.ten',
                 'bo_suu_taps.duong_dan',
                 'bo_suu_taps.duong_dan_anh',
-                DB::raw('SUM(don_hang_chi_tiets.so_luong) as tong_so_luot_mua')
+//                DB::raw('SUM(don_hang_chi_tiets.so_luong) as tong_so_luot_mua')
             )
             ->leftJoin('bo_suu_tap_san_pham', 'bo_suu_taps.id', '=', 'bo_suu_tap_san_pham.bo_suu_tap_id')
             ->leftJoin('bien_the_san_phams', 'bo_suu_tap_san_pham.san_pham_id', '=', 'bien_the_san_phams.san_pham_id')
-            ->leftJoin('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
-            ->leftJoin('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
-            ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
+//            ->leftJoin('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
+//            ->leftJoin('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+//            ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->groupBy('bo_suu_taps.id', 'bo_suu_taps.ten', 'bo_suu_taps.duong_dan', 'bo_suu_taps.duong_dan_anh')
-            ->havingRaw('SUM(don_hang_chi_tiets.so_luong) > 0') // Lọc chỉ lấy bộ sưu tập có lượt mua > 0
-            ->orderByDesc('tong_so_luot_mua')
-            ->take(5)
+//            ->havingRaw('SUM(don_hang_chi_tiets.so_luong) > 0') // Lọc chỉ lấy bộ sưu tập có lượt mua > 0
+//            ->orderByDesc('tong_so_luot_mua')
+            ->limit(5)
             ->with(['sanPhams' => function ($query) {
                 $query->select(
                     'san_phams.id',
@@ -378,20 +378,33 @@ class TrangChuController extends Controller
                 ], 404);
             }
 
-            $formattedData = $danhMucCha->children->map(function ($child) {
-                return [
-                    'id' => $child->id,
-                    'ten_danh_muc' => $child->ten_danh_muc,
-                    'duong_dan' => $child->duong_dan,
-                    'con' => $child->children->map(function ($grandChild) {
-                        return [
-                            'id' => $grandChild->id,
-                            'ten_danh_muc' => $grandChild->ten_danh_muc,
-                            'duong_dan' => $grandChild->duong_dan,
-                        ];
-                    }),
-                ];
-            });
+            $getFullPath = function ($danhMuc) {
+                $path = $danhMuc->duong_dan;
+                $parent = $danhMuc->parent;
+                while ($parent) {
+                    $path = $parent->duong_dan . '/' . $path;
+                    $parent = $parent->parent;
+                }
+                return $path;
+            };
+
+            $formattedData = [
+                'danh_muc' => $danhMucCha->children->map(function ($child) use ($getFullPath) {
+                    return [
+                        'id' => $child->id,
+                        'ten_danh_muc' => $child->ten_danh_muc,
+                        'duong_dan' => $getFullPath($child),
+                        'con' => $child->children->map(function ($grandChild) use ($getFullPath) {
+                            return [
+                                'id' => $grandChild->id,
+                                'ten_danh_muc' => $grandChild->ten_danh_muc,
+                                'duong_dan' => $getFullPath($grandChild),
+                            ];
+                        })->toArray(),
+                    ];
+                })->toArray(),
+                'anh_danh_muc_cha' => $danhMucCha->duong_dan_anh,
+            ];
 
             return response()->json([
                 'status' => true,
@@ -405,10 +418,12 @@ class TrangChuController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
-                'error' => $exception->getMessage()
+                'error' => $exception->getMessage(),
             ], 500);
         }
     }
+
+
 
     public function loadDanhMucSanPhamCha(){
         try {

@@ -138,7 +138,7 @@ const ProductItem = ({
             ₫{(tong_tien ?? 0).toLocaleString("vi-VN")}
           </span>
         </div>
-      </div>{" "}
+      </div>
     </>
   );
 };

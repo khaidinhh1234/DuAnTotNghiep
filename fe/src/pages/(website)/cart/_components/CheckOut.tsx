@@ -16,7 +16,7 @@ const CheckOut = () => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
-  
+
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -26,60 +26,46 @@ const CheckOut = () => {
             Authorization: `Bearer ${access_token}`,
           },
         });
-        return response.data; 
+        return response.data;
       } catch (error) {
         throw new Error("Error fetching cart data");
       }
     },
   });
   const { mutate: increaseQuantity } = useMutation({
-    mutationFn: async ({
-      productId,
-      currentQuantity,
-    }: {
-      productId: string;
-      currentQuantity: number;
-    }) => {
-      // Kiểm tra nếu số lượng hiện tại nhỏ hơn 10
-      if (currentQuantity < 10) {
-        await instanceClient.put(
-          `/gio-hang/tang-so-luong/${productId}`,
-          { so_luong: currentQuantity + 1 },
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-            },
-          }
-        );
-      } else {
-        toast.error("Thêm tối đa 10 sản phẩm");
-        // throw new Error("Số lượng tối đa là 10"); 
-      }
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+      // Send the request to the backend without any pre-check
+      await instanceClient.put(
+        `/gio-hang/tang-so-luong/${productId}`,
+        { so_luong: currentQuantity + 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
     },
-    // Thực hiện cập nhật lạc quan (optimistic update)
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
+  
+      // Optimistic update for quantity increment
       queryClient.setQueryData(
         ["cart", access_token],
         (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
-          const updatedProducts = oldData.san_pham_giam_gia.map(
-            (product: any) => {
-              if (product.id === productId) {
-                return { ...product, so_luong: currentQuantity + 1 };
-              }
-              return product;
+          const updatedProducts = oldData.san_pham_giam_gia.map((product) => {
+            if (product.id === productId) {
+              return { ...product, so_luong: currentQuantity + 1 };
             }
-          );
-
-          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
-            (product) => {
-              if (product.id === productId) {
-                return { ...product, so_luong: currentQuantity + 1 };
-              }
-              return product;
+            return product;
+          });
+  
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map((product) => {
+            if (product.id === productId) {
+              return { ...product, so_luong: currentQuantity + 1 };
             }
-          );
-
+            return product;
+          });
+  
           return {
             ...oldData,
             san_pham_giam_gia: updatedProducts,
@@ -87,23 +73,22 @@ const CheckOut = () => {
           };
         }
       );
+  
       return { previousCartData };
     },
     onSuccess: () => {
+      toast.success("Số lượng sản phẩm đã được tăng thành công!");
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
-    onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
+    onError: (error, _, context) => {
       if (context?.previousCartData) {
-        queryClient.setQueryData(
-          ["cart", access_token],
-          context.previousCartData
-        );
+        queryClient.setQueryData(["cart", access_token], context.previousCartData);
       }
-      toast.error(error.message || "Thao tác quá nhanh, vui lòng chậm lại");
+      const errorMessage = (error as any).response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.";
+      toast.error(errorMessage);
     },
   });
-
-
+  
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({
       productId,
@@ -209,20 +194,20 @@ const CheckOut = () => {
     const productInRegular = data?.san_pham_nguyen_gia.find(
       (product: { id: number }) => product.id === Number(productId)
     );
-    
+
     // Đặt mặc định là 1 nếu không tìm thấy số lượng
     const quantity = (productInDiscounts?.so_luong || productInRegular?.so_luong) || 1;
-  
+
     if (productInDiscounts) {
       return total + productInDiscounts.gia_hien_tai * quantity;
     }
-  
+
     if (productInRegular) {
       return total + productInRegular.gia_hien_tai * quantity;
     }
-  
+
     return total; // Nếu không có sản phẩm nào, trả về tổng không thay đổi
-  }, 0);  
+  }, 0);
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
   const shippingFee = totalSelectedPrice > 498000 ? 0 : 20000;
   const finalTotal = totalSelectedPrice + shippingFee;
@@ -343,7 +328,7 @@ const CheckOut = () => {
         ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id),
         ...(data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id)
       ];
-      
+
       if (preSelectedProducts.length > 0) {
         setSelectedProducts(prev => Array.from(new Set([...prev, ...preSelectedProducts])));
       }
@@ -412,7 +397,6 @@ const CheckOut = () => {
                       <th className="px-4 py-2">
                         <input
                           type="checkbox"
-                          // checked={selectedProducts.length === data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length}
                           checked={selectedProducts.length === (data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length)}
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                           onChange={(e) => handleSelectAll(e.target.checked)}
@@ -517,6 +501,7 @@ const CheckOut = () => {
                                 className="w-7 h-10 text-center"
                                 placeholder="Quantity"
                                 min="1"
+                                max={product.so_luong_bien_the} 
                                 title="Product Quantity"
                                 readOnly
                               />
@@ -529,11 +514,13 @@ const CheckOut = () => {
                                 }
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
+                                disabled={product.so_luong >= product.so_luong_bien_the} 
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>
                             </div>
                           </td>
+
                           <td className="px-4 py-2">
                             {formatCurrency(
                               product.gia_hien_tai * product.so_luong
@@ -619,6 +606,7 @@ const CheckOut = () => {
                                 className="w-7 h-10 text-center"
                                 placeholder="Quantity"
                                 min="1"
+                                max={product.so_luong_bien_the} 
                                 title="Product Quantity"
                                 readOnly
                               />
@@ -631,6 +619,7 @@ const CheckOut = () => {
                                 }
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
+                                disabled={product.so_luong >= product.so_luong_bien_the} 
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>

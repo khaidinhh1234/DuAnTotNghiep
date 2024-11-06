@@ -90,12 +90,11 @@ Route::middleware([])
         })->middleware('throttle:10000000,1');
 
         // Client Tin tức
-        Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layTatCaDanhMuc']);
-
+        Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layBaiVietMoiNhat']);
         Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
+        Route::get('load-bai-viet-va-danh-muc', [ApiTinTucController::class, 'loadBaiVietVaDanhMuc']);
 
-        //Thanh toán MoMo
         //Thanh toán MoMo
         Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
         Route::post('check-trang-thai', [MoMoController::class, 'checkDonHang']);
@@ -122,7 +121,7 @@ Route::middleware([])
         Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
 
         // Trang bộ sưu tập
-        Route::get('bo-suu-tap/{slug}', [App\Http\Controllers\Client\Api\BoSuuTapController::class, 'show']);
+        Route::get('bo-suu-tap/{slug}', [BoSuuTapController::class, 'show']);
 
         Route::middleware('auth.sanctum')->group(function () {
             // Giỏ hàng
@@ -164,9 +163,11 @@ Route::middleware([])
 
             //Tài khoản
             Route::post('/cap-nhat-thong-tin', [ApiTaiKhoanController::class, 'CapNhatThongTin']);
-            Route::get('/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan']);
+            Route::match(['get', 'post'], '/vi-tai-khoan', [ApiTaiKhoanController::class, 'viTaiKhoan']);
             Route::post('/thiet-lap-ma-xac-minh', [ApiTaiKhoanController::class, 'thietLapMaXacMinh']);
             Route::get('/quen-ma-xac-minh', [ApiTaiKhoanController::class, 'quenMaXacMinh']);
+            Route::post('/nap-tien', [ApiTaiKhoanController::class, 'napTienVi']);
+            Route::post('xac-nhan-nap-tien', [ApiTaiKhoanController::class, 'xacNhanNapTien']);
             Route::get('/danh-sach-ngan-hang', [ApiTaiKhoanController::class, 'nganHangUser']);
             Route::post('/them-ngan-hang', [ApiTaiKhoanController::class, 'themTaiKhoanNganHang']);
             Route::post('/huy-lien-ket-ngan-hang/{id}', [ApiTaiKhoanController::class, 'huyLienKetNganHang']);
@@ -397,9 +398,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('tong-quan-theo-ngay', [ThongKeTongQuanController::class, 'thongKeTongQuanTrongNgay']);
                 Route::get('doanh-thu-loi-nhuan-theo-ngay', [ThongKeTongQuanController::class, 'doanhThuLoiNhuanRoi']);
                 Route::get('doanh-thu-va-don-theo-ngay', [ThongKeTongQuanController::class, 'thongKeDoanhThuTrongNgay']);
-
-            })->middleware( 'throttle:10000000,1');
-
+            })->middleware('throttle:10000000,1');
 
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai']);
 
@@ -445,7 +444,9 @@ Route::middleware(['auth.sanctum'])
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
 
+
         // thông báo telegram 
         Route::post('/thong-bao-don', [ThongBaoTelegramController::class, 'thongBaoDonHangMoi']);
 
     });
+

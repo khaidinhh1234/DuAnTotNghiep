@@ -265,6 +265,7 @@ class DonHangClientController extends Controller
 
         try {
             $userId = Auth::id();
+            $user = User::findOrFail($userId);
             $sanPhamDuocChon = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
@@ -362,6 +363,7 @@ class DonHangClientController extends Controller
                 'ma_giam_gia' => $request->ma_giam_gia ?? null,
                 'so_tien_giam_gia' => $soTienGiamGia,
                 'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
+                'mien_phi_van_chuyen' => $tongTienDonHang >= 500000 ? 1 : 0
             ]);
 
             foreach ($sanPhamDuocChon as $sanPham) {
@@ -390,18 +392,34 @@ class DonHangClientController extends Controller
                 'chiTiets.bienTheSanPham.anhBienThe',
             ])->where('id', $donHang->id)->first();
 
-            if($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT){
+            if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT) {
                 DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
                     'tieu_de' => 'Đơn hàng đã được đặt',
                     'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
                     'loai' => 'Đơn hàng',
-                    'duong_dan' => 'don-hang',
+                    'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                    'id_duong_dan' => $donHang->ma_don_hang,
                 ]);
 
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
+            } elseif ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
+                $viTien = $user->viTien;
+                if ($viTien->so_du < $donHang->tong_tien_don_hang) {
+                    return response()->json(['status' => false, 'message' => 'Số dư trong ví tiền không đủ để thanh toán.'], 400);
+                }
+                DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
+                $viTien->so_du -= $donHang->tong_tien_don_hang;
+                $thongBao = ThongBao::create([
+                    'user_id' => $userId,
+                    'tieu_de' => 'Đơn hàng đã được đặt',
+                    'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
+                    'loai' => 'Đơn hàng',
+                    'duong_dan' => $donHang->ma_don_hang,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
             }
@@ -426,8 +444,6 @@ class DonHangClientController extends Controller
 
         return $allIds->unique()->toArray();
     }
-
-
     public function huyDonHang(Request $request)
     {
         $request->validate([
@@ -436,6 +452,8 @@ class DonHangClientController extends Controller
         ]);
 
         $userId = Auth::id();
+        $user = User::findOrFail($userId);
+        $viTien = $user->viTien;
         $maDonHang = $request->input('ma_don_hang');
         $lidoHuyHang = $request->input('li_do_huy_hang');
 
@@ -456,6 +474,11 @@ class DonHangClientController extends Controller
             $donHang->li_do_huy_hang = $lidoHuyHang;
             $donHang->trang_thai_don_hang = DonHang::TTDH_DH;
             $donHang->save();
+
+            if (in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
+                $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT) {
+                $viTien->increment('so_du', $donHang->tong_tien_don_hang);
+            }
 
             foreach ($donHang->chiTiets as $chiTiet) {
                 $bienTheSanPham = BienTheSanPham::find($chiTiet->bien_the_san_pham_id);
@@ -582,7 +605,6 @@ class DonHangClientController extends Controller
             ], 500);
         }
     }
-
     public function yeuCauRutTien(Request $request, $id)
     {
         $request->validate([

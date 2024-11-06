@@ -10,22 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class TinTucController extends Controller
 {
-    public function layTatCaDanhMuc(Request $request)
+    public function layBaiVietMoiNhat()
     {
         try {
             // Bắt đầu transaction
             DB::beginTransaction();
 
-            $danhMucTinTuc = DanhMucTinTuc::query()
-                ->with([
-                    'tinTuc' => function ($query) {
-                        $query->select('id', 'anh_tin_tuc', 'danh_muc_tin_tuc_id')
-                            ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo mới nhất
-                            ->get();
-                    }
-                ])
-                ->get();
-
+            $baiViet = TinTuc::with('danhMucTinTuc')->orderBy('created_at', 'desc')
+                ->limit(4)->get(  );
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -33,7 +25,7 @@ class TinTucController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'danhMucCha' => $danhMucTinTuc,
+                'data' => $baiViet,
             ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
@@ -121,33 +113,33 @@ class TinTucController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
-                $baiVietKhac = $baiVietLienQuan->map(function($baiViet): array{
-                    return [
-                        'id' => $baiViet->id,
-                        'user_id' => $baiViet->user_id,
-                        'danh_muc_tin_tuc_id' => $baiViet->danh_muc_tin_tuc_id,
-                        'tieu_de' => $baiViet->tieu_de,
-                        'anh_tin_tuc' => $baiViet->anh_tin_tuc ?? 'default_image.jpg', // Gán ảnh mặc định nếu null,
-                        'noi_dung' => $baiViet->noi_dung,
-                        'duong_dan_bai_viet' => $baiViet->duong_dan,
-                        'created_at' => $baiViet->created_at,
-                        'updated_at' => $baiViet->updated_at,
-                        'deleted_at' => $baiViet->deleted_at,
-                        'luot_xem' => $baiViet->luot_xem,
-                        'danh_muc_tin_tuc' => $baiViet->danhMucTinTuc ? [
-                            'id' => $baiViet->danhMucTinTuc->id,
-                            'ten_danh_muc_tin_tuc' => $baiViet->danhMucTinTuc->ten_danh_muc_tin_tuc,
-                            'duong_dan' => $baiViet->danhMucTinTuc->duong_dan,
-                        ] : null,
-                    ];
-                });
+            $baiVietKhac = $baiVietLienQuan->map(function ($baiViet): array {
+                return [
+                    'id' => $baiViet->id,
+                    'user_id' => $baiViet->user_id,
+                    'danh_muc_tin_tuc_id' => $baiViet->danh_muc_tin_tuc_id,
+                    'tieu_de' => $baiViet->tieu_de,
+                    'anh_tin_tuc' => $baiViet->anh_tin_tuc ?? 'default_image.jpg', // Gán ảnh mặc định nếu null,
+                    'noi_dung' => $baiViet->noi_dung,
+                    'duong_dan_bai_viet' => $baiViet->duong_dan,
+                    'created_at' => $baiViet->created_at,
+                    'updated_at' => $baiViet->updated_at,
+                    'deleted_at' => $baiViet->deleted_at,
+                    'luot_xem' => $baiViet->luot_xem,
+                    'danh_muc_tin_tuc' => $baiViet->danhMucTinTuc ? [
+                        'id' => $baiViet->danhMucTinTuc->id,
+                        'ten_danh_muc_tin_tuc' => $baiViet->danhMucTinTuc->ten_danh_muc_tin_tuc,
+                        'duong_dan' => $baiViet->danhMucTinTuc->duong_dan,
+                    ] : null,
+                ];
+            });
             // Lấy top 5 bài viết có lượt xem cao nhất
             $baiVietTop5 = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
-            ->orderBy('luot_xem', 'desc')
-            // ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at','danh_muc_tin_tuc_id')
-            ->limit(5)
-            ->get();
-            $baiVietTopLuotXem = $baiVietTop5->map(function($baiViet): array{
+                ->orderBy('luot_xem', 'desc')
+                // ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at','danh_muc_tin_tuc_id')
+                ->limit(5)
+                ->get();
+            $baiVietTopLuotXem = $baiVietTop5->map(function ($baiViet): array {
                 return [
                     'id' => $baiViet->id,
                     'user_id' => $baiViet->user_id,
@@ -214,12 +206,12 @@ class TinTucController extends Controller
                 ->where('id', '<>', $baiVietDetail->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
-             // Lấy top 5 bài viết có lượt xem cao nhất
-             $baiVietTopLuotXem = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
-             ->orderBy('luot_xem', 'desc')
-             ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at','danh_muc_tin_tuc_id')
-             ->limit(5)
-             ->get();
+            // Lấy top 5 bài viết có lượt xem cao nhất
+            $baiVietTopLuotXem = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
+                ->orderBy('luot_xem', 'desc')
+                ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at', 'danh_muc_tin_tuc_id')
+                ->limit(5)
+                ->get();
 
             DB::commit();
 
@@ -244,4 +236,29 @@ class TinTucController extends Controller
         }
     }
 
+    public function loadBaiVietVaDanhMuc()
+    {
+        try {
+            $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
+                ->orderBy('created_at', 'desc')->get();
+
+            $baiViet = TinTuc::orderBy('created_at', 'desc')
+                ->paginate(10);
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công.',
+                'Danh_muc_tin_tuc' => $danhMucTinTuc,
+                'baiViet' => $baiViet,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
