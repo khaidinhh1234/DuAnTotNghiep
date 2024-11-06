@@ -25,11 +25,15 @@ class ThongBaoTelegramController extends Controller
             return response()->json(['message' => 'Không tìm thấy đơn hàng.'], 404);
         }
 
-        // Chuẩn bị nội dung thông báo
+
+        $donHang = $vanChuyen->donHang;
+
         $message = "📦 Đơn hàng mới đã được giao cho bạn!\n";
         $message .= "Mã vận chuyển: {$vanChuyen->ma_van_chuyen}\n";
         $message .= "Trạng thái: {$vanChuyen->trang_thai_van_chuyen}\n";
         $message .= "COD: {$vanChuyen->tien_cod} VND\n";
+        $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
+        $message .= "Đường dẫn: " . "http://192.168.250.174:5173/shipper" . "\n";
         $message .= "Ghi chú: {$vanChuyen->ghi_chu}\n";
 
         // Lấy danh sách các shipper có số điện thoại và `chat_id`
@@ -42,31 +46,27 @@ class ThongBaoTelegramController extends Controller
             $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
         }
 
-        return response()->json(['message' => 'Thông báo đã được gửi tới tất cả shipper.']);
+        return response()->json(['message' => 'Thông báo đã được gửi tới shipper.']);
     }
     public function thongBaoHoanTatGiaoHang($id)
     {
         $vanChuyen = VanChuyen::find($id);
 
-        $donHang = $vanChuyen->donHang;
         if (!$vanChuyen) {
-            return response()->json([
-                'message' => 'Không tìm thấy đơn vận chuyển.'
-            ], 404);
+            return response()->json(['message' => 'Không tìm thấy đơn vận chuyển.'], 404);
         }
 
         if ($vanChuyen->trang_thai_van_chuyen != VanChuyen::TTVC_GHTC) {
-            return response()->json([
-                'message' => 'Đơn hàng chưa giao thành công.'
-            ], 400);
+            return response()->json(['message' => 'Đơn hàng chưa giao thành công.'], 400);
         }
 
+        $donHang = $vanChuyen->donHang;
         $message = "✅ Đơn hàng {$donHang->ma_don_hang} đã hoàn tất thành công!\n";
         $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
         $message .= "Tổng tiền: {$donHang->tong_tien_don_hang} VND\n";
+        $message .= "Đường dẫn: " . "http://192.168.250.174:5173/shipper" . "\n";
 
         $shipper = User::findOrFail($vanChuyen->shipper_id);
-
         $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
 
         return response()->json(['message' => 'Thông báo hoàn tất đơn hàng đã được gửi.']);

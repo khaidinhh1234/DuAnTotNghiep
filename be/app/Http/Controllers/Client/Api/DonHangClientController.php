@@ -12,6 +12,7 @@ use App\Models\DonHangChiTiet;
 use App\Models\GiaoDichVi;
 use App\Models\GioHang;
 use App\Models\HoanTien;
+use App\Models\LichSuGiaoDich;
 use App\Models\MaKhuyenMai;
 use App\Models\NganHang;
 use App\Models\SanPham;
@@ -475,8 +476,10 @@ class DonHangClientController extends Controller
             $donHang->trang_thai_don_hang = DonHang::TTDH_DH;
             $donHang->save();
 
-            if (in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
-                $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT) {
+            if (
+                in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
+                $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
+            ) {
                 $viTien->increment('so_du', $donHang->tong_tien_don_hang);
             }
 
@@ -629,6 +632,7 @@ class DonHangClientController extends Controller
 
         try {
             $user = User::findOrFail($userId);
+            $viUser = $user->viTien;
             if (Hash::check($maXacThuc, $user->viTien->ma_xac_minh)) {
                 if ($user->viTien->so_du < $soTien) {
                     return response()->json([
@@ -653,6 +657,15 @@ class DonHangClientController extends Controller
                     'mo_ta' => 'Rút tiền từ ví tiền',
                     'trang_thai' => 'dang_xu_ly',
                     'thoi_gian_giao_dich' => now(),
+                ]);
+
+                LichSuGiaoDich::create([
+                    'vi_tien_id' => $viTien->id,
+                    'loai_giao_dich' => 'rut_tien',
+                    'so_du_truoc' => $viTien->so_du,
+                    'so_du_sau' => $viTien->so_du - $soTien,
+                    'ngay_thay_doi' => now(),
+                    'mo_ta' => 'Rút tiền từ ví tiền',
                 ]);
 
                 $thongBao = ThongBao::create([

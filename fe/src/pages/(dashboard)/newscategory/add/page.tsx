@@ -1,9 +1,10 @@
 // import { ICategories } from "@/common/types/category";
 import { NewCategories } from "@/common/types/newcategory";
 import instance from "@/configs/admin";
-
+import { UploadOutlined } from "@ant-design/icons";
+import { uploadToCloudinary } from "@/configs/cloudinary";
+import { Button, Form, Input, Upload, message } from "antd";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
 const NewCategoriesAdd = () => {
@@ -24,8 +25,23 @@ const NewCategoriesAdd = () => {
       message.error(error.message);
     },
   });
-  const onFinish = (values: any) => {
-    mutate(values);
+  // const onFinish = (values: any) => {
+  //   mutate(values);
+  // };
+  const onFinish = async (values: any) => {
+    try {
+      let imageUrl = null;
+      if (values.imageFile && values.imageFile[0]) {
+        imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
+      }
+      const categoryData = {
+        ...values,
+        hinh_anh: imageUrl,
+      };
+      mutate(categoryData);
+    } catch (error) {
+      message.error("Lỗi khi tải ảnh lên");
+    }
   };
 
   return (
@@ -74,6 +90,37 @@ const NewCategoriesAdd = () => {
                 ]}
               >
                 <Input placeholder="Nhập tên danh mục tin tức" />
+              </Form.Item>
+              <Form.Item
+                label="Mô tả"
+                name="mo_ta"
+                rules={[
+                  {
+                    required: true,
+                    message: "Mô tả bắt buộc phải nhập!",
+                  },
+
+                  {
+                    pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                    message: "Vui lòng  không chứa ký tự trắng!",
+                  },
+                ]}
+              >
+                <Input placeholder="Nhập mô tả tin tức" />
+              </Form.Item>
+              <Form.Item
+                label="Thêm ảnh"
+                name="imageFile"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+              >
+                <Upload
+                  listType="picture"
+                  maxCount={1}
+                  beforeUpload={() => false}
+                >
+                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                </Upload>
               </Form.Item>
               <Form.Item>
                 <Button
