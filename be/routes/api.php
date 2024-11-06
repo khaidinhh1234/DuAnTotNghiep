@@ -95,7 +95,6 @@ Route::middleware([])
         Route::get('load-bai-viet-va-danh-muc', [ApiTinTucController::class, 'loadBaiVietVaDanhMuc']);
 
         //Thanh toán MoMo
-        //Thanh toán MoMo
         Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
         Route::post('check-trang-thai', [MoMoController::class, 'checkDonHang']);
         Route::post('luu-thanh-toan-vao-momo', [MoMoController::class, 'savePaymentInfo']);
@@ -121,7 +120,7 @@ Route::middleware([])
         Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
 
         // Trang bộ sưu tập
-        Route::get('bo-suu-tap/{slug}', [App\Http\Controllers\Client\Api\BoSuuTapController::class, 'show']);
+        Route::get('bo-suu-tap/{slug}', [BoSuuTapController::class, 'show']);
 
         Route::middleware('auth.sanctum')->group(function () {
             // Giỏ hàng
