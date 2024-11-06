@@ -101,33 +101,29 @@ class VanChuyenController extends Controller
             DB::beginTransaction();
             $validTransitions = [
                 VanChuyen::TTVC_CXL => [VanChuyen::TTVC_DGH],
+                VanChuyen::TTVC_DGH => [VanChuyen::TTVC_GHTB, VanChuyen::TTVC_GHTC],
             ];
             foreach ($validate['id'] as $id) {
                 $vanChuyen = VanChuyen::findOrFail($id);
                 if (
-                    !isset($validTransitions[$vanChuyen->trang_thai_van_chuyen])
-                    || !in_array($validate['trang_thai_van_chuyen'], $validTransitions[$vanChuyen->trang_thai_van_chuyen])
+                    isset($validTransitions[$vanChuyen->trang_thai_van_chuyen])
+                    && in_array($validate['trang_thai_van_chuyen'], $validTransitions[$vanChuyen->trang_thai_van_chuyen])
                 ) {
-                    DB::rollBack();
-                    return response()->json([
-                        'status' => false,
-                        'status_code' => 400,
-                        'message' => 'Không thể cập nhật trạng thái ngược lại hoặc trạng thái không hợp lệ'
-                    ], 400);
+                    $vanChuyen->update([
+                        'trang_thai_van_chuyen' => $validate['trang_thai_van_chuyen'],
+                    ]);
                 }
-                $vanChuyen->update([
-                    'trang_thai_van_chuyen' => $validate['trang_thai_van_chuyen'],
-                ]);
 
-                $thongBao = ThongBao::create([
-                    'tieu_de' => 'Cập nhật trạng thái vận chuyển',
-                    'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' đã được cập nhật trạng thái vận chuyển',
-                    'loai' => 'Vận chuyển',
-                    'duong_dan' => $vanChuyen->ma_van_chuyen,
-                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                ]);
+                // $thongBao = ThongBao::create([
+                //     'user_id' => $vanChuyen->donHang->user_id,
+                //     'tieu_de' => 'Cập nhật trạng thái vận chuyển',
+                //     'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' đã được cập nhật trạng thái vận chuyển',
+                //     'loai' => 'Vận chuyển',
+                //     'duong_dan' => $vanChuyen->ma_van_chuyen,
+                //     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                // ]);
 
-                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                // broadcast(new ThongBaoMoi($thongBao))->toOthers();
             }
             DB::commit();
             return response()->json([
@@ -144,82 +140,82 @@ class VanChuyenController extends Controller
             ]);
         }
     }
-        public function xacNhanVanChuyen(Request $request, string $id)
-        {
-            try {
-                $validate = $request->validate([
-                    'shipper_xac_nhan' => 'required|in:1,2',
-                    'anh_xac_thuc' => 'nullable|string',
-                    'ghi_chu' => 'nullable|array',
-                    'ghi_chu.*.lan1' => 'nullable|string',
-                    'ghi_chu.*.lan2' => 'nullable|string',
-                    'ghi_chu.*.lan3' => 'nullable|string',
-                ]);
+    public function xacNhanVanChuyen(Request $request, string $id)
+    {
+        try {
+            $validate = $request->validate([
+                'shipper_xac_nhan' => 'required|in:1,2',
+                'anh_xac_thuc' => 'nullable|string',
+                'ghi_chu' => 'nullable|array',
+                'ghi_chu.*.lan1' => 'nullable|string',
+                'ghi_chu.*.lan2' => 'nullable|string',
+                'ghi_chu.*.lan3' => 'nullable|string',
+            ]);
 
-                DB::beginTransaction();
+            DB::beginTransaction();
 
-                $vanChuyen = VanChuyen::findOrFail($id);
-                $shipper = Auth::guard('api')->id();
+            $vanChuyen = VanChuyen::findOrFail($id);
+            $shipper = Auth::guard('api')->id();
 
-                if ($vanChuyen->shipper_id != $shipper) {
-                    throw new \Exception('Bạn không phải shipper của đơn hàng này', 400);
-                }
+            if ($vanChuyen->shipper_id != $shipper) {
+                throw new \Exception('Bạn không phải shipper của đơn hàng này', 400);
+            }
 
-                if ($vanChuyen->shipper_xac_nhan == 0) {
-                    if ($validate['shipper_xac_nhan'] == 2) {
-                        if ($vanChuyen->so_lan_giao >= 2) {
-                            $vanChuyen->update([
-                                'trang_thai_van_chuyen' => VanChuyen::TTVC_GHTB,
-                                'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
-                                'ghi_chu' => json_encode($validate['ghi_chu']),
-                            ]);
-                            DB::commit();
-                            return response()->json([
-                                'status' => true,
-                                'status_code' => 200,
-                                'message' => 'Giao hàng thất bại'
-                            ], 200);
-                        } else {
-                            $vanChuyen->increment('so_lan_giao');
-                            $vanChuyen->update([
-                                'ghi_chu' => json_encode($validate['ghi_chu']),
-                            ]);
-                            DB::commit();
-                            return response()->json([
-                                'status' => true,
-                                'status_code' => 200,
-                                'message' => 'Giao hàng thất bại lần ' . $vanChuyen->so_lan_giao
-                            ], 200);
-                        }
-                    } elseif ($validate['shipper_xac_nhan'] == 1) {
+            if ($vanChuyen->shipper_xac_nhan == 0) {
+                if ($validate['shipper_xac_nhan'] == 2) {
+                    if ($vanChuyen->so_lan_giao >= 2) {
                         $vanChuyen->update([
-                            'trang_thai_van_chuyen' => VanChuyen::TTVC_GHTC,
-                            'cod' => VanChuyen::TTCOD_DN,
+                            'trang_thai_van_chuyen' => VanChuyen::TTVC_GHTB,
                             'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
-                            'anh_xac_thuc' => $validate['anh_xac_thuc'],
-                            'ngay_giao_hang_thanh_cong' => now()
-                        ]);
-                        $vanChuyen->donHang->update([
-                            'trang_thai_thanh_toan' => DonHang::TTTT_DTT,
-                            'trang_thai_don_hang' => DonHang::TTDH_CKHCN
+                            'ghi_chu' => json_encode($validate['ghi_chu']),
                         ]);
                         DB::commit();
                         return response()->json([
                             'status' => true,
                             'status_code' => 200,
-                            'message' => 'Xác nhận giao hàng thành công'
+                            'message' => 'Giao hàng thất bại'
+                        ], 200);
+                    } else {
+                        $vanChuyen->increment('so_lan_giao');
+                        $vanChuyen->update([
+                            'ghi_chu' => json_encode($validate['ghi_chu']),
+                        ]);
+                        DB::commit();
+                        return response()->json([
+                            'status' => true,
+                            'status_code' => 200,
+                            'message' => 'Giao hàng thất bại lần ' . $vanChuyen->so_lan_giao
                         ], 200);
                     }
+                } elseif ($validate['shipper_xac_nhan'] == 1) {
+                    $vanChuyen->update([
+                        'trang_thai_van_chuyen' => VanChuyen::TTVC_GHTC,
+                        'cod' => VanChuyen::TTCOD_DN,
+                        'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
+                        'anh_xac_thuc' => $validate['anh_xac_thuc'],
+                        'ngay_giao_hang_thanh_cong' => now()
+                    ]);
+                    $vanChuyen->donHang->update([
+                        'trang_thai_thanh_toan' => DonHang::TTTT_DTT,
+                        'trang_thai_don_hang' => DonHang::TTDH_CKHCN
+                    ]);
+                    DB::commit();
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => 200,
+                        'message' => 'Xác nhận giao hàng thành công'
+                    ], 200);
                 }
-            } catch (\Exception $exception) {
-                DB::rollBack();
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 500,
-                    'message' => $exception->getMessage()
-                ], 500);
             }
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => $exception->getMessage()
+            ], 500);
         }
+    }
 
     public function layThongTinVanChuyen()
     {
