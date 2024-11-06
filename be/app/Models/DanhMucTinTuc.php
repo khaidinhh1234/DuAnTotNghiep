@@ -13,6 +13,8 @@ class DanhMucTinTuc extends Model
 
     protected $fillable = [
         'ten_danh_muc_tin_tuc',
+        'mo_ta',
+        'hinh_anh',
         'duong_dan',
     ];
     public function tinTuc() {
