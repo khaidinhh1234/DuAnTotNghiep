@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import instance from "@/configs/admin";
 import { UploadOutlined } from "@ant-design/icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Input, Select, Upload, message } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { uploadToCloudinary } from "@/configs/cloudinary";
@@ -11,7 +11,7 @@ import AddCategorySelect from "@/components/AddCaterogySelect";
 
 const CategoriesEdit = () => {
   const { id } = useParams();
-
+  const queryClient = useQueryClient()
   const [form] = Form.useForm();
   const nav = useNavigate();
   const [parentCategories, setParentCategories] = useState<ICategories[]>([]);
@@ -55,9 +55,11 @@ const CategoriesEdit = () => {
       form.setFieldsValue({
         ten_danh_muc: data.data.ten_danh_muc,
         cha_id: data.data.cha_id || null,
+        imageFile: data.data.anh_danh_muc ? [{ url: data.data.anh_danh_muc }] : [], // Thêm ảnh vào trường form nếu có
       });
     }
   }, [data, form]);
+
 
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
@@ -72,6 +74,7 @@ const CategoriesEdit = () => {
     },
     onSuccess: () => {
       message.success("Sửa danh mục thành công");
+      queryClient.invalidateQueries({ queryKey: ["danhmuc"] });
       form.resetFields();
       nav("/admin/categories");
     },
@@ -83,20 +86,34 @@ const CategoriesEdit = () => {
   const onFinish = async (values: any) => {
     try {
       let imageUrl = null;
+  
+      // Nếu có ảnh mới được chọn
       if (values.imageFile && values.imageFile[0]) {
         imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
+      } else {
+        // Nếu không có ảnh mới, giữ lại ảnh cũ
+        imageUrl = data?.data.anh_danh_muc;
       }
-
+  
+      // Tạo đối tượng dữ liệu danh mục
       const categoryData: ICategories = {
         ...values,
-        cha_id: values.category || null,
-        anh_danh_muc: imageUrl,
+        cha_id: values.cha_id || null, // Đảm bảo lấy đúng giá trị cha_id từ form
+        anh_danh_muc: imageUrl,  // Dùng ảnh mới hoặc ảnh cũ
       };
+  
+      console.log("Dữ liệu gửi lên server: ", categoryData); // In dữ liệu gửi lên server
+  
+      // Gọi mutation để cập nhật danh mục
       mutate(categoryData);
+  
     } catch (error) {
+      console.error("Lỗi chi tiết:", error); // Log chi tiết lỗi
       message.error("Lỗi khi tải ảnh lên");
     }
   };
+  
+  
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -151,31 +168,34 @@ const CategoriesEdit = () => {
                   <Input placeholder="Nhập tên danh mục" />
                 </Form.Item>
                 <Form.Item label="Chọn danh mục cha" name="cha_id">
-                {allCategoriesData ? (
-                  <AddCategorySelect
-                    categoriesData={allCategoriesData}
-                    onChange={(value) => {
-                      console.log('Category selected:', value);
-                      form.setFieldsValue({ category: value });
-                    }}
-                    value={form.getFieldValue('category')}
-                  />
-                ) : (
-                  <Select disabled placeholder="Đang tải danh mục..." />
-                )}
+                  {allCategoriesData ? (
+                    <AddCategorySelect
+                      categoriesData={allCategoriesData}
+                      onChange={(value) => {
+                        console.log('Category selected:', value);
+                        form.setFieldsValue({ cha_id: value }); // Đảm bảo lưu đúng vào cha_id
+                      }}
+                      value={form.getFieldValue('cha_id')}
+                    />
+                  ) : (
+                    <Select disabled placeholder="Đang tải danh mục..." />
+                  )}
                 </Form.Item>
                 <Form.Item
                   label="Thêm ảnh"
                   name="imageFile"
                   valuePropName="fileList"
-                  getValueFromEvent={(e) =>
-                    Array.isArray(e) ? e : e?.fileList
-                  }
+                  getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
+                  initialValue={data?.data.anh_danh_muc ? [{
+                    url: data.data.anh_danh_muc,
+                    name: 'image.jpg', 
+                    status: 'done',
+                  }] : []}
                 >
                   <Upload
                     listType="picture"
                     maxCount={1}
-                    beforeUpload={() => false}
+                    beforeUpload={() => false} 
                   >
                     <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
                   </Upload>
