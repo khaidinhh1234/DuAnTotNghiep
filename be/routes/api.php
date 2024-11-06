@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Admin\Api\HangThanhVienController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TaiKhoanController;
+use App\Http\Controllers\Admin\Api\ThongBaoTelegramController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhGiaController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhMuc;
 use App\Http\Controllers\Admin\Api\ThongKeDoanhThuController;
@@ -89,10 +90,9 @@ Route::middleware([])
         })->middleware('throttle:10000000,1');
 
         // Client Tin tức
-        Route::get('danh-muc-tin-tuc', [ApiTinTucController::class, 'layBaiVietMoiNhat']);
-        Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
+        Route::get('load-danh-muc-tin-tuc', [ApiTinTucController::class, 'loadDanhMucTinTucVaBaiViet']);
+        Route::get('danhmuctintuc/{duongDan}', [ApiTinTucController::class, 'xemBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
-        Route::get('load-bai-viet-va-danh-muc', [ApiTinTucController::class, 'loadBaiVietVaDanhMuc']);
 
         //Thanh toán MoMo
         Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
@@ -442,4 +442,6 @@ Route::middleware(['auth.sanctum'])
 
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
+
     });
+
