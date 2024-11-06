@@ -136,6 +136,7 @@ import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 import Test4 from "@/pages/(van_chuyen)/test";
+import WalletProtectedRoute from './WalletProtectedRoute';
 const Router = () => {
   //
 
@@ -184,10 +185,35 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
-            <Route path="/mypro/wallet" element={<TaiChinh />} />
+            {/* <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
-            <Route path="/mypro/naptien" element={<NapTien/>} />
+            <Route path="/mypro/naptien" element={<NapTien/>} /> */}
+      <Route path="/mypro/wallet" element={<TaiChinh />} />
+      <Route 
+        path="/mypro/WithdrawPage" 
+        element={
+          <WalletProtectedRoute>
+            <WithdrawPage />
+          </WalletProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/mypro/bank" 
+        element={
+          <WalletProtectedRoute>
+            <BankAccount />
+          </WalletProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/mypro/naptien" 
+        element={
+          <WalletProtectedRoute>
+            <NapTien />
+          </WalletProtectedRoute>
+        } 
+      />
 
 
 

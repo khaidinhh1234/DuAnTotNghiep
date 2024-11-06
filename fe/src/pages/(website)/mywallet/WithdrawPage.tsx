@@ -27,9 +27,18 @@ const WithdrawPage = () => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [lastToastTime, setLastToastTime] = useState(0);
 
-  const { data } = useQuery({
-    queryKey: ['financeData'],
-    queryFn: () => instanceClient.get('/vi-tai-khoan').then(res => res.data?.data)
+  const { data: walletData } = useQuery({
+    queryKey: ['walletData'],
+    queryFn: async () => {
+      const storedCode = localStorage.getItem('walletVerificationCode');
+      if (!storedCode) return null;
+      
+      const response = await instanceClient.post('/vi-tai-khoan', {
+        ma_xac_minh: storedCode
+      });
+      return response.data;
+    },
+    enabled: !!localStorage.getItem('walletVerificationCode')
   });
 
   const withdrawalMutation = useMutation({
@@ -73,7 +82,8 @@ const WithdrawPage = () => {
     setShowVerificationModal(true);
   };
 
-  const walletBalance = data?.viUser?.so_du || 0;
+  const walletBalance = walletData?.data?.viUser?.so_du || 0;
+
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 0;

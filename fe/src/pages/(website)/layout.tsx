@@ -3,9 +3,12 @@ import Footer from "@/pages/(website)/_component/Footer";
 import { Outlet } from "react-router-dom";
 import Header from './_component/Test';
 import Header2 from "./_component/Header2";
+import { useWalletRouteCheck } from "@/services/useWalletRouteCheck";
 // import Test from "./_component/Test";
 
 const Layout = () => {
+  useWalletRouteCheck();
+
   return (
     <div>
       {/* <Header /> */}
