@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DanhMucTinTuc;
 use App\Models\TinTuc;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,24 +14,38 @@ class TinTucController extends Controller
     public function loadDanhMucTinTucVaBaiViet()
     {
         try {
+            // Lấy danh mục tin tức, trừ các danh mục không cần thiết
             $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            // Lấy bài viết theo từng danh mục tin tức
             $loadBaiVietTheoDanhMuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
                 ->select('id', 'ten_danh_muc_tin_tuc', 'created_at')
                 ->with(['tinTuc' => function ($query) {
-                    $query->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'created_at')
+                    $query->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'created_at')
                         ->orderBy('created_at', 'desc')
                         ->limit(4);
                 }])
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            // Tìm 5 bài viết có lượt xem tăng nhiều nhất trong 24 giờ qua
+            $time24HoursAgo = Carbon::now()->subDay();
+            $baiVietCoLuotXemTangTrong24h = TinTuc::select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'created_at')
+                ->where('updated_at', '>=', $time24HoursAgo)
+                ->orderBy('luot_xem', 'desc')
+                ->limit(5)
+                ->get();
+
+            // Trả về kết quả
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
                 'Danh_muc_tin_tuc' => $danhMucTinTuc,
                 'Lay_bai_viet_theo_danh_muc' => $loadBaiVietTheoDanhMuc,
+                'Bai_viet_duoc_xem_nhieu_nhat' => $baiVietCoLuotXemTangTrong24h
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -100,8 +115,9 @@ class TinTucController extends Controller
                 ], 404);
             }
 
-            // Tăng lượt xem cho bài viết
+            // Tăng lượt xem cho bài viết và cập nhật lại updated_at
             $baiVietDetail->increment('luot_xem');
+            $baiVietDetail->touch(); // Cập nhật lại trường `updated_at`
 
             // Lấy các bài viết khác cùng danh mục, ngoại trừ bài viết hiện tại
             $baiVietKhac = TinTuc::where('danh_muc_tin_tuc_id', $baiVietDetail->danh_muc_tin_tuc_id)
