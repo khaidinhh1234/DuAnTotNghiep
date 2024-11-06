@@ -22,6 +22,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Link, useNavigate } from "react-router-dom";
 import CategorySelect from '../../../../components/CategorySelect';
+import AddCategorySelect from "@/components/AddCaterogySelect";
 const { TextArea } = Input;
 
 export interface VariantType {
@@ -295,31 +296,31 @@ const AddProducts: React.FC = () => {
           </Link>
         </div>
       </div>
-      <div className="bg-white p-3">      
+      <div className="bg-white p-3">
         <Form
-        form={form}
-        name="basic"
-        layout="vertical"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 24 }}
-        style={{ maxWidth: "100%" }}
-        className="mx-10 my-5"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        autoComplete="off"
-      >
-        <div className="grid grid-cols-2 gap-5">
-          <Form.Item
-            className="block text-md font-medium text-gray-700 mt-2 mb-1"
-            label="Tên sản phẩm"
-            name="ten_san_pham"
-            rules={[
-              { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
-            ]}
-          >
-            <Input placeholder="Nhập tên sản phẩm" />
-          </Form.Item>
-          {/* <Form.Item
+          form={form}
+          name="basic"
+          layout="vertical"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 24 }}
+          style={{ maxWidth: "100%" }}
+          className="mx-10 my-5"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          autoComplete="off"
+        >
+          <div className="grid grid-cols-2 gap-5">
+            <Form.Item
+              className="block text-md font-medium text-gray-700 mt-2 mb-1"
+              label="Tên sản phẩm"
+              name="ten_san_pham"
+              rules={[
+                { required: true, message: "Tên sản phẩm bắt buộc phải nhập!" },
+              ]}
+            >
+              <Input placeholder="Nhập tên sản phẩm" />
+            </Form.Item>
+            {/* <Form.Item
             className="block text-md font-medium text-gray-700 mt-2 mb-1"
             label="Danh mục sản phẩm"
             name="danh_muc_id"
@@ -335,116 +336,115 @@ const AddProducts: React.FC = () => {
                 ))}
             </Select>
           {/* <CategorySelect categoriesData={categoriesData} /> */}
-          {/* </Form.Item>  */}
-          <Form.Item
-      className="block text-md font-medium mt-2 text-gray-700 mb-1"
-      label="Danh mục sản phẩm"
-      name="danh_muc_id"
-      rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
-    >
-       <CategorySelect 
-      categoriesData={categoriesData}
-      onChange={(value) => {
-        console.log('Category selected:', value);
-        form.setFieldsValue({ danh_muc_id: value });
-      }}
-    />
-
-    </Form.Item>
-        </div>{" "}
-        <div className="grid grid-cols-1 gap-5">
-          <Form.Item
-            className="block text-md font-medium mt-2 text-gray-700 mb-1"
-            label="Mô tả ngắn"
-            name="mo_ta_ngan"
-            rules={[
-              { required: true, message: "Mô tả ngắn bắt buộc phải nhập!" },
-            ]}
-          >
-            <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
-          </Form.Item>
-        </div>
-        <div className="grid grid-cols-2 gap-5">
-          <Form.Item
-            className="block text-md font-medium mt-2 text-gray-700 mb-1"
-            label="Chọn bộ sưu tập"
-            name="tags"
-            // rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
-          >
-            <Select
-              mode="multiple"
-              className="w-full"
-              placeholder="Chọn bộ sưu tập"
+            {/* </Form.Item>  */}
+            <Form.Item
+              className="block text-md font-medium mt-2 text-gray-700 mb-1"
+              label="Danh mục sản phẩm"
+              name="danh_muc_id"
+              rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
             >
-              {the &&
-                the.map((tag: any) => (
-                  <Select.Option key={tag.id} value={tag.id}>
-                    {tag.ten}
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            className="block text-md font-medium mt-2 text-gray-700 mb-1"
-            label="Mã sản phẩm"
-            name="ma_san_pham"
-          >
-            <div className="flex items-center gap-2">
-              <Input
-                placeholder="Nhập mã sản phẩm"
-                value={"SP-" + productCode}
-                readOnly
+              <CategorySelect
+                categoriesData={categoriesData}
+                onChange={(value) => {
+                  console.log('Category selected:', value);
+                  form.setFieldsValue({ danh_muc_id: value });
+                }}
               />
-              <Button onClick={generateRandomCode}>Đổi mã</Button>
-            </div>
-          </Form.Item>
-        </div>
-        <div className="grid grid-cols-2 gap-5 mb-5">
-
-
-          <Form.Item
-            className="block text-md font-medium mt-2 text-gray-700 mb-1"
-            label="Ảnh nổi bật"
-            name="anh_san_pham"
-            rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
-            valuePropName="fileList"
-            getValueFromEvent={(e) => {
-              if (Array.isArray(e)) {
-                return e;
-              }
-              return e && e.fileList;
-            }}
-          >
-            <Upload
-              listType="picture-card"
-              fileList={fileList}
-              beforeUpload={(file) => {
-                const isImage = file.type.startsWith('image/');
-                if (!isImage) {
-                  message.error('Bạn chỉ có thể tải lên file ảnh!');
-                }
-                return false; // Prevent default upload
-              }}
-              onChange={({ fileList: newFileList }) => {
-                setFileList(newFileList);
-                if (newFileList.length > 0) {
-                  const file = newFileList[0].originFileObj;
-                  if (file instanceof File) {
-                    setProductImage(URL.createObjectURL(file));
-                  }
-                } else {
-                  setProductImage('');
-                }
-              }}
-              onPreview={handlePreview}
-              maxCount={1}
+            </Form.Item>
+          </div>{" "}
+          <div className="grid grid-cols-1 gap-5">
+            <Form.Item
+              className="block text-md font-medium mt-2 text-gray-700 mb-1"
+              label="Mô tả ngắn"
+              name="mo_ta_ngan"
+              rules={[
+                { required: true, message: "Mô tả ngắn bắt buộc phải nhập!" },
+              ]}
             >
-              {fileList.length >= 1 ? null : uploadButton}
-            </Upload>
+              <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
+            </Form.Item>
+          </div>
+          <div className="grid grid-cols-2 gap-5">
+            <Form.Item
+              className="block text-md font-medium mt-2 text-gray-700 mb-1"
+              label="Chọn bộ sưu tập"
+              name="tags"
+            // rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
+            >
+              <Select
+                mode="multiple"
+                className="w-full"
+                placeholder="Chọn bộ sưu tập"
+              >
+                {the &&
+                  the.map((tag: any) => (
+                    <Select.Option key={tag.id} value={tag.id}>
+                      {tag.ten}
+                    </Select.Option>
+                  ))}
+              </Select>
+            </Form.Item>
 
-          </Form.Item>
-          {/* <Form.Item
+            <Form.Item
+              className="block text-md font-medium mt-2 text-gray-700 mb-1"
+              label="Mã sản phẩm"
+              name="ma_san_pham"
+            >
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="Nhập mã sản phẩm"
+                  value={"SP-" + productCode}
+                  readOnly
+                />
+                <Button onClick={generateRandomCode}>Đổi mã</Button>
+              </div>
+            </Form.Item>
+          </div>
+          <div className="grid grid-cols-2 gap-5 mb-5">
+
+
+            <Form.Item
+              className="block text-md font-medium mt-2 text-gray-700 mb-1"
+              label="Ảnh nổi bật"
+              name="anh_san_pham"
+              rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
+              valuePropName="fileList"
+              getValueFromEvent={(e) => {
+                if (Array.isArray(e)) {
+                  return e;
+                }
+                return e && e.fileList;
+              }}
+            >
+              <Upload
+                listType="picture-card"
+                fileList={fileList}
+                beforeUpload={(file) => {
+                  const isImage = file.type.startsWith('image/');
+                  if (!isImage) {
+                    message.error('Bạn chỉ có thể tải lên file ảnh!');
+                  }
+                  return false; // Prevent default upload
+                }}
+                onChange={({ fileList: newFileList }) => {
+                  setFileList(newFileList);
+                  if (newFileList.length > 0) {
+                    const file = newFileList[0].originFileObj;
+                    if (file instanceof File) {
+                      setProductImage(URL.createObjectURL(file));
+                    }
+                  } else {
+                    setProductImage('');
+                  }
+                }}
+                onPreview={handlePreview}
+                maxCount={1}
+              >
+                {fileList.length >= 1 ? null : uploadButton}
+              </Upload>
+
+            </Form.Item>
+            {/* <Form.Item
       label="Ảnh nổi bật"
       name="anh_san_pham"
       rules={[{ required: true, message: "Ảnh sản phẩm là bắt buộc!" }]}
@@ -488,227 +488,227 @@ const AddProducts: React.FC = () => {
         <img alt="example" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </Form.Item> */}
-          {/* <Form.Item 
+            {/* <Form.Item 
             className="block text-md font-medium mt-2 text-gray-700 mb-1"
             label="Giá tốt" name="gia_tot" valuePropName="checked">
             <Checkbox />
           </Form.Item> */}
-          <Form.Item
-  className="block text-md font-medium mt-2 text-gray-700 mb-1"
-  label="Giá tốt" 
-  name="gia_tot" 
-  valuePropName="checked"
->
-  <Switch />
-</Form.Item>
-        </div>
-        <div className="grid grid-cols-1 gap-5 ">
-          <Form.Item
-            name="noi_dung"
-            className="block text-md font-medium mt-2 text-gray-700 mb-1"
-            label="Nội dung sản phẩm"
-            rules={[
-              {
-                required: true,
-                message: "Nội dung sản phẩm là bắt buộc!",
-              },
-            ]}
-            initialValue={"Xin chào bạn đã đến với chúng tôi "}
-          >
-            <ReactQuill
-              theme="snow"
-              value={value}
-              onChange={setValue}
-              className="h-56"
-            />
-          </Form.Item>
-        </div>
-        <div className="mt-8">
-          <h2 className="text-2xl pt-8 font-semibold mb-4 ">
-            Giá bán, Kho hàng và Biến thể
-          </h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Tạo biến thể nếu sản phẩm có hơn một tùy chọn, ví dụ như về kích
-            thước hay màu sắc.
-          </p>
-          <div className="mb-6 flex gap-5 items-center">
-            <label className="block text-md font-medium text-gray-700 mb-1">
-              Thêm biến thể :
-            </label>
-            <Select
-              style={{ width: 120 }}
-              onSelect={addVariant}
-              placeholder="Chọn biến thể"
+            <Form.Item
+              className="block text-md font-medium mt-2 text-gray-700 mb-1"
+              label="Giá tốt"
+              name="gia_tot"
+              valuePropName="checked"
             >
-              <Select.Option value="color">Màu sắc</Select.Option>
-              <Select.Option value="size">Kích thước</Select.Option>
-            </Select>
+              <Switch />
+            </Form.Item>
           </div>
-          <div className="grid grid-cols-2 gap-10 ">
-            {variants?.map((variant, index) => (
-              <div key={index} className="mb-6 bg-gray-50 p-4 rounded-md">
-                <h3 className="text-lg font-medium mb-2 flex justify-between items-center">
-                  Biến thể {variant.type === "color" ? "Màu sắc" : "Kích thước"}
-                  <button
-                    className="text-white text-xs hover:bg-red-500 bg-red-400 gap-1 px-2 py-1 rounded-md flex items-center"
-                    onClick={() => removeVariant(index)}
-                  >
-                    <i className="fa-solid fa-trash-can" /> Xóa
-                  </button>
-                </h3>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {variant.type === "color" ? "Chọn màu sắc" : "Chọn kích thước"}
-                  </label>
-                  {variant.type === "size" ? (
-                    <>
-                      <Select
-                        style={{ width: "100%", marginBottom: "10px" }}
-                        placeholder="Chọn loại kích thước"
-                        onChange={handleSizeTypeChange}
-                        value={selectedSizeType}
-                      >
-                        {Object.keys(groupSizesByType(kichthuoc.data)).map((type) => (
-                          <Select.Option key={type} value={type}>
-                            {sizeTypeLabels[type] || type}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                      {selectedSizeType && (
+          <div className="grid grid-cols-1 gap-5 ">
+            <Form.Item
+              name="noi_dung"
+              className="block text-md font-medium mt-2 text-gray-700 mb-1"
+              label="Nội dung sản phẩm"
+              rules={[
+                {
+                  required: true,
+                  message: "Nội dung sản phẩm là bắt buộc!",
+                },
+              ]}
+              initialValue={"Xin chào bạn đã đến với chúng tôi "}
+            >
+              <ReactQuill
+                theme="snow"
+                value={value}
+                onChange={setValue}
+                className="h-56"
+              />
+            </Form.Item>
+          </div>
+          <div className="mt-8">
+            <h2 className="text-2xl pt-8 font-semibold mb-4 ">
+              Giá bán, Kho hàng và Biến thể
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Tạo biến thể nếu sản phẩm có hơn một tùy chọn, ví dụ như về kích
+              thước hay màu sắc.
+            </p>
+            <div className="mb-6 flex gap-5 items-center">
+              <label className="block text-md font-medium text-gray-700 mb-1">
+                Thêm biến thể :
+              </label>
+              <Select
+                style={{ width: 120 }}
+                onSelect={addVariant}
+                placeholder="Chọn biến thể"
+              >
+                <Select.Option value="color">Màu sắc</Select.Option>
+                <Select.Option value="size">Kích thước</Select.Option>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-10 ">
+              {variants?.map((variant, index) => (
+                <div key={index} className="mb-6 bg-gray-50 p-4 rounded-md">
+                  <h3 className="text-lg font-medium mb-2 flex justify-between items-center">
+                    Biến thể {variant.type === "color" ? "Màu sắc" : "Kích thước"}
+                    <button
+                      className="text-white text-xs hover:bg-red-500 bg-red-400 gap-1 px-2 py-1 rounded-md flex items-center"
+                      onClick={() => removeVariant(index)}
+                    >
+                      <i className="fa-solid fa-trash-can" /> Xóa
+                    </button>
+                  </h3>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {variant.type === "color" ? "Chọn màu sắc" : "Chọn kích thước"}
+                    </label>
+                    {variant.type === "size" ? (
+                      <>
                         <Select
-                          mode="multiple"
-                          style={{ width: "100%" }}
-                          placeholder="Chọn kích thước"
-                          onChange={(values) => updateVariantValues(index, values)}
-                          value={variant.values}
+                          style={{ width: "100%", marginBottom: "10px" }}
+                          placeholder="Chọn loại kích thước"
+                          onChange={handleSizeTypeChange}
+                          value={selectedSizeType}
                         >
-                          {groupSizesByType(kichthuoc.data)[selectedSizeType].map((size: any) => (
-                            <Select.Option key={size.id} value={size.id}>
-                              {size.kich_thuoc}
+                          {Object.keys(groupSizesByType(kichthuoc.data)).map((type) => (
+                            <Select.Option key={type} value={type}>
+                              {sizeTypeLabels[type] || type}
                             </Select.Option>
                           ))}
                         </Select>
-                      )}
-                    </>
-                  ) : (
-                    <Select
-                      mode="multiple"
-                      style={{ width: "100%" }}
-                      placeholder="Chọn màu sắc"
-                      onChange={(values) => updateVariantValues(index, values)}
-                      value={variant.values}
-                    >
-                      {mausac?.data.map((color: any) => (
-                        <Select.Option key={color.id} value={color.ten_mau_sac}>
-                          <div className="flex items-center">
-                            <div
-                              className="w-4 h-4 rounded-full mr-2"
-                              style={{ backgroundColor: color.ma_mau_sac }}
-                            />
-                            {color.ten_mau_sac}
-                          </div>
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-        <div className="p-0">
-          <h2 className="text-xl font-bold ">Giá bán & Kho hàng</h2>
-          <div className="mt-4 overflow-x-auto shadow-md">
-            <table className="w-full max-w-full table-auto bg-white rounded-lg  border border-gray-300">
-              <thead>
-                <tr className="bg-gray-100 border-b border-gray-300 text-center">
-                  <th className="p-1 border-r border-gray-300">Kích thước</th>
-                  <th className="p-1 border-r border-gray-300">Màu sắc</th>
-                  <th className="p-1 border-r border-gray-300">Giá bán</th>
-                  <th className="p-1 border-r border-gray-300">Chi phí sản xuất</th>
-
-                  <th className="p-1 border-r border-gray-300">
-                    Giá khuyến mãi
-                  </th>
-                  <th className="p-1 border-r border-gray-300">Số lượng</th>
-                  <th className="p-1">Ảnh biến thể</th>
-
-                </tr>
-              </thead>
-              <tbody>
-                {combinations &&
-                  combinations.map((combo, index) => (
-                    <tr className="border-t border-gray-300 text-center">
-                      <td className="p-1 border-r border-gray-300 text-center">
-                        {" "}
-                        {combo.size}
-                      </td>
-                      <td className="p-1 border-r border-gray-300 text-center">
-                        {combo.color}
-                      </td>
-                      <td className="p-1 border-r border-gray-300 w-[20%]">
-                        <Form.Item
-                          name={`gia_ban-${index}`}
-                          className="my-0 px-5"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập giá bán!",
-                            },
-                            {
-                              type: "number",
-                              min: 1000,
-                              message: "Giá bán phải lớn hơn hoặc bằng 1000!",
-                            },
-                            {
-                              validator: (_, value) =>
-                                value && isNaN(value)
-                                  ? Promise.reject("Giá bán phải là một số!")
-                                  : Promise.resolve(),
-                            },
-                          ]}
-                        >
-
-                          <InputNumber style={{ width: "100%" }} placeholder="Nhập giá bán" />
-
-                        </Form.Item>
-                      </td>
-                      <td className="p-1 border-r border-gray-300 w-[20%]">
-                        <Form.Item
-                          name={`chi_phi_san_xuat-${index}`}
-                          className="my-0 px-5"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập chi phí sản xuất!",
-                            },
-                            {
-                              type: "number",
-                              min: 1000,
-                              message: "Giá phải lớn hơn 1000!",
-                            },
-                            {
-                              validator: (_, value) => {
-                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
-                                if (value && giaBan && value >= giaBan) {
-                                  return Promise.reject("Chi phí sản xuất  phải nhỏ hơn giá bán!");
-                                }
-                                return Promise.resolve();
-                              },
-                            },
-                          ]}
-                          style={{ margin: 0 }}
-                        >
-                          <InputNumber
-                            placeholder="0"
+                        {selectedSizeType && (
+                          <Select
+                            mode="multiple"
                             style={{ width: "100%" }}
-                            min={0}
-                          />
-                        </Form.Item>
+                            placeholder="Chọn kích thước"
+                            onChange={(values) => updateVariantValues(index, values)}
+                            value={variant.values}
+                          >
+                            {groupSizesByType(kichthuoc.data)[selectedSizeType].map((size: any) => (
+                              <Select.Option key={size.id} value={size.id}>
+                                {size.kich_thuoc}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        )}
+                      </>
+                    ) : (
+                      <Select
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder="Chọn màu sắc"
+                        onChange={(values) => updateVariantValues(index, values)}
+                        value={variant.values}
+                      >
+                        {mausac?.data.map((color: any) => (
+                          <Select.Option key={color.id} value={color.ten_mau_sac}>
+                            <div className="flex items-center">
+                              <div
+                                className="w-4 h-4 rounded-full mr-2"
+                                style={{ backgroundColor: color.ma_mau_sac }}
+                              />
+                              {color.ten_mau_sac}
+                            </div>
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
 
-                      </td>
-                      {/* <td className="p-1 border-r border-gray-300 w-[20%]">
+          </div>
+          <div className="p-0">
+            <h2 className="text-xl font-bold ">Giá bán & Kho hàng</h2>
+            <div className="mt-4 overflow-x-auto shadow-md">
+              <table className="w-full max-w-full table-auto bg-white rounded-lg  border border-gray-300">
+                <thead>
+                  <tr className="bg-gray-100 border-b border-gray-300 text-center">
+                    <th className="p-1 border-r border-gray-300">Kích thước</th>
+                    <th className="p-1 border-r border-gray-300">Màu sắc</th>
+                    <th className="p-1 border-r border-gray-300">Giá bán</th>
+                    <th className="p-1 border-r border-gray-300">Chi phí sản xuất</th>
+
+                    <th className="p-1 border-r border-gray-300">
+                      Giá khuyến mãi
+                    </th>
+                    <th className="p-1 border-r border-gray-300">Số lượng</th>
+                    <th className="p-1">Ảnh biến thể</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {combinations &&
+                    combinations.map((combo, index) => (
+                      <tr className="border-t border-gray-300 text-center">
+                        <td className="p-1 border-r border-gray-300 text-center">
+                          {" "}
+                          {combo.size}
+                        </td>
+                        <td className="p-1 border-r border-gray-300 text-center">
+                          {combo.color}
+                        </td>
+                        <td className="p-1 border-r border-gray-300 w-[20%]">
+                          <Form.Item
+                            name={`gia_ban-${index}`}
+                            className="my-0 px-5"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng nhập giá bán!",
+                              },
+                              {
+                                type: "number",
+                                min: 1000,
+                                message: "Giá bán phải lớn hơn hoặc bằng 1000!",
+                              },
+                              {
+                                validator: (_, value) =>
+                                  value && isNaN(value)
+                                    ? Promise.reject("Giá bán phải là một số!")
+                                    : Promise.resolve(),
+                              },
+                            ]}
+                          >
+
+                            <InputNumber style={{ width: "100%" }} placeholder="Nhập giá bán" />
+
+                          </Form.Item>
+                        </td>
+                        <td className="p-1 border-r border-gray-300 w-[20%]">
+                          <Form.Item
+                            name={`chi_phi_san_xuat-${index}`}
+                            className="my-0 px-5"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng nhập chi phí sản xuất!",
+                              },
+                              {
+                                type: "number",
+                                min: 1000,
+                                message: "Giá phải lớn hơn 1000!",
+                              },
+                              {
+                                validator: (_, value) => {
+                                  const giaBan = form.getFieldValue(`gia_ban-${index}`);
+                                  if (value && giaBan && value >= giaBan) {
+                                    return Promise.reject("Chi phí sản xuất  phải nhỏ hơn giá bán!");
+                                  }
+                                  return Promise.resolve();
+                                },
+                              },
+                            ]}
+                            style={{ margin: 0 }}
+                          >
+                            <InputNumber
+                              placeholder="0"
+                              style={{ width: "100%" }}
+                              min={0}
+                            />
+                          </Form.Item>
+
+                        </td>
+                        {/* <td className="p-1 border-r border-gray-300 w-[20%]">
                         <Form.Item
                           name={`gia_khuyen_mai-${index}`}
                           className="my-0 px-5"
@@ -736,156 +736,156 @@ const AddProducts: React.FC = () => {
                           />
                         </Form.Item>
 
-                      </td> */}  
-                                          <td className="p-1 border-r border-gray-300 w-[20%]">
-  <Form.Item
-    name={`gia_khuyen_mai-${index}`}
-    className="my-0 px-5"
-    rules={[
-      { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
-      {
-        type: "number",
-        min: 0,
-        message: "Giá khuyến mãi phải lớn hơn hoặc bằng 0!",
-      },
-      {
-        validator: (_, value) => {
-          const giaBan = form.getFieldValue(`gia_ban-${index}`);
-          if (value === 0 || (value > 0 && value >= 1000)) {
-            if (giaBan && value >= giaBan) {
-              return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
-            }
-            return Promise.resolve();
-          }
-          return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc nhỏ hơn hoặc bằng 1000!"));
-        },
-      },
-    ]}
-  >
-    <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
-  </Form.Item>
-</td>
+                      </td> */}
+                        <td className="p-1 border-r border-gray-300 w-[20%]">
+                          <Form.Item
+                            name={`gia_khuyen_mai-${index}`}
+                            className="my-0 px-5"
+                            rules={[
+                              { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
+                              {
+                                type: "number",
+                                min: 0,
+                                message: "Giá khuyến mãi phải lớn hơn hoặc bằng 0!",
+                              },
+                              {
+                                validator: (_, value) => {
+                                  const giaBan = form.getFieldValue(`gia_ban-${index}`);
+                                  if (value === 0 || (value > 0 && value >= 1000)) {
+                                    if (giaBan && value >= giaBan) {
+                                      return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
+                                    }
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc nhỏ hơn hoặc bằng 1000!"));
+                                },
+                              },
+                            ]}
+                          >
+                            <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
+                          </Form.Item>
+                        </td>
 
 
-                      <td className="p-1 border-r border-gray-300 w-[20%]">
-                        <Form.Item
-                          name={`so_luong_bien_the-${index}`}
-                          className="my-0 px-5"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập số lượng!",
-                            },
-                            {
-                              type: "number",
-                              min: 0,
-                              message: "Số lượng phải lớn hơn âm!",
-                            },
-                            {
-                              validator: (_, value) =>
-                                value && isNaN(value)
-                                  ? Promise.reject("Số lượng phải là một số!")
-                                  : Promise.resolve(),
-                            },
-                          ]}
-                          style={{ margin: 0 }}
-                        >
-                          <InputNumber placeholder="Nhập số lượng" style={{ width: "100%" }} min={0} />
+                        <td className="p-1 border-r border-gray-300 w-[20%]">
+                          <Form.Item
+                            name={`so_luong_bien_the-${index}`}
+                            className="my-0 px-5"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng nhập số lượng!",
+                              },
+                              {
+                                type: "number",
+                                min: 0,
+                                message: "Số lượng phải lớn hơn âm!",
+                              },
+                              {
+                                validator: (_, value) =>
+                                  value && isNaN(value)
+                                    ? Promise.reject("Số lượng phải là một số!")
+                                    : Promise.resolve(),
+                              },
+                            ]}
+                            style={{ margin: 0 }}
+                          >
+                            <InputNumber placeholder="Nhập số lượng" style={{ width: "100%" }} min={0} />
 
-                        </Form.Item>
-                      </td>
-                      <td className="p-1">
-                        <Form.Item
-                          name={`anh_bien_the-${index}`}
-                          valuePropName="fileList"
-                          getValueFromEvent={(e) => e.fileList}
-                          className="my-0 flex justify-center"
-                        >
-                          <Upload
-                            action="https://api.cloudinary.com/v1_1/dpypwbeis/image/upload"
-                            data={{ upload_preset: "ml_default" }}
-                            listType="picture-card"
-                            fileList={fileLists[index] || []}
-                            onPreview={handlePreview}
-                            onChange={(info: any) =>
-                              handleChange(info, index)
-                            }
-                            maxCount={5}
-                            multiple
-                            className={`custom-upload mx-auto ${(fileLists[index] && fileLists[index].length) >=
+                          </Form.Item>
+                        </td>
+                        <td className="p-1">
+                          <Form.Item
+                            name={`anh_bien_the-${index}`}
+                            valuePropName="fileList"
+                            getValueFromEvent={(e) => e.fileList}
+                            className="my-0 flex justify-center"
+                          >
+                            <Upload
+                              action="https://api.cloudinary.com/v1_1/dpypwbeis/image/upload"
+                              data={{ upload_preset: "ml_default" }}
+                              listType="picture-card"
+                              fileList={fileLists[index] || []}
+                              onPreview={handlePreview}
+                              onChange={(info: any) =>
+                                handleChange(info, index)
+                              }
+                              maxCount={5}
+                              multiple
+                              className={`custom-upload mx-auto ${(fileLists[index] && fileLists[index].length) >=
                                 3
                                 ? "w-[200px]"
                                 : "w-auto"
-                              }`}
-                          >
-                            {(fileLists[index] && fileLists[index].length) >=
-                              5
-                              ? null
-                              : uploadButton}
-                          </Upload>
-                          {previewImage && (
-                            <Image
-                              wrapperStyle={{ display: "none" }}
-                              preview={{
-                                visible: previewOpen,
-                                onVisibleChange: (visible) =>
-                                  setPreviewOpen(visible),
-                                afterOpenChange: (visible) =>
-                                  !visible && setPreviewImage(""),
-                              }}
-                              src={previewImage}
-                            />
-                          )}
-                          <Modal
-                            visible={previewVisible}
-                            title={previewTitle}
-                            footer={null}
-                            onCancel={handleCancel}
-                          >
-                            <img alt="Ảnh biến thể" src={previewImage} />
-                          </Modal>
-                        </Form.Item>
-                      </td>
+                                }`}
+                            >
+                              {(fileLists[index] && fileLists[index].length) >=
+                                5
+                                ? null
+                                : uploadButton}
+                            </Upload>
+                            {previewImage && (
+                              <Image
+                                wrapperStyle={{ display: "none" }}
+                                preview={{
+                                  visible: previewOpen,
+                                  onVisibleChange: (visible) =>
+                                    setPreviewOpen(visible),
+                                  afterOpenChange: (visible) =>
+                                    !visible && setPreviewImage(""),
+                                }}
+                                src={previewImage}
+                              />
+                            )}
+                            <Modal
+                              visible={previewVisible}
+                              title={previewTitle}
+                              footer={null}
+                              onCancel={handleCancel}
+                            >
+                              <img alt="Ảnh biến thể" src={previewImage} />
+                            </Modal>
+                          </Form.Item>
+                        </td>
 
-                    </tr>
-                  ))}
-              </tbody>{" "}
-            </table>{" "}
-            {combinations.length === 0 && (
-              <div className="border border-gray-300 text-center mx-auto">
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  className="mx-auto"
-                />
-              </div>
-            )}
+                      </tr>
+                    ))}
+                </tbody>{" "}
+              </table>{" "}
+              {combinations.length === 0 && (
+                <div className="border border-gray-300 text-center mx-auto">
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    className="mx-auto"
+                  />
+                </div>
+              )}
+            </div>
+          </div>{" "}
+          <div className="mt-10">
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={addProductMutation.isPending}
+                className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors ml-12"
+                style={{
+                  padding: "14px 50px",
+                  marginRight: "190px",
+                }}
+              >              Thêm sản phẩm
+              </Button>
+            </Form.Item>
+
           </div>
-        </div>{" "}
-        <div className="mt-10">
-          <Form.Item>
-          <Button
-  type="primary"
-  htmlType="submit"
-  loading={addProductMutation.isPending}
-  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors ml-12"
-  style={{
-    padding: "14px 50px",
-    marginRight: "190px",
-  }}
->              Thêm sản phẩm
-            </Button>
-          </Form.Item>
-          
-        </div>
-        <Modal
-          visible={previewVisible}
-          title={previewTitle}
-          footer={null}
-          onCancel={handleCancel}
-        >
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
-        </Modal>
-      </Form>
+          <Modal
+            visible={previewVisible}
+            title={previewTitle}
+            footer={null}
+            onCancel={handleCancel}
+          >
+            <img alt="example" style={{ width: '100%' }} src={previewImage} />
+          </Modal>
+        </Form>
       </div>
     </main>
   );

@@ -146,7 +146,7 @@ class ThongKeTongQuanController extends Controller
         $donHangHoan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
             ->whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc])
             ->get();
-// dd($donHangHoan);
+        // dd($donHangHoan);
         // Tính tổng số lượng đơn hàng hoàn và tổng tiền hoàn (dựa trên tổng tiền đơn hàng)
         $tongTienHoan = $donHangHoan->sum('tong_tien_don_hang');
         $tongSoLuongDonHangHoan = $donHangHoan->count();
@@ -289,21 +289,21 @@ class ThongKeTongQuanController extends Controller
                 DonHang::TTDH_CKHCN,
             ];
             $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThai)
-            ->where(function ($query) use ($ngayBatDau, $ngayKetThuc) {
-                // Nếu trạng thái thanh toán là PTTT_TT, lọc theo ngày hoàn thành đơn
-                $query->where(function ($q) use ($ngayBatDau, $ngayKetThuc) {
-                    $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
-                    ->where('trang_thai_thanh_toan',DonHang::TTTT_DTT)
-                      ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
+                ->where(function ($query) use ($ngayBatDau, $ngayKetThuc) {
+                    // Nếu trạng thái thanh toán là PTTT_TT, lọc theo ngày hoàn thành đơn
+                    $query->where(function ($q) use ($ngayBatDau, $ngayKetThuc) {
+                        $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
+                            ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                            ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
+                    })
+                        // Nếu trạng thái thanh toán là PTTT_MM_ATM hoặc PTTT_MM_QR, lọc theo created_at
+                        ->orWhere(function ($q) use ($ngayBatDau, $ngayKetThuc) {
+                        $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
+                            ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                            ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
+                    });
                 })
-                // Nếu trạng thái thanh toán là PTTT_MM_ATM hoặc PTTT_MM_QR, lọc theo created_at
-                ->orWhere(function ($q) use ($ngayBatDau, $ngayKetThuc) {
-                    $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
-                    ->where('trang_thai_thanh_toan',DonHang::TTTT_DTT)
-                      ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
-                });
-            })
-            ->get();
+                ->get();
             // Tính tổng doanh thu và số đơn hàng trong khoảng thời gian
             $tongDoanhThu = $donHangs->sum('tong_tien_don_hang');
             $soDonHang = $donHangs->count();
@@ -721,11 +721,6 @@ class ThongKeTongQuanController extends Controller
             DB::beginTransaction();
             $today = Carbon::today();
             $trangThai = [
-
-                DonHang::TTDH_DXH, // Hoàn tất đơn hàng
-                DonHang::TTDH_DXL, // 
-                DonHang::TTDH_DGH    // Đơn hàng giao hàng
-                ,
                 DonHang::TTDH_HTDH, // Đơn hàng hoàn tất
                 DonHang::TTDH_CKHCN, //
             ];
@@ -818,7 +813,7 @@ class ThongKeTongQuanController extends Controller
                     DonHang::TTDH_CXH,
                     DonHang::TTDH_DXH,
                     DonHang::TTDH_DXL,
-                  
+
                 ])
                 ->count();
 
@@ -861,7 +856,7 @@ class ThongKeTongQuanController extends Controller
     {
         // Mốc thời gian từ 0h đến 22h cách nhau 2 giờ
         $timeLabels = ['0h', '2h', '4h', '6h', '8h', '10h', '12h', '14h', '16h', '18h', '20h', '22h', '24h'];
-    
+
         // Lấy thời gian bắt đầu và kết thúc của ngày hiện tại
         $ngayBatDau = Carbon::today();
         $ngayKetThuc = Carbon::tomorrow();
@@ -870,7 +865,7 @@ class ThongKeTongQuanController extends Controller
             DonHang::TTDH_HTDH,
             DonHang::TTDH_CKHCN,
         ];
-    
+
         // Tạo khoảng thời gian cách nhau 2 giờ
         $intervals = [];
         for ($i = 0; $i < 24; $i += 2) {
@@ -879,11 +874,11 @@ class ThongKeTongQuanController extends Controller
                 'end' => $ngayBatDau->copy()->addHours($i + 2),
             ];
         }
-    
+
         // Mảng để lưu các giá trị cho doanh thu và lợi nhuận
         $doanhThuArray = [];
         $loiNhuanArray = [];
-    
+
         // Lặp qua từng khoảng thời gian để tính doanh thu và lợi nhuận
         foreach ($intervals as $interval) {
             $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThai)
@@ -891,32 +886,32 @@ class ThongKeTongQuanController extends Controller
                     // Nếu trạng thái thanh toán là PTTT_TT, lọc theo ngày hoàn thành đơn
                     $query->where(function ($q) use ($interval) {
                         $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
-                          ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
-                          ->whereBetween('ngay_hoan_thanh_don', [$interval['start'], $interval['end']]);
+                            ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                            ->whereBetween('ngay_hoan_thanh_don', [$interval['start'], $interval['end']]);
                     })
-                    // Nếu trạng thái thanh toán là PTTT_MM_ATM hoặc PTTT_MM_QR, lọc theo created_at
-                    ->orWhere(function ($q) use ($interval) {
+                        // Nếu trạng thái thanh toán là PTTT_MM_ATM hoặc PTTT_MM_QR, lọc theo created_at
+                        ->orWhere(function ($q) use ($interval) {
                         $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
-                          ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
-                          ->whereBetween('created_at', [$interval['start'], $interval['end']]);
+                            ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                            ->whereBetween('created_at', [$interval['start'], $interval['end']]);
                     });
                 })
                 ->get();
-    
+
             // Tính tổng doanh thu và tổng chi phí sản xuất
             $tongDoanhThu = $donHangs->sum('tong_tien_don_hang');
             $tongChiPhiSanXuat = $donHangs->sum(function ($donHang) {
                 return $donHang->bienTheSanPhams->sum('chi_phi_san_xuat');
             });
-    
+
             // Tính lợi nhuận
             $loiNhuan = $tongDoanhThu - $tongChiPhiSanXuat;
-    
+
             // Thêm dữ liệu vào các mảng
             $doanhThuArray[] = $tongDoanhThu;
             $loiNhuanArray[] = $loiNhuan;
         }
-    
+
         // Trả về kết quả dưới dạng JSON
         return response()->json([
             'thoi_gian' => $timeLabels,
@@ -924,44 +919,44 @@ class ThongKeTongQuanController extends Controller
             'loi_nhuan' => $loiNhuanArray
         ]);
     }
-    
+
     public function thongKeDoanhThuTrongNgay()
     {
         $ngayBatDau = Carbon::today();
         $ngayKetThuc = Carbon::tomorrow();
-    
+
         $trangThai = [
             DonHang::TTDH_DGH,
             DonHang::TTDH_HTDH,
             DonHang::TTDH_CKHCN,
         ];
-    
+
         $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThai)
             ->where(function ($query) use ($ngayBatDau, $ngayKetThuc) {
                 // Nếu trạng thái thanh toán là PTTT_TT, lọc theo ngày hoàn thành đơn
                 $query->where(function ($q) use ($ngayBatDau, $ngayKetThuc) {
                     $q->where('phuong_thuc_thanh_toan', DonHang::PTTT_TT)
-                    ->where('trang_thai_thanh_toan',DonHang::TTTT_DTT)
-                      ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
+                        ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                        ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
                 })
-                // Nếu trạng thái thanh toán là PTTT_MM_ATM hoặc PTTT_MM_QR, lọc theo created_at
-                ->orWhere(function ($q) use ($ngayBatDau, $ngayKetThuc) {
+                    // Nếu trạng thái thanh toán là PTTT_MM_ATM hoặc PTTT_MM_QR, lọc theo created_at
+                    ->orWhere(function ($q) use ($ngayBatDau, $ngayKetThuc) {
                     $q->whereIn('phuong_thuc_thanh_toan', [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
-                    ->where('trang_thai_thanh_toan',DonHang::TTTT_DTT)
-                      ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
+                        ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                        ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
                 });
             })
             ->get();
-    
+
         $tongSoDonHang = $donHangs->count();
         $tongDoanhThu = $donHangs->sum('tong_tien_don_hang');
-    
+
         // Trả về kết quả
         return response()->json([
             'tong_so_don_hang' => $tongSoDonHang,
             'tong_doanh_thu' => $tongDoanhThu
         ]);
     }
-    
+
 
 }

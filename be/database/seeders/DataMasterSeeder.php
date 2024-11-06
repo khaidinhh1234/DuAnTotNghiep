@@ -177,10 +177,14 @@ class DataMasterSeeder extends Seeder
         $DanhMucTinTucs = [
             [
                 'ten_danh_muc_tin_tuc' => 'Dịch vụ khách hàng',
+                'mo_ta' => 'Dịch vụ khách hàng',
+                'hinh_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729310626/3465_a0djdb.png',
                 'duong_dan' => 'dich_vu_khach_hang',
             ],
             [
                 'ten_danh_muc_tin_tuc' => 'Về chúng tôi',
+                'mo_ta' => 'Dịch vụ khách hàng',
+                'hinh_anh' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729310626/3465_a0djdb.png',
                 'duong_dan' => 've_chung_toi',
             ],
         ];

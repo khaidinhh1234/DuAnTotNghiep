@@ -204,7 +204,6 @@ const ProductDetail: React.FC = () => {
     },
   });
   // add to cart
-  const MAX_QUANTITY = 10;
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
@@ -227,12 +226,6 @@ const ProductDetail: React.FC = () => {
           item.variantId === variantIdToUse
       );
 
-      const currentQuantity = existingItem ? existingItem.quantity : 0;
-
-      if (currentQuantity + quantity > MAX_QUANTITY) {
-        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
-        return;
-      }
 
       if (existingItem) {
         existingItem.quantity += quantity;
@@ -508,7 +501,7 @@ const ProductDetail: React.FC = () => {
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                  // className="mySwiper1"
+                // className="mySwiper1"
                 >
                   {currentImages?.map((image, index) => (
                     <SwiperSlide key={`thumb-${index}`}>
@@ -684,8 +677,8 @@ const ProductDetail: React.FC = () => {
                     type="number"
                     id="numberInput"
                     defaultValue={1}
-                    min={1}
-                    max={100}
+                    min="1"
+                    max={selectedVariant?.so_luong_bien_the || 1}
                     value={quantity}
                     onChange={(e) =>
                       setQuantity(Math.max(1, parseInt(e.target.value, 10)))
@@ -693,39 +686,39 @@ const ProductDetail: React.FC = () => {
                     className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                   />
                   <button
-                    onClick={() => {
-                      if (quantity >= MAX_QUANTITY) {
-                        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
-                      } else {
-                        setQuantity((prev) => prev + 1);
-                      }
-                    }}
-                    className="py-2 pl-2"
-                    disabled={quantity >= MAX_QUANTITY}
+                    onClick={() =>
+                      setQuantity((prev) =>
+                        Math.min(
+                          selectedVariant?.so_luong_bien_the || 1,
+                          prev + 1
+                        )
+                      )
+                    }
+                  className="py-2 pl-2"
                   >
-                    <i className="fa-solid fa-plus" />
-                  </button>
-                </div>
-                <button
-                  onClick={handleAddToCart}
-                  className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
-                >
-                  Thêm vào giỏ hàng
-                </button>
-                <button
-                  onClick={() => handleClickHeart(product?.id)}
-                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
-`}
-                >
-                  <i
-                    className={`fa-heart text-3xl text-red-600 ${product?.trang_thai_yeu_thich ? "fa-solid " : "fa-regular "}`}
-                  />
+                  <i className="fa-solid fa-plus" />
                 </button>
               </div>
+              <button
+                onClick={handleAddToCart}
+                className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
+              >
+                Thêm vào giỏ hàng
+              </button>
+              <button
+                onClick={() => handleClickHeart(product?.id)}
+                className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
+`}
+              >
+                <i
+                  className={`fa-heart text-3xl text-red-600 ${product?.trang_thai_yeu_thich ? "fa-solid " : "fa-regular "}`}
+                />
+              </button>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section >
 
       <div className="max-w-6xl mx-auto p-8">
         <div className="flex space-x-8 border-b pb-2 mb-4">
@@ -981,7 +974,7 @@ const ProductDetail: React.FC = () => {
         )}
       </div>
 
-      {/* <div className="container mx-14 pb-10">
+  {/* <div className="container mx-14 pb-10">
         <h2 className="mx-14 text-4xl font-medium tracking-[1px] mb-12">
           Sản phẩm cùng loại        </h2>
         <div className="mx-14 lg:flex lg:gap-7 h-[500px]">
@@ -1031,21 +1024,23 @@ const ProductDetail: React.FC = () => {
       <RelatedProducts productId={product?.id ?? 0} />
 
       <Footer />
-      {previewImage && (
-        <Image
-          style={{ display: "none" }}
-          preview={{
-            visible: previewOpen,
-            src: previewImage,
-            onVisibleChange: (visible) => {
-              setPreviewOpen(visible);
-              if (!visible) {
-                setPreviewImage("");
-              }
-            },
-          }}
-        />
-      )}
+  {
+    previewImage && (
+      <Image
+        style={{ display: "none" }}
+        preview={{
+          visible: previewOpen,
+          src: previewImage,
+          onVisibleChange: (visible) => {
+            setPreviewOpen(visible);
+            if (!visible) {
+              setPreviewImage("");
+            }
+          },
+        }}
+      />
+    )
+  }
     </>
   );
 };

@@ -144,7 +144,7 @@ const Footer = () => {
                   style={{ color: "#ffffff" }}
                 />
               </a>
-              <a
+              {/* <a
                 href={websiteInfo?.link_youtube}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -153,7 +153,7 @@ const Footer = () => {
                   className="fa-brands fa-youtube"
                   style={{ color: "#ffffff" }}
                 />
-              </a>
+              </a> */}
               <a
                 href={websiteInfo?.link_youtube}
                 target="_blank"

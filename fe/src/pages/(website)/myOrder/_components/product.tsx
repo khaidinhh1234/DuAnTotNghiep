@@ -1,4 +1,5 @@
 import { sanPham2 } from "@/assets/img";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 // Component hiển thị thông tin sản phẩm
@@ -17,10 +18,118 @@ const ProductItem = ({
   pricesale,
   trang_thai_thanh_toan,
 }: any) => {
-  // console.log(chi_tiet_don_hangs);
-  // console.log(status);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCancelOrder = () => {
+    if (status === "Hoàn tất đơn hàng") {
+      console.log("Đánh giá");
+    } else if (status === "Chờ khách hàng xác nhận") {
+      console.log("Đã nhận hàng");
+    } else {
+      setIsModalOpen(true); // Show the modal when other statuses are met
+    }
+  };
+
+  const closeModal = () => setIsModalOpen(false);
   return (
     <>
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-lg font-semibold mb-4">Chọn Lý Do Hủy</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Vui lòng chọn lý do hủy. Với lý do này, bạn sẽ hủy tất cả sản phẩm
+              trong đơn hàng và không thể thay đổi sau đó.
+            </p>
+
+            <form>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    className="form-radio text-red-500 h-4 w-4 mr-2"
+                  />
+                  <span className="text-gray-700">
+                    Muốn thay đổi địa chỉ giao hàng
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    className="form-radio text-red-500 h-4 w-4 mr-2"
+                  />
+                  <span className="text-gray-700">
+                    Muốn nhập/thay đổi mã Voucher
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    className="form-radio text-red-500 h-4 w-4 mr-2"
+                  />
+                  <span className="text-gray-700">
+                    Muốn thay đổi sản phẩm trong đơn hàng (size, màu sắc, số
+                    lượng, ...)
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    className="form-radio text-red-500 h-4 w-4 mr-2"
+                  />
+                  <span className="text-gray-700">
+                    Thủ tục thanh toán quá rắc rối
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    className="form-radio text-red-500 h-4 w-4 mr-2"
+                  />
+                  <span className="text-gray-700">
+                    Tìm thấy giá rẻ hơn ở chỗ khác
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    className="form-radio text-red-500 h-4 w-4 mr-2"
+                  />
+                  <span className="text-gray-700">
+                    Đổi ý, không muốn mua nữa
+                  </span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    className="form-radio text-red-500 h-4 w-4 mr-2"
+                  />
+                  <span className="text-gray-700">Lý do khác</span>
+                </label>
+              </div>
+            </form>
+
+            <div className="mt-6 flex justify-between">
+              <button
+                className="text-gray-600 hover:underline"
+                onClick={closeModal}
+              >
+                KHÔNG PHẢI BÂY GIỜ
+              </button>
+              <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg">
+                HỦY ĐƠN HÀNG
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="py-6 grid grid-cols-7  border-b border-hrBlack">
         <div className="col-span-5 ">
           <div className="flex justify-between ">
@@ -132,6 +241,10 @@ const ProductItem = ({
                   ? "bg-black hover:bg-black/50"
                   : "bg-[#FF7262] hover:bg-[#e9b2ac]"
               } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg mb-2`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleCancelOrder();
+              }}
             >
               {status === "Hoàn tất đơn hàng"
                 ? "Đánh giá"
@@ -141,7 +254,13 @@ const ProductItem = ({
             </button>
           )}{" "}
           {trang_thai_thanh_toan == "Chưa thanh toán" && (
-            <button className="shadow-md shadow-slate-600/50  hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-6 mb-2 rounded-lg text-white">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                console.log("click");
+              }}
+              className="shadow-md shadow-slate-600/50  hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-6 mb-2 rounded-lg text-white"
+            >
               Tiếp tục thanh toán
             </button>
           )}
@@ -186,6 +305,9 @@ const ProductItem = ({
                   ? "bg-black hover:bg-black/50"
                   : "bg-[#FF7262] hover:bg-[#e9b2ac]"
               } shadow-md shadow-slate-600/50 text-white  text-sm py-3 rounded-lg mb-2 w-[50%]`}
+              onClick={() => {
+                console.log("click");
+              }}
             >
               {status === "Hoàn tất đơn hàng"
                 ? "Đánh giá"
@@ -208,7 +330,7 @@ const ProductItem = ({
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang }: any) => {
   const don_hang = donhang;
-  console.log(don_hang);
+  // console.log(don_hang);
   return (
     <>
       <div className="flex flex-row lg:justify-between lg:items-center">

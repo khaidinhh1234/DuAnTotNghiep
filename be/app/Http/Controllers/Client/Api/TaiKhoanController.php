@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Events\SendMail;
+use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
 use App\Models\DonHang;
+use App\Models\GiaoDichVi;
 use App\Models\LichSuGiaoDich;
 use App\Models\Momo;
 use App\Models\NganHang;
+use App\Models\ThongBao;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,12 +50,13 @@ class TaiKhoanController extends Controller
         }
     }
 
-    public function viTaiKhoan()
+    public function viTaiKhoan(Request $request)
     {
         try {
             $userID = Auth::id();
             $user = User::find($userID);
             $viUser = $user->viTien;
+
             if (!$viUser) {
                 return response()->json([
                     'status' => false,
@@ -60,18 +64,47 @@ class TaiKhoanController extends Controller
                     'message' => 'Người dùng chưa có ví tiền',
                 ], 404);
             }
-            $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
-            $data = [
-                'viUser' => $viUser,
-                'lichSuGiaoDich' => $lichSuGiaoDich,
-                'trang_thai_ma_xac_minh' => $viUser->ma_xac_minh ? true : false,
-            ];
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy thông tin ví thành công',
-                'data' => $data,
-            ], 200);
+            if($request->method() == 'GET'){
+                if (($viUser->ma_xac_minh == "")) {
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 400,
+                    ], 400);
+                } else if (isset($viUser->ma_xac_minh)) {
+                    return response()->json([
+                        'status' => true,
+                        'status_code' => 200,
+                    ], 200);
+                }
+            }
+
+
+            if ($request->method() == 'POST') {
+                $request->validate([
+                    'ma_xac_minh' => 'required|string|max:6',
+                ]);
+
+                if (!Hash::check($request->ma_xac_minh, $viUser->ma_xac_minh)) {
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 400,
+                        'message' => 'Mã xác minh không chính xác',
+                    ], 400);
+                }
+
+                $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
+                $data = [
+                    'viUser' => $viUser,
+                    'lichSuGiaoDich' => $lichSuGiaoDich,
+                ];
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Lấy thông tin ví thành công',
+                    'data' => $data,
+                ], 200);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -81,7 +114,6 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
-
     public function themTaiKhoanNganHang(Request $request)
     {
         $validate = $request->validate([
@@ -256,6 +288,139 @@ class TaiKhoanController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã xảy ra lỗi khi đổi mã xác minh',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    public function napTienVi(Request $request)
+    {
+        $request->validate([
+            'so_tien' => 'required|numeric',
+            'ma_xac_minh' => 'required|string|max:6',
+        ]);
+        try {
+            $user = Auth::user();
+            $viUser = $user->viTien;
+            $maXacMinh = $request->ma_xac_minh;
+            if (Hash::check($maXacMinh, $viUser->ma_xac_minh)) {
+                $giaoDichVi = GiaoDichVi::create([
+                    'vi_tien_id' => $viUser->id,
+                    'so_tien' => $request->so_tien,
+                    'loai_giao_dich' => 'nap_tien',
+                    'mo_ta' => 'Nạp tiền vào ví',
+                    'thoi_gian_giao_dich' => now(),
+                ]);
+
+                // $lichSuGiaoDich = LichSuGiaoDich::create([
+                //     'vi_tien_id' => $viUser->id,
+                //     'so_du_truoc' => $viUser->so_tien,
+                //     'so_du_sau' => $viUser->so_tien + $request->so_tien,
+                //     'ngay_thay_doi' => now(),
+                //     'mo_ta' => 'Nạp tiền vào ví',
+                // ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Mã xác minh không chính xác',
+                ], 400);
+            }
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Yêu cầu nạp tiền thành công',
+                'data' => $giaoDichVi,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Yêu cầu nạp tiền thất bại',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function xacNhanNapTien(Request $request)
+    {
+        try {
+            $trangThai = $request->resultCode ?? null;
+            $maOrderMomo = $request->orderId ?? null;
+            $soTien = $request->amount ?? null;
+            $maDonHang = explode("-", $maOrderMomo)[0];
+
+            $giaoDichVi = GiaoDichVi::where('ma_giao_dich', $maDonHang)->first();
+
+            if (!isset($giaoDichVi)) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Không tìm thấy giao dịch',
+                ], 404);
+            }
+
+            if ($trangThai == 0) {
+                $giaoDichVi->update([
+                    'trang_thai' => 'thanh_cong',
+                ]);
+                $giaoDichVi->viTien->update([
+                    'so_du' => $giaoDichVi->viTien->so_du + $soTien,
+                ]);
+                $thongBao = ThongBao::create([
+                    'user_id' => $giaoDichVi->viTien->user_id,
+                    'tieu_de' => 'Nạp tiền thành công',
+                    'noi_dung' => 'Bạn đã nạp thành công ' . number_format($soTien) . ' VNĐ vào ví',
+                    'loai' => 'Nạp tiền vào ví',
+                    'duong_dan' => $giaoDichVi->ma_giao_dich,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Xác nhận nạp tiền thành công',
+                    'data' => $giaoDichVi,
+                ], 200);
+            } else {
+                $trangThaiMessages = [
+                    4 => 'Giao dịch đã bị hủy bởi bạn.',
+                    5 => 'Số tiền bạn nhập không hợp lệ.',
+                    6 => 'Tài khoản MoMo của bạn không đủ số dư.',
+                    7 => 'Giao dịch đã hết hạn và không thể hoàn tất.',
+                    8 => 'Giao dịch không hợp lệ. Vui lòng kiểm tra lại.',
+                    49 => 'Lỗi xác thực - Dữ liệu hoặc khóa bí mật không khớp.',
+                    1001 => 'Địa chỉ IP của bạn không được phép truy cập.',
+                    1006 => 'Yêu cầu của bạn đã được xử lý trước đó.',
+                    9000 => 'Lỗi hệ thống - Đã xảy ra sự cố không mong muốn.'
+                ];
+
+                if (array_key_exists($trangThai, $trangThaiMessages)) {
+                    $giaoDichVi->update([
+                        'trang_thai' => 'that_bai',
+                    ]);
+
+                    $thongBao = ThongBao::create([
+                        'user_id' => $giaoDichVi->viTien->user_id,
+                        'tieu_de' => 'Nạp tiền thất bại',
+                        'noi_dung' => $trangThaiMessages[$trangThai],
+                        'loai' => 'Nạp tiền vào ví',
+                        'duong_dan' => $giaoDichVi->ma_giao_dich,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    ]);
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                    return response()->json([
+                        'status' => false,
+                        'status_code' => 400,
+                        'message' => $trangThaiMessages[$trangThai],
+                    ], 400);
+                }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Xác nhận nạp tiền thất bại',
                 'error' => $e->getMessage(),
             ], 500);
         }
