@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Admin\Api\HangThanhVienController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TaiKhoanController;
+use App\Http\Controllers\Admin\Api\ThongBaoTelegramController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhGiaController;
 use App\Http\Controllers\Admin\Api\ThongKeDanhMuc;
 use App\Http\Controllers\Admin\Api\ThongKeDoanhThuController;
@@ -442,4 +443,10 @@ Route::middleware(['auth.sanctum'])
 
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
+
+
+        // thông báo telegram 
+        Route::post('/thong-bao-don', [ThongBaoTelegramController::class, 'thongBaoDonHangMoi']);
+
     });
+
