@@ -64,7 +64,7 @@ class TaiKhoanController extends Controller
                     'message' => 'Người dùng chưa có ví tiền',
                 ], 404);
             }
-            if($request->method() == 'GET'){
+            if ($request->method() == 'GET') {
                 if (($viUser->ma_xac_minh == "")) {
                     return response()->json([
                         'status' => false,
@@ -311,13 +311,14 @@ class TaiKhoanController extends Controller
                     'thoi_gian_giao_dich' => now(),
                 ]);
 
-                // $lichSuGiaoDich = LichSuGiaoDich::create([
-                //     'vi_tien_id' => $viUser->id,
-                //     'so_du_truoc' => $viUser->so_tien,
-                //     'so_du_sau' => $viUser->so_tien + $request->so_tien,
-                //     'ngay_thay_doi' => now(),
-                //     'mo_ta' => 'Nạp tiền vào ví',
-                // ]);
+                LichSuGiaoDich::create([
+                    'vi_tien_id' => $viUser->id,
+                    'loai_giao_dich' => 'nap_tien',
+                    'so_du_truoc' => $viUser->so_du,
+                    'so_du_sau' => $viUser->so_du + $request->so_tien,
+                    'ngay_thay_doi' => now(),
+                    'mo_ta' => 'Nạp tiền vào ví',
+                ]);
             } else {
                 return response()->json([
                     'status' => false,
