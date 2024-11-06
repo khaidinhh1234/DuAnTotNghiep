@@ -51,7 +51,7 @@ const EditProducts: React.FC = () => {
   const [value, setValue] = useState("");
   const [productCode, setProductCode] = useState("");
   const [variants, setVariants] = useState<VariantType[]>([]);
-  const [fileLists, setFileLists] = useState<{ [key: string]: any[] }>({});  const [previewVisible, setPreviewVisible] = useState(false);
+  const [fileLists, setFileLists] = useState<{ [key: string]: any[] }>({}); const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [productImage, setProductImage] = useState("");
@@ -223,7 +223,7 @@ const EditProducts: React.FC = () => {
   const generateVariantCombinations = () => {
     const colorVariant = variants.find((v) => v.type === "color")?.values || [];
     const sizeVariant = variants.find((v) => v.type === "size")?.values || [];
-  
+
     const newCombinations = [];
     for (const colorId of colorVariant) {
       for (const sizeId of sizeVariant) {
@@ -238,7 +238,7 @@ const EditProducts: React.FC = () => {
         });
       }
     }
-  
+
     setCombinations(newCombinations);
   };
 
@@ -264,7 +264,7 @@ const EditProducts: React.FC = () => {
       setProductCode(productData.data.ma_san_pham?.replace("SP-", "") || '');
       setProductImage(productData.data.anh_san_pham || '');
 
- 
+
       if (productData.data.anh_san_pham) {
         setProductImageList([{
           uid: "-1",
@@ -280,7 +280,7 @@ const EditProducts: React.FC = () => {
         const colors = new Set<number>();
         const sizes = new Set<number>();
         let sizeType: string | null = null;
-  
+
         productData.data.bien_the_san_pham.forEach((v: any) => {
           if (v.mau_bien_the && v.mau_bien_the.id) colors.add(v.mau_bien_the.id);
           if (v.kich_thuoc_bien_the && v.kich_thuoc_bien_the.id) {
@@ -290,14 +290,14 @@ const EditProducts: React.FC = () => {
             }
           }
         });
-  
+
         setVariants([
           { type: 'color', values: Array.from(colors) },
           { type: 'size', values: Array.from(sizes) }
         ]);
-  
+
         setSelectedSizeType(sizeType);
-    
+
         const newCombinations = productData.data.bien_the_san_pham.map((v: any) => ({
           id: `${v.bien_the_mau_sac_id || v.mau_sac_id}-${v.bien_the_kich_thuoc_id || v.kich_thuoc_id}`,
           color: Number(v.bien_the_mau_sac_id || v.mau_sac_id),
@@ -308,15 +308,15 @@ const EditProducts: React.FC = () => {
           so_luong_bien_the: v.so_luong_bien_the,
           anh_bien_the: v.anh_bien_the
             ? uniqBy(v.anh_bien_the, 'duong_dan_anh').map((img: any) => ({
-                uid: img.id.toString(),
-                name: `image-${img.id}.png`,
-                status: "done",
-                url: img.duong_dan_anh,
-              }))
+              uid: img.id.toString(),
+              name: `image-${img.id}.png`,
+              status: "done",
+              url: img.duong_dan_anh,
+            }))
             : [],
         }));
         setCombinations(newCombinations);
-        
+
         const newFileLists: any = {};
         newCombinations.forEach((combo: any, index: number) => {
           newFileLists[index] = combo.anh_bien_the;
@@ -342,13 +342,13 @@ const EditProducts: React.FC = () => {
     }
     try {
       let productImageUrl = productImage; // Use the existing image URL by default
-  
+
       if (productImageList.length > 0 && productImageList[0].originFileObj) {
         // Only upload if there's a new file
         const file = productImageList[0].originFileObj;
         productImageUrl = await uploadToCloudinary(file);
       }
-  
+
       const updatedCombinations = await Promise.all(combinations.map(async (combo, index) => {
         const variantImages = fileLists[index] || [];
         const uploadedUrls = await Promise.all(
@@ -356,16 +356,16 @@ const EditProducts: React.FC = () => {
             if (file.originFileObj) {
               return await uploadToCloudinary(file.originFileObj);
             }
-            return file.url; 
+            return file.url;
           })
         );
-  
+
         return {
           ...combo,
           anh: uploadedUrls,
         };
       }));
-  
+
       const updatedProductData = {
         ten_san_pham: values.ten_san_pham,
         anh_san_pham: productImageUrl,
@@ -385,7 +385,7 @@ const EditProducts: React.FC = () => {
           anh: combo.anh,
         })),
       };
-  
+
       updateProductMutation.mutate(updatedProductData);
     } catch (error) {
       console.error('Error during form submission:', error);
@@ -457,15 +457,15 @@ const EditProducts: React.FC = () => {
               </Select>
             </Form.Item> */}
             <Form.Item
-  label="Danh mục sản phẩm"
-  name="danh_muc_id"
-  rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
->
-<CategorySelect 
-  categoriesData={categoriesData}
-  onChange={(value) => form.setFieldsValue({ danh_muc_id: value })}
-/>
-</Form.Item>
+              label="Danh mục sản phẩm"
+              name="danh_muc_id"
+              rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
+            >
+              <CategorySelect
+                categoriesData={categoriesData}
+                onChange={(value) => form.setFieldsValue({ danh_muc_id: value })}
+              />
+            </Form.Item>
           </div>
           <div className="grid grid-cols-1 gap-5">
             <Form.Item
@@ -482,7 +482,7 @@ const EditProducts: React.FC = () => {
             <Form.Item
               label="Chọn bộ sưu tập"
               name="tags"
-              // rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
+            // rules={[{ required: true, message: "Vui lòng chọn bộ sưu tập" }]}
             >
               <Select
                 mode="multiple"
@@ -510,40 +510,40 @@ const EditProducts: React.FC = () => {
             </Form.Item>
           </div>
           <div className="grid grid-cols-2 gap-5 mb-5">
-     
-   <Form.Item
-  label="Ảnh nổi bật"
-  name="anh_san_pham"
-  rules={[
-    {
-      validator: (_) => {
-        if (productImageList.length > 0 || productImage) {
-          return Promise.resolve();
-        }
-        return Promise.reject(new Error('Vui lòng tải lên ảnh sản phẩm!'));
-      },
-    },
-  ]}>
-  <Upload
-    listType="picture-card"
-    beforeUpload={(file) => {
-      const isImage = file.type.startsWith('image/');
-      if (!isImage) {
-        message.error('Bạn chỉ có thể tải lên file ảnh!');
-      }
-      return false; 
-    }}
-    onChange={({ fileList }) => setProductImageList(fileList)}
-    onPreview={handlePreview}
-    onRemove={handleRemove}
-    fileList={productImageList}
-  >
-    {productImageList.length === 0 && uploadButton}
-  </Upload>
-</Form.Item>
+
+            <Form.Item
+              label="Ảnh nổi bật"
+              name="anh_san_pham"
+              rules={[
+                {
+                  validator: (_) => {
+                    if (productImageList.length > 0 || productImage) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('Vui lòng tải lên ảnh sản phẩm!'));
+                  },
+                },
+              ]}>
+              <Upload
+                listType="picture-card"
+                beforeUpload={(file) => {
+                  const isImage = file.type.startsWith('image/');
+                  if (!isImage) {
+                    message.error('Bạn chỉ có thể tải lên file ảnh!');
+                  }
+                  return false;
+                }}
+                onChange={({ fileList }) => setProductImageList(fileList)}
+                onPreview={handlePreview}
+                onRemove={handleRemove}
+                fileList={productImageList}
+              >
+                {productImageList.length === 0 && uploadButton}
+              </Upload>
+            </Form.Item>
 
             <Form.Item label="Giá tốt" name="gia_tot" valuePropName="checked">
-            <Switch />
+              <Switch />
             </Form.Item>
           </div>
           <div className="grid grid-cols-1 gap-5 ">
@@ -729,36 +729,36 @@ const EditProducts: React.FC = () => {
                         </Form.Item>
 
                       </td>
-                  
+
                       <td className="p-1 border-r border-gray-300 w-[20%]">
-  <Form.Item
-    name={`gia_khuyen_mai-${index}`}
-    className="my-0 px-5"
-    initialValue={combo.gia_khuyen_mai}
-    rules={[
-      { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
-      {
-        type: "number",
-        min: 0,
-        message: "Giá khuyến mãi phải lớn hơn hoặc bằng 0!",
-      },
-      {
-        validator: (_, value) => {
-          const giaBan = form.getFieldValue(`gia_ban-${index}`);
-          if (value === 0 || (value > 0 && value >= 1000)) {
-            if (giaBan && value >= giaBan) {
-              return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
-            }
-            return Promise.resolve();
-          }
-          return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc lớn hơn hoặc bằng 1000!"));
-        },
-      },
-    ]}
-  >
-    <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
-  </Form.Item>
-</td>
+                        <Form.Item
+                          name={`gia_khuyen_mai-${index}`}
+                          className="my-0 px-5"
+                          initialValue={combo.gia_khuyen_mai}
+                          rules={[
+                            { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
+                            {
+                              type: "number",
+                              min: 0,
+                              message: "Giá khuyến mãi phải lớn hơn hoặc bằng 0!",
+                            },
+                            {
+                              validator: (_, value) => {
+                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
+                                if (value === 0 || (value > 0 && value >= 1000)) {
+                                  if (giaBan && value >= giaBan) {
+                                    return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
+                                  }
+                                  return Promise.resolve();
+                                }
+                                return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc lớn hơn hoặc bằng 1000!"));
+                              },
+                            },
+                          ]}
+                        >
+                          <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
+                        </Form.Item>
+                      </td>
 
                       <td className="p-1 border-r border-gray-300 w-[20%]">
                         <Form.Item
@@ -779,60 +779,59 @@ const EditProducts: React.FC = () => {
                           valuePropName="fileList"
                           getValueFromEvent={(e) => e.fileList}
                           className="my-0 flex justify-center"
-                                                initialValue={combo.anh_bien_the}
-                                              >
-                                                <Upload
-                                                  action="https://api.cloudinary.com/v1_1/dpypwbeis/image/upload"
-                                                  data={{ upload_preset: "ml_default" }}
-                                                  listType="picture-card"
-                                                  fileList={fileLists[index] || []}
-                                                  onPreview={handlePreview}
-                                                  onChange={(info: any) => handleChange(info, index)}
-                                                  maxCount={5}
-                                                  multiple
-                                                  className={`custom-upload mx-auto ${
-                                                    (fileLists[index] && fileLists[index].length) >= 3 ? "w-[200px]" : "w-auto"
-                                                  }`}
-                                                >
-                                                  {(fileLists[index] && fileLists[index].length) >= 5 ? null : uploadButton}
-                                                </Upload>
-                                              </Form.Item>
-                                            </td>
-                                     
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                    {combinations.length === 0 && (
-                                      <div className="border border-gray-300 text-center mx-auto">
-                                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} className="mx-auto" />
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>{" "}
-                                  <div className="mt-10">
-                                    <Form.Item>
-                                    <Button type="primary" htmlType="submit" className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors ml-12"
-  style={{
-    padding: "14px 40px",
-    marginRight: "190px",
-  }} loading={updateProductMutation.isPending}>
-                                    Cập nhập sản phẩm
-                                      </Button>
-                                    </Form.Item>
-                                  </div>
-                                  <Modal
-        visible={previewVisible}
-        title={previewTitle}
-        footer={null}
-        onCancel={handleCancel}
-      >
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
-                                </Form>
-                                </div>
-                              </main>
-                            );
-                          };
-                          
-                          export default EditProducts;
+                          initialValue={combo.anh_bien_the}
+                        >
+                          <Upload
+                            action="https://api.cloudinary.com/v1_1/dpypwbeis/image/upload"
+                            data={{ upload_preset: "ml_default" }}
+                            listType="picture-card"
+                            fileList={fileLists[index] || []}
+                            onPreview={handlePreview}
+                            onChange={(info: any) => handleChange(info, index)}
+                            maxCount={5}
+                            multiple
+                            className={`custom-upload mx-auto ${(fileLists[index] && fileLists[index].length) >= 3 ? "w-[200px]" : "w-auto"
+                              }`}
+                          >
+                            {(fileLists[index] && fileLists[index].length) >= 5 ? null : uploadButton}
+                          </Upload>
+                        </Form.Item>
+                      </td>
+
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {combinations.length === 0 && (
+                <div className="border border-gray-300 text-center mx-auto">
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} className="mx-auto" />
+                </div>
+              )}
+            </div>
+          </div>{" "}
+          <div className="mt-10">
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors ml-12"
+                style={{
+                  padding: "14px 40px",
+                  marginRight: "190px",
+                }} loading={updateProductMutation.isPending}>
+                Cập nhập sản phẩm
+              </Button>
+            </Form.Item>
+          </div>
+          <Modal
+            visible={previewVisible}
+            title={previewTitle}
+            footer={null}
+            onCancel={handleCancel}
+          >
+            <img alt="example" style={{ width: '100%' }} src={previewImage} />
+          </Modal>
+        </Form>
+      </div>
+    </main>
+  );
+};
+
+export default EditProducts;
