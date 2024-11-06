@@ -269,7 +269,7 @@ const Header2 = () => {
                         <i className="fa-solid fa-x"></i>
                     </button>
                 </div>
-                <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-4 opacity-90">
+                <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-5 opacity-90">
                     <div className="max-w-7xl mx-auto flex justify-between items-center ">
                         <div className="lg:hidden order-1 relative">
                             <button
@@ -282,17 +282,20 @@ const Header2 = () => {
                         </div>
                         <div className="order-2 lg:w-60">
                             <Link to='/'>
-                            <img
-                                src={logo}
-                                alt="Logo"
-                                className="lg:w-[130px] lg:h-[40px] w-32 h-9"
-                            /></Link>
+                                <img
+                                    src={logo}
+                                    alt="Logo"
+                                    className="lg:w-[130px] lg:h-[40px] w-32 h-9"
+                                /></Link>
                         </div>
 
                         <nav className="hidden lg:block order-3">
-                            <ul className="flex items-center space-x-4">
-                            <li>
+                            <ul className="flex items-center space-x-4 m-0">
+                                <li>
                                     <a href="/" className="px-4 py-2 block hover:bg-gray-100">Trang chủ</a>
+                                </li>
+                                <li>
+                                    <a href="/ourstory" className="px-4 py-2 block hover:bg-gray-100">Giới thiệu</a>
                                 </li>
                                 {menuItems.map((category) => (
                                     <li
@@ -312,13 +315,9 @@ const Header2 = () => {
                                         )}
                                     </li>
                                 ))}
-
                                 <li>
-                                    <a href="/ourstory" className="px-4 py-2 block hover:bg-gray-100">Giới thiệu</a>
-                                </li>
-                                {/* <li>
                                     <a href="/vourcher" className="px-4 py-2 block hover:bg-gray-100">Bài viết</a>
-                                </li> */}
+                                </li>
                                 <li>
                                     <a href="/vourcher" className="px-4 py-2 block hover:bg-gray-100">Khuyến mại</a>
                                 </li>
@@ -374,8 +373,8 @@ const Header2 = () => {
 
                                         <div
                                             className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications
-                                                    ? "opacity-100"
-                                                    : "opacity-0 pointer-events-none"
+                                                ? "opacity-100"
+                                                : "opacity-0 pointer-events-none"
                                                 }`}
                                         >
                                             <Notifications onUnreadCountChange={(count: number) => console.log(`Unread count: ${count}`)} />
@@ -471,11 +470,10 @@ const Header2 = () => {
                                                         href=""
                                                         className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                                                     >
-                                                        <img
-                                                            src="https://github.com/shadcn.png"
-                                                            alt=""
-                                                            className="w-[30px] h-[30px] rounded-full"
-                                                        />
+                                                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <circle cx="12" cy="12" r="9" stroke="black" stroke-width="2"/>
+                                                        <line x1="12" y1="1" x2="12" y2="12" stroke="black" stroke-width="2"/>
+                                                        </svg>
                                                         <h6 className="font-semibold mx-2 text-lg ">
                                                             Đăng xuất
                                                         </h6>
