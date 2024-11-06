@@ -86,29 +86,24 @@ const CategoriesEdit = () => {
   const onFinish = async (values: any) => {
     try {
       let imageUrl = null;
-  
-      // Nếu có ảnh mới được chọn
+
       if (values.imageFile && values.imageFile[0]) {
         imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
       } else {
-        // Nếu không có ảnh mới, giữ lại ảnh cũ
         imageUrl = data?.data.anh_danh_muc;
       }
-  
-      // Tạo đối tượng dữ liệu danh mục
       const categoryData: ICategories = {
         ...values,
-        cha_id: values.cha_id || null, // Đảm bảo lấy đúng giá trị cha_id từ form
-        anh_danh_muc: imageUrl,  // Dùng ảnh mới hoặc ảnh cũ
+        cha_id: values.cha_id || null, 
+        anh_danh_muc: imageUrl, 
       };
   
-      console.log("Dữ liệu gửi lên server: ", categoryData); // In dữ liệu gửi lên server
+      // console.log("Dữ liệu gửi lên server: ", categoryData); 
   
-      // Gọi mutation để cập nhật danh mục
       mutate(categoryData);
   
     } catch (error) {
-      console.error("Lỗi chi tiết:", error); // Log chi tiết lỗi
+      // console.error("Lỗi chi tiết:", error); 
       message.error("Lỗi khi tải ảnh lên");
     }
   };
