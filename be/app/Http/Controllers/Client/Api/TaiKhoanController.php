@@ -346,9 +346,10 @@ class TaiKhoanController extends Controller
         try {
             $trangThai = $request->resultCode ?? null;
             $maOrderMomo = $request->orderId ?? null;
+            $soTien = $request->amount ?? null
             $maDonHang = explode("-", $maOrderMomo)[0];
 
-            $giaoDichVi = GiaoDichVi::where('ma_don_hang', $maDonHang)->first();
+            $giaoDichVi = GiaoDichVi::where('ma_giao_dich', $maDonHang)->first();
 
             if (!isset($giaoDichVi)) {
                 return response()->json([
@@ -363,12 +364,12 @@ class TaiKhoanController extends Controller
                     'trang_thai' => 'thanh_cong',
                 ]);
                 $giaoDichVi->viTien->update([
-                    'so_tien' => $giaoDichVi->viTien->so_tien + $giaoDichVi->so_tien,
+                    'so_du' => $giaoDichVi->viTien->so_du + $soTien,
                 ]);
                 $thongBao = ThongBao::create([
                     'user_id' => $giaoDichVi->viTien->user_id,
                     'tieu_de' => 'Nạp tiền thành công',
-                    'noi_dung' => 'Bạn đã nạp thành công ' . number_format($giaoDichVi->so_tien) . ' VNĐ vào ví',
+                    'noi_dung' => 'Bạn đã nạp thành công ' . number_format($soTien) . ' VNĐ vào ví',
                     'loai' => 'Nạp tiền vào ví',
                     'duong_dan' => $giaoDichVi->ma_giao_dich,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
@@ -379,6 +380,7 @@ class TaiKhoanController extends Controller
                     'status' => true,
                     'status_code' => 200,
                     'message' => 'Xác nhận nạp tiền thành công',
+                    'data' => $giaoDichVi
                 ], 200);
             } else {
                 $trangThaiMessages = [
