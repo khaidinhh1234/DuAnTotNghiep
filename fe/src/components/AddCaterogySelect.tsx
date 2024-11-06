@@ -71,14 +71,27 @@ interface Category {
   children?: Category[];
 }
 
-interface CategorySelectProps {
-  categoriesData: {
-    data: Category[];
-  };
-  onChange: (value: number) => void;
-  value?: number;
-}
+// interface CategorySelectProps {
+//   categoriesData: {
+//     data: Category[];
+//   };
+//   onChange: (value: number) => void;
+//   value?: number;
+// }
 
+interface CategorySelectProps {
+
+    categoriesData: {
+  
+      data: Category[];
+  
+    };
+  
+    onChange: (value: string[]) => void;
+  
+    value?: string[];
+  
+  }
 const renderCategories = (categories: Category[], level = 0): JSX.Element[] => {
   const result: JSX.Element[] = [];
   

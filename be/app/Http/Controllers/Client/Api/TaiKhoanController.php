@@ -64,7 +64,7 @@ class TaiKhoanController extends Controller
                     'message' => 'Người dùng chưa có ví tiền',
                 ], 404);
             }
-            if($request->method() == 'GET'){
+            if ($request->method() == 'GET') {
                 if (($viUser->ma_xac_minh == "")) {
                     return response()->json([
                         'status' => false,
@@ -89,7 +89,7 @@ class TaiKhoanController extends Controller
                         'status' => false,
                         'status_code' => 400,
                         'message' => 'Mã xác minh không chính xác',
-                    ], 400);
+], 400);
                 }
 
                 $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
@@ -114,6 +114,7 @@ class TaiKhoanController extends Controller
             ], 500);
         }
     }
+
     public function themTaiKhoanNganHang(Request $request)
     {
         $validate = $request->validate([
@@ -161,7 +162,7 @@ class TaiKhoanController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-                'message' => 'Thêm tài khoản ngân hàng thất bại',
+'message' => 'Thêm tài khoản ngân hàng thất bại',
                 'error' => $e->getMessage()
             ]);
         }
@@ -243,7 +244,7 @@ class TaiKhoanController extends Controller
                 $mess = 'Thiết lập mã xác minh thành công';
             } else if (Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)) {
                 $user->viTien->update([
-                    'ma_xac_minh' => Hash::make($validate['ma_xac_minh_moi']),
+'ma_xac_minh' => Hash::make($validate['ma_xac_minh_moi']),
                 ]);
                 $mess = 'Đổi mã xác minh thành công';
             } else {
@@ -311,18 +312,18 @@ class TaiKhoanController extends Controller
                     'thoi_gian_giao_dich' => now(),
                 ]);
 
-                // $lichSuGiaoDich = LichSuGiaoDich::create([
-                //     'vi_tien_id' => $viUser->id,
-                //     'so_du_truoc' => $viUser->so_tien,
-                //     'so_du_sau' => $viUser->so_tien + $request->so_tien,
-                //     'ngay_thay_doi' => now(),
-                //     'mo_ta' => 'Nạp tiền vào ví',
-                // ]);
+                LichSuGiaoDich::create([
+                    'vi_tien_id' => $viUser->id,
+                    'so_du_truoc' => $viUser->so_du,
+                    'so_du_sau' => $viUser->so_du + $request->so_tien,
+                    'ngay_thay_doi' => now(),
+                    'mo_ta' => 'Nạp tiền vào ví',
+                ]);
             } else {
                 return response()->json([
                     'status' => false,
                     'status_code' => 400,
-                    'message' => 'Mã xác minh không chính xác',
+'message' => 'Mã xác minh không chính xác',
                 ], 400);
             }
             return response()->json([
@@ -388,7 +389,7 @@ class TaiKhoanController extends Controller
                     5 => 'Số tiền bạn nhập không hợp lệ.',
                     6 => 'Tài khoản MoMo của bạn không đủ số dư.',
                     7 => 'Giao dịch đã hết hạn và không thể hoàn tất.',
-                    8 => 'Giao dịch không hợp lệ. Vui lòng kiểm tra lại.',
+8 => 'Giao dịch không hợp lệ. Vui lòng kiểm tra lại.',
                     49 => 'Lỗi xác thực - Dữ liệu hoặc khóa bí mật không khớp.',
                     1001 => 'Địa chỉ IP của bạn không được phép truy cập.',
                     1006 => 'Yêu cầu của bạn đã được xử lý trước đó.',
@@ -451,4 +452,4 @@ class TaiKhoanController extends Controller
             'data' => $transactions
         ]);
     }
-}
+}           
