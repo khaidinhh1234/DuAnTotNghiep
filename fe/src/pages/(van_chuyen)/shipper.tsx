@@ -17,7 +17,7 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import DetailTS from "./DetailTS";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -70,7 +70,12 @@ const Shipper: React.FC = () => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-
+  const nav = useNavigate();
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    nav("/login");
+  };
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {
       try {
@@ -313,23 +318,21 @@ const Shipper: React.FC = () => {
             Giao Hàng Glow Express{" "}
           </h1>
         </div>
-        {/* <div>
-          <h1 className="font-semibold md:text-2xl">Thông tin giao hàng</h1>
+        <div>
+          <h1 className="font-semibold md:text-2xl">
+            Thông tin giao hàng
+            <i
+              className="fa-solid fa-arrow-right-from-bracket mx-5 hover:text-red-500 cursor-pointer"
+              onClick={() => logout()}
+            ></i>
+          </h1>
           <h1 className="font-semibold md:text-xl ">
             Người giao hàng : !3223434
           </h1>
           <h1 className="font-semibold md:text-xl">ID : VN-DC01432</h1>
-        </div> */}
-      </div>
-      {/* <div className="flex items-center justify-between">
-        <div>
-          <Link to="/admin/transport" className="mr-1">
-            <Button className="ml-auto bg-black text-white rounded-lg py-1">
-              Quay lại
-            </Button>
-          </Link>
         </div>
-      </div> */}
+      </div>
+
       <div className="mx-10 bg-white">
         <Tabs
           defaultActiveKey="Tất cả"
