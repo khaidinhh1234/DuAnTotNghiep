@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\DonHangHoanTat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +16,7 @@ class DonHang extends Model
     const PTTT_TT = 'Thanh toán khi nhận hàng';
     const PTTT_MM_ATM = 'Momo_ATM';
     const PTTT_MM_QR = 'Momo_QR';
+    const PTTT_VT = 'Ví tiền';
 
     // Trạng thái đơn hàng
     const TTDH_CXH = 'Chờ xác nhận';
@@ -61,9 +63,8 @@ class DonHang extends Model
         'trang_thai_thanh_toan',
         'trang_thai_van_chuyen',
         'li_do_hoan_hang',
-        'li_do_huy_hang'
-
-
+        'li_do_huy_hang',
+        'mien_phi_van_chuyen'
     ];
 
     // Relationship with DonHangChiTiet
@@ -111,6 +112,14 @@ class DonHang extends Model
         static::creating(function ($donHang) {
             $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
         });
+         // Kiểm tra trạng thái đơn hàng khi cập nhật
+         static::updated(function ($donHang) {
+            if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH) {
+                event(new DonHangHoanTat($donHang));
+            }
+        });
+    
+ 
     }
 
 
@@ -120,6 +129,7 @@ class DonHang extends Model
             self::PTTT_TT => 'Thanh toán khi nhận hàng',
             self::PTTT_MM_ATM => 'Thanh toán qua Momo ATM',
             self::PTTT_MM_QR => 'Thanh toán qua MoMo QR',
+            self::PTTT_VT => 'Thanh toán qua ví tiền',
         ];
 
         return $phuongThucThanhToanNames[$phuongThucThanhToan] ?? 'Phương thức thanh toán không xác định';

@@ -5,184 +5,49 @@ namespace App\Http\Controllers\Client\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DanhMucTinTuc;
 use App\Models\TinTuc;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TinTucController extends Controller
 {
-    public function layTatCaDanhMuc(Request $request)
+    public function loadDanhMucTinTucVaBaiViet()
     {
         try {
-            // Bắt đầu transaction
-            DB::beginTransaction();
-
-            $danhMucTinTuc = DanhMucTinTuc::query()
-                ->with([
-                    'tinTuc' => function ($query) {
-                        $query->select('id', 'anh_tin_tuc', 'danh_muc_tin_tuc_id')
-                            ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo mới nhất
-                            ->get();
-                    }
-                ])
+            // Lấy danh mục tin tức, trừ các danh mục không cần thiết
+            $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
+                ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Commit transaction nếu mọi thứ thành công
-            DB::commit();
-
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công.',
-                'danhMucCha' => $danhMucTinTuc,
-            ], 200);
-        } catch (\Exception $e) {
-            // Rollback nếu có lỗi
-            DB::rollBack();
-            // Trả về lỗi
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-
-    // {
-    //     try {
-    //         DB::beginTransaction();
-    //         $baiVietMoiNhat = DanhMucTinTuc::query()
-    //             ->where('duong_dan', $duong_dan)
-    //             ->with([
-    //                 'tinTuc' => function ($query) {
-    //                     $query
-    //                         ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo mới nhất
-    //                         ->limit(1); // Lấy duy nhất 1 bài viết
-    //                 }
-    //             ])
-    //             ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo mới nhất
-
-    //             ->first(); // Lấy bài viết mới nhất
-
-    //         DB::commit();
-
-
-    //         return response()->json([
-    //             'status' => true,
-    //             'status_code' => 200,
-    //             'message' => 'Lấy dữ liệu thành công.',
-    //             'baiVietMoiNhat' => $baiVietMoiNhat,
-    //             // 'baiVietKhac' => $baiVietKhac,
-    //         ], 200);
-    //     } catch (\Exception $e) {
-
-    //         DB::rollBack();
-
-    //         // Trả về lỗi
-    //         return response()->json([
-    //             'status' => false,
-    //             'status_code' => 500,
-    //             'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu.',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-    public function layBaiVietTheoDanhMuc(Request $request, $duong_dan)
-    {
-        try {
-            // Bắt đầu transaction
-            DB::beginTransaction();
-
-            // Lấy danh mục theo đường dẫn
-            $danhMuc = DanhMucTinTuc::query()
-                ->where('duong_dan', $duong_dan)
-                ->first();
-
-            if (!$danhMuc) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 404,
-                    'message' => 'Danh mục không tồn tại.',
-                ], 404);
-            }
-
-            // Lấy bài viết mới nhất của danh mục
-            $baiVietMoiNhat = TinTuc::with('danhMucTinTuc') // Thêm `with` để lấy quan hệ danh mục
-                ->where('danh_muc_tin_tuc_id', $danhMuc->id)
+            // Lấy bài viết theo từng danh mục tin tức
+            $loadBaiVietTheoDanhMuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
+                ->select('id', 'ten_danh_muc_tin_tuc', 'created_at')
+                ->with(['tinTuc' => function ($query) {
+                    $query->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'created_at')
+                        ->orderBy('created_at', 'desc')
+                        ->limit(4);
+                }])
                 ->orderBy('created_at', 'desc')
-                ->first();
+                ->get();
 
-            // Lấy các bài viết khác trong danh mục (loại trừ bài viết mới nhất)
-            $baiVietLienQuan = TinTuc::with('danhMucTinTuc') // Thêm `with` để lấy quan hệ danh mục
-                ->where('danh_muc_tin_tuc_id', $danhMuc->id)
-                ->where('id', '<>', optional($baiVietMoiNhat)->id)
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-
-            $baiVietKhac = $baiVietLienQuan->map(function ($baiViet): array {
-                return [
-                    'id' => $baiViet->id,
-                    'user_id' => $baiViet->user_id,
-                    'danh_muc_tin_tuc_id' => $baiViet->danh_muc_tin_tuc_id,
-                    'tieu_de' => $baiViet->tieu_de,
-                    'anh_tin_tuc' => $baiViet->anh_tin_tuc ?? 'default_image.jpg', // Gán ảnh mặc định nếu null,
-                    'noi_dung' => $baiViet->noi_dung,
-                    'duong_dan_bai_viet' => $baiViet->duong_dan,
-                    'created_at' => $baiViet->created_at,
-                    'updated_at' => $baiViet->updated_at,
-                    'deleted_at' => $baiViet->deleted_at,
-                    'luot_xem' => $baiViet->luot_xem,
-                    'danh_muc_tin_tuc' => $baiViet->danhMucTinTuc ? [
-                        'id' => $baiViet->danhMucTinTuc->id,
-                        'ten_danh_muc_tin_tuc' => $baiViet->danhMucTinTuc->ten_danh_muc_tin_tuc,
-                        'duong_dan' => $baiViet->danhMucTinTuc->duong_dan,
-                    ] : null,
-                ];
-            });
-            // Lấy top 5 bài viết có lượt xem cao nhất
-            $baiVietTop5 = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
+            // Tìm 5 bài viết có lượt xem tăng nhiều nhất trong 24 giờ qua
+            $time24HoursAgo = Carbon::now()->subDay();
+            $baiVietCoLuotXemTangTrong24h = TinTuc::select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'created_at')
+                ->where('updated_at', '>=', $time24HoursAgo)
                 ->orderBy('luot_xem', 'desc')
-                // ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at','danh_muc_tin_tuc_id')
                 ->limit(5)
                 ->get();
-            $baiVietTopLuotXem = $baiVietTop5->map(function ($baiViet): array {
-                return [
-                    'id' => $baiViet->id,
-                    'user_id' => $baiViet->user_id,
-                    'danh_muc_tin_tuc_id' => $baiViet->danh_muc_tin_tuc_id,
-                    'tieu_de' => $baiViet->tieu_de,
-                    'anh_tin_tuc' => $baiViet->anh_tin_tuc ?? 'default_image.jpg', // Gán ảnh mặc định nếu null,
-                    'noi_dung' => $baiViet->noi_dung,
-                    'duong_dan_bai_viet' => $baiViet->duong_dan,
-                    'created_at' => $baiViet->created_at,
-                    'updated_at' => $baiViet->updated_at,
-                    'deleted_at' => $baiViet->deleted_at,
-                    'luot_xem' => $baiViet->luot_xem,
-                    'danh_muc_tin_tuc' => $baiViet->danhMucTinTuc ? [
-                        'id' => $baiViet->danhMucTinTuc->id,
-                        'ten_danh_muc_tin_tuc' => $baiViet->danhMucTinTuc->ten_danh_muc_tin_tuc,
-                        'duong_dan' => $baiViet->danhMucTinTuc->duong_dan,
-                    ] : null,
-                ];
-            });
 
-            DB::commit();
-
+            // Trả về kết quả
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'baiVietMoiNhatCuaDanhMuc' => $baiVietMoiNhat,
-                'baiVietKhacCuaDanhMuc' => $baiVietKhac,
-                'baiVietTop' => $baiVietTopLuotXem,
+                'Danh_muc_tin_tuc' => $danhMucTinTuc,
+                'Lay_bai_viet_theo_danh_muc' => $loadBaiVietTheoDanhMuc,
+                'Bai_viet_duoc_xem_nhieu_nhat' => $baiVietCoLuotXemTangTrong24h
             ], 200);
         } catch (\Exception $e) {
-            // Rollback nếu có lỗi
-            DB::rollBack();
-
-            // Trả về lỗi
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -192,6 +57,47 @@ class TinTucController extends Controller
         }
     }
 
+    public function xemBaiVietTheoDanhMuc($duongDan)
+    {
+        try {
+            $danhMuc = DanhMucTinTuc::where('duong_dan', $duongDan)->first();
+
+
+            $baiViet = TinTuc::where('danh_muc_tin_tuc_id', $danhMuc->id)
+                ->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->paginate(12);
+
+            $baiVietCoNhieuLuotXem = TinTuc::where('danh_muc_tin_tuc_id', $danhMuc->id)
+                ->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'created_at')
+                ->orderBy('luot_xem', 'desc')
+                ->limit(5)
+                ->get();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy tất cả bài viết thành công.',
+                'danhMuc' => [
+                    'id' => $danhMuc->id,
+                    'ten_danh_muc_tin_tuc' => $danhMuc->ten_danh_muc_tin_tuc,
+                    'mo_ta' => $danhMuc->mo_ta,
+                    'hinh_anh' => $danhMuc->hinh_anh,
+                    'duong_dan' => $danhMuc->duong_dan,
+                    'created_at' => $danhMuc->created_at,
+                ],
+                'baiViet' => $baiViet,
+                'baiVietCoNhieuLuotXem' => $baiVietCoNhieuLuotXem,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy bài viết.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function xemBaiViet(Request $request, $duong_dan)
     {
@@ -208,6 +114,10 @@ class TinTucController extends Controller
                     'message' => 'Bài viết không tồn tại.',
                 ], 404);
             }
+
+            // Tăng lượt xem cho bài viết và cập nhật lại updated_at
+            $baiVietDetail->increment('luot_xem');
+            $baiVietDetail->touch(); // Cập nhật lại trường `updated_at`
 
             // Lấy các bài viết khác cùng danh mục, ngoại trừ bài viết hiện tại
             $baiVietKhac = TinTuc::where('danh_muc_tin_tuc_id', $baiVietDetail->danh_muc_tin_tuc_id)
@@ -235,32 +145,6 @@ class TinTucController extends Controller
             // Rollback nếu có lỗi
             DB::rollBack();
 
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function loadBaiVietVaDanhMuc()
-    {
-        try {
-            $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
-                ->orderBy('created_at', 'desc')->get();
-
-            $baiViet = TinTuc::orderBy('created_at', 'desc')
-                ->paginate(10);
-
-            return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu thành công.',
-                'Danh_muc_tin_tuc' => $danhMucTinTuc,
-                'baiViet' => $baiViet,
-            ], 200);
-        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'status_code' => 500,

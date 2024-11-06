@@ -6,6 +6,7 @@ import CreditCardForm from "./cart";
 import { Checkbox } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const banks = [
   { name: 'Agribank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Agribank_dk6etr.png' },
@@ -58,7 +59,7 @@ const BankAccount = () => {
     queryKey: ['walletStatus'],
     queryFn: async () => {
       const response = await instanceClient.get('/vi-tai-khoan');
-      return response.data?.data;
+      return response.data;
     }
   });
 
@@ -110,7 +111,7 @@ const BankAccount = () => {
   };
 
   const handleBankSelection = (bank: any) => {
-    if (!walletData?.trang_thai_ma_xac_minh) {
+    if (!walletData?.status) {
       setShowPinRegistrationModal(true);
       return;
     }
@@ -133,7 +134,7 @@ const BankAccount = () => {
   };
 
   const handleWithdraw = () => {
-    if (!walletData?.trang_thai_ma_xac_minh) {
+    if (!walletData?.status) {
       setShowPinRegistrationModal(true);
       return;
     }
@@ -157,7 +158,7 @@ const BankAccount = () => {
   };
 
   const handleAddBankClick = () => {
-    if (!walletData?.trang_thai_ma_xac_minh) {
+    if (!walletData?.status) {
       setShowPinRegistrationModal(true);
       return;
     }
@@ -165,7 +166,7 @@ const BankAccount = () => {
   };
 
   const handleDeleteBank = (bankId: string) => {
-    if (walletData?.trang_thai_ma_xac_minh) {
+    if (walletData?.status) {
       setSelectedBankToDelete(bankId);
       setShowPinModal(true);
     } else {
@@ -259,7 +260,11 @@ const BankAccount = () => {
     <div className="w-full h-screen relative">
       <div className="flex items-center justify-between px-4 py-4 bg-white font-bold text-lg border-b border-gray-200">
         <div className="flex items-center">
-          <i className="fa-light fa-wallet mr-2"></i>
+        <Link to="/mypro/wallet">
+
+         <i className="fa-light fa-wallet mr-2"></i>
+         </Link>
+
           Tài khoản Ngân hàng liên kết
         </div>
         {selectedBanks.length > 0 && (
@@ -376,7 +381,7 @@ const BankAccount = () => {
         </div>
       )}
 
-      {showPinModal && walletData?.trang_thai_ma_xac_minh && (
+      {showPinModal && walletData?.status && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">Xác nhận mật khẩu ví</h2>

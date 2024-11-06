@@ -47,6 +47,9 @@ class DanhMucTinTucController extends Controller
             DB::beginTransaction();
             $validateDanhMucTinTuc = $request->validate([
                 'ten_danh_muc_tin_tuc' => 'required|string|max:255',
+                'mo_ta' => 'nullable',
+                'hinh_anh' => 'nullable',
+
             ]);
             $validateDanhMucTinTuc['duong_dan'] = Str::slug($validateDanhMucTinTuc['ten_danh_muc_tin_tuc']);
             $danhMucTinTuc = DanhMucTinTuc::create($validateDanhMucTinTuc);

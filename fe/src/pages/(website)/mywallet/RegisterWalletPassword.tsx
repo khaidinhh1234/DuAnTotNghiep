@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import instanceClient from '@/configs/client';
 import { toast } from 'react-toastify';
@@ -8,13 +8,16 @@ import { Link } from 'react-router-dom';
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  trang_thai_ma_xac_minh: boolean;
+  status: boolean;
+  onRegisterSuccess?: (code: string) => void;
+
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ 
   isOpen, 
   onClose,
-  trang_thai_ma_xac_minh 
+  status,
+  onRegisterSuccess 
 }) => {
   const [showRegistration, setShowRegistration] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -22,21 +25,43 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const [password, setPassword] = useState(['', '', '', '', '', '']);
   const [confirmPassword, setConfirmPassword] = useState(['', '', '', '', '', '']);
 
-  const setupPasswordMutation = useMutation({
-    mutationFn: async (data: { ma_xac_minh?: string, ma_xac_minh_moi: string }) => {
-      return await instanceClient.post('/thiet-lap-ma-xac-minh', data);
-    },
-    onSuccess: () => {
-      setShowRegistration(false);
-      setShowChangePassword(false);
-      onClose();
-      resetPasswordFields();
-      toast.success('Thiết lập mật khẩu thành công!');
-    },
-    onError: () => {
-      toast.error('Có lỗi xảy ra. Vui lòng thử lại!');
-    }
-  });
+  // const setupPasswordMutation = useMutation({
+  //   mutationFn: async (data: { ma_xac_minh?: string, ma_xac_minh_moi: string }) => {
+  //     return await instanceClient.post('/thiet-lap-ma-xac-minh', data);
+  //   },
+  //   onSuccess: () => {
+  //     setShowRegistration(false);
+  //     setShowChangePassword(false);
+  //     onClose();
+  //     resetPasswordFields();
+  //     toast.success('Thiết lập mật khẩu thành công!');
+  //   },
+  //   onError: () => {
+  //     toast.error('Có lỗi xảy ra. Vui lòng thử lại!');
+  //   }
+  // });
+
+const setupPasswordMutation = useMutation({
+  mutationFn: async (data: { ma_xac_minh?: string, ma_xac_minh_moi: string }) => {
+    return await instanceClient.post('/thiet-lap-ma-xac-minh', data);
+  },
+  onSuccess: () => {
+    const passwordString = password.join('');
+    
+    localStorage.setItem('walletVerificationCode', passwordString);
+    
+    onRegisterSuccess?.(passwordString);
+    
+    setShowRegistration(false);
+    setShowChangePassword(false);
+    onClose();
+    resetPasswordFields();
+    toast.success('Thiết lập mật khẩu thành công!');
+  },
+  onError: () => {
+    toast.error('Có lỗi xảy ra. Vui lòng thử lại!');
+  }
+});
 
   const handleSubmit = () => {
     const passwordString = password.join('');
@@ -64,7 +89,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       });
     } else {
       setupPasswordMutation.mutate({
-        ma_xac_minh_moi: passwordString
+        ma_xac_minh: passwordString,
+        // ma_xac_minh_moi: passwordString
+         ma_xac_minh_moi: ''
       });
     }
   };
@@ -131,7 +158,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     setPassword(['', '', '', '', '', '']);
     setConfirmPassword(['', '', '', '', '', '']);
   };
-
+  useEffect(() => {
+    if (!status) {
+      setShowRegistration(true);
+    }
+  }, [status]);
   if (!isOpen) return null;
 
   const renderMainMenu = () => (
@@ -151,7 +182,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         </button>
       </div>
       <div className="space-y-4">
-        {!trang_thai_ma_xac_minh ? (
+        {!status ? (
           <button 
             onClick={() => {
               resetPasswordFields();
@@ -163,6 +194,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             <i className="fa-solid fa-chevron-right text-gray-400"></i>
           </button>
         ) : (
+          <>
           <button 
             onClick={() => {
               resetPasswordFields();
@@ -173,15 +205,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             <span>Đổi mật khẩu ví</span>
             <i className="fa-solid fa-chevron-right text-gray-400"></i>
           </button>
+
+              <Link to="/mypro/bank">
+              <button 
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-between"
+              >
+                <span>Phương Thức thanh toán</span>
+                <i className="fa-solid fa-chevron-right text-gray-400"></i>
+              </button>
+            </Link>
+            </>
         )}
-        <Link to="/mypro/bank">
-          <button 
-            className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-between"
-          >
-            <span>Phương Thức thanh toán</span>
-            <i className="fa-solid fa-chevron-right text-gray-400"></i>
-          </button>
-        </Link>
+    
       </div>
     </>
   );

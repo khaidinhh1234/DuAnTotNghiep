@@ -1,40 +1,670 @@
+
+// // import instanceClient from "@/configs/client";
+// // import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// // import { useEffect, useState, useRef } from "react";
+// // import { Link, useNavigate } from "react-router-dom";
+// // import { toast } from "react-toastify";
+// // import SettingsModal from "./RegisterWalletPassword";
+
+// // function TaiChinh() {
+// //   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+// //   const [pins, setPins] = useState(['', '', '', '', '', '']);
+// //   const [showForgotPinModal, setShowForgotPinModal] = useState(false);
+// //   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+// //   const queryClient = useQueryClient();
+// //   const navigate = useNavigate();
+
+// //   const { data: walletStatus } = useQuery({
+// //     queryKey: ["walletStatus"],
+// //     queryFn: async () => {
+// //       const response = await instanceClient.get('/vi-tai-khoan');
+// //       return response.data;
+// //     }
+// //   });
+
+// //   const forgotPinMutation = useMutation({
+// //     mutationFn: async () => {
+// //       const response = await instanceClient.get('/quen-ma-xac-minh');
+// //       return response.data;
+// //     },
+// //     onSuccess: () => {
+// //       toast.success('Yêu cầu lấy lại mã PIN đã được gửi đến email của bạn');
+// //       setShowForgotPinModal(false);
+// //     },
+// //     onError: (error: any) => {
+// //       const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+// //       toast.error(errorMessage);
+// //     }
+// //   });
+
+// //   useEffect(() => {
+// //     if (walletStatus && !walletStatus.status) {
+// //       setIsSettingsOpen(true);
+// //     }
+// //   }, [walletStatus]);
+
+// //   const verifyWalletMutation = useMutation({
+// //     mutationFn: async (code: string) => {
+// //       const response = await instanceClient.post('/vi-tai-khoan', {
+// //         ma_xac_minh: code
+// //       });
+// //       return response.data;
+// //     },
+// //     onSuccess: (data) => {
+// //       queryClient.setQueryData(["walletData"], data);
+// //       setPins(['', '', '', '', '', '']);
+// //       // toast.success('');
+// //     },
+// //     onError: (error: any) => {
+// //       toast.error(error.response?.data?.message || 'Mã xác minh không đúng');
+// //       setPins(['', '', '', '', '', '']);
+// //       inputRefs.current[0]?.focus();
+// //     }
+// //   });
+
+// //   const handleChange = (index: number, value: string) => {
+// //     if (!/^\d*$/.test(value)) return;
+
+// //     const newPins = [...pins];
+// //     newPins[index] = value;
+// //     setPins(newPins);
+
+// //     if (value && index < 5) {
+// //       inputRefs.current[index + 1]?.focus();
+// //     }
+// //   };
+
+// //   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+// //     if (e.key === 'Backspace' && !pins[index] && index > 0) {
+// //       inputRefs.current[index - 1]?.focus();
+// //     }
+// //   };
+
+// //   const handleVerification = () => {
+// //     const code = pins.join('');
+// //     if (code.length === 6) {
+// //       verifyWalletMutation.mutate(code);
+// //     }
+// //   };
+
+// //   const { data: walletData } = verifyWalletMutation;
+
+// //   return (
+// //     <div className="p-4 min-h-screen">
+// //       <div className="flex items-center align-center justify-between mb-4">
+// //         <h1 className="text-xl font-semibold">Tài chính</h1>
+// //         <button
+// //           onClick={() => setIsSettingsOpen(true)}
+// //           className="hover:text-gray-700"
+// //         >
+// //           <i className="fa-regular fa-gear"></i>
+// //         </button>
+// //       </div>
+
+// //       {walletStatus?.status && !walletData && (
+// //         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+// //           <div className="bg-white rounded-lg p-6 w-96">
+// //             <div className="flex justify-between items-center mb-4">
+// //               <h2 className="text-xl font-semibold">Xác nhận mật khẩu ví</h2>
+// //               <button
+// //                 onClick={() => navigate('/mypro/myprofile')}
+// //                 className="text-gray-500 hover:text-gray-700"
+// //               >
+// //                 <i className="fas fa-times"></i>
+// //               </button>
+// //             </div>
+// //             <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
+
+// //             <div className="mb-6">
+// //               <div className="flex justify-between space-x-2">
+// //                 {pins.map((pin, index) => (
+// //                   <input
+// //                     key={index}
+// //                     type="password"
+// //                     maxLength={1}
+// //                     value={pin}
+// //                     ref={(el) => (inputRefs.current[index] = el)}
+// //                     onChange={(e) => handleChange(index, e.target.value)}
+// //                     onKeyDown={(e) => handleKeyDown(index, e)}
+// //                     className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+// //                   />
+// //                 ))}
+// //               </div>
+
+// //               <button
+// //                 onClick={() => setShowForgotPinModal(true)}
+// //                 className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+// //               >
+// //                 Quên mật khẩu?
+// //               </button>
+// //             </div>
+
+// //             <div className="flex justify-end space-x-3">
+// //               <button
+// //                 onClick={() => navigate('/mypro/myprofile')}
+// //                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
+// //               >
+// //                 Thoát
+// //               </button>
+// //               <button
+// //                 onClick={handleVerification}
+// //                 disabled={pins.some(pin => !pin) || verifyWalletMutation.isPending}
+// //                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+// //               >
+// //                 {verifyWalletMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+// //               </button>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       )}
+
+// //       {showForgotPinModal && (
+// //         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+// //           <div className="bg-white rounded-lg p-6 w-96">
+// //             <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
+// //             <p className="text-gray-600 mb-6">
+// //               Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi đến email của bạn.
+// //             </p>
+
+// //             <div className="flex justify-end space-x-3">
+// //               <button
+// //                 onClick={() => setShowForgotPinModal(false)}
+// //                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
+// //               >
+// //                 Hủy
+// //               </button>
+// //               <button
+// //                 onClick={() => forgotPinMutation.mutate()}
+// //                 disabled={forgotPinMutation.isPending}
+// //                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+// //               >
+// //                 {forgotPinMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+// //               </button>
+// //             </div>
+// //           </div>
+// //         </div>
+// //       )}
+
+// //       <SettingsModal
+// //         isOpen={isSettingsOpen}
+// //         onClose={() => setIsSettingsOpen(false)}
+// //         status={walletStatus?.status}
+// //       />
+
+// //       {walletData?.data && (
+// //         <>
+// //           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
+// //             <div className="flex justify-between items-center">
+// //               <span className="text-lg font-semibold">Tổng số dư</span>
+// //               <div className="flex space-x-2">
+// //                 <Link to="/mypro/naptien">
+// //                   <button className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-orange-600 active:bg-orange-700">
+// //                     Nạp tiền
+// //                   </button>
+// //                 </Link>
+// //                 <Link to="/mypro/bank">
+// //                   <button className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-orange-600 active:bg-orange-700">
+// //                     Rút tiền
+// //                   </button>
+// //                 </Link>
+// //               </div>
+// //             </div>
+
+// //             <div className="text-red-500 text-4xl font-semibold my-4">
+// //               {walletData.data?.viUser?.so_du?.toLocaleString() ?? 0}₫
+// //             </div>
+// //           </div>
+
+// //           <div className="bg-white rounded-lg p-4 shadow-sm mt-6 border border-gray-120">
+// //             <h2 className="text-lg font-semibold mb-4">Lịch sử Giao Dịch</h2>
+// //             {walletData.data?.viUser?.lich_su_giao_dichs?.length > 0 ? (
+// //               <ul className="max-h-[400px] overflow-y-auto">
+// //                 {walletData.data.viUser.lich_su_giao_dichs.map((transaction: any, index: number) => (
+// //                   <li key={index} className="flex justify-between items-center border-b py-2">
+// //                     <div>
+// //                       <p className="text-sm font-medium">{transaction?.mo_ta}</p>
+// //                       <p className="text-xs text-gray-500">
+// //                         {new Date(transaction?.ngay_thay_doi).toLocaleString("vi-VN", {
+// //                           year: "numeric",
+// //                           month: "2-digit",
+// //                           day: "2-digit",
+// //                           hour: "2-digit",
+// //                           minute: "2-digit",
+// //                         })}
+// //                       </p>
+// //                     </div>
+// //                     <p className="text-sm font-semibold">
+// //                       {transaction?.so_du_sau - transaction?.so_du_truoc > 0 ? "+" : ""}
+// //                       {(transaction?.so_du_sau - transaction?.so_du_truoc).toLocaleString()}đ
+// //                     </p>
+// //                   </li>
+// //                 ))}
+// //               </ul>
+// //             ) : (
+// //               <p className="text-center text-gray-500">Không có giao dịch nào</p>
+// //             )}
+// //           </div>
+// //         </>
+// //       )}
+// //     </div>
+// //   );
+// // }
+
+// // export default TaiChinh;
+// import instanceClient from "@/configs/client";
+// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// import { useEffect, useState, useRef } from "react";
+// import { Link, useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import SettingsModal from "./RegisterWalletPassword";
+
+// function TaiChinh() {
+//   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+//   const [pins, setPins] = useState(['', '', '', '', '', '']);
+//   const [showForgotPinModal, setShowForgotPinModal] = useState(false);
+//   const [storedVerificationCode, setStoredVerificationCode] = useState(() => 
+//     localStorage.getItem('walletVerificationCode')
+//   );
+//   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+//   const queryClient = useQueryClient();
+//   const navigate = useNavigate();
+
+//   const { data: walletStatus } = useQuery({
+//     queryKey: ["walletStatus"],
+//     queryFn: async () => {
+//       const response = await instanceClient.get('/vi-tai-khoan');
+//       return response.data;
+//     }
+//   });
+
+//   const { data: walletData } = useQuery({
+//     queryKey: ['walletData', storedVerificationCode],
+//     queryFn: async () => {
+//       if (!storedVerificationCode) return null;
+//       const response = await instanceClient.post('/vi-tai-khoan', {
+//         ma_xac_minh: storedVerificationCode
+//       });
+//       return response.data;
+//     },
+//     enabled: !!storedVerificationCode,
+//     staleTime: 5 * 60 * 1000,
+//   });
+
+//   const forgotPinMutation = useMutation({
+//     mutationFn: async () => {
+//       const response = await instanceClient.get('/quen-ma-xac-minh');
+//       return response.data;
+//     },
+//     onSuccess: () => {
+//       toast.success('Yêu cầu lấy lại mã PIN đã được gửi đến email của bạn');
+//       setShowForgotPinModal(false);
+//     },
+//     onError: (error: any) => {
+//       const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+//       toast.error(errorMessage);
+//     }
+//   });
+
+//   useEffect(() => {
+//     if (walletStatus && !walletStatus.status) {
+//       setIsSettingsOpen(true);
+//     }
+//   }, [walletStatus]);
+
+//   const verifyWalletMutation = useMutation({
+//     mutationFn: async (code: string) => {
+//       const response = await instanceClient.post('/vi-tai-khoan', {
+//         ma_xac_minh: code
+//       });
+//       return response.data;
+//     },
+//     onSuccess: (data) => {
+//       const verificationCode = pins.join('');
+//       localStorage.setItem('walletVerificationCode', verificationCode);
+//       setStoredVerificationCode(verificationCode);
+//       queryClient.setQueryData(['walletData', verificationCode], data);
+//       setPins(['', '', '', '', '', '']);
+//     },
+//     onError: (error: any) => {
+//       localStorage.removeItem('walletVerificationCode');
+//       setStoredVerificationCode(null);
+//       toast.error(error.response?.data?.message || 'Mã xác minh không đúng');
+//       setPins(['', '', '', '', '', '']);
+//       inputRefs.current[0]?.focus();
+//     }
+//   });
+
+//   useEffect(() => {
+//     return () => {
+//       if (verifyWalletMutation.isError) {
+//         localStorage.removeItem('walletVerificationCode');
+//         setStoredVerificationCode(null);
+//       }
+//     };
+//   }, [verifyWalletMutation.isError]);
+
+//   const handleChange = (index: number, value: string) => {
+//     if (!/^\d*$/.test(value)) return;
+
+//     const newPins = [...pins];
+//     newPins[index] = value;
+//     setPins(newPins);
+
+//     if (value && index < 5) {
+//       inputRefs.current[index + 1]?.focus();
+//     }
+//   };
+
+//   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+//     if (e.key === 'Backspace' && !pins[index] && index > 0) {
+//       inputRefs.current[index - 1]?.focus();
+//     }
+//   };
+
+//   const handleVerification = () => {
+//     const code = pins.join('');
+//     if (code.length === 6) {
+//       verifyWalletMutation.mutate(code);
+//     }
+//   };
+
+//   return (
+//     <div className="p-4 min-h-screen">
+//       <div className="flex items-center align-center justify-between mb-4">
+//         <h1 className="text-xl font-semibold">Tài chính</h1>
+//         <button
+//           onClick={() => setIsSettingsOpen(true)}
+//           className="hover:text-gray-700"
+//         >
+//           <i className="fa-regular fa-gear"></i>
+//         </button>
+//       </div>
+
+//       {walletStatus?.status && !storedVerificationCode && !walletData && (
+//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+//           <div className="bg-white rounded-lg p-6 w-96">
+//             <div className="flex justify-between items-center mb-4">
+//               <h2 className="text-xl font-semibold">Xác nhận mật khẩu ví</h2>
+//               <button
+//                 onClick={() => navigate('/mypro/myprofile')}
+//                 className="text-gray-500 hover:text-gray-700"
+//               >
+//                 <i className="fas fa-times"></i>
+//               </button>
+//             </div>
+//             <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
+
+//             <div className="mb-6">
+//               <div className="flex justify-between space-x-2">
+//                 {pins.map((pin, index) => (
+//                   <input
+//                     key={index}
+//                     type="password"
+//                     maxLength={1}
+//                     value={pin}
+//                     ref={(el) => (inputRefs.current[index] = el)}
+//                     onChange={(e) => handleChange(index, e.target.value)}
+//                     onKeyDown={(e) => handleKeyDown(index, e)}
+//                     className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                   />
+//                 ))}
+//               </div>
+
+//               <button
+//                 onClick={() => setShowForgotPinModal(true)}
+//                 className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+//               >
+//                 Quên mật khẩu?
+//               </button>
+//             </div>
+
+//             <div className="flex justify-end space-x-3">
+//               <button
+//                 onClick={() => navigate('/mypro/myprofile')}
+//                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
+//               >
+//                 Thoát
+//               </button>
+//               <button
+//                 onClick={handleVerification}
+//                 disabled={pins.some(pin => !pin) || verifyWalletMutation.isPending}
+//                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+//               >
+//                 {verifyWalletMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+
+//       {showForgotPinModal && (
+//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+//           <div className="bg-white rounded-lg p-6 w-96">
+//             <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
+//             <p className="text-gray-600 mb-6">
+//               Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi đến email của bạn.
+//             </p>
+
+//             <div className="flex justify-end space-x-3">
+//               <button
+//                 onClick={() => setShowForgotPinModal(false)}
+//                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
+//               >
+//                 Hủy
+//               </button>
+//               <button
+//                 onClick={() => forgotPinMutation.mutate()}
+//                 disabled={forgotPinMutation.isPending}
+//                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+//               >
+//                 {forgotPinMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+
+//       <SettingsModal
+//         isOpen={isSettingsOpen}
+//         onClose={() => setIsSettingsOpen(false)}
+//         status={walletStatus?.status}
+//       />
+//       {walletData?.data && (
+//         <>
+//           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
+//             <div className="flex justify-between items-center">
+//               <span className="text-lg font-semibold">Tổng số dư</span>
+//               <div className="flex space-x-2">
+//                 <Link to="/mypro/naptien">
+//                   <button className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-orange-600 active:bg-orange-700">
+//                     Nạp tiền
+//                   </button>
+//                 </Link>
+//                 <Link to="/mypro/bank">
+//                   <button className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-orange-600 active:bg-orange-700">
+//                     Rút tiền
+//                   </button>
+//                 </Link>
+//               </div>
+//             </div>
+
+//             <div className="text-red-500 text-4xl font-semibold my-4">
+//               {walletData.data?.viUser?.so_du?.toLocaleString() ?? 0}₫
+//             </div>
+//           </div>
+
+//           <div className="bg-white rounded-lg p-4 shadow-sm mt-6 border border-gray-120">
+//             <h2 className="text-lg font-semibold mb-4">Lịch sử Giao Dịch</h2>
+//             {walletData.data?.viUser?.lich_su_giao_dichs?.length > 0 ? (
+//               <ul className="max-h-[400px] overflow-y-auto">
+//                 {walletData.data.viUser.lich_su_giao_dichs.map((transaction: any, index: number) => (
+//                   <li key={index} className="flex justify-between items-center border-b py-2">
+//                     <div>
+//                       <p className="text-sm font-medium">{transaction?.mo_ta}</p>
+//                       <p className="text-xs text-gray-500">
+//                         {new Date(transaction?.ngay_thay_doi).toLocaleString("vi-VN", {
+//                           year: "numeric",
+//                           month: "2-digit",
+//                           day: "2-digit",
+//                           hour: "2-digit",
+//                           minute: "2-digit",
+//                         })}
+//                       </p>
+//                     </div>
+//                     <p className="text-sm font-semibold">
+//                       {transaction?.so_du_sau - transaction?.so_du_truoc > 0 ? "+" : ""}
+//                       {(transaction?.so_du_sau - transaction?.so_du_truoc).toLocaleString()}đ
+//                     </p>
+//                   </li>
+//                 ))}
+//               </ul>
+//             ) : (
+//               <p className="text-center text-gray-500">Không có giao dịch nào</p>
+//             )}
+//           </div>
+//         </>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default TaiChinh;
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import SettingsModal from "./RegisterWalletPassword";
 
-export const fetchFinanceData = async () => {
-  const response = await instanceClient.get(`/vi-tai-khoan`);
-  console.log("response", response);
-  return response.data?.data;
-};
 function TaiChinh() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const location = useLocation();
+  const [pins, setPins] = useState(['', '', '', '', '', '']);
+  const [showForgotPinModal, setShowForgotPinModal] = useState(false);
+  const [storedVerificationCode, setStoredVerificationCode] = useState(() => 
+    localStorage.getItem('walletVerificationCode')
+  );
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["financeData"],
-    queryFn: fetchFinanceData,
+  // const { data: walletStatus } = useQuery({
+  //   queryKey: ["walletStatus"],
+  //   queryFn: async () => {
+  //     const response = await instanceClient.get('/vi-tai-khoan');
+  //     return response.data;
+  //   }
+  // });
+  const { data: walletStatus, isSuccess,  refetch: refetchWalletStatus } = useQuery({
+    queryKey: ["walletStatus"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get('/vi-tai-khoan');
+        return response.data;
+      } catch (error: any) {
+        if (error.response?.status === 400) {
+          return {
+            status: false,
+            status_code: 400
+          };
+        }
+        throw error;
+      }
+    },
+    retry: false
   });
+  
   useEffect(() => {
-    if (location.state?.openSettings) {
+    if (isSuccess && walletStatus?.status === false) {
       setIsSettingsOpen(true);
     }
-  }, [location.state]);
-  if (isLoading) {
-    return <div className="p-4">Loading...</div>;
-  }
+  }, [walletStatus, isSuccess]);
+  
+  
+  
+  const { data: walletData } = useQuery({
+    queryKey: ['walletData', storedVerificationCode],
+    queryFn: async () => {
+      if (!storedVerificationCode) return null;
+      const response = await instanceClient.post('/vi-tai-khoan', {
+        ma_xac_minh: storedVerificationCode
+      });
+      return response.data;
+    },
+    enabled: !!storedVerificationCode,
+    staleTime: 5 * 60 * 1000,
+  });
 
-  if (error) {
-    return <div className="p-4">Error loading finance data</div>;
-  }
+  const forgotPinMutation = useMutation({
+    mutationFn: async () => {
+      const response = await instanceClient.get('/quen-ma-xac-minh');
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Yêu cầu lấy lại mã PIN đã được gửi đến email của bạn');
+      setShowForgotPinModal(false);
+    },
+    onError: (error: any) => {
+      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+      toast.error(errorMessage);
+    }
+  });
 
+  const verifyWalletMutation = useMutation({
+    mutationFn: async (code: string) => {
+      const response = await instanceClient.post('/vi-tai-khoan', {
+        ma_xac_minh: code
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      const verificationCode = pins.join('');
+      localStorage.setItem('walletVerificationCode', verificationCode);
+      setStoredVerificationCode(verificationCode);
+      queryClient.setQueryData(['walletData', verificationCode], data);
+      setPins(['', '', '', '', '', '']);
+    },
+    onError: (error: any) => {
+      localStorage.removeItem('walletVerificationCode');
+      setStoredVerificationCode(null);
+      toast.error(error.response?.data?.message || 'Mã xác minh không đúng');
+      setPins(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
+    }
+  });
+
+  const handleChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return;
+
+    const newPins = [...pins];
+    newPins[index] = value;
+    setPins(newPins);
+
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !pins[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleVerification = () => {
+    const code = pins.join('');
+    if (code.length === 6) {
+      verifyWalletMutation.mutate(code);
+    }
+  };
+  const handleRegisterSuccess = async (code: string) => {
+    setStoredVerificationCode(code);
+    await refetchWalletStatus(); 
+    queryClient.invalidateQueries({ queryKey: ['walletData', code] });
+  };
   return (
     <div className="p-4 min-h-screen">
-      <div className="flex items-center align-center justify-between  mb-4">
-        <h1 className="text-xl font-semibold ">Tài chính</h1>
-
+      <div className="flex items-center align-center justify-between mb-4">
+        <h1 className="text-xl font-semibold">Tài chính</h1>
         <button
           onClick={() => setIsSettingsOpen(true)}
           className="hover:text-gray-700"
@@ -42,91 +672,155 @@ function TaiChinh() {
           <i className="fa-regular fa-gear"></i>
         </button>
       </div>
-      <SettingsModal
+
+    
+
+      {walletStatus?.status && !storedVerificationCode && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Xác nhận mật khẩu ví</h2>
+              <button
+                onClick={() => navigate('/mypro/myprofile')}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
+
+            <div className="mb-6">
+              <div className="flex justify-between space-x-2">
+                {pins.map((pin, index) => (
+                  <input
+                    key={index}
+                    type="password"
+                    maxLength={1}
+                    value={pin}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={() => setShowForgotPinModal(true)}
+                className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
+              >
+                Quên mật khẩu?
+              </button>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => navigate('/mypro/myprofile')}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Thoát
+              </button>
+              <button
+                onClick={handleVerification}
+                disabled={pins.some(pin => !pin) || verifyWalletMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {verifyWalletMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showForgotPinModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
+            <p className="text-gray-600 mb-6">
+              Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi đến email của bạn.
+            </p>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowForgotPinModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={() => forgotPinMutation.mutate()}
+                disabled={forgotPinMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {forgotPinMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+  <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
-        trang_thai_ma_xac_minh={data?.trang_thai_ma_xac_minh}
+        status={walletStatus?.status}
+        onRegisterSuccess={handleRegisterSuccess}
+
       />
-      {/* Container */}
-      <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
-        {/* Tổng số dư */}
-        <div className="flex justify-between items-center">
-          <div>
-            <span className="text-lg font-semibold">Tổng số dư</span>
-          </div>
-          <Link to="/mypro/bank">
-            <button className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-orange-600 active:bg-orange-700">
-              Rút tiền
-            </button>
-          </Link>
-        </div>
-
-        {/* Số dư */}
-        <div className="text-red-500 text-4xl font-semibold my-4">
-          {data?.viUser?.so_du?.toLocaleString() ?? 0}₫
-        </div>
-
-        {/* Doanh Thu Đơn Hàng */}
-        <div className="flex items-center justify-between">
-          {/* <Link to="/mypro/doangthu" className="flex items-center">
-            <div className="bg-red-500 text-white p-3 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-              </svg>
+      {walletData?.data && (
+        <>
+          <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-semibold">Tổng số dư</span>
+              <div className="flex space-x-2">
+                <Link to="/mypro/naptien">
+                  <button className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-orange-600 active:bg-orange-700">
+                    Nạp tiền
+                  </button>
+                </Link>
+                <Link to="/mypro/bank">
+                  <button className="bg-red-500 text-white rounded-lg px-3 py-1 hover:bg-orange-600 active:bg-orange-700">
+                    Rút tiền
+                  </button>
+                </Link>
+              </div>
             </div>
-            <span className="ml-4 text-xl font-semibold">Doanh Thu Đơn Hàng</span>
-          </Link> */}
-          <div className="text-gray-400">
-            {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-            </svg> */}
-          </div>
-        </div>
-      </div>
 
-      <div className="bg-white rounded-lg p-4 shadow-sm mt-6 border border-gray-120">
-  <h2 className="text-lg font-semibold mb-4">Lịch sử Giao Dịch</h2>
-  {data?.viUser?.lich_su_giao_dichs?.length > 0 ? (
-    <ul className="max-h-[400px] overflow-y-auto">
-      {data?.viUser?.lich_su_giao_dichs?.map(
-        (transaction: any, index: number) => (
-          <li
-            key={index}
-            className="flex justify-between items-center border-b py-2"
-          >
-            <div>
-              <p className="text-sm font-medium">{transaction?.mo_ta}</p>
-              <p className="text-xs text-gray-500">
-                {new Date(transaction?.ngay_thay_doi).toLocaleString(
-                  "vi-VN",
-                  {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }
-                )}
-              </p>
+            <div className="text-red-500 text-4xl font-semibold my-4">
+              {walletData.data?.viUser?.so_du?.toLocaleString() ?? 0}₫
             </div>
-            <p className="text-sm font-semibold">
-              {transaction?.so_du_sau - transaction?.so_du_truoc > 0
-                ? "+"
-                : ""}
-              {(
-                transaction?.so_du_sau - transaction?.so_du_truoc
-              ).toLocaleString()}
-              đ
-            </p>
-          </li>
-        )
+          </div>
+
+          <div className="bg-white rounded-lg p-4 shadow-sm mt-6 border border-gray-120">
+            <h2 className="text-lg font-semibold mb-4">Lịch sử Giao Dịch</h2>
+            {walletData.data?.viUser?.lich_su_giao_dichs?.length > 0 ? (
+              <ul className="max-h-[400px] overflow-y-auto">
+                {walletData.data.viUser.lich_su_giao_dichs.map((transaction: any, index: number) => (
+                  <li key={index} className="flex justify-between items-center border-b py-2">
+                    <div>
+                      <p className="text-sm font-medium">{transaction?.mo_ta}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(transaction?.ngay_thay_doi).toLocaleString("vi-VN", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                    <p className="text-sm font-semibold">
+                      {transaction?.so_du_sau - transaction?.so_du_truoc > 0 ? "+" : ""}
+                      {(transaction?.so_du_sau - transaction?.so_du_truoc).toLocaleString()}đ
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-center text-gray-500">Không có giao dịch nào</p>
+            )}
+          </div>
+        </>
       )}
-    </ul>
-  ) : (
-    <p className="text-center text-gray-500">Không có giao dịch nào</p>
-  )}
-</div>
-</div>
+    </div>
   );
 }
 

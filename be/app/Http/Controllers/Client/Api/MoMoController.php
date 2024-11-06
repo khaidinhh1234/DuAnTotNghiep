@@ -85,8 +85,6 @@ class MoMoController extends Controller
             $jsonResult = json_decode($result, true);
 
             if (isset($jsonResult['payUrl'])) {
-
-
                 return response()->json(['payUrl' => $jsonResult['payUrl']]);
             } else {
                 return response()->json(['message' => 'Không tạo được URL thanh toán'], 500);
@@ -348,6 +346,7 @@ class MoMoController extends Controller
             if (array_key_exists($trangThai, $trangThaiMessages)) {
                 if ($donHang->trang_thai_thanh_toan === DonHang::TTTT_CTT) {
                     $donHang->update(['trang_thai_thanh_toan' => DonHang::TTTT_CTT]);
+                    DB::table('gio_hangs')->where('user_id', $donHang->user_id)->where('chon', 1)->update(['deleted_at' => now()]);
 
                     $message = $trangThaiMessages[$trangThai];
                     $thongBao = ThongBao::create([
