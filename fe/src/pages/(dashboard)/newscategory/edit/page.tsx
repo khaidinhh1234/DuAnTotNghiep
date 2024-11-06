@@ -1,8 +1,9 @@
 import { ICategories } from "@/common/types/category";
 import instance from "@/configs/admin";
-
+import { UploadOutlined } from "@ant-design/icons";
+import { uploadToCloudinary } from "@/configs/cloudinary";
+import { Button, Form, Input, Upload, message, Spin } from "antd";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, message, Spin } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 const NewCategoriesEdit = () => {
@@ -33,16 +34,26 @@ const NewCategoriesEdit = () => {
     },
   });
 
-  const onFinish = (values: any) => {
-    mutate(values);
+  const onFinish = async (values: any) => {
+    try {
+      let imageUrl = null;
+      if (values.imageFile && values.imageFile[0]) {
+        imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
+      }
+      const categoryData = {
+        ...values,
+        hinh_anh: imageUrl,
+      };
+      mutate(categoryData);
+    } catch (error) {
+      message.error("Lỗi khi tải ảnh lên");
+    }
   };
 
-  // Nếu đang tải dữ liệu
   if (isLoading) {
     return <Spin />;
   }
 
-  // Nếu có lỗi khi tải dữ liệu
   if (isError) {
     return <div>Lỗi khi lấy dữ liệu danh mục. Vui lòng thử lại sau.</div>;
   }
@@ -84,24 +95,46 @@ const NewCategoriesEdit = () => {
                 label="Tên danh mục tin tức"
                 name="ten_danh_muc_tin_tuc"
                 rules={[
-                  {
-                    required: true,
-                    message: "Tên danh mục bắt buộc phải nhập!",
-                  },
-
-                  {
-                    pattern: /^[^\s]+(\s+[^\s]+)*$/,
-                    message: "Vui lòng  không chứa ký tự trắng!",
-                  },
+                  { required: true, message: "Tên danh mục bắt buộc phải nhập!" },
+                  { pattern: /^[^\s]+(\s+[^\s]+)*$/, message: "Vui lòng không chứa ký tự trắng!" },
                 ]}
               >
                 <Input placeholder="Nhập tên danh mục tin tức" />
+              </Form.Item>
+              <Form.Item
+                label="Mô tả"
+                name="mo_ta"
+                rules={[
+                  { required: true, message: "Mô tả bắt buộc phải nhập!" },
+                  { pattern: /^[^\s]+(\s+[^\s]+)*$/, message: "Vui lòng không chứa ký tự trắng!" },
+                ]}
+              >
+                <Input placeholder="Nhập mô tả tin tức" />
+              </Form.Item>
+              <Form.Item
+                label="Thêm ảnh"
+                name="imageFile"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
+              >
+                <Upload
+                  listType="picture"
+                  maxCount={1}
+                  beforeUpload={() => false}
+                  defaultFileList={
+                    data?.data.hinh_anh
+                      ? [{ url: data.data.hinh_anh, name: "Hình ảnh hiện tại", thumbUrl: data.data.hinh_anh }]
+                      : []
+                  }
+                >
+                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                </Upload>
               </Form.Item>
               <Form.Item>
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+                  className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                 >
                   Cập nhật danh mục tin tức
                 </Button>
