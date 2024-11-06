@@ -90,10 +90,9 @@ Route::middleware([])
         })->middleware('throttle:10000000,1');
 
         // Client Tin tức
-        Route::get('load-danh-muc-tin-tuc', [ApiTinTucController::class, 'loadDanhMucTinTuc']);
-        Route::post('tin-tuc-theo-danh-muc/{duong_dan}', [ApiTinTucController::class, 'layBaiVietTheoDanhMuc']);
+        Route::get('load-danh-muc-tin-tuc', [ApiTinTucController::class, 'loadDanhMucTinTucVaBaiViet']);
+        Route::get('danhmuctintuc/{duongDan}', [ApiTinTucController::class, 'xemBaiVietTheoDanhMuc']);
         Route::post('xem-bai-viet/{duong_dan}', [ApiTinTucController::class, 'xemBaiViet']);
-        Route::get('load-bai-viet-va-danh-muc', [ApiTinTucController::class, 'loadBaiVietVaDanhMuc']);
 
         //Thanh toán MoMo
         Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
