@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\DonHangHoanTat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -111,6 +112,14 @@ class DonHang extends Model
         static::creating(function ($donHang) {
             $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
         });
+         // Kiểm tra trạng thái đơn hàng khi cập nhật
+         static::updated(function ($donHang) {
+            if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH) {
+                event(new DonHangHoanTat($donHang));
+            }
+        });
+    
+ 
     }
 
 

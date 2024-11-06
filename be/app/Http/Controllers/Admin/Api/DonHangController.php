@@ -224,6 +224,8 @@ class DonHangController extends Controller
                         'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? 0 : $donHang->tong_tien_don_hang,
                     ];
                     VanChuyen::create($vanChuyenData);
+
+                    
                 }
 
                 $thongBao = ThongBao::create([
