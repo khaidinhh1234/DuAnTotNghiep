@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\DonHang;
 use App\Models\User;
 use App\Models\VanChuyen;
 use Illuminate\Http\Request;
@@ -12,31 +11,39 @@ use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 
-
 class ThongBaoTelegramController extends Controller
 {
     // Hàm gửi thông báo qua Telegram khi có đơn hàng mới cho tất cả shipper
-    public function thongBaoDonHangMoi($id)
+    public function thongBaoDonHangMoi(Request $request)
     {
-        $vanChuyen = VanChuyen::find($id);
+        $vanChuyenId = $request->id_van_chuyen;
+        // Tìm thông tin vận chuyển và shipper
+        $vanChuyen = VanChuyen::find($vanChuyenId);
 
+        // Kiểm tra xem đơn hàng có tồn tại
         if (!$vanChuyen) {
             return response()->json(['message' => 'Không tìm thấy đơn hàng.'], 404);
         }
 
+        // Chuẩn bị nội dung thông báo
         $message = "📦 Đơn hàng mới đã được giao cho bạn!\n";
         $message .= "Mã vận chuyển: {$vanChuyen->ma_van_chuyen}\n";
         $message .= "Trạng thái: {$vanChuyen->trang_thai_van_chuyen}\n";
         $message .= "COD: {$vanChuyen->tien_cod} VND\n";
         $message .= "Ghi chú: {$vanChuyen->ghi_chu}\n";
 
-        $shipper = User::findOrFail($vanChuyen->shipper_id);
-        $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
+        // Lấy danh sách các shipper có số điện thoại và `chat_id`
+        $shippers = User::whereNotNull('so_dien_thoai')
+            ->whereNotNull('telegram_chat_id')
+            ->get();
+
+        // Gửi thông báo tới từng shipper
+        foreach ($shippers as $shipper) {
+            $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
+        }
 
         return response()->json(['message' => 'Thông báo đã được gửi tới tất cả shipper.']);
     }
-
-    // Hàm thông báo khi đơn hàng hoàn tất
     public function thongBaoHoanTatGiaoHang($id)
     {
         $vanChuyen = VanChuyen::find($id);
