@@ -81,13 +81,6 @@ class TaiKhoanController extends Controller
                 'hang_thanh_vien_id' => $hangThanhVien->id
             ]);
 
-            DB::table('vi_tiens')->insert([
-                'user_id' => $taiKhoan->id,
-                'so_du' => 0,
-                'crated_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ]);
-
             if ($request->vai_tros == []) {
                 $member = VaiTro::query()->where('ten_vai_tro', operator: 'Khách hàng')->first();
                 if ($member == []) {
@@ -98,6 +91,12 @@ class TaiKhoanController extends Controller
                         ]
                     );
                 }
+                DB::table('vi_tiens')->insert([
+                    'user_id' => $taiKhoan->id,
+                    'so_du' => 0,
+                    'crated_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
                 $taiKhoan->vaiTros()->attach($member->id);
             } else {
                 foreach ($request->vai_tros ?? [] as $vaiTro) {
