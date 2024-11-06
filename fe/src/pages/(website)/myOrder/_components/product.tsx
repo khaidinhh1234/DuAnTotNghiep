@@ -1,5 +1,6 @@
 import { sanPham2 } from "@/assets/img";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 // Component hiển thị thông tin sản phẩm
@@ -19,7 +20,7 @@ const ProductItem = ({
   trang_thai_thanh_toan,
 }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [value, setValue] = useState<string>("");
   const handleCancelOrder = () => {
     if (status === "Hoàn tất đơn hàng") {
       console.log("Đánh giá");
@@ -31,102 +32,58 @@ const ProductItem = ({
   };
 
   const closeModal = () => setIsModalOpen(false);
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    console.log(value);
+    setIsModalOpen(false);
+  };
   return (
     <>
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-lg font-semibold mb-4">Chọn Lý Do Hủy</h2>
-            <p className="text-sm text-gray-600 mb-4">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              Chọn Lý Do Hủy
+            </h2>
+            <p className="text-sm text-gray-600">
               Vui lòng chọn lý do hủy. Với lý do này, bạn sẽ hủy tất cả sản phẩm
               trong đơn hàng và không thể thay đổi sau đó.
             </p>
 
-            <form>
-              <div className="space-y-2">
-                <label className="flex items-center">
+            <form className="space-y-3">
+              {[
+                "Muốn thay đổi địa chỉ giao hàng",
+                "Muốn nhập/thay đổi mã Voucher",
+                "Muốn thay đổi sản phẩm trong đơn hàng (size, màu sắc, số lượng, ...)",
+                "Thủ tục thanh toán quá rắc rối",
+                "Tìm thấy giá rẻ hơn ở chỗ khác",
+                "Đổi ý, không muốn mua nữa",
+                "Lý do khác",
+              ].map((reason, index) => (
+                <label key={index} className="flex items-center">
                   <input
                     type="radio"
-                    name="cancelReason"
-                    className="form-radio text-red-500 h-4 w-4 mr-2"
+                    className="form-radio text-red-500 h-5 w-5 mr-3 focus:ring focus:ring-red-200"
+                    onChange={() => setValue(reason)}
                   />
-                  <span className="text-gray-700">
-                    Muốn thay đổi địa chỉ giao hàng
-                  </span>
+                  <span className="text-gray-700">{reason}</span>
                 </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    className="form-radio text-red-500 h-4 w-4 mr-2"
-                  />
-                  <span className="text-gray-700">
-                    Muốn nhập/thay đổi mã Voucher
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    className="form-radio text-red-500 h-4 w-4 mr-2"
-                  />
-                  <span className="text-gray-700">
-                    Muốn thay đổi sản phẩm trong đơn hàng (size, màu sắc, số
-                    lượng, ...)
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    className="form-radio text-red-500 h-4 w-4 mr-2"
-                  />
-                  <span className="text-gray-700">
-                    Thủ tục thanh toán quá rắc rối
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    className="form-radio text-red-500 h-4 w-4 mr-2"
-                  />
-                  <span className="text-gray-700">
-                    Tìm thấy giá rẻ hơn ở chỗ khác
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    className="form-radio text-red-500 h-4 w-4 mr-2"
-                  />
-                  <span className="text-gray-700">
-                    Đổi ý, không muốn mua nữa
-                  </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    className="form-radio text-red-500 h-4 w-4 mr-2"
-                  />
-                  <span className="text-gray-700">Lý do khác</span>
-                </label>
-              </div>
+              ))}
+              <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                <button
+                  className="text-gray-600 hover:text-gray-800 text-sm font-medium focus:outline-none"
+                  onClick={closeModal}
+                >
+                  KHÔNG PHẢI BÂY GIỜ
+                </button>
+                <button
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-md shadow-lg transition-all"
+                  onClick={(e: any) => handleSubmit(e)}
+                >
+                  HỦY ĐƠN HÀNG
+                </button>
+              </div>{" "}
             </form>
-
-            <div className="mt-6 flex justify-between">
-              <button
-                className="text-gray-600 hover:underline"
-                onClick={closeModal}
-              >
-                KHÔNG PHẢI BÂY GIỜ
-              </button>
-              <button className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg">
-                HỦY ĐƠN HÀNG
-              </button>
-            </div>
           </div>
         </div>
       )}

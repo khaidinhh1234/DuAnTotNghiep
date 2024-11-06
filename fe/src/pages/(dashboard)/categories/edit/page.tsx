@@ -151,18 +151,18 @@ const CategoriesEdit = () => {
                   <Input placeholder="Nhập tên danh mục" />
                 </Form.Item>
                 <Form.Item label="Chọn danh mục cha" name="cha_id">
-                {allCategoriesData ? (
-                  <AddCategorySelect
-                    categoriesData={allCategoriesData}
-                    onChange={(value) => {
-                      console.log('Category selected:', value);
-                      form.setFieldsValue({ category: value });
-                    }}
-                    value={form.getFieldValue('category')}
-                  />
-                ) : (
-                  <Select disabled placeholder="Đang tải danh mục..." />
-                )}
+                  {allCategoriesData ? (
+                    <AddCategorySelect
+                      categoriesData={allCategoriesData}
+                      onChange={(value) => {
+                        console.log("Category selected:", value);
+                        form.setFieldsValue({ category: value });
+                      }}
+                      value={form.getFieldValue("category")}
+                    />
+                  ) : (
+                    <Select disabled placeholder="Đang tải danh mục..." />
+                  )}
                 </Form.Item>
                 <Form.Item
                   label="Thêm ảnh"

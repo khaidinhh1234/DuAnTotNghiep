@@ -30,12 +30,12 @@ const CategoriesAdd = () => {
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
       const response = await instance.post(`/danhmuc`, category);
+      nav("/admin/categories/add");
       return response.data;
     },
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
       form.resetFields();
-      nav("/admin/categories/add");
     },
     onError: (error) => {
       message.error(error.message);
@@ -115,10 +115,10 @@ const CategoriesAdd = () => {
                   <AddCategorySelect
                     categoriesData={allCategoriesData}
                     onChange={(value) => {
-                      console.log('Category selected:', value);
+                      console.log("Category selected:", value);
                       form.setFieldsValue({ category: value });
                     }}
-                    value={form.getFieldValue('category')}
+                    value={form.getFieldValue("category")}
                   />
                 ) : (
                   <Select disabled placeholder="Đang tải danh mục..." />
