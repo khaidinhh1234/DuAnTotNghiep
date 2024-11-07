@@ -54,12 +54,15 @@ class MoMoController extends Controller
             $amount = $request->amount;
             if (isset($request->ma_don_hang)) {
                 $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
+                $redirectUrl = env('MOMO_REDIRECT_URL');
+                $ipnUrl = env('MOMO_IPN_URL');
             } elseif (isset($request->ma_giao_dich)) {
                 $orderId = $request->ma_giao_dich . '-' . random_int(100000, 999999);
+                $redirectUrl = env('MOMO_REDIRECT_VT_URL');
+                $ipnUrl = env('MOMO_IPN_VT_URL');
             }
 
-            $redirectUrl = env('MOMO_REDIRECT_URL');
-            $ipnUrl = env('MOMO_IPN_URL');
+            
             $extraData = "";
 
             $requestId = time() . "";
@@ -102,11 +105,13 @@ class MoMoController extends Controller
             $amount = $request->amount;
             if (isset($request->ma_don_hang)) {
                 $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
+                $redirectUrl = env('MOMO_REDIRECT_URL');
+                $ipnUrl = env('MOMO_IPN_URL');
             } elseif (isset($request->ma_giao_dich)) {
                 $orderId = $request->ma_giao_dich . '-' . random_int(100000, 999999);
+                $redirectUrl = env('MOMO_REDIRECT_VT_URL');
+                $ipnUrl = env('MOMO_IPN_VT_URL');
             }
-            $redirectUrl = env('MOMO_REDIRECT_URL');
-            $ipnUrl = env('MOMO_IPN_URL');
             $extraData = "";
 
             $requestId = time() . "";
