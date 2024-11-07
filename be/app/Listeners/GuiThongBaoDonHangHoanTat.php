@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\Api\ThongBaoTelegramController;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class GuiThongBaoDonHangHoanTat
+class GuiThongBaoDonHangHoanTat implements ShouldQueue
 {
     /**
      * Create the event listener.

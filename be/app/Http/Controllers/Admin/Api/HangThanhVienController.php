@@ -52,6 +52,7 @@ class HangThanhVienController extends Controller
             return response()->json(['errors' => $validateHangThanhVien->errors()], 422);
         }
 
+
         $exists = HangThanhVien::where(function ($query) use ($request) {
             // kiểm tra bất kì tối thiểu hay tối đa nằm trong khaonr bất kì bản ghio nòa cũng sẽ báo
             $query->whereBetween('chi_tieu_toi_thieu', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
@@ -60,6 +61,7 @@ class HangThanhVienController extends Controller
                     $subQuery->where('chi_tieu_toi_thieu', '<=', $request->chi_tieu_toi_thieu)
                         ->where('chi_tieu_toi_da', '>=', $request->chi_tieu_toi_da);
                 });
+
         })->exists();
 
         if ($exists) {
@@ -146,7 +148,7 @@ class HangThanhVienController extends Controller
         if ($exists) {
             return response()->json(['error' => 'Khoảng chi tiêu đã tồn tại hoặc bị chồng lấn.'], 422);
         }
-    
+
         try {
             DB::beginTransaction();
             $hang = HangThanhVien::findOrFail($id);
