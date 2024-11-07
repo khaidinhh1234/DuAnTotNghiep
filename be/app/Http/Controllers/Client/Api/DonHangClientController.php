@@ -113,6 +113,9 @@ class DonHangClientController extends Controller
                 return $order->chiTiets->sum('so_luong');
             });
             $tongTienSanPham = $donHang->sum(function ($order) {
+                if($order->chiTiets->sum('thanh_tien') < 500000){
+                    return $order->chiTiets->sum('thanh_tien') + 20000;
+                }
                 return $order->chiTiets->sum('thanh_tien');
             });
 
@@ -159,8 +162,8 @@ class DonHangClientController extends Controller
 
             //Lấy mã giảm giá
             $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
+            $soTienGiamGia = 0;
             if ($donHang->ma_giam_gia) {
-                $soTienGiamGia = 0;
 
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
                     ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
@@ -207,15 +210,8 @@ class DonHangClientController extends Controller
             $tongSoLuong = $donHang->chiTiets->sum('so_luong');
             $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
 
-            //Tính tiền ship
-            if($donHang->mien_phi_van_chuyen == 1){
-                $tienShip = 0;
-                $soTienGiamShip = 20000;
-            }else{
-                $tienShip = 20000;
-                $soTienGiamShip = 0;
-            }
-
+            // Tính tiền ship
+            $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -227,7 +223,9 @@ class DonHangClientController extends Controller
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
                     'tien_ship' => $tienShip,
                     'so_tien_giam_gia' => $soTienGiamGia,
-                    'tiet_kiem' => $donHang->tong_tien_don_hang - $soTienGiamGia - $soTienGiamShip,
+                    'tiet_kiem' => $soTienGiamGia + $tienShip,
+                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
+                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc,
                     'danh_gia' => $danhGiaDonHang
                 ]
             ], 200);
@@ -245,7 +243,7 @@ class DonHangClientController extends Controller
     {
         try {
             DB::beginTransaction();
-            $donHang = DonHang::query()->with('vanChuyen')->findOrFail($id);
+            $donHang = DonHang::query()->with(relations: 'vanChuyen')->findOrFail($id);
 
             if ($donHang->vanChuyen->shipper_xac_nhan == 1) {
                 $donHang->vanChuyen->update([
@@ -376,6 +374,13 @@ class DonHangClientController extends Controller
                 }
             }
 
+            if ($tongTienDonHang < 500000) {
+                $tongTienDonHang += 20000;
+                $freeShip = 0;
+            } else {
+                $freeShip = 1;
+            }
+
             $maDonHang = 'DH' . strtoupper(uniqid());
             $donHang = DonHang::create([
                 'ma_don_hang' => $maDonHang,
@@ -391,7 +396,7 @@ class DonHangClientController extends Controller
                 'ma_giam_gia' => $request->ma_giam_gia ?? null,
                 'so_tien_giam_gia' => $soTienGiamGia,
                 // 'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
-                'mien_phi_van_chuyen' => $tongTienDonHang >= 500000 ? 1 : 0
+                'mien_phi_van_chuyen' => $freeShip
             ]);
             if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
                 $donHang->update([
