@@ -3,7 +3,7 @@ import instanceClient from "@/configs/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // Component hiển thị thông tin sản phẩm
 const ProductItem = ({
@@ -22,8 +22,12 @@ const ProductItem = ({
   trang_thai_thanh_toan,
 }: any) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [Payment, setPayment] = useState(false);
+
   const queryClient = useQueryClient();
   const [li_do_huy_hang, setValue] = useState<string>("");
+  const [phuong_thuc_thanh_toan, setPhuongthuc] = useState<any>({});
+  // console.log("phuong_thuc_thanh_toan", phuong_thuc_thanh_toan);
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       // console.log(data);
@@ -71,8 +75,124 @@ const ProductItem = ({
     const data = { li_do_huy_hang, ma_don_hang };
     mutate(data);
   };
+  const nav = useNavigate();
+  const { mutate: mutatePayment, isPending } = useMutation({
+    mutationFn: async (data: any) => {
+      // console.log(data);
+      try {
+        if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
+          const response = await instanceClient.post("payment/momo", data);
+          if (response.data && response.data.payUrl) {
+            window.location.href = response.data.payUrl; // Redirect the user to the MoMo payment interface
+          }
+          if (response.status === 200) {
+            // message.success("Thanh toán MoMo thành công");
+            message.success("Chờ  xử lý Thanh toán");
+          }
+        } else if (data.phuong_thuc_thanh_toan === "Thanh toán khi nhận hàng") {
+          message.success("Đặt hàng thành công");
+          nav(`/thankyou?orderId=${data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
+        } else {
+          message.error("Đặt hàng thất bại");
+          throw new Error("Error during order creation or MoMo payment");
+        }
+        // const response = await instanceClient.post(`payment/momo`, data);
+        // if (response.data && response.data.payUrl) {
+        //   window.location.href = response.data.payUrl; // Redirect the user to the MoMo payment interface
+        // }
+        // if (response.status === 200) {
+        //   // message.success("Thanh toán MoMo thành công");
+        //   message.success("Thanh toán thành công");
+        // }
+        // return response.data;
+      } catch (error) {
+        console.log(error);
+        message.error("Thanh toán thất bại");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["MyOrder_LISTas"],
+      });
+    },
+  });
+  const handlethanhtoan = (e: any) => {
+    e.preventDefault();
+    const data = { ma_don_hang, phuong_thuc_thanh_toan, amount: tong_tien };
+    // console.log(data);
+    mutatePayment(data);
+  };
+
+  const PaymentClose = [
+    {
+      name: "Thanh toán quét mã MoMoQR",
+      value: "Momo_QR",
+      img: "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730963854/nzgq1qiuvtynqdkhwc5g.png",
+    },
+    { name: "Thẻ ATM  và tài khoản ngân hàng", value: "Momo_ATM" },
+    // {
+    //   name: "Thanh toán qua Visa, MasterCard, JCB",
+    //   value: "Ví điện tử",
+    // },
+    { name: "Ví Glow Clothing", value: "Ví tiền" },
+    { name: "Thanh toán khi nhận hàng", value: "Thanh toán khi nhận hàng" },
+  ];
   return (
     <>
+      {Payment && (
+        <>
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full space-y-4">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                Phương thức thanh toán
+              </h2>
+              <p className="text-sm text-gray-600">
+                Vui lòng chọn lý do hủy. Với lý do này, bạn sẽ hủy tất cả sản
+                phẩm trong đơn hàng và không thể thay đổi sau đó.
+              </p>
+
+              <form className="space-y-3">
+                {PaymentClose?.map((reason: any, index) => (
+                  <label
+                    key={index}
+                    className="flex items-center my-5  border-b py-3"
+                  >
+                    <input
+                      type="radio"
+                      name="phuong_thuc_thanh_toan"
+                      className="form-radio text-red-500 h-5 w-5 mr-3 focus:ring focus:ring-red-200"
+                      onChange={() => setPhuongthuc(reason?.value)}
+                    />
+                    <span className="text-gray-700 mr-3">{reason?.name}</span>{" "}
+                    <img
+                      src={reason?.img}
+                      alt={reason?.name}
+                      className="w-12 h-12"
+                    />
+                  </label>
+                ))}
+                <div className="flex justify-between items-center pt-4  border-gray-200">
+                  <button
+                    className="text-gray-600 hover:text-gray-800 text-sm font-medium focus:outline-none"
+                    onClick={(e: any) => {
+                      e.preventDefault();
+                      setPayment(!Payment);
+                    }}
+                  >
+                    KHÔNG PHẢI BÂY GIỜ
+                  </button>
+                  <button
+                    className="bg-gray-600 hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-md shadow-lg transition-all"
+                    onClick={(e: any) => handlethanhtoan(e)}
+                  >
+                    Thanh toán ngay
+                  </button>
+                </div>{" "}
+              </form>
+            </div>
+          </div>
+        </>
+      )}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full space-y-4">
@@ -249,18 +369,33 @@ const ProductItem = ({
                   : "Hủy Đơn Hàng"}
             </button>
           )}{" "}
+          <br />
           {trang_thai_thanh_toan == "Chưa thanh toán" &&
             status == "Chờ xác nhận" && (
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log("click");
+                  setPayment(true);
                 }}
-                className="shadow-md shadow-slate-600/50  hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-6 mb-2 rounded-lg text-white"
+                className={`shadow-md shadow-slate-600/50  hover:text-white  bg-black hover:bg-black/50 font-medium  text-sm py-3 px-6 mb-2 rounded-lg text-white  ${isPending ? "cursor-not-allowed" : ""}`}
               >
-                Tiếp tục thanh toán
+                {isPending ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin "></i> Tiếp tục
+                    thanh toán
+                  </>
+                ) : (
+                  "Tiếp tục thanh toán"
+                )}
               </button>
             )}
+          {(status === "Hoàn tất đơn hàng" ||
+            status === "Chờ khách hàng xác nhận" ||
+            trang_thai_thanh_toan == "Đã thanh toán") && (
+            <button className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white">
+              Hoàn hàng
+            </button>
+          )}
         </div>
         <div className="col-span-7 border-t mt-2 py-3 lg:flex lg:justify-between">
           {" "}
