@@ -30,13 +30,6 @@ class TinTucController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Tìm 5 bài viết có lượt xem tăng nhiều nhất trong 24 giờ qua
-            $time24HoursAgo = Carbon::now()->subDay();
-            $baiVietCoLuotXemTangTrong24h = TinTuc::select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'created_at')
-                ->where('updated_at', '>=', $time24HoursAgo)
-                ->orderBy('luot_xem', 'desc')
-                ->limit(5)
-                ->get();
 
             // Trả về kết quả
             return response()->json([
@@ -45,7 +38,6 @@ class TinTucController extends Controller
                 'message' => 'Lấy dữ liệu thành công.',
                 'Danh_muc_tin_tuc' => $danhMucTinTuc,
                 'Lay_bai_viet_theo_danh_muc' => $loadBaiVietTheoDanhMuc,
-                'Bai_viet_duoc_xem_nhieu_nhat' => $baiVietCoLuotXemTangTrong24h
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -74,6 +66,15 @@ class TinTucController extends Controller
                 ->limit(5)
                 ->get();
 
+            // Tìm 5 bài viết có lượt xem tăng nhiều nhất trong 24 giờ qua
+            $time24HoursAgo = Carbon::now()->subDay();
+            $baiVietCoLuotXemTangTrong24h = TinTuc::where('danh_muc_tin_tuc_id', $danhMuc->id)
+                ->where('updated_at', '>=', $time24HoursAgo)
+                ->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'created_at')
+                ->orderBy('luot_xem', 'desc')
+                ->limit(5)
+                ->get();
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -88,6 +89,7 @@ class TinTucController extends Controller
                 ],
                 'baiViet' => $baiViet,
                 'baiVietCoNhieuLuotXem' => $baiVietCoNhieuLuotXem,
+                'baiVietCoLuotXemNhieuNhatTrong24h' => $baiVietCoLuotXemTangTrong24h
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

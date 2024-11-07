@@ -15,6 +15,9 @@ import VerificationModal from "./VerificationModal";
 
 const ShippingAddressPage = () => {
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
+  const [user] = useLocalStorage("user" as any, {});
+  const member = user?.user;
+  console.log(member);
   const {
     register,
     handleSubmit,
@@ -22,6 +25,12 @@ const ShippingAddressPage = () => {
     reset,
   } = useForm({
     resolver: zodResolver(checkout_address),
+    defaultValues: {
+      ten_nguoi_dat_hang: member?.ho + " " + member?.ten || "",
+      so_dien_thoai_nguoi_dat_hang: member?.so_dien_thoai || "",
+      dia_chi_nguoi_dat_hang: member?.dia_chi || "",
+      email_nguoi_dat_hang: member?.email || "",
+    },
   });
   const nav = useNavigate();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
@@ -31,10 +40,16 @@ const ShippingAddressPage = () => {
       console.log(data);
       try {
         // Bước 1: Tạo đơn hàng
+        if (data.phuong_thuc_thanh_toan === "Ví tiền") {
+          setPendingOrderData(data);
+          setShowVerificationModal(true);
+          return;
+        }
+
         const order = await instanceClient.post(`don-hang`, data);
         // console.log(order);
         // Bước 2: Thực hiện thanh toán qua MoMo
-        
+
         if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
           const momoPaymentData = {
             phuong_thuc_thanh_toan: data.phuong_thuc_thanh_toan,
@@ -57,9 +72,9 @@ const ShippingAddressPage = () => {
         } else if (data.phuong_thuc_thanh_toan === "Thanh toán khi nhận hàng") {
           toast.success("Đặt hàng thành công");
           nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
-        } else if (data.phuong_thuc_thanh_toan === "Ví tiền") {
-          setPendingOrderData(order.data);
-          setShowVerificationModal(true);;
+          // } else if (data.phuong_thuc_thanh_toan === "Ví tiền") {
+          //   setPendingOrderData(order.data);
+          //   setShowVerificationModal(true);;
         } else {
           message.error("Đặt hàng thất bại");
           throw new Error("Error during order creation or MoMo payment");
@@ -109,24 +124,22 @@ const ShippingAddressPage = () => {
   const products = checkout?.chi_tiet_don_hang?.san_pham;
   const handleVerification = async (code: string) => {
     try {
-      const verifyData = {
-        ma_xac_minh: code,
-        phuong_thuc_thanh_toan: "Ví tiền"
+      const orderData = {
+        ...pendingOrderData,
+        ma_xac_minh: code
       };
-  
-      const order = await instanceClient.post(`don-hang`, verifyData);
-      
-      toast.success("Thanh toán thành công");
-      nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
-      
-    } catch (error) {
-      toast.error("Mã xác minh không đúng");
+
+      const order = await instanceClient.post(`don-hang`, orderData);
+      toast.success("Đặt hàng thành công");
+      nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!');
     } finally {
       setShowVerificationModal(false);
       setPendingOrderData(null);
     }
   };
-  
+
   return (
     <>
       <section className="container">
@@ -148,7 +161,7 @@ const ShippingAddressPage = () => {
           </form>
         </div>
       </section>
-      <VerificationModal 
+      <VerificationModal
         isOpen={showVerificationModal}
         onClose={() => setShowVerificationModal(false)}
         onVerify={handleVerification}
