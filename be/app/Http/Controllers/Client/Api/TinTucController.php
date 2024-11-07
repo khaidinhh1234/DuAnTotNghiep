@@ -24,6 +24,7 @@ class TinTucController extends Controller
                 ->select('id', 'ten_danh_muc_tin_tuc', 'created_at')
                 ->with(['tinTuc' => function ($query) {
                     $query->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'created_at')
+                        ->with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
                         ->orderBy('created_at', 'desc')
                         ->limit(4);
                 }])
@@ -62,6 +63,7 @@ class TinTucController extends Controller
 
             $baiVietCoNhieuLuotXem = TinTuc::where('danh_muc_tin_tuc_id', $danhMuc->id)
                 ->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'created_at')
+                ->with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
                 ->orderBy('luot_xem', 'desc')
                 ->limit(5)
                 ->get();
