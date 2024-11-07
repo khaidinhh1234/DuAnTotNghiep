@@ -584,6 +584,7 @@ class DonHangClientController extends Controller
     {
         $validated = $request->validate([
             'ly_do_hoan_don' => 'required|string|max:255',
+            'hinh_anh_hoan_tra' => 'required|string'
         ]);
 
         $userId = Auth::id();
@@ -599,6 +600,11 @@ class DonHangClientController extends Controller
                     'message' => 'Đơn hàng không tồn tại hoặc không thể hoàn hàng.',
                 ], 400);
             }
+            $donHang->update([
+                'trang_thai_don_hang' => DonHang::TTDH_CXNHH,
+                'ly_do_hoan_don' => $validated['ly_do_hoan_don'],
+                'hinh_anh_hoan_tra' => $validated['hinh_anh_hoan_tra'],
+            ]);
             $viTienId = User::find($userId)->viTien->id;
             $giaoDichVi = GiaoDichVi::create([
                 'vi_tien_id' => $viTienId,
@@ -675,7 +681,7 @@ class DonHangClientController extends Controller
                     ], 400);
                 }
                 $yeuCauRutTien = YeuCauRutTien::create([
-                    'vi_tien_id' => $viTien->id,
+                    'vi_tien_id' => $viUser->id,
                     'ngan_hang_id' => $nganHangId,
                     'so_tien' => (int)$soTien,
                     'trang_thai' => 'cho_duyet',
@@ -694,9 +700,9 @@ class DonHangClientController extends Controller
                 ]);
 
                 LichSuGiaoDich::create([
-                    'vi_tien_id' => $viTien->id,
-                    'so_du_truoc' => $viTien->so_du,
-                    'so_du_sau' => $viTien->so_du - $soTien,
+                    'vi_tien_id' => $viUser->id,
+                    'so_du_truoc' => $viUser->so_du,
+                    'so_du_sau' => $viUser->so_du - $soTien,
                     'ngay_thay_doi' => now(),
                     'mo_ta' => 'Rút tiền từ ví tiền',
                 ]);

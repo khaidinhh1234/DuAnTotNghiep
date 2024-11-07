@@ -62,7 +62,7 @@ const Blog = () => {
                                 {category.tin_tuc.map((article: any) => (
                                     <div key={article.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
                                         <div className="bg-white   p-4">
-                                            <Link to={`/tin-tuc/${article.duong_dan}`}>
+                                            <Link to={`/xem-bai-viet/${article.duong_dan}`}>
                                                 <img
                                                     src={article.anh_tin_tuc}
                                                     alt=""

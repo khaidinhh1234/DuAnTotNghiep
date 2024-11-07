@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import instanceClient from '@/configs/client';
 import { Carousel } from 'antd';
@@ -8,6 +8,7 @@ interface Article {
     tieu_de: string;
     noi_dung: string;
     anh_tin_tuc: string;
+    duong_dan: string;
     danh_muc_tin_tuc_id: number;
     luot_xem: number | null;
     created_at: string;
@@ -41,13 +42,10 @@ const BlogCategories = () => {
                     <>
                         <div className="flex justify-center py-10">
                             <div className="flex flex-row items-stretch gap-0 w-full px-10 h-full">
-                                {/* Text Section on the Left */}
                                 <div className="w-1/2 bg-gray-100 p-28">
                                     <h3 className="text-5xl font-semibold mb-5">{data.danhMuc.ten_danh_muc_tin_tuc}</h3>
                                     <p className="text-xl text-gray-500">{data.danhMuc.mo_ta}</p>
                                 </div>
-
-                                {/* Image Section on the Right */}
                                 <div className="w-1/2 h-full">
                                     <img
                                         src={data.danhMuc.hinh_anh}
@@ -74,7 +72,8 @@ const BlogCategories = () => {
                                 autoplaySpeed={2000}
                                 className="h-[700px] autoplay">
                                 {data.baiVietCoLuotXemNhieuNhatTrong24h.map((article: Article) => (
-                                    <div key={article.id} className="h-full relative flex justify-center items-center">
+                                   <Link to={`/xem-bai-viet/${article.duong_dan}`}>
+                                     <div key={article.id} className="h-full relative flex justify-center items-center">
                                         <img
                                             src={article.anh_tin_tuc}
                                             alt={article.tieu_de}
@@ -85,11 +84,12 @@ const BlogCategories = () => {
                                                 <h3 className="text-lg font-semibold">{article.tieu_de}</h3>
                                                 <p className="text-sm mt-1 line-clamp-2" dangerouslySetInnerHTML={{ __html: article.noi_dung }}></p>
                                             </div>
-                                            <button className="px-4 py-2 border-2 border-white bg-transparent text-white rounded-md hover:bg-white hover:text-black hover:scale-110 mb-10 mr-14 transition-transform">
+                                            <Link to={`/xem-bai-viet/${article.duong_dan}`} className="px-4 py-2 border-2 border-white bg-transparent text-white rounded-md hover:bg-white hover:text-black hover:scale-110 mb-10 mr-14 transition-transform">
                                                 Đọc thêm
-                                            </button>
+                                            </Link>
                                         </div>
                                     </div>
+                                   </Link>
                                 ))}
                             </Carousel>
                         ) : (
@@ -126,6 +126,7 @@ const BlogCategories = () => {
                 <div className="grid grid-cols-3 gap-5">
                     {data?.baiViet?.data && data.baiViet.data.length > 0 ? (
                         data.baiViet.data.map((article: Article) => (
+                        <Link to={`/xem-bai-viet/${article.duong_dan}`}>
                             <div key={article.id} className="p-4">
                                 <img
                                     src={article.anh_tin_tuc}
@@ -137,6 +138,7 @@ const BlogCategories = () => {
                                     {new Date(article.created_at).toLocaleDateString()}
                                 </p>
                             </div>
+                        </Link>
                         ))
                     ) : (
                         <p>Không có bài viết nào.</p>
