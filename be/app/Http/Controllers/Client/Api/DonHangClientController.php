@@ -157,6 +157,20 @@ class DonHangClientController extends Controller
                 'vanChuyen',
             ])->where('ma_don_hang', $maDonHang)->firstOrFail();
 
+            //Lấy mã giảm giá
+            $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
+            if ($donHang->ma_giam_gia) {
+                $soTienGiamGia = 0;
+
+                $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
+                    : $maGiamGia->giam_gia;
+
+                if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
+                    $soTienGiamGia = $donHang->tong_tien_don_hang;
+                }
+            }
+
             $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
                 $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
                 $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
@@ -193,6 +207,15 @@ class DonHangClientController extends Controller
             $tongSoLuong = $donHang->chiTiets->sum('so_luong');
             $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
 
+            //Tính tiền ship
+            if($donHang->mien_phi_van_chuyen == 1){
+                $tienShip = 0;
+                $soTienGiamShip = 20000;
+            }else{
+                $tienShip = 20000;
+                $soTienGiamShip = 0;
+            }
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -202,6 +225,9 @@ class DonHangClientController extends Controller
                     'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'tien_ship' => $tienShip,
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                    'tiet_kiem' => $donHang->tong_tien_don_hang - $soTienGiamGia - $soTienGiamShip,
                     'danh_gia' => $danhGiaDonHang
                 ]
             ], 200);
