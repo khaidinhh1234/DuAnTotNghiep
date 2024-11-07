@@ -615,7 +615,7 @@ const Header2 = () => {
                     ))}
 
 
-                    <a href="/" className="text-xl">Bài viết</a>
+                    <a href="/blog" className="text-xl">Bài viết</a>
                     <a href="/vourcher" className="text-xl">Khuyến mại</a>
                     <a href="/contact" className="text-xl">Liên hệ</a>
                 </nav>
