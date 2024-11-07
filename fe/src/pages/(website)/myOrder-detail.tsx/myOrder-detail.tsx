@@ -30,15 +30,15 @@ const MyOrderdetail = () => {
   if (isError) {
     console.log("Error:", error.message);
   }
-  // console.log("Data:", data);
+  console.log("Data:", data);
   const chitiet = data?.data;
-  console.log("Chi tiết đơn hàng:", chitiet);
+  // console.log("Chi tiết đơn hàng:", chitiet);
 
   // const chitietsanpham = data?.data?.don_hang;
   const thongtin = data?.data?.thong_tin;
   // console.log(thongtin);
   const donhang = data?.data?.don_hang;
-  console.log(donhang);
+  // console.log(donhang);
   const phoneNumber =
     donhang?.so_dien_thoai_nguoi_dat_hang ?? thongtin?.so_dien_thoai;
   const formattedPhoneNumber = phoneNumber?.replace(/^0/, "(+84)");
