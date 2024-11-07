@@ -72,9 +72,6 @@ const ShippingAddressPage = () => {
         } else if (data.phuong_thuc_thanh_toan === "Thanh toán khi nhận hàng") {
           toast.success("Đặt hàng thành công");
           nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
-          // } else if (data.phuong_thuc_thanh_toan === "Ví tiền") {
-          //   setPendingOrderData(order.data);
-          //   setShowVerificationModal(true);;
         } else {
           message.error("Đặt hàng thất bại");
           throw new Error("Error during order creation or MoMo payment");

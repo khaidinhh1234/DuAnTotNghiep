@@ -140,6 +140,7 @@ import WalletProtectedRoute from './WalletProtectedRoute';
 import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
+
 const Router = () => {
   //
 

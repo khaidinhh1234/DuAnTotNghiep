@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tin_tucs', function (Blueprint $table) {
-            $table->dropColumn('luot_xem');
+            $table->integer('luot_xem')->default(0);
         });
     }
 };

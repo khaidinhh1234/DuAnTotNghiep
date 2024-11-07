@@ -46,7 +46,7 @@ class DonHang extends Model
     // Trạng thái thanh toán
     const TTTT_CTT = 'Chưa thanh toán';
     const TTTT_DTT = 'Đã thanh toán';
-    const TTTT_DHT = "Đã hoàn hàng";
+    const TTTT_DHT = "Đã hoàn tiền";
 
     protected $fillable = [
         'user_id',
@@ -120,7 +120,6 @@ class DonHang extends Model
                 event(new DonHangHoanTat($donHang));
             }
         });
-
     }
 
 

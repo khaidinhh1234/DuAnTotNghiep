@@ -537,6 +537,117 @@ import { toast } from "react-toastify";
 import SettingsModal from "./RegisterWalletPassword";
 
 function TaiChinh() {
+  const queryParams = new URLSearchParams(window.location.search);
+  const resultCode = parseInt(queryParams.get("resultCode") ?? "0", 10);
+  const orderId = queryParams.get("orderId");
+  const partnerCode = queryParams.get("partnerCode");
+  const amount = parseInt(queryParams.get("amount") ?? "0", 10);
+  const requestId = queryParams.get("requestId");
+  const orderInfo = queryParams.get("orderInfo");
+  const orderType = queryParams.get("orderType");
+  const transId = queryParams.get("transId");
+  const payType = queryParams.get("payType");
+  const signature = queryParams.get("signature");
+  const datas = {
+    resultCode: resultCode,
+    partnerCode: partnerCode,
+    orderId: orderId,
+    amount: amount,
+    requestId: requestId,
+    orderInfo: orderInfo,
+    orderType: orderType,
+    transId: transId,
+    payType: payType,
+    signature: signature,
+  };
+  console.log(datas);
+
+  // const confirmPayment = useMutation({
+  //   mutationFn: async () => {
+  //     const response = await instanceClient.post(`/xac-nhan-nap-tien`, {
+  //       orderId: orderId,
+  //       resultCode: resultCode,
+  //       amount: amount,
+  //     });
+  //     return response.data;
+  //   },
+  //   onSuccess: (data) => {
+  //     if (resultCode === 0) {
+  //       toast.success("Nạp tiền thành công");
+  //     } else {
+  //       toast.error(data.message || "Nạp tiền thất bại");
+  //     }
+
+  //   },
+  //   onError: (error: any) => {
+  //     toast.error(error.response?.data?.message || "Nạp tiền thất bại");
+  //   }
+  // });
+  
+  // useEffect(() => {
+  //   if (orderId) {
+  //     confirmPayment.mutate();
+  //   }
+  // }, []);
+  
+  const [hasExecuted, setHasExecuted] = useState(false);
+
+const confirmPayment = useMutation({
+  mutationFn: async () => {
+    try {
+      const response = await instanceClient.post(`/xac-nhan-nap-tien`, {
+        orderId: orderId,
+        resultCode: resultCode,
+        amount: amount,
+      });
+      
+      if (resultCode === 0) {
+        toast.success("Nạp tiền thành công");
+      // } else {
+      //   toast.error(response.data.message || "Nạp tiền thất bại");
+       }
+      
+      return response.data;
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Nạp tiền thất bại");
+      throw error;
+    }
+  }
+});
+
+useEffect(() => {
+  if (orderId && !hasExecuted) {
+    confirmPayment.mutate();
+    setHasExecuted(true);
+  }
+}, [orderId]);
+
+  // const { data } = useQuery({
+  //   queryKey: ["checkbill"],
+  //   queryFn: async () => {
+  //     if (resultCode === 0) {
+  //       const response = await instanceClient.post(`/xac-nhan-nap-tien`, {
+  //         orderId: orderId,
+  //         resultCode: resultCode,
+  //         amount: amount,
+
+  //       });
+    
+  //       toast.success("Nạp tiền  thành công");
+  //       return response.data;
+  //     }
+  //     if (resultCode !== 0) {
+  //       const response = await instanceClient.post(`/xac-nhan-nap-tien`, {
+  //         orderId: orderId,
+  //         resultCode: resultCode,
+  //         amount: amount,
+
+  //       });
+  //       toast.error("Đặt hàng thất bại");
+  //       return response.data;
+  //     }
+  //   },
+  // });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [pins, setPins] = useState(['', '', '', '', '', '']);
   const [showForgotPinModal, setShowForgotPinModal] = useState(false);
