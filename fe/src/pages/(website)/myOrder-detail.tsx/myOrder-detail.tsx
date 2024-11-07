@@ -30,15 +30,15 @@ const MyOrderdetail = () => {
   if (isError) {
     console.log("Error:", error.message);
   }
-  console.log("Data:", data);
+  // console.log("Data:", data);
   const chitiet = data?.data;
   console.log("Chi tiết đơn hàng:", chitiet);
 
-  const chitietsanpham = data?.data?.don_hang;
+  // const chitietsanpham = data?.data?.don_hang;
   const thongtin = data?.data?.thong_tin;
   // console.log(thongtin);
   const donhang = data?.data?.don_hang;
-  // console.log(donhang);
+  console.log(donhang);
   const phoneNumber =
     donhang?.so_dien_thoai_nguoi_dat_hang ?? thongtin?.so_dien_thoai;
   const formattedPhoneNumber = phoneNumber?.replace(/^0/, "(+84)");
@@ -238,10 +238,20 @@ const MyOrderdetail = () => {
                   >
                     <p>
                       {" "}
-                      {/* <span className="text-gray-400 line-through">
-                        {(10000).toLocaleString("vi-VN")} đ{" "}
-                      </span> */}
-                      {(item?.thanh_tien).toLocaleString("vi-VN")} đ
+                      <span className="text-gray-400 line-through mx-2">
+                        {item?.bien_the_san_pham?.gia_khuyen_mai &&
+                          (item?.bien_the_san_pham?.gia_ban).toLocaleString(
+                            "vi-VN"
+                          ) + "đ"}
+                      </span>
+                      {(item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi !==
+                      null
+                        ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
+                        : item?.bien_the_san_pham?.gia_khuyen_mai !== null
+                          ? item?.bien_the_san_pham?.gia_khuyen_mai
+                          : item?.bien_the_san_pham?.gia_ban
+                      ).toLocaleString("vi-VN")}{" "}
+                      đ
                     </p>
                   </div>
                 </div>
@@ -353,10 +363,7 @@ const MyOrderdetail = () => {
                 ₫{(donhang?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
               </p>
               <p className="text-red-600 font-semibold text-2xl">
-                {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
-                  "vi-VN"
-                )}{" "}
-                đ
+                {(donhang?.tong_tien_don_hang ?? 0).toLocaleString("vi-VN")} đ
               </p>
             </div>
           </div>
@@ -395,9 +402,12 @@ const MyOrderdetail = () => {
         ) : (
           <div className="flex items-center justify-between">
             {" "}
-            <div className="text-start border-t pt-4">
+            <div className="text-start border-t pt-4 w-96 ">
               Lý do
-              <span className="ml-10">Lý do khác</span>
+              <span className="ml-10 pb-2 ">
+                {(donhang?.li_do_huy_hang || donhang?.li_do_hoan_hang) ??
+                  "Lí do khác"}
+              </span>
             </div>{" "}
             <div className="text-end border-t pt-4">
               Trạng thái thanh toán :{" "}
