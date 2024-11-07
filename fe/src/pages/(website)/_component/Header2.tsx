@@ -19,6 +19,7 @@ import './dropdown.css'
 //     children: Category[];
 // }
 
+
 const Header2 = () => {
     const [check, setcheck] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -38,6 +39,7 @@ const Header2 = () => {
             }
         };
 
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -50,6 +52,7 @@ const Header2 = () => {
             }
         };
 
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -61,10 +64,11 @@ const Header2 = () => {
         duong_dan: string;
         con: Category[];  // Chứa các danh mục con
     }
-    // 
+    //
     const [categories, setCategories] = useState<Category[]>([]);
     const [menuItems, setMenuItems] = useState<Category[]>([]);
     const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
+
 
     // Fetch danh mục cha
     useEffect(() => {
@@ -74,7 +78,7 @@ const Header2 = () => {
                 if (response.data.status) {
                     const categories = response.data.data.map((category: any) => ({
                         id: category.id,
-                        ten_danh_muc: category.ten_danh_muc,
+ten_danh_muc: category.ten_danh_muc,
                         duong_dan: category.duong_dan,
                         con: [] // Mảng con ban đầu rỗng
                     }));
@@ -85,8 +89,10 @@ const Header2 = () => {
             }
         };
 
+
         fetchParentCategories();
     }, []);
+
 
     // Fetch danh mục con
     const fetchCategories = async (parentId: number) => {
@@ -100,59 +106,65 @@ const Header2 = () => {
         }
     };
 
+
     // Handle hover event
     const handleMouseEnter = (id: number) => {
         setHoveredMenu(id);
         fetchCategories(id); // Fetch danh mục con khi hover vào danh mục cha
     };
 
+
     const handleMouseLeave = () => {
         setHoveredMenu(null);
         // setCategories([]); // Clear categories khi di chuột ra ngoài
     };
 
+
     // Hàm render các menu items từ dữ liệu categories
     const renderMenuItems = (items: any): MenuProps['items'] => {
-        console.log("items", items?.danh_muc)
-        return items?.danh_muc?.length !== 0 ?  items?.danh_muc?.map((category:any) => ({
-            key: category?.id?.toString(),
-            label: (
-                <div className="menu-item py-5 flex flex-col gap-y-2 items-start !m-0 !p-0 !mx-28 !gap-x-20">
-                    <div className="category flex items-center m-0 p-0 min-w-[100px]">
-                        <a className="text-black font-bold m-0 p-0" href={`/${category?.duong_dan}`} rel="noopener noreferrer">
-                            {category?.ten_danh_muc}
+        return items?.danh_muc?.length
+            ? items.danh_muc.map((category: any) => ({
+                key: category.id.toString(),
+                label: (
+                    <div className="menu-item py-5 flex flex-col gap-y-2 items-start !m-0 !p-0 !mx-28 !gap-x-20">
+                        <a className="row text-black text-sm font-bold" href={`/${category.duong_dan}`} rel="noopener noreferrer">
+                            {category.ten_danh_muc}
                         </a>
+                        {category.con && category.con.length > 0 && (
+                            <div className="subcategories flex flex-col">
+                                {category.con.map((subCategory: any) => (
+                                    <a
+                                        key={subCategory.id}
+                                        href={`/${subCategory.duong_dan}`}
+                                        rel="noopener noreferrer"
+                                        className="text-gray-950 text-sm"
+                                    >
+                                        {subCategory.ten_danh_muc}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                    {category?.con && category?.con?.length > 0 && (
-                        <div className="subcategories flex flex-col  !m-0 !p-0">
-                            {category?.con?.map((subCategory:any) => (
-                                <a
-                                    key={subCategory?.id}
-                                    href={`/${subCategory?.duong_dan}`}
-                                    rel="noopener noreferrer"
-                                    className="text-gray-400 text-sm m-0 p-0"
-                                >
-                                    {subCategory?.ten_danh_muc}
-                                </a>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            ),
-        })): [{ key: '1', label: '1' }, { key: '2', label: '2' }, { key: '3', label: '3' }];
+                ),
+            }))
+            : [];
     };
 
-    // Sử dụng hàm renderMenuItems trong Menu
+
     <Menu items={renderMenuItems(categories)} className="m-0 p-0" />
+
+
+
 
     console.log("asdasdasd", categories)
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as any)) {
                 // Khi click ra ngoài, ẩn phần tử
-                setcheck(false);
+setcheck(false);
             }
         };
+
 
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -169,6 +181,7 @@ const Header2 = () => {
     // console.log("member", member);
     // console.log("member", member);
 
+
     // console.log("giaohang", giaohangs);
     const logout = () => {
         // nav("/login");
@@ -180,6 +193,7 @@ const Header2 = () => {
     const [searchValue, setSearchValue] = useState("");
     const [menu, setMenu] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+
 
     // const handleMouseLeave = () => {
     //     setTimeout(() => {
@@ -200,13 +214,16 @@ const Header2 = () => {
     };
     const [isProductMenuVisible, setIsProductMenuVisible] = useState(false);
 
+
     const handleMouseEnterProduct = () => {
         setIsProductMenuVisible(true);
     };
 
+
     const handleMouseLeaveProduct = () => {
         setIsProductMenuVisible(false);
     };
+
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -215,12 +232,15 @@ const Header2 = () => {
             }
         };
 
+
         document.addEventListener("mousedown", handleClickOutside);
+
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [ref]);
+
 
     const access_token = user.access_token || localStorage.getItem("access_token");
     const { data } = useQuery({
@@ -239,7 +259,11 @@ const Header2 = () => {
         },
     });
 
+
     const dataCount = data?.notifications?.length || 0;
+
+
+
 
 
 
@@ -252,7 +276,7 @@ const Header2 = () => {
             name: "Sản phẩm",
             path: "/shop",
         },
-        {
+{
             name: "Giới thiệu",
             path: "/ourstory",
         },
@@ -267,42 +291,17 @@ const Header2 = () => {
     ];
     // const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
 
+
     // const handleMouseEnter = (menuId: number) => {
     //     setHoveredMenu(menuId);
     // };
 
+
     // const handleMouseLeave = () => {
     //     setHoveredMenu(null);
     // };
-    const items: MenuProps['items'] = [
-        {
-            key: '1',
-            label: (
-                <div>
-                    <div>
-                        1
-                    </div>
-                    <div>2</div>
-                </div>
-            ),
-        },
-        {
-            key: '2',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                    2nd menu item
-                </a>
-            ),
-        },
-        {
-            key: '3',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-                    3rd menu item
-                </a>
-            ),
-        },
-    ];
+
+
     const mainMenuItems = [
         { id: 1, label: "Nam" },
         { id: 2, label: "Nữ" },
@@ -348,7 +347,7 @@ const Header2 = () => {
         //                                             isActive ? "underline decoration-sky-500" : ""
         //                                         }
         //                                     >
-        //                                         {item.name}
+//                                         {item.name}
         //                                     </NavLink>
         //                                 </li>
         //                             ))}
@@ -397,12 +396,13 @@ const Header2 = () => {
         //                     /></Link>
         //                 </div>
 
+
         //                 <nav className="hidden lg:block order-3">
         //                     <ul className="flex items-center space-x-4">
         //                     <li>
         //                             <a href="/" className="px-4 py-2 block hover:bg-gray-100">Trang chủ</a>
         //                         </li>
-        //                         {menuItems.map((category) => (
+//                         {menuItems.map((category) => (
         //                             <li
         //                                 key={category.id}
         //                                 className="relative group"
@@ -421,6 +421,7 @@ const Header2 = () => {
         //                             </li>
         //                         ))}
 
+
         //                         <li>
         //                             <a href="/ourstory" className="px-4 py-2 block hover:bg-gray-100">Giới thiệu</a>
         //                         </li>
@@ -435,6 +436,7 @@ const Header2 = () => {
         //                         </li>
         //                     </ul>
         //                 </nav>
+
 
         //                 <div className="order-4 flex items-center space-x-6 cursor-pointer">
         //                     <span>
@@ -451,7 +453,7 @@ const Header2 = () => {
         //                             >
         //                                 <Input
         //                                     placeholder="Nhập từ khóa tìm kiếm"
-        //                                     size="large"
+//                                     size="large"
         //                                     value={searchValue}
         //                                     onChange={(e) => setSearchValue(e.target.value)}
         //                                     onPressEnter={() => onSearch(searchValue)}
@@ -459,6 +461,7 @@ const Header2 = () => {
         //                             </Modal>
         //                         </div>
         //                     </span>
+
 
         //                     {member ? (
         //                         <>
@@ -480,6 +483,7 @@ const Header2 = () => {
         //                                     </span>
         //                                 </i>
 
+
         //                                 <div
         //                                     className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications
         //                                             ? "opacity-100"
@@ -498,7 +502,7 @@ const Header2 = () => {
         //                                 <a href="/gio-hang">
         //                                     <i className="fa-regular fa-bag-shopping text-xl relative">
         //                                         <span
-        //                                             className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
+//                                             className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
         //                                                 } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
         //                                         >
         //                                             {data?.tong_so_luong}
@@ -538,7 +542,7 @@ const Header2 = () => {
         //                                         </li>
         //                                         <hr />
         //                                         {!phanquyen || phanquyen.length === 0 ? (
-        //                                             ""
+//                                             ""
         //                                         ) : (
         //                                             <>
         //                                                 <li className="my-1">
@@ -577,7 +581,7 @@ const Header2 = () => {
         //                                             <a
         //                                                 onClick={logout}
         //                                                 href=""
-        //                                                 className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+//                                                 className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
         //                                             >
         //                                                 <img
         //                                                     src="https://github.com/shadcn.png"
@@ -621,34 +625,37 @@ const Header2 = () => {
                         className="lg:w-[130px] lg:h-[40px] w-32 h-9"
                     />
                 </Link>
-
                 {/* Navigation Links */}
                 <nav className="flex space-x-6 text-gray-700 font-bold ml-4 relative">
-                    <a href="/" className="">Trang chủ</a>
+                    <Link to="/" className="text-xl font-bold">Trang chủ</Link>
+                    <a href="/ourstory" className="text-xl">Giới thiệu</a>
                     {mainMenuItems.map((item) => (
                         <div
-                            key={item.id}
+key={item.id}
                             onMouseEnter={() => handleMouseEnter(item.id)}
                             onMouseLeave={handleMouseLeave}
-                            className="relative"
+                            className="relative text-xl"
                         >
                             <Dropdown
                                 menu={{
-                                    items: renderMenuItems(categories),
-                                    className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[20px] -left-20",
+                                    items: renderMenuItems(categories),  // Đảm bảo truyền categories vào hàm renderMenuItems
+                                    className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
                                 }}
                             >
                                 <a href="#" className="text-black">{item.label}</a>
                             </Dropdown>
                         </div>
                     ))}
-                    <a href="/ourstory" className="">Giới thiệu</a>
-                    <a href="/" className="">Bài viết</a>
-                    <a href="/vourcher" className="">Khuyến mại</a>
-                    <a href="/contact" className="">Liên hệ</a>
+
+
+
+
+                    <Link to="/blog" className="text-xl">Bài viết</Link>
+                    <Link to="/vourcher" className="text-xl">Khuyến mại</Link>
+                    <Link to="/contact" className="text-xl">Liên hệ</Link>
                 </nav>
             </div>
-            <div className="order-4 flex items-center space-x-6 cursor-pointer">
+            <div className="order-4 flex items-center space-x-6 cursor-pointer mr-32 z-10">
                 <span>
                     <div className="relative">
                         <SearchOutlined
@@ -672,6 +679,7 @@ const Header2 = () => {
                     </div>
                 </span>
 
+
                 {member ? (
                     <>
                         {/* {" "}
@@ -687,16 +695,17 @@ const Header2 = () => {
                             onMouseLeave={() => setShowNotifications(false)}
                         >
                             <i className="fa-regular fa-bell text-xl relative cursor-pointer">
-                                <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+<span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
                                     {dataCount}
                                 </span>
                             </i>
+
 
                             <div
                                 className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications
                                     ? "opacity-100"
                                     : "opacity-0 pointer-events-none"
-                                }`}
+                                    }`}
                             >
                                 <Notifications onUnreadCountChange={(count: number) => console.log(`Unread count: ${count}`)} />
                             </div>
@@ -711,7 +720,7 @@ const Header2 = () => {
                                 <i className="fa-regular fa-bag-shopping text-xl relative">
                                     <span
                                         className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
-                                        } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                                            } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                                     >
                                         {data?.tong_so_luong}
                                     </span>
@@ -721,6 +730,7 @@ const Header2 = () => {
                             <CartOverlay isVisible={isCartVisible} />
                             {/* </div> */}
                         </span>
+                       
                         <Avatar className="relative" onClick={() => setcheck(!check)}>
                             <AvatarImage src={member?.anh_nguoi_dung} />
                             <AvatarFallback>CN</AvatarFallback>
@@ -738,7 +748,7 @@ const Header2 = () => {
                                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                                         >
                                             <img
-                                                src=""
+src=""
                                                 alt=""
                                                 className="w-[30px] h-[30px] rounded-full"
                                             />
@@ -787,7 +797,7 @@ const Header2 = () => {
                                     </li>
                                     <li className="mb-2">
                                         <a
-                                            onClick={logout}
+onClick={logout}
                                             href=""
                                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                                         >
@@ -812,7 +822,7 @@ const Header2 = () => {
                     <Link to="/login">
                         <button
                             className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                            } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
+                                } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
                         >
                             Đăng nhập
                         </button>
@@ -823,3 +833,4 @@ const Header2 = () => {
     );
 };
 export default Header2;
+

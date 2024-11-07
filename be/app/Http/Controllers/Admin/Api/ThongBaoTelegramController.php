@@ -14,11 +14,10 @@ use Telegram\Bot\Laravel\Facades\Telegram;
 class ThongBaoTelegramController extends Controller
 {
     // Hàm gửi thông báo qua Telegram khi có đơn hàng mới cho tất cả shipper
-    public function thongBaoDonHangMoi(Request $request)
+    public function thongBaoDonHangMoi($id)
     {
-        $vanChuyenId = $request->id_van_chuyen;
         // Tìm thông tin vận chuyển và shipper
-        $vanChuyen = VanChuyen::find($vanChuyenId);
+        $vanChuyen = VanChuyen::find($id);
 
         // Kiểm tra xem đơn hàng có tồn tại
         if (!$vanChuyen) {

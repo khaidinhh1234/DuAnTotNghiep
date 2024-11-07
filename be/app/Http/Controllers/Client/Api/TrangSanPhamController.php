@@ -154,6 +154,9 @@ class TrangSanPhamController extends Controller
             // Lấy các tham số lọc từ yêu cầu
             $danhMucChaIds = $request->danh_muc_cha_ids ?? [];
             $danhMucConIds = $request->danh_muc_con_ids ?? [];
+
+            $danhMucChauIds = $request->danh_muc_chau_ids ?? [];
+
             $mauSacIds = $request->mau_sac_ids ?? [];
             $kichThuocIds = $request->kich_thuoc_ids ?? [];
             $giaDuoi = $request->gia_duoi ?? null;
@@ -163,18 +166,27 @@ class TrangSanPhamController extends Controller
             $query = SanPham::query()->where('trang_thai', 1);
 
             // Lọc theo danh mục cha và con
-            if (!empty($danhMucChaIds) || !empty($danhMucConIds)) {
-                $query->whereHas('danhMuc', function ($query) use ($danhMucChaIds, $danhMucConIds) {
-                    if (!empty($danhMucChaIds) && !empty($danhMucConIds)) {
+            if (!empty($danhMucChaIds) || !empty($danhMucConIds) || !empty($danhMucChauIds)) {
+                $query->whereHas('danhMuc', function ($query) use ($danhMucChaIds, $danhMucConIds, $danhMucChauIds) {
+                    if (!empty($danhMucChaIds) && !empty($danhMucConIds) && !empty($danhMucChauIds)) {
+                        $query->where(function ($query) use ($danhMucChaIds, $danhMucConIds, $danhMucChauIds) {
+                            $query->whereIn('cha_id', $danhMucChaIds)
+                                ->whereIn('id', $danhMucConIds)
+                                ->orWhereIn('id', $danhMucChauIds);
+                        });
+                    } elseif (!empty($danhMucChaIds) && !empty($danhMucConIds)) {
                         $query->where(function ($query) use ($danhMucChaIds, $danhMucConIds) {
                             $query->whereIn('cha_id', $danhMucChaIds)
-                                ->whereIn('id', $danhMucConIds);
+                                ->orWhereIn('id', $danhMucConIds);
                         });
                     } elseif (!empty($danhMucChaIds)) {
                         $query->whereIn('cha_id', $danhMucChaIds)
                             ->orWhereIn('id', $danhMucChaIds);
                     } elseif (!empty($danhMucConIds)) {
-                        $query->whereIn('id', $danhMucConIds);
+                        $query->whereIn('id', $danhMucConIds)
+                            ->orWhereIn('cha_id', $danhMucConIds);
+                    } elseif (!empty($danhMucChauIds)) {
+                        $query->whereIn('id', $danhMucChauIds);
                     }
                 });
             }

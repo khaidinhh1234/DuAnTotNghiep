@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('tin_tucs', function (Blueprint $table) {
-            $table->integer('luot_xem')->default(0);
-
+        Schema::table('don_hangs', function (Blueprint $table) {
+            $table->string('hinh_anh_hoan_tra')->nullable()->after('li_do_hoan_hang');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tin_tucs', function (Blueprint $table) {
-            $table->integer('luot_xem')->default(0);
+        Schema::table('don_hangs', function (Blueprint $table) {
+            $table->dropColumn('hinh_anh_hoan_tra');
         });
     }
 };
