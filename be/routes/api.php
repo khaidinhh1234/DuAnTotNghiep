@@ -97,6 +97,7 @@ Route::middleware([])
         //Thanh toán MoMo
         Route::post('/payment/momo', [MoMoController::class, 'thanhToanOnlineMomo']);
         Route::post('check-trang-thai', [MoMoController::class, 'checkDonHang']);
+        Route::post('thanh-toan-lai', [MoMoController::class, 'thanhToanLai']);
         Route::post('luu-thanh-toan-vao-momo', [MoMoController::class, 'savePaymentInfo']);
 
         //Client Chi tiết sản phẩm
