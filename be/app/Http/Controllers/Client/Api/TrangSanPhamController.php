@@ -154,6 +154,7 @@ class TrangSanPhamController extends Controller
             // Lấy các tham số lọc từ yêu cầu
             $danhMucChaIds = $request->danh_muc_cha_ids ?? [];
             $danhMucConIds = $request->danh_muc_con_ids ?? [];
+            $danhMucConIds = $request->danh_muc_chau_ids ?? [];
             $mauSacIds = $request->mau_sac_ids ?? [];
             $kichThuocIds = $request->kich_thuoc_ids ?? [];
             $giaDuoi = $request->gia_duoi ?? null;

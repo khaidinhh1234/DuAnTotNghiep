@@ -7,6 +7,7 @@ use App\Exports\DonHangExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateDonHangRequest;
 use App\Http\Requests\UpdatePaymentStatusRequest;
+use App\Listeners\CapNhatHangThanhVien;
 use App\Models\DonHang;
 use App\Models\GiaoDichVi;
 use App\Models\HoanTien;
@@ -204,8 +205,14 @@ class DonHangController extends Controller
                     continue;
                 }
 
+
                 $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
 
+                // Kiểm tra nếu trạng thái mới là 'hoàn tất' và cập nhật hạng thành viên
+                // if ($request->trang_thai_don_hang === DonHang::TTDH_HTDH) {
+                //     $capNhatHangThanhVien = new CapNhatHangThanhVien();
+                //     $capNhatHangThanhVien->handle($donHang->user_id); // truyền user_id của người mua để cập nhật hạng thành viên
+                // }
                 if ($request->trang_thai_don_hang === DonHang::TTDH_DXL) {
                     if ($shippers->isEmpty()) {
                         throw new \Exception('Không có shipper nào trong hệ thống');
