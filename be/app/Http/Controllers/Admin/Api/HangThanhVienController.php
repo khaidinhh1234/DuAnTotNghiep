@@ -51,6 +51,18 @@ class HangThanhVienController extends Controller
         if ($vadidateHangThanhVien->fails()) {
             return response()->json(['errors' => $vadidateHangThanhVien->errors()], 422);
         }
+        $exists = HangThanhVien::where(function ($query) use ($request) {
+            $query->whereBetween('chi_tieu_toi_thieu', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
+            ->orWhereBetween('chi_tieu_toi_da', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
+            ->orWhere(function ($subQuery) use ($request) {
+                $subQuery->where('chi_tieu_toi_thieu', '<=', $request->chi_tieu_toi_thieu)
+                ->where('chi_tieu_toi_da', '>=', $request->chi_tieu_toi_da);
+            });
+        })->exists();
+
+        if ($exists) {
+            return response()->json(['error' => 'Khoảng chi tiêu đã tồn tại hoặc bị chồng lấn.'], 422);
+        }
         try {
             DB::beginTransaction();
             $hang = HangThanhVien::create($request->all());
@@ -113,6 +125,20 @@ class HangThanhVienController extends Controller
         if ($vadidateHangThanhVien->fails()) {
             return response()->json(['errors' => $vadidateHangThanhVien->errors()], 422);
         }
+
+        $exists = HangThanhVien::where(function ($query) use ($request) {
+            $query->whereBetween('chi_tieu_toi_thieu', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
+            ->orWhereBetween('chi_tieu_toi_da', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
+            ->orWhere(function ($subQuery) use ($request) {
+                $subQuery->where('chi_tieu_toi_thieu', '<=', $request->chi_tieu_toi_thieu)
+                ->where('chi_tieu_toi_da', '>=', $request->chi_tieu_toi_da);
+            });
+        })->exists();
+
+        if ($exists) {
+            return response()->json(['error' => 'Khoảng chi tiêu đã tồn tại hoặc bị chồng lấn.'], 422);
+        }
+
         try {
             DB::beginTransaction();
             $hang = HangThanhVien::query()->findOrFail($id);
