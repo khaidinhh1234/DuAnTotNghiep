@@ -548,7 +548,7 @@ const AddVoucher = () => {
                   className={`mr-2 whitespace-nowrap ${tabKey ? "text-slate-400" : "text-white"}`}
                   onClick={() => setTabKey(true)}
                 >
-                  <span className="text-sm">Áp dụng voucher thông minh</span>
+                  <span className="text-sm">Áp dụng voucher thông minh</span>F
                 </Button> */}
                 <p className="flex items-center whitespace-nowrap">
                   Thông số được tạo bởi Smart AI. Mức độ hiệu quả hiện tại:{" "}

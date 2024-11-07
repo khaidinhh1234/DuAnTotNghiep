@@ -453,10 +453,8 @@ class DonHangClientController extends Controller
         ]);
 
         $userId = Auth::id();
-        $user = User::findOrFail($userId);
-        $viTien = $user->viTien;
-        $maDonHang = $request->input('ma_don_hang');
-        $lidoHuyHang = $request->input('li_do_huy_hang');
+        $maDonHang = $request->ma_don_hang;
+        $lidoHuyHang = $request->li_do_huy_hang;
 
         DB::beginTransaction();
 
@@ -472,54 +470,40 @@ class DonHangClientController extends Controller
                     'message' => 'Đơn hàng không tồn tại hoặc không thể hủy.',
                 ], 400);
             }
-            $donHang->li_do_huy_hang = $lidoHuyHang;
-            $donHang->trang_thai_don_hang = DonHang::TTDH_DH;
-            $donHang->save();
+
+            $donHang->update([
+                'li_do_huy_hang' => $lidoHuyHang,
+                'trang_thai_don_hang' => DonHang::TTDH_DH,
+            ]);
 
             if (
                 in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
                 $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
             ) {
-                $viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
             }
 
             foreach ($donHang->chiTiets as $chiTiet) {
-                $bienTheSanPham = BienTheSanPham::find($chiTiet->bien_the_san_pham_id);
-                if ($bienTheSanPham) {
-                    $bienTheSanPham->so_luong_bien_the += $chiTiet->so_luong;
-                    $bienTheSanPham->save();
+                $bienTheSanPham = $chiTiet->bienTheSanPham;
+                $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
 
-                    $gioHangItem = DB::table('gio_hangs')
-                        ->where('user_id', $userId)
-                        ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
-                        ->whereNull('deleted_at')
-                        ->first();
+                $gioHangItem = GioHang::withTrashed()
+                    ->where('user_id', $userId)
+                    ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
+                    ->first();
 
-                    if ($gioHangItem) {
-                        DB::table('gio_hangs')
-                            ->where('user_id', $userId)
-                            ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
-                            ->update([
-                                'so_luong' => $gioHangItem->so_luong + $chiTiet->so_luong,
-                                'deleted_at' => null, // Khôi phục trạng thái giỏ hàng
-                            ]);
-
-                        DB::table('gio_hangs')
-                            ->where('user_id', $userId)
-                            ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
-                            ->where('id', '!=', $gioHangItem->id) // Giữ lại bản ghi hiện tại
-                            ->delete();
-                    } else {
-                        DB::table('gio_hangs')->insert([
-                            'user_id' => $userId,
-                            'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
-                            'so_luong' => $chiTiet->so_luong,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-                    }
+                if ($gioHangItem) {
+                    $gioHangItem->restore();
+                    $gioHangItem->increment('so_luong', $chiTiet->so_luong);
+                } else {
+                    GioHang::create([
+                        'user_id' => $userId,
+                        'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
+                        'so_luong' => $chiTiet->so_luong,
+                    ]);
                 }
             }
+
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Đơn hàng đã hủy',
@@ -661,7 +645,6 @@ class DonHangClientController extends Controller
 
                 LichSuGiaoDich::create([
                     'vi_tien_id' => $viTien->id,
-                    'loai_giao_dich' => 'rut_tien',
                     'so_du_truoc' => $viTien->so_du,
                     'so_du_sau' => $viTien->so_du - $soTien,
                     'ngay_thay_doi' => now(),

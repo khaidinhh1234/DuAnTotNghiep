@@ -274,6 +274,18 @@ const AddAddressForm = ({ register, products, errors }: any) => {
           Thanh toán qua MoMo ATM
         </label>
       </div>
+      <div className="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio">
+        <input
+          type="radio"
+          id="PTTT_VT"
+          value="Ví tiền"
+          {...register("phuong_thuc_thanh_toan", { required: true })}
+          className="bg-blackL"
+        />
+        <label htmlFor="PTTT_VT" className="title-h3 px-3">
+          Thanh toán qua ví
+        </label>
+      </div>
       <div className="border-t border-hrBlack pt-4 mb-7 flex items-center custom-radio">
         <input
           type="radio"
