@@ -20,7 +20,7 @@ const AddAddressForm = ({ register, products, errors }: any) => {
           </div>
         ))}
       </div> */}
-      <table className="min-w-full  ">
+      <table className="min-w-full overflow-x-auto bg-white shadow-md rounded-lg">
         <thead>
           <tr className="text-left border-b border-gray-200">
             <th className="font-semibold text-gray-700 px-4 py-2">Sản phẩm</th>
@@ -29,54 +29,59 @@ const AddAddressForm = ({ register, products, errors }: any) => {
               Số lượng
             </th>
             <th className="font-semibold text-gray-700 px-4 py-2">Tổng tiền</th>
-            {/* <th className="font-semibold text-gray-700 px-4 py-2">Xóa</th> */}
           </tr>
         </thead>
 
         <tbody>
           {products &&
-            products?.map((product: any) => (
-              <tr
-                key={product?.id}
-                className="border-b border-gray-200 hover:bg-gray-100"
-              >
-                <td className="px-4 py-2">
-                  <div className="flex items-center gap-4">
+            products?.map(
+              (product: {
+                id: string;
+                hinh_anh: string;
+                ten_san_pham: string;
+                kich_thuoc: string;
+                mau_sac: string;
+                gia_hien_tai: number;
+                so_luong: number;
+              }) => (
+                <tr
+                  key={product.id}
+                  className="border-b border-gray-200 hover:bg-gray-100 text-sm sm:text-base"
+                >
+                  <td className="px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 ">
                     <img
-                      src={product?.hinh_anh ?? 0}
-                      alt={product?.ten_san_pham ?? ""}
-                      className="w-20 h-24 object-cover rounded-md "
+                      src={product.hinh_anh}
+                      alt={product.ten_san_pham}
+                      className="w-16 h-20 object-cover rounded-md"
                     />
                     <div>
-                      <h3 className="font-semibold text-gray-700 text-lg">
-                        {product?.ten_san_pham ?? ""}
+                      <h3 className="font-semibold text-gray-700 text-base sm:text-lg">
+                        {product.ten_san_pham}
                       </h3>
-                      <p className="mb-2">
-                        Size: <span> {product?.kich_thuoc}</span>
-                        ,Màu: <span>{product?.mau_sac}</span>
+                      <p className="text-gray-600">
+                        Size: <span>{product.kich_thuoc}</span>, Màu:{" "}
+                        <span>{product.mau_sac}</span>
                       </p>
                     </div>
-                  </div>
-                </td>
-                <td className="px-4 py-2">
-                  {(product?.gia_hien_tai ?? 0).toLocaleString("vi-VN")}₫
-                </td>
-                <td className="px-4 py-2">
-                  <div className="flex items-center justify-center  rounded-lg">
-                    {(product?.so_luong ?? 0).toLocaleString("vi-VN")}
-                  </div>
-                </td>
-
-                <td className="px-4 py-2">
-                  {(product?.gia_hien_tai * product?.so_luong).toLocaleString(
-                    "vi-VN"
-                  )}
-                  ₫
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="px-4 py-2">
+                    {product.gia_hien_tai.toLocaleString("vi-VN")}₫
+                  </td>
+                  <td className="px-4 py-2 hidden lg:table-cell text-center">
+                    {product.so_luong.toLocaleString("vi-VN")}
+                  </td>
+                  <td className="px-4 py-2">
+                    {(product.gia_hien_tai * product.so_luong).toLocaleString(
+                      "vi-VN"
+                    )}
+                    ₫
+                  </td>
+                </tr>
+              )
+            )}
         </tbody>
       </table>
+
       <h3 className="title-h3 mt-5">Địa chỉ giao hàng</h3>
       <div className="my-5">
         <label htmlFor="ten_nguoi_dat_hang" className="text-md px-1">
@@ -101,7 +106,7 @@ const AddAddressForm = ({ register, products, errors }: any) => {
         </label>
         <br />
         <input
-          type="number"
+          type="text"
           {...register("so_dien_thoai_nguoi_dat_hang", { required: true })}
           placeholder="Nhập số điện thoại"
           className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] sm:w-[460px] md:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
@@ -272,6 +277,18 @@ const AddAddressForm = ({ register, products, errors }: any) => {
         />
         <label htmlFor="paypal" className="title-h3 px-3">
           Thanh toán qua MoMo ATM
+        </label>
+      </div>
+      <div className="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio">
+        <input
+          type="radio"
+          id="PTTT_VT"
+          value="Ví tiền"
+          {...register("phuong_thuc_thanh_toan", { required: true })}
+          className="bg-blackL"
+        />
+        <label htmlFor="PTTT_VT" className="title-h3 px-3">
+          Thanh toán qua ví
         </label>
       </div>
       <div className="border-t border-hrBlack pt-4 mb-7 flex items-center custom-radio">

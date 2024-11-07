@@ -136,6 +136,9 @@ import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 import Test4 from "@/pages/(van_chuyen)/test";
+import WalletProtectedRoute from './WalletProtectedRoute';
+import ThankYouPage1 from "@/pages/(website)/thankyou/you";
+import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
 const Router = () => {
   //
 
@@ -165,6 +168,8 @@ const Router = () => {
           <Route path="/gio-hang" element={<Cart />} />{" "}
           <Route path="/test" element={<Test />} />{" "}
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
+          {/* <Route path="/thankyou1" element={<PaymentStatus />} />{" "} */}
+
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route path="/search-results" element={<Page2 />} />
           <Route
@@ -184,10 +189,35 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
-            <Route path="/mypro/wallet" element={<TaiChinh />} />
+            {/* <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
-            <Route path="/mypro/naptien" element={<NapTien/>} />
+            <Route path="/mypro/naptien" element={<NapTien/>} /> */}
+      <Route path="/mypro/wallet" element={<TaiChinh />} />
+      <Route 
+        path="/mypro/WithdrawPage" 
+        element={
+          <WalletProtectedRoute>
+            <WithdrawPage />
+          </WalletProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/mypro/bank" 
+        element={
+          <WalletProtectedRoute>
+            <BankAccount />
+          </WalletProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/mypro/naptien" 
+        element={
+          <WalletProtectedRoute>
+            <NapTien />
+          </WalletProtectedRoute>
+        } 
+      />
 
 
 
