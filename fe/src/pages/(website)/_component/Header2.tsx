@@ -605,12 +605,21 @@ const Header2 = () => {
                         >
                             <Dropdown
                                 menu={{
+<<<<<<< HEAD
+                                    items: renderMenuItems(categories),
+                                    className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[20px]", // Thêm justify-content vào đây
+=======
                                     items: renderMenuItems(categories),  // Đảm bảo truyền categories vào hàm renderMenuItems
                                     className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
+>>>>>>> 258b79d556d7bf30ae3311c4f0113357c0087d2c
                                 }}
                             >
                                 <a href="#" className="text-black">{item.label}</a>
                             </Dropdown>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 258b79d556d7bf30ae3311c4f0113357c0087d2c
                         </div>
                     ))}
 
@@ -619,6 +628,10 @@ const Header2 = () => {
                     <a href="/vourcher" className="text-xl">Khuyến mại</a>
                     <a href="/contact" className="text-xl">Liên hệ</a>
                 </nav>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 258b79d556d7bf30ae3311c4f0113357c0087d2c
             </div>
             <div className="order-4 flex items-center space-x-6 cursor-pointer mr-32 z-10">
                 <span>
@@ -643,6 +656,40 @@ const Header2 = () => {
                         </Modal>
                     </div>
                 </span>
+<<<<<<< HEAD
+                <span
+                    ref={notificationRef}
+                    className="relative"
+                    onMouseEnter={() => setShowNotifications(true)}
+                    onMouseLeave={() => setShowNotifications(false)}
+                >
+                    <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
+                        {unreadCount > 0 && (
+                            <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                                {unreadCount}
+                            </span>
+                        )}
+                    </i>
+                    <div
+                        className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${showNotifications
+                            ? "opacity-100"
+                            : "opacity-0 pointer-events-none"
+                            }`}
+                    >
+                        <Notifications onUnreadCountChange={setUnreadCount} />
+                    </div>
+                </span>
+                <span
+                    ref={cartRef}
+                    onMouseEnter={() => setIsCartVisible(true)}
+                    onMouseLeave={() => setIsCartVisible(false)}
+                >
+                    <a href="/gio-hang">
+                        <i className="fa-regular fa-bag-shopping text-xl relative px-1">
+                            <span
+                                className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                                    } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+=======
 
                 {member ? (
                     <>
@@ -669,6 +716,7 @@ const Header2 = () => {
                                     ? "opacity-100"
                                     : "opacity-0 pointer-events-none"
                                     }`}
+>>>>>>> 258b79d556d7bf30ae3311c4f0113357c0087d2c
                             >
                                 <Notifications onUnreadCountChange={(count: number) => console.log(`Unread count: ${count}`)} />
                             </div>
