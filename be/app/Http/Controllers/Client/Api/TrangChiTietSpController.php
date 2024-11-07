@@ -43,7 +43,8 @@ class TrangChiTietSpController extends Controller
             ], 500);
         }
     }
-    public function chiTietSanPham($duongDan)
+
+    public function chiTietSanPham(Request $request, $duongDan)
     {
         try {
             // Lấy chi tiết sản phẩm với các quan hệ cần thiết
@@ -67,7 +68,7 @@ class TrangChiTietSpController extends Controller
                 'boSuuTapSanPham',
                 'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
-
+    
             // Kiểm tra xem sản phẩm có tồn tại không
             if (!$chiTietSanPham) {
                 return response()->json([
@@ -76,33 +77,39 @@ class TrangChiTietSpController extends Controller
                     'message' => 'Không tìm thấy sản phẩm'
                 ], 404);
             }
-
+    
+            // Kiểm tra nếu cần tăng lượt xem (tham số `tang_luot_xem` được gửi từ frontend)
+            if ($request->has('tang_luot_xem') && $request->tang_luot_xem == true) {
+                $chiTietSanPham->increment('luot_xem');
+                $chiTietSanPham->touch(); // Cập nhật `updated_at`
+            }
+    
             // Cập nhật trạng thái đánh giá hữu ích
             foreach ($chiTietSanPham->danhGias as $danhGia) {
                 $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
             }
-
+    
             // Kiểm tra trạng thái yêu thích của sản phẩm
             $chiTietSanPham['trang_thai_yeu_thich'] = false;
             if (Auth::guard('api')->check()) {
                 $user = Auth::guard('api')->user();
                 $chiTietSanPham['trang_thai_yeu_thich'] = $chiTietSanPham->khachHangYeuThich->contains('id', $user->id);
             }
-
+    
             // Lấy thêm thông tin danh mục cha và ông của danh mục sản phẩm
             $danhMuc = $chiTietSanPham->danhMuc;
-
+    
             // Lấy cha của danh mục
             $danhMuc->load('parent');  // Load danh mục cha
             $chaDanhMuc = $danhMuc->parent;
-
+    
             // Lấy ông của danh mục
             $ongDanhMuc = $chaDanhMuc ? $chaDanhMuc->parent : null;
-
+    
             // Thêm vào dữ liệu trả về
             $chiTietSanPham['cha_danh_muc'] = $chaDanhMuc;
             $chiTietSanPham['ong_danh_muc'] = $ongDanhMuc;
-
+    
             // Trả về chi tiết sản phẩm cùng với các thông tin danh mục cha và ông
             return response()->json([
                 'status' => true,
@@ -120,11 +127,7 @@ class TrangChiTietSpController extends Controller
             ], 500);
         }
     }
-
-
-
-
-
+    
 
     public function danhSachSanPhamCungLoai($id)
     {
