@@ -1,7 +1,7 @@
 import { logo } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
-import { Input, Modal } from "antd";
+import { Dropdown, Input, Modal, MenuProps } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -108,7 +108,28 @@ const Header = () => {
   // console.log(member);
   // console.log("member", member);
   // console.log("member", member);
+  const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
+  const fetchCategories = async (parentId: number) => {
+    try {
+      const response = await instanceClient.get(
+        `/load-danh-muc-con-chau/${parentId}`
+      );
+      if (response.data.status) {
+        setCategories(response.data.data); // Cập nhật danh mục con
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu danh mục con:", error);
+    }
+  };
+  const handleMouseEnter = (id: number) => {
+    setHoveredMenu(id);
+    fetchCategories(id); // Fetch danh mục con khi hover vào danh mục cha
+  };
 
+  const handleMouseLeaveMenu = () => {
+    setHoveredMenu(null);
+    // setCategories([]); // Clear categories khi di chuột ra ngoài
+  };
   // console.log("giaohang", giaohangs);
   const logout = () => {
     localStorage.removeItem("accessToken");
@@ -148,7 +169,38 @@ const Header = () => {
   const handleMouseLeaveProduct = () => {
     setIsProductMenuVisible(false);
   };
-
+  const renderMenuItems = (items: any): MenuProps["items"] => {
+    return items?.danh_muc?.length
+      ? items.danh_muc.map((category: any) => ({
+          key: category.id.toString(),
+          label: (
+            <div className="menu-item py-5 flex flex-col gap-y-2 items-start !m-0 !p-0 !mx-28 !gap-x-20">
+              <a
+                className="row text-black text-sm font-bold"
+                href={`/${category.duong_dan}`}
+                rel="noopener noreferrer"
+              >
+                {category.ten_danh_muc}
+              </a>
+              {category.con && category.con.length > 0 && (
+                <div className="subcategories flex flex-col">
+                  {category.con.map((subCategory: any) => (
+                    <a
+                      key={subCategory.id}
+                      href={`/${subCategory.duong_dan}`}
+                      rel="noopener noreferrer"
+                      className="text-gray-950 text-sm"
+                    >
+                      {subCategory.ten_danh_muc}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ),
+        }))
+      : [];
+  };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as any)) {
@@ -208,6 +260,11 @@ const Header = () => {
       path: "/contact",
     },
   ];
+  const mainMenuItems = [
+    { id: 1, label: "Nam" },
+    { id: 2, label: "Nữ" },
+    { id: 3, label: "Trẻ em" },
+  ];
   return (
     <header className="h-12 relative">
       <div className="bg-white w-full">
@@ -223,7 +280,7 @@ const Header = () => {
           <div
             className="px-10 bg-white h-full w-96 sm:w-96 fixed top-0 left-0 shadow-lg transition-transform duration-300 ease-in-out"
             style={{ transform: menu ? "translateX(0)" : "translateX(-100%)" }}
-            onMouseLeave={handleMouseLeave}
+            onMouseLeave={handleMouseLeaveMenu}
           >
             <div className="grid">
               <div className="my-10 text-2xl">
@@ -280,7 +337,7 @@ const Header = () => {
           </button>
         </div>
         <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-4 ">
-          <div className="max-w-7xl mx-auto flex justify-between items-center ">
+          <div className=" mx-40 flex justify-between items-center ">
             <div className="lg:hidden order-1 relative">
               <button
                 onClick={() => {
@@ -290,76 +347,56 @@ const Header = () => {
                 <i className="fa-solid fa-bars text-2xl mx-5"></i>
               </button>
             </div>
-            <div className="order-2 lg:w-60">
-              <Link to="/">
-                <img
-                  src={logo}
-                  alt="Logo"
-                  className="lg:w-[130px] lg:h-[40px] w-32 h-9"
-                />
-              </Link>
-            </div>
 
-            <nav className="hidden lg:block order-3">
-              <ul className="flex items-center space-x-4">
-                {MenuList.map((item, index) => (
-                  <li
-                    key={index}
-                    className="mt-2 relative"
-                    onMouseEnter={
-                      item.name === "Sản phẩm"
-                        ? handleMouseEnterProduct
-                        : undefined
-                    }
-                    onMouseLeave={
-                      item.name === "Sản phẩm"
-                        ? handleMouseLeaveProduct
-                        : undefined
-                    }
+            <nav className="hidden lg:flex order-3 items-cennter justify-start">
+              <div className="lg:w-36">
+                <Link to="/">
+                  <img
+                    src={logo}
+                    alt="Logo"
+                    className="lg:w-[120px] lg:h-[35px] w-32 h-9"
+                  />
+                </Link>
+              </div>
+              {/* Navigation Links */}
+              <nav className="flex space-x-6 text-gray-700 font-bold pt-1 relative">
+                <a href="/" className="text-lg font-bold">
+                  Trang chủ
+                </a>
+                <a href="/ourstory" className="text-lg">
+                  Giới thiệu
+                </a>
+                {mainMenuItems.map((item) => (
+                  <div
+                    key={item.id}
+                    onMouseEnter={() => handleMouseEnter(item.id)}
+                    onMouseLeave={handleMouseLeave}
+                    className="relative text-lg"
                   >
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) =>
-                        `xl:px-4 lg:px-1 py-2 rounded-[7px] text-lg font-medium hover:text-white hover:bg-black ${
-                          !isActive
-                            ? "text-black hover:shadow-slate-500/50 hover:shadow-lg hover:border-0"
-                            : "text-white bg-black"
-                        }`
-                      }
+                    <Dropdown
+                      menu={{
+                        items: renderMenuItems(categories), // Đảm bảo truyền categories vào hàm renderMenuItems
+                        className:
+                          "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
+                      }}
                     >
-                      {item.name}
-                    </NavLink>
-                    {item.name === "Sản phẩm" && isProductMenuVisible && (
-                      <div className="absolute top-full left-60 transform -translate-x-1/2 pt-10 shadow-lg rounded-md z-50 ">
-                        <div className="p-8 w-[1000px] grid grid-cols-3 gap-8 rounded-md bg-white bg-opacity-100 ">
-                          {categories.map((category) => (
-                            <div
-                              key={category.id}
-                              className="border-r border-gray-240"
-                            >
-                              <h3 className="font-bold mb-4 text-lg">
-                                {category.ten_danh_muc}
-                              </h3>
-                              <ul className="space-y-2">
-                                {category.children.map((subCategory) => (
-                                  <li key={subCategory.id}>
-                                    <a
-                                      href={`/shop/${category.duong_dan}/${subCategory.duong_dan}`}
-                                      className="block text-gray-700 text-lg whitespace-nowrap hover:text-red-600"
-                                    >
-                                      {subCategory.ten_danh_muc}
-                                    </a>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </li>
+                      <a href="#" className="text-black">
+                        {item.label}
+                      </a>
+                    </Dropdown>
+                  </div>
                 ))}
-              </ul>
+
+                <a href="/" className="text-lg">
+                  Bài viết
+                </a>
+                <a href="/vourcher" className="text-lg">
+                  Khuyến mại
+                </a>
+                <a href="/contact" className="text-lg">
+                  Liên hệ
+                </a>
+              </nav>
             </nav>
 
             <div className="order-4 flex items-center space-x-2 cursor-pointer">
@@ -506,7 +543,7 @@ const Header = () => {
                               className="w-[30px] h-[30px] rounded-full"
                             />
                             <h6 className="font-semibold mx-2 text-lg ">
-                              Đơn hàng
+                              Cài đặt
                             </h6>
                           </a>
                         </li>
