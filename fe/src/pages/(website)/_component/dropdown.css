@@ -4,19 +4,20 @@
     width: 100vw;
     max-width: 100vw;
     top: 20px;
+    padding: 0 20px; /* Adds padding to avoid stretching too far on full-width */
 }
 
 .menu-item {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Đảm bảo các mục căn lên trên */
-    align-items: flex-start; /* Căn chỉnh các mục con bên trái */
-    min-height: 50px; /* Đảm bảo chiều cao tối thiểu để các mục thẳng hàng */
+    justify-content: flex-start;
+    align-items: flex-start;
+    min-height: 50px;
 }
 
 .category {
     display: flex;
-    align-items: center; /* Căn giữa các mục trong menu */
+    align-items: center;
     min-width: 100px;
 }
 
@@ -26,4 +27,5 @@
     gap: 8px;
     margin-top: 8px;
     padding-left: 20px;
+    position: relative; /* Helps keep it aligned under the parent */
 }
