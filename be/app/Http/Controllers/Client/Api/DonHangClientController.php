@@ -393,8 +393,8 @@ class DonHangClientController extends Controller
                 'chiTiets.bienTheSanPham.anhBienThe',
             ])->where('id', $donHang->id)->first();
 
+            DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
             if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT) {
-                DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
                     'tieu_de' => 'Đơn hàng đã được đặt',
