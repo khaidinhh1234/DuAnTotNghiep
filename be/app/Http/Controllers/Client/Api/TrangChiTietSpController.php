@@ -15,13 +15,44 @@ use Illuminate\Support\Facades\DB;
 
 class TrangChiTietSpController extends Controller
 {
+    public function danhMucCha(Request $request)
+    {
+        try {
+            // Bắt đầu transaction
+            DB::beginTransaction();
+            // Lấy danh mục có cha_id là null
+            $danhMucCha = DanhMuc::query()->whereNull('cha_id')->get();
+            // Commit transaction nếu mọi thứ thành công
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công.',
+                'danhMucCha' => $danhMucCha,
+            ], 200);
+        } catch (\Exception $e) {
+            // Rollback nếu có lỗi
+            DB::rollBack();
+            // Trả về lỗi
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dự liệu.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function chiTietSanPham($duongDan)
     {
         try {
-            // $user = Auth::guard('api')->user();
-
+            // Lấy chi tiết sản phẩm với các quan hệ cần thiết
             $chiTietSanPham = SanPham::with([
-                'danhMuc',
+                'danhMuc' => function ($query) {
+                    $query->with([
+                        'parent',  // Lấy danh mục cha
+                    ]);
+                },
                 'danhGias.user',
                 'danhGias.danhGiaHuuIch',
                 'danhGias' => function ($query) {
@@ -37,17 +68,42 @@ class TrangChiTietSpController extends Controller
                 'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
 
+            // Kiểm tra xem sản phẩm có tồn tại không
+            if (!$chiTietSanPham) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Không tìm thấy sản phẩm'
+                ], 404);
+            }
+
+            // Cập nhật trạng thái đánh giá hữu ích
             foreach ($chiTietSanPham->danhGias as $danhGia) {
                 $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
             }
 
+            // Kiểm tra trạng thái yêu thích của sản phẩm
             $chiTietSanPham['trang_thai_yeu_thich'] = false;
             if (Auth::guard('api')->check()) {
                 $user = Auth::guard('api')->user();
                 $chiTietSanPham['trang_thai_yeu_thich'] = $chiTietSanPham->khachHangYeuThich->contains('id', $user->id);
             }
 
+            // Lấy thêm thông tin danh mục cha và ông của danh mục sản phẩm
+            $danhMuc = $chiTietSanPham->danhMuc;
 
+            // Lấy cha của danh mục
+            $danhMuc->load('parent');  // Load danh mục cha
+            $chaDanhMuc = $danhMuc->parent;
+
+            // Lấy ông của danh mục
+            $ongDanhMuc = $chaDanhMuc ? $chaDanhMuc->parent : null;
+
+            // Thêm vào dữ liệu trả về
+            $chiTietSanPham['cha_danh_muc'] = $chaDanhMuc;
+            $chiTietSanPham['ong_danh_muc'] = $ongDanhMuc;
+
+            // Trả về chi tiết sản phẩm cùng với các thông tin danh mục cha và ông
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -55,6 +111,7 @@ class TrangChiTietSpController extends Controller
                 'data' => $chiTietSanPham
             ]);
         } catch (\Exception $exception) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -63,6 +120,10 @@ class TrangChiTietSpController extends Controller
             ], 500);
         }
     }
+
+
+
+
 
 
     public function danhSachSanPhamCungLoai($id)
@@ -330,6 +391,9 @@ class TrangChiTietSpController extends Controller
             ],
         ]);
     }
+    
+    
+
 
     public function loadKichThuoc()
     {

@@ -37,6 +37,14 @@ interface ProductData {
   danh_muc: {
     ten_danh_muc: string;
     cha_id?: number;
+    id?: number;
+
+  };
+  cha_danh_muc: {
+    id?: number;
+  }; 
+  ong_danh_muc: {
+    id?: number;
   };
   trang_thai_yeu_thich: boolean;
   danh_gias: Array<{
@@ -639,7 +647,7 @@ const ProductDetail: React.FC = () => {
                   <SizeGuideModal
                     isOpen={isModalOpen}
                     onClose={toggleModal}
-                    categoryId={product?.ong_danh_muc?.id ?? 0}
+                    categoryId={product?.ong_danh_muc?.id ?? product?.cha_danh_muc?.id ?? product?.danh_muc?.id ?? 0}
                     productDetailId={product?.id ?? 0}
                   />
                 </div>

@@ -483,34 +483,47 @@ console.log('Category ID:', categoryId);
                 {sizeMutation.isPending ? 'Đang tính...' : 'Gợi ý size'}
               </button>
             </div>
-            {sizeMutation.data && (
-              <div className="mt-4">
-                <div className="flex items-center justify-center">
-                  <div className="text-lg">Size phù hợp: </div>
-                  <div className="ml-2 flex space-x-1">
-                    {Array.isArray(sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y) ? (
-                      sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y.map((size: string, index: number) => (
-                        <span 
-                          key={index} 
-                          className="bg-blue-900 text-white px-3 py-1 rounded-md font-bold"
-                        >
-                          {size}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="bg-blue-900 text-white px-3 py-1 rounded-md font-bold">
-                        {sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                {sizeMutation.data.data.goi_y.huong_dan_cham_soc && (
-                  <div className="text-sm text-gray-600 mt-2">
-                    {sizeMutation.data.data.goi_y.huong_dan_cham_soc}
-                  </div>
-                )}
-              </div>
-            )}
+            {sizeMutation.data ? (
+  <div className="mt-4">
+    <div className="flex items-center justify-center">
+      <div className="text-lg">Size phù hợp: </div>
+      <div className="ml-2 flex space-x-1">
+        {sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y ? (
+          Array.isArray(sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y) ? (
+            sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y.map((size: string, index: number) => (
+              <span 
+                key={index} 
+                className="bg-blue-900 text-white px-3 py-1 rounded-md font-bold"
+              >
+                {size}
+              </span>
+            ))
+          ) : (
+            <span className="bg-blue-900 text-white px-3 py-1 rounded-md font-bold">
+              {sizeMutation.data.data.goi_y.kich_thuoc_duoc_goi_y}
+            </span>
+          )
+        ) : (
+          <span className="text-red-500 font-medium">
+            Không tìm thấy size phù hợp với bạn
+          </span>
+        )}
+      </div>
+    </div>
+    {sizeMutation.data.data.goi_y.huong_dan_cham_soc && (
+      <div className="text-sm text-gray-600 mt-2">
+        {sizeMutation.data.data.goi_y.huong_dan_cham_soc}
+      </div>
+    )}
+  </div>
+) : sizeMutation.isError ? (
+  <div className="mt-4">
+    <span className="text-red-500 font-medium">
+      Không tìm thấy size phù hợp với bạn
+    </span>
+  </div>
+) : null}
+
           </div>
         </TabPane>
         <TabPane tab="Size Nam" key="2">

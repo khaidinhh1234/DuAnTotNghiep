@@ -89,7 +89,7 @@ class TaiKhoanController extends Controller
                         'status' => false,
                         'status_code' => 400,
                         'message' => 'Mã xác minh không chính xác',
-], 400);
+                    ], 400);
                 }
 
                 $lichSuGiaoDich = $viUser->lichSuGiaoDichs;
@@ -162,7 +162,7 @@ class TaiKhoanController extends Controller
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
-'message' => 'Thêm tài khoản ngân hàng thất bại',
+                'message' => 'Thêm tài khoản ngân hàng thất bại',
                 'error' => $e->getMessage()
             ]);
         }
@@ -244,7 +244,7 @@ class TaiKhoanController extends Controller
                 $mess = 'Thiết lập mã xác minh thành công';
             } else if (Hash::check($validate['ma_xac_minh'], $user->viTien->ma_xac_minh)) {
                 $user->viTien->update([
-'ma_xac_minh' => Hash::make($validate['ma_xac_minh_moi']),
+                    'ma_xac_minh' => Hash::make($validate['ma_xac_minh_moi']),
                 ]);
                 $mess = 'Đổi mã xác minh thành công';
             } else {
@@ -323,7 +323,7 @@ class TaiKhoanController extends Controller
                 return response()->json([
                     'status' => false,
                     'status_code' => 400,
-'message' => 'Mã xác minh không chính xác',
+                    'message' => 'Mã xác minh không chính xác',
                 ], 400);
             }
             return response()->json([
@@ -385,15 +385,41 @@ class TaiKhoanController extends Controller
                 ], 200);
             } else {
                 $trangThaiMessages = [
-                    4 => 'Giao dịch đã bị hủy bởi bạn.',
-                    5 => 'Số tiền bạn nhập không hợp lệ.',
-                    6 => 'Tài khoản MoMo của bạn không đủ số dư.',
-                    7 => 'Giao dịch đã hết hạn và không thể hoàn tất.',
-8 => 'Giao dịch không hợp lệ. Vui lòng kiểm tra lại.',
-                    49 => 'Lỗi xác thực - Dữ liệu hoặc khóa bí mật không khớp.',
-                    1001 => 'Địa chỉ IP của bạn không được phép truy cập.',
-                    1006 => 'Yêu cầu của bạn đã được xử lý trước đó.',
-                    9000 => 'Lỗi hệ thống - Đã xảy ra sự cố không mong muốn.'
+                    10 => 'Hệ thống đang được bảo trì.',
+                    11 => 'Truy cập bị từ chối.',
+                    12 => 'Phiên bản API không được hỗ trợ cho yêu cầu này.',
+                    13 => 'Xác thực người bán không thành công.',
+                    20 => 'Yêu cầu định dạng không đúng.',
+                    21 => 'Yêu cầu bị từ chối do số tiền giao dịch không hợp lệ.',
+                    22 => 'Số tiền giao dịch nằm ngoài phạm vi.',
+                    40 => 'RequestId bị trùng lặp.',
+                    41 => 'OrderId bị trùng lặp.',
+                    42 => 'Không tìm thấy orderId hoặc orderId không hợp lệ.',
+                    43 => 'Yêu cầu bị từ chối do có giao dịch tương tự đang được xử lý.',
+                    45 => 'ItemId trùng lặp.',
+                    47 => 'Yêu cầu bị từ chối do thông tin không áp dụng được trong tập dữ liệu có giá trị đã cho.',
+                    98 => 'Mã QR này không được tạo thành công. Vui lòng thử lại sau.',
+                    99 => 'Lỗi không xác định.',
+                    1000 => 'Giao dịch đang được khởi tạo và chờ người dùng xác nhận.',
+                    1001 => 'Giao dịch không thành công do không đủ tiền.',
+                    1002 => 'Giao dịch bị từ chối bởi đơn vị phát hành phương thức thanh toán.',
+                    1003 => 'Giao dịch bị hủy sau khi được xác thực thành công.',
+                    1004 => 'Giao dịch không thành công vì số tiền vượt quá hạn mức thanh toán hàng ngày/hàng tháng.',
+                    1005 => 'Giao dịch không thành công vì URL hoặc mã QR đã hết hạn.',
+                    1006 => 'Giao dịch không thành công vì người dùng đã từ chối xác nhận thanh toán.',
+                    1007 => 'Giao dịch bị từ chối do tài khoản người dùng không hoạt động hoặc không tồn tại.',
+                    1017 => 'Giao dịch bị hủy bởi người bán.',
+                    1026 => 'Giao dịch bị hạn chế do quy định khuyến mãi.',
+                    1080 => 'Nỗ lực hoàn tiền không thành công trong quá trình xử lý. Vui lòng thử lại trong thời gian ngắn, tốt nhất là sau một giờ.',
+                    1081 => 'Hoàn tiền bị từ chối. Giao dịch ban đầu có thể đã được hoàn tiền.',
+                    1088 => 'Hoàn tiền bị từ chối. Giao dịch thanh toán ban đầu không đủ điều kiện để được hoàn tiền.',
+                    2019 => 'Yêu cầu bị từ chối do orderGroupId không hợp lệ.',
+                    4001 => 'Giao dịch bị từ chối vì tài khoản người dùng đang bị hạn chế.',
+                    4002 => 'Giao dịch bị từ chối vì tài khoản người dùng chưa được C06 xác minh.',
+                    4100 => 'Giao dịch không thành công vì người dùng không đăng nhập được.',
+                    7000 => 'Giao dịch đang được xử lý.',
+                    7002 => 'Giao dịch đang được xử lý bởi nhà cung cấp phương thức thanh toán đã chọn.',
+                    9000 => 'Giao dịch đã được xác thực thành công.',
                 ];
 
                 if (array_key_exists($trangThai, $trangThaiMessages)) {
@@ -452,4 +478,4 @@ class TaiKhoanController extends Controller
             'data' => $transactions
         ]);
     }
-}           
+}
