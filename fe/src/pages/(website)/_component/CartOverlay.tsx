@@ -111,7 +111,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
     );
   }
   return (
-    <div className="absolute top-14 right-60 w-96 ">
+    <div className="absolute top-10 right-48 w-96 pt-3">
       <div className="mt-2 bg-white shadow-lg border p-4 rounded-lg z-30">
         <h2 className="text-lg font-semibold mb-3">
           Bạn có {totalUniqueProducts} sản phẩm

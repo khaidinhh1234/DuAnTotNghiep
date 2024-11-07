@@ -74,7 +74,7 @@ const Header2 = () => {
                 if (response.data.status) {
                     const categories = response.data.data.map((category: any) => ({
                         id: category.id,
-                        ten_danh_muc: category.ten_danh_muc,
+ten_danh_muc: category.ten_danh_muc,
                         duong_dan: category.duong_dan,
                         con: [] // Mảng con ban đầu rỗng
                     }));
@@ -149,7 +149,7 @@ const Header2 = () => {
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as any)) {
                 // Khi click ra ngoài, ẩn phần tử
-                setcheck(false);
+setcheck(false);
             }
         };
 
@@ -251,7 +251,7 @@ const Header2 = () => {
             name: "Sản phẩm",
             path: "/shop",
         },
-        {
+{
             name: "Giới thiệu",
             path: "/ourstory",
         },
@@ -319,7 +319,7 @@ const Header2 = () => {
         //                                             isActive ? "underline decoration-sky-500" : ""
         //                                         }
         //                                     >
-        //                                         {item.name}
+//                                         {item.name}
         //                                     </NavLink>
         //                                 </li>
         //                             ))}
@@ -373,7 +373,7 @@ const Header2 = () => {
         //                     <li>
         //                             <a href="/" className="px-4 py-2 block hover:bg-gray-100">Trang chủ</a>
         //                         </li>
-        //                         {menuItems.map((category) => (
+//                         {menuItems.map((category) => (
         //                             <li
         //                                 key={category.id}
         //                                 className="relative group"
@@ -422,7 +422,7 @@ const Header2 = () => {
         //                             >
         //                                 <Input
         //                                     placeholder="Nhập từ khóa tìm kiếm"
-        //                                     size="large"
+//                                     size="large"
         //                                     value={searchValue}
         //                                     onChange={(e) => setSearchValue(e.target.value)}
         //                                     onPressEnter={() => onSearch(searchValue)}
@@ -469,7 +469,7 @@ const Header2 = () => {
         //                                 <a href="/gio-hang">
         //                                     <i className="fa-regular fa-bag-shopping text-xl relative">
         //                                         <span
-        //                                             className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
+//                                             className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
         //                                                 } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
         //                                         >
         //                                             {data?.tong_so_luong}
@@ -509,7 +509,7 @@ const Header2 = () => {
         //                                         </li>
         //                                         <hr />
         //                                         {!phanquyen || phanquyen.length === 0 ? (
-        //                                             ""
+//                                             ""
         //                                         ) : (
         //                                             <>
         //                                                 <li className="my-1">
@@ -548,7 +548,7 @@ const Header2 = () => {
         //                                             <a
         //                                                 onClick={logout}
         //                                                 href=""
-        //                                                 className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+//                                                 className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
         //                                             >
         //                                                 <img
         //                                                     src="https://github.com/shadcn.png"
@@ -594,44 +594,31 @@ const Header2 = () => {
                 </Link>
                 {/* Navigation Links */}
                 <nav className="flex space-x-6 text-gray-700 font-bold ml-4 relative">
-                    <a href="/" className="text-xl font-bold">Trang chủ</a>
+                    <Link to="/" className="text-xl font-bold">Trang chủ</Link>
                     <a href="/ourstory" className="text-xl">Giới thiệu</a>
                     {mainMenuItems.map((item) => (
                         <div
-                            key={item.id}
+key={item.id}
                             onMouseEnter={() => handleMouseEnter(item.id)}
                             onMouseLeave={handleMouseLeave}
                             className="relative text-xl"
                         >
                             <Dropdown
                                 menu={{
-<<<<<<< HEAD
-                                    items: renderMenuItems(categories),
-                                    className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[20px]", // Thêm justify-content vào đây
-=======
                                     items: renderMenuItems(categories),  // Đảm bảo truyền categories vào hàm renderMenuItems
                                     className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
->>>>>>> 258b79d556d7bf30ae3311c4f0113357c0087d2c
                                 }}
                             >
                                 <a href="#" className="text-black">{item.label}</a>
                             </Dropdown>
-<<<<<<< HEAD
-
-=======
->>>>>>> 258b79d556d7bf30ae3311c4f0113357c0087d2c
                         </div>
                     ))}
 
 
-                    <a href="/" className="text-xl">Bài viết</a>
-                    <a href="/vourcher" className="text-xl">Khuyến mại</a>
-                    <a href="/contact" className="text-xl">Liên hệ</a>
+                    <Link to="/blog" className="text-xl">Bài viết</Link>
+                    <Link to="/vourcher" className="text-xl">Khuyến mại</Link>
+                    <Link to="/contact" className="text-xl">Liên hệ</Link>
                 </nav>
-<<<<<<< HEAD
-
-=======
->>>>>>> 258b79d556d7bf30ae3311c4f0113357c0087d2c
             </div>
             <div className="order-4 flex items-center space-x-6 cursor-pointer mr-32 z-10">
                 <span>
@@ -656,40 +643,6 @@ const Header2 = () => {
                         </Modal>
                     </div>
                 </span>
-<<<<<<< HEAD
-                <span
-                    ref={notificationRef}
-                    className="relative"
-                    onMouseEnter={() => setShowNotifications(true)}
-                    onMouseLeave={() => setShowNotifications(false)}
-                >
-                    <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
-                        {unreadCount > 0 && (
-                            <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                                {unreadCount}
-                            </span>
-                        )}
-                    </i>
-                    <div
-                        className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${showNotifications
-                            ? "opacity-100"
-                            : "opacity-0 pointer-events-none"
-                            }`}
-                    >
-                        <Notifications onUnreadCountChange={setUnreadCount} />
-                    </div>
-                </span>
-                <span
-                    ref={cartRef}
-                    onMouseEnter={() => setIsCartVisible(true)}
-                    onMouseLeave={() => setIsCartVisible(false)}
-                >
-                    <a href="/gio-hang">
-                        <i className="fa-regular fa-bag-shopping text-xl relative px-1">
-                            <span
-                                className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                                    } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
-=======
 
                 {member ? (
                     <>
@@ -706,7 +659,7 @@ const Header2 = () => {
                             onMouseLeave={() => setShowNotifications(false)}
                         >
                             <i className="fa-regular fa-bell text-xl relative cursor-pointer">
-                                <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+<span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
                                     {dataCount}
                                 </span>
                             </i>
@@ -716,7 +669,6 @@ const Header2 = () => {
                                     ? "opacity-100"
                                     : "opacity-0 pointer-events-none"
                                     }`}
->>>>>>> 258b79d556d7bf30ae3311c4f0113357c0087d2c
                             >
                                 <Notifications onUnreadCountChange={(count: number) => console.log(`Unread count: ${count}`)} />
                             </div>
@@ -759,7 +711,7 @@ const Header2 = () => {
                                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                                         >
                                             <img
-                                                src=""
+src=""
                                                 alt=""
                                                 className="w-[30px] h-[30px] rounded-full"
                                             />
@@ -808,7 +760,7 @@ const Header2 = () => {
                                     </li>
                                     <li className="mb-2">
                                         <a
-                                            onClick={logout}
+onClick={logout}
                                             href=""
                                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                                         >
