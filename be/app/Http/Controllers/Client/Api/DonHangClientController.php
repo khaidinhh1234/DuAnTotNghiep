@@ -584,6 +584,7 @@ class DonHangClientController extends Controller
     {
         $validated = $request->validate([
             'ly_do_hoan_don' => 'required|string|max:255',
+            'hinh_anh_hoan_tra' => 'required|string'
         ]);
 
         $userId = Auth::id();
@@ -599,6 +600,11 @@ class DonHangClientController extends Controller
                     'message' => 'Đơn hàng không tồn tại hoặc không thể hoàn hàng.',
                 ], 400);
             }
+            $donHang->update([
+                'trang_thai_don_hang' => DonHang::TTDH_CXNHH,
+                'ly_do_hoan_don' => $validated['ly_do_hoan_don'],
+                'hinh_anh_hoan_tra' => $validated['hinh_anh_hoan_tra'],
+            ]);
             $viTienId = User::find($userId)->viTien->id;
             $giaoDichVi = GiaoDichVi::create([
                 'vi_tien_id' => $viTienId,

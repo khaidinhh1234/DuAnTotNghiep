@@ -369,6 +369,7 @@ class DonHangController extends Controller
 
             DB::beginTransaction();
             $hoanTien = HoanTien::findOrFail($id);
+            $donHang = $hoanTien->donHang;
             $giaoDichVi = $hoanTien->giaoDichVi;
             $soDuTruoc = $giaoDichVi->viTien->so_du;
 
@@ -376,6 +377,7 @@ class DonHangController extends Controller
                 $hoanTien->update(['trang_thai' => 'hoan_thanh_cong']);
                 $giaoDichVi->update(['trang_thai' => 'thanh_cong']);
 
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_HH]);
                 //Lưu giao dịch
                 DB::table('lich_su_giao_diches')->insert([
                     'vi_tien_id' => $giaoDichVi->viTien->id,
@@ -388,7 +390,9 @@ class DonHangController extends Controller
                 $mess = 'Xác nhận hoàn hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $hoanTien->update(['trang_thai' => 'tu_choi']);
+                $giaoDichVi->update(['trang_thai' => 'that_bai']);
 
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_TCHH]);
                 //Lưu giao dịch
                 DB::table('lich_su_giao_diches')->insert([
                     'vi_tien_id' => $giaoDichVi->viTien->id,
