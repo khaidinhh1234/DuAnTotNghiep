@@ -113,37 +113,36 @@ const Header2 = () => {
 
     // Hàm render các menu items từ dữ liệu categories
     const renderMenuItems = (items: any): MenuProps['items'] => {
-        console.log("items", items?.danh_muc)
-        return items?.danh_muc?.length !== 0 ?  items?.danh_muc?.map((category:any) => ({
-            key: category?.id?.toString(),
-            label: (
-                <div className="menu-item py-5 flex flex-col gap-y-2 items-start !m-0 !p-0 !mx-28 !gap-x-20">
-                    <div className="category flex items-center m-0 p-0 min-w-[100px]">
-                        <a className="text-black font-bold m-0 p-0" href={`/${category?.duong_dan}`} rel="noopener noreferrer">
-                            {category?.ten_danh_muc}
+        return items?.danh_muc?.length
+            ? items.danh_muc.map((category: any) => ({
+                key: category.id.toString(),
+                label: (
+                    <div className="menu-item py-5 flex flex-col gap-y-2 items-start !m-0 !p-0 !mx-28 !gap-x-20">
+                        <a className="row text-black text-sm font-bold" href={`/${category.duong_dan}`} rel="noopener noreferrer">
+                            {category.ten_danh_muc}
                         </a>
+                        {category.con && category.con.length > 0 && (
+                            <div className="subcategories flex flex-col">
+                                {category.con.map((subCategory: any) => (
+                                    <a
+                                        key={subCategory.id}
+                                        href={`/${subCategory.duong_dan}`}
+                                        rel="noopener noreferrer"
+                                        className="text-gray-950 text-sm"
+                                    >
+                                        {subCategory.ten_danh_muc}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                    {category?.con && category?.con?.length > 0 && (
-                        <div className="subcategories flex flex-col  !m-0 !p-0">
-                            {category?.con?.map((subCategory:any) => (
-                                <a
-                                    key={subCategory?.id}
-                                    href={`/${subCategory?.duong_dan}`}
-                                    rel="noopener noreferrer"
-                                    className="text-gray-400 text-sm m-0 p-0"
-                                >
-                                    {subCategory?.ten_danh_muc}
-                                </a>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            ),
-        })): [{ key: '1', label: '1' }, { key: '2', label: '2' }, { key: '3', label: '3' }];
+                ),
+            }))
+            : [];
     };
 
-    // Sử dụng hàm renderMenuItems trong Menu
     <Menu items={renderMenuItems(categories)} className="m-0 p-0" />
+
 
     console.log("asdasdasd", categories)
     useEffect(() => {
@@ -274,35 +273,7 @@ const Header2 = () => {
     // const handleMouseLeave = () => {
     //     setHoveredMenu(null);
     // };
-    const items: MenuProps['items'] = [
-        {
-            key: '1',
-            label: (
-                <div>
-                    <div>
-                        1
-                    </div>
-                    <div>2</div>
-                </div>
-            ),
-        },
-        {
-            key: '2',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                    2nd menu item
-                </a>
-            ),
-        },
-        {
-            key: '3',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-                    3rd menu item
-                </a>
-            ),
-        },
-    ];
+
     const mainMenuItems = [
         { id: 1, label: "Nam" },
         { id: 2, label: "Nữ" },
@@ -621,34 +592,35 @@ const Header2 = () => {
                         className="lg:w-[130px] lg:h-[40px] w-32 h-9"
                     />
                 </Link>
-
                 {/* Navigation Links */}
                 <nav className="flex space-x-6 text-gray-700 font-bold ml-4 relative">
-                    <a href="/" className="">Trang chủ</a>
+                    <a href="/" className="text-xl font-bold">Trang chủ</a>
+                    <a href="/ourstory" className="text-xl">Giới thiệu</a>
                     {mainMenuItems.map((item) => (
                         <div
                             key={item.id}
                             onMouseEnter={() => handleMouseEnter(item.id)}
                             onMouseLeave={handleMouseLeave}
-                            className="relative"
+                            className="relative text-xl"
                         >
                             <Dropdown
                                 menu={{
-                                    items: renderMenuItems(categories),
-                                    className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[20px] -left-20",
+                                    items: renderMenuItems(categories),  // Đảm bảo truyền categories vào hàm renderMenuItems
+                                    className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
                                 }}
                             >
                                 <a href="#" className="text-black">{item.label}</a>
                             </Dropdown>
                         </div>
                     ))}
-                    <a href="/ourstory" className="">Giới thiệu</a>
-                    <a href="/" className="">Bài viết</a>
-                    <a href="/vourcher" className="">Khuyến mại</a>
-                    <a href="/contact" className="">Liên hệ</a>
+
+
+                    <a href="/" className="text-xl">Bài viết</a>
+                    <a href="/vourcher" className="text-xl">Khuyến mại</a>
+                    <a href="/contact" className="text-xl">Liên hệ</a>
                 </nav>
             </div>
-            <div className="order-4 flex items-center space-x-6 cursor-pointer">
+            <div className="order-4 flex items-center space-x-6 cursor-pointer mr-32 z-10">
                 <span>
                     <div className="relative">
                         <SearchOutlined
@@ -721,6 +693,7 @@ const Header2 = () => {
                             <CartOverlay isVisible={isCartVisible} />
                             {/* </div> */}
                         </span>
+                        
                         <Avatar className="relative" onClick={() => setcheck(!check)}>
                             <AvatarImage src={member?.anh_nguoi_dung} />
                             <AvatarFallback>CN</AvatarFallback>
