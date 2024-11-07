@@ -56,7 +56,8 @@ class MaKhuyenMaiController extends Controller
             'chi_tieu_thoi_thieu' => 'nullable|numeric',
             'khuyen_mai_san_pham' => 'nullable|array',
             'khuyen_mai_danh_muc' => 'nullable|array',
-            'hang_thanh_vien' => 'required|array'
+            'hang_thanh_vien' => 'required|array',
+            'ap_dung_vi' => 'required|in:0,1'
         ]);
 
         $validator->after(function ($validator) use ($request) {
@@ -75,8 +76,13 @@ class MaKhuyenMaiController extends Controller
             $dataMaKhuyenMai = $request->except(['san_phams', 'danh_mucs']);
             $dataKhuyenMaiSanPham = $request->san_phams ?? [];
             $dataKhuyenMaiDanhMuc = $request->danh_mucs ?? [];
-
+            $dataMaKhuyenMai['ap_dung_vi'] = $request->ap_dung_vi ? 1 : 0;
             $apDungText = '';
+
+//            $apDungVi = '';
+//            if($dataMaKhuyenMai['ap_dung_vi'] == 1) {
+//                $apDungVi = 'Áp dụng cho ví Glow';
+//            }
 
             if (!empty($dataKhuyenMaiDanhMuc)) {
                 $danhMucDetails = DB::table('danh_mucs')
@@ -91,15 +97,15 @@ class MaKhuyenMaiController extends Controller
                     }
                 }
 
-                $apDungText = 'Áp dụng cho danh mục: ' . implode(', ', $danhMucHierarchy);
+                $apDungText = 'Áp dụng cho danh mục: ' . implode(', ', $danhMucHierarchy) . $dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '';
             } elseif (!empty($dataKhuyenMaiSanPham)) {
                 $sanPhamNames = DB::table('san_phams')->whereIn('id', $dataKhuyenMaiSanPham)->pluck('ten_san_pham')->toArray();
                 if (empty($sanPhamNames)) {
                     throw new \Exception('Sản phẩm được chọn không hợp lệ.');
                 }
-                $apDungText = 'Áp dụng cho sản phẩm: ' . implode(', ', $sanPhamNames);
+                $apDungText = 'Áp dụng cho sản phẩm: ' . implode(', ', $sanPhamNames) . $dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '';
             } else {
-                $apDungText = 'Áp dụng cho tất cả sản phẩm';
+                $apDungText = 'Áp dụng cho tất cả sản phẩm' . $dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '';
             }
 
             $dataMaKhuyenMai['ap_dung'] = $apDungText;
