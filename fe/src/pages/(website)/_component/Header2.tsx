@@ -594,7 +594,7 @@ const Header2 = () => {
                 </Link>
                 {/* Navigation Links */}
                 <nav className="flex space-x-6 text-gray-700 font-bold ml-4 relative">
-                    <a href="/" className="text-xl font-bold">Trang chủ</a>
+                    <Link to="/" className="text-xl font-bold">Trang chủ</Link>
                     <a href="/ourstory" className="text-xl">Giới thiệu</a>
                     {mainMenuItems.map((item) => (
                         <div
@@ -615,9 +615,9 @@ const Header2 = () => {
                     ))}
 
 
-                    <a href="/blog" className="text-xl">Bài viết</a>
-                    <a href="/vourcher" className="text-xl">Khuyến mại</a>
-                    <a href="/contact" className="text-xl">Liên hệ</a>
+                    <Link to="/blog" className="text-xl">Bài viết</Link>
+                    <Link to="/vourcher" className="text-xl">Khuyến mại</Link>
+                    <Link to="/contact" className="text-xl">Liên hệ</Link>
                 </nav>
             </div>
             <div className="order-4 flex items-center space-x-6 cursor-pointer mr-32 z-10">

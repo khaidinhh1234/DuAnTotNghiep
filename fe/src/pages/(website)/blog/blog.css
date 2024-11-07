@@ -1,0 +1,19 @@
+/* Tùy chỉnh style cho carousel dots */
+.ant-carousel .slick-dots {
+    bottom: 20px; /* Điều chỉnh khoảng cách từ bottom */
+    display: flex;
+    justify-content: center; /* Căn giữa các dots */
+    width: 600px; /* Đảm bảo chiều rộng của dots bằng chiều rộng của carousel */
+}
+
+.ant-carousel .slick-dots li button {
+    width: 100px; /* Điều chỉnh kích thước của mỗi dot */
+    height: 1px; /* Điều chỉnh chiều cao */
+    background-color: white; /* Màu của các dots */
+    opacity: 0.7; /* Độ mờ của các dots */
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+    background-color: #ffffff; /* Màu của dot khi active */
+    opacity: 1; /* Độ mờ của dot khi active */
+}

@@ -138,6 +138,8 @@ import NapTien from "@/pages/(website)/mywallet/NapTien";
 import Test4 from "@/pages/(van_chuyen)/test";
 import WalletProtectedRoute from './WalletProtectedRoute';
 import Blog from "@/pages/(website)/blog/Blog";
+import BlogCategories from "@/pages/(website)/blog/BlogCategories";
+import BlogDetail from "@/pages/(website)/blog/BlogDetail";
 const Router = () => {
   //
 
@@ -232,6 +234,8 @@ const Router = () => {
             element={<NewDetail />}
           />
           <Route path="/blog" element={<Blog/>}/>
+          <Route path="/danhmuctintuc/:duongDan" element={<BlogCategories/>}/>
+          <Route path="/xem-bai-viet/:duong_dan" element={<BlogDetail/>}/>
           {/* <Route
             path="/xem-bai-viet/:duong_dan"
             element={<DetailBlog />}

@@ -5,7 +5,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Import Swiper CSS
 
 const Blog = () => {
-    const { duong_dan } = useParams();
     const { data } = useQuery({
         queryKey: ["baiviet"],
         queryFn: async () => {
@@ -19,7 +18,8 @@ const Blog = () => {
         const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
         const date = new Date(dateString);
         return new Intl.DateTimeFormat('vi-VN', options).format(date);
-      };
+    };
+    // console.log
     return (
         <div className="mt-10 pl-20 pb-20">
             {data?.Danh_muc_tin_tuc && (
@@ -32,7 +32,7 @@ const Blog = () => {
                     {data.Danh_muc_tin_tuc.map((item: any) => (
                         <SwiperSlide key={item.id}>
                             <div className="p-4 bg-white rounded-lg shadow-md relative">
-                                <Link to="">
+                                <Link to={`/danhmuctintuc/${item.duong_dan}`}>
                                     <div className="relative w-full h-40 rounded-lg overflow-hidden cursor-pointer">
                                         <img
                                             src={item.hinh_anh}
@@ -46,43 +46,44 @@ const Blog = () => {
                                         </div>
                                     </div>
                                 </Link>
+
                             </div>
                         </SwiperSlide>
                     ))}
                 </Swiper>
             )}
             <div className="mt-32">
-            {data?.Lay_bai_viet_theo_danh_muc.map((category: any) => (
-                <div key={category.id} className="mb-6">
-                    <h2 className="text-5xl font-bold mb-4">{category.ten_danh_muc_tin_tuc}</h2>
-                    <h4>Mới nhất</h4>
-                    {category.tin_tuc.length > 0 ? (
-                        <div className="flex flex-wrap -mx-2">
-                            {category.tin_tuc.map((article: any) => (
-                                <div key={article.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
-                                    <div className="bg-white   p-4">
-                                        <Link to={`/tin-tuc/${article.duong_dan}`}>
-                                            <img
-                                                src={article.anh_tin_tuc}
-                                                alt=""
-                                                className="w-full h-[300px]  object-cover mb-3 cursor-pointer"
-                                            />
-                                            <h3 className="text-lg font-semibold hover:text-red-500">
-                                                {article.tieu_de}
-                                            </h3>
-                                            <span className="text-xs text-gray-400">
-                                                {formatDate(article.created_at)}
-                                            </span>
-                                        </Link>
+                {data?.Lay_bai_viet_theo_danh_muc.map((category: any) => (
+                    <div key={category.id} className="mb-6">
+                        <h2 className="text-5xl font-bold mb-4">{category.ten_danh_muc_tin_tuc}</h2>
+                        <h4 className="text-2xl font-bold mb-4 mt-10">Mới nhất</h4>
+                        {category.tin_tuc.length > 0 ? (
+                            <div className="flex flex-wrap -mx-2">
+                                {category.tin_tuc.map((article: any) => (
+                                    <div key={article.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
+                                        <div className="bg-white   p-4">
+                                            <Link to={`/tin-tuc/${article.duong_dan}`}>
+                                                <img
+                                                    src={article.anh_tin_tuc}
+                                                    alt=""
+                                                    className="w-full h-[300px]  object-cover mb-3 cursor-pointer"
+                                                />
+                                                <h3 className="text-2xl font-semibold hover:text-red-500">
+                                                    {article.tieu_de}
+                                                </h3>
+                                                <span className="text-xl text-gray-400">
+                                                    {article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc} | {formatDate(article.created_at)}
+                                                </span>
+                                            </Link>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-sm text-gray-500">Không có bài viết nào.</p>
-                    )}
-                </div>
-            ))}
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-500">Không có bài viết nào.</p>
+                        )}
+                    </div>
+                ))}
             </div>
         </div>
     );
