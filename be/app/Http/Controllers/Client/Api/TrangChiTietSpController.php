@@ -236,52 +236,57 @@ class TrangChiTietSpController extends Controller
 
     public function goiY(Request $request)
     {
+        // Validate input dữ liệu
         $request->validate([
             'chieu_cao' => 'required|numeric|min:0',
             'can_nang' => 'required|numeric|min:0',
             'san_pham_id' => 'required|exists:san_phams,id'
         ]);
-
+    
+        // Lấy dữ liệu từ request
         $chieuCao = $request->input('chieu_cao');
         $canNang = $request->input('can_nang');
         $sanPhamId = $request->input('san_pham_id');
-
+    
+        // Lấy sản phẩm và danh mục liên quan
         $sanPham = SanPham::with('danhMuc')->find($sanPhamId);
-
+    
         if (!$sanPham || !$sanPham->danhMuc) {
             return response()->json([
                 'status' => false,
                 'message' => 'Sản phẩm không tồn tại hoặc không có danh mục.',
             ], 404);
         }
-
-        $danhMuc = $sanPham->danhMuc;
-        if ($danhMuc->cha_id !== null) {
-            $danhMuc = DanhMuc::find($danhMuc->cha_id);
-        }
-
+    
+        // Lấy danh mục chính (nếu có cha)
+        $danhMuc = $sanPham->danhMuc->cha_id ? DanhMuc::find($sanPham->danhMuc->cha_id) : $sanPham->danhMuc;
+    //  dd($danhMuc);
+        // Lấy tên danh mục và giới tính (sử dụng cho việc lọc kích thước)
         $tenDanhMuc = strtolower($danhMuc->ten_danh_muc);
-        $gioiTinh = $danhMuc->gioi_tinh;
-
+    
+        // Tìm kích thước phù hợp với chiều cao, cân nặng và loại kích thước
         $kichThuoc = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
             ->where('chieu_cao_toi_thieu', '<=', $chieuCao)
             ->where('chieu_cao_toi_da', '>=', $chieuCao)
             ->where('can_nang_toi_thieu', '<=', $canNang)
             ->where('can_nang_toi_da', '>=', $canNang)
             ->first();
-
+   
+        // Nếu không tìm thấy kích thước phù hợp
         if (!$kichThuoc) {
             return response()->json([
                 'status' => false,
                 'message' => 'Không tìm thấy kích thước phù hợp.',
             ], 404);
         }
-
+    
+        // Tìm biến thể sản phẩm phù hợp với sản phẩm và kích thước
         $bienTheSanPham = BienTheSanPham::where('san_pham_id', $sanPhamId)
             ->where('bien_the_kich_thuoc_id', $kichThuoc->id)
             ->with('mauBienThe')
             ->get(['bien_the_mau_sac_id', 'so_luong_bien_the', 'gia_ban', 'gia_khuyen_mai']);
-
+    
+        // Nếu không tìm thấy biến thể sản phẩm phù hợp
         if ($bienTheSanPham->isEmpty()) {
             return response()->json([
                 'status' => false,
@@ -292,26 +297,29 @@ class TrangChiTietSpController extends Controller
                 ]
             ], 404);
         }
-
+    
+        // Chuyển biến thể sản phẩm thành định dạng trả về
         $result = $bienTheSanPham->map(function ($variant) {
             return [
                 'bien_the_mau_sac' => $variant->mauBienThe,
                 'so_luong' => $variant->so_luong_bien_the,
                 'gia_ban' => $variant->gia_ban,
-                'gia_khuyen_mai' => $variant->gia_khuyen_mai ? $variant->gia_khuyen_mai : null,
+                'gia_khuyen_mai' => $variant->gia_khuyen_mai ?? null,
                 'co_san_kho' => $variant->so_luong_bien_the > 0,
             ];
         });
-
+    
+        // Gợi ý kích thước khác gần với chiều cao và cân nặng
         $kichThuocGoiY = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
             ->where(function ($query) use ($chieuCao, $canNang) {
                 $query->whereBetween('chieu_cao_toi_thieu', [$chieuCao - 10, $chieuCao + 10])
-                    ->whereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
-                    ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
-                    ->whereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
+                      ->orWhereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
+                      ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
+                      ->orWhereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
             })
             ->pluck('kich_thuoc');
-
+    
+        // Trả về kết quả
         return response()->json([
             'status' => true,
             'kich_thuoc' => $kichThuoc->kich_thuoc,

@@ -639,7 +639,7 @@ const ProductDetail: React.FC = () => {
                   <SizeGuideModal
                     isOpen={isModalOpen}
                     onClose={toggleModal}
-                    categoryId={product?.danh_muc?.cha_id ?? 0}
+                    categoryId={product?.ong_danh_muc?.id ?? 0}
                     productDetailId={product?.id ?? 0}
                   />
                 </div>
@@ -883,14 +883,14 @@ const ProductDetail: React.FC = () => {
                     )}
                     <div className="mt-2 flex items-center space-x-4">
                       <button
-                        className={`like-button flex items-center space-x-2 ${likeMutation?.isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                        className={`like-button flex items-center space-x-2 ${likeMutation?.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
                         onClick={() =>
                           handleReviewLike(
                             review?.id,
                             review?.trang_thai_danh_gia_nguoi_dung
                           )
                         }
-                        disabled={likeMutation?.isLoading}
+                        disabled={likeMutation?.isPending}
                       >
                         <i
                           className={
@@ -901,7 +901,7 @@ const ProductDetail: React.FC = () => {
                         ></i>
 
                         <span>
-                          {likeMutation?.isLoading ? (
+                          {likeMutation?.isPending ? (
                             "Đang xử lý..."
                           ) : (
                             <>
