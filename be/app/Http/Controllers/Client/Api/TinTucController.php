@@ -123,6 +123,11 @@ class TinTucController extends Controller
             $baiVietDetail->increment('luot_xem');
             $baiVietDetail->touch(); // Cập nhật lại trường `updated_at`
 
+            // Lấy danh mục tin tức, trừ các danh mục không cần thiết
+            $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
             // Lấy các bài viết khác cùng danh mục, ngoại trừ bài viết hiện tại
             $baiVietKhac = TinTuc::where('danh_muc_tin_tuc_id', $baiVietDetail->danh_muc_tin_tuc_id)
                 ->where('id', '<>', $baiVietDetail->id)
@@ -144,6 +149,7 @@ class TinTucController extends Controller
                 'baiVietDetail' => $baiVietDetail,
                 'baiVietKhac' => $baiVietKhac,
                 'baiVietTop' => $baiVietTopLuotXem,
+                'danhMucTinTuc' => $danhMucTinTuc,
             ], 200);
         } catch (\Exception $e) {
             // Rollback nếu có lỗi
