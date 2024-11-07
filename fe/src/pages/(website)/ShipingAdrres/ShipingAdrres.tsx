@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { checkout_address } from "@/common/validations/checkout";
+import VerificationModal from "./VerificationModal";
 
 const ShippingAddressPage = () => {
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
@@ -23,6 +24,8 @@ const ShippingAddressPage = () => {
     resolver: zodResolver(checkout_address),
   });
   const nav = useNavigate();
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [pendingOrderData, setPendingOrderData] = useState<{ data: { ma_don_hang: string } } | null>(null);
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       console.log(data);
@@ -31,6 +34,7 @@ const ShippingAddressPage = () => {
         const order = await instanceClient.post(`don-hang`, data);
         // console.log(order);
         // Bước 2: Thực hiện thanh toán qua MoMo
+        
         if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
           const momoPaymentData = {
             phuong_thuc_thanh_toan: data.phuong_thuc_thanh_toan,
@@ -53,6 +57,9 @@ const ShippingAddressPage = () => {
         } else if (data.phuong_thuc_thanh_toan === "Thanh toán khi nhận hàng") {
           toast.success("Đặt hàng thành công");
           nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
+        } else if (data.phuong_thuc_thanh_toan === "Ví tiền") {
+          setPendingOrderData(order.data);
+          setShowVerificationModal(true);;
         } else {
           message.error("Đặt hàng thất bại");
           throw new Error("Error during order creation or MoMo payment");
@@ -100,7 +107,26 @@ const ShippingAddressPage = () => {
   });
   const tong_tien = checkout?.chi_tiet_don_hang;
   const products = checkout?.chi_tiet_don_hang?.san_pham;
-
+  const handleVerification = async (code: string) => {
+    try {
+      const verifyData = {
+        ma_xac_minh: code,
+        phuong_thuc_thanh_toan: "Ví tiền"
+      };
+  
+      const order = await instanceClient.post(`don-hang`, verifyData);
+      
+      toast.success("Thanh toán thành công");
+      nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
+      
+    } catch (error) {
+      toast.error("Mã xác minh không đúng");
+    } finally {
+      setShowVerificationModal(false);
+      setPendingOrderData(null);
+    }
+  };
+  
   return (
     <>
       <section className="container">
@@ -122,6 +148,11 @@ const ShippingAddressPage = () => {
           </form>
         </div>
       </section>
+      <VerificationModal 
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        onVerify={handleVerification}
+      />
     </>
   );
 };

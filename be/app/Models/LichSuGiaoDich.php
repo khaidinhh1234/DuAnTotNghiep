@@ -11,10 +11,11 @@ class LichSuGiaoDich extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'giao_dich_vi_id',
-        'so_tien',
-        'loai_giao_dich',
-        'thoi_gian',
+        'vi_tien_id',
+        'so_du_truoc',
+        'so_du_sau',
+        'ngay_thay_doi',
+        'mo_ta',
     ];
 
     public function giaoDichVi()

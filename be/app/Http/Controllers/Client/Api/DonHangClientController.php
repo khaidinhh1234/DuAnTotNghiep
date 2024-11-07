@@ -625,7 +625,7 @@ class DonHangClientController extends Controller
                     ], 400);
                 }
                 $yeuCauRutTien = YeuCauRutTien::create([
-                    'vi_tien_id' => $viTien->id,
+                    'vi_tien_id' => $viUser->id,
                     'ngan_hang_id' => $nganHangId,
                     'so_tien' => (int)$soTien,
                     'trang_thai' => 'cho_duyet',
@@ -644,9 +644,9 @@ class DonHangClientController extends Controller
                 ]);
 
                 LichSuGiaoDich::create([
-                    'vi_tien_id' => $viTien->id,
-                    'so_du_truoc' => $viTien->so_du,
-                    'so_du_sau' => $viTien->so_du - $soTien,
+                    'vi_tien_id' => $viUser->id,
+                    'so_du_truoc' => $viUser->so_du,
+                    'so_du_sau' => $viUser->so_du - $soTien,
                     'ngay_thay_doi' => now(),
                     'mo_ta' => 'Rút tiền từ ví tiền',
                 ]);
