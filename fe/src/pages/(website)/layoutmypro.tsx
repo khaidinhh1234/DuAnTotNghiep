@@ -1,6 +1,9 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./_component/Slibar";
+import { useWalletRouteCheck } from "@/services/useWalletRouteCheck";
 const LayoutMyPro = () => {
+  useWalletRouteCheck();
+
   return (
     <div>
       <main>

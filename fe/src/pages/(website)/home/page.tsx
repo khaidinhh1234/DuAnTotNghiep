@@ -37,7 +37,7 @@ const HomePage = () => {
       <Bestseller products={products} />
       <DealsOfTheMonth chuong_trinh_uu_dai={chuong_trinh_uu_dai} />
       <Customer danhgia={danhgia} />
-      <InstagramStories />
+      {/* <InstagramStories /> */}
       <Method />{" "}
     </div>
   );

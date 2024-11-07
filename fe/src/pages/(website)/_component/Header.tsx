@@ -506,7 +506,7 @@ const Header = () => {
                               className="w-[30px] h-[30px] rounded-full"
                             />
                             <h6 className="font-semibold mx-2 text-lg ">
-                              Cài đặt
+                              Đơn hàng
                             </h6>
                           </a>
                         </li>

@@ -6,6 +6,7 @@ import CreditCardForm from "./cart";
 import { Checkbox } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const banks = [
   { name: 'Agribank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Agribank_dk6etr.png' },
@@ -259,7 +260,11 @@ const BankAccount = () => {
     <div className="w-full h-screen relative">
       <div className="flex items-center justify-between px-4 py-4 bg-white font-bold text-lg border-b border-gray-200">
         <div className="flex items-center">
-         <a href="/mypro/wallet"><i className="fa-light fa-wallet mr-2"></i></a> 
+        <Link to="/mypro/wallet">
+
+         <i className="fa-light fa-wallet mr-2"></i>
+         </Link>
+
           Tài khoản Ngân hàng liên kết
         </div>
         {selectedBanks.length > 0 && (
