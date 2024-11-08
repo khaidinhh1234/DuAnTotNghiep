@@ -7,6 +7,7 @@ import {
   InputNumber,
   Radio,
   Select,
+  Switch,
   message,
 } from "antd";
 import { DateTime } from "luxon";
@@ -15,11 +16,10 @@ import { useEffect, useState } from "react";
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 
+import { codinh, giamgiaphantram } from "@/assets/img";
 import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import AddCategorySelect from "@/components/AddCaterogySelect";
-import { codinh, giamgiaphantram } from "@/assets/img";
 
 const AddVoucher = () => {
   const [form] = Form.useForm();
@@ -37,7 +37,7 @@ const AddVoucher = () => {
   const [selectedValues2, setSelectedValues2] = useState<string[]>([]);
   const [key, setkey] = useState<string[]>([]);
   const [danhm, setdanhmuc] = useState<string[]>([]);
-
+  const apDungVi = form.getFieldValue('ap_dung_vi') ? 1 : 0;
   const [isAllSelected1, setIsAllSelected1] = useState(false);
   // const [searchTerm, setSearchTerm] = useState("");
   const nav = useNavigate();
@@ -144,6 +144,7 @@ const AddVoucher = () => {
       danh_mucs,
       loai: tabKey ? "tien_mat" : "phan_tram",
       ma_code: voucherCode,
+      ap_dung_vi: apDungVi,
     };
     mutate(formValues);
     // console.log("formValues", formValues);
@@ -777,7 +778,18 @@ const AddVoucher = () => {
                       options={data}
                     />
                   </Form.Item>{" "}
-                  <div className="flex gap-2 ">
+                  <Form.Item
+                    className="block text-md font-medium mt-2 text-gray-700 mb-1"
+                    label="Áp dụng cho ví"
+                    name="ap_dung_vi"
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      onChange={(checked) => form.setFieldsValue({ ap_dung_vi: checked ? 1 : 0 })}
+                    />
+                  </Form.Item>
+
+                  <div className="flex gap-2">
                     <Form.Item className=" flex whitespace-nowrap">
                       <Link to="/admin/vouchers">
                         <Button htmlType="submit">
