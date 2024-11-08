@@ -296,13 +296,25 @@ class TrangChuController extends Controller
                 'user_id' => Auth::id(),
                 'tim_kiem' => $query,
             ]);
+
             $dataLichSuTimKiem = LichSuTimKiem::query()
                 ->select('tim_kiem')
                 ->where('user_id', Auth::id())
                 ->orderByDesc('id')
-                ->limit(10)->get();
-        }
+                ->limit(10)
+                ->get();
 
+            $duplicates = DB::table('lich_su_tim_kiems')
+                ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
+                ->where('user_id', Auth::id())
+                ->groupBy('tim_kiem')
+                ->pluck('latest_id');
+
+            DB::table('lich_su_tim_kiems')
+                ->where('user_id', Auth::id())
+                ->whereNotIn('id', $duplicates)
+                ->delete();
+        }
 
 
         $query = trim($request->input('query'));
@@ -334,13 +346,12 @@ class TrangChuController extends Controller
                 ->where('san_phams.trang_thai', 1)
                 ->where('san_phams.hang_moi', 1)
                 ->whereNotNull('san_phams.danh_muc_id')
+                ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
+                ->orderByDesc('san_phams.id')
                 ->where(function ($q) use ($query) {
                     $q->where('ten_san_pham', 'like', '%' . $query . '%')
                         ->orWhere('ma_san_pham', 'like', '%' . $query . '%');
                 })
-                ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
-                ->orderByDesc('san_phams.id')
-                ->take(8)
                 ->get()
                 ->map(function ($sanPham) {
                     $bienThe = BienTheSanPham::query()
@@ -380,16 +391,26 @@ class TrangChuController extends Controller
 
                     return $sanPham;
                 });
-        $json = [
-            'status' => true,
-            'status_code' => 200,
-            'message' => 'Lấy dữ liệu này',
-            'data' => $goiY,
-            'lich_su_tim_kiem' => $dataLichSuTimKiem
-        ];
-        return response()->json(
-            $json
-        );
+
+        //User
+        $user = Auth::guard('api')->user();
+        if ($user) {
+            // Thêm thông tin yêu thích vào từng sản phẩm
+            $goiY->map(function ($sanPham) use ($user) {
+                $sanPham['yeu_thich'] = $sanPham->khachHangYeuThich->contains($user->id); // Sản phẩm được yêu thích
+                return $sanPham;
+            });
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu này',
+                'data' => $goiY,
+                'lich_su_tim_kiem' => $dataLichSuTimKiem
+            ];
+            return response()->json(
+                $json
+            );
+        }
     }
 
     public function loadDanhMucConChau($chaId)
@@ -475,5 +496,7 @@ class TrangChuController extends Controller
             ], 500);
         }
     }
+
+
 
 }

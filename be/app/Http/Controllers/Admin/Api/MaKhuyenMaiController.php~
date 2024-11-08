@@ -142,15 +142,21 @@ class MaKhuyenMaiController extends Controller
             return null;
         }
 
-        $parentName = '';
-        if ($danhMuc->cha_id) {
-            $parentName = $this->getDanhMucHierarchy($danhMuc->cha_id);
-            $parentName = $parentName ? $parentName . '(' . $danhMuc->ten_danh_muc . ')' : $danhMuc->ten_danh_muc;
-        } else {
-            $parentName = $danhMuc->ten_danh_muc;
+        $children = DB::table('danh_mucs')->where('cha_id', $danhMuc->id)->get();
+        $childrenNames = [];
+        foreach ($children as $child) {
+            $childHierarchy = $this->getDanhMucHierarchy($child->id);
+            if ($childHierarchy) {
+                $childrenNames[] = $childHierarchy;
+            }
         }
 
-        return $parentName;
+        $result = $danhMuc->ten_danh_muc;
+        if (!empty($childrenNames)) {
+            $result .= '(' . implode(',', $childrenNames) . ')';
+        }
+
+        return $result;
     }
 
 
