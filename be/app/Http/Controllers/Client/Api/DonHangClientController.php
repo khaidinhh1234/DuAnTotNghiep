@@ -159,8 +159,8 @@ class DonHangClientController extends Controller
 
             //Lấy mã giảm giá
             $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
+            $soTienGiamGia = 0;
             if ($donHang->ma_giam_gia) {
-                $soTienGiamGia = 0;
 
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
                     ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
@@ -208,10 +208,10 @@ class DonHangClientController extends Controller
             $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
 
             //Tính tiền ship
-            if($donHang->mien_phi_van_chuyen == 1){
+            if ($donHang->mien_phi_van_chuyen == 1) {
                 $tienShip = 0;
                 $soTienGiamShip = 20000;
-            }else{
+            } else {
                 $tienShip = 20000;
                 $soTienGiamShip = 0;
             }

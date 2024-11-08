@@ -136,9 +136,10 @@ import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 import Test4 from "@/pages/(van_chuyen)/test";
-import WalletProtectedRoute from './WalletProtectedRoute';
+import WalletProtectedRoute from "./WalletProtectedRoute";
 import ThankYouPage1 from "@/pages/(website)/thankyou/you";
 import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
+import Test3 from "@/pages/(website)/test3";
 const Router = () => {
   //
 
@@ -157,8 +158,6 @@ const Router = () => {
           />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
-          {/* <Route path="/minicard" element={<Notifications />} /> */}
           <Route path="/shop/:slug" element={<Page1 />} />
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
@@ -166,10 +165,8 @@ const Router = () => {
           <Route path="/payment" element={<Payment />} />{" "}
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
-          <Route path="/test" element={<Test />} />{" "}
+          <Route path="/test" element={<Test3 />} />{" "}
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
-          {/* <Route path="/thankyou1" element={<PaymentStatus />} />{" "} */}
-
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route path="/search-results" element={<Page2 />} />
           <Route
@@ -193,34 +190,31 @@ const Router = () => {
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
             <Route path="/mypro/naptien" element={<NapTien/>} /> */}
-      <Route path="/mypro/wallet" element={<TaiChinh />} />
-      <Route 
-        path="/mypro/WithdrawPage" 
-        element={
-          <WalletProtectedRoute>
-            <WithdrawPage />
-          </WalletProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/mypro/bank" 
-        element={
-          <WalletProtectedRoute>
-            <BankAccount />
-          </WalletProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/mypro/naptien" 
-        element={
-          <WalletProtectedRoute>
-            <NapTien />
-          </WalletProtectedRoute>
-        } 
-      />
-
-
-
+            <Route path="/mypro/wallet" element={<TaiChinh />} />
+            <Route
+              path="/mypro/WithdrawPage"
+              element={
+                <WalletProtectedRoute>
+                  <WithdrawPage />
+                </WalletProtectedRoute>
+              }
+            />
+            <Route
+              path="/mypro/bank"
+              element={
+                <WalletProtectedRoute>
+                  <BankAccount />
+                </WalletProtectedRoute>
+              }
+            />
+            <Route
+              path="/mypro/naptien"
+              element={
+                <WalletProtectedRoute>
+                  <NapTien />
+                </WalletProtectedRoute>
+              }
+            />
             <Route path="/mypro/doangthu" element={<RevenuePage />} />
             <Route path="/mypro/lichsu" element={<History />} />
             <Route

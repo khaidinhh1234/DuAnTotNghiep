@@ -1,10 +1,13 @@
 import { sanPham2 } from "@/assets/img";
 import instanceClient from "@/configs/client";
+import { PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
+import { Button, Form, Image, message, Upload } from "antd";
+import TextArea from "antd/es/input/TextArea";
+import { UploadFile, UploadProps } from "antd/es/upload";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import HoanTien from "./Hoan";
 // Component hiển thị thông tin sản phẩm
 const ProductItem = ({
   status,
@@ -22,6 +25,8 @@ const ProductItem = ({
   trang_thai_thanh_toan,
 }: any) => {
   console.log(chi_tiet_don_hangs);
+  const [values, setValues] = useState<string>("");
+  console.log(values);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
   const [Hoan, setHoan] = useState(false);
@@ -142,121 +147,19 @@ const ProductItem = ({
     { name: "Ví Glow Clothing", value: "Ví tiền" },
     { name: "Thanh toán khi nhận hàng", value: "Thanh toán khi nhận hàng" },
   ];
+  //upload image
+
   return (
     <>
       {Hoan && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full space-y-4 overflow-y-auto h-auto">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
-              Yêu cầu Trả hàng /Hoàn tiền
-            </h2>
-            <p className="text-sm text-gray-600">
-              Vui lòng chọn lý do hủy. Với lý do này, bạn sẽ hủy tất cả sản phẩm
-              trong đơn hàng và không thể thay đổi sau đó.
-            </p>
-
-            <form className="space-y-3">
-              <div className="grid grid-cols-3 gap-2">
-                {" "}
-                {chi_tiet_don_hangs?.map((item: any, index: any) => (
-                  <>
-                    <div className="relative w-32 col-span-1" key={index}>
-                      <img
-                        src={
-                          item?.bien_the_san_pham?.anh_bien_the[0]
-                            ?.duong_dan_anh ?? ""
-                        }
-                        alt="sdfsdf"
-                        className="w-32 h-36 rounded-md "
-                      />
-                      <span className="absolute bottom-0 bg-slate-500 w-full px-7 opacity-80 py-1 text-white">
-                        đ {(item?.thanh_tien ?? 0)?.toLocaleString("vi-VN")}{" "}
-                      </span>
-                    </div>{" "}
-                  </>
-                ))}
-              </div>
-              <div className="flex justify-between items-center border-b border-gray-300 pb-2">
-                <button className="text-gray-800 font-semibold">
-                  Phương án
-                </button>
-                <button className="text-gray-800 font-semibold">
-                  Trả hàng và Hoàn tiền
-                </button>
-              </div>
-              {/* Reason */}
-              {/* Refund Amount */}
-              <div className="py-2 ">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-800">
-                    Số tiền hoàn lại
-                  </span>
-                  <span className="text-gray-800 font-semibold text-xl">
-                    ₫{tong_tien.toLocaleString("vi-VN")}
-                  </span>
-                </div>
-              </div>
-              {/* Refund Method */}
-              <div className="py-2 ">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-800">
-                    Hoàn tiền vào
-                  </span>
-                  <span className="text-gray-800 font-semibold">
-                    Số dư TK Shopee
-                  </span>
-                </div>
-              </div>
-              {/* Description */}
-              <div className="py-4 border-t border-gray-300">
-                <label className="text-sm font-medium text-gray-800 flex items-center justify-between">
-                  Mô tả <span className="text-gray-400 text-xs">0/2000</span>
-                </label>
-                <textarea
-                  className="w-full mt-1 p-2 border border-gray-300 rounded-md resize-none text-sm text-gray-700"
-                  placeholder="Ghi chú thêm"
-                  rows="3"
-                ></textarea>
-              </div>
-              {/* Image and Video Upload */}
-              <div className="py-4 border-t border-gray-300">
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Image Upload */}
-                  <div className="flex flex-col items-center justify-center border border-dashed border-gray-400 rounded-md p-4 text-gray-600">
-                    <span className="text-2xl">📷</span>
-                    <span className="text-sm font-medium">Thêm Hình ảnh</span>
-                    <span className="text-xs text-gray-400">0/6</span>
-                  </div>
-
-                  {/* Video Upload */}
-                </div>
-                <p className="mt-2 text-xs text-gray-500">
-                  Hãy đăng tải hình ảnh (dưới 10MB/ảnh), video (dưới
-                  100MB/video) thấy rõ tình trạng sản phẩm nhận được, còn nguyên
-                  seal, tem, hộp.
-                </p>
-              </div>
-              {/* Submit Button */}
-              <div className="flex justify-between items-center pt-4  border-gray-200">
-                <button
-                  className="text-gray-600 hover:text-gray-800 text-sm font-medium focus:outline-none"
-                  onClick={(e: any) => {
-                    e.preventDefault();
-                    setHoan(!Hoan);
-                  }}
-                >
-                  KHÔNG PHẢI BÂY GIỜ
-                </button>
-                <button
-                  className="bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-6 rounded-md shadow-lg transition-all"
-                  // onClick={(e: any) => handlethanhtoan(e)}
-                >
-                  Gửi yêu cầu
-                </button>
-              </div>{" "}
-            </form>
-          </div>
-        </div>
+        <>
+          <HoanTien
+            chi_tiet_don_hangs={chi_tiet_don_hangs}
+            setHoan={setHoan}
+            tong_tien={tong_tien}
+            setValues={setValues}
+          />
+        </>
       )}
       {Payment && (
         <>
@@ -585,7 +488,7 @@ const ProductItem = ({
 };
 
 // Component hiển thị danh sách sản phẩm
-const ProductList = ({ donhang }: any) => {
+const ProductList = ({ donhang, tong }: any) => {
   const don_hang = donhang;
   // console.log(don_hang);
   return (
@@ -641,7 +544,7 @@ const ProductList = ({ donhang }: any) => {
                 }
                 quantity={item.chi_tiets[0]?.so_luong || 1}
                 chi_tiet_don_hangs={item.chi_tiets || []}
-                tong_tien={item.tong_tien_don_hang || 0}
+                tong_tien={tong || 0}
                 ma_don_hang={item.ma_don_hang || ""}
               />
             ))

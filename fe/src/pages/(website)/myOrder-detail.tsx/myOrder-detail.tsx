@@ -13,7 +13,7 @@ const MyOrderdetail = () => {
     queryFn: async () => {
       if (!slug) throw new Error("Slug không hợp lệ.");
       try {
-        console.log(slug);
+        // console.log(slug);
 
         const response = await instanceClient.get(`don-hang/${slug}`);
         if (response.status !== 200) {
@@ -332,15 +332,19 @@ const MyOrderdetail = () => {
             <p>
               <UserOutlined />{" "}
               {donhang?.ten_nguoi_dat_hang ??
-                thongtin?.ho + " " + thongtin?.ten}
+                (thongtin?.ho && thongtin?.ten
+                  ? `${thongtin.ho} ${thongtin.ten}`
+                  : "Không có thông tin")}
             </p>
             <p>
               <i className="fa-solid fa-phone mr-1"></i>
-              {formattedPhoneNumber ?? 0}
+              {formattedPhoneNumber ?? "Không có sdt thông tin"}
             </p>
             <p>
               <i className="fa-solid fa-map-marker-alt"></i>{" "}
-              {donhang?.dia_chi_nguoi_dat_hang ?? thongtin?.dia_chi}
+              {donhang?.dia_chi_nguoi_dat_hang ??
+                thongtin?.dia_chi ??
+                "Không có địa chỉ"}
             </p>
           </div>
           <div className="border-l px-5 flex justify-between">
@@ -348,6 +352,7 @@ const MyOrderdetail = () => {
             <div className="text-end">
               {" "}
               <p>Tổng tiền hàng</p>
+              <p>Tiết kiệm</p>
               <p>Phí vận chuyển</p>
               <p>Voucher từ GLOW</p>
               <p>Thành tiền</p>
@@ -355,15 +360,22 @@ const MyOrderdetail = () => {
             <div className="text-right">
               {" "}
               <p>
-                ₫{(donhang?.tong_tien_don_hang ?? 0).toLocaleString("vn-VN")}
+                ₫
+                {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
+                  "vn-VN"
+                )}
               </p>
-              <p>{chitiet?.tong_thanh_tien_san_pham !== 0 ? "₫25.000" : 0} </p>
+              <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p>
+              <p>{(chitiet?.tien_ship ?? 0).toLocaleString("vn-VN")} </p>
               <p>
                 {" "}
-                ₫{(donhang?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
+                ₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
               </p>
               <p className="text-red-600 font-semibold text-2xl">
-                {(donhang?.tong_tien_don_hang ?? 0).toLocaleString("vi-VN")} đ
+                {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
+                  "vi-VN"
+                )}{" "}
+                đ
               </p>
             </div>
           </div>
