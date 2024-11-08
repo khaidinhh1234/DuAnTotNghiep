@@ -10,6 +10,7 @@ use App\Models\DanhGia;
 use App\Models\DanhMuc;
 use App\Models\DanhMucTinTuc;
 use App\Models\DonHang;
+use App\Models\LichSuTimKiem;
 use App\Models\SanPham;
 use App\Models\ThongTinWeb;
 use App\Models\TinTuc;
@@ -290,6 +291,22 @@ class TrangChuController extends Controller
 
         $query = trim($request->input('query'));
 
+        if (Auth::check()) {
+            LichSuTimKiem::create([
+                'user_id' => Auth::id(),
+                'tim_kiem' => $query,
+            ]);
+            $dataLichSuTimKiem = LichSuTimKiem::query()
+                ->select('tim_kiem')
+                ->where('user_id', Auth::id())
+                ->orderByDesc('id')
+                ->limit(10)->get();
+        }
+
+
+
+        $query = trim($request->input('query'));
+
         $goiY =
             SanPham::query()
                 ->select(
@@ -317,7 +334,10 @@ class TrangChuController extends Controller
                 ->where('san_phams.trang_thai', 1)
                 ->where('san_phams.hang_moi', 1)
                 ->whereNotNull('san_phams.danh_muc_id')
-                ->where('ten_san_pham', 'like', '%' . $query . '%')
+                ->where(function ($q) use ($query) {
+                    $q->where('ten_san_pham', 'like', '%' . $query . '%')
+                        ->orWhere('ma_san_pham', 'like', '%' . $query . '%');
+                })
                 ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
                 ->orderByDesc('san_phams.id')
                 ->take(8)
@@ -360,7 +380,16 @@ class TrangChuController extends Controller
 
                     return $sanPham;
                 });
-        return response()->json($goiY);
+        $json = [
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Lấy dữ liệu này',
+            'data' => $goiY,
+            'lich_su_tim_kiem' => $dataLichSuTimKiem
+        ];
+        return response()->json(
+            $json
+        );
     }
 
     public function loadDanhMucConChau($chaId)

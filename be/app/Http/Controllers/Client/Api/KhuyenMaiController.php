@@ -256,6 +256,14 @@ class KhuyenMaiController extends Controller
     public function danhSachMaKhuyenMaiTheoSanPhamGioHang(Request $request)
     {
         try {
+//            $dataApDungVi = [];
+//
+//            if ($request->ap_dung_vi == 1) {
+//                $dataApDungVi = [0, 1];
+//            } else {
+//                $dataApDungVi = [0];
+//            }
+
             $user = $request->user();
             if (!$user) {
                 return response()->json(['status' => false, 'message' => 'Bạn cần đăng nhập để xem mã khuyến mãi.'], 401);
@@ -292,6 +300,7 @@ class KhuyenMaiController extends Controller
                 ->where('trang_thai', 1)
                 ->where('ngay_bat_dau_suu_tam', '<=', now())
                 ->where('ngay_ket_thuc', '>=', now())
+//                ->whereIn("ap_dung_vi", $dataApDungVi)
                 ->whereDoesntHave('user', function ($q) use ($user) {
                     $q->where('user_id', $user->id)->where('da_su_dung', true);
                 });
@@ -300,7 +309,7 @@ class KhuyenMaiController extends Controller
                 $query->where('ma_code', 'LIKE', '%' . $request->ma_code . '%');
             }
 
-            $maKhuyenMai = $query->get()->map(function ($ma) use ($sanPhamIds, $danhMucIdsWithSubCategories, $tongGiaTriGioHang) {
+            $maKhuyenMai = $query->get()->map(function ($ma) use ($request, $sanPhamIds, $danhMucIdsWithSubCategories, $tongGiaTriGioHang) {
                 $apDung = true;
                 $errorMessages = [];
                 $soTienGiamGia = 0;
@@ -308,6 +317,11 @@ class KhuyenMaiController extends Controller
                 if ($ma->chi_tieu_toi_thieu > $tongGiaTriGioHang) {
                     $apDung = false;
                     $errorMessages[] = 'Tổng giá trị đơn hàng không đủ để áp dụng mã khuyến mãi.';
+                }
+
+                if($ma->ap_dung_vi == 1 && $request->ap_dung_vi == 0) {
+                    $apDung = false;
+                    $errorMessages[] = 'Mã khuyến mãi cần sử dụng ví để áp dụng';
                 }
 
                 $sanPhamKhongApDung = $ma->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist();

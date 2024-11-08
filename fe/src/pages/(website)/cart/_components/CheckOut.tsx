@@ -34,7 +34,6 @@ const CheckOut = () => {
   });
   const { mutate: increaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      // Send the request to the backend without any pre-check
       await instanceClient.put(
         `/gio-hang/tang-so-luong/${productId}`,
         { so_luong: currentQuantity + 1 },
@@ -47,7 +46,7 @@ const CheckOut = () => {
     },
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-  
+
       // Optimistic update for quantity increment
       queryClient.setQueryData(
         ["cart", access_token],
@@ -58,14 +57,14 @@ const CheckOut = () => {
             }
             return product;
           });
-  
+
           const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map((product) => {
             if (product.id === productId) {
               return { ...product, so_luong: currentQuantity + 1 };
             }
             return product;
           });
-  
+
           return {
             ...oldData,
             san_pham_giam_gia: updatedProducts,
@@ -73,7 +72,7 @@ const CheckOut = () => {
           };
         }
       );
-  
+
       return { previousCartData };
     },
     onSuccess: () => {
@@ -88,7 +87,7 @@ const CheckOut = () => {
       toast.error(errorMessage);
     },
   });
-  
+
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({
       productId,
@@ -502,23 +501,31 @@ const CheckOut = () => {
                                 className="w-7 h-10 text-center"
                                 placeholder="Quantity"
                                 min="1"
-                                max={product.so_luong_bien_the} 
+                                max={product.so_luong_bien_the}
                                 title="Product Quantity"
                                 readOnly
                               />
                               <button
-                                onClick={() =>
+                                onClick={() => {
+                                  // Kiểm tra nếu số lượng sản phẩm hiện tại đã đạt đến số lượng tối đa của biến thể
+                                  if (product.so_luong >= product.so_luong_bien_the) {
+                                    toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
+                                    return; // Dừng lại nếu đạt giới hạn
+                                  }
+
+                                  // Gọi hàm tăng số lượng nếu còn tồn kho
                                   increaseQuantity({
                                     productId: product.id,
                                     currentQuantity: product.so_luong,
-                                  })
-                                }
+                                  });
+                                }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
-                                disabled={product.so_luong >= product.so_luong_bien_the} 
+                                disabled={product.so_luong >= product.so_luong_bien_the} // Vô hiệu hóa nút nếu đạt giới hạn
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>
+
                             </div>
                           </td>
 
@@ -607,7 +614,7 @@ const CheckOut = () => {
                                 className="w-7 h-10 text-center"
                                 placeholder="Quantity"
                                 min="1"
-                                max={product.so_luong_bien_the} 
+                                max={product.so_luong_bien_the}
                                 title="Product Quantity"
                                 readOnly
                               />
@@ -620,7 +627,7 @@ const CheckOut = () => {
                                 }
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
-                                disabled={product.so_luong >= product.so_luong_bien_the} 
+                                disabled={product.so_luong >= product.so_luong_bien_the}
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>
