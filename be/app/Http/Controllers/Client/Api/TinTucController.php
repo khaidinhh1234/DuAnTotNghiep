@@ -119,9 +119,11 @@ class TinTucController extends Controller
                 ], 404);
             }
 
-            // Tăng lượt xem cho bài viết và cập nhật lại updated_at
-            $baiVietDetail->increment('luot_xem');
-            $baiVietDetail->touch(); // Cập nhật lại trường `updated_at`
+            // Kiểm tra nếu cần tăng lượt xem (tham số `tang_luot_xem` được gửi từ frontend)
+            if ($request->has('tang_luot_xem') && $request->tang_luot_xem == true) {
+                $baiVietDetail->increment('luot_xem');
+                $baiVietDetail->touch(); // Cập nhật `updated_at`
+            }
 
             // Lấy danh mục tin tức, trừ các danh mục không cần thiết
             $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])

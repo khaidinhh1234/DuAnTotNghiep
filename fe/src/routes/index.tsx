@@ -137,6 +137,9 @@ import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 import Test4 from "@/pages/(van_chuyen)/test";
 import WalletProtectedRoute from './WalletProtectedRoute';
+import Blog from "@/pages/(website)/blog/Blog";
+import BlogCategories from "@/pages/(website)/blog/BlogCategories";
+import BlogDetail from "@/pages/(website)/blog/BlogDetail";
 
 const Router = () => {
   //
@@ -192,31 +195,31 @@ const Router = () => {
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
             <Route path="/mypro/naptien" element={<NapTien/>} /> */}
-      <Route path="/mypro/wallet" element={<TaiChinh />} />
-      <Route 
-        path="/mypro/WithdrawPage" 
-        element={
-          <WalletProtectedRoute>
-            <WithdrawPage />
-          </WalletProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/mypro/bank" 
-        element={
-          <WalletProtectedRoute>
-            <BankAccount />
-          </WalletProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/mypro/naptien" 
-        element={
-          <WalletProtectedRoute>
-            <NapTien />
-          </WalletProtectedRoute>
-        } 
-      />
+            <Route path="/mypro/wallet" element={<TaiChinh />} />
+            <Route
+              path="/mypro/WithdrawPage"
+              element={
+                <WalletProtectedRoute>
+                  <WithdrawPage />
+                </WalletProtectedRoute>
+              }
+            />
+            <Route
+              path="/mypro/bank"
+              element={
+                <WalletProtectedRoute>
+                  <BankAccount />
+                </WalletProtectedRoute>
+              }
+            />
+            <Route
+              path="/mypro/naptien"
+              element={
+                <WalletProtectedRoute>
+                  <NapTien />
+                </WalletProtectedRoute>
+              }
+            />
 
 
 
@@ -233,6 +236,9 @@ const Router = () => {
             path="/tin-tuc-theo-danh-muc/:duong_dan"
             element={<NewDetail />}
           />
+          <Route path="/blog" element={<Blog/>}/>
+          <Route path="/danhmuctintuc/:duongDan" element={<BlogCategories/>}/>
+          <Route path="/xem-bai-viet/:duong_dan" element={<BlogDetail/>}/>
           {/* <Route
             path="/xem-bai-viet/:duong_dan"
             element={<DetailBlog />}

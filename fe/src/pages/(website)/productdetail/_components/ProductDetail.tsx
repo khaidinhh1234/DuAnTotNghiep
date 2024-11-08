@@ -1,7 +1,7 @@
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -150,7 +150,24 @@ const ProductDetail: React.FC = () => {
     null
   ); //laybienthe
   // const [isReady, setIsReady] = useState(false);
+  const viewedRef = useRef(false);
 
+  useEffect(() => {
+    const incrementView = async () => {
+        try {
+            const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`, { params: { tang_luot_xem: true } });
+            console.log("Lượt xem đã tăng:", response.data);
+            viewedRef.current = true; // Đánh dấu đã tăng lượt xem
+        } catch (error) {
+            console.error("Lỗi khi tăng lượt xem:", error);
+        }
+    };
+
+    // Chỉ gọi API tăng lượt xem khi trang đã tải và chưa tăng lượt xem
+    if (slug && !viewedRef.current) {
+        incrementView();
+    }
+}, [slug]); // Không cần theo dõi `viewed` vì dùng `useRef`
   // useEffect(() => {
   //   const storedToken = localStorage.getItem("accessToken");
   //   if (storedToken) {
@@ -433,6 +450,7 @@ const ProductDetail: React.FC = () => {
   if (isLoading) return <div>Đang tải...</div>;
   // if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
   // console.log(product);
+  
   return (
     <>
       <section>

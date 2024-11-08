@@ -170,6 +170,18 @@ class VanChuyenController extends Controller
                             'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
                             'ghi_chu' => json_encode($validate['ghi_chu']),
                         ]);
+
+                        $thongBao = ThongBao::create([
+                            'user_id' => $vanChuyen->user_id,
+                            'tieu_de' => 'Giao hàng thất bại',
+                            'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $vanChuyen->ma_don_hang,
+                            'loai' => 'Đơn hàng',
+                            'duong_dan' => $vanChuyen->ma_don_hang,
+                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                        ]);
+
+                        broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
                         DB::commit();
                         return response()->json([
                             'status' => true,
