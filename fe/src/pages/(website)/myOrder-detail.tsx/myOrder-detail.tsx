@@ -397,9 +397,7 @@ const MyOrderdetail = () => {
                       : "text-black"
                 }`}
               >
-                {donhang?.trang_thai_thanh_toan === "Chưa thanh toán"
-                  ? "Thanh toán thất bại "
-                  : donhang?.trang_thai_thanh_toan}
+                {donhang?.trang_thai_thanh_toan}
               </span>
             </div>{" "}
             <div className="text-end border-t pt-4">
@@ -409,7 +407,7 @@ const MyOrderdetail = () => {
                   ? "Thanh toán MoMo ATM"
                   : donhang?.phuong_thuc_thanh_toan === "Momo_QR"
                     ? "Thanh toán MoMo QR"
-                    : donhang?.trang_thai_don_hang}
+                    : donhang?.phuong_thuc_thanh_toan}
               </span>
             </div>{" "}
           </div>

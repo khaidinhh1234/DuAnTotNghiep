@@ -11,7 +11,7 @@ import HoanTien from "./Hoan";
 // Component hiển thị thông tin sản phẩm
 const isToday = (date) => {
   const today = new Date();
-  console.log(today);
+  // console.log(today);
   return (
     date.getUTCDate() === today.getUTCDate() &&
     date.getUTCMonth() === today.getUTCMonth() &&
@@ -34,6 +34,7 @@ const ProductItem = ({
   pricesale,
   trang_thai_thanh_toan,
   created_at,
+  phuong_thuc_thanh_toans,
 }: any) => {
   // console.log(chi_tiet_don_hangs);
   console.log("status", new Date(created_at));
@@ -48,7 +49,6 @@ const ProductItem = ({
   const queryClient = useQueryClient();
   const [li_do_huy_hang, setValue] = useState<string>("");
   const [phuong_thuc_thanh_toan, setPhuongthuc] = useState<any>({});
-  // console.log("phuong_thuc_thanh_toan", phuong_thuc_thanh_toan);
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       // console.log(data);
@@ -400,13 +400,15 @@ const ProductItem = ({
             >
               {status === "Hoàn tất đơn hàng"
                 ? "Đánh giá"
-                : status === "Chờ khách hàng xác nhận"
+                : status === "Chờ khách hàng xác nhận" &&
+                    status !== "Hoàn tất đơn hàng"
                   ? "Đã nhận hàng"
                   : "Hủy Đơn Hàng"}
             </button>
           )}{" "}
           <br />
           {isToday(dateToCheck) &&
+            phuong_thuc_thanh_toans !== "Thanh toán khi nhận hàng" &&
             trang_thai_thanh_toan == "Chưa thanh toán" &&
             status == "Chờ xác nhận" && (
               <button
@@ -426,19 +428,19 @@ const ProductItem = ({
                 )}
               </button>
             )}
-          {(status === "Hoàn tất đơn hàng" ||
-            status === "Chờ khách hàng xác nhận" ||
-            trang_thai_thanh_toan == "Đã thanh toán") && (
-            <button
-              className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
-              onClick={(e) => {
-                e.preventDefault();
-                setHoan(true);
-              }}
-            >
-              Hoàn hàng
-            </button>
-          )}
+          {status === "Hoàn tất đơn hàng" &&
+            status !== "Chờ khách hàng xác nhận" &&
+            trang_thai_thanh_toan == "Đã thanh toán" && (
+              <button
+                className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setHoan(true);
+                }}
+              >
+                Hoàn hàng
+              </button>
+            )}
         </div>
         <div className="col-span-7 border-t mt-2 py-3 lg:flex lg:justify-between">
           {" "}
@@ -559,9 +561,10 @@ const ProductList = ({ donhang, tong }: any) => {
                 }
                 quantity={item.chi_tiets[0]?.so_luong || 1}
                 chi_tiet_don_hangs={item.chi_tiets || []}
-                tong_tien={tong || 0}
+                tong_tien={item?.tong_tien_don_hang || 0}
                 created_at={item?.created_at || ""}
                 ma_don_hang={item.ma_don_hang || ""}
+                phuong_thuc_thanh_toans={item.phuong_thuc_thanh_toan || ""}
               />
             ))
           ) : (

@@ -78,7 +78,7 @@ const Detail = ({ record }: any) => {
   // const donhang = data?.data;
   const thongtin = data?.data.thong_tin;
 
-  // console.log("data", products);
+  console.log("data", products);
   // console.log(vanchuyen, "vanchuyen");
   const handleCancel = () => {
     setOpen(false);
@@ -209,49 +209,55 @@ const Detail = ({ record }: any) => {
                 <div
                   className={`${
                     record.trang_thai_don_hang === "Chờ xác nhận"
-                      ? "bg-blue-400" // Chờ xác nhận: màu vàng nhạt
+                      ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
                       : record.trang_thai_don_hang === "Đã xác nhận"
-                        ? "bg-green-500" // Đã xác nhận: màu cam đậm
+                        ? "text-orange-500" // Đã xác nhận: màu cam đậm
                         : record.trang_thai_don_hang === "Đang xử lý"
-                          ? "bg-yellow-500" // Đang xử lý: màu xanh dương
+                          ? "text-blue-500" // Đang xử lý: màu xanh dương
                           : record.trang_thai_don_hang === "Đang giao hàng"
-                            ? "bg-purple-500" // Đang giao hàng: màu tím
+                            ? "text-purple-500" // Đang giao hàng: màu tím
                             : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
-                              ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
-                              : record.trang_thai_don_hang ===
-                                  "Chờ khách hàng xác nhận"
-                                ? "bg-pink-500" // Ch�� khách hàng xác nhận: màu tím
+                              ? "text-green-500" // Hoàn tất đơn hàng: màu xanh lá
+                              : record.trang_thai_don_hang === "Hủy hàng"
+                                ? "text-red-500" // Hủy hàng: màu đỏ
                                 : record.trang_thai_don_hang ===
-                                    "Đơn hàng bị từ chối nhan"
-                                  ? "bg-red-500" // Đơn hàng bị từ chối nhan: màu đ��
-                                  : record.trang_thai_don_hang === "Hủy hàng"
-                                    ? "bg-red-500" // Hủy hàng: màu đ��
-                                    : record.trang_thai_don_hang === "Hoàn hàng"
-                                      ? "bg-green-500" // Hoàn hàng: màu xanh lá
-                                      : "bg-red-500" // Các trạng thái khác: màu đỏ
+                                    "Đơn hàng bị từ chối nhân"
+                                  ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
+                                  : record.trang_thai_don_hang === "Hoàn hàng"
+                                    ? "text-blue-700" // Hoàn hàng: màu xanh đậm
+                                    : record.trang_thai_don_hang ===
+                                        "Chờ xác nhận hoàn hàng"
+                                      ? "text-yellow-500" // Chờ xác nhận hoàn hàng: màu vàng đậm
+                                      : record.trang_thai_don_hang ===
+                                          "Từ chối hoàn hàng"
+                                        ? "text-gray-500" // Từ chối hoàn hàng: màu xám
+                                        : "text-gray-700" // Các trạng thái khác: màu đỏ
                   } text-white px-2 py-1 font-bold rounded-lg`}
                 >
                   {record.trang_thai_don_hang === "Chờ xác nhận"
-                    ? "Chờ xác nhận" // Chờ xác nhận: màu vàng nhạt
+                    ? "Chờ xác nhận"
                     : record.trang_thai_don_hang === "Đã xác nhận"
-                      ? "Đã xác nhận" // Đã xác nhận: màu cam đậm
+                      ? "Đã xác nhận"
                       : record.trang_thai_don_hang === "Đang xử lý"
-                        ? "Chờ lấy hàng" // Đang xử lý: màu xanh dương
-                        : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
-                          ? "Hoàn tất đơn hàng" // Đang giao hàng: màu tím
+                        ? "Chờ lấy hàng"
+                        : record.trang_thai_don_hang === "Đang giao hàng"
+                          ? "Đang giao hàng"
                           : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
-                            ? "Hoàn tất đơn hàng" // Đã giao hàng thành công: màu xanh lá
-                            : record.trang_thai_don_hang ===
-                                "Chờ khách hàng xác nhận"
-                              ? "Chờ khách hàng xác nhận" // Chờ khách hàng xác nhận: màu tím
+                            ? "Hoàn tất đơn hàng"
+                            : record.trang_thai_don_hang === "Hủy hàng"
+                              ? "Hủy hàng"
                               : record.trang_thai_don_hang ===
-                                  "Đơn hàng bị từ chối nhan"
-                                ? "Đơn hàng bị từ chối nhan" // Đơn hàng bị từ chối nhan: màu đ��
-                                : record.trang_thai_don_hang === "Hủy hàng"
-                                  ? "Hủy hàng" // Hủy hàng: màu đ��
-                                  : record.trang_thai_don_hang === "Hoàn hàng"
-                                    ? "Hoàn hàng" // Hoàn hàng: màu xanh lá
-                                    : "Đã hủy"}
+                                  "Đơn hàng bị từ chối nhân"
+                                ? "Đơn hàng bị từ chối nhận"
+                                : record.trang_thai_don_hang === "Hoàn hàng"
+                                  ? "Hoàn hàng"
+                                  : record.trang_thai_don_hang ===
+                                      "Chờ xác nhận hoàn hàng"
+                                    ? "Chờ xác nhận hoàn hàng"
+                                    : record.trang_thai_don_hang ===
+                                        "Từ chối hoàn hàng"
+                                      ? "Từ chối hoàn hàng"
+                                      : "Giao hàng thất bại"}
                 </div>
               </div>
             </div>
