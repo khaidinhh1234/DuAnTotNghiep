@@ -35,7 +35,7 @@ const Detail = ({ record }: any) => {
       return response.data;
     },
   });
-  console.log(data, "data");
+  // console.log(data, "data");
   // console.log(data,'datatoString');
   // const { data: vanchuyen, isLoading } = useQuery({
   //   queryKey: ["vanchuyen"],
@@ -80,7 +80,7 @@ const Detail = ({ record }: any) => {
   // const donhang = data?.data;
   const thongtin = data?.data.thong_tin;
 
-  console.log("data", products);
+  // console.log("data", products);
   // console.log(vanchuyen, "vanchuyen");
   const handleCancel = () => {
     setOpen(false);
@@ -152,7 +152,7 @@ const Detail = ({ record }: any) => {
   const handleCancel2 = () => {
     setIsModalOpen(false);
   };
-  console.log("record", record);
+  // console.log("record", record);
   return (
     <div>
       {" "}

@@ -80,11 +80,32 @@ const ProductItem = ({
       });
     },
   });
+  const { mutate: mutateXacnhan } = useMutation({
+    mutationFn: async (data: any) => {
+      // console.log(data);
+      try {
+        const response = await instanceClient.patch(
+          `xac-nhan-don-hang/${data}`
+        );
+        message.success("Đã xác nhận nhận hàng ");
+        // setIsModalOpen(false);
+        return response.data;
+      } catch (error) {
+        message.error(" Lỗi xác nhận nhận hàng ");
+        console.log(error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["MyOrder_LISTas"],
+      });
+    },
+  });
   const handleCancelOrder = () => {
     if (status === "Hoàn tất đơn hàng") {
       console.log("Đánh giá");
     } else if (status === "Chờ khách hàng xác nhận") {
-      console.log("Đã nhận hàng");
+      mutateXacnhan(ma_don_hang);
     } else {
       setIsModalOpen(true); // Show the modal when other statuses are met
     }
