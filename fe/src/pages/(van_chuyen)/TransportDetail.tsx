@@ -245,8 +245,7 @@ const TransportDetail = ({ record }: any) => {
     <div>
       {" "}
       <p onClick={() => setOpen(true)}>
-        {" "}
-        <div>
+        <div className="relative">
           <div>
             <h1 className="text-lg">
               Mã Vận chuyển: <span>{vanChuyenData ? vanChuyenData.ma_van_chuyen : "Loading..."}</span>
@@ -290,20 +289,36 @@ const TransportDetail = ({ record }: any) => {
                         </span>
                       </div>
                     </div>
-
                   </div>
-
                 ))
               ) : (
                 <p>Loading...</p>
               )}
+            </div>
+            <div className="absolute bottom-0 right-0 flex flex-col justify-center items-end space-y-2 p-4 ">
               <div>
-                <span>{vanchuyen.trang_thai_van_chuyen}</span>
+                <span
+                  className={`
+                    font-bold
+      ${vanchuyen?.trang_thai_van_chuyen === 'Chờ xử lý' ? 'text-yellow-500' : ''}
+      ${vanchuyen?.trang_thai_van_chuyen === 'Đang giao hàng' ? 'text-blue-500' : ''}
+      ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thành công' ? 'text-green-500' : ''}
+      ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thất bại' ? 'text-red-500' : ''}
+    `}
+                >
+                  {vanchuyen ? vanchuyen.trang_thai_van_chuyen : "Không có dữ liệu"}
+                </span>
               </div>
+
+              <p className="md:text-lg text-xs text-gray-800">
+                Tổng số tiền ({data?.data?.tong_so_luong} sản phẩm):
+                {data?.data?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
+              </p>
             </div>
           </div>
         </div>
       </p>
+
       <Modal
         centered
         open={open}

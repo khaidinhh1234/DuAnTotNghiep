@@ -145,6 +145,7 @@ import Test3 from "@/pages/(website)/test3";
 import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
+import AllTransport from "@/pages/(van_chuyen)/AllTransport";
 
 const Router = () => {
   //
@@ -430,6 +431,7 @@ const Router = () => {
         <Route path="/changePassword" element={<ChangePassword />} />
         <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />
         <Route path="/shipper" element={<Shipper />} />
+        <Route path="/shipper2" element={<AllTransport />} />
         <Route path="/test2" element={<Test4 />} />
       </Routes>
     </>
