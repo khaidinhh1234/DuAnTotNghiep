@@ -18,7 +18,7 @@ class GuiThongBaoKhuyenMai extends Command
     {
         $now = Carbon::now();
         $today = $now->toDateString();
-        $tomorrow = Carbon::now()->addDay()->toDateString();
+        $tomorrow = $now->addDay()->toDateString();
 
         $chuongTrinhUuDai = ChuongTrinhUuDai::where(function ($query) use ($today, $tomorrow) {
             $query->whereDate('ngay_bat_dau', $today)

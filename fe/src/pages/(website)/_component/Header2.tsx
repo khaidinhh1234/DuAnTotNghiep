@@ -19,6 +19,7 @@ import './dropdown.css'
 //     children: Category[];
 // }
 
+
 const Header2 = () => {
     const [check, setcheck] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
@@ -38,6 +39,7 @@ const Header2 = () => {
             }
         };
 
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -50,6 +52,7 @@ const Header2 = () => {
             }
         };
 
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -61,10 +64,11 @@ const Header2 = () => {
         duong_dan: string;
         con: Category[];  // Chứa các danh mục con
     }
-    // 
+    //
     const [categories, setCategories] = useState<Category[]>([]);
     const [menuItems, setMenuItems] = useState<Category[]>([]);
     const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
+
 
     // Fetch danh mục cha
     useEffect(() => {
@@ -85,8 +89,10 @@ ten_danh_muc: category.ten_danh_muc,
             }
         };
 
+
         fetchParentCategories();
     }, []);
+
 
     // Fetch danh mục con
     const fetchCategories = async (parentId: number) => {
@@ -100,16 +106,19 @@ ten_danh_muc: category.ten_danh_muc,
         }
     };
 
+
     // Handle hover event
     const handleMouseEnter = (id: number) => {
         setHoveredMenu(id);
         fetchCategories(id); // Fetch danh mục con khi hover vào danh mục cha
     };
 
+
     const handleMouseLeave = () => {
         setHoveredMenu(null);
         // setCategories([]); // Clear categories khi di chuột ra ngoài
     };
+
 
     // Hàm render các menu items từ dữ liệu categories
     const renderMenuItems = (items: any): MenuProps['items'] => {
@@ -141,7 +150,10 @@ ten_danh_muc: category.ten_danh_muc,
             : [];
     };
 
+
     <Menu items={renderMenuItems(categories)} className="m-0 p-0" />
+
+
 
 
     console.log("asdasdasd", categories)
@@ -152,6 +164,7 @@ ten_danh_muc: category.ten_danh_muc,
 setcheck(false);
             }
         };
+
 
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -168,6 +181,7 @@ setcheck(false);
     // console.log("member", member);
     // console.log("member", member);
 
+
     // console.log("giaohang", giaohangs);
     const logout = () => {
         // nav("/login");
@@ -179,6 +193,7 @@ setcheck(false);
     const [searchValue, setSearchValue] = useState("");
     const [menu, setMenu] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+
 
     // const handleMouseLeave = () => {
     //     setTimeout(() => {
@@ -199,13 +214,16 @@ setcheck(false);
     };
     const [isProductMenuVisible, setIsProductMenuVisible] = useState(false);
 
+
     const handleMouseEnterProduct = () => {
         setIsProductMenuVisible(true);
     };
 
+
     const handleMouseLeaveProduct = () => {
         setIsProductMenuVisible(false);
     };
+
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -214,12 +232,15 @@ setcheck(false);
             }
         };
 
+
         document.addEventListener("mousedown", handleClickOutside);
+
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [ref]);
+
 
     const access_token = user.access_token || localStorage.getItem("access_token");
     const { data } = useQuery({
@@ -238,7 +259,11 @@ setcheck(false);
         },
     });
 
+
     const dataCount = data?.notifications?.length || 0;
+
+
+
 
 
 
@@ -266,13 +291,16 @@ setcheck(false);
     ];
     // const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
 
+
     // const handleMouseEnter = (menuId: number) => {
     //     setHoveredMenu(menuId);
     // };
 
+
     // const handleMouseLeave = () => {
     //     setHoveredMenu(null);
     // };
+
 
     const mainMenuItems = [
         { id: 1, label: "Nam" },
@@ -368,6 +396,7 @@ setcheck(false);
         //                     /></Link>
         //                 </div>
 
+
         //                 <nav className="hidden lg:block order-3">
         //                     <ul className="flex items-center space-x-4">
         //                     <li>
@@ -392,6 +421,7 @@ setcheck(false);
         //                             </li>
         //                         ))}
 
+
         //                         <li>
         //                             <a href="/ourstory" className="px-4 py-2 block hover:bg-gray-100">Giới thiệu</a>
         //                         </li>
@@ -406,6 +436,7 @@ setcheck(false);
         //                         </li>
         //                     </ul>
         //                 </nav>
+
 
         //                 <div className="order-4 flex items-center space-x-6 cursor-pointer">
         //                     <span>
@@ -431,6 +462,7 @@ setcheck(false);
         //                         </div>
         //                     </span>
 
+
         //                     {member ? (
         //                         <>
         //                             {/* {" "}
@@ -450,6 +482,7 @@ setcheck(false);
         //                                         {dataCount}
         //                                     </span>
         //                                 </i>
+
 
         //                                 <div
         //                                     className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications
@@ -615,6 +648,8 @@ key={item.id}
                     ))}
 
 
+
+
                     <Link to="/blog" className="text-xl">Bài viết</Link>
                     <Link to="/vourcher" className="text-xl">Khuyến mại</Link>
                     <Link to="/contact" className="text-xl">Liên hệ</Link>
@@ -644,6 +679,7 @@ key={item.id}
                     </div>
                 </span>
 
+
                 {member ? (
                     <>
                         {/* {" "}
@@ -664,6 +700,7 @@ key={item.id}
                                 </span>
                             </i>
 
+
                             <div
                                 className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications
                                     ? "opacity-100"
@@ -683,7 +720,7 @@ key={item.id}
                                 <i className="fa-regular fa-bag-shopping text-xl relative">
                                     <span
                                         className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
-                                            } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                                            } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center `}
                                     >
                                         {data?.tong_so_luong}
                                     </span>
@@ -693,7 +730,7 @@ key={item.id}
                             <CartOverlay isVisible={isCartVisible} />
                             {/* </div> */}
                         </span>
-                        
+                       
                         <Avatar className="relative" onClick={() => setcheck(!check)}>
                             <AvatarImage src={member?.anh_nguoi_dung} />
                             <AvatarFallback>CN</AvatarFallback>
@@ -796,3 +833,4 @@ onClick={logout}
     );
 };
 export default Header2;
+
