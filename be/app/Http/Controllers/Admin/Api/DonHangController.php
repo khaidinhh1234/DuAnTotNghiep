@@ -11,6 +11,7 @@ use App\Listeners\CapNhatHangThanhVien;
 use App\Models\DonHang;
 use App\Models\GiaoDichVi;
 use App\Models\HoanTien;
+use App\Models\MaKhuyenMai;
 use App\Models\ThongBao;
 use App\Models\User;
 use App\Models\VanChuyen;
@@ -110,6 +111,21 @@ class DonHangController extends Controller
                     'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang === "" ? $donHang->user->dia_chi : $donHang->dia_chi_nguoi_dat_hang
                 ];
             }
+            $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
+            $soTienGiamGia = 0;
+            if ($donHang->ma_giam_gia) {
+
+                $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
+                    : $maGiamGia->giam_gia;
+
+                if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
+                    $soTienGiamGia = $donHang->tong_tien_don_hang;
+                }
+            }
+            // Tính tiền ship
+            $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
+            $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
 
             // Chuẩn bị phản hồi với đầy đủ thông tin
             return response()->json([
@@ -121,6 +137,11 @@ class DonHangController extends Controller
                     'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'tien_ship' => $tienShip,
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
+                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc,
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
                 ]
             ], 200);
