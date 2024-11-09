@@ -459,19 +459,19 @@ const ProductItem = ({
                 )}
               </button>
             )}
-          {/* {status === "Hoàn tất đơn hàng" ||
-            (status === "Chờ khách hàng xác nhận" &&
-              trang_thai_thanh_toan == "Đã thanh toán" && ( */}
-          <button
-            className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
-            onClick={(e) => {
-              e.preventDefault();
-              setHoan(true);
-            }}
-          >
-            Hoàn hàng
-          </button>
-          {/* ))} */}
+          {(status === "Hoàn tất đơn hàng" ||
+            status === "Chờ khách hàng xác nhận") &&
+            trang_thai_thanh_toan == "Đã thanh toán" && (
+              <button
+                className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setHoan(true);
+                }}
+              >
+                Hoàn hàng
+              </button>
+            )}
         </div>
         <div className="col-span-7 border-t mt-2 py-3 lg:flex lg:justify-between">
           {" "}

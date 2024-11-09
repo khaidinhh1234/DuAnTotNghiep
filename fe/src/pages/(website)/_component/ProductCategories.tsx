@@ -1,4 +1,6 @@
+
 import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Slider } from "antd";
@@ -110,7 +112,22 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       setChildIds((prevState) => prevState.filter((id) => id !== childId));
     }
   };
-
+  const { tenDanhMucCha, tenDanhMucCon } = useParams();
+  const [_, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+        try {
+            const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
+            if (response.data.status) {
+                setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy sản phẩm:", error);
+        }
+    };
+    
+    fetchProducts();
+}, [tenDanhMucCha, tenDanhMucCon]);
   // ALL sản phẩm
   const { data } = useQuery({
     queryKey: ["PRODUCTSLOC"],
@@ -128,11 +145,11 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   });
   // console.log("data", data?.data?.data);
   // danh mục
-  const { data: danhmuc } = useQuery({
-    queryKey: ["DANHMUCCLIENT"],
+  const { data: locsanpham } = useQuery({
+    queryKey: ["LOCSLIBAR"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get("load-danh-muc");
+        const response = await instanceClient.get("lay-dm-ms-kt");
         if (response.data.status_code !== 200) {
           throw new Error("Error fetching product");
         }
@@ -142,37 +159,10 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  // mắc  sắc
-  const { data: mausac } = useQuery({
-    queryKey: ["MAUSACCLIENT"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("mau-sac");
-        if (response.data.status_code !== 200) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
-  const mau_sac = mausac?.mauSac;
-  const { data: size } = useQuery({
-    queryKey: ["KICHTHUOCCLIENT"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("kich-thuoc");
 
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
-  // console.log(mausac);
+  const mau_sac = locsanpham?.mauSac;
 
-  const sizes = size?.kichThuoc;
+  const sizes = locsanpham?.kichThuoc;
   // console.log(sizes);
   // lọc
   const [page, setPage] = useState(1);
@@ -199,7 +189,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const onPage = (page: number) => {
     setPage(page);
   };
-  const danh_muc = danhmuc?.data;
+  const danh_muc = locsanpham?.danhMucCha;
   // console.log(danh_muc);
   const products = data?.data?.data;
   // console.log(products);
@@ -213,18 +203,18 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
   }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
-
+  
   return (
     <div>
       {" "}
       <section>
         <div className="container">
-          <div className="flex flex-wrap items-start w-full">
+          <div className="flex flex-wrap items-start w-full mt-16">
             {/* <!-- Sidebar Filters --> */}
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
             </button>
-            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0">
+            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0    sticky top-20 ">
               {/* <!-- Product Categories --> */}
               <div className="mb-5">
                 <div
@@ -304,18 +294,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                         </div>
                       ))}
                     </>
-                    {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Nữ
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Trẻ em
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div> */}
                   </div>
                 ) : null}
               </div>
@@ -511,12 +489,12 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-              <SearchResultsPage
-                data={data}
-                onPage={onPage}
-                products={products}
+            <SearchResultsPage
+                 data={data}
+                 onPage={onPage}
+                 products={products}
                 Wishlist={handleWishlist}
-                isPending={isPending}
+                 isPending={isPending}
               />
             </div>
           </div>

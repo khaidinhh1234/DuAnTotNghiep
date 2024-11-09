@@ -1,7 +1,7 @@
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { message, Modal } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface VoucheruserProps {
   onSelectVoucher: ({
@@ -13,7 +13,10 @@ interface VoucheruserProps {
   }) => void;
 }
 
-const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
+const Voucheruser: React.FC<VoucheruserProps> = ({
+  onSelectVoucher,
+  ap,
+}: any) => {
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
@@ -77,14 +80,17 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
     setClickedIndex(newIndex);
     setSelectedDiscount(newIndex ? giam_gia : null);
   };
-
+  console.log(ap);
   const { data, refetch } = useQuery({
     queryKey: ["Voucher_LIST"],
     queryFn: async () => {
       try {
-        const datas = code ? { ma_code: code } : {};
+        const datas =
+          code || ap !== 0
+            ? { ma_code: code, ap_dung_vi: ap }
+            : { ap_dung_vi: 0 };
         const response = await instanceClient.post(
-          `ma-uu-dai-theo-gio-hang`,
+          "ma-uu-dai-theo-gio-hang",
           datas
         );
         return response.data;
@@ -92,8 +98,12 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
         throw new Error("Error fetching cart data");
       }
     },
-    // enabled: false, // Disable automatic fetch
+    enabled: false, // Disable automatic fetch on mount
   });
+
+  useEffect(() => {
+    refetch();
+  }, [ap, refetch]);
 
   // console.log(data);
   const voucher = data?.data;

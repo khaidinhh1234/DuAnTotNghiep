@@ -782,8 +782,8 @@ const EditProducts: React.FC = () => {
                           initialValue={combo.anh_bien_the}
                         >
                           <Upload
-                            action="https://api.cloudinary.com/v1_1/dpypwbeis/image/upload"
-                            data={{ upload_preset: "ml_default" }}
+                            action="https://api.cloudinary.com/v1_1/dpundwxg1/image/upload"
+                            data={{ upload_preset: "upload" }}
                             listType="picture-card"
                             fileList={fileLists[index] || []}
                             onPreview={handlePreview}
