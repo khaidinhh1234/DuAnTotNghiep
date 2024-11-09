@@ -720,7 +720,7 @@ key={item.id}
                                 <i className="fa-regular fa-bag-shopping text-xl relative">
                                     <span
                                         className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
-                                            } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                                            } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center `}
                                     >
                                         {data?.tong_so_luong}
                                     </span>
