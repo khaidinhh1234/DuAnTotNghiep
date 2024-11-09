@@ -79,7 +79,7 @@ Route::middleware([])
             Route::get('danhmuc/{tenDanhMucCha}/{tenDanhMucCon?}/{tenDanhMucConCapBa?}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
             // // Lấy ra danh mục cha
-           
+
 
             // // Lấy ra màu sắc
             // Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
@@ -150,7 +150,7 @@ Route::middleware([])
             Route::post('don-hang/huy-don-hang', [DonHangClientController::class, 'huyDonHang']);
             Route::get('/don-hang', [DonHangClientController::class, 'donHangUser']);
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
-            Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang']);
+            Route::post('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'xacNhanDonHang']);
             Route::post('/don-hang/hoan-hang/{ma_don_hang}', [DonHangClientController::class, 'hoanDonHang']);
 
             //Yêu cầu rút tiền

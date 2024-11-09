@@ -240,30 +240,29 @@ class DonHangClientController extends Controller
         }
     }
 
-    public function xacNhanDonHang(string $id)
+    public function xacNhanDonHang(string $ma_don_hang)
     {
         try {
             DB::beginTransaction();
-            $donHang = DonHang::query()->with(relations: 'vanChuyen')->findOrFail($id);
+            $donHang = DonHang::with('vanChuyen')->where('ma_don_hang', $ma_don_hang)->firstOrFail();
 
-            if ($donHang->vanChuyen->shipper_xac_nhan == 1) {
-                $donHang->vanChuyen->update([
-                    'khach_hang_xac_nhan' => 1
-                ]);
+            if ($donHang->vanChuyen->shipper_xac_nhan) {
+            $donHang->vanChuyen->update(['khach_hang_xac_nhan' => 1]);
+            $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_HTDH]);
             } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Đơn hàng chưa được xác nhận đã giao hàng',
-                ]);
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'Đơn hàng chưa được xác nhận đã giao hàng',
+            ]);
             }
 
             DB::commit();
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Xác nhận nhận hàng thành công',
-                'data' => $donHang
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Xác nhận nhận hàng thành công',
+            'data' => $donHang
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
