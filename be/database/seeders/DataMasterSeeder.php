@@ -390,7 +390,7 @@ class DataMasterSeeder extends Seeder
             'ten' => 'A',
             'email' => 'nguyenvana@gmail.com',
             'anh_nguoi_dung' => 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png',
-            'password' => Hash::make('Ship1234'), // Mã hóa mật khẩu
+            'password' => Hash::make('Ship1234'),
             'so_dien_thoai' => '0123456789',
             'dia_chi' => '123 Đường ABC, TP XYZ',
             'ngay_sinh' => Carbon::parse('1990-01-01'),

@@ -4,12 +4,13 @@ import CategorySelect from "@/components/CategorySelect";
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadOutlined } from "@ant-design/icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Input, Select, Upload, message } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const CategoriesAdd = () => {
+  const queryClient = useQueryClient()
   const [form] = Form.useForm();
   const nav = useNavigate();
   const [allCategories, setAllCategories] = useState<ICategories[]>([]);
@@ -34,6 +35,7 @@ const CategoriesAdd = () => {
     },
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
+      queryClient.invalidateQueries({ queryKey: ["allCategories"] });
       form.resetFields();
       nav("/admin/categories/add");
     },
