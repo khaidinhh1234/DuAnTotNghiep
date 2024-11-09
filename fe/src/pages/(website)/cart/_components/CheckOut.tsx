@@ -76,7 +76,7 @@ const CheckOut = () => {
       return { previousCartData };
     },
     onSuccess: () => {
-      toast.success("Số lượng sản phẩm đã được tăng thành công!");
+      // toast.success("Số lượng sản phẩm đã được tăng thành công!");
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error, _, context) => {
@@ -138,7 +138,7 @@ const CheckOut = () => {
       return { previousCartData };
     },
     onSuccess: () => {
-      toast.success("Số lượng sản phẩm đã được giảm thành công!");
+      // toast.success("Số lượng sản phẩm đã được giảm thành công!");
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {

@@ -153,21 +153,31 @@ const ProductDetail: React.FC = () => {
   const viewedRef = useRef(false);
 
   useEffect(() => {
+    // Hàm tăng lượt xem sau 10 giây
     const incrementView = async () => {
-        try {
-            const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`, { params: { tang_luot_xem: true } });
-            console.log("Lượt xem đã tăng:", response.data);
-            viewedRef.current = true; // Đánh dấu đã tăng lượt xem
-        } catch (error) {
-            console.error("Lỗi khi tăng lượt xem:", error);
-        }
+      try {
+        const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`, {
+          params: { tang_luot_xem: true },
+        });
+        console.log("Lượt xem đã tăng:", response.data);
+        viewedRef.current = true; // Đánh dấu đã tăng lượt xem
+      } catch (error) {
+        console.error("Lỗi khi tăng lượt xem:", error);
+      }
     };
 
-    // Chỉ gọi API tăng lượt xem khi trang đã tải và chưa tăng lượt xem
+    // Chỉ gọi API tăng lượt xem khi slug đã có và chưa tăng lượt xem
     if (slug && !viewedRef.current) {
+      // Đợi 10 giây mới gọi API
+      const timer = setTimeout(() => {
         incrementView();
+      }, 10000); // 10000 ms = 10 giây
+
+      // Cleanup khi component unmount hoặc slug thay đổi
+      return () => clearTimeout(timer);
     }
-}, [slug]); // Không cần theo dõi `viewed` vì dùng `useRef`
+  }, [slug]); // Dùng slug làm dependency để hiệu ứng chạy lại khi slug thay đổi
+
   // useEffect(() => {
   //   const storedToken = localStorage.getItem("accessToken");
   //   if (storedToken) {

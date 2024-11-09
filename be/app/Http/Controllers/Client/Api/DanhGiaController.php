@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AnhDanhGia;
+use App\Models\BienTheSanPham;
 use App\Models\DanhGia;
+use App\Models\DonHang;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -58,27 +60,67 @@ class DanhGiaController extends Controller
     {
         try {
             DB::beginTransaction();
-            $validateDanhGia = $request->validate([
-                'san_pham_id' => 'required|exists:san_phams,id',
-                'don_hang_id' => 'required|exists:don_hangs,id',
+
+            // Xác thực đầu vào
+            $validatedData = $request->validate([
+                'ma_don_hang' => 'required|exists:don_hangs,ma_don_hang',
                 'so_sao_san_pham' => 'required|integer|min:1|max:5',
                 'so_sao_dich_vu_van_chuyen' => 'required|integer|min:1|max:5',
                 'chat_luong_san_pham' => 'nullable|string',
                 'mo_ta' => 'nullable|string',
                 'phan_hoi' => 'nullable|string',
                 'huu_ich' => 'nullable|integer|min:0',
-                'anh_danh_gia.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'anh_danh_gia' => 'nullable|array',
+                'anh_danh_gia.*' => 'nullable|string',
             ]);
-            
-            $validateDanhGia['user_id'] = Auth::guard('api')->id();
-            $danhGia = DanhGia::create($validateDanhGia);
+
+            // Kiểm tra trạng thái đơn hàng
+            $donHang = DonHang::where('ma_don_hang', $validatedData['ma_don_hang'])
+                ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+                ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                ->first();
+            if (!$donHang) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Đơn hàng không hợp lệ hoặc chưa hoàn tất thanh toán.',
+                ], 400);
+            }
+            $chiTietDonHang = $donHang->chiTiets->pluck('bien_the_san_pham_id')->toArray();
+            $danhGia = DanhGia::create([
+                'user_id' => Auth::user()->id,
+                'don_hang_id' => $donHang->id,
+                'so_sao_san_pham' => $validatedData['so_sao_san_pham'],
+                'so_sao_dich_vu_van_chuyen' => $validatedData['so_sao_dich_vu_van_chuyen'],
+                'chat_luong_san_pham' => $validatedData['chat_luong_san_pham'],
+                'mo_ta' => $validatedData['mo_ta'],
+            ]);
+            foreach ($chiTietDonHang as $value) {
+                $bienTheSP = BienTheSanPham::find($value);
+                if ($bienTheSP) {
+                    $danhGia->danhGiaBienTheSanPhams()->attach(
+                        $bienTheSP->id,
+                        ['san_pham_id' =>  $bienTheSP->san_pham_id]
+                    );
+                }
+            }
+
+            // Thêm ảnh đánh giá
+            if (isset($validatedData['anh_danh_gia'])) {
+                foreach ($validatedData['anh_danh_gia'] as $anhDanhGia) {;
+                    AnhDanhGia::create([
+                        'danh_gia_id' => $danhGia->id,
+                        'anh_danh_gia' => $anhDanhGia,
+                    ]);
+                }
+            }
 
             DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Đánh giá mới đã được tạo thành công',
-                'data' => $danhGia,
+                // 'data' => ,
             ]);
         } catch (\Exception $exception) {
             DB::rollBack();

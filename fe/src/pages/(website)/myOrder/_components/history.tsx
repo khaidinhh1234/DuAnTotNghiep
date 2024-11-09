@@ -71,7 +71,7 @@ const History = () => {
                       {item?.amount?.toLocaleString("vi-VN")}₫
                     </td>
                     <td className="py-3 px-4 border-b text-blue-500 font-semibold">
-                      {item.don_hang.phuong_thuc_thanh_toan === "Momo_ATM" ? ( // ATM
+                      {item.don_hang.phuong_thuc_thanh_toan === "Momo_ATM" ? (
                         <span>Thẻ ATM</span>
                       ) : (
                         <span>MoMo QR</span>
@@ -80,28 +80,12 @@ const History = () => {
                   </tr>
                 ))
               ) : (
-                <table className="w-full text-center" v-else>
-                  <tbody>
-                    <tr>
-                      <td className="text-gray-500 py-4">
-                        Không có giao dịch nào
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <tr>
+                  <td className="py-4 text-center text-gray-500" colSpan={7}>
+                    Không có giao dịch nào
+                  </td>
+                </tr>
               )}
-              {/* <tr className="hover:bg-gray-50">
-                <td className="py-3 px-4 border-b">30/10/2024</td>
-                <td className="py-3 px-4 border-b">#123455</td>
-                <td className="py-3 px-4 border-b">Thất bại</td>
-                <td className="py-3 px-4 border-b">Thẻ tín dụng</td>
-                <td className="py-3 px-4 border-b">30/10/2024</td>
-                <td className="py-3 px-4 border-b">₫250,000</td>
-                <td className="py-3 px-4 border-b text-red-500 font-semibold">
-                  Mastercard
-                </td>
-              </tr> */}
-              {/* Add more rows as needed */}
             </tbody>
           </table>
 

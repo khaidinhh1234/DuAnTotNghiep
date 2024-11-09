@@ -300,7 +300,7 @@ class TrangChuController extends Controller
             ]);
 
             $dataLichSuTimKiem = LichSuTimKiem::query()
-                ->select('tim_kiem')
+                ->select('tim_kiem', 'id')
                 ->where('user_id', Auth::id())
                 ->orderByDesc('id')
                 ->limit(10)

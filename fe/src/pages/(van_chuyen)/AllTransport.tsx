@@ -18,7 +18,8 @@ import {
 import React, { useEffect, useState } from "react";
 
 import { Link, useParams } from "react-router-dom";
-import DetailTS from "./test";
+import DetailTS from "./TransportDetail";
+import TransportDetail from "./TransportDetail";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -52,7 +53,7 @@ const datas = [
   { value: "3", label: "Giao hàng thất bại" },
 ];
 
-const Test: React.FC = () => {
+const AllTransport: React.FC = () => {
   const queryClient = useQueryClient();
   // const { id } = useParams()
   // console.log("Current ID:", id);
@@ -181,23 +182,37 @@ const Test: React.FC = () => {
   //     shipper_id: item.don_hang?.shipper?.ho_ten || "Chưa có dữ liệu",
   //   })
   // );
-  const data = [
-    {
-      id: 1,
-      created_at: "2021-10-10",
-      don_hang_id: 1,
-      trang_thai_van_chuyen: "Chờ xử lý",
-    },
-    {
-      id: 2,
-      created_at: "2021-10-10",
-      don_hang_id: 2,
-      trang_thai_van_chuyen: "Đang",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     created_at: "2021-10-10",
+  //     don_hang_id: 1,
+  //     trang_thai_van_chuyen: "Chờ xử lý",
+  //   },
+  //   {
+  //     id: 2,
+  //     created_at: "2021-10-10",
+  //     don_hang_id: 2,
+  //     trang_thai_van_chuyen: "Đang",
+  //   },
+  // ];
   const handleChange = (value: string) => {
     setTrangThai(value);
   };
+  const { data } = useQuery({
+    queryKey: ["vanchuyen"],
+    queryFn: async () => {
+      const response = await instance.get(`/vanchuyen`);
+      return response.data;
+    },
+  })
+  const dataSource = data?.data?.map((item: any) => ({
+    // key: item.id,
+    // index: index + 1,
+    ...item,
+  }));
+  // console.log(shipperData)
+
   const hasSelected = selectedRowKeys.length > 0;
   const columns: TableColumnsType<{
     id: number;
@@ -205,135 +220,138 @@ const Test: React.FC = () => {
     don_hang_id: number;
     trang_thai_van_chuyen: string;
   }> = [
-    // {
-    //   title: "Mã vận chuyển",
-    //   dataIndex: "ma_van_chuyen",
-    //   key: "ma_van_chuyen",
-    // },
-    // {
-    //   title: "Mã đơn hàng",
-    //   dataIndex: "don_hang_id",
-    //   key: "don_hang_id",
-    //   render: (text) => <a>{text}</a>,
-    // },
-    {
-      title: "Tất cả",
-      className: "text-xl w-1/2",
-      dataIndex: "created_at",
-      key: "created_at",
-      // sorter: (a, b) =>
-      //   new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
-      render: (_, record) => (
-        // const date = new Date(record.created_at);
-        // return (
-        //   <div>
-        //     {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
-        //   </div>
-        // );
-        <div className="border rounded-lg p-4 mb-4">
-          <DetailTS />{" "}
-          <div className="justify-between flex">
-            <div className="flex items-end">
-              {" "}
-              <span className="md:text-lg text-sm text-red-500 font-semibold">
-                Đang giao hàng
-              </span>
-            </div>
-            <div>
-              <p className="md:text-lg text-xs text-gray-800 flex items-end justify-end">
-                Tổng số tiền (1 sản phẩm):{" "}
-                <span className="text-red-500 font-semibold"> ₫724.300</span>
-              </p>
-              <div className="flex space-x-2 mt-2 justify-end">
-                <button className="px-3 py-1 border border-gray-600 text-gray-600 rounded-lg text-xs md:text-base">
-                  Giao hàng thất bại
-                </button>
-                <button className="px-3 py-2 border-red-500 text-red-500 border hover:bg-red-600 hover:text-white rounded-lg text-xs md:text-base">
-                  Nhận hàng
-                </button>
-              </div>
-            </div>
+      // {
+      //   title: "Mã vận chuyển",
+      //   dataIndex: "ma_van_chuyen",
+      //   key: "ma_van_chuyen",
+      // },
+      // {
+      //   title: "Mã đơn hàng",
+      //   dataIndex: "don_hang_id",
+      //   key: "don_hang_id",
+      //   render: (text) => <a>{text}</a>,
+      // },
+      {
+        title: "Tất cả",
+        className: "text-xl w-1/2",
+        dataIndex: "created_at",
+        key: "created_at",
+        // sorter: (a, b) =>
+        //   new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+        render: (_, record) => (
+          // console.log(record)
+          // const date = new Date(record.created_at);
+          // return (
+          //   <div>
+          //     {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
+          //   </div>
+          // );
+          <div className="border rounded-lg p-4 mb-4">
+            <TransportDetail record={record} />
+            {/* <div className="justify-between flex">
+              {dataSource?.map((item: any) => (
+                <div key={item.id}>
+                  <div className="flex items-end">
+                    <span className="md:text-lg text-sm text-red-500 font-semibold">
+                      {item.trang_thai_van_chuyen}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="md:text-lg text-xs text-gray-800 flex items-end justify-end">
+                      Tổng số tiền (1 sản phẩm): {item.tien_cod}
+                    </p>
+                    <div className="flex space-x-2 mt-2 justify-end">
+                      <button className="px-3 py-1 border border-gray-600 text-gray-600 rounded-lg text-xs md:text-base">
+                        Giao hàng thất bại
+                      </button>
+                      <button className="px-3 py-2 border-red-500 text-red-500 border hover:bg-red-600 hover:text-white rounded-lg text-xs md:text-base">
+                        Nhận hàng
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div> */}
           </div>
-        </div>
-      ),
-    },
-    // {
-    //   title: "Trạng thái giao hàng",
-    //   dataIndex: "trang_thai_van_chuyen",
-    //   key: "trang_thai_van_chuyen",
-    //   render: (_, record) => {
-    //     return (
-    //       <div
-    //         className={
-    //           "font-bold text-[15px] " +
-    //           (record.trang_thai_van_chuyen === "Chờ xử lý"
-    //             ? "text-yellow-400"
-    //             : record.trang_thai_van_chuyen === "Đang giao hàng"
-    //               ? "text-blue-500"
-    //               : record.trang_thai_van_chuyen === "Giao hàng thành công"
-    //                 ? "text-green-500"
-    //                 : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-    //                   ? "text-red-500"
-    //                   : "text-gray-500")
-    //         }
-    //       >
-    //         {record.trang_thai_van_chuyen}
-    //       </div>
-    //     );
-    //   },
-    // },
-    // {
-    //   title: "Thanh toán",
-    //   dataIndex: "trang_thai_thanh_toan",
-    //   key: "trang_thai_thanh_toan",
-    //   sorter: (a: any, b: any) =>
-    //     a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
-    //   render: (_, record: any) => {
-    //     return (
-    //       <div
-    //         className={
-    //           record.trang_thai_thanh_toan === "Đã thanh toán"
-    //             ? "text-green-500 font-bold text-[15px]"
-    //             : record.trang_thai_thanh_toan === "Chờ xử lý"
-    //               ? "text-blue-500 font-bold text-[15px]"
-    //               : "text-yellow-500 font-bold text-[15px]"
-    //         }
-    //       >
-    //         {record.trang_thai_thanh_toan === "Đã thanh toán"
-    //           ? "Đã thanh toán"
-    //           : record.trang_thai_thanh_toan === "Chờ xử lý"
-    //             ? "Chờ xử lý"
-    //             : "Chưa thanh toán"}
-    //       </div>
-    //     );
-    //   },
-    // },
-    // {
-    //   title: "Tổng tiền",
-    //   dataIndex: "tien_cod",
-    //   // key: "tien_cod",
-    //   render: (_, record) => {
-    //     return (
-    //       <div>
-    //         {new Intl.NumberFormat("vi-VN", {
-    //           style: "currency",
-    //           currency: "VND",
-    //         }).format(Number(record.tien_cod))}
-    //       </div>
-    //     );
-    //   },
-    // },
-    // {
-    //   title: "Thao tác",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     // console.log(record),
-    //     <Space size="middle">
-    //       <DetailTS record={record} />
-    //     </Space>
-    //   ),
-    // },
-  ];
+        ),
+      },
+      // {
+      //   title: "Trạng thái giao hàng",
+      //   dataIndex: "trang_thai_van_chuyen",
+      //   key: "trang_thai_van_chuyen",
+      //   render: (_, record) => {
+      //     return (
+      //       <div
+      //         className={
+      //           "font-bold text-[15px] " +
+      //           (record.trang_thai_van_chuyen === "Chờ xử lý"
+      //             ? "text-yellow-400"
+      //             : record.trang_thai_van_chuyen === "Đang giao hàng"
+      //               ? "text-blue-500"
+      //               : record.trang_thai_van_chuyen === "Giao hàng thành công"
+      //                 ? "text-green-500"
+      //                 : record.trang_thai_van_chuyen === "Giao hàng thất bại"
+      //                   ? "text-red-500"
+      //                   : "text-gray-500")
+      //         }
+      //       >
+      //         {record.trang_thai_van_chuyen}
+      //       </div>
+      //     );
+      //   },
+      // },
+      // {
+      //   title: "Thanh toán",
+      //   dataIndex: "trang_thai_thanh_toan",
+      //   key: "trang_thai_thanh_toan",
+      //   sorter: (a: any, b: any) =>
+      //     a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
+      //   render: (_, record: any) => {
+      //     return (
+      //       <div
+      //         className={
+      //           record.trang_thai_thanh_toan === "Đã thanh toán"
+      //             ? "text-green-500 font-bold text-[15px]"
+      //             : record.trang_thai_thanh_toan === "Chờ xử lý"
+      //               ? "text-blue-500 font-bold text-[15px]"
+      //               : "text-yellow-500 font-bold text-[15px]"
+      //         }
+      //       >
+      //         {record.trang_thai_thanh_toan === "Đã thanh toán"
+      //           ? "Đã thanh toán"
+      //           : record.trang_thai_thanh_toan === "Chờ xử lý"
+      //             ? "Chờ xử lý"
+      //             : "Chưa thanh toán"}
+      //       </div>
+      //     );
+      //   },
+      // },
+      // {
+      //   title: "Tổng tiền",
+      //   dataIndex: "tien_cod",
+      //   // key: "tien_cod",
+      //   render: (_, record) => {
+      //     return (
+      //       <div>
+      //         {new Intl.NumberFormat("vi-VN", {
+      //           style: "currency",
+      //           currency: "VND",
+      //         }).format(Number(record.tien_cod))}
+      //       </div>
+      //     );
+      //   },
+      // },
+      // {
+      //   title: "Thao tác",
+      //   key: "action",
+      //   render: (_, record) => (
+      //     // console.log(record),
+      //     <Space size="middle">
+      //       <DetailTS record={record} />
+      //     </Space>
+      //   ),
+      // },
+    ];
 
   // Tabs để lọc dữ liệu theo trạng thái
   const tabItems = [
@@ -427,7 +445,7 @@ const Test: React.FC = () => {
         <Table
           // rowSelection={rowSelection}
           columns={columns}
-          dataSource={data}
+          dataSource={dataSource}
           // loading={isLoading}
           pagination={{ pageSize: 10, className: "my-5" }}
         />
@@ -437,4 +455,4 @@ const Test: React.FC = () => {
   );
 };
 
-export default Test;
+export default AllTransport;
