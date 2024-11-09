@@ -212,6 +212,7 @@ class DonHangClientController extends Controller
 
             // Tính tiền ship
             $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
+            $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -223,7 +224,7 @@ class DonHangClientController extends Controller
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
                     'tien_ship' => $tienShip,
                     'so_tien_giam_gia' => $soTienGiamGia,
-                    'tiet_kiem' => $soTienGiamGia + $tienShip,
+                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
                     'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc,
                     'danh_gia' => $danhGiaDonHang
