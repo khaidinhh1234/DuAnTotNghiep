@@ -94,7 +94,7 @@ import {
   default as ShowUser,
 } from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
-import Test from "@/pages/(van_chuyen)/test2";
+import Test from "@/pages/(van_chuyen)/AllTransport";
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
 import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
@@ -135,7 +135,7 @@ import ProductCategories from "@/pages/(website)/shop/_components/ProductCategor
 import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
-import Test4 from "@/pages/(van_chuyen)/test";
+import Test4 from "@/pages/(van_chuyen)/TransportDetail";
 import WalletProtectedRoute from './WalletProtectedRoute';
 import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
