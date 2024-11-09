@@ -311,7 +311,7 @@ const TransportDetail = ({ record }: any) => {
               </div>
 
               <p className="md:text-lg text-xs text-gray-800">
-                Tổng số tiền ({data?.data?.tong_so_luong} sản phẩm): { " " }
+                Tổng số tiền ({data?.data?.tong_so_luong} sản phẩm): {" "}
                 {data?.data?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
               </p>
             </div>

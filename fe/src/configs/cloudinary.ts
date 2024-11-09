@@ -1,7 +1,7 @@
 // cấu hình cloudinary
 import axios from "axios";
 
-const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dpypwbeis/image/upload";
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dpundwxg1/image/upload";
 const CLOUDINARY_UPLOAD_PRESET = "upload";
 
 export const uploadToCloudinary = async (file: File): Promise<string> => {
