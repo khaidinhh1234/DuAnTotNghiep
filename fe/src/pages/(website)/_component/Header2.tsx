@@ -126,10 +126,10 @@ ten_danh_muc: category.ten_danh_muc,
             ? items.danh_muc.map((category: any) => ({
                 key: category.id.toString(),
                 label: (
-                    <div className="menu-item py-5 flex flex-col gap-y-2 items-start !m-0 !p-0 !mx-28 !gap-x-20">
-                        <a className="row text-black text-sm font-bold" href={`/${category.duong_dan}`} rel="noopener noreferrer">
-                            {category.ten_danh_muc}
-                        </a>
+                    <div className="menu-item py-5 flex flex-col gap-y-2 !items-start !m-0 !p-0 !mx-28 !gap-x-20">
+                        <Link className="row text-black text-sm font-bold" to={`/${category.duong_dan}`} >
+                            {category.ten_danh_muc} 
+                        </Link>
                         {category.con && category.con.length > 0 && (
                             <div className="subcategories flex flex-col">
                                 {category.con.map((subCategory: any) => (
@@ -833,3 +833,4 @@ onClick={logout}
     );
 };
 export default Header2;
+
