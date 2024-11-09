@@ -1,7 +1,7 @@
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Rate } from "antd";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -37,6 +37,14 @@ interface ProductData {
   danh_muc: {
     ten_danh_muc: string;
     cha_id?: number;
+    id?: number;
+
+  };
+  cha_danh_muc: {
+    id?: number;
+  }; 
+  ong_danh_muc: {
+    id?: number;
   };
   trang_thai_yeu_thich: boolean;
   danh_gias: Array<{
@@ -142,7 +150,24 @@ const ProductDetail: React.FC = () => {
     null
   ); //laybienthe
   // const [isReady, setIsReady] = useState(false);
+  const viewedRef = useRef(false);
 
+  useEffect(() => {
+    const incrementView = async () => {
+        try {
+            const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`, { params: { tang_luot_xem: true } });
+            console.log("Lượt xem đã tăng:", response.data);
+            viewedRef.current = true; // Đánh dấu đã tăng lượt xem
+        } catch (error) {
+            console.error("Lỗi khi tăng lượt xem:", error);
+        }
+    };
+
+    // Chỉ gọi API tăng lượt xem khi trang đã tải và chưa tăng lượt xem
+    if (slug && !viewedRef.current) {
+        incrementView();
+    }
+}, [slug]); // Không cần theo dõi `viewed` vì dùng `useRef`
   // useEffect(() => {
   //   const storedToken = localStorage.getItem("accessToken");
   //   if (storedToken) {
@@ -425,6 +450,7 @@ const ProductDetail: React.FC = () => {
   if (isLoading) return <div>Đang tải...</div>;
   // if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
   // console.log(product);
+  
   return (
     <>
       <section>
@@ -639,7 +665,7 @@ const ProductDetail: React.FC = () => {
                   <SizeGuideModal
                     isOpen={isModalOpen}
                     onClose={toggleModal}
-                    categoryId={product?.danh_muc?.cha_id ?? 0}
+                    categoryId={product?.ong_danh_muc?.id ?? product?.cha_danh_muc?.id ?? product?.danh_muc?.id ?? 0}
                     productDetailId={product?.id ?? 0}
                   />
                 </div>
@@ -883,14 +909,14 @@ const ProductDetail: React.FC = () => {
                     )}
                     <div className="mt-2 flex items-center space-x-4">
                       <button
-                        className={`like-button flex items-center space-x-2 ${likeMutation?.isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                        className={`like-button flex items-center space-x-2 ${likeMutation?.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
                         onClick={() =>
                           handleReviewLike(
                             review?.id,
                             review?.trang_thai_danh_gia_nguoi_dung
                           )
                         }
-                        disabled={likeMutation?.isLoading}
+                        disabled={likeMutation?.isPending}
                       >
                         <i
                           className={
@@ -901,7 +927,7 @@ const ProductDetail: React.FC = () => {
                         ></i>
 
                         <span>
-                          {likeMutation?.isLoading ? (
+                          {likeMutation?.isPending ? (
                             "Đang xử lý..."
                           ) : (
                             <>

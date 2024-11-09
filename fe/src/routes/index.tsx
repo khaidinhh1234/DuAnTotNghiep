@@ -137,9 +137,13 @@ import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 import Test4 from "@/pages/(van_chuyen)/test";
 import WalletProtectedRoute from "./WalletProtectedRoute";
-import ThankYouPage1 from "@/pages/(website)/thankyou/you";
-import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
+// import ThankYouPage1 from "@/pages/(website)/thankyou/you";
+// import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
 import Test3 from "@/pages/(website)/test3";
+import Blog from "@/pages/(website)/blog/Blog";
+import BlogCategories from "@/pages/(website)/blog/BlogCategories";
+import BlogDetail from "@/pages/(website)/blog/BlogDetail";
+
 const Router = () => {
   //
 
@@ -228,6 +232,9 @@ const Router = () => {
             path="/tin-tuc-theo-danh-muc/:duong_dan"
             element={<NewDetail />}
           />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/danhmuctintuc/:duongDan" element={<BlogCategories />} />
+          <Route path="/xem-bai-viet/:duong_dan" element={<BlogDetail />} />
           {/* <Route
             path="/xem-bai-viet/:duong_dan"
             element={<DetailBlog />}

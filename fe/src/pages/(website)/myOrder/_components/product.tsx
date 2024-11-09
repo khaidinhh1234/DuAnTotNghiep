@@ -9,6 +9,16 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HoanTien from "./Hoan";
 // Component hiển thị thông tin sản phẩm
+const isToday = (date) => {
+  const today = new Date();
+  console.log(today);
+  return (
+    date.getUTCDate() === today.getUTCDate() &&
+    date.getUTCMonth() === today.getUTCMonth() &&
+    date.getUTCFullYear() === today.getUTCFullYear()
+  );
+};
+
 const ProductItem = ({
   status,
   price,
@@ -23,10 +33,14 @@ const ProductItem = ({
   ma_don_hang,
   pricesale,
   trang_thai_thanh_toan,
+  created_at,
 }: any) => {
-  console.log(chi_tiet_don_hangs);
+  // console.log(chi_tiet_don_hangs);
+  console.log("status", new Date(created_at));
+  const dateToCheck = new Date(created_at);
+  // console.log(isToday(dateToCheck));
   const [values, setValues] = useState<string>("");
-  console.log(values);
+  // console.log(values);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
   const [Hoan, setHoan] = useState(false);
@@ -392,7 +406,8 @@ const ProductItem = ({
             </button>
           )}{" "}
           <br />
-          {trang_thai_thanh_toan == "Chưa thanh toán" &&
+          {isToday(dateToCheck) &&
+            trang_thai_thanh_toan == "Chưa thanh toán" &&
             status == "Chờ xác nhận" && (
               <button
                 onClick={(e) => {
@@ -490,7 +505,7 @@ const ProductItem = ({
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang, tong }: any) => {
   const don_hang = donhang;
-  // console.log(don_hang);
+  console.log(don_hang);
   return (
     <>
       <div className="flex flex-row lg:justify-between lg:items-center">
@@ -508,14 +523,14 @@ const ProductList = ({ donhang, tong }: any) => {
       <div className="lg:col-span-9 col-span-8 lg:pl-4 h-full">
         <form>
           {don_hang && don_hang.length ? (
-            don_hang.map((item: any, index: number) => (
+            don_hang?.map((item: any, index: number) => (
               <ProductItem
                 key={index}
                 status={item.trang_thai_don_hang || "Đang xử lý"}
                 pricesale={
                   item.chi_tiets[0]?.bien_the_san_pham
                     ?.gia_khuyen_mai_tam_thoi ||
-                  item.chi_tiets[0]?.bien_the_san_pham?.gia_khuyen_mai ||
+                  item?.chi_tiets[0]?.bien_the_san_pham?.gia_khuyen_mai ||
                   item.chi_tiets[0]?.bien_the_san_pham?.gia_ban ||
                   0
                 }
@@ -545,6 +560,7 @@ const ProductList = ({ donhang, tong }: any) => {
                 quantity={item.chi_tiets[0]?.so_luong || 1}
                 chi_tiet_don_hangs={item.chi_tiets || []}
                 tong_tien={tong || 0}
+                created_at={item?.created_at || ""}
                 ma_don_hang={item.ma_don_hang || ""}
               />
             ))

@@ -30,13 +30,13 @@ const MyOrderdetail = () => {
   if (isError) {
     console.log("Error:", error.message);
   }
-  console.log("Data:", data);
+  // console.log("Data:", data);
   const chitiet = data?.data;
   // console.log("Chi tiết đơn hàng:", chitiet);
-
+  console.log(chitiet);
   // const chitietsanpham = data?.data?.don_hang;
   const thongtin = data?.data?.thong_tin;
-  // console.log(thongtin);
+  console.log(thongtin);
   const donhang = data?.data?.don_hang;
   // console.log(donhang);
   const phoneNumber =
@@ -315,11 +315,13 @@ const MyOrderdetail = () => {
           <div>
             <h1 className="text-xl font-semibold">
               Địa chỉ nhận hàng{" "}
-              {(chitiet?.trang_thai_don_hang === "Hoàn tất đơn hàng" ||
-                chitiet?.trang_thai_don_hang === "Chờ khách hàng xác nhận") && (
+              {(donhang?.trang_thai_don_hang === "Hoàn tất đơn hàng" ||
+                donhang?.trang_thai_don_hang === "Chờ khách hàng xác nhận") && (
                 <Link
                   to={
-                    "https://asset.cloudinary.com/dcvu7e7ps/6f1977e298bde704fe55379ef638bb9c"
+                    chitiet?.anh_xac_thuc
+                      ? chitiet?.anh_xac_thuc
+                      : "https://res.cloudinary.com/dpypwbeis/image/upload/v1731121361/ewrlhy9lsbiq1gxhgcsl.jpg"
                   }
                   target="_blank"
                   rel="noopener noreferrer"

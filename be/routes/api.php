@@ -70,6 +70,7 @@ Route::middleware([])
         Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']);
         Route::post('goi-y-kich-thuoc', [TrangChiTietSpController::class, 'goiY']);
         Route::get('load-kick-thuoc', [TrangChiTietSpController::class, 'loadKichThuoc']);
+         Route::get('/danh-muc-cha', [TrangChiTietSpController::class, 'danhMucCha']);
         //Trang sản phẩm
         // lấy tất cả sản phẩm
         Route::group([], function () {
@@ -78,7 +79,7 @@ Route::middleware([])
             Route::get('danhmuc/{tenDanhMucCha}/{tenDanhMucCon?}/{tenDanhMucConCapBa?}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
             // // Lấy ra danh mục cha
-            // Route::get('/danh-muc-cha', [TrangSanPhamController::class, 'danhMucCha']);
+           
 
             // // Lấy ra màu sắc
             // Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);

@@ -500,7 +500,7 @@ const Header = () => {
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                           >
                             <img
-                              src=""
+                              src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
                               alt=""
                               className="w-[30px] h-[30px] rounded-full"
                             />
@@ -520,11 +520,7 @@ const Header = () => {
                                 href="/admin"
                                 className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                               >
-                                <img
-                                  src="https://github.com/shadcn.png"
-                                  alt=""
-                                  className="w-[30px] h-[30px] rounded-full"
-                                />
+                                <i className="fa-solid fa-crown text-xl ml-1"></i>
                                 <h6 className="font-semibold mx-2 text-lg ">
                                   Quản trị
                                 </h6>
@@ -534,16 +530,12 @@ const Header = () => {
                         )}
                         <li className="my-1">
                           <a
-                            href=""
+                            href="/mypro/myorder/"
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                           >
-                            <img
-                              src="https://github.com/shadcn.png"
-                              alt=""
-                              className="w-[30px] h-[30px] rounded-full"
-                            />
+                            <i className="fa-sharp-duotone fa-solid fa-box-open-full text-xl ml-1"></i>
                             <h6 className="font-semibold mx-2 text-lg ">
-                              Cài đặt
+                              Đơn hàng
                             </h6>
                           </a>
                         </li>
@@ -553,11 +545,7 @@ const Header = () => {
                             href=""
                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                           >
-                            <img
-                              src="https://github.com/shadcn.png"
-                              alt=""
-                              className="w-[30px] h-[30px] rounded-full"
-                            />
+                            <i className="fa-solid fa-arrow-right-from-bracket text-xl ml-2 "></i>
                             <h6 className="font-semibold mx-2 text-lg ">
                               Đăng xuất
                             </h6>
