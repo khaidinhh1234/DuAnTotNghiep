@@ -110,7 +110,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
       };
     })
     ?.filter((item: any) => item?.day > 0);
-
+  console.log(vouchertrue);
   return (
     <div>
       <span
@@ -179,8 +179,11 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
                     key={index}
                   >
                     <div>
-                      <span className="bg-teal-500 text-white text-sm px-2 py-1 rounded">
-                        Lựa chọn tốt nhất
+                      <span
+                        className={` text-white text-sm px-2 py-1 rounded ${item?.ma_khuyen_mai?.ap_dung_vi == 1 ? "bg-red-700" : "bg-teal-500"}`}
+                      >
+                        Lựa chọn tốt nhất{" "}
+                        {`${item?.ma_khuyen_mai?.ap_dung_vi == 1 ? "Áp dụng cho ví" : ""}`}
                       </span>
                       <h3 className="text-lg font-semibold mt-2 truncate w-80">
                         {item?.ma_khuyen_mai?.mo_ta}
@@ -205,7 +208,9 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
                         Sắp hết hạn: Còn {item?.day} ngày
                       </p>
                     </div>
-                    <div className="text-teal-500">
+                    <div
+                      className={`${item?.ma_khuyen_mai?.ap_dung_vi == 1 ? "text-red-700" : "text-teal-500"}`}
+                    >
                       <button
                         className={`text-sm font-semibold ${
                           clickedIndex === item?.ma_khuyen_mai?.ma_code

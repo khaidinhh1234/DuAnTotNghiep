@@ -17,7 +17,7 @@ const ShippingAddressPage = () => {
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-  console.log(member);
+  // console.log(member);
   const {
     register,
     handleSubmit,
@@ -34,7 +34,9 @@ const ShippingAddressPage = () => {
   });
   const nav = useNavigate();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [pendingOrderData, setPendingOrderData] = useState<{ data: { ma_don_hang: string } } | null>(null);
+  const [pendingOrderData, setPendingOrderData] = useState<{
+    data: { ma_don_hang: string };
+  } | null>(null);
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       console.log(data);
@@ -123,14 +125,16 @@ const ShippingAddressPage = () => {
     try {
       const orderData = {
         ...pendingOrderData,
-        ma_xac_minh: code
+        ma_xac_minh: code,
       };
 
       const order = await instanceClient.post(`don-hang`, orderData);
       toast.success("Đặt hàng thành công");
       nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!');
+      toast.error(
+        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại!"
+      );
     } finally {
       setShowVerificationModal(false);
       setPendingOrderData(null);
