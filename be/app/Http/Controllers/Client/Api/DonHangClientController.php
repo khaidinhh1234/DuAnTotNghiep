@@ -589,7 +589,7 @@ class DonHangClientController extends Controller
     public function hoanDonHang(Request $request, $ma_don_hang)
     {
         $validated = $request->validate([
-            'ly_do_hoan_don' => 'required|string|max:255',
+            'li_do_hoan_hang' => 'required|string|max:255',
             'hinh_anh_hoan_tra' => 'required|string'
         ]);
 
@@ -608,7 +608,7 @@ class DonHangClientController extends Controller
             }
             $donHang->update([
                 'trang_thai_don_hang' => DonHang::TTDH_CXNHH,
-                'ly_do_hoan_don' => $validated['ly_do_hoan_don'],
+                'li_do_hoan_hang' => $validated['li_do_hoan_hang'],
                 'hinh_anh_hoan_tra' => $validated['hinh_anh_hoan_tra'],
             ]);
             $viTienId = User::find($userId)->viTien->id;
@@ -625,7 +625,7 @@ class DonHangClientController extends Controller
                 'giao_dich_vi_id' => $giaoDichVi->id,
                 'don_hang_id' => $donHang->id,
                 'so_tien_hoan' => $donHang->tong_tien_don_hang,
-                'ly_do' => $validated['ly_do_hoan_don'],
+                'ly_do' => $validated['li_do_hoan_hang'],
                 'thoi_gian_hoan' => now(),
             ]);
 
