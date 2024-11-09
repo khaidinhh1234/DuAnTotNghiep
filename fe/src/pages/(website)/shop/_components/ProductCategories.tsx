@@ -119,7 +119,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
         try {
             const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
             if (response.data.status) {
-                setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
+                setProducts(response.data.data); 
             }
         } catch (error) {
             console.error("Lỗi khi lấy sản phẩm:", error);
@@ -128,7 +128,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     
     fetchProducts();
 }, [tenDanhMucCha, tenDanhMucCon]);
-  // ALL sản phẩm
   const { data } = useQuery({
     queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
