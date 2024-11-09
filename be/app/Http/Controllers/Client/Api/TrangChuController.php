@@ -521,10 +521,9 @@ class TrangChuController extends Controller
 
     public function xoaMotLichSuTimKiem($id)
     {
-
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->delete();
+            $user->lichSuTimKiem()->where('id', $id)->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
