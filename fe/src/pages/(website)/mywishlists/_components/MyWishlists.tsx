@@ -121,11 +121,11 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
             ))
           ) : (
             <>
-              <div className="col-span-9 h-[530px] ">
+              <div className="col-span-9 h-[450px] ">
                 <img
-                  src="https://res.cloudinary.com/dpypwbeis/image/upload/v1730343472/zh60sofc5dxucpb9lv5i.png"
+                  src="https://res.cloudinary.com/dpypwbeis/image/upload/v1731090053/alrcbcq0hw5obbuhonmb.png"
                   alt=""
-                  className="w-[25%] h-auto mx-auto mt-24"
+                  className="w-[20%] h-auto mx-auto mt-24"
                 />
               </div>
             </>

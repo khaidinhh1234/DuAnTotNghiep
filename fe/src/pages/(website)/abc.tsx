@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "antd";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { Button } from "antd";
+
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dpypwbeis/image/upload";
+const CLOUDINARY_UPLOAD_PRESET = "demo-update";
 
 const Test = () => {
   const {
@@ -9,15 +12,17 @@ const Test = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const [fileList, setFileList] = useState<any[]>([]);
-  const [img, setImg] = useState<string>("");
+  const [fileList, setFileList] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
   // Handle file change
-  const handleChange = (e: any) => {
-    const files = Array.from(e.target.files);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
     setFileList(files);
-    setValue("feature_image", files); // This stores files in the form state
+    setValue("feature_image", files);
   };
+
+  // Update preview URLs when fileList changes
   useEffect(() => {
     const urls = fileList.map((file) => URL.createObjectURL(file));
     setPreviewUrls(urls);
@@ -25,23 +30,37 @@ const Test = () => {
     // Cleanup object URLs on component unmount
     return () => urls.forEach((url) => URL.revokeObjectURL(url));
   }, [fileList]);
-  // Upload the file to Cloudinary and get the URL
+
+  // Function to upload file to Cloudinary
+  const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+    const response = await fetch(CLOUDINARY_URL, {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+    return data.secure_url;
+  };
 
   // Handle form submit
   const onSubmit = async (data: any) => {
-    // Upload each file
-    const uploadedUrls = await Promise.all(
-      fileList.map((file) => URL.createObjectURL(file))
-    );
-    console.log("Uploaded image URLs:", { ...data, abc: uploadedUrls[0] });
-    // Log or save the URLs to the database
+    let uploadedUrls = [];
 
-    // Example: You can then send the data to your backend
-    // await fetch('your_api_endpoint', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ ...data, feature_image: uploadedUrls }),
-    //   headers: { 'Content-Type': 'application/json' },
-    // });
+    if (fileList.length > 0) {
+      uploadedUrls = await Promise.all(
+        fileList.map(async (file) => {
+          return await uploadFile(file);
+        })
+      );
+    }
+
+    console.log("Form data:", {
+      ...data,
+      feature_image: uploadedUrls.length ? uploadedUrls : null,
+    });
   };
 
   return (
@@ -62,7 +81,7 @@ const Test = () => {
               id="description"
               {...register("description", {
                 required: "Mô tả sản phẩm là bắt buộc",
-              })} // Register the input
+              })}
               rows={5}
               placeholder="Nhập mô tả sản phẩm"
               className="w-full mt-1 p-2 border border-gray-300 rounded-md"

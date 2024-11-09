@@ -13,7 +13,7 @@ const Layout = () => {
     <div>
       {/* <Header /> */}
       {/* <Test/> */}
-      <Header2 />
+      <Header />
       <Outlet />
       <Footer />
     </div>

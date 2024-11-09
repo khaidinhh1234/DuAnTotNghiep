@@ -56,11 +56,13 @@ const MyOrder = () => {
   //     return { ...page, chitiet: page.data };
   //   }) || [];
   const orders = data?.pages.flatMap((page) => page.data.don_hang) || [];
+  const tong = data?.pages[0]?.data?.tong_thanh_tien_san_pham ?? 0;
 
+  // console.log(tong);
   return (
     <div>
       {/* Hiển thị danh sách đơn hàng */}
-      <ProductList donhang={orders} />
+      <ProductList donhang={orders} tong={tong} />
       {/* Nút tải thêm nếu còn trang tiếp theo */}
       <div
         ref={loadMoreRef}
