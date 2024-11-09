@@ -12,8 +12,6 @@ class DanhGia extends Model
     protected $fillable = [
         'user_id',
         'don_hang_id',
-        'san_pham_id',
-        'bien_the_san_pham_id',
         'so_sao_san_pham',
         'so_sao_dich_vu_van_chuyen',
         'chat_luong_san_pham',
@@ -42,7 +40,11 @@ class DanhGia extends Model
     }
     public function danhGiaHuuIch()
     {
-        return $this->belongsToMany(User::class, 'danh_gia_huu_ich', 'danh_gia_id', 'user_id');
+        return $this->belongsToMany(User::class, 'danh_gia_huu_ich', 'danh_gia_id', 'user_id')->withPivot('bien_the_san_pham_id');
+    }
+    public function danhGiaBienTheSanPhams()
+    {
+        return $this->belongsToMany(BienTheSanPham::class, 'danh_gia_san_phams', 'danh_gia_id', 'bien_the_san_pham_id')->withPivot('san_pham_id');
     }
     public function bienTheSanPham()
     {
