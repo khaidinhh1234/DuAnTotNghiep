@@ -505,9 +505,9 @@ const ProductItem = ({
 };
 
 // Component hiển thị danh sách sản phẩm
-const ProductList = ({ donhang, tong }: any) => {
+const ProductList = ({ donhang }: any) => {
   const don_hang = donhang;
-  console.log(don_hang);
+  // console.log(don_hang);
   return (
     <>
       <div className="flex flex-row lg:justify-between lg:items-center">

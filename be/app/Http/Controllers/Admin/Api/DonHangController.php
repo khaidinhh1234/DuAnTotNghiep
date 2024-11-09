@@ -74,11 +74,13 @@ class DonHangController extends Controller
 
                 return [
                     'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
-                    'anh_san_pham' => $anhSanPham, // Ảnh sản phẩm
-                    'anh_bien_the' => $anhBienThe, // Ảnh biến thể
+                    'anh_san_pham' => $anhSanPham,
+                    'mau_bien_the' => $chiTiet->bienTheSanPham->mauBienThe->ten_mau_sac,
+                    'kich_thuoc_bien_the' => $chiTiet->bienTheSanPham->kichThuocBienThe->kich_thuoc,
+                    'anh_bien_the' => $anhBienThe,
                     'so_luong' => $chiTiet->so_luong,
-                    'gia' => $chiTiet->gia,
-                    'thanh_tien' => $chiTiet->thanh_tien,
+                    'gia' => $chiTiet->bianTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban,
+                    'thanh_tien' => $chiTiet->so_luong * ($chiTiet->bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban),
                 ];
             });
 
@@ -141,7 +143,7 @@ class DonHangController extends Controller
                     'so_tien_giam_gia' => $soTienGiamGia,
                     'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
                     'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
-                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc,
+                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? '',
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
                 ]
             ], 200);
@@ -252,9 +254,9 @@ class DonHangController extends Controller
                         'cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? VanChuyen::TTCOD_KT : VanChuyen::TTCOD_CN,
                         'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? 0 : $donHang->tong_tien_don_hang,
                     ]);
-//                    $thongBaoTele = new ThongBaoTelegramController();
-//
-//                    $thongBaoTele->thongBaoDonHangMoi($vanChuyen->id);
+                    //                    $thongBaoTele = new ThongBaoTelegramController();
+                    //
+                    //                    $thongBaoTele->thongBaoDonHangMoi($vanChuyen->id);
                 }
 
                 $thongBao = ThongBao::create([

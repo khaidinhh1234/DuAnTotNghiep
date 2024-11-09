@@ -368,7 +368,12 @@ const MyOrderdetail = () => {
                 )}
               </p>
               <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p>
-              <p>{(chitiet?.tien_ship ?? 0).toLocaleString("vn-VN")} </p>
+              <p>
+                {(chitiet?.tien_ship != 0
+                  ? (chitiet?.tien_ship ?? "FreeShip")
+                  : "FreeShip"
+                ).toLocaleString("vn-VN")}{" "}
+              </p>
               <p>
                 {" "}
                 ₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
