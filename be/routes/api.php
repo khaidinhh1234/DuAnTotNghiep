@@ -125,6 +125,10 @@ Route::middleware([])
         Route::get('bo-suu-tap/{slug}', [BoSuuTapController::class, 'show']);
 
         Route::middleware('auth.sanctum')->group(function () {
+            // xóa lịch xử tìm kiếm
+            Route::delete('tim-kiem-goi-y/xoa-toan-bo', [TrangChuController::class, 'xoaLichSuTimKiem']);
+            Route::delete('tim-kiem-goi-y/xoa/{id}', [TrangChuController::class, 'xoaMotLichSuTimKiem']);
+
             // Giỏ hàng
             Route::get('/gio-hang', [GioHangController::class, 'index']);
             Route::post('/gio-hang', [GioHangController::class, 'store']);
