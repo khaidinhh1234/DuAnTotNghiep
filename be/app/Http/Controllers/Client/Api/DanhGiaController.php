@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AnhDanhGia;
 use App\Models\DanhGia;
+use App\Models\DonHang;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -58,6 +59,8 @@ class DanhGiaController extends Controller
     {
         try {
             DB::beginTransaction();
+
+            // Xác thực đầu vào
             $validateDanhGia = $request->validate([
                 'san_pham_id' => 'required|exists:san_phams,id',
                 'don_hang_id' => 'required|exists:don_hangs,id',
@@ -69,8 +72,38 @@ class DanhGiaController extends Controller
                 'huu_ich' => 'nullable|integer|min:0',
                 'anh_danh_gia.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-            
+
+            // Kiểm tra trạng thái đơn hàng
+            $donHang = DonHang::where('id', $request->don_hang_id)
+                ->where('user_id', Auth::guard('api')->id())
+                ->where('trang_thai_don_hang', DonHang::TTDH_HTDH) 
+                ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
+                ->first();
+
+            if (!$donHang) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Đơn hàng không hợp lệ hoặc chưa hoàn tất thanh toán.',
+                ], 400);
+            }
+
+            // Kiểm tra xem người dùng đã đánh giá sản phẩm này trong đơn hàng chưa
+            $existingReview = DanhGia::where('user_id', Auth::guard('api')->id())
+                ->where('san_pham_id', $request->san_pham_id)
+                ->where('don_hang_id', $request->don_hang_id)
+                ->first();
+
+            if ($existingReview) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Bạn đã đánh giá sản phẩm này trong đơn hàng này.',
+                ], 400);
+            }
+
             $validateDanhGia['user_id'] = Auth::guard('api')->id();
+
             $danhGia = DanhGia::create($validateDanhGia);
 
             DB::commit();
