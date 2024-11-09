@@ -71,6 +71,7 @@ class DanhGiaController extends Controller
                 'phan_hoi' => 'nullable|string',
                 'huu_ich' => 'nullable|integer|min:0',
                 'anh_danh_gia.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'bien_the_san_pham_id' => 'required|exists:bien_the_san_phams,id', 
             ]);
 
             // Kiểm tra trạng thái đơn hàng
