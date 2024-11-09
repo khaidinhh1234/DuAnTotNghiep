@@ -79,7 +79,7 @@ Route::middleware([])
             Route::get('danhmuc/{tenDanhMucCha}/{tenDanhMucCon?}/{tenDanhMucConCapBa?}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
             // // Lấy ra danh mục cha
-           
+
 
             // // Lấy ra màu sắc
             // Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
@@ -125,6 +125,10 @@ Route::middleware([])
         Route::get('bo-suu-tap/{slug}', [BoSuuTapController::class, 'show']);
 
         Route::middleware('auth.sanctum')->group(function () {
+            // xóa lịch xử tìm kiếm
+            Route::delete('tim-kiem-goi-y/xoa-toan-bo', [TrangChuController::class, 'xoaLichSuTimKiem']);
+            Route::delete('tim-kiem-goi-y/xoa/{id}', [TrangChuController::class, 'xoaMotLichSuTimKiem']);
+
             // Giỏ hàng
             Route::get('/gio-hang', [GioHangController::class, 'index']);
             Route::post('/gio-hang', [GioHangController::class, 'store']);
@@ -147,10 +151,10 @@ Route::middleware([])
             Route::post('thong-bao/da-doc/{id}', [ThongBaoController::class, 'daXem']);
 
             // Đơn hàng
+            Route::patch('/xac-nhan-don-hang/{ma_don_hang}', [DonHangClientController::class, 'xacNhanDonHang']);
             Route::post('don-hang/huy-don-hang', [DonHangClientController::class, 'huyDonHang']);
             Route::get('/don-hang', [DonHangClientController::class, 'donHangUser']);
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
-            Route::post('/don-hang/{id}', [DonHangClientController::class, 'xacNhanDonHang']);
             Route::post('/don-hang/hoan-hang/{ma_don_hang}', [DonHangClientController::class, 'hoanDonHang']);
 
             //Yêu cầu rút tiền

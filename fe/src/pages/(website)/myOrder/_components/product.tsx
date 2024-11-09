@@ -1,11 +1,24 @@
 import { sanPham2 } from "@/assets/img";
 import instanceClient from "@/configs/client";
+import { PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
+import { Button, Form, Image, message, Upload } from "antd";
+import TextArea from "antd/es/input/TextArea";
+import { UploadFile, UploadProps } from "antd/es/upload";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import HoanTien from "./Hoan";
 // Component hiển thị thông tin sản phẩm
+const isToday = (date) => {
+  const today = new Date();
+  console.log(today);
+  return (
+    date.getUTCDate() === today.getUTCDate() &&
+    date.getUTCMonth() === today.getUTCMonth() &&
+    date.getUTCFullYear() === today.getUTCFullYear()
+  );
+};
+
 const ProductItem = ({
   status,
   price,
@@ -20,9 +33,17 @@ const ProductItem = ({
   ma_don_hang,
   pricesale,
   trang_thai_thanh_toan,
+  created_at,
 }: any) => {
+  // console.log(chi_tiet_don_hangs);
+  console.log("status", new Date(created_at));
+  const dateToCheck = new Date(created_at);
+  // console.log(isToday(dateToCheck));
+  const [values, setValues] = useState<string>("");
+  // console.log(values);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
+  const [Hoan, setHoan] = useState(false);
 
   const queryClient = useQueryClient();
   const [li_do_huy_hang, setValue] = useState<string>("");
@@ -140,8 +161,20 @@ const ProductItem = ({
     { name: "Ví Glow Clothing", value: "Ví tiền" },
     { name: "Thanh toán khi nhận hàng", value: "Thanh toán khi nhận hàng" },
   ];
+  //upload image
+
   return (
     <>
+      {Hoan && (
+        <>
+          <HoanTien
+            chi_tiet_don_hangs={chi_tiet_don_hangs}
+            setHoan={setHoan}
+            tong_tien={tong_tien}
+            setValues={setValues}
+          />
+        </>
+      )}
       {Payment && (
         <>
           <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
@@ -373,7 +406,8 @@ const ProductItem = ({
             </button>
           )}{" "}
           <br />
-          {trang_thai_thanh_toan == "Chưa thanh toán" &&
+          {isToday(dateToCheck) &&
+            trang_thai_thanh_toan == "Chưa thanh toán" &&
             status == "Chờ xác nhận" && (
               <button
                 onClick={(e) => {
@@ -399,7 +433,7 @@ const ProductItem = ({
               className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
               onClick={(e) => {
                 e.preventDefault();
-                // handlehoan(ma_don_hang);
+                setHoan(true);
               }}
             >
               Hoàn hàng
@@ -469,9 +503,9 @@ const ProductItem = ({
 };
 
 // Component hiển thị danh sách sản phẩm
-const ProductList = ({ donhang }: any) => {
+const ProductList = ({ donhang, tong }: any) => {
   const don_hang = donhang;
-  // console.log(don_hang);
+  console.log(don_hang);
   return (
     <>
       <div className="flex flex-row lg:justify-between lg:items-center">
@@ -489,14 +523,14 @@ const ProductList = ({ donhang }: any) => {
       <div className="lg:col-span-9 col-span-8 lg:pl-4 h-full">
         <form>
           {don_hang && don_hang.length ? (
-            don_hang.map((item: any, index: number) => (
+            don_hang?.map((item: any, index: number) => (
               <ProductItem
                 key={index}
                 status={item.trang_thai_don_hang || "Đang xử lý"}
                 pricesale={
                   item.chi_tiets[0]?.bien_the_san_pham
                     ?.gia_khuyen_mai_tam_thoi ||
-                  item.chi_tiets[0]?.bien_the_san_pham?.gia_khuyen_mai ||
+                  item?.chi_tiets[0]?.bien_the_san_pham?.gia_khuyen_mai ||
                   item.chi_tiets[0]?.bien_the_san_pham?.gia_ban ||
                   0
                 }
@@ -525,7 +559,8 @@ const ProductList = ({ donhang }: any) => {
                 }
                 quantity={item.chi_tiets[0]?.so_luong || 1}
                 chi_tiet_don_hangs={item.chi_tiets || []}
-                tong_tien={item.tong_tien_don_hang || 0}
+                tong_tien={tong || 0}
+                created_at={item?.created_at || ""}
                 ma_don_hang={item.ma_don_hang || ""}
               />
             ))

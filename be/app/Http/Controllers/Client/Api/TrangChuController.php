@@ -291,6 +291,8 @@ class TrangChuController extends Controller
 
         $query = trim($request->input('query'));
 
+
+        $dataLichSuTimKiem = [];
         if (Auth::check()) {
             LichSuTimKiem::create([
                 'user_id' => Auth::id(),
@@ -298,7 +300,7 @@ class TrangChuController extends Controller
             ]);
 
             $dataLichSuTimKiem = LichSuTimKiem::query()
-                ->select('tim_kiem')
+                ->select('tim_kiem', 'id')
                 ->where('user_id', Auth::id())
                 ->orderByDesc('id')
                 ->limit(10)
@@ -497,6 +499,44 @@ class TrangChuController extends Controller
         }
     }
 
+    public function xoaLichSuTimKiem()
+    {
+        try {
+            $user = Auth::guard('api')->user();
+            $user->lichSuTimKiem()->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Xóa lịch sử tim kiếm',
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi xóa lịch sử tim kiếm',
+                'error' => $exception->getMessage(),
+            ], 500);
+        }
+    }
 
+    public function xoaMotLichSuTimKiem($id)
+    {
+        try {
+            $user = Auth::guard('api')->user();
+            $user->lichSuTimKiem()->where('id', $id)->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Xóa lịch sử tim kiếm',
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi xóa lịch sử tim kiếm',
+                'error' => $exception->getMessage(),
+            ], 500);
+        }
+    }
 
 }

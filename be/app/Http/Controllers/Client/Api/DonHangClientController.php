@@ -113,7 +113,7 @@ class DonHangClientController extends Controller
                 return $order->chiTiets->sum('so_luong');
             });
             $tongTienSanPham = $donHang->sum(function ($order) {
-                if($order->chiTiets->sum('thanh_tien') < 500000){
+                if ($order->chiTiets->sum('thanh_tien') < 500000) {
                     return $order->chiTiets->sum('thanh_tien') + 20000;
                 }
                 return $order->chiTiets->sum('thanh_tien');
@@ -212,6 +212,7 @@ class DonHangClientController extends Controller
 
             // Tính tiền ship
             $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
+            $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -223,9 +224,9 @@ class DonHangClientController extends Controller
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
                     'tien_ship' => $tienShip,
                     'so_tien_giam_gia' => $soTienGiamGia,
-                    'tiet_kiem' => $soTienGiamGia + $tienShip,
+                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
                     'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
-                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc,
+                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? "",
                     'danh_gia' => $danhGiaDonHang
                 ]
             ], 200);
@@ -239,30 +240,30 @@ class DonHangClientController extends Controller
         }
     }
 
-    public function xacNhanDonHang(string $id)
+    public function xacNhanDonHang(string $ma_don_hang)
     {
         try {
             DB::beginTransaction();
-            $donHang = DonHang::query()->with(relations: 'vanChuyen')->findOrFail($id);
+            $donHang = DonHang::with('vanChuyen')->where('ma_don_hang', $ma_don_hang)->first();
 
-            if ($donHang->vanChuyen->shipper_xac_nhan == 1) {
-                $donHang->vanChuyen->update([
-                    'khach_hang_xac_nhan' => 1
-                ]);
+            if ($donHang->vanChuyen->shipper_xac_nhan) {
+            $donHang->vanChuyen->update(['khach_hang_xac_nhan' => "1"]);
+            $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_HTDH]);
+
             } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Đơn hàng chưa được xác nhận đã giao hàng',
-                ]);
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'Đơn hàng chưa được xác nhận đã giao hàng',
+            ]);
             }
 
             DB::commit();
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Xác nhận nhận hàng thành công',
-                'data' => $donHang
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Xác nhận nhận hàng thành công',
+            'data' => $donHang
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
