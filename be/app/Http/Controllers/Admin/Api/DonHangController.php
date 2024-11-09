@@ -143,7 +143,7 @@ class DonHangController extends Controller
                     'so_tien_giam_gia' => $soTienGiamGia,
                     'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
                     'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
-                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc,
+                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? '',
                     'danh_gia' => $danhGiaData // Thông tin đánh giá
                 ]
             ], 200);

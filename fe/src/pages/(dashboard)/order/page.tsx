@@ -266,11 +266,22 @@ const OrderAdmin: React.FC = () => {
                     ? "text-blue-500" // Đang xử lý: màu xanh dương
                     : record.trang_thai_don_hang === "Đang giao hàng"
                       ? "text-purple-500" // Đang giao hàng: màu tím
-                      : record.trang_thai_don_hang === "Giao hàng thành công"
-                        ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
+                      : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
+                        ? "text-green-500" // Hoàn tất đơn hàng: màu xanh lá
                         : record.trang_thai_don_hang === "Hủy hàng"
-                          ? "text-red-500" // Hủy đơn hàng: màu đ��
-                          : "text-red-700 ")
+                          ? "text-red-500" // Hủy hàng: màu đỏ
+                          : record.trang_thai_don_hang ===
+                              "Đơn hàng bị từ chối nhân"
+                            ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
+                            : record.trang_thai_don_hang === "Hoàn hàng"
+                              ? "text-blue-700" // Hoàn hàng: màu xanh đậm
+                              : record.trang_thai_don_hang ===
+                                  "Chờ xác nhận hoàn hàng"
+                                ? "text-yellow-500" // Chờ xác nhận hoàn hàng: màu vàng đậm
+                                : record.trang_thai_don_hang ===
+                                    "Từ chối hoàn hàng"
+                                  ? "text-gray-500" // Từ chối hoàn hàng: màu xám
+                                  : "text-gray-700") // Mặc định: màu xám đậm
             }
           >
             {record.trang_thai_don_hang === "Chờ xác nhận"
@@ -281,11 +292,22 @@ const OrderAdmin: React.FC = () => {
                   ? "Chờ lấy hàng"
                   : record.trang_thai_don_hang === "Đang giao hàng"
                     ? "Đang giao hàng"
-                    : record.trang_thai_don_hang === "Giao hàng thành công"
-                      ? "Đã giao hàng thành công"
+                    : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
+                      ? "Hoàn tất đơn hàng"
                       : record.trang_thai_don_hang === "Hủy hàng"
                         ? "Hủy hàng"
-                        : "Giao hàng thất bại"}
+                        : record.trang_thai_don_hang ===
+                            "Đơn hàng bị từ chối nhân"
+                          ? "Đơn hàng bị từ chối nhận"
+                          : record.trang_thai_don_hang === "Hoàn hàng"
+                            ? "Hoàn hàng"
+                            : record.trang_thai_don_hang ===
+                                "Chờ xác nhận hoàn hàng"
+                              ? "Chờ xác nhận hoàn hàng"
+                              : record.trang_thai_don_hang ===
+                                  "Từ chối hoàn hàng"
+                                ? "Từ chối hoàn hàng"
+                                : "Giao hàng thất bại"}
           </div>
         );
       },
@@ -309,14 +331,18 @@ const OrderAdmin: React.FC = () => {
                 ? "text-green-500 font-bold text-[15px]"
                 : record.trang_thai_thanh_toan === "Chờ xử lý"
                   ? "text-blue-500 font-bold text-[15px]"
-                  : "text-yellow-500 font-bold text-[15px]"
+                  : record.trang_thai_thanh_toan === "Đã hoàn tiền"
+                    ? "text-red-500 font-bold text-[15px]" // Đã hoàn tiền: màu đỏ
+                    : "text-yellow-500 font-bold text-[15px]" // Chưa thanh toán: màu vàng
             }
           >
             {record.trang_thai_thanh_toan === "Đã thanh toán"
               ? "Đã thanh toán"
               : record.trang_thai_thanh_toan === "Chờ xử lý"
                 ? "Chờ xử lý"
-                : "Chưa thanh toán"}
+                : record.trang_thai_thanh_toan === "Đã hoàn tiền"
+                  ? "Đã hoàn tiền"
+                  : "Chưa thanh toán"}
           </div>
         );
       },
@@ -386,12 +412,13 @@ const OrderAdmin: React.FC = () => {
       title: "Tổng tiền",
       dataIndex: " tong_tien_don_hang",
       render: (_, record) => {
+        // console.log("record", record);
         return (
           <div>
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
-            }).format(Number(record.tong_tien_don_hang))}
+            }).format(Number(record?.tong_tien_don_hang))}
           </div>
         );
       },

@@ -368,7 +368,12 @@ const MyOrderdetail = () => {
                 )}
               </p>
               <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p>
-              <p>{(chitiet?.tien_ship ?? 0).toLocaleString("vn-VN")} </p>
+              <p>
+                {(chitiet?.tien_ship != 0
+                  ? (chitiet?.tien_ship ?? "FreeShip")
+                  : "FreeShip"
+                ).toLocaleString("vn-VN")}{" "}
+              </p>
               <p>
                 {" "}
                 ₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
@@ -397,9 +402,7 @@ const MyOrderdetail = () => {
                       : "text-black"
                 }`}
               >
-                {donhang?.trang_thai_thanh_toan === "Chưa thanh toán"
-                  ? "Thanh toán thất bại "
-                  : donhang?.trang_thai_thanh_toan}
+                {donhang?.trang_thai_thanh_toan}
               </span>
             </div>{" "}
             <div className="text-end border-t pt-4">
@@ -409,7 +412,7 @@ const MyOrderdetail = () => {
                   ? "Thanh toán MoMo ATM"
                   : donhang?.phuong_thuc_thanh_toan === "Momo_QR"
                     ? "Thanh toán MoMo QR"
-                    : donhang?.trang_thai_don_hang}
+                    : donhang?.phuong_thuc_thanh_toan}
               </span>
             </div>{" "}
           </div>
