@@ -703,28 +703,7 @@ const Footer = () => {
             </div>
 
             <div className="lg:col-span-2 col-span-6">
-              <h1 className="text-xl font-semibold mb-3">Thông tin</h1>
-              <ul>
-                <li className="mb-3">
-                  <a href="/mypro/myprofile">Tài khoản</a>
-                </li>
-                <li className="mb-3">
-                  <a href="/login">Đăng nhập</a>
-                </li>
-                <li className="mb-3">
-                  <a href="/gio-hang">Giỏ hàng</a>
-                </li>
-                <li className="mb-3">
-                  <a href="/vourcher">Khuyến mãi</a>
-                </li>
-                <li className="mb-3">
-                  <a href="">Liên hệ</a>
-                </li>
-              </ul>
-            </div>
-
-            <div className="lg:col-span-2 col-span-6">
-              <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
+              <h1 className="text-xl font-semibold mb-3">Danh Mục Tin Tức</h1>
               <ul>
                 {websiteInfo?.footer_blogs.slice(0, 5).map((category: any) => (
                   <li key={category.id} className="mb-3">
@@ -736,8 +715,22 @@ const Footer = () => {
               </ul>
             </div>
 
+            <div className="lg:col-span-2 col-span-6">
+  <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
+  <ul>
+    {websiteInfo?.footer_blogs?.map((category : any) =>
+      category.tin_tuc?.map((news : any) => (
+        <li key={news.id} className="mb-3">
+          <Link to={`/tin-tuc/${category.duong_dan}/${news.duong_dan}`}>
+            {news.tieu_de}
+          </Link>
+        </li>
+      ))
+    )}
+  </ul>
+</div>
             <div className="lg:col-span-4 col-span-6">
-              <h1 className="text-xl font-semibold mb-4">Đăng ký</h1>
+              <h1 className="text-xl font-semibold mb-4">Địa Chỉ</h1>
               <p className="lg:w-80 mb-5">{websiteInfo?.cau_noi}</p>
               <div className="relative">
                 {isLoaded && (

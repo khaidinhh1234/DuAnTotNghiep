@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const AddAddressForm = ({ register, products, errors, settrangthai }: any) => {
-  // console.log("products", products);
+  console.log("products", products);
 
   return (
     <div className="">

@@ -447,6 +447,41 @@ class DonHangClientController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+                $userDonHangs = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Đơn hàng');
+                    })->get();
+                if (!empty($userDonHangs)) {
+                    foreach ($userDonHangs as $userDonHang) {
+                        $thongBao = ThongBao::create([
+                            'user_id' => $userDonHang->id,
+                            'tieu_de' => 'Có 1 đơn hàng đã được đặt',
+                            'noi_dung' => 'Có 1 đơn hàng mới của người dùng: '.$user->ho.' '. $user->ten.' bằng phương thức: '.$request->phuong_thuc_thanh_toan,
+                            'loai' => 'Đơn hàng',
+                            'duong_dan' =>$donHang->ma_don_hang,
+                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                        ]);
+
+                        broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                    }
+                }
+
+                $userAdmin = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Quản trị viên');
+                    })->first();
+
+                $thongBao = ThongBao::create([
+                    'user_id' => $userAdmin->id,
+                    'tieu_de' => 'Có 1 đơn hàng mới đã được đặt',
+                    'noi_dung' => 'Có 1 đơn hàng mới của người dùng: '.$user->ho.' '. $user->ten.' bằng phương thức: '.$request->phuong_thuc_thanh_toan,
+                    'loai' => 'Đơn hàng',
+                    'duong_dan' => $donHang->ma_don_hang,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
             } elseif ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
                 $viTien = $user->viTien;
@@ -471,6 +506,42 @@ class DonHangClientController extends Controller
                         'duong_dan' => $donHang->ma_don_hang,
                         'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                     ]);
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+                    $userDonHangs = User::query()->with('vaiTros')
+                        ->whereHas('vaiTros', function ($query) {
+                            $query->where('ten_vai_tro', 'Rút tiền');
+                        })->get();
+
+                    if(!empty($userDonHangs)){
+                        foreach ($userDonHangs as $userDonHang) {
+                            $thongBao = ThongBao::create([
+                                'user_id' => $userDonHang->id,
+                                'tieu_de' => 'Có 1 đơn hàng đã được đặt',
+                                'noi_dung' => 'Có 1 đơn hàng mới của người dùng: '.$user->ho.' '. $user->ten.'.',
+                                'loai' => 'Đơn hàng',
+                                'duong_dan' =>$donHang->ma_don_hang,
+                                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                            ]);
+
+                            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                        }
+                    }
+
+                    $userAdmin = User::query()->with('vaiTros')
+                        ->whereHas('vaiTros', function ($query) {
+                            $query->where('ten_vai_tro', 'Quản trị viên');
+                        })->first();
+
+                    $thongBao = ThongBao::create([
+                        'user_id' => $userAdmin->id,
+                        'tieu_de' => 'Có 1 đơn hàng mới đã được đặt',
+                        'noi_dung' => 'Có 1 đơn hàng mới của người dùng: '.$user->ho.' '. $user->ten.'.',
+                        'loai' => 'Đơn hàng',
+                        'duong_dan' => $donHang->ma_don_hang,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    ]);
+
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
                     event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
                 } else {
@@ -723,6 +794,41 @@ class DonHangClientController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+                $userRutTiens = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Rút tiền');
+                    })->first();
+
+                if(!empty($userRutTiens)){
+                    $thongBao = ThongBao::create([
+                        'user_id' => $userRutTiens->id,
+                        'tieu_de' => 'Yêu cầu rút tiền',
+                        'noi_dung' => 'Có 1 yêu cầu rút tiền mới của người dùng: '.$user->ho.' '. $user->ten.'.',
+                        'loai' => 'Rút tiền',
+                        'duong_dan' => $yeuCauRutTien->id,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    ]);
+
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                }
+
+                $userAdmin = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Quản trị viên');
+                    })->first();
+
+                $thongBao = ThongBao::create([
+                    'user_id' => $userAdmin->id,
+                    'tieu_de' => 'Yêu cầu rút tiền',
+                    'noi_dung' => 'Có 1 yêu cầu rút tiền, nhân viên đang xử lý: '.$userRutTiens->ho.' '. $userRutTiens->ten.'.',
+                    'loai' => 'Rút tiền',
+                    'duong_dan' => $yeuCauRutTien->id,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
             } else {
                 return response()->json([
                     'status' => false,
