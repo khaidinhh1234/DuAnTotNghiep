@@ -396,8 +396,6 @@ class TrangChiTietSpController extends Controller
     }
 
 
-
-
     public function loadKichThuoc()
     {
         try {
