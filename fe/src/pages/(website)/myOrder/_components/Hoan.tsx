@@ -2,19 +2,41 @@ import React from "react";
 import { sanPham2 } from "@/assets/img";
 import instanceClient from "@/configs/client";
 import { PlusOutlined } from "@ant-design/icons";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Image, message, Upload } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { UploadFile, UploadProps } from "antd/es/upload";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 
 interface HoanHang {
   li_do_hoan_hang: string;
-  hinh_anh_hoan_tra: string | null;
+  hinh_anh_hoan_tra: string;
+  ma_don_hang?: string;
 }
-const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
+const HoanTien = () => {
+  const { slug } = useParams();
+  // console.log("Slug:", slug);
+
+  const { data, error, isError } = useQuery({
+    queryKey: ["CHITIETDONHANG", slug],
+    queryFn: async () => {
+      if (!slug) throw new Error("Slug không hợp lệ.");
+      try {
+        // console.log(slug);
+
+        const response = await instanceClient.get(`don-hang/${slug}`);
+        if (response.status !== 200) {
+          throw new Error("Lỗi khi lấy thông tin chi tiết đơn hàng.");
+        }
+        return response.data;
+      } catch (error) {
+        console.error("Lỗi khi gọi API:", error);
+        throw new Error("Lỗi khi lấy thông tin chi tiết đơn hàng.");
+      }
+    },
+  });
   const [form] = Form.useForm();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -40,30 +62,37 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
     setFileList(newFileList);
 
-  const onFinish: any["onFinish"] = (values: any) => {
-    const feature_image = fileList
-      .filter((file) => file.status === "done")
-      .map((file) => file.response?.secure_url);
-    // mutate({ ...values, feature_image });
+
+  // const onFinish: any["onFinish"] = (values: any) => {
+  //   const feature_image = fileList
+  //     .filter((file) => file.status === "done")
+  //     .map((file) => file.response?.secure_url);
+  //   // mutate({ ...values, feature_image });
+  //   console.log(values);
+  //   console.log(feature_image[0]);
+  //   // mutate(values);
+  // };
+  const onFinish = async (values: any) => {
     console.log(values);
-    console.log(feature_image[0]);
-    // mutate(values);
+    const data: HoanHang = {
+      li_do_hoan_hang: values.description,
+      hinh_anh_hoan_tra: "",
+      ma_don_hang: slug,
+    };
+    if (fileList.length > 0) {
+      // Nếu có ảnh, lấy URL của ảnh đã upload
+      const uploadPromises = await uploadToCloudinary(
+        fileList[0].originFileObj as File
+      );
+
+      // console.log(uploadPromises);
+
+      data.hinh_anh_hoan_tra = uploadPromises; // Ghép các URL ảnh lại với nhau
+    }
+    // console.log(data);
+    mutate(data as any);
   };
-  // const onFinish = async (values: any) => {
-  //   try {
-  //     let imageUrl = null
-  //     if(values.imageFile && values.imageFile[0]){
-  //       imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj)
-  //     }
-  //     const hoanHang: HoanHang = {
-  //       li_do_hoan_hang: values.description,
-  //       hinh_anh_hoan_tra: imageUrl
-  //     }
-  //     mutate(hoanHang)
-  //   } catch (error) {
-  //     message.error("Lỗi khi tải ảnh")
-  //   }
-  // }
+
 
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
@@ -71,26 +100,27 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
       <div style={{ marginTop: 8 }}>Upload</div>
     </button>
   );
-    // const { mutate } = useMutation({
-    //   mutationKey: ["hoanTien"],
-    //   mutationFn: async ({ma_don_hang, imageUrl, notes}: any) => {
-    //     const response = await instanceClient.post(`/don-hang/hoan-hang/${ma_don_hang}`, {
-    //       ma_don_hang: ma_don_hang,
-    //       imageUrl,
-    //       li_do_hoan_hang: notes
-    //     })
-    //     return response.data
-    //   },
-    //   onSuccess: () => {
-    //     message.success("Hoàn tiền thành công!");
-    //     setHoan(true);
-    //     // navigate("/dashboard/orders");
-    //   },
-    //   onError: (error: any) => {
-    //     message.error("Hoàn tiền thất bại!");
-    //     console.error(error);
-    //   },
-    // })
+
+  const navigate = useNavigate();
+  const { mutate } = useMutation({
+    mutationKey: ["hoanTien"],
+    mutationFn: async (data) => {
+      const response = await instanceClient.post(
+        `don-hang/hoan-hang/${slug}`,
+        data
+      );
+      navigate("/mypro/myorder");
+      return response.data;
+    },
+    onSuccess: () => {
+      message.success("Hoàn tiền thành công!");
+    },
+    onError: (error: any) => {
+      message.error("Hoàn tiền thất bại!");
+      console.error(error);
+    },
+  });
+
   return (
     <div>
       {" "}
@@ -112,23 +142,22 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
           >
             <div className="grid grid-cols-3 gap-2">
               {" "}
-              {chi_tiet_don_hangs?.map((item: any, index: any) => (
-                <>
-                  <div className="relative w-32 col-span-1" key={index}>
-                    <img
-                      src={
-                        item?.bien_the_san_pham?.anh_bien_the[0]
-                          ?.duong_dan_anh ?? ""
-                      }
-                      alt="sdfsdf"
-                      className="w-32 h-36 rounded-md"
-                    />
-                    <span className="absolute bottom-0 bg-slate-500 w-full opacity-80 py-2 text-white text-center">
-                      đ {(item?.thanh_tien ?? 0).toLocaleString("vi-VN")}
-                    </span>
-                  </div>
-                </>
-              ))}
+              {data?.data?.chi_tiet_cua_don_hang?.map(
+                (item: any, index: any) => (
+                  <>
+                    <div className="relative w-32 col-span-1" key={index}>
+                      <img
+                        src={item?.anh_bien_the[0] ?? ""}
+                        alt="sdfsdf"
+                        className="w-32 h-36 rounded-md"
+                      />
+                      <span className="absolute bottom-0 bg-slate-500 w-full opacity-80 py-2 text-white text-center">
+                        đ {(item?.thanh_tien ?? 0).toLocaleString("vi-VN")}
+                      </span>
+                    </div>
+                  </>
+                )
+              )}
             </div>
             <div className="flex justify-between items-center border-b border-gray-300 pb-2">
               <button className="text-gray-800 font-semibold">Phương án</button>
@@ -142,7 +171,8 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
                   Số tiền hoàn lại
                 </span>
                 <span className="text-gray-800 font-semibold text-xl">
-                  ₫{tong_tien.toLocaleString("vi-VN")}
+                  ₫
+                  {data?.data?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
                 </span>
               </div>
             </div>
@@ -153,7 +183,7 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
                   Hoàn tiền vào
                 </span>
                 <span className="text-gray-800 font-semibold">
-                  Số dư TK Shopee
+                  Số dư TK Ví GLOW
                 </span>
               </div>
             </div>
@@ -170,7 +200,11 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
               >
                 <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
               </Form.Item>
-              <Form.Item className="" label="Ảnh nổi bật " name="feature_image">
+              <Form.Item
+                className=""
+                label="Hình ảnh minh chứng"
+                name="feature_image"
+              >
                 <Upload
                   action="https://api.cloudinary.com/v1_1/dpypwbeis/image/upload"
                   data={{ upload_preset: "ml_default" }}
@@ -202,33 +236,20 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
             </div>
             {/* Submit Button */}
             <div className="flex justify-between items-center pt-4  border-gray-200">
-              <button
+              <Link
+                to="/mypro/myorder"
                 className="text-gray-600 hover:text-gray-800 text-sm font-medium focus:outline-none"
-                onClick={(e: any) => {
-                  e.preventDefault();
-                  setHoan(false);
-                }}
               >
                 KHÔNG PHẢI BÂY GIỜ
-              </button>
-                {/* <button
-          className="bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-6 rounded-md shadow-lg transition-all"
-          onClick={(e: any) => {
-            e.preventDefault(), handleHoan();
-          }}
-        >
-          Gửi yêu cầu
-        </button> */}
+              </Link>
+
               <Button
                 type="primary"
                 size="middle"
-                onClick={(e: any) => {
-                  e.preventDefault();
-                }}
                 htmlType="submit"
-                className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+                className="bg-gray-600 hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-md shadow-lg transition-all"
               >
-                Thêm
+                Gửi yêu cầu
               </Button>
             </div>{" "}
           </Form>
