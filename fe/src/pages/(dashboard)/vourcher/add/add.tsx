@@ -7,6 +7,7 @@ import {
   InputNumber,
   Radio,
   Select,
+  Switch,
   message,
 } from "antd";
 import { DateTime } from "luxon";
@@ -15,11 +16,10 @@ import { useEffect, useState } from "react";
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 
+import { codinh, giamgiaphantram } from "@/assets/img";
 import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import AddCategorySelect from "@/components/AddCaterogySelect";
-import { codinh, giamgiaphantram } from "@/assets/img";
 
 const AddVoucher = () => {
   const [form] = Form.useForm();
@@ -33,17 +33,19 @@ const AddVoucher = () => {
   const [phantram, setphantram] = useState(30);
   const [voucherCode, setVoucherCode] = useState("");
   const [value, setValue] = useState(0);
+  console.log("value", value);
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [selectedValues2, setSelectedValues2] = useState<string[]>([]);
   const [key, setkey] = useState<string[]>([]);
   const [danhm, setdanhmuc] = useState<string[]>([]);
-
+  const apDungVi = form.getFieldValue("ap_dung_vi") ? 1 : 0;
   const [isAllSelected1, setIsAllSelected1] = useState(false);
   // const [searchTerm, setSearchTerm] = useState("");
   const nav = useNavigate();
   const { mutate } = useMutation({
     // mutationKey: "createVoucher",
     mutationFn: async (values: any) => {
+      console.log("values", values);
       try {
         const response = await instance.post("/makhuyenmai", values);
         nav("/admin/vouchers");
@@ -64,7 +66,7 @@ const AddVoucher = () => {
             : error?.response?.data?.errors?.ma_code?.[0]
               ? error?.response?.data?.errors?.ma_code?.[0]
               : error?.response?.data?.errors?.loai?.[0] == "phan_tram" ||
-                error?.response?.data?.errors?.giam_gia?.[0]
+                  error?.response?.data?.errors?.giam_gia?.[0]
                 ? "Giảm giá phải lớn hơn 0% và không quá 50%"
                 : "Có lỗi xảy ra",
         });
@@ -121,16 +123,16 @@ const AddVoucher = () => {
   const handleSubmit = (values: any) => {
     const endDate = values.ngay_ket_thuc
       ? DateTime.fromJSDate(values.ngay_ket_thuc.toDate()).toFormat(
-        "yyyy/MM/dd"
-      )
+          "yyyy/MM/dd"
+        )
       : null;
     const start = values.ngay_bat_dau
       ? DateTime.fromJSDate(values.ngay_bat_dau.toDate()).toFormat("yyyy/MM/dd")
       : null;
     const suutam = values.ngay_bat_dau_suu_tam
       ? DateTime.fromJSDate(values.ngay_bat_dau_suu_tam.toDate()).toFormat(
-        "yyyy/MM/dd"
-      )
+          "yyyy/MM/dd"
+        )
       : null;
     const san_phams = key.map((item) => item.match(/\d+/g)?.join("") || null);
     const danh_mucs = danhm.map((item) => item.match(/\d+/g)?.join("") || null);
@@ -144,6 +146,7 @@ const AddVoucher = () => {
       danh_mucs,
       loai: tabKey ? "tien_mat" : "phan_tram",
       ma_code: voucherCode,
+      ap_dung_vi: apDungVi,
     };
     mutate(formValues);
     // console.log("formValues", formValues);
@@ -617,7 +620,11 @@ const AddVoucher = () => {
                     className={`grid grid-cols-5  px-3 py-5 text-slate-900 rounded-lg  ${tabKey == false ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
-                      <img src={giamgiaphantram} alt="" className="w-16 h-16 " />
+                      <img
+                        src={giamgiaphantram}
+                        alt=""
+                        className="w-16 h-16 "
+                      />
                       {/* <p>khaidinh</p> */}
                     </div>
                     <div className="col-span-3 leading-[15px]">
@@ -777,7 +784,19 @@ const AddVoucher = () => {
                       options={data}
                     />
                   </Form.Item>{" "}
-                  <div className="flex gap-2 ">
+                  <Form.Item
+                    className="block text-md font-medium mt-2 text-gray-700 mb-1"
+                    label="Áp dụng cho ví"
+                    name="ap_dung_vi"
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      onChange={(checked) =>
+                        form.setFieldsValue({ ap_dung_vi: checked ? 1 : 0 })
+                      }
+                    />
+                  </Form.Item>
+                  <div className="flex gap-2">
                     <Form.Item className=" flex whitespace-nowrap">
                       <Link to="/admin/vouchers">
                         <Button htmlType="submit">

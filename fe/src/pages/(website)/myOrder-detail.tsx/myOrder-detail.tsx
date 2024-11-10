@@ -13,7 +13,7 @@ const MyOrderdetail = () => {
     queryFn: async () => {
       if (!slug) throw new Error("Slug không hợp lệ.");
       try {
-        console.log(slug);
+        // console.log(slug);
 
         const response = await instanceClient.get(`don-hang/${slug}`);
         if (response.status !== 200) {
@@ -32,13 +32,13 @@ const MyOrderdetail = () => {
   }
   // console.log("Data:", data);
   const chitiet = data?.data;
-  console.log("Chi tiết đơn hàng:", chitiet);
-
+  // console.log("Chi tiết đơn hàng:", chitiet);
+  console.log(chitiet);
   // const chitietsanpham = data?.data?.don_hang;
   const thongtin = data?.data?.thong_tin;
-  // console.log(thongtin);
+  console.log(thongtin);
   const donhang = data?.data?.don_hang;
-  console.log(donhang);
+  // console.log(donhang);
   const phoneNumber =
     donhang?.so_dien_thoai_nguoi_dat_hang ?? thongtin?.so_dien_thoai;
   const formattedPhoneNumber = phoneNumber?.replace(/^0/, "(+84)");
@@ -315,11 +315,13 @@ const MyOrderdetail = () => {
           <div>
             <h1 className="text-xl font-semibold">
               Địa chỉ nhận hàng{" "}
-              {(chitiet?.trang_thai_don_hang === "Hoàn tất đơn hàng" ||
-                chitiet?.trang_thai_don_hang === "Chờ khách hàng xác nhận") && (
+              {(donhang?.trang_thai_don_hang === "Hoàn tất đơn hàng" ||
+                donhang?.trang_thai_don_hang === "Chờ khách hàng xác nhận") && (
                 <Link
                   to={
-                    "https://asset.cloudinary.com/dcvu7e7ps/6f1977e298bde704fe55379ef638bb9c"
+                    chitiet?.anh_xac_thuc
+                      ? chitiet?.anh_xac_thuc
+                      : "https://res.cloudinary.com/dpypwbeis/image/upload/v1731121361/ewrlhy9lsbiq1gxhgcsl.jpg"
                   }
                   target="_blank"
                   rel="noopener noreferrer"
@@ -332,15 +334,19 @@ const MyOrderdetail = () => {
             <p>
               <UserOutlined />{" "}
               {donhang?.ten_nguoi_dat_hang ??
-                thongtin?.ho + " " + thongtin?.ten}
+                (thongtin?.ho && thongtin?.ten
+                  ? `${thongtin.ho} ${thongtin.ten}`
+                  : "Không có thông tin")}
             </p>
             <p>
               <i className="fa-solid fa-phone mr-1"></i>
-              {formattedPhoneNumber ?? 0}
+              {formattedPhoneNumber ?? "Không có sdt thông tin"}
             </p>
             <p>
               <i className="fa-solid fa-map-marker-alt"></i>{" "}
-              {donhang?.dia_chi_nguoi_dat_hang ?? thongtin?.dia_chi}
+              {donhang?.dia_chi_nguoi_dat_hang ??
+                thongtin?.dia_chi ??
+                "Không có địa chỉ"}
             </p>
           </div>
           <div className="border-l px-5 flex justify-between">
@@ -348,6 +354,7 @@ const MyOrderdetail = () => {
             <div className="text-end">
               {" "}
               <p>Tổng tiền hàng</p>
+              <p>Tiết kiệm</p>
               <p>Phí vận chuyển</p>
               <p>Voucher từ GLOW</p>
               <p>Thành tiền</p>
@@ -355,15 +362,27 @@ const MyOrderdetail = () => {
             <div className="text-right">
               {" "}
               <p>
-                ₫{(donhang?.tong_tien_don_hang ?? 0).toLocaleString("vn-VN")}
+                ₫
+                {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
+                  "vn-VN"
+                )}
               </p>
-              <p>{chitiet?.tong_thanh_tien_san_pham !== 0 ? "₫25.000" : 0} </p>
+              <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p>
+              <p>
+                {(chitiet?.tien_ship != 0
+                  ? (chitiet?.tien_ship ?? "FreeShip")
+                  : "FreeShip"
+                ).toLocaleString("vn-VN")}{" "}
+              </p>
               <p>
                 {" "}
-                ₫{(donhang?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
+                ₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
               </p>
               <p className="text-red-600 font-semibold text-2xl">
-                {(donhang?.tong_tien_don_hang ?? 0).toLocaleString("vi-VN")} đ
+                {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
+                  "vi-VN"
+                )}{" "}
+                đ
               </p>
             </div>
           </div>
@@ -383,9 +402,7 @@ const MyOrderdetail = () => {
                       : "text-black"
                 }`}
               >
-                {donhang?.trang_thai_thanh_toan === "Chưa thanh toán"
-                  ? "Thanh toán thất bại "
-                  : donhang?.trang_thai_thanh_toan}
+                {donhang?.trang_thai_thanh_toan}
               </span>
             </div>{" "}
             <div className="text-end border-t pt-4">
@@ -395,7 +412,7 @@ const MyOrderdetail = () => {
                   ? "Thanh toán MoMo ATM"
                   : donhang?.phuong_thuc_thanh_toan === "Momo_QR"
                     ? "Thanh toán MoMo QR"
-                    : donhang?.trang_thai_don_hang}
+                    : donhang?.phuong_thuc_thanh_toan}
               </span>
             </div>{" "}
           </div>

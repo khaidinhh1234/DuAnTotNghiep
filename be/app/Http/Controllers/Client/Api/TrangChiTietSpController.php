@@ -15,13 +15,45 @@ use Illuminate\Support\Facades\DB;
 
 class TrangChiTietSpController extends Controller
 {
-    public function chiTietSanPham($duongDan)
+    public function danhMucCha(Request $request)
     {
         try {
-            // $user = Auth::guard('api')->user();
+            // Bắt đầu transaction
+            DB::beginTransaction();
+            // Lấy danh mục có cha_id là null
+            $danhMucCha = DanhMuc::query()->whereNull('cha_id')->get();
+            // Commit transaction nếu mọi thứ thành công
+            DB::commit();
 
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công.',
+                'danhMucCha' => $danhMucCha,
+            ], 200);
+        } catch (\Exception $e) {
+            // Rollback nếu có lỗi
+            DB::rollBack();
+            // Trả về lỗi
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dự liệu.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function chiTietSanPham(Request $request, $duongDan)
+    {
+        try {
+            // Lấy chi tiết sản phẩm với các quan hệ cần thiết
             $chiTietSanPham = SanPham::with([
-                'danhMuc',
+                'danhMuc' => function ($query) {
+                    $query->with([
+                        'parent',  // Lấy danh mục cha
+                    ]);
+                },
                 'danhGias.user',
                 'danhGias.danhGiaHuuIch',
                 'danhGias' => function ($query) {
@@ -37,17 +69,48 @@ class TrangChiTietSpController extends Controller
                 'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
 
+            // Kiểm tra xem sản phẩm có tồn tại không
+            if (!$chiTietSanPham) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Không tìm thấy sản phẩm'
+                ], 404);
+            }
+
+            // Kiểm tra nếu cần tăng lượt xem (tham số `tang_luot_xem` được gửi từ frontend)
+            if ($request->has('tang_luot_xem') && $request->tang_luot_xem == true) {
+                $chiTietSanPham->increment('luot_xem');
+                $chiTietSanPham->touch(); // Cập nhật `updated_at`
+            }
+
+            // Cập nhật trạng thái đánh giá hữu ích
             foreach ($chiTietSanPham->danhGias as $danhGia) {
                 $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
             }
 
+            // Kiểm tra trạng thái yêu thích của sản phẩm
             $chiTietSanPham['trang_thai_yeu_thich'] = false;
             if (Auth::guard('api')->check()) {
                 $user = Auth::guard('api')->user();
                 $chiTietSanPham['trang_thai_yeu_thich'] = $chiTietSanPham->khachHangYeuThich->contains('id', $user->id);
             }
 
+            // Lấy thêm thông tin danh mục cha và ông của danh mục sản phẩm
+            $danhMuc = $chiTietSanPham->danhMuc;
 
+            // Lấy cha của danh mục
+            $danhMuc->load('parent');  // Load danh mục cha
+            $chaDanhMuc = $danhMuc->parent;
+
+            // Lấy ông của danh mục
+            $ongDanhMuc = $chaDanhMuc ? $chaDanhMuc->parent : null;
+
+            // Thêm vào dữ liệu trả về
+            $chiTietSanPham['cha_danh_muc'] = $chaDanhMuc;
+            $chiTietSanPham['ong_danh_muc'] = $ongDanhMuc;
+
+            // Trả về chi tiết sản phẩm cùng với các thông tin danh mục cha và ông
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -55,6 +118,7 @@ class TrangChiTietSpController extends Controller
                 'data' => $chiTietSanPham
             ]);
         } catch (\Exception $exception) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -236,16 +300,19 @@ class TrangChiTietSpController extends Controller
 
     public function goiY(Request $request)
     {
+        // Validate input dữ liệu
         $request->validate([
             'chieu_cao' => 'required|numeric|min:0',
             'can_nang' => 'required|numeric|min:0',
             'san_pham_id' => 'required|exists:san_phams,id'
         ]);
 
+        // Lấy dữ liệu từ request
         $chieuCao = $request->input('chieu_cao');
         $canNang = $request->input('can_nang');
         $sanPhamId = $request->input('san_pham_id');
 
+        // Lấy sản phẩm và danh mục liên quan
         $sanPham = SanPham::with('danhMuc')->find($sanPhamId);
 
         if (!$sanPham || !$sanPham->danhMuc) {
@@ -255,14 +322,13 @@ class TrangChiTietSpController extends Controller
             ], 404);
         }
 
-        $danhMuc = $sanPham->danhMuc;
-        if ($danhMuc->cha_id !== null) {
-            $danhMuc = DanhMuc::find($danhMuc->cha_id);
-        }
-
+        // Lấy danh mục chính (nếu có cha)
+        $danhMuc = $sanPham->danhMuc->cha_id ? DanhMuc::find($sanPham->danhMuc->cha_id) : $sanPham->danhMuc;
+    //  dd($danhMuc);
+        // Lấy tên danh mục và giới tính (sử dụng cho việc lọc kích thước)
         $tenDanhMuc = strtolower($danhMuc->ten_danh_muc);
-        $gioiTinh = $danhMuc->gioi_tinh;
 
+        // Tìm kích thước phù hợp với chiều cao, cân nặng và loại kích thước
         $kichThuoc = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
             ->where('chieu_cao_toi_thieu', '<=', $chieuCao)
             ->where('chieu_cao_toi_da', '>=', $chieuCao)
@@ -270,6 +336,7 @@ class TrangChiTietSpController extends Controller
             ->where('can_nang_toi_da', '>=', $canNang)
             ->first();
 
+        // Nếu không tìm thấy kích thước phù hợp
         if (!$kichThuoc) {
             return response()->json([
                 'status' => false,
@@ -277,11 +344,13 @@ class TrangChiTietSpController extends Controller
             ], 404);
         }
 
+        // Tìm biến thể sản phẩm phù hợp với sản phẩm và kích thước
         $bienTheSanPham = BienTheSanPham::where('san_pham_id', $sanPhamId)
             ->where('bien_the_kich_thuoc_id', $kichThuoc->id)
             ->with('mauBienThe')
             ->get(['bien_the_mau_sac_id', 'so_luong_bien_the', 'gia_ban', 'gia_khuyen_mai']);
 
+        // Nếu không tìm thấy biến thể sản phẩm phù hợp
         if ($bienTheSanPham->isEmpty()) {
             return response()->json([
                 'status' => false,
@@ -293,25 +362,28 @@ class TrangChiTietSpController extends Controller
             ], 404);
         }
 
+        // Chuyển biến thể sản phẩm thành định dạng trả về
         $result = $bienTheSanPham->map(function ($variant) {
             return [
                 'bien_the_mau_sac' => $variant->mauBienThe,
                 'so_luong' => $variant->so_luong_bien_the,
                 'gia_ban' => $variant->gia_ban,
-                'gia_khuyen_mai' => $variant->gia_khuyen_mai ? $variant->gia_khuyen_mai : null,
+                'gia_khuyen_mai' => $variant->gia_khuyen_mai ?? null,
                 'co_san_kho' => $variant->so_luong_bien_the > 0,
             ];
         });
 
+        // Gợi ý kích thước khác gần với chiều cao và cân nặng
         $kichThuocGoiY = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
             ->where(function ($query) use ($chieuCao, $canNang) {
                 $query->whereBetween('chieu_cao_toi_thieu', [$chieuCao - 10, $chieuCao + 10])
-                    ->whereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
-                    ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
-                    ->whereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
+                      ->orWhereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
+                      ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
+                      ->orWhereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
             })
             ->pluck('kich_thuoc');
 
+        // Trả về kết quả
         return response()->json([
             'status' => true,
             'kich_thuoc' => $kichThuoc->kich_thuoc,
@@ -322,6 +394,9 @@ class TrangChiTietSpController extends Controller
             ],
         ]);
     }
+
+
+
 
     public function loadKichThuoc()
     {

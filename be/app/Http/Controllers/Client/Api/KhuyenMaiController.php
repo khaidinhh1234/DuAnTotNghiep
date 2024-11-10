@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BienTheSanPham;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\MaKhuyenMai;
+use App\Models\SanPham;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -80,16 +82,46 @@ class KhuyenMaiController extends Controller
         }
     }
 
+
     public function chiTietChuongTrinhUuDai($slug)
     {
         try {
             $chuongTrinh = ChuongTrinhUuDai::query()
-                ->with([
-                    'sanPhams.bienTheSanPham',
-                    'sanPhams.bienTheSanPham.mauBienThe',
-                    'sanPhams.bienTheSanPham.kichThuocBienThe',
-                    'sanPhams.bienTheSanPham.anhBienThe',
-                ])
+                ->with(['sanPhams' => function ($query) {
+                    $query->select(
+                        'san_phams.id',
+                        'san_phams.ten_san_pham',
+                        'san_phams.duong_dan',
+                        'san_phams.anh_san_pham',
+                        'san_phams.hang_moi',
+                        'san_phams.gia_tot'
+                    )
+                        ->whereNotNull('san_phams.danh_muc_id')
+                        ->where('san_phams.trang_thai', 1)
+                        ->whereHas('bienTheSanPham')
+                        ->with(['bienTheSanPham' => function ($query) {
+                            $query->select(
+                                'bien_the_san_phams.id',
+                                'bien_the_san_phams.san_pham_id',
+                                'bien_the_san_phams.so_luong_bien_the',
+                                'bien_the_mau_sacs.ten_mau_sac',
+                                'bien_the_mau_sacs.ma_mau_sac',
+                                'bien_the_kich_thuocs.kich_thuoc',
+                                DB::raw('(SELECT anh_bien_thes.duong_dan_anh
+                                FROM anh_bien_thes
+                                WHERE anh_bien_thes.bien_the_san_pham_id = bien_the_san_phams.id
+                                LIMIT 1) as duong_dan_anh'),
+                                DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'),
+                                DB::raw('CASE
+                                WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
+                                WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
+                                ELSE bien_the_san_phams.gia_ban
+                            END as gia_hien_tai')
+                            )
+                                ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
+                                ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id');
+                        }]);
+                }])
                 ->where('duong_dan', $slug)
                 ->first();
 
@@ -97,7 +129,47 @@ class KhuyenMaiController extends Controller
                 return response()->json(['status' => false, 'message' => 'Chương trình ưu đãi không tồn tại.'], 404);
             }
 
-            if (Carbon::now()->lt($chuongTrinh->ngay_bat_dau)) {
+            foreach ($chuongTrinh->sanPhams as $sanPham) {
+                $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
+                    ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
+                        $giaTriUuDai = $uuDai->loai === 'phan_tram'
+                            ? $uuDai->gia_tri_uu_dai . '%'
+                            : number_format($uuDai->gia_tri_uu_dai, 0, ',', '.') . ' VND';
+                        return $uuDai->ten_uu_dai . " - Giảm: " . $giaTriUuDai;
+                    })->implode(', ')
+                    : null;
+
+                $lowestPrice = null;
+                $highestPrice = null;
+
+                $mauSacVaAnh = $sanPham->bienTheSanPham->groupBy('ma_mau_sac')->map(function ($items) {
+                    $bienTheDauTien = $items->first();
+                    $anhBienTheDaiDien = $bienTheDauTien->anhBienThe->first() ? $bienTheDauTien->anhBienThe->first()->duong_dan_anh : null;
+                    return [
+                        'ma_mau_sac' => $bienTheDauTien->ma_mau_sac,
+                        'ten_mau_sac' => $bienTheDauTien->ten_mau_sac,
+                        'hinh_anh' => $anhBienTheDaiDien
+                    ];
+                })->values()->all();
+
+                foreach ($sanPham->bienTheSanPham as $bienThe) {
+                    $currentPrice = $bienThe->gia_hien_tai;
+                    $lowestPrice = $lowestPrice === null || $currentPrice < $lowestPrice ? $currentPrice : $lowestPrice;
+                    $highestPrice = $highestPrice === null || $currentPrice > $highestPrice ? $currentPrice : $highestPrice;
+                }
+
+                $sanPham->gia_thap_nhat = $lowestPrice;
+                $sanPham->gia_cao_nhat = $highestPrice;
+                $sanPham->mau_sac_va_anh = $mauSacVaAnh;
+            }
+
+            $ngayBatDau = $chuongTrinh->ngay_bat_dau ? Carbon::parse($chuongTrinh->ngay_bat_dau) : null;
+            $ngayKetThuc = $chuongTrinh->ngay_ket_thuc ? Carbon::parse($chuongTrinh->ngay_ket_thuc) : null;
+            $ngayHienTai = Carbon::now();
+
+            $chuongTrinh['bat_dau'] = $ngayBatDau ? $ngayBatDau->format('d-m-Y') : null;
+
+            if ($ngayBatDau && $ngayHienTai < $ngayBatDau) {
                 return response()->json([
                     'status' => true,
                     'data' => [
@@ -105,19 +177,20 @@ class KhuyenMaiController extends Controller
                         'trang_thai' => 'Chưa bắt đầu chương trình',
                     ]
                 ]);
-            }
-
-            if ($chuongTrinh->nagy_bat_dau <= Carbon::now() && $chuongTrinh->ngay_ket_thuc >= Carbon::now()) {
+            } elseif ($ngayKetThuc && $ngayHienTai > $ngayKetThuc) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Chương trình ưu đãi đã kết thúc.',
+                ], 400);
+            } else {
                 return response()->json([
                     'status' => true,
-                    'data' => $chuongTrinh,
+                    'data' => [
+                        'chuong_trinh' => $chuongTrinh,
+                        'trang_thai' => 'Chương trình đang diễn ra',
+                    ]
                 ]);
             }
-
-            return response()->json([
-                'status' => false,
-                'message' => 'Chương trình ưu đãi đã kết thúc.',
-            ], 400);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy chi tiết chương trình ưu đãi.', 'error' => $e->getMessage()], 400);
         }
@@ -256,6 +329,14 @@ class KhuyenMaiController extends Controller
     public function danhSachMaKhuyenMaiTheoSanPhamGioHang(Request $request)
     {
         try {
+//            $dataApDungVi = [];
+//
+//            if ($request->ap_dung_vi == 1) {
+//                $dataApDungVi = [0, 1];
+//            } else {
+//                $dataApDungVi = [0];
+//            }
+
             $user = $request->user();
             if (!$user) {
                 return response()->json(['status' => false, 'message' => 'Bạn cần đăng nhập để xem mã khuyến mãi.'], 401);
@@ -292,6 +373,7 @@ class KhuyenMaiController extends Controller
                 ->where('trang_thai', 1)
                 ->where('ngay_bat_dau_suu_tam', '<=', now())
                 ->where('ngay_ket_thuc', '>=', now())
+//                ->whereIn("ap_dung_vi", $dataApDungVi)
                 ->whereDoesntHave('user', function ($q) use ($user) {
                     $q->where('user_id', $user->id)->where('da_su_dung', true);
                 });
@@ -300,7 +382,7 @@ class KhuyenMaiController extends Controller
                 $query->where('ma_code', 'LIKE', '%' . $request->ma_code . '%');
             }
 
-            $maKhuyenMai = $query->get()->map(function ($ma) use ($sanPhamIds, $danhMucIdsWithSubCategories, $tongGiaTriGioHang) {
+            $maKhuyenMai = $query->get()->map(function ($ma) use ($request, $sanPhamIds, $danhMucIdsWithSubCategories, $tongGiaTriGioHang) {
                 $apDung = true;
                 $errorMessages = [];
                 $soTienGiamGia = 0;
@@ -308,6 +390,11 @@ class KhuyenMaiController extends Controller
                 if ($ma->chi_tieu_toi_thieu > $tongGiaTriGioHang) {
                     $apDung = false;
                     $errorMessages[] = 'Tổng giá trị đơn hàng không đủ để áp dụng mã khuyến mãi.';
+                }
+
+                if($ma->ap_dung_vi == 1 && $request->ap_dung_vi == 0) {
+                    $apDung = false;
+                    $errorMessages[] = 'Mã khuyến mãi cần sử dụng ví để áp dụng';
                 }
 
                 $sanPhamKhongApDung = $ma->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist();

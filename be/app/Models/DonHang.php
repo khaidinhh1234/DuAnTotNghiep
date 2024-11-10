@@ -28,7 +28,8 @@ class DonHang extends Model
     const TTDH_HTDH = 'Hoàn tất đơn hàng';
     const TTDH_DHTB = 'Đơn hàng bị từ chối nhân';
     const TTDH_HH = 'Hoàn hàng';
-    const TTDH_CXNHH = 'Chờ xác nhận hoàn hàng ';
+    const TTDH_CXNHH = 'Chờ xác nhận hoàn hàng';
+    const TTDH_TCHH = 'Từ chối hoàn hàng';
 
 
     // Lí do hủy hàng
@@ -45,7 +46,7 @@ class DonHang extends Model
     // Trạng thái thanh toán
     const TTTT_CTT = 'Chưa thanh toán';
     const TTTT_DTT = 'Đã thanh toán';
-    const TTTT_DHT = "Đã hoàn hàng";
+    const TTTT_DHT = "Đã hoàn tiền";
 
     protected $fillable = [
         'user_id',
@@ -63,6 +64,7 @@ class DonHang extends Model
         'trang_thai_thanh_toan',
         'trang_thai_van_chuyen',
         'li_do_hoan_hang',
+        'hinh_anh_hoan_tra',
         'li_do_huy_hang',
         'mien_phi_van_chuyen'
     ];
@@ -112,13 +114,6 @@ class DonHang extends Model
         static::creating(function ($donHang) {
             $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
         });
-         // Kiểm tra trạng thái đơn hàng khi cập nhật
-         static::updated(function ($donHang) {
-            if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH) {
-                event(new DonHangHoanTat($donHang));
-            }
-        });
-
 
     }
 

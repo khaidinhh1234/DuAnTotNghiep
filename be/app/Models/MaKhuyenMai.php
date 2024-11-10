@@ -24,7 +24,8 @@ class MaKhuyenMai extends Model
         'tong_giam_gia_toi_da',
         'ngay_bat_dau_suu_tam',
         'trang_thai',
-        'ap_dung'
+        'ap_dung',
+        'ap_dung_vi'
     ];
 
     public function sanPhams()

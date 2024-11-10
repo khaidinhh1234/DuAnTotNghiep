@@ -153,20 +153,13 @@ const NewCategory = () => {
   const columns: TableColumnsType<NewCategories> = [
     {
       title: "STT",
-      width: "20%",
+      width: "10%",
       key: "id",
       dataIndex: "index",
     },
-    // {
-    //   title: "STT",
-    //   width: "10%",
-    //   key: "id",
-    //   dataIndex: "ten_danh_muc_tin_tucey",
-    //     // ...getColumnSearchProps("ten_danh_muc_tin_tuc"),
-    // },
     {
       title: "Tên danh mục tin tức",
-      width: "25%",
+      width: "30%",
       key: "ten_danh_muc_tin_tuc",
       dataIndex: "ten_danh_muc_tin_tuc",
       ...getColumnSearchProps("ten_danh_muc_tin_tuc"),
@@ -175,14 +168,38 @@ const NewCategory = () => {
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
+      title: "Ảnh danh mục tin tức",
+      width: "30%",
+      key: "hinh_anh",
+      dataIndex: "hinh_anh",
+      render: (hinh_anh: string) =>
+        hinh_anh ? (
+          <img
+            src={hinh_anh}
+            alt="Ảnh danh mục"
+            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+          />
+        ) : (
+          <span>Ảnh không có</span>
+        ),
+    },
+    {
+      title: "Mô tả",
+      width: "30%",
+      key: "mo_ta",
+      dataIndex: "mo_ta",
+      render: (text) => (text? text : "Chưa có dữ liệu"),
+    },
+    {
       title: "Thời gian tạo",
-      width: "20%",
+      width: "30%",
       key: "created_at",
       dataIndex: "created_at",
       render: (text) => (text ? new Date(text).toLocaleDateString() : ""),
     },
     {
       title: "Quản trị",
+      width: "20%",
       key: "action",
       render: (_, newcategory) => (
         <Space>

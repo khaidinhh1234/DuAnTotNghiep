@@ -3,14 +3,16 @@ import instance from "@/configs/admin";
 import { UploadOutlined } from "@ant-design/icons";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { Button, Form, Input, Upload, message, Spin } from "antd";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { NewCategories } from "@/common/types/newcategory";
+import { useEffect } from "react";
 
 const NewCategoriesEdit = () => {
   const [form] = Form.useForm();
   const nav = useNavigate();
   const { id } = useParams();
-
+  const queryClient = useQueryClient();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhmuctintuc", id],
     queryFn: async () => {
@@ -18,7 +20,15 @@ const NewCategoriesEdit = () => {
       return response.data;
     },
   });
-
+  useEffect(() => {
+    if (data) {
+      form.setFieldsValue({
+        ten_danh_muc_tin_tuc: data.data.ten_danh_muc_tin_tuc,
+        mo_ta: data.data.mo_ta,
+        imageFile: data.data.hinh_anh ? [{ url: data.data.hinh_anh }] : [],
+      });
+    }
+  }, [data, form]);
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
       const response = await instance.put(`/danhmuctintuc/${id}`, category);
@@ -26,6 +36,7 @@ const NewCategoriesEdit = () => {
     },
     onSuccess: () => {
       message.success("Cập nhật danh mục thành công");
+      queryClient.invalidateQueries({ queryKey: ["danhmuctintuc"] });
       form.resetFields();
       nav("/admin/newcategory");
     },
@@ -39,17 +50,20 @@ const NewCategoriesEdit = () => {
       let imageUrl = null;
       if (values.imageFile && values.imageFile[0]) {
         imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
+        console.log("Image URL from Cloudinary:", imageUrl);
       }
       const categoryData = {
         ...values,
-        hinh_anh: imageUrl,
+        hinh_anh: imageUrl || data?.data.hinh_anh, // Nếu không có ảnh mới, giữ ảnh cũ
       };
       mutate(categoryData);
     } catch (error) {
       message.error("Lỗi khi tải ảnh lên");
     }
   };
-
+  
+  
+  
   if (isLoading) {
     return <Spin />;
   }
@@ -87,7 +101,7 @@ const NewCategoriesEdit = () => {
               layout="vertical"
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 24 }}
-              initialValues={{ ...data?.data }}
+              initialValues={data?.data} // Đặt dữ liệu ban đầu
               autoComplete="off"
               onFinish={onFinish}
             >
@@ -111,7 +125,7 @@ const NewCategoriesEdit = () => {
               >
                 <Input placeholder="Nhập mô tả tin tức" />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 label="Thêm ảnh"
                 name="imageFile"
                 valuePropName="fileList"
@@ -129,7 +143,32 @@ const NewCategoriesEdit = () => {
                 >
                   <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
                 </Upload>
+              </Form.Item> */}
+              <Form.Item
+                label="Thêm ảnh"
+                name="imageFile"
+                valuePropName="fileList"
+                getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
+              >
+                <Upload
+                  listType="picture"
+                  maxCount={1}
+                  beforeUpload={() => false}
+                  defaultFileList={
+                    data?.data.hinh_anh
+                      ? [{
+                        uid: '-1', // ID duy nhất cho file
+                        name: 'image.jpg',
+                        url: data.data.hinh_anh,
+                        status: 'done',
+                      }]
+                      : []
+                  }
+                >
+                  <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+                </Upload>
               </Form.Item>
+
               <Form.Item>
                 <Button
                   type="primary"

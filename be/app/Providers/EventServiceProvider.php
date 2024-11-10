@@ -6,6 +6,7 @@ use App\Events\DonHangHoanTat;
 use App\Events\HoanTatDonHang;
 use App\Events\PhanHoiLienHe;
 use App\Events\SendMail;
+use App\Listeners\CapNhatHangThanhVien;
 use App\Listeners\GuiMailHoanTatDonHang;
 use App\Listeners\GuiThongBaoDonHangHoanTat;
 use App\Listeners\SendMailContact;
@@ -39,6 +40,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         DonHangHoanTat::class => [
             GuiThongBaoDonHangHoanTat::class,
+            CapNhatHangThanhVien::class,
         ],
     ];
 

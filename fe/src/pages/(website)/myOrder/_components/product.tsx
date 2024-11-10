@@ -4,8 +4,23 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import HoanTien from "./Hoan";
+import React from "react";
+import { FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
+import { Flex, Rate } from "antd";
+import Danhgia from "./Danhgia";
 
 // Component hiển thị thông tin sản phẩm
+const isToday = (date: any) => {
+  const today = new Date();
+  // console.log(today);
+  return (
+    date.getUTCDate() === today.getUTCDate() &&
+    date.getUTCMonth() === today.getUTCMonth() &&
+    date.getUTCFullYear() === today.getUTCFullYear()
+  );
+};
+
 const ProductItem = ({
   status,
   price,
@@ -20,14 +35,24 @@ const ProductItem = ({
   ma_don_hang,
   pricesale,
   trang_thai_thanh_toan,
+  created_at,
+  phuong_thuc_thanh_toans,
 }: any) => {
+  // console.log(chi_tiet_don_hangs);
+  console.log("status", new Date(created_at));
+  const dateToCheck = new Date(created_at);
+  console.log(isToday(dateToCheck));
+
+  const [values, setValues] = useState<string>("");
+  const [danhgia, setDanhgia] = useState<boolean>(false);
+  // console.log(values);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
+  const [Hoan, setHoan] = useState(false);
 
   const queryClient = useQueryClient();
   const [li_do_huy_hang, setValue] = useState<string>("");
   const [phuong_thuc_thanh_toan, setPhuongthuc] = useState<any>({});
-  // console.log("phuong_thuc_thanh_toan", phuong_thuc_thanh_toan);
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       // console.log(data);
@@ -59,11 +84,33 @@ const ProductItem = ({
       });
     },
   });
+  const { mutate: mutateXacnhan } = useMutation({
+    mutationFn: async (data: any) => {
+      // console.log(data);
+      try {
+        const response = await instanceClient.patch(
+          `xac-nhan-don-hang/${data}`
+        );
+        message.success("Đã xác nhận nhận hàng ");
+        // setIsModalOpen(false);
+        return response.data;
+      } catch (error) {
+        message.error(" Lỗi xác nhận nhận hàng ");
+        console.log(error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["MyOrder_LISTas"],
+      });
+    },
+  });
   const handleCancelOrder = () => {
     if (status === "Hoàn tất đơn hàng") {
       console.log("Đánh giá");
+      setDanhgia(true);
     } else if (status === "Chờ khách hàng xác nhận") {
-      console.log("Đã nhận hàng");
+      mutateXacnhan(ma_don_hang);
     } else {
       setIsModalOpen(true); // Show the modal when other statuses are met
     }
@@ -75,6 +122,9 @@ const ProductItem = ({
     const data = { li_do_huy_hang, ma_don_hang };
     mutate(data);
   };
+  // const handlehoan ()=>{
+
+  // }
   const nav = useNavigate();
   const { mutate: mutatePayment, isPending } = useMutation({
     mutationFn: async (data: any) => {
@@ -137,8 +187,25 @@ const ProductItem = ({
     { name: "Ví Glow Clothing", value: "Ví tiền" },
     { name: "Thanh toán khi nhận hàng", value: "Thanh toán khi nhận hàng" },
   ];
+  //upload image
+
   return (
     <>
+      {danhgia && (
+        <>
+          <Danhgia />
+        </>
+      )}
+      {Hoan && (
+        <>
+          <HoanTien
+            chi_tiet_don_hangs={chi_tiet_don_hangs}
+            setHoan={setHoan}
+            tong_tien={tong_tien}
+            setValues={setValues}
+          />  
+        </>
+      )}
       {Payment && (
         <>
           <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
@@ -364,13 +431,16 @@ const ProductItem = ({
             >
               {status === "Hoàn tất đơn hàng"
                 ? "Đánh giá"
-                : status === "Chờ khách hàng xác nhận"
+                : status === "Chờ khách hàng xác nhận" &&
+                    status !== "Hoàn tất đơn hàng"
                   ? "Đã nhận hàng"
                   : "Hủy Đơn Hàng"}
             </button>
           )}{" "}
           <br />
-          {trang_thai_thanh_toan == "Chưa thanh toán" &&
+          {isToday(dateToCheck) &&
+            phuong_thuc_thanh_toans !== "Thanh toán khi nhận hàng" &&
+            trang_thai_thanh_toan == "Chưa thanh toán" &&
             status == "Chờ xác nhận" && (
               <button
                 onClick={(e) => {
@@ -390,12 +460,18 @@ const ProductItem = ({
               </button>
             )}
           {(status === "Hoàn tất đơn hàng" ||
-            status === "Chờ khách hàng xác nhận" ||
-            trang_thai_thanh_toan == "Đã thanh toán") && (
-            <button className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white">
-              Hoàn hàng
-            </button>
-          )}
+            status === "Chờ khách hàng xác nhận") &&
+            trang_thai_thanh_toan == "Đã thanh toán" && (
+              <button
+                className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setHoan(true);
+                }}
+              >
+                Hoàn hàng
+              </button>
+            )}
         </div>
         <div className="col-span-7 border-t mt-2 py-3 lg:flex lg:justify-between">
           {" "}
@@ -480,14 +556,14 @@ const ProductList = ({ donhang }: any) => {
       <div className="lg:col-span-9 col-span-8 lg:pl-4 h-full">
         <form>
           {don_hang && don_hang.length ? (
-            don_hang.map((item: any, index: number) => (
+            don_hang?.map((item: any, index: number) => (
               <ProductItem
                 key={index}
                 status={item.trang_thai_don_hang || "Đang xử lý"}
                 pricesale={
                   item.chi_tiets[0]?.bien_the_san_pham
                     ?.gia_khuyen_mai_tam_thoi ||
-                  item.chi_tiets[0]?.bien_the_san_pham?.gia_khuyen_mai ||
+                  item?.chi_tiets[0]?.bien_the_san_pham?.gia_khuyen_mai ||
                   item.chi_tiets[0]?.bien_the_san_pham?.gia_ban ||
                   0
                 }
@@ -516,8 +592,10 @@ const ProductList = ({ donhang }: any) => {
                 }
                 quantity={item.chi_tiets[0]?.so_luong || 1}
                 chi_tiet_don_hangs={item.chi_tiets || []}
-                tong_tien={item.tong_tien_don_hang || 0}
+                tong_tien={item?.tong_tien_don_hang || 0}
+                created_at={item?.created_at || ""}
                 ma_don_hang={item.ma_don_hang || ""}
+                phuong_thuc_thanh_toans={item.phuong_thuc_thanh_toan || ""}
               />
             ))
           ) : (

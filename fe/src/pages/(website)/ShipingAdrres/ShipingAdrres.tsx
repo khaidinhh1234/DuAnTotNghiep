@@ -11,12 +11,16 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { checkout_address } from "@/common/validations/checkout";
+import VerificationModal from "./VerificationModal";
 
 const ShippingAddressPage = () => {
+  const [trangthai, settrangthai] = useState("Thanh toán khi nhận hàng");
+
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
+
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-  console.log(member);
+  // console.log(member);
   const {
     register,
     handleSubmit,
@@ -29,20 +33,32 @@ const ShippingAddressPage = () => {
       so_dien_thoai_nguoi_dat_hang: member?.so_dien_thoai || "",
       dia_chi_nguoi_dat_hang: member?.dia_chi || "",
       email_nguoi_dat_hang: member?.email || "",
+      phuong_thuc_thanh_toan: "Thanh toán khi nhận hàng",
     },
   });
   const nav = useNavigate();
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [pendingOrderData, setPendingOrderData] = useState<{
+    data: { ma_don_hang: string };
+  } | null>(null);
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       console.log(data);
       try {
         // Bước 1: Tạo đơn hàng
+        if (trangthai === "Ví tiền") {
+          setPendingOrderData(data);
+          setShowVerificationModal(true);
+          return;
+        }
+
         const order = await instanceClient.post(`don-hang`, data);
         // console.log(order);
         // Bước 2: Thực hiện thanh toán qua MoMo
-        if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
+
+        if (trangthai !== "Thanh toán khi nhận hàng") {
           const momoPaymentData = {
-            phuong_thuc_thanh_toan: data.phuong_thuc_thanh_toan,
+            phuong_thuc_thanh_toan: trangthai,
             ma_don_hang: order.data.data.ma_don_hang,
             amount: order.data.data.tong_tien_don_hang,
           };
@@ -59,7 +75,7 @@ const ShippingAddressPage = () => {
             // message.success("Thanh toán MoMo thành công");
             toast.success("Đặt hàng thành công");
           }
-        } else if (data.phuong_thuc_thanh_toan === "Thanh toán khi nhận hàng") {
+        } else if (trangthai === "Thanh toán khi nhận hàng") {
           toast.success("Đặt hàng thành công");
           nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
         } else {
@@ -77,6 +93,7 @@ const ShippingAddressPage = () => {
   });
 
   const onsubmit = (formData: any) => {
+    console.log(trangthai);
     // console.log(formData);
     // Kết hợp dữ liệu với mã khuyến mãi
     // Kiểm tra nếu tất cả các trường (ngoại trừ macode) đều có giá trị
@@ -86,7 +103,9 @@ const ShippingAddressPage = () => {
     );
     if (isDataComplete) {
       // Gọi hàm mutate với dữ liệu đã kết hợp
-      mutate({ ...formData, macode });
+      console.log(formData);
+
+      mutate({ ...formData, macode, phuong_thuc_thanh_toan: trangthai });
       reset(); // Reset form sau khi gửi dữ liệu
     } else {
       console.log("Dữ liệu chưa đầy đủ");
@@ -109,6 +128,25 @@ const ShippingAddressPage = () => {
   });
   const tong_tien = checkout?.chi_tiet_don_hang;
   const products = checkout?.chi_tiet_don_hang?.san_pham;
+  const handleVerification = async (code: string) => {
+    try {
+      const orderData = {
+        ...pendingOrderData,
+        ma_xac_minh: code,
+      };
+
+      const order = await instanceClient.post(`don-hang`, orderData);
+      toast.success("Đặt hàng thành công");
+      nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`);
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại!"
+      );
+    } finally {
+      setShowVerificationModal(false);
+      setPendingOrderData(null);
+    }
+  };
 
   return (
     <>
@@ -124,13 +162,23 @@ const ShippingAddressPage = () => {
                   errors={errors}
                   products={products}
                   checkout={checkout}
+                  settrangthai={settrangthai}
                 />
               </div>
-              <Subtotal tong_tien={tong_tien} Macode={handleCode} />
+              <Subtotal
+                tong_tien={tong_tien}
+                Macode={handleCode}
+                trangthai={trangthai}
+              />
             </div>
           </form>
         </div>
       </section>
+      <VerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        onVerify={handleVerification}
+      />
     </>
   );
 };

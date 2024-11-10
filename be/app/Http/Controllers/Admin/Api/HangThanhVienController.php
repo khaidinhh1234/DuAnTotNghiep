@@ -38,7 +38,7 @@ class HangThanhVienController extends Controller
      */
     public function store(Request $request)
     {
-        $vadidateHangThanhVien = Validator::make($request->all(), [
+        $validateHangThanhVien = Validator::make($request->all(), [
             'ten_hang_thanh_vien' => 'required|unique:hang_thanh_viens',
             'anh_hang_thanh_vien' => 'required',
             'chi_tieu_toi_thieu' => 'required|numeric',
@@ -48,9 +48,26 @@ class HangThanhVienController extends Controller
             'mo_ta' => 'nullable'
         ]);
 
-        if ($vadidateHangThanhVien->fails()) {
-            return response()->json(['errors' => $vadidateHangThanhVien->errors()], 422);
+        if ($validateHangThanhVien->fails()) {
+            return response()->json(['errors' => $validateHangThanhVien->errors()], 422);
         }
+
+
+        $exists = HangThanhVien::where(function ($query) use ($request) {
+            // kiểm tra bất kì tối thiểu hay tối đa nằm trong khaonr bất kì bản ghio nòa cũng sẽ báo
+            $query->whereBetween('chi_tieu_toi_thieu', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
+                ->orWhereBetween('chi_tieu_toi_da', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
+                ->orWhere(function ($subQuery) use ($request) {
+                    $subQuery->where('chi_tieu_toi_thieu', '<=', $request->chi_tieu_toi_thieu)
+                        ->where('chi_tieu_toi_da', '>=', $request->chi_tieu_toi_da);
+                });
+
+        })->exists();
+
+        if ($exists) {
+            return response()->json(['error' => 'Khoảng chi tiêu đã tồn tại hoặc bị chồng lấn.'], 422);
+        }
+
         try {
             DB::beginTransaction();
             $hang = HangThanhVien::create($request->all());
@@ -71,6 +88,8 @@ class HangThanhVienController extends Controller
             ], 500);
         }
     }
+
+
 
     /**
      * Display the specified resource.
@@ -100,7 +119,7 @@ class HangThanhVienController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $vadidateHangThanhVien = Validator::make($request->all(), [
+        $validateHangThanhVien = Validator::make($request->all(), [
             'ten_hang_thanh_vien' => 'required|unique:hang_thanh_viens,id,' . $id,
             'anh_hang_thanh_vien' => 'required',
             'chi_tieu_toi_thieu' => 'required|integer',
@@ -109,22 +128,40 @@ class HangThanhVienController extends Controller
             'ngay_ket_thuc' => 'nullable',
             'mo_ta' => 'nullable'
         ]);
-
-        if ($vadidateHangThanhVien->fails()) {
-            return response()->json(['errors' => $vadidateHangThanhVien->errors()], 422);
+    
+        if ($validateHangThanhVien->fails()) {
+            return response()->json(['errors' => $validateHangThanhVien->errors()], 422);
         }
+    
+        $exists = HangThanhVien::where(function ($query) use ($request) {
+
+            $query->whereBetween('chi_tieu_toi_thieu', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
+                  ->orWhereBetween('chi_tieu_toi_da', [$request->chi_tieu_toi_thieu, $request->chi_tieu_toi_da])
+                  ->orWhere(function ($subQuery) use ($request) {
+                      $subQuery->where('chi_tieu_toi_thieu', '<=', $request->chi_tieu_toi_thieu)
+                               ->where('chi_tieu_toi_da', '>=', $request->chi_tieu_toi_da);
+                  });
+        })
+        ->where('id', '!=', $id)  // Loại trừ bản ghi hiện tại
+        ->exists();
+    
+        if ($exists) {
+            return response()->json(['error' => 'Khoảng chi tiêu đã tồn tại hoặc bị chồng lấn.'], 422);
+        }
+
         try {
             DB::beginTransaction();
-            $hang = HangThanhVien::query()->findOrFail($id);
+            $hang = HangThanhVien::findOrFail($id);
             $hang->update($request->all());
             DB::commit();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
-                'message' => 'Thêm mới hạng thành viên thành công',
+                'message' => 'Cập nhật hạng thành viên thành công',
                 'data' => $hang
             ], 200);
         } catch (\Exception $exception) {
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 404,
@@ -133,6 +170,8 @@ class HangThanhVienController extends Controller
             ], 404);
         }
     }
+    
+
 
     /**
      * Remove the specified resource from storage.

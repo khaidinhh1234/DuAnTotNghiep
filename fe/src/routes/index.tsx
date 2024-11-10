@@ -94,7 +94,7 @@ import {
   default as ShowUser,
 } from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
-import Test from "@/pages/(van_chuyen)/test2";
+import Test from "@/pages/(van_chuyen)/AllTransport";
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
 import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
@@ -135,8 +135,18 @@ import ProductCategories from "@/pages/(website)/shop/_components/ProductCategor
 import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import CreditCardForm from "@/pages/(website)/mywallet/cart";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
-import Test4 from "@/pages/(van_chuyen)/test";
+
+import Test4 from "@/pages/(van_chuyen)/TransportDetail";
 import WalletProtectedRoute from './WalletProtectedRoute';
+
+// import ThankYouPage1 from "@/pages/(website)/thankyou/you";
+// import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
+import Test3 from "@/pages/(website)/test3";
+import Blog from "@/pages/(website)/blog/Blog";
+import BlogCategories from "@/pages/(website)/blog/BlogCategories";
+import BlogDetail from "@/pages/(website)/blog/BlogDetail";
+import AllTransport from "@/pages/(van_chuyen)/AllTransport";
+
 const Router = () => {
   //
 
@@ -155,8 +165,6 @@ const Router = () => {
           />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          {/* <Route path="/orderPlaceSuccess" element={<OrderPlaceSuccess />} /> */}
-          {/* <Route path="/minicard" element={<Notifications />} /> */}
           <Route path="/shop/:slug" element={<Page1 />} />
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
@@ -164,7 +172,7 @@ const Router = () => {
           <Route path="/payment" element={<Payment />} />{" "}
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
-          <Route path="/test" element={<Test />} />{" "}
+          <Route path="/test" element={<Test3 />} />{" "}
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route path="/search-results" element={<Page2 />} />
@@ -189,34 +197,31 @@ const Router = () => {
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
             <Route path="/mypro/naptien" element={<NapTien/>} /> */}
-      <Route path="/mypro/wallet" element={<TaiChinh />} />
-      <Route 
-        path="/mypro/WithdrawPage" 
-        element={
-          <WalletProtectedRoute>
-            <WithdrawPage />
-          </WalletProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/mypro/bank" 
-        element={
-          <WalletProtectedRoute>
-            <BankAccount />
-          </WalletProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/mypro/naptien" 
-        element={
-          <WalletProtectedRoute>
-            <NapTien />
-          </WalletProtectedRoute>
-        } 
-      />
-
-
-
+            <Route path="/mypro/wallet" element={<TaiChinh />} />
+            <Route
+              path="/mypro/WithdrawPage"
+              element={
+                <WalletProtectedRoute>
+                  <WithdrawPage />
+                </WalletProtectedRoute>
+              }
+            />
+            <Route
+              path="/mypro/bank"
+              element={
+                <WalletProtectedRoute>
+                  <BankAccount />
+                </WalletProtectedRoute>
+              }
+            />
+            <Route
+              path="/mypro/naptien"
+              element={
+                <WalletProtectedRoute>
+                  <NapTien />
+                </WalletProtectedRoute>
+              }
+            />
             <Route path="/mypro/doangthu" element={<RevenuePage />} />
             <Route path="/mypro/lichsu" element={<History />} />
             <Route
@@ -230,6 +235,9 @@ const Router = () => {
             path="/tin-tuc-theo-danh-muc/:duong_dan"
             element={<NewDetail />}
           />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/danhmuctintuc/:duongDan" element={<BlogCategories />} />
+          <Route path="/xem-bai-viet/:duong_dan" element={<BlogDetail />} />
           {/* <Route
             path="/xem-bai-viet/:duong_dan"
             element={<DetailBlog />}
@@ -423,6 +431,7 @@ const Router = () => {
         <Route path="/changePassword" element={<ChangePassword />} />
         <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />
         <Route path="/shipper" element={<Shipper />} />
+        <Route path="/shipper2" element={<AllTransport />} />
         <Route path="/test2" element={<Test4 />} />
       </Routes>
     </>

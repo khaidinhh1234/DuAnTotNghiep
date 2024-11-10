@@ -113,6 +113,9 @@ class DonHangClientController extends Controller
                 return $order->chiTiets->sum('so_luong');
             });
             $tongTienSanPham = $donHang->sum(function ($order) {
+                if ($order->chiTiets->sum('thanh_tien') < 500000) {
+                    return $order->chiTiets->sum('thanh_tien') + 20000;
+                }
                 return $order->chiTiets->sum('thanh_tien');
             });
 
@@ -157,6 +160,20 @@ class DonHangClientController extends Controller
                 'vanChuyen',
             ])->where('ma_don_hang', $maDonHang)->firstOrFail();
 
+            //Lấy mã giảm giá
+            $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
+            $soTienGiamGia = 0;
+            if ($donHang->ma_giam_gia) {
+
+                $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
+                    : $maGiamGia->giam_gia;
+
+                if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
+                    $soTienGiamGia = $donHang->tong_tien_don_hang;
+                }
+            }
+
             $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
                 $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
                 $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
@@ -193,6 +210,9 @@ class DonHangClientController extends Controller
             $tongSoLuong = $donHang->chiTiets->sum('so_luong');
             $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
 
+            // Tính tiền ship
+            $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
+            $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -202,6 +222,11 @@ class DonHangClientController extends Controller
                     'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'tien_ship' => $tienShip,
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
+                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? "",
                     'danh_gia' => $danhGiaDonHang
                 ]
             ], 200);
@@ -215,30 +240,30 @@ class DonHangClientController extends Controller
         }
     }
 
-    public function xacNhanDonHang(string $id)
+    public function xacNhanDonHang(string $ma_don_hang)
     {
         try {
             DB::beginTransaction();
-            $donHang = DonHang::query()->with('vanChuyen')->findOrFail($id);
+            $donHang = DonHang::with('vanChuyen')->where('ma_don_hang', $ma_don_hang)->first();
 
-            if ($donHang->vanChuyen->shipper_xac_nhan == 1) {
-                $donHang->vanChuyen->update([
-                    'khach_hang_xac_nhan' => 1
-                ]);
+            if ($donHang->vanChuyen->shipper_xac_nhan) {
+            $donHang->vanChuyen->update(['khach_hang_xac_nhan' => "1"]);
+            $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_HTDH]);
+
             } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Đơn hàng chưa được xác nhận đã giao hàng',
-                ]);
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'Đơn hàng chưa được xác nhận đã giao hàng',
+            ]);
             }
 
             DB::commit();
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Xác nhận nhận hàng thành công',
-                'data' => $donHang
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Xác nhận nhận hàng thành công',
+            'data' => $donHang
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -350,6 +375,13 @@ class DonHangClientController extends Controller
                 }
             }
 
+            if ($tongTienDonHang < 500000) {
+                $tongTienDonHang += 20000;
+                $freeShip = 0;
+            } else {
+                $freeShip = 1;
+            }
+
             $maDonHang = 'DH' . strtoupper(uniqid());
             $donHang = DonHang::create([
                 'ma_don_hang' => $maDonHang,
@@ -365,7 +397,7 @@ class DonHangClientController extends Controller
                 'ma_giam_gia' => $request->ma_giam_gia ?? null,
                 'so_tien_giam_gia' => $soTienGiamGia,
                 // 'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
-                'mien_phi_van_chuyen' => $tongTienDonHang >= 500000 ? 1 : 0
+                'mien_phi_van_chuyen' => $freeShip
             ]);
             if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
                 $donHang->update([
@@ -403,8 +435,8 @@ class DonHangClientController extends Controller
                 'chiTiets.bienTheSanPham.anhBienThe',
             ])->where('id', $donHang->id)->first();
 
+            DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
             if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT) {
-                DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
                     'tieu_de' => 'Đơn hàng đã được đặt',
@@ -557,7 +589,8 @@ class DonHangClientController extends Controller
     public function hoanDonHang(Request $request, $ma_don_hang)
     {
         $validated = $request->validate([
-            'ly_do_hoan_don' => 'required|string|max:255',
+            'li_do_hoan_hang' => 'required|string|max:255',
+            'hinh_anh_hoan_tra' => 'required|string'
         ]);
 
         $userId = Auth::id();
@@ -573,6 +606,11 @@ class DonHangClientController extends Controller
                     'message' => 'Đơn hàng không tồn tại hoặc không thể hoàn hàng.',
                 ], 400);
             }
+            $donHang->update([
+                'trang_thai_don_hang' => DonHang::TTDH_CXNHH,
+                'li_do_hoan_hang' => $validated['li_do_hoan_hang'],
+                'hinh_anh_hoan_tra' => $validated['hinh_anh_hoan_tra'],
+            ]);
             $viTienId = User::find($userId)->viTien->id;
             $giaoDichVi = GiaoDichVi::create([
                 'vi_tien_id' => $viTienId,
@@ -587,7 +625,7 @@ class DonHangClientController extends Controller
                 'giao_dich_vi_id' => $giaoDichVi->id,
                 'don_hang_id' => $donHang->id,
                 'so_tien_hoan' => $donHang->tong_tien_don_hang,
-                'ly_do' => $validated['ly_do_hoan_don'],
+                'ly_do' => $validated['li_do_hoan_hang'],
                 'thoi_gian_hoan' => now(),
             ]);
 
@@ -649,7 +687,7 @@ class DonHangClientController extends Controller
                     ], 400);
                 }
                 $yeuCauRutTien = YeuCauRutTien::create([
-                    'vi_tien_id' => $viTien->id,
+                    'vi_tien_id' => $viUser->id,
                     'ngan_hang_id' => $nganHangId,
                     'so_tien' => (int)$soTien,
                     'trang_thai' => 'cho_duyet',
@@ -668,9 +706,9 @@ class DonHangClientController extends Controller
                 ]);
 
                 LichSuGiaoDich::create([
-                    'vi_tien_id' => $viTien->id,
-                    'so_du_truoc' => $viTien->so_du,
-                    'so_du_sau' => $viTien->so_du - $soTien,
+                    'vi_tien_id' => $viUser->id,
+                    'so_du_truoc' => $viUser->so_du,
+                    'so_du_sau' => $viUser->so_du - $soTien,
                     'ngay_thay_doi' => now(),
                     'mo_ta' => 'Rút tiền từ ví tiền',
                 ]);

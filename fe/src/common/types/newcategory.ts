@@ -3,4 +3,6 @@ export interface NewCategories {
     ten_danh_muc_tin_tuc: string,
     duong_dan:string,
     created_at?: Date;
+    hinh_anh: string;
+    mo_ta: string
 }

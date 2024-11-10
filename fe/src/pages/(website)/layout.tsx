@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./_component/Header";
 import Header2 from "./_component/Header2";
 import { useWalletRouteCheck } from "@/services/useWalletRouteCheck";
+import Test123 from "./_component/test123";
 // import Test from "./_component/Test";
 
 const Layout = () => {
@@ -14,6 +15,7 @@ const Layout = () => {
       {/* <Header /> */}
       {/* <Test/> */}
       <Header />
+      {/* <Test123/> */}
       <Outlet />
       <Footer />
     </div>

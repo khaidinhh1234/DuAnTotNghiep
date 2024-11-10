@@ -10,6 +10,7 @@ use App\Models\DanhGia;
 use App\Models\DanhMuc;
 use App\Models\DanhMucTinTuc;
 use App\Models\DonHang;
+use App\Models\LichSuTimKiem;
 use App\Models\SanPham;
 use App\Models\ThongTinWeb;
 use App\Models\TinTuc;
@@ -290,6 +291,36 @@ class TrangChuController extends Controller
 
         $query = trim($request->input('query'));
 
+
+        $dataLichSuTimKiem = [];
+        if (Auth::check()) {
+            LichSuTimKiem::create([
+                'user_id' => Auth::id(),
+                'tim_kiem' => $query,
+            ]);
+
+            $dataLichSuTimKiem = LichSuTimKiem::query()
+                ->select('tim_kiem', 'id')
+                ->where('user_id', Auth::id())
+                ->orderByDesc('id')
+                ->limit(10)
+                ->get();
+
+            $duplicates = DB::table('lich_su_tim_kiems')
+                ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
+                ->where('user_id', Auth::id())
+                ->groupBy('tim_kiem')
+                ->pluck('latest_id');
+
+            DB::table('lich_su_tim_kiems')
+                ->where('user_id', Auth::id())
+                ->whereNotIn('id', $duplicates)
+                ->delete();
+        }
+
+
+        $query = trim($request->input('query'));
+
         $goiY =
             SanPham::query()
                 ->select(
@@ -317,10 +348,12 @@ class TrangChuController extends Controller
                 ->where('san_phams.trang_thai', 1)
                 ->where('san_phams.hang_moi', 1)
                 ->whereNotNull('san_phams.danh_muc_id')
-                ->where('ten_san_pham', 'like', '%' . $query . '%')
                 ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
                 ->orderByDesc('san_phams.id')
-                ->take(8)
+                ->where(function ($q) use ($query) {
+                    $q->where('ten_san_pham', 'like', '%' . $query . '%')
+                        ->orWhere('ma_san_pham', 'like', '%' . $query . '%');
+                })
                 ->get()
                 ->map(function ($sanPham) {
                     $bienThe = BienTheSanPham::query()
@@ -360,7 +393,26 @@ class TrangChuController extends Controller
 
                     return $sanPham;
                 });
-        return response()->json($goiY);
+
+        //User
+        $user = Auth::guard('api')->user();
+        if ($user) {
+            // Thêm thông tin yêu thích vào từng sản phẩm
+            $goiY->map(function ($sanPham) use ($user) {
+                $sanPham['yeu_thich'] = $sanPham->khachHangYeuThich->contains($user->id); // Sản phẩm được yêu thích
+                return $sanPham;
+            });
+            $json = [
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu này',
+                'data' => $goiY,
+                'lich_su_tim_kiem' => $dataLichSuTimKiem
+            ];
+            return response()->json(
+                $json
+            );
+        }
     }
 
     public function loadDanhMucConChau($chaId)
@@ -443,6 +495,46 @@ class TrangChuController extends Controller
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi lấy dữ liệu',
                 'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
+    public function xoaLichSuTimKiem()
+    {
+        try {
+            $user = Auth::guard('api')->user();
+            $user->lichSuTimKiem()->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Xóa lịch sử tim kiếm',
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi xóa lịch sử tim kiếm',
+                'error' => $exception->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function xoaMotLichSuTimKiem($id)
+    {
+        try {
+            $user = Auth::guard('api')->user();
+            $user->lichSuTimKiem()->where('id', $id)->delete();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Xóa lịch sử tim kiếm',
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi xóa lịch sử tim kiếm',
+                'error' => $exception->getMessage(),
             ], 500);
         }
     }

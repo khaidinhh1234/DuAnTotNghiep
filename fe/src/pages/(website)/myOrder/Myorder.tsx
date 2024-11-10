@@ -57,6 +57,7 @@ const MyOrder = () => {
   //   }) || [];
   const orders = data?.pages.flatMap((page) => page.data.don_hang) || [];
 
+  // console.log(tong);
   return (
     <div>
       {/* Hiển thị danh sách đơn hàng */}
