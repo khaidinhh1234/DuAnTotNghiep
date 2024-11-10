@@ -16,8 +16,6 @@ export const checkout_address = z.object({
   dia_chi_nguoi_dat_hang: z
     .string()
     .min(2, { message: "Vui lòng nhập Địa chỉ nhận hàng lớn hơn 2 ký tự" }),
-  phuong_thuc_thanh_toan: z.string().min(2, {
-    message: "Vui lòng chọn phương thức thanh toán",
-  }),
+
   ghi_chu: z.string(),
 });

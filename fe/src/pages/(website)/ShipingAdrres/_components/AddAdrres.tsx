@@ -1,5 +1,8 @@
-const AddAddressForm = ({ register, products, errors }: any) => {
+import { useState } from "react";
+
+const AddAddressForm = ({ register, products, errors, settrangthai }: any) => {
   // console.log("products", products);
+
   return (
     <div className="">
       <h3 className="title-h3">Sản phẩm đã đặt</h3>
@@ -247,11 +250,11 @@ const AddAddressForm = ({ register, products, errors }: any) => {
       <div className="flex ">
         {" "}
         <h3 className="title-h3">Phương thức thanh toán</h3>
-        {errors.phuong_thuc_thanh_toan && (
+        {/* {errors.phuong_thuc_thanh_toan && (
           <h3 className="title-h3 text-lg font-medium mx-10 text-red-500">
             Vui lòng chọn phương thức thanh toán
           </h3>
-        )}
+        )} */}
       </div>
       <p className="text-gray-500">
         Lựa chọn phương thức thanh toán phù hợp nhất cho bạn
@@ -259,8 +262,10 @@ const AddAddressForm = ({ register, products, errors }: any) => {
       <div className="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio">
         <input
           type="radio"
+          name="phuong_thuc_thanh_toan"
           value="Momo_QR"
-          {...register("phuong_thuc_thanh_toan", { required: true })}
+          onChange={() => settrangthai("Momo_QR")}
+          // {...register("phuong_thuc_thanh_toan", { required: true })}
           className="bg-blackL"
         />
         <label htmlFor="googlePay" className="title-h3 px-3">
@@ -270,9 +275,11 @@ const AddAddressForm = ({ register, products, errors }: any) => {
       <div className="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio">
         <input
           type="radio"
+          name="phuong_thuc_thanh_toan"
           id="paypal"
           value="Momo_ATM"
-          {...register("phuong_thuc_thanh_toan", { required: true })}
+          onChange={() => settrangthai("Momo_ATM")}
+          // {...register("phuong_thuc_thanh_toan", { required: true })}
           className="bg-blackL"
         />
         <label htmlFor="paypal" className="title-h3 px-3">
@@ -282,9 +289,11 @@ const AddAddressForm = ({ register, products, errors }: any) => {
       <div className="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio">
         <input
           type="radio"
+          name="phuong_thuc_thanh_toan"
           id="PTTT_VT"
           value="Ví tiền"
-          {...register("phuong_thuc_thanh_toan", { required: true })}
+          onChange={() => settrangthai("Ví tiền")}
+          // {...register("phuong_thuc_thanh_toan", { required: true })}
           className="bg-blackL"
         />
         <label htmlFor="PTTT_VT" className="title-h3 px-3">
@@ -294,9 +303,12 @@ const AddAddressForm = ({ register, products, errors }: any) => {
       <div className="border-t border-hrBlack pt-4 mb-7 flex items-center custom-radio">
         <input
           type="radio"
+          name="phuong_thuc_thanh_toan"
           id="cashOnDelivery"
+          onChange={() => console.log("Thanh toán khi nhận hàng")}
           value="Thanh toán khi nhận hàng"
-          {...register("phuong_thuc_thanh_toan", { required: true })}
+          defaultChecked
+          // {...register("phuong_thuc_thanh_toan", { required: true })}
           className="bg-blackL"
         />
         <label htmlFor="cashOnDelivery" className="title-h3 px-3">
