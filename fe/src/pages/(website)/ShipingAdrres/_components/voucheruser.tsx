@@ -80,7 +80,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
     setClickedIndex(newIndex);
     setSelectedDiscount(newIndex ? giam_gia : null);
   };
-  console.log(ap);
+  // console.log(ap);
   const { data, refetch } = useQuery({
     queryKey: ["Voucher_LIST"],
     queryFn: async () => {
@@ -120,7 +120,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
       };
     })
     ?.filter((item: any) => item?.day > 0);
-  console.log(vouchertrue);
+  // console.log(vouchertrue);
   return (
     <div>
       <span
@@ -172,15 +172,20 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
                   <div
                     className={`border rounded-md px-4 flex justify-between items-center mb-4 ${
                       item?.ap_dung
-                        ? "cursor-pointer"
+                        ? item?.ma_khuyen_mai?.ap_dung_vi == ap
+                          ? "cursor-pointer"
+                          : "opacity-50 cursor-not-allowed"
                         : "opacity-50 cursor-not-allowed"
                     } ${
                       clickedIndex === item?.ma_khuyen_mai?.ma_code
-                        ? "border border-teal-500 bg-teal-50 shadow-md shadow-black/50"
+                        ? item?.ma_khuyen_mai?.ap_dung_vi == 1
+                          ? "border-red-500 border  bg-red-50 shadow-md shadow-black/50"
+                          : "border-teal-500 border  bg-teal-50 shadow-md shadow-black/50"
                         : ""
                     }`}
                     onClick={() =>
                       item?.ap_dung &&
+                      item?.ma_khuyen_mai?.ap_dung_vi == ap &&
                       handleClick({
                         index: item?.ma_khuyen_mai?.ma_code,
                         giam_gia: item?.ma_khuyen_mai?.giam_gia,

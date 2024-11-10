@@ -32,7 +32,9 @@ const ThankYouPage = () => {
     signature: signature,
   };
   console.log(datas);
-  const { data } = useQuery({
+  const orderid = orderId ? orderId.split("-")[0] : "";
+  console.log(orderid);
+  useQuery({
     queryKey: ["checkbill"],
     queryFn: async () => {
       if (resultCode === 0) {
@@ -40,10 +42,7 @@ const ThankYouPage = () => {
           orderId: orderId,
           resultCode: resultCode,
         });
-        const lichsu = await instanceClient.post(
-          `luu-thanh-toan-vao-momo`,
-          datas
-        );
+        await instanceClient.post(`luu-thanh-toan-vao-momo`, datas);
         toast.success("Đặt hàng thành công");
         return response.data;
       }
@@ -109,24 +108,22 @@ const ThankYouPage = () => {
       {/* Header Section */}
       <header className=" bg-gradient-to-r from-gray-900 via-gray-500 to-gray-900 text-white rounded-lg p-10 text-center mt-12  mx-auto shadow-2xl transform transition-all duration-500 ease-out hover:scale-105">
         <h2 className="text-3xl font-extrabold flex items-center justify-center mb-6 tracking-wide">
-          {resultCode !== 0 ? (
-            <div className="flex items-center justify-center">
-              <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
-              <p className="mt-5">Đặt hàng thất bại</p>
-            </div>
-          ) : resultCode === 1006 ? (
-            <div className="flex items-center justify-center">
-              <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3">
-                ✔
-              </span>
-              <p className="mt-5">Thanh toán thất bại</p>
-            </div>
-          ) : (
+          {resultCode == 0 ? (
             <div className="flex items-center justify-center">
               <span className="flex items-center justify-center w-12 h-12 rounded-full border-4 border-green-400 text-green-400 mr-3">
                 ✔
               </span>
               <p className="mt-5">Đặt hàng thành công</p>
+            </div>
+          ) : resultCode === 1006 ? (
+            <div className="flex items-center justify-center">
+              <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
+              <p className="mt-5">Thanh toán thất bại</p>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center">
+              <span className="text-yellow-400 mr-3 animate-bounce">🔔</span>
+              <p className="mt-5">Đặt hàng thất bại</p>
             </div>
           )}
         </h2>
@@ -141,7 +138,7 @@ const ThankYouPage = () => {
               Trang chủ
             </button>
           </Link>
-          <Link to={`/mypro/myorder/${orderId}`}>
+          <Link to={`/mypro/myorder/${orderid}`}>
             <button className="bg-white text-gray-900 font-semibold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1 active:scale-95 duration-300 ease-in-out">
               Đơn mua
             </button>{" "}

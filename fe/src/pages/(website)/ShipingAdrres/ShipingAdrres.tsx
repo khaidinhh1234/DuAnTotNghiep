@@ -1,16 +1,15 @@
-import { useForm } from "react-hook-form";
-import AddressForm from "./_components/AddAdrres";
-import ShippingAddress from "./_components/ShippingAddress";
-import Subtotal from "./_components/subtotail";
+import { checkout_address } from "@/common/validations/checkout";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { message } from "antd";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { checkout_address } from "@/common/validations/checkout";
+import AddressForm from "./_components/AddAdrres";
+import Subtotal from "./_components/subtotail";
 import VerificationModal from "./VerificationModal";
 
 const ShippingAddressPage = () => {
@@ -43,7 +42,6 @@ const ShippingAddressPage = () => {
   } | null>(null);
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
-      console.log(data);
       try {
         // Bước 1: Tạo đơn hàng
         if (trangthai === "Ví tiền") {
@@ -51,18 +49,14 @@ const ShippingAddressPage = () => {
           setShowVerificationModal(true);
           return;
         }
-
         const order = await instanceClient.post(`don-hang`, data);
-        // console.log(order);
         // Bước 2: Thực hiện thanh toán qua MoMo
-
         if (trangthai !== "Thanh toán khi nhận hàng") {
           const momoPaymentData = {
             phuong_thuc_thanh_toan: trangthai,
             ma_don_hang: order.data.data.ma_don_hang,
             amount: order.data.data.tong_tien_don_hang,
-          };
-          // console.log(momoPaymentData);
+          }; // console.log(momoPaymentData);
           const response = await instanceClient.post(
             "payment/momo",
             momoPaymentData
@@ -136,11 +130,14 @@ const ShippingAddressPage = () => {
       };
 
       const order = await instanceClient.post(`don-hang`, orderData);
-      toast.success("Đặt hàng thành công");
+      toast.success("Vui lòng chờ xử lý");
       nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại!"
+      );
+      nav(
+        `/thankyou?orderId=${pendingOrderData?.data.ma_don_hang}&resultCode=1`
       );
     } finally {
       setShowVerificationModal(false);
