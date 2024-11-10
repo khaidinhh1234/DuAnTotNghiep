@@ -297,8 +297,8 @@ const MemberRankForm: React.FC = () => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -315,6 +315,8 @@ const MemberRankForm: React.FC = () => {
           fileList[0].originFileObj
         );
         newRank.anh_hang_thanh_vien = cloudinaryUrl;
+        // console.log(newRank);
+        // console.log(cloudinaryUrl);
       }
       return instance.post("/hangthanhvien", newRank);
     },
@@ -375,7 +377,9 @@ const MemberRankForm: React.FC = () => {
 
     setPreviewImage(file.url || (file.preview as string));
     setPreviewVisible(true);
-    setPreviewTitle(file.name || file.url!.substring(file.url!.lastIndexOf('/') + 1));
+    setPreviewTitle(
+      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+    );
   };
 
   const handleCancel = () => setPreviewVisible(false);
@@ -402,7 +406,7 @@ const MemberRankForm: React.FC = () => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
+      reader.onerror = (error) => reject(error);
     });
 
   return (
@@ -552,7 +556,7 @@ const MemberRankForm: React.FC = () => {
         footer={null}
         onCancel={handleCancel}
       >
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        <img alt="example" style={{ width: "100%" }} src={previewImage} />
       </Modal>
     </main>
   );

@@ -37,19 +37,15 @@ const ProductItem = ({
   trang_thai_thanh_toan,
   created_at,
   phuong_thuc_thanh_toans,
+  danh_gias,
 }: any) => {
   // console.log(chi_tiet_don_hangs);
   // console.log("status", new Date(created_at));
   const dateToCheck = new Date(created_at);
   // console.log(isToday(dateToCheck));
-
-  const [values, setValues] = useState<string>("");
-  const [danhgia, setDanhgia] = useState<boolean>(false);
   // console.log(values);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
-  const [Hoan, setHoan] = useState(false);
-
   const queryClient = useQueryClient();
   const [li_do_huy_hang, setValue] = useState<string>("");
   const [phuong_thuc_thanh_toan, setPhuongthuc] = useState<any>({});
@@ -108,7 +104,7 @@ const ProductItem = ({
   const handleCancelOrder = () => {
     if (status === "Hoàn tất đơn hàng") {
       console.log("Đánh giá");
-      setDanhgia(true);
+      // setDanhgia(true);
     } else if (status === "Chờ khách hàng xác nhận") {
       mutateXacnhan(ma_don_hang);
     } else {
@@ -191,12 +187,12 @@ const ProductItem = ({
 
   return (
     <>
-      {danhgia && (
+      {/* {danhgia && (
         <>
-          <Danhgia />
+          <Danhgia setDanhgia={setDanhgia} slug={ma_don_hang} />
         </>
-      )}
-      {Hoan && (
+      )} */}
+      {/* {Hoan && (
         <>
           <HoanTien
             chi_tiet_don_hangs={chi_tiet_don_hangs}
@@ -205,7 +201,7 @@ const ProductItem = ({
             setValues={setValues}
           />
         </>
-      )}
+      )} */}
       {Payment && (
         <>
           <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
@@ -405,36 +401,58 @@ const ProductItem = ({
             </div>
           )}
         </div>
-        <div className="hidden sm:block col-span-2 text-end">
+        <div className="hidden sm:block col-span-2 text-end ">
           <Link to={`/mypro/myorder/${ma_don_hang}`}>
-            <button className="hover:bg-blackL hover:text-white shadow font-medium shadow-black/50 text-sm py-3 px-6 mb-2 rounded-lg">
+            <button className=" hover:bg-blackL hover:text-white shadow font-medium shadow-black/50 text-sm py-3 px-6 mb-2 rounded-lg">
               Xem Đơn Hàng
             </button>
           </Link>
+          {danh_gias?.length <= 0
+            ? (status === "Hoàn tất đơn hàng" ||
+                status === "Chờ khách hàng xác nhận") && (
+                <div className={"mt-3 -mb-2"}>
+                  <Link
+                    to={`/mypro/danhgia/${ma_don_hang}`}
+                    className="  shadow-md shadow-slate-600/50 hover:text-white  bg-black hover:bg-black/70 font-medium  text-base py-4 px-10  rounded-lg text-white "
+                  >
+                    Đánh giá
+                  </Link>
+                </div>
+              )
+            : ""}
           <br />
+          {status === "Hoàn tất đơn hàng" &&
+            trang_thai_thanh_toan == "Đã thanh toán" && (
+              <div className="mt-5">
+                {" "}
+                <Link
+                  to={`/mypro/hoanhang/${ma_don_hang}`}
+                  className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-4 px-10 my-2 rounded-lg text-white"
+                >
+                  Hoàn hàng
+                </Link>
+              </div>
+            )}
           {(status === "Chờ xác nhận" ||
             status === "Đã xác nhận" ||
             // status === "Đang xử lý" ||
-            status === "Hoàn tất đơn hàng" ||
+
             status === "Chờ khách hàng xác nhận") && (
             <button
               className={`${
-                status === "Hoàn tất đơn hàng" ||
                 status === "Chờ khách hàng xác nhận"
                   ? "bg-black hover:bg-black/50"
                   : "bg-[#FF7262] hover:bg-[#e9b2ac]"
-              } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg mb-2`}
+              } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg my-2`}
               onClick={(e) => {
                 e.preventDefault();
                 handleCancelOrder();
               }}
             >
-              {status === "Hoàn tất đơn hàng"
-                ? "Đánh giá"
-                : status === "Chờ khách hàng xác nhận" &&
-                    status !== "Hoàn tất đơn hàng"
-                  ? "Đã nhận hàng"
-                  : "Hủy Đơn Hàng"}
+              {status === "Chờ khách hàng xác nhận" &&
+              status !== "Hoàn tất đơn hàng"
+                ? "Đã nhận hàng"
+                : "Hủy Đơn Hàng"}
             </button>
           )}
           <br />
@@ -457,19 +475,6 @@ const ProductItem = ({
                 ) : (
                   "Tiếp tục thanh toán"
                 )}
-              </button>
-            )}
-          {(status === "Hoàn tất đơn hàng" ||
-            status === "Chờ khách hàng xác nhận") &&
-            trang_thai_thanh_toan == "Đã thanh toán" && (
-              <button
-                className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setHoan(true);
-                }}
-              >
-                Hoàn hàng
               </button>
             )}
         </div>
@@ -523,7 +528,8 @@ const ProductItem = ({
                   ? "Đã nhận hàng"
                   : "Hủy Đơn Hàng"}
             </button>
-          )}{" "}
+          )}
+
           {trang_thai_thanh_toan == "Chưa thanh toán" && (
             <button className="shadow-md shadow-slate-600/50 w-[49%]  hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-6 mb-2 rounded-lg text-white">
               Tiếp tục thanh toán
@@ -538,7 +544,7 @@ const ProductItem = ({
 // Component hiển thị danh sách sản phẩm
 const ProductList = ({ donhang }: any) => {
   const don_hang = donhang;
-  // console.log(don_hang);
+  console.log(don_hang);
   return (
     <>
       <div className="flex flex-row lg:justify-between lg:items-center">
@@ -596,6 +602,7 @@ const ProductList = ({ donhang }: any) => {
                 created_at={item?.created_at || ""}
                 ma_don_hang={item.ma_don_hang || ""}
                 phuong_thuc_thanh_toans={item.phuong_thuc_thanh_toan || ""}
+                danh_gias={item.danh_gias || []}
               />
             ))
           ) : (

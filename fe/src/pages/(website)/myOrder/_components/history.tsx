@@ -54,7 +54,7 @@ const History = () => {
             </thead>
             <tbody className="text-gray-700 text-sm font-light">
               {lichsus.length != 0 ? (
-                lichsus?.map((item: any) => (
+                lichsus.slice(0, 6).map((item: any) => (
                   <tr className="hover:bg-gray-50" key={item?.id}>
                     <td className="py-3 px-4 border-b">{item.transId}</td>
                     <td className="py-3 px-4 border-b">{item.orderId}</td>
