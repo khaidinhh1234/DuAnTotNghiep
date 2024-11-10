@@ -21,7 +21,7 @@ class DanhGia extends Model
     ];
     public function sanPham()
     {
-        return $this->belongsTo(SanPham::class, 'san_pham_id', 'id');
+        return $this->belongsToMany(SanPham::class, 'danh_gia_san_phams', 'danh_gia_id', 'san_pham_id')->withPivot('bien_the_san_pham_id');
     }
 
     public function user()
@@ -40,7 +40,7 @@ class DanhGia extends Model
     }
     public function danhGiaHuuIch()
     {
-        return $this->belongsToMany(User::class, 'danh_gia_huu_ich', 'danh_gia_id', 'user_id')->withPivot('bien_the_san_pham_id');
+        return $this->belongsToMany(User::class, 'danh_gia_huu_ich', 'danh_gia_id', 'user_id');
     }
     public function danhGiaBienTheSanPhams()
     {
@@ -48,6 +48,7 @@ class DanhGia extends Model
     }
     public function bienTheSanPham()
     {
-        return $this->belongsTo(BienTheSanPham::class, 'bien_the_san_pham_id', 'id');
+        return $this->belongsToMany(BienTheSanPham::class, 'danh_gia_san_phams', 'danh_gia_id', 'bien_the_san_pham_id')->withPivot('san_pham_id');
+
     }
 }

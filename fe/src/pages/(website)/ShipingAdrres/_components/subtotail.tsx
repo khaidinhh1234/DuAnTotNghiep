@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Voucheruser from "./voucheruser";
 
-const Subtotal = ({ tong_tien, Macode }: any) => {
+const Subtotal = ({ tong_tien, Macode, trangthai }: any) => {
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
-
+  const ap = trangthai === "Ví tiền" ? 1 : 0;
   useEffect(() => {
     if (selectedDiscount === null) return;
   }, [selectedDiscount]);
@@ -37,7 +37,7 @@ const Subtotal = ({ tong_tien, Macode }: any) => {
               className="lg:w-[218px] w-[300px] h-[56px] px-4 rounded-s-lg focus:outline-none border border-l-2 border-t-2 border-blackL border-r-0"
             /> */}
 
-            <Voucheruser onSelectVoucher={handleSelectVoucher} />
+            <Voucheruser onSelectVoucher={handleSelectVoucher} ap={ap} />
           </div>
           <div className="py-4">
             {selectedDiscount && (

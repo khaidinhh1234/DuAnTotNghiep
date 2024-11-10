@@ -1,7 +1,7 @@
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { message, Modal } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface VoucheruserProps {
   onSelectVoucher: ({
@@ -13,7 +13,10 @@ interface VoucheruserProps {
   }) => void;
 }
 
-const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
+const Voucheruser: React.FC<VoucheruserProps> = ({
+  onSelectVoucher,
+  ap,
+}: any) => {
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
@@ -77,14 +80,17 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
     setClickedIndex(newIndex);
     setSelectedDiscount(newIndex ? giam_gia : null);
   };
-
+  // console.log(ap);
   const { data, refetch } = useQuery({
     queryKey: ["Voucher_LIST"],
     queryFn: async () => {
       try {
-        const datas = code ? { ma_code: code } : {};
+        const datas =
+          code || ap !== 0
+            ? { ma_code: code, ap_dung_vi: ap }
+            : { ap_dung_vi: 0 };
         const response = await instanceClient.post(
-          `ma-uu-dai-theo-gio-hang`,
+          "ma-uu-dai-theo-gio-hang",
           datas
         );
         return response.data;
@@ -92,8 +98,12 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
         throw new Error("Error fetching cart data");
       }
     },
-    // enabled: false, // Disable automatic fetch
+    enabled: false, // Disable automatic fetch on mount
   });
+
+  useEffect(() => {
+    refetch();
+  }, [ap, refetch]);
 
   // console.log(data);
   const voucher = data?.data;
@@ -110,7 +120,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
       };
     })
     ?.filter((item: any) => item?.day > 0);
-
+  // console.log(vouchertrue);
   return (
     <div>
       <span
@@ -162,15 +172,20 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
                   <div
                     className={`border rounded-md px-4 flex justify-between items-center mb-4 ${
                       item?.ap_dung
-                        ? "cursor-pointer"
+                        ? item?.ma_khuyen_mai?.ap_dung_vi == ap
+                          ? "cursor-pointer"
+                          : "opacity-50 cursor-not-allowed"
                         : "opacity-50 cursor-not-allowed"
                     } ${
                       clickedIndex === item?.ma_khuyen_mai?.ma_code
-                        ? "border border-teal-500 bg-teal-50 shadow-md shadow-black/50"
+                        ? item?.ma_khuyen_mai?.ap_dung_vi == 1
+                          ? "border-red-500 border  bg-red-50 shadow-md shadow-black/50"
+                          : "border-teal-500 border  bg-teal-50 shadow-md shadow-black/50"
                         : ""
                     }`}
                     onClick={() =>
                       item?.ap_dung &&
+                      item?.ma_khuyen_mai?.ap_dung_vi == ap &&
                       handleClick({
                         index: item?.ma_khuyen_mai?.ma_code,
                         giam_gia: item?.ma_khuyen_mai?.giam_gia,
@@ -179,8 +194,11 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
                     key={index}
                   >
                     <div>
-                      <span className="bg-teal-500 text-white text-sm px-2 py-1 rounded">
-                        Lựa chọn tốt nhất
+                      <span
+                        className={` text-white text-sm px-2 py-1 rounded ${item?.ma_khuyen_mai?.ap_dung_vi == 1 ? "bg-red-700" : "bg-teal-500"}`}
+                      >
+                        Lựa chọn tốt nhất{" "}
+                        {`${item?.ma_khuyen_mai?.ap_dung_vi == 1 ? "Áp dụng cho ví" : ""}`}
                       </span>
                       <h3 className="text-lg font-semibold mt-2 truncate w-80">
                         {item?.ma_khuyen_mai?.mo_ta}
@@ -205,7 +223,9 @@ const Voucheruser: React.FC<VoucheruserProps> = ({ onSelectVoucher }) => {
                         Sắp hết hạn: Còn {item?.day} ngày
                       </p>
                     </div>
-                    <div className="text-teal-500">
+                    <div
+                      className={`${item?.ma_khuyen_mai?.ap_dung_vi == 1 ? "text-red-700" : "text-teal-500"}`}
+                    >
                       <button
                         className={`text-sm font-semibold ${
                           clickedIndex === item?.ma_khuyen_mai?.ma_code

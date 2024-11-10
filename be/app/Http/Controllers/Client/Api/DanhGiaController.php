@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AnhDanhGia;
+use App\Models\BienTheSanPham;
 use App\Models\DanhGia;
 use App\Models\DonHang;
 use App\Models\SanPham;
@@ -62,7 +63,6 @@ class DanhGiaController extends Controller
 
             // Xác thực đầu vào
             $validatedData = $request->validate([
-                'ma_san_pham_id' => 'required|array',
                 'ma_don_hang' => 'required|exists:don_hangs,ma_don_hang',
                 'so_sao_san_pham' => 'required|integer|min:1|max:5',
                 'so_sao_dich_vu_van_chuyen' => 'required|integer|min:1|max:5',
@@ -79,8 +79,6 @@ class DanhGiaController extends Controller
                 ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->where('trang_thai_thanh_toan', DonHang::TTTT_DTT)
                 ->first();
-            // dd($donHang);
-
             if (!$donHang) {
                 return response()->json([
                     'status' => false,
@@ -88,7 +86,7 @@ class DanhGiaController extends Controller
                     'message' => 'Đơn hàng không hợp lệ hoặc chưa hoàn tất thanh toán.',
                 ], 400);
             }
-
+            $chiTietDonHang = $donHang->chiTiets->pluck('bien_the_san_pham_id')->toArray();
             $danhGia = DanhGia::create([
                 'user_id' => Auth::user()->id,
                 'don_hang_id' => $donHang->id,
@@ -96,8 +94,16 @@ class DanhGiaController extends Controller
                 'so_sao_dich_vu_van_chuyen' => $validatedData['so_sao_dich_vu_van_chuyen'],
                 'chat_luong_san_pham' => $validatedData['chat_luong_san_pham'],
                 'mo_ta' => $validatedData['mo_ta'],
-
             ]);
+            foreach ($chiTietDonHang as $value) {
+                $bienTheSP = BienTheSanPham::find($value);
+                if ($bienTheSP) {
+                    $danhGia->danhGiaBienTheSanPhams()->attach(
+                        $bienTheSP->id,
+                        ['san_pham_id' =>  $bienTheSP->san_pham_id]
+                    );
+                }
+            }
 
             // Thêm ảnh đánh giá
             if (isset($validatedData['anh_danh_gia'])) {
@@ -109,21 +115,6 @@ class DanhGiaController extends Controller
                 }
             }
 
-            foreach ($validatedData['ma_san_pham_id'] as $maSanPham) {
-                $sanPham = SanPham::with('bienTheSanPham')->where('ma_san_pham', $maSanPham)->first();
-                // dd($sanPham);
-                if (!$sanPham) {
-                    return response()->json([
-                        'status' => false,
-                        'status_code' => 400,
-                        'message' => 'Sản phẩm không tồn tại',
-                    ], 400);
-                } else {
-                    $danhGia->danhGiaBienTheSanPhams()->attach($sanPham->bienTheSanPham->pluck('id'), [
-                        'san_pham_id' => $sanPham->id
-                    ]);
-                }
-            }
             DB::commit();
             return response()->json([
                 'status' => true,

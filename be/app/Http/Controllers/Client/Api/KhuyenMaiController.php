@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BienTheSanPham;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\MaKhuyenMai;
+use App\Models\SanPham;
+use App\Traits\LocSanPhamTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 
 class KhuyenMaiController extends Controller
 {
+    use LocSanPhamTrait;
     public function danhSachMaKhuyenMaiTheoNguoiDung(Request $request)
     {
         try {
@@ -80,16 +84,11 @@ class KhuyenMaiController extends Controller
         }
     }
 
-    public function chiTietChuongTrinhUuDai($slug)
+
+    public function chiTietChuongTrinhUuDai($slug, Request $request)
     {
         try {
             $chuongTrinh = ChuongTrinhUuDai::query()
-                ->with([
-                    'sanPhams.bienTheSanPham',
-                    'sanPhams.bienTheSanPham.mauBienThe',
-                    'sanPhams.bienTheSanPham.kichThuocBienThe',
-                    'sanPhams.bienTheSanPham.anhBienThe',
-                ])
                 ->where('duong_dan', $slug)
                 ->first();
 
@@ -97,7 +96,23 @@ class KhuyenMaiController extends Controller
                 return response()->json(['status' => false, 'message' => 'Chương trình ưu đãi không tồn tại.'], 404);
             }
 
-            if (Carbon::now()->lt($chuongTrinh->ngay_bat_dau)) {
+            $sanPhamIds = $chuongTrinh->sanPhams->pluck('id')->toArray();
+            dd($sanPhamIds);
+            $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
+            $sanPhamDetails = $this->locSanPham($sanPhamIds, $request);
+            $sanPhamData = $sanPhamDetails->getData();
+
+
+            $chuongTrinh->san_pham = $sanPhamData->data;
+            $chuongTrinh->danh_sach_loc = $danhSachLoc;
+
+            $ngayBatDau = $chuongTrinh->ngay_bat_dau ? Carbon::parse($chuongTrinh->ngay_bat_dau) : null;
+            $ngayKetThuc = $chuongTrinh->ngay_ket_thuc ? Carbon::parse($chuongTrinh->ngay_ket_thuc) : null;
+            $ngayHienTai = Carbon::now();
+
+            $chuongTrinh->bat_dau = $ngayBatDau ? $ngayBatDau->format('d-m-Y') : null;
+
+            if ($ngayBatDau && $ngayHienTai < $ngayBatDau) {
                 return response()->json([
                     'status' => true,
                     'data' => [
@@ -105,24 +120,24 @@ class KhuyenMaiController extends Controller
                         'trang_thai' => 'Chưa bắt đầu chương trình',
                     ]
                 ]);
-            }
-
-            if ($chuongTrinh->nagy_bat_dau <= Carbon::now() && $chuongTrinh->ngay_ket_thuc >= Carbon::now()) {
+            } elseif ($ngayKetThuc && $ngayHienTai > $ngayKetThuc) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Chương trình ưu đãi đã kết thúc.',
+                ], 400);
+            } else {
                 return response()->json([
                     'status' => true,
-                    'data' => $chuongTrinh,
+                    'data' => [
+                        'chuong_trinh' => $chuongTrinh,
+                        'trang_thai' => 'Chương trình đang diễn ra',
+                    ]
                 ]);
             }
-
-            return response()->json([
-                'status' => false,
-                'message' => 'Chương trình ưu đãi đã kết thúc.',
-            ], 400);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy chi tiết chương trình ưu đãi.', 'error' => $e->getMessage()], 400);
         }
     }
-
 
     public function layMaKhuyenMaiTheoHangThanhVien()
     {

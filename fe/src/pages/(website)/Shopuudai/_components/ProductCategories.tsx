@@ -1,16 +1,1095 @@
-import instanceClient from "@/configs/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Slider } from "antd";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+// // import instanceClient from "@/configs/client";
+// // import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// // import { Slider } from "antd";
+// // import { useEffect, useState } from "react";
+// // import { useParams } from "react-router-dom";
+// // import ProductsList from "./ProductsList";
+
+// // const ProductCategories = ({ handleWishlist, isPending }: any) => {
+// //   const [showcate, setShowcate] = useState(true);
+// //   const [showcolor, setShowcolor] = useState(true);
+// //   const [showprice, setShowprice] = useState(true);
+// //   const [showsize, setShowsize] = useState(true);
+// //   const { slug } = useParams();
+// //   const { data: promotionalData } = useQuery({
+// //     queryKey: ["PROMOTIONAL", slug],
+// //     queryFn: async () => {
+// //       if (!slug) return null;
+// //       const response = await instanceClient.get(`chuong-trinh-uu-dai/${slug}`);
+// //       return response.data;
+// //     },
+// //     enabled: !!slug,
+// //   });
+// //   // lọc danh mục
+// //   const [parentIds, setParentIds] = useState<number[]>([]);
+// //   const [childIds, setChildIds] = useState<number[]>([]);
+// //   // lọc giá
+// //   const [price, setPrice] = useState([0, 1000000]);
+// //   // size
+// //   const [selectedSize, setselectedSize] = useState<number[]>([]);
+// //   // console.log(selectedSize);
+// //   // mau sac
+// //   const [selectedMau, setSelectedMau] = useState<number[]>([]);
+// //   // console.log(selectedMau);
+// //   // mau sac
+// //   const handleItemClick = (id: number) => {
+// //     setSelectedMau(
+// //       (prevSelectedSize) =>
+// //         prevSelectedSize.includes(id)
+// //           ? prevSelectedSize.filter((itemId) => itemId !== id) // Deselect if already clicked
+// //           : [...prevSelectedSize, id] // Add to the list if not yet selected
+// //     );
+// //   };
+
+// //   // size
+// //   const handleCheckboxChange = (id: number) => {
+// //     setselectedSize((prevSize) =>
+// //       prevSize.includes(id)
+// //         ? prevSize.filter((item) => item !== id)
+// //         : [...prevSize, id]
+// //     );
+// //   }; //data
+// //   const datas = {
+// //     // danh_muc_cha_ids: [...parentIds],
+// //     ...(parentIds.length > 0 && { danh_muc_cha_ids: [...parentIds] }),
+// //     ...(childIds.length > 0 && { danh_muc_con_ids: [...childIds] }),
+// //     ...(price.length > 0 && { gia_duoi: price[0] }),
+// //     ...(price.length > 0 && { gia_tren: price[1] }),
+// //     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
+// //     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
+// //   };
+// //   console.log(datas);
+// //   // lọc danh mục
+// //   const [expanded, setExpanded] = useState<number[]>([]);
+// //   const [parentChecked, setParentChecked] = useState<{
+// //     [key: number]: boolean;
+// //   }>({});
+// //   const [childChecked, setChildChecked] = useState<{
+// //     [key: number]: boolean[];
+// //   }>({});
+// //   const toggleExpand = (index: number) => {
+// //     if (expanded.includes(index)) {
+// //       setExpanded(expanded.filter((i) => i !== index));
+// //     } else {
+// //       setExpanded([...expanded, index]);
+// //     }
+// //   };
+// //   const handleParentChange = (
+// //     index: number,
+// //     checked: boolean,
+// //     children: any[],
+// //     parentId: number
+// //   ) => {
+// //     setParentChecked((prevState) => ({ ...prevState, [index]: checked }));
+// //     if (checked) {
+// //       setParentIds((prevState) => [...prevState, parentId]);
+// //       const allCheckedChildren = children.map(() => true);
+// //       setChildChecked((prevState) => ({
+// //         ...prevState,
+// //         [index]: allCheckedChildren,
+// //       }));
+
+// //       const childIdsArray = children.map((child: any) => child.id);
+// //       setChildIds((prevState) => [...prevState, ...childIdsArray]);
+// //     } else {
+// //       setParentIds((prevState) => prevState.filter((id) => id !== parentId));
+// //       setChildChecked((prevState) => ({
+// //         ...prevState,
+// //         [index]: [],
+// //       }));
+// //       const childIdsArray = children.map((child: any) => child.id);
+// //       setChildIds((prevState) =>
+// //         prevState.filter((id) => !childIdsArray.includes(id))
+// //       );
+// //     }
+// //   };
+
+// //   const handleChildChange = (
+// //     parentIndex: number,
+// //     childIndex: number,
+// //     checked: boolean,
+// //     childId: number
+// //   ) => {
+// //     const currentChildren = childChecked[parentIndex] || [];
+// //     const updatedChildren = [...currentChildren];
+// //     updatedChildren[childIndex] = checked;
+// //     setChildChecked({ ...childChecked, [parentIndex]: updatedChildren });
+// //     if (checked) {
+// //       setChildIds((prevState) => [...prevState, childId]);
+// //       setParentChecked({ ...parentChecked, [parentIndex]: true });
+// //     } else {
+// //       setChildIds((prevState) => prevState.filter((id) => id !== childId));
+// //     }
+// //   };
+
+// //   // ALL sản phẩm
+// //   const { data } = useQuery({
+// //     queryKey: ["PRODUCTSLOC"],
+// //     queryFn: async () => {
+// //       try {
+// //         const response = await instanceClient.post("loc-san-pham", datas); // Gửi datas cho API
+// //         if (response.data.status !== true) {
+// //           throw new Error("Error fetching product");
+// //         }
+// //         return response.data;
+// //       } catch (error) {
+// //         throw new Error("Lỗi khi lấy thông tin");
+// //       }
+// //     },
+// //   });
+// //   console.log("data", data?.data?.data);
+// //   // danh mục
+// //   const { data: danhmuc } = useQuery({
+// //     queryKey: ["DANHMUCCLIENT"],
+// //     queryFn: async () => {
+// //       try {
+// //         const response = await instanceClient.get("load-danh-muc");
+// //         if (response.data.status_code !== 200) {
+// //           throw new Error("Error fetching product");
+// //         }
+// //         return response.data;
+// //       } catch (error) {
+// //         throw new Error("Lỗi khi lấy thông tin");
+// //       }
+// //     },
+// //   });
+// //   // mắc  sắc
+// //   const { data: mausac } = useQuery({
+// //     queryKey: ["MAUSACCLIENT"],
+// //     queryFn: async () => {
+// //       try {
+// //         const response = await instanceClient.get("mau-sac");
+// //         if (response.data.status_code !== 200) {
+// //           throw new Error("Error fetching product");
+// //         }
+// //         return response.data;
+// //       } catch (error) {
+// //         throw new Error("Lỗi khi lấy thông tin");
+// //       }
+// //     },
+// //   });
+// //   const mau_sac = mausac?.mauSac;
+// //   const { data: size } = useQuery({
+// //     queryKey: ["KICHTHUOCCLIENT"],
+// //     queryFn: async () => {
+// //       try {
+// //         const response = await instanceClient.get("kich-thuoc");
+
+// //         return response.data;
+// //       } catch (error) {
+// //         throw new Error("Lỗi khi lấy thông tin");
+// //       }
+// //     },
+// //   });
+// //   // console.log(mausac);
+
+// //   const sizes = size?.kichThuoc;
+// //   // lọc
+// //   const queryClient = useQueryClient();
+// //   const { mutate } = useMutation({
+// //     mutationFn: async () => {
+// //       try {
+// //         const response = await instanceClient.post("loc-san-pham", datas);
+// //         if (response.data.status !== true) {
+// //           throw new Error("Error fetching product");
+// //         }
+// //         return response.data;
+// //       } catch (error) {
+// //         throw new Error("Lỗi khi lấy thông tin");
+// //       }
+// //     },
+// //     onSuccess: (data) => {
+// //       queryClient.setQueryData(["PRODUCTSLOC"], data);
+// //     },
+// //   });
+// //   const danh_muc = danhmuc?.data;
+// //   // console.log(danh_muc);
+// //   const products = data?.data?.data;
+// //   const displayProducts = slug
+// //     ? promotionalData?.data?.san_phams
+// //     : data?.data?.data;
+
+// //   // console.log(products);
+// //   useEffect(() => {
+// //     if (
+// //       parentIds.length >= 0 ||
+// //       childIds.length >= 0 ||
+// //       selectedSize.length >= 0 ||
+// //       selectedMau.length >= 0
+// //     ) {
+// //       mutate(); // Gọi mutate khi có sự thay đổi
+// //     }
+// //   }, [parentIds, childIds, mutate, selectedSize, selectedMau, price]);
+
+// //   return (
+// //     <div>
+// //       {" "}
+// //       <section>
+// //         <div className="container">
+// //           <div className="flex flex-wrap items-start w-full">
+// //             {/* <!-- Sidebar Filters --> */}
+// //             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
+// //               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
+// //             </button>
+// //             <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0">
+// //               {/* <!-- Product Categories --> */}
+// //               <div className="mb-5">
+// //                 <div
+// //                   className="flex justify-between items-center cursor-pointer"
+// //                   onClick={() => setShowcate(!showcate)}
+// //                 >
+// //                   <h2 className="font-bold mb-2 text-lg">Danh mục sản phẩm</h2>
+// //                   <button className="mr-3">
+// //                     {showcate ? (
+// //                       <i className="fa-solid fa-chevron-up"></i>
+// //                     ) : (
+// //                       <i className="fa-solid fa-chevron-down"></i>
+// //                     )}
+// //                   </button>
+// //                 </div>
+// //                 {showcate ? (
+// //                   <div className="mt-7">
+// //                     <>
+// //                       {danh_muc?.map((item: any, index: any) => (
+// //                         <div key={index}>
+// //                           <div className="flex justify-between items-center my-4">
+// //                             <label className="flex">
+// //                               <input
+// //                                 type="checkbox"
+// //                                 className="mr-2"
+// //                                 checked={parentChecked[index] || false}
+// //                                 onChange={(e) => {
+// //                                   const isChecked = e.target.checked;
+// //                                   handleParentChange(
+// //                                     index,
+// //                                     isChecked,
+// //                                     item.children,
+// //                                     item.id
+// //                                   );
+// //                                   isChecked && mutate(item.id);
+// //                                 }}
+// //                               />
+// //                               {item.ten_danh_muc}
+// //                             </label>
+// //                             <i
+// //                               className={`fa-solid fa-plus mr-3 cursor-pointer ${
+// //                                 expanded.includes(index) ? "rotate-45" : ""
+// //                               }`}
+// //                               onClick={() => toggleExpand(index)}
+// //                             ></i>
+// //                           </div>
+
+// //                           {expanded.includes(index) &&
+// //                             item.children.map((itemcon: any, indexCon: any) => (
+// //                               <div
+// //                                 className="flex justify-between items-center my-4 ml-4"
+// //                                 key={indexCon}
+// //                               >
+// //                                 <label className="flex">
+// //                                   <input
+// //                                     type="checkbox"
+// //                                     className="mr-2"
+// //                                     checked={
+// //                                       childChecked[index]?.[indexCon] || false
+// //                                     }
+// //                                     disabled={!parentChecked[index]}
+// //                                     onChange={(e) => {
+// //                                       const isChecked = e.target.checked;
+// //                                       handleChildChange(
+// //                                         index,
+// //                                         indexCon,
+// //                                         isChecked,
+// //                                         itemcon.id
+// //                                       );
+// //                                       isChecked && mutate(itemcon.id);
+// //                                     }}
+// //                                   />
+// //                                   {itemcon.ten_danh_muc}
+// //                                 </label>
+// //                               </div>
+// //                             ))}
+// //                         </div>
+// //                       ))}
+// //                     </>
+// //                     {/* <div className="flex justify-between items-center my-4">
+// //                       <label className="flex">
+// //                         <input type="checkbox" className="mr-2" /> Nữ
+// //                       </label>
+// //                       <i className="fa-solid fa-plus mr-3"></i>
+// //                     </div>
+// //                     <div className="flex justify-between items-center my-4">
+// //                       <label className="flex">
+// //                         <input type="checkbox" className="mr-2" /> Trẻ em
+// //                       </label>
+// //                       <i className="fa-solid fa-plus mr-3"></i>
+// //                     </div> */}
+// //                   </div>
+// //                 ) : null}
+// //               </div>
+
+// //               {/* <!-- Filter by Price --> */}
+// //               <div className="mb-5">
+// //                 <div
+// //                   className=" flex justify-between items-center cursor-pointer"
+// //                   onClick={() => setShowprice(!showprice)}
+// //                 >
+// //                   <h2 className="font-bold text-lg mb-2">Lọc Theo Giá</h2>
+// //                   <button className="mr-3">
+// //                     {showprice ? (
+// //                       <i className="fa-solid fa-chevron-up"></i>
+// //                     ) : (
+// //                       <i className="fa-solid fa-chevron-down"></i>
+// //                     )}
+// //                   </button>
+// //                 </div>
+
+// //                 {showprice ? (
+// //                   <div>
+// //                     <p className="my-4 font-medium">
+// //                       Giá :{price[0].toLocaleString("vi-VN")}đ -{" "}
+// //                       {price[1].toLocaleString("vi-VN")} đ
+// //                     </p>
+// //                     <div className="w-full">
+// //                       <Slider
+// //                         range
+// //                         defaultValue={[0, 1000000]}
+// //                         max={1000000}
+// //                         onAfterChange={(value) => {
+// //                           setPrice(value as [number, number]);
+// //                           mutate();
+// //                         }}
+// //                         tipFormatter={(value: any) =>
+// //                           `${value.toLocaleString()} đ`
+// //                         }
+// //                       />
+// //                     </div>{" "}
+// //                   </div>
+// //                 ) : null}
+// //               </div>
+
+// //               {/* <!-- Filter by Color --> */}
+// //               <div className="mb-5">
+// //                 <div
+// //                   className="flex justify-between items-center cursor-pointer"
+// //                   onClick={() => setShowcolor(!showcolor)}
+// //                 >
+// //                   <h2 className="font-bold text-lg mb-2">Lọc Theo Màu Sắc</h2>
+// //                   <button className="mr-3">
+// //                     {showcolor ? (
+// //                       <i className="fa-solid fa-chevron-up"></i>
+// //                     ) : (
+// //                       <i className="fa-solid fa-chevron-down"></i>
+// //                     )}
+// //                   </button>
+// //                 </div>
+// //                 {showcolor ? (
+// //                   <div className="flex flex-col mb-12">
+// //                     {mau_sac?.map((item: any, index: number) => (
+// //                       <div
+// //                         key={index}
+// //                         className="flex justify-between items-center mt-3 cursor-pointer"
+// //                         onClick={() => handleItemClick(item.id)}
+// //                       >
+// //                         <div className="flex items-center font-semibold">
+// //                           <span
+// //                             className={`w-6 h-6 inline-block mr-2 rounded-[4px] border ${
+// //                               selectedMau.includes(item.id)
+// //                                 ? "border-[3px]  border-blue-300"
+// //                                 : ""
+// //                             }`}
+// //                             style={{ backgroundColor: item.ma_mau_sac }}
+// //                           ></span>
+// //                           <span>{item.ten_mau_sac}</span>
+// //                         </div>
+// //                         <span className="px-3">(10)</span>
+// //                       </div>
+// //                     ))}
+// //                     {/* <div className="flex justify-between items-center mt-3">
+// //                       <div className="flex items-center font-semibold">
+// //                         <span className="w-6 h-6 bg-blue-500 inline-block mr-2 rounded-[4px]"></span>
+// //                         <span>Blue </span>
+// //                       </div>
+// //                       <span className="px-3"> (14)</span>
+// //                     </div>
+// //                     <div className="flex justify-between items-center mt-3">
+// //                       <div className="flex items-center font-semibold">
+// //                         <span className="w-6 h-6 bg-orange-500 inline-block mr-2 rounded-[4px]"></span>
+// //                         <span>Orange </span>
+// //                       </div>
+// //                       <span className="px-3"> (8)</span>
+// //                     </div>
+// //                     <div className="flex justify-between items-center mt-3">
+// //                       <div className="flex items-center font-semibold">
+// //                         <span className="w-6 h-6 bg-black inline-block mr-2 rounded-[4px]"></span>
+// //                         <span>Black </span>
+// //                       </div>
+// //                       <span className="px-3"> (9)</span>
+// //                     </div>
+// //                     <div className="flex justify-between items-center mt-3">
+// //                       <div className="flex items-center font-semibold">
+// //                         <span className="w-6 h-6 bg-green-500 inline-block mr-2 rounded-[4px]"></span>
+// //                         <span>Green </span>
+// //                       </div>
+// //                       <span className="px-3"> (4)</span>
+// //                     </div>
+// //                     <div className="flex justify-between items-center mt-3">
+// //                       <div className="flex items-center font-semibold">
+// //                         <span className="w-6 h-6 bg-yellow-500 inline-block mr-2 rounded-[4px]"></span>
+// //                         <span>Yellow </span>
+// //                       </div>
+// //                       <span className="px-3"> (2)</span>
+// //                     </div> */}
+// //                   </div>
+// //                 ) : null}
+// //               </div>
+
+// //               {/* <!-- Filter by Size --> */}
+// //               <div className="mb-4 mr-3">
+// //                 <div
+// //                   className="flex justify-between items-center"
+// //                   onClick={() => setShowsize(!showsize)}
+// //                 >
+// //                   <h2 className="font-bold text-lg mb-2">Lọc Theo Kích Cỡ</h2>
+// //                   {showsize ? (
+// //                     <i className="fa-solid fa-chevron-up"></i>
+// //                   ) : (
+// //                     <i className="fa-solid fa-chevron-down"></i>
+// //                   )}
+// //                 </div>
+// //                 {showsize ? (
+// //                   <div>
+// //                     {sizes?.map((item: any, index: any) => (
+// //                       <div
+// //                         className="flex justify-between items-center my-4 "
+// //                         key={index}
+// //                       >
+// //                         <label className="flex font-normal">
+// //                           <input
+// //                             type="checkbox"
+// //                             className="mr-2"
+// //                             onChange={() => handleCheckboxChange(item.id)}
+// //                             checked={selectedSize.includes(item.id)}
+// //                           />
+// //                           {item.kich_thuoc} /{" "}
+// //                           {item.loai_kich_thuoc === "nam"
+// //                             ? "Nam"
+// //                             : item.loai_kich_thuoc === "nu"
+// //                               ? "Nữ"
+// //                               : "Trẻ em"}
+// //                         </label>
+// //                         <span>(6)</span>
+// //                       </div>
+// //                     ))}
+// //                     {/* <div className="flex justify-between items-center my-4">
+// //                       <label className="flex font-normal">
+// //                         <input type="checkbox" className="mr-2" /> M
+// //                       </label>
+// //                       <span>(20)</span>
+// //                     </div>
+// //                     <div className="flex justify-between items-center my-4">
+// //                       <label className="flex font-normal">
+// //                         <input type="checkbox" className="mr-2" /> L
+// //                       </label>
+// //                       <span>(7)</span>
+// //                     </div>
+// //                     <div className="flex justify-between items-center my-4">
+// //                       <label className="flex font-normal">
+// //                         <input type="checkbox" className="mr-2" /> XL
+// //                       </label>
+// //                       <span>(16)</span>
+// //                     </div>
+// //                     <div className="flex justify-between items-center my-4">
+// //                       <label className="flex font-normal">
+// //                         <input type="checkbox" className="mr-2" /> XXL
+// //                       </label>
+// //                       <span>(10)</span>
+// //                     </div>
+// //                     <div className="flex justify-between items-center my-4">
+// //                       <label className="flex font-normal">
+// //                         <input type="checkbox" className="mr-2" /> XXXL
+// //                       </label>
+// //                       <span>(2)</span>
+// //                     </div> */}
+// //                   </div>
+// //                 ) : null}
+// //               </div>
+// //             </div>
+// //             {/* <!-- Product Listings --> */}
+// //             <div className="sm:w-4/5 w-3/4 px-5">
+// //               <ProductsList
+// //                 products={displayProducts}
+// //                 Wishlist={handleWishlist}
+// //                 isPending={isPending}
+// //                 isPromotional={!!slug}
+// //                 promotionalInfo={promotionalData?.data}
+// //               />
+// //             </div>
+// //           </div>
+// //         </div>
+// //       </section>
+// //     </div>
+// //   );
+// // };
+
+// // export default ProductCategories;
+// import { sanPham2 } from "@/assets/img";
+// import { useEffect, useState } from "react";
+// import { Link, useParams } from "react-router-dom";
+// import ProductsList from "./ProductsList";
+// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// import instanceClient from "@/configs/client";
+// import { Slider } from "antd";
+
+// const ProductCategories = ({ handleWishlist, isPending }: any) => {
+//   const [showcate, setShowcate] = useState(true);
+//   const [showcolor, setShowcolor] = useState(true);
+//   const [showprice, setShowprice] = useState(true);
+//   const [showsize, setShowsize] = useState(true);
+//   // lọc danh mục
+//   const [parentIds, setParentIds] = useState<number[]>([]);
+//   const [childIds, setChildIds] = useState<number[]>([]);
+//   // lọc giá
+//   const [price, setPrice] = useState([0, 1000000]);
+//   // size
+//   const [selectedSize, setselectedSize] = useState<number[]>([]);
+//   // console.log(selectedSize);
+//   // mau sac
+//   const [selectedMau, setSelectedMau] = useState<number[]>([]);
+//   // console.log(selectedMau);
+//   // mau sac
+//     const { slug } = useParams();
+//   const { data: promotionalData } = useQuery({
+//     queryKey: ["PROMOTIONAL", slug],
+//     queryFn: async () => {
+//       if (!slug) return null;
+//       const response = await instanceClient.get(`chuong-trinh-uu-dai/${slug}`);
+//       return response.data;
+//     },
+//     enabled: !!slug,
+//   });
+//   console.log(promotionalData)
+//   const handleItemClick = (id: number) => {
+//     setSelectedMau(
+//       (prevSelectedSize) =>
+//         prevSelectedSize.includes(id)
+//           ? prevSelectedSize.filter((itemId) => itemId !== id) // Deselect if already clicked
+//           : [...prevSelectedSize, id] // Add to the list if not yet selected
+//     );
+//   };
+
+//   // size
+//   const handleCheckboxChange = (id: number) => {
+//     setselectedSize((prevSize) =>
+//       prevSize.includes(id)
+//         ? prevSize.filter((item) => item !== id)
+//         : [...prevSize, id]
+//     );
+//   }; //data
+//   const datas = {
+//     // danh_muc_cha_ids: [...parentIds],
+//     ...(parentIds.length > 0 && { danh_muc_cha_ids: [...parentIds] }),
+//     ...(childIds.length > 0 && { danh_muc_con_ids: [...childIds] }),
+//     ...(price.length > 0 && { gia_duoi: price[0] }),
+//     ...(price.length > 0 && { gia_tren: price[1] }),
+//     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
+//     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
+//   };
+//   // console.log(datas);
+//   // lọc danh mục
+//   const [expanded, setExpanded] = useState<number[]>([]);
+//   const [parentChecked, setParentChecked] = useState<{
+//     [key: number]: boolean;
+//   }>({});
+//   const [childChecked, setChildChecked] = useState<{
+//     [key: number]: boolean[];
+//   }>({});
+//   const toggleExpand = (index: number) => {
+//     if (expanded.includes(index)) {
+//       setExpanded(expanded.filter((i) => i !== index));
+//     } else {
+//       setExpanded([...expanded, index]);
+//     }
+//   };
+//   const handleParentChange = (
+//     index: number,
+//     checked: boolean,
+//     children: any[],
+//     parentId: number
+//   ) => {
+//     setParentChecked((prevState) => ({ ...prevState, [index]: checked }));
+//     if (checked) {
+//       setParentIds((prevState) => [...prevState, parentId]);
+//       const allCheckedChildren = children.map(() => true);
+//       setChildChecked((prevState) => ({
+//         ...prevState,
+//         [index]: allCheckedChildren,
+//       }));
+
+//       const childIdsArray = children.map((child: any) => child.id);
+//       setChildIds((prevState) => [...prevState, ...childIdsArray]);
+//     } else {
+//       setParentIds((prevState) => prevState.filter((id) => id !== parentId));
+//       setChildChecked((prevState) => ({
+//         ...prevState,
+//         [index]: [],
+//       }));
+//       const childIdsArray = children.map((child: any) => child.id);
+//       setChildIds((prevState) =>
+//         prevState.filter((id) => !childIdsArray.includes(id))
+//       );
+//     }
+//   };
+
+//   const handleChildChange = (
+//     parentIndex: number,
+//     childIndex: number,
+//     checked: boolean,
+//     childId: number
+//   ) => {
+//     const currentChildren = childChecked[parentIndex] || [];
+//     const updatedChildren = [...currentChildren];
+//     updatedChildren[childIndex] = checked;
+//     setChildChecked({ ...childChecked, [parentIndex]: updatedChildren });
+//     if (checked) {
+//       setChildIds((prevState) => [...prevState, childId]);
+//       setParentChecked({ ...parentChecked, [parentIndex]: true });
+//     } else {
+//       setChildIds((prevState) => prevState.filter((id) => id !== childId));
+//     }
+//   };
+//   const { tenDanhMucCha, tenDanhMucCon } = useParams();
+//   const [_, setProducts] = useState([]);
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//         try {
+//             const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
+//             if (response.data.status) {
+//                 setProducts(response.data.data); 
+//             }
+//         } catch (error) {
+//             console.error("Lỗi khi lấy sản phẩm:", error);
+//         }
+//     };
+    
+//     fetchProducts();
+// }, [tenDanhMucCha, tenDanhMucCon]);
+// const { data } = useQuery({
+//   queryKey: ["PRODUCTSLOC", promotionalData],
+//   queryFn: async () => {
+//     try {
+//       const datas = {
+//         // Giả định bạn sẽ sử dụng promotionalData để tạo dữ liệu lọc
+//         // Ví dụ: truyền toàn bộ hoặc một phần của promotionalData vào datas
+//         promotion: promotionalData,
+//       };
+
+//       const response = await instanceClient.post("loc-san-pham", datas);
+//       if (response.data.status !== true) {
+//         throw new Error("Error fetching product");
+//       }
+//       return response.data;
+//     } catch (error) {
+//       throw new Error("Lỗi khi lấy thông tin");
+//     }
+//   },
+//   enabled: !!promotionalData, // Chỉ gọi khi promotionalData có giá trị
+// });
+
+//   // console.log("data", data);
+//   // danh mục
+//   const { data: locsanpham } = useQuery({
+//     queryKey: ["LOCSLIBAR"],
+//     queryFn: async () => {
+//       try {
+//         const response = await instanceClient.get("lay-dm-ms-kt");
+//         if (response.data.status_code !== 200) {
+//           throw new Error("Error fetching product");
+//         }
+//         return response.data;
+//       } catch (error) {
+//         throw new Error("Lỗi khi lấy thông tin");
+//       }
+//     },
+//   });
+
+//   const mau_sac = locsanpham?.mauSac;
+
+//   const sizes = locsanpham?.kichThuoc;
+//   // console.log(sizes);
+//   // lọc
+//   const [page, setPage] = useState(1);
+//   const queryClient = useQueryClient();
+//   const { mutate } = useMutation({
+//     mutationFn: async () => {
+//       try {
+//         const response = await instanceClient.post(
+//           `loc-san-pham?page=${page}`,
+//           datas
+//         );
+//         if (response.data.status !== true) {
+//           throw new Error("Error fetching product");
+//         }
+//         return response.data;
+//       } catch (error) {
+//         throw new Error("Lỗi khi lấy thông tin");
+//       }
+//     },
+//     onSuccess: (data) => {
+//       queryClient.setQueryData(["PRODUCTSLOC"], data);
+//     },
+//   });
+//   const onPage = (page: number) => {
+//     setPage(page);
+//   };
+//   const danh_muc = locsanpham?.danhMucCha;
+//   // console.log(danh_muc);
+//   // const products = data?.data?.data;
+//     const displayProducts = slug
+//     ? promotionalData?.data?.chuong_trinh?.san_phams
+//     : data?.data?.data;
+//   // console.log(products);
+//   useEffect(() => {
+//     if (
+//       parentIds.length >= 0 ||
+//       childIds.length >= 0 ||
+//       selectedSize.length >= 0 ||
+//       selectedMau.length >= 0
+//     ) {
+//       mutate(); // Gọi mutate khi có sự thay đổi
+//     }
+//   }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
+  
+//   return (
+//     <div>
+//       {" "}
+//       <section>
+//         <div className="container">
+//           <div className="flex flex-wrap items-start w-full mt-16">
+//             {/* <!-- Sidebar Filters --> */}
+//             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
+//               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
+//             </button>
+//             <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0    sticky top-20 ">
+//               {/* <!-- Product Categories --> */}
+//               <div className="mb-5">
+//                 <div
+//                   className="flex justify-between items-center cursor-pointer"
+//                   onClick={() => setShowcate(!showcate)}
+//                 >
+//                   <h2 className="font-bold mb-2 text-lg">Danh mục sản phẩm</h2>
+//                   <button className="mr-3">
+//                     {showcate ? (
+//                       <i className="fa-solid fa-chevron-up"></i>
+//                     ) : (
+//                       <i className="fa-solid fa-chevron-down"></i>
+//                     )}
+//                   </button>
+//                 </div>
+//                 {showcate ? (
+//                   <div className="mt-7">
+//                     <>
+//                       {danh_muc?.map((item: any, index: any) => (
+//                         <div key={index}>
+//                           <div className="flex justify-between items-center my-4">
+//                             <label className="flex">
+//                               <input
+//                                 type="checkbox"
+//                                 className="mr-2"
+//                                 checked={parentChecked[index] || false}
+//                                 onChange={(e) => {
+//                                   const isChecked = e.target.checked;
+//                                   handleParentChange(
+//                                     index,
+//                                     isChecked,
+//                                     item.children,
+//                                     item.id
+//                                   );
+//                                   isChecked && mutate(item.id);
+//                                 }}
+//                               />
+//                               {item.ten_danh_muc}
+//                             </label>
+//                             <i
+//                               className={`fa-solid fa-plus mr-3 cursor-pointer ${
+//                                 expanded.includes(index) ? "rotate-45" : ""
+//                               }`}
+//                               onClick={() => toggleExpand(index)}
+//                             ></i>
+//                           </div>
+
+//                           {expanded.includes(index) &&
+//                             item.children.map((itemcon: any, indexCon: any) => (
+//                               <div
+//                                 className="flex justify-between items-center my-4 ml-4"
+//                                 key={indexCon}
+//                               >
+//                                 <label className="flex">
+//                                   <input
+//                                     type="checkbox"
+//                                     className="mr-2"
+//                                     checked={
+//                                       childChecked[index]?.[indexCon] || false
+//                                     }
+//                                     disabled={!parentChecked[index]}
+//                                     onChange={(e) => {
+//                                       const isChecked = e.target.checked;
+//                                       handleChildChange(
+//                                         index,
+//                                         indexCon,
+//                                         isChecked,
+//                                         itemcon.id
+//                                       );
+//                                       isChecked && mutate(itemcon.id);
+//                                     }}
+//                                   />
+//                                   {itemcon.ten_danh_muc}
+//                                 </label>
+//                               </div>
+//                             ))}
+//                         </div>
+//                       ))}
+//                     </>
+//                   </div>
+//                 ) : null}
+//               </div>
+
+//               {/* <!-- Filter by Price --> */}
+//               <div className="mb-5">
+//                 <div
+//                   className=" flex justify-between items-center cursor-pointer"
+//                   onClick={() => setShowprice(!showprice)}
+//                 >
+//                   <h2 className="font-bold text-lg mb-2">Lọc Theo Giá</h2>
+//                   <button className="mr-3">
+//                     {showprice ? (
+//                       <i className="fa-solid fa-chevron-up"></i>
+//                     ) : (
+//                       <i className="fa-solid fa-chevron-down"></i>
+//                     )}
+//                   </button>
+//                 </div>
+
+//                 {showprice ? (
+//                   <div>
+//                     <p className="my-4 font-medium">
+//                       Giá :{price[0].toLocaleString("vi-VN")}đ -{" "}
+//                       {price[1].toLocaleString("vi-VN")} đ
+//                     </p>
+//                     <div className="w-full">
+//                       <Slider
+//                         range
+//                         defaultValue={[0, 1000000]}
+//                         max={1000000}
+//                         onAfterChange={(value) => {
+//                           setPrice(value as [number, number]);
+//                           mutate();
+//                         }}
+//                         tipFormatter={(value: any) =>
+//                           `${value.toLocaleString()} đ`
+//                         }
+//                       />
+//                     </div>{" "}
+//                   </div>
+//                 ) : null}
+//               </div>
+
+//               {/* <!-- Filter by Color --> */}
+//               <div className="mb-5">
+//                 <div
+//                   className="flex justify-between items-center cursor-pointer"
+//                   onClick={() => setShowcolor(!showcolor)}
+//                 >
+//                   <h2 className="font-bold text-lg mb-2">Lọc Theo Màu Sắc</h2>
+//                   <button className="mr-3">
+//                     {showcolor ? (
+//                       <i className="fa-solid fa-chevron-up"></i>
+//                     ) : (
+//                       <i className="fa-solid fa-chevron-down"></i>
+//                     )}
+//                   </button>
+//                 </div>
+//                 {showcolor ? (
+//                   <div className="flex flex-col mb-12">
+//                     {mau_sac?.map((item: any, index: number) => (
+//                       <div
+//                         key={index}
+//                         className="flex justify-between items-center mt-3 cursor-pointer"
+//                         onClick={() => handleItemClick(item.id)}
+//                       >
+//                         <div className="flex items-center font-semibold">
+//                           <span
+//                             className={`w-6 h-6 inline-block mr-2 rounded-[4px] border ${
+//                               selectedMau.includes(item.id)
+//                                 ? "border-[3px]  border-blue-300"
+//                                 : ""
+//                             }`}
+//                             style={{ backgroundColor: item.ma_mau_sac }}
+//                           ></span>
+//                           <span>{item.ten_mau_sac}</span>
+//                         </div>
+//                         <span className="px-3">
+//                           ({item?.so_luong_san_pham})
+//                         </span>
+//                       </div>
+//                     ))}
+//                     {/* <div className="flex justify-between items-center mt-3">
+//                       <div className="flex items-center font-semibold">
+//                         <span className="w-6 h-6 bg-blue-500 inline-block mr-2 rounded-[4px]"></span>
+//                         <span>Blue </span>
+//                       </div>
+//                       <span className="px-3"> (14)</span>
+//                     </div>
+//                     <div className="flex justify-between items-center mt-3">
+//                       <div className="flex items-center font-semibold">
+//                         <span className="w-6 h-6 bg-orange-500 inline-block mr-2 rounded-[4px]"></span>
+//                         <span>Orange </span>
+//                       </div>
+//                       <span className="px-3"> (8)</span>
+//                     </div>
+//                     <div className="flex justify-between items-center mt-3">
+//                       <div className="flex items-center font-semibold">
+//                         <span className="w-6 h-6 bg-black inline-block mr-2 rounded-[4px]"></span>
+//                         <span>Black </span>
+//                       </div>
+//                       <span className="px-3"> (9)</span>
+//                     </div>
+//                     <div className="flex justify-between items-center mt-3">
+//                       <div className="flex items-center font-semibold">
+//                         <span className="w-6 h-6 bg-green-500 inline-block mr-2 rounded-[4px]"></span>
+//                         <span>Green </span>
+//                       </div>
+//                       <span className="px-3"> (4)</span>
+//                     </div>
+//                     <div className="flex justify-between items-center mt-3">
+//                       <div className="flex items-center font-semibold">
+//                         <span className="w-6 h-6 bg-yellow-500 inline-block mr-2 rounded-[4px]"></span>
+//                         <span>Yellow </span>
+//                       </div>
+//                       <span className="px-3"> (2)</span>
+//                     </div> */}
+//                   </div>
+//                 ) : null}
+//               </div>
+
+//               {/* <!-- Filter by Size --> */}
+//               <div className="mb-4 mr-3">
+//                 <div
+//                   className="flex justify-between items-center"
+//                   onClick={() => setShowsize(!showsize)}
+//                 >
+//                   <h2 className="font-bold text-lg mb-2">Lọc Theo Kích Cỡ</h2>
+//                   {showsize ? (
+//                     <i className="fa-solid fa-chevron-up"></i>
+//                   ) : (
+//                     <i className="fa-solid fa-chevron-down"></i>
+//                   )}
+//                 </div>
+//                 {showsize ? (
+//                   <div>
+//                     {sizes?.map((item: any, index: any) => (
+//                       <div
+//                         className="flex justify-between items-center my-4 "
+//                         key={index}
+//                       >
+//                         <label className="flex font-normal">
+//                           <input
+//                             type="checkbox"
+//                             className="mr-2"
+//                             onChange={() => handleCheckboxChange(item.id)}
+//                             checked={selectedSize.includes(item.id)}
+//                           />
+//                           {item.kich_thuoc} /{" "}
+//                           {item.loai_kich_thuoc === "nam"
+//                             ? "Nam"
+//                             : item.loai_kich_thuoc === "nu"
+//                               ? "Nữ"
+//                               : "Trẻ em"}
+//                         </label>
+//                         <span>({item?.so_luong_san_pham})</span>
+//                       </div>
+//                     ))}
+//                     {/* <div className="flex justify-between items-center my-4">
+//                       <label className="flex font-normal">
+//                         <input type="checkbox" className="mr-2" /> M
+//                       </label>
+//                       <span>(20)</span>
+//                     </div>
+//                     <div className="flex justify-between items-center my-4">
+//                       <label className="flex font-normal">
+//                         <input type="checkbox" className="mr-2" /> L
+//                       </label>
+//                       <span>(7)</span>
+//                     </div>
+//                     <div className="flex justify-between items-center my-4">
+//                       <label className="flex font-normal">
+//                         <input type="checkbox" className="mr-2" /> XL
+//                       </label>
+//                       <span>(16)</span>
+//                     </div>
+//                     <div className="flex justify-between items-center my-4">
+//                       <label className="flex font-normal">
+//                         <input type="checkbox" className="mr-2" /> XXL
+//                       </label>
+//                       <span>(10)</span>
+//                     </div>
+//                     <div className="flex justify-between items-center my-4">
+//                       <label className="flex font-normal">
+//                         <input type="checkbox" className="mr-2" /> XXXL
+//                       </label>
+//                       <span>(2)</span>
+//                     </div> */}
+//                   </div>
+//                 ) : null}
+//               </div>
+//             </div>
+//             {/* <!-- Product Listings --> */}
+//             <div className="sm:w-4/5 w-3/4 px-5">
+//               {/* <ProductsList
+//                 data={data}
+//                 onPage={onPage}
+//                 products={products}
+//                 Wishlist={handleWishlist}
+//                 isPending={isPending}
+//               /> */}
+//                  <ProductsList
+//                                  onPage={onPage}
+//                                  data={data}
+
+//                 products={displayProducts}
+//                 Wishlist={handleWishlist}
+//                 isPending={isPending}
+//                 isPromotional={!!slug}
+//                 // promotionalInfo={promotionalData?.data}
+//               />
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+//     </div>
+//   );
+// };
+
+// export default ProductCategories;
+import { sanPham2 } from "@/assets/img";
+import { useEffect, useState, useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
 import ProductsList from "./ProductsList";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import instanceClient from "@/configs/client";
+import { Slider } from "antd";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
   const [showcolor, setShowcolor] = useState(true);
   const [showprice, setShowprice] = useState(true);
   const [showsize, setShowsize] = useState(true);
-  const { slug } = useParams();
+  const [parentIds, setParentIds] = useState<number[]>([]);
+  const [childIds, setChildIds] = useState<number[]>([]);
+  const [price, setPrice] = useState([0, 1000000]);
+  const [selectedSize, setselectedSize] = useState<number[]>([]);
+  const [selectedMau, setSelectedMau] = useState<number[]>([]);
+  const { slug, tenDanhMucCha, tenDanhMucCon } = useParams();
+
   const { data: promotionalData } = useQuery({
     queryKey: ["PROMOTIONAL", slug],
     queryFn: async () => {
@@ -20,60 +1099,44 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     },
     enabled: !!slug,
   });
-  // lọc danh mục
-  const [parentIds, setParentIds] = useState<number[]>([]);
-  const [childIds, setChildIds] = useState<number[]>([]);
-  // lọc giá
-  const [price, setPrice] = useState([0, 1000000]);
-  // size
-  const [selectedSize, setselectedSize] = useState<number[]>([]);
-  // console.log(selectedSize);
-  // mau sac
-  const [selectedMau, setSelectedMau] = useState<number[]>([]);
-  // console.log(selectedMau);
-  // mau sac
+
   const handleItemClick = (id: number) => {
-    setSelectedMau(
-      (prevSelectedSize) =>
-        prevSelectedSize.includes(id)
-          ? prevSelectedSize.filter((itemId) => itemId !== id) // Deselect if already clicked
-          : [...prevSelectedSize, id] // Add to the list if not yet selected
+    setSelectedMau((prevSelectedSize) =>
+      prevSelectedSize.includes(id)
+        ? prevSelectedSize.filter((itemId) => itemId !== id)
+        : [...prevSelectedSize, id]
     );
   };
 
-  // size
   const handleCheckboxChange = (id: number) => {
     setselectedSize((prevSize) =>
       prevSize.includes(id)
         ? prevSize.filter((item) => item !== id)
         : [...prevSize, id]
     );
-  }; //data
+  };
+
   const datas = {
-    // danh_muc_cha_ids: [...parentIds],
     ...(parentIds.length > 0 && { danh_muc_cha_ids: [...parentIds] }),
     ...(childIds.length > 0 && { danh_muc_con_ids: [...childIds] }),
     ...(price.length > 0 && { gia_duoi: price[0] }),
     ...(price.length > 0 && { gia_tren: price[1] }),
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
+    ...(slug && { chuong_trinh_id: promotionalData?.data?.chuong_trinh?.id }),
   };
-  console.log(datas);
-  // lọc danh mục
+
   const [expanded, setExpanded] = useState<number[]>([]);
-  const [parentChecked, setParentChecked] = useState<{
-    [key: number]: boolean;
-  }>({});
-  const [childChecked, setChildChecked] = useState<{
-    [key: number]: boolean[];
-  }>({});
+  const [parentChecked, setParentChecked] = useState<{[key: number]: boolean}>({});
+  const [childChecked, setChildChecked] = useState<{[key: number]: boolean[]}>({});
+
   const toggleExpand = (index: number) => {
-    if (expanded.includes(index)) {
-      setExpanded(expanded.filter((i) => i !== index));
-    } else {
-      setExpanded([...expanded, index]);
-    }
+    setExpanded(expanded.includes(index) 
+      ? expanded.filter((i) => i !== index)
+      : [...expanded, index]
+    );
   };
+
   const handleParentChange = (
     index: number,
     checked: boolean,
@@ -88,7 +1151,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
         ...prevState,
         [index]: allCheckedChildren,
       }));
-
       const childIdsArray = children.map((child: any) => child.id);
       setChildIds((prevState) => [...prevState, ...childIdsArray]);
     } else {
@@ -122,12 +1184,29 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     }
   };
 
-  // ALL sản phẩm
+  const [_, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
+        if (response.data.status) {
+          setProducts(response.data.data);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy sản phẩm:", error);
+      }
+    };
+    fetchProducts();
+  }, [tenDanhMucCha, tenDanhMucCon]);
+
   const { data } = useQuery({
-    queryKey: ["PRODUCTSLOC"],
+    queryKey: ["PRODUCTSLOC", promotionalData],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post("loc-san-pham", datas); // Gửi datas cho API
+        const response = await instanceClient.post("loc-san-pham", {
+          promotion: promotionalData,
+        });
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
@@ -136,14 +1215,14 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
+    enabled: !!promotionalData,
   });
-  console.log("data", data?.data?.data);
-  // danh mục
-  const { data: danhmuc } = useQuery({
-    queryKey: ["DANHMUCCLIENT"],
+
+  const { data: locsanpham } = useQuery({
+    queryKey: ["LOCSLIBAR"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get("load-danh-muc");
+        const response = await instanceClient.get("lay-dm-ms-kt");
         if (response.data.status_code !== 200) {
           throw new Error("Error fetching product");
         }
@@ -153,86 +1232,88 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  // mắc  sắc
-  const { data: mausac } = useQuery({
-    queryKey: ["MAUSACCLIENT"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("mau-sac");
-        if (response.data.status_code !== 200) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
-  const mau_sac = mausac?.mauSac;
-  const { data: size } = useQuery({
-    queryKey: ["KICHTHUOCCLIENT"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("kich-thuoc");
 
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-  });
-  // console.log(mausac);
-
-  const sizes = size?.kichThuoc;
-  // lọc
+  const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
+
   const { mutate } = useMutation({
     mutationFn: async () => {
       try {
-        const response = await instanceClient.post("loc-san-pham", datas);
-        if (response.data.status !== true) {
-          throw new Error("Error fetching product");
+        const response = await instanceClient.post('loc-san-pham', datas);
+        
+        if (response.data.status === true) {
+          const allFilteredProducts = response.data.data.data;
+          
+          const promotionalIds = promotionalData?.data?.chuong_trinh?.san_phams.map(
+            (product: any) => product.id
+          );
+  
+          const filteredPromotionalProducts = allFilteredProducts.filter(
+            (product: any) => promotionalIds.includes(product.id)
+          );
+  
+          return {
+            ...response.data,
+            data: {
+              ...response.data.data,
+              data: filteredPromotionalProducts
+            }
+          };
         }
+        console.log(data)
+
         return response.data;
       } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
+        console.log('Filter Error:', error);
+        throw new Error("Error filtering products");
       }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["PRODUCTSLOC"], data);
     },
   });
-  const danh_muc = danhmuc?.data;
-  // console.log(danh_muc);
-  const products = data?.data?.data;
-  const displayProducts = slug
-    ? promotionalData?.data?.san_phams
-    : data?.data?.data;
+  
 
-  // console.log(products);
+  const onPage = (page: number) => {
+    setPage(page);
+  };
+
+  const mau_sac = locsanpham?.mauSac;
+  const sizes = locsanpham?.kichThuoc;
+  const danh_muc = locsanpham?.danhMucCha;
+
+  const displayProducts = useMemo(() => {
+    if (slug) {
+      // Initially show all promotional products
+      if (!data?.data?.data?.data) {
+        return promotionalData?.data?.chuong_trinh?.san_phams || [];
+      }
+      // Show filtered results when filters are applied
+      return data?.data?.data?.data;
+    }
+    return data?.data?.data;
+  }, [slug, data, promotionalData]);
   useEffect(() => {
     if (
       parentIds.length >= 0 ||
       childIds.length >= 0 ||
       selectedSize.length >= 0 ||
-      selectedMau.length >= 0
+      selectedMau.length >= 0 ||
+      promotionalData
     ) {
-      mutate(); // Gọi mutate khi có sự thay đổi
+      mutate();
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price]);
+  }, [parentIds, childIds, selectedSize, selectedMau, price, page, promotionalData]);
 
   return (
     <div>
-      {" "}
       <section>
         <div className="container">
-          <div className="flex flex-wrap items-start w-full">
-            {/* <!-- Sidebar Filters --> */}
+          <div className="flex flex-wrap items-start w-full mt-16">
             <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
             </button>
-            <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0">
-              {/* <!-- Product Categories --> */}
+            <div className="lg:block hidden w-1/5 py-4 mb-4 lg:mb-0 sticky top-20">
               <div className="mb-5">
                 <div
                   className="flex justify-between items-center cursor-pointer"
@@ -247,90 +1328,68 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                     )}
                   </button>
                 </div>
-                {showcate ? (
+                {showcate && (
                   <div className="mt-7">
-                    <>
-                      {danh_muc?.map((item: any, index: any) => (
-                        <div key={index}>
-                          <div className="flex justify-between items-center my-4">
-                            <label className="flex">
-                              <input
-                                type="checkbox"
-                                className="mr-2"
-                                checked={parentChecked[index] || false}
-                                onChange={(e) => {
-                                  const isChecked = e.target.checked;
-                                  handleParentChange(
-                                    index,
-                                    isChecked,
-                                    item.children,
-                                    item.id
-                                  );
-                                  isChecked && mutate(item.id);
-                                }}
-                              />
-                              {item.ten_danh_muc}
-                            </label>
-                            <i
-                              className={`fa-solid fa-plus mr-3 cursor-pointer ${
-                                expanded.includes(index) ? "rotate-45" : ""
-                              }`}
-                              onClick={() => toggleExpand(index)}
-                            ></i>
-                          </div>
-
-                          {expanded.includes(index) &&
-                            item.children.map((itemcon: any, indexCon: any) => (
-                              <div
-                                className="flex justify-between items-center my-4 ml-4"
-                                key={indexCon}
-                              >
-                                <label className="flex">
-                                  <input
-                                    type="checkbox"
-                                    className="mr-2"
-                                    checked={
-                                      childChecked[index]?.[indexCon] || false
-                                    }
-                                    disabled={!parentChecked[index]}
-                                    onChange={(e) => {
-                                      const isChecked = e.target.checked;
-                                      handleChildChange(
-                                        index,
-                                        indexCon,
-                                        isChecked,
-                                        itemcon.id
-                                      );
-                                      isChecked && mutate(itemcon.id);
-                                    }}
-                                  />
-                                  {itemcon.ten_danh_muc}
-                                </label>
-                              </div>
-                            ))}
+                    {danh_muc?.map((item: any, index: any) => (
+                      <div key={index}>
+                        <div className="flex justify-between items-center my-4">
+                          <label className="flex">
+                            <input
+                              type="checkbox"
+                              className="mr-2"
+                              checked={parentChecked[index] || false}
+                              onChange={(e) => {
+                                handleParentChange(
+                                  index,
+                                  e.target.checked,
+                                  item.children,
+                                  item.id
+                                );
+                              }}
+                            />
+                            {item.ten_danh_muc}
+                          </label>
+                          <i
+                            className={`fa-solid fa-plus mr-3 cursor-pointer ${
+                              expanded.includes(index) ? "rotate-45" : ""
+                            }`}
+                            onClick={() => toggleExpand(index)}
+                          ></i>
                         </div>
-                      ))}
-                    </>
-                    {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Nữ
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex">
-                        <input type="checkbox" className="mr-2" /> Trẻ em
-                      </label>
-                      <i className="fa-solid fa-plus mr-3"></i>
-                    </div> */}
+                        {expanded.includes(index) &&
+                          item.children.map((itemcon: any, indexCon: any) => (
+                            <div
+                              className="flex justify-between items-center my-4 ml-4"
+                              key={indexCon}
+                            >
+                              <label className="flex">
+                                <input
+                                  type="checkbox"
+                                  className="mr-2"
+                                  checked={childChecked[index]?.[indexCon] || false}
+                                  disabled={!parentChecked[index]}
+                                  onChange={(e) => {
+                                    handleChildChange(
+                                      index,
+                                      indexCon,
+                                      e.target.checked,
+                                      itemcon.id
+                                    );
+                                  }}
+                                />
+                                {itemcon.ten_danh_muc}
+                              </label>
+                            </div>
+                          ))}
+                      </div>
+                    ))}
                   </div>
-                ) : null}
+                )}
               </div>
 
-              {/* <!-- Filter by Price --> */}
               <div className="mb-5">
                 <div
-                  className=" flex justify-between items-center cursor-pointer"
+                  className="flex justify-between items-center cursor-pointer"
                   onClick={() => setShowprice(!showprice)}
                 >
                   <h2 className="font-bold text-lg mb-2">Lọc Theo Giá</h2>
@@ -342,12 +1401,11 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                     )}
                   </button>
                 </div>
-
-                {showprice ? (
+                {showprice && (
                   <div>
                     <p className="my-4 font-medium">
-                      Giá :{price[0].toLocaleString("vi-VN")}đ -{" "}
-                      {price[1].toLocaleString("vi-VN")} đ
+                      Giá: {price[0].toLocaleString("vi-VN")}đ -{" "}
+                      {price[1].toLocaleString("vi-VN")}đ
                     </p>
                     <div className="w-full">
                       <Slider
@@ -362,12 +1420,11 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                           `${value.toLocaleString()} đ`
                         }
                       />
-                    </div>{" "}
+                    </div>
                   </div>
-                ) : null}
+                )}
               </div>
 
-              {/* <!-- Filter by Color --> */}
               <div className="mb-5">
                 <div
                   className="flex justify-between items-center cursor-pointer"
@@ -382,153 +1439,88 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                     )}
                   </button>
                 </div>
-                {showcolor ? (
+                {showcolor && (
                   <div className="flex flex-col mb-12">
                     {mau_sac?.map((item: any, index: number) => (
                       <div
-                        key={index}
-                        className="flex justify-between items-center mt-3 cursor-pointer"
-                        onClick={() => handleItemClick(item.id)}
-                      >
-                        <div className="flex items-center font-semibold">
-                          <span
-                            className={`w-6 h-6 inline-block mr-2 rounded-[4px] border ${
-                              selectedMau.includes(item.id)
-                                ? "border-[3px]  border-blue-300"
-                                : ""
-                            }`}
-                            style={{ backgroundColor: item.ma_mau_sac }}
-                          ></span>
-                          <span>{item.ten_mau_sac}</span>
-                        </div>
-                        <span className="px-3">(10)</span>
-                      </div>
-                    ))}
-                    {/* <div className="flex justify-between items-center mt-3">
+                      key={index}
+                      className="flex justify-between items-center mt-3 cursor-pointer"
+                      onClick={() => handleItemClick(item.id)}
+                    >
                       <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-blue-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Blue </span>
+                        <span
+                          className={`w-6 h-6 inline-block mr-2 rounded-[4px] border ${
+                            selectedMau.includes(item.id)
+                              ? "border-[3px] border-blue-300"
+                              : ""
+                          }`}
+                          style={{ backgroundColor: item.ma_mau_sac }}
+                        ></span>
+                        <span>{item.ten_mau_sac}</span>
                       </div>
-                      <span className="px-3"> (14)</span>
+                      <span className="px-3">({item?.so_luong_san_pham})</span>
                     </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-orange-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Orange </span>
-                      </div>
-                      <span className="px-3"> (8)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-black inline-block mr-2 rounded-[4px]"></span>
-                        <span>Black </span>
-                      </div>
-                      <span className="px-3"> (9)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-green-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Green </span>
-                      </div>
-                      <span className="px-3"> (4)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-yellow-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Yellow </span>
-                      </div>
-                      <span className="px-3"> (2)</span>
-                    </div> */}
-                  </div>
-                ) : null}
-              </div>
-
-              {/* <!-- Filter by Size --> */}
-              <div className="mb-4 mr-3">
-                <div
-                  className="flex justify-between items-center"
-                  onClick={() => setShowsize(!showsize)}
-                >
-                  <h2 className="font-bold text-lg mb-2">Lọc Theo Kích Cỡ</h2>
-                  {showsize ? (
-                    <i className="fa-solid fa-chevron-up"></i>
-                  ) : (
-                    <i className="fa-solid fa-chevron-down"></i>
-                  )}
+                  ))}
                 </div>
-                {showsize ? (
-                  <div>
-                    {sizes?.map((item: any, index: any) => (
-                      <div
-                        className="flex justify-between items-center my-4 "
-                        key={index}
-                      >
-                        <label className="flex font-normal">
-                          <input
-                            type="checkbox"
-                            className="mr-2"
-                            onChange={() => handleCheckboxChange(item.id)}
-                            checked={selectedSize.includes(item.id)}
-                          />
-                          {item.kich_thuoc} /{" "}
-                          {item.loai_kich_thuoc === "nam"
-                            ? "Nam"
-                            : item.loai_kich_thuoc === "nu"
-                              ? "Nữ"
-                              : "Trẻ em"}
-                        </label>
-                        <span>(6)</span>
-                      </div>
-                    ))}
-                    {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> M
-                      </label>
-                      <span>(20)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> L
-                      </label>
-                      <span>(7)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XL
-                      </label>
-                      <span>(16)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XXL
-                      </label>
-                      <span>(10)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XXXL
-                      </label>
-                      <span>(2)</span>
-                    </div> */}
-                  </div>
-                ) : null}
-              </div>
+              )}
             </div>
-            {/* <!-- Product Listings --> */}
-            <div className="sm:w-4/5 w-3/4 px-5">
-              <ProductsList
-                products={displayProducts}
-                Wishlist={handleWishlist}
-                isPending={isPending}
-                isPromotional={!!slug}
-                promotionalInfo={promotionalData?.data}
-              />
+
+            <div className="mb-4 mr-3">
+              <div
+                className="flex justify-between items-center"
+                onClick={() => setShowsize(!showsize)}
+              >
+                <h2 className="font-bold text-lg mb-2">Lọc Theo Kích Cỡ</h2>
+                {showsize ? (
+                  <i className="fa-solid fa-chevron-up"></i>
+                ) : (
+                  <i className="fa-solid fa-chevron-down"></i>
+                )}
+              </div>
+              {showsize && (
+                <div>
+                  {sizes?.map((item: any, index: any) => (
+                    <div
+                      className="flex justify-between items-center my-4"
+                      key={index}
+                    >
+                      <label className="flex font-normal">
+                        <input
+                          type="checkbox"
+                          className="mr-2"
+                          onChange={() => handleCheckboxChange(item.id)}
+                          checked={selectedSize.includes(item.id)}
+                        />
+                        {item.kich_thuoc} /{" "}
+                        {item.loai_kich_thuoc === "nam"
+                          ? "Nam"
+                          : item.loai_kich_thuoc === "nu"
+                          ? "Nữ"
+                          : "Trẻ em"}
+                      </label>
+                      <span>({item?.so_luong_san_pham})</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
+
+          <div className="sm:w-4/5 w-3/4 px-5">
+            <ProductsList
+              onPage={onPage}
+              data={data}
+              products={displayProducts}
+              Wishlist={handleWishlist}
+              isPending={isPending}
+              isPromotional={!!slug}
+            />
+          </div>
         </div>
-      </section>
-    </div>
-  );
+      </div>
+    </section>
+  </div>
+);
 };
 
 export default ProductCategories;

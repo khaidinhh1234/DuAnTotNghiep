@@ -106,21 +106,21 @@ class DonHang extends Model
         return $this->hasOne(HoanTien::class, 'don_hang_id', 'id');
     }
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
+    protected static function boot()
+    {
+        parent::boot();
 
-    //     // Tự động tạo mã đơn hàng khi tạo đơn hàng mới
-    //     static::creating(function ($donHang) {
-    //         $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
-    //     });
+        // Tự động tạo mã đơn hàng khi tạo đơn hàng mới
+        static::creating(function ($donHang) {
+            $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
+        });
 
     //     static::updated(function ($donHang) {
     //         if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH && $donHang->trang_thai_thanh_toan === DonHang::TTTT_DTT) {
     //             event(new DonHangHoanTat($donHang));
     //         }
-    //     });
-    // }
+        // });
+    }
 
 
     public static function getPhuongThucThanhToan($phuongThucThanhToan)

@@ -75,7 +75,7 @@ Route::middleware([])
         // lấy tất cả sản phẩm
         Route::group([], function () {
             Route::get('lay-tat-ca-san-pham', [TrangSanPhamController::class, 'layTatCaSanPham']);
-            Route::get('sanpham/danhmuc/{slug}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
+//            Route::get('sanpham/danhmuc/{slug}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('danhmuc/{tenDanhMucCha}/{tenDanhMucCon?}/{tenDanhMucConCapBa?}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
             // // Lấy ra danh mục cha
@@ -118,9 +118,9 @@ Route::middleware([])
         Route::delete('/danh-gia/{danhGia}/unlike', [TrangChiTietSpController::class, 'boLikeDanhGia']);
 
         //Chương trình ưu đãi và
-        Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
+        Route::post('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
         Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
-
+//        Route::post('danh-sach-loc', [App\Traits\LocSanPhamTrait::class, 'layDanhMucMauSacKichThuoc']);
         // Trang bộ sưu tập
         Route::get('bo-suu-tap/{slug}', [BoSuuTapController::class, 'show']);
 
@@ -342,6 +342,12 @@ Route::middleware(['auth.sanctum'])
                 Route::post('hangthanhvien/thung-rac/{id}', [HangThanhVienController::class, 'khoiPhucHangThanhVien'])->name('hangthanhvien.khoiphuc');
                 Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
             });
+
+//        Route::middleware('auth.checkrole')
+//            ->group(function () {
+                Route::get('thong-bao', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'index'])->name('thongbao.index');
+                Route::post('thong-bao/da-doc/{id}', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'daXem']);
+//            });
 
         // Liên hệ
         Route::middleware('auth.checkrole')

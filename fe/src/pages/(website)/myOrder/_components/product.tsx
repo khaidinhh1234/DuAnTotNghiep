@@ -1,15 +1,17 @@
 import { sanPham2 } from "@/assets/img";
 import instanceClient from "@/configs/client";
-import { PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Form, Image, message, Upload } from "antd";
-import TextArea from "antd/es/input/TextArea";
-import { UploadFile, UploadProps } from "antd/es/upload";
+import { message } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HoanTien from "./Hoan";
+import React from "react";
+import { FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
+import { Flex, Rate } from "antd";
+import Danhgia from "./Danhgia";
+
 // Component hiển thị thông tin sản phẩm
-const isToday = (date) => {
+const isToday = (date: any) => {
   const today = new Date();
   // console.log(today);
   return (
@@ -37,12 +39,10 @@ const ProductItem = ({
   phuong_thuc_thanh_toans,
 }: any) => {
   // console.log(chi_tiet_don_hangs);
-  console.log("status", new Date(created_at));
+  // console.log("status", new Date(created_at));
   const dateToCheck = new Date(created_at);
-  console.log(isToday(dateToCheck));
-  const [reviewText, setReviewText] = useState("");
-  const [qualityRating, setQualityRating] = useState(0);
-  const [toggleUsername, setToggleUsername] = useState(true);
+  // console.log(isToday(dateToCheck));
+
   const [values, setValues] = useState<string>("");
   const [danhgia, setDanhgia] = useState<boolean>(false);
   // console.log(values);
@@ -131,9 +131,10 @@ const ProductItem = ({
       // console.log(data);
       try {
         if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
-          const response = await instanceClient.post("payment/momo", data);
-          if (response.data && response.data.payUrl) {
-            window.location.href = response.data.payUrl; // Redirect the user to the MoMo payment interface
+          
+          const response = await instanceClient.post("thanh-toan-lai", data);
+          if (response.data && response.data.url) {
+            window.location.href = response.data.url; // Redirect the user to the MoMo payment interface
           }
           if (response.status === 200) {
             // message.success("Thanh toán MoMo thành công");
@@ -168,7 +169,7 @@ const ProductItem = ({
   });
   const handlethanhtoan = (e: any) => {
     e.preventDefault();
-    const data = { ma_don_hang, phuong_thuc_thanh_toan, amount: tong_tien };
+    const data = { ma_don_hang, phuong_thuc_thanh_toan };
     // console.log(data);
     mutatePayment(data);
   };
@@ -193,128 +194,7 @@ const ProductItem = ({
     <>
       {danhgia && (
         <>
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
-            <div className="p-6 bg-white rounded-lg shadow-lg max-w-lg mx-auto">
-              {/* Header */}
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
-                <button className="text-red-500 font-semibold">Gửi</button>
-              </div>
-
-              {/* Product Info */}
-              <div className="mb-4">
-                <p className="text-sm text-gray-700">
-                  Xem Hướng dẫn đánh giá chuẩn để nhận đến{" "}
-                  <span className="text-red-500 font-bold">200 xu</span>!
-                </p>
-              </div>
-
-              {/* Rating */}
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold">Chất lượng sản phẩm</h3>
-                <div className="flex items-center space-x-1 my-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() => setQualityRating(star)}
-                      className={`text-2xl ${star <= qualityRating ? "text-yellow-500" : "text-gray-400"}`}
-                    >
-                      ★
-                    </button>
-                  ))}
-                  <span className="text-sm text-gray-600">Tuyệt vời</span>
-                </div>
-              </div>
-
-              {/* Image/Video Upload */}
-              <div className="flex space-x-4 mb-4">
-                <button className="border border-gray-300 rounded-lg p-3 flex items-center justify-center w-1/2">
-                  <span role="img" aria-label="Camera" className="mr-2">
-                    📷
-                  </span>{" "}
-                  Thêm Hình ảnh
-                </button>
-                <button className="border border-gray-300 rounded-lg p-3 flex items-center justify-center w-1/2">
-                  <span role="img" aria-label="Video Camera" className="mr-2">
-                    🎥
-                  </span>{" "}
-                  Thêm Video
-                </button>
-              </div>
-
-              {/* Additional Review Section */}
-              <div className="border border-red-500 p-4 mb-4">
-                <h4 className="text-sm font-semibold text-red-500 mb-1">
-                  Mục đánh giá bổ sung dành cho Người mua
-                </h4>
-                <textarea
-                  placeholder="Chất liệu: để lại đánh giá"
-                  className="w-full border border-gray-300 p-2 rounded-lg mt-2"
-                  rows={2}
-                />
-                <textarea
-                  placeholder="Công dụng: để lại đánh giá"
-                  className="w-full border border-gray-300 p-2 rounded-lg mt-2"
-                  rows={2}
-                />
-              </div>
-
-              {/* Review Text Area */}
-              <textarea
-                placeholder="Hãy chia sẻ cảm nhận về sản phẩm (Tối đa 200 ký tự)"
-                className="w-full border border-gray-300 p-2 rounded-lg mb-4"
-                rows={3}
-                maxLength={200}
-                value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
-              />
-
-              {/* Toggle Username Display */}
-              <div className="flex items-center mb-4">
-                <label className="text-sm text-gray-700 mr-2">
-                  Hiển thị tên đăng nhập trên đánh giá này
-                </label>
-                <input
-                  type="checkbox"
-                  checked={toggleUsername}
-                  onChange={() => setToggleUsername(!toggleUsername)}
-                  className="h-5 w-5 text-blue-500 focus:ring focus:ring-blue-200"
-                />
-              </div>
-
-              {/* Additional Ratings */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span>Dịch vụ của người bán</span>
-                  <div className="flex space-x-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button key={star} className="text-yellow-500 text-xl">
-                        ★
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>Dịch vụ vận chuyển</span>
-                  <div className="flex space-x-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button key={star} className="text-yellow-500 text-xl">
-                        ★
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    className=""
-                    onClick={() => {
-                      setToggleUsername(false);
-                    }}
-                  >
-                    click
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Danhgia />
         </>
       )}
       {Hoan && (
@@ -324,7 +204,7 @@ const ProductItem = ({
             setHoan={setHoan}
             tong_tien={tong_tien}
             setValues={setValues}
-          />  
+          />
         </>
       )}
       {Payment && (
@@ -557,7 +437,7 @@ const ProductItem = ({
                   ? "Đã nhận hàng"
                   : "Hủy Đơn Hàng"}
             </button>
-          )}{" "}
+          )}
           <br />
           {isToday(dateToCheck) &&
             phuong_thuc_thanh_toans !== "Thanh toán khi nhận hàng" &&
@@ -580,19 +460,19 @@ const ProductItem = ({
                 )}
               </button>
             )}
-          {/* {status === "Hoàn tất đơn hàng" ||
-            (status === "Chờ khách hàng xác nhận" &&
-              trang_thai_thanh_toan == "Đã thanh toán" && ( */}
-          <button
-            className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
-            onClick={(e) => {
-              e.preventDefault();
-              setHoan(true);
-            }}
-          >
-            Hoàn hàng
-          </button>
-          {/* ))} */}
+          {(status === "Hoàn tất đơn hàng" ||
+            status === "Chờ khách hàng xác nhận") &&
+            trang_thai_thanh_toan == "Đã thanh toán" && (
+              <button
+                className="shadow-md shadow-slate-600/50 hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-10 mb-2 rounded-lg text-white"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setHoan(true);
+                }}
+              >
+                Hoàn hàng
+              </button>
+            )}
         </div>
         <div className="col-span-7 border-t mt-2 py-3 lg:flex lg:justify-between">
           {" "}

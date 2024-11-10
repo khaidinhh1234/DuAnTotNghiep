@@ -54,24 +54,25 @@ class DanhGiaController extends Controller
             $danhGias = DanhGia::with([
                 'sanPham:id,ten_san_pham,anh_san_pham',
                 'anhDanhGias:id,anh_danh_gia,danh_gia_id',
-                'user:id,ho,ten,email'
+                'user:id,ho,ten,email',
+                'danhGiaBienTheSanPhams',
             ])
                 ->orderBy('created_at', 'desc')
                 ->get();
-    
+
             $danhGias->transform(function ($danhGia) {
                 $soSaoSanPham = $danhGia->so_sao_san_pham ?? 0;
                 $soSaoVanChuyen = $danhGia->so_sao_dich_vu_van_chuyen ?? 0;
-    
+
                 if ($soSaoSanPham > 0 || $soSaoVanChuyen > 0) {
                     $danhGia->tong_so_sao_trung_binh = ($soSaoSanPham + $soSaoVanChuyen) / 2;
                 } else {
                     $danhGia->tong_so_sao_trung_binh = 0;
                 }
-    
+
                 return $danhGia;
             });
-    
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -87,7 +88,7 @@ class DanhGiaController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Update the specified resource in storage.
      */
