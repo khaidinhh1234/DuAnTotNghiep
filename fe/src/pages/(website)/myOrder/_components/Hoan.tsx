@@ -40,30 +40,30 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
     setFileList(newFileList);
 
-  // const onFinish: any["onFinish"] = (values: any) => {
-  //   const feature_image = fileList
-  //     .filter((file) => file.status === "done")
-  //     .map((file) => file.response?.secure_url);
-  //   // mutate({ ...values, feature_image });
-  //   console.log(values);
-  //   console.log(feature_image[0]);
-  //   // mutate(values);
-  // };
-  const onFinish = async (values: any) => {
-    try {
-      let imageUrl = null
-      if(values.imageFile && values.imageFile[0]){
-        imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj)
-      }
-      const hoanHang: HoanHang = {
-        li_do_hoan_hang: values.description,
-        hinh_anh_hoan_tra: imageUrl
-      }
-      mutate(hoanHang)
-    } catch (error) {
-      message.error("Lỗi khi tải ảnh")
-    }
-  }
+  const onFinish: any["onFinish"] = (values: any) => {
+    const feature_image = fileList
+      .filter((file) => file.status === "done")
+      .map((file) => file.response?.secure_url);
+    // mutate({ ...values, feature_image });
+    console.log(values);
+    console.log(feature_image[0]);
+    // mutate(values);
+  };
+  // const onFinish = async (values: any) => {
+  //   try {
+  //     let imageUrl = null
+  //     if(values.imageFile && values.imageFile[0]){
+  //       imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj)
+  //     }
+  //     const hoanHang: HoanHang = {
+  //       li_do_hoan_hang: values.description,
+  //       hinh_anh_hoan_tra: imageUrl
+  //     }
+  //     mutate(hoanHang)
+  //   } catch (error) {
+  //     message.error("Lỗi khi tải ảnh")
+  //   }
+  // }
 
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
@@ -71,26 +71,26 @@ const HoanTien = ({ chi_tiet_don_hangs, setHoan, tong_tien }: any) => {
       <div style={{ marginTop: 8 }}>Upload</div>
     </button>
   );
-  const { mutate } = useMutation({
-    mutationKey: ["hoanTien"],
-    mutationFn: async ({ma_don_hang, imageUrl, notes}: any) => {
-      const response = await instanceClient.post(`/don-hang/hoan-hang/${ma_don_hang}`, {
-        ma_don_hang: ma_don_hang,
-        imageUrl,
-        li_do_hoan_hang: notes
-      })
-      return response.data
-    },
-    onSuccess: () => {
-      message.success("Hoàn tiền thành công!");
-      setHoan(true);
-      // navigate("/dashboard/orders");
-    },
-    onError: (error: any) => {
-      message.error("Hoàn tiền thất bại!");
-      console.error(error);
-    },
-  })
+    // const { mutate } = useMutation({
+    //   mutationKey: ["hoanTien"],
+    //   mutationFn: async ({ma_don_hang, imageUrl, notes}: any) => {
+    //     const response = await instanceClient.post(`/don-hang/hoan-hang/${ma_don_hang}`, {
+    //       ma_don_hang: ma_don_hang,
+    //       imageUrl,
+    //       li_do_hoan_hang: notes
+    //     })
+    //     return response.data
+    //   },
+    //   onSuccess: () => {
+    //     message.success("Hoàn tiền thành công!");
+    //     setHoan(true);
+    //     // navigate("/dashboard/orders");
+    //   },
+    //   onError: (error: any) => {
+    //     message.error("Hoàn tiền thất bại!");
+    //     console.error(error);
+    //   },
+    // })
   return (
     <div>
       {" "}
