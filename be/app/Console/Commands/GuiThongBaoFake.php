@@ -22,8 +22,8 @@ class GuiThongBaoFake extends Command
             foreach ($users as $user) {
                 $thongBao = ThongBao::create([
                     'user_id' => $user->id,
-                    'tieu_de' => 'đmmm',
-                    'noi_dung' => 'dmm',
+                    'tieu_de' => 'test',
+                    'noi_dung' => 'test',
                     'loai' => 'uu_dai',
                     'duong_dan' => fake()->url(),
                     'hinh_thu_nho'=> 'https://cuoihoihungthinh.com/wp-content/uploads/2021/09/icon-uu-dai.png'

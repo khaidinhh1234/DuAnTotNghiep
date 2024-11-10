@@ -94,40 +94,91 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       );
     }
   };
-
+// toanmoi
   const handleChildChange = (
     parentIndex: number,
     childIndex: number,
     checked: boolean,
-    childId: number
+    childId: number,
+    children: any[]
   ) => {
+    // Cập nhật trạng thái checkbox của danh mục con
     const currentChildren = childChecked[parentIndex] || [];
     const updatedChildren = [...currentChildren];
     updatedChildren[childIndex] = checked;
     setChildChecked({ ...childChecked, [parentIndex]: updatedChildren });
+  
+    // Cập nhật trạng thái các ID của danh mục con
     if (checked) {
       setChildIds((prevState) => [...prevState, childId]);
-      setParentChecked({ ...parentChecked, [parentIndex]: true });
     } else {
       setChildIds((prevState) => prevState.filter((id) => id !== childId));
     }
+  
+    // Cập nhật trạng thái checkbox của các item con con
+    if (checked) {
+      // Nếu item con được chọn, tất cả item con con cũng được chọn
+      const grandchildIds = children[childIndex]?.children.map((child: any) => child.id);
+      setGrandchildChecked((prev) => {
+        const updatedChecked = { ...prev };
+        if (!updatedChecked[parentIndex]) updatedChecked[parentIndex] = {};
+        if (!updatedChecked[parentIndex][childIndex]) updatedChecked[parentIndex][childIndex] = {};
+        grandchildIds.forEach((id: any) => {
+          updatedChecked[parentIndex][childIndex][id] = true;
+        });
+        return updatedChecked;
+      });
+    } else {
+      // Nếu item con bị bỏ chọn, tất cả item con con cũng bị bỏ chọn
+      setGrandchildChecked((prev) => {
+        const updatedChecked = { ...prev };
+        if (updatedChecked[parentIndex] && updatedChecked[parentIndex][childIndex]) {
+          Object.keys(updatedChecked[parentIndex][childIndex]).forEach((id) => {
+            updatedChecked[parentIndex][childIndex][id] = false;
+          });
+        }
+        return updatedChecked;
+      });
+    }
+  
+    // Nếu checkbox của danh mục con được bật, bật luôn checkbox của danh mục cha
+    if (checked) {
+      setParentChecked({ ...parentChecked, [parentIndex]: true });
+    } else {
+      // Nếu tất cả các danh mục con của danh mục cha đều tắt, tắt checkbox của danh mục cha
+      const allChildrenUnchecked = !updatedChildren.some((checked) => checked);
+      if (allChildrenUnchecked) {
+        setParentChecked((prevState) => ({
+          ...prevState,
+          [parentIndex]: false,
+        }));
+      }
+    }
   };
-  const { tenDanhMucCha, tenDanhMucCon } = useParams();
+
+  const { tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa } = useParams();
+
   const [_, setProducts] = useState([]);
   useEffect(() => {
     const fetchProducts = async () => {
-        try {
-            const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
-            if (response.data.status) {
-                setProducts(response.data.data); 
-            }
-        } catch (error) {
-            console.error("Lỗi khi lấy sản phẩm:", error);
+      try {
+        // Xây dựng endpoint API tùy theo các tham số có giá trị
+        let endpoint = `/sanpham/danhmuc/${tenDanhMucCha}`;
+        if (tenDanhMucCon) endpoint += `/${tenDanhMucCon}`;
+        if (tenDanhMucConCapBa) endpoint += `/${tenDanhMucConCapBa}`;
+
+        const response = await instanceClient.get(endpoint);
+        if (response.data.status) {
+          setProducts(response.data.data);
         }
+      } catch (error) {
+        console.error("Lỗi khi lấy sản phẩm:", error);
+      }
     };
-    
+
     fetchProducts();
-}, [tenDanhMucCha, tenDanhMucCon]);
+  }, [tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa]);
+
   const { data } = useQuery({
     queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
@@ -201,8 +252,33 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ) {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
+  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);\
+  // toanmoi
+  const [grandchildChecked, setGrandchildChecked] = useState<
+    { [key: string]: { [key: string]: { [key: string]: boolean } } }
+  >({}); // Đây là trạng thái lưu trữ trạng thái của các checkbox cháu
+  const handleGrandchildChange = (
+    parentIndex: number,
+    childIndex: number,
+    grandchildIndex: number,
+    isChecked: boolean,
+    grandchildId: number
+  ) => {
+    setGrandchildChecked((prev) => {
+      const updatedChecked = { ...prev };
+      if (!updatedChecked[parentIndex]) updatedChecked[parentIndex] = {};
+      if (!updatedChecked[parentIndex][childIndex]) updatedChecked[parentIndex][childIndex] = {};
+      updatedChecked[parentIndex][childIndex][grandchildIndex] = isChecked;
+      return updatedChecked;
+    });
   
+    // Cập nhật danh sách các ID của item con con
+    if (isChecked) {
+      setChildIds((prevState) => [...prevState, grandchildId]);
+    } else {
+      setChildIds((prevState) => prevState.filter((id) => id !== grandchildId));
+    }
+  };
   return (
     <div>
       {" "}
@@ -242,56 +318,80 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                                 checked={parentChecked[index] || false}
                                 onChange={(e) => {
                                   const isChecked = e.target.checked;
-                                  handleParentChange(
-                                    index,
-                                    isChecked,
-                                    item.children,
-                                    item.id
-                                  );
+                                  handleParentChange(index, isChecked, item.children, item.id);
                                   isChecked && mutate(item.id);
                                 }}
                               />
                               {item.ten_danh_muc}
                             </label>
                             <i
-                              className={`fa-solid fa-plus mr-3 cursor-pointer ${
-                                expanded.includes(index) ? "rotate-45" : ""
-                              }`}
+                              className={`fa-solid fa-plus mr-3 cursor-pointer ${expanded.includes(index) ? "rotate-45" : ""
+                                }`}
                               onClick={() => toggleExpand(index)}
                             ></i>
                           </div>
 
                           {expanded.includes(index) &&
                             item.children.map((itemcon: any, indexCon: any) => (
-                              <div
-                                className="flex justify-between items-center my-4 ml-4"
-                                key={indexCon}
-                              >
-                                <label className="flex">
-                                  <input
-                                    type="checkbox"
-                                    className="mr-2"
-                                    checked={
-                                      childChecked[index]?.[indexCon] || false
-                                    }
-                                    disabled={!parentChecked[index]}
-                                    onChange={(e) => {
-                                      const isChecked = e.target.checked;
-                                      handleChildChange(
-                                        index,
-                                        indexCon,
-                                        isChecked,
-                                        itemcon.id
-                                      );
-                                      isChecked && mutate(itemcon.id);
-                                    }}
-                                  />
-                                  {itemcon.ten_danh_muc}
-                                </label>
+                              <div key={indexCon} className="ml-4">
+                                <div className="flex justify-between items-center my-4">
+                                  <label className="flex">
+                                    <input
+                                      type="checkbox"
+                                      className="mr-2"
+                                      checked={childChecked[index]?.[indexCon] || false}
+                                      disabled={!parentChecked[index]}
+                                      onChange={(e) => {
+                                        const isChecked = e.target.checked;
+                                        handleChildChange(index, indexCon, isChecked, itemcon.id);
+                                        isChecked && mutate(itemcon.id);
+                                      }}
+                                    />
+                                    {itemcon.ten_danh_muc}
+                                  </label>
+                                  <i
+                                    className={`fa-solid fa-plus mr-3 cursor-pointer ${expanded.includes(`${index}-${indexCon}`) ? "rotate-45" : ""
+                                      }`}
+                                    onClick={() => toggleExpand(`${index}-${indexCon}`)}
+                                  ></i>
+                                </div>
+                                {/* Thêm cấp danh mục con của danh mục con */}
+                                {expanded.includes(`${index}-${indexCon}`) &&
+                                  itemcon.children?.map((itemconcon: any, indexConCon: any) => (
+                                    <div
+                                      className="flex justify-between items-center my-4 ml-8"
+                                      key={indexConCon}
+                                    >
+                                      <label className="flex">
+                                        <input
+                                          type="checkbox"
+                                          className="mr-2"
+                                          checked={
+                                            grandchildChecked[index]?.[indexCon]?.[indexConCon] || false
+                                          }
+                                          disabled={!childChecked[index]?.[indexCon]}
+                                          onChange={(e) => {
+                                            const isChecked = e.target.checked;
+                                            handleGrandchildChange(
+                                              index,
+                                              indexCon,
+                                              indexConCon,
+                                              isChecked,
+                                              itemconcon.id
+                                            );
+                                            isChecked && mutate(itemconcon.id);
+                                          }}
+                                        />
+                                        {itemconcon.ten_danh_muc}
+                                      </label>
+                                    </div>
+                                  ))}
                               </div>
                             ))}
+
                         </div>
                       ))}
+
                     </>
                   </div>
                 ) : null}
@@ -362,11 +462,10 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                       >
                         <div className="flex items-center font-semibold">
                           <span
-                            className={`w-6 h-6 inline-block mr-2 rounded-[4px] border ${
-                              selectedMau.includes(item.id)
-                                ? "border-[3px]  border-blue-300"
-                                : ""
-                            }`}
+                            className={`w-6 h-6 inline-block mr-2 rounded-[4px] border ${selectedMau.includes(item.id)
+                              ? "border-[3px]  border-blue-300"
+                              : ""
+                              }`}
                             style={{ backgroundColor: item.ma_mau_sac }}
                           ></span>
                           <span>{item.ten_mau_sac}</span>

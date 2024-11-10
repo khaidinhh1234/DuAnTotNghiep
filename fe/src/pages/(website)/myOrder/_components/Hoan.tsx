@@ -62,6 +62,7 @@ const HoanTien = () => {
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
     setFileList(newFileList);
 
+
   // const onFinish: any["onFinish"] = (values: any) => {
   //   const feature_image = fileList
   //     .filter((file) => file.status === "done")
@@ -92,12 +93,14 @@ const HoanTien = () => {
     mutate(data as any);
   };
 
+
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
       <PlusOutlined />
       <div style={{ marginTop: 8 }}>Upload</div>
     </button>
   );
+
   const navigate = useNavigate();
   const { mutate } = useMutation({
     mutationKey: ["hoanTien"],
@@ -117,6 +120,7 @@ const HoanTien = () => {
       console.error(error);
     },
   });
+
   return (
     <div>
       {" "}

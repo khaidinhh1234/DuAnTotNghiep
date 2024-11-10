@@ -6,7 +6,7 @@ import ProductCategories from "./_components/ProductCategories";
 import instanceClient from "@/configs/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-const Page1 = () => {
+const Page = () => {
   const queryclient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: async (id: any) => {
@@ -32,7 +32,7 @@ const Page1 = () => {
       }
     },
     onSuccess: () => {
-      queryclient.invalidateQueries({ queryKey: ["SANPHAM_YEUTHICH"] });
+      queryclient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
     },
   });
   const handleWishlist = (id: any) => {
@@ -50,4 +50,4 @@ const Page1 = () => {
   );
 };
 
-export default Page1;
+export default Page;

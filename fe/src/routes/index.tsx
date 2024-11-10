@@ -146,8 +146,12 @@ import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
 import AllTransport from "@/pages/(van_chuyen)/AllTransport";
+
 import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
 import HoanHang from "@/pages/(website)/myOrder/_components/Hoan";
+
+import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
+
 
 const Router = () => {
   //
@@ -162,12 +166,12 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route
-            path="/sanpham/danhmuc/:tenDanhMucCha/:tenDanhMucCon?"
+            path="/shop/:tenDanhMucCha/:?/:tenDanhMucConCapBa?"
             element={<ProductCategories />}
           />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          <Route path="/shop/:slug" element={<Page1 />} />
+          <Route path="/tenDanhMucConshop/:slug" element={<Page1 />} />
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
@@ -263,7 +267,10 @@ const Router = () => {
           <Route path="dashboard/doanhthu" element={<List />} />
           <Route path="dashboard/sanpham" element={<SanPham />} />
           <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
+          <Route path="dashboard/thongbao" element={<NotificationPage1 />} />
+
           {/* Sản phẩm  */}
+
           <Route
             path="products"
             element={<Navigate to="/admin/products/list" />}

@@ -70,12 +70,12 @@ Route::middleware([])
         Route::get('/danh-sach-san-pham-cung-loai/{id}', [TrangChiTietSpController::class, 'danhSachSanPhamCungLoai']);
         Route::post('goi-y-kich-thuoc', [TrangChiTietSpController::class, 'goiY']);
         Route::get('load-kick-thuoc', [TrangChiTietSpController::class, 'loadKichThuoc']);
-         Route::get('/danh-muc-cha', [TrangChiTietSpController::class, 'danhMucCha']);
+        Route::get('/danh-muc-cha', [TrangChiTietSpController::class, 'danhMucCha']);
         //Trang sản phẩm
         // lấy tất cả sản phẩm
         Route::group([], function () {
             Route::get('lay-tat-ca-san-pham', [TrangSanPhamController::class, 'layTatCaSanPham']);
-            Route::get('sanpham/danhmuc/{slug}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
+//            Route::get('sanpham/danhmuc/{slug}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('danhmuc/{tenDanhMucCha}/{tenDanhMucCon?}/{tenDanhMucConCapBa?}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
             // // Lấy ra danh mục cha
@@ -118,9 +118,9 @@ Route::middleware([])
         Route::delete('/danh-gia/{danhGia}/unlike', [TrangChiTietSpController::class, 'boLikeDanhGia']);
 
         //Chương trình ưu đãi và
-        Route::get('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
+        Route::post('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
         Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
-
+//        Route::post('danh-sach-loc', [App\Traits\LocSanPhamTrait::class, 'layDanhMucMauSacKichThuoc']);
         // Trang bộ sưu tập
         Route::get('bo-suu-tap/{slug}', [BoSuuTapController::class, 'show']);
 
@@ -454,6 +454,4 @@ Route::middleware(['auth.sanctum'])
 
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
-
     });
-
