@@ -1203,7 +1203,7 @@ const Search = () => {
           {/* <div className="grid grid-cols-7 justify-center gap-4">
             {searchResponse.data.slice(0, 4).map(renderProductCard)}
           </div> */}
-<div className="grid grid-cols-6 justify-center gap-4">
+<div className="grid grid-cols-7 justify-center gap-4">
   {searchResponse.data.slice(0, 6).map((item, index) => (
     <div key={index} className="px-20">
       {renderProductCard(item)}

@@ -189,6 +189,7 @@ const SearchResultsPage = ({ Wishlist, isPending }: any) => {
   const onChange = (page: number, newPageSize: number) => {
     setCurrentPage(page);
     setPageSize(newPageSize);
+
   };
 
   const startIndex = (currentPage - 1) * pageSize;
@@ -305,6 +306,7 @@ const SearchResultsPage = ({ Wishlist, isPending }: any) => {
             itemRender={itemRender}
             onChange={onChange}
           />
+          
         </div>
       </div>
     </section>

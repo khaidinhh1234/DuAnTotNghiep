@@ -131,6 +131,7 @@ const ProductItem = ({
       // console.log(data);
       try {
         if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
+          
           const response = await instanceClient.post("thanh-toan-lai", data);
           if (response.data && response.data.url) {
             window.location.href = response.data.url; // Redirect the user to the MoMo payment interface

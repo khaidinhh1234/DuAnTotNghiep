@@ -115,6 +115,11 @@ class DonHang extends Model
             $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
         });
 
+    //     static::updated(function ($donHang) {
+    //         if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH && $donHang->trang_thai_thanh_toan === DonHang::TTTT_DTT) {
+    //             event(new DonHangHoanTat($donHang));
+    //         }
+        // });
     }
 
 
