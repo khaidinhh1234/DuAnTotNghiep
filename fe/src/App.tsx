@@ -100,11 +100,12 @@ function App() {
 
     useEffect(() => {
         window.Pusher = Pusher;
+
         const echo = new Echo({
             broadcaster: "pusher",
-            key: "472eb0c88808adb5465f",
+            key: "481e2d48d1b812127469",
             cluster: "ap1",
-            encrypted: true,
+            forceTLS: true, // Sử dụng forceTLS thay vì encrypted
         });
 
         const user = localStorage.getItem("user");
@@ -116,53 +117,55 @@ function App() {
         try {
             const parsedUser = JSON.parse(user);
             userId = parsedUser.user.id;
+            console.log("ID người dùng:", userId);
         } catch (error) {
             console.error("Lỗi phân tích người dùng:", error);
             return;
         }
 
         const channelName = `thong-bao`;
-        echo
-            .channel(channelName)
-            .listen(
-                "ThongBaoMoi",
-                (event: { user_id: number; tieu_de: string; noi_dung: string }) => {
-                    if (event.user_id === userId) {
-                        const toastMessage = `${event.tieu_de}: ${event.noi_dung}`;
-                        const id = notificationId++;
-                        setNotifications((prev) => [
-                            ...prev,
-                            { id, message: toastMessage },
-                        ]);
+        const channel = echo.channel(channelName);
 
-                        if (!audioRef.current) {
-                            audioRef.current = new Audio(notificationSoundUrl);
-                        } else {
-                            audioRef.current.pause();
-                            audioRef.current.currentTime = 0;
-                        }
+        channel.listen(
+            "ThongBaoMoi",
+            (event: { user_id: number; tieu_de: string; noi_dung: string }) => {
+                console.log("Received event:", event);
+                if (event.user_id === userId) {
+                    const toastMessage = `${event.tieu_de}: ${event.noi_dung}`;
+                    const id = notificationId++;
+                    setNotifications((prev) => [
+                        ...prev,
+                        { id, message: toastMessage },
+                    ]);
 
-                        const playSound = async () => {
-                            try {
-                                if (audioRef.current) {
-                                    await audioRef.current.play();
-                                }
-                            } catch (error) {
-                                console.error("Lỗi khi phát âm thanh:", error);
-                            }
-                        };
-                        playSound();
+                    if (!audioRef.current) {
+                        audioRef.current = new Audio(notificationSoundUrl);
+                    } else {
+                        audioRef.current.pause();
+                        audioRef.current.currentTime = 0;
                     }
+
+                    const playSound = async () => {
+                        try {
+                            if (audioRef.current) {
+                                await audioRef.current.play();
+                            }
+                        } catch (error) {
+                            console.error("Lỗi khi phát âm thanh:", error);
+                        }
+                    };
+                    playSound();
                 }
-            );
+            }
+        );
 
         return () => {
             if (echo) {
                 echo.leave(channelName);
-                echo.disconnect();
             }
         };
     }, []);
+
 
     const handleDelete = (id: number) => {
         setNotifications((prev) =>

@@ -7,6 +7,7 @@ use App\Models\BienTheSanPham;
 use App\Models\ChuongTrinhUuDai;
 use App\Models\MaKhuyenMai;
 use App\Models\SanPham;
+use App\Traits\LocSanPhamTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 
 class KhuyenMaiController extends Controller
 {
+    use LocSanPhamTrait;
     public function danhSachMaKhuyenMaiTheoNguoiDung(Request $request)
     {
         try {
@@ -83,45 +85,10 @@ class KhuyenMaiController extends Controller
     }
 
 
-    public function chiTietChuongTrinhUuDai($slug)
+    public function chiTietChuongTrinhUuDai($slug, Request $request)
     {
         try {
             $chuongTrinh = ChuongTrinhUuDai::query()
-                ->with(['sanPhams' => function ($query) {
-                    $query->select(
-                        'san_phams.id',
-                        'san_phams.ten_san_pham',
-                        'san_phams.duong_dan',
-                        'san_phams.anh_san_pham',
-                        'san_phams.hang_moi',
-                        'san_phams.gia_tot'
-                    )
-                        ->whereNotNull('san_phams.danh_muc_id')
-                        ->where('san_phams.trang_thai', 1)
-                        ->whereHas('bienTheSanPham')
-                        ->with(['bienTheSanPham' => function ($query) {
-                            $query->select(
-                                'bien_the_san_phams.id',
-                                'bien_the_san_phams.san_pham_id',
-                                'bien_the_san_phams.so_luong_bien_the',
-                                'bien_the_mau_sacs.ten_mau_sac',
-                                'bien_the_mau_sacs.ma_mau_sac',
-                                'bien_the_kich_thuocs.kich_thuoc',
-                                DB::raw('(SELECT anh_bien_thes.duong_dan_anh
-                                FROM anh_bien_thes
-                                WHERE anh_bien_thes.bien_the_san_pham_id = bien_the_san_phams.id
-                                LIMIT 1) as duong_dan_anh'),
-                                DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'),
-                                DB::raw('CASE
-                                WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
-                                WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
-                                ELSE bien_the_san_phams.gia_ban
-                            END as gia_hien_tai')
-                            )
-                                ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
-                                ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id');
-                        }]);
-                }])
                 ->where('duong_dan', $slug)
                 ->first();
 
@@ -129,45 +96,21 @@ class KhuyenMaiController extends Controller
                 return response()->json(['status' => false, 'message' => 'Chương trình ưu đãi không tồn tại.'], 404);
             }
 
-            foreach ($chuongTrinh->sanPhams as $sanPham) {
-                $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
-                    ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
-                        $giaTriUuDai = $uuDai->loai === 'phan_tram'
-                            ? $uuDai->gia_tri_uu_dai . '%'
-                            : number_format($uuDai->gia_tri_uu_dai, 0, ',', '.') . ' VND';
-                        return $uuDai->ten_uu_dai . " - Giảm: " . $giaTriUuDai;
-                    })->implode(', ')
-                    : null;
+            $sanPhamIds = $chuongTrinh->sanPhams->pluck('id')->toArray();
+            dd($sanPhamIds);
+            $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
+            $sanPhamDetails = $this->locSanPham($sanPhamIds, $request);
+            $sanPhamData = $sanPhamDetails->getData();
 
-                $lowestPrice = null;
-                $highestPrice = null;
 
-                $mauSacVaAnh = $sanPham->bienTheSanPham->groupBy('ma_mau_sac')->map(function ($items) {
-                    $bienTheDauTien = $items->first();
-                    $anhBienTheDaiDien = $bienTheDauTien->anhBienThe->first() ? $bienTheDauTien->anhBienThe->first()->duong_dan_anh : null;
-                    return [
-                        'ma_mau_sac' => $bienTheDauTien->ma_mau_sac,
-                        'ten_mau_sac' => $bienTheDauTien->ten_mau_sac,
-                        'hinh_anh' => $anhBienTheDaiDien
-                    ];
-                })->values()->all();
-
-                foreach ($sanPham->bienTheSanPham as $bienThe) {
-                    $currentPrice = $bienThe->gia_hien_tai;
-                    $lowestPrice = $lowestPrice === null || $currentPrice < $lowestPrice ? $currentPrice : $lowestPrice;
-                    $highestPrice = $highestPrice === null || $currentPrice > $highestPrice ? $currentPrice : $highestPrice;
-                }
-
-                $sanPham->gia_thap_nhat = $lowestPrice;
-                $sanPham->gia_cao_nhat = $highestPrice;
-                $sanPham->mau_sac_va_anh = $mauSacVaAnh;
-            }
+            $chuongTrinh->san_pham = $sanPhamData->data;
+            $chuongTrinh->danh_sach_loc = $danhSachLoc;
 
             $ngayBatDau = $chuongTrinh->ngay_bat_dau ? Carbon::parse($chuongTrinh->ngay_bat_dau) : null;
             $ngayKetThuc = $chuongTrinh->ngay_ket_thuc ? Carbon::parse($chuongTrinh->ngay_ket_thuc) : null;
             $ngayHienTai = Carbon::now();
 
-            $chuongTrinh['bat_dau'] = $ngayBatDau ? $ngayBatDau->format('d-m-Y') : null;
+            $chuongTrinh->bat_dau = $ngayBatDau ? $ngayBatDau->format('d-m-Y') : null;
 
             if ($ngayBatDau && $ngayHienTai < $ngayBatDau) {
                 return response()->json([
@@ -195,7 +138,6 @@ class KhuyenMaiController extends Controller
             return response()->json(['status' => false, 'message' => 'Có lỗi xảy ra khi lấy chi tiết chương trình ưu đãi.', 'error' => $e->getMessage()], 400);
         }
     }
-
 
     public function layMaKhuyenMaiTheoHangThanhVien()
     {
