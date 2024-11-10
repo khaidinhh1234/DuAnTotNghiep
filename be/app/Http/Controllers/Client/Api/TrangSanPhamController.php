@@ -417,17 +417,16 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-    public function laySanPhamTheoDanhMuc(Request $request, $tenDanhMucCha, $tenDanhMucCon = null, $tenDanhMucConCapBa = null)
+    public function laySanPhamTheoDanhMuc($tenDanhMucCha, $tenDanhMucCon = null, $tenDanhMucConCapBa = null)
     {
         try {
-
-            $sanPhamIds = [];
             $danhMucCha = DanhMuc::query()->where('duong_dan', $tenDanhMucCha)->first();
 
             if (!$danhMucCha) {
                 return response()->json(['message' => 'Không tìm thấy danh mục'], 404);
             }
 
+            $sanPhams = null;
             if ($tenDanhMucCon) {
                 $danhMucCon = DanhMuc::where('duong_dan', $tenDanhMucCon)->first();
 
@@ -442,28 +441,17 @@ class TrangSanPhamController extends Controller
                         return response()->json(['message' => 'Danh mục con cấp ba không tồn tại'], 404);
                     }
 
-                    $sanPhams = SanPham::where('danh_muc_id', $danhMucConCapBa->id)->get();
+                    $sanPhams = SanPham::where('danh_muc_id', $danhMucConCapBa->id);
                 } else {
-                    $danhMucConIds = DanhMuc::where('cha_id', $danhMucCon->id)->pluck('id')->toArray();
-                    $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucConIds)->get();
+                    $danhMucConIds = DanhMuc::where('cha_id', $danhMucCon->id)->pluck('id');
+                    $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucConIds);
                 }
             } else {
                 $danhMucIds = $this->layDanhMucIds($danhMucCha);
-                $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucIds)->get();
+                $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucIds);
             }
 
-            $sanPhamIds = $sanPhams->pluck('id')->toArray();
-            dd($sanPhamIds);
-            $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
-
-            $sanPhamDetails = $this->locSanPham($sanPhamIds, $request);
-
-            if (!$sanPhamDetails || !$sanPhamDetails->getData()) {
-                return response()->json(['message' => 'Không lấy được chi tiết sản phẩm'], 500);
-            }
-
-            $sanPhamData = $sanPhamDetails->getData();
-            $sanPhams = $sanPhamData->data;
+            $result = $sanPhams->get();
 
             return response()->json([
                 'status' => true,
@@ -490,8 +478,7 @@ class TrangSanPhamController extends Controller
                             ];
                         }),
                     ],
-                    'san_pham' => $sanPhams,
-                    'danh_sach_loc' => $danhSachLoc
+                    'San_pham' => $result,
                 ],
             ], 200);
         } catch (Exception $exception) {
@@ -504,6 +491,8 @@ class TrangSanPhamController extends Controller
         }
     }
 
+
+    // Hàm đệ quy để lấy tất cả ID danh mục con
     protected function layDanhMucIds($danhMuc)
     {
         $ids = [$danhMuc->id];
@@ -512,6 +501,4 @@ class TrangSanPhamController extends Controller
         }
         return $ids;
     }
-
-
 }

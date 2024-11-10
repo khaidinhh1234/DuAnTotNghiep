@@ -163,6 +163,7 @@ trait LocSanPhamTrait
             DB::beginTransaction();
 
             $sanPhams = SanPham::whereIn('id', $sanPhamIds)->get();
+
             if ($sanPhams->isEmpty()) {
                 return response()->json([
                     'status' => false,
@@ -172,24 +173,22 @@ trait LocSanPhamTrait
 
             $danhMuc = $sanPhams->first()->danhMuc()->with('children.children')->get();
 
-            $mauSacs = BienTheMauSac::query()
-                ->whereHas('sanPhams', function ($query) use ($sanPhamIds) {
-                    $query->whereIn('san_pham_id', $sanPhamIds);
-                })
+            $mauSacs = BienTheMauSac::whereHas('sanPhams', function ($query) use ($sanPhamIds) {
+                $query->whereIn('san_pham_id', $sanPhamIds);
+            })
+                ->get();
+
+            $kichThuoc = BienTheKichThuoc::whereHas('sanPhams', function ($query) use ($sanPhamIds) {
+                $query->whereIn('san_pham_id', $sanPhamIds);
+            })
                 ->get();
 
             $mauSacs->map(function ($mauSac) use ($sanPhamIds) {
-                $mauSac->setAttribute('so_luong_san_pham', $mauSac->sanPhams->whereIn('san_pham_id', $sanPhamIds)->count());
+                $mauSac->so_luong_san_pham = $mauSac->sanPhams->whereIn('id', $sanPhamIds)->count();
             });
 
-            $kichThuoc = BienTheKichThuoc::query()
-                ->whereHas('sanPhams', function ($query) use ($sanPhamIds) {
-                    $query->whereIn('san_pham_id', $sanPhamIds);
-                })
-                ->get();
-
             $kichThuoc->map(function ($kichThuoc) use ($sanPhamIds) {
-                $kichThuoc->setAttribute('so_luong_san_pham', $kichThuoc->sanPhams->whereIn('san_pham_id', $sanPhamIds)->count());
+                $kichThuoc->so_luong_san_pham = $kichThuoc->sanPhams->whereIn('id', $sanPhamIds)->count();
             });
 
             DB::commit();
@@ -210,6 +209,7 @@ trait LocSanPhamTrait
             ], 500);
         }
     }
+
 
 
 }
