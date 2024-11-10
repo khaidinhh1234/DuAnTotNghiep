@@ -39,9 +39,9 @@ const ProductItem = ({
   phuong_thuc_thanh_toans,
 }: any) => {
   // console.log(chi_tiet_don_hangs);
-  console.log("status", new Date(created_at));
+  // console.log("status", new Date(created_at));
   const dateToCheck = new Date(created_at);
-  console.log(isToday(dateToCheck));
+  // console.log(isToday(dateToCheck));
 
   const [values, setValues] = useState<string>("");
   const [danhgia, setDanhgia] = useState<boolean>(false);
@@ -131,9 +131,9 @@ const ProductItem = ({
       // console.log(data);
       try {
         if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
-          const response = await instanceClient.post("payment/momo", data);
-          if (response.data && response.data.payUrl) {
-            window.location.href = response.data.payUrl; // Redirect the user to the MoMo payment interface
+          const response = await instanceClient.post("thanh-toan-lai", data);
+          if (response.data && response.data.url) {
+            window.location.href = response.data.url; // Redirect the user to the MoMo payment interface
           }
           if (response.status === 200) {
             // message.success("Thanh toán MoMo thành công");
@@ -168,7 +168,7 @@ const ProductItem = ({
   });
   const handlethanhtoan = (e: any) => {
     e.preventDefault();
-    const data = { ma_don_hang, phuong_thuc_thanh_toan, amount: tong_tien };
+    const data = { ma_don_hang, phuong_thuc_thanh_toan };
     // console.log(data);
     mutatePayment(data);
   };
@@ -203,7 +203,7 @@ const ProductItem = ({
             setHoan={setHoan}
             tong_tien={tong_tien}
             setValues={setValues}
-          />  
+          />
         </>
       )}
       {Payment && (
@@ -436,7 +436,7 @@ const ProductItem = ({
                   ? "Đã nhận hàng"
                   : "Hủy Đơn Hàng"}
             </button>
-          )}{" "}
+          )}
           <br />
           {isToday(dateToCheck) &&
             phuong_thuc_thanh_toans !== "Thanh toán khi nhận hàng" &&

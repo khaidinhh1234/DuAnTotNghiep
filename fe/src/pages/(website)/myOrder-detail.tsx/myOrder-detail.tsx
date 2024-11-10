@@ -3,11 +3,13 @@ import { SmileOutlined, TruckOutlined, UserOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Steps } from "antd";
 import { Link, useParams } from "react-router-dom";
+import Danhgia from "../myOrder/_components/Danhgia";
+import { useState } from "react";
 
 const MyOrderdetail = () => {
   const { slug } = useParams();
   // console.log("Slug:", slug);
-
+  const [danhgia, setDanhgia] = useState<boolean>(false);
   const { data, error, isError } = useQuery({
     queryKey: ["CHITIETDONHANG", slug],
     queryFn: async () => {
@@ -30,13 +32,17 @@ const MyOrderdetail = () => {
   if (isError) {
     console.log("Error:", error.message);
   }
+
+  const handleDanhgia = () => {
+    setDanhgia(true);
+  };
   // console.log("Data:", data);
   const chitiet = data?.data;
   // console.log("Chi tiết đơn hàng:", chitiet);
-  console.log(chitiet);
+  // console.log(chitiet);
   // const chitietsanpham = data?.data?.don_hang;
   const thongtin = data?.data?.thong_tin;
-  console.log(thongtin);
+  // console.log(thongtin);
   const donhang = data?.data?.don_hang;
   // console.log(donhang);
   const phoneNumber =
@@ -111,6 +117,11 @@ const MyOrderdetail = () => {
 
   return (
     <div className=" ">
+      {danhgia && (
+        <>
+          <Danhgia setDanhgia={setDanhgia} />
+        </>
+      )}
       <div className="flex justify-between items-center border px-5 pt-4 pb-1">
         <Link to={"/mypro/myorder"}>
           <h1>
@@ -146,11 +157,15 @@ const MyOrderdetail = () => {
                 ? "Chờ lấy hàng"
                 : donhang?.trang_thai_don_hang}
           </h1>
-          {donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" && (
-            <a className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer ">
-              Đánh giá
-            </a>
-          )}
+          {donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
+            (donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng" && (
+              <button
+                className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
+                onClick={() => handleDanhgia()}
+              >
+                Đánh giá
+              </button>
+            ))}
         </div>
       </div>
       <div className="border-x  px-5 py-4">
@@ -172,7 +187,12 @@ const MyOrderdetail = () => {
                 items={[
                   { title: "Gửi yêu cầu" },
                   { title: "Được chấp nhận" },
-                  { title: "Đã hoàn tiền" },
+                  {
+                    title:
+                      donhang?.trang_thai_don_hang === "Hủy hàng"
+                        ? "Hoàn tất thủ tục"
+                        : "Đã hoàn tiền",
+                  },
                 ]}
               />
             )}
