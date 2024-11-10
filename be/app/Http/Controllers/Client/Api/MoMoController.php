@@ -52,7 +52,7 @@ class MoMoController extends Controller
 
             $orderInfo = "Thanh toán qua MoMo";
             $amount = $request->amount;
-            if (isset($ma_don_hang)) {
+            if (isset($request->ma_don_hang)) {
                 $orderId = $request->ma_don_hang . '-' . random_int(100000, 999999);
                 $redirectUrl = env('MOMO_REDIRECT_URL');
                 $ipnUrl = env('MOMO_IPN_URL');
