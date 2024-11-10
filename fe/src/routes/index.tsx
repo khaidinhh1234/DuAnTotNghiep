@@ -160,12 +160,12 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route
-            path="/sanpham/danhmuc/:tenDanhMucCha/:tenDanhMucCon?"
+            path="/shop/:tenDanhMucCha/:?/:tenDanhMucConCapBa?"
             element={<ProductCategories />}
           />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          <Route path="/shop/:slug" element={<Page1 />} />
+          <Route path="/tenDanhMucConshop/:slug" element={<Page1 />} />
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
