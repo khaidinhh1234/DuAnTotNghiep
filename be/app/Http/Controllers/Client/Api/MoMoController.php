@@ -62,7 +62,7 @@ class MoMoController extends Controller
                 $ipnUrl = env('MOMO_IPN_VT_URL');
             }
 
-            
+
             $extraData = "";
 
             $requestId = time() . "";
@@ -309,8 +309,7 @@ class MoMoController extends Controller
             }
 
             if (
-                $trangThai == 0 && $donHang->phuong_thuc_thanh_toan === DonHang::PTTT_MM_ATM
-                && $donHang->trang_thai_thanh_toan === DonHang::PTTT_MM_QR
+                $trangThai == 0 && in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])
             ) {
                 if ($donHang->trang_thai_thanh_toan === DonHang::TTTT_DTT) {
                     return response()->json([
@@ -325,7 +324,7 @@ class MoMoController extends Controller
                 $thongBao = ThongBao::create([
                     'user_id' => $donHang->user_id,
                     'tieu_de' => 'Đơn hàng đã được thanh toán',
-                    'noi_dung' => 'Cảm ơn bạn đã ' . DonHang::TTTT_DTT . ' mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
+                    'noi_dung' => 'Cảm ơn bạn đã thanh toán mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
                     'loai' => 'Đơn hàng',
                     'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
@@ -423,10 +422,11 @@ class MoMoController extends Controller
         try {
             $user = Auth::user();
             $userId = Auth::id();
+            $ma_don_hang = explode("-", $request->ma_don_hang)[0];
             $donHang = DonHang::where('ma_don_hang', $request->ma_don_hang)->first();
             if (in_array($request->phuong_thuc_thanh_toan, [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])) {
                 $mangRequest = [
-                    'ma_don_hang' => $request->ma_don_hang,
+                    'ma_don_hang' => $ma_don_hang,
                     'amount' => $donHang->tong_tien_don_hang,
                     'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
                 ];

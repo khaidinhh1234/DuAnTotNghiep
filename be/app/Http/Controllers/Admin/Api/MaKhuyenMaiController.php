@@ -79,11 +79,6 @@ class MaKhuyenMaiController extends Controller
             $dataMaKhuyenMai['ap_dung_vi'] = $request->ap_dung_vi ? 1 : 0;
             $apDungText = '';
 
-//            $apDungVi = '';
-//            if($dataMaKhuyenMai['ap_dung_vi'] == 1) {
-//                $apDungVi = 'Áp dụng cho ví Glow';
-//            }
-
             if (!empty($dataKhuyenMaiDanhMuc)) {
                 $danhMucDetails = DB::table('danh_mucs')
                     ->whereIn('id', $dataKhuyenMaiDanhMuc)
@@ -97,15 +92,15 @@ class MaKhuyenMaiController extends Controller
                     }
                 }
 
-                $apDungText = 'Áp dụng cho danh mục: ' . implode(', ', $danhMucHierarchy) . $dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '';
+                $apDungText = 'Áp dụng cho danh mục: ' . implode(', ', $danhMucHierarchy) . ($dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '');
             } elseif (!empty($dataKhuyenMaiSanPham)) {
                 $sanPhamNames = DB::table('san_phams')->whereIn('id', $dataKhuyenMaiSanPham)->pluck('ten_san_pham')->toArray();
                 if (empty($sanPhamNames)) {
                     throw new \Exception('Sản phẩm được chọn không hợp lệ.');
                 }
-                $apDungText = 'Áp dụng cho sản phẩm: ' . implode(', ', $sanPhamNames) . $dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '';
+                $apDungText = 'Áp dụng cho sản phẩm: ' . implode(', ', $sanPhamNames) . ($dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '');
             } else {
-                $apDungText = 'Áp dụng cho tất cả sản phẩm' . $dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '';
+                $apDungText = 'Áp dụng cho tất cả sản phẩm' . ($dataMaKhuyenMai['ap_dung_vi'] == 1 ? ', Áp dụng cho ví Glow' : '');
             }
 
             $dataMaKhuyenMai['ap_dung'] = $apDungText;
@@ -139,6 +134,7 @@ class MaKhuyenMaiController extends Controller
             ], 500);
         }
     }
+
 
     private function getDanhMucHierarchy($id)
     {

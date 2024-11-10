@@ -42,7 +42,7 @@ class SanPham extends Model
 
     public function danhGias()
     {
-        return $this->hasMany(DanhGia::class, 'san_pham_id', 'id');
+        return $this->belongsToMany(DanhGia::class, 'danh_gia_san_phams', 'san_pham_id', 'danh_gia_id')->withPivot('bien_the_san_pham_id');
     }
 
     public function chuongTrinhUuDais()
