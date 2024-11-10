@@ -343,6 +343,12 @@ Route::middleware(['auth.sanctum'])
                 Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
             });
 
+//        Route::middleware('auth.checkrole')
+//            ->group(function () {
+                Route::get('thong-bao', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'index'])->name('thongbao.index');
+                Route::post('thong-bao/da-doc/{id}', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'daXem']);
+//            });
+
         // Liên hệ
         Route::middleware('auth.checkrole')
             ->group(function () {
