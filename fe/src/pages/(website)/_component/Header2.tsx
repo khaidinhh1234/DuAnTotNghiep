@@ -66,7 +66,6 @@ const Header2 = () => {
   const [menuItems, setMenuItems] = useState<Category[]>([]);
   const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
 
-<<<<<<< HEAD
 
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -118,21 +117,6 @@ const Header2 = () => {
             }
         } catch (error) {
             console.error('Lỗi khi lấy dữ liệu danh mục con:', error);
-=======
-  // Fetch danh mục cha
-  useEffect(() => {
-    const fetchParentCategories = async () => {
-      try {
-        const response = await instanceClient.get("/load-danh-muc-cha");
-        if (response.data.status) {
-          const categories = response.data.data.map((category: any) => ({
-            id: category.id,
-            ten_danh_muc: category.ten_danh_muc,
-            duong_dan: category.duong_dan,
-            con: [], // Mảng con ban đầu rỗng
-          }));
-          setMenuItems(categories);
->>>>>>> 83b8914410cb2346a9d385ea8c94047288561a92
         }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu danh mục cha:", error);
@@ -167,7 +151,6 @@ const Header2 = () => {
     // setCategories([]); // Clear categories khi di chuột ra ngoài
   };
 
-<<<<<<< HEAD
 
     // Hàm render các menu items từ dữ liệu categories
     const renderMenuItems = (items: any): MenuProps['items'] => {
@@ -700,36 +683,6 @@ const Header2 = () => {
                     <Link to="/vourcher" className="text-xl">Khuyến mại</Link>
                     <Link to="/contact" className="text-xl">Liên hệ</Link>
                 </nav>
-=======
-  // Hàm render các menu items từ dữ liệu categories
-  const renderMenuItems = (items: any): MenuProps["items"] => {
-    return items?.danh_muc?.length
-      ? items.danh_muc.map((category: any) => ({
-          key: category.id.toString(),
-          label: (
-            <div className="menu-item py-5 flex flex-col gap-y-2 items-start !m-0 !p-0 !mx-28 !gap-x-20">
-              <a
-                className="row text-black text-sm font-bold"
-                href={`/${category.duong_dan}`}
-                rel="noopener noreferrer"
-              >
-                {category.ten_danh_muc}
-              </a>
-              {category.con && category.con.length > 0 && (
-                <div className="subcategories flex flex-col">
-                  {category.con.map((subCategory: any) => (
-                    <a
-                      key={subCategory.id}
-                      href={`/${subCategory.duong_dan}`}
-                      rel="noopener noreferrer"
-                      className="text-gray-950 text-sm"
-                    >
-                      {subCategory.ten_danh_muc}
-                    </a>
-                  ))}
-                </div>
-              )}
->>>>>>> 83b8914410cb2346a9d385ea8c94047288561a92
             </div>
           ),
         }))
@@ -1258,7 +1211,6 @@ const Header2 = () => {
                       <i className="fa-regular fa-heart text-xl">{ }</i>
                     </a>
                   </span> */}
-<<<<<<< HEAD
                         <span
                             ref={notificationRef}
                             className="relative"
@@ -1270,19 +1222,6 @@ const Header2 = () => {
                                     {dataCount}
                                 </span>
                             </i>
-=======
-            <span
-              ref={notificationRef}
-              className="relative"
-              onMouseEnter={() => setShowNotifications(true)}
-              onMouseLeave={() => setShowNotifications(false)}
-            >
-              <i className="fa-regular fa-bell text-xl relative cursor-pointer">
-                <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                  {dataCount}
-                </span>
-              </i>
->>>>>>> 83b8914410cb2346a9d385ea8c94047288561a92
 
               <div
                 className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${
@@ -1320,7 +1259,6 @@ const Header2 = () => {
               {/* </div> */}
             </span>
 
-<<<<<<< HEAD
                             <div
                                 className={`absolute right-0 mt-2 z-50 transition-opacity duration-300 ${showNotifications
                                     ? "opacity-100"
@@ -1443,44 +1381,6 @@ const Header2 = () => {
                         <button
                             className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
                                 } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
-=======
-            <Avatar className="relative" onClick={() => setcheck(!check)}>
-              <AvatarImage src={member?.anh_nguoi_dung} />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            {check && (
-              <div
-                ref={ref}
-                className="absolute top-20 w-60 h-auto p-3 rounded-lg shadow-lg
-                   bg-white border"
-              >
-                <ul>
-                  <li className="mb-1">
-                    <a
-                      href="/mypro/myprofile"
-                      className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
-                    >
-                      <img
-                        src=""
-                        alt=""
-                        className="w-[30px] h-[30px] rounded-full"
-                      />
-                      <h6 className="font-semibold mx-2 text-lg ">
-                        {" "}
-                        {member.ten + " " + member.ho}
-                      </h6>
-                    </a>
-                  </li>
-                  <hr />
-                  {!phanquyen || phanquyen.length === 0 ? (
-                    ""
-                  ) : (
-                    <>
-                      <li className="my-1">
-                        <a
-                          href="/admin"
-                          className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
->>>>>>> 83b8914410cb2346a9d385ea8c94047288561a92
                         >
                           <img
                             src="https://github.com/shadcn.png"

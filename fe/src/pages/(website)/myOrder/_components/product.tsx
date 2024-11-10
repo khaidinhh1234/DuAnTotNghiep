@@ -8,6 +8,9 @@ import { UploadFile, UploadProps } from "antd/es/upload";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HoanTien from "./Hoan";
+import VerificationModal from "../../ShipingAdrres/VerificationModal";
+import { toast } from "react-toastify";
+
 // Component hiển thị thông tin sản phẩm
 const isToday = (date) => {
   const today = new Date();
@@ -49,6 +52,8 @@ const ProductItem = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
   const [Hoan, setHoan] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [pendingOrderData, setPendingOrderData] = useState<{ data: { ma_don_hang: string } } | null>(null);
 
   const queryClient = useQueryClient();
   const [li_do_huy_hang, setValue] = useState<string>("");
@@ -130,6 +135,21 @@ const ProductItem = ({
     mutationFn: async (data: any) => {
       // console.log(data);
       try {
+        // if (data.phuong_thuc_thanh_toan === "Ví tiền") {
+        //   setPendingOrderData(data);
+        //   setShowVerificationModal(true);
+        //   return;
+        // }
+        if (data.phuong_thuc_thanh_toan === "Ví tiền") {
+          // Call wallet payment API endpoint with verification code
+          const response = await instanceClient.post("don-hang", data);
+          
+          if (response.status === 200) {
+            message.success("Thanh toán ví tiền thành công");
+            nav(`/thankyou?orderId=${data.ma_don_hang}&resultCode=0`);
+          }
+          return response.data;
+        }
         if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
           const response = await instanceClient.post("payment/momo", data);
           if (response.data && response.data.payUrl) {
@@ -166,13 +186,33 @@ const ProductItem = ({
       });
     },
   });
+  
   const handlethanhtoan = (e: any) => {
     e.preventDefault();
     const data = { ma_don_hang, phuong_thuc_thanh_toan, amount: tong_tien };
-    // console.log(data);
+    
+    if (phuong_thuc_thanh_toan === "Ví tiền") {
+      setShowVerificationModal(true);
+      return;
+    }
     mutatePayment(data);
   };
-
+  
+  const handleVerification = async (code: string) => {
+    // Call mutation with payment data + verification code
+    mutatePayment({ 
+      ma_don_hang,
+      phuong_thuc_thanh_toan: "Ví tiền",
+      amount: tong_tien,
+      ma_xac_minh: code
+    });
+  
+    setShowVerificationModal(false);
+  };
+  
+  
+  
+  
   const PaymentClose = [
     {
       name: "Thanh toán quét mã MoMoQR",
@@ -191,6 +231,7 @@ const ProductItem = ({
 
   return (
     <>
+      
       {danhgia && (
         <>
           <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
@@ -315,6 +356,7 @@ const ProductItem = ({
               </div>
             </div>
           </div>
+         
         </>
       )}
       {Hoan && (
@@ -325,6 +367,7 @@ const ProductItem = ({
             tong_tien={tong_tien}
             setValues={setValues}
           />
+              
         </>
       )}
       {Payment && (
@@ -375,6 +418,11 @@ const ProductItem = ({
                   >
                     Thanh toán ngay
                   </button>
+                  <VerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        onVerify={handleVerification}
+      />
                 </div>{" "}
               </form>
             </div>
