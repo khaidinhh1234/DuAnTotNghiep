@@ -1,24 +1,17 @@
 import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Button,
   DatePicker,
-  Flex,
   Input,
-  message,
-  Popconfirm,
-  Select,
   Space,
   Table,
   TableColumnsType,
   TableProps,
-  Tabs,
+  Tabs
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { Link, useParams } from "react-router-dom";
-import DetailTS from "./TransportDetail";
 import TransportDetail from "./TransportDetail";
 
 type TableRowSelection<T extends object = object> =
