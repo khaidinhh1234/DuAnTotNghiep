@@ -271,6 +271,22 @@ class DonHangController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+                $userAdmin = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Quản trị viên');
+                    })->first();
+
+                $thongBao = ThongBao::create([
+                    'user_id' => $userAdmin->id,
+                    'tieu_de' => 'Đơn hàng '.$donHang->ma_don_hang.' đã có cập nhật mới',
+                    'noi_dung' => '',
+                    'loai' => 'Rút tiền',
+                    'duong_dan' => $donHang->ma_don_hang,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
             }
 
             DB::commit();
