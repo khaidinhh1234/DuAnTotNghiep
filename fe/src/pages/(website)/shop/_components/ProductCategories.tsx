@@ -252,7 +252,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ) {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);\
+  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
   // toanmoi
   const [grandchildChecked, setGrandchildChecked] = useState<
     { [key: string]: { [key: string]: { [key: string]: boolean } } }
