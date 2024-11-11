@@ -78,9 +78,9 @@ const Dashboard = () => {
           </div>{" "}
           <div className="">
             {" "}
-            <Segmented<string>
+            <Segmented
               options={["Tổng quan", "Trạng thái"]}
-              onChange={(value) => {
+              onChange={(value: string) => {
                 setTab(value);
               }}
               block

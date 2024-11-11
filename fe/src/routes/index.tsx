@@ -20,7 +20,6 @@ import CategoriesRemote from "@/pages/(dashboard)/categories/remote/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
-
 import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
@@ -121,37 +120,22 @@ import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
 import BankAccount from "@/pages/(website)/mywallet/nganhang";
 import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
 import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
-
 import History from "@/pages/(website)/myOrder/_components/history";
-
-// import SearchResultsPage from "@/pages/(website)/_component/SearchResultsPage";
-
-// import History from "@/pages/(website)/mywallet/history";
 import WithdrawalRequests from "@/pages/(dashboard)/dohoan/ruttien";
 import Page2 from "@/pages/(website)/_component/shop";
 import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
-// import ProductsList from "@/pages/(website)/Shopuudai/_components/ProductsList";
 import ProductCategories from "@/pages/(website)/shop/_components/ProductCategories";
 import NapTien from "@/pages/(website)/mywallet/NapTien";
-// import CreditCardForm from "@/pages/(website)/mywallet/cart";
-// import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
-
 import Test4 from "@/pages/(van_chuyen)/TransportDetail";
 import WalletProtectedRoute from "./WalletProtectedRoute";
-
-// import ThankYouPage1 from "@/pages/(website)/thankyou/you";
-// import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
 import Test3 from "@/pages/(website)/test3";
 import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
 import AllTransport from "@/pages/(van_chuyen)/AllTransport";
-
 import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
 import HoanHang from "@/pages/(website)/myOrder/_components/Hoan";
-
 import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
-
 
 const Router = () => {
   //
@@ -246,10 +230,6 @@ const Router = () => {
           <Route path="/blog" element={<Blog />} />
           <Route path="/danhmuctintuc/:duongDan" element={<BlogCategories />} />
           <Route path="/xem-bai-viet/:duong_dan" element={<BlogDetail />} />
-          {/* <Route
-            path="/xem-bai-viet/:duong_dan"
-            element={<DetailBlog />}
-          /> */}
         </Route>
         {/* TRang admin */}
         <Route
@@ -268,9 +248,7 @@ const Router = () => {
           <Route path="dashboard/sanpham" element={<SanPham />} />
           <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
           <Route path="dashboard/thongbao" element={<NotificationPage1 />} />
-
           {/* Sản phẩm  */}
-
           <Route
             path="products"
             element={<Navigate to="/admin/products/list" />}

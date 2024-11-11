@@ -115,7 +115,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
     if (datestart && dateend) {
       refetch();
     }
-  }, [datestart, dateend, refetch]);
+  }, [datestart, dateend, Chart1, refetch]);
   // const date2 = Chart1?.ngay_trong_khoang.map((item: any) => item);
   // console.log(date2);
   const chartData = {
