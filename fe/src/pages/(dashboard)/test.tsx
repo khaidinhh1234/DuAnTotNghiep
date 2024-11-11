@@ -1,51 +1,121 @@
-import React from "react";
-import Chart from "react-apexcharts";
+import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
+import ReactApexChart from "react-apexcharts";
 
 const Test = () => {
-  const options = {
+  // Define state using useState hook
+  const [series, setSeries] = useState([
+    {
+      name: "Số lượng khách",
+      type: "column",
+      data: chart2?.so_luong_thanh_vien || [],
+    },
+    {
+      name: "Tiền đã chi tiêu",
+      type: "column",
+      data: chart2?.tong_chi_tieu || [],
+    },
+  ]);
+
+  const [options, setOptions] = useState({
     chart: {
       height: 350,
-      type: "area",
+      type: "line",
+      stacked: false,
     },
     dataLabels: {
       enabled: false,
     },
     stroke: {
-      curve: "smooth",
+      width: [1, 1],
+    },
+    title: {
+      text: "Phân tích Hạng thành viên",
+      align: "left",
+      offsetX: 110,
     },
     xaxis: {
-      type: "datetime",
-      categories: [
-        "2018-09-19T00:00:00.000Z",
-        "2018-09-19T01:30:00.000Z",
-        "2018-09-19T02:30:00.000Z",
-        "2018-09-19T03:30:00.000Z",
-        "2018-09-19T04:30:00.000Z",
-        "2018-09-19T05:30:00.000Z",
-        "2018-09-19T06:30:00.000Z",
-      ],
+      categories: chart2?.ten_hang_thanh_vien || [],
     },
+    yaxis: [
+      {
+        seriesName: "Income",
+        axisTicks: {
+          show: true,
+        },
+        axisBorder: {
+          show: true,
+          color: "#008FFB",
+        },
+        labels: {
+          style: {
+            colors: "#008FFB",
+          },
+          formatter: (value: number) => {
+            return `${value}`; // Format to show in millions
+          },
+        },
+        title: {
+          text: "Số lượng khách (triệu khách)",
+          style: {
+            color: "#008FFB",
+          },
+        },
+        tooltip: {
+          enabled: true,
+        },
+      },
+      {
+        seriesName: "Cashflow",
+        opposite: true,
+        axisTicks: {
+          show: true,
+        },
+        axisBorder: {
+          show: true,
+          color: "#00E396",
+        },
+        labels: {
+          style: {
+            colors: "#00E396",
+          },
+          formatter: (value: number) => {
+            return `${value.toLocaleString()} đ `; // Format to show in millions
+          },
+        },
+        title: {
+          text: "Tiền đã chi tiêu (triệu đồng)",
+          style: {
+            color: "#00E396",
+          },
+        },
+      },
+    ],
     tooltip: {
-      x: {
-        format: "dd/MM/yy HH:mm",
+      fixed: {
+        enabled: true,
+        position: "topLeft",
+        offsetY: 30,
+        offsetX: 60,
       },
     },
-  };
-
-  const series = [
-    {
-      name: "series1",
-      data: [31, 40, 28, 51, 42, 109, 100],
+    legend: {
+      horizontalAlign: "left",
+      offsetX: 40,
     },
-    {
-      name: "series2",
-      data: [11, 32, 45, 32, 34, 52, 41],
-    },
-  ];
+  });
 
   return (
-    <div id="chart">
-      <Chart options={options} series={series} type="area" height={350} />
+    <div>
+      <div id="chart">
+        <ReactApexChart
+          options={options}
+          series={series}
+          type="line"
+          height={350}
+        />
+      </div>
+      <div id="html-dist"></div>
     </div>
   );
 };

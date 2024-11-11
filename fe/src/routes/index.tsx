@@ -93,7 +93,7 @@ import {
   default as ShowUser,
 } from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import AddProducts from "@/pages/(dashboard)/products/Addd/page";
-import Test from "@/pages/(van_chuyen)/AllTransport";
+import Test23 from "@/pages/(dashboard)/test";
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
 import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
@@ -364,7 +364,7 @@ const Router = () => {
           <Route path="centralstocks" element={<CentralStock />} />
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          <Route path="test" element={<Test />} />
+          <Route path="test" element={<Test23 />} />
           <Route path="list" element={<List />} />
           <Route
             path="ADmin"
