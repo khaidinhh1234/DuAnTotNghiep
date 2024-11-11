@@ -97,7 +97,7 @@ class KhuyenMaiController extends Controller
             }
 
             $sanPhamIds = $chuongTrinh->sanPhams->pluck('id')->toArray();
-            dd($sanPhamIds);
+//            dd($sanPhamIds);
             $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
             $sanPhamDetails = $this->locSanPham($sanPhamIds, $request);
             $sanPhamData = $sanPhamDetails->getData();

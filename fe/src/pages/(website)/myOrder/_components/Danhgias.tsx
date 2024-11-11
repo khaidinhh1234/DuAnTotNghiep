@@ -6,8 +6,11 @@ import type { GetProp, UploadProps } from "antd";
 import { Button, Form, Input, message, Modal, Rate, Upload } from "antd";
 import { RcFile, UploadFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-const Danhgia = ({ setDanhgia, slug }: any) => {
+const Danhgias = () => {
+  const { slug } = useParams<{ slug: string }>();
+
   const [reviewText, setReviewText] = useState("");
   const customIcons = ["😞", "😐", "😊", "😃", "😍"]; // Custom icons for rating
   const desc = ["Tệ", "Không tốt", "Bình thường", "Tốt", "Tuyệt vời"]; // Descriptions for each rating
@@ -87,14 +90,14 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
-
+  const nav = useNavigate();
   const { mutate: mutateDanhgia } = useMutation({
     mutationFn: async (data: any) => {
       try {
         const response = await instanceClient.post(`danh-gia`, data);
         if (response.status === 200) {
           message.success("Đánh giá thành công");
-          setDanhgia(false);
+          nav("/mypro/myorder");
         }
       } catch (error) {
         message.error("Đánh giá thất bại");
@@ -148,9 +151,9 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
           {/* Header */}
           <Form layout="vertical" onFinish={onFinish} form={form}>
             <div className="flex justify-between items-start mb-4">
-              <h1 onClick={() => setDanhgia(false)}>
+              <Link to={"/mypro/myorder"}>
                 <i className="fa-solid fa-chevron-down fa-rotate-90 text-xl cursor-pointer"></i>
-              </h1>
+              </Link>
               <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
 
               <Form.Item>
@@ -287,4 +290,4 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
   );
 };
 
-export default Danhgia;
+export default Danhgias;
