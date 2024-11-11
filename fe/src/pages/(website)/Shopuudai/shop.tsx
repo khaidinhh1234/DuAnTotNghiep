@@ -1,12 +1,12 @@
 import Method from "../_component/Method";
 import AllProduct from "../shop/_components/AllProduct";
-import ProductCategories from "./_components/ProductCategories";
+import ProductCategories1 from "./_components/ProductCategories1";
 // import { sanPham2 } from "@/assets/img";
 
 import instanceClient from "@/configs/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-const Page = () => {
+const Page3 = () => {
   const queryclient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: async (id: any) => {
@@ -41,7 +41,7 @@ const Page = () => {
   return (
     <>
       <AllProduct />
-      <ProductCategories
+      <ProductCategories1
         handleWishlist={handleWishlist}
         isPending={isPending}
       />
@@ -50,4 +50,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Page3;

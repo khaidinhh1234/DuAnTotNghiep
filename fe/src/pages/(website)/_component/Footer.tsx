@@ -719,7 +719,7 @@ const Footer = () => {
   <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
   <ul>
     {websiteInfo?.footer_blogs?.map((category : any) =>
-      category.tin_tuc?.map((news : any) => (
+      category.tin_tuc?.slice(0, 5).map((news : any) => (
         <li key={news.id} className="mb-3">
           <Link to={`/tin-tuc/${category.duong_dan}/${news.duong_dan}`}>
             {news.tieu_de}

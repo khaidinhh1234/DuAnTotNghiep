@@ -23,7 +23,7 @@ const DealsOfTheMonth = ({ chuong_trinh_uu_dai }: any) => {
                   key={index}
                   className={`${isLastItemOdd ? "col-span-2" : "col-span-1"}`}
                 >
-                  <Link to={`/deal/${item?.id}`}>
+                  <Link to={`/shopp/${item?.duong_dan}`}>
                     <img
                       src={item?.duong_dan_anh}
                       alt="Deal Image"
