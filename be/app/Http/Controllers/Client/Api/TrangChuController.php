@@ -14,7 +14,9 @@ use App\Models\LichSuTimKiem;
 use App\Models\SanPham;
 use App\Models\ThongTinWeb;
 use App\Models\TinTuc;
+use App\Traits\LocSanPhamTrait;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +24,7 @@ use Illuminate\Support\Facades\Log;
 
 class TrangChuController extends Controller
 {
+    use LocSanPhamTrait;
 
     public function index()
     {
@@ -291,129 +294,67 @@ class TrangChuController extends Controller
 
         $query = trim($request->input('query'));
 
-
-        $dataLichSuTimKiem = [];
-        if (Auth::check()) {
-            LichSuTimKiem::create([
-                'user_id' => Auth::id(),
-                'tim_kiem' => $query,
-            ]);
-
-            $dataLichSuTimKiem = LichSuTimKiem::query()
-                ->select('tim_kiem', 'id')
-                ->where('user_id', Auth::id())
-                ->orderByDesc('id')
-                ->limit(10)
-                ->get();
-
-            $duplicates = DB::table('lich_su_tim_kiems')
-                ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
-                ->where('user_id', Auth::id())
-                ->groupBy('tim_kiem')
-                ->pluck('latest_id');
-
-            DB::table('lich_su_tim_kiems')
-                ->where('user_id', Auth::id())
-                ->whereNotIn('id', $duplicates)
-                ->delete();
-        }
-
-
-        $query = trim($request->input('query'));
-
-        $goiY =
-            SanPham::query()
-                ->select(
-                    'san_phams.id',
-                    'san_phams.ten_san_pham',
-                    'san_phams.duong_dan',
-                    'san_phams.anh_san_pham',
-                    'san_phams.hang_moi',
-                    'san_phams.gia_tot',
-                    DB::raw('MIN(CASE
-                    WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
-                    WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
-                    ELSE bien_the_san_phams.gia_ban
-                END) as gia_thap_nhat'),
-
-                    DB::raw('MAX(CASE
-                    WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
-                    WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
-                    ELSE bien_the_san_phams.gia_ban
-                END) as gia_cao_nhat')
-                )
-                ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
-                ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
-                ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
+        $sanPhamIds = SanPham::query()
                 ->where('san_phams.trang_thai', 1)
-                ->where('san_phams.hang_moi', 1)
                 ->whereNotNull('san_phams.danh_muc_id')
-                ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
                 ->orderByDesc('san_phams.id')
                 ->where(function ($q) use ($query) {
                     $q->where('ten_san_pham', 'like', '%' . $query . '%')
                         ->orWhere('ma_san_pham', 'like', '%' . $query . '%');
                 })
-                ->get()
-                ->map(function ($sanPham) {
-                    $bienThe = BienTheSanPham::query()
-                        ->with('anhBienThe')
-                        ->select(
-                            'bien_the_san_phams.id',
-                            'bien_the_san_phams.san_pham_id',
-                            'bien_the_san_phams.so_luong_bien_the',
-                            'bien_the_mau_sacs.ten_mau_sac',
-                            'bien_the_mau_sacs.ma_mau_sac',
-                            'bien_the_kich_thuocs.kich_thuoc',
-                            DB::raw('bien_the_san_phams.gia_ban as gia_chua_giam'),
-                            DB::raw('CASE
-                            WHEN bien_the_san_phams.gia_khuyen_mai_tam_thoi IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai_tam_thoi
-                            WHEN bien_the_san_phams.gia_khuyen_mai IS NOT NULL THEN bien_the_san_phams.gia_khuyen_mai
-                            ELSE bien_the_san_phams.gia_ban
-                        END as gia_hien_tai')
-                        )
-                        ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
-                        ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
-                        ->where('bien_the_san_phams.san_pham_id', $sanPham->id)
-                        ->get();
+                ->pluck('id')->toArray();
 
-                    $mauSacVaAnh = $bienThe->groupBy('ma_mau_sac')->map(function ($items) {
-                        $bienTheDauTien = $items->first();
-                        $anhBienTheDaiDien = $bienTheDauTien->anhBienThe->first() ? $bienTheDauTien->anhBienThe->first()->duong_dan_anh : null;
+        if ($sanPhamIds) {
+           $goiY = $this->locSanPham($sanPhamIds, $request);
+           $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
+        }
 
-                        return [
-                            'ma_mau_sac' => $bienTheDauTien->ma_mau_sac,
-                            'ten_mau_sac' => $bienTheDauTien->ten_mau_sac,
-                            'hinh_anh' => $anhBienTheDaiDien
-                        ];
-                    })->values()->all();
-
-                    $sanPham->bien_the = $bienThe;
-                    $sanPham->mau_sac_va_anh = $mauSacVaAnh;
-
-                    return $sanPham;
-                });
-
-        //User
-        $user = Auth::guard('api')->user();
-        if ($user) {
-            // Thêm thông tin yêu thích vào từng sản phẩm
-            $goiY->map(function ($sanPham) use ($user) {
-                $sanPham['yeu_thich'] = $sanPham->khachHangYeuThich->contains($user->id); // Sản phẩm được yêu thích
-                return $sanPham;
-            });
             $json = [
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu này',
-                'data' => $goiY,
-                'lich_su_tim_kiem' => $dataLichSuTimKiem
+                'san_pham' => $goiY,
+                'danh_sach_loc' => $danhSachLoc
             ];
             return response()->json(
                 $json
             );
         }
-    }
+
+        public function lichSuTimKiem()
+        {
+            try {
+                $dataLichSuTimKiem = [];
+                if (Auth::check()) {
+                    $dataLichSuTimKiem = LichSuTimKiem::query()
+                        ->select('tim_kiem', 'id')
+                        ->where('user_id', Auth::id())
+                        ->orderByDesc('id')
+                        ->limit(10)
+                        ->get();
+
+                    $duplicates = DB::table('lich_su_tim_kiems')
+                        ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
+                        ->where('user_id', Auth::id())
+                        ->whereRaw('LENGTH(tim_kiem) = 1')
+                        ->groupBy('tim_kiem')
+                        ->pluck('latest_id');
+
+                    DB::table('lich_su_tim_kiems')
+                        ->where('user_id', Auth::id())
+                        ->whereNotIn('id', $duplicates)
+                        ->delete();
+                    return response()->json([
+                        'status' => true,
+                        'data' => $dataLichSuTimKiem
+                    ]);
+                }
+            }catch (Exception $exception) {
+                return response()->json([
+                    'status' => false,
+                ]);
+            }
+        }
 
     public function loadDanhMucConChau($chaId)
     {

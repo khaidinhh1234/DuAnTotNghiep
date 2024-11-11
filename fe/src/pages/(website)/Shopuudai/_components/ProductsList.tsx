@@ -232,22 +232,22 @@ const ProductsList = ({ products, Wishlist, isPending, data, onPage }: any) => {
     // console.log(`Page: ${page}, PageSize: ${pageSize}`);
     // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
   };
-  const { tenDanhMucCha, tenDanhMucCon } = useParams();
-  const [_, setProducts] = useState([]);
-  useEffect(() => {
-    const fetchProducts = async () => {
-        try {
-            const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
-            if (response.data.status) {
-                setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
-            }
-        } catch (error) {
-            console.error("Lỗi khi lấy sản phẩm:", error);
-        }
-    };
+//   const { tenDanhMucCha, tenDanhMucCon } = useParams();
+//   const [_, setProducts] = useState([]);
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//         try {
+//             const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
+//             if (response.data.status) {
+//                 setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
+//             }
+//         } catch (error) {
+//             console.error("Lỗi khi lấy sản phẩm:", error);
+//         }
+//     };
 
-    fetchProducts();
-}, [tenDanhMucCha, tenDanhMucCon]);
+//     fetchProducts();
+// }, [tenDanhMucCha, tenDanhMucCon]);
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4  overflow-hidden">

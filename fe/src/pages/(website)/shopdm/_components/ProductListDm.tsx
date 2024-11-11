@@ -1,10 +1,9 @@
 import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import View from "../../_component/View";
-import instanceClient from "@/configs/client";
-const ProductsList = ({products,  Wishlist, isPending, data, onPage }: any) => {
+const ProductsListDM = ({ products, Wishlist, isPending, data, onPage }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
@@ -41,31 +40,6 @@ const ProductsList = ({products,  Wishlist, isPending, data, onPage }: any) => {
     // console.log(`Page: ${page}, PageSize: ${pageSize}`);
     // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
   };
-
-  const { tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa } = useParams();
-  const [_, setProducts] = useState([]);
-      
-    const fetchProducts = async () => {
-      try {
-        const response = await instanceClient.post(
-          `/danhmuc/${tenDanhMucCha}/${tenDanhMucCon || ''}/${tenDanhMucConCapBa || ''}`
-        );
-        if (response.data.status) {
-          setProducts(response.data.data);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm:", error);
-      }
-    };
-
-    useEffect(() => {
-      if (tenDanhMucCha) {
-        fetchProducts();
-      }
-    }, [tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa]);
-
-
-
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4  overflow-hidden">
@@ -75,12 +49,13 @@ const ProductsList = ({products,  Wishlist, isPending, data, onPage }: any) => {
           </div>
         </div>
         <div className="w-0.5/4 sm:text-base text-sm flex items-center">
+          {/* Short by latest <i className="fa-solid fa-chevron-down pl-1"></i> */}
         </div>
       </div>
       <section className="">
         <div className="container">
           <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14 mx-auto">
-          {Array.isArray(products) && products.length > 0 ? (
+            {products && products.length !== 0 ? (
               products.map((product: any, index: any) => (
                 <div
                   className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6  lg:w-[300px] w-[350px] mx-auto lg:mx-0"
@@ -109,9 +84,9 @@ const ProductsList = ({products,  Wishlist, isPending, data, onPage }: any) => {
                           <img
                             src={
                               hoveredProductId === product.id &&
-                                hoveredVariantIndex !== null
+                              hoveredVariantIndex !== null
                                 ? product.mau_sac_va_anh[hoveredVariantIndex]
-                                  .hinh_anh
+                                    .hinh_anh
                                 : product.anh_san_pham
                             }
                             // src={sanPham2}
@@ -162,11 +137,12 @@ const ProductsList = ({products,  Wishlist, isPending, data, onPage }: any) => {
                               <button
                                 key={indexs}
                                 className={`w-7 h-7 rounded-full border mr-1 
-                             ${hoveredProductId === product?.id &&
-                                    hoveredVariantIndex === indexs
-                                    ? "border-black"
-                                    : "border-gray-300 hover:border-black"
-                                  }`}
+                             ${
+                               hoveredProductId === product?.id &&
+                               hoveredVariantIndex === indexs
+                                 ? "border-black"
+                                 : "border-gray-300 hover:border-black"
+                             }`}
                                 style={{
                                   backgroundColor: item?.ma_mau_sac,
                                 }}
@@ -217,4 +193,4 @@ const ProductsList = ({products,  Wishlist, isPending, data, onPage }: any) => {
   );
 };
 
-export default ProductsList;
+export default ProductsListDM;

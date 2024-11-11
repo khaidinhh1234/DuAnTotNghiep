@@ -20,8 +20,17 @@ import CategoriesRemote from "@/pages/(dashboard)/categories/remote/page";
 import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
+
+
+import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
+import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
+import IntroCard from "@/pages/(dashboard)/adminProfile/profile/IntroCard";
+import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
+import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
+
 import EvaluateAdmin from "@/pages/(dashboard)/evaluate/page";
 import { LayoutAdmin } from "@/pages/(dashboard)/layout";
+import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import NewEdit from "@/pages/(dashboard)/news/edit/NewEdit";
 import PageNew from "@/pages/(dashboard)/news/pagenew";
 import RemoteNew from "@/pages/(dashboard)/news/remote/RemoteNew";
@@ -31,14 +40,21 @@ import NewCategoriesEdit from "@/pages/(dashboard)/newscategory/edit/page";
 import NewCategory from "@/pages/(dashboard)/newscategory/page";
 import NewCategoriesRemote from "@/pages/(dashboard)/newscategory/remove/page";
 import OrderAdmin from "@/pages/(dashboard)/order/page";
+import AddProducts from "@/pages/(dashboard)/products/Addd/page";
+import EditProducts from "@/pages/(dashboard)/products/Editt/page";
 import ProductsAdmin from "@/pages/(dashboard)/products/page";
 import ProductsRemote from "@/pages/(dashboard)/products/remote/page";
 import RevenueAdmin from "@/pages/(dashboard)/revenue/page";
 import Suportuser from "@/pages/(dashboard)/suportuser/suportuser";
+import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
+import PageSupport from "@/pages/(dashboard)/support/page";
 import Tagsadd from "@/pages/(dashboard)/tags/add/add";
 import Tagsedit from "@/pages/(dashboard)/tags/edit/edit";
 import TagsRemoteAdmin from "@/pages/(dashboard)/tags/remove/remove";
 import Tags from "@/pages/(dashboard)/tags/tags";
+import Collect from "@/pages/(dashboard)/transport/collect/Collect";
+import PageTransport from "@/pages/(dashboard)/transport/page";
+import TableUncomfirmedOrder from "@/pages/(dashboard)/transport/unconfirmedorder/table";
 import MemberRankForm from "@/pages/(dashboard)/user/hangthanhvien/add/page";
 import MemberRank from "@/pages/(dashboard)/user/hangthanhvien/edit/page";
 import Rank from "@/pages/(dashboard)/user/hangthanhvien/page";
@@ -47,6 +63,10 @@ import UserskhachhangAdd from "@/pages/(dashboard)/user/khachhang/add/page";
 import UserskhachhangEdit from "@/pages/(dashboard)/user/khachhang/edit/page";
 import UsersAdminkhachhang from "@/pages/(dashboard)/user/khachhang/page";
 import UserskhachangRemote from "@/pages/(dashboard)/user/khachhang/remote/page";
+import {
+  default as ShowNhanvien,
+  default as ShowUser,
+} from "@/pages/(dashboard)/user/khachhang/show/showUser";
 import UsersNhanvienAdd from "@/pages/(dashboard)/user/nhanvien/add/page";
 import UsersnhanvienEdit from "@/pages/(dashboard)/user/nhanvien/edit/page";
 import UsersAdminNhanvien from "@/pages/(dashboard)/user/nhanvien/page";
@@ -56,18 +76,35 @@ import PageEditPermission from "@/pages/(dashboard)/userprivileges/edit/page";
 import UserPrivilegeAdmin from "@/pages/(dashboard)/userprivileges/page";
 import Showvaitro from "@/pages/(dashboard)/userprivileges/show/page";
 import AddVoucher from "@/pages/(dashboard)/vourcher/add/add";
+import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
+import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
+import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
+import ChuongTrinhUuDaiRemote from "@/pages/(dashboard)/vourcher/banner/remote";
 import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
 import VoucherAdmin from "@/pages/(dashboard)/vourcher/page";
 import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
+import Test from "@/pages/(van_chuyen)/AllTransport";
+import Shipper from "@/pages/(van_chuyen)/shipper";
 import NotFoundPage from "@/pages/(website)/404/page";
 import Cart from "@/pages/(website)/cart/Cart";
+import Layoutcheckout from "@/pages/(website)/checkout/layoutcheckout";
 import Contact from "@/pages/(website)/contact/Contact";
 import HomePage from "@/pages/(website)/home/page";
 import LayoutWebsite from "@/pages/(website)/layout";
+import LayoutMyPro from "@/pages/(website)/layoutmypro";
 import ManageAddresses from "@/pages/(website)/manageaddresses/ManageAddresses";
+import MyOrderdetail from "@/pages/(website)/myOrder-detail.tsx/myOrder-detail";
 import MyOrder from "@/pages/(website)/myOrder/Myorder";
 import MyProfile from "@/pages/(website)/myprofile/MyProfile";
+import MyProfileedit from "@/pages/(website)/myprofile/MyProfileedit";
+import MyVoucher from "@/pages/(website)/myvocher/myvocher";
+import RevenuePage from "@/pages/(website)/mywallet/doanhthu";
+import BankAccount from "@/pages/(website)/mywallet/nganhang";
+import TaiChinh from "@/pages/(website)/mywallet/wallte";
+import WithdrawPage from "@/pages/(website)/mywallet/WithdrawPage";
 import MyWishlists from "@/pages/(website)/mywishlists/MyWishlists";
+import NewDetail from "@/pages/(website)/newdetail/NewDetail";
+import Notificationkm from "@/pages/(website)/notifications/_components/Khuyenmai";
 import Notification from "@/pages/(website)/notifications/Notification";
 import Ordersummary from "@/pages/(website)/ordersummary/ordersummary";
 import Payment from "@/pages/(website)/payment/PayMent";
@@ -75,11 +112,14 @@ import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail
 import SavedCard from "@/pages/(website)/savedcards/SavedCard";
 import Setting from "@/pages/(website)/settings/Setting";
 import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
+import Page1 from "@/pages/(website)/Shopuudai/shop";
+import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
 import Voucher from "@/pages/(website)/vourcher/page";
 import { Navigate } from "react-router";
 import { Route, Routes } from "react-router-dom";
 import Bienthe from "../pages/(dashboard)/bienthe/bienthe";
 import PageOur from "../pages/(website)/ourstory/pageOur";
+
 import Page from "./../pages/(website)/shop/shop";
 import NewAdd from "@/pages/(dashboard)/news/add/NewAdd";
 import PageTransport from "@/pages/(dashboard)/transport/page";
@@ -97,13 +137,12 @@ import Test23 from "@/pages/(dashboard)/test";
 import Feedback from "@/pages/(dashboard)/support/feedback/Feedback";
 import ChuongTrinhUuDai from "@/pages/(dashboard)/vourcher/banner/page";
 import ChuongTrinhUuDaiAdd from "@/pages/(dashboard)/vourcher/banner/add";
+
 import { List } from "./../pages/(dashboard)/dashboard/list/page";
-import EditProducts from "@/pages/(dashboard)/products/Editt/page";
-import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
 import Dashboard from "./../pages/(dashboard)/dashboard/tongquan/page";
-import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
-import ChuongTrinhUuDaiEdit from "@/pages/(dashboard)/vourcher/banner/edit";
+import Page from "./../pages/(website)/shop/shop";
 import PrivateRoute from "./PrivateRoute";
+
 import ChuongTrinhUuDaiRemote from "@/pages/(dashboard)/vourcher/banner/remote";
 import IntroCard from "@/pages/(dashboard)/adminProfile/profile/IntroCard";
 import Shipper from "@/pages/(van_chuyen)/shipper";
@@ -125,17 +164,30 @@ import WithdrawalRequests from "@/pages/(dashboard)/dohoan/ruttien";
 import Page2 from "@/pages/(website)/_component/shop";
 import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
 import ProductCategories from "@/pages/(website)/shop/_components/ProductCategories";
+import History from "@/pages/(website)/myOrder/_components/history";
+// import SearchResultsPage from "@/pages/(website)/_component/SearchResultsPage";
+// import History from "@/pages/(website)/mywallet/history";
+import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
+import WithdrawalRequests from "@/pages/(dashboard)/dohoan/ruttien";
+import Page2 from "@/pages/(website)/_component/shop";
+// import ProductsList from "@/pages/(website)/Shopuudai/_components/ProductsList";
 import NapTien from "@/pages/(website)/mywallet/NapTien";
 import Test4 from "@/pages/(van_chuyen)/TransportDetail";
-import WalletProtectedRoute from "./WalletProtectedRoute";
-import Test3 from "@/pages/(website)/test3";
+
+import WalletProtectedRoute from './WalletProtectedRoute';
+
+// import ThankYouPage1 from "@/pages/(website)/thankyou/you";
+// import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
+import AllTransport from "@/pages/(van_chuyen)/AllTransport";
 import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
-import AllTransport from "@/pages/(van_chuyen)/AllTransport";
+import Test3 from "@/pages/(website)/test3";
+import Page3 from "@/pages/(website)/Shopuudai/shop";
 import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
 import HoanHang from "@/pages/(website)/myOrder/_components/Hoan";
 import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
+import ShopDM from "@/pages/(website)/shopdm/shop";
 
 const Router = () => {
   //
@@ -149,13 +201,13 @@ const Router = () => {
         <Route path="/" element={<LayoutWebsite />}>
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
-          <Route
-            path="/shop/:tenDanhMucCha/:?/:tenDanhMucConCapBa?"
-            element={<ProductCategories />}
-          />
+          <Route path="/shop/:tenDanhMucCha" element={<ShopDM />} />
+          <Route path="/shop/:tenDanhMucCha/:tenDanhMucCon" element={<ShopDM />} />
+          <Route path="/shop/:tenDanhMucCha/:tenDanhMucCon/:tenDanhMucConCapBa" element={<ShopDM />} />
+
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          <Route path="/tenDanhMucConshop/:slug" element={<Page1 />} />
+          <Route path="/shopp/:slug" element={<Page3 />} />
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
@@ -183,8 +235,6 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
-            <Route path="/mypro/danhgia/:slug" element={<Danhgias />} />
-            <Route path="/mypro/hoanhang/:slug" element={<HoanHang />} />
             {/* <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
