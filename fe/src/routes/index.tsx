@@ -136,7 +136,7 @@ import NapTien from "@/pages/(website)/mywallet/NapTien";
 // import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
 
 import Test4 from "@/pages/(van_chuyen)/TransportDetail";
-import WalletProtectedRoute from "./WalletProtectedRoute";
+import WalletProtectedRoute from './WalletProtectedRoute';
 
 // import ThankYouPage1 from "@/pages/(website)/thankyou/you";
 // import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
@@ -145,6 +145,7 @@ import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
 import Test3 from "@/pages/(website)/test3";
+import Page3 from "@/pages/(website)/Shopuudai/shop";
 
 import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
 import HoanHang from "@/pages/(website)/myOrder/_components/Hoan";
@@ -171,7 +172,7 @@ const Router = () => {
 
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          <Route path="/tenDanhMucConshop/:slug" element={<Page1 />} />
+          <Route path="/shopp/:slug" element={<Page3 />} />
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
@@ -199,8 +200,6 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
-            <Route path="/mypro/danhgia/:slug" element={<Danhgias />} />
-            <Route path="/mypro/hoanhang/:slug" element={<HoanHang />} />
             {/* <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />

@@ -1,3 +1,4 @@
+
 import { sanPham2 } from "@/assets/img";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -23,6 +24,8 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [selectedMau, setSelectedMau] = useState<number[]>([]);
   // console.log(selectedMau);
   // mau sac
+    const { slug,  } = useParams();
+
   const handleItemClick = (id: number) => {
     setSelectedMau(
       (prevSelectedSize) =>
@@ -40,15 +43,26 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
         : [...prevSize, id]
     );
   }; //data
-  const datas = {
-    // danh_muc_cha_ids: [...parentIds],
-    ...(parentIds.length > 0 && { danh_muc_cha_ids: [...parentIds] }),
-    ...(childIds.length > 0 && { danh_muc_con_ids: [...childIds] }),
-    ...(price.length > 0 && { gia_duoi: price[0] }),
-    ...(price.length > 0 && { gia_tren: price[1] }),
-    ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
-    ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
-  };
+//  const { data: promotionalData } = useQuery({
+//    queryKey: ["PROMOTIONAL", slug],
+//    queryFn: async () => {
+//     if (!slug) return null;
+//      const response = await instanceClient.get(`chuong-trinh-uu-dai/${slug}`);
+//     return response.data;
+//   },
+//    enabled: !!slug,
+//  });
+ const datas = {
+  ...(parentIds.length > 0 && { danh_muc_cha_ids: [...parentIds] }),
+  ...(childIds.length > 0 && { danh_muc_con_ids: [...childIds] }),
+  ...(price.length > 0 && { gia_duoi: price[0] }),
+  ...(price.length > 0 && { gia_tren: price[1] }),
+  ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
+  ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
+
+
+
+};
   // console.log(datas);
   // lọc danh mục
   const [expanded, setExpanded] = useState<number[]>([]);
@@ -156,44 +170,24 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     }
   };
 
-  const { tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa } = useParams();
 
-  const [_, setProducts] = useState([]);
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        // Xây dựng endpoint API tùy theo các tham số có giá trị
-        let endpoint = `/sanpham/danhmuc/${tenDanhMucCha}`;
-        if (tenDanhMucCon) endpoint += `/${tenDanhMucCon}`;
-        if (tenDanhMucConCapBa) endpoint += `/${tenDanhMucConCapBa}`;
 
-        const response = await instanceClient.get(endpoint);
-        if (response.data.status) {
-          setProducts(response.data.data);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm:", error);
-      }
-    };
-
-    fetchProducts();
-  }, [tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa]);
-
-  const { data } = useQuery({
+  const { data,  } = useQuery({
     queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post("loc-san-pham", datas); // Gửi datas cho API
+        const response = await instanceClient.post(`chuong-trinh-uu-dai/${slug}`, datas); // Gửi datas cho API
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
         return response.data;
+        
       } catch (error) {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
   });
-  // console.log("data", data?.data?.data);
+  // console.log("data", apiResponse?.chuong_trinh?.san_pham?.data);
   // danh mục
   const { data: locsanpham } = useQuery({
     queryKey: ["LOCSLIBAR"],
@@ -221,7 +215,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     mutationFn: async () => {
       try {
         const response = await instanceClient.post(
-          `loc-san-pham?page=${page}`,
+          `chuong-trinh-uu-dai/${slug}?page=${page}`,
           datas
         );
         if (response.data.status !== true) {
@@ -240,8 +234,9 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     setPage(page);
   };
   const danh_muc = locsanpham?.danhMucCha;
+  const products = data?.data?.chuong_trinh?.san_pham?.data;
+
   // console.log(danh_muc);
-  const products = data?.data?.data;
   // console.log(products);
   useEffect(() => {
     if (
@@ -279,6 +274,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
       setChildIds((prevState) => prevState.filter((id) => id !== grandchildId));
     }
   };
+  
   return (
     <div>
       {" "}
@@ -286,7 +282,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
         <div className="container">
           <div className="flex flex-wrap items-start w-full mt-16">
             {/* <!-- Sidebar Filters --> */}
-            <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0" title="Toggle Filters">
+            <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
               <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
             </button>
             <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0    sticky top-20 ">

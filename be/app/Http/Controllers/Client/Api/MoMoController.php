@@ -419,11 +419,14 @@ class MoMoController extends Controller
             'phuong_thuc_thanh_toan' => 'required|string',
             'ma_xac_minh' => 'nullable|string|min:6|max:6',
         ]);
+    
         try {
             $user = Auth::user();
             $userId = Auth::id();
             $ma_don_hang = explode("-", $request->ma_don_hang)[0];
             $donHang = DonHang::where('ma_don_hang', $request->ma_don_hang)->first();
+    
+            // Thanh toán qua MoMo
             if (in_array($request->phuong_thuc_thanh_toan, [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])) {
                 $mangRequest = [
                     'ma_don_hang' => $ma_don_hang,
@@ -433,13 +436,16 @@ class MoMoController extends Controller
                 $donHang->update([
                     'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
                 ]);
-                // dd(new Request($mangRequest));
                 $url = $this->thanhToanOnlineMomo(new Request($mangRequest));
                 return response()->json(['url' => $url->original['payUrl']]);
-            } else if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT) {
+            }
+    
+            // Thanh toán trực tiếp
+            if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT) {
                 $donHang->update([
                     'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
                 ]);
+    
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
                     'tieu_de' => 'Đơn hàng đã được đặt',
@@ -448,6 +454,7 @@ class MoMoController extends Controller
                     'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
+    
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHang));
                 return response()->json([
@@ -456,41 +463,62 @@ class MoMoController extends Controller
                     'message' => 'Đơn hàng đã được đặt thành công',
                     'data' => $donHang,
                 ], 200);
-            } else if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
+            }
+    
+            // Thanh toán qua ví tiền
+            if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
                 $viTien = $user->viTien;
-                if (Hash::check($request->ma_xac_minh, $viTien->ma_xac_minh)) {
-                    if ($viTien->so_du < $donHang->tong_tien_don_hang) {
-                        return response()->json(['status' => false, 'message' => 'Số dư trong ví tiền không đủ để thanh toán.'], 400);
-                    }
-                    $donHang->update([
-                        'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
-                        'trang_thai_thanh_toan' => DonHang::TTTT_DTT,
-                    ]);
-                    $viTien->update(['so_du' => $viTien->so_du - $donHang->tong_tien_don_hang]);
-                    LichSuGiaoDich::create([
-                        'vi_tien_id' => $viTien->id,
-                        'so_du_truoc' => $viTien->so_du,
-                        'so_du_sau' => $viTien->so_du - $donHang->tong_tien_don_hang,
-                        'ngay_thay_doi' => now(),
-                        'mo_ta' => "Thanh toán đơn hàng {$donHang->ma_don_hang}",
-                    ]);
-                    $thongBao = ThongBao::create([
-                        'user_id' => $userId,
-                        'tieu_de' => 'Đơn hàng đã được đặt',
-                        'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
-                        'loai' => 'Đơn hàng',
-                        'duong_dan' => $donHang->ma_don_hang,
-                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                    ]);
-                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
-                    event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHang));
+    
+                // Kiểm tra mã xác minh
+                if (!Hash::check($request->ma_xac_minh, $viTien->ma_xac_minh)) {
                     return response()->json([
-                        'status' => true,
-                        'status_code' => 200,
-                        'message' => 'Đơn hàng đã được đặt thành công',
-                        'data' => $donHang,
-                    ], 200);
+                        'status' => false,
+'message' => 'Mã xác minh không chính xác.',
+                    ], 400);
                 }
+    
+                // Kiểm tra số dư
+                if ($viTien->so_du < $donHang->tong_tien_don_hang) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Số dư trong ví tiền không đủ để thanh toán.',
+                    ], 400);
+                }
+    
+                // Cập nhật đơn hàng và số dư
+                $donHang->update([
+                    'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
+                    'trang_thai_thanh_toan' => DonHang::TTTT_DTT,
+                ]);
+    
+                $viTien->update(['so_du' => $viTien->so_du - $donHang->tong_tien_don_hang]);
+    
+                LichSuGiaoDich::create([
+                    'vi_tien_id' => $viTien->id,
+                    'so_du_truoc' => $viTien->so_du,
+                    'so_du_sau' => $viTien->so_du - $donHang->tong_tien_don_hang,
+                    'ngay_thay_doi' => now(),
+                    'mo_ta' => "Thanh toán đơn hàng {$donHang->ma_don_hang}",
+                ]);
+    
+                $thongBao = ThongBao::create([
+                    'user_id' => $userId,
+                    'tieu_de' => 'Đơn hàng đã được đặt',
+                    'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
+                    'loai' => 'Đơn hàng',
+                    'duong_dan' => $donHang->ma_don_hang,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+    
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHang));
+    
+                return response()->json([
+                    'status' => true,
+                    'status_code' => 200,
+                    'message' => 'Đơn hàng đã được đặt thành công',
+                    'data' => $donHang,
+                ], 200);
             }
         } catch (\Exception $e) {
             return response()->json([
@@ -498,7 +526,7 @@ class MoMoController extends Controller
                 'status_code' => 500,
                 'message' => 'Lỗi hệ thống',
                 'error' => $e->getMessage()
-            ],  500);
+            ], 500);
         }
     }
 }
