@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang Đăng Nhập</title>
+
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+<body class="h-screen overflow-hidden bg-gray-100 md:bg-white">
+
+      <div class="flex flex-col md:flex-row min-h-screen">
+        <div class="hidden md:flex md:w-1/2 bg-gray-100 relative">
+            <img src="../assets/images/Logo.svg" alt="Krist Logo" class="absolute top-5 left-5 w-22 md:w-34">
+            <img src="../assets/images/lognin/Rectangle 3463274.png" alt="Fashion Model" class="object-cover w-1024 h-800">
+        </div>
+
+    <!-- <div class="flex-1 flex my-20  justify-center p-4 md:p-0"> -->
+      <section class="flex-1 flex items-center justify-center p-4 md:p-0">
+
+      <div class="w-full max-w-md p-6 md:p-8 bg-white shadow-lg rounded-lg border border-slate-100 h-[480px]">
+        <h1 class="text-2xl font-bold mb-4">Chào Mừng 👋</h1>
+        <p class="text-gray-600 mb-6">Vui lòng đăng nhập</p>
+        <form>
+        <div class="mb-4">
+          <label for="email" class="block text-gray-700 mb-2"
+            >Địa Chỉ Email</label
+          >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="robertdavis@sample.com"
+            required
+            class="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-500"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-gray-700 mb-2"
+            >Mật Khẩu</label
+          >
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="Mật Khẩu Của Bạn"
+            class="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-500"
+          />
+        </div>
+        <div class="flex items-center mb-6">
+          <input
+            type="checkbox"
+            id="remember-me"
+            name="remember-me"
+            class="mr-2"
+          />
+          <label for="remember-me" class="text-gray-700"
+            >Ghi Nhớ Đăng Nhập</label
+          >
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-gray-800 text-white p-3 rounded-md hover:bg-gray-900"
+        >
+          Đăng Nhập
+        </button>
+        <a
+          href="#"
+          class="block text-right text-gray-600 mt-4 hover:underline"
+          >Quên Mật Khẩu?</a
+        >
+        </form>
+      </div>
+    <!-- </div> -->
+        </section>
+    </div>
+  </body>
+</html>

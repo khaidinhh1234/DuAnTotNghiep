@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="../public/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Method</title>
+
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://site-assets.fontawesome.com/releases/v6.5.2/css/all.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Heaser -->
+    <header>
+      <div class="container my-3">
+        <div class="flex justify-around lg:justify-between items-center">
+          <div class="order-1 lg:hidden">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </div>
+          <div class="order-2 Logo lg:w-60">
+            <img
+              src="../assets/images/Logo.svg "
+              alt=""
+              class="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
+            />
+          </div>
+
+          <nav class="order-3 hidden lg:block">
+            <ul class="flex items-center space-x-2">
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Shop</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Our Story</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Blog</a
+                >
+              </li>
+              <li>
+                <a
+                  href=""
+                  class="hover:shadow-slate-500/50 font-medium hover:text-white text-lg hover:bg-blackL hover:shadow-lg hover:border-0 px-4 py-2 rounded-lg"
+                  >Contact Us</a
+                >
+              </li>
+            </ul>
+          </nav>
+          <div class="order-4 icon space-x-6 *:cursor-pointer">
+            <span class=""
+              ><i class="fa-solid fa-magnifying-glass text-xl"></i
+            ></span>
+            <span><i class="fa-regular fa-heart text-xl"></i></span>
+            <span>
+              <a href="./src/checkout.html"
+                ><i class="fa-regular fa-bag-shopping text-xl relative">
+                  <span
+                    class="-bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center"
+                    >0</span
+                  ></i
+                ></a
+              >
+            </span>
+
+            <button
+              class="btn-black lg:text-lg lg:py-3 lg:px-7 py-2 px-5 font-serif rounded-lg"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!--Payment Method -->
+      <section class="container">
+        <div class="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
+          <h1 class="h1cart">Payment Method</h1>
+          <div class="grid lg:grid-cols-12 lg:gap-20 px-0 justify-center">
+            <div
+              class="lg:col-span-6 xl:col-span-8 md:col-span-4 md:w-full w-[425px]"
+            >
+              <div class="mb-7">
+                <div class="flex items-center space-x-0">
+                  <div class="pl-1">
+                    <i
+                      class="fa-regular fa-house bg-blackL w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
+                      style="color: #ffffff"
+                    ></i>
+                  </div>
+                  <hr class="m-0 dashed-black" />
+                  <div class="text-center">
+                    <i
+                      class="fa-light fa-credit-card bg-blackL text-white w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
+                    ></i>
+                  </div>
+                  <hr class="m-0 dashed-line" />
+                  <div class="pr-1 text-center">
+                    <i
+                      class="fa-light fa-file-invoice bg-stone-100 w-11 h-11 rounded-lg px-[10px] py-3 text-xl mb-2"
+                    ></i>
+                  </div>
+                </div>
+                <div class="flex justify-between space-x-0">
+                  <div class="text-center">
+                    <span class="">Address</span>
+                  </div>
+
+                  <div class="text-center">
+                    <span>Payment Method</span>
+                  </div>
+
+                  <div class="text-center">
+                    <span>Review</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-[30px]">
+                <h3 class="title-h3">Select a payment method</h3>
+
+                <form class="my-7 mb-8">
+                  <div class="my-5 flex items-center custom-radio">
+                    <input
+                      type="radio"
+                      id="customRadio"
+                      name="radioGroup"
+                      class="bg-blackL"
+                    />
+
+                    <label for="name" class="title-h3 px-3"
+                      >Debit/Credit Card</label
+                    >
+                  </div>
+                  <div class="my-5">
+                    <label for="name" class="text-md px-1">Card Number</label
+                    ><br />
+                    <input
+                      type="text"
+                      value="3897 22XX XXXX 3890"
+                      placeholder="Enter Card Number"
+                      class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] lg:w-[460px] md:w-[720px] xl:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                    />
+                  </div>
+                  <div class="my-5">
+                    <label for="name" class="text-md px-1">Card Name</label
+                    ><br />
+                    <input
+                      type="text"
+                      value="John Doe"
+                      placeholder="Enter Card Name"
+                      class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[400px] lg:w-[460px] md:w-[720px] xl:w-[720px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                    />
+                  </div>
+                  <div
+                    class="flex justify-between xl:w-[720px] md:w-[720px] lg:w-[460px] w-[400px] mb-7"
+                  >
+                    <div class="">
+                      <label for="name" class="text-md px-3"> Expiry Date</label
+                      ><br />
+                      <input
+                        type="text"
+                        value="09/26"
+                        class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[190px] lg:w-[210px] xl:w-[350px] md:w-[350px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                      />
+                    </div>
+                    <div class="">
+                      <label for="name" class="text-md px-3">CVV</label><br />
+                      <input
+                        type="text"
+                        value="***"
+                        class="border border-t-2 border-l-2 border-blackL px-5 py-3 w-[190px] lg:w-[210px] xl:w-[350px] md:w-[350px] focus:ring-1 focus:ring-slate-500 rounded-xl"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    class="hidden lg:block btn-black px-10 w-[320px] py-4 rounded-lg text-md font-medium"
+                  >
+                    Add Card
+                  </button>
+                </form>
+                <form action="">
+                  <div
+                    class="border-t border-hrBlack pt-7 mb-5 flex items-center custom-radio"
+                  >
+                    <input
+                      type="radio"
+                      id="customRadio"
+                      name="radioGroup"
+                      class="bg-blackL"
+                    />
+
+                    <label for="name" class="title-h3 px-3">Google Pay</label>
+                  </div>
+                  <div
+                    class="border-t border-hrBlack pt-4 mb-5 flex items-center custom-radio"
+                  >
+                    <input
+                      type="radio"
+                      id="customRadio"
+                      name="radioGroup"
+                      class="bg-blackL"
+                    />
+
+                    <label for="name" class="title-h3 px-3">Paypal</label>
+                  </div>
+                  <div
+                    class="border-t border-hrBlack pt-4 mb-7 flex items-center custom-radio"
+                  >
+                    <input
+                      type="radio"
+                      id="customRadio"
+                      name="radioGroup"
+                      class="bg-blackL"
+                    />
+
+                    <label for="name" class="title-h3 px-3"
+                      >Cash on Delivery</label
+                    >
+                  </div>
+                  <a href="ordersummary.html">
+                    <button
+                      class="btn-black px-10 w-[320px] py-4 rounded-lg mb-5 text-md font-medium"
+                    >
+                      Continue
+                    </button></a
+                  >
+                </form>
+              </div>
+            </div>
+            <div class="lg:col-span-4 col-span-6">
+              <div class="border px-4 py-1 lg:w-[359px] rounded-md">
+                <div
+                  class="flex justify-between font-bold border-hrBlack border-b py-4"
+                >
+                  <h4>Subtotal</h4>
+                  <span class="px-2">$200.00</span>
+                </div>
+                <div class="py-4">
+                  <label class="text-xs">Enter Discount Code</label><br />
+
+                  <div class="flex">
+                    <input
+                      type="text"
+                      placeholder="FLAT50"
+                      class="lg:w-[218px] w-[300px] h-[56px] px-4 rounded-s-lg focus:outline-none border border-l-2 border-t-2 border-blackL border-r-0"
+                    />
+                    <button
+                      class="bg-black hover:bg-stone-700 w-[101px] h-[55px] border border-black rounded-r-lg text-white"
+                    >
+                      Apply
+                    </button>
+                  </div>
+
+                  <div
+                    class="py-4 flex justify-between font-medium border-b border-hrBlack"
+                  >
+                    <p>Delivery Charge</p>
+                    <span class="px-2">$5.00</span>
+                  </div>
+                </div>
+                <div class="flex justify-between font-bold mb-8">
+                  <h4>Grand Total</h4>
+                  <span>$205.00</span>
+                </div>
+                <button
+                  type="submit"
+                  class="lg:hidden block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
+                >
+                  Add Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="bg-black text-white">
+      <div class="container">
+        <div
+          class="grid grid-cols-12 gap-8 mx-4 py-14 border-b border-stone-700"
+        >
+          <div class="lg:col-span-4 col-span-6">
+            <div>
+              <img
+                src="../assets/images/Logofooter.png "
+                alt=""
+                class="lg:w-[143px] lg:h-[42.24px] w-32 h-8"
+              />
+            </div>
+            <div class="my-[39px] space-y-5 w-[261px]">
+              <div class="*:px-1">
+                <i class="fa-regular fa-phone-volume text-lg"></i>
+                <span class="text-base">(704)555-0127</span>
+              </div>
+              <div class="*:px-1">
+                <i class="fa-light fa-envelope text-lg"></i
+                ><span class="mx-1">kist@example.com</span>
+              </div>
+              <div class="*:px-1 flex">
+                <i class="fa-regular fa-location-dot text-lg"></i>
+                <span class="mx-2 lg:w-full w-48"
+                  >3891 Ranchview Dr.Richardson, California 626339</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-2 col-span-6">
+            <h1 class="text-xl font-semibold mb-3">Information</h1>
+            <ul class="">
+              <li class="mb-3"><a href="" class="">My Acount</a></li>
+              <li class="mb-3"><a href="">Login</a></li>
+              <li class="mb-3"><a href="">My Cart</a></li>
+              <li class="mb-3"><a href="">My Wishlist</a></li>
+
+              <li class="mb-3"><a href="">Checkout</a></li>
+            </ul>
+          </div>
+          <div class="lg:col-span-2 col-span-6">
+            <h1 class="text-xl font-semibold mb-3">Service</h1>
+            <ul>
+              <li class="mb-3"><a href="">About Us</a></li>
+              <li class="mb-3"><a href="">Careers</a></li>
+              <li class="mb-3"><a href="">Delivery Information</a></li>
+              <li class="mb-3"><a href="">Privacy Policy</a></li>
+              <li class="mb-3"><a href="">Terms & Conditions</a></li>
+            </ul>
+          </div>
+          <div class="lg:col-span-4 col-span-6">
+            <h1 class="text-xl font-semibold mb-4">Subscribe</h1>
+            <p class="lg:w-80 mb-5">
+              Enter your email below to be the first to know about new
+              collections and product launches.
+            </p>
+            <div class="relative">
+              <i
+                class="fa-regular fa-envelope absolute top-3 left-4 text-2xl"
+              ></i>
+
+              <input
+                type="email"
+                placeholder="Your Email"
+                class="lg:w-[305px] w-[200px] bg-blackL text-[15px] py-3 px-12 rounded-lg text-white border shadow-lg shadow-slate-600/50 focus:ring focus:ring-blue-500 focus:ring-opacity-50 focus:outline-none placeholder-white"
+              />
+              <button type="submit">
+                <i
+                  class="fa-solid fa-arrow-right absolute text-gray-400 lg:top-4 lg:left-[270px] text-xl top-4 left-[170px]"
+                ></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between py-3">
+          <div class="">
+            <img src="../assets/images/bank.png" alt="" class="h-7" />
+          </div>
+          <div>© 2024 Krist All Rights are Reserved.</div>
+          <div class="*:text-2xl *:px-3">
+            <i class="fa-brands fa-facebook" style="color: #ffffff"></i
+            ><i class="fa-brands fa-instagram"></i
+            ><i class="fa-brands fa-twitter" style="color: #ffffff"></i>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
