@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
 class ValidateKhoangNgayNhapRequest extends FormRequest
 {
     /**
@@ -38,3 +37,4 @@ class ValidateKhoangNgayNhapRequest extends FormRequest
         ];
     }
 }
+

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const CategoriesAdd = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const nav = useNavigate();
   const [allCategories, setAllCategories] = useState<ICategories[]>([]);
@@ -111,16 +111,21 @@ const CategoriesAdd = () => {
               <Form.Item
                 label="Chọn danh mục cha"
                 name="category"
-                rules={[{ required: false }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Tên danh mục cha bắt buộc phải nhập!",
+                  },
+                ]}
               >
                 {allCategoriesData ? (
                   <AddCategorySelect
                     categoriesData={allCategoriesData}
                     onChange={(value) => {
-                      console.log('Category selected:', value);
+                      console.log("Category selected:", value);
                       form.setFieldsValue({ category: value });
                     }}
-                    value={form.getFieldValue('category')}
+                    value={form.getFieldValue("category")}
                   />
                 ) : (
                   <Select disabled placeholder="Đang tải danh mục..." />

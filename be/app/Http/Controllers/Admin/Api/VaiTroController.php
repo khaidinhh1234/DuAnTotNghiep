@@ -222,6 +222,7 @@ class VaiTroController extends Controller
                 'huykichhoat' => 'Hủy kích hoạt',
                 'thongbao' => 'Thông báo',
                 'tttt' => 'Trạng thái thanh toán',
+                'tthh' => 'Trạng thái',
                 'ttdh' => 'Trạng thái',
                 'ttvc' => 'Trạng thái',
                 'danhmuc' => 'danh mục',
