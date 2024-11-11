@@ -94,7 +94,7 @@ const Danhgias = () => {
   const { mutate: mutateDanhgia } = useMutation({
     mutationFn: async (data: any) => {
       try {
-        const response = await instanceClient.post(`danh-gia`, data);
+        const response = await instanceClient.post(`danhgia`, data);
         if (response.status === 200) {
           message.success("Đánh giá thành công");
           nav("/mypro/myorder");

@@ -6,6 +6,7 @@ import instanceClient from "@/configs/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import ProductCategoriesDM from "./_components/ProductCategoriesDM";
+import AllProductDM from "./_components/AllProductDM";
 const ShopDM = () => {
   const queryclient = useQueryClient();
   const { mutate, isPending } = useMutation({
@@ -40,7 +41,7 @@ const ShopDM = () => {
   };
   return (
     <>
-      <AllProduct />
+      <AllProductDM />
       <ProductCategoriesDM
         handleWishlist={handleWishlist}
         isPending={isPending}

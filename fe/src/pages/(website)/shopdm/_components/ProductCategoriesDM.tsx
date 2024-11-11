@@ -715,29 +715,28 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
 //     enabled: !!tenDanhMucCha && !!tenDanhMucCon && !!tenDanhMucConCapBa,
 //   });
 // console.log(categoriesData?.data?.san_pham)
-const { data, error, isSuccess } = useQuery({
+const { data } = useQuery({
     queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
         try {
-            const response = await instanceClient.post(`/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}/${tenDanhMucConCapBa}`, datas);
+            let url = "/danhmuc";
+
+            if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
+            if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
+            if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
+
+            const response = await instanceClient.post(url);
+
             if (response.data.status !== true) {
                 throw new Error("Error fetching product");
             }
-            return response.data;
+
+            return response.data; 
         } catch (error) {
             throw new Error("Lỗi khi lấy thông tin");
         }
     },
 });
-
-useEffect(() => {
-    if (isSuccess && data) {
-        // Xử lý dữ liệu khi query thành công
-        console.log("Data fetched successfully:", data);
-        queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
-    }
-}, [isSuccess, data]);
-
 console.log("data", data?.data?.san_pham?.data);
 
   // danh mục
@@ -766,13 +765,20 @@ console.log("data", data?.data?.san_pham?.data);
   const { mutate } = useMutation({
     mutationFn: async () => {
       try {
+        let url = "/danhmuc";
+        if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
+        if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
+        if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
+
         const response = await instanceClient.post(
-          `loc-san-pham?page=${page}`,
+          `${url}?page=${page}`,
           datas
         );
+
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
+
         return response.data;
       } catch (error) {
         throw new Error("Lỗi khi lấy thông tin");
@@ -781,7 +787,8 @@ console.log("data", data?.data?.san_pham?.data);
     onSuccess: (data) => {
       queryClient.setQueryData(["PRODUCTSLOC"], data);
     },
-  });
+});
+  
   const onPage = (page: number) => {
     setPage(page);
   };

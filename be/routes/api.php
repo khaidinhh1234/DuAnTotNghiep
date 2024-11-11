@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
 use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Admin\Api\HangThanhVienController;
+use App\Http\Controllers\Admin\api\HoanHangController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TaiKhoanController;
 use App\Http\Controllers\Admin\Api\ThongBaoTelegramController;
@@ -276,6 +277,10 @@ Route::middleware(['auth.sanctum'])
                 Route::put('vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
                 Route::get('lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen'])->withoutMiddleware('auth.checkrole');
                 Route::put('vanchuyen/xac-nhan-van-chuyen/{id}', [VanChuyenController::class, 'xacNhanVanChuyen'])->name('vanchuyen.xacnhan');
+                //Hoàn hàng
+                Route::get('hoanhang/danh-sach', [HoanHangController::class, 'index'])->name('hoanhang.index');
+                Route::get('hoanhang/chitiet/{id}', [HoanHangController::class, 'show'])->name('hoanhang.show');
+                Route::put('hoanhang/xac-nhan-hoan-hang', [HoanHangController::class, 'capNhatTrangThaiHoanHang'])->name('hoanhang.tthh');
             });
 
         //Danh Mục Tin Tức
