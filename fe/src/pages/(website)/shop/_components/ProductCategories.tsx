@@ -183,7 +183,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post("loc-san-pham", datas); // Gửi datas cho API
+        const response = await instanceClient.post("  ", datas); // Gửi datas cho API
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
         }
