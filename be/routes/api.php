@@ -160,6 +160,8 @@ Route::middleware([])
 
             //Yêu cầu rút tiền
             Route::post('/rut-tien/{id}', [DonHangClientController::class, 'yeuCauRutTien']);
+
+            Route::get('lich-su-tim-kiem', [TrangChuController::class, 'lichSuTimKiem']);
         });
 
         Route::group([], function () {
