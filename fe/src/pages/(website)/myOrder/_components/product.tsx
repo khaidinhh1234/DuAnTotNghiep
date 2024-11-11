@@ -9,6 +9,8 @@ import React from "react";
 import { FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
 import { Flex, Rate } from "antd";
 import Danhgia from "./Danhgia";
+import VerificationModal from "../../ShipingAdrres/VerificationModal";
+import { toast } from "react-toastify";
 
 // Component hiển thị thông tin sản phẩm
 const isToday = (date: any) => {
@@ -49,6 +51,8 @@ const ProductItem = ({
   const queryClient = useQueryClient();
   const [li_do_huy_hang, setValue] = useState<string>("");
   const [phuong_thuc_thanh_toan, setPhuongthuc] = useState<any>({});
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       // console.log(data);
@@ -125,7 +129,12 @@ const ProductItem = ({
   const { mutate: mutatePayment, isPending } = useMutation({
     mutationFn: async (data: any) => {
       // console.log(data);
+
       try {
+        if (data.phuong_thuc_thanh_toan === "Ví tiền") {
+          setIsVerificationModalOpen(true);
+          return;
+        }
         if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
           
           const response = await instanceClient.post("thanh-toan-lai", data);
@@ -169,7 +178,27 @@ const ProductItem = ({
     // console.log(data);
     mutatePayment(data);
   };
-
+  const handleVerification = async (verificationCode: string) => {
+    try {
+      const paymentData = {
+        ma_don_hang,
+        phuong_thuc_thanh_toan: "Ví tiền", 
+        ma_xac_minh: verificationCode
+      };
+  
+      const response = await instanceClient.post("thanh-toan-lai", paymentData);
+      
+      if (response.status === 200) {
+        toast.success("Thanh toán bằng ví thành công");
+        setIsVerificationModalOpen(false);
+        setPayment(false);
+        nav(`/thankyou?orderId=${ma_don_hang}&resultCode=0`);
+      }
+    } catch (error : any) {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
+    }
+  };
+  
   const PaymentClose = [
     {
       name: "Thanh toán quét mã MoMoQR",
@@ -251,6 +280,12 @@ const ProductItem = ({
                   >
                     Thanh toán ngay
                   </button>
+                  <VerificationModal
+      isOpen={isVerificationModalOpen}
+      onClose={() => setIsVerificationModalOpen(false)} 
+      onVerify={handleVerification}
+    />
+
                 </div>{" "}
               </form>
             </div>
