@@ -27,7 +27,7 @@ const DealsOfTheMonth = ({ chuong_trinh_uu_dai }: any) => {
                     <img
                       src={item?.duong_dan_anh}
                       alt="Deal Image"
-                      className="w-full lg:h-[500px] object-cover mb-1 px-5 lg:px-auto"
+                      className="w-full lg:h-[500px] object-contain mb-1 px-5 lg:px-auto"
                     />
                   </Link>
                 </div>
