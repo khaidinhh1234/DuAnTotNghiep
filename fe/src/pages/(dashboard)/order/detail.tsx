@@ -358,17 +358,18 @@ const Detail = ({ record }: any) => {
                         </td>
                         <td className="text-center w-[20%] font-semibold  ">
                           <span className="text-gray-400 line-through text-xs">
-                            {item?.bien_the_san_pham?.gia_ban.toLocaleString()}{" "}
+                            {item?.bien_the_san_pham?.gia_ban?.toLocaleString() ??
+                              0}{" "}
                           </span>{" "}
                           {(
                             item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi ??
                             item?.bien_the_san_pham?.gia_khuyen_mai ??
                             item?.bien_the_san_pham?.gia_ban
-                          ).toLocaleString()}
+                          )?.toLocaleString() ?? 0}
                           VNĐ
                         </td>
                         <td className="text-center w-[35%] font-semibold">
-                          {(item?.thanh_tien).toLocaleString()} VNĐ
+                          {item?.thanh_tien?.toLocaleString() ?? 0} VNĐ
                         </td>
                       </tr>
                     ))}
@@ -476,10 +477,11 @@ const Detail = ({ record }: any) => {
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {tong?.tong_thanh_tien_san_pham.toLocaleString(
-                        "vi-VN"
-                      )
-                      // .toLocaleString()
+                      {
+                        tong?.tong_thanh_tien_san_pham?.toLocaleString(
+                          "vi-VN"
+                        ) ?? 0
+                        // .toLocaleString()
                       }
                     </span>{" "}
                     VNĐ
@@ -490,7 +492,7 @@ const Detail = ({ record }: any) => {
                   <p className="text-base font-semibold">
                     <span>
                       {tong?.so_tien_giam_gia
-                        ? "-" + tong?.so_tien_giam_gia.toLocaleString("vi-VN")
+                        ? "-" + tong?.so_tien_giam_gia?.toLocaleString("vi-VN")
                         : 0}{" "}
                       VNĐ
                     </span>
@@ -508,7 +510,7 @@ const Detail = ({ record }: any) => {
                   </h1>
                   <p className="text-lg font-bold">
                     {" "}
-                    {(tong?.tong_tien).toLocaleString("vi-VN")} VNĐ
+                    {tong?.tong_tien?.toLocaleString("vi-VN") ?? 0} VNĐ
                   </p>
                 </div>
               </div>

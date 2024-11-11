@@ -7,6 +7,7 @@ use App\Models\BienTheKichThuoc;
 use App\Models\BienTheMauSac;
 use App\Models\DanhMuc;
 use App\Models\SanPham;
+use App\Traits\LocSanPhamTrait;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TrangSanPhamController extends Controller
 {
+    use LocSanPhamTrait;
     // public function danhMucCha(Request $request)
     // {
     //     try {
@@ -418,112 +420,38 @@ class TrangSanPhamController extends Controller
     public function laySanPhamTheoDanhMuc($tenDanhMucCha, $tenDanhMucCon = null, $tenDanhMucConCapBa = null)
     {
         try {
-            // Truy vấn danh mục cha (cấp 1)
-            $danhMucCha = DanhMuc::with('sanPhams')->where('duong_dan', $tenDanhMucCha)->first();
+            $danhMucCha = DanhMuc::query()->where('duong_dan', $tenDanhMucCha)->first();
 
-            // Kiểm tra danh mục cha có tồn tại
             if (!$danhMucCha) {
                 return response()->json(['message' => 'Không tìm thấy danh mục'], 404);
             }
 
-            // Khởi tạo biến chứa sản phẩm
             $sanPhams = null;
-
-            // Nếu có danh mục cấp 2
             if ($tenDanhMucCon) {
-                // Tìm danh mục cấp 2
                 $danhMucCon = DanhMuc::where('duong_dan', $tenDanhMucCon)->first();
 
-                // Kiểm tra danh mục cấp 2 có tồn tại
                 if (!$danhMucCon) {
                     return response()->json(['message' => 'Danh mục con không tồn tại'], 404);
                 }
 
-                // Nếu có danh mục cấp 3
                 if ($tenDanhMucConCapBa) {
-                    // Tìm danh mục cấp 3
                     $danhMucConCapBa = DanhMuc::where('duong_dan', $tenDanhMucConCapBa)->first();
 
-                    // Kiểm tra danh mục cấp 3 có tồn tại
                     if (!$danhMucConCapBa) {
                         return response()->json(['message' => 'Danh mục con cấp ba không tồn tại'], 404);
                     }
 
-                    // Lấy sản phẩm từ danh mục cấp 3
                     $sanPhams = SanPham::where('danh_muc_id', $danhMucConCapBa->id);
                 } else {
-                    // Nếu chỉ có danh mục cấp 2, lấy tất cả sản phẩm từ các danh mục cấp 3 thuộc danh mục cấp 2
-                    $danhMucCap3Ids = DanhMuc::where('cha_id', $danhMucCon->id)->pluck('id');
-                    $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucCap3Ids);
+                    $danhMucConIds = DanhMuc::where('cha_id', $danhMucCon->id)->pluck('id');
+                    $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucConIds);
                 }
             } else {
-                // Nếu không có danh mục con, lấy tất cả sản phẩm từ danh mục cha và các danh mục con của nó
                 $danhMucIds = $this->layDanhMucIds($danhMucCha);
                 $sanPhams = SanPham::whereIn('danh_muc_id', $danhMucIds);
             }
 
-            $soLuongSanPhamMoiTrang = request()->get('per_page', 8);
-
-            $sanPhams = $sanPhams->where('san_phams.trang_thai', 1)
-                ->select(
-                    'san_phams.id',
-                    'san_phams.ten_san_pham',
-                    'san_phams.anh_san_pham',
-                    'san_phams.created_at',
-                    'san_phams.ma_san_pham',
-                    'san_phams.duong_dan',
-                    'san_phams.hang_moi'
-                )
-                ->addSelect([
-                    DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
-                    DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat')
-                ])
-                ->leftJoin('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
-                ->groupBy('san_phams.id')
-                ->orderBy('san_phams.created_at', 'desc')
-                ->paginate($soLuongSanPhamMoiTrang);
-
-            // Xử lý kết quả trả về
-            $result = $sanPhams->map(function ($sanPham) {
-                $mauSacVaAnh = $sanPham->bienTheSanPham->flatMap(function ($bienThe) {
-                    return $bienThe->anhBienThe->map(function ($anh) use ($bienThe) {
-                        return [
-                            'hinh_anh' => optional($bienThe->anhBienThe->first())->duong_dan_anh,
-                            'ma_mau_sac' => optional($bienThe->mauBienThe)->ma_mau_sac,
-                            'ten_mau_sac' => optional($bienThe->mauBienThe)->ten_mau_sac,
-                        ];
-                    });
-                })->unique('ma_mau_sac')->values();
-
-                $trangThaiYeuthich = false;
-                if (Auth::guard('api')->check()) {
-                    $user = Auth::guard('api')->user();
-                    $trangThaiYeuthich = $sanPham->khachHangYeuThich->contains('id', $user->id);
-                }
-
-                return [
-                    'id' => $sanPham->id,
-                    'ten_san_pham' => $sanPham->ten_san_pham,
-                    'duong_dan' => $sanPham->duong_dan,
-                    'anh_san_pham' => $sanPham->anh_san_pham ?? 'default_image.jpg',
-                    'hang_moi' => $sanPham->hang_moi,
-                    'gia_thap_nhat' => $sanPham->gia_thap_nhat,
-                    'gia_cao_nhat' => $sanPham->gia_cao_nhat,
-                    'bien_the' => $sanPham->bienTheSanPham->map(function ($bienThe) {
-                        return [
-                            'id' => $bienThe->id,
-                            'so_luong_bien_the' => $bienThe->so_luong_bien_the ?? 0,
-                            'gia_ban' => $bienThe->gia_ban ?? 0,
-                            'gia_khuyen_mai' => $bienThe->gia_khuyen_mai ?? $bienThe->gia_ban,
-                            'gia_khuyen_mai_tam_thoi' => $bienThe->gia_khuyen_mai_tam_thoi ?? null,
-                            'mau_sac' => $bienThe->mauBienThe->ten_mau_sac ?? 'Không xác định',
-                            'kich_thuoc' => $bienThe->kichThuocBienThe->kich_thuoc ?? 'Không xác định',
-                        ];
-                    }),
-                    'mau_sac_va_anh' => $mauSacVaAnh,
-                    'trang_thai_yeu_thich' => $trangThaiYeuthich,
-                ];
-            });
+            $result = $sanPhams->get();
 
             return response()->json([
                 'status' => true,
@@ -536,9 +464,6 @@ class TrangSanPhamController extends Controller
                         'cha_id' => $danhMucCha->cha_id,
                         'anh_danh_muc' => $danhMucCha->anh_danh_muc,
                         'duong_dan' => $danhMucCha->duong_dan,
-                        'created_at' => $danhMucCha->created_at,
-                        'updated_at' => $danhMucCha->updated_at,
-                        'deleted_at' => $danhMucCha->deleted_at,
                         'children' => $danhMucCha->children->map(function ($child) {
                             return [
                                 'id' => $child->id,
@@ -565,6 +490,7 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
+
 
     // Hàm đệ quy để lấy tất cả ID danh mục con
     protected function layDanhMucIds($danhMuc)

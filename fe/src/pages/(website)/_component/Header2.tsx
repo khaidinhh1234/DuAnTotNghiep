@@ -78,7 +78,7 @@ const Header2 = () => {
                 if (response.data.status) {
                     const categories = response.data.data.map((category: any) => ({
                         id: category.id,
-ten_danh_muc: category.ten_danh_muc,
+                        ten_danh_muc: category.ten_danh_muc,
                         duong_dan: category.duong_dan,
                         con: [] // Mảng con ban đầu rỗng
                     }));
@@ -127,20 +127,24 @@ ten_danh_muc: category.ten_danh_muc,
                 key: category.id.toString(),
                 label: (
                     <div className="menu-item py-5 flex flex-col gap-y-2 !items-start !m-0 !p-0 !mx-28 !gap-x-20">
-                        <Link className="row text-black text-sm font-bold" to={`/${category.duong_dan}`} >
-                            {category.ten_danh_muc} 
+                        <Link
+                            className="row text-black text-sm font-bold"
+                            to={`/shop/${category.duong_dan}`} // Chỉ có danh mục cha
+                        >
+                            {category.ten_danh_muc}
                         </Link>
+
+
                         {category.con && category.con.length > 0 && (
                             <div className="subcategories flex flex-col">
                                 {category.con.map((subCategory: any) => (
-                                    <a
+                                    <Link
                                         key={subCategory.id}
-                                        href={`/${subCategory.duong_dan}`}
-                                        rel="noopener noreferrer"
+                                        to={`/shop/${category.duong_dan}/${subCategory.duong_dan}`}
                                         className="text-gray-950 text-sm"
                                     >
                                         {subCategory.ten_danh_muc}
-                                    </a>
+                                    </Link>
                                 ))}
                             </div>
                         )}
@@ -149,9 +153,7 @@ ten_danh_muc: category.ten_danh_muc,
             }))
             : [];
     };
-
-
-    <Menu items={renderMenuItems(categories)} className="m-0 p-0" />
+    <Menu items={renderMenuItems(categories)} className="m-0 p-0" />;
 
 
 
@@ -161,7 +163,7 @@ ten_danh_muc: category.ten_danh_muc,
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as any)) {
                 // Khi click ra ngoài, ẩn phần tử
-setcheck(false);
+                setcheck(false);
             }
         };
 
@@ -276,7 +278,7 @@ setcheck(false);
             name: "Sản phẩm",
             path: "/shop",
         },
-{
+        {
             name: "Giới thiệu",
             path: "/ourstory",
         },
@@ -347,7 +349,7 @@ setcheck(false);
         //                                             isActive ? "underline decoration-sky-500" : ""
         //                                         }
         //                                     >
-//                                         {item.name}
+        //                                         {item.name}
         //                                     </NavLink>
         //                                 </li>
         //                             ))}
@@ -402,7 +404,7 @@ setcheck(false);
         //                     <li>
         //                             <a href="/" className="px-4 py-2 block hover:bg-gray-100">Trang chủ</a>
         //                         </li>
-//                         {menuItems.map((category) => (
+        //                         {menuItems.map((category) => (
         //                             <li
         //                                 key={category.id}
         //                                 className="relative group"
@@ -453,7 +455,7 @@ setcheck(false);
         //                             >
         //                                 <Input
         //                                     placeholder="Nhập từ khóa tìm kiếm"
-//                                     size="large"
+        //                                     size="large"
         //                                     value={searchValue}
         //                                     onChange={(e) => setSearchValue(e.target.value)}
         //                                     onPressEnter={() => onSearch(searchValue)}
@@ -502,7 +504,7 @@ setcheck(false);
         //                                 <a href="/gio-hang">
         //                                     <i className="fa-regular fa-bag-shopping text-xl relative">
         //                                         <span
-//                                             className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
+        //                                             className={`${menu === true ? "bg-opacity-60 text-opacity-60" : ""
         //                                                 } -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
         //                                         >
         //                                             {data?.tong_so_luong}
@@ -542,7 +544,7 @@ setcheck(false);
         //                                         </li>
         //                                         <hr />
         //                                         {!phanquyen || phanquyen.length === 0 ? (
-//                                             ""
+        //                                             ""
         //                                         ) : (
         //                                             <>
         //                                                 <li className="my-1">
@@ -581,7 +583,7 @@ setcheck(false);
         //                                             <a
         //                                                 onClick={logout}
         //                                                 href=""
-//                                                 className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
+        //                                                 className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
         //                                             >
         //                                                 <img
         //                                                     src="https://github.com/shadcn.png"
@@ -631,25 +633,25 @@ setcheck(false);
                     <a href="/ourstory" className="text-xl">Giới thiệu</a>
                     {mainMenuItems.map((item) => (
                         <div
-key={item.id}
+                            key={item.id}
                             onMouseEnter={() => handleMouseEnter(item.id)}
                             onMouseLeave={handleMouseLeave}
                             className="relative text-xl"
                         >
                             <Dropdown
                                 menu={{
-                                    items: renderMenuItems(categories),  // Đảm bảo truyền categories vào hàm renderMenuItems
+                                    items: renderMenuItems(categories),
                                     className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
                                 }}
                             >
-                                <a href="#" className="text-black">{item.label}</a>
+                                {/* Chuyển hướng đến /shop với id danh mục */}
+                                <Link to={`/shop?categoryId=${item.id}`} className="text-black">
+                                    {item.label}
+                                </Link>
+
                             </Dropdown>
                         </div>
                     ))}
-
-
-
-
                     <Link to="/blog" className="text-xl">Bài viết</Link>
                     <Link to="/vourcher" className="text-xl">Khuyến mại</Link>
                     <Link to="/contact" className="text-xl">Liên hệ</Link>
@@ -695,7 +697,7 @@ key={item.id}
                             onMouseLeave={() => setShowNotifications(false)}
                         >
                             <i className="fa-regular fa-bell text-xl relative cursor-pointer">
-<span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                                <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
                                     {dataCount}
                                 </span>
                             </i>
@@ -730,7 +732,7 @@ key={item.id}
                             <CartOverlay isVisible={isCartVisible} />
                             {/* </div> */}
                         </span>
-                       
+
                         <Avatar className="relative" onClick={() => setcheck(!check)}>
                             <AvatarImage src={member?.anh_nguoi_dung} />
                             <AvatarFallback>CN</AvatarFallback>
@@ -748,7 +750,7 @@ key={item.id}
                                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg"
                                         >
                                             <img
-src=""
+                                                src=""
                                                 alt=""
                                                 className="w-[30px] h-[30px] rounded-full"
                                             />
@@ -797,7 +799,7 @@ src=""
                                     </li>
                                     <li className="mb-2">
                                         <a
-onClick={logout}
+                                            onClick={logout}
                                             href=""
                                             className="text-black flex hover:bg-slate-300 px-2 pt-2 rounded-lg "
                                         >

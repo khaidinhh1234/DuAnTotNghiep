@@ -147,6 +147,7 @@ import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
 import AllTransport from "@/pages/(van_chuyen)/AllTransport";
 import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
+import Page3 from "@/pages/(website)/Shopuudai/shop";
 
 const Router = () => {
   //
@@ -166,7 +167,7 @@ const Router = () => {
           />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
-          <Route path="/shop/:slug" element={<Page1 />} />
+          <Route path="/shop/:slug" element={<Page3 />} />
           <Route path="/vourcher" element={<Voucher />} />
           <Route path="/myorder" element={<MyOrder />} />
           <Route path="/ordersummary" element={<Ordersummary />} />
