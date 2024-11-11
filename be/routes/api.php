@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Api\MaKhuyenMaiController;
 use App\Http\Controllers\Admin\Api\DanhMucTinTucController;
 use App\Http\Controllers\Admin\Api\DonHangController;
 use App\Http\Controllers\Admin\Api\HangThanhVienController;
+use App\Http\Controllers\Admin\api\HoanHangController;
 use App\Http\Controllers\Admin\Api\SanPhamController;
 use App\Http\Controllers\Admin\Api\TaiKhoanController;
 use App\Http\Controllers\Admin\Api\ThongBaoTelegramController;
@@ -75,7 +76,7 @@ Route::middleware([])
         // lấy tất cả sản phẩm
         Route::group([], function () {
             Route::get('lay-tat-ca-san-pham', [TrangSanPhamController::class, 'layTatCaSanPham']);
-//            Route::get('sanpham/danhmuc/{slug}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
+            //            Route::get('sanpham/danhmuc/{slug}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::post('danhmuc/{tenDanhMucCha}/{tenDanhMucCon?}/{tenDanhMucConCapBa?}', [\App\Http\Controllers\Client\Api\DanhMucController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
             // // Lấy ra danh mục cha
@@ -120,7 +121,7 @@ Route::middleware([])
         //Chương trình ưu đãi và
         Route::post('chuong-trinh-uu-dai/{slug}', [KhuyenMaiController::class, 'chiTietChuongTrinhUuDai']);
         Route::get('chuong-trinh-uu-dai', [KhuyenMaiController::class, 'danhSachChuongTrinhUuDai']);
-//        Route::post('danh-sach-loc', [App\Traits\LocSanPhamTrait::class, 'layDanhMucMauSacKichThuoc']);
+        //        Route::post('danh-sach-loc', [App\Traits\LocSanPhamTrait::class, 'layDanhMucMauSacKichThuoc']);
         // Trang bộ sưu tập
         Route::get('bo-suu-tap/{slug}', [BoSuuTapController::class, 'show']);
 
@@ -276,6 +277,10 @@ Route::middleware(['auth.sanctum'])
                 Route::put('vanchuyen/trang-thai-van-chuyen', [VanChuyenController::class, 'capNhatTrangThaiVanChuyen'])->name('vanchuyen.ttvc');
                 Route::get('lay-thong-tin-van-chuyen', [VanChuyenController::class, 'layThongTinVanChuyen'])->withoutMiddleware('auth.checkrole');
                 Route::put('vanchuyen/xac-nhan-van-chuyen/{id}', [VanChuyenController::class, 'xacNhanVanChuyen'])->name('vanchuyen.xacnhan');
+                //Hoàn hàng
+                Route::get('hoanhang/danh-sach', [HoanHangController::class, 'index'])->name('hoanhang.index');
+                Route::get('hoanhang/chitiet/{id}', [HoanHangController::class, 'show'])->name('hoanhang.show');
+                Route::put('hoanhang/xac-nhan-hoan-hang', [HoanHangController::class, 'capNhatTrangThaiHoanHang'])->name('hoanhang.tthh');
             });
 
         //Danh Mục Tin Tức
@@ -343,11 +348,11 @@ Route::middleware(['auth.sanctum'])
                 Route::get('hangthanhvien/{id}', [HangThanhVienController::class, 'show'])->name('hangthanhvien.show');
             });
 
-//        Route::middleware('auth.checkrole')
-//            ->group(function () {
-                Route::get('thong-bao', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'index'])->name('thongbao.index');
-                Route::post('thong-bao/da-doc/{id}', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'daXem']);
-//            });
+        //        Route::middleware('auth.checkrole')
+        //            ->group(function () {
+        Route::get('thong-bao', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'index'])->name('thongbao.index');
+        Route::post('thong-bao/da-doc/{id}', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'daXem']);
+        //            });
 
         // Liên hệ
         Route::middleware('auth.checkrole')

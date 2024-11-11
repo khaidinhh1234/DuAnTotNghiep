@@ -24,7 +24,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [selectedMau, setSelectedMau] = useState<number[]>([]);
   // console.log(selectedMau);
   // mau sac
-    const { slug, tenDanhMucCha,  } = useParams();
+    const { slug,  } = useParams();
 
   const handleItemClick = (id: number) => {
     setSelectedMau(
@@ -53,15 +53,13 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
 //    enabled: !!slug,
 //  });
  const datas = {
-  // danh_muc_cha_ids: [...parentIds],
-  // ...(parentIds.length > 0 && { tenDanhMucCha: [...parentIds] }),
-  // ...(childIds.length > 0 && { tenDanhMucCon: [...childIds] }),
+  ...(parentIds.length > 0 && { danh_muc_cha_ids: [...parentIds] }),
+  ...(childIds.length > 0 && { danh_muc_con_ids: [...childIds] }),
   ...(price.length > 0 && { gia_duoi: price[0] }),
   ...(price.length > 0 && { gia_tren: price[1] }),
   ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
   ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
-  ...(tenDanhMucCha?.length ? { danh_muc_cha: tenDanhMucCha } : {}),
-  // ...(slug && { chuong_trinh_id: promotionalData?.data?.chuong_trinh?.id }),
+
 
 
 };

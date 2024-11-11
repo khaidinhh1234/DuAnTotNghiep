@@ -10,6 +10,7 @@ use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Listeners\CapNhatHangThanhVien;
 use App\Models\DonHang;
 use App\Models\GiaoDichVi;
+use App\Models\Hoan_hang;
 use App\Models\HoanTien;
 use App\Models\MaKhuyenMai;
 use App\Models\ThongBao;
@@ -418,21 +419,34 @@ class DonHangController extends Controller
             $donHang = $hoanTien->donHang;
             $giaoDichVi = $hoanTien->giaoDichVi;
             $soDuTruoc = $giaoDichVi->viTien->so_du;
+            $shippers = User::query()->with('vaiTros')->whereHas('vaiTros', function ($query) {
+                $query->where('ten_vai_tro', 'Người giao hàng');
+            })->get();
 
             if ($validated['trang_thai'] === 'hoan_thanh_cong') {
-                $hoanTien->update(['trang_thai' => 'hoan_thanh_cong']);
-                $giaoDichVi->update(['trang_thai' => 'thanh_cong']);
+                // $hoanTien->update(['trang_thai' => 'hoan_thanh_cong']);
+                // $giaoDichVi->update(['trang_thai' => 'thanh_cong']);
 
-                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_HH]);
-                //Lưu giao dịch
-                DB::table('lich_su_giao_diches')->insert([
-                    'vi_tien_id' => $giaoDichVi->viTien->id,
-                    'so_du_truoc' => $soDuTruoc,
-                    'so_du_sau' => $soDuTruoc + $hoanTien->so_tien_hoan,
-                    'ngay_thay_doi' => Carbon::now(),
-                    'mo_ta' => 'Hoàn tiền đơn hàng #' . $hoanTien->donHang->ma_don_hang,
+                // $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_HH]);
+                // //Lưu giao dịch
+                // DB::table('lich_su_giao_diches')->insert([
+                //     'vi_tien_id' => $giaoDichVi->viTien->id,
+                //     'so_du_truoc' => $soDuTruoc,
+                //     'so_du_sau' => $soDuTruoc + $hoanTien->so_tien_hoan,
+                //     'ngay_thay_doi' => Carbon::now(),
+                //     'mo_ta' => 'Hoàn tiền đơn hàng #' . $hoanTien->donHang->ma_don_hang,
+                // ]);
+                // $giaoDichVi->viTien->increment('so_du', $hoanTien->so_tien_hoan);
+                $minDonHangCount = $shippers->min(fn($shipper) => $shipper->vanChuyens->count());
+                $shippersWithMinDonHang = $shippers->filter(fn($shipper) => $shipper->vanChuyens->count() == $minDonHangCount);
+                $shipper = $shippersWithMinDonHang->random();
+                Hoan_hang::create([
+                    'don_hang_id' => $donHang->id,
+                    'user_id' => $donHang->user_id,
+                    'shipper_id' => $shipper->id,
+                    'ngay_tao' => Carbon::now(),
+                    'hoan_tien_id' => $id,
                 ]);
-                $giaoDichVi->viTien->increment('so_du', $hoanTien->so_tien_hoan);
                 $mess = 'Xác nhận hoàn hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $hoanTien->update(['trang_thai' => 'tu_choi']);
