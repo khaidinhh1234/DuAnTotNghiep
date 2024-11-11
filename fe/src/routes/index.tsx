@@ -21,8 +21,6 @@ import CentralStock from "@/pages/(dashboard)/centralstock.tsx/page";
 import BannerManagement from "@/pages/(dashboard)/content/banner/banner";
 import Content from "@/pages/(dashboard)/content/footer/footer";
 
-import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
-import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
 import IntroCard from "@/pages/(dashboard)/adminProfile/profile/IntroCard";
 import SanPham from "@/pages/(dashboard)/dashboard/sanpham/page";
 import TaiKhoan from "@/pages/(dashboard)/dashboard/taikhoan/page";
@@ -81,7 +79,6 @@ import ChuongTrinhUuDaiRemote from "@/pages/(dashboard)/vourcher/banner/remote";
 import EditVoucher from "@/pages/(dashboard)/vourcher/edit/edit";
 import VoucherAdmin from "@/pages/(dashboard)/vourcher/page";
 import ShowVoucher from "@/pages/(dashboard)/vourcher/show/show";
-import Test from "@/pages/(van_chuyen)/AllTransport";
 import Shipper from "@/pages/(van_chuyen)/shipper";
 import NotFoundPage from "@/pages/(website)/404/page";
 import Cart from "@/pages/(website)/cart/Cart";
@@ -110,7 +107,6 @@ import PageProductDetail from "@/pages/(website)/productdetail/PageProductDetail
 import SavedCard from "@/pages/(website)/savedcards/SavedCard";
 import Setting from "@/pages/(website)/settings/Setting";
 import ShippingAddressPage from "@/pages/(website)/ShipingAdrres/ShipingAdrres";
-import Page1 from "@/pages/(website)/Shopuudai/shop";
 import ThankYouPage from "@/pages/(website)/thankyou/thankyou";
 import Voucher from "@/pages/(website)/vourcher/page";
 import { Navigate } from "react-router";
@@ -131,12 +127,9 @@ import RefundRequests from "@/pages/(dashboard)/dohoan/donhoan";
 import WithdrawalRequests from "@/pages/(dashboard)/dohoan/ruttien";
 import Page2 from "@/pages/(website)/_component/shop";
 // import ProductsList from "@/pages/(website)/Shopuudai/_components/ProductsList";
-import NapTien from "@/pages/(website)/mywallet/NapTien";
-// import CreditCardForm from "@/pages/(website)/mywallet/cart";
-// import DetailBlog from "@/pages/(website)/newdetail/DetailBlog";
-
 import Test4 from "@/pages/(van_chuyen)/TransportDetail";
-import WalletProtectedRoute from './WalletProtectedRoute';
+import NapTien from "@/pages/(website)/mywallet/NapTien";
+import WalletProtectedRoute from "./WalletProtectedRoute";
 
 // import ThankYouPage1 from "@/pages/(website)/thankyou/you";
 // import PaymentStatus from "@/pages/(website)/mywallet/PaymentStatus";
@@ -145,14 +138,12 @@ import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
 import Test3 from "@/pages/(website)/test3";
-import Page3 from "@/pages/(website)/Shopuudai/shop";
-
-import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
-import HoanHang from "@/pages/(website)/myOrder/_components/Hoan";
 
 import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
+import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
+import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
 import ShopDM from "@/pages/(website)/shopdm/shop";
-
+import Page3 from "@/pages/(website)/Shopuudai/shop";
 
 const Router = () => {
   //
@@ -167,9 +158,14 @@ const Router = () => {
           <Route index element={<HomePage />} />
           <Route path="/shop" element={<Page />} />
           <Route path="/shop/:tenDanhMucCha" element={<ShopDM />} />
-          <Route path="/shop/:tenDanhMucCha/:tenDanhMucCon" element={<ShopDM />} />
-          <Route path="/shop/:tenDanhMucCha/:tenDanhMucCon/:tenDanhMucConCapBa" element={<ShopDM />} />
-
+          <Route
+            path="/shop/:tenDanhMucCha/:tenDanhMucCon"
+            element={<ShopDM />}
+          />
+          <Route
+            path="/shop/:tenDanhMucCha/:tenDanhMucCon/:tenDanhMucConCapBa"
+            element={<ShopDM />}
+          />
           <Route path="/product-detail/:slug" element={<PageProductDetail />} />
           <Route path="/ourstory" element={<PageOur />} />
           <Route path="/shopp/:slug" element={<Page3 />} />
@@ -245,10 +241,6 @@ const Router = () => {
           <Route path="/blog" element={<Blog />} />
           <Route path="/danhmuctintuc/:duongDan" element={<BlogCategories />} />
           <Route path="/xem-bai-viet/:duong_dan" element={<BlogDetail />} />
-          {/* <Route
-            path="/xem-bai-viet/:duong_dan"
-            element={<DetailBlog />}
-          /> */}
         </Route>
         {/* TRang admin */}
         <Route
@@ -267,9 +259,7 @@ const Router = () => {
           <Route path="dashboard/sanpham" element={<SanPham />} />
           <Route path="dashboard/taikhoan" element={<TaiKhoan />} />
           <Route path="dashboard/thongbao" element={<NotificationPage1 />} />
-
           {/* Sản phẩm  */}
-
           <Route
             path="products"
             element={<Navigate to="/admin/products/list" />}
@@ -385,7 +375,6 @@ const Router = () => {
           <Route path="centralstocks" element={<CentralStock />} />
           <Route path="suportuser" element={<Suportuser />} />
           <Route path="revenues" element={<RevenueAdmin />} />
-          <Route path="test" element={<Test />} />
           <Route path="list" element={<List />} />
           <Route
             path="ADmin"
