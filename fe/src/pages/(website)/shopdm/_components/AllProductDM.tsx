@@ -35,7 +35,7 @@ const AllProductDM = () => {
         <>
             <section>
                 <div className="container">
-                    <div className=" flex mt-[70px] mb-9">
+                    <div className=" flex mt-10 ">
                         <p className="pr-2">{data?.data?.danh_muc?.ten_danh_muc || "Tên danh mục không có sẵn"}</p>
                     </div>
                 </div>
