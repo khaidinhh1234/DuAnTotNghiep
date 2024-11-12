@@ -112,7 +112,7 @@ class TrangSanPhamController extends Controller
             DB::beginTransaction();
 
             // Lấy danh mục cha và danh mục con
-            $danhMuc = DanhMuc::with('children.children')->whereNull('cha_id')->where('duong_dan', $loai)->get();
+            $danhMuc = DanhMuc::with('children.children')->where('duong_dan', $loai)->get();
 
             // Lấy tất cả màu sắc theo đường dẫn của danh mục
             $mauSacs = BienTheMauSac::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
@@ -122,11 +122,12 @@ class TrangSanPhamController extends Controller
             });
 
             // Lấy tất cả kích thước theo đường dẫn của danh mục và loại kích thước
-            $kichThuoc = BienTheKichThuoc::with(['sanPhams' => function ($query) use ($loai) {
-                $query->whereHas('danhMuc', function ($query) use ($loai) {
-                    $query->where('duong_dan', $loai);
-                });
-            }])->where('loai_kich_thuoc', $loai)->get();
+            $kichThuoc = BienTheKichThuoc::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
+                $query->where('duong_dan', $loai);
+            }]);
+            $kichThuoc = $kichThuoc->get()->filter(function ($kichThuoc) {
+                return $kichThuoc->sanPhams->isNotEmpty();
+            });
 
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
@@ -160,7 +161,6 @@ class TrangSanPhamController extends Controller
             // Lấy các tham số lọc từ yêu cầu
             $danhMucChaIds = $request->danh_muc_cha_ids ?? [];
             $danhMucConIds = $request->danh_muc_con_ids ?? [];
-
             $danhMucChauIds = $request->danh_muc_chau_ids ?? [];
 
             $mauSacIds = $request->mau_sac_ids ?? [];
@@ -321,6 +321,7 @@ class TrangSanPhamController extends Controller
 
     public function layTatCaSanPham(Request $request)
     {
+        $danhmuc = $request->get('danh_muc', null);
         try {
             $soLuongSanPhamMoiTrang = $request->get('per_page', 8);
             // Nạp quan hệ khachHangYeuThich để kiểm tra trạng thái yêu thích
@@ -341,6 +342,11 @@ class TrangSanPhamController extends Controller
                 'khachHangYeuThich' // Nạp trước quan hệ khachHangYeuThich
             ])
                 ->where('san_phams.trang_thai', 1)
+                ->whereHas('danhMuc', function ($query) use ($danhmuc) {
+                    if ($danhmuc) {
+                        $query->where('duong_dan', $danhmuc);
+                    }
+                })
                 ->select(
                     'san_phams.id',
                     'san_phams.ten_san_pham',

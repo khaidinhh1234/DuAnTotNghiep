@@ -16,7 +16,7 @@ interface Notification {
   duong_dan: string;
   id_duong_dan: string;
   created_at: string;
-  loai: "Đơn hàng" | "Yêu cầu rút tiền" | "Khuyến mại";
+  loai: "Đơn hàng" | "Ưu đãi" | "Ví tiền";
 }
 
 interface NotificationResponse {
@@ -32,11 +32,11 @@ interface NotificationItemProps {
 const getNotificationRoute = (notification: Notification): string => {
   switch (notification.loai) {
     case "Đơn hàng":
-      return `/mypro/myorder/${notification.duong_dan}`;
-    case "Yêu cầu rút tiền":
-      return "/mypro/wallet";
-    case "Khuyến mại":
-      return `/shop/${notification.duong_dan}`;
+      return "/admin/orders/list";
+    case "Ví tiền":
+      return "/admin/orders/ruttien";
+    case "Ưu đãi":
+      return "/admin/chuongtrinhuudai";
     default:
       return "#";
   }
@@ -185,7 +185,7 @@ const Notifications: React.FC<NotificationsProps> = ({
 
               <div className="p-4 border-t border-gray-200">
                 <a
-                  href="/mypro/notification"
+                  href="/admin/dashboard/thongbao"
                   className="block text-center text-sm text-black-600 hover:text-blue-800"
                 >
                   Xem tất cả
