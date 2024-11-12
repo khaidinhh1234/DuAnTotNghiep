@@ -211,12 +211,8 @@ const DetailTransport = ({ record }: any) => {
       };
     }
   );
-  // console.log(products);
-  const vanchuyenData = data?.data?.van_chuyen?.don_hang
-  const shipper = data?.data?.van_chuyen?.shipper
-  console.log("shipper", shipper)
-  console.log("vanchuyenData", vanchuyenData)
   const thongtin = data?.data?.thong_tin;
+
   const handleCancel = () => {
     setOpen(false);
   };
@@ -520,23 +516,131 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
-                {record.trang_thai_don_hang === "Đang xử lý" ? (
-                  <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
-                    Chờ lấy hàng
-                  </span>
-                ) : record.trang_thai_don_hang === "Đang giao hàng" ? (
-                  <span className="w-full py-1 px-2 text-base font-medium text-purple-500 border-b-2 border-purple-500 hover:text-purple-600 hover:border-purple-600 transition-all duration-300 ease-in-out cursor-default text-center">
-                    Đang giao hàng
-                  </span>
-                ) : record.trang_thai_don_hang === "Hoàn tất đơn hàng" ? (
-                  <span className="w-full py-1 px-2 text-base font-medium text-green-500 border-b-2 border-green-500 hover:text-green-600 hover:border-green-600 transition-all duration-300 ease-in-out cursor-default text-center">
-                    Hoàn tất đơn hàng
-                  </span>
-                ) : (
-                  <span className="w-full py-1 px-2 text-base font-medium text-red-500 border-b-2 border-red-500 hover:text-red-600 hover:border-red-600 transition-all duration-300 ease-in-out cursor-default text-center">
-                    Giao hàng thất bại
-                  </span>
+                {isWebcamVisible && !isImageSaved && (
+                  <div className="relative mx-auto mt-6">
+                    {url ? (
+                      <div className="relative">
+                        <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
+                        <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
+                          <button
+                            onClick={deletePhoto}
+                            className="px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                            title="Xóa ảnh"
+                          >
+                            <i className="fa-regular fa-trash-can"></i>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <Webcam
+                          ref={webcamRef}
+                          screenshotFormat="image/jpeg"
+                          videoConstraints={videoConstraints}
+                          className="w-60 rounded-lg"
+                          audio={false}
+                        />
+                        <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
+                          <button
+                            onClick={capturePhoto}
+                            className="px-4 opacity-70 py-3 rounded-full text-3xl bg-white/80 backdrop-blur-sm"
+                            title="Chụp ảnh"
+                          >
+                            <i className="fa-regular fa-camera"></i>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
+
+                {showNoteInput && (
+                  <textarea
+                    rows={3}
+                    placeholder="Nhập ghi chú..."
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    className="border rounded-lg p-2 mt-4"
+                  />
+                )}
+
+                <div className="mt-4">
+                  <h4 className="font-bold">Ghi chú thất bại:</h4>
+                  <ul className="list-disc pl-5">
+                    {notes.lan1 && <li>Lần 1: {notes.lan1}</li>}
+                    {notes.lan2 && <li>Lần 2: {notes.lan2}</li>}
+                    {notes.lan3 && <li>Lần 3: {notes.lan3}</li>}
+                  </ul>
+                </div>
+
+                {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
+                  <button
+                    className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
+                    onClick={() => {
+                      setIsWebcamVisible(true);
+                      mutate({ id: record.id, action: "Đang giao hàng" });
+                    }}
+                  >
+                    Giao hàng
+                  </button>
+                ) : record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
+                  <button
+                    className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
+                    onClick={() => {
+                      setIsWebcamVisible(true);
+                      mutate({ id: record.id, action: "Đang giao hàng" });
+                    }}
+                  >
+                    Giao hàng
+                  </button>
+                ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
+                  <>
+                    {failedAttempts < 3 ? (
+                      <>
+                        {showNoteInput ? (
+                          <button
+                            onClick={handleSaveNote}
+                            className="w-full py-2 border bg-green-600 rounded-lg text-white hover:bg-green-700 mt-7"
+                          >
+                            Gửi ghi chú
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
+                              onClick={handleSave}
+                              disabled={loading || isImageSaved}
+                            >
+                              {loading ? "Đang xử lý..." : "Xác nhận giao hàng"}
+                            </button>
+                            <button
+                              className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
+                              onClick={handleDeliveryFailure}
+                            >
+                              Giao hàng thất bại
+                            </button>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <button
+                        className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
+                        onClick={async () => {
+                          await mutate({
+                            id: record.id,
+                            action: "Giao hàng thất bại",
+                            ghi_chu: notes,
+                          });
+                          setFailedAttempts(0);
+                          setNotes({});
+                          setShowNoteInput(false);
+                        }}
+                      >
+                        Xác nhận giao hàng thất bại
+                      </button>
+                    )}
+                  </>
+                ) : null}
               </div>
 
             </div>{" "}
@@ -546,7 +650,7 @@ const DetailTransport = ({ record }: any) => {
               <h5 className="text-blue-600 my-2">
                 {record.van_chuyen?.don_hang.ten_nguoi_dat_hang
                   ? record.van_chuyen?.don_hang.ten_nguoi_dat_hang
-                  : thongtin?.ten_nguoi_dat_hang}
+                  : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <hr />
               <h5 className="text-blue-800 text-lg my-2">Người liên hệ</h5>
@@ -554,14 +658,14 @@ const DetailTransport = ({ record }: any) => {
                 {" "}
                 {record.van_chuyen?.don_hang.ten_nguoi_dat_hang
                   ? record.van_chuyen?.don_hang.ten_nguoi_dat_hang
-                  : thongtin?.ten_nguoi_dat_hang}
+                  : thongtin?.ho + " " + thongtin?.ten}
               </h5>
               <p className="text-blue-800 font-semibold">
                 Số điện thoại :
                 <span className="text-black font-medium">
                   {record.van_chuyen?.don_hang.so_dien_thoai_nguoi_dat_hang
                     ? record.van_chuyen?.don_hang.so_dien_thoai_nguoi_dat_hang
-                    : thongtin?.so_dien_thoai_nguoi_dat_hang}
+                    : thongtin?.so_dien_thoai}
                 </span>
               </p>
               <h5 className="text-blue-800">
@@ -569,7 +673,7 @@ const DetailTransport = ({ record }: any) => {
                 <span className="text-black">
                   {record?.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
                     ? record?.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
-                    : thongtin?.dia_chi_nguoi_dat_hang}
+                    : thongtin?.dia_chi}
                 </span>
               </h5>
               <p className="text-blue-800 font-semibold">
@@ -577,7 +681,7 @@ const DetailTransport = ({ record }: any) => {
                 <span className="text-black">
                   {record?.van_chuyen?.don_hang.ghi_chu
                     ? record?.van_chuyen?.don_hang.ghi_chu
-                    : vanchuyenData?.ghi_chu}
+                    : "Không có ghi chú"}
                 </span>
               </p>
             </div>{" "}
@@ -588,17 +692,14 @@ const DetailTransport = ({ record }: any) => {
                   Thông tin nhân viên giao hàng
                 </h5>
                 <hr />
-                {shipper && (
-                  <>
-                    <p className="text-blue-800 text-lg my-2">
-                      Nhân viên giao hàng: {shipper.ho} {shipper.ten}
-                    </p>
-                    <p className="text-blue-800 font-semibold">
-                      Số điện thoại: {shipper.so_dien_thoai}
-                    </p>
-                  </>
-                )}
-
+                <p className="text-blue-800 text-lg my-2">
+                  Nhân viên giao hàng:
+                </p>
+                {/* <span className="text-black my-2">{shipperName}</span> */}
+                <p className="text-blue-800 font-semibold">
+                  Số điện thoại:
+                  {/* <span className="text-black font-medium">{shipperPhone}</span> */}
+                </p>
               </div>
             </div>
           </div>

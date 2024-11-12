@@ -6,25 +6,26 @@
     height: 100vh;
     gap: 16px;
 }
-
 .menu-item {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    min-height: 270px;
+    height: auto;
+    
 }
 
-.category {
+/* .category {
     display: flex;
     align-items: center;
     min-width: 100px;
-}
+} */
 
 .subcategories {
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin-top: 2px;
-    position: relative;
+    position: relative; 
 }
+

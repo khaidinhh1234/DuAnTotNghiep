@@ -62,7 +62,7 @@ Route::middleware([])
         // Trang chủ
         Route::get('trangchu', [TrangChuController::class, 'index']);
         Route::get('thong-tin-web', [TrangChuController::class, 'thongTinWeb']);
-        Route::post('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
+        Route::get('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
         Route::get('load-danh-muc-con-chau/{id}', [TrangChuController::class, 'loadDanhMucConChau']);
         Route::get('load-danh-muc-cha', [TrangChuController::class, 'loadDanhMucSanPhamCha']);
         //Client Sản Phẩm
@@ -160,8 +160,6 @@ Route::middleware([])
 
             //Yêu cầu rút tiền
             Route::post('/rut-tien/{id}', [DonHangClientController::class, 'yeuCauRutTien']);
-
-            Route::get('lich-su-tim-kiem', [TrangChuController::class, 'lichSuTimKiem']);
         });
 
         Route::group([], function () {

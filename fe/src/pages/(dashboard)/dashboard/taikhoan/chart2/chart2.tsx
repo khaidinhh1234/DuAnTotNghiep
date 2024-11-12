@@ -1,38 +1,30 @@
 import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 const Chart2: React.FC = () => {
-  const { data: chart2, refetch } = useQuery({
+  const { data: chart2 } = useQuery({
     queryKey: ["khachhangtable1chart2"],
     queryFn: async () => {
       const response = await instance.get("thong-ke/rank-va-chi-tieu");
       return response.data;
     },
   });
-
-  useEffect(() => {
-    async () => {
-      await refetch();
-    };
-  }, [chart2, refetch]);
-  console.log(chart2);
-
-  const [series] = useState([
-    {
-      name: "Số lượng khách",
-      type: "column",
-      data: chart2?.so_luong_thanh_vien || [],
-    },
-    {
-      name: "Tiền đã chi tiêu",
-      type: "column",
-      data: chart2?.tong_chi_tieu || [],
-    },
-  ]);
-
-  const [options] = useState({
+  // console.log(chart2);
+  const options: ApexCharts.ApexOptions = {
+    series: [
+      {
+        name: "Số lượng khách",
+        type: "column",
+        data: chart2?.so_luong_thanh_vien || [],
+      },
+      {
+        name: "Tiền đã chi tiêu",
+        type: "column",
+        data: chart2?.tong_chi_tieu || [],
+      },
+    ],
     chart: {
       height: 350,
       type: "line",
@@ -44,17 +36,13 @@ const Chart2: React.FC = () => {
     stroke: {
       width: [1, 1],
     },
-    title: {
-      text: "",
-      align: "left",
-      offsetX: 110,
-    },
+
     xaxis: {
-      categories: chart2?.ten_hang_thanh_vien || [],
+      categories: chart2?.ten_hang_thanh_vien || [], // Ranks instead of years
     },
     yaxis: [
       {
-        seriesName: "Income",
+        seriesName: "Số lượng khách",
         axisTicks: {
           show: true,
         },
@@ -81,7 +69,7 @@ const Chart2: React.FC = () => {
         },
       },
       {
-        seriesName: "Cashflow",
+        seriesName: "Tiền đã chi tiêu",
         opposite: true,
         axisTicks: {
           show: true,
@@ -109,7 +97,7 @@ const Chart2: React.FC = () => {
     tooltip: {
       fixed: {
         enabled: true,
-        position: "topLeft",
+        position: "topLeft", // Options: topRight, topLeft, bottomRight, bottomLeft
         offsetY: 30,
         offsetX: 60,
       },
@@ -118,22 +106,19 @@ const Chart2: React.FC = () => {
       horizontalAlign: "left",
       offsetX: 40,
     },
-  });
+  };
 
   return (
     <>
       {" "}
       <h3 className="font-semibold">Phân tích Hạng thành viên</h3>
-      <div>
-        <div id="chart">
-          <ReactApexChart
-            options={options as any}
-            series={series}
-            type="line"
-            height={350}
-          />
-        </div>
-        <div id="html-dist"></div>
+      <div id="chart" style={{ maxWidth: "800px", margin: "0 auto" }}>
+        <ReactApexChart
+          options={options}
+          series={options.series}
+          type="line"
+          height={350}
+        />
       </div>
     </>
   );
