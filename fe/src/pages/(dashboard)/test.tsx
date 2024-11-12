@@ -1,107 +1,84 @@
-import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
-const Test = () => {
-  // Define state using useState hook
-  const [series, setSeries] = useState([
+interface DataPoint {
+  x: number;
+  y: number;
+}
+
+interface Series {
+  name: string;
+  data: DataPoint[];
+}
+
+const generateDayWiseTimeSeries = (
+  baseval: number,
+  count: number,
+  yrange: { min: number; max: number }
+): DataPoint[] => {
+  let series = [];
+  for (let i = 0; i < count; i++) {
+    const x = baseval + i * 86400000;
+    const y =
+      Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
+    series.push({ x, y });
+  }
+  return series;
+};
+
+const Test: React.FC = () => {
+  const [series, setSeries] = useState<Series[]>([
     {
-      name: "Số lượng khách",
-      type: "column",
-      data: chart2?.so_luong_thanh_vien || [],
+      name: "Khách hàng mới",
+      data: chart3?.so_luong_khach_hang_moi,
     },
     {
-      name: "Tiền đã chi tiêu",
-      type: "column",
-      data: chart2?.tong_chi_tieu || [],
+      name: "Khách hàng cũ",
+      data: chart3?.so_luong_khach_hang_cu,
+    },
+    {
+      name: "Tổng khách hàng",
+      data: chart3?.tong_so_luong_khach_hang,
     },
   ]);
 
   const [options, setOptions] = useState({
     chart: {
+      type: "area" as const,
       height: 350,
-      type: "line",
-      stacked: false,
+      stacked: true,
+      events: {
+        selection: function (chart: any, e: any) {
+          console.log(new Date(e.xaxis.min));
+        },
+      },
     },
-    dataLabels: {
-      enabled: false,
-    },
+    colors: ["#00E396", "#008FFB", "#FF4560"],
+
     stroke: {
-      width: [1, 1],
+      curve: "monotoneCubic" as const,
     },
-    title: {
-      text: "Phân tích Hạng thành viên",
-      align: "left",
-      offsetX: 110,
-    },
-    xaxis: {
-      categories: chart2?.ten_hang_thanh_vien || [],
-    },
-    yaxis: [
-      {
-        seriesName: "Income",
-        axisTicks: {
-          show: true,
-        },
-        axisBorder: {
-          show: true,
-          color: "#008FFB",
-        },
-        labels: {
-          style: {
-            colors: "#008FFB",
-          },
-          formatter: (value: number) => {
-            return `${value}`; // Format to show in millions
-          },
-        },
-        title: {
-          text: "Số lượng khách (triệu khách)",
-          style: {
-            color: "#008FFB",
-          },
-        },
-        tooltip: {
-          enabled: true,
-        },
-      },
-      {
-        seriesName: "Cashflow",
-        opposite: true,
-        axisTicks: {
-          show: true,
-        },
-        axisBorder: {
-          show: true,
-          color: "#00E396",
-        },
-        labels: {
-          style: {
-            colors: "#00E396",
-          },
-          formatter: (value: number) => {
-            return `${value.toLocaleString()} đ `; // Format to show in millions
-          },
-        },
-        title: {
-          text: "Tiền đã chi tiêu (triệu đồng)",
-          style: {
-            color: "#00E396",
-          },
-        },
-      },
-    ],
-    tooltip: {
-      fixed: {
-        enabled: true,
-        position: "topLeft",
-        offsetY: 30,
-        offsetX: 60,
+    fill: {
+      type: "gradient" as const,
+      gradient: {
+        opacityFrom: 0.6,
+        opacityTo: 0.8,
       },
     },
     legend: {
-      horizontalAlign: "left",
-      offsetX: 40,
+      position: "top" as const,
+      horizontalAlign: "left" as const,
+    },
+    xaxis: {
+      categories: chart3?.moc_time,
+    },
+    yaxis: {
+      title: {
+        text: "Số lượng khách hàng",
+      },
+    },
+    dataLabels: {
+      enabled: true,
     },
   });
 
@@ -111,7 +88,7 @@ const Test = () => {
         <ReactApexChart
           options={options}
           series={series}
-          type="line"
+          type="area"
           height={350}
         />
       </div>

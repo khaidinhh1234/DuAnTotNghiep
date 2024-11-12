@@ -10,6 +10,7 @@ const Chart3: React.FC = () => {
       const response = await instance.get("thong-ke/khach-hang-all");
       return response.data;
     },
+   
   });
 
   useEffect(() => {
@@ -68,13 +69,16 @@ const Chart3: React.FC = () => {
   ];
 
   return (
-    <div id="chart" style={{ maxWidth: "1400px", margin: "0 auto" }}>
-      <ReactApexChart
-        options={options}
-        series={series}
-        type="line"
-        height={450}
-      />
+    <div>
+      <div id="chart">
+        <ReactApexChart
+          options={options}
+          series={series}
+          type="area"
+          height={450}
+        />
+      </div>
+      <div id="html-dist"></div>
     </div>
   );
 };
