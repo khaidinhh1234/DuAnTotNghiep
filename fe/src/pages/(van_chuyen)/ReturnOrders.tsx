@@ -13,6 +13,8 @@ import {
 import React, { useState, useEffect } from "react";
 
 import TransportDetail from "./TransportDetail";
+import { Link } from "react-router-dom";
+import ReturnOrderDetail from "./ReturnOrderDetail";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -29,8 +31,8 @@ interface Transport {
   created_at: string;
   don_hang_id: number;
   shipper_id: number;
-  ma_van_chuyen: string;
-  trang_thai_van_chuyen: string;
+  ma_hoan_hang: string;
+  trang_thai_hoan_hang: string;
   cod: number;
   tien_cod: number;
   anh_xac_thuc: string;
@@ -42,13 +44,12 @@ interface Transport {
 
 const tabItems = [
   { label: "Đơn vận chuyển", key: "Tất cả" },
-  { label: "Chờ xử lý", key: "Chờ xử lý" },
-  { label: "Đang giao hàng", key: "Đang giao hàng" },
-  { label: "Giao hàng thành công", key: "Giao hàng thành công" },
-  { label: "Giao hàng thất bại", key: "Giao hàng thất bại" },
+  { label: "Chờ lấy hàng hoàn", key: "Chờ lấy hàng hoàn" },
+  { label: "Đang vận chuyển", key: "Đang vận chuyển" },
+  { label: "Trả hàng thành công", key: "Trả hàng thành công" },
 ];
 
-const AllTransport: React.FC = () => {
+const ReturnOrders: React.FC = () => {
   const queryClient = useQueryClient();
   const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState<Transport[]>([]);
@@ -64,12 +65,12 @@ const AllTransport: React.FC = () => {
   };
 
   const { data } = useQuery({
-    queryKey: ["vanchuyen"],
+    queryKey: ["hoanhang"],
     queryFn: async () => {
       const response = await instance.get(`/hoanhang/danh-sach`);
       return response.data;
     },
-  })
+  });
 
   useEffect(() => {
     if (data?.data) {
@@ -77,7 +78,7 @@ const AllTransport: React.FC = () => {
 
       if (searchText) {
         filtered = filtered.filter((item: Transport) =>
-          item.ma_van_chuyen.toLowerCase().includes(searchText.toLowerCase())
+          item.ma_hoan_hang.toLowerCase().includes(searchText.toLowerCase())
         );
       }
 
@@ -91,7 +92,7 @@ const AllTransport: React.FC = () => {
 
       if (activeTab !== "Tất cả") {
         filtered = filtered.filter((item: Transport) =>
-          item.trang_thai_van_chuyen === activeTab
+          item.trang_thai_hoan_hang === activeTab
         );
       }
 
@@ -103,34 +104,37 @@ const AllTransport: React.FC = () => {
     id: number;
     created_at: string;
     don_hang_id: number;
-    trang_thai_van_chuyen: string;
+    trang_thai_hoan_hang: string;
   }> = [
-    {
-      title: "Tất cả",
-      className: "text-xl w-1/2",
-      dataIndex: "created_at",
-      key: "created_at",
-      render: (_, record) => (
-        <div className="border rounded-lg p-4 mb-4">
-          <TransportDetail record={record} />
-        </div>
-      ),
-    },
-  ];
+      {
+        title: "Tất cả",
+        className: "text-xl w-1/2",
+        dataIndex: "created_at",
+        key: "created_at",
+        render: (_, record) => (
+          <div className="border rounded-lg p-4 mb-4">
+            <ReturnOrderDetail record={record} />
+          </div>
+        ),
+      },
+    ];
 
   return (
     <main className="flex flex-1 flex-col gap-0 p-0 lg:gap-6 lg:px-6 lg:py-10 container">
       <div className="flex justify-between items-start mx-10">
         <div className="flex gap-5 items-center">
-          <img
-            src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729398683/Black_and_White_Circle_Business_Logo_1_ieyoum.png"
-            alt="Logo"
-            className="w-16 h-16"
-          />
-          <h1 className="font-semibold md:text-2xl mt-3">
+          <Link to='/'>
+            <img
+              src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729398683/Black_and_White_Circle_Business_Logo_1_ieyoum.png"
+              alt="Logo"
+              className="w-16 h-16"
+            />
+          </Link>
+          <h1 className="font-semibold md:text-2xl">
             Giao Hàng Glow Express
           </h1>
         </div>
+
       </div>
 
       <div className="lg:mx-10 mx-3 bg-white">
@@ -161,4 +165,4 @@ const AllTransport: React.FC = () => {
   );
 };
 
-export default AllTransport;
+export default ReturnOrders;

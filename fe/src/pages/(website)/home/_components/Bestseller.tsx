@@ -81,7 +81,7 @@ const Bestseller = ({ products }: any) => {
                     )}
                     <a href="#">
                       <i
-                        className={`z-10 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
+                        className={`z-20 fa-solid fa-arrow-right-arrow-left text-lg bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-[63px] right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
                       />
                     </a>
 

@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import {  useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Slider } from "antd";
@@ -23,8 +23,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [selectedMau, setSelectedMau] = useState<number[]>([]);
   // console.log(selectedMau);
   // mau sac
-  const location = useLocation();
-  const query = new URLSearchParams(location.search).get("query") || "";
   const handleItemClick = (id: number) => {
     setSelectedMau(
       (prevSelectedSize) =>
@@ -50,8 +48,6 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ...(price.length > 0 && { gia_tren: price[1] }),
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
-    ...(query && { query: query })
-
   };
   // console.log(datas);
   // lọc danh mục
@@ -134,17 +130,19 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
 }, [tenDanhMucCha, tenDanhMucCon]);
   // ALL sản phẩm
   const { data } = useQuery({
-    queryKey: ["PRODUCTSLOC", datas],
+    queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post(`/tim-kiem-goi-y`, datas);
+        const response = await instanceClient.post("loc-san-pham", datas); // Gửi datas cho API
+        if (response.data.status !== true) {
+          throw new Error("Error fetching product");
+        }
         return response.data;
       } catch (error) {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
   });
-
   // console.log("data", data?.data?.data);
   // danh mục
   const { data: locsanpham } = useQuery({
@@ -171,21 +169,30 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async () => {
-      const response = await instanceClient.post(`/tim-kiem-goi-y?page=${page}`, datas);
-      return response.data;
+      try {
+        const response = await instanceClient.post(
+          `loc-san-pham?page=${page}`,
+          datas
+        );
+        if (response.data.status !== true) {
+          throw new Error("Error fetching product");
+        }
+        return response.data;
+      } catch (error) {
+        throw new Error("Lỗi khi lấy thông tin");
+      }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["PRODUCTSLOC"], data);
     },
   });
-
   const onPage = (page: number) => {
     setPage(page);
   };
   const danh_muc = locsanpham?.danhMucCha;
   // console.log(danh_muc);
-  const products = data?.san_pham?.original?.data?.data || [];
-  console.log(products);
+  const products = data?.data?.data;
+  // console.log(products);
   useEffect(() => {
     if (
       parentIds.length >= 0 ||
@@ -195,7 +202,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ) {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page,query]);
+  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page]);
   
   return (
     <div>
@@ -483,9 +490,9 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
             <SearchResultsPage
-             data={data}
-             onPage={setPage}
-             products={data?.san_pham?.original?.data?.data || []}
+                 data={data}
+                 onPage={onPage}
+                 products={products}
                 Wishlist={handleWishlist}
                  isPending={isPending}
               />

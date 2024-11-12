@@ -59,6 +59,9 @@ const Chart6 = () => {
       });
       return res.data;
     },
+    onSuccess: (data) => {
+      // console.log("Updated data:", data?.theo_tuan?.ngay);
+    },
   });
 
   const tuyChonBieuDo = {

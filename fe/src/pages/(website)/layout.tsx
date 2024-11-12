@@ -1,11 +1,10 @@
 import Footer from "@/pages/(website)/_component/Footer";
 // import Header from "@/pages/(website)/_component/Header";
 import { Outlet } from "react-router-dom";
-
+import Header from "./_component/Header";
+import Header2 from "./_component/Header2";
 import { useWalletRouteCheck } from "@/services/useWalletRouteCheck";
 import Test123 from "./_component/test123";
-import Header from "./_component/Header";
-import Test from "./_component/Test";
 // import Test from "./_component/Test";
 
 const Layout = () => {
@@ -17,9 +16,6 @@ const Layout = () => {
       {/* <Test/> */}
       {/* <Header2 /> */}
       {/* <Test123/> */}
-      {/* <Header /> */}
-      {/* <Test123/> */}
-      <Test/>
       <Outlet />
       <Footer />
     </div>

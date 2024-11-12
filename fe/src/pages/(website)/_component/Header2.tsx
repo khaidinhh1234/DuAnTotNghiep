@@ -121,20 +121,6 @@ const Header2 = () => {
 
 
     // Hàm render các menu items từ dữ liệu categories
-    // Hàm tạo mục danh mục con
-    const renderSubCategories = (subCategories: any[]) => {
-        return subCategories.map((subCategory: any) => (
-            <Link
-                key={subCategory.id}
-                to={`/shop/${subCategory.duong_dan}`}
-                className="text-gray-950 text-sm"
-            >
-                {subCategory.ten_danh_muc}
-            </Link>
-        ));
-    };
-
-    // Hàm tạo mục danh mục chính và sử dụng renderSubCategories cho các danh mục con
     const renderMenuItems = (items: any): MenuProps['items'] => {
         return items?.danh_muc?.length
             ? items.danh_muc.map((category: any) => ({
@@ -150,7 +136,15 @@ const Header2 = () => {
 
                         {category.con && category.con.length > 0 && (
                             <div className="subcategories flex flex-col">
-                                {renderSubCategories(category.con)}
+                                {category.con.map((subCategory: any) => (
+                                    <Link
+                                        key={subCategory.id}
+                                        to={`/shop/${subCategory.duong_dan}`}
+                                        className="text-gray-950 text-sm"
+                                    >
+                                        {subCategory.ten_danh_muc}
+                                    </Link>
+                                ))}
                             </div>
                         )}
                     </div>
@@ -158,15 +152,12 @@ const Header2 = () => {
             }))
             : [];
     };
-
-    // Sử dụng trong Menu component
     <Menu items={renderMenuItems(categories)} className="m-0 p-0" />;
 
 
 
 
-
-    console.log("asdasdasd", categories)
+    // console.log("asdasdasd", categories)
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (ref.current && !ref.current.contains(event.target as any)) {
@@ -342,14 +333,13 @@ const Header2 = () => {
                             <Dropdown
                                 menu={{
                                     items: renderMenuItems(categories),
-                                    className: "custom-dropdown flex flex-row right-[555px] top-[45px] w-[100vw] h-[300px]", // Cố định chiều rộng và chiều cao
+                                    className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
                                 }}
                             >
                                 <Link to={`/shop/${item.slug}`} className="text-black">
                                     {item.label}
                                 </Link>
                             </Dropdown>
-
                         </div>
                     ))}
                     <Link to="/blog" className="text-xl">Bài viết</Link>

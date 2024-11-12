@@ -10,8 +10,8 @@ import "dayjs/locale/vi";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import "moment/locale/vi";
-import { useEffect, useState } from "react";
-import ReactApexChart from "react-apexcharts";
+import { useEffect } from "react";
+import Chart, { Props } from "react-apexcharts";
 // const handleChange = (value: string) => {
 //   console.log(`selected ${value}`);
 // };
@@ -35,23 +35,33 @@ const Chart5 = ({ datestart, dateend, top }: any) => {
     },
     enabled: !!datestart && !!dateend && !!top,
   });
-
-  const [series, setSeries] = useState<{ name: string; data: any[] }[]>([]);
+  useEffect(() => {
+    if (datestart && dateend) {
+      refetch();
+    }
+    if (top) {
+      refetch();
+    }
+  }, [datestart, dateend, top, refetch]);
   // console.log(data);
-  const [options, setOptions] = useState({
+  const optionsareachart: Props = {
     chart: {
-      height: 350,
-      type: "area",
+      id: "area-chart",
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+      foreColor: "#adb0bb",
+      zoom: {
+        enabled: true,
+      },
+      toolbar: {
+        show: true,
+      },
     },
     dataLabels: {
-      enabled: false,
+      enabled: true,
     },
     stroke: {
+      width: "3",
       curve: "smooth",
-    },
-    xaxis: {
-      type: "datetime", // Make sure it's using "datetime" instead of "date"
-      categories: [],
     },
     colors: [
       "#FF5733", // Orange Red
@@ -75,66 +85,41 @@ const Chart5 = ({ datestart, dateend, top }: any) => {
       "#FF6F33", // Light Coral
       "#3333FF", // Blue
     ],
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy",
-      },
+    xaxis: {
+      categories: data?.ngay_trong_khoang_chon || [],
     },
 
     yaxis: {
+      opposite: false,
       labels: {
-        formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
+        show: true,
       },
     },
-  });
-  const formattedDates = data?.ngay?.map((date: any) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  });
+    legend: {
+      show: true,
+      position: "bottom",
+      width: "50px",
+    },
+    grid: {
+      show: false,
+    },
+    tooltip: {
+      theme: "dark",
+      fillSeriesColor: false,
+    },
+  };
 
-  useEffect(() => {
-    if (data) {
-      setSeries(data?.series || []);
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        xaxis: {
-          ...prevOptions.xaxis,
-          type: "category", // Use "category" for custom date format
-          categories: formattedDates || [],
-        },
-      }));
-    }
-  }, [data, datestart, dateend]); // Run when Chart1 data changes (i.e., after refetch)
+  const seriesareachart = data?.series || [];
 
-  // Re-fetch data when datestart or dateend changes
-
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch();
-      }
-      if (top) {
-        await refetch();
-      }
-    };
-  }, [datestart, dateend, top, series, options]);
   return (
     <>
       {" "}
-      <div>
-        <div id="chart">
-          <ReactApexChart
-            options={options as any}
-            series={series}
-            type="area"
-            height={420}
-          />
-        </div>
-        <div id="html-dist"></div>
-      </div>
+      <Chart
+        options={optionsareachart}
+        series={seriesareachart}
+        type="area"
+        height="500px"
+      />
     </>
   );
 };
