@@ -161,7 +161,6 @@ class TrangSanPhamController extends Controller
             // Lấy các tham số lọc từ yêu cầu
             $danhMucChaIds = $request->danh_muc_cha_ids ?? [];
             $danhMucConIds = $request->danh_muc_con_ids ?? [];
-
             $danhMucChauIds = $request->danh_muc_chau_ids ?? [];
 
             $mauSacIds = $request->mau_sac_ids ?? [];
@@ -322,6 +321,7 @@ class TrangSanPhamController extends Controller
 
     public function layTatCaSanPham(Request $request)
     {
+        $danhmuc = $request->get('danh_muc', null);
         try {
             $soLuongSanPhamMoiTrang = $request->get('per_page', 8);
             // Nạp quan hệ khachHangYeuThich để kiểm tra trạng thái yêu thích
@@ -342,6 +342,11 @@ class TrangSanPhamController extends Controller
                 'khachHangYeuThich' // Nạp trước quan hệ khachHangYeuThich
             ])
                 ->where('san_phams.trang_thai', 1)
+                ->whereHas('danhMuc', function ($query) use ($danhmuc) {
+                    if ($danhmuc) {
+                        $query->where('duong_dan', $danhmuc);
+                    }
+                })
                 ->select(
                     'san_phams.id',
                     'san_phams.ten_san_pham',

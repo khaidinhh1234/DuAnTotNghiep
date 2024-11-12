@@ -168,14 +168,16 @@ const Header = () => {
                 {category.ten_danh_muc}
               </Link>
 
-              {category.con && category.con.length > 0 && (
-                <div className="subcategories flex flex-col">
-                  {renderSubCategories(category.con)}
-                </div>
-              )}
-            </div>
-          ),
-        }))
+
+            {category.con && category.con.length > 0 && (
+              <div className="subcategories flex flex-col text-xl font-medium">
+                {renderSubCategories(category.con)}
+              </div>
+            )}
+          </div>
+        ),
+      }))
+
       : [];
   };
 
@@ -372,7 +374,6 @@ const Header = () => {
                 <i className="fa-solid fa-bars text-2xl mx-5"></i>
               </button>
             </div>
-
             <nav className="hidden lg:flex order-3 items-cennter justify-start">
               <div className="lg:w-36">
                 <Link to="/">
@@ -383,7 +384,6 @@ const Header = () => {
                   />
                 </Link>
               </div>
-              {/* Navigation Links */}
               <nav className="flex space-x-6 text-gray-700 font-bold pt-1 relative">
                 <NavLink to="/" className="text-lg font-bold">
                   Trang chủ
@@ -402,16 +402,16 @@ const Header = () => {
                       menu={{
                         items: renderMenuItems(categories),
                         className:
-                          "custom-dropdown flex flex-row justify-start w-[100vw] top-[30px] -left-[545px]",
+                          "custom-dropdown flex flex-row justify-start w-[100%] fixed top-[80px] left-0 z-50", 
                       }}
                     >
                       <Link to={`/shop/${item.slug}`} className="text-black">
                         {item.label}
+                        
                       </Link>
                     </Dropdown>
                   </div>
                 ))}
-
                 <NavLink to="/blog" className="text-lg">
                   Bài viết
                 </NavLink>
@@ -473,11 +473,12 @@ const Header = () => {
                 </i>
 
                 <div
-                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
-                    showNotifications
-                      ? "opacity-100"
-                      : "opacity-0 pointer-events-none"
-                  }`}
+
+                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${showNotifications
+                    ? "opacity-100"
+                    : "opacity-0 pointer-events-none"
+                    }`}
+
                 >
                   <Notifications onUnreadCountChange={setUnreadCount} />
                 </div>

@@ -13,7 +13,6 @@ import {
 import React, { useState, useEffect } from "react";
 
 import TransportDetail from "./TransportDetail";
-import { Link } from "react-router-dom";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -106,35 +105,32 @@ const AllTransport: React.FC = () => {
     don_hang_id: number;
     trang_thai_van_chuyen: string;
   }> = [
-      {
-        title: "Tất cả",
-        className: "text-xl w-1/2",
-        dataIndex: "created_at",
-        key: "created_at",
-        render: (_, record) => (
-          <div className="border rounded-lg p-4 mb-4">
-            <TransportDetail record={record} />
-          </div>
-        ),
-      },
-    ];
+    {
+      title: "Tất cả",
+      className: "text-xl w-1/2",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (_, record) => (
+        <div className="border rounded-lg p-4 mb-4">
+          <TransportDetail record={record} />
+        </div>
+      ),
+    },
+  ];
 
   return (
     <main className="flex flex-1 flex-col gap-0 p-0 lg:gap-6 lg:px-6 lg:py-10 container">
       <div className="flex justify-between items-start mx-10">
         <div className="flex gap-5 items-center">
-          <Link to='/'>
-            <img
-              src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729398683/Black_and_White_Circle_Business_Logo_1_ieyoum.png"
-              alt="Logo"
-              className="w-16 h-16"
-            />
-          </Link>
-          <h1 className="font-semibold md:text-2xl">
+          <img
+            src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729398683/Black_and_White_Circle_Business_Logo_1_ieyoum.png"
+            alt="Logo"
+            className="w-16 h-16"
+          />
+          <h1 className="font-semibold md:text-2xl mt-3">
             Giao Hàng Glow Express
           </h1>
         </div>
-
       </div>
 
       <div className="lg:mx-10 mx-3 bg-white">

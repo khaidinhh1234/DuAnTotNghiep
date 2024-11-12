@@ -206,6 +206,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   console.log(locsanpham);
   const mau_sac = locsanpham?.mauSac;
 
+
   const sizes = locsanpham?.kichThuoc;
   // console.log(sizes);
   // lọc
@@ -264,6 +265,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   useEffect(() => {
     const isInDanhMucPage =
       tenDanhMucCha || tenDanhMucCon || tenDanhMucConCapBa;
+
 
     if (
       selectedParentIds.length > 0 ||

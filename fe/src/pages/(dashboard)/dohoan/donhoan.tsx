@@ -66,6 +66,10 @@ const RefundRequests: React.FC = () => {
             }
         }
     }, [data, activeTab]);
+    const [actedItems, setActedItems] = useState<number[]>(() => {
+        const saved = localStorage.getItem('actedItems');
+        return saved ? JSON.parse(saved) : [];
+    });
 
     const { mutate } = useMutation({
         mutationFn: async ({ ids, status }: { ids: React.Key[], status: string }) => {
@@ -74,17 +78,26 @@ const RefundRequests: React.FC = () => {
             formData.append('trang_thai', status === 'accept' ? 'hoan_thanh_cong' : 'tu_choi');
 
             const response = await instance.post(`/donhang/xac-nhan-hoan-hang/${ids[0]}`, formData);
+            
+            // Update localStorage when adding new acted items
+            const newActedItems = [...actedItems, ids[0] as number];
+            setActedItems(newActedItems);
+            localStorage.setItem('actedItems', JSON.stringify(newActedItems));
+            
             return response.data;
         },
         onSuccess: () => {
             message.success("Cập nhật trạng thái thành công");
             queryClient.invalidateQueries({ queryKey: ["refund-requests"] });
             setSelectedRowKeys([]);
-        },
-        onError: () => {
-            message.error("Cập nhật trạng thái thất bại");
         }
     });
+
+
+    const handleConfirm = (id: number) => {
+        mutate({ ids: [id], status: "accept" });
+    };
+
 
 
     const handleTotalSearch = (value: string) => {
@@ -181,13 +194,66 @@ const RefundRequests: React.FC = () => {
             key: "thoi_gian_hoan",
             width: "15%",
         },
+        // {
+        //     title: "Thao tác",
+        //     key: "action",
+        //     width: "20%",
+        //     render: (_, record) => (
+        //         <Space>
+        //             {record.trang_thai === "cho_xac_nhan" && (
+        //                 <>
+        //                     <Popconfirm
+        //                         title="Xác nhận yêu cầu"
+        //                         description="Bạn có chắc chắn muốn xác nhận yêu cầu này?"
+        //                         onConfirm={() => mutate({ ids: [record.id], status: "accept" })}
+        //                         okButtonProps={{
+        //                             className: "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium"
+        //                         }}
+        //                         cancelButtonProps={{
+        //                             className: "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium"
+        //                         }}
+        //                         okText="Xác nhận"
+        //                         cancelText="Hủy"
+        //                     >
+        //                         <Button
+        //                             className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+        //                         >
+        //                             Xác nhận
+        //                         </Button>
+        //                     </Popconfirm>
+        
+        //                     <Popconfirm
+        //                         title="Từ chối yêu cầu"
+        //                         description="Bạn có chắc chắn muốn từ chối yêu cầu này?"
+        //                         onConfirm={() => mutate({ ids: [record.id], status: "reject" })}
+        //                         okButtonProps={{
+        //                             className: "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium"
+        //                         }}
+        //                         cancelButtonProps={{
+        //                             className: "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium"
+        //                         }}
+        //                         okText="Xác nhận"
+        //                         cancelText="Hủy"
+        //                     >
+        //                         <Button
+        //                             className="bg-gradient-to-l from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-bold border border-red-300"
+        //                         >
+        //                             Từ chối
+        //                         </Button>
+        //                     </Popconfirm>
+        //                 </>
+        //             )}
+        //             <RefundDetail record={record} />
+        //         </Space>
+        //     ),
+        // }
         {
             title: "Thao tác",
             key: "action",
             width: "20%",
             render: (_, record) => (
                 <Space>
-                    {record.trang_thai === "cho_xac_nhan" && (
+                    {!actedItems.includes(record.id) && record.trang_thai === "cho_xac_nhan" && (
                         <>
                             <Popconfirm
                                 title="Xác nhận yêu cầu"
@@ -271,20 +337,7 @@ const RefundRequests: React.FC = () => {
                             onSearch={handleTotalSearch}
                             style={{ width: 300 }}
                         />
-                        {/* <Select
-              style={{ width: 200 }}
-              options={statusOptions}
-              placeholder="Chọn hành động"
-            /> */}
-                        {/* <Button
-              type="primary"
-              disabled={selectedRowKeys.length === 0}
-              onClick={() => {
-                // Handle bulk action
-              }}
-            >
-              Áp dụng
-            </Button> */}
+                     
                         <RangePicker onChange={handleDateChange} />
                     </Space>
                 </Flex>
