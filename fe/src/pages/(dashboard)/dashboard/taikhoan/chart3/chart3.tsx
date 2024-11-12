@@ -1,17 +1,22 @@
 import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const Chart3: React.FC = () => {
-  const { data: chart3 } = useQuery({
+  const { data: chart3, refetch } = useQuery({
     queryKey: ["tongquattable2chart3"],
     queryFn: async () => {
       const response = await instance.get("thong-ke/khach-hang-all");
       return response.data;
     },
   });
-  // console.log(chart3);
+
+  useEffect(() => {
+    async () => {
+      await refetch();
+    };
+  }, [chart3]);
   const options: ApexCharts.ApexOptions = {
     chart: {
       type: "line",

@@ -338,7 +338,6 @@ class ThongKeKhachHangController extends Controller
             'tong_so_luong_khach_hang' => $tongSoLuongKhachHang,  // Tổng số khách hàng
             'moc_time' => $mocTime  // Mốc thời gian (ngày)
         ]);
-
     }
     function top10KhachHangTieuBieu()
     {
@@ -347,8 +346,19 @@ class ThongKeKhachHangController extends Controller
         $motThangTruoc = $now->copy()->subMonth();
 
         // Truy vấn để lấy thông tin các khách hàng và tính toán các thông số
-        $topKhachHang = User::select('users.id', 'users.anh_nguoi_dung', 'users.ho', 'users.ten', 'users.so_dien_thoai', 'hang_thanh_viens.ten_hang_thanh_vien', 'hang_thanh_viens.anh_hang_thanh_vien')
+        $topKhachHang = User::select(
+            'users.id',
+            'users.anh_nguoi_dung',
+            'users.ho',
+            'users.ten',
+            'users.so_dien_thoai',
+            'hang_thanh_viens.ten_hang_thanh_vien',
+            'hang_thanh_viens.anh_hang_thanh_vien'
+        )
             ->join('hang_thanh_viens', 'users.hang_thanh_vien_id', '=', 'hang_thanh_viens.id') // Tham gia với bảng hạng thành viên
+            ->whereHas('vaiTros', function ($query) {
+                $query->where('ten_vai_tro', 'Khách hàng'); // Lọc vai trò là "Khách hàng"
+            })
             ->withCount([
                 'donHangs as tong_so_don' => function ($query) use ($motThangTruoc) {
                     $query->where('created_at', '>=', $motThangTruoc);
