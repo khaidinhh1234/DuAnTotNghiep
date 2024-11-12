@@ -1,13 +1,12 @@
-
 import { CameraOutlined } from "@ant-design/icons";
 import { Avatar, Button, Radio, DatePicker, Upload, message, Form } from "antd";
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import { Link } from "react-router-dom";
-import type { RadioChangeEvent } from 'antd';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link, useNavigate } from "react-router-dom";
+import type { RadioChangeEvent } from "antd";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { uploadToCloudinary } from "@/configs/cloudinary";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 import instanceClient from "@/configs/client";
 import { toast } from "react-toastify";
 
@@ -26,30 +25,33 @@ const MyProfilePage = () => {
   const [form] = Form.useForm();
   const [avatarImage, setAvatarImage] = useState<string>("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [gender, setGender] = useState<string>('male');
-  const [{ user, access_token }, setUserStorage] = useLocalStorage("user"as any,  {});
+  const [gender, setGender] = useState<string>("male");
+  const [{ user, access_token }, setUserStorage] = useLocalStorage(
+    "user" as any,
+    {}
+  );
   const queryClient = useQueryClient();
 
   useEffect(() => {
     form.setFieldsValue({
-      ho: user?.ho || '',
-      ten: user?.ten || '',
+      ho: user?.ho || "",
+      ten: user?.ten || "",
       ngay_sinh: user?.ngay_sinh ? dayjs(user.ngay_sinh) : null,
-      gioi_tinh: user?.gioi_tinh || 'male',
-      so_dien_thoai: user?.so_dien_thoai || '',
-      email: user?.email || '',
-      dia_chi: user?.dia_chi || '',
+      gioi_tinh: user?.gioi_tinh || "male",
+      so_dien_thoai: user?.so_dien_thoai || "",
+      email: user?.email || "",
+      dia_chi: user?.dia_chi || "",
     });
 
     if (user?.anh_nguoi_dung) {
       setAvatarImage(user.anh_nguoi_dung);
     }
   }, [user, form]);
-
+  const nav = useNavigate();
   const updateProfileMutation = useMutation({
     mutationFn: async (formData: ProfileFormData) => {
       let imageUrl = avatarImage;
-      
+
       if (avatarFile) {
         imageUrl = await uploadToCloudinary(avatarFile);
       }
@@ -57,51 +59,51 @@ const MyProfilePage = () => {
       const updatedData = {
         ...formData,
         anh_nguoi_dung: imageUrl,
-        ngay_sinh: dayjs(formData.ngay_sinh).format('YYYY-MM-DD')
+        ngay_sinh: dayjs(formData.ngay_sinh).format("YYYY-MM-DD"),
       };
 
       const response = await instanceClient.post(
-        '/cap-nhat-thong-tin',
+        "/cap-nhat-thong-tin",
         updatedData,
         {
           headers: {
-            Authorization: `Bearer ${access_token}`
-          }
+            Authorization: `Bearer ${access_token}`,
+          },
         }
       );
-
+      nav("/mypro/myprofile");
       // Update local storage
       setUserStorage((prev: any) => ({
         ...prev,
         user: {
           ...prev.user,
           ...updatedData,
-          anh_nguoi_dung: imageUrl
-        }
+          anh_nguoi_dung: imageUrl,
+        },
       }));
 
       return response.data;
     },
     onSuccess: () => {
-      message.success('Cập nhật thông tin thành công');
+      message.success("Cập nhật thông tin thành công");
       queryClient.invalidateQueries({
-        queryKey: ['userProfile']
+        queryKey: ["userProfile"],
       });
     },
     onError: () => {
-      toast.error('Có lỗi xảy ra khi cập nhật thông tin');
-    }
+      toast.error("Có lỗi xảy ra khi cập nhật thông tin");
+    },
   });
 
   const handleAvatarChange = (info: any) => {
     if (info.file && info.file.originFileObj) {
       const file = info.file.originFileObj;
       if (file.size > 2 * 1024 * 1024) {
-        toast.error('Kích thước ảnh không được vượt quá 2MB');
+        toast.error("Kích thước ảnh không được vượt quá 2MB");
         return;
       }
-      if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.type)) {
-        toast.error('Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF');
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+        toast.error("Chỉ chấp nhận file ảnh định dạng JPG, PNG hoặc GIF");
         return;
       }
       setAvatarFile(file);
@@ -159,7 +161,7 @@ const MyProfilePage = () => {
           <Form.Item
             name="ten"
             label="Tên"
-            rules={[{ required: true, message: 'Vui lòng nhập tên' }]}
+            rules={[{ required: true, message: "Vui lòng nhập tên" }]}
           >
             <input className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200" />
           </Form.Item>
@@ -167,7 +169,7 @@ const MyProfilePage = () => {
           <Form.Item
             name="ho"
             label="Họ"
-            rules={[{ required: true, message: 'Vui lòng nhập họ' }]}
+            rules={[{ required: true, message: "Vui lòng nhập họ" }]}
           >
             <input className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200" />
           </Form.Item>
@@ -177,10 +179,10 @@ const MyProfilePage = () => {
           <Form.Item
             name="ngay_sinh"
             label="Ngày sinh"
-            rules={[{ required: true, message: 'Vui lòng chọn ngày sinh' }]}
+            rules={[{ required: true, message: "Vui lòng chọn ngày sinh" }]}
           >
-            <DatePicker 
-              className="w-full h-[52px] rounded-xl border-2 border-gray-200" 
+            <DatePicker
+              className="w-full h-[52px] rounded-xl border-2 border-gray-200"
               format="DD/MM/YYYY"
             />
           </Form.Item>
@@ -188,15 +190,21 @@ const MyProfilePage = () => {
           <Form.Item
             name="gioi_tinh"
             label="Giới tính"
-            rules={[{ required: true, message: 'Vui lòng chọn giới tính' }]}
+            rules={[{ required: true, message: "Vui lòng chọn giới tính" }]}
           >
-            <Radio.Group 
-              onChange={onGenderChange} 
-              className="flex gap-8 p-4 bg-gray-50 rounded-xl border-2 border-gray-200"
+            <Radio.Group
+              onChange={onGenderChange}
+              className="flex gap-8 px-4 pb-3 bg-gray-50 rounded-xl border-2 border-gray-200"
             >
-              <Radio value="1">Nam</Radio>
-              <Radio value="2">Nữ</Radio>
-              <Radio value="3">Khác</Radio>
+              <Radio value="1" className="flex flex-row items-end flex-nowrap">
+                Nam
+              </Radio>
+              <Radio value="2" className="flex flex-row items-end flex-nowrap">
+                Nữ
+              </Radio>
+              <Radio value="0" className="flex flex-row items-end flex-nowrap">
+                Khác...
+              </Radio>
             </Radio.Group>
           </Form.Item>
         </div>
@@ -206,22 +214,28 @@ const MyProfilePage = () => {
             name="so_dien_thoai"
             label="Số Điện Thoại"
             rules={[
-              { required: true, message: 'Vui lòng nhập số điện thoại' },
-              { pattern: /^[0-9]{10}$/, message: 'Số điện thoại không hợp lệ' }
+              { required: true, message: "Vui lòng nhập số điện thoại" },
+              { pattern: /^[0-9]{10}$/, message: "Số điện thoại không hợp lệ" },
             ]}
           >
-            <input type="tel" className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200" />
+            <input
+              type="tel"
+              className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200"
+            />
           </Form.Item>
 
           <Form.Item
             name="email"
             label="Địa Chỉ Email"
             rules={[
-              { required: true, message: 'Vui lòng nhập email' },
-              { type: 'email', message: 'Email không hợp lệ' }
+              { required: true, message: "Vui lòng nhập email" },
+              { type: "email", message: "Email không hợp lệ" },
             ]}
           >
-            <input type="email" className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200"     readOnly
+            <input
+              type="email"
+              className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200"
+              readOnly
             />
           </Form.Item>
         </div>
@@ -229,7 +243,7 @@ const MyProfilePage = () => {
         <Form.Item
           name="dia_chi"
           label="Địa Chỉ"
-          rules={[{ required: true, message: 'Vui lòng nhập địa chỉ' }]}
+          rules={[{ required: true, message: "Vui lòng nhập địa chỉ" }]}
         >
           <input className="w-full h-[52px] px-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition duration-200" />
         </Form.Item>

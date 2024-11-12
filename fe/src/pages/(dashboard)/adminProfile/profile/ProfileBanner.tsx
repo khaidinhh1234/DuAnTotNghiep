@@ -29,7 +29,7 @@ const ProfileBanner = ({ profile, setpass }: any) => {
       setAvatarImage(file);
     }
   };
-  console.log("Profile:", profile);
+  // console.log("Profile:", profile);
   return (
     <>
       <Card
