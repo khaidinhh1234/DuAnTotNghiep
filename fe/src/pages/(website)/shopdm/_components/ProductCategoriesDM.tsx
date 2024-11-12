@@ -46,8 +46,8 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     //data
     const datas = {
         // danh_muc_cha_ids: [...parentIds],
-        // ...(parentIds.length > 0 && { tenDanhMucCha: [...parentIds] }),
-        // ...(childIds.length > 0 && { tenDanhMucCon: [...childIds] }),
+        ...(parentIds.length > 0 && { tenDanhMucCha: [...parentIds] }),
+        ...(childIds.length > 0 && { tenDanhMucCon: [...childIds] }),
         ...(price.length > 0 && { gia_duoi: price[0] }),
         ...(price.length > 0 && { gia_tren: price[1] }),
         ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
@@ -222,53 +222,73 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     // lọc
     const [page, setPage] = useState(1);
     const queryClient = useQueryClient();
-    // const { mutate } = useMutation({
-    //     mutationFn: async () => {
-    //         try {
-    //             const response = await instanceClient.post(
-    //                 `loc-san-pham?page=${page}`,
-    //                 datas
-    //             );
-    //             if (response.data.status !== true) {
-    //                 throw new Error("Error fetching product");
-    //             }
-    //             return response.data;
-    //         } catch (error) {
-    //             throw new Error("Lỗi khi lấy thông tin");
-    //         }
-    //     },
-    //     onSuccess: (data) => {
-    //         // queryClient.setQueryData(["PRODUCTSLOC"], data);
-    //         queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
-    //     },
-    // });
-    const { mutate } = useMutation({
+    const { mutate:LOCMUTATE } = useMutation({
         mutationFn: async () => {
-          try {
-            let url = "/danhmuc";
-            if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
-            if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
-            if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
-    
-            const response = await instanceClient.post(
-              `${url}?page=${page}`,
-              datas
-            );
-    
-            if (response.data.status !== true) {
-              throw new Error("Error fetching product");
+            try {
+                const response = await instanceClient.post(
+                    `loc-san-pham?page=${page}`,
+                    datas
+                );
+                if (response.data.status !== true) {
+                    throw new Error("Error fetching product");
+                }
+                return response.data;
+            } catch (error) {
+                throw new Error("Lỗi khi lấy thông tin");
             }
-    
-            return response.data;
-          } catch (error) {
-            throw new Error("Lỗi khi lấy thông tin");
-          }
         },
         onSuccess: (data) => {
-        //   queryClient.setQueryData(["PRODUCTSLOC"], data);
-        queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
+            queryClient.setQueryData(["PRODUCTSLOC"], data);
+            // Chỉ invalidate nếu cần thiết, tránh reload liên tục
+            if (!isInDanhMucPage) {
+                queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
+            }
         },
     });
+    const { mutate } = useMutation({
+        mutationFn: async () => {
+            try {
+                let url = "/danhmuc";
+                if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
+                if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
+                if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
+                const response = await instanceClient.post(
+                    `${url}?page=${page}`,
+                    datas
+                );
+                if (response.data.status !== true) {
+                    throw new Error("Error fetching product");
+                }
+                return response.data;
+            } catch (error) {
+                throw new Error("Lỗi khi lấy thông tin");
+            }
+        },
+        onSuccess: (data) => {
+            queryClient.setQueryData(["PRODUCTSLOC"], data);
+            // Chỉ invalidate nếu cần thiết, tránh reload liên tục
+            if (!isInDanhMucPage) {
+                queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
+            }
+        },
+    });
+    useEffect(() => {
+        const isInDanhMucPage = tenDanhMucCha || tenDanhMucCon || tenDanhMucConCapBa;
+    
+        if (
+            parentIds.length > 0 ||
+            childIds.length > 0 ||
+            selectedSize.length > 0 ||
+            selectedMau.length > 0 ||
+            price.length > 0
+        ) {
+            if (isInDanhMucPage) {
+                mutate();
+            } else {
+                LOCMUTATE();
+            }
+        }
+    }, [parentIds, childIds, mutate, LOCMUTATE, selectedSize, selectedMau, price, page, tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa]);
     const onPage = (page: number) => {
         setPage(page);
     };
@@ -277,26 +297,8 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     const products = data?.data?.san_pham?.data;
     // console.log(products);
     const location = useLocation();
-    useEffect(() => {
-        if (
-            (tenDanhMucCha?.length ?? 0) >= 0 ||
-            (tenDanhMucCon?.length ?? 0) >= 0 ||
-            selectedSize.length >= 0 ||
-            selectedMau.length >= 0 ||
-            (tenDanhMucConCapBa?.length ?? 0) >= 0
-        ) {
-            mutate(); // Call mutate when URL or selection changes
-        }
-    }, [
-        tenDanhMucCha,
-        tenDanhMucCon,
-        selectedSize,
-        selectedMau,
-        price,
-        page,
-        tenDanhMucConCapBa,
-        location.pathname, // Run mutate when pathname changes
-    ]);
+    
+    
     // toanmoi
     const [grandchildChecked, setGrandchildChecked] = useState<
         { [key: string]: { [key: string]: { [key: string]: boolean } } }
@@ -331,7 +333,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                 <div className="container">
                     <div className="flex flex-wrap items-start w-full mt-16">
                         {/* <!-- Sidebar Filters --> */}
-                        <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0">
+                        <button className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0" title="Toggle Filters">
                             <i className="fa-solid fa-layer-group text-2xl hover:text-black text-gray-500"></i>
                         </button>
                         <div className="lg:block hidden w-1/5 py-4  mb-4 lg:mb-0    sticky top-20 ">
@@ -388,7 +390,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                                                             disabled={!parentChecked[index]}
                                                                             onChange={(e) => {
                                                                                 const isChecked = e.target.checked;
-                                                                                handleChildChange(index, indexCon, isChecked, itemcon.id);
+                                                                                handleChildChange(index, indexCon, isChecked, itemcon.id, itemcon.children);
                                                                                 isChecked && mutate(itemcon.id);
                                                                             }}
                                                                         />
