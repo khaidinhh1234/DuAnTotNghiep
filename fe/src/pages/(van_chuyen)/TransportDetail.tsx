@@ -248,7 +248,8 @@ const TransportDetail = ({ record }: any) => {
         <div className="relative">
           <div>
             <h1 className="text-lg">
-              Mã Vận chuyển: <span>{vanChuyenData ? vanChuyenData.ma_van_chuyen : "Loading..."}</span>
+              Mã Vận chuyển: <span>{vanChuyenData ? vanChuyenData.ma_van_chuyen : "Loading..."}</span> <br />
+              Ngày tạo: <span>{vanChuyenData ? new Date(vanChuyenData.ngay_tao).toLocaleDateString("vi-VN") : "Loading..."}</span>
             </h1>
           </div>
           <div className="flex items-start space-x-4 mb-2">

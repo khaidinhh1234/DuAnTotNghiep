@@ -10,7 +10,7 @@ import {
   TableProps,
   Tabs
 } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import TransportDetail from "./TransportDetail";
 
@@ -40,204 +40,86 @@ interface Transport {
   ghi_chu: string;
 }
 
-const datas = [
-  { value: "1", label: "Đang giao hàng" },
-  { value: "2", label: "Giao hàng thành công" },
-  { value: "3", label: "Giao hàng thất bại" },
+const tabItems = [
+  { label: "Đơn vận chuyển", key: "Tất cả" },
+  { label: "Chờ xử lý", key: "Chờ xử lý" },
+  { label: "Đang giao hàng", key: "Đang giao hàng" },
+  { label: "Giao hàng thành công", key: "Giao hàng thành công" },
+  { label: "Giao hàng thất bại", key: "Giao hàng thất bại" },
 ];
 
 const AllTransport: React.FC = () => {
   const queryClient = useQueryClient();
-  // const { id } = useParams()
-  // console.log("Current ID:", id);
-
-  const [trangthai, setTrangThai] = useState<string>();
+  const [searchText, setSearchText] = useState("");
   const [filteredData, setFilteredData] = useState<Transport[]>([]);
-  const [formcheck, setFormCheck] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [dateRange, setDateRange] = useState<[string, string] | null>(null);
   const [activeTab, setActiveTab] = useState<string>("Tất cả");
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
   };
 
-  const rowSelection: TableRowSelection<{
-    id: number;
-    created_at: string;
-    don_hang_id: number;
-    trang_thai_van_chuyen: string;
-  }> = {
-    selectedRowKeys,
-    onChange: onSelectChange,
+  const handleDateRangeChange = (dates: any, dateStrings: [string, string]) => {
+    setDateRange(dateStrings);
   };
 
-  const handleChange = (value: string) => {
-    setTrangThai(value);
-  };
   const { data } = useQuery({
     queryKey: ["vanchuyen"],
     queryFn: async () => {
       const response = await instance.get(`/vanchuyen`);
       return response.data;
     },
-  })
-  const dataSource = data?.data?.map((item: any) => ({
-    // key: item.id,
-    // index: index + 1,
-    ...item,
-  }));
+  });
 
-  const hasSelected = selectedRowKeys.length > 0;
+  useEffect(() => {
+    if (data?.data) {
+      let filtered = data.data;
+
+      if (searchText) {
+        filtered = filtered.filter((item: Transport) =>
+          item.ma_van_chuyen.toLowerCase().includes(searchText.toLowerCase())
+        );
+      }
+
+      if (dateRange) {
+        const [start, end] = dateRange;
+        filtered = filtered.filter((item: Transport) => {
+          const itemDate = new Date(item.created_at).toISOString().split("T")[0];
+          return itemDate >= start && itemDate <= end;
+        });
+      }
+
+      if (activeTab !== "Tất cả") {
+        filtered = filtered.filter((item: Transport) =>
+          item.trang_thai_van_chuyen === activeTab
+        );
+      }
+
+      setFilteredData(filtered);
+    }
+  }, [searchText, dateRange, activeTab, data]);
+
   const columns: TableColumnsType<{
     id: number;
     created_at: string;
     don_hang_id: number;
     trang_thai_van_chuyen: string;
   }> = [
-      // {
-      //   title: "Mã vận chuyển",
-      //   dataIndex: "ma_van_chuyen",
-      //   key: "ma_van_chuyen",
-      // },
-      // {
-      //   title: "Mã đơn hàng",
-      //   dataIndex: "don_hang_id",
-      //   key: "don_hang_id",
-      //   render: (text) => <a>{text}</a>,
-      // },
-      {
-        title: "Tất cả",
-        className: "text-xl w-1/2",
-        dataIndex: "created_at",
-        key: "created_at",
-        // sorter: (a, b) =>
-        //   new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
-        render: (_, record) => (
-          // console.log(record)
-          // const date = new Date(record.created_at);
-          // return (
-          //   <div>
-          //     {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
-          //   </div>
-          // );
-          <div className="border rounded-lg p-4 mb-4">
-            <TransportDetail record={record} />
-            {/* <div className="justify-between flex">
-              {dataSource?.map((item: any) => (
-                <div key={item.id}>
-                  <div className="flex items-end">
-                    <span className="md:text-lg text-sm text-red-500 font-semibold">
-                      {item.trang_thai_van_chuyen}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="md:text-lg text-xs text-gray-800 flex items-end justify-end">
-                      Tổng số tiền (1 sản phẩm): {item.tien_cod}
-                    </p>
-                    <div className="flex space-x-2 mt-2 justify-end">
-                      <button className="px-3 py-1 border border-gray-600 text-gray-600 rounded-lg text-xs md:text-base">
-                        Giao hàng thất bại
-                      </button>
-                      <button className="px-3 py-2 border-red-500 text-red-500 border hover:bg-red-600 hover:text-white rounded-lg text-xs md:text-base">
-                        Nhận hàng
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div> */}
-          </div>
-        ),
-      },
-      // {
-      //   title: "Trạng thái giao hàng",
-      //   dataIndex: "trang_thai_van_chuyen",
-      //   key: "trang_thai_van_chuyen",
-      //   render: (_, record) => {
-      //     return (
-      //       <div
-      //         className={
-      //           "font-bold text-[15px] " +
-      //           (record.trang_thai_van_chuyen === "Chờ xử lý"
-      //             ? "text-yellow-400"
-      //             : record.trang_thai_van_chuyen === "Đang giao hàng"
-      //               ? "text-blue-500"
-      //               : record.trang_thai_van_chuyen === "Giao hàng thành công"
-      //                 ? "text-green-500"
-      //                 : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-      //                   ? "text-red-500"
-      //                   : "text-gray-500")
-      //         }
-      //       >
-      //         {record.trang_thai_van_chuyen}
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   title: "Thanh toán",
-      //   dataIndex: "trang_thai_thanh_toan",
-      //   key: "trang_thai_thanh_toan",
-      //   sorter: (a: any, b: any) =>
-      //     a.trang_thai_thanh_toan.localeCompare(b.trang_thai_thanh_toan),
-      //   render: (_, record: any) => {
-      //     return (
-      //       <div
-      //         className={
-      //           record.trang_thai_thanh_toan === "Đã thanh toán"
-      //             ? "text-green-500 font-bold text-[15px]"
-      //             : record.trang_thai_thanh_toan === "Chờ xử lý"
-      //               ? "text-blue-500 font-bold text-[15px]"
-      //               : "text-yellow-500 font-bold text-[15px]"
-      //         }
-      //       >
-      //         {record.trang_thai_thanh_toan === "Đã thanh toán"
-      //           ? "Đã thanh toán"
-      //           : record.trang_thai_thanh_toan === "Chờ xử lý"
-      //             ? "Chờ xử lý"
-      //             : "Chưa thanh toán"}
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   title: "Tổng tiền",
-      //   dataIndex: "tien_cod",
-      //   // key: "tien_cod",
-      //   render: (_, record) => {
-      //     return (
-      //       <div>
-      //         {new Intl.NumberFormat("vi-VN", {
-      //           style: "currency",
-      //           currency: "VND",
-      //         }).format(Number(record.tien_cod))}
-      //       </div>
-      //     );
-      //   },
-      // },
-      // {
-      //   title: "Thao tác",
-      //   key: "action",
-      //   render: (_, record) => (
-      //     // console.log(record),
-      //     <Space size="middle">
-      //       <DetailTS record={record} />
-      //     </Space>
-      //   ),
-      // },
-    ];
-
-  // Tabs để lọc dữ liệu theo trạng thái
-  const tabItems = [
-    { label: "Đơn vận chuyển", key: "Tất cả" },
-    { label: "Chờ xử lý", key: "Chờ xử lý" },
-    { label: "Đang giao hàng", key: "Đang giao hàng" },
-    { label: "Giao hàng thành công", key: "Giao hàng thành công" },
+    {
+      title: "Tất cả",
+      className: "text-xl w-1/2",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (_, record) => (
+        <div className="border rounded-lg p-4 mb-4">
+          <TransportDetail record={record} />
+        </div>
+      ),
+    },
   ];
 
   return (
     <main className="flex flex-1 flex-col gap-0 p-0 lg:gap-6 lg:px-6 lg:py-10 container">
-      <div className="flex items-center">{/* Header */}</div>
       <div className="flex justify-between items-start mx-10">
         <div className="flex gap-5 items-center">
           <img
@@ -261,69 +143,19 @@ const AllTransport: React.FC = () => {
 
         <div style={{ marginBottom: 16 }}>
           <Space>
-            <Input placeholder="Tìm kiếm" prefix={<SearchOutlined />} />
-            <RangePicker />
+            <Input
+              placeholder="Tìm kiếm"
+              prefix={<SearchOutlined />}
+              onChange={handleSearchChange}
+            />
+            <RangePicker onChange={handleDateRangeChange} />
           </Space>
         </div>
-
-        {/* <Flex gap="middle" vertical>
-          <Flex align="center" gap="middle" className="relative"> */}
-        {/* <Button
-              type="primary"
-              onClick={start}
-              disabled={!hasSelected}
-              loading={loading}
-              className="text-white"
-            >
-              Thao tác
-            </Button> */}
-
-        {/* {formcheck && (
-              <div className="bg-slate-400 absolute left-0 top-10 z-10 w-80 h-36 rounded-lg shadow-md p-3">
-                <p>Cập nhật trạng thái đơn hàng theo:</p>
-                <Select
-                  defaultValue={datas[0].label}
-                  style={{ width: "100%" }}
-                  onChange={handleChange}
-                  options={datas}
-                />
-                <br />
-                <div className="my-5 flex justify-between">
-                  <Popconfirm
-                    title="Trạng thái"
-                    description="Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng này?"
-                    okText="Có"
-                    onConfirm={() => {
-                      console.log(
-                        "Đã cập nhật trạng thái cho đơn hàng",
-                        selectedRowKeys
-                      );
-                    }}
-                    cancelText="Không"
-                  >
-                    <Button
-                      type="primary"
-                      className="bg-red-500 text-white hover:bg-red-700"
-                      disabled={!hasSelected}
-                      loading={loading}
-                    >
-                      Xác nhận
-                    </Button>
-                  </Popconfirm>
-                </div>
-              </div>
-            )}
-            {hasSelected ? `Đã chọn ${selectedRowKeys.length} đơn` : ""}
-          </Flex> */}
-
         <Table
-          // rowSelection={rowSelection}
           columns={columns}
-          dataSource={dataSource}
-          // loading={isLoading}
+          dataSource={filteredData}
           pagination={{ pageSize: 10, className: "my-5" }}
         />
-        {/* </Flex> */}
       </div>
     </main>
   );
