@@ -115,10 +115,8 @@ class TrangSanPhamController extends Controller
             $danhMuc = DanhMuc::with('children.children')->whereNull('cha_id')->where('duong_dan', $loai)->get();
 
             // Lấy tất cả màu sắc theo đường dẫn của danh mục
-            $mauSacs = BienTheMauSac::with(['sanPhams' => function ($query) use ($loai) {
-                $query->whereHas('danhMuc', function ($query) use ($loai) {
-                    $query->where('duong_dan', $loai);
-                });
+            $mauSacs = BienTheMauSac::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
+                $query->where('duong_dan', $loai);
             }])->get()->filter(function ($mauSac) {
                 return $mauSac->sanPhams->isNotEmpty();
             });

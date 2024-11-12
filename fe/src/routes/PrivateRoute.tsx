@@ -48,7 +48,7 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
   }
 
   if (isDeliveryPerson) {
-    nav("/shipp");
+    nav("/shipper2");
   }
   // if (isAuthenticated) {
   //   toast.success("Đăng nhập thành công");

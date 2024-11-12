@@ -204,7 +204,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
         queryKey: ["LOCSLIBAR"],
         queryFn: async () => {
             try {
-                const response = await instanceClient.get("lay-dm-ms-kt");
+                const response = await instanceClient.get(`lay-dm-ms-kt?loai=nu`);
                 if (response.data.status_code !== 200) {
                     throw new Error("Error fetching product");
                 }
