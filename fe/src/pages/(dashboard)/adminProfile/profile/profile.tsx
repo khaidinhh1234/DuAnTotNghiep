@@ -1,172 +1,109 @@
-import React, { useState } from "react";
-import { Input, Button } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { useMutation } from "@tanstack/react-query";
-import instance from "@/configs/auth";
-import { toast } from "react-toastify";
+import { Button, DatePicker, Form, Input, Radio } from "antd";
 // import { useNavigate } from 'react-router-dom';
-import { useLocalStorage } from "@/components/hook/useStoratge";
 
-interface ChangPassword {
-  current_password: string;
-  new_password: string;
-  new_password_confirmation: string;
-  token?: string;
-  user?: any; // Add user property
-}
-
-const Profile = () => {
+const Profile = ({ profile }: any) => {
   // const nav = useNavigate();
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [passwordMatchError, setPasswordMatchError] = useState(false);
-  const [passwordLengthError, setPasswordLengthError] = useState(false);
-  const [alert, setAlert] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
 
-  const [user] = useLocalStorage("user" as any, {});
+  const [form] = Form.useForm();
 
-  // Kiểm tra mật khẩu hợp lệ
-  const handlePasswordValidation = () => {
-    if (newPassword.length < 6) {
-      setPasswordLengthError(true);
-      setAlert({
-        message: "Mật khẩu mới phải có ít nhất 6 ký tự.",
-        type: "error",
-      });
-      return false;
-    }
-
-    if (newPassword !== confirmNewPassword) {
-      setPasswordMatchError(true);
-      setAlert({
-        message: "Mật khẩu mới và xác nhận mật khẩu không khớp.",
-        type: "error",
-      });
-      return false;
-    }
-
-    setPasswordLengthError(false);
-    setPasswordMatchError(false);
-    return true;
+  const onFinish = async (values: any) => {
+    console.log("Success:", values);
   };
-
-  const handleSubmit = () => {
-    const isValid = handlePasswordValidation();
-    if (!isValid) return;
-
-    onSubmit({
-      current_password: currentPassword,
-      new_password: newPassword,
-      new_password_confirmation: confirmNewPassword,
-    });
-  };
-
-  const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setConfirmNewPassword(e.target.value);
-    if (newPassword !== e.target.value) {
-      setPasswordMatchError(true);
-    } else {
-      setPasswordMatchError(false);
-    }
-  };
-
-  // Mutation để gửi yêu cầu đổi mật khẩu
-  const { mutate } = useMutation({
-    mutationFn: async (user: ChangPassword) => {
-      try {
-        const res = await instance.post("/change-password", user);
-        toast.success(res.data.message || "Đổi mật khẩu thành công");
-        setAlert({ message: "Đổi mật khẩu thành công!", type: "success" });
-
-        // Reset form sau khi thành công
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-      } catch (error: any) {
-        toast.error(error.response?.data?.message || "Đổi mật khẩu thất bại");
-        setAlert({ message: "Đổi mật khẩu thất bại!", type: "error" });
-      }
-    },
-  });
-
-  // Hàm để gọi mutate với user
-  const onSubmit = (data: ChangPassword) => {
-    if (!user) {
-      toast.error("Token không hợp lệ hoặc không tồn tại");
-      return;
-    }
-
-    mutate({ ...data, user }); // Gửi user kèm theo dữ liệu mật khẩu mới
-  };
-
+  console.log("Profile:", profile?.tai_khoan);
+  const thongtin = profile?.tai_khoan;
   return (
     <div className="max-w mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h2 className="text-2xl font-semibold mb-4">Chỉnh sửa trang cá nhân</h2>
-      <div className="mb-4">
-        <label className="block text-gray-700">Email</label>
-        <Input
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          className="mt-1"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Số điện thoại</label>
-        <Input
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="mt-1"
-        />
-        {passwordLengthError && (
-          <p className="text-red-500 text-sm mt-1">
-            Mật khẩu mới phải có ít nhất 6 ký tự
-          </p>
-        )}
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Địa chỉ </label>
-        <Input
-          value={confirmNewPassword}
-          onChange={handleConfirmPasswordChange}
-          className="mt-1"
-        />
-        {passwordMatchError && (
-          <p className="text-red-500 text-sm mt-1">Mật khẩu không khớp</p>
-        )}
-      </div>{" "}
-      <div className="mb-4">
-        <label className="block text-gray-700">Giới tính </label>
-        <Input
-          value={confirmNewPassword}
-          onChange={handleConfirmPasswordChange}
-          className="mt-1"
-        />
-        {passwordMatchError && (
-          <p className="text-red-500 text-sm mt-1">Mật khẩu không khớp</p>
-        )}
-      </div>{" "}
-      <div className="mb-4">
-        <label className="block text-gray-700">Ngày sinh </label>
-        <Input
-          value={confirmNewPassword}
-          onChange={handleConfirmPasswordChange}
-          className="mt-1"
-        />
-        {passwordMatchError && (
-          <p className="text-red-500 text-sm mt-1">Mật khẩu không khớp</p>
-        )}
-      </div>
-      <div>
-        <Button type="primary" onClick={handleSubmit}>
-          Đổi mật khẩu
-        </Button>
-      </div>
+      <Form
+        form={form}
+        name="basic"
+        layout="vertical"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 24 }}
+        style={{ maxWidth: 1000 }}
+        initialValues={{ ...profile?.tai_khoan }}
+        className=" my-5"
+        autoComplete="off"
+        onFinish={onFinish}
+      >
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập email của bạn!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập Email của bạn" value={thongtin?.email} />
+        </Form.Item>
+        <Form.Item
+          label="Số điện thoại"
+          name="so_dien_thoai"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập số điện thoại của bạn!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập số điện thoại của bạn" />
+        </Form.Item>
+        <Form.Item
+          label="Địa chỉ "
+          name="dia_chi"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập Địa chỉ của bạn!",
+            },
+          ]}
+        >
+          <Input placeholder="Nhập địa chỉ của bạn" />
+        </Form.Item>
+
+        <Form.Item
+          label="Ngày sinh  "
+          name="ngay_sinh"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập Ngày sinh của bạn!",
+            },
+          ]}
+        >
+          <DatePicker
+            className="w-full h-[52px] rounded-xl border-2 border-gray-200"
+            format="DD/MM/YYYY"
+          />
+        </Form.Item>
+        <Form.Item
+          label="Giới tính"
+          name="gioi_tinh"
+          rules={[
+            {
+              required: true,
+              message: "Giới tính bắt buộc phải nhập!",
+            },
+          ]}
+        >
+          <Radio.Group className="flex">
+            <Radio value="1" className="flex flex-row items-end flex-nowrap">
+              Nam
+            </Radio>
+            <Radio value="2" className="flex flex-row items-end flex-nowrap">
+              Nữ
+            </Radio>
+            <Radio value="0" className="flex flex-row items-end flex-nowrap">
+              Khác...
+            </Radio>
+          </Radio.Group>
+        </Form.Item>
+        <div>
+          <Button type="primary">Lưu thay đổi</Button>
+        </div>
+      </Form>
     </div>
   );
 };

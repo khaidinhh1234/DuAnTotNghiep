@@ -13,9 +13,9 @@ const Layout = () => {
 
   return (
     <div>
-      {/* <Header /> */}
+      <Header />
       {/* <Test123/> */}
-      <Test/>
+      {/* <Test/> */}
       <Outlet />
       <Footer />
     </div>
