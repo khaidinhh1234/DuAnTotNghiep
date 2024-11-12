@@ -137,7 +137,7 @@ import AllTransport from "@/pages/(van_chuyen)/AllTransport";
 import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
-import Test3 from "@/pages/(website)/test3";
+import Test23 from "@/pages/(dashboard)/test";
 
 import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
 import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
@@ -175,7 +175,7 @@ const Router = () => {
           <Route path="/payment" element={<Payment />} />{" "}
           <Route path="/contact" element={<Contact />} />
           <Route path="/gio-hang" element={<Cart />} />{" "}
-          <Route path="/test" element={<Test3 />} />{" "}
+          {/* <Route path="/test" element={<Test3 />} />{" "} */}
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route path="/search-results" element={<Page2 />} />
@@ -419,6 +419,7 @@ const Router = () => {
           {/* Error */}
           <Route path="*" element={<NotFoundPage />} />
           {/* Chưa dùng đến */}
+          <Route path="test" element={<Test23 />} />
           <Route path="ADmin/privilegeadmin" element={<PagePrivilegeAdmin />} />
           <Route path="add-admin" element={<PageAddAdmin />} />
         </Route>{" "}
