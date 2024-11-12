@@ -103,15 +103,18 @@ const SiderComponent: React.FC = () => {
                   Vận chuyển
                 </Menu.Item>
               )}
-                  {quyen.includes("admin.donhang.hoanhang") && (
+              {quyen.includes("admin.donhang.hoanhang") && (
                 <Menu.Item key="/admin/orders/donhoan">
                   Danh sách đơn hoàn
                 </Menu.Item>
               )}
             </SubMenu>
           )}
-      {quyen?.includes("admin.rut-tien.xacnhan") && (
-              <Menu.Item key="/admin/orders/ruttien"   icon={<DollarOutlined style={{ fontSize: '24px' }} />}>
+          {quyen?.includes("admin.rut-tien.xacnhan") && (
+            <Menu.Item
+              key="/admin/orders/ruttien"
+              icon={<DollarOutlined style={{ fontSize: "24px" }} />}
+            >
               Rút tiền
             </Menu.Item>
           )}

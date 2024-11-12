@@ -293,12 +293,16 @@ class TrangChuController extends Controller
         ]);
 
         $query = trim($request->input('query'));
+<<<<<<< HEAD
         if (Auth::check()) {
             LichSuTimKiem::create([
                 'user_id' => Auth::id(),
                 'tim_kiem' => $query,
             ]);
 }
+=======
+
+>>>>>>> aac1ff9964bc5a7da7cf0399331196093d3c8763
         $sanPhamIds = SanPham::query()
                 ->where('san_phams.trang_thai', 1)
                 ->whereNotNull('san_phams.danh_muc_id')
