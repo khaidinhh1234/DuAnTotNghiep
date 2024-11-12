@@ -360,12 +360,12 @@ const Header = () => {
               </div>
               {/* Navigation Links */}
               <nav className="flex space-x-6 text-gray-700 font-bold pt-1 relative">
-                <a href="/" className="text-lg font-bold">
+                <NavLink to="/" className="text-lg font-bold">
                   Trang chủ
-                </a>
-                <a href="/ourstory" className="text-lg">
+                </NavLink>
+                <NavLink to="/ourstory" className="text-lg">
                   Giới thiệu
-                </a>
+                </NavLink>
                 {mainMenuItems.map((item) => (
                   <div
                     key={item.id}
@@ -387,15 +387,15 @@ const Header = () => {
                   </div>
                 ))}
 
-                <a href="/" className="text-lg">
+                <NavLink to="/blog" className="text-lg">
                   Bài viết
-                </a>
-                <a href="/vourcher" className="text-lg">
+                </NavLink>
+                <NavLink to="/vourcher" className="text-lg">
                   Khuyến mại
-                </a>
-                <a href="/contact" className="text-lg">
+                </NavLink>
+                <NavLink to="/contact" className="text-lg">
                   Liên hệ
-                </a>
+                </NavLink>
               </nav>
             </nav>
 
