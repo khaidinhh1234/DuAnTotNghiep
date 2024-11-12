@@ -152,6 +152,7 @@ import HoanHang from "@/pages/(website)/myOrder/_components/Hoan";
 
 import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
 import ShopDM from "@/pages/(website)/shopdm/shop";
+import Page4 from "@/pages/(website)/_component/shop";
 
 
 const Router = () => {
@@ -182,7 +183,7 @@ const Router = () => {
           <Route path="/test" element={<Test3 />} />{" "}
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
-          <Route path="/search-results" element={<Page2 />} />
+          <Route path="/search-results" element={<Page4 />} />
           <Route
             path="/shippingAddressPage"
             element={<ShippingAddressPage />}
