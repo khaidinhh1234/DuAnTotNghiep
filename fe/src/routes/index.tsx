@@ -153,6 +153,8 @@ import HoanHang from "@/pages/(website)/myOrder/_components/Hoan";
 import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
 import ShopDM from "@/pages/(website)/shopdm/shop";
 import ReturnOrders from "@/pages/(van_chuyen)/ReturnOrders";
+import HoanTien from "@/pages/(website)/myOrder/_components/Hoan";
+import Layoutvc from "@/pages/(website)/layoutvc";
 
 
 const Router = () => {
@@ -184,7 +186,6 @@ const Router = () => {
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
           <Route path="/search-results" element={<Page2 />} />
-          <Route path="/return-orders" element={<ReturnOrders />} />
 
 
           <Route
@@ -204,6 +205,7 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
+            <Route path="/mypro/hoanhang/:slug" element={<HoanTien />} />
             {/* <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
             <Route path="/mypro/bank" element={<BankAccount />} />
@@ -446,6 +448,9 @@ const Router = () => {
         <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />
         <Route path="/shipper" element={<Shipper />} />
         <Route path="/shipper2" element={<AllTransport />} />
+        <Route path="/return-orders" element={<ReturnOrders />} />
+        <Route path="/" element={<Layoutvc />}>
+</Route>
         <Route path="/test2" element={<Test4 />} />
       </Routes>
     </>

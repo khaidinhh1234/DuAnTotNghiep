@@ -167,7 +167,7 @@ class SanPhamController extends Controller
             'ten_san_pham' => 'required|string|max:255|unique:san_phams,ten_san_pham,' . $id,
             'anh_san_pham' => 'required|string',
             'ma_san_pham' => 'required|string|max:255|unique:san_phams,ma_san_pham,' . $id,
-            'mo_ta_ngan' => 'required|string|max:255',
+            'mo_ta_ngan' => 'required|string',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'gia_tot' => 'nullable|boolean',

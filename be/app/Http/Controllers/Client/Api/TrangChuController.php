@@ -413,7 +413,45 @@ class TrangChuController extends Controller
                 $json
             );
         }
+<<<<<<< HEAD
     }
+=======
+
+        public function lichSuTimKiem()
+        {
+            try {
+                $dataLichSuTimKiem = [];
+                if (Auth::check()) {
+                    $dataLichSuTimKiem = LichSuTimKiem::query()
+                        ->select('tim_kiem', 'id')
+                        ->where('user_id', Auth::id())
+                        ->orderByDesc('id')
+                        ->limit(10)
+                        ->get();
+
+                    $duplicates = DB::table('lich_su_tim_kiems')
+                        ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
+                        ->where('user_id', Auth::id())
+                        // ->whereRaw('LENGTH(tim_kiem) = 1')
+                        ->groupBy('tim_kiem')
+                        ->pluck('latest_id');
+
+                    DB::table('lich_su_tim_kiems')
+                        ->where('user_id', Auth::id())
+                        ->whereNotIn('id', $duplicates)
+                        ->delete();
+                    return response()->json([
+                        'status' => true,
+                        'data' => $dataLichSuTimKiem
+                    ]);
+                }
+            }catch (Exception $exception) {
+                return response()->json([
+                    'status' => false,
+                ]);
+            }
+        }
+>>>>>>> e899f7c7acd97e57a691b01e5d3bb43f4c66f65a
 
     public function loadDanhMucConChau($chaId)
     {
@@ -503,7 +541,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->delete();
+            $user->lichSuTimKiem->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -523,7 +561,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->where('id', $id)->delete();
+            $user->lichSuTimKiem->where('id', $id)->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

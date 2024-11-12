@@ -261,9 +261,9 @@ const Header = () => {
     },
   ];
   const mainMenuItems = [
-    { id: 1, label: "Nam" },
-    { id: 2, label: "Nữ" },
-    { id: 3, label: "Trẻ em" },
+    { id: 1, label: "Nam", slug: "nam" },
+    { id: 2, label: "Nữ", slug: "nu" },
+    { id: 3, label: "Trẻ em", slug: "tre_em" },
   ];
   return (
     <header className="h-12 relative">
@@ -347,7 +347,6 @@ const Header = () => {
                 <i className="fa-solid fa-bars text-2xl mx-5"></i>
               </button>
             </div>
-
             <nav className="hidden lg:flex order-3 items-cennter justify-start">
               <div className="lg:w-36">
                 <Link to="/">
@@ -358,7 +357,6 @@ const Header = () => {
                   />
                 </Link>
               </div>
-              {/* Navigation Links */}
               <nav className="flex space-x-6 text-gray-700 font-bold pt-1 relative">
                 <a href="/" className="text-lg font-bold">
                   Trang chủ

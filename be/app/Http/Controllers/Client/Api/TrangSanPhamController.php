@@ -154,9 +154,9 @@ class TrangSanPhamController extends Controller
         DB::beginTransaction(); // Bắt đầu giao dịch
         try {
             // Lấy các tham số lọc từ yêu cầu
+            $loaiDanhMuc = $request->loai_danh_muc ?? null;
             $danhMucChaIds = $request->danh_muc_cha_ids ?? [];
             $danhMucConIds = $request->danh_muc_con_ids ?? [];
-
             $danhMucChauIds = $request->danh_muc_chau_ids ?? [];
 
             $mauSacIds = $request->mau_sac_ids ?? [];
@@ -165,7 +165,10 @@ class TrangSanPhamController extends Controller
             $giaTren = $request->gia_tren ?? null;
 
             // Tạo truy vấn sản phẩm
-            $query = SanPham::query()->where('trang_thai', 1);
+            $query = SanPham::query()->where('trang_thai', 1)
+            ->whereHas('danhMuc', function ($query) use ($loaiDanhMuc) {
+                $query->where('duong_dan', $loaiDanhMuc);
+            });
 
             // Lọc theo danh mục cha và con
             if (!empty($danhMucChaIds) || !empty($danhMucConIds) || !empty($danhMucChauIds)) {
@@ -317,6 +320,7 @@ class TrangSanPhamController extends Controller
 
     public function layTatCaSanPham(Request $request)
     {
+        $danhmuc = $request->get('danh_muc', null);
         try {
             $soLuongSanPhamMoiTrang = $request->get('per_page', 8);
             // Nạp quan hệ khachHangYeuThich để kiểm tra trạng thái yêu thích
@@ -337,6 +341,11 @@ class TrangSanPhamController extends Controller
                 'khachHangYeuThich' // Nạp trước quan hệ khachHangYeuThich
             ])
                 ->where('san_phams.trang_thai', 1)
+                ->whereHas('danhMuc', function ($query) use ($danhmuc) {
+                    if ($danhmuc) {
+                        $query->where('duong_dan', $danhmuc);
+                    }
+                })
                 ->select(
                     'san_phams.id',
                     'san_phams.ten_san_pham',

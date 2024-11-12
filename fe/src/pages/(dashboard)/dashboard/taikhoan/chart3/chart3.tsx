@@ -50,15 +50,15 @@ const Chart3: React.FC = () => {
   const series = [
     {
       name: "Khách hàng mới",
-      data: chart3?.so_luong_khach_hang_moi,
+      data: chart3?.so_luong_khach_hang_moi ?? [],
     },
     {
       name: "Khách hàng cũ",
-      data: chart3?.so_luong_khach_hang_cu,
+      data: chart3?.so_luong_khach_hang_cu ?? [],
     },
     {
       name: "Tổng khách hàng",
-      data: chart3?.tong_so_luong_khach_hang,
+      data: chart3?.tong_so_luong_khach_hang ?? [],
     },
   ];
 

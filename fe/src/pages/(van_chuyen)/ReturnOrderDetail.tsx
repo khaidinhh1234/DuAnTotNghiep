@@ -45,7 +45,7 @@ const ReturnOrderDetail = ({ record }: any) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["hoanhang"] });
+      queryClient.invalidateQueries({ queryKey: ["RETURN_ORDER"] });
       message.success("Cập nhật trạng thái thành công");
     },
   });
@@ -84,9 +84,17 @@ const ReturnOrderDetail = ({ record }: any) => {
                     <span className="text-xs md:text-lg text-gray-500 mt-1">
                       x{product.so_luong}
                     </span>
-                    <div className="flex items-end mt-2">
+                    {/* <div className="flex items-end mt-2">
                       <span className="text-base md:text-xl font-semibold text-red-500">
                         ₫{product?.gia?.toLocaleString("vi-VN")}
+                      </span>
+                    </div> */}
+                    <div className="flex items-end mt-2">
+                      <span className="text-xs sm:text-base text-gray-500 line-through mr-1">
+                        ₫{product?.bien_the_san_pham?.gia_ban?.toLocaleString("vi-VN") || "0"}
+                      </span>
+                      <span className="text-base sm:text-xl font-semibold text-red-500">
+                        ₫{product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString("vi-VN") || "0"}
                       </span>
                     </div>
                   </div>
@@ -138,26 +146,92 @@ const ReturnOrderDetail = ({ record }: any) => {
               <p className="text-gray-500 text-sm">
                 {thongtin?.ten_nguoi_dat_hang} - {thongtin?.so_dien_thoai_nguoi_dat_hang}
               </p>
-              <p className="text-gray-500 text-sm">
-                {thongtin?.dia_chi_nguoi_dat_hang}
-              </p>
+              <p className="text-gray-500 text-sm">{thongtin?.dia_chi_nguoi_dat_hang}</p>
               <p className="text-gray-500 text-sm">
                 Lý do hoàn hàng: {donhang?.li_do_hoan_hang || "Không có"}
               </p>
               {donhang?.hinh_anh_hoan_tra && (
-      <div className="mr-10 -mt-64 text-right"> {/* Căn toàn bộ nội dung sang phải */}
-        <p className="font-semibold mb-2">Hình ảnh hoàn trả:</p>
-        <Image
-          src={donhang.hinh_anh_hoan_tra}
-          alt="Hình ảnh hoàn trả"
-          className="max-w-xs rounded-lg ml-auto" // Đẩy ảnh về bên phải
-        />
-      </div>
-    )}
+                <div className="text-right mt-4 sm:mt-0">
+                  <p className="font-semibold mb-2 text-gray-700">Hình ảnh hoàn trả:</p>
+                  <Image
+                    src={donhang.hinh_anh_hoan_tra}
+                    alt="Hình ảnh hoàn trả"
+                    className="w-full max-w-[150px] sm:max-w-[200px] md:max-w-[250px] rounded-lg mx-auto"
+                  />
+                </div>
+              )}
             </div>
-            
           </div>
 
+
+
+          <div className="bg-white rounded-md shadow-md p-4 mt-4 relative">
+            <div>
+              <h1 className="text-base md:text-lg">
+                Mã Hoàn hàng: <span>{returnOrder?.ma_hoan_hang}</span> <br />
+              </h1>
+            </div>
+            <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
+              <div className="w-full md:w-3/4">
+                {products?.map((product: any) => (
+                  <div key={product.id} className="flex mb-4 border-b pb-4">
+                    <img
+                      src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
+                      alt="Product"
+                      className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
+                    />
+                    <div className="flex flex-col justify-between w-full">
+                      <h3 className="text-sm md:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
+                        {product?.bien_the_san_pham?.san_pham?.ten_san_pham}
+                      </h3>
+                      <div className="text-xs md:text-base text-gray-500 mt-1">
+                        Size: {product?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc},
+                        Màu: {product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
+                      </div>
+                      <span className="text-xs md:text-lg text-gray-500 mt-1">
+                        x{product.so_luong}
+                      </span>
+                      <div className="flex items-end mt-2">
+                      <span className="text-xs sm:text-base text-gray-500 line-through mr-1">
+                        ₫{product?.bien_the_san_pham?.gia_ban?.toLocaleString("vi-VN") || "0"}
+                      </span>
+                      <span className="text-base sm:text-xl font-semibold text-red-500">
+                        ₫{product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString("vi-VN") || "0"}
+                      </span>
+                    </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="w-full md:w-1/4 flex flex-col items-end space-y-2 p-4">
+                <div>
+                  <span className={`font-bold
+                    ${returnOrder?.trang_thai_hoan_hang === 'Chờ lấy hàng hoàn' ? 'text-yellow-500' : ''}
+                  ${returnOrder?.trang_thai_hoan_hang === 'Đang vận chuyển' ? 'text-blue-500' : ''}
+                  ${returnOrder?.trang_thai_hoan_hang === 'Trả hàng thành công' ? 'text-green-500' : ''}
+                `}>
+                    {returnOrder?.trang_thai_hoan_hang}
+                  </span>
+                </div>
+
+                <div className="absolute bottom-4 right-4 text-right">
+                  <p className="md:text-lg text-gray-700">
+                    Thành tiền:{" "}
+                    <span className="font-semibold text-red-500">
+
+                      {data?.data?.hoan_hang?.don_hang?.tong_tien_don_hang?.toLocaleString("vi-VN")} ₫                  </span>
+                  </p>
+                  <p className="md:text-lg font-bold text-gray-700 mt-1">
+                    Tổng tiền COD:{" "}
+                    <span className="font-bold text-red-500">
+                      {data?.data?.hoan_hang?.don_hang?.tong_tien_don_hang?.toLocaleString("vi-VN")} ₫
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
           <div className="bg-white rounded-md shadow-md p-4 mt-4">
             <div className="flex flex-col gap-2">
               {returnOrder?.trang_thai_hoan_hang === "Chờ lấy hàng hoàn" && (
@@ -177,9 +251,9 @@ const ReturnOrderDetail = ({ record }: any) => {
                 </button>
               )}
             </div>
+
           </div>
 
-       
         </div>
       </Modal>
     </div>
