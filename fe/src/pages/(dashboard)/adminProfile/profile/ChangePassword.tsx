@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Input, Button } from 'antd';
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import { useMutation } from '@tanstack/react-query';
-import instance from '@/configs/auth';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
+import { Input, Button } from "antd";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import { useMutation } from "@tanstack/react-query";
+import instance from "@/configs/auth";
+import { toast } from "react-toastify";
 // import { useNavigate } from 'react-router-dom';
-import { useLocalStorage } from '@/components/hook/useStoratge';
+import { useLocalStorage } from "@/components/hook/useStoratge";
 
 interface ChangPassword {
   current_password: string;
@@ -17,26 +17,35 @@ interface ChangPassword {
 
 const ChangePassword = () => {
   // const nav = useNavigate();
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState(false);
   const [passwordLengthError, setPasswordLengthError] = useState(false);
-  const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
-  const [user] = useLocalStorage('user' as any, {});
+  const [user] = useLocalStorage("user" as any, {});
 
   // Kiểm tra mật khẩu hợp lệ
   const handlePasswordValidation = () => {
     if (newPassword.length < 6) {
       setPasswordLengthError(true);
-      setAlert({ message: 'Mật khẩu mới phải có ít nhất 6 ký tự.', type: 'error' });
+      setAlert({
+        message: "Mật khẩu mới phải có ít nhất 6 ký tự.",
+        type: "error",
+      });
       return false;
     }
 
     if (newPassword !== confirmNewPassword) {
       setPasswordMatchError(true);
-      setAlert({ message: 'Mật khẩu mới và xác nhận mật khẩu không khớp.', type: 'error' });
+      setAlert({
+        message: "Mật khẩu mới và xác nhận mật khẩu không khớp.",
+        type: "error",
+      });
       return false;
     }
 
@@ -47,7 +56,7 @@ const ChangePassword = () => {
 
   const handleSubmit = () => {
     const isValid = handlePasswordValidation();
-    if (!isValid) return;
+    if (!isValid) return false;
 
     onSubmit({
       current_password: currentPassword,
@@ -56,7 +65,9 @@ const ChangePassword = () => {
     });
   };
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setConfirmNewPassword(e.target.value);
     if (newPassword !== e.target.value) {
       setPasswordMatchError(true);
@@ -69,17 +80,17 @@ const ChangePassword = () => {
   const { mutate } = useMutation({
     mutationFn: async (user: ChangPassword) => {
       try {
-        const res = await instance.post('/change-password', user);
+        const res = await instance.post("/change-password", user);
         toast.success(res.data.message || "Đổi mật khẩu thành công");
-        setAlert({ message: 'Đổi mật khẩu thành công!', type: 'success' });
+        setAlert({ message: "Đổi mật khẩu thành công!", type: "success" });
 
         // Reset form sau khi thành công
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmNewPassword('');
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
       } catch (error: any) {
-        toast.error(error.response?.data?.message || 'Đổi mật khẩu thất bại');
-        setAlert({ message: 'Đổi mật khẩu thất bại!', type: 'error' });
+        toast.error(error.response?.data?.message || "Đổi mật khẩu thất bại");
+        setAlert({ message: "Đổi mật khẩu thất bại!", type: "error" });
       }
     },
   });
@@ -87,7 +98,7 @@ const ChangePassword = () => {
   // Hàm để gọi mutate với user
   const onSubmit = (data: ChangPassword) => {
     if (!user) {
-      toast.error('Token không hợp lệ hoặc không tồn tại');
+      toast.error("Token không hợp lệ hoặc không tồn tại");
       return;
     }
 
@@ -103,8 +114,11 @@ const ChangePassword = () => {
         <Input.Password
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
-          iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+          iconRender={(visible) =>
+            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+          }
           className="mt-1"
+          placeholder="Nhập mật khẩu hiện tại"
         />
       </div>
 
@@ -113,11 +127,16 @@ const ChangePassword = () => {
         <Input.Password
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+          iconRender={(visible) =>
+            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+          }
           className="mt-1"
+          placeholder="Nhập mật khẩu mới"
         />
         {passwordLengthError && (
-          <p className="text-red-500 text-sm mt-1">Mật khẩu mới phải có ít nhất 6 ký tự</p>
+          <p className="text-red-500 text-sm mt-1">
+            Mật khẩu mới phải có ít nhất 6 ký tự
+          </p>
         )}
       </div>
 
@@ -126,8 +145,11 @@ const ChangePassword = () => {
         <Input.Password
           value={confirmNewPassword}
           onChange={handleConfirmPasswordChange}
-          iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+          iconRender={(visible) =>
+            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+          }
           className="mt-1"
+          placeholder="Nhập lại mật khẩu mới"
         />
         {passwordMatchError && (
           <p className="text-red-500 text-sm mt-1">Mật khẩu không khớp</p>

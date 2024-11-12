@@ -247,45 +247,40 @@ const TransportDetail = ({ record }: any) => {
       <p onClick={() => setOpen(true)}>
         <div className="relative">
           <div>
-            <h1 className="text-lg">
+            <h1 className="text-base md:text-lg">
               Mã Vận chuyển: <span>{vanChuyenData ? vanChuyenData.ma_van_chuyen : "Loading..."}</span> <br />
               Ngày tạo: <span>{vanChuyenData ? new Date(vanChuyenData.ngay_tao).toLocaleDateString("vi-VN") : "Loading..."}</span>
             </h1>
           </div>
-          <div className="flex items-start space-x-4 mb-2">
-            <div>
+          <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
+            <div className="w-full md:w-3/4">
               {products ? (
                 products.map((product: any) => (
                   <div key={product.id} className="flex mb-4 border-b pb-4">
                     <img
                       src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
                       alt="Product Image"
-                      className="md:w-24 md:h-28 w-20 h-20 object-cover rounded mr-4"
+                      className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
                     />
-
                     <div className="flex flex-col justify-between w-full">
-                      {/* Product Name */}
-                      <h3 className="md:text-lg text-sm font-semibold truncate hover:text-red-500 cursor-pointer">
+                      <h3 className="text-sm md:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
                         {product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Unknown Product"}
                       </h3>
 
-                      {/* Product Details (Size and Color) */}
-                      <div className="md:text-base text-xs text-gray-500 mt-1">
+                      <div className="text-xs md:text-base text-gray-500 mt-1">
                         Size: <span>{product?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc || "N/A"}</span>,
                         Màu: <span>{product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac || "N/A"}</span>
                       </div>
 
-                      {/* Quantity */}
-                      <span className="md:text-lg text-xs text-gray-500 mt-1">
+                      <span className="text-xs md:text-lg text-gray-500 mt-1">
                         x{product.so_luong}
                       </span>
 
-                      {/* Product Pricing */}
                       <div className="flex items-end mt-2">
-                        <span className="md:text-base text-xs text-gray-500 line-through mr-1">
+                        <span className="text-xs md:text-base text-gray-500 line-through mr-1">
                           ₫{product?.bien_the_san_pham?.gia_ban?.toLocaleString("vi-VN") || "0"}
                         </span>
-                        <span className="md:text-xl text-base font-semibold text-red-500">
+                        <span className="text-base md:text-xl font-semibold text-red-500">
                           ₫{product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString("vi-VN") || "0"}
                         </span>
                       </div>
@@ -296,22 +291,21 @@ const TransportDetail = ({ record }: any) => {
                 <p>Loading...</p>
               )}
             </div>
-            <div className="absolute bottom-0 right-0 flex flex-col justify-center items-end space-y-2 p-4 ">
+            <div className="w-full md:w-1/4 flex flex-col items-end space-y-2 p-4">
               <div>
                 <span
-                  className={`
-                    font-bold
-      ${vanchuyen?.trang_thai_van_chuyen === 'Chờ xử lý' ? 'text-yellow-500' : ''}
-      ${vanchuyen?.trang_thai_van_chuyen === 'Đang giao hàng' ? 'text-blue-500' : ''}
-      ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thành công' ? 'text-green-500' : ''}
-      ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thất bại' ? 'text-red-500' : ''}
-    `}
+                  className={`font-bold
+              ${vanchuyen?.trang_thai_van_chuyen === 'Chờ xử lý' ? 'text-yellow-500' : ''}
+              ${vanchuyen?.trang_thai_van_chuyen === 'Đang giao hàng' ? 'text-blue-500' : ''}
+              ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thành công' ? 'text-green-500' : ''}
+              ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thất bại' ? 'text-red-500' : ''}
+            `}
                 >
                   {vanchuyen ? vanchuyen.trang_thai_van_chuyen : "Không có dữ liệu"}
                 </span>
               </div>
 
-              <p className="md:text-lg text-xs text-gray-800">
+              <p className="text-xs md:text-lg text-gray-800">
                 Tổng số tiền ({data?.data?.tong_so_luong} sản phẩm): {" "}
                 {data?.data?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
               </p>
@@ -380,26 +374,26 @@ const TransportDetail = ({ record }: any) => {
               <div>
                 {products ? (
                   products.map((product: any) => (
-                    <div key={product.id} className="flex mb-4 border-b pb-4">
+                    <div key={product.id} className="flex flex-col sm:flex-row mb-4 border-b pb-4">
                       <img
                         src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
                         alt="Product Image"
-                        className="md:w-24 md:h-28 w-20 h-20 object-cover rounded mr-4"
+                        className="w-20 h-20 sm:w-24 sm:h-28 object-cover rounded mr-4"
                       />
                       <div className="flex flex-col justify-between w-full">
-                        <h3 className="md:text-lg text-sm font-semibold truncate hover:text-red-500 cursor-pointer">
+                        <h3 className="text-sm sm:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
                           {product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Unknown Product"}
                         </h3>
-                        <div className="md:text-base text-xs text-gray-500 mt-1">
+                        <div className="text-xs sm:text-base text-gray-500 mt-1">
                           Size: <span>{product?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc || "N/A"}</span>, Màu:{" "}
                           <span>{product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac || "N/A"}</span>
                         </div>
-                        <span className="md:text-lg text-xs text-gray-500 mt-1">x{product.so_luong}</span>
+                        <span className="text-xs sm:text-lg text-gray-500 mt-1">x{product.so_luong}</span>
                         <div className="flex items-end mt-2">
-                          <span className="md:text-base text-xs text-gray-500 line-through mr-1">
+                          <span className="text-xs sm:text-base text-gray-500 line-through mr-1">
                             ₫{product?.bien_the_san_pham?.gia_ban?.toLocaleString("vi-VN") || "0"}
                           </span>
-                          <span className="md:text-xl text-base font-semibold text-red-500">
+                          <span className="text-base sm:text-xl font-semibold text-red-500">
                             ₫{product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString("vi-VN") || "0"}
                           </span>
                         </div>
@@ -410,6 +404,7 @@ const TransportDetail = ({ record }: any) => {
                   <p>Loading...</p>
                 )}
               </div>
+
 
               {/* Thành tiền and Tổng tiền COD in the bottom right corner */}
               <div className="absolute bottom-4 right-4 text-right">
