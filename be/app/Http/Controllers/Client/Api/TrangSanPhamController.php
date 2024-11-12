@@ -159,6 +159,7 @@ class TrangSanPhamController extends Controller
         DB::beginTransaction(); // Bắt đầu giao dịch
         try {
             // Lấy các tham số lọc từ yêu cầu
+            $loaiDanhMuc = $request->loai_danh_muc ?? null;
             $danhMucChaIds = $request->danh_muc_cha_ids ?? [];
             $danhMucConIds = $request->danh_muc_con_ids ?? [];
             $danhMucChauIds = $request->danh_muc_chau_ids ?? [];
@@ -169,7 +170,10 @@ class TrangSanPhamController extends Controller
             $giaTren = $request->gia_tren ?? null;
 
             // Tạo truy vấn sản phẩm
-            $query = SanPham::query()->where('trang_thai', 1);
+            $query = SanPham::query()->where('trang_thai', 1)
+            ->whereHas('danhMuc', function ($query) use ($loaiDanhMuc) {
+                $query->where('duong_dan', $loaiDanhMuc);
+            });
 
             // Lọc theo danh mục cha và con
             if (!empty($danhMucChaIds) || !empty($danhMucConIds) || !empty($danhMucChauIds)) {
