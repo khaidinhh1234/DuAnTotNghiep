@@ -16,9 +16,10 @@ const Chart2: React.FC = () => {
     async () => {
       await refetch();
     };
-  }, [chart2]);
+  }, [chart2, refetch]);
   console.log(chart2);
-  const [series, setSeries] = useState([
+
+  const [series] = useState([
     {
       name: "Số lượng khách",
       type: "column",
@@ -31,7 +32,7 @@ const Chart2: React.FC = () => {
     },
   ]);
 
-  const [options, setOptions] = useState({
+  const [options] = useState({
     chart: {
       height: 350,
       type: "line",
