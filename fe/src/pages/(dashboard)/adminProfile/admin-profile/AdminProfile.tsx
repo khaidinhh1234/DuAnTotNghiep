@@ -6,7 +6,7 @@ import ProfileBanner from "../profile/ProfileBanner";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { useQuery } from "@tanstack/react-query";
 import instance from "@/configs/admin";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Profile from "../profile/profile";
 
 const AdminProfile = () => {
@@ -17,7 +17,7 @@ const AdminProfile = () => {
   // const { id } = useParams();
   // console.log(id);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ["taikhoanid", id],
     queryFn: async () => {
       try {
@@ -30,6 +30,7 @@ const AdminProfile = () => {
   });
 
   const profile = data?.data;
+
   return (
     <PageContainer>
       <div className="">
@@ -50,8 +51,8 @@ const AdminProfile = () => {
 
           <Col xs={24} lg={16}>
             {/* <Post /> */}
-            {pass && <ChangePasswordAdmin />}
-            {!pass && <Profile />}
+            {!pass && <ChangePasswordAdmin />}
+            {/* {pass && <Profile profile={profile} />} */}
           </Col>
         </Row>
       </div>

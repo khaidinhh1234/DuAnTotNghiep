@@ -66,10 +66,10 @@ const AllTransport: React.FC = () => {
   const { data } = useQuery({
     queryKey: ["vanchuyen"],
     queryFn: async () => {
-      const response = await instance.get(`/vanchuyen`);
+      const response = await instance.get(`/hoanhang/danh-sach`);
       return response.data;
     },
-  });
+  })
 
   useEffect(() => {
     if (data?.data) {

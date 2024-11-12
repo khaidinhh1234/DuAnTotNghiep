@@ -27,4 +27,6 @@ class BienTheKichThuoc extends Model
     {
         return $this->hasManyThrough(SanPham::class, BienTheSanPham::class, 'bien_the_kich_thuoc_id', 'id', 'id', 'san_pham_id');
     }
+
+    
 }
