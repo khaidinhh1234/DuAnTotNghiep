@@ -87,7 +87,7 @@ const [price, setPrice] = useState<number>(0); // Define the price state
         <>
             <section>
                 <div className="container">
-                    <div className=" flex mt-10 ">
+                    <div className=" flex  mt-20 ">
                         <p className="pr-2">{data?.data?.danh_muc?.ten_danh_muc || "Tên danh mục không có sẵn"}</p>
                     </div>
                 </div>
