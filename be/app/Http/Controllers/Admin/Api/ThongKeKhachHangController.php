@@ -344,7 +344,7 @@ class ThongKeKhachHangController extends Controller
         // Lấy thời gian 1 tháng trước
         $now = Carbon::now();
         $motThangTruoc = $now->copy()->subMonth();
-
+    
         // Truy vấn để lấy thông tin các khách hàng và tính toán các thông số
         $topKhachHang = User::select(
             'users.id',
@@ -383,7 +383,7 @@ class ThongKeKhachHangController extends Controller
             ->limit(10) // Giới hạn top 10 khách hàng
             ->get();
 
-        // Định dạng kết quả
+
         $result = $topKhachHang->map(function ($khachHang) {
             return [
                 'ten_khach_hang' => $khachHang->ho . ' ' . $khachHang->ten,
@@ -397,8 +397,9 @@ class ThongKeKhachHangController extends Controller
                 'tong_tien_mua_hang' => (int) $khachHang->tong_tien_mua_hang,
             ];
         });
-
+    
         // Trả về kết quả dưới dạng JSON
         return response()->json($result);
     }
+    
 }
