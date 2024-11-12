@@ -169,7 +169,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post("loc-san-pham");
+        const response = await instanceClient.post(`loc-san-pham?${danhmuc}`);
 
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
@@ -184,7 +184,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   //   console.log("data", data?.data?.san_pham?.data);
 
   // danh mục
-  const { data: locsanpham } = useQuery({
+  const { data: locsanpham, refetch } = useQuery({
     queryKey: ["LOCSAMPHAM"],
     queryFn: async () => {
       try {
@@ -200,6 +200,9 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
+  useEffect(() => {
+    refetch();
+  }, [danhmuc, refetch]);
   console.log(locsanpham);
   const mau_sac = locsanpham?.mauSac;
 
@@ -333,7 +336,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       {" "}
       <section>
         <div className="container">
-          <div className="flex flex-wrap items-start w-full mt-16">
+          <div className="flex flex-wrap items-start w-full mt-5">
             {/* <!-- Sidebar Filters --> */}
             <button
               className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0"
@@ -348,7 +351,9 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                   className="flex justify-between items-center cursor-pointer"
                   onClick={() => setShowcate(!showcate)}
                 >
-                  <h2 className="font-bold mb-2 text-lg">Danh mục {danhmuc}</h2>
+                  <h2 className="font-bold mb-2 text-lg capitalize">
+                    Danh mục {danhmuc}
+                  </h2>
                   <button className="mr-3">
                     {showcate ? (
                       <i className="fa-solid fa-chevron-up"></i>
