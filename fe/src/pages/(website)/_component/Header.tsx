@@ -1,7 +1,7 @@
 import { logo } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
-import { Dropdown, Input, Modal, MenuProps } from "antd";
+import { Dropdown, Input, Modal, MenuProps, Menu } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,18 +11,17 @@ import Notifications from "./Notifications";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Search from "./Search";
-
+import "./dropdown.css"
 interface Category {
   id: number;
   ten_danh_muc: string;
   duong_dan: string;
-  children: Category[];
+  con: Category[];  // Chứa các danh mục con
 }
 
 const Header = () => {
   const [check, setcheck] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [isCartVisible, setIsCartVisible] = useState(false);
   const cartRef = useRef<HTMLDivElement>(null);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -71,22 +70,6 @@ const Header = () => {
     };
   }, []);
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await instance.get("/load-danh-muc");
-
-        const result = response.data;
-        if (result.status) {
-          setCategories(result.data);
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as any)) {
         // Khi click ra ngoài, ẩn phần tử
@@ -108,23 +91,99 @@ const Header = () => {
   // console.log(member);
   // console.log("member", member);
   // console.log("member", member);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [menuItems, setMenuItems] = useState<Category[]>([]);
   const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
-  const fetchCategories = async (parentId: number) => {
+  useEffect(() => {
+    const fetchParentCategories = async () => {
+        try {
+            const response = await instanceClient.get('/load-danh-muc-cha');
+            if (response.data.status) {
+                const categories = response.data.data.map((category: any) => ({
+                    id: category.id,
+                    ten_danh_muc: category.ten_danh_muc,
+                    duong_dan: category.duong_dan,
+                    con: [] // Mảng con ban đầu rỗng
+                }));
+                setMenuItems(categories);
+            }
+        } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu danh mục cha:', error);
+        }
+    };
+
+
+    fetchParentCategories();
+}, []);
+
+
+// Fetch danh mục con
+const fetchCategories = async (parentId: number) => {
     try {
-      const response = await instanceClient.get(
-        `/load-danh-muc-con-chau/${parentId}`
-      );
-      if (response.data.status) {
-        setCategories(response.data.data); // Cập nhật danh mục con
-      }
+        const response = await instanceClient.get(`/load-danh-muc-con-chau/${parentId}`);
+        if (response.data.status) {
+            setCategories(response.data.data); // Cập nhật danh mục con
+        }
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu danh mục con:", error);
+        console.error('Lỗi khi lấy dữ liệu danh mục con:', error);
     }
-  };
-  const handleMouseEnter = (id: number) => {
+};
+
+
+// Handle hover event
+const handleMouseEnter = (id: number) => {
     setHoveredMenu(id);
     fetchCategories(id); // Fetch danh mục con khi hover vào danh mục cha
-  };
+};
+
+
+const handleMouseLeave = () => {
+    setHoveredMenu(null);
+    // setCategories([]); // Clear categories khi di chuột ra ngoài
+};
+
+
+// Hàm render các menu items từ dữ liệu categories
+// Hàm tạo mục danh mục con
+const renderSubCategories = (subCategories: any[]) => {
+    return subCategories.map((subCategory: any) => (
+        <Link
+            key={subCategory.id}
+            to={`/shop/${subCategory.duong_dan}`}
+            className="text-gray-950 text-sm"
+        >
+            {subCategory.ten_danh_muc}
+        </Link>
+    ));
+};
+
+// Hàm tạo mục danh mục chính và sử dụng renderSubCategories cho các danh mục con
+const renderMenuItems = (items: any): MenuProps['items'] => {
+    return items?.danh_muc?.length
+        ? items.danh_muc.map((category: any) => ({
+            key: category.id.toString(),
+            label: (
+                <div className="menu-item py-5 flex flex-col gap-y-2 !items-start !m-0 !p-0 !mx-28 !gap-x-20">
+                    <Link
+                        className="row text-black text-sm font-bold"
+                        to={`/shop/${category.duong_dan}`}
+                    >
+                        {category.ten_danh_muc}
+                    </Link>
+
+                    {category.con && category.con.length > 0 && (
+                        <div className="subcategories flex flex-col">
+                            {renderSubCategories(category.con)}
+                        </div>
+                    )}
+                </div>
+            ),
+        }))
+        : [];
+};
+
+// Sử dụng trong Menu component
+<Menu items={renderMenuItems(categories)} className="m-0 p-0" />;
 
   const handleMouseLeaveMenu = () => {
     setHoveredMenu(null);
@@ -143,12 +202,12 @@ const Header = () => {
   const [isClosing, setIsClosing] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const handleMouseLeave = () => {
-    setTimeout(() => {
-      setMenu(false);
-      setIsClosing(false);
-    }, 100);
-  };
+  // const handleMouseLeave = () => {
+  //   setTimeout(() => {
+  //     setMenu(false);
+  //     setIsClosing(false);
+  //   }, 100);
+  // };
   const onSearch = (value: any) => {
     console.log("Search value:", value);
     // Add your search logic here
@@ -169,38 +228,7 @@ const Header = () => {
   const handleMouseLeaveProduct = () => {
     setIsProductMenuVisible(false);
   };
-  const renderMenuItems = (items: any): MenuProps["items"] => {
-    return items?.danh_muc?.length
-      ? items.danh_muc.map((category: any) => ({
-          key: category.id.toString(),
-          label: (
-            <div className="menu-item py-5 flex flex-col gap-y-2 items-start !m-0 !p-0 !mx-28 !gap-x-20">
-              <a
-                className="row text-black text-sm font-bold"
-                href={`/${category.duong_dan}`}
-                rel="noopener noreferrer"
-              >
-                {category.ten_danh_muc}
-              </a>
-              {category.con && category.con.length > 0 && (
-                <div className="subcategories flex flex-col">
-                  {category.con.map((subCategory: any) => (
-                    <a
-                      key={subCategory.id}
-                      href={`/${subCategory.duong_dan}`}
-                      rel="noopener noreferrer"
-                      className="text-gray-950 text-sm"
-                    >
-                      {subCategory.ten_danh_muc}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          ),
-        }))
-      : [];
-  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as any)) {
@@ -261,10 +289,10 @@ const Header = () => {
     },
   ];
   const mainMenuItems = [
-    { id: 1, label: "Nam" },
-    { id: 2, label: "Nữ" },
-    { id: 3, label: "Trẻ em" },
-  ];
+        { id: 1, label: "Nam", slug: "nam" },
+        { id: 2, label: "Nữ", slug: "nu" },
+        { id: 3, label: "Trẻ em", slug: "tre-em" },
+    ];
   return (
     <header className="h-12 relative">
       <div className="bg-white w-full">
@@ -359,44 +387,33 @@ const Header = () => {
                 </Link>
               </div>
               {/* Navigation Links */}
-              <nav className="flex space-x-6 text-gray-700 font-bold pt-1 relative">
-                <a href="/" className="text-lg font-bold">
-                  Trang chủ
-                </a>
-                <a href="/ourstory" className="text-lg">
-                  Giới thiệu
-                </a>
-                {mainMenuItems.map((item) => (
-                  <div
-                    key={item.id}
-                    onMouseEnter={() => handleMouseEnter(item.id)}
-                    onMouseLeave={handleMouseLeave}
-                    className="relative text-lg"
-                  >
-                    <Dropdown
-                      menu={{
-                        items: renderMenuItems(categories), // Đảm bảo truyền categories vào hàm renderMenuItems
-                        className:
-                          "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
-                      }}
-                    >
-                      <a href="#" className="text-black">
-                        {item.label}
-                      </a>
-                    </Dropdown>
-                  </div>
-                ))}
+              <nav className="flex space-x-6 text-gray-700 font-bold ml-4 relative">
+                    <Link to="/" className="text-xl font-bold">Trang chủ</Link>
+                    <a href="/ourstory" className="text-xl">Giới thiệu</a>
+                    {mainMenuItems.map((item) => (
+                        <div
+                            key={item.id}
+                            onMouseEnter={() => handleMouseEnter(item.id)}
+                            onMouseLeave={handleMouseLeave}
+                            className="relative text-xl"
+                        >
+                            <Dropdown
+                                menu={{
+                                    items: renderMenuItems(categories),
+                                    className: "custom-dropdown flex flex-row right-[559px] top-[36px] w-[100vw] h-[300px]", // Cố định chiều rộng và chiều cao
+                                }}
+                            >
+                                <Link to={`/shop/${item.slug}`} className="text-black">
+                                    {item.label}
+                                </Link>
+                            </Dropdown>
 
-                <a href="/" className="text-lg">
-                  Bài viết
-                </a>
-                <a href="/vourcher" className="text-lg">
-                  Khuyến mại
-                </a>
-                <a href="/contact" className="text-lg">
-                  Liên hệ
-                </a>
-              </nav>
+                        </div>
+                    ))}
+                    <Link to="/blog" className="text-xl">Bài viết</Link>
+                    <Link to="/vourcher" className="text-xl">Khuyến mại</Link>
+                    <Link to="/contact" className="text-xl">Liên hệ</Link>
+                </nav>
             </nav>
 
             <div className="order-4 flex items-center space-x-2 cursor-pointer">
