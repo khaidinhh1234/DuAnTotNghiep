@@ -12,9 +12,9 @@ const Layout = () => {
 
   return (
     <div>
-      {/* <Header /> */}
+      <Header />
       {/* <Test/> */}
-      <Header2 />
+      {/* <Header2 /> */}
       {/* <Test123/> */}
       <Outlet />
       <Footer />
