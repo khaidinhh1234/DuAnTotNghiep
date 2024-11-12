@@ -165,11 +165,13 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   //     enabled: !!tenDanhMucCha && !!tenDanhMucCon && !!tenDanhMucConCapBa,
   //   });
   // console.log(categoriesData?.data?.san_pham)
-  const { data } = useQuery({
+  const { data, refetch: refetch2 } = useQuery({
     queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post(`loc-san-pham?${danhmuc}`);
+        const response = await instanceClient.post(`loc-san-pham`, {
+          loai_danh_muc: danhmuc,
+        });
 
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
@@ -181,7 +183,8 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
-  //   console.log("data", data?.data?.san_pham?.data);
+
+  console.log("data", data?.data?.data);
 
   // danh mục
   const { data: locsanpham, refetch } = useQuery({
@@ -202,10 +205,10 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   });
   useEffect(() => {
     refetch();
-  }, [danhmuc, refetch]);
+    refetch2();
+  }, [danhmuc, refetch, refetch2]);
   console.log(locsanpham);
   const mau_sac = locsanpham?.mauSac;
-
 
   const sizes = locsanpham?.kichThuoc;
   // console.log(sizes);
@@ -266,7 +269,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     const isInDanhMucPage =
       tenDanhMucCha || tenDanhMucCon || tenDanhMucConCapBa;
 
-
     if (
       selectedParentIds.length > 0 ||
       selectedChildIds.length > 0 ||
@@ -297,7 +299,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   };
   const danh_muc = locsanpham?.danhMucCha;
   // console.log(danh_muc);
-  const products = data?.data?.san_pham?.data;
+  const products = data?.data?.data;
   // console.log(products);
   const location = useLocation();
 
