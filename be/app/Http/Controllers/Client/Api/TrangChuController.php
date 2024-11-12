@@ -293,16 +293,12 @@ class TrangChuController extends Controller
         ]);
 
         $query = trim($request->input('query'));
-<<<<<<< HEAD
         if (Auth::check()) {
             LichSuTimKiem::create([
                 'user_id' => Auth::id(),
                 'tim_kiem' => $query,
             ]);
 }
-=======
-
->>>>>>> aac1ff9964bc5a7da7cf0399331196093d3c8763
         $sanPhamIds = SanPham::query()
                 ->where('san_phams.trang_thai', 1)
                 ->whereNotNull('san_phams.danh_muc_id')
@@ -345,7 +341,7 @@ class TrangChuController extends Controller
                     $duplicates = DB::table('lich_su_tim_kiems')
                         ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
                         ->where('user_id', Auth::id())
-                        ->whereRaw('LENGTH(tim_kiem) = 1')
+                        // ->whereRaw('LENGTH(tim_kiem) = 1')
                         ->groupBy('tim_kiem')
                         ->pluck('latest_id');
 
@@ -453,7 +449,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->delete();
+            $user->lichSuTimKiem->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -473,7 +469,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->where('id', $id)->delete();
+            $user->lichSuTimKiem->where('id', $id)->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
