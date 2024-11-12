@@ -500,67 +500,29 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                     </button>
                                 </div>
                                 {showcolor ? (
-                                    <div className="flex flex-col mb-12">
-                                        {mau_sac?.map((item: any, index: number) => (
-                                            <div
-                                                key={index}
-                                                className="flex justify-between items-center mt-3 cursor-pointer"
-                                                onClick={() => handleItemClick(item.id)}
-                                            >
-                                                <div className="flex items-center font-semibold">
-                                                    <span
-                                                        className={`w-6 h-6 inline-block mr-2 rounded-[4px] border ${selectedMau.includes(item.id)
-                                                            ? "border-[3px]  border-blue-300"
-                                                            : ""
+                                            <div className="grid grid-cols-3 gap-4 mt-5 mb-12">
+                                                {mau_sac?.map((item: any, index: number) => (
+                                                    <div
+                                                        key={index}
+                                                        className="flex flex-col items-center cursor-pointer"
+                                                        onClick={() => handleItemClick(item.id)}
+                                                    >
+                                                        <span
+                                                            className={`w-7 h-7 inline-block rounded-full border-2 ${
+                                                                selectedMau.includes(item.id)
+                                                                    ? "border-blue-400"
+                                                                    : "border-gray-300"
                                                             }`}
-                                                        style={{ backgroundColor: item.ma_mau_sac }}
-                                                    ></span>
-                                                    <span>{item.ten_mau_sac}</span>
-                                                </div>
-                                                <span className="px-3">
-                                                    ({item?.so_luong_san_pham})
-                                                </span>
+                                                            style={{ backgroundColor: item.ma_mau_sac }}
+                                                        ></span>
+                                                        <span className="mt-2 text-sm font-semibold">
+                                                            {item.ten_mau_sac}
+                                                        </span>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                        {/* <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-blue-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Blue </span>
-                      </div>
-                      <span className="px-3"> (14)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-orange-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Orange </span>
-                      </div>
-                      <span className="px-3"> (8)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-black inline-block mr-2 rounded-[4px]"></span>
-                        <span>Black </span>
-                      </div>
-                      <span className="px-3"> (9)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-green-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Green </span>
-                      </div>
-                      <span className="px-3"> (4)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-yellow-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Yellow </span>
-                      </div>
-                      <span className="px-3"> (2)</span>
-                    </div> */}
-                                    </div>
-                                ) : null}
+                                        ) : null}
                             </div>
-
                             {/* <!-- Filter by Size --> */}
                             <div className="mb-4 mr-3">
                                 <div
@@ -575,61 +537,24 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                     )}
                                 </div>
                                 {showsize ? (
-                                    <div>
-                                        {sizes?.map((item: any, index: any) => (
-                                            <div
-                                                className="flex justify-between items-center my-4 "
-                                                key={index}
-                                            >
-                                                <label className="flex font-normal">
-                                                    <input
-                                                        type="checkbox"
-                                                        className="mr-2"
-                                                        onChange={() => handleCheckboxChange(item.id)}
-                                                        checked={selectedSize.includes(item.id)}
-                                                    />
-                                                    {item.kich_thuoc} /{" "}
-                                                    {item.loai_kich_thuoc === "nam"
-                                                        ? "Nam"
-                                                        : item.loai_kich_thuoc === "nu"
-                                                            ? "Nữ"
-                                                            : "Trẻ em"}
-                                                </label>
-                                                <span>({item?.so_luong_san_pham})</span>
-                                            </div>
-                                        ))}
-                                        {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> M
-                      </label>
-                      <span>(20)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> L
-                      </label>
-                      <span>(7)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XL
-                      </label>
-                      <span>(16)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XXL
-                      </label>
-                      <span>(10)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XXXL
-                      </label>
-                      <span>(2)</span>
-                    </div> */}
-                                    </div>
-                                ) : null}
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {sizes?.map((item: any, index: any) => (
+                                                <div
+                                                    key={index}
+                                                    className={`flex items-center justify-center w-15 h-10 border rounded-lg cursor-pointer ${
+                                                        selectedSize.includes(item.id)
+                                                            ? "border-blue-500 bg-blue-100"
+                                                            : "border-gray-300"
+                                                    }`}
+                                                    onClick={() => handleCheckboxChange(item.id)}
+                                                >
+                                                    <span className="text-sm ">
+                                                        {item.kich_thuoc}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : null}
                             </div>
                         </div>
                         {/* <!-- Product Listings --> */}
