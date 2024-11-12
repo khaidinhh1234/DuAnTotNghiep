@@ -37,7 +37,7 @@ const LoginForm = () => {
       );
       if (isDeliveryPerson) {
         message.success("Đăng nhập thành công");
-        return nav("/shipper");
+        return nav("/shipper2");
       } else if (hasPermission && !isDeliveryPerson) {
         message.success("Đăng nhập thành công");
         return nav("/admin/dashboard/list");

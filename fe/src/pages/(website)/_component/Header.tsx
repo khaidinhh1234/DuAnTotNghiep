@@ -169,7 +169,7 @@ const Header = () => {
             </Link>
 
             {category.con && category.con.length > 0 && (
-              <div className="subcategories flex flex-col">
+              <div className="subcategories flex flex-col text-xl font-medium">
                 {renderSubCategories(category.con)}
               </div>
             )}
