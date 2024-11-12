@@ -1,7 +1,7 @@
 import instanceClient from "@/configs/client";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadOutlined } from "@ant-design/icons";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { GetProp, UploadProps } from "antd";
 import { Button, Form, Input, message, Modal, Rate, Upload } from "antd";
 import { RcFile, UploadFile } from "antd/es/upload";
@@ -87,11 +87,11 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
-
+  const queryClient = useQueryClient();
   const { mutate: mutateDanhgia } = useMutation({
     mutationFn: async (data: any) => {
       try {
-        const response = await instanceClient.post(`danh-gia`, data);
+        const response = await instanceClient.post(`danhgia`, data);
         if (response.status === 200) {
           message.success("Đánh giá thành công");
           setDanhgia(false);
@@ -100,6 +100,11 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
         message.error("Đánh giá thất bại");
         throw new Error("Error during review creation");
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["MyOrder_LISTas"],
+      });
     },
   });
   const onFinish = async (values: any) => {

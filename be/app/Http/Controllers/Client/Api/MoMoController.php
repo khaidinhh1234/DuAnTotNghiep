@@ -473,7 +473,9 @@ class MoMoController extends Controller
                 if (!Hash::check($request->ma_xac_minh, $viTien->ma_xac_minh)) {
                     return response()->json([
                         'status' => false,
-                        'message' => 'Mã xác minh không chính xác.',
+
+'message' => 'Mã xác minh không chính xác.',
+
                     ], 400);
                 }
     
@@ -529,5 +531,5 @@ class MoMoController extends Controller
             ], 500);
         }
     }
-    
+
 }

@@ -71,124 +71,6 @@ const AllTransport: React.FC = () => {
     onChange: onSelectChange,
   };
 
-  // const { mutate } = useMutation({
-  //   mutationFn: async (data: React.Key[]) => {
-  //     try {
-  //       const trangthais =
-  //         trangthai === "1"
-  //           ? "Đang giao hàng"
-  //           : trangthai === "2"
-  //             ? "Giao hàng thành công"
-  //             : trangthai === "3"
-  //               ? "Giao hàng thất bại"
-  //               : "Không rõ";
-
-  //       const response = await instance.put("vanchuyen/trang-thai-van-chuyen", {
-  //         trang_thai_van_chuyen: trangthais,
-  //         id: data,
-  //       });
-  //       const error = response.data.message;
-  //       start();
-  //       if (error === "Cập nhật trạng thái đơn hàng thành công") {
-  //         message.open({
-  //           type: "success",
-  //           content: error,
-  //         });
-  //       } else {
-  //         message.open({
-  //           type: "success",
-  //           content: error,
-  //         });
-  //       }
-  //       return response.data;
-  //     } catch (error: any) {
-  //       console.error(error.message);
-  //       throw new Error(error.message);
-  //     }
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["vanchuyen"],
-  //     });
-  //     setLoading(false);
-  //   },
-  //   onError: (error: any) => {
-  //     console.error("Error updating order:", error.message);
-  //     message.open({
-  //       type: "error",
-  //       content: `Cập nhật trạng thái đơn hàng thất bại: ${error.message}`,
-  //     });
-  //     setLoading(false);
-  //   },
-  // });
-
-  // const { data, isLoading } = useQuery({
-  //   queryKey: ["vanchuyen"],
-  //   queryFn: async () => {
-  //     const response = await instance.get("/vanchuyen");
-  //     return response.data;
-  //   },
-  // });
-  // // console.log(data);
-  // // const { data: ttShipper, isLoading: isLoadingShipper } = useQuery({
-  // //   queryKey: ["shipper"],
-  // //   queryFn: async () => {
-  // //     const response = await instance.get(`/vanchuyen/${id}`);
-  // //     return response.data;
-  // //   },
-  // // });
-
-  // // if (isLoading || isLoadingShipper) {
-  // //   return <div>Loading...</div>; // Hoặc bạn có thể hiện thị một loader khác
-  // // }
-  // // const shipperTT = data?.data?.van_chuyen?.shipper
-  // // console.log(shipperTT)
-
-  // const start = () => {
-  //   setFormCheck(!formcheck);
-  // };
-
-  // const transport: Transport[] | undefined = data?.data;
-
-  // useEffect(() => {
-  //   if (transport) {
-  //     // Nếu tab "Tất cả" được chọn, hiển thị tất cả dữ liệu mà không lọc
-  //     if (activeTab === "Tất cả") {
-  //       setFilteredData(transport);
-  //     } else {
-  //       // Lọc dữ liệu theo trạng thái của tab đang được chọn
-  //       const filtered = transport.filter(
-  //         (item) => item.trang_thai_van_chuyen === activeTab
-  //       );
-  //       setFilteredData(filtered);
-  //     }
-  //   }
-  // }, [transport, activeTab]);
-
-  // const dataSource: TransportData[] = (filteredData ?? []).map(
-  //   (item: any): TransportData => ({
-  //     key: item.id,
-  //     ...item,
-  //     don_hang_id: item.don_hang?.ma_don_hang || "Chưa có dữ liệu",
-  //     trang_thai_thanh_toan:
-  //       item.don_hang?.trang_thai_thanh_toan || "Chưa có dữ liệu",
-  //     shipper_id: item.don_hang?.shipper?.ho_ten || "Chưa có dữ liệu",
-  //   })
-  // );
-  // const data = [
-  //   {
-  //     id: 1,
-  //     created_at: "2021-10-10",
-  //     don_hang_id: 1,
-  //     trang_thai_van_chuyen: "Chờ xử lý",
-  //   },
-  //   {
-  //     id: 2,
-  //     created_at: "2021-10-10",
-  //     don_hang_id: 2,
-  //     trang_thai_van_chuyen: "Đang",
-  //   },
-  // ];
   const handleChange = (value: string) => {
     setTrangThai(value);
   };
@@ -204,7 +86,6 @@ const AllTransport: React.FC = () => {
     // index: index + 1,
     ...item,
   }));
-  // console.log(shipperData)
 
   const hasSelected = selectedRowKeys.length > 0;
   const columns: TableColumnsType<{
