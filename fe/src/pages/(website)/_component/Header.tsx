@@ -158,24 +158,24 @@ const Header = () => {
   const renderMenuItems = (items: any): MenuProps["items"] => {
     return items?.danh_muc?.length
       ? items.danh_muc.map((category: any) => ({
-          key: category.id.toString(),
-          label: (
-            <div className="menu-item py-5 flex flex-col gap-y-2 !items-start !m-0 !p-0 !mx-28 !gap-x-20">
-              <Link
-                className="row text-black text-sm font-bold"
-                to={`/shop/${category.duong_dan}`}
-              >
-                {category.ten_danh_muc}
-              </Link>
+        key: category.id.toString(),
+        label: (
+          <div className="menu-item py-5 flex flex-col gap-y-2 !items-start !m-0 !p-0 !mx-28 !gap-x-20">
+            <Link
+              className="row text-black text-sm font-bold"
+              to={`/shop/${category.duong_dan}`}
+            >
+              {category.ten_danh_muc}
+            </Link>
 
-              {category.con && category.con.length > 0 && (
-                <div className="subcategories flex flex-col">
-                  {renderSubCategories(category.con)}
-                </div>
-              )}
-            </div>
-          ),
-        }))
+            {category.con && category.con.length > 0 && (
+              <div className="subcategories flex flex-col">
+                {renderSubCategories(category.con)}
+              </div>
+            )}
+          </div>
+        ),
+      }))
       : [];
   };
 
@@ -295,9 +295,8 @@ const Header = () => {
       <div className="bg-white w-full">
         {/* Add the corresponding closing tag for this div */}
         <div
-          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${
-            menu ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${menu ? "translate-x-0" : "-translate-x-full"
+            }`}
           style={{
             backgroundColor: menu ? "rgba(0, 0, 0, 0.4)" : "transparent",
           }}
@@ -400,14 +399,14 @@ const Header = () => {
                   >
                     <Dropdown
                       menu={{
-                        items: renderMenuItems(categories), // Đảm bảo truyền categories vào hàm renderMenuItems
+                        items: renderMenuItems(categories),
                         className:
-                          "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
+                          "custom-dropdown flex flex-row justify-start w-[100vw] top-[30px] -left-[545px]",
                       }}
                     >
-                      <a href="#" className="text-black">
+                      <Link to={`/shop/${item.slug}`} className="text-black">
                         {item.label}
-                      </a>
+                      </Link>
                     </Dropdown>
                   </div>
                 ))}
@@ -473,11 +472,10 @@ const Header = () => {
                 </i>
 
                 <div
-                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
-                    showNotifications
+                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${showNotifications
                       ? "opacity-100"
                       : "opacity-0 pointer-events-none"
-                  }`}
+                    }`}
                 >
                   <Notifications onUnreadCountChange={setUnreadCount} />
                 </div>
@@ -491,9 +489,8 @@ const Header = () => {
                 <a href="/gio-hang">
                   <i className="fa-regular fa-bag-shopping text-xl relative px-1">
                     <span
-                      className={`${
-                        menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                      } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                      className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                        } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
                       {totalUniqueProducts || 0}{" "}
                     </span>
@@ -586,9 +583,8 @@ const Header = () => {
               ) : (
                 <Link to="/login">
                   <button
-                    className={`${
-                      menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                    } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
+                    className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                      } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
                   >
                     Đăng nhập
                   </button>
