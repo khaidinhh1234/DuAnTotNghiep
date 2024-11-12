@@ -143,6 +143,8 @@ import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
 import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
 import AdminProfile from "@/pages/(dashboard)/adminProfile/admin-profile/AdminProfile";
 import ShopDM from "@/pages/(website)/shopdm/shop";
+import Page4 from "@/pages/(website)/_component/shop";
+
 import Page3 from "@/pages/(website)/Shopuudai/shop";
 import HoanTien from "@/pages/(website)/myOrder/_components/Hoan";
 
@@ -179,7 +181,7 @@ const Router = () => {
           {/* <Route path="/test" element={<Test3 />} />{" "} */}
           <Route path="/thankyou" element={<ThankYouPage />} />{" "}
           <Route path="/checkout" element={<Layoutcheckout />} />{" "}
-          <Route path="/search-results" element={<Page2 />} />
+          <Route path="/search-results" element={<Page4 />} />
           <Route
             path="/shippingAddressPage"
             element={<ShippingAddressPage />}
@@ -197,6 +199,7 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
+            {/* <Route path="/mypro/hoanhang/:slug" element={<HoanTien />} /> */}
             <Route path="/mypro/hoanhang/:slug" element={<HoanTien />} />
             {/* <Route path="/mypro/wallet" element={<TaiChinh />} />
             <Route path="/mypro/WithdrawPage" element={<WithdrawPage />} />
