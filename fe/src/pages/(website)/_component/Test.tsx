@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { Dropdown } from "antd"; 
 
 // Define types for the category structure
 type Category = {
@@ -49,6 +50,20 @@ const mainMenuItems = [
   { id: 3, label: "Trẻ em", slug: "tre-em" },
 ];
 
+const renderMenuItems = (categories: Category[]) => {
+  return categories.map((category) => ({
+    key: category.title,
+    label: (
+      <div>
+        <h3>{category.title}</h3>
+        {category.items.map((item, index) => (
+          <p key={index}>{item}</p>
+        ))}
+      </div>
+    ),
+  }));
+};
+
 const Test: React.FC = () => {
   const [isHovered, setIsHovered] = useState<number | null>(null);
 
@@ -75,36 +90,18 @@ const Test: React.FC = () => {
           onMouseLeave={handleMouseLeave}
           className="relative text-lg"
         >
-          <Link to={`/shop/${item.slug}`} className="text-black">
-            {item.label}
-          </Link>
-
-          {/* Hiển thị phần danh mục khi hover vào */}
-          {isHovered === item.id && (
-            <div className="absolute top-[100px] left-0 w-screen h-screen bg-white p-6 border-t-4 border-gray-300 z-50">
-              <div className="flex items-start">
-                <div className="flex flex-1 gap-8">
-                  {categories.map((category, index) => (
-                    <div key={index} className="flex flex-col space-y-2">
-                      <h3 className="font-semibold text-lg">{category.title}</h3>
-                      {category.items.map((item, idx) => (
-                        <p key={idx} className="text-gray-700">
-                          {item}
-                        </p>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-                <div className="ml-8">
-                  <img
-                    src="link_to_image.jpg" // Thay đổi link ảnh phù hợp
-                    alt="Thời trang nam"
-                    className="w-60 h-auto rounded-lg object-cover"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+          <Dropdown
+            menu={{
+              items: renderMenuItems(categories),
+              className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[30px] left-0",
+            }}
+            // visible={isHovered === item.id}    
+            trigger={['hover']}
+          >
+            <Link to={`/shop/${item.slug}`} className="text-black">
+              {item.label}
+            </Link>
+          </Dropdown>
         </div>
       ))}
 
@@ -117,6 +114,33 @@ const Test: React.FC = () => {
       <NavLink to="/contact" className="text-lg">
         Liên hệ
       </NavLink>
+
+      {/* Giao diện danh mục khi hover */}
+      {isHovered && (
+        <div className="absolute top-0 left-0 w-screen h-screen bg-white p-6 border-t-4 border-gray-300 z-50">
+          <div className="flex items-start">
+            <div className="flex flex-1 gap-8">
+              {categories.map((category, index) => (
+                <div key={index} className="flex flex-col space-y-2">
+                  <h3 className="font-semibold text-lg">{category.title}</h3>
+                  {category.items.map((item, idx) => (
+                    <p key={idx} className="text-gray-700">
+                      {item}
+                    </p>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="ml-8">
+              <img
+                src="link_to_image.jpg" // Thay đổi link ảnh phù hợp
+                alt="Thời trang nam"
+                className="w-60 h-auto rounded-lg object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
