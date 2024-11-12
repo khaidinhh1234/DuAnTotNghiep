@@ -169,13 +169,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     queryKey: ["PRODUCTSLOC"],
     queryFn: async () => {
       try {
-        let url = "/danhmuc";
-
-        if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
-        if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
-        if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
-
-        const response = await instanceClient.post(url);
+        const response = await instanceClient.post("loc-san-pham");
 
         if (response.data.status !== true) {
           throw new Error("Error fetching product");
@@ -240,12 +234,12 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   const { mutate } = useMutation({
     mutationFn: async () => {
       try {
-        let url = "/danhmuc";
-        if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
-        if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
-        if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
+        // let url = "/danhmuc";
+        // if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
+        // if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
+        // if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
         const response = await instanceClient.post(
-          `${url}?page=${page}`,
+          `loc-san-pham?page=${page}`,
           datas
         );
         if (response.data.status !== true) {
@@ -354,7 +348,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                   className="flex justify-between items-center cursor-pointer"
                   onClick={() => setShowcate(!showcate)}
                 >
-                  <h2 className="font-bold mb-2 text-lg">Danh mục sản phẩm</h2>
+                  <h2 className="font-bold mb-2 text-lg">Danh mục {danhmuc}</h2>
                   <button className="mr-3">
                     {showcate ? (
                       <i className="fa-solid fa-chevron-up"></i>
