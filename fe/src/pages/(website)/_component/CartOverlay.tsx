@@ -421,9 +421,9 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
         <Link to="/shippingAddressPage" className="block">
           <button 
             className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm"
-            disabled={selectedProducts.length === 0}
+            disabled={allItems.length === 0}
           >
-            Thanh toán ({selectedProducts.length} sản phẩm)
+            Thanh toán ({allItems.length} sản phẩm)
           </button>
         </Link>
       </div>

@@ -105,6 +105,7 @@ class TrangSanPhamController extends Controller
     // }
     public function layDanhMucMauSacKichThuoc()
     {
+        $loai = request()->get('loai', null);
         try {
             // Bắt đầu transaction
             DB::beginTransaction();
@@ -112,18 +113,19 @@ class TrangSanPhamController extends Controller
             // Lấy danh mục cha và danh mục con
             $danhMuc = DanhMuc::query()->whereNull('cha_id')->with('children.children')->get();
 
-            // Lấy tất cả màu sắc
-            $mauSacs = BienTheMauSac::query()->get();
-            $mauSacs->map(function ($mauSac) {
-                $mauSac->setAttribute('so_luong_san_pham', $mauSac->sanPhams->groupBy('ten_san_pham')->count());
+            // Lấy tất cả màu sắc theo đường dẫn của danh mục
+            $mauSacs = BienTheMauSac::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
+                $query->where('duong_dan', $loai);
+            }])->get()->filter(function ($mauSacs) {
+                return !$mauSacs->sanPhams->isEmpty();
             });
 
-            // Lấy tất cả kích thước
-            $kichThuoc = BienTheKichThuoc::query()->get();
-            $kichThuoc->map(function ($kichThuoc) {
-                $kichThuoc->setAttribute('so_luong_san_pham', $kichThuoc->sanPhams->groupBy('ten_san_pham')->count());
+            // Lấy tất cả kích thước theo đường dẫn của danh mục và loại kích thước
+            $kichThuoc = BienTheKichThuoc::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
+                $query->where('duong_dan', $loai);
+            }])->get()->filter(function ($kichThuoc) {
+                return !$kichThuoc->sanPhams->isEmpty();
             });
-
             // Commit transaction nếu mọi thứ thành công
             DB::commit();
 
@@ -132,8 +134,8 @@ class TrangSanPhamController extends Controller
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
                 'danhMucCha' => $danhMuc,
-                'mauSac' => $mauSacs,
-                'kichThuoc' => $kichThuoc
+                'mauSac' => $mauSacs->values(),
+                'kichThuoc' => $kichThuoc->values()
             ], 200);
         } catch (Exception $e) {
             // Rollback nếu có lỗi
@@ -163,12 +165,12 @@ class TrangSanPhamController extends Controller
             $kichThuocIds = $request->kich_thuoc_ids ?? [];
             $giaDuoi = $request->gia_duoi ?? null;
             $giaTren = $request->gia_tren ?? null;
-
+            // dd($loaiDanhMuc);
             // Tạo truy vấn sản phẩm
-            $query = SanPham::query()->where('trang_thai', 1)
-            ->whereHas('danhMuc', function ($query) use ($loaiDanhMuc) {
-                $query->where('duong_dan', $loaiDanhMuc);
-            });
+            $query = SanPham::query()->where('trang_thai', 1);
+            // ->whereHas('danhMuc', function ($query) use ($loaiDanhMuc) {
+            //     $query->where('duong_dan', $loaiDanhMuc);
+            // });
 
             // Lọc theo danh mục cha và con
             if (!empty($danhMucChaIds) || !empty($danhMucConIds) || !empty($danhMucChauIds)) {
