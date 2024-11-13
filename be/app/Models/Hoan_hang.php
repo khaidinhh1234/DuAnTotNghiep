@@ -34,7 +34,10 @@ class Hoan_hang extends Model
     {
         return $this->belongsTo(User::class, 'shipper_id', 'id');
     }
-
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
     public function hoanTien()
     {
         return $this->belongsTo(HoanTien::class, 'hoan_tien_id', 'id');
