@@ -122,7 +122,7 @@ const Header = () => {
         `/load-danh-muc-con-chau/${parentId}`
       );
       if (response.data.status) {
-        setCategories(response.data.data); // Cập nhật danh mục con
+        setCategories(response.data.data); 
       }
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu danh mục con:", error);
@@ -183,7 +183,7 @@ const Header = () => {
 
   // Sử dụng trong Menu component
   <Menu items={renderMenuItems(categories)} className="m-0 p-0" />;
-
+// console.log
   const handleMouseLeaveMenu = () => {
     setHoveredMenu(null);
     // setCategories([]); // Clear categories khi di chuột ra ngoài
@@ -407,7 +407,6 @@ const Header = () => {
                     >
                       <Link to={`/shop/${item.slug}`} className="text-black">
                         {item.label}
-                        
                       </Link>
                     </Dropdown>
                   </div>
