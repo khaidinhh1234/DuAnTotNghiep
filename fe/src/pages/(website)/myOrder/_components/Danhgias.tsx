@@ -15,8 +15,6 @@ const Danhgias = () => {
   const customIcons = ["😞", "😐", "😊", "😃", "😍"]; // Custom icons for rating
   const desc = ["Tệ", "Không tốt", "Bình thường", "Tốt", "Tuyệt vời"]; // Descriptions for each rating
   const [rate, setRate] = useState(5);
-  const [rate2, setRate2] = useState(5);
-  const [rate3, setRate3] = useState(5);
   const [rateMessage, setRateMessage] = useState("");
 
   // Check rate and set message
@@ -101,7 +99,6 @@ const Danhgias = () => {
           message.success("Đánh giá thành công");
           nav("/mypro/myorder");
         }
-        7;
       } catch (error) {
         message.error("Đánh giá thất bại");
         throw new Error("Error during review creation");
@@ -114,8 +111,8 @@ const Danhgias = () => {
       anh_danh_gia: [] as string[], // Khởi tạo mảng chứa các URL ảnh
       chat_luong_san_pham: rateMessage,
       mo_ta: values.mo_ta,
-      so_sao_san_pham: rate2,
-      so_sao_dich_vu_van_chuyen: rate3,
+      so_sao_san_pham: values.so_sao_san_pham,
+      so_sao_dich_vu_van_chuyen: values.so_sao_dich_vu_van_chuyen,
     };
 
     if (fileList.length > 0) {
@@ -266,11 +263,7 @@ const Danhgias = () => {
                 </span>
                 <div className="flex space-x-1">
                   <Form.Item name={"so_sao_san_pham"}>
-                    <Rate
-                      defaultValue={5}
-                      value={5}
-                      onChange={(value) => setRate2(value)}
-                    />
+                    <Rate defaultValue={5} />
                   </Form.Item>
                 </div>
               </div>
@@ -278,11 +271,7 @@ const Danhgias = () => {
                 <span className=" text-lg font-medium">Dịch vụ vận chuyển</span>
 
                 <Form.Item name="so_sao_dich_vu_van_chuyen">
-                  <Rate
-                    defaultValue={5}
-                    value={5}
-                    onChange={(value) => setRate3(value)}
-                  />
+                  <Rate defaultValue={5} />
                 </Form.Item>
               </div>{" "}
             </div>

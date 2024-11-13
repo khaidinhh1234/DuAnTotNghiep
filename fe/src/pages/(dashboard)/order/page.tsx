@@ -66,6 +66,7 @@ const OrderAdmin: React.FC = () => {
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
   const [searchText, setSearchText] = useState("");
 
+  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const searchInput = useRef<InputRef>(null);
   const { data, isLoading, isError } = useQuery({
     queryKey: ["ORDERS"],

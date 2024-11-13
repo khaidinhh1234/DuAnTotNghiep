@@ -16,7 +16,6 @@ import Table2chart5 from "./table2/chart5";
 import Table2chart6 from "./table2/chart6";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
-import Test from "../../test";
 const { RangePicker } = DatePicker;
 const Dashboard = () => {
   const [datestart, setDatestart] = useState(dayjs().subtract(10, "day"));
@@ -79,9 +78,9 @@ const Dashboard = () => {
           </div>{" "}
           <div className="">
             {" "}
-            <Segmented
+            <Segmented<string>
               options={["Tổng quan", "Trạng thái"]}
-              onChange={(value: string) => {
+              onChange={(value) => {
                 setTab(value);
               }}
               block
@@ -96,7 +95,6 @@ const Dashboard = () => {
                         datestart={datestart as any}
                         dateend={dateend as any}
                       />
-                      {/* <Test /> */}
                     </div>
                   );
 
@@ -115,8 +113,7 @@ const Dashboard = () => {
                       <Tablechart4
                         datestart={datestart as any}
                         dateend={dateend as any}
-                      />{" "}
-                      {/* <Test /> */}
+                      />
                     </div>
                   );
               }

@@ -19,7 +19,7 @@ const HoanTien = () => {
   const { slug } = useParams();
   // console.log("Slug:", slug);
 
-  const { data } = useQuery({
+  const { data, error, isError } = useQuery({
     queryKey: ["CHITIETDONHANG", slug],
     queryFn: async () => {
       if (!slug) throw new Error("Slug không hợp lệ.");
@@ -62,6 +62,7 @@ const HoanTien = () => {
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
     setFileList(newFileList);
 
+
   // const onFinish: any["onFinish"] = (values: any) => {
   //   const feature_image = fileList
   //     .filter((file) => file.status === "done")
@@ -91,6 +92,7 @@ const HoanTien = () => {
     // console.log(data);
     mutate(data as any);
   };
+
 
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">

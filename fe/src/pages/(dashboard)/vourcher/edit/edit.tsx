@@ -9,6 +9,7 @@ import {
   InputNumber,
   Radio,
   Select,
+  Switch,
   message,
 } from "antd";
 import { DateTime } from "luxon";
@@ -18,6 +19,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import instance from "@/configs/admin";
+import { codinh, giamgiaphantram } from "@/assets/img";
 // const { Option } = Select;
 // const options: SelectProps["options"] = [] as {
 //   label: string;
@@ -634,8 +636,7 @@ const EditVoucher = () => {
                      ${tabKey ? "bg-slate-200 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
-                      <img src="" alt="" className="w-10 h-10 " />
-                      <p>khaidinh</p>
+                    <img src={codinh} alt="" className="w-14 h-14 " />
                     </div>
                     <div className="col-span-3 leading-[15px]">
                       <p className="font-bold text-2xl">
@@ -673,8 +674,11 @@ const EditVoucher = () => {
                     className={`grid grid-cols-5  px-3 py-5 text-slate-900 rounded-lg  ${tabKey === false ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
-                      <img src="" alt="" className="w-10 h-10 " />
-                      <p>khaidinh</p>
+                    <img
+                        src={giamgiaphantram}
+                        alt=""
+                        className="w-16 h-16 "
+                      />
                     </div>
                     <div className="col-span-3 leading-[15px]">
                       <p className="font-bold text-2xl">
@@ -845,6 +849,18 @@ const EditVoucher = () => {
                       options={data}
                     />
                   </Form.Item>{" "}
+                  <Form.Item
+                    className="block text-md font-medium mt-2 text-gray-700 mb-1"
+                    label="Áp dụng cho ví"
+                    name="ap_dung_vi"
+                    valuePropName="checked"
+                  >
+                    <Switch
+                      onChange={(checked) =>
+                        form.setFieldsValue({ ap_dung_vi: checked ? 1 : 0 })
+                      }
+                    />
+                  </Form.Item>
                   <div className="flex gap-2 ">
                     <Form.Item className=" flex whitespace-nowrap">
                       <Button htmlType="submit">

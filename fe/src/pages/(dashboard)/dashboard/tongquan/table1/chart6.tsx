@@ -3,8 +3,8 @@ import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import type { StatisticProps } from "antd";
 import { Statistic } from "antd";
-import { useEffect, useState } from "react";
-import ReactApexChart from "react-apexcharts";
+import { useEffect } from "react";
+import Chart from "react-apexcharts";
 import CountUp from "react-countup";
 const formatter: StatisticProps["formatter"] = (value: any) => (
   <CountUp end={value as number} separator="," />
@@ -79,7 +79,6 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
   //   enabled: !!datestart && !!dateend,
   // });
   // console.log(soluong);
-
   const {
     data: Chart2,
 
@@ -93,7 +92,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
       );
       return response.data;
     },
-    enabled: !!datestart && !!dateend, // only enable the query when both dates are available
+    enabled: !!datestart && !!dateend,
   });
 
   const doanh_so = doanhso?.ti_le_tang_giam_don_hang > 0;
@@ -103,106 +102,74 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
   const don_hang = don?.ti_le_tang_giam_don_hang > 0;
 
   useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch(); // Await refetch to handle async operation
-      }
-    };
+    if (datestart && dateend) {
+      refetch();
+    }
   }, [datestart, dateend, refetch]);
   useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch2(); // Await refetch to handle async operation
-      }
-    };
+    if (datestart && dateend) {
+      refetch2();
+    }
   }, [datestart, dateend, refetch2]);
   useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch3(); // Await refetch to handle async operation
-      }
-    };
+    if (datestart && dateend) {
+      refetch3();
+    }
   }, [datestart, dateend, refetch3]);
   useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch4(); // Await refetch to handle async operation
-      }
-    };
+    if (datestart && dateend) {
+      refetch4();
+    }
   }, [datestart, dateend, refetch4]);
   // useEffect(() => {
   //   if (datestart && dateend) {
   //     refetch9();
   //   }
   // }, [datestart, dateend, refetch9]);
-  const [series, setSeries] = useState<{ name: string; data: any[] }[]>([]);
-  const [options, setOptions] = useState({
-    chart: {
-      height: 350,
-      type: "area",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      type: "datetime", // Make sure it's using "datetime" instead of "date"
-      categories: [],
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy",
-      },
-    },
-    colors: ["#FF0000", "#00FF00"],
-    yaxis: {
-      labels: {
-        formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
-      },
-    },
-  });
-  const formattedDates = Chart2?.ngay?.map((date: any) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  });
-  // Whenever Chart1 changes (i.e., after refetch), update series and options
   useEffect(() => {
-    if (Chart2) {
-      setSeries([
-        {
-          name: "Đơn hủy",
-          data: Chart2?.so_luong_huy_hang,
-        },
-        {
-          name: "Đơn chốt",
-          data: Chart2?.so_luong_hoan_tat_don_hang,
-        },
-      ]);
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        xaxis: {
-          ...prevOptions.xaxis,
-          type: "category", // Use "category" for custom date format
-          categories: formattedDates || [],
-        },
-      }));
+    if (datestart && dateend) {
+      chart2();
     }
-  }, [Chart2, datestart, dateend]); // Run when Chart1 data changes (i.e., after refetch)
+  }, [datestart, dateend, chart2]);
+  // console.log(Chart2);
+  const chartData = {
+    series: [
+      {
+        name: "Đơn hủy",
+        data: Chart2?.so_luong_huy_hang, // Example data
+      },
 
-  // Re-fetch data when datestart or dateend changes
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await chart2(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, series, options]);
-  console.log(Chart2);
+      {
+        name: "Đơn chốt",
+        data: Chart2?.so_luong_hoan_tat_don_hang, // Example data
+      },
+    ],
+
+    options: {
+      chart: {
+        type: "line",
+        height: 350,
+      },
+      stroke: {
+        curve: "smooth",
+      },
+      colors: ["#FF0000", "#00FF00"],
+      dataLabels: {
+        enabled: false,
+      },
+      xaxis: {
+        categories: Chart2?.ngay, // Days of the month
+      },
+      yaxis: {
+        labels: {
+          formatter: (val: number) => {
+            return `${Math.round(val)} đơn`;
+          },
+        },
+      },
+    },
+  };
+
   return (
     <div className="bg-white p-4 rounded-md shadow">
       <div className="grid grid-cols-5 gap-4 mb-2 ml-auto">
@@ -338,17 +305,12 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
         </div>
       </div>
 
-      <div>
-        <div id="chart">
-          <ReactApexChart
-            options={options as any}
-            series={series}
-            type="area"
-            height={420}
-          />
-        </div>
-        <div id="html-dist"></div>
-      </div>
+      <Chart
+        options={chartData.options as any}
+        series={chartData.series}
+        type="line"
+        height={420}
+      />
     </div>
   );
 };

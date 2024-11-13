@@ -127,25 +127,232 @@ const Header2 = () => {
     ));
   };
 
-  // Hàm tạo mục danh mục chính và sử dụng renderSubCategories cho các danh mục con
-  const renderMenuItems = (items: any): MenuProps["items"] => {
-    return items?.danh_muc?.length
-      ? items.danh_muc.map((category: any) => ({
-          key: category.id.toString(),
-          label: (
-            <div className="menu-item py-5 flex flex-col gap-y-2 !items-start !m-0 !p-0 !mx-28 !gap-x-20">
-              <Link
-                className="row text-black text-sm font-bold"
-                to={`/shop/${category.duong_dan}`}
-              >
-                {category.ten_danh_muc}
-              </Link>
+    // Hàm render các menu items từ dữ liệu categories
+    const renderMenuItems = (items: any): MenuProps['items'] => {
+        return items?.danh_muc?.length
+            ? items.danh_muc.map((category: any) => ({
+                key: category.id.toString(),
+                label: (
+                    <div className="menu-item py-5 flex flex-col gap-y-2 !items-start !m-0 !p-0 !mx-28 !gap-x-20">
+                        <Link
+                            className="row text-black text-sm font-bold"
+                            to={`/shop/${category.duong_dan}`}
+                        >
+                            {category.ten_danh_muc}
+                        </Link>
 
-              {category.con && category.con.length > 0 && (
-                <div className="subcategories flex flex-col">
-                  {renderSubCategories(category.con)}
-                </div>
-              )}
+                        {category.con && category.con.length > 0 && (
+                            <div className="subcategories flex flex-col">
+                                {category.con.map((subCategory: any) => (
+                                    <Link
+                                        key={subCategory.id}
+                                        to={`/shop/${subCategory.duong_dan}`}
+                                        className="text-gray-950 text-sm"
+                                    >
+                                        {subCategory.ten_danh_muc}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                ),
+            }))
+            : [];
+    };
+    <Menu items={renderMenuItems(categories)} className="m-0 p-0" />;
+
+
+
+
+    // console.log("asdasdasd", categories)
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (ref.current && !ref.current.contains(event.target as any)) {
+                // Khi click ra ngoài, ẩn phần tử
+                setcheck(false);
+            }
+        };
+
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref]);
+    const [user] = useLocalStorage("user" as any, {});
+    // const nav = useNavigate();
+    const member = user.user;
+    const phanquyen = user?.user?.vai_tros?.filter(
+        (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
+    );
+    // console.log(member);
+    // console.log("member", member);
+    // console.log("member", member);
+
+
+    // console.log("giaohang", giaohangs);
+    const logout = () => {
+        // nav("/login");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
+        // setUser(null);
+    };
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [searchValue, setSearchValue] = useState("");
+    const [menu, setMenu] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+
+
+    // const handleMouseLeave = () => {
+    //     setTimeout(() => {
+    //         setMenu(false);
+    //         setIsClosing(false);
+    //     }, 100);
+    // };
+    const onSearch = (value: any) => {
+        console.log("Search value:", value);
+        // Add your search logic here
+        setIsModalVisible(false);
+    };
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
+    const [isProductMenuVisible, setIsProductMenuVisible] = useState(false);
+
+
+    const handleMouseEnterProduct = () => {
+        setIsProductMenuVisible(true);
+    };
+
+
+    const handleMouseLeaveProduct = () => {
+        setIsProductMenuVisible(false);
+    };
+
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (ref.current && !ref.current.contains(event.target as any)) {
+                setcheck(false);
+            }
+        };
+
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref]);
+
+
+    const access_token = user.access_token || localStorage.getItem("access_token");
+    const { data } = useQuery({
+        queryKey: ["cart", access_token],
+        queryFn: async () => {
+            try {
+                const response = await instanceClient.get(`/gio-hang`, {
+                    headers: {
+                        Authorization: `Bearer ${access_token}`,
+                    },
+                });
+                return response.data;
+            } catch (error) {
+                throw new Error("Error fetching cart data");
+            }
+        },
+    });
+
+
+    const dataCount = data?.notifications?.length || 0;
+
+
+
+
+
+
+    const MenuList = [
+        {
+            name: "Trang chủ",
+            path: "/",
+        },
+        {
+            name: "Sản phẩm",
+            path: "/shop",
+        },
+        {
+            name: "Giới thiệu",
+            path: "/ourstory",
+        },
+        {
+            name: "Khuyến mãi",
+            path: "/vourcher",
+        },
+        {
+            name: "Liên Hệ",
+            path: "/contact",
+        },
+    ];
+    // const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
+
+
+    // const handleMouseEnter = (menuId: number) => {
+    //     setHoveredMenu(menuId);
+    // };
+
+
+    // const handleMouseLeave = () => {
+    //     setHoveredMenu(null);
+    // };
+
+
+    const mainMenuItems = [
+        { id: 1, label: "Nam", slug: "nam" },
+        { id: 2, label: "Nữ", slug: "nu" },
+        { id: 3, label: "Trẻ em", slug: "tre-em" },
+    ];
+    return (
+        <header className="flex items-center justify-between py-10 px-10 bg-white shadow-md">
+            {/* Logo */}
+            <div className="flex items-center space-x-4 ml-32">
+                <Link to="/">
+                    <img
+                        src={logo}
+                        alt="Logo"
+                        className="lg:w-[130px] lg:h-[40px] w-32 h-9"
+                    />
+                </Link>
+                {/* Navigation Links */}
+                <nav className="flex space-x-6 text-gray-700 font-bold ml-4 relative">
+                    <Link to="/" className="text-xl font-bold">Trang chủ</Link>
+                    <a href="/ourstory" className="text-xl">Giới thiệu</a>
+                    {mainMenuItems.map((item) => (
+                        <div
+                            key={item.id}
+                            onMouseEnter={() => handleMouseEnter(item.id)}
+                            onMouseLeave={handleMouseLeave}
+                            className="relative text-xl"
+                        >
+                            <Dropdown
+                                menu={{
+                                    items: renderMenuItems(categories),
+                                    className: "custom-dropdown flex flex-row justify-start w-[100vw] top-[45px] -left-[555px]",
+                                }}
+                            >
+                                <Link to={`/shop/${item.slug}`} className="text-black">
+                                    {item.label}
+                                </Link>
+                            </Dropdown>
+                        </div>
+                    ))}
+                    <Link to="/blog" className="text-xl">Bài viết</Link>
+                    <Link to="/vourcher" className="text-xl">Khuyến mại</Link>
+                    <Link to="/contact" className="text-xl">Liên hệ</Link>
+                </nav>
             </div>
           ),
         }))

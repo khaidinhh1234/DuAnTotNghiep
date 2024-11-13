@@ -9,8 +9,8 @@ type NotificationType = keyof typeof NOTIFICATION_TYPES;
 const NOTIFICATION_TYPES = {
     ALL: 'Tất cả',
     ORDER: 'Đơn hàng',
-    PROMOTION: 'Ưu đãi', 
-    WALLET: 'Ví tiền'
+    PROMOTION: 'Khuyến mãi', 
+    WALLET: 'Yêu cầu rút tiền'
   } as const;
 
 interface NotificationResponse {
@@ -121,11 +121,11 @@ const NotificationPage1 = (): JSX.Element => {
   const getNotificationLink = (notification: Notification): string => {
     switch (notification.loai) {
       case NOTIFICATION_TYPES.PROMOTION:
-        return '/admin/chuongtrinhuudai';
+        return `/shop/${notification.duong_dan}`;
       case NOTIFICATION_TYPES.WALLET:
-        return '/admin/orders/ruttien';
+        return '/mypro/wallet';
       case NOTIFICATION_TYPES.ORDER:
-        return '/admin/orders/list';
+        return `/mypro/myorder/${notification.duong_dan}`;
       default:
         return '#';
     }
