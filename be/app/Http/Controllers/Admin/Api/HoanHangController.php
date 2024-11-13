@@ -91,7 +91,9 @@ class HoanHangController extends Controller
                 Hoan_hang::TTHH_DVC => Hoan_hang::TTHH_THTC,
             ];
             foreach ($validated['id'] as $id) {
-                $hoanHang = Hoan_hang::findOrFail($id);
+                $hoanHang = Hoan_hang::query()
+                    ->with('donHang.bienTheSanPhams')
+                    ->findOrFail($id);
                 if (
                     isset($validTransitions[$hoanHang->trang_thai_hoan_hang])
                     && $validTransitions[$hoanHang->trang_thai_hoan_hang] == $validated['trang_thai_hoan_hang']
@@ -101,19 +103,31 @@ class HoanHangController extends Controller
                     ]);
                 }
                 if ($hoanHang->trang_thai_hoan_hang == Hoan_hang::TTHH_THTC) {
-                    $hoanTien = HoanTien::query()->where('id', $hoanHang->hoan_tien_id)->first();
-                    $giaoDichVi = $hoanTien->giaoDichVi;
-                    $soDuTruoc = $giaoDichVi->viTien->so_du;
-                    $giaoDichVi = $hoanTien->giaoDichVi;
-                    //Lưu giao dịch
-                    DB::table('lich_su_giao_diches')->insert([
-                        'vi_tien_id' => $giaoDichVi->viTien->id,
-                        'so_du_truoc' => $soDuTruoc,
-                        'so_du_sau' => $soDuTruoc + $hoanTien->so_tien_hoan,
-                        'ngay_thay_doi' => Carbon::now(),
-                        'mo_ta' => 'Hoàn tiền đơn hàng #' . $hoanTien->donHang->ma_don_hang,
-                    ]);
-                    $giaoDichVi->viTien->increment('so_du', $hoanTien->so_tien_hoan);
+                    $hoanTien = HoanTien::query()
+                        ->with('donHang.chiTiets')
+                        ->find($hoanHang->hoan_tien_id);
+
+                    if ($hoanTien) {
+                        $giaoDichVi = $hoanTien->giaoDichVi;
+                        $soDuTruoc = $giaoDichVi->viTien->so_du;
+                        $soLuongBienThe = $hoanHang->donHang->bienTheSanPhams->first()->so_luong_bien_the;
+                        $soLuongSanPhamHoan = $hoanTien->donHang->chiTiets->sum('so_luong');
+
+                        $hoanHang->donHang->bienTheSanPhams->first()->update([
+                            'so_luong_bien_the' => $soLuongBienThe + $soLuongSanPhamHoan
+                        ]);
+
+                        // Lưu giao dịch
+                        DB::table('lich_su_giao_diches')->insert([
+                            'vi_tien_id' => $giaoDichVi->viTien->id,
+                            'so_du_truoc' => $soDuTruoc,
+                            'so_du_sau' => $soDuTruoc + $hoanTien->so_tien_hoan,
+                            'ngay_thay_doi' => Carbon::now(),
+                            'mo_ta' => 'Hoàn tiền đơn hàng #' . $hoanTien->donHang->ma_don_hang,
+                        ]);
+
+                        $giaoDichVi->viTien->increment('so_du', $hoanTien->so_tien_hoan);
+                    }
                 }
             }
             DB::commit();
