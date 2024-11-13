@@ -148,6 +148,7 @@ import Page4 from "@/pages/(website)/_component/shop";
 import Page3 from "@/pages/(website)/Shopuudai/shop";
 import HoanTien from "@/pages/(website)/myOrder/_components/Hoan";
 import ReturnOrders from "@/pages/(van_chuyen)/ReturnOrders";
+import ReturnOrders1 from "@/pages/(dashboard)/dohoan/hoanhang/page";
 
 const Router = () => {
   //
@@ -316,6 +317,8 @@ const Router = () => {
           <Route path="orders/ruttien" element={<WithdrawalRequests />} />
           <Route path="orders/donhoan" element={<RefundRequests />} />
           <Route path="orders/collect" element={<Collect />} />
+          <Route path="orders/hoanhang" element={<ReturnOrders1 />} />
+
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
           <Route path="add-vocher" element={<AddVoucher />} />

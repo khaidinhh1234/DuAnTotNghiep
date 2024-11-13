@@ -14,7 +14,13 @@ class HoanHangController extends Controller
     public function index()
     {
         try {
-            $hoanHangs = Hoan_hang::all();
+            $hoanHangs = Hoan_hang::with([
+                'donHang.chiTiets.bienTheSanPham.sanPham',
+                'donHang.chiTiets.bienTheSanPham.mauBienThe',
+                'donHang.chiTiets.bienTheSanPham.kichThuocBienThe',
+                'user',
+                'shipper'
+            ])->orderBy('created_at', 'desc')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
