@@ -22,7 +22,6 @@ const HomePage = () => {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
-    staleTime: 1000 * 60,
   });
   const chuong_trinh_uu_dai = data?.chuong_trinh_uu_dai || [];
   // console.log(chuong_trinh_uu_dai);

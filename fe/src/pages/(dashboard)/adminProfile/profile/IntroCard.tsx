@@ -8,13 +8,27 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, Col, Row, Typography } from "antd";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useLocalStorage } from "@/components/hook/useStoratge";
 // import { faBriefcase, faUser } from "@fortawesome/free-regular-svg-icons"; // Import icons/
 
 const { Title, Text } = Typography;
 
-const IntroCard = ({ profile }: any) => {
-  const thongtin = profile?.tai_khoan;
+const IntroCard = () => {
+  // const { id } = useParams();
+  // console.log(id);
+
+  // const { data, isLoading, isError } = useQuery({
+  //   queryKey: ["taikhoanid", id],
+  //   queryFn: async () => {
+  //     try {
+  //       const res = await instance.get(`/taikhoan/${id}`);
+  //       return res.data;
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   },
+  // });
+
+  // console.log(data);
 
   // Xử lý khi đang loading
   // if (isLoading) {
@@ -44,9 +58,7 @@ const IntroCard = ({ profile }: any) => {
           <MailOutlined style={{ fontSize: "21px" }} />
         </Col>
         <Col span={22}>
-          <Text className="text-lg">
-            Email: {thongtin?.email ?? "không có thông tin"}
-          </Text>
+          <Text className="text-lg">Email: Nqton301004@gmail.com</Text>
         </Col>
       </Row>
 
@@ -55,9 +67,7 @@ const IntroCard = ({ profile }: any) => {
           <DesktopOutlined style={{ fontSize: "21px" }} />
         </Col>
         <Col span={22}>
-          <Text className="text-lg">
-            Số điện thoại:{thongtin?.so_dien_thoai ?? "không có thông tin"}
-          </Text>
+          <Text className="text-lg">Số điện thoại: 0983827425</Text>
         </Col>
       </Row>
 
@@ -66,9 +76,7 @@ const IntroCard = ({ profile }: any) => {
           <EnvironmentOutlined style={{ fontSize: "21px" }} />
         </Col>
         <Col span={22}>
-          <Text className="text-lg">
-            Địa chỉ: {thongtin?.dia_chi ?? "không có thông tin"}
-          </Text>
+          <Text className="text-lg">Địa chỉ: Hà nội</Text>
         </Col>
       </Row>
 
@@ -77,9 +85,7 @@ const IntroCard = ({ profile }: any) => {
           {/* <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: "21px" }} /> */}
         </Col>
         <Col span={22}>
-          <Text className="text-lg">
-            Ngày sinh: {thongtin?.ngay_sinh ?? "không có thông tin"}
-          </Text>
+          <Text className="text-lg">Ngày sinh: 30-10-2004</Text>
         </Col>
       </Row>
 
@@ -88,9 +94,7 @@ const IntroCard = ({ profile }: any) => {
           {/* <FontAwesomeIcon icon={faUser} style={{ fontSize: "21px" }} /> */}
         </Col>
         <Col span={22}>
-          <Text className="text-lg">
-            Giới tính: {thongtin?.gioi_tinh ?? "không có thông tin"}
-          </Text>
+          <Text className="text-lg">Giới tính: Name</Text>
         </Col>
       </Row>
     </Card>

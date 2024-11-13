@@ -300,8 +300,8 @@ type NotificationType = keyof typeof NOTIFICATION_TYPES;
 const NOTIFICATION_TYPES = {
   ALL: 'Tất cả',
   ORDER: 'Đơn hàng',
-  PROMOTION: 'Ưu đãi', 
-  WALLET: 'Ví tiền'
+  PROMOTION: 'Khuyến mãi', 
+  WALLET: 'Yêu cầu rút tiền'
 } as const;
 
 interface NotificationResponse {

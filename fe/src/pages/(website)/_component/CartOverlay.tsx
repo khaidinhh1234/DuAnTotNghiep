@@ -192,8 +192,7 @@ interface CartOverlayProps {
 const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
-  const access_token =
-    user.access_token || localStorage.getItem("access_token");
+  const access_token = user.access_token || localStorage.getItem("access_token");
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
@@ -258,10 +257,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
       ? selectedProducts.filter((id) => id !== productId)
       : [...selectedProducts, productId];
     setSelectedProducts(updatedSelectedProducts);
-    localStorage.setItem(
-      "selectedProducts",
-      JSON.stringify(updatedSelectedProducts)
-    );
+    localStorage.setItem("selectedProducts", JSON.stringify(updatedSelectedProducts));
     SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
   };
 
@@ -288,17 +284,11 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
   useEffect(() => {
     if (data) {
       const preSelectedProducts = [
-        ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map(
-          (p: any) => p.id
-        ),
-        ...(
-          data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []
-        ).map((p: any) => p.id),
+        ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id),
+        ...(data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id)
       ];
       if (preSelectedProducts.length > 0) {
-        setSelectedProducts((prev) =>
-          Array.from(new Set([...prev, ...preSelectedProducts]))
-        );
+        setSelectedProducts(prev => Array.from(new Set([...prev, ...preSelectedProducts])));
       }
     }
   }, [data]);
@@ -311,7 +301,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
   ];
 
   const selectedTotal = allItems
-    .filter((item) => selectedProducts.includes(item.id))
+    .filter(item => selectedProducts.includes(item.id))
     .reduce((sum, item) => sum + item.gia_hien_tai * item.so_luong, 0);
 
   const formatCurrency = (amount: number) => {
@@ -323,25 +313,17 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
 
   if (allItems.length === 0) {
     return (
-      <div className="absolute top-10 right-48 w-96  ">
-        <div className="mt-10 bg-white shadow-lg p-8 rounded-lg z-50 flex flex-col items-center">
-          <h1 className="text-2xl font-bold mb-4">Giỏ hàng</h1>
-          <p className="text-gray-500 mb-6">
-            Không có sản phẩm trong giỏ hàng.
-          </p>
-          <div className="p-6">
-            <img
-              src="/public/Shop.png"
-              alt="No Product"
-              className="w-52 h-44"
-            />
-          </div>
-          <Link to="/shop" className="w-full">
-            <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
-              Mua sắm ngay
-            </button>
-          </Link>
+      <div className="absolute top-20 right-48 w-96 bg-white shadow-lg p-8 rounded-lg z-50 flex flex-col items-center">
+        <h1 className="text-2xl font-bold mb-4">Giỏ hàng</h1>
+        <p className="text-gray-500 mb-6">Không có sản phẩm trong giỏ hàng.</p>
+        <div className="p-6">
+          <img src="/public/Shop.png" alt="No Product" className="w-52 h-44" />
         </div>
+        <Link to="/shop" className="w-full">
+          <button className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm">
+            Mua sắm ngay
+          </button>
+        </Link>
       </div>
     );
   }
@@ -352,15 +334,9 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
         <div className="bg-white rounded-lg p-4 mb-4">
           <p className="font-bold text-black text-[16px]">
             {selectedTotal >= 500000 ? (
-              <>
-                Chúc mừng! Đơn hàng của bạn được
-                <span className="text-black">Miễn phí vận chuyển</span>
-              </>
+              <>Chúc mừng! Đơn hàng của bạn được<span className="text-black">Miễn phí vận chuyển</span></>
             ) : (
-              <>
-                Thêm {formatCurrency(500000 - selectedTotal)} để được{" "}
-                <span className="text-black">Miễn phí vận chuyển</span>
-              </>
+              <>Thêm {formatCurrency(500000 - selectedTotal)} để được <span className="text-black">Miễn phí vận chuyển</span></>
             )}
           </p>
           <div className="relative bg-gray-100 rounded-full h-2 mt-3">
@@ -374,7 +350,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
                 className="absolute top-0 flex items-center justify-center"
                 style={{
                   left: `${Math.min((selectedTotal / 500000) * 100, 100)}%`,
-                  transform: "translate(-40%, -40%)",
+                  transform: 'translate(-40%, -40%)',
                 }}
               >
                 <div className="w-6 h-6 rounded-full bg-yellow-200 flex items-center justify-center">
@@ -388,23 +364,16 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
         <div className="flex items-center mb-3">
           <input
             type="checkbox"
-            checked={
-              selectedProducts.length === allItems.length && allItems.length > 0
-            }
+            checked={selectedProducts.length === allItems.length && allItems.length > 0}
             onChange={(e) => handleSelectAll(e.target.checked)}
             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
           />
-          <span className="ml-2 text-sm font-medium">
-            Chọn tất cả ({allItems.length} sản phẩm)
-          </span>
+          <span className="ml-2 text-sm font-medium">Chọn tất cả ({allItems.length} sản phẩm)</span>
         </div>
 
         <div className="max-h-[300px] overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {allItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center py-2 border-b last:border-b-0"
-            >
+            <div key={item.id} className="flex items-center py-2 border-b last:border-b-0">
               <input
                 type="checkbox"
                 checked={selectedProducts.includes(item.id)}
@@ -450,7 +419,7 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
           </button>
         </Link>
         <Link to="/shippingAddressPage" className="block">
-          <button
+          <button 
             className="w-full bg-black text-white border border-black py-2 px-4 rounded mt-2 hover:bg-white hover:text-black hover:border-gray-300 text-sm"
             disabled={allItems.length === 0}
           >

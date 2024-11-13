@@ -103,16 +103,15 @@ class TrangSanPhamController extends Controller
     //         ], 500);
     //     }
     // }
-    public function layDanhMucMauSacKichThuoc(Request $request)
+    public function layDanhMucMauSacKichThuoc()
     {
-        // $id = $request->get('id') ?? null;
-        $loai = $request->get('loai') ?? null;
+        $loai = request()->get('loai', null);
         try {
             // Bắt đầu transaction
             DB::beginTransaction();
 
             // Lấy danh mục cha và danh mục con
-            $danhMuc = DanhMuc::with('children.children')->where('duong_dan', $loai)->get();
+            $danhMuc = DanhMuc::query()->whereNull('cha_id')->with('children.children')->get();
 
             // Lấy tất cả màu sắc theo đường dẫn của danh mục
             $mauSacs = BienTheMauSac::with(['sanPhams.danhMuc' => function ($query) use ($loai) {

@@ -1,10 +1,6 @@
 import {
   CameraOutlined,
-  CodepenOutlined,
   FacebookFilled,
-  FormOutlined,
-  HeartOutlined,
-  TruckOutlined,
   TwitterCircleFilled,
   UserOutlined,
   YoutubeFilled,
@@ -18,7 +14,7 @@ import { Upload } from "antd";
 
 const { Text, Title } = Typography;
 
-const ProfileBanner = ({ profile, setpass }: any) => {
+const ProfileBanner = () => {
   const [avatarImage, setAvatarImage] = useState<string>("");
   const [{ user }] = useLocalStorage("user" as any, {});
   const url = user.anh_nguoi_dung;
@@ -29,7 +25,6 @@ const ProfileBanner = ({ profile, setpass }: any) => {
       setAvatarImage(file);
     }
   };
-  // console.log("Profile:", profile);
   return (
     <>
       <Card
@@ -52,27 +47,25 @@ const ProfileBanner = ({ profile, setpass }: any) => {
           >
             <div className="flex justify-between w-full max-w-xs space-x-6 text-center">
               <div>
-                <FormOutlined style={{ fontSize: "24px", color: "#50b2fc" }} />
+                <UserOutlined style={{ fontSize: "24px", color: "#50b2fc" }} />
                 <Title level={4} className="m-0">
-                  {profile?.so_luong_danh_gia?.toLocaleString() ?? 0}
+                  938
                 </Title>
-                <Text type="secondary">Bài viết</Text>
+                <Text type="secondary">Posts</Text>
               </div>
               <div>
-                <CodepenOutlined
-                  style={{ fontSize: "24px", color: "#50b2fc" }}
-                />
+                <UserOutlined style={{ fontSize: "24px", color: "#50b2fc" }} />
                 <Title level={4} className="m-0">
-                  {profile?.so_luong_don_hang?.toLocaleString() ?? 0}
+                  3,586
                 </Title>
-                <Text type="secondary">Đơn hàng</Text>
+                <Text type="secondary">Followers</Text>
               </div>
               <div>
-                <HeartOutlined style={{ fontSize: "24px", color: "#50b2fc" }} />
+                <UserOutlined style={{ fontSize: "24px", color: "#50b2fc" }} />
                 <Title level={4} className="m-0">
-                  {profile?.so_luong_yeu_thich?.toLocaleString() ?? 0}
+                  2,659
                 </Title>
-                <Text type="secondary">Yêu thích</Text>
+                <Text type="secondary">Following</Text>
               </div>
             </div>
           </Col>
@@ -144,13 +137,7 @@ const ProfileBanner = ({ profile, setpass }: any) => {
                 icon={<YoutubeFilled className="text-white" />}
                 style={{ backgroundColor: "#CD201F" }}
               />
-              <Button
-                type="default"
-                className="text-white bg-slate-950"
-                onClick={() => setpass(true)}
-              >
-                Đổi mật khẩu
-              </Button>
+              <Button type="primary">Add To Story</Button>
             </div>
           </Col>
         </Row>
