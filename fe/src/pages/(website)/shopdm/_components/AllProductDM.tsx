@@ -85,10 +85,10 @@ const AllProductDM = () => {
       <section>
         <div className="container">
           <div className=" flex  mt-20 text-2xl font-bold">
-            <h1 className="font-bold">Danh Mục </h1>{" "}
+            <h1 className="font-bold">Danh Mục Sản Phẩm </h1>{" "}
             <p className="pl-2">
-              {data?.data?.danh_muc?.ten_danh_muc ||
-                "Tên danh mục không có sẵn"}
+              {/* {data?.data?.danh_muc?.ten_danh_muc ||
+                ""} */}
             </p>
           </div>
         </div>
