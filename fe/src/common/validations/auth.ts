@@ -70,10 +70,7 @@ export const changePassword = z
     .min(2, { message: "Vui lòng nhập Tên" })
     .max(20, { message: "Không quá 20 ký tự" })
 
-    .max(20, { message: "Không quá 20 ký tự" })
-    .regex(/^[A-Za-zÀ-ỹ]+(?:\s[A-Za-zÀ-ỹ]+)?$/, {
-      message: "Không chứa ký tự đặc biệt, số và dấu cách",
-    }),
+   ,
     loai_lien_he: z.string(),
     noi_dung_lien_he: z.string().min(1, "Vui lòng nhập nội dung liên hệ")
   });
