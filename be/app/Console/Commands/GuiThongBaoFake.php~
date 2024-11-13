@@ -18,7 +18,7 @@ class GuiThongBaoFake extends Command
     public function handle()
     {
         $users = User::get();
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             foreach ($users as $user) {
                 $thongBao = ThongBao::create([
                     'user_id' => $user->id,

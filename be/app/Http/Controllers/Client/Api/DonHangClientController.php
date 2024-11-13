@@ -330,7 +330,7 @@ class DonHangClientController extends Controller
                     $allDanhMucIds = $this->getAllDanhMucIds($danhMucIds);
 
                     if (empty($allDanhMucIds) || (empty($sanPhamDanhMucIds) || count(array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) === 0)) {
-                        $soTienGiamGia = 0;
+                        return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng'], 400);
                     } else {
                         if ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
                             return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.'], 400);
