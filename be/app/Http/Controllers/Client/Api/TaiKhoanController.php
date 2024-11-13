@@ -312,13 +312,13 @@ class TaiKhoanController extends Controller
                     'thoi_gian_giao_dich' => now(),
                 ]);
 
-                LichSuGiaoDich::create([
-                    'vi_tien_id' => $viUser->id,
-                    'so_du_truoc' => $viUser->so_du,
-                    'so_du_sau' => $viUser->so_du + $request->so_tien,
-                    'ngay_thay_doi' => now(),
-                    'mo_ta' => 'Nạp tiền vào ví',
-                ]);
+                // LichSuGiaoDich::create([
+                //     'vi_tien_id' => $viUser->id,
+                //     'so_du_truoc' => $viUser->so_du,
+                //     'so_du_sau' => $viUser->so_du + $request->so_tien,
+                //     'ngay_thay_doi' => now(),
+                //     'mo_ta' => 'Nạp tiền vào ví',
+                // ]);
             } else {
                 return response()->json([
                     'status' => false,
@@ -345,6 +345,8 @@ class TaiKhoanController extends Controller
     public function xacNhanNapTien(Request $request)
     {
         try {
+            $user = Auth::user();
+            $viUser = $user->viTien;
             $trangThai = $request->resultCode ?? null;
             $maOrderMomo = $request->orderId ?? null;
             $soTien = $request->amount ?? null;
@@ -367,6 +369,13 @@ class TaiKhoanController extends Controller
                 $giaoDichVi->viTien->update([
                     'so_du' => $giaoDichVi->viTien->so_du + $soTien,
                 ]);
+                LichSuGiaoDich::create([
+                    'vi_tien_id' => $viUser->id,
+                    'so_du_truoc' => $viUser->so_du,
+                    'so_du_sau' => $viUser->so_du + $request->so_tien,
+                    'ngay_thay_doi' => now(),
+                    'mo_ta' => 'Nạp tiền vào ví',
+                ]);
                 $thongBao = ThongBao::create([
                     'user_id' => $giaoDichVi->viTien->user_id,
                     'tieu_de' => 'Nạp tiền thành công',
@@ -375,6 +384,7 @@ class TaiKhoanController extends Controller
                     'duong_dan' => $giaoDichVi->ma_giao_dich,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
+
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
                 return response()->json([
