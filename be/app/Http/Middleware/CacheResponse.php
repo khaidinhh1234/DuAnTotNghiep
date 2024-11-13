@@ -3,18 +3,24 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Cache;
 
 class CacheResponse
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
-        return $next($request);
+        $key = 'api_cache:' . $request->fullUrl();
+
+        if (Cache::has($key)) {
+            return response()->json(json_decode(Cache::get($key)), 200);
+        }
+
+        $response = $next($request);
+
+        if ($response->isSuccessful()) {
+            Cache::put($key, $response->getContent(), now()->addMinutes(10));
+        }
+
+        return $response;
     }
 }

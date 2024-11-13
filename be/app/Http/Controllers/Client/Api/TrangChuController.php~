@@ -138,16 +138,16 @@ class TrangChuController extends Controller
                 'bo_suu_taps.ten',
                 'bo_suu_taps.duong_dan',
                 'bo_suu_taps.duong_dan_anh',
-//                DB::raw('SUM(don_hang_chi_tiets.so_luong) as tong_so_luot_mua')
+                //                DB::raw('SUM(don_hang_chi_tiets.so_luong) as tong_so_luot_mua')
             )
             ->leftJoin('bo_suu_tap_san_pham', 'bo_suu_taps.id', '=', 'bo_suu_tap_san_pham.bo_suu_tap_id')
             ->leftJoin('bien_the_san_phams', 'bo_suu_tap_san_pham.san_pham_id', '=', 'bien_the_san_phams.san_pham_id')
-//            ->leftJoin('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
-//            ->leftJoin('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
-//            ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
+            //            ->leftJoin('don_hang_chi_tiets', 'bien_the_san_phams.id', '=', 'don_hang_chi_tiets.bien_the_san_pham_id')
+            //            ->leftJoin('don_hangs', 'don_hang_chi_tiets.don_hang_id', '=', 'don_hangs.id')
+            //            ->where('don_hangs.trang_thai_don_hang', DonHang::TTDH_HTDH)
             ->groupBy('bo_suu_taps.id', 'bo_suu_taps.ten', 'bo_suu_taps.duong_dan', 'bo_suu_taps.duong_dan_anh')
-//            ->havingRaw('SUM(don_hang_chi_tiets.so_luong) > 0') // Lọc chỉ lấy bộ sưu tập có lượt mua > 0
-//            ->orderByDesc('tong_so_luot_mua')
+            //            ->havingRaw('SUM(don_hang_chi_tiets.so_luong) > 0') // Lọc chỉ lấy bộ sưu tập có lượt mua > 0
+            //            ->orderByDesc('tong_so_luot_mua')
             ->limit(5)
             ->with(['sanPhams' => function ($query) {
                 $query->select(
@@ -186,7 +186,7 @@ class TrangChuController extends Controller
             }])
             ->get();
 
-// Xử lý từng bộ sưu tập
+        // Xử lý từng bộ sưu tập
         foreach ($boSuuTapUaChuongs as $boSuuTap) {
             foreach ($boSuuTap->sanPhams as $sanPham) {
                 $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
@@ -242,7 +242,7 @@ class TrangChuController extends Controller
             ->whereNotIn('id', function ($query) {
                 $query->select('id')
                     ->from('danh_muc_tin_tucs')
-                    ->whereIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng','Về chúng tôi']);
+                    ->whereIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi']);
             })
             ->orderByDesc('id')
             ->limit(4)
@@ -267,7 +267,7 @@ class TrangChuController extends Controller
             $data = ThongTinWeb::query()
                 ->first()
                 ->makeHidden(['banner']);
-            $data['footer_blogs'] = DanhMucTinTuc::query()->whereIn('ten_danh_muc_tin_tuc',['Dịch vụ khách hàng','Về chúng tôi'])
+            $data['footer_blogs'] = DanhMucTinTuc::query()->whereIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
                 ->with('tinTuc')->get();
 
             return response()->json([
@@ -293,69 +293,91 @@ class TrangChuController extends Controller
         ]);
 
         $query = trim($request->input('query'));
+<<<<<<< HEAD
+=======
 
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
+        if (Auth::check()) {
+            LichSuTimKiem::create([
+                'user_id' => Auth::id(),
+                'tim_kiem' => $query,
+            ]);
+<<<<<<< HEAD
+}
+=======
+        }
+
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
         $sanPhamIds = SanPham::query()
-                ->where('san_phams.trang_thai', 1)
-                ->whereNotNull('san_phams.danh_muc_id')
-                ->orderByDesc('san_phams.id')
-                ->where(function ($q) use ($query) {
-                    $q->where('ten_san_pham', 'like', '%' . $query . '%')
-                        ->orWhere('ma_san_pham', 'like', '%' . $query . '%');
-                })
-                ->pluck('id')->toArray();
+            ->where('san_phams.trang_thai', 1)
+            ->whereNotNull('san_phams.danh_muc_id')
+            ->orderByDesc('san_phams.id')
+            ->where(function ($q) use ($query) {
+                $q->where('ten_san_pham', 'like', '%' . $query . '%')
+                    ->orWhere('ma_san_pham', 'like', '%' . $query . '%');
+            })
+            ->pluck('id')->toArray();
 
         if ($sanPhamIds) {
-           $goiY = $this->locSanPham($sanPhamIds, $request);
-           $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
+            $goiY = $this->locSanPham($sanPhamIds, $request);
+            $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
         }
 
-            $json = [
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Lấy dữ liệu này',
-                'san_pham' => $goiY,
-                'danh_sach_loc' => $danhSachLoc
-            ];
-            return response()->json(
-                $json
-            );
-        }
+        $json = [
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Lấy dữ liệu này',
+            'san_pham' => $goiY,
+            'danh_sach_loc' => $danhSachLoc
+        ];
+        return response()->json(
+            $json
+        );
+    }
 
-        public function lichSuTimKiem()
-        {
-            try {
-                $dataLichSuTimKiem = [];
-                if (Auth::check()) {
-                    LichSuTimKiem::create([
-                        'user_id' => Auth::id(),
-                        'tim_kiem' => $query,
-                    ]);
+    public function lichSuTimKiem()
+    {
+        try {
+            $dataLichSuTimKiem = [];
+            if (Auth::check()) {
+                $dataLichSuTimKiem = LichSuTimKiem::query()
+                    ->select('tim_kiem', 'id')
+                    ->where('user_id', Auth::id())
+                    ->orderByDesc('id')
+                    ->limit(10)
+                    ->get();
 
-                    $dataLichSuTimKiem = LichSuTimKiem::query()
-                        ->select('tim_kiem', 'id')
-                        ->where('user_id', Auth::id())
-                        ->orderByDesc('id')
-                        ->limit(10)
-                        ->get();
-
+<<<<<<< HEAD
                     $duplicates = DB::table('lich_su_tim_kiems')
                         ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
                         ->where('user_id', Auth::id())
-                        ->whereRaw('LENGTH(tim_kiem) = 1')
+                        // ->whereRaw('LENGTH(tim_kiem) = 1')
                         ->groupBy('tim_kiem')
                         ->pluck('latest_id');
+=======
+                $duplicates = DB::table('lich_su_tim_kiems')
+                    ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
+                    ->where('user_id', Auth::id())
+                    ->whereRaw('LENGTH(tim_kiem) = 1')
+                    ->groupBy('tim_kiem')
+                    ->pluck('latest_id');
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
 
-                    DB::table('lich_su_tim_kiems')
-                        ->where('user_id', Auth::id())
-                        ->whereNotIn('id', $duplicates)
-                        ->delete();
-                }
-            }catch (Exception $exception) {
+                DB::table('lich_su_tim_kiems')
+                    ->where('user_id', Auth::id())
+                    ->whereNotIn('id', $duplicates)
+                    ->delete();
                 return response()->json([
-                    'status' => false,
+                    'status' => true,
+                    'data' => $dataLichSuTimKiem
                 ]);
             }
+        } catch (Exception $exception) {
+            return response()->json([
+                'status' => false,
+            ]);
         }
+    }
 
     public function loadDanhMucConChau($chaId)
     {
@@ -406,7 +428,6 @@ class TrangChuController extends Controller
                 'message' => 'Lấy dữ liệu thành công',
                 'data' => $formattedData,
             ], 200);
-
         } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
@@ -419,7 +440,8 @@ class TrangChuController extends Controller
 
 
 
-    public function loadDanhMucSanPhamCha(){
+    public function loadDanhMucSanPhamCha()
+    {
         try {
             $danhMucs = DanhMuc::whereNull('cha_id')
                 ->get();
@@ -429,8 +451,9 @@ class TrangChuController extends Controller
                     'status_code' => 200,
                     'message' => 'Lấy dữ liệu thành công',
                     'data' => $danhMucs,
-                ]
-            ,200);
+                ],
+                200
+            );
         } catch (\Exception $exception) {
             return response()->json([
                 'status' => false,
@@ -445,7 +468,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->delete();
+            $user->lichSuTimKiem->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -465,7 +488,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->where('id', $id)->delete();
+            $user->lichSuTimKiem->where('id', $id)->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -480,5 +503,4 @@ class TrangChuController extends Controller
             ], 500);
         }
     }
-
 }

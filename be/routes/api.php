@@ -55,7 +55,7 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('/check-token-forgot', [ResetPasswordController::class, 'checkTokenForgot']);
 Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
-Route::middleware([])
+Route::middleware(['cache.headers:public;max_age=600;etag'])
     ->name('client.')
     ->prefix('client')
     ->group(function () {

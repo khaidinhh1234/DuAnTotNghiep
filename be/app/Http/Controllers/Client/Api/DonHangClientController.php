@@ -329,51 +329,50 @@ class DonHangClientController extends Controller
                     $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
                     $allDanhMucIds = $this->getAllDanhMucIds($danhMucIds);
 
-                    if (empty($allDanhMucIds) || (empty($sanPhamDanhMucIds) || count(array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) === 0)) {
-                        return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng'], 400);
+                    if ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
+                        if (!empty($allDanhMucIds) && count(array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) === 0) {
+                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho sản phẩm hoặc danh mục trong giỏ hàng.'], 400);
+                        }
+                    }
+
+                    $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
+                    if ($maGiamGia->hangThanhViens()->where('id', $userHangThanhVienId)->doesntExist()) {
+                        return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho hạng thành viên của bạn.'], 400);
+                    }
+
+                    if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
+                        return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho người dùng này.'], 400);
+                    }
+
+                    $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                        ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
+                        : $maGiamGia->giam_gia;
+
+                    $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
+                        ->where('user_id', $userId)
+                        ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                        ->where('da_su_dung', true)
+                        ->exists();
+
+                    if ($daSuDung) {
+                        return response()->json(['status' => false, 'message' => 'Mã giảm giá này đã được sử dụng.'], 400);
                     } else {
-                        if ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
-                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.'], 400);
-                        }
+                        DB::table('nguoi_dung_ma_khuyen_mai')->updateOrInsert(
+                            ['user_id' => $userId, 'ma_khuyen_mai_id' => $maGiamGia->id],
+                            ['da_su_dung' => true, 'ngay_su_dung' => now()]
+                        );
+                    }
 
-                        $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
-                        if ($maGiamGia->hangThanhViens()->where('id', $userHangThanhVienId)->doesntExist()) {
-                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho hạng thành viên của bạn.'], 400);
-                        }
+                    $chi_tieu_toi_thieu = $maGiamGia->chi_tieu_toi_thieu ?? 0;
 
-                        if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
-                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho người dùng này.'], 400);
-                        }
-
-                        $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                            ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
-                            : $maGiamGia->giam_gia;
-
-                        $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
-                            ->where('user_id', $userId)
-                            ->where('ma_khuyen_mai_id', $maGiamGia->id)
-                            ->where('da_su_dung', true)
-                            ->exists();
-
-                        if ($daSuDung) {
-                            return response()->json(['status' => false, 'message' => 'Mã giảm giá này đã được sử dụng.'], 400);
-                        } else {
-                            DB::table('nguoi_dung_ma_khuyen_mai')->updateOrInsert(
-                                ['user_id' => $userId, 'ma_khuyen_mai_id' => $maGiamGia->id],
-                                ['da_su_dung' => true, 'ngay_su_dung' => now()]
-                            );
-                        }
-
-                        $chi_tieu_toi_thieu = $maGiamGia->chi_tieu_toi_thieu ?? 0;
-
-                        if ($tongTienDonHang < $chi_tieu_toi_thieu) {
-                            return response()->json(['status' => false, 'message' => 'Tổng giá đơn hàng phải lớn hơn hoặc bằng ' . number_format($chi_tieu_toi_thieu) . ' VNĐ.'], 400);
-                        }
+                    if ($tongTienDonHang < $chi_tieu_toi_thieu) {
+                        return response()->json(['status' => false, 'message' => 'Tổng giá đơn hàng phải lớn hơn hoặc bằng ' . number_format($chi_tieu_toi_thieu) . ' VNĐ.'], 400);
                     }
                 } else {
                     return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
                 }
             }
+
 
             if ($tongTienDonHang < 500000) {
                 $tongTienDonHang += 20000;
