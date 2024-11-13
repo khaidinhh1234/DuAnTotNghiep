@@ -293,13 +293,21 @@ class TrangChuController extends Controller
         ]);
 
         $query = trim($request->input('query'));
+<<<<<<< HEAD
+=======
+
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
         if (Auth::check()) {
             LichSuTimKiem::create([
                 'user_id' => Auth::id(),
                 'tim_kiem' => $query,
             ]);
+<<<<<<< HEAD
+}
+=======
         }
 
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
         $sanPhamIds = SanPham::query()
             ->where('san_phams.trang_thai', 1)
             ->whereNotNull('san_phams.danh_muc_id')
@@ -339,12 +347,22 @@ class TrangChuController extends Controller
                     ->limit(10)
                     ->get();
 
+<<<<<<< HEAD
                     $duplicates = DB::table('lich_su_tim_kiems')
                         ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
                         ->where('user_id', Auth::id())
                         // ->whereRaw('LENGTH(tim_kiem) = 1')
                         ->groupBy('tim_kiem')
                         ->pluck('latest_id');
+=======
+                $duplicates = DB::table('lich_su_tim_kiems')
+                    ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
+                    ->where('user_id', Auth::id())
+                    ->whereRaw('LENGTH(tim_kiem) = 1')
+                    ->groupBy('tim_kiem')
+                    ->pluck('latest_id');
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
+
                 DB::table('lich_su_tim_kiems')
                     ->where('user_id', Auth::id())
                     ->whereNotIn('id', $duplicates)
