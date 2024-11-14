@@ -1,6 +1,6 @@
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Image, message, Rate } from "antd";
+import { Button, Image, message, Modal, Rate } from "antd";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useParams } from "react-router-dom";
@@ -24,6 +24,7 @@ import "swiper/css/thumbs";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Footer from "./Footer";
 import RelatedProducts from "./RelatedProducts";
+import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -42,7 +43,7 @@ interface ProductData {
   };
   cha_danh_muc: {
     id?: number;
-  }; 
+  };
   ong_danh_muc: {
     id?: number;
   };
@@ -239,6 +240,7 @@ const ProductDetail: React.FC = () => {
     },
   });
   // add to cart
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
@@ -252,29 +254,20 @@ const ProductDetail: React.FC = () => {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
-
+    console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
     if (!access_token) {
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      const existingItem = cart.find(
-        (item: { variantId: number; quantity: number }) =>
-          item.variantId === variantIdToUse
-      );
-
-
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
-        cart.push({ variantId: variantIdToUse, quantity });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-      toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
-    } else {
-      addToCart(variantIdToUse);
+      setIsModalVisible(true); // Hiển thị modal đăng nhập
+      return;
     }
+    // if (!access_token) {
+    //   toast.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
+    //   return;
+    // }
+
+    addToCart(variantIdToUse);
   };
-  // useMutation thêm sản phẩm vào giỏ hàng trên server khi có access_token
+
+  // useMutation để thêm sản phẩm vào giỏ hàng trên server khi có access_token
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
       const response = await instanceClient.post(
@@ -289,11 +282,9 @@ const ProductDetail: React.FC = () => {
           },
         }
       );
-      // console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
       return response.data;
     },
     onSuccess: (data) => {
-      // console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
       if (data?.status) {
         toast.success(data.message);
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
@@ -302,13 +293,14 @@ const ProductDetail: React.FC = () => {
       }
     },
     onError: (error: any) => {
-      console.error("Lỗi khi thêm vào giỏ hàng:", error); // Kiểm tra lỗi
+      console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error(
         error.response?.data?.message ||
         "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
+
 
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {
@@ -460,7 +452,7 @@ const ProductDetail: React.FC = () => {
   if (isLoading) return <div>Đang tải...</div>;
   // if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
   // console.log(product);
-  
+
   return (
     <>
       <section>
@@ -730,31 +722,39 @@ const ProductDetail: React.FC = () => {
                         )
                       )
                     }
-                  className="py-2 pl-2"
+                    className="py-2 pl-2"
                   >
-                  <i className="fa-solid fa-plus" />
+                    <i className="fa-solid fa-plus" />
+                  </button>
+                </div>
+                <button
+                  onClick={handleAddToCart}
+                  className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
+                >
+                  Thêm vào giỏ hàng
+                </button>
+                <Modal
+                  visible={isModalVisible}
+                  onCancel={() => setIsModalVisible(false)}
+                  footer={null}
+                  width={1000}
+                >
+                  <LoginPopup />
+                </Modal>
+                <button
+                  onClick={() => handleClickHeart(product?.id)}
+                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
+`}
+                >
+                  <i
+                    className={`fa-heart text-3xl text-red-600 ${product?.trang_thai_yeu_thich ? "fa-solid " : "fa-regular "}`}
+                  />
                 </button>
               </div>
-              <button
-                onClick={handleAddToCart}
-                className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
-              >
-                Thêm vào giỏ hàng
-              </button>
-              <button
-                onClick={() => handleClickHeart(product?.id)}
-                className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
-`}
-              >
-                <i
-                  className={`fa-heart text-3xl text-red-600 ${product?.trang_thai_yeu_thich ? "fa-solid " : "fa-regular "}`}
-                />
-              </button>
             </div>
           </div>
         </div>
-      </div>
-    </section >
+      </section >
 
       <div className="max-w-6xl mx-auto p-8">
         <div className="flex space-x-8 border-b pb-2 mb-4">
@@ -1010,7 +1010,7 @@ const ProductDetail: React.FC = () => {
         )}
       </div>
 
-  {/* <div className="container mx-14 pb-10">
+      {/* <div className="container mx-14 pb-10">
         <h2 className="mx-14 text-4xl font-medium tracking-[1px] mb-12">
           Sản phẩm cùng loại        </h2>
         <div className="mx-14 lg:flex lg:gap-7 h-[500px]">
@@ -1060,23 +1060,23 @@ const ProductDetail: React.FC = () => {
       <RelatedProducts productId={product?.id ?? 0} />
 
       <Footer />
-  {
-    previewImage && (
-      <Image
-        style={{ display: "none" }}
-        preview={{
-          visible: previewOpen,
-          src: previewImage,
-          onVisibleChange: (visible) => {
-            setPreviewOpen(visible);
-            if (!visible) {
-              setPreviewImage("");
-            }
-          },
-        }}
-      />
-    )
-  }
+      {
+        previewImage && (
+          <Image
+            style={{ display: "none" }}
+            preview={{
+              visible: previewOpen,
+              src: previewImage,
+              onVisibleChange: (visible) => {
+                setPreviewOpen(visible);
+                if (!visible) {
+                  setPreviewImage("");
+                }
+              },
+            }}
+          />
+        )
+      }
     </>
   );
 };

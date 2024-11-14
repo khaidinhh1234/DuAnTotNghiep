@@ -2,6 +2,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
+import { debounce } from "lodash";
 import { FastForward, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,7 +17,6 @@ const CheckOut = () => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
-
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -32,6 +32,7 @@ const CheckOut = () => {
       }
     },
   });
+
   const { mutate: increaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
       await instanceClient.put(
@@ -138,7 +139,6 @@ const CheckOut = () => {
       return { previousCartData };
     },
     onSuccess: () => {
-      // toast.success("Số lượng sản phẩm đã được giảm thành công!");
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
@@ -151,6 +151,22 @@ const CheckOut = () => {
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
     },
   });
+  const debouncedIncreaseQuantity = debounce(
+    (productId, currentQuantity) => {
+      increaseQuantity({ productId, currentQuantity });
+    },
+    500,
+    { leading: true, trailing: false } 
+  );
+
+  const debouncedDecreaseQuantity = debounce(
+    (productId, currentQuantity) => {
+      decreaseQuantity({ productId, currentQuantity });
+    },
+    500,
+    { leading: true, trailing: false }
+  );
+
 
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId: string) => {
@@ -195,7 +211,6 @@ const CheckOut = () => {
       (product: { id: number }) => product.id === Number(productId)
     );
 
-    // Đặt mặc định là 1 nếu không tìm thấy số lượng
     const quantity = (productInDiscounts?.so_luong || productInRegular?.so_luong) || 1;
 
     if (productInDiscounts) {
@@ -206,7 +221,7 @@ const CheckOut = () => {
       return total + productInRegular.gia_hien_tai * quantity;
     }
 
-    return total; // Nếu không có sản phẩm nào, trả về tổng không thay đổi
+    return total; 
   }, 0);
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
   const shippingFee = totalSelectedPrice > 498000 ? 0 : 20000;
@@ -484,12 +499,7 @@ const CheckOut = () => {
                                 </Popconfirm>
                               ) : (
                                 <button
-                                  onClick={() =>
-                                    decreaseQuantity({
-                                      productId: product.id,
-                                      currentQuantity: product.so_luong,
-                                    })
-                                  }
+                                  onClick={() => debouncedDecreaseQuantity(product.id, product.so_luong)}
                                   className="py-1 px-3 rounded-l-lg"
                                   title="Decrease quantity"
                                 >
@@ -498,7 +508,7 @@ const CheckOut = () => {
                               )}
                               <input
                                 value={product.so_luong}
-                                className="w-7 h-10 text-center"
+                                className="w-7 h-10 text-center"  
                                 placeholder="Quantity"
                                 min="1"
                                 max={product.so_luong_bien_the}
@@ -507,25 +517,18 @@ const CheckOut = () => {
                               />
                               <button
                                 onClick={() => {
-                                  // Kiểm tra nếu số lượng sản phẩm hiện tại đã đạt đến số lượng tối đa của biến thể
                                   if (product.so_luong >= product.so_luong_bien_the) {
                                     toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
-                                    return; // Dừng lại nếu đạt giới hạn
+                                    return;
                                   }
-
-                                  // Gọi hàm tăng số lượng nếu còn tồn kho
-                                  increaseQuantity({
-                                    productId: product.id,
-                                    currentQuantity: product.so_luong,
-                                  });
+                                  debouncedIncreaseQuantity(product.id, product.so_luong);
                                 }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
-                                disabled={product.so_luong >= product.so_luong_bien_the} // Vô hiệu hóa nút nếu đạt giới hạn
+                                disabled={product.so_luong >= product.so_luong_bien_the}
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>
-
                             </div>
                           </td>
 
@@ -597,12 +600,7 @@ const CheckOut = () => {
                                 </Popconfirm>
                               ) : (
                                 <button
-                                  onClick={() =>
-                                    decreaseQuantity({
-                                      productId: product.id,
-                                      currentQuantity: product.so_luong,
-                                    })
-                                  }
+                                  onClick={() => debouncedDecreaseQuantity(product.id, product.so_luong)}
                                   className="py-1 px-3 rounded-l-lg"
                                   title="Decrease quantity"
                                 >
@@ -619,12 +617,13 @@ const CheckOut = () => {
                                 readOnly
                               />
                               <button
-                                onClick={() =>
-                                  increaseQuantity({
-                                    productId: product.id,
-                                    currentQuantity: product.so_luong,
-                                  })
-                                }
+                                onClick={() => {
+                                  if (product.so_luong >= product.so_luong_bien_the) {
+                                    toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
+                                    return;
+                                  }
+                                  debouncedIncreaseQuantity(product.id, product.so_luong);
+                                }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
                                 disabled={product.so_luong >= product.so_luong_bien_the}
