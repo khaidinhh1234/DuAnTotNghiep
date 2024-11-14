@@ -631,8 +631,13 @@ class ThongKeTongQuanController extends Controller
     }
     public function doanhThuTheoKhoang(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
+        $ngayBatDau = $request->has('ngay_bat_dau') 
+        ? Carbon::parse($request->input('ngay_bat_dau'))->addDay() 
+        : now()->subDays(10);
+    
+    $ngayKetThuc = $request->has('ngay_ket_thuc') 
+        ? Carbon::parse($request->input('ngay_ket_thuc'))->addDay()->endOfDay() 
+        : now()->endOfDay();
 
         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc);
 
@@ -689,8 +694,13 @@ class ThongKeTongQuanController extends Controller
     }
     public function trangThaiKhoangDonSoSanh(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
+        $ngayBatDau = $request->has('ngay_bat_dau') 
+        ? Carbon::parse($request->input('ngay_bat_dau'))->addDay() 
+        : now()->subDays(10);
+    
+    $ngayKetThuc = $request->has('ngay_ket_thuc') 
+        ? Carbon::parse($request->input('ngay_ket_thuc'))->addDay()->endOfDay() 
+        : now()->endOfDay();
 
         $khoangNgay = [];
         for ($date = $ngayBatDau->copy(); $date->lte($ngayKetThuc); $date->addDay()) {
