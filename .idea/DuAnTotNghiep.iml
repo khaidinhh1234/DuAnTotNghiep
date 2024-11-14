@@ -11,6 +11,7 @@
       <excludeFolder url="file://$MODULE_DIR$/be/vendor/cloudinary-labs/cloudinary-laravel" />
       <excludeFolder url="file://$MODULE_DIR$/be/vendor/cloudinary/cloudinary_php" />
       <excludeFolder url="file://$MODULE_DIR$/be/vendor/cloudinary/transformation-builder-sdk" />
+      <excludeFolder url="file://$MODULE_DIR$/be/vendor/predis/predis" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

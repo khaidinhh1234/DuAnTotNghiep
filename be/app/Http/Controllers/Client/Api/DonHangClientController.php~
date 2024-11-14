@@ -113,6 +113,9 @@ class DonHangClientController extends Controller
                 return $order->chiTiets->sum('so_luong');
             });
             $tongTienSanPham = $donHang->sum(function ($order) {
+                if ($order->chiTiets->sum('thanh_tien') < 500000) {
+                    return $order->chiTiets->sum('thanh_tien') + 20000;
+                }
                 return $order->chiTiets->sum('thanh_tien');
             });
 
@@ -157,6 +160,20 @@ class DonHangClientController extends Controller
                 'vanChuyen',
             ])->where('ma_don_hang', $maDonHang)->firstOrFail();
 
+            //Lấy mã giảm giá
+            $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
+            $soTienGiamGia = 0;
+            if ($donHang->ma_giam_gia) {
+
+                $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
+                    : $maGiamGia->giam_gia;
+
+                if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
+                    $soTienGiamGia = $donHang->tong_tien_don_hang;
+                }
+            }
+
             $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
                 $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
                 $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
@@ -193,6 +210,9 @@ class DonHangClientController extends Controller
             $tongSoLuong = $donHang->chiTiets->sum('so_luong');
             $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
 
+            // Tính tiền ship
+            $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
+            $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -202,6 +222,11 @@ class DonHangClientController extends Controller
                     'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'tien_ship' => $tienShip,
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
+                    'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? "",
                     'danh_gia' => $danhGiaDonHang
                 ]
             ], 200);
@@ -215,30 +240,30 @@ class DonHangClientController extends Controller
         }
     }
 
-    public function xacNhanDonHang(string $id)
+    public function xacNhanDonHang(string $ma_don_hang)
     {
         try {
             DB::beginTransaction();
-            $donHang = DonHang::query()->with('vanChuyen')->findOrFail($id);
+            $donHang = DonHang::with('vanChuyen')->where('ma_don_hang', $ma_don_hang)->first();
 
-            if ($donHang->vanChuyen->shipper_xac_nhan == 1) {
-                $donHang->vanChuyen->update([
-                    'khach_hang_xac_nhan' => 1
-                ]);
+            if ($donHang->vanChuyen->shipper_xac_nhan) {
+            $donHang->vanChuyen->update(['khach_hang_xac_nhan' => "1"]);
+            $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_HTDH]);
+
             } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Đơn hàng chưa được xác nhận đã giao hàng',
-                ]);
+            return response()->json([
+                'status' => false,
+                'status_code' => 400,
+                'message' => 'Đơn hàng chưa được xác nhận đã giao hàng',
+            ]);
             }
 
             DB::commit();
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Xác nhận nhận hàng thành công',
-                'data' => $donHang
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Xác nhận nhận hàng thành công',
+            'data' => $donHang
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -260,6 +285,7 @@ class DonHangClientController extends Controller
             'so_dien_thoai_nguoi_dat_hang' => 'required|string|max:15',
             'dia_chi_nguoi_dat_hang' => 'required|string|max:255',
             'ma_giam_gia' => 'nullable|string|max:100',
+            'ma_xac_minh' => 'nullable|string|max:6',
         ]);
 
         DB::beginTransaction();
@@ -303,50 +329,61 @@ class DonHangClientController extends Controller
                     $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
                     $allDanhMucIds = $this->getAllDanhMucIds($danhMucIds);
 
-                    if (empty($allDanhMucIds) || (empty($sanPhamDanhMucIds) || count(array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) === 0)) {
-                        $soTienGiamGia = 0;
-                    } else {
-                        if ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
+                    // Kiểm tra nếu mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng
+                    if ($maGiamGia->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist()) {
+                        // Nếu không áp dụng cho sản phẩm, tiếp tục kiểm tra danh mục
+                        if (!empty($allDanhMucIds) && count(array_intersect($sanPhamDanhMucIds, $allDanhMucIds)) === 0) {
+                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho danh mục sản phẩm trong giỏ hàng.'], 400);
+                        } else {
                             return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng.'], 400);
                         }
+                    }
 
-                        $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
-                        if ($maGiamGia->hangThanhViens()->where('id', $userHangThanhVienId)->doesntExist()) {
-                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho hạng thành viên của bạn.'], 400);
-                        }
 
-                        if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
-                            return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho người dùng này.'], 400);
-                        }
+                    $userHangThanhVienId = Auth::user()->hang_thanh_vien_id;
+                    if ($maGiamGia->hangThanhViens()->where('id', $userHangThanhVienId)->doesntExist()) {
+                        return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho hạng thành viên của bạn.'], 400);
+                    }
 
-                        $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                            ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
-                            : $maGiamGia->giam_gia;
+                    if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
+                        return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho người dùng này.'], 400);
+                    }
 
-                        $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
-                            ->where('user_id', $userId)
-                            ->where('ma_khuyen_mai_id', $maGiamGia->id)
-                            ->where('da_su_dung', true)
-                            ->exists();
+                    $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                        ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
+                        : $maGiamGia->giam_gia;
 
-                        if ($daSuDung) {
-                            return response()->json(['status' => false, 'message' => 'Mã giảm giá này đã được sử dụng.'], 400);
-                        } else {
-                            DB::table('nguoi_dung_ma_khuyen_mai')->updateOrInsert(
-                                ['user_id' => $userId, 'ma_khuyen_mai_id' => $maGiamGia->id],
-                                ['da_su_dung' => true, 'ngay_su_dung' => now()]
-                            );
-                        }
+                    $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
+                        ->where('user_id', $userId)
+                        ->where('ma_khuyen_mai_id', $maGiamGia->id)
+                        ->where('da_su_dung', true)
+                        ->exists();
 
-                        $chi_tieu_toi_thieu = $maGiamGia->chi_tieu_toi_thieu ?? 0;
+                    if ($daSuDung) {
+                        return response()->json(['status' => false, 'message' => 'Mã giảm giá này đã được sử dụng.'], 400);
+                    } else {
+                        DB::table('nguoi_dung_ma_khuyen_mai')->updateOrInsert(
+                            ['user_id' => $userId, 'ma_khuyen_mai_id' => $maGiamGia->id],
+                            ['da_su_dung' => true, 'ngay_su_dung' => now()]
+                        );
+                    }
 
-                        if ($tongTienDonHang < $chi_tieu_toi_thieu) {
-                            return response()->json(['status' => false, 'message' => 'Tổng giá đơn hàng phải lớn hơn hoặc bằng ' . number_format($chi_tieu_toi_thieu) . ' VNĐ.'], 400);
-                        }
+                    $chi_tieu_toi_thieu = $maGiamGia->chi_tieu_toi_thieu ?? 0;
+
+                    if ($tongTienDonHang < $chi_tieu_toi_thieu) {
+                        return response()->json(['status' => false, 'message' => 'Tổng giá đơn hàng phải lớn hơn hoặc bằng ' . number_format($chi_tieu_toi_thieu) . ' VNĐ.'], 400);
                     }
                 } else {
                     return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
                 }
+            }
+
+
+            if ($tongTienDonHang < 500000) {
+                $tongTienDonHang += 20000;
+                $freeShip = 0;
+            } else {
+                $freeShip = 1;
             }
 
             $maDonHang = 'DH' . strtoupper(uniqid());
@@ -363,9 +400,18 @@ class DonHangClientController extends Controller
                 'dia_chi_nguoi_dat_hang' => $request->dia_chi_nguoi_dat_hang,
                 'ma_giam_gia' => $request->ma_giam_gia ?? null,
                 'so_tien_giam_gia' => $soTienGiamGia,
-                'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
-                'mien_phi_van_chuyen' => $tongTienDonHang >= 500000 ? 1 : 0
+                // 'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
+                'mien_phi_van_chuyen' => $freeShip
             ]);
+            if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
+                $donHang->update([
+                    'trang_thai_thanh_toan' => DonHang::TTTT_DTT,
+                ]);
+            } else {
+                $donHang->update([
+                    'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
+                ]);
+            }
 
             foreach ($sanPhamDuocChon as $sanPham) {
                 $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
@@ -392,7 +438,7 @@ class DonHangClientController extends Controller
                 'chiTiets.bienTheSanPham.kichThuocBienThe',
                 'chiTiets.bienTheSanPham.anhBienThe',
             ])->where('id', $donHang->id)->first();
-            
+
             DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
             if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT) {
                 $thongBao = ThongBao::create([
@@ -405,24 +451,109 @@ class DonHangClientController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
-                event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
-            } elseif ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
-                $viTien = $user->viTien;
-                if ($viTien->so_du < $donHang->tong_tien_don_hang) {
-                    return response()->json(['status' => false, 'message' => 'Số dư trong ví tiền không đủ để thanh toán.'], 400);
+
+                $userDonHangs = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Đơn hàng');
+                    })->get();
+                if (!empty($userDonHangs)) {
+                    foreach ($userDonHangs as $userDonHang) {
+                        $thongBao = ThongBao::create([
+                            'user_id' => $userDonHang->id,
+                            'tieu_de' => 'Có 1 đơn hàng đã được đặt',
+                            'noi_dung' => 'Có 1 đơn hàng mới của người dùng: '.$user->ho.' '. $user->ten.' bằng phương thức: '.$request->phuong_thuc_thanh_toan,
+                            'loai' => 'Đơn hàng',
+                            'duong_dan' =>$donHang->ma_don_hang,
+                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                        ]);
+
+                        broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                    }
                 }
-                DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
-                $viTien->so_du -= $donHang->tong_tien_don_hang;
+
+                $userAdmin = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Quản trị viên');
+                    })->first();
+
                 $thongBao = ThongBao::create([
-                    'user_id' => $userId,
-                    'tieu_de' => 'Đơn hàng đã được đặt',
-                    'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
+                    'user_id' => $userAdmin->id,
+                    'tieu_de' => 'Có 1 đơn hàng mới đã được đặt',
+                    'noi_dung' => 'Có 1 đơn hàng mới của người dùng: '.$user->ho.' '. $user->ten.' bằng phương thức: '.$request->phuong_thuc_thanh_toan,
                     'loai' => 'Đơn hàng',
                     'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
+
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
+            } elseif ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
+                $viTien = $user->viTien;
+                if (Hash::check($request->ma_xac_minh, $viTien->ma_xac_minh)) {
+                    if ($viTien->so_du < $donHang->tong_tien_don_hang) {
+                        return response()->json(['status' => false, 'message' => 'Số dư trong ví tiền không đủ để thanh toán.'], 400);
+                    }
+                    DB::table('gio_hangs')->where('user_id', $userId)->where('chon', 1)->update(['deleted_at' => now()]);
+                    $viTien->update(['so_du' => $viTien->so_du - $donHang->tong_tien_don_hang]);
+                    LichSuGiaoDich::create([
+                        'vi_tien_id' => $viTien->id,
+                        'so_du_truoc' => $viTien->so_du,
+                        'so_du_sau' => $viTien->so_du - $donHang->tong_tien_don_hang,
+                        'ngay_thay_doi' => now(),
+                        'mo_ta' => "Thanh toán đơn hàng {$donHang->ma_don_hang}",
+                    ]);
+                    $thongBao = ThongBao::create([
+                        'user_id' => $userId,
+                        'tieu_de' => 'Đơn hàng đã được đặt',
+                        'noi_dung' => 'Cảm ơn bạn đã đặt hàng mã đơn hàng của bạn là: ' . $donHang->ma_don_hang,
+                        'loai' => 'Đơn hàng',
+                        'duong_dan' => $donHang->ma_don_hang,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    ]);
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+                    $userDonHangs = User::query()->with('vaiTros')
+                        ->whereHas('vaiTros', function ($query) {
+                            $query->where('ten_vai_tro', 'Rút tiền');
+                        })->get();
+
+                    if(!empty($userDonHangs)){
+                        foreach ($userDonHangs as $userDonHang) {
+                            $thongBao = ThongBao::create([
+                                'user_id' => $userDonHang->id,
+                                'tieu_de' => 'Có 1 đơn hàng đã được đặt',
+                                'noi_dung' => 'Có 1 đơn hàng mới của người dùng: '.$user->ho.' '. $user->ten.'.',
+                                'loai' => 'Đơn hàng',
+                                'duong_dan' =>$donHang->ma_don_hang,
+                                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                            ]);
+
+                            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                        }
+                    }
+
+                    $userAdmin = User::query()->with('vaiTros')
+                        ->whereHas('vaiTros', function ($query) {
+                            $query->where('ten_vai_tro', 'Quản trị viên');
+                        })->first();
+
+                    $thongBao = ThongBao::create([
+                        'user_id' => $userAdmin->id,
+                        'tieu_de' => 'Có 1 đơn hàng mới đã được đặt',
+                        'noi_dung' => 'Có 1 đơn hàng mới của người dùng: '.$user->ho.' '. $user->ten.'.',
+                        'loai' => 'Đơn hàng',
+                        'duong_dan' => $donHang->ma_don_hang,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    ]);
+
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                    event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHangTmp));
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Mã xác minh không chính xác.'
+                    ], 400);
+                }
             }
             DB::commit();
             return response()->json(['status' => true, 'message' => 'Đặt hàng thành công.', 'data' => $donHangTmp], 201);
@@ -533,7 +664,8 @@ class DonHangClientController extends Controller
     public function hoanDonHang(Request $request, $ma_don_hang)
     {
         $validated = $request->validate([
-            'ly_do_hoan_don' => 'required|string|max:255',
+            'li_do_hoan_hang' => 'required|string|max:255',
+            'hinh_anh_hoan_tra' => 'required|string'
         ]);
 
         $userId = Auth::id();
@@ -549,6 +681,11 @@ class DonHangClientController extends Controller
                     'message' => 'Đơn hàng không tồn tại hoặc không thể hoàn hàng.',
                 ], 400);
             }
+            $donHang->update([
+                'trang_thai_don_hang' => DonHang::TTDH_CXNHH,
+                'li_do_hoan_hang' => $validated['li_do_hoan_hang'],
+                'hinh_anh_hoan_tra' => $validated['hinh_anh_hoan_tra'],
+            ]);
             $viTienId = User::find($userId)->viTien->id;
             $giaoDichVi = GiaoDichVi::create([
                 'vi_tien_id' => $viTienId,
@@ -563,7 +700,7 @@ class DonHangClientController extends Controller
                 'giao_dich_vi_id' => $giaoDichVi->id,
                 'don_hang_id' => $donHang->id,
                 'so_tien_hoan' => $donHang->tong_tien_don_hang,
-                'ly_do' => $validated['ly_do_hoan_don'],
+                'ly_do' => $validated['li_do_hoan_hang'],
                 'thoi_gian_hoan' => now(),
             ]);
 
@@ -625,7 +762,7 @@ class DonHangClientController extends Controller
                     ], 400);
                 }
                 $yeuCauRutTien = YeuCauRutTien::create([
-                    'vi_tien_id' => $viTien->id,
+                    'vi_tien_id' => $viUser->id,
                     'ngan_hang_id' => $nganHangId,
                     'so_tien' => (int)$soTien,
                     'trang_thai' => 'cho_duyet',
@@ -644,9 +781,9 @@ class DonHangClientController extends Controller
                 ]);
 
                 LichSuGiaoDich::create([
-                    'vi_tien_id' => $viTien->id,
-                    'so_du_truoc' => $viTien->so_du,
-                    'so_du_sau' => $viTien->so_du - $soTien,
+                    'vi_tien_id' => $viUser->id,
+                    'so_du_truoc' => $viUser->so_du,
+                    'so_du_sau' => $viUser->so_du - $soTien,
                     'ngay_thay_doi' => now(),
                     'mo_ta' => 'Rút tiền từ ví tiền',
                 ]);
@@ -661,6 +798,41 @@ class DonHangClientController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+                $userRutTiens = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Rút tiền');
+                    })->first();
+
+                if(!empty($userRutTiens)){
+                    $thongBao = ThongBao::create([
+                        'user_id' => $userRutTiens->id,
+                        'tieu_de' => 'Yêu cầu rút tiền',
+                        'noi_dung' => 'Có 1 yêu cầu rút tiền mới của người dùng: '.$user->ho.' '. $user->ten.'.',
+                        'loai' => 'Rút tiền',
+                        'duong_dan' => $yeuCauRutTien->id,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    ]);
+
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                }
+
+                $userAdmin = User::query()->with('vaiTros')
+                    ->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Quản trị viên');
+                    })->first();
+
+                $thongBao = ThongBao::create([
+                    'user_id' => $userAdmin->id,
+                    'tieu_de' => 'Yêu cầu rút tiền',
+                    'noi_dung' => 'Có 1 yêu cầu rút tiền, nhân viên đang xử lý: '.$userRutTiens->ho.' '. $userRutTiens->ten.'.',
+                    'loai' => 'Rút tiền',
+                    'duong_dan' => $yeuCauRutTien->id,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
             } else {
                 return response()->json([
                     'status' => false,

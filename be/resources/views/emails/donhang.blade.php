@@ -5,143 +5,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hóa Đơn Đặt Hàng - Cầu Vồng Sặc Sỡ</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #ff66ff; /* Nền hồng chói */
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            color: #333;
             margin: 0;
             padding: 20px;
-            color: #ff0000; /* Chữ đỏ */
-            line-height: 1.6;
         }
 
         .email-container {
-            max-width: 600px;
+            max-width: 700px;
             margin: auto;
-            background: #ff9900; /* Nền cam */
-            border: 10px double #33cc33; /* Viền xanh lá */
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
-            overflow: hidden;
-            text-align: center;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
 
         .header {
-            background-color: #0000ff; /* Nền xanh dương */
-            padding: 15px;
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eaeaea;
         }
 
         .header img {
-            max-width: 100px;
-            height: auto;
-            margin-bottom: 5px;
+            max-width: 80px;
         }
 
         h1 {
-            font-size: 36px;
-            margin-bottom: 5px;
-            color: #ffff00; /* Màu vàng chói */
-            text-shadow: 3px 3px 5px black; /* Đổ bóng đen */
+            font-size: 28px;
+            margin-top: 15px;
+            color: #007bff;
         }
 
         h2 {
-            font-size: 28px;
-            color: #ff33cc; /* Màu hồng neon */
-            margin: 15px 0 10px;
-            padding-bottom: 5px;
-            border-bottom: 3px dotted #cc33ff; /* Viền chấm tím neon */
+            font-size: 22px;
+            margin-top: 30px;
+            color: #495057;
+        }
+
+        .table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .table th {
+            background-color: #f1f1f1;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product-image {
+            width: 60px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .summary {
+            background-color: #f7f7f7;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #0056b3;
         }
 
         .footer {
             text-align: center;
             font-size: 14px;
-            color: #ffffff;
-            padding: 15px;
-            background-color: #660066; /* Nền tím đậm */
-            border-top: 5px solid #ff3333; /* Viền đỏ */
-        }
-
-        .table {
-            border-collapse: collapse;
-            margin: 15px 0;
-            width: 100%;
-            color: #ffffff;
-        }
-
-        .table th,
-        .table td {
-            vertical-align: middle;
-            padding: 8px;
-            border: 3px dashed #3333cc; /* Viền xanh lam */
-            background-color: #ff66cc; /* Nền hồng sáng */
-        }
-
-        .table th {
-            background-color: #ffcc00; /* Nền vàng sáng */
-            color: #00ff00; /* Chữ xanh lá chói */
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .product-image {
-            width: 80px;
-            height: auto;
-            border: 4px solid #00ffcc; /* Viền xanh dương nhạt */
-            border-radius: 5px;
-        }
-
-        .summary {
-            background-color: #ccff66; /* Nền xanh nhạt */
-            border-radius: 5px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 18px;
-            color: #6600cc; /* Chữ tím đậm */
-        }
-
-        .highlight {
-            color: #ff0033; /* Màu đỏ đậm */
-            font-weight: bold;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: #ff66ff; /* Nền hồng chói */
-            color: #000000; /* Chữ đen */
-            text-decoration: none;
-            padding: 15px 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            margin-top: 15px;
-            transition: background-color 0.3s;
-            font-size: 18px;
-            border: 3px dotted #33cc33; /* Viền xanh lá */
-        }
-
-        .cta-button:hover {
-            background-color: #00ccff; /* Nền xanh dương nhạt khi hover */
-            color: #ffff00; /* Chữ vàng khi hover */
-        }
-
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .email-container {
-                width: 100%;
-                padding: 5px;
-            }
-
-            .header img {
-                max-width: 80px;
-            }
-
-            h1 {
-                font-size: 28px;
-            }
-
-            h2 {
-                font-size: 24px;
-            }
+            color: #666;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
         }
     </style>
 </head>
@@ -157,19 +122,19 @@
     <table class="table">
         <tbody>
         <tr>
-            <th scope="row">Mã Đơn Hàng</th>
+            <th>Mã Đơn Hàng</th>
             <td class="highlight">{{ $donHang->ma_don_hang }}</td>
         </tr>
         <tr>
-            <th scope="row">Tổng Tiền</th>
+            <th>Tổng Tiền</th>
             <td class="highlight">{{ number_format($donHang->tong_tien_don_hang) }} VND</td>
         </tr>
         <tr>
-            <th scope="row">Phương Thức Thanh Toán</th>
+            <th>Phương Thức Thanh Toán</th>
             <td>{{ $donHang->phuong_thuc_thanh_toan }}</td>
         </tr>
         <tr>
-            <th scope="row">Trạng Thái Đơn Hàng</th>
+            <th>Trạng Thái Đơn Hàng</th>
             <td>{{ $donHang->trang_thai_don_hang }}</td>
         </tr>
         </tbody>
@@ -179,19 +144,19 @@
     <table class="table">
         <tbody>
         <tr>
-            <th scope="row">Tên</th>
+            <th>Tên</th>
             <td>{{ $donHang->ten_nguoi_dat_hang }}</td>
         </tr>
         <tr>
-            <th scope="row">Email</th>
+            <th>Email</th>
             <td>{{ $donHang->email_nguoi_dat_hang }}</td>
         </tr>
         <tr>
-            <th scope="row">Số Điện Thoại</th>
+            <th>Số Điện Thoại</th>
             <td>{{ $donHang->so_dien_thoai_nguoi_dat_hang }}</td>
         </tr>
         <tr>
-            <th scope="row">Địa Chỉ Giao Hàng</th>
+            <th>Địa Chỉ Giao Hàng</th>
             <td>{{ $donHang->dia_chi_nguoi_dat_hang }}</td>
         </tr>
         </tbody>
@@ -234,7 +199,7 @@
     </div>
 
     <div class="footer">
-        <p>Xin cảm ơn bạn đã đặt hàng tại chúng tôi!</p>
+        <p>Cảm ơn bạn đã đặt hàng tại chúng tôi!</p>
         <a href="http://localhost:5173/" class="cta-button">QUAY LẠI TRANG CHỦ</a>
     </div>
 </div>

@@ -53,20 +53,21 @@ const Blog = () => {
                 </Swiper>
             )}
             <div className="mt-32">
-                {data?.Lay_bai_viet_theo_danh_muc.map((category: any) => (
-                    <div key={category.id} className="mb-6">
-                        <h2 className="text-5xl font-bold mb-4">{category.ten_danh_muc_tin_tuc}</h2>
-                        <h4 className="text-2xl font-bold mb-4 mt-10">Mới nhất</h4>
-                        {category.tin_tuc.length > 0 ? (
+                {data?.Lay_bai_viet_theo_danh_muc
+                    .filter((category: any) => category.tin_tuc.length > 0) // Lọc các danh mục có bài viết
+                    .map((category: any) => (
+                        <div key={category.id} className="mb-6">
+                            <h2 className="text-5xl font-bold mb-4">{category.ten_danh_muc_tin_tuc}</h2>
+                            <h4 className="text-2xl font-bold mb-4 mt-10">Mới nhất</h4>
                             <div className="flex flex-wrap -mx-2">
                                 {category.tin_tuc.map((article: any) => (
                                     <div key={article.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2">
-                                        <div className="bg-white   p-4">
+                                        <div className="bg-white p-4">
                                             <Link to={`/xem-bai-viet/${article.duong_dan}`}>
                                                 <img
                                                     src={article.anh_tin_tuc}
                                                     alt=""
-                                                    className="w-full h-[300px]  object-cover mb-3 cursor-pointer"
+                                                    className="w-full h-[300px] object-cover mb-3 cursor-pointer"
                                                 />
                                                 <h3 className="text-2xl font-semibold hover:text-red-500">
                                                     {article.tieu_de}
@@ -79,12 +80,10 @@ const Blog = () => {
                                     </div>
                                 ))}
                             </div>
-                        ) : (
-                            <p className="text-sm text-gray-500">Không có bài viết nào.</p>
-                        )}
-                    </div>
-                ))}
+                        </div>
+                    ))}
             </div>
+
         </div>
     );
 };

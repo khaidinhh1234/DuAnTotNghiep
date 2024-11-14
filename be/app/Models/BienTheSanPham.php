@@ -26,7 +26,6 @@ class BienTheSanPham extends Model
         return $this->belongsTo(SanPham::class, 'san_pham_id', 'id');
     }
 
-
     public function anhBienThe()
     {
         return $this->hasMany(AnhBienThe::class, 'bien_the_san_pham_id', 'id');

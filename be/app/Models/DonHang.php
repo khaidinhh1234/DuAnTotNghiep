@@ -50,6 +50,7 @@ class DonHang extends Model
 
     protected $fillable = [
         'user_id',
+        'bien_the_san_pham_id',
         'ghi_chu',
         'trang_thai_don_hang',
         'phuong_thuc_thanh_toan',

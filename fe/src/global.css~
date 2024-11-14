@@ -1,0 +1,537 @@
+/* get 'DM Sans' font from fonts.google.com */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap");
+
+@layer tailwind-base, antd;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+@layer antd {
+  @import "antd/dist/reset.css";
+}
+@tailwind components;
+@tailwind utilities;
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: "Jost", sans-serif;
+}
+.container {
+  @apply mx-auto max-w-7xl  px-4;
+}
+.container-mobile {
+  @apply mx-auto max-w-2xl  px-4;
+}
+.placeholder-white::placeholder {
+  color: #ffffff;
+  opacity: 1;
+}
+input[id="numberInput"]::-webkit-outer-spin-button,
+input[id="numberInput"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+Add these styles to customize Ant Design Menu .ant-menu-inline {
+  border-right: none !important;
+}
+
+.ant-menu-submenu-title:hover,
+.ant-menu-item:hover {
+  background-color: black !important;
+  color: white !important;
+}
+
+.ant-menu-submenu-arrow::before,
+.ant-menu-submenu-arrow::after {
+  background-color: currentColor !important;
+}
+
+.ant-menu-item a:hover {
+  color: white !important;
+}
+
+.ant-menu-submenu-title {
+  padding-left: 20px !important;
+}
+
+.ant-menu-sub.ant-menu-inline {
+  background: transparent !important;
+}
+
+.rotated-header-table .ant-table-thead > tr > th {
+  height: 150px; /* Điều chỉnh giá trị này theo nhu cầu của bạn */
+  white-space: nowrap;
+  padding: 0 !important;
+}
+
+.rotated-header-table .ant-table-thead > tr > th > .ant-table-header-column {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: 50% 50%;
+  width: 30px; /* Điều chỉnh dựa trên nội dung của bạn */
+}
+
+.rotated-header-table .ant-table-thead > tr > th.ant-table-cell {
+  padding: 0 !important;
+}
+
+/* Thêm padding cho các ô dữ liệu để cân đối với tiêu đề xoay */
+.rotated-header-table .ant-table-tbody > tr > td {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.custom-switch.ant-switch {
+  background-color: #f0f0f0;
+  border-color: #d9d9d9;
+}
+
+.custom-switch.ant-switch:hover {
+  background-color: #e6e6e6;
+}
+
+.custom-switch.ant-switch.ant-switch-checked {
+  background-color: #1890ff;
+}
+
+.custom-switch.ant-switch.ant-switch-checked:hover {
+  background-color: #1890ff;
+}
+
+.custom-switch .ant-switch-handle::before {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-switch .ant-switch-inner {
+  color: #333;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.custom-switch.ant-switch-checked .ant-switch-inner {
+  color: white;
+}
+
+.custom-switch.ant-switch-loading .ant-switch-loading-icon {
+  color: #1890ff;
+}
+
+.custom-upload .ant-upload-list-item-container {
+  margin: 0 !important; /* Xóa margin */
+  padding: 0 !important; /* Xóa padding */
+  border: none !important; /* Loại bỏ border nếu có */
+  width: 50px !important; /* Đảm bảo kích thước đồng nhất với các ảnh */
+  height: 50px !important;
+}
+
+.custom-upload .ant-upload-list-item {
+  margin: 0 !important; /* Đảm bảo không có margin giữa các phần tử */
+  padding: 0 !important; /* Xóa padding */
+  width: 50px !important; /* Kích thước ảnh đã upload */
+  height: 50px !important;
+}
+
+.custom-upload .ant-upload-list-item img {
+  object-fit: cover;
+  width: 100% !important; /* Đảm bảo ảnh vừa khít khung */
+  height: 100% !important;
+}
+
+.custom-upload .ant-upload {
+  width: 50px !important; /* Kích thước của nút Upload */
+  height: 50px !important;
+  margin: 0 !important; /* Xóa margin */
+  padding: 0 !important; /* Xóa padding */
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid #000000;
+  border-radius: 0.25rem;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input[type="checkbox"]:checked {
+  background-color: black;
+  border-color: black;
+}
+
+input[type="checkbox"]:checked::before {
+  content: "✔";
+  display: block;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: -2rem;
+  line-height: 1.5rem;
+}
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 2px solid #000000;
+  border-radius: 50%;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+input[type="radio"]:checked {
+  background-color: black;
+  border-color: black;
+}
+
+input[type="radio"]:checked::before {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.custom-radio {
+  display: flex;
+  align-items: center;
+}
+
+.custom-radio label {
+  margin-left: 0.5rem;
+}
+.btn-black {
+  @apply bg-blackL  border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white;
+}
+
+.h1cart {
+  @apply lg:text-4xl text-2xl font-medium tracking-[1px] mb-9;
+}
+.title-h3 {
+  @apply font-bold text-xl mb-1;
+}
+.dashed-line {
+  border-top: 2px dashed #ccc;
+  width: 100%;
+}
+.dashed-black {
+  border-top: 2px dashed #222222;
+  width: 100%;
+}
+.inprocrass {
+  @apply text-[#E3B231] bg-[#E3B231]/10 text-xs px-1 py-1 rounded-sm;
+}
+.delivered {
+  @apply text-[#3CD139] bg-[#3CD139]/10 text-xs px-2 py-1 rounded-sm;
+}
+.product-card:hover .btn {
+  @apply visible opacity-100;
+}
+
+/* input[type="range"]::-webkit-slider-thumb {
+  @apply bg-black;
+}
+input[type="range"]::-moz-range-thumb {
+  @apply bg-black;
+}
+input[type="range"]::-ms-thumb {
+  @apply bg-black;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  @apply bg-gray-800;
+}
+input[type="range"]::-moz-range-track {
+  @apply bg-gray-800;
+}
+input[type="range"]::-ms-track {
+  @apply bg-gray-800;
+} */
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+
+  object-fit: cover;
+}
+
+.swiper-slide {
+  background-size: cover;
+
+  background-position: center;
+}
+
+.mySwiper1 {
+  box-sizing: border-box;
+  padding: 10px 0;
+}
+
+.mySwiper1 .swiper-slide {
+  opacity: 0.4;
+}
+
+.mySwiper1 .swiper-slide-thumb-active {
+  opacity: 1;
+  background: #f4f4f4;
+  border: 1px solid #cccccc;
+  border-radius: 1rem;
+}
+
+.swiper-slide img {
+  display: block;
+
+  object-fit: cover;
+}
+.swiper-with-hover .swiper-slide img {
+  transition: transform 0.3s ease;
+}
+
+.swiper-with-hover .swiper-slide img:hover {
+  transform: scale(1.1);
+}
+.range-container {
+  position: relative;
+  width: 100%;
+  height: 50px;
+}
+.range-slider {
+  top: 3px;
+  position: absolute;
+  width: 240px;
+  height: 0.5px;
+  background: #000000;
+  border-radius: 5px;
+}
+.range-input {
+  -webkit-appearance: none;
+  width: 240px;
+  height: 6px;
+  background: transparent;
+  pointer-events: none;
+  position: absolute;
+  margin: 0;
+  padding: 0;
+}
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: all;
+  width: 16px;
+  height: 16px;
+  background: black;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+.range-input::-moz-range-thumb {
+  pointer-events: all;
+  width: 16px;
+  height: 16px;
+  background: black;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+.pl__ring {
+  animation: ringA 2s linear infinite;
+}
+
+.pl__ring--b {
+  animation-name: ringB;
+}
+
+.pl__ring--c {
+  animation-name: ringC;
+}
+
+.pl__ring--d {
+  animation-name: ringD;
+}
+
+/* Animations */
+@keyframes ringA {
+  from,
+  4% {
+    stroke-dasharray: 0 660;
+    stroke-width: 20;
+    stroke-dashoffset: -330;
+  }
+  12% {
+    stroke-dasharray: 60 600;
+    stroke-width: 30;
+    stroke-dashoffset: -335;
+  }
+  32% {
+    stroke-dasharray: 60 600;
+    stroke-width: 30;
+    stroke-dashoffset: -595;
+  }
+  40%,
+  54% {
+    stroke-dasharray: 0 660;
+    stroke-width: 20;
+    stroke-dashoffset: -660;
+  }
+  62% {
+    stroke-dasharray: 60 600;
+    stroke-width: 30;
+    stroke-dashoffset: -665;
+  }
+  82% {
+    stroke-dasharray: 60 600;
+    stroke-width: 30;
+    stroke-dashoffset: -925;
+  }
+  90%,
+  to {
+    stroke-dasharray: 0 660;
+    stroke-width: 20;
+    stroke-dashoffset: -990;
+  }
+}
+
+@keyframes ringB {
+  from,
+  12% {
+    stroke-dasharray: 0 220;
+    stroke-width: 20;
+    stroke-dashoffset: -110;
+  }
+  20% {
+    stroke-dasharray: 20 200;
+    stroke-width: 30;
+    stroke-dashoffset: -115;
+  }
+  40% {
+    stroke-dasharray: 20 200;
+    stroke-width: 30;
+    stroke-dashoffset: -195;
+  }
+  48%,
+  62% {
+    stroke-dasharray: 0 220;
+    stroke-width: 20;
+    stroke-dashoffset: -220;
+  }
+  70% {
+    stroke-dasharray: 20 200;
+    stroke-width: 30;
+    stroke-dashoffset: -225;
+  }
+  90% {
+    stroke-dasharray: 20 200;
+    stroke-width: 30;
+    stroke-dashoffset: -305;
+  }
+  98%,
+  to {
+    stroke-dasharray: 0 220;
+    stroke-width: 20;
+    stroke-dashoffset: -330;
+  }
+}
+
+@keyframes ringC {
+  from {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: 0;
+  }
+  8% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -5;
+  }
+  28% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -175;
+  }
+  36%,
+  58% {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: -220;
+  }
+  66% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -225;
+  }
+  86% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -395;
+  }
+  94%,
+  to {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: -440;
+  }
+}
+
+@keyframes ringD {
+  from,
+  8% {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: 0;
+  }
+  16% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -5;
+  }
+  36% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -175;
+  }
+  44%,
+  50% {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: -220;
+  }
+  58% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -225;
+  }
+  78% {
+    stroke-dasharray: 40 400;
+    stroke-width: 30;
+    stroke-dashoffset: -395;
+  }
+  86%,
+  to {
+    stroke-dasharray: 0 440;
+    stroke-width: 20;
+    stroke-dashoffset: -440;
+  }
+}

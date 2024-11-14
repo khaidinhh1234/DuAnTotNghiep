@@ -183,7 +183,7 @@ const Header = () => {
 
   // Sử dụng trong Menu component
   <Menu items={renderMenuItems(categories)} className="m-0 p-0" />;
-// console.log
+// console.log  
   const handleMouseLeaveMenu = () => {
     setHoveredMenu(null);
     // setCategories([]); // Clear categories khi di chuột ra ngoài
