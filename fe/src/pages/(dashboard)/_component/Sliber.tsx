@@ -61,33 +61,33 @@ const SiderComponent: React.FC = () => {
             (quyen?.includes("admin.bienthekichthuoc.index") &&
               quyen?.includes("admin.bienthemausac.index")) ||
             quyen?.includes("admin.bosuutap.index")) && (
-            <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
-              {quyen?.includes("admin.sanpham.index") && (
-                <Menu.Item key="/admin/products/list">
-                  Danh sách sản phẩm
-                </Menu.Item>
-              )}
-              {quyen?.includes("admin.bienthekichthuoc.index") &&
-                quyen?.includes("admin.bienthemausac.index") && (
-                  <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
+              <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
+                {quyen?.includes("admin.sanpham.index") && (
+                  <Menu.Item key="/admin/products/list">
+                    Danh sách sản phẩm
+                  </Menu.Item>
                 )}
-              {quyen?.includes("admin.bosuutap.index") && (
-                <Menu.Item key="/admin/products/tags">Bộ sưu tập</Menu.Item>
-              )}
-            </SubMenu>
-          )}
+                {quyen?.includes("admin.bienthekichthuoc.index") &&
+                  quyen?.includes("admin.bienthemausac.index") && (
+                    <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
+                  )}
+                {quyen?.includes("admin.bosuutap.index") && (
+                  <Menu.Item key="/admin/products/tags">Bộ sưu tập</Menu.Item>
+                )}
+              </SubMenu>
+            )}
 
           {(quyen?.includes("admin.danhmuctintuc.index") ||
             quyen?.includes("admin.danhmuc.index")) && (
-            <SubMenu key="sub3" icon={<Folder />} title="Danh mục">
-              {quyen?.includes("admin.danhmuc.index") && (
-                <Menu.Item key="/admin/categories">Danh mục sản phẩm</Menu.Item>
-              )}
-              {quyen?.includes("admin.danhmuctintuc.index") && (
-                <Menu.Item key="/admin/newcategory">Danh mục tin tức</Menu.Item>
-              )}{" "}
-            </SubMenu>
-          )}
+              <SubMenu key="sub3" icon={<Folder />} title="Danh mục">
+                {quyen?.includes("admin.danhmuc.index") && (
+                  <Menu.Item key="/admin/categories">Danh mục sản phẩm</Menu.Item>
+                )}
+                {quyen?.includes("admin.danhmuctintuc.index") && (
+                  <Menu.Item key="/admin/newcategory">Danh mục tin tức</Menu.Item>
+                )}{" "}
+              </SubMenu>
+            )}
 
           {quyen?.includes("admin.donhang.index") && (
             <SubMenu key="sub4" icon={<ShoppingCart />} title="Đơn hàng">
@@ -98,16 +98,27 @@ const SiderComponent: React.FC = () => {
                   Danh sách đơn hàng
                 </Menu.Item>
               )}
-              {quyen.includes("admin.vanchuyen.index") && (
+              {/* {quyen.includes("admin.vanchuyen.index") && (
                 <Menu.Item key="/admin/orders/uncomfirmedorder">
                   Vận chuyển
                 </Menu.Item>
-              )}
+              )} */}
               {quyen.includes("admin.donhang.hoanhang") && (
                 <Menu.Item key="/admin/orders/donhoan">
                   Danh sách đơn hoàn
                 </Menu.Item>
               )}
+              {quyen.includes("admin.vanchuyen.index") && (
+                <SubMenu key="van-chuyen" title="Vận chuyển">
+                  <Menu.Item key="/admin/orders/uncomfirmedorder">
+                    Đơn hàng
+                  </Menu.Item>
+                  <Menu.Item key="/admin/orders/hoanhang">
+                    Đơn hoàn
+                  </Menu.Item>
+                </SubMenu>
+              )}
+
             </SubMenu>
           )}
           {quyen?.includes("admin.rut-tien.xacnhan") && (
@@ -121,30 +132,30 @@ const SiderComponent: React.FC = () => {
 
           {(quyen?.includes("admin.taikhoan.index") ||
             quyen?.includes("admin.hangthanhvien.index")) && (
-            <SubMenu key="sub5" icon={<User />} title="Tài khoản">
-              <Menu.Item key="/admin/users/khachhang">Khách hàng</Menu.Item>
-              {quyen?.includes("admin.taikhoan.index") &&
-                vaitro.includes("Quản trị viên") && (
-                  <Menu.Item key="/admin/users/nhanvien">Nhân viên</Menu.Item>
+              <SubMenu key="sub5" icon={<User />} title="Tài khoản">
+                <Menu.Item key="/admin/users/khachhang">Khách hàng</Menu.Item>
+                {quyen?.includes("admin.taikhoan.index") &&
+                  vaitro.includes("Quản trị viên") && (
+                    <Menu.Item key="/admin/users/nhanvien">Nhân viên</Menu.Item>
+                  )}
+                {quyen?.includes("admin.hangthanhvien.index") && (
+                  <Menu.Item key="/admin/users/rank">Hạng thành viên</Menu.Item>
                 )}
-              {quyen?.includes("admin.hangthanhvien.index") && (
-                <Menu.Item key="/admin/users/rank">Hạng thành viên</Menu.Item>
-              )}
-            </SubMenu>
-          )}
+              </SubMenu>
+            )}
           {(quyen?.includes("admin.chuongtrinhuudai.index") ||
             quyen?.includes("admin.makhuyenmai.index")) && (
-            <SubMenu key="sub6" icon={<Tag />} title="Khuyến mại & Ưu đãi">
-              {quyen?.includes("admin.makhuyenmai.index") && (
-                <Menu.Item key="/admin/vouchers">Mã khuyến mại</Menu.Item>
-              )}
-              {quyen?.includes("admin.chuongtrinhuudai.index") && (
-                <Menu.Item key="/admin/chuongtrinhuudai">
-                  Chương trình ưu đãi
-                </Menu.Item>
-              )}
-            </SubMenu>
-          )}
+              <SubMenu key="sub6" icon={<Tag />} title="Khuyến mại & Ưu đãi">
+                {quyen?.includes("admin.makhuyenmai.index") && (
+                  <Menu.Item key="/admin/vouchers">Mã khuyến mại</Menu.Item>
+                )}
+                {quyen?.includes("admin.chuongtrinhuudai.index") && (
+                  <Menu.Item key="/admin/chuongtrinhuudai">
+                    Chương trình ưu đãi
+                  </Menu.Item>
+                )}
+              </SubMenu>
+            )}
           {quyen?.includes("admin.tintuc.index") && (
             <Menu.Item key="/admin/news" icon={<Newspaper />}>
               Tin tức

@@ -54,7 +54,7 @@ const Blog = () => {
             )}
             <div className="mt-32">
                 {data?.Lay_bai_viet_theo_danh_muc
-                    .filter((category: any) => category.tin_tuc.length > 0) // Lọc các danh mục có bài viết
+                    .filter((category: any) => category.tin_tuc.length > 0)
                     .map((category: any) => (
                         <div key={category.id} className="mb-6">
                             <h2 className="text-5xl font-bold mb-4">{category.ten_danh_muc_tin_tuc}</h2>
