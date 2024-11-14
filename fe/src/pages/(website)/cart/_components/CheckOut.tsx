@@ -2,11 +2,11 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
-import { debounce } from "lodash";
 import { FastForward, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import  debounce  from 'lodash/debounce';
 
 const CheckOut = () => {
   const nav = useNavigate();
@@ -85,7 +85,7 @@ const CheckOut = () => {
         queryClient.setQueryData(["cart", access_token], context.previousCartData);
       }
       const errorMessage = (error as any).response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.";
-      toast.error(errorMessage);
+      toast.error("Error: " + errorMessage);
     },
   });
 
@@ -155,7 +155,7 @@ const CheckOut = () => {
     (productId, currentQuantity) => {
       increaseQuantity({ productId, currentQuantity });
     },
-    500,
+    1000,
     { leading: true, trailing: false } 
   );
 
@@ -163,7 +163,7 @@ const CheckOut = () => {
     (productId, currentQuantity) => {
       decreaseQuantity({ productId, currentQuantity });
     },
-    500,
+    1000,
     { leading: true, trailing: false }
   );
 
