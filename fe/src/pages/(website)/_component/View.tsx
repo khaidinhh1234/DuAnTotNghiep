@@ -202,9 +202,14 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     setPreviewOpen(true);
   };
 
-  // -
-
-  // +
+  const selectedVariant = useMemo(() => {
+    if (!product || !selectedColor || !selectedSize) return null;
+    return product?.bien_the_san_pham?.find(
+      (v: any) =>
+        v?.mau_bien_the?.ma_mau_sac === selectedColor &&
+        v?.kich_thuoc_bien_the?.kich_thuoc === selectedSize
+    );
+  }, [product, selectedColor, selectedSize]);
 
   // const images = [product, products1, products2, sanPham2];
 
@@ -421,6 +426,20 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     </div>
                     <h4 className=" text-xl font-normal">
                       {product?.ma_san_pham}
+                      {selectedVariant && (
+                    <div className="mt-2">
+                      <a
+                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                          ? "bg-[#3CD139]/10 text-[#3CD139]"
+                          : "bg-red-500 text-white"
+                          }`}
+                      >
+                        {selectedVariant?.so_luong_bien_the > 0
+                          ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
+                          : "Hết hàng"}
+                      </a>
+                    </div>
+                  )}
                     </h4>
                     <div className="stars_reviews d-flex ">
                       <span>
