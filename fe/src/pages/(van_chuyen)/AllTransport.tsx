@@ -13,7 +13,7 @@ import {
 import React, { useState, useEffect } from "react";
 
 import TransportDetail from "./TransportDetail";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MainHeader from "./MainHeader";
 
 type TableRowSelection<T extends object = object> =
@@ -72,17 +72,25 @@ const AllTransport: React.FC = () => {
       return response.data;
     },
   });
+  const nav = useNavigate();
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    nav("/login");
+  };
 
   useEffect(() => {
     if (data?.data) {
       let filtered = data.data;
 
+      // Tìm kiếm theo mã vận chuyển
       if (searchText) {
         filtered = filtered.filter((item: Transport) =>
           item.ma_van_chuyen.toLowerCase().includes(searchText.toLowerCase())
         );
       }
 
+      // Lọc theo khoảng thời gian
       if (dateRange) {
         const [start, end] = dateRange;
         filtered = filtered.filter((item: Transport) => {
@@ -91,11 +99,19 @@ const AllTransport: React.FC = () => {
         });
       }
 
+      // Lọc theo trạng thái vận chuyển
       if (activeTab !== "Tất cả") {
         filtered = filtered.filter((item: Transport) =>
           item.trang_thai_van_chuyen === activeTab
         );
       }
+
+      // Sắp xếp để đơn vận chuyển mới nhất lên trên cùng
+      filtered = filtered.sort((a: any, b: any) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return dateB - dateA;
+      });
 
       setFilteredData(filtered);
     }
@@ -122,49 +138,49 @@ const AllTransport: React.FC = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-0 p-0 lg:gap-6 lg:px-6 lg:py-10 container">
-                    <MainHeader/>
+  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mx-10 lg:mx-0">
+    <div className="text-left mb-4 lg:mb-0">
+      <MainHeader /> {/* Logo và các thành phần khác trong MainHeader */}
+    </div>
+    <div className="lg:ml-auto text-left lg:text-right">
+      <h1 className="font-semibold text-lg lg:text-2xl">
+        Thông tin giao hàng
+        <i
+          className="fa-solid fa-arrow-right-from-bracket mx-5 hover:text-red-500 cursor-pointer"
+          onClick={logout}
+        ></i>
+      </h1>
+      <h1 className="font-semibold text-md lg:text-xl">Người giao hàng: !3223434</h1>
+      <h1 className="font-semibold text-md lg:text-xl">ID: VN-DC01432</h1>
+    </div>
+  </div>
 
-      {/* <div className="flex justify-between items-start mx-10">
-        <div className="flex gap-5 items-center">
-          <Link to='/'>
-            <img
-              src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729398683/Black_and_White_Circle_Business_Logo_1_ieyoum.png"
-              alt="Logo"
-              className="w-16 h-16"
-            />
-          </Link>
-          <h1 className="font-semibold md:text-2xl">
-            Giao Hàng Glow Express
-          </h1>
-        </div>
-
-      </div> */}
-
-      <div className="lg:mx-10 mx-3 bg-white">
-        <Tabs
-          defaultActiveKey="Tất cả"
-          activeKey={activeTab}
-          onChange={(key) => setActiveTab(key)}
-          items={tabItems}
+  {/* Các thành phần còn lại */}
+  <div className="lg:mx-10 mx-3 bg-white">
+    <Tabs
+      defaultActiveKey="Tất cả"
+      activeKey={activeTab}
+      onChange={(key) => setActiveTab(key)}
+      items={tabItems}
+    />
+    <div className="mb-4">
+      <Space>
+        <Input
+          placeholder="Tìm kiếm"
+          prefix={<SearchOutlined />}
+          onChange={handleSearchChange}
         />
+        <RangePicker onChange={handleDateRangeChange} />
+      </Space>
+    </div>
+    <Table
+      columns={columns}
+      dataSource={filteredData}
+      pagination={{ pageSize: 10, className: "my-5" }}
+    />
+  </div>
+</main>
 
-        <div style={{ marginBottom: 16 }}>
-          <Space>
-            <Input
-              placeholder="Tìm kiếm"
-              prefix={<SearchOutlined />}
-              onChange={handleSearchChange}
-            />
-            <RangePicker onChange={handleDateRangeChange} />
-          </Space>
-        </div>
-        <Table
-          columns={columns}
-          dataSource={filteredData}
-          pagination={{ pageSize: 10, className: "my-5" }}
-        />
-      </div>
-    </main>
   );
 };
 

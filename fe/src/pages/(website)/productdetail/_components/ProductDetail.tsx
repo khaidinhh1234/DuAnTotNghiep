@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Modal, Rate } from "antd";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -136,7 +136,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   // const [token, setToken] = useState<string | null>(null);
-
+  const nav = useNavigate()
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
     user.access_token || localStorage.getItem("access_token");
@@ -256,7 +256,8 @@ const ProductDetail: React.FC = () => {
     }
     console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
     if (!access_token) {
-      setIsModalVisible(true); // Hiển thị modal đăng nhập
+      // setIsModalVisible(true); // Hiển thị modal đăng nhập
+      nav("/login")
       return;
     }
     // if (!access_token) {
@@ -708,11 +709,20 @@ const ProductDetail: React.FC = () => {
                     min="1"
                     max={selectedVariant?.so_luong_bien_the || 1}
                     value={quantity}
-                    onChange={(e) =>
-                      setQuantity(Math.max(1, parseInt(e.target.value, 10)))
-                    }
+                    onChange={(e) => {
+                      const inputQuantity = parseInt(e.target.value, 10);
+                      // Kiểm tra nếu inputQuantity vượt quá số lượng kho
+                      if (inputQuantity > (selectedVariant?.so_luong_bien_the || 1)) {
+                        if (selectedVariant) {
+                          setQuantity(selectedVariant.so_luong_bien_the); // Đặt về số lượng kho tối đa
+                        }
+                      } else {
+                        setQuantity(Math.max(1, inputQuantity)); // Đảm bảo số lượng không thấp hơn 1
+                      }
+                    }}
                     className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                   />
+
                   <button
                     onClick={() =>
                       setQuantity((prev) =>
@@ -1010,53 +1020,6 @@ const ProductDetail: React.FC = () => {
         )}
       </div>
 
-      {/* <div className="container mx-14 pb-10">
-        <h2 className="mx-14 text-4xl font-medium tracking-[1px] mb-12">
-          Sản phẩm cùng loại        </h2>
-        <div className="mx-14 lg:flex lg:gap-7 h-[500px]">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {relatedProducts?.data.map((product) => (
-              <div key={product.id} className="xl:col-span-1 lg:col-span-1 col-span-1 md:col-span-1 mb-2 w-[264px] mx-auto">
-                <div className="product-card hover:bg-zinc-100">
-                  <div className="w-full h-[332px] relative">
-                    <a href="#">
-                      <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white" />
-                    </a>
-                    <a href="#">
-                      <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white" />
-                    </a>
-                    <a href="#">
-                      <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white" />
-                    </a>
-                    <img
-                      src={product.anh_san_pham}
-                      alt={product.ten_san_pham}
-                      className="w-[285px] h-[320px] object-cover"
-                    />
-                    <button className="hover:bg-blackL hover:text-white absolute px-[75px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
-                      Add to Cart
-                    </button>
-                  </div>
-                  <div className="bg-white pt-4">
-                    <a href="#">
-                      <h5 className="font-bold text-lg">{product.ten_san_pham}</h5>
-                    </a>
-                    <p className="my-1 font-normal">
-                      {product.mo_ta_ngan}
-                    </p>
-                    <p className="font-medium text-lg">
-                      {product.gia_ban}
-                      <span className="text-black/20 line-through px-1">
-                        {product.gia_goc}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div> */}
       <RelatedProducts productId={product?.id ?? 0} />
 
       <Footer />
