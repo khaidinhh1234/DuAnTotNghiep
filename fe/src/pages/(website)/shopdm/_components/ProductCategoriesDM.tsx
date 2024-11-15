@@ -155,15 +155,15 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     }
   };
 
-  //   const { data: categoriesData } = useQuery({
-  //     queryKey: ["CATEGORIES", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
-  //     queryFn: async () => {
-  //       if (!tenDanhMucCha || !tenDanhMucCon || !tenDanhMucConCapBa) return null;
-  //       const response = await instanceClient.post(`danhmuc/${tenDanhMucCha}/${tenDanhMucCon}/${tenDanhMucConCapBa}`);
-  //       return response.data;
-  //     },
-  //     enabled: !!tenDanhMucCha && !!tenDanhMucCon && !!tenDanhMucConCapBa,
-  //   });
+    // const { data: categoriesData } = useQuery({
+    //   queryKey: ["CATEGORIES", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
+    //   queryFn: async () => {
+    //     if (!tenDanhMucCha || !tenDanhMucCon || !tenDanhMucConCapBa) return null;
+    //     const response = await instanceClient.post(`danhmuc/${tenDanhMucCha}/${tenDanhMucCon}/${tenDanhMucConCapBa}`);
+    //     return response.data;
+    //   },
+    //   enabled: !!tenDanhMucCha && !!tenDanhMucCon && !!tenDanhMucConCapBa,
+    // });
   // console.log(categoriesData?.data?.san_pham)
   const { data, refetch: refetch2 } = useQuery({
     queryKey: ["PRODUCTSLOC"],

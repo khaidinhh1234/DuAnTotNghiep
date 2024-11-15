@@ -14,6 +14,7 @@ import React, { useState, useEffect } from "react";
 
 import TransportDetail from "./TransportDetail";
 import { Link } from "react-router-dom";
+import MainHeader from "./MainHeader";
 
 type TableRowSelection<T extends object = object> =
   TableProps<T>["rowSelection"];
@@ -121,7 +122,9 @@ const AllTransport: React.FC = () => {
 
   return (
     <main className="flex flex-1 flex-col gap-0 p-0 lg:gap-6 lg:px-6 lg:py-10 container">
-      <div className="flex justify-between items-start mx-10">
+                    <MainHeader/>
+
+      {/* <div className="flex justify-between items-start mx-10">
         <div className="flex gap-5 items-center">
           <Link to='/'>
             <img
@@ -135,7 +138,7 @@ const AllTransport: React.FC = () => {
           </h1>
         </div>
 
-      </div>
+      </div> */}
 
       <div className="lg:mx-10 mx-3 bg-white">
         <Tabs
