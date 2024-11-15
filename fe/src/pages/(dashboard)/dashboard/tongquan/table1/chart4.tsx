@@ -94,62 +94,17 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
   //   return <div>Error: {error.message}</div>;
   // }
   useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch7(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch7]);
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch2(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch2]);
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch3(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch3]);
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch4(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch4]);
+    if (datestart && dateend) {
+      refetch7();
+      refetch2();
+      refetch3();
+      refetch4();
+    }
+  }, [datestart, dateend, refetch7, refetch2, refetch3, refetch4]);
 
   // const date2 = Chart1?.ngay_trong_khoang.map((item: any) => item);
   const [series, setSeries] = useState<{ name: string; data: any[] }[]>([]);
-  const [options, setOptions] = useState({
-    chart: {
-      height: 350,
-      type: "area",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      type: "datetime", // Make sure it's using "datetime" instead of "date"
-      categories: [],
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy",
-      },
-    },
-    yaxis: {
-      labels: {
-        formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
-      },
-    },
-  });
+  const [options, setOptions] = useState({});
   const formattedDates = Chart1?.ngay_trong_khoang?.map((date: any) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
@@ -170,14 +125,32 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
           data: Chart1?.doanh_thu_huy_hoan_theo_ngay,
         },
       ]);
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        xaxis: {
-          ...prevOptions.xaxis,
-          type: "category", // Use "category" for custom date format
-          categories: formattedDates || [],
+      setOptions({
+        chart: {
+          height: 350,
+          type: "area",
         },
-      }));
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "smooth",
+        },
+        xaxis: {
+          type: "datetime", // Make sure it's using "datetime" instead of "date"
+          categories: formattedDates,
+        },
+        tooltip: {
+          x: {
+            format: "dd/MM/yyyy",
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
+          },
+        },
+      });
     }
   }, [Chart1, datestart, dateend]); // Run when Chart1 data changes (i.e., after refetch)
 

@@ -42,9 +42,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
           <i className="fa-regular fa-box-check text-white text-xl"></i>
         </div>
         <div className="flex ">
-
-          <h3 className="text-lg font-bold">Tổng Số Lượng Sản phẩm: </h3>{" "}
-
+          <h3 className="text-lg font-bold">Tổng SL Sản phẩm: </h3>{" "}
           <h3 className="text-lg font-bold mx-1">
             {data?.tong_so_luong_ton_kho || 0} sản phẩm
           </h3>
@@ -81,7 +79,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
           </div>
         </div>
         <div>
-          <div className="text-black">
+          {/* <div className="text-black">
             Giá bán : <br />
             <span className="text-2xl font-bold text-black">
               {" "}
@@ -91,7 +89,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
                 suffix="đ"
               />
             </span>
-          </div>
+          </div> */}
           {/* <div
             className={`flex items-center mt-1 ${phandon ? "text-green-600" : "text-red-600"}`}
           >
