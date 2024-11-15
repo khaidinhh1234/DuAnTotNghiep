@@ -701,7 +701,7 @@ const Footer = () => {
                 </div>
               </div>
             </div>
-
+{/* 
             <div className="lg:col-span-2 col-span-6">
               <h1 className="text-xl font-semibold mb-3">Danh Mục Tin Tức</h1>
               <ul>
@@ -713,8 +713,41 @@ const Footer = () => {
                   </li>
                 ))}
               </ul>
-            </div>
+            </div> */}
+         <div className="lg:col-span-2 col-span-6">
+               <h1 className="text-xl font-semibold mb-3">Thông tin</h1>
+               <ul>
+                 <li className="mb-3">
+                  <Link to="/">
+                   <p >Trang chủ</p>
+                   </Link>
+                 </li>
+                <li className="mb-3">
+                <Link to="/ourstory">
+                   Giới thiệu
+                    </Link>
+                 </li>
+                 <li className="mb-3">
+                  <Link to="/shop/nam">Nam</Link>
+                </li>
+                 <li className="mb-3">
+                   <Link to="/shop/nu">Nữ</Link>
 
+                 </li>
+                <li className="mb-3">
+                   <Link to="/shop/tre_em">Trẻ em</Link>
+                 </li>
+                 <li className="mb-3">
+                   <Link to="/blog">Bài viết</Link>
+                 </li>
+                 <li className="mb-3">
+                   <Link to="/vourcher">Khuyến mại</Link>
+                 </li>
+                 <li className="mb-3">
+                   <Link to="/contact">Liên hệ</Link>
+                 </li>
+               </ul>
+             </div>
             <div className="lg:col-span-2 col-span-6">
   <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
   <ul>
