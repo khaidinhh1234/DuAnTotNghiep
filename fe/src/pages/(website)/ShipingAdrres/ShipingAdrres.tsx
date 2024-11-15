@@ -37,14 +37,39 @@ const ShippingAddressPage = () => {
   });
   const nav = useNavigate();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showPinRegistrationModal, setShowPinRegistrationModal] = useState(false);
+
   const [pendingOrderData, setPendingOrderData] = useState<{
     data: { ma_don_hang: string };
   } | null>(null);
+  const { data: walletStatus, isSuccess } = useQuery({
+    queryKey: ["walletStatus"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get('/vi-tai-khoan');
+        return response.data;
+      } catch (error: any) {
+        if (error.response?.status === 400) {
+          return {
+            status: false,
+            status_code: 400
+          };
+        }
+        throw error;
+      }
+    },
+    retry: false
+  });
+
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       try {
         // Bước 1: Tạo đơn hàng
         if (trangthai === "Ví tiền") {
+          if (!walletStatus?.status) {
+            setShowPinRegistrationModal(true);
+            return;
+          }
           setPendingOrderData(data);
           setShowVerificationModal(true);
           return;
@@ -85,6 +110,9 @@ const ShippingAddressPage = () => {
       }
     },
   });
+  const handleClosePinModal = () => {
+    setShowPinRegistrationModal(false);
+  };
 
   const onsubmit = (formData: any) => {
     console.log(trangthai);
@@ -176,6 +204,33 @@ const ShippingAddressPage = () => {
         onClose={() => setShowVerificationModal(false)}
         onVerify={handleVerification}
       />
+      {showPinRegistrationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Chưa đăng ký mã PIN</h2>
+            <p className="text-gray-600 mb-6">Bạn cần đăng ký mã PIN để thực hiện thao tác này</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={handleClosePinModal}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Đóng
+              </button>
+              <button
+                onClick={() => {
+                  nav('/mypro/wallet', {
+                    state: { openSettings: true }
+                  });
+                  handleClosePinModal();
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Đăng ký PIN
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
