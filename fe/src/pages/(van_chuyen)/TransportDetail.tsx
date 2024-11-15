@@ -246,12 +246,33 @@ const TransportDetail = ({ record }: any) => {
       {" "}
       <p onClick={() => setOpen(true)}>
         <div className="relative">
-          <div>
+          <div className="relative flex flex-col md:flex-row justify-between md:items-center">
             <h1 className="text-base md:text-lg">
               Mã Vận chuyển: <span>{vanChuyenData ? vanChuyenData.ma_van_chuyen : "Loading..."}</span> <br />
               Ngày tạo: <span>{vanChuyenData ? new Date(vanChuyenData.ngay_tao).toLocaleDateString("vi-VN") : "Loading..."}</span>
             </h1>
+
+            <div className="mt-2 md:mt-0 text-left md:text-right"> {/* Thêm khoảng cách khi chuyển xuống dưới ở mobile */}
+              <div>
+                <span
+                  className={`font-bold
+          ${vanchuyen?.trang_thai_van_chuyen === 'Chờ xử lý' ? 'text-yellow-500' : ''}
+          ${vanchuyen?.trang_thai_van_chuyen === 'Đang giao hàng' ? 'text-blue-500' : ''}
+          ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thành công' ? 'text-green-500' : ''}
+          ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thất bại' ? 'text-red-500' : ''}
+        `}
+                >
+                  {vanchuyen ? vanchuyen.trang_thai_van_chuyen : "Không có dữ liệu"}
+                </span>
+              </div>
+
+              <p className="text-xs md:text-lg text-gray-800">
+                Tổng số tiền ({data?.data?.tong_so_luong} sản phẩm):{" "}
+                {data?.data?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
+              </p>
+            </div>
           </div>
+
           <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
             <div className="w-full md:w-3/4">
               {products ? (
@@ -291,28 +312,11 @@ const TransportDetail = ({ record }: any) => {
                 <p>Loading...</p>
               )}
             </div>
-            <div className="w-full md:w-1/4 flex flex-col items-end space-y-2 p-4">
-              <div>
-                <span
-                  className={`font-bold
-              ${vanchuyen?.trang_thai_van_chuyen === 'Chờ xử lý' ? 'text-yellow-500' : ''}
-              ${vanchuyen?.trang_thai_van_chuyen === 'Đang giao hàng' ? 'text-blue-500' : ''}
-              ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thành công' ? 'text-green-500' : ''}
-              ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thất bại' ? 'text-red-500' : ''}
-            `}
-                >
-                  {vanchuyen ? vanchuyen.trang_thai_van_chuyen : "Không có dữ liệu"}
-                </span>
-              </div>
 
-              <p className="text-xs md:text-lg text-gray-800">
-                Tổng số tiền ({data?.data?.tong_so_luong} sản phẩm): {" "}
-                {data?.data?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
-              </p>
-            </div>
           </div>
         </div>
       </p>
+
 
       <Modal
         centered
@@ -328,13 +332,6 @@ const TransportDetail = ({ record }: any) => {
           <div className="flex items-center space-x-2 text-lg font-semibold text-gray-700">
             <span>Thông tin đơn hàng</span>
           </div>
-          {/* Order Status */}
-          {/* <div className="bg-teal-600 text-hite rounded-t-md px-3 pt-3 pb-1 mt-4">
-            <p className="text-lg font-semibold text-white">
-              Đơn hàng đã hoàn thành
-            </p>
-          </div> */}
-          {/* Shipping Info */}
           <div className="bg-white rounded-md shadow-md p-4 mt-4">
             <div>
               <p className="text-gray-700 font-semibold">Thông tin vận chuyển</p>
@@ -348,7 +345,7 @@ const TransportDetail = ({ record }: any) => {
               <p className="text-gray-500 text-sm">
                 {record.van_chuyen?.don_hang?.ten_nguoi_dat_hang
                   ? `${record.van_chuyen.don_hang.ten_nguoi_dat_hang} - ${record.van_chuyen.don_hang.so_dien_thoai_nguoi_dat_hang || ''}`
-                  : `${thongtin?.ho + " " + thongtin?.ten || ''} (+${thongtin?.so_dien_thoai || ''})`}
+                  : `${thongtin?.ten_nguoi_dat_hang || ''} (+${thongtin?.so_dien_thoai_nguoi_dat_hang || ''})`}
               </p>
 
               <p className="text-gray-500 text-sm">
@@ -360,7 +357,7 @@ const TransportDetail = ({ record }: any) => {
               <p className="text-gray-500 text-sm">
                 ghi chú : {record?.van_chuyen?.don_hang.ghi_chu
                   ? record.van_chuyen?.don_hang.ghi_chu
-                  : "không có ghi chú"
+                  : donhang?.ghi_chu
                 }
               </p>
             </div>

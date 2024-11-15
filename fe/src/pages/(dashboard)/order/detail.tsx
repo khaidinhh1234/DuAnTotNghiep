@@ -550,7 +550,7 @@ const Detail = ({ record }: any) => {
                         mutate({ id: record.id, action: "Đang xử lý" })
                       }
                     >
-                      Hoàn tất đơn hàng
+                     Đã chuẩn bị hàng
                     </button>{" "}
                     <button
                       className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"

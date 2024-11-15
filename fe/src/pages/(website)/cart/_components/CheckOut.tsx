@@ -2,11 +2,12 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
+import { debounce } from "lodash";
 import { FastForward, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import  debounce  from 'lodash/debounce';
+type RequestPayload = { productId: string; currentQuantity: number };
 
 const CheckOut = () => {
   const nav = useNavigate();
@@ -17,6 +18,23 @@ const CheckOut = () => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
+  const MAX_REQUESTS = 10;
+  const requestQueue: (() => Promise<void>)[] = [];
+  const addRequestToQueue = (requestFn: () => Promise<void>) => {
+    if (requestQueue.length >= MAX_REQUESTS) {
+      // Xóa request cũ nhất nếu đã đạt đến giới hạn
+      requestQueue.shift();
+    }
+    requestQueue.push(requestFn);
+  };
+
+  const executeNextRequest = async () => {
+    if (requestQueue.length > 0) {
+      // Lấy request đầu tiên trong hàng đợi và thực hiện nó
+      const nextRequest = requestQueue.shift();
+      await nextRequest?.();
+    }
+  };
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -32,7 +50,6 @@ const CheckOut = () => {
       }
     },
   });
-
   const { mutate: increaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
       await instanceClient.put(
@@ -47,8 +64,6 @@ const CheckOut = () => {
     },
     onMutate: ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-
-      // Optimistic update for quantity increment
       queryClient.setQueryData(
         ["cart", access_token],
         (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
@@ -77,15 +92,16 @@ const CheckOut = () => {
       return { previousCartData };
     },
     onSuccess: () => {
-      // toast.success("Số lượng sản phẩm đã được tăng thành công!");
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+      executeNextRequest()
     },
     onError: (error, _, context) => {
       if (context?.previousCartData) {
         queryClient.setQueryData(["cart", access_token], context.previousCartData);
       }
       const errorMessage = (error as any).response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.";
-      toast.error("Error: " + errorMessage);
+      toast.error(errorMessage);
+      executeNextRequest()
     },
   });
 
@@ -140,6 +156,7 @@ const CheckOut = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+      executeNextRequest()
     },
     onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
       if (context?.previousCartData) {
@@ -149,23 +166,38 @@ const CheckOut = () => {
         );
       }
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
+      executeNextRequest()
     },
   });
+
   const debouncedIncreaseQuantity = debounce(
     (productId, currentQuantity) => {
-      increaseQuantity({ productId, currentQuantity });
+      addRequestToQueue(() => new Promise<void>((resolve, reject) => {
+        increaseQuantity({ productId, currentQuantity }, {
+          onSuccess: resolve,
+          onError: reject,
+        });
+      }));
+      executeNextRequest(); 
     },
-    1000,
-    { leading: true, trailing: false } 
-  );
-
-  const debouncedDecreaseQuantity = debounce(
-    (productId, currentQuantity) => {
-      decreaseQuantity({ productId, currentQuantity });
-    },
-    1000,
+    2000,
     { leading: true, trailing: false }
   );
+  
+  const debouncedDecreaseQuantity = debounce(
+    (productId, currentQuantity) => {
+      addRequestToQueue(() => new Promise<void>((resolve, reject) => {
+        decreaseQuantity({ productId, currentQuantity }, {
+          onSuccess: resolve,
+          onError: reject,
+        });
+      }));
+      executeNextRequest(); 
+    },
+    2000,
+    { leading: true, trailing: false }
+  );
+  
 
 
   const { mutate: Delete } = useMutation({
@@ -221,7 +253,7 @@ const CheckOut = () => {
       return total + productInRegular.gia_hien_tai * quantity;
     }
 
-    return total; 
+    return total;
   }, 0);
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
   const shippingFee = totalSelectedPrice > 498000 ? 0 : 20000;
@@ -508,7 +540,7 @@ const CheckOut = () => {
                               )}
                               <input
                                 value={product.so_luong}
-                                className="w-7 h-10 text-center"  
+                                className="w-7 h-10 text-center"
                                 placeholder="Quantity"
                                 min="1"
                                 max={product.so_luong_bien_the}
