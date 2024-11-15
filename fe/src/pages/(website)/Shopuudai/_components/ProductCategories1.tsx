@@ -496,7 +496,16 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                         }`}
                         onClick={() => handleCheckboxChange(item.id)}
                       >
-                        <span className="text-sm ">{item.kich_thuoc}</span>
+
+                        <span className="text-sm mr-1">{item.kich_thuoc}</span>-
+
+                        <span className="text-sm ml-1">  {item.loai_kich_thuoc === "nam"
+                            ? "Nam"
+                            : item.loai_kich_thuoc === "nu"
+                              ? "Nữ"
+                              : "Trẻ em"}</span>
+
+
                       </div>
                     ))}
                   </div>
