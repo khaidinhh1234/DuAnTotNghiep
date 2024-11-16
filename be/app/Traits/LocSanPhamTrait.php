@@ -171,7 +171,7 @@ trait LocSanPhamTrait
                 ], 404);
             }
 
-            $danhMuc = $sanPhams->first()->danhMuc()->with(['children','children.children'])->get();
+            $danhMuc = $sanPhams->first()->danhMuc()->with(['children', 'children.children'])->get();
 
             $mauSacs = BienTheMauSac::whereHas('sanPhams', function ($query) use ($sanPhamIds) {
                 $query->whereIn('san_pham_id', $sanPhamIds);
@@ -209,7 +209,4 @@ trait LocSanPhamTrait
             ], 500);
         }
     }
-
-
-
 }
