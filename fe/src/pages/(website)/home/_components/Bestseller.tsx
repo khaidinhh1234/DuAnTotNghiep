@@ -6,6 +6,8 @@ import { message } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
+import { debounce } from "lodash/debounce";
+import useDebounce from "@/components/hook/useDebounce";
 
 const Bestseller = ({ products }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
@@ -18,6 +20,7 @@ const Bestseller = ({ products }: any) => {
     setHoveredVariantIndex(variantIndex);
   };
   const queryclient = useQueryClient();
+  const debounceFn = useDebounce({ value: products, time: 1000 });
   const { mutate, isPending } = useMutation({
     mutationFn: async (id: any) => {
       try {
@@ -35,19 +38,17 @@ const Bestseller = ({ products }: any) => {
         }
 
         return response.data;
-      } catch (error) {
-        message.error("Xóa sản phẩm yêu thích thất bại");
-        console.error("API error", error); // Thêm log lỗi API
-        throw new Error("Xóa sản phẩm yêu thích thất bại");
+      } catch (error: any) {
+        message.error(error?.response?.data?.mess);
+        // throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
     },
     onSuccess: () => {
       queryclient.invalidateQueries({
-        queryKey: ["PRODUCTS_KEY"],
+        queryKey: ["TRANG_CHU_CLIENT"],
       });
     },
   });
-  // console.log(products);
   return (
     <>
       <section>
@@ -79,7 +80,7 @@ const Bestseller = ({ products }: any) => {
                         />
                       </span>
                     )}
-                    
+
                     <Link to={`/product-detail/${product.duong_dan}`}>
                       <div className="relative">
                         <img

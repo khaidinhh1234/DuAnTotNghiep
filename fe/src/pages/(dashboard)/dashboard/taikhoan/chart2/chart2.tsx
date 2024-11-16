@@ -12,114 +12,122 @@ const Chart2: React.FC = () => {
     },
   });
 
+  console.log(chart2);
+
+  const [series, setSeries] = useState<
+    { name: string; type: string; data: any[] }[]
+  >([]);
+
+  const [options, setOptions] = useState({});
+  useEffect(() => {
+    if (chart2) {
+      setSeries([
+        {
+          name: "Số lượng khách",
+          type: "column",
+          data: chart2?.so_luong_thanh_vien,
+        },
+        {
+          name: "Tiền đã chi tiêu",
+          type: "column",
+          data: chart2?.tong_chi_tieu,
+        },
+      ]);
+      setOptions({
+        chart: {
+          height: 350,
+          type: "line",
+          stacked: false,
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          width: [1, 1],
+        },
+        title: {
+          text: "",
+          align: "left",
+          offsetX: 110,
+        },
+        xaxis: {
+          categories: chart2?.ten_hang_thanh_vien || [],
+        },
+        yaxis: [
+          {
+            seriesName: "Income",
+            axisTicks: {
+              show: true,
+            },
+            axisBorder: {
+              show: true,
+              color: "#008FFB",
+            },
+            labels: {
+              style: {
+                colors: "#008FFB",
+              },
+              formatter: (value: number) => {
+                return `${value}`; // Format to show in millions
+              },
+            },
+            title: {
+              text: "Số lượng khách (triệu khách)",
+              style: {
+                color: "#008FFB",
+              },
+            },
+            tooltip: {
+              enabled: true,
+            },
+          },
+          {
+            seriesName: "Cashflow",
+            opposite: true,
+            axisTicks: {
+              show: true,
+            },
+            axisBorder: {
+              show: true,
+              color: "#00E396",
+            },
+            labels: {
+              style: {
+                colors: "#00E396",
+              },
+              formatter: (value: number) => {
+                return `${value.toLocaleString()} đ `; // Format to show in millions
+              },
+            },
+            title: {
+              text: "Tiền đã chi tiêu (triệu đồng)",
+              style: {
+                color: "#00E396",
+              },
+            },
+          },
+        ],
+        tooltip: {
+          fixed: {
+            enabled: true,
+            position: "topLeft",
+            offsetY: 30,
+            offsetX: 60,
+          },
+        },
+        legend: {
+          horizontalAlign: "left",
+          offsetX: 40,
+        },
+      });
+    }
+  }, [chart2]);
+
   useEffect(() => {
     async () => {
       await refetch();
     };
   }, [chart2, refetch]);
-  console.log(chart2);
-
-  const [series] = useState([
-    {
-      name: "Số lượng khách",
-      type: "column",
-      data: chart2?.so_luong_thanh_vien || [],
-    },
-    {
-      name: "Tiền đã chi tiêu",
-      type: "column",
-      data: chart2?.tong_chi_tieu || [],
-    },
-  ]);
-
-  const [options] = useState({
-    chart: {
-      height: 350,
-      type: "line",
-      stacked: false,
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      width: [1, 1],
-    },
-    title: {
-      text: "",
-      align: "left",
-      offsetX: 110,
-    },
-    xaxis: {
-      categories: chart2?.ten_hang_thanh_vien || [],
-    },
-    yaxis: [
-      {
-        seriesName: "Income",
-        axisTicks: {
-          show: true,
-        },
-        axisBorder: {
-          show: true,
-          color: "#008FFB",
-        },
-        labels: {
-          style: {
-            colors: "#008FFB",
-          },
-          formatter: (value: number) => {
-            return `${value}`; // Format to show in millions
-          },
-        },
-        title: {
-          text: "Số lượng khách (triệu khách)",
-          style: {
-            color: "#008FFB",
-          },
-        },
-        tooltip: {
-          enabled: true,
-        },
-      },
-      {
-        seriesName: "Cashflow",
-        opposite: true,
-        axisTicks: {
-          show: true,
-        },
-        axisBorder: {
-          show: true,
-          color: "#00E396",
-        },
-        labels: {
-          style: {
-            colors: "#00E396",
-          },
-          formatter: (value: number) => {
-            return `${value.toLocaleString()} đ `; // Format to show in millions
-          },
-        },
-        title: {
-          text: "Tiền đã chi tiêu (triệu đồng)",
-          style: {
-            color: "#00E396",
-          },
-        },
-      },
-    ],
-    tooltip: {
-      fixed: {
-        enabled: true,
-        position: "topLeft",
-        offsetY: 30,
-        offsetX: 60,
-      },
-    },
-    legend: {
-      horizontalAlign: "left",
-      offsetX: 40,
-    },
-  });
-
   return (
     <>
       {" "}

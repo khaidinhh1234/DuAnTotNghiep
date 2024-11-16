@@ -142,7 +142,7 @@ class GioHangController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Sản phẩm đã được thêm vào giỏ hàng thành công!',
+                'message' => 'Thêm vào giỏ hàng thành công!',
                 'data' => $gioHang
             ], 201);
         } catch (\Exception $e) {

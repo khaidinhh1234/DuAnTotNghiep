@@ -23,14 +23,21 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isHeart, setIsHeart] = useState(false);
-  const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
-  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(null);
-  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null);
+  const [selectedColorDisplay, setSelectedColorDisplay] = useState<
+    string | null
+  >(null);
+  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
+    null
+  );
+  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
+    null
+  );
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   const [open, setOpen] = React.useState<boolean>(false);
 
   const [user] = useLocalStorage("user" as any, {});
-  const access_token = user.access_token || localStorage.getItem("access_token");
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
 
   const { data } = useQuery({
     queryKey: ["PRODUCT_DETAIL", id],
@@ -45,10 +52,14 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
       const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
-      if (response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích") {
+      if (
+        response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+      ) {
         message.success("Xóa sản phẩm yêu thích thành công");
       }
-      if (response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích") {
+      if (
+        response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+      ) {
         message.success("Thêm sản phẩm yêu thích thành công");
       }
       return response.data;
@@ -72,7 +83,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
   }, [data]);
 
   const sizesForSelectedColor = product?.bien_the_san_pham
-    ?.filter((variant: any) => variant?.mau_bien_the?.ma_mau_sac === selectedColor)
+    ?.filter(
+      (variant: any) => variant?.mau_bien_the?.ma_mau_sac === selectedColor
+    )
     ?.map((variant: any) => variant?.kich_thuoc_bien_the?.kich_thuoc);
 
   interface Variant {
@@ -254,7 +267,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
   return (
     <>
-      <Link 
+      <Link
         to={`${location.pathname}${location.search}`}
         onClick={(e) => {
           e.preventDefault();
@@ -272,10 +285,14 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
         open={open}
         onCancel={() => {
           setOpen(false);
-          window.history.pushState({}, '', `${location.pathname}${location.search}`);
+          window.history.pushState(
+            {},
+            "",
+            `${location.pathname}${location.search}`
+          );
         }}
       >
-   <div>
+        <div>
           {" "}
           <section>
             <div className="container py-5">
@@ -389,19 +406,20 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     <h4 className=" text-xl font-normal">
                       {product?.ma_san_pham}
                       {selectedVariant && (
-                    <div className="mt-2">
-                      <a
-                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
-                          ? "bg-[#3CD139]/10 text-[#3CD139]"
-                          : "bg-red-500 text-white"
-                          }`}
-                      >
-                        {selectedVariant?.so_luong_bien_the > 0
-                          ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
-                          : "Hết hàng"}
-                      </a>
-                    </div>
-                  )}
+                        <div className="mt-2">
+                          <a
+                            className={` text-sm px-2 py-1 rounded-sm ${
+                              selectedVariant?.so_luong_bien_the > 0
+                                ? "bg-[#3CD139]/10 text-[#3CD139]"
+                                : "bg-red-500 text-white"
+                            }`}
+                          >
+                            {selectedVariant?.so_luong_bien_the > 0
+                              ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
+                              : "Hết hàng"}
+                          </a>
+                        </div>
+                      )}
                     </h4>
                     <div className="stars_reviews d-flex ">
                       <span>
