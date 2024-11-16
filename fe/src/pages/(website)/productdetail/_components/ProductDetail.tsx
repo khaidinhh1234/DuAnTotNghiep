@@ -264,8 +264,13 @@ const ProductDetail: React.FC = () => {
     }
     console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
     if (!access_token) {
+<<<<<<< HEAD
+      setIsModalVisible(true); // Hiển thị modal đăng nhập
+      // nav("/login")
+=======
       // setIsModalVisible(true); // Hiển thị modal đăng nhập
       nav("/login");
+>>>>>>> bcb74bc109117e8bd63798eddf74ba616d3f9048
       return;
     }
     // if (!access_token) {
@@ -761,7 +766,7 @@ const ProductDetail: React.FC = () => {
                   visible={isModalVisible}
                   onCancel={() => setIsModalVisible(false)}
                   footer={null}
-                  width={1000}
+                  width={500}
                 >
                   <LoginPopup />
                 </Modal>
