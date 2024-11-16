@@ -696,7 +696,6 @@ class ThongKeTongQuanController extends Controller
     public function trangThaiKhoangDonSoSanh(Request $request)
     {
 
-
         $ngayBatDau = $request->has('ngay_bat_dau')
             ? Carbon::parse($request->input('ngay_bat_dau'))->addDay()
             : now()->subDays(10);
