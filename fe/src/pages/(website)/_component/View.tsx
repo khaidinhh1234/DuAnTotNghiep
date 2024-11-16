@@ -547,7 +547,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         onClick={() =>
                           setQuantity((prev) => Math.max(1, prev - 1))
                         }
-                        className="py-2 pr-2"
+                        className={`py-2 pr-2 ${quantity === 1 ? "cursor-not-allowed" : ""}`}
                       >
                         <i className="fa-solid fa-minus" />
                       </button>

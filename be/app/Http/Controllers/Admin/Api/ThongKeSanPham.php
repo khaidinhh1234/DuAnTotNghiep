@@ -17,9 +17,13 @@ class ThongKeSanPham extends Controller
 {
     public function thongKeTopSanPham(Request $request)
     {
-        // Lấy ngày bắt đầu và ngày kết thúc từ request, mặc định là 10 ngày gần nhất nếu không có input
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
+        $ngayBatDau = $request->has('ngay_bat_dau')
+        ? Carbon::parse($request->input('ngay_bat_dau'))->setTimezone('Asia/Ho_Chi_Minh')->startOfDay()
+        : now()->subDays(10)->setTimezone('Asia/Ho_Chi_Minh')->startOfDay();
+
+    $ngayKetThuc = $request->has('ngay_ket_thuc')
+        ? Carbon::parse($request->input('ngay_ket_thuc'))->setTimezone('Asia/Ho_Chi_Minh')->endOfDay()
+        : now()->setTimezone('Asia/Ho_Chi_Minh')->endOfDay();
         $soLuongTop = $request->input('top', 5);
 
         // Tạo danh sách các ngày trong khoảng thời gian được chọn
