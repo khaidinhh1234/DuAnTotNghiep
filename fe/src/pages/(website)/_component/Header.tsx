@@ -1,7 +1,7 @@
 import { logo } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { SearchOutlined } from "@ant-design/icons";
-import { Dropdown, Input, Modal, MenuProps, Menu } from "antd";
+import { Dropdown, Input, Modal, MenuProps, Menu, Spin } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -122,7 +122,7 @@ const Header = () => {
         `/load-danh-muc-con-chau/${parentId}`
       );
       if (response.data.status) {
-        setCategories(response.data.data); 
+        setCategories(response.data.data);
       }
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu danh mục con:", error);
@@ -147,7 +147,7 @@ const Header = () => {
       <Link
         key={subCategory.id}
         to={`/shop/${subCategory.duong_dan}`}
-        className="text-gray-950 text-sm"
+        className="text-gray-950 text-sm hover:text-red-600 transition-colors duration-200"
       >
         {subCategory.ten_danh_muc}
       </Link>
@@ -156,34 +156,44 @@ const Header = () => {
 
   // Hàm tạo mục danh mục chính và sử dụng renderSubCategories cho các danh mục con
   const renderMenuItems = (items: any): MenuProps["items"] => {
-    return items?.danh_muc?.length
-      ? items.danh_muc.map((category: any) => ({
-          key: category.id.toString(),
+    if (!items || !items.danh_muc || items.danh_muc.length === 0) {
+      // Trả về một component loading khi không có danh mục hoặc đang tải
+      return [
+        {
+          key: "loading",
           label: (
-            <div className="menu-item py-5 flex flex-col gap-y-2 !items-start !m-0 !p-0 !mx-28 !gap-x-20">
-              <Link
-                className="row text-black text-sm font-bold"
-                to={`/shop/${category.duong_dan}`}
-              >
-                {category.ten_danh_muc}
-              </Link>
+            <div className="menu-item py-5 flex justify-center items-center">
+              <Spin size="small" /> {/* Hiển thị loading spinner */}
+            </div>
+          ),
+        },
+      ];
+    }
 
+    return items.danh_muc.map((category: any) => ({
+      key: category.id.toString(),
+      label: (
+        <div className="menu-item py-5 flex flex-col gap-y-4 w-80  rounded-lg px-[50px]">
+          <Link
+            className="text-black text-lg font-semibold hover:text-red-600 transition-colors duration-200"
+            to={`/shop/${category.duong_dan}`}
+          >
+            {category.ten_danh_muc}
+          </Link>
 
-            {category.con && category.con.length > 0 && (
-              <div className="subcategories flex flex-col text-xl font-medium">
-                {renderSubCategories(category.con)}
-              </div>
-            )}
-          </div>
-        ),
-      }))
-
-      : [];
+          {category.con && category.con.length > 0 && (
+            <div className="subcategories flex flex-col mt-2 text-sm text-gray-700">
+              {renderSubCategories(category.con)}
+            </div>
+          )}
+        </div>
+      ),
+    }));
   };
 
   // Sử dụng trong Menu component
   <Menu items={renderMenuItems(categories)} className="m-0 p-0" />;
-// console.log  
+  // console.log
   const handleMouseLeaveMenu = () => {
     setHoveredMenu(null);
     // setCategories([]); // Clear categories khi di chuột ra ngoài
@@ -402,10 +412,10 @@ const Header = () => {
                       menu={{
                         items: renderMenuItems(categories),
                         className:
-                          "custom-dropdown flex flex-row justify-start w-[100%] fixed top-[80px] left-0 z-50", 
+                          "custom-dropdown flex flex-row justify-start w-[100%] fixed top-[80px] left-0 z-20 ",
                       }}
                     >
-                      <Link to={`/shop/${item.slug}`} className="text-black">
+                      <Link to={`/shop/${item.slug}`} className="text-black ">
                         {item.label}
                       </Link>
                     </Dropdown>
@@ -472,12 +482,11 @@ const Header = () => {
                 </i>
 
                 <div
-
-                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${showNotifications
-                    ? "opacity-100"
-                    : "opacity-0 pointer-events-none"
-                    }`}
-
+                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
+                    showNotifications
+                      ? "opacity-100"
+                      : "opacity-0 pointer-events-none"
+                  }`}
                 >
                   <Notifications onUnreadCountChange={setUnreadCount} />
                 </div>
