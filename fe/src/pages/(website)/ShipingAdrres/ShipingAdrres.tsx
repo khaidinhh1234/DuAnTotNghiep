@@ -158,14 +158,14 @@ const ShippingAddressPage = () => {
       };
 
       const order = await instanceClient.post(`don-hang`, orderData);
-      toast.success("Vui lòng chờ xử lý");
+      toast.success("Đặt hàng thành công");
       nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`);
     } catch (error: any) {
       toast.error(
         error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại!"
       );
       nav(
-        `/thankyou?orderId=${pendingOrderData?.data.ma_don_hang}&resultCode=1`
+        `/thankyou?orderId=${pendingOrderData?.data.ma_don_hang}&resultCode=1006`
       );
     } finally {
       setShowVerificationModal(false);

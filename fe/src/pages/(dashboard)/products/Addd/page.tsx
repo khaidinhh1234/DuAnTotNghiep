@@ -219,12 +219,22 @@ const AddProducts: React.FC = () => {
 
     const newCombinations = [];
     for (const color of colorVariant) {
-      for (const size of sizeVariant) {
-        const sizeData = kichthuoc.data.find((s: any) => s.id === size);
-        newCombinations.push({ color, size: sizeData.kich_thuoc, sizeType: sizeData.loai_kich_thuoc });
+      for (const sizeId of sizeVariant) {
+        const sizeData = kichthuoc.data.find((s: any) =>
+          s.id === sizeId &&
+          s.loai_kich_thuoc === selectedSizeType
+        );
+
+        if (sizeData) {
+          newCombinations.push({
+            color,
+            size: sizeData.kich_thuoc,
+            sizeId: sizeData.id,
+            sizeType: sizeData.loai_kich_thuoc
+          });
+        }
       }
     }
-
     setCombinations(newCombinations);
   };
 
@@ -260,7 +270,7 @@ const AddProducts: React.FC = () => {
         bo_suu_tap: values.tags,
         bien_the: combinations.map((combo, index) => ({
           mau_sac_id: mausac?.data.find((c: any) => c.ten_mau_sac === combo.color)?.id,
-          kich_thuoc_id: kichthuoc?.data.find((s: any) => s.kich_thuoc === combo.size)?.id,
+          kich_thuoc_id: combo.sizeId,
           so_luong_bien_the: parseInt(values[`so_luong_bien_the-${index}`], 10),
           gia_ban: parseFloat(values[`gia_ban-${index}`]),
           chi_phi_san_xuat: parseFloat(values[`chi_phi_san_xuat-${index}`]),
@@ -639,7 +649,8 @@ const AddProducts: React.FC = () => {
                 <tbody>
                   {combinations &&
                     combinations.map((combo, index) => (
-                      <tr className="border-t border-gray-300 text-center">
+                      <tr         key={`${combo.color}-${combo.sizeId}-${index}`} 
+                      className="border-t border-gray-300 text-center">
                         <td className="p-1 border-r border-gray-300 text-center">
                           {" "}
                           {combo.size}
