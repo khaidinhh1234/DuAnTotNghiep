@@ -111,8 +111,11 @@ class TrangSanPhamController extends Controller
             // Bắt đầu transaction
             DB::beginTransaction();
 
-            // Lấy danh mục cha và danh mục con
-            $danhMuc = DanhMuc::with('children.children')->where('duong_dan', $loai)->get();
+            $danhMuc = DanhMuc::where('duong_dan', $loai)->first();
+
+            $danhMucCap2 = DanhMuc::with('children') 
+                ->where('cha_id', $danhMuc->id)
+                ->get();
 
             // Lấy tất cả màu sắc theo đường dẫn của danh mục
             $mauSacs = BienTheMauSac::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
@@ -136,6 +139,7 @@ class TrangSanPhamController extends Controller
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
                 'danhMucCha' => $danhMuc,
+                'danhMucCap2' => $danhMucCap2,
                 'mauSac' => $mauSacs->values(),
                 'kichThuoc' => $kichThuoc->values(),
             ], 200);
