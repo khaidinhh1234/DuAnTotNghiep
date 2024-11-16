@@ -81,7 +81,6 @@ class TrangChuController extends Controller
             ->whereNotNull('san_phams.danh_muc_id')
             ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
             ->orderByDesc('san_phams.id')
-            ->take(8)
             ->get()
             ->map(function ($sanPham) {
                 $bienThe = BienTheSanPham::query()
@@ -449,8 +448,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem->delete();
-            $user->lichSuTimKiem->delete();
+            $user->lichSuTimKiem()->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -470,8 +468,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem->where('id', $id)->delete();
-            $user->lichSuTimKiem->where('id', $id)->delete();
+            $user->lichSuTimKiem()->where('id', $id)->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
