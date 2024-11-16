@@ -631,7 +631,6 @@ class ThongKeTongQuanController extends Controller
     }
     public function doanhThuTheoKhoang(Request $request)
     {
-
         $ngayBatDau = $request->has('ngay_bat_dau')
             ? Carbon::parse($request->input('ngay_bat_dau'))->addDay()
             : now()->subDays(10);
@@ -642,60 +641,49 @@ class ThongKeTongQuanController extends Controller
 
         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc);
 
-        // Lấy đơn hàng hoàn tất (TTDH_HTDH)
-        $donHangHoanTat = DonHang::whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
+        // Doanh thu hoàn tất
+        $doanhThuHoanTat = DonHang::selectRaw('DATE(ngay_hoan_thanh_don) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+            ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
             ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-            ->get();
+            ->groupBy('ngay')
+            ->get()
+            ->keyBy('ngay');
 
-        // Tính tổng doanh thu cho đơn hàng hoàn tất
-        $tongDoanhThuHoanTat = $donHangHoanTat->sum('tong_tien_don_hang');
+        $tongDoanhThuHoanTat = $doanhThuHoanTat->sum('doanh_thu');
 
-        // Lấy doanh thu theo từng ngày cho đơn hàng hoàn tất
-        $doanhThuHoanTatTheoNgay = [];
-        $ngayTrongKhoang = [];
-        for ($i = 0; $i <= $khoangThoiGian; $i++) {
-            $ngay = $ngayBatDau->copy()->addDays($i);
-            $doanhThuNgay = DonHang::whereDate('ngay_hoan_thanh_don', $ngay)
-                ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                ->sum('tong_tien_don_hang');
-            $doanhThuHoanTatTheoNgay[] = $doanhThuNgay;
-            $ngayTrongKhoang[] = $ngay->format('Y-m-d');
-        }
-
-        // Lấy đơn hàng hủy (TTDH_DH, TTDH_HH)
-        $donHangHoan = DonHang::whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc]) // Sửa 'updated_at' thành 'ngay_huy'
-
+        // Doanh thu hủy/hoàn
+        $doanhThuHoan = DonHang::selectRaw('DATE(ngay_hoan) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+            ->whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc])
             ->where('trang_thai_don_hang', DonHang::TTDH_HH)
+            ->groupBy('ngay')
+            ->get()
+            ->keyBy('ngay');
 
-            ->get();
+        $tongDoanhThuHoan = $doanhThuHoan->sum('doanh_thu');
 
-        // Tính tổng doanh thu cho đơn hàng hủy
-        $tongDoanhThuHoan = $donHangHoan->sum('tong_tien_don_hang');
-
-        // Lấy doanh thu theo từng ngày cho đơn hàng hủy
+        // Chuẩn bị dữ liệu doanh thu từng ngày
+        $doanhThuHoanTatTheoNgay = [];
         $doanhThuHoanTheoNgay = [];
+        $ngayTrongKhoang = [];
+
         for ($i = 0; $i <= $khoangThoiGian; $i++) {
-            $ngay = $ngayBatDau->copy()->addDays($i);
-            $doanhThuNgayHoan = DonHang::whereDate('ngay_hoan', $ngay) // Sửa 'updated_at' thành 'ngay_huy'
-
-                ->where('trang_thai_don_hang', DonHang::TTDH_HH)
-
-                ->sum('tong_tien_don_hang');
-            $doanhThuHoanTheoNgay[] = $doanhThuNgayHoan;
+            $ngay = $ngayBatDau->copy()->addDays($i)->format('Y-m-d');
+            $ngayTrongKhoang[] = $ngay;
+            $doanhThuHoanTatTheoNgay[] = $doanhThuHoanTat->get($ngay)->doanh_thu ?? 0;
+            $doanhThuHoanTheoNgay[] = $doanhThuHoan->get($ngay)->doanh_thu ?? 0;
         }
 
-        // Trả về kết quả
         return response()->json([
             'tong_doanh_thu_hoan_tat' => $tongDoanhThuHoanTat,
             'doanh_thu_hoan_tat_theo_ngay' => $doanhThuHoanTatTheoNgay,
             'tong_doanh_thu_huy_hoan' => $tongDoanhThuHoan,
             'doanh_thu_huy_hoan_theo_ngay' => $doanhThuHoanTheoNgay,
-            'ngay_trong_khoang' => $ngayTrongKhoang // Các ngày trong khoảng thời gian
+            'ngay_trong_khoang' => $ngayTrongKhoang,
         ]);
     }
+
     public function trangThaiKhoangDonSoSanh(Request $request)
     {
-
         $ngayBatDau = $request->has('ngay_bat_dau')
             ? Carbon::parse($request->input('ngay_bat_dau'))->addDay()
             : now()->subDays(10);
