@@ -67,9 +67,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
         }
 
         return response.data;
-      } catch (error) {
-        message.error("Xóa sản phẩm yêu thích thất bại");
-        console.error("API error", error); // Thêm log lỗi API
+      } catch (error: any) {
+        message.error(error?.response?.data?.mess);
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
     },
@@ -427,19 +426,20 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     <h4 className=" text-xl font-normal">
                       {product?.ma_san_pham}
                       {selectedVariant && (
-                    <div className="mt-2">
-                      <a
-                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
-                          ? "bg-[#3CD139]/10 text-[#3CD139]"
-                          : "bg-red-500 text-white"
-                          }`}
-                      >
-                        {selectedVariant?.so_luong_bien_the > 0
-                          ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
-                          : "Hết hàng"}
-                      </a>
-                    </div>
-                  )}
+                        <div className="mt-2">
+                          <a
+                            className={` text-sm px-2 py-1 rounded-sm ${
+                              selectedVariant?.so_luong_bien_the > 0
+                                ? "bg-[#3CD139]/10 text-[#3CD139]"
+                                : "bg-red-500 text-white"
+                            }`}
+                          >
+                            {selectedVariant?.so_luong_bien_the > 0
+                              ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
+                              : "Hết hàng"}
+                          </a>
+                        </div>
+                      )}
                     </h4>
                     <div className="stars_reviews d-flex ">
                       <span>
