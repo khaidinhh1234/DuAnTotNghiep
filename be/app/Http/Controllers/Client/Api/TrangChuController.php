@@ -305,7 +305,7 @@ class TrangChuController extends Controller
             ->orderByDesc('san_phams.id')
             ->where(function ($q) use ($query) {
                 $q->where('ten_san_pham', 'like', '%' . $query . '%')
-                    ->orWhere('ma_san_pham', 'like', '%' . $query . '%');
+                    ->orWhere('ma_san_pham', $query);
             })
             ->pluck('id')->toArray();
 
