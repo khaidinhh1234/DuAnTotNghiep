@@ -414,18 +414,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       {selectedVariant && (
                         <div className="mt-2">
                           <a
-<<<<<<< HEAD
-                            className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
-                              ? "bg-[#3CD139]/10 text-[#3CD139]"
-                              : "bg-red-500 text-white"
-                              }`}
-=======
                             className={` text-sm px-2 py-1 rounded-sm ${
                               selectedVariant?.so_luong_bien_the > 0
                                 ? "bg-[#3CD139]/10 text-[#3CD139]"
                                 : "bg-red-500 text-white"
                             }`}
->>>>>>> bcb74bc109117e8bd63798eddf74ba616d3f9048
                           >
                             {selectedVariant?.so_luong_bien_the > 0
                               ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
