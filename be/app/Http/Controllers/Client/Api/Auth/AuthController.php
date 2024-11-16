@@ -58,7 +58,7 @@ class AuthController extends Controller
        DB::table('vi_tiens')->insert([
         'user_id' => $user->id,
         'so_du' => 0,
-        'ma_xac_minh' => Str::random(10), // Thêm mã xác minh ngẫu nhiên
+        // 'ma_xac_minh' => Str::random(10), // Thêm mã xác minh ngẫu nhiên
         'created_at' => now(),
         'updated_at' => now(),
     ]);

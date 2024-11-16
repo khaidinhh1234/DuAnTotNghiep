@@ -23,6 +23,8 @@ export interface Voucher {
   da_thu_thap: number;
   so_luong_da_su_dung: any;
   trang_thai: number;
+  ap_dung_vi: number;
+  trang_thai_su_dung: string;
 }
 
 export interface VoucherResponse {
@@ -110,9 +112,16 @@ const MyVoucher = () => {
               {currentVouchers && currentVouchers.length !== 0 ? (
                 currentVouchers.map((voucher: Voucher) => (
                   <div
-                    key={voucher.id}
-                    className="flex items-center bg-white border border-gray-200 rounded-lg p-3 shadow-md w-full min-h-[130px] relative"
-                  >
+                  key={voucher.id}
+                  className={`flex items-center border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative ${
+                    voucher.ap_dung_vi ? 'bg-[#fff]' : 'bg-white'
+                  }`}
+                >
+                  {voucher.trang_thai_su_dung === "Đã sử dụng" && (
+                    <div className="absolute top-0 right-0 bg-gray-500 text-white px-3 py-1 rounded-bl-lg">
+                      Đã sử dụng
+                    </div>
+                  )}
                     <div className="absolute top-2 -right-1 flex items-center">
                       <div className="bg-red-100 text-red-500 font-bold text-xs px-2 py-0.5 rounded-l-full shadow-md relative">
                         x {voucher.so_luong - voucher.so_luong_da_su_dung}
@@ -139,8 +148,13 @@ const MyVoucher = () => {
                           : `Giảm: ${voucher.giam_gia}%`}
                         cho đơn từ {formatCurrency(voucher.chi_tieu_toi_thieu)}
                       </p>
-
-                      <div className="bg-[#cfebee] text-[#63b1bc] px-2 py-0.5 rounded mt-1 inline-block text-sm">
+                      <div 
+                        className={`${
+                          voucher.ap_dung_vi 
+                            ? 'bg-[#ee4d2d] text-[#fff]' 
+                            : 'bg-[#cfebee] text-[#63b1bc]'
+                        } px-2 py-1 rounded mt-2 inline-block`}
+                      >
                         {voucher.ma_code}
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-1">
@@ -162,14 +176,20 @@ const MyVoucher = () => {
                     <div className="flex-shrink-0">
                       <button
                         onClick={() => handleSaveVoucher(voucher.ma_code)}
-                        disabled={voucher.da_thu_thap === 1}
+                        disabled={voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"}
                         className={`${
-                          voucher.da_thu_thap === 1
+                          voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"
                             ? "bg-gray-400"
+                            : voucher.ap_dung_vi
+                            ? "bg-[#ee4d2d]"
                             : "bg-[#63b1bc]"
-                        } text-white font-semibold py-1.5 px-6 rounded text-sm whitespace-nowrap`}
+                        } text-white font-semibold py-2 px-4 rounded whitespace-nowrap`}
                       >
-                        {voucher.da_thu_thap === 1 ? "Đã lưu" : "Lưu mã"}
+                        {voucher.da_thu_thap === 1 
+                          ? "Đã lưu" 
+                          : voucher.trang_thai_su_dung === "Đã sử dụng"
+                          ? "Đã dùng"
+                          : "Lưu mã"}
                       </button>
                     </div>
                   </div>

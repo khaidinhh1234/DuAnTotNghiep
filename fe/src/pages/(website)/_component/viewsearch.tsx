@@ -3,7 +3,7 @@ import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message, Modal, Rate } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -13,65 +13,45 @@ import {
   Thumbs,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
 const View = ({ id, ID }: { id: string; ID: number }) => {
-  // console.log(id);
-  // console.log(ID);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isHeart, setIsHeart] = useState(false);
-  const [selectedColorDisplay, setSelectedColorDisplay] = useState<
-    string | null
-  >(null);
-  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(
-    null
-  );
-  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
-    null
-  ); //laybienthe
+  const [selectedColorDisplay, setSelectedColorDisplay] = useState<string | null>(null);
+  const [selectedSizeDisplay, setSelectedSizeDisplay] = useState<string | null>(null);
+  const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const [user] = useLocalStorage("user" as any, {});
-  const access_token =
-    user.access_token || localStorage.getItem("access_token");
-  //   console.log(id);
+  const access_token = user.access_token || localStorage.getItem("access_token");
+
   const { data } = useQuery({
     queryKey: ["PRODUCT_DETAIL", id],
     queryFn: async () => {
-      try {
-        const response = await instanceClient.get(`chi-tiet-san-pham/${id}`);
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
+      const response = await instanceClient.get(`chi-tiet-san-pham/${id}`);
+      return response.data;
     },
   });
-  // console.log(data);
+
   const queryclient = useQueryClient();
+
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
-      try {
-        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
-        // console.log(response.data);
-        if (
-          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
-        ) {
-          message.success("Xóa sản phẩm yêu thích thành công");
-        }
-        if (
-          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
-        ) {
-          message.success("Thêm sản phẩm yêu thích thành công");
-        }
-
-        return response.data;
-      } catch (error) {
-        message.error("Xóa sản phẩm yêu thích thất bại");
-        console.error("API error", error); // Thêm log lỗi API
-        throw new Error("Xóa sản phẩm yêu thích thất bại");
+      const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+      if (response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích") {
+        message.success("Xóa sản phẩm yêu thích thành công");
       }
+      if (response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích") {
+        message.success("Thêm sản phẩm yêu thích thành công");
+      }
+      return response.data;
     },
     onSuccess: () => {
       queryclient.invalidateQueries({
@@ -79,10 +59,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       });
     },
   });
+
   const product = data?.data;
-  // console.log(product);
-  const [open, setOpen] = React.useState<boolean>(false);
-  // danh gia
+
   const averageRating = useMemo(() => {
     if (!data || !product || product?.danh_gias.length === 0) return 0;
     const totalStars = product.danh_gias.reduce(
@@ -92,11 +71,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     return (totalStars / data.data.danh_gias.length).toFixed(1);
   }, [data]);
 
-  // kich thuoc
   const sizesForSelectedColor = product?.bien_the_san_pham
-    ?.filter(
-      (variant: any) => variant?.mau_bien_the?.ma_mau_sac === selectedColor
-    )
+    ?.filter((variant: any) => variant?.mau_bien_the?.ma_mau_sac === selectedColor)
     ?.map((variant: any) => variant?.kich_thuoc_bien_the?.kich_thuoc);
 
   interface Variant {
@@ -112,10 +88,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     anh_bien_the: string[];
   }
 
-  interface Product {
-    bien_the_san_pham: Variant[];
-  }
-
   const sanpham = product?.bien_the_san_pham
     ?.filter(
       (variant: Variant) =>
@@ -126,9 +98,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       gia_ban: variant?.gia_ban,
       gia_khuyen_mai: variant?.gia_khuyen_mai,
       gia_khuyen_mai_tam_thoi: variant?.gia_khuyen_mai_tam_thoi,
-
       anh_san_pham: variant?.anh_bien_the,
     }));
+
   const uniqueColors = useMemo<Set<string>>(() => {
     if (!product?.bien_the_san_pham) return new Set<string>();
     return new Set<string>(
@@ -137,30 +109,13 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       )
     );
   }, [product]);
-  // console.log(sanpham);
-  //   const showLoading = () => {
-  //     setOpen(true);
-  //   };
-  //   const [activeTab, setActiveTab] = useState("descriptions"); // State to manage active tab
 
-  // const handleColorClick = (color: any) => {
-  //   setSelectedColor(color);
-  //   const selectedVariant = product?.bien_the_san_pham?.find(
-  //     (v: any) => v?.mau_bien_the?.ma_mau_sac === color
-  //   );
-  //   setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
-  // };
-
-  // const handleSizeClick = (size: string) => {
-  //   setSelectedSize(size);
-  //   setSelectedSizeDisplay(size);
-  // };
   const handleColorClick = (color: string) => {
     setSelectedColor(color);
     const selectedVariant = product?.bien_the_san_pham?.find(
       (v: Variant) => v?.mau_bien_the?.ma_mau_sac === color
     );
-    setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
+    setSelectedVariantId(selectedVariant?.id ?? null);
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
     updateImages(color, selectedSize);
   };
@@ -170,10 +125,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     const selectedVariant = product?.bien_the_san_pham?.find(
       (v: Variant) => v?.kich_thuoc_bien_the?.kich_thuoc === size
     );
-    setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
+    setSelectedVariantId(selectedVariant?.id ?? null);
     setSelectedSizeDisplay(size);
     updateImages(selectedColor, size);
   };
+
   const updateImages = (color: string | null, size: string | null) => {
     if (color && size && product) {
       const variant = product?.bien_the_san_pham?.find(
@@ -191,12 +147,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     }
   };
 
-  // const sizes = ["S", "M", "L", "XL", "XXL"];
-
   const handleClickHeart = (id: number) => {
     setIsHeart(!isHeart);
     mutate(id);
   };
+
   const handlePreview = (imageUrl: string) => {
     setPreviewImage(imageUrl);
     setPreviewOpen(true);
@@ -211,8 +166,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     );
   }, [product, selectedColor, selectedSize]);
 
-  // const images = [product, products1, products2, sanPham2];
-
   useEffect(() => {
     if (product && product.bien_the_san_pham.length > 0) {
       const firstVariant = product?.bien_the_san_pham[0];
@@ -222,8 +175,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       setSelectedSizeDisplay(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
     }
   }, [product]);
-  // add to cart
+
   const [quantity, setQuantity] = useState<number>(1);
+  const MAX_QUANTITY = 10;
 
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
@@ -244,7 +198,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     onSuccess: (data) => {
       if (data.status) {
         toast.success(data.message);
-        queryclient.invalidateQueries({ queryKey: ["cart", access_token] }); // Làm mới giỏ hàng
+        queryclient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
         toast.error(data.message);
       }
@@ -257,7 +211,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     },
   });
 
-  const MAX_QUANTITY = 10;
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
@@ -274,7 +227,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
     if (!access_token) {
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
       const existingItem = cart.find(
         (item: { variantId: number; quantity: number }) =>
           item.variantId === variantIdToUse
@@ -299,21 +251,31 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       addToCart(variantIdToUse);
     }
   };
+
   return (
     <>
-      <Link to={``} type="primary" onClick={() => setOpen(true)}>
-        <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+      <Link 
+        to={`${location.pathname}${location.search}`}
+        onClick={(e) => {
+          e.preventDefault();
+          setOpen(true);
+        }}
+      >
+        <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px] px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
           Thêm vào giỏ hàng
         </button>
       </Link>
+
       <Modal
         width={1300}
-        // title={<p>Loading Modal</p>}
         footer={null}
         open={open}
-        onCancel={() => setOpen(false)}
+        onCancel={() => {
+          setOpen(false);
+          window.history.pushState({}, '', `${location.pathname}${location.search}`);
+        }}
       >
-        <div>
+   <div>
           {" "}
           <section>
             <div className="container py-5">

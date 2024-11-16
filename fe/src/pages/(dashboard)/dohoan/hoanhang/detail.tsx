@@ -32,7 +32,7 @@ const Detail = ({ record }: any) => {
 
     return (
         <div>
-            <Button  onClick={() => setOpen(true)} className="hover:opacity-90">
+            <Button onClick={() => setOpen(true)} className="hover:opacity-90">
                 Xem chi tiết
             </Button>
             <Modal
@@ -43,7 +43,7 @@ const Detail = ({ record }: any) => {
                 footer={null}
                 onCancel={() => setOpen(false)}
             >
-                <div className="max-h-[80vh] overflow-y-auto px-6 py-4">
+                <div className="max-h-[100vh] overflow-y-auto px-6 py-4">
                     <h1 className="text-2xl font-bold mb-6 sticky top-0 bg-white pb-4 border-b">
                         Chi tiết đơn hoàn hàng
                     </h1>
@@ -64,14 +64,35 @@ const Detail = ({ record }: any) => {
                                         </p>
                                     </div>
                                     <div className={`px-4 py-2 rounded-full font-medium ${returnOrderDetail?.trang_thai_hoan_hang === "Trả hàng thành công"
-                                            ? "bg-green-50 text-green-600"
-                                            : "bg-yellow-50 text-yellow-600"
+                                        ? "bg-green-50 text-green-600"
+                                        : "bg-yellow-50 text-yellow-600"
                                         }`}>
                                         {returnOrderDetail?.trang_thai_hoan_hang}
                                     </div>
                                 </div>
                             </div>
-
+                            <div className="bg-white rounded-lg shadow-sm border p-4 mb-4">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <h4 className="text-lg mb-2">
+                                            Thông tin hoàn hàng 
+        
+                                        </h4>
+                                        <p className="text-gray-600 flex justify-start">
+                                        Ngày lấy hàng :  <p className="font-medium ml-1">
+                                            {formatDate(returnOrderDetail?.ngay_lay_hang) || "Chưa lấy hàng"}
+                                        </p>
+                                        </p>
+                                        <p className="text-gray-600 flex justify-start -mt-5">
+                                       Ngày hoàn thành :     <p className="font-medium ml-1">
+                                            {formatDate(returnOrderDetail?.ngay_hoan_hang_thanh_cong) || "Chưa hoàn thành"}
+                                        </p>
+                                        </p>
+                                       
+                                    </div>
+                                 
+                                </div>
+                            </div>
                             <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
                                 <div className="p-4 border-b">
                                     <h2 className="text-lg font-semibold">Sản phẩm hoàn trả</h2>
@@ -143,20 +164,26 @@ const Detail = ({ record }: any) => {
                         <div className="col-span-3 space-y-6">
                             <div className="bg-white rounded-lg shadow-sm border p-4">
                                 <h3 className="text-lg font-semibold mb-4 pb-2 border-b">
-                                    Thông tin hoàn hàng
+                                    Thông tin người giao hàng
                                 </h3>
                                 <div className="space-y-3">
                                     <div>
-                                        <p className="text-gray-600 mb-1">Ngày lấy hàng</p>
+                                        <p className="text-gray-600 mb-1">Họ tên</p>
                                         <p className="font-medium">
-                                            {formatDate(returnOrderDetail?.ngay_lay_hang) || "Chưa lấy hàng"}
+                                        {returnOrderDetail?.shipper?.ho} {returnOrderDetail?.shipper?.ten}
+
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-gray-600 mb-1">Ngày hoàn thành</p>
+                                        <p className="text-gray-600 mb-1">email</p>
                                         <p className="font-medium">
-                                            {formatDate(returnOrderDetail?.ngay_hoan_hang_thanh_cong) || "Chưa hoàn thành"}
-                                        </p>
+                                        {returnOrderDetail?.shipper?.email}                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-600 mb-1">email</p>
+                                        <p className="font-medium">
+                                        {returnOrderDetail?.shipper?.so_dien_thoai}             
+                                                                   </p>
                                     </div>
                                 </div>
                             </div>
