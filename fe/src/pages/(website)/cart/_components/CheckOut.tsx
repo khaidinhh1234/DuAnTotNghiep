@@ -7,6 +7,7 @@ import { FastForward, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 type RequestPayload = { productId: string; currentQuantity: number };
 
 const CheckOut = () => {

@@ -123,7 +123,7 @@ const ContactPage = ({}) => {
                     <input
                       type="email"
                       {...register("email")}
-                      placeholder="Email / Số điện thoại của bạn"
+                      placeholder="Email của bạn"
                       className={`border rounded-lg px-3 py-2 ${
                         errors.email ? "border-red-600" : "border-stone-500"
                       }`}

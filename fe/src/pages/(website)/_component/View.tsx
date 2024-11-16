@@ -1,9 +1,10 @@
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
+import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message, Modal, Rate } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -14,6 +15,7 @@ import {
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 const View = ({ id, ID }: { id: string; ID: number }) => {
+  const nav = useNavigate()
   // console.log(id);
   // console.log(ID);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -243,7 +245,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     onSuccess: (data) => {
       if (data.status) {
         toast.success(data.message);
-        queryclient.invalidateQueries({ queryKey: ["cart", access_token] }); // Làm mới giỏ hàng
+        queryclient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
         toast.error(data.message);
       }
@@ -251,12 +253,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     onError: (error: any) => {
       toast.error(
         error.response?.data?.message ||
-          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
-
-  const MAX_QUANTITY = 10;
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
@@ -270,33 +271,18 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
-
+    console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
     if (!access_token) {
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      const existingItem = cart.find(
-        (item: { variantId: number; quantity: number }) =>
-          item.variantId === variantIdToUse
-      );
-
-      const currentQuantity = existingItem ? existingItem.quantity : 0;
-
-      if (currentQuantity + quantity > MAX_QUANTITY) {
-        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
-        return;
-      }
-
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
-        cart.push({ variantId: variantIdToUse, quantity });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-      toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
-    } else {
-      addToCart(variantIdToUse);
+      setIsModalVisible(true); // Hiển thị modal đăng nhập
+      // nav("/login")
+      return;
     }
+    // if (!access_token) {
+    //   toast.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
+    //   return;
+    // }
+
+    addToCart(variantIdToUse);
   };
   return (
     <>
@@ -462,8 +448,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         <>
                           {gia?.gia_khuyen_mai_tam_thoi
                             ? gia?.gia_khuyen_mai_tam_thoi.toLocaleString(
-                                "vi-VN"
-                              )
+                              "vi-VN"
+                            )
                             : (gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ??
                               0)}{" "}
                           đ
@@ -477,7 +463,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                                 ? gia?.gia_ban - gia?.gia_khuyen_mai_tam_thoi
                                 : gia?.gia_ban - gia?.gia_khuyen_mai) /
                                 gia?.gia_ban) *
-                                100
+                              100
                             )}
                             %
                           </span>
@@ -506,9 +492,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       {Array.from(uniqueColors).map((color, index) => (
                         <button
                           key={index}
-                          className={`w-9 h-9 rounded-md border-2 ${
-                            selectedColor === color ? "border-black" : ""
-                          }`}
+                          className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? "border-black" : ""
+                            }`}
                           style={{
                             backgroundColor: color as string,
                           }}
@@ -532,9 +517,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         <button
                           key={size}
                           onClick={() => handleSizeClick(size)}
-                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
-                            selectedSize === size ? "bg-blackL text-white" : ""
-                          }`}
+                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${selectedSize === size ? "bg-blackL text-white" : ""
+                            }`}
                         >
                           {size}
                         </button>
@@ -555,26 +539,32 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         type="number"
                         id="numberInput"
                         defaultValue={1}
-                        min={1}
-                        max={100}
+                        min="1"
+                        max={selectedVariant?.so_luong_bien_the || 1}
                         value={quantity}
-                        onChange={(e) =>
-                          setQuantity(Math.max(1, parseInt(e.target.value, 10)))
-                        }
+                        onChange={(e) => {
+                          const inputQuantity = parseInt(e.target.value, 10);
+                          // Kiểm tra nếu inputQuantity vượt quá số lượng kho
+                          if (inputQuantity > (selectedVariant?.so_luong_bien_the || 1)) {
+                            if (selectedVariant) {
+                              setQuantity(selectedVariant.so_luong_bien_the); // Đặt về số lượng kho tối đa
+                            }
+                          } else {
+                            setQuantity(Math.max(1, inputQuantity)); // Đảm bảo số lượng không thấp hơn 1
+                          }
+                        }}
                         className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                       />
                       <button
-                        onClick={() => {
-                          if (quantity >= MAX_QUANTITY) {
-                            toast.error(
-                              `Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`
-                            );
-                          } else {
-                            setQuantity((prev) => prev + 1);
-                          }
-                        }}
+                        onClick={() =>
+                          setQuantity((prev) =>
+                            Math.min(
+                              selectedVariant?.so_luong_bien_the || 1,
+                              prev + 1
+                            )
+                          )
+                        }
                         className="py-2 pl-2"
-                        disabled={quantity >= MAX_QUANTITY}
                       >
                         <i className="fa-solid fa-plus" />
                       </button>
@@ -585,6 +575,14 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     >
                       Thêm vào giỏ hàng
                     </button>
+                    <Modal
+                      visible={isModalVisible}
+                      onCancel={() => setIsModalVisible(false)}
+                      footer={null}
+                      width={500}
+                    >
+                      <LoginPopup />
+                    </Modal>
                     <button
                       onClick={() => handleClickHeart(ID)}
                       className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
