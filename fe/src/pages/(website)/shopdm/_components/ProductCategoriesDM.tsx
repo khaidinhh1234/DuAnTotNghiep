@@ -47,14 +47,12 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   //data
   const datas = {
     ...(selectedParentIds.length > 0 && {
-      danh_muc_cha_ids: [...selectedParentIds],
+      danh_muc_con_ids: [...selectedParentIds],
     }),
     ...(selectedChildIds.length > 0 && {
-      danh_muc_con_ids: [...selectedChildIds],
+      danh_muc_chau_ids: [...selectedChildIds],
     }),
-    ...(selectedGrandchildIds.length > 0 && {
-      danh_muc_chau_ids: [...selectedGrandchildIds],
-    }),
+
     ...(price.length > 0 && { gia_duoi: price[0] }),
     ...(price.length > 0 && { gia_tren: price[1] }),
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
@@ -65,6 +63,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     //   ? { danh_muc_con_cap_ba: tenDanhMucConCapBa }
     //   : {}),
   };
+
   const danhmuc = tenDanhMucConCapBa
     ? tenDanhMucConCapBa
     : tenDanhMucCon
@@ -148,34 +147,53 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     }
   };
 
-  // const { data: categoriesData } = useQuery({
-  //   queryKey: ["CATEGORIES", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
-  //   queryFn: async () => {
-  //     if (!tenDanhMucCha || !tenDanhMucCon || !tenDanhMucConCapBa) return null;
-  //     const response = await instanceClient.post(`danhmuc/${tenDanhMucCha}/${tenDanhMucCon}/${tenDanhMucConCapBa}`);
-  //     return response.data;
-  //   },
-  //   enabled: !!tenDanhMucCha && !!tenDanhMucCon && !!tenDanhMucConCapBa,
-  // });
-  // console.log(categoriesData?.data?.san_pham)
   const { data, refetch: refetch2 } = useQuery({
-    queryKey: ["PRODUCTSLOC"],
+    queryKey: ["SANPHAM_LOC", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post(`loc-san-pham`, {
-          loai_danh_muc: danhmuc,
-        });
+        let url = "danhmuc";
 
-        if (response.data.status !== true) {
-          throw new Error("Error fetching product");
+        // Ưu tiên danh mục cấp 3 -> danh mục con -> danh mục cha
+        if (tenDanhMucConCapBa) {
+          url += `/${tenDanhMucConCapBa}`;
+        } else if (tenDanhMucCon) {
+          url += `/${tenDanhMucCon}`;
+        } else if (tenDanhMucCha) {
+          url += `/${tenDanhMucCha}`;
+        } else {
+          throw new Error("Không có danh mục hợp lệ");
         }
 
+        const response = await instanceClient.post(url, datas);
         return response.data;
       } catch (error) {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
+    enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
   });
+  console.log(data);
+  const products = data?.data?.San_pham;
+
+  // console.log(categoriesData?.data?.san_pham)
+  // const { data, } = useQuery({
+  //   queryKey: ["PRODUCTSLOC"],
+  //   queryFn: async () => {
+  //     try {
+  //       const response = await instanceClient.post(`loc-san-pham`, {
+  //         loai_danh_muc: danhmuc,
+  //       });
+
+  //       if (response.data.status !== true) {
+  //         throw new Error("Error fetching product");
+  //       }
+
+  //       return response.data;
+  //     } catch (error) {
+  //       throw new Error("Lỗi khi lấy thông tin");
+  //     }
+  //   },
+  // });
 
   // danh mục
   const { data: locsanpham, refetch } = useQuery({
@@ -198,7 +216,8 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   useEffect(() => {
     refetch();
     refetch2();
-  }, [danhmuc, refetch, refetch2]);
+    datas;
+  }, [danhmuc, refetch, refetch2, datas]);
   // console.log(locsanpham);
   const mau_sac = locsanpham?.mauSac;
 
@@ -206,54 +225,54 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   // console.log(sizes);
   // lọc
   const [page, setPage] = useState(1);
-  const queryClient = useQueryClient();
-  const { mutate: LOCMUTATE } = useMutation({
-    mutationFn: async () => {
-      try {
-        const response = await instanceClient.post(
-          `danhmuc?page=${page}`,
-          datas
-        );
-        if (response.data.status !== true) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["PRODUCTSLOC"], data);
-      // Chỉ invalidate nếu cần thiết, tránh reload liên tục
-      if (!isInDanhMucPage) {
-        queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
-      }
-    },
-  });
-  const { mutate } = useMutation({
-    mutationFn: async () => {
-      try {
-        // let url = "/danhmuc";
-        // if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
-        // if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
-        // if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
-        const response = await instanceClient.post(`loc-san-pham`, datas);
-        if (response.data.status !== true) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["PRODUCTSLOC"], data);
-      // Chỉ invalidate nếu cần thiết, tránh reload liên tục
-      if (!isInDanhMucPage) {
-        queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
-      }
-    },
-  });
+  // const queryClient = useQueryClient();
+  // const { mutate: LOCMUTATE } = useMutation({
+  //   mutationFn: async () => {
+  //     try {
+  //       const response = await instanceClient.post(
+  //         `danhmuc?page=${page}`,
+  //         datas
+  //       );
+  //       if (response.data.status !== true) {
+  //         throw new Error("Error fetching product");
+  //       }
+  //       return response.data;
+  //     } catch (error) {
+  //       throw new Error("Lỗi khi lấy thông tin");
+  //     }
+  //   },
+  //   onSuccess: (data) => {
+  //     queryClient.setQueryData(["PRODUCTSLOC"], data);
+  //     // Chỉ invalidate nếu cần thiết, tránh reload liên tục
+  //     if (!isInDanhMucPage) {
+  //       queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
+  //     }
+  //   },
+  // });
+  // const { mutate } = useMutation({
+  //   mutationFn: async () => {
+  //     try {
+  //       // let url = "/danhmuc";
+  //       // if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
+  //       // if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
+  //       // if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
+  //       const response = await instanceClient.post(`loc-san-pham`, datas);
+  //       if (response.data.status !== true) {
+  //         throw new Error("Error fetching product");
+  //       }
+  //       return response.data;
+  //     } catch (error) {
+  //       throw new Error("Lỗi khi lấy thông tin");
+  //     }
+  //   },
+  //   onSuccess: () => {
+  //     // queryClient.setQueryData(["PRODUCTSLOC"], data);
+  //     // Chỉ invalidate nếu cần thiết, tránh reload liên tục
+  //     // if (!isInDanhMucPage) {
+  //     queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
+  //     // }
+  //   },
+  // });
   useEffect(() => {
     const isInDanhMucPage =
       tenDanhMucCha || tenDanhMucCon || tenDanhMucConCapBa;
@@ -267,17 +286,17 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       price.length > 0
     ) {
       if (isInDanhMucPage) {
-        mutate();
+        // mutate();
       } else {
-        LOCMUTATE();
+        // LOCMUTATE();
       }
     }
   }, [
     selectedParentIds,
     selectedChildIds,
     selectedGrandchildIds,
-    mutate,
-    LOCMUTATE,
+    // mutate,
+    // LOCMUTATE,
     selectedSize,
     selectedMau,
     price,
@@ -288,7 +307,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   };
   const danh_muc = locsanpham?.danhMucCap2;
   // console.log(danh_muc);
-  const products = data?.data?.data;
+  // const products = data?.data?.data;
   // console.log(products);
 
   // toanmoi
@@ -379,7 +398,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                   item.children,
                                   item.id
                                 );
-                                isChecked && mutate(item.id);
+                                // isChecked && mutate(item.id);
                               }}
                             />
                             {item.ten_danh_muc}
@@ -413,7 +432,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                         itemcon.id,
                                         itemcon.children
                                       );
-                                      isChecked && mutate(itemcon.id);
+                                      // isChecked && mutate(itemcon.id);
                                     }}
                                   />
                                   {itemcon.ten_danh_muc}
@@ -458,7 +477,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                               isChecked,
                                               itemconcon.id
                                             );
-                                            isChecked && mutate(itemconcon.id);
+                                            // isChecked && mutate(itemconcon.id);
                                           }}
                                         />
                                         {itemconcon.ten_danh_muc}
@@ -503,7 +522,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                         max={1000000}
                         onAfterChange={(value) => {
                           setPrice(value as [number, number]);
-                          mutate();
+                          // mutate();
                         }}
                         tipFormatter={(value: any) =>
                           `${value.toLocaleString()} đ`
