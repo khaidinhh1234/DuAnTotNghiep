@@ -136,33 +136,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
   //   }
   // }, [datestart, dateend, refetch9]);
   const [series, setSeries] = useState<{ name: string; data: any[] }[]>([]);
-  const [options, setOptions] = useState({
-    chart: {
-      height: 350,
-      type: "area",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      type: "datetime", // Make sure it's using "datetime" instead of "date"
-      categories: [],
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy",
-      },
-    },
-    colors: ["#FF0000", "#00FF00"],
-    yaxis: {
-      labels: {
-        formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
-      },
-    },
-  });
+  const [options, setOptions] = useState({});
   const formattedDates = Chart2?.ngay?.map((date: any) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
@@ -183,14 +157,33 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
           data: Chart2?.so_luong_hoan_tat_don_hang,
         },
       ]);
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        xaxis: {
-          ...prevOptions.xaxis,
-          type: "category", // Use "category" for custom date format
-          categories: formattedDates || [],
+      setOptions({
+        chart: {
+          height: 350,
+          type: "area",
         },
-      }));
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "smooth",
+        },
+        xaxis: {
+          type: "datetime", // Make sure it's using "datetime" instead of "date"
+          categories: formattedDates,
+        },
+        tooltip: {
+          x: {
+            format: "dd/MM/yyyy",
+          },
+        },
+        colors: ["#FF0000", "#00FF00"],
+        yaxis: {
+          labels: {
+            formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
+          },
+        },
+      });
     }
   }, [Chart2, datestart, dateend]); // Run when Chart1 data changes (i.e., after refetch)
 
@@ -201,7 +194,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
         await chart2(); // Await refetch to handle async operation
       }
     };
-  }, [datestart, dateend, series, options]);
+  }, [datestart, dateend, series, options, chart2]);
   console.log(Chart2);
   return (
     <div className="bg-white p-4 rounded-md shadow">

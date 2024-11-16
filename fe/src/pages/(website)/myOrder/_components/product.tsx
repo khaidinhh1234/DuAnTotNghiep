@@ -1,6 +1,6 @@
 import { sanPham2 } from "@/assets/img";
 import instanceClient from "@/configs/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -52,7 +52,23 @@ const ProductItem = ({
   const [li_do_huy_hang, setValue] = useState<string>("");
   const [phuong_thuc_thanh_toan, setPhuongthuc] = useState<any>({});
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+  const [showPinRegistrationModal, setShowPinRegistrationModal] = useState(false);
 
+  const { data: walletStatus, isSuccess } = useQuery({
+    queryKey: ["walletStatus"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.get('/vi-tai-khoan');
+        return response.data;
+      } catch (error: any) {
+        if (error.response?.status === 400) {
+          return { status: false, status_code: 400 };
+        }
+        throw error;
+      }
+    },
+    retry: false
+  });
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
       // console.log(data);
@@ -132,6 +148,10 @@ const ProductItem = ({
 
       try {
         if (data.phuong_thuc_thanh_toan === "Ví tiền") {
+          if (!walletStatus?.status) {
+            setShowPinRegistrationModal(true);
+            return;
+          }
           setIsVerificationModalOpen(true);
           return;
         }
@@ -232,6 +252,7 @@ const ProductItem = ({
           />
         </>
       )} */}
+  
       {Payment && (
         <>
           <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
@@ -285,7 +306,31 @@ const ProductItem = ({
       onClose={() => setIsVerificationModalOpen(false)} 
       onVerify={handleVerification}
     />
-
+     {showPinRegistrationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h2 className="text-xl font-semibold mb-4">Chưa đăng ký mã PIN</h2>
+            <p className="text-gray-600 mb-6">Bạn cần đăng ký mã PIN để thực hiện thao tác này</p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowPinRegistrationModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Đóng
+              </button>
+              <button
+                onClick={() => {
+                  nav('/mypro/wallet', { state: { openSettings: true } });
+                  setShowPinRegistrationModal(false);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Đăng ký PIN
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
                 </div>{" "}
               </form>
             </div>

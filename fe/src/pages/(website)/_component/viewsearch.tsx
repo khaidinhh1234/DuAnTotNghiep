@@ -1,10 +1,9 @@
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
-import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message, Modal, Rate } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -14,10 +13,10 @@ import {
   Thumbs,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
 const View = ({ id, ID }: { id: string; ID: number }) => {
-  const nav = useNavigate()
-  // console.log(id);
-  // console.log(ID);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -32,47 +31,38 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
   );
   const [selectedVariantId, setSelectedVariantId] = useState<number | null>(
     null
-  ); //laybienthe
+  );
   const [currentImages, setCurrentImages] = useState<string[]>([]);
+  const [open, setOpen] = React.useState<boolean>(false);
 
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
     user.access_token || localStorage.getItem("access_token");
-  //   console.log(id);
+
   const { data } = useQuery({
     queryKey: ["PRODUCT_DETAIL", id],
     queryFn: async () => {
-      try {
-        const response = await instanceClient.get(`chi-tiet-san-pham/${id}`);
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
+      const response = await instanceClient.get(`chi-tiet-san-pham/${id}`);
+      return response.data;
     },
   });
-  // console.log(data);
+
   const queryclient = useQueryClient();
+
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
-      try {
-        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
-        // console.log(response.data);
-        if (
-          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
-        ) {
-          message.success("Xóa sản phẩm yêu thích thành công");
-        }
-        if (
-          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
-        ) {
-          message.success("Thêm sản phẩm yêu thích thành công");
-        }
-
-        return response.data;
-      } catch (error: any) {
-        message.error(error?.response?.data?.mess);
-        throw new Error("Xóa sản phẩm yêu thích thất bại");
+      const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+      if (
+        response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+      ) {
+        message.success("Xóa sản phẩm yêu thích thành công");
       }
+      if (
+        response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+      ) {
+        message.success("Thêm sản phẩm yêu thích thành công");
+      }
+      return response.data;
     },
     onSuccess: () => {
       queryclient.invalidateQueries({
@@ -80,10 +70,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       });
     },
   });
+
   const product = data?.data;
-  // console.log(product);
-  const [open, setOpen] = React.useState<boolean>(false);
-  // danh gia
+
   const averageRating = useMemo(() => {
     if (!data || !product || product?.danh_gias.length === 0) return 0;
     const totalStars = product.danh_gias.reduce(
@@ -93,7 +82,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     return (totalStars / data.data.danh_gias.length).toFixed(1);
   }, [data]);
 
-  // kich thuoc
   const sizesForSelectedColor = product?.bien_the_san_pham
     ?.filter(
       (variant: any) => variant?.mau_bien_the?.ma_mau_sac === selectedColor
@@ -113,10 +101,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     anh_bien_the: string[];
   }
 
-  interface Product {
-    bien_the_san_pham: Variant[];
-  }
-
   const sanpham = product?.bien_the_san_pham
     ?.filter(
       (variant: Variant) =>
@@ -127,9 +111,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       gia_ban: variant?.gia_ban,
       gia_khuyen_mai: variant?.gia_khuyen_mai,
       gia_khuyen_mai_tam_thoi: variant?.gia_khuyen_mai_tam_thoi,
-
       anh_san_pham: variant?.anh_bien_the,
     }));
+
   const uniqueColors = useMemo<Set<string>>(() => {
     if (!product?.bien_the_san_pham) return new Set<string>();
     return new Set<string>(
@@ -138,30 +122,13 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       )
     );
   }, [product]);
-  // console.log(sanpham);
-  //   const showLoading = () => {
-  //     setOpen(true);
-  //   };
-  //   const [activeTab, setActiveTab] = useState("descriptions"); // State to manage active tab
 
-  // const handleColorClick = (color: any) => {
-  //   setSelectedColor(color);
-  //   const selectedVariant = product?.bien_the_san_pham?.find(
-  //     (v: any) => v?.mau_bien_the?.ma_mau_sac === color
-  //   );
-  //   setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
-  // };
-
-  // const handleSizeClick = (size: string) => {
-  //   setSelectedSize(size);
-  //   setSelectedSizeDisplay(size);
-  // };
   const handleColorClick = (color: string) => {
     setSelectedColor(color);
     const selectedVariant = product?.bien_the_san_pham?.find(
       (v: Variant) => v?.mau_bien_the?.ma_mau_sac === color
     );
-    setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
+    setSelectedVariantId(selectedVariant?.id ?? null);
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
     updateImages(color, selectedSize);
   };
@@ -171,10 +138,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     const selectedVariant = product?.bien_the_san_pham?.find(
       (v: Variant) => v?.kich_thuoc_bien_the?.kich_thuoc === size
     );
-    setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
+    setSelectedVariantId(selectedVariant?.id ?? null);
     setSelectedSizeDisplay(size);
     updateImages(selectedColor, size);
   };
+
   const updateImages = (color: string | null, size: string | null) => {
     if (color && size && product) {
       const variant = product?.bien_the_san_pham?.find(
@@ -192,12 +160,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     }
   };
 
-  // const sizes = ["S", "M", "L", "XL", "XXL"];
-
   const handleClickHeart = (id: number) => {
     setIsHeart(!isHeart);
     mutate(id);
   };
+
   const handlePreview = (imageUrl: string) => {
     setPreviewImage(imageUrl);
     setPreviewOpen(true);
@@ -212,8 +179,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     );
   }, [product, selectedColor, selectedSize]);
 
-  // const images = [product, products1, products2, sanPham2];
-
   useEffect(() => {
     if (product && product.bien_the_san_pham.length > 0) {
       const firstVariant = product?.bien_the_san_pham[0];
@@ -223,8 +188,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       setSelectedSizeDisplay(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);
     }
   }, [product]);
-  // add to cart
+
   const [quantity, setQuantity] = useState<number>(1);
+  const MAX_QUANTITY = 10;
 
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
@@ -253,11 +219,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     onError: (error: any) => {
       toast.error(
         error.response?.data?.message ||
-        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
-  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
@@ -271,32 +237,60 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
-    console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
-    if (!access_token) {
-      setIsModalVisible(true); // Hiển thị modal đăng nhập
-      // nav("/login")
-      return;
-    }
-    // if (!access_token) {
-    //   toast.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
-    //   return;
-    // }
 
-    addToCart(variantIdToUse);
+    if (!access_token) {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const existingItem = cart.find(
+        (item: { variantId: number; quantity: number }) =>
+          item.variantId === variantIdToUse
+      );
+
+      const currentQuantity = existingItem ? existingItem.quantity : 0;
+
+      if (currentQuantity + quantity > MAX_QUANTITY) {
+        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
+        return;
+      }
+
+      if (existingItem) {
+        existingItem.quantity += quantity;
+      } else {
+        cart.push({ variantId: variantIdToUse, quantity });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
+    } else {
+      addToCart(variantIdToUse);
+    }
   };
+
   return (
     <>
-      <Link to={``} type="primary" onClick={() => setOpen(true)}>
-        <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px]  px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
+      <Link
+        to={`${location.pathname}${location.search}`}
+        onClick={(e) => {
+          e.preventDefault();
+          setOpen(true);
+        }}
+      >
+        <button className="hover:bg-blackL hover:text-white absolute lg:px-[65px] px-[90px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
           Thêm vào giỏ hàng
         </button>
       </Link>
+
       <Modal
         width={1300}
-        // title={<p>Loading Modal</p>}
         footer={null}
         open={open}
-        onCancel={() => setOpen(false)}
+        onCancel={() => {
+          setOpen(false);
+          window.history.pushState(
+            {},
+            "",
+            `${location.pathname}${location.search}`
+          );
+        }}
       >
         <div>
           {" "}
@@ -414,18 +408,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       {selectedVariant && (
                         <div className="mt-2">
                           <a
-<<<<<<< HEAD
-                            className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
-                              ? "bg-[#3CD139]/10 text-[#3CD139]"
-                              : "bg-red-500 text-white"
-                              }`}
-=======
                             className={` text-sm px-2 py-1 rounded-sm ${
                               selectedVariant?.so_luong_bien_the > 0
                                 ? "bg-[#3CD139]/10 text-[#3CD139]"
                                 : "bg-red-500 text-white"
                             }`}
->>>>>>> bcb74bc109117e8bd63798eddf74ba616d3f9048
                           >
                             {selectedVariant?.so_luong_bien_the > 0
                               ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -455,8 +442,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         <>
                           {gia?.gia_khuyen_mai_tam_thoi
                             ? gia?.gia_khuyen_mai_tam_thoi.toLocaleString(
-                              "vi-VN"
-                            )
+                                "vi-VN"
+                              )
                             : (gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ??
                               0)}{" "}
                           đ
@@ -470,7 +457,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                                 ? gia?.gia_ban - gia?.gia_khuyen_mai_tam_thoi
                                 : gia?.gia_ban - gia?.gia_khuyen_mai) /
                                 gia?.gia_ban) *
-                              100
+                                100
                             )}
                             %
                           </span>
@@ -499,8 +486,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       {Array.from(uniqueColors).map((color, index) => (
                         <button
                           key={index}
-                          className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? "border-black" : ""
-                            }`}
+                          className={`w-9 h-9 rounded-md border-2 ${
+                            selectedColor === color ? "border-black" : ""
+                          }`}
                           style={{
                             backgroundColor: color as string,
                           }}
@@ -524,8 +512,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         <button
                           key={size}
                           onClick={() => handleSizeClick(size)}
-                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${selectedSize === size ? "bg-blackL text-white" : ""
-                            }`}
+                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
+                            selectedSize === size ? "bg-blackL text-white" : ""
+                          }`}
                         >
                           {size}
                         </button>
@@ -538,7 +527,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         onClick={() =>
                           setQuantity((prev) => Math.max(1, prev - 1))
                         }
-                        className={`py-2 pr-2 ${quantity === 1 ? "cursor-not-allowed" : ""}`}
+                        className="py-2 pr-2"
                       >
                         <i className="fa-solid fa-minus" />
                       </button>
@@ -546,32 +535,26 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         type="number"
                         id="numberInput"
                         defaultValue={1}
-                        min="1"
-                        max={selectedVariant?.so_luong_bien_the || 1}
+                        min={1}
+                        max={100}
                         value={quantity}
-                        onChange={(e) => {
-                          const inputQuantity = parseInt(e.target.value, 10);
-                          // Kiểm tra nếu inputQuantity vượt quá số lượng kho
-                          if (inputQuantity > (selectedVariant?.so_luong_bien_the || 1)) {
-                            if (selectedVariant) {
-                              setQuantity(selectedVariant.so_luong_bien_the); // Đặt về số lượng kho tối đa
-                            }
-                          } else {
-                            setQuantity(Math.max(1, inputQuantity)); // Đảm bảo số lượng không thấp hơn 1
-                          }
-                        }}
+                        onChange={(e) =>
+                          setQuantity(Math.max(1, parseInt(e.target.value, 10)))
+                        }
                         className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                       />
                       <button
-                        onClick={() =>
-                          setQuantity((prev) =>
-                            Math.min(
-                              selectedVariant?.so_luong_bien_the || 1,
-                              prev + 1
-                            )
-                          )
-                        }
+                        onClick={() => {
+                          if (quantity >= MAX_QUANTITY) {
+                            toast.error(
+                              `Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`
+                            );
+                          } else {
+                            setQuantity((prev) => prev + 1);
+                          }
+                        }}
                         className="py-2 pl-2"
+                        disabled={quantity >= MAX_QUANTITY}
                       >
                         <i className="fa-solid fa-plus" />
                       </button>
@@ -582,14 +565,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     >
                       Thêm vào giỏ hàng
                     </button>
-                    <Modal
-                      visible={isModalVisible}
-                      onCancel={() => setIsModalVisible(false)}
-                      footer={null}
-                      width={500}
-                    >
-                      <LoginPopup />
-                    </Modal>
                     <button
                       onClick={() => handleClickHeart(ID)}
                       className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 

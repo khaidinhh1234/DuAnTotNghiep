@@ -1,6 +1,6 @@
 import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const Chart3: React.FC = () => {
@@ -12,61 +12,65 @@ const Chart3: React.FC = () => {
     },
   });
 
+  const [series, setSeries] = useState<{ name: string; data: any[] }[]>([]);
+  const [options, setOptions] = useState({});
+  useEffect(() => {
+    if (chart3) {
+      setSeries([
+        {
+          name: "Khách hàng mới",
+          data: chart3?.so_luong_khach_hang_moi ?? [],
+        },
+        {
+          name: "Khách hàng cũ",
+          data: chart3?.so_luong_khach_hang_cu ?? [],
+        },
+        {
+          name: "Tổng khách hàng",
+          data: chart3?.tong_so_luong_khach_hang ?? [],
+        },
+      ]);
+      setOptions({
+        chart: {
+          type: "line",
+          height: 350,
+        },
+        title: {
+          text: "Phân tích khách hàng trong 30 ngày qua",
+          align: "center",
+          style: {
+            fontSize: "20px",
+          },
+        },
+
+        xaxis: {
+          categories: chart3?.moc_time, // Days of the month
+        },
+        yaxis: {
+          title: {
+            text: "Số lượng khách hàng",
+          },
+        },
+        dataLabels: {
+          enabled: true,
+        },
+        colors: ["#00E396", "#008FFB", "#FF4560"],
+        tooltip: {
+          shared: true,
+          intersect: false,
+        },
+        legend: {
+          position: "top",
+          horizontalAlign: "left",
+        },
+      });
+    }
+  }, [chart3]);
   useEffect(() => {
     async () => {
       await refetch();
     };
   }, [chart3]);
-  const options: ApexCharts.ApexOptions = {
-    chart: {
-      type: "line",
-      height: 350,
-    },
-    title: {
-      text: "Phân tích khách hàng trong 30 ngày qua",
-      align: "center",
-      style: {
-        fontSize: "20px",
-      },
-    },
-
-    xaxis: {
-      categories: chart3?.moc_time, // Days of the month
-    },
-    yaxis: {
-      title: {
-        text: "Số lượng khách hàng",
-      },
-    },
-    dataLabels: {
-      enabled: true,
-    },
-    colors: ["#00E396", "#008FFB", "#FF4560"],
-    tooltip: {
-      shared: true,
-      intersect: false,
-    },
-    legend: {
-      position: "top",
-      horizontalAlign: "left",
-    },
-  };
-
-  const series = [
-    {
-      name: "Khách hàng mới",
-      data: chart3?.so_luong_khach_hang_moi ?? [],
-    },
-    {
-      name: "Khách hàng cũ",
-      data: chart3?.so_luong_khach_hang_cu ?? [],
-    },
-    {
-      name: "Tổng khách hàng",
-      data: chart3?.tong_so_luong_khach_hang ?? [],
-    },
-  ];
-
   return (
     <div>
       <div id="chart">

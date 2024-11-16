@@ -1,7 +1,13 @@
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Modal, Rate } from "antd";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -39,7 +45,6 @@ interface ProductData {
     ten_danh_muc: string;
     cha_id?: number;
     id?: number;
-
   };
   cha_danh_muc: {
     id?: number;
@@ -136,7 +141,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   // const [token, setToken] = useState<string | null>(null);
-  const nav = useNavigate()
+  const nav = useNavigate();
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
     user.access_token || localStorage.getItem("access_token");
@@ -157,9 +162,12 @@ const ProductDetail: React.FC = () => {
     // Hàm tăng lượt xem sau 10 giây
     const incrementView = async () => {
       try {
-        const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`, {
-          params: { tang_luot_xem: true },
-        });
+        const response = await instanceClient.get(
+          `/chi-tiet-san-pham/${slug}`,
+          {
+            params: { tang_luot_xem: true },
+          }
+        );
         console.log("Lượt xem đã tăng:", response.data);
         viewedRef.current = true; // Đánh dấu đã tăng lượt xem
       } catch (error) {
@@ -224,12 +232,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                ...review,
-                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                danh_gia_huu_ich_count: variables.isLiked
-                  ? review.danh_gia_huu_ich_count - 1
-                  : review.danh_gia_huu_ich_count + 1,
-              }
+                  ...review,
+                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                  danh_gia_huu_ich_count: variables.isLiked
+                    ? review.danh_gia_huu_ich_count - 1
+                    : review.danh_gia_huu_ich_count + 1,
+                }
               : review
           ),
         };
@@ -256,8 +264,13 @@ const ProductDetail: React.FC = () => {
     }
     console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
     if (!access_token) {
+<<<<<<< HEAD
       setIsModalVisible(true); // Hiển thị modal đăng nhập
       // nav("/login")
+=======
+      // setIsModalVisible(true); // Hiển thị modal đăng nhập
+      nav("/login");
+>>>>>>> bcb74bc109117e8bd63798eddf74ba616d3f9048
       return;
     }
     // if (!access_token) {
@@ -297,11 +310,10 @@ const ProductDetail: React.FC = () => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error(
         error.response?.data?.message ||
-        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
-
 
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {
@@ -423,12 +435,12 @@ const ProductDetail: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["product", slug],
+        queryKey: ["product", slug, "PRODUCT_DETAIL"],
       });
     },
-    onError: (error) => {
-      message.error("Xóa sản phẩm yêu thích thất bại");
-      console.error("API error", error);
+    onError: (error: any) => {
+      message.error(error?.response?.data?.mess);
+      throw new Error("Xóa sản phẩm yêu thích thất bại");
     },
   });
   const handleClickHeart = (id: any) => {
@@ -530,7 +542,7 @@ const ProductDetail: React.FC = () => {
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                // className="mySwiper1"
+                  // className="mySwiper1"
                 >
                   {currentImages?.map((image, index) => (
                     <SwiperSlide key={`thumb-${index}`}>
@@ -563,10 +575,11 @@ const ProductDetail: React.FC = () => {
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
-                          ? "bg-[#3CD139]/10 text-[#3CD139]"
-                          : "bg-red-500 text-white"
-                          }`}
+                        className={` text-sm px-2 py-1 rounded-sm ${
+                          selectedVariant?.so_luong_bien_the > 0
+                            ? "bg-[#3CD139]/10 text-[#3CD139]"
+                            : "bg-red-500 text-white"
+                        }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -668,7 +681,12 @@ const ProductDetail: React.FC = () => {
                   <SizeGuideModal
                     isOpen={isModalOpen}
                     onClose={toggleModal}
-                    categoryId={product?.ong_danh_muc?.id ?? product?.cha_danh_muc?.id ?? product?.danh_muc?.id ?? 0}
+                    categoryId={
+                      product?.ong_danh_muc?.id ??
+                      product?.cha_danh_muc?.id ??
+                      product?.danh_muc?.id ??
+                      0
+                    }
                     productDetailId={product?.id ?? 0}
                   />
                 </div>
@@ -695,9 +713,7 @@ const ProductDetail: React.FC = () => {
               <div className="mt-12 flex gap-5">
                 <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                   <button
-                    onClick={() =>
-                      setQuantity((prev) => Math.max(1, prev - 1))
-                    }
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
                     className="py-2 pr-2"
                   >
                     <i className="fa-solid fa-minus" />
@@ -712,7 +728,10 @@ const ProductDetail: React.FC = () => {
                     onChange={(e) => {
                       const inputQuantity = parseInt(e.target.value, 10);
                       // Kiểm tra nếu inputQuantity vượt quá số lượng kho
-                      if (inputQuantity > (selectedVariant?.so_luong_bien_the || 1)) {
+                      if (
+                        inputQuantity >
+                        (selectedVariant?.so_luong_bien_the || 1)
+                      ) {
                         if (selectedVariant) {
                           setQuantity(selectedVariant.so_luong_bien_the); // Đặt về số lượng kho tối đa
                         }
@@ -764,7 +783,7 @@ const ProductDetail: React.FC = () => {
             </div>
           </div>
         </div>
-      </section >
+      </section>
 
       <div className="max-w-6xl mx-auto p-8">
         <div className="flex space-x-8 border-b pb-2 mb-4">
@@ -790,10 +809,11 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${isDescriptionExpanded
-                ? "h-auto"
-                : "max-h-[500px] overflow-hidden"
-                }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
+                isDescriptionExpanded
+                  ? "h-auto"
+                  : "max-h-[500px] overflow-hidden"
+              }`}
             >
               <div
                 dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
@@ -1023,23 +1043,21 @@ const ProductDetail: React.FC = () => {
       <RelatedProducts productId={product?.id ?? 0} />
 
       <Footer />
-      {
-        previewImage && (
-          <Image
-            style={{ display: "none" }}
-            preview={{
-              visible: previewOpen,
-              src: previewImage,
-              onVisibleChange: (visible) => {
-                setPreviewOpen(visible);
-                if (!visible) {
-                  setPreviewImage("");
-                }
-              },
-            }}
-          />
-        )
-      }
+      {previewImage && (
+        <Image
+          style={{ display: "none" }}
+          preview={{
+            visible: previewOpen,
+            src: previewImage,
+            onVisibleChange: (visible) => {
+              setPreviewOpen(visible);
+              if (!visible) {
+                setPreviewImage("");
+              }
+            },
+          }}
+        />
+      )}
     </>
   );
 };

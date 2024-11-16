@@ -3,13 +3,15 @@ import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
- import View from "./View";
+ import View from "./viewsearch";
+
 
 const SearchResultsPage = ({ products, Wishlist, isPending, data, onPage, query }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(data?.current_page ?? 1);
   const [pageSize, setPageSize] = useState(data?.per_page);
+  const [searchData, setSearchData] = useState(new URLSearchParams(window.location.search).get('query'));
 
   const handleMouseEnter = (productId: number, variantIndex: any) => {
     setHoveredProductId(productId);
@@ -80,7 +82,15 @@ const SearchResultsPage = ({ products, Wishlist, isPending, data, onPage, query 
                             />
                           </div>
                         </Link>
-                        <View id={product?.duong_dan} ID={product?.id} />
+                        <div onClick={(e) => e.stopPropagation()}>
+  <View 
+    id={product?.duong_dan} 
+    ID={product?.id}
+    searchParams={searchData} 
+  />
+</div>
+
+
                       </div>
 
                       <Link to={`/product-detail/${product?.duong_dan}`}>
