@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
-import {  useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
-import { Slider } from "antd";
+import { message, Slider } from "antd";
 import SearchResultsPage from "./SearchResultsPage";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
@@ -50,8 +49,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ...(price.length > 0 && { gia_tren: price[1] }),
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
-    ...(query && { query: query })
-
+    ...(query && { query: query }),
   };
   // console.log(datas);
   // lọc danh mục
@@ -120,18 +118,20 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [_, setProducts] = useState([]);
   useEffect(() => {
     const fetchProducts = async () => {
-        try {
-            const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
-            if (response.data.status) {
-                setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
-            }
-        } catch (error) {
-            console.error("Lỗi khi lấy sản phẩm:", error);
+      try {
+        const response = await instanceClient.get(
+          `/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`
+        );
+        if (response.data.status) {
+          setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
         }
+      } catch (error) {
+        console.error("Lỗi khi lấy sản phẩm:", error);
+      }
     };
-    
+
     fetchProducts();
-}, [tenDanhMucCha, tenDanhMucCon]);
+  }, [tenDanhMucCha, tenDanhMucCon]);
   // ALL sản phẩm
   const { data } = useQuery({
     queryKey: ["PRODUCTSLOC", datas],
@@ -171,8 +171,16 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async () => {
-      const response = await instanceClient.post(`/tim-kiem-goi-y?page=${page}`, datas);
-      return response.data;
+      try {
+        const response = await instanceClient.post(
+          `/tim-kiem-goi-y?page=${page}`,
+          datas
+        );
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Lỗi khi lấy thông tin");
+      }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["PRODUCTSLOC"], data);
@@ -195,8 +203,17 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ) {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page,query]);
-  
+  }, [
+    parentIds,
+    childIds,
+    mutate,
+    selectedSize,
+    selectedMau,
+    price,
+    page,
+    query,
+  ]);
+
   return (
     <div>
       {" "}
@@ -396,13 +413,16 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                         }`}
                         onClick={() => handleCheckboxChange(item.id)}
                       >
-    <span className="text-sm mr-1">{item.kich_thuoc}</span>-
-
-<span className="text-sm ml-1">  {item.loai_kich_thuoc === "nam"
-    ? "Nam"
-    : item.loai_kich_thuoc === "nu"
-      ? "Nữ"
-      : "Trẻ em"}</span>                      </div>
+                        <span className="text-sm mr-1">{item.kich_thuoc}</span>-
+                        <span className="text-sm ml-1">
+                          {" "}
+                          {item.loai_kich_thuoc === "nam"
+                            ? "Nam"
+                            : item.loai_kich_thuoc === "nu"
+                              ? "Nữ"
+                              : "Trẻ em"}
+                        </span>{" "}
+                      </div>
                     ))}
                   </div>
                 ) : null}
@@ -410,12 +430,12 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-            <SearchResultsPage
-             data={data}
-             onPage={setPage}
-             products={data?.san_pham?.original?.data?.data || []}
+              <SearchResultsPage
+                data={data}
+                onPage={setPage}
+                products={data?.san_pham?.original?.data?.data || []}
                 Wishlist={handleWishlist}
-                 isPending={isPending}
+                isPending={isPending}
               />
             </div>
           </div>

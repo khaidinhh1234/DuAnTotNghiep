@@ -62,19 +62,22 @@ const PageSupport: React.FC = () => {
       id: number | string;
       phan_hoi: string;
     }) => {
-      // console.log(phan_hoi,'sưefsefd');
-      const response = await instance.put(`/lien-he/${id}`, {
-        noi_dung_phan_hoi: phan_hoi
-      });
-      return response.data;
+     try {
+        const response = await instance.put(`/lien-he/${id}`, {
+          noi_dung_phan_hoi: phan_hoi,
+        });
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Phản hồi thất bại");
+      }
+    
     },
     onSuccess: () => {
       message.success("Phản hồi thành công");
       queryClient.invalidateQueries({ queryKey: ["phanhoilienhe"] });
     },
-    onError: (error) => {
-      console.error("Error:", error);
-    },
+  
   });
   const showDetail = (record: Support) => {
     console.log("record", record);

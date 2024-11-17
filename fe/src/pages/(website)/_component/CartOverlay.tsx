@@ -4,6 +4,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
+import { message } from "antd";
 
 interface CartOverlayProps {
   isVisible: boolean;
@@ -38,11 +39,15 @@ const CartOverlay: React.FC<CartOverlayProps> = ({ isVisible }) => {
 
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId: string) => {
-      await instanceClient.delete(`/gio-hang/${productId}`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
+      try {
+        await instanceClient.delete(`/gio-hang/${productId}`, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+      } catch (error) {
+        message.error("Xóa thất bại");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });

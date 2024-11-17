@@ -61,7 +61,10 @@ const ReturnOrderDetail = ({ record }: any) => {
           <div>
             <h1 className="text-base md:text-lg">
               Mã Hoàn hàng: <span>{returnOrder?.ma_hoan_hang}</span> <br />
-              Ngày tạo: <span>{new Date(returnOrder?.ngay_tao).toLocaleDateString("vi-VN")}</span>
+              Ngày tạo:{" "}
+              <span>
+                {new Date(returnOrder?.ngay_tao).toLocaleDateString("vi-VN")}
+              </span>
             </h1>
           </div>
           <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
@@ -78,8 +81,13 @@ const ReturnOrderDetail = ({ record }: any) => {
                       {product?.bien_the_san_pham?.san_pham?.ten_san_pham}
                     </h3>
                     <div className="text-xs md:text-base text-gray-500 mt-1">
-                      Size: {product?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc},
-                      Màu: {product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
+                      Size:{" "}
+                      {
+                        product?.bien_the_san_pham?.kich_thuoc_bien_the
+                          ?.kich_thuoc
+                      }
+                      , Màu:{" "}
+                      {product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
                     </div>
                     <span className="text-xs md:text-lg text-gray-500 mt-1">
                       x{product.so_luong}
@@ -91,10 +99,16 @@ const ReturnOrderDetail = ({ record }: any) => {
                     </div> */}
                     <div className="flex items-end mt-2">
                       <span className="text-xs sm:text-base text-gray-500 line-through mr-1">
-                        ₫{product?.bien_the_san_pham?.gia_ban?.toLocaleString("vi-VN") || "0"}
+                        ₫
+                        {product?.bien_the_san_pham?.gia_ban?.toLocaleString(
+                          "vi-VN"
+                        ) || "0"}
                       </span>
                       <span className="text-base sm:text-xl font-semibold text-red-500">
-                        ₫{product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString("vi-VN") || "0"}
+                        ₫
+                        {product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString(
+                          "vi-VN"
+                        ) || "0"}
                       </span>
                     </div>
                   </div>
@@ -103,11 +117,13 @@ const ReturnOrderDetail = ({ record }: any) => {
             </div>
             <div className="w-full md:w-1/4 flex flex-col items-end space-y-2 p-4">
               <div>
-                <span className={`font-bold
-                    ${returnOrder?.trang_thai_hoan_hang === 'Chờ lấy hàng hoàn' ? 'text-yellow-500' : ''}
-                  ${returnOrder?.trang_thai_hoan_hang === 'Đang vận chuyển' ? 'text-blue-500' : ''}
-                  ${returnOrder?.trang_thai_hoan_hang === 'Trả hàng thành công' ? 'text-green-500' : ''}
-                `}>
+                <span
+                  className={`font-bold
+                    ${returnOrder?.trang_thai_hoan_hang === "Chờ lấy hàng hoàn" ? "text-yellow-500" : ""}
+                  ${returnOrder?.trang_thai_hoan_hang === "Đang vận chuyển" ? "text-blue-500" : ""}
+                  ${returnOrder?.trang_thai_hoan_hang === "Trả hàng thành công" ? "text-green-500" : ""}
+                `}
+                >
                   {returnOrder?.trang_thai_hoan_hang}
                 </span>
               </div>
@@ -144,15 +160,20 @@ const ReturnOrderDetail = ({ record }: any) => {
             <div className="bg-white rounded-md shadow-md p-4 mt-4">
               <p className="text-gray-700 font-semibold">Địa chỉ hoàn hàng</p>
               <p className="text-gray-500 text-sm">
-                {thongtin?.ten_nguoi_dat_hang} - {thongtin?.so_dien_thoai_nguoi_dat_hang}
+                {thongtin?.ten_nguoi_dat_hang} -{" "}
+                {thongtin?.so_dien_thoai_nguoi_dat_hang}
               </p>
-              <p className="text-gray-500 text-sm">{thongtin?.dia_chi_nguoi_dat_hang}</p>
+              <p className="text-gray-500 text-sm">
+                {thongtin?.dia_chi_nguoi_dat_hang}
+              </p>
               <p className="text-gray-500 text-sm">
                 Lý do hoàn hàng: {donhang?.li_do_hoan_hang || "Không có"}
               </p>
               {donhang?.hinh_anh_hoan_tra && (
                 <div className="text-right mt-4 sm:mt-0">
-                  <p className="font-semibold mb-2 text-gray-700">Hình ảnh hoàn trả:</p>
+                  <p className="font-semibold mb-2 text-gray-700">
+                    Hình ảnh hoàn trả:
+                  </p>
                   <Image
                     src={donhang.hinh_anh_hoan_tra}
                     alt="Hình ảnh hoàn trả"
@@ -162,8 +183,6 @@ const ReturnOrderDetail = ({ record }: any) => {
               )}
             </div>
           </div>
-
-
 
           <div className="bg-white rounded-md shadow-md p-4 mt-4 relative">
             <div>
@@ -185,31 +204,44 @@ const ReturnOrderDetail = ({ record }: any) => {
                         {product?.bien_the_san_pham?.san_pham?.ten_san_pham}
                       </h3>
                       <div className="text-xs md:text-base text-gray-500 mt-1">
-                        Size: {product?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc},
-                        Màu: {product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
+                        Size:{" "}
+                        {
+                          product?.bien_the_san_pham?.kich_thuoc_bien_the
+                            ?.kich_thuoc
+                        }
+                        , Màu:{" "}
+                        {product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
                       </div>
                       <span className="text-xs md:text-lg text-gray-500 mt-1">
                         x{product.so_luong}
                       </span>
                       <div className="flex items-end mt-2">
-                      <span className="text-xs sm:text-base text-gray-500 line-through mr-1">
-                        ₫{product?.bien_the_san_pham?.gia_ban?.toLocaleString("vi-VN") || "0"}
-                      </span>
-                      <span className="text-base sm:text-xl font-semibold text-red-500">
-                        ₫{product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString("vi-VN") || "0"}
-                      </span>
-                    </div>
+                        <span className="text-xs sm:text-base text-gray-500 line-through mr-1">
+                          ₫
+                          {product?.bien_the_san_pham?.gia_ban?.toLocaleString(
+                            "vi-VN"
+                          ) || "0"}
+                        </span>
+                        <span className="text-base sm:text-xl font-semibold text-red-500">
+                          ₫
+                          {product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString(
+                            "vi-VN"
+                          ) || "0"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="w-full md:w-1/4 flex flex-col items-end space-y-2 p-4">
                 <div>
-                  <span className={`font-bold
-                    ${returnOrder?.trang_thai_hoan_hang === 'Chờ lấy hàng hoàn' ? 'text-yellow-500' : ''}
-                  ${returnOrder?.trang_thai_hoan_hang === 'Đang vận chuyển' ? 'text-blue-500' : ''}
-                  ${returnOrder?.trang_thai_hoan_hang === 'Trả hàng thành công' ? 'text-green-500' : ''}
-                `}>
+                  <span
+                    className={`font-bold
+                    ${returnOrder?.trang_thai_hoan_hang === "Chờ lấy hàng hoàn" ? "text-yellow-500" : ""}
+                  ${returnOrder?.trang_thai_hoan_hang === "Đang vận chuyển" ? "text-blue-500" : ""}
+                  ${returnOrder?.trang_thai_hoan_hang === "Trả hàng thành công" ? "text-green-500" : ""}
+                `}
+                  >
                     {returnOrder?.trang_thai_hoan_hang}
                   </span>
                 </div>
@@ -218,26 +250,33 @@ const ReturnOrderDetail = ({ record }: any) => {
                   <p className="md:text-lg text-gray-700">
                     Thành tiền:{" "}
                     <span className="font-semibold text-red-500">
-
-                      {data?.data?.hoan_hang?.don_hang?.tong_tien_don_hang?.toLocaleString("vi-VN")} ₫                  </span>
+                      {data?.data?.hoan_hang?.don_hang?.tong_tien_don_hang?.toLocaleString(
+                        "vi-VN"
+                      )}{" "}
+                      ₫{" "}
+                    </span>
                   </p>
                   <p className="md:text-lg font-bold text-gray-700 mt-1">
                     Tổng tiền COD:{" "}
                     <span className="font-bold text-red-500">
-                      {data?.data?.hoan_hang?.don_hang?.tong_tien_don_hang?.toLocaleString("vi-VN")} ₫
+                      {data?.data?.hoan_hang?.don_hang?.tong_tien_don_hang?.toLocaleString(
+                        "vi-VN"
+                      )}{" "}
+                      ₫
                     </span>
                   </p>
                 </div>
               </div>
             </div>
-
           </div>
           <div className="bg-white rounded-md shadow-md p-4 mt-4">
             <div className="flex flex-col gap-2">
               {returnOrder?.trang_thai_hoan_hang === "Chờ lấy hàng hoàn" && (
                 <button
                   className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
-                  onClick={() => mutate({ id: record.id, action: "Đang vận chuyển" })}
+                  onClick={() =>
+                    mutate({ id: record.id, action: "Đang vận chuyển" })
+                  }
                 >
                   Lấy hàng hoàn
                 </button>
@@ -245,15 +284,15 @@ const ReturnOrderDetail = ({ record }: any) => {
               {returnOrder?.trang_thai_hoan_hang === "Đang vận chuyển" && (
                 <button
                   className="w-full py-2 border bg-green-600 rounded-lg text-white hover:bg-green-700"
-                  onClick={() => mutate({ id: record.id, action: "Trả hàng thành công" })}
+                  onClick={() =>
+                    mutate({ id: record.id, action: "Trả hàng thành công" })
+                  }
                 >
                   Xác nhận trả hàng thành công
                 </button>
               )}
             </div>
-
           </div>
-
         </div>
       </Modal>
     </div>

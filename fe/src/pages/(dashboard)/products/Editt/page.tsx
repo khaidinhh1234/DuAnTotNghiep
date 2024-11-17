@@ -265,6 +265,18 @@ const EditProducts: React.FC = () => {
     }
   }, [productData]);
   useEffect(() => {
+    if (productData?.data?.bien_the_san_pham?.length > 0) {
+      const existingSizes = new Set<number>();
+      productData.data.bien_the_san_pham.forEach((variant: any) => {
+        if (variant.kich_thuoc_bien_the?.id) {
+          existingSizes.add(variant.kich_thuoc_bien_the.id);
+        }
+      });
+      setLockedSizes(Array.from(existingSizes));
+    }
+  }, [productData]);
+  const [lockedSizes, setLockedSizes] = useState<number[]>([]);
+  useEffect(() => {
     console.log("productImage:", productImage);
     console.log("productImageList:", productImageList);
   }, [productImage, productImageList]);
@@ -315,8 +327,8 @@ const EditProducts: React.FC = () => {
         ]);
 
         setSelectedSizeType(sizeType);
-   
-        
+
+
         const newCombinations = productData.data.bien_the_san_pham.map((v: any) => ({
           id: `${v.bien_the_mau_sac_id || v.mau_sac_id}-${v.bien_the_kich_thuoc_id || v.kich_thuoc_id}`,
           color: Number(v.bien_the_mau_sac_id || v.mau_sac_id),
@@ -629,7 +641,7 @@ const EditProducts: React.FC = () => {
                           placeholder="Chọn loại kích thước"
                           onChange={handleSizeTypeChange}
                           value={selectedSizeType}
-                          disabled={variant.values.length > 0} 
+                          disabled={variant.values.length > 0}
                         >
                           {Object.keys(groupSizesByType(kichthuoc?.data || [])).map((type) => (
                             <Select.Option key={type} value={type}>
@@ -642,18 +654,21 @@ const EditProducts: React.FC = () => {
                             mode="multiple"
                             style={{ width: "100%" }}
                             placeholder="Chọn kích thước"
-                            onChange={(values) => updateVariantValues(index, values)}
+                            onChange={(values) => {
+                              // Combine locked sizes with newly selected sizes
+                              const newValues = Array.from(new Set([...lockedSizes, ...values]));
+                              updateVariantValues(index, newValues);
+                            }}
                             value={variant.values}
                           >
                             {groupSizesByType(kichthuoc?.data || [])[selectedSizeType]?.map((size: any) => (
                               <Select.Option
                                 key={size.id}
                                 value={size.id}
-                                disabled={combinations.some(combo =>
-                                  combo.size === size.id && !variant.values.includes(size.id)
-                                )}
+                                disabled={lockedSizes.includes(size.id)}
                               >
                                 {size.kich_thuoc}
+                                {lockedSizes.includes(size.id) && ""}
                               </Select.Option>
                             ))}
                           </Select>
@@ -661,32 +676,32 @@ const EditProducts: React.FC = () => {
                       </>
                     ) : (
                       <Select
-                      mode="multiple"
-                      style={{ width: "100%" }}
-                      placeholder="Chọn màu sắc"
-                      onChange={(values) => {
-                        const newValues = Array.from(new Set([...lockedColors, ...values]));
-                        updateVariantValues(index, newValues);
-                      }}
-                      value={variant.values}
-                    >
-                      {mausac?.data?.map((color: any) => (
-                        <Select.Option 
-                          key={color.id} 
-                          value={color.id}
-                          disabled={lockedColors.includes(color.id)}
-                        >
-                          <div className="flex items-center">
-                            <div
-                              className="w-4 h-4 rounded-full mr-2"
-                              style={{ backgroundColor: color.ma_mau_sac }}
-                            />
-                            {color.ten_mau_sac}
-                            {lockedColors.includes(color.id) && ""}
-                          </div>
-                        </Select.Option>
-                      ))}
-                    </Select>
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder="Chọn màu sắc"
+                        onChange={(values) => {
+                          const newValues = Array.from(new Set([...lockedColors, ...values]));
+                          updateVariantValues(index, newValues);
+                        }}
+                        value={variant.values}
+                      >
+                        {mausac?.data?.map((color: any) => (
+                          <Select.Option
+                            key={color.id}
+                            value={color.id}
+                            disabled={lockedColors.includes(color.id)}
+                          >
+                            <div className="flex items-center">
+                              <div
+                                className="w-4 h-4 rounded-full mr-2"
+                                style={{ backgroundColor: color.ma_mau_sac }}
+                              />
+                              {color.ten_mau_sac}
+                              {lockedColors.includes(color.id) && ""}
+                            </div>
+                          </Select.Option>
+                        ))}
+                      </Select>
                     )}
                   </div>
                 </div>

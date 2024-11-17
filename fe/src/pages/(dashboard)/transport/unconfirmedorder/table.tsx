@@ -33,16 +33,16 @@ interface Transport {
   id: number;
   created_at: string;
   don_hang_id: number;
-  shipper_id: number
+  shipper_id: number;
   ma_van_chuyen: string;
   trang_thai_van_chuyen: string;
   cod: number;
   tien_cod: number;
   anh_xac_thuc: string;
-  khach_hang_xac_nhan: string
-  shipper_xac_nhan: string
-  so_lan_giao: string
-  ghi_chu: string
+  khach_hang_xac_nhan: string;
+  shipper_xac_nhan: string;
+  so_lan_giao: string;
+  ghi_chu: string;
 }
 
 const datas = [
@@ -99,7 +99,7 @@ const TableUncomfirmedOrder: React.FC = () => {
         }
         return response.data;
       } catch (error: any) {
-        console.error(error.message);
+        message.error(error.response.data.message);
         throw new Error(error.message);
       }
     },
@@ -154,7 +154,8 @@ const TableUncomfirmedOrder: React.FC = () => {
       key: item.id,
       ...item,
       don_hang_id: item.don_hang?.ma_don_hang || "Chưa có dữ liệu",
-      trang_thai_thanh_toan: item.don_hang?.trang_thai_thanh_toan || "Chưa có dữ liệu",
+      trang_thai_thanh_toan:
+        item.don_hang?.trang_thai_thanh_toan || "Chưa có dữ liệu",
       shipper_id: item.don_hang?.shipper?.ho_ten || "Chưa có dữ liệu",
     })
   );
@@ -296,12 +297,12 @@ const TableUncomfirmedOrder: React.FC = () => {
         </div>
       </div> */}
       <div>
-      <Tabs
-            defaultActiveKey="Tất cả"
-            activeKey={activeTab}
-            onChange={(key) => setActiveTab(key)}
-            items={tabItems}
-          />
+        <Tabs
+          defaultActiveKey="Tất cả"
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key)}
+          items={tabItems}
+        />
         {/* Bộ lọc tìm kiếm */}
         <div style={{ marginBottom: 16 }}>
           <Space>
@@ -309,7 +310,6 @@ const TableUncomfirmedOrder: React.FC = () => {
 
             <RangePicker />
           </Space>
-          
         </div>
         <Flex gap="middle" vertical>
           <Flex align="center" gap="middle" className="relative">

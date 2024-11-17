@@ -1,15 +1,7 @@
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
-import {
-  Button,
-  Input,
-  message,
-  Popconfirm,
-  Space,
-  Spin,
-  Table,
-} from "antd";
+import { Button, Input, message, Popconfirm, Space, Spin, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
@@ -54,26 +46,30 @@ const CategoriesAdmin: React.FC = () => {
   //   })) || [];
   let currentIndex = 1; // Initialize the currentIndex outside of the function
 
-const generateDataSource = (categories: ICategories[], parentKey = "", isParent = true): ICategories[] => {
-  return categories.map((category: ICategories) => {
-    const key = `${parentKey}-${category.id}`;
-    const children = category.children ? generateDataSource(category.children, key, false) : [];
+  const generateDataSource = (
+    categories: ICategories[],
+    parentKey = "",
+    isParent = true
+  ): ICategories[] => {
+    return categories.map((category: ICategories) => {
+      const key = `${parentKey}-${category.id}`;
+      const children = category.children
+        ? generateDataSource(category.children, key, false)
+        : [];
 
-    // Assign the current index for the category
-    const index = isParent ? currentIndex++ : undefined;
+      // Assign the current index for the category
+      const index = isParent ? currentIndex++ : undefined;
 
-    return {
-      key: key, 
-      index: index, // Assign the sequential index
-      ...category,
-      children,
-    };
-  });
-};
+      return {
+        key: key,
+        index: index, // Assign the sequential index
+        ...category,
+        children,
+      };
+    });
+  };
 
-const dataSource = data?.data ? generateDataSource(data.data) : [];
-
-
+  const dataSource = data?.data ? generateDataSource(data.data) : [];
 
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
@@ -84,8 +80,8 @@ const dataSource = data?.data ? generateDataSource(data.data) : [];
         } else {
           throw new Error(response.data.message || "Failed to delete");
         }
-      } catch (error) {
-        console.error("Error deleting category:", error);
+      } catch (error: any) {
+        message.error(error.response.data.message);
         throw error;
       }
     },
@@ -319,4 +315,3 @@ const dataSource = data?.data ? generateDataSource(data.data) : [];
 };
 
 export default CategoriesAdmin;
-

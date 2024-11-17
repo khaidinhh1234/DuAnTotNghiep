@@ -6,30 +6,40 @@ import { useLocation, useParams } from "react-router-dom";
 const AllProductDM = () => {
   const { tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa } = useParams();
 
-  console.log("data", tenDanhMucCha);
-  console.log("data", tenDanhMucCon);
-  console.log("data", tenDanhMucConCapBa);
-  const data = tenDanhMucConCapBa
-    ? tenDanhMucConCapBa
-    : tenDanhMucCon
-      ? tenDanhMucCon
-      : tenDanhMucCha
-        ? tenDanhMucCha
-        : "không xác định";
+  const { data } = useQuery({
+    queryKey: ["SANPHAM_LOC", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
+    queryFn: async () => {
+      try {
+        let url = "danhmuc";
+
+        // Ưu tiên danh mục cấp 3 -> danh mục con -> danh mục cha
+        if (tenDanhMucCha) {
+          url += `/${tenDanhMucCha}`;
+        } else if (tenDanhMucCon) {
+          url += `/${tenDanhMucCha}/${tenDanhMucCon}`;
+        } else if (tenDanhMucConCapBa) {
+          url += `/${tenDanhMucConCapBa}/${tenDanhMucCon}/${tenDanhMucConCapBa}`;
+        } else {
+          throw new Error("Không có danh mục hợp lệ");
+        }
+
+        const response = await instanceClient.post(url);
+        return response.data;
+      } catch (error) {
+        throw new Error("Lỗi khi lấy thông tin");
+      }
+    },
+    enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
+  });
+  console.log(data);
   return (
     <>
       <section>
         <div className="container">
           <div className=" flex  mt-20 text-2xl font-bold">
             <h1 className="font-bold">Danh Mục </h1>{" "}
-            <p className="pl-2 normal-case  ">
-              {data == "nam"
-                ? "Nam"
-                : data == "nu"
-                  ? "Nữ"
-                  : data == "tre_em"
-                    ? "Trẻ em"
-                    : (data ?? "Không xác định")}
+            <p className="pl-2 capitalize ">
+              {data?.data?.danh_muc?.ten_danh_muc ?? "Không xác định"}
             </p>
           </div>
         </div>

@@ -279,19 +279,26 @@ const ProductDetail: React.FC = () => {
   // useMutation để thêm sản phẩm vào giỏ hàng trên server khi có access_token
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-      const response = await instanceClient.post(
-        "/gio-hang",
-        {
-          bien_the_san_pham_id: variantId,
-          so_luong: quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
+      try {
+        const response = await instanceClient.post(
+          "/gio-hang",
+          {
+            bien_the_san_pham_id: variantId,
+            so_luong: quantity,
           },
-        }
-      );
-      return response.data;
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error: any) {
+        throw new Error(
+          error.response?.data?.message ||
+            "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        );
+      }
     },
     onSuccess: (data) => {
       if (data?.status) {
@@ -457,6 +464,22 @@ const ProductDetail: React.FC = () => {
   const toggleDescription = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
+  const isVariantAvailable = (variants: any[], color: string, size?: string) => {
+    if (size) {
+      // Check specific color and size combination
+      return variants.some(
+        v => 
+          v.mau_bien_the.ma_mau_sac === color && 
+          v.kich_thuoc_bien_the.kich_thuoc === size &&
+          v.so_luong_bien_the > 0
+      );
+    }
+    // Check if any size is available for this color
+    return variants.some(
+      v => v.mau_bien_the.ma_mau_sac === color && v.so_luong_bien_the > 0
+    );
+  };
+  
   if (isLoading) return <div>Đang tải...</div>;
   // if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
   // console.log(product);
@@ -640,7 +663,7 @@ const ProductDetail: React.FC = () => {
                     <span className="font-normal">{selectedColorDisplay}</span>
                   ) : null}
                 </h3>
-                <div className="flex space-x-2">
+                {/* <div className="flex space-x-2">
                   {Array.from(
                     new Set(
                       product?.bien_the_san_pham?.map(
@@ -655,7 +678,41 @@ const ProductDetail: React.FC = () => {
                       onClick={() => handleColorClick(color)}
                     />
                   ))}
-                </div>
+                </div> */}
+                <div className="flex space-x-2">
+  {Array.from(
+    new Set(
+      product?.bien_the_san_pham?.map(
+        (v) => v?.mau_bien_the?.ma_mau_sac
+      )
+    )
+  ).map((color, index) => {
+    const isAvailable = isVariantAvailable(product?.bien_the_san_pham, color);
+    return (
+      <button
+        key={index}
+        className={`w-9 h-9 rounded-md border-2 ${
+          selectedColor === color ? "border-black" : ""
+        } ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
+        style={{ backgroundColor: color }}
+        onClick={() => isAvailable && handleColorClick(color)}
+        disabled={!isAvailable}
+      >
+        {!isAvailable && (
+          <div 
+            className="absolute inset-0 border-t-2 border-red-500 transform rotate-45"
+            style={{
+              content: '""',
+              width: '120%',
+              left: '-10%',
+              top: '45%'
+            }}
+          />
+        )}
+      </button>
+    );
+  })}
+</div>
               </div>
 
               <div className="items-center mt-4 mb-3">
@@ -685,7 +742,7 @@ const ProductDetail: React.FC = () => {
                     productDetailId={product?.id ?? 0}
                   />
                 </div>
-
+{/* 
                 <div className="flex mt-3">
                   {Array.from(
                     new Set(
@@ -702,7 +759,45 @@ const ProductDetail: React.FC = () => {
                       {size}
                     </button>
                   ))}
-                </div>
+                </div> */}
+                <div className="flex mt-3">
+  {Array.from(
+    new Set(
+      product?.bien_the_san_pham?.map(
+        (v) => v?.kich_thuoc_bien_the?.kich_thuoc
+      )
+    )
+  ).map((size, index) => {
+    const isAvailable = selectedColor ? 
+      isVariantAvailable(product?.bien_the_san_pham, selectedColor, size) : 
+      false;
+    
+    return (
+      <button
+        key={index}
+        onClick={() => isAvailable && handleSizeClick(size)}
+        disabled={!isAvailable}
+        className={`w-10 h-10 rounded-md border border-blackL text-blackL 
+          hover:bg-blackL hover:text-white mr-2 
+          ${selectedSize === size ? "bg-blackL text-white" : ""}
+          ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
+      >
+        {size}
+        {!isAvailable && (
+          <div 
+            className="absolute inset-0 border-t-2 border-red-500 transform rotate-45"
+            style={{
+              content: '""',
+              width: '120%',
+              left: '-10%',
+              top: '45%'
+            }}
+          />
+        )}
+      </button>
+    );
+  })}
+</div>
               </div>
 
               <div className="mt-12 flex gap-5">

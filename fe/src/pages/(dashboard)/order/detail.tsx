@@ -59,6 +59,15 @@ const Detail = ({ record }: any) => {
       id: number | string;
       phan_hoi: string;
     }) => {
+      try {
+        const response = await instance.post(`/danhsachdanhgia/${id}`, {
+          phan_hoi,
+        });
+        return response.data;
+      } catch (error) {
+        message.error("Không thể cập nhật phản hồi");
+        console.error("Error:", error);
+      }
       const response = await instance.post(`/danhsachdanhgia/${id}`, {
         phan_hoi,
       });
@@ -66,9 +75,6 @@ const Detail = ({ record }: any) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ORDER_DETAIL"] });
-    },
-    onError: (error) => {
-      console.error("Error:", error);
     },
   });
   const tong = data?.data;
@@ -111,11 +117,8 @@ const Detail = ({ record }: any) => {
         }
         return response.data;
       } catch (error) {
-        // console.error("Error:", error);
-        message.open({
-          type: "error",
-          content: "Không thể cập nhật trạng thái đơn hàng!",
-        });
+        message.error("Không thể cập nhật trạng thái đơn hàng");
+        console.error("Error:", error);
       }
     },
     onSuccess: () => {
@@ -550,7 +553,7 @@ const Detail = ({ record }: any) => {
                         mutate({ id: record.id, action: "Đang xử lý" })
                       }
                     >
-                     Đã chuẩn bị hàng
+                      Đã chuẩn bị hàng
                     </button>{" "}
                     <button
                       className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"

@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 const Test = () => {
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
-  const access_token = user.access_token || localStorage.getItem("access_token");
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
 
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]); // Lưu trữ các sản phẩm được chọn
   const [selectAllDiscounted, setSelectAllDiscounted] = useState(false);
@@ -28,39 +29,62 @@ const Test = () => {
     },
   });
   const { mutate: increaseQuantity } = useMutation({
-    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`, 
-        { so_luong: currentQuantity + 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
-      
+    mutationFn: async ({
+      productId,
+      currentQuantity,
+    }: {
+      productId: string;
+      currentQuantity: number;
+    }) => {
+      try {
+        const response = await instanceClient.put(
+          `/gio-hang/tang-so-luong/${productId}`,
+          { so_luong: currentQuantity + 1 },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        throw new Error("Error increasing product quantity");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Có lỗi xảy ra khi tăng số lượng sản phẩm.');
+      toast.error(error.message || "Có lỗi xảy ra khi tăng số lượng sản phẩm.");
     },
   });
   const { mutate: decreaseQuantity } = useMutation({
-    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(`/gio-hang/giam-so-luong/${productId}`, { so_luong: currentQuantity - 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
+    mutationFn: async ({
+      productId,
+      currentQuantity,
+    }: {
+      productId: string;
+      currentQuantity: number;
+    }) => {
+      try {
+        if (currentQuantity === 1) {
+          // Xóa sản phẩm khỏi giỏ hàng nếu số lượng là 1
+          await instanceClient.delete(`/gio-hang/${productId}`, {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          });
+          return;
         }
-      );
+      } catch (error) {
+        throw new Error("Error deleting product from cart");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Có lỗi xảy ra khi giảm số lượng sản phẩm.');
+      toast.error(error.message || "Có lỗi xảy ra khi giảm số lượng sản phẩm.");
     },
   });
   const handleCheckboxChange = (id: number) => {
@@ -74,14 +98,20 @@ const Test = () => {
     if (selectAllDiscounted) {
       // Bỏ chọn tất cả sản phẩm đang giảm giá
       setSelectedProducts((prevSelected) =>
-        prevSelected.filter((productId) =>
-          !data?.san_pham_giam_gia.map((product:any) => product.id).includes(productId)
+        prevSelected.filter(
+          (productId) =>
+            !data?.san_pham_giam_gia
+              .map((product: any) => product.id)
+              .includes(productId)
         )
       );
     } else {
       // Chọn tất cả sản phẩm đang giảm giá
-      const allDiscountedIds = data?.san_pham_giam_gia.map((product: any) => product.id) || [];
-      setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allDiscountedIds])]);
+      const allDiscountedIds =
+        data?.san_pham_giam_gia.map((product: any) => product.id) || [];
+      setSelectedProducts((prevSelected) => [
+        ...new Set([...prevSelected, ...allDiscountedIds]),
+      ]);
     }
     setSelectAllDiscounted(!selectAllDiscounted);
   };
@@ -90,14 +120,20 @@ const Test = () => {
     if (selectAllRegular) {
       // Bỏ chọn tất cả sản phẩm nguyên giá
       setSelectedProducts((prevSelected) =>
-        prevSelected.filter((productId) =>
-          !data?.san_pham_nguyen_gia.map((product: any) => product.id).includes(productId)
+        prevSelected.filter(
+          (productId) =>
+            !data?.san_pham_nguyen_gia
+              .map((product: any) => product.id)
+              .includes(productId)
         )
       );
     } else {
       // Chọn tất cả sản phẩm nguyên giá
-      const allRegularIds = data?.san_pham_nguyen_gia.map((product: any) => product.id) || [];
-      setSelectedProducts((prevSelected) => [...new Set([...prevSelected, ...allRegularIds])]);
+      const allRegularIds =
+        data?.san_pham_nguyen_gia.map((product: any) => product.id) || [];
+      setSelectedProducts((prevSelected) => [
+        ...new Set([...prevSelected, ...allRegularIds]),
+      ]);
     }
     setSelectAllRegular(!selectAllRegular);
   };
@@ -106,7 +142,10 @@ const Test = () => {
     (data?.san_pham_giam_gia
       ?.filter((product: any) => selectedProducts.includes(product.id))
       .reduce(
-        (total: number, product: { gia_hien_tai: number; so_luong: number }) => {
+        (
+          total: number,
+          product: { gia_hien_tai: number; so_luong: number }
+        ) => {
           return total + product.gia_hien_tai * product.so_luong;
         },
         0
@@ -120,7 +159,6 @@ const Test = () => {
         0
       ) || 0);
 
-
   return (
     <section className="container mx-auto">
       <div className="lg:mx-16 mx-4 lg:my-16 my-8">
@@ -128,14 +166,14 @@ const Test = () => {
 
         {/* Thông báo */}
         <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-            <p className="font-bold text-green-600">
-              Chúc mừng! Đơn hàng của bạn được{" "}
-              <span className="text-green-700">Miễn phí vận chuyển</span>
-            </p>
-            <div className="bg-green-100 rounded-full h-2 mt-3">
-              <div className="bg-green-500 h-full w-full"></div>
-            </div>
+          <p className="font-bold text-green-600">
+            Chúc mừng! Đơn hàng của bạn được{" "}
+            <span className="text-green-700">Miễn phí vận chuyển</span>
+          </p>
+          <div className="bg-green-100 rounded-full h-2 mt-3">
+            <div className="bg-green-500 h-full w-full"></div>
           </div>
+        </div>
 
         {/* Khuyến mãi */}
         {/* <div className="flex items-center justify-between bg-red-100 text-red-600 px-6 py-4 rounded-lg mb-8">
@@ -158,7 +196,9 @@ const Test = () => {
                   className="form-checkbox h-5 w-5 text-yellow-500"
                   title="Select all discounted products"
                 />
-                <h2 className="font-bold text-xl mb-0 ml-2">Đang được giảm giá</h2>
+                <h2 className="font-bold text-xl mb-0 ml-2">
+                  Đang được giảm giá
+                </h2>
               </div>
 
               {data?.san_pham_giam_gia.map((product: any) => (
@@ -168,12 +208,12 @@ const Test = () => {
                 >
                   <div className="flex items-center gap-6">
                     <input
-                          type="checkbox"
-                          checked={selectedProducts.includes(product.id)}
-                          onChange={() => handleCheckboxChange(product.id)}
-                          className="form-checkbox h-5 w-5 text-yellow-500"
-                          title={`Select ${product.ten_san_pham}`}
-                        />
+                      type="checkbox"
+                      checked={selectedProducts.includes(product.id)}
+                      onChange={() => handleCheckboxChange(product.id)}
+                      className="form-checkbox h-5 w-5 text-yellow-500"
+                      title={`Select ${product.ten_san_pham}`}
+                    />
                     <img
                       src={product.hinh_anh}
                       alt="Ảnh sản phẩm"
@@ -184,15 +224,27 @@ const Test = () => {
                       <p className="text-sm text-gray-500">
                         {product.mau_sac}, {product.kich_thuoc}
                       </p>
-                      <p className="text-red-500 font-bold">{product.gia_khuyen_mai} ₫</p>
-                      <p className="text-gray-400 line-through">{product.gia_cu} ₫</p>
-                      <p className="text-sm text-red-500">Đã tiết kiệm: {product.tiet_kiem} ₫</p>
+                      <p className="text-red-500 font-bold">
+                        {product.gia_khuyen_mai} ₫
+                      </p>
+                      <p className="text-gray-400 line-through">
+                        {product.gia_cu} ₫
+                      </p>
+                      <p className="text-sm text-red-500">
+                        Đã tiết kiệm: {product.tiet_kiem} ₫
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                     <button
-                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      onClick={() =>
+                        decreaseQuantity({
+                          productId: product.id,
+                          currentQuantity: product.so_luong,
+                        })
+                      }
+                      className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                    >
                       −
                     </button>
                     <input
@@ -203,8 +255,14 @@ const Test = () => {
                       title={`Quantity of ${product.ten_san_pham}`}
                     />
                     <button
-                     onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      onClick={() =>
+                        increaseQuantity({
+                          productId: product.id,
+                          currentQuantity: product.so_luong,
+                        })
+                      }
+                      className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                    >
                       +
                     </button>
                   </div>
@@ -214,7 +272,6 @@ const Test = () => {
 
             {/* Danh mục sản phẩm nguyên giá */}
             <div className="bg-white p-6 rounded-lg shadow-md">
-             
               <div className="flex items-center mb-4">
                 <input
                   type="checkbox"
@@ -223,7 +280,9 @@ const Test = () => {
                   className="form-checkbox h-5 w-5 text-yellow-500"
                   title="Select all regular priced products"
                 />
-                 <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm nguyên giá</h2>
+                <h2 className="font-bold text-xl mb-0 ml-2">
+                  Sản phẩm nguyên giá
+                </h2>
               </div>
               {data?.san_pham_nguyen_gia.map((product: any) => (
                 <div
@@ -248,13 +307,21 @@ const Test = () => {
                       <p className="text-sm text-gray-500">
                         {product.mau_sac}, {product.kich_thuoc}
                       </p>
-                      <p className="text-black font-bold">{product.gia_ban} ₫</p>
+                      <p className="text-black font-bold">
+                        {product.gia_ban} ₫
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                     <button
-                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      onClick={() =>
+                        decreaseQuantity({
+                          productId: product.id,
+                          currentQuantity: product.so_luong,
+                        })
+                      }
+                      className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                    >
                       −
                     </button>
                     <input
@@ -265,8 +332,14 @@ const Test = () => {
                       title={`Quantity of ${product.ten_san_pham}`}
                     />
                     <button
-                    onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      onClick={() =>
+                        increaseQuantity({
+                          productId: product.id,
+                          currentQuantity: product.so_luong,
+                        })
+                      }
+                      className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                    >
                       +
                     </button>
                   </div>

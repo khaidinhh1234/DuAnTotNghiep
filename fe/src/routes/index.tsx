@@ -149,6 +149,8 @@ import Page3 from "@/pages/(website)/Shopuudai/shop";
 import HoanTien from "@/pages/(website)/myOrder/_components/Hoan";
 import ReturnOrders from "@/pages/(van_chuyen)/ReturnOrders";
 import ReturnOrders1 from "@/pages/(dashboard)/dohoan/hoanhang/page";
+import Danhgia from "@/pages/(website)/myOrder/_components/Danhgia";
+import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
 
 const Router = () => {
   //
@@ -201,6 +203,7 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
+            <Route path="/mypro/danhgia/:slug" element={<Danhgias />} />
             {/* <Route path="/mypro/hoanhang/:slug" element={<HoanTien />} /> */}
             <Route path="/mypro/hoanhang/:slug" element={<HoanTien />} />
             {/* <Route path="/mypro/wallet" element={<TaiChinh />} />
@@ -318,7 +321,6 @@ const Router = () => {
           <Route path="orders/donhoan" element={<RefundRequests />} />
           <Route path="orders/collect" element={<Collect />} />
           <Route path="orders/hoanhang" element={<ReturnOrders1 />} />
-
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
           <Route path="add-vocher" element={<AddVoucher />} />
@@ -442,7 +444,6 @@ const Router = () => {
         <Route path="/shipper" element={<Shipper />} />
         <Route path="/shipper2" element={<AllTransport />} />
         <Route path="/return-orders" element={<ReturnOrders />} />
-
         <Route path="/test2" element={<Test4 />} />
       </Routes>
     </>

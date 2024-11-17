@@ -50,6 +50,7 @@ const MyProfilePage = () => {
   const nav = useNavigate();
   const updateProfileMutation = useMutation({
     mutationFn: async (formData: ProfileFormData) => {
+      try {
       let imageUrl = avatarImage;
 
       if (avatarFile) {
@@ -83,6 +84,9 @@ const MyProfilePage = () => {
       }));
 
       return response.data;
+    }catch (error: any) {
+      throw new Error("Cập nhật thông tin thất bại");
+    }
     },
     onSuccess: () => {
       message.success("Cập nhật thông tin thành công");

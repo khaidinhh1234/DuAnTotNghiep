@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 const TransportDetail = ({ record }: any) => {
-  console.log("record:", record)
+  console.log("record:", record);
   const [modalWidth, setModalWidth] = useState(400);
 
   useEffect(() => {
@@ -38,35 +38,46 @@ const TransportDetail = ({ record }: any) => {
   console.log(data);
   const vanChuyenData = data?.data?.van_chuyen;
   console.log(vanChuyenData);
-  const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map((item: any) => {
-    return {
-      ...item,
-    };
-  });
-  const thongtin = data?.data?.thong_tin
-  console.log(thongtin)
+  const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map(
+    (item: any) => {
+      return {
+        ...item,
+      };
+    }
+  );
+  const thongtin = data?.data?.thong_tin;
+  console.log(thongtin);
   const donhang = data?.data?.van_chuyen?.don_hang;
 
-  const vanchuyen = data?.data?.van_chuyen
+  const vanchuyen = data?.data?.van_chuyen;
 
-  const webcam = data?.data?.anh_xac_thuc
-  console.log(webcam)
+  const webcam = data?.data?.anh_xac_thuc;
+  console.log(webcam);
   const handleCancel = () => {
     setOpen(false);
   };
   const { mutateAsync: mutate } = useMutation({
-    mutationFn: async ({ id, action, imageUrl, failedAttempts, notes }: any) => {
+    mutationFn: async ({
+      id,
+      action,
+      imageUrl,
+      failedAttempts,
+      notes,
+    }: any) => {
       try {
         let response;
         const shipperXacNhan = failedAttempts >= 3 ? "2" : "1";
         if (action === "Xác nhận giao hàng") {
-          response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${id}`, {
-            anh_xac_thuc: imageUrl,
-            shipper_xac_nhan: shipperXacNhan,
-            ghi_chu: notes,
-            id: [id],
-            failedAttempts,
-          });
+          response = await instance.put(
+            `/vanchuyen/xac-nhan-van-chuyen/${id}`,
+            {
+              anh_xac_thuc: imageUrl,
+              shipper_xac_nhan: shipperXacNhan,
+              ghi_chu: notes,
+              id: [id],
+              failedAttempts,
+            }
+          );
         } else {
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
             trang_thai_van_chuyen: action,
@@ -98,7 +109,7 @@ const TransportDetail = ({ record }: any) => {
   const [failedAttemptsNotes, setFailedAttemptsNotes] = useState<string[]>([]);
   // const [note, setNote] = useState(""); // Để lưu ghi chú
   const [notes, setNotes] = useState(() => {
-    const savedNotes = localStorage.getItem('deliveryNotes');
+    const savedNotes = localStorage.getItem("deliveryNotes");
     return savedNotes ? JSON.parse(savedNotes) : [];
   });
   const [currentNote, setCurrentNote] = useState(""); // Để lưu ghi chú hiện tại
@@ -107,7 +118,8 @@ const TransportDetail = ({ record }: any) => {
   // const [noteCount, setNoteCount] = useState(0);
   const [isSuccessDeliveryOpen, setIsSuccessDeliveryOpen] = useState(false);
   const [isFailureDeliveryOpen, setIsFailureDeliveryOpen] = useState(false);
-  const [isDeliveryButtonsVisible, setIsDeliveryButtonsVisible] = useState(true);
+  const [isDeliveryButtonsVisible, setIsDeliveryButtonsVisible] =
+    useState(true);
   // Thay đổi label của nút dựa trên số lần gửi ghi chú
   const [buttonLabel, setButtonLabel] = useState("Gửi ghi chú");
   const [noteSubmissionCount, setNoteSubmissionCount] = useState(0);
@@ -216,12 +228,15 @@ const TransportDetail = ({ record }: any) => {
 
       // Gửi ghi chú lên server
       const ghiChuCapNhat = updatedNotes.map((note, index) => ({
-        [`lan${index + 1}`]: note
+        [`lan${index + 1}`]: note,
       }));
-      const response = await instance.put(`/vanchuyen/xac-nhan-van-chuyen/${record.id}`, {
-        ghi_chu: ghiChuCapNhat,
-        shipper_xac_nhan: "2",
-      });
+      const response = await instance.put(
+        `/vanchuyen/xac-nhan-van-chuyen/${record.id}`,
+        {
+          ghi_chu: ghiChuCapNhat,
+          shipper_xac_nhan: "2",
+        }
+      );
 
       if (response.data.status) {
         message.success("Ghi chú đã được gửi thành công");
@@ -240,7 +255,7 @@ const TransportDetail = ({ record }: any) => {
     } finally {
       setLoading(false);
     }
-  }
+  };
   return (
     <div>
       {" "}
@@ -248,24 +263,36 @@ const TransportDetail = ({ record }: any) => {
         <div className="relative">
           <div className="relative flex flex-col md:flex-row justify-between md:items-center">
             <h1 className="text-base md:text-lg">
-              Mã Vận chuyển: <span>{vanChuyenData ? vanChuyenData.ma_van_chuyen : "Loading..."}</span> <br />
-              Ngày tạo: <span>{vanChuyenData ? new Date(vanChuyenData.ngay_tao).toLocaleDateString("vi-VN") : "Loading..."}</span>
+              Mã Vận chuyển:{" "}
+              <span>
+                {vanChuyenData ? vanChuyenData.ma_van_chuyen : "Loading..."}
+              </span>{" "}
+              <br />
+              Ngày tạo:{" "}
+              <span>
+                {vanChuyenData
+                  ? new Date(vanChuyenData.ngay_tao).toLocaleDateString("vi-VN")
+                  : "Loading..."}
+              </span>
             </h1>
 
-            <div className="mt-2 md:mt-0 text-left md:text-right"> {/* Thêm khoảng cách khi chuyển xuống dưới ở mobile */}
+            <div className="mt-2 md:mt-0 text-left md:text-right">
+              {" "}
+              {/* Thêm khoảng cách khi chuyển xuống dưới ở mobile */}
               <div>
                 <span
                   className={`font-bold
-          ${vanchuyen?.trang_thai_van_chuyen === 'Chờ xử lý' ? 'text-yellow-500' : ''}
-          ${vanchuyen?.trang_thai_van_chuyen === 'Đang giao hàng' ? 'text-blue-500' : ''}
-          ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thành công' ? 'text-green-500' : ''}
-          ${vanchuyen?.trang_thai_van_chuyen === 'Giao hàng thất bại' ? 'text-red-500' : ''}
+          ${vanchuyen?.trang_thai_van_chuyen === "Chờ xử lý" ? "text-yellow-500" : ""}
+          ${vanchuyen?.trang_thai_van_chuyen === "Đang giao hàng" ? "text-blue-500" : ""}
+          ${vanchuyen?.trang_thai_van_chuyen === "Giao hàng thành công" ? "text-green-500" : ""}
+          ${vanchuyen?.trang_thai_van_chuyen === "Giao hàng thất bại" ? "text-red-500" : ""}
         `}
                 >
-                  {vanchuyen ? vanchuyen.trang_thai_van_chuyen : "Không có dữ liệu"}
+                  {vanchuyen
+                    ? vanchuyen.trang_thai_van_chuyen
+                    : "Không có dữ liệu"}
                 </span>
               </div>
-
               <p className="text-xs md:text-lg text-gray-800">
                 Tổng số tiền ({data?.data?.tong_so_luong} sản phẩm):{" "}
                 {data?.data?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
@@ -285,12 +312,21 @@ const TransportDetail = ({ record }: any) => {
                     />
                     <div className="flex flex-col justify-between w-full">
                       <h3 className="text-sm md:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
-                        {product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Unknown Product"}
+                        {product?.bien_the_san_pham?.san_pham?.ten_san_pham ||
+                          "Unknown Product"}
                       </h3>
 
                       <div className="text-xs md:text-base text-gray-500 mt-1">
-                        Size: <span>{product?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc || "N/A"}</span>,
-                        Màu: <span>{product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac || "N/A"}</span>
+                        Size:{" "}
+                        <span>
+                          {product?.bien_the_san_pham?.kich_thuoc_bien_the
+                            ?.kich_thuoc || "N/A"}
+                        </span>
+                        , Màu:{" "}
+                        <span>
+                          {product?.bien_the_san_pham?.mau_bien_the
+                            ?.ten_mau_sac || "N/A"}
+                        </span>
                       </div>
 
                       <span className="text-xs md:text-lg text-gray-500 mt-1">
@@ -299,10 +335,16 @@ const TransportDetail = ({ record }: any) => {
 
                       <div className="flex items-end mt-2">
                         <span className="text-xs md:text-base text-gray-500 line-through mr-1">
-                          ₫{product?.bien_the_san_pham?.gia_ban?.toLocaleString("vi-VN") || "0"}
+                          ₫
+                          {product?.bien_the_san_pham?.gia_ban?.toLocaleString(
+                            "vi-VN"
+                          ) || "0"}
                         </span>
                         <span className="text-base md:text-xl font-semibold text-red-500">
-                          ₫{product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString("vi-VN") || "0"}
+                          ₫
+                          {product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString(
+                            "vi-VN"
+                          ) || "0"}
                         </span>
                       </div>
                     </div>
@@ -312,12 +354,9 @@ const TransportDetail = ({ record }: any) => {
                 <p>Loading...</p>
               )}
             </div>
-
           </div>
         </div>
       </p>
-
-
       <Modal
         centered
         open={open}
@@ -334,7 +373,9 @@ const TransportDetail = ({ record }: any) => {
           </div>
           <div className="bg-white rounded-md shadow-md p-4 mt-4">
             <div>
-              <p className="text-gray-700 font-semibold">Thông tin vận chuyển</p>
+              <p className="text-gray-700 font-semibold">
+                Thông tin vận chuyển
+              </p>
               <p className="text-gray-500 text-sm">
                 Glow clothing Express: SPXVN042195340009
               </p>
@@ -344,34 +385,36 @@ const TransportDetail = ({ record }: any) => {
               <p className="text-gray-700 font-semibold">Địa chỉ nhận hàng</p>
               <p className="text-gray-500 text-sm">
                 {record.van_chuyen?.don_hang?.ten_nguoi_dat_hang
-                  ? `${record.van_chuyen.don_hang.ten_nguoi_dat_hang} - ${record.van_chuyen.don_hang.so_dien_thoai_nguoi_dat_hang || ''}`
-                  : `${thongtin?.ten_nguoi_dat_hang || ''} (+${thongtin?.so_dien_thoai_nguoi_dat_hang || ''})`}
+                  ? `${record.van_chuyen.don_hang.ten_nguoi_dat_hang} - ${record.van_chuyen.don_hang.so_dien_thoai_nguoi_dat_hang || ""}`
+                  : `${thongtin?.ten_nguoi_dat_hang || ""} (+${thongtin?.so_dien_thoai_nguoi_dat_hang || ""})`}
               </p>
-
               <p className="text-gray-500 text-sm">
                 {record.van_chuyen?.don_hang?.dia_chi_nguoi_dat_hang
                   ? record.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
-                  : thongtin?.dia_chi_nguoi_dat_hang
-                }
+                  : thongtin?.dia_chi_nguoi_dat_hang}
               </p>{" "}
               <p className="text-gray-500 text-sm">
-                ghi chú : {record?.van_chuyen?.don_hang.ghi_chu
+                ghi chú :{" "}
+                {record?.van_chuyen?.don_hang.ghi_chu
                   ? record.van_chuyen?.don_hang.ghi_chu
-                  : donhang?.ghi_chu
-                }
+                  : donhang?.ghi_chu}
               </p>
             </div>
           </div>
           {/* Product Info */}
           <div className="bg-white rounded-md shadow-md p-4 mt-4 relative">
             <p className="text-gray-700 font-semibold mb-2 text-base">
-              Mã đơn hàng: <span>{donhang ? donhang.ma_don_hang : "Không có dữ liệu"}</span>
+              Mã đơn hàng:{" "}
+              <span>{donhang ? donhang.ma_don_hang : "Không có dữ liệu"}</span>
             </p>
             <div className="flex items-start space-x-4 mb-2 border-b pb-5">
               <div>
                 {products ? (
                   products.map((product: any) => (
-                    <div key={product.id} className="flex flex-col sm:flex-row mb-4 border-b pb-4">
+                    <div
+                      key={product.id}
+                      className="flex flex-col sm:flex-row mb-4 border-b pb-4"
+                    >
                       <img
                         src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
                         alt="Product Image"
@@ -379,19 +422,36 @@ const TransportDetail = ({ record }: any) => {
                       />
                       <div className="flex flex-col justify-between w-full">
                         <h3 className="text-sm sm:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
-                          {product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Unknown Product"}
+                          {product?.bien_the_san_pham?.san_pham?.ten_san_pham ||
+                            "Unknown Product"}
                         </h3>
                         <div className="text-xs sm:text-base text-gray-500 mt-1">
-                          Size: <span>{product?.bien_the_san_pham?.kich_thuoc_bien_the?.kich_thuoc || "N/A"}</span>, Màu:{" "}
-                          <span>{product?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac || "N/A"}</span>
+                          Size:{" "}
+                          <span>
+                            {product?.bien_the_san_pham?.kich_thuoc_bien_the
+                              ?.kich_thuoc || "N/A"}
+                          </span>
+                          , Màu:{" "}
+                          <span>
+                            {product?.bien_the_san_pham?.mau_bien_the
+                              ?.ten_mau_sac || "N/A"}
+                          </span>
                         </div>
-                        <span className="text-xs sm:text-lg text-gray-500 mt-1">x{product.so_luong}</span>
+                        <span className="text-xs sm:text-lg text-gray-500 mt-1">
+                          x{product.so_luong}
+                        </span>
                         <div className="flex items-end mt-2">
                           <span className="text-xs sm:text-base text-gray-500 line-through mr-1">
-                            ₫{product?.bien_the_san_pham?.gia_ban?.toLocaleString("vi-VN") || "0"}
+                            ₫
+                            {product?.bien_the_san_pham?.gia_ban?.toLocaleString(
+                              "vi-VN"
+                            ) || "0"}
                           </span>
                           <span className="text-base sm:text-xl font-semibold text-red-500">
-                            ₫{product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString("vi-VN") || "0"}
+                            ₫
+                            {product?.bien_the_san_pham?.gia_khuyen_mai?.toLocaleString(
+                              "vi-VN"
+                            ) || "0"}
                           </span>
                         </div>
                       </div>
@@ -402,19 +462,24 @@ const TransportDetail = ({ record }: any) => {
                 )}
               </div>
 
-
               {/* Thành tiền and Tổng tiền COD in the bottom right corner */}
               <div className="absolute bottom-4 right-4 text-right">
                 <p className="md:text-lg text-gray-700">
                   Thành tiền:{" "}
                   <span className="font-semibold text-red-500">
-                    {vanchuyen?.tien_cod ? vanchuyen.tien_cod.toLocaleString("vn-VN") : "0"} ₫
+                    {vanchuyen?.tien_cod
+                      ? vanchuyen.tien_cod.toLocaleString("vn-VN")
+                      : "0"}{" "}
+                    ₫
                   </span>
                 </p>
                 <p className="md:text-lg font-bold text-gray-700 mt-1">
                   Tổng tiền COD:{" "}
                   <span className="font-bold text-red-500">
-                    {vanchuyen?.tien_cod ? vanchuyen.tien_cod.toLocaleString("vn-VN") : "0"} ₫
+                    {vanchuyen?.tien_cod
+                      ? vanchuyen.tien_cod.toLocaleString("vn-VN")
+                      : "0"}{" "}
+                    ₫
                   </span>
                 </p>
               </div>
@@ -425,7 +490,8 @@ const TransportDetail = ({ record }: any) => {
           <div className="flex justify-between mt-4">
             <div className="flex flex-col gap-2 w-full">
               {/* Nút Giao hàng */}
-              {record.trang_thai_van_chuyen === "Chờ xử lý" || record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
+              {record.trang_thai_van_chuyen === "Chờ xử lý" ||
+              record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
                 <button
                   className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
                   onClick={() => {
@@ -435,7 +501,8 @@ const TransportDetail = ({ record }: any) => {
                 >
                   Giao hàng
                 </button>
-              ) : record.trang_thai_van_chuyen === "Đang giao hàng" && isDeliveryButtonsVisible ? (
+              ) : record.trang_thai_van_chuyen === "Đang giao hàng" &&
+                isDeliveryButtonsVisible ? (
                 <div className="flex gap-2">
                   {/* Nút Giao hàng thất bại */}
                   <button
@@ -467,7 +534,11 @@ const TransportDetail = ({ record }: any) => {
                     <div className="relative mx-auto mt-6">
                       {url ? (
                         <div className="relative">
-                          <img src={url} alt="Ảnh chụp" className="w-60 rounded-lg" />
+                          <img
+                            src={url}
+                            alt="Ảnh chụp"
+                            className="w-60 rounded-lg"
+                          />
                           <div className="absolute bottom-[-30px] inset-x-0 flex justify-center items-center">
                             <button
                               onClick={removePhoto}
@@ -505,7 +576,9 @@ const TransportDetail = ({ record }: any) => {
                     onClick={handleSave}
                     disabled={loading || isImageSaved}
                   >
-                    {loading ? "Đang xử lý..." : "Xác nhận giao hàng thành công"}
+                    {loading
+                      ? "Đang xử lý..."
+                      : "Xác nhận giao hàng thành công"}
                   </button>
                   {isImageSaved && (
                     <Image
@@ -538,8 +611,10 @@ const TransportDetail = ({ record }: any) => {
                     <div className="mt-4">
                       <h3 className="font-semibold">Danh sách ghi chú:</h3>
                       <ul className="list-disc pl-5">
-                        {notes.map((note, index) => (
-                          <li key={index} className="mt-1">{note}</li>
+                        {notes.map((note: any, index: number) => (
+                          <li key={index} className="mt-1">
+                            {note}
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -548,7 +623,6 @@ const TransportDetail = ({ record }: any) => {
               )}
             </div>
           </div>
-
         </div>
       </Modal>
     </div>
