@@ -34,11 +34,5 @@ class DanhMuc extends Model
     {
         return $this->hasMany(SanPham::class, 'danh_muc_id', 'id');
     }
-
-    // Quan hệ với danh mục ông (cha của cha)
-    public function grandparents()
-    {
-        return $this->parent()->parent(); // Lấy "cha của cha", tức là ông
-    }
 }
 
