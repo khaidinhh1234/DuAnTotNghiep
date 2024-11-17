@@ -47,11 +47,15 @@ const ListMyProfile = ({ member }: any) => {
 
   const updateAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
-      const imageUrl = await uploadToCloudinary(file);
-      await instanceClient.post("/cap-nhat-thong-tin", {
-        anh_nguoi_dung: imageUrl,
-      });
-      return imageUrl;
+      try {
+        const imageUrl = await uploadToCloudinary(file);
+        await instanceClient.post("/cap-nhat-thong-tin", {
+          anh_nguoi_dung: imageUrl,
+        });
+        return imageUrl;
+      } catch (error: any) {
+        throw new Error("Không thể cập nhật ảnh đại diện");
+      }
     },
     onSuccess: (imageUrl) => {
       setUser((prev: any) => ({

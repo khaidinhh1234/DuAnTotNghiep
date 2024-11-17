@@ -1,4 +1,3 @@
-
 // import instance from "@/configs/admin";
 // import { uploadToCloudinary } from "@/configs/cloudinary";
 // import { UploadOutlined } from "@ant-design/icons";
@@ -6,7 +5,6 @@
 // import { Button, Form, Input, message, Spin, Upload, Select } from "antd";
 // import { useState, useEffect } from "react";
 // import { Link, useNavigate } from "react-router-dom";
-
 
 // const Tagsadd = () => {
 //   const [form] = Form.useForm();
@@ -86,7 +84,6 @@
 //       form.setFieldsValue({ san_pham: [] });
 //     }
 //   };
-  
 
 //   return (
 //     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -147,7 +144,7 @@
 //                   maxCount={1}
 //                   beforeUpload={() => false}
 //                 >
-//                   <Button>  
+//                   <Button>
 //                     <UploadOutlined /> tải ảnh
 //                   </Button>
 //                 </Upload>
@@ -181,7 +178,6 @@
 //   </div>
 // </Form.Item>
 
-
 //               <Form.Item>
 //                 <Button
 //                   type="primary"
@@ -205,7 +201,16 @@ import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, message, Spin, Upload, Select, Modal } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Spin,
+  Upload,
+  Select,
+  Modal,
+} from "antd";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -213,33 +218,42 @@ const Tagsadd = () => {
   const [form] = Form.useForm();
   const nav = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [productOptions, setProductOptions] = useState<{ value: string; label: string }[]>([]);
+  const [productOptions, setProductOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
+  const [previewImage, setPreviewImage] = useState("");
 
   const { data: productsData, isLoading: productsLoading } = useQuery({
-    queryKey: ['products'],
+    queryKey: ["products"],
     queryFn: async () => {
-      const response = await instance.get('/sanpham');
+      const response = await instance.get("/sanpham");
       return response.data;
     },
   });
 
   useEffect(() => {
     if (productsData && productsData.data) {
-      const options = productsData.data.map((product: { id: string; ten_san_pham: string }) => ({
-        value: product.id,
-        label: product.ten_san_pham
-      }));
+      const options = productsData.data.map(
+        (product: { id: string; ten_san_pham: string }) => ({
+          value: product.id,
+          label: product.ten_san_pham,
+        })
+      );
       setProductOptions(options);
     }
   }, [productsData]);
 
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
-      const response = await instance.post(`/bosuutap`, data);
-      return response.data;
+      try {
+        const response = await instance.post(`/bosuutap`, data);
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Thêm bộ sưu tập thất bại");
+      }
     },
     onSuccess: () => {
       message.success("Thêm bộ sưu tập thành công");
@@ -282,7 +296,9 @@ const Tagsadd = () => {
 
   const handleSelectAll = () => {
     if (selectedProducts.length < productOptions.length) {
-      const allProductIds = productOptions.map((option: { value: string }) => option.value);
+      const allProductIds = productOptions.map(
+        (option: { value: string }) => option.value
+      );
       setSelectedProducts(allProductIds);
       form.setFieldsValue({ san_pham: allProductIds });
     } else {
@@ -305,7 +321,7 @@ const Tagsadd = () => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
+      reader.onerror = (error) => reject(error);
     });
   };
 
@@ -376,27 +392,38 @@ const Tagsadd = () => {
               <Form.Item
                 label="Chọn sản phẩm"
                 name="san_pham"
-                rules={[{ required: true, message: "Vui lòng chọn ít nhất một sản phẩm!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ít nhất một sản phẩm!",
+                  },
+                ]}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
                   <Select
                     mode="multiple"
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     placeholder="Chọn sản phẩm"
                     loading={productsLoading}
                     options={productOptions}
                     onChange={handleSelectChange}
                     value={selectedProducts}
                     filterOption={(input, option: any) =>
-                      option?.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      option?.label
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
                     }
                     showSearch
                   />
                   <Button
                     onClick={handleSelectAll}
-                    style={{ whiteSpace: 'nowrap' }}
+                    style={{ whiteSpace: "nowrap" }}
                   >
-                    {selectedProducts.length === productOptions.length ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
+                    {selectedProducts.length === productOptions.length
+                      ? "Bỏ chọn tất cả"
+                      : "Chọn tất cả"}
                   </Button>
                 </div>
               </Form.Item>
@@ -408,7 +435,13 @@ const Tagsadd = () => {
                   className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? <><Spin size="small"/> Đang Thêm...</> : "Thêm"}
+                  {isSubmitting ? (
+                    <>
+                      <Spin size="small" /> Đang Thêm...
+                    </>
+                  ) : (
+                    "Thêm"
+                  )}
                 </Button>
               </Form.Item>
             </Form>
@@ -422,7 +455,7 @@ const Tagsadd = () => {
         footer={null}
         onCancel={() => setPreviewVisible(false)}
       >
-        <img alt="preview" style={{ width: '100%' }} src={previewImage} />
+        <img alt="preview" style={{ width: "100%" }} src={previewImage} />
       </Modal>
     </main>
   );

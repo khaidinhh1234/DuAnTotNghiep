@@ -13,16 +13,18 @@ const NewCategoriesAdd = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (category: NewCategories) => {
-      const response = await instance.post(`/danhmuctintuc`, category);
-      return response.data;
+      try {
+        const response = await instance.post(`/danhmuctintuc`, category);
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Thêm danh mục thất bại");
+      }
     },
     onSuccess: () => {
       message.success("Thêm danh mục thành công");
       form.resetFields();
       nav("/admin/newcategory/add");
-    },
-    onError: (error) => {
-      message.error(error.message);
     },
   });
   // const onFinish = (values: any) => {

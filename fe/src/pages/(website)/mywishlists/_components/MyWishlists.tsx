@@ -25,8 +25,8 @@ const MyWishlistsPage = ({ yeuthich }: any) => {
         const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
         message.success("Xóa sản phẩm yêu thích thành công");
         return response.data;
-      } catch (error) {
-        console.error("API error", error); // Thêm log lỗi API
+      } catch (error: any) {
+        message.error(error.response.data.message);
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
     },

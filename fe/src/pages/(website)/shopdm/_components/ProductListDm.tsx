@@ -3,7 +3,13 @@ import { Pagination } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
-const ProductsListDM = ({ products, Wishlist, isPending, data, onPage }: any) => {
+const ProductsListDM = ({
+  products,
+  Wishlist,
+  isPending,
+  data,
+  onPage,
+}: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
@@ -16,30 +22,7 @@ const ProductsListDM = ({ products, Wishlist, isPending, data, onPage }: any) =>
   const handleWishlist = (id: any) => {
     Wishlist(id) as any;
   };
-  const itemRender: PaginationProps["itemRender"] = (
-    _,
-    type,
-    originalElement
-  ) => {
-    if (type === "prev") {
-      return <a>Trước</a>;
-    }
-    if (type === "next") {
-      return <a>Tiếp</a>;
-    }
 
-    return originalElement;
-  };
-  const [currentPage, setCurrentPage] = useState(data?.current_page ?? 1); // Trang hiện tại
-  const [pageSize, setPageSize] = useState(data?.per_page); // Số lượng sản phẩm mỗi trang
-
-  const onChange = (page: number, pageSize: number) => {
-    setCurrentPage(page);
-    setPageSize(pageSize);
-    onPage(page);
-    // console.log(`Page: ${page}, PageSize: ${pageSize}`);
-    // Thực hiện xử lý dữ liệu dựa trên trang và số lượng sản phẩm mỗi trang
-  };
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4  overflow-hidden">
@@ -75,7 +58,7 @@ const ProductsListDM = ({ products, Wishlist, isPending, data, onPage }: any) =>
                           />
                         </span>
                       )}
-                     
+
                       {/* <View id={product?.duong_dan} ID={product?.id} /> */}
                       <Link to={`/product-detail/${product?.duong_dan}`}>
                         <div className="relative">
@@ -173,18 +156,12 @@ const ProductsListDM = ({ products, Wishlist, isPending, data, onPage }: any) =>
           </div>
 
           {/* <!-- Pagination --> */}
-          <div className="flex justify-end mt-10">
-            <Pagination
-              total={data?.data?.total ?? 0}
-              current={currentPage}
-              pageSize={pageSize}
-              itemRender={itemRender}
-              onChange={onChange}
-            />
-            {/* {hasNextPage && (
+          {/* <div className="flex justify-end mt-10"> */}
+
+          {/* {hasNextPage && (
         <button onClick={() => fetchNextPage()}>Tải thêm đơn hàng</button>
       )} */}
-          </div>
+          {/* </div> */}
         </div>
       </section>
     </>

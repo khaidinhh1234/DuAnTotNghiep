@@ -1,4 +1,3 @@
-
 import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -96,6 +95,7 @@ const UsersRemoteNhanvien: React.FC = () => {
         });
         return res.data;
       } catch (error) {
+        message.error("Khôi phục thất bại");
         console.log(error);
       }
     },

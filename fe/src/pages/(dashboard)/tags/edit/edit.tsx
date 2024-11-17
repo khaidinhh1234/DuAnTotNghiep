@@ -1,4 +1,3 @@
-
 // import React, { useState, useEffect } from "react";
 // import instance from "@/configs/admin";
 // import { uploadToCloudinary } from "@/configs/cloudinary";
@@ -154,7 +153,7 @@
 //                   onChange={handleChange}
 //                   beforeUpload={() => false}
 //                   maxCount={1}
-                  
+
 //                 >
 //                   {fileList.length === 0 && (
 //                     <div>
@@ -164,8 +163,6 @@
 //                   )}
 //                 </Upload>
 //               </Form.Item>
-
-   
 
 //               <Form.Item>
 //                 <Button
@@ -200,7 +197,16 @@ import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { UploadOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, message, Upload, Modal, Spin, Select } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Upload,
+  Modal,
+  Spin,
+  Select,
+} from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 const Tagsedit: React.FC = () => {
@@ -211,10 +217,16 @@ const Tagsedit: React.FC = () => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [productOptions, setProductOptions] = useState<{ value: string; label: string }[]>([]);
+  const [productOptions, setProductOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
-  const { data: tagData, isLoading: tagLoading, isError: tagError } = useQuery({
+  const {
+    data: tagData,
+    isLoading: tagLoading,
+    isError: tagError,
+  } = useQuery({
     queryKey: ["tag", id],
     queryFn: async () => {
       try {
@@ -228,19 +240,21 @@ const Tagsedit: React.FC = () => {
   });
 
   const { data: productsData, isLoading: productsLoading } = useQuery({
-    queryKey: ['products'],
+    queryKey: ["products"],
     queryFn: async () => {
-      const response = await instance.get('/sanpham');
+      const response = await instance.get("/sanpham");
       return response.data;
     },
   });
 
   useEffect(() => {
     if (productsData && productsData.data) {
-      const options = productsData.data.map((product: { id: string; ten_san_pham: string }) => ({
-        value: product.id,
-        label: product.ten_san_pham
-      }));
+      const options = productsData.data.map(
+        (product: { id: string; ten_san_pham: string }) => ({
+          value: product.id,
+          label: product.ten_san_pham,
+        })
+      );
       setProductOptions(options);
     }
   }, [productsData]);
@@ -250,14 +264,14 @@ const Tagsedit: React.FC = () => {
       const tagProducts = tagData.data.san_pham || [];
       const selectedProductIds = tagProducts.map((product: any) => product.id);
       setSelectedProducts(selectedProductIds);
-      
+
       setImageUrl(tagData.data.duong_dan_anh);
       if (tagData.data.duong_dan_anh) {
         setFileList([
           {
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
+            uid: "-1",
+            name: "image.png",
+            status: "done",
             url: tagData.data.duong_dan_anh,
           },
         ]);
@@ -272,8 +286,13 @@ const Tagsedit: React.FC = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (data: any) => {
-      const response = await instance.put(`/bosuutap/` + id, data);
-      return response.data;
+      try {
+        const response = await instance.put(`/bosuutap/` + id, data);
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Error updating tag");
+      }
     },
     onSuccess: () => {
       message.success("Cập nhật bộ sưu tập thành công");
@@ -328,7 +347,9 @@ const Tagsedit: React.FC = () => {
 
   const handleSelectAll = () => {
     if (selectedProducts.length < productOptions.length) {
-      const allProductIds = productOptions.map((option: { value: string }) => option.value);
+      const allProductIds = productOptions.map(
+        (option: { value: string }) => option.value
+      );
       setSelectedProducts(allProductIds);
       form.setFieldsValue({ san_pham: allProductIds });
     } else {
@@ -338,7 +359,7 @@ const Tagsedit: React.FC = () => {
   };
 
   // if (tagLoading || productsLoading) return <p>Loading...</p>;
-  
+
   if (tagLoading || productsLoading)
     return (
       <div className="flex items-center justify-center mt-[250px]">
@@ -348,8 +369,8 @@ const Tagsedit: React.FC = () => {
   if (tagError) return <p>Error loading tag data</p>;
 
   return (
-          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-        <div className="flex items-center">
+    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+      <div className="flex items-center">
         <h1 className="md:text-base">
           Quản trị /Bộ sưu tập /
           <span className="font-semibold px-px"> Bộ sưu tập</span>
@@ -366,86 +387,114 @@ const Tagsedit: React.FC = () => {
         </div>
       </div>
       <div>
-        <div style={{ padding: 24, minHeight: 360 }}>           <div className="bg-white px-4 rounded-xl py-5 shadow-lg max-w-2xl">
-        <Form
-        form={form}
-        name="basic"
-        layout="vertical"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 24 }}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          label="Tên bộ sưu tập"
-          name="ten"
-          rules={[{ required: true, message: "Vui lòng nhập tên bộ sưu tập!" }]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Ảnh" name="imageFile">
-          <Upload
-            listType="picture-card"
-            fileList={fileList}
-            onPreview={handlePreview}
-            onChange={handleChange}
-            beforeUpload={() => false}
-          >
-            {fileList.length === 0 && <div>
-              <UploadOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
-            </div>}
-          </Upload>
-        </Form.Item>
-        
-        <Form.Item
-          label="Chọn sản phẩm"
-          name="san_pham"
-          rules={[{ required: true, message: "Vui lòng chọn ít nhất một sản phẩm!" }]}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Select
-              mode="multiple"
-              style={{ width: '100%' }}
-              placeholder="Chọn sản phẩm"
-              options={productOptions}
-              onChange={handleSelectChange}
-              value={selectedProducts}
-              filterOption={(input, option: any) =>
-                option?.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              showSearch
-            />
-            <Button
-              onClick={handleSelectAll}
-              style={{ whiteSpace: 'nowrap' }}
+        <div style={{ padding: 24, minHeight: 360 }}>
+          {" "}
+          <div className="bg-white px-4 rounded-xl py-5 shadow-lg max-w-2xl">
+            <Form
+              form={form}
+              name="basic"
+              layout="vertical"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 24 }}
+              onFinish={onFinish}
             >
-              {selectedProducts.length === productOptions.length ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
-            </Button>
-          </div>
-        </Form.Item>
+              <Form.Item
+                label="Tên bộ sưu tập"
+                name="ten"
+                rules={[
+                  { required: true, message: "Vui lòng nhập tên bộ sưu tập!" },
+                ]}
+              >
+                <Input />
+              </Form.Item>
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? <><Spin size="small"/>Đang cập nhật...</> : "Cập nhật"}
-          </Button>
-        </Form.Item>
-      </Form>
-           </div>
-           </div>
-                 </div>
+              <Form.Item label="Ảnh" name="imageFile">
+                <Upload
+                  listType="picture-card"
+                  fileList={fileList}
+                  onPreview={handlePreview}
+                  onChange={handleChange}
+                  beforeUpload={() => false}
+                >
+                  {fileList.length === 0 && (
+                    <div>
+                      <UploadOutlined />
+                      <div style={{ marginTop: 8 }}>Upload</div>
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
+
+              <Form.Item
+                label="Chọn sản phẩm"
+                name="san_pham"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ít nhất một sản phẩm!",
+                  },
+                ]}
+              >
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <Select
+                    mode="multiple"
+                    style={{ width: "100%" }}
+                    placeholder="Chọn sản phẩm"
+                    options={productOptions}
+                    onChange={handleSelectChange}
+                    value={selectedProducts}
+                    filterOption={(input, option: any) =>
+                      option?.label
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    }
+                    showSearch
+                  />
+                  <Button
+                    onClick={handleSelectAll}
+                    style={{ whiteSpace: "nowrap" }}
+                  >
+                    {selectedProducts.length === productOptions.length
+                      ? "Bỏ chọn tất cả"
+                      : "Chọn tất cả"}
+                  </Button>
+                </div>
+              </Form.Item>
+
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Spin size="small" />
+                      Đang cập nhật...
+                    </>
+                  ) : (
+                    "Cập nhật"
+                  )}
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        </div>
+      </div>
       <Modal
         visible={previewVisible}
         title="Xem trước"
         footer={null}
         onCancel={() => setPreviewVisible(false)}
       >
-        <img alt="example" style={{ width: '100%' }} src={imageUrl || undefined} />
+        <img
+          alt="example"
+          style={{ width: "100%" }}
+          src={imageUrl || undefined}
+        />
       </Modal>
     </main>
   );

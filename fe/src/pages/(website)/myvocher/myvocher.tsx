@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import "swiper/css";
@@ -56,12 +55,11 @@ const MyVoucher = () => {
     queryFn: getVouchers,
   });
 
-
-  const activeVouchers = vouchersData?.data.filter(
-    (voucher: Voucher) => 
-      voucher.trang_thai === 1 && 
-      voucher.da_thu_thap === 1
-  ) || [];
+  const activeVouchers =
+    vouchersData?.data.filter(
+      (voucher: Voucher) =>
+        voucher.trang_thai === 1 && voucher.da_thu_thap === 1
+    ) || [];
 
   const totalVouchers = activeVouchers.length;
   const indexOfLastVoucher = currentPage * pageSize;
@@ -76,11 +74,14 @@ const MyVoucher = () => {
       .filter((v: Voucher) => v.da_thu_thap === 1)
       .map((v: Voucher) => v.ma_code);
   });
- 
 
   const saveMutation = useMutation({
     mutationFn: (maCode: string) => {
-      return instanceClient.post(`/thu-thap-ma-khuyen-mai/${maCode}`);
+      try {
+        return instanceClient.post(`/thu-thap-ma-khuyen-mai/${maCode}`);
+      } catch (error: any) {
+        throw new Error("Lưu mã thất bại");
+      }
     },
     onSuccess: (_, maCode) => {
       setSavedVouchers((prev) => [...prev, maCode]);
@@ -112,16 +113,16 @@ const MyVoucher = () => {
               {currentVouchers && currentVouchers.length !== 0 ? (
                 currentVouchers.map((voucher: Voucher) => (
                   <div
-                  key={voucher.id}
-                  className={`flex items-center border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative ${
-                    voucher.ap_dung_vi ? 'bg-[#fff]' : 'bg-white'
-                  }`}
-                >
-                  {voucher.trang_thai_su_dung === "Đã sử dụng" && (
-                    <div className="absolute top-0 right-0 bg-gray-500 text-white px-3 py-1 rounded-bl-lg">
-                      Đã sử dụng
-                    </div>
-                  )}
+                    key={voucher.id}
+                    className={`flex items-center border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative ${
+                      voucher.ap_dung_vi ? "bg-[#fff]" : "bg-white"
+                    }`}
+                  >
+                    {voucher.trang_thai_su_dung === "Đã sử dụng" && (
+                      <div className="absolute top-0 right-0 bg-gray-500 text-white px-3 py-1 rounded-bl-lg">
+                        Đã sử dụng
+                      </div>
+                    )}
                     <div className="absolute top-2 -right-1 flex items-center">
                       <div className="bg-red-100 text-red-500 font-bold text-xs px-2 py-0.5 rounded-l-full shadow-md relative">
                         x {voucher.so_luong - voucher.so_luong_da_su_dung}
@@ -148,11 +149,11 @@ const MyVoucher = () => {
                           : `Giảm: ${voucher.giam_gia}%`}
                         cho đơn từ {formatCurrency(voucher.chi_tieu_toi_thieu)}
                       </p>
-                      <div 
+                      <div
                         className={`${
-                          voucher.ap_dung_vi 
-                            ? 'bg-[#ee4d2d] text-[#fff]' 
-                            : 'bg-[#cfebee] text-[#63b1bc]'
+                          voucher.ap_dung_vi
+                            ? "bg-[#ee4d2d] text-[#fff]"
+                            : "bg-[#cfebee] text-[#63b1bc]"
                         } px-2 py-1 rounded mt-2 inline-block`}
                       >
                         {voucher.ma_code}
@@ -176,20 +177,24 @@ const MyVoucher = () => {
                     <div className="flex-shrink-0">
                       <button
                         onClick={() => handleSaveVoucher(voucher.ma_code)}
-                        disabled={voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"}
+                        disabled={
+                          voucher.da_thu_thap === 1 ||
+                          voucher.trang_thai_su_dung === "Đã sử dụng"
+                        }
                         className={`${
-                          voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"
+                          voucher.da_thu_thap === 1 ||
+                          voucher.trang_thai_su_dung === "Đã sử dụng"
                             ? "bg-gray-400"
                             : voucher.ap_dung_vi
-                            ? "bg-[#ee4d2d]"
-                            : "bg-[#63b1bc]"
+                              ? "bg-[#ee4d2d]"
+                              : "bg-[#63b1bc]"
                         } text-white font-semibold py-2 px-4 rounded whitespace-nowrap`}
                       >
-                        {voucher.da_thu_thap === 1 
-                          ? "Đã lưu" 
+                        {voucher.da_thu_thap === 1
+                          ? "Đã lưu"
                           : voucher.trang_thai_su_dung === "Đã sử dụng"
-                          ? "Đã dùng"
-                          : "Lưu mã"}
+                            ? "Đã dùng"
+                            : "Lưu mã"}
                       </button>
                     </div>
                   </div>

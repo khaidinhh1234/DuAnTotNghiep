@@ -47,15 +47,18 @@ const NewEdit = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (news: INew) => {
-      return await instance.put(`/tintuc/${id}`, news);
+      try {
+        const response = await instance.put(`/tintuc/${id}`, news);
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Cập nhật tin tức thất bại");
+      }
     },
     onSuccess: () => {
       message.success("Thao tác thành công");
       form.resetFields();
       nav("/admin/news");
-    },
-    onError: (error) => {
-      message.error(error.message);
     },
   });
 

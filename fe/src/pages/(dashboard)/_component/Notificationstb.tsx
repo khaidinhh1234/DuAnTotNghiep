@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { Pagination } from 'antd';
+import { message, Pagination } from 'antd';
 import instance from '@/configs/admin';
 
 type NotificationType = keyof typeof NOTIFICATION_TYPES;
@@ -59,8 +59,14 @@ const NotificationPage1 = (): JSX.Element => {
 
   const markAsReadMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await instance.post(`/thong-bao/da-doc/${id}`);
-      return response.data;
+      try {
+        const response = await instance.post(`/thong-bao/da-doc/${id}`);
+        return response.data;
+      } catch (error: any) {
+  message.error(error.response.data.message);
+        throw new Error('Đánh dấu đã đọc thất bại');
+      }
+   
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
@@ -69,16 +75,23 @@ const NotificationPage1 = (): JSX.Element => {
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      const unreadNotifications = notificationResponse?.data?.filter(
-        (notif: Notification) => notif.trang_thai_da_doc === "0" && 
-        (selectedType === NOTIFICATION_TYPES.ALL || notif.loai === selectedType)
-      ) || [];
-      
-      const promises = unreadNotifications.map((notification: Notification) => 
-        instance.post(`/thong-bao/da-doc/${notification.id}`)
-      );
-      
-      return Promise.all(promises);
+      try {
+        const unreadNotifications = notificationResponse?.data?.filter(
+          (notif: Notification) => notif.trang_thai_da_doc === "0" && 
+          (selectedType === NOTIFICATION_TYPES.ALL || notif.loai === selectedType)
+        ) || [];
+        
+        const promises = unreadNotifications.map((notification: Notification) => 
+          instance.post(`/thong-bao/da-doc/${notification.id}`)
+        );
+        
+        return Promise.all(promises);
+      }
+      catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error('Đánh dấu đã đọc thất bại');
+      }
+     
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });

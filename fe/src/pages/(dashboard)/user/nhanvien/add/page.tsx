@@ -47,8 +47,12 @@ const UsersNhanvienAdd = () => {
       try {
         const res = await instance.post("/taikhoan", data);
         return res.data;
-      } catch (error) {
-        throw error;
+      } catch (error: any) {
+        message.open({
+          type: "error",
+          content: error?.response?.data?.message || "Có lỗi xảy ra",
+        });
+        throw new Error("Thêm tài khoản Nhân viên thất bại");
       }
     },
     onSuccess: () => {

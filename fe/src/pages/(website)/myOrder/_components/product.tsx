@@ -182,7 +182,7 @@ const ProductItem = ({
         // }
         // return response.data;
       } catch (error) {
-        console.log(error);
+      
         message.error("Thanh toán thất bại");
       }
     },
