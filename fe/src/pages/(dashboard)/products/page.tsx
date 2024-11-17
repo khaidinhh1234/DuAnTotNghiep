@@ -1,5 +1,3 @@
-
-
 import "@/global.css";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -85,20 +83,21 @@ const ProductsAdmin: React.FC = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string | number) => {
-      const response = await instance.delete(`/sanpham/${id}`);
-      if (response.data.status) {
-        return id;
-      } else {
-        throw new Error(response.data.message || "Failed to delete");
+      try {
+        const response = await instance.delete(`/sanpham/${id}`);
+        if (response.data.status) {
+          return id;
+        } else {
+          throw new Error(response.data.message || "Failed to delete");
+        }
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham"] });
       message.success("Xóa sản phẩm thành công");
-    },
-    onError: (error) => {
-      console.error("Error deleting product:", error);
-      message.error("Xóa sản phẩm thất bại");
     },
   });
 
@@ -110,46 +109,46 @@ const ProductsAdmin: React.FC = () => {
       action: string;
       ids: React.Key[];
     }) => {
-      let endpoint = "";
-      let method = "patch";
-      let payload: any = {};
+      try {
+        let endpoint = "";
+        let method = "patch";
+        let payload: any = {};
 
-      switch (action) {
-        case "activate":
-          endpoint = "sanphams/trang-thai-nhieu-san-pham";
-          payload = { san_phams: ids, trang_thai: true };
-          break;
-        case "deactivate":
-          endpoint = "sanphams/trang-thai-nhieu-san-pham";
-          payload = { san_phams: ids, trang_thai: false };
-          break;
+        switch (action) {
+          case "activate":
+            endpoint = "sanphams/trang-thai-nhieu-san-pham";
+            payload = { san_phams: ids, trang_thai: true };
+            break;
+          case "deactivate":
+            endpoint = "sanphams/trang-thai-nhieu-san-pham";
+            payload = { san_phams: ids, trang_thai: false };
+            break;
 
-        case "delete":
-          endpoint = "sanpham";
-          method = "delete";
+          case "delete":
+            endpoint = "sanpham";
+            method = "delete";
 
-          payload = { san_phams: ids };
-          break;
-        default:
-          throw new Error("Invalid action");
-      }
+            payload = { san_phams: ids };
+            break;
+          default:
+            throw new Error("Invalid action");
+        }
 
-      if (method === "patch") {
-        const response = await instance.patch(endpoint, payload);
-        return response.data;
-      } else {
-        const response = await instance.delete(endpoint, { data: payload });
-        return response.data;
+        if (method === "patch") {
+          const response = await instance.patch(endpoint, payload);
+          return response.data;
+        } else {
+          const response = await instance.delete(endpoint, { data: payload });
+          return response.data;
+        }
+      } catch (error: any) {
+        message.error(error.response.data.message);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham"] });
       message.success("Thao tác thành công");
       setSelectedRowKeys([]);
-    },
-    onError: (error) => {
-      console.error("Error performing bulk action:", error);
-      message.error("Thao tác thất bại");
     },
   });
 

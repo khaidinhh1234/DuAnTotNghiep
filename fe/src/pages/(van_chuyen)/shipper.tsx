@@ -107,7 +107,7 @@ const Shipper: React.FC = () => {
         }
         return response.data;
       } catch (error: any) {
-        console.error(error.message);
+        message.error(error.response.data.message);
         throw new Error(error.message);
       }
     },

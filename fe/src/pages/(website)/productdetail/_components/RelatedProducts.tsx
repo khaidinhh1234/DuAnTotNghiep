@@ -59,8 +59,8 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
         }
 
         return response.data;
-      } catch (error) {
-        message.error("Xóa sản phẩm yêu thích thất bại");
+      } catch (error: any) {
+        message.error(error.response.data.message);
         console.error("API error", error); // Thêm log lỗi API
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
@@ -104,7 +104,6 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
                     <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
                   </span>
                 )}
-               
 
                 <Link to={`/product-detail/${product.duong_dan}`}>
                   <div className="relative">

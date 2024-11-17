@@ -1,4 +1,3 @@
-
 import React from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, message, Popconfirm, Space, Table } from "antd";
@@ -23,9 +22,7 @@ interface DataType {
   ngay_hien_thi: string;
 }
 
-
 const ChuongTrinhUuDai: React.FC = () => {
-
   const { data, isLoading } = useQuery({
     queryKey: ["chuongtrinhuudai"],
     queryFn: async () => {
@@ -46,7 +43,7 @@ const ChuongTrinhUuDai: React.FC = () => {
     }));
   }, [data]);
   const queryClient = useQueryClient();
-  
+
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
@@ -57,7 +54,7 @@ const ChuongTrinhUuDai: React.FC = () => {
           throw new Error(response.data.message || "Failed to delete");
         }
       } catch (error) {
-        console.error("Error deleting :", error);
+        message.error("Xóa thất bại");
         throw error;
       }
     },
@@ -161,7 +158,7 @@ const ChuongTrinhUuDai: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0]; // This will return the date in YYYY-MM-DD format
+    return date.toISOString().split("T")[0]; // This will return the date in YYYY-MM-DD format
   };
 
   const columns: TableColumnsType<DataType> = [
@@ -172,21 +169,21 @@ const ChuongTrinhUuDai: React.FC = () => {
       width: "5%",
     },
     {
-        title: "Ảnh",
-        width: "15%",
-        key: "duong_dan_anh",
-        dataIndex: "duong_dan_anh",
-        render: (duong_dan_anh: string) =>
-            duong_dan_anh ? (
-            <img
-              src={duong_dan_anh}
-              alt="Ảnh danh mục"
-              style={{ width: "80px", height: "80px", objectFit: "cover" }}
-            />
-          ) : (
-            <span>Ảnh không có</span>
-          ),
-      },
+      title: "Ảnh",
+      width: "15%",
+      key: "duong_dan_anh",
+      dataIndex: "duong_dan_anh",
+      render: (duong_dan_anh: string) =>
+        duong_dan_anh ? (
+          <img
+            src={duong_dan_anh}
+            alt="Ảnh danh mục"
+            style={{ width: "80px", height: "80px", objectFit: "cover" }}
+          />
+        ) : (
+          <span>Ảnh không có</span>
+        ),
+    },
     {
       title: "Tên ưu đãi",
       dataIndex: "ten_uu_dai",
@@ -207,22 +204,27 @@ const ChuongTrinhUuDai: React.FC = () => {
       dataIndex: "ngay_hien_thi",
       key: "ngay_hien_thi",
       render: (text) => formatDate(text),
-      sorter: (a, b) => new Date(a.ngay_hien_thi).getTime() - new Date(b.ngay_hien_thi).getTime(),
+      sorter: (a, b) =>
+        new Date(a.ngay_hien_thi).getTime() -
+        new Date(b.ngay_hien_thi).getTime(),
       width: "15%",
     },
     {
-        title: "Thời gian",
-        key: "thoi_gian",
-        render: (record) => `${formatDate(record.ngay_bat_dau)} - ${formatDate(record.ngay_ket_thuc)}`,
-        sorter: (a, b) => new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(),
-        width: "20%",
-      },
-      
+      title: "Thời gian",
+      key: "thoi_gian",
+      render: (record) =>
+        `${formatDate(record.ngay_bat_dau)} - ${formatDate(record.ngay_ket_thuc)}`,
+      sorter: (a, b) =>
+        new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(),
+      width: "20%",
+    },
+
     {
       title: "Giá trị ưu đãi",
       dataIndex: "gia_tri_uu_dai",
       key: "gia_tri_uu_dai",
-      render: (value, record) => `${value}${record.loai === 'phan_tram' ? '%' : ''}`,
+      render: (value, record) =>
+        `${value}${record.loai === "phan_tram" ? "%" : ""}`,
       width: "10%",
     },
     // {
@@ -232,39 +234,38 @@ const ChuongTrinhUuDai: React.FC = () => {
     //   render: (value) => value === 'phan_tram' ? 'Phần trăm' : 'Giá trị cố định',
     //   width: "10%",
     // },
-        {
-        title: "Quản trị",
-        key: "action",
-        render: (_, record) => (
-          <Space>
-            <Popconfirm
-              title="Chuyển vào thùng rác"
-              description="Bạn có chắc chắn muốn xóa không?"
-              okText="Có"
-              cancelText="Không"
-              onConfirm={() => {
-                mutate(String(record.id));
-              }}
-            >
-              <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
-                xóa
-              </Button>
-            </Popconfirm>
-            <Link to={`/admin/chuongtrinhuudai/edit/${record.id}`}>
+    {
+      title: "Quản trị",
+      key: "action",
+      render: (_, record) => (
+        <Space>
+          <Popconfirm
+            title="Chuyển vào thùng rác"
+            description="Bạn có chắc chắn muốn xóa không?"
+            okText="Có"
+            cancelText="Không"
+            onConfirm={() => {
+              mutate(String(record.id));
+            }}
+          >
+            <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
+              xóa
+            </Button>
+          </Popconfirm>
+          <Link to={`/admin/chuongtrinhuudai/edit/${record.id}`}>
             <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
-                Chỉnh sửa
-              </Button>
-            </Link>
-            {/* <Link to={`show/${record.key}`}>
+              Chỉnh sửa
+            </Button>
+          </Link>
+          {/* <Link to={`show/${record.key}`}>
               <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
                 xem
               </Button>
             </Link> */}
-          </Space>
-        ),
-      },
+        </Space>
+      ),
+    },
   ];
-
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -291,16 +292,14 @@ const ChuongTrinhUuDai: React.FC = () => {
           </Link>
         </div>
       </div>
-      
+
       <div className="max-w-full">
-        
         <Table
           columns={columns}
           dataSource={chuongTrinhUuDai}
           pagination={{ pageSize: 10, className: "my-5" }}
           rowKey="id"
           loading={isLoading}
-
         />
       </div>
     </main>

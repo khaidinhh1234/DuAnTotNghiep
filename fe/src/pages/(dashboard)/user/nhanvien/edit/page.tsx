@@ -75,7 +75,8 @@ const UsersnhanvienEdit = () => {
       try {
         const res = await instance.put(`/taikhoan/${id}`, data);
         return res.data;
-      } catch (error) {
+      } catch (error: any) {
+        message.error(error.response.data.message);
         throw error;
       }
     },

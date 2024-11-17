@@ -279,19 +279,26 @@ const ProductDetail: React.FC = () => {
   // useMutation để thêm sản phẩm vào giỏ hàng trên server khi có access_token
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-      const response = await instanceClient.post(
-        "/gio-hang",
-        {
-          bien_the_san_pham_id: variantId,
-          so_luong: quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
+      try {
+        const response = await instanceClient.post(
+          "/gio-hang",
+          {
+            bien_the_san_pham_id: variantId,
+            so_luong: quantity,
           },
-        }
-      );
-      return response.data;
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error: any) {
+        throw new Error(
+          error.response?.data?.message ||
+            "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        );
+      }
     },
     onSuccess: (data) => {
       if (data?.status) {

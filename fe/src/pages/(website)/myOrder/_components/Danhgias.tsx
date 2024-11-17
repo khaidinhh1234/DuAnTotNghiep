@@ -102,8 +102,8 @@ const Danhgias = () => {
           nav("/mypro/myorder");
         }
         7;
-      } catch (error) {
-        message.error("Đánh giá thất bại");
+      } catch (error: any) {
+        message.error(error.response.data.message);
         throw new Error("Error during review creation");
       }
     },

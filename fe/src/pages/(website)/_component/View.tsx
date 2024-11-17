@@ -15,7 +15,7 @@ import {
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 const View = ({ id, ID }: { id: string; ID: number }) => {
-  const nav = useNavigate()
+  const nav = useNavigate();
   // console.log(id);
   // console.log(ID);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -228,19 +228,23 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-      const response = await instanceClient.post(
-        "/gio-hang",
-        {
-          bien_the_san_pham_id: variantId,
-          so_luong: quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
+      try {
+        const response = await instanceClient.post(
+          "/gio-hang",
+          {
+            bien_the_san_pham_id: variantId,
+            so_luong: quantity,
           },
-        }
-      );
-      return response.data;
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        throw new Error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+      }
     },
     onSuccess: (data) => {
       if (data.status) {
@@ -253,7 +257,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     onError: (error: any) => {
       toast.error(
         error.response?.data?.message ||
-        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
@@ -448,8 +452,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         <>
                           {gia?.gia_khuyen_mai_tam_thoi
                             ? gia?.gia_khuyen_mai_tam_thoi.toLocaleString(
-                              "vi-VN"
-                            )
+                                "vi-VN"
+                              )
                             : (gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ??
                               0)}{" "}
                           đ
@@ -463,7 +467,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                                 ? gia?.gia_ban - gia?.gia_khuyen_mai_tam_thoi
                                 : gia?.gia_ban - gia?.gia_khuyen_mai) /
                                 gia?.gia_ban) *
-                              100
+                                100
                             )}
                             %
                           </span>
@@ -492,8 +496,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       {Array.from(uniqueColors).map((color, index) => (
                         <button
                           key={index}
-                          className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? "border-black" : ""
-                            }`}
+                          className={`w-9 h-9 rounded-md border-2 ${
+                            selectedColor === color ? "border-black" : ""
+                          }`}
                           style={{
                             backgroundColor: color as string,
                           }}
@@ -517,8 +522,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         <button
                           key={size}
                           onClick={() => handleSizeClick(size)}
-                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${selectedSize === size ? "bg-blackL text-white" : ""
-                            }`}
+                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
+                            selectedSize === size ? "bg-blackL text-white" : ""
+                          }`}
                         >
                           {size}
                         </button>
@@ -545,7 +551,10 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         onChange={(e) => {
                           const inputQuantity = parseInt(e.target.value, 10);
                           // Kiểm tra nếu inputQuantity vượt quá số lượng kho
-                          if (inputQuantity > (selectedVariant?.so_luong_bien_the || 1)) {
+                          if (
+                            inputQuantity >
+                            (selectedVariant?.so_luong_bien_the || 1)
+                          ) {
                             if (selectedVariant) {
                               setQuantity(selectedVariant.so_luong_bien_the); // Đặt về số lượng kho tối đa
                             }

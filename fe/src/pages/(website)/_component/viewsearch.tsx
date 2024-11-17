@@ -51,18 +51,24 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
-      const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
-      if (
-        response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
-      ) {
-        message.success("Xóa sản phẩm yêu thích thành công");
+      try {
+        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+        if (
+          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+        ) {
+          message.success("Xóa sản phẩm yêu thích thành công");
+        }
+        if (
+          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+        ) {
+          message.success("Thêm sản phẩm yêu thích thành công");
+        }
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        console.error("API error", error); // Thêm log lỗi API
+        throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
-      if (
-        response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
-      ) {
-        message.success("Thêm sản phẩm yêu thích thành công");
-      }
-      return response.data;
     },
     onSuccess: () => {
       queryclient.invalidateQueries({
@@ -194,19 +200,26 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-      const response = await instanceClient.post(
-        "/gio-hang",
-        {
-          bien_the_san_pham_id: variantId,
-          so_luong: quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
+      try {
+        const response = await instanceClient.post(
+          "/gio-hang",
+          {
+            bien_the_san_pham_id: variantId,
+            so_luong: quantity,
           },
-        }
-      );
-      return response.data;
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error: any) {
+        throw new Error(
+          error.response?.data?.message ||
+            "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        );
+      }
     },
     onSuccess: (data) => {
       if (data.status) {

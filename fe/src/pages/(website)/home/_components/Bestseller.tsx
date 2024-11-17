@@ -1,13 +1,12 @@
 // import { sanPham2 } from "@/assets/img";
 
+import useDebounce from "@/components/hook/useDebounce";
 import instanceClient from "@/configs/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
-import { debounce } from "lodash/debounce";
-import useDebounce from "@/components/hook/useDebounce";
 
 const Bestseller = ({ products }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);

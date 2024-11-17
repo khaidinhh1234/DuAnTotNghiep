@@ -2,7 +2,7 @@ import { IColor } from "@/common/types/product";
 import instance from "@/configs/admin";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Form, Input, message, Spin } from "antd";
-import {  Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const getSizeTypeDisplay = (loaiKichThuoc: string): string => {
@@ -17,7 +17,6 @@ const getSizeTypeDisplay = (loaiKichThuoc: string): string => {
       return loaiKichThuoc;
   }
 };
-
 
 const Size = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,15 +47,20 @@ const Size = () => {
 
   const updateMutation = useMutation({
     mutationFn: async (values: IColor) => {
-      const updatedValues = {
-        ...values,
-        loai_kich_thuoc: originalSizeType,
-      };
-      const response = await instance.put(
-        `/bienthekichthuoc/${id}`,
-        updatedValues
-      );
-      return response.data;
+      try {
+        const updatedValues = {
+          ...values,
+          loai_kich_thuoc: originalSizeType,
+        };
+        const response = await instance.put(
+          `/bienthekichthuoc/${id}`,
+          updatedValues
+        );
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Cập nhật màu sắc thất bại");
+      }
     },
     onSuccess: () => {
       message.success("Cập nhật kích thước thành công");

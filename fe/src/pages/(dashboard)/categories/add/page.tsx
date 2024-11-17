@@ -30,8 +30,13 @@ const CategoriesAdd = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
-      const response = await instance.post(`/danhmuc`, category);
-      return response.data;
+      try {
+        const response = await instance.post(`/danhmuc`, category);
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Thêm danh mục thất bại");
+      }
     },
     onSuccess: () => {
       message.success("Thêm danh mục thành công");

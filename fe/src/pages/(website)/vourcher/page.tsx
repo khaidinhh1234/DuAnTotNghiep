@@ -105,7 +105,7 @@
 //                     key={voucher.id}
 //                     className="flex items-center bg-white border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative"
 //                   >
-                    
+
 //                     <div className="absolute top-2 -right-1 flex items-center">
 //                       <div className="bg-red-100 text-red-500 font-bold text-sm px-2 py-1 rounded-l-full shadow-md relative">
 //                         x {voucher.so_luong - voucher.so_luong_da_su_dung}
@@ -208,6 +208,7 @@ import "swiper/css/scrollbar";
 import { useState } from "react";
 import VoucherDetail from "./_component/vourcherDeatil";
 import Method from "../_component/Method";
+import { message } from "antd";
 
 export interface Voucher {
   id: number;
@@ -261,7 +262,12 @@ const Voucher = () => {
 
   const saveMutation = useMutation({
     mutationFn: (maCode: string) => {
-      return instanceClient.post(`/thu-thap-ma-khuyen-mai/${maCode}`);
+      try {
+        return instanceClient.post(`/thu-thap-ma-khuyen-mai/${maCode}`);
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Xóa sản phẩm yêu thích thất bại");
+      }
     },
     onSuccess: (_, maCode) => {
       setSavedVouchers((prev) => [...prev, maCode]);
@@ -307,7 +313,7 @@ const Voucher = () => {
                   <div
                     key={voucher.id}
                     className={`flex items-center border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative ${
-                      voucher.ap_dung_vi ? 'bg-[#fff]' : 'bg-white'
+                      voucher.ap_dung_vi ? "bg-[#fff]" : "bg-white"
                     }`}
                   >
                     {voucher.trang_thai_su_dung === "Đã sử dụng" && (
@@ -343,11 +349,11 @@ const Voucher = () => {
                         cho đơn từ {formatCurrency(voucher.chi_tieu_toi_thieu)}
                       </p>
 
-                      <div 
+                      <div
                         className={`${
-                          voucher.ap_dung_vi 
-                            ? 'bg-[#ee4d2d] text-[#fff]' 
-                            : 'bg-[#cfebee] text-[#63b1bc]'
+                          voucher.ap_dung_vi
+                            ? "bg-[#ee4d2d] text-[#fff]"
+                            : "bg-[#cfebee] text-[#63b1bc]"
                         } px-2 py-1 rounded mt-2 inline-block`}
                       >
                         {voucher.ma_code}
@@ -372,20 +378,24 @@ const Voucher = () => {
                     <div className="flex-shrink-0">
                       <button
                         onClick={() => handleSaveVoucher(voucher.ma_code)}
-                        disabled={voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"}
+                        disabled={
+                          voucher.da_thu_thap === 1 ||
+                          voucher.trang_thai_su_dung === "Đã sử dụng"
+                        }
                         className={`${
-                          voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"
+                          voucher.da_thu_thap === 1 ||
+                          voucher.trang_thai_su_dung === "Đã sử dụng"
                             ? "bg-gray-400"
                             : voucher.ap_dung_vi
-                            ? "bg-[#ee4d2d]"
-                            : "bg-[#63b1bc]"
+                              ? "bg-[#ee4d2d]"
+                              : "bg-[#63b1bc]"
                         } text-white font-semibold py-2 px-8 rounded whitespace-nowrap`}
                       >
-                        {voucher.da_thu_thap === 1 
-                          ? "Đã lưu" 
+                        {voucher.da_thu_thap === 1
+                          ? "Đã lưu"
                           : voucher.trang_thai_su_dung === "Đã sử dụng"
-                          ? "Đã dùng"
-                          : "Lưu mã"}
+                            ? "Đã dùng"
+                            : "Lưu mã"}
                       </button>
                     </div>
                   </div>
