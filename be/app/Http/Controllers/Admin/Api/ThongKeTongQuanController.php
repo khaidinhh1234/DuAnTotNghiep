@@ -791,6 +791,74 @@ class ThongKeTongQuanController extends Controller
             'so_luong_huy_hang' => $soLuongHuyHang,
         ]);
     }
+
+    public function thongKeTheoKhoangDoanhThuTrangThai(Request $request)
+{
+    $ngayBatDau = $request->has('ngay_bat_dau')
+        ? Carbon::parse($request->input('ngay_bat_dau'))->setTimezone('Asia/Ho_Chi_Minh')->startOfDay()
+        : now()->subDays(10)->setTimezone('Asia/Ho_Chi_Minh')->startOfDay();
+
+    $ngayKetThuc = $request->has('ngay_ket_thuc')
+        ? Carbon::parse($request->input('ngay_ket_thuc'))->setTimezone('Asia/Ho_Chi_Minh')->endOfDay()
+        : now()->setTimezone('Asia/Ho_Chi_Minh')->endOfDay();
+
+    $khoangNgay = [];
+    for ($date = $ngayBatDau->copy(); $date->lte($ngayKetThuc); $date->addDay()) {
+        $khoangNgay[] = $date->format('Y-m-d');
+    }
+
+    $doanhThuHoanTat = DonHang::selectRaw('DATE(ngay_hoan_thanh_don) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+        ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
+        ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+        ->groupBy('ngay')
+        ->get()
+        ->keyBy('ngay');
+
+    $tongDoanhThuHoanTat = $doanhThuHoanTat->sum('doanh_thu');
+
+    $doanhThuHoan = DonHang::selectRaw('DATE(ngay_hoan) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+        ->whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc])
+        ->where('trang_thai_don_hang', DonHang::TTDH_HH)
+        ->groupBy('ngay')
+        ->get()
+        ->keyBy('ngay');
+
+    $tongDoanhThuHoan = $doanhThuHoan->sum('doanh_thu');
+
+    $soLuongHTDH = [];
+    $soLuongHuyHang = [];
+    $doanhThuHoanTatTheoNgay = [];
+    $doanhThuHoanTheoNgay = [];
+
+    foreach ($khoangNgay as $ngay) {
+        // Đếm số lượng đơn hoàn tất
+        $soLuongHTDH[] = DonHang::whereDate('ngay_hoan_thanh_don', $ngay)
+            ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+            ->count();
+
+        // Đếm số lượng đơn hàng bị hủy
+        $soLuongHuyHang[] = DonHang::whereDate('ngay_huy', $ngay)
+            ->where('trang_thai_don_hang', DonHang::TTDH_DH)
+            ->count();
+
+        // Lấy doanh thu hoàn tất từng ngày
+        $doanhThuHoanTatTheoNgay[] = $doanhThuHoanTat->get($ngay)->doanh_thu ?? 0;
+
+        // Lấy doanh thu hủy/hoàn từng ngày
+        $doanhThuHoanTheoNgay[] = $doanhThuHoan->get($ngay)->doanh_thu ?? 0;
+    }
+
+    return response()->json([
+        'tong_doanh_thu_hoan_tat' => $tongDoanhThuHoanTat,
+        'doanh_thu_hoan_tat_theo_ngay' => $doanhThuHoanTatTheoNgay,
+        'tong_doanh_thu_huy_hoan' => $tongDoanhThuHoan,
+        'doanh_thu_huy_hoan_theo_ngay' => $doanhThuHoanTheoNgay,
+        'so_luong_hoan_tat_don_hang' => $soLuongHTDH,
+        'so_luong_huy_hang' => $soLuongHuyHang,
+        'ngay_trong_khoang' => $khoangNgay,
+    ]);
+}
+
     // Tổng quan theo ngày
     public function thanhToanTienMatTheoNgay(Request $request)
     {
