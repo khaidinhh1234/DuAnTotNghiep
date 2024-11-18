@@ -203,7 +203,7 @@ class SanPhamController extends Controller
             $gioHang = GioHang::where('bien_the_san_pham_id', $value['id'])->update([
                 'so_luong_bien_the' => $value['so_luong_bien_the']
             ]);
-            if ($value['so_luong_bien_the'] !== null) {
+            if ($value['so_luong_bien_the'] != null) {
                 $bienTheSanPham[] = [
                     'bien_the_mau_sac_id' => $value['mau_sac_id'],
                     'bien_the_kich_thuoc_id' => $value['kich_thuoc_id'],
