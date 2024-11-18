@@ -13,7 +13,10 @@ const Bestseller = ({ products }: any) => {
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
   );
-
+  const [visibleProductsCount, setVisibleProductsCount] = useState(4);
+  const handleSeeMore = () => {
+    setVisibleProductsCount(visibleProductsCount + 8); 
+  };
   const handleMouseEnter = (productId: number, variantIndex: any) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
@@ -59,13 +62,11 @@ const Bestseller = ({ products }: any) => {
           </div>
 
           <div className="grid grid-cols-12 justify-center gap-7">
-            {" "}
-            {products?.slice(0, 4).map((product: any, index: any) => (
+            {products?.slice(0, visibleProductsCount).map((product: any, index: any) => (
               <div
                 className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
                 key={index}
               >
-                {" "}
                 <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
                   <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
                     {isPending ? (
@@ -85,79 +86,76 @@ const Bestseller = ({ products }: any) => {
                         <img
                           src={
                             hoveredProductId === product.id &&
-                            hoveredVariantIndex !== null
-                              ? product.mau_sac_va_anh[hoveredVariantIndex]
-                                  .hinh_anh
+                              hoveredVariantIndex !== null
+                              ? product.mau_sac_va_anh[hoveredVariantIndex].hinh_anh
                               : product.anh_san_pham
                           }
                           alt=""
                           className="lg:w-[300px] w-[500px] lg:h-[380px] h-[400px] rounded-t-md"
                         />
-                        {product?.hang_moi == 1 && (
+                        {product?.hang_moi === 1 && (
                           <span className="absolute top-3 left-4 bg-red-500 text-white px-3 py-[2px] rounded-md font-bold">
                             Mới
                           </span>
                         )}
-                      </div>{" "}
+                      </div>
                     </Link>
                     <View id={product?.duong_dan} ID={product?.id} />
                   </div>
                   <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2">
                     <Link to={`/product-detail/${product.duong_dan}`}>
-                      {" "}
-                      <h5 className=" text-base truncate w-60 font-medium hover:text-red-500">
+                      <h5 className="text-base truncate w-60 font-medium hover:text-red-500">
                         {product?.ten_san_pham}
-                      </h5>{" "}
+                      </h5>
                     </Link>
 
                     <p className="font-semibold text-lg">
                       {product?.gia_thap_nhat === product?.gia_cao_nhat ? (
-                        <>
-                          {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")}{" "}
-                          đ
-                        </>
+                        <>{(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")} đ</>
                       ) : (
                         <>
-                          {(product?.gia_thap_nhat ?? 0).toLocaleString(
-                            "vi-VN"
-                          )}{" "}
-                          đ
+                          {(product?.gia_thap_nhat ?? 0).toLocaleString("vi-VN")} đ
                           <i className="fa-solid fa-minus text-sm mx-1 text-slate-500"></i>
-                          {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")}{" "}
-                          đ
+                          {(product?.gia_cao_nhat ?? 0).toLocaleString("vi-VN")} đ
                         </>
                       )}
                     </p>
 
                     <p className="font-bold text-lg flex items-center">
-                      {product?.mau_sac_va_anh?.map(
-                        (item: any, indexs: any) => (
-                          <button
-                            key={indexs}
-                            className={`w-7 h-7 rounded-full border mr-1 
-                             ${
-                               hoveredProductId === product?.id &&
-                               hoveredVariantIndex === indexs
-                                 ? "border-black"
-                                 : "border-gray-300 hover:border-black"
-                             }`}
-                            style={{
-                              backgroundColor: item?.ma_mau_sac,
-                            }}
-                            onMouseEnter={() =>
-                              handleMouseEnter(product?.id, indexs)
-                            }
-                          />
-                        )
-                      )}
+                      {product?.mau_sac_va_anh?.map((item: any, indexs: any) => (
+                        <button
+                          key={indexs}
+                          className={`w-7 h-7 rounded-full border mr-1 ${hoveredProductId === product?.id &&
+                              hoveredVariantIndex === indexs
+                              ? "border-black"
+                              : "border-gray-300 hover:border-black"
+                            }`}
+                          style={{
+                            backgroundColor: item?.ma_mau_sac,
+                          }}
+                          onMouseEnter={() => handleMouseEnter(product?.id, indexs)}
+                        />
+                      ))}
                     </p>
-                  </div>{" "}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+
+          {products?.length > visibleProductsCount && (
+            <div className="col-span-12 text-center mt-4">
+              <button
+                onClick={handleSeeMore}
+                className="bg-black text-white px-4 py-2 rounded-md hover:bg-white hover:text-black border border-black"
+              >
+                Xem thêm
+              </button>
+            </div>
+          )}
         </div>
       </section>
+
     </>
   );
 };
