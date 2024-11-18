@@ -1,385 +1,92 @@
-import { useLocalStorage } from "@/components/hook/useStoratge";
-import instanceClient from "@/configs/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Popconfirm } from "antd";
-import { debounce } from "lodash";
-import { FastForward, Star } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useLocalStorage } from "@/components/hook/useStoratge"
+import instanceClient from "@/configs/client"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { Popconfirm } from "antd"
+import { debounce } from "lodash"
+import { Star } from "lucide-react"
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 
-type RequestPayload = { productId: string; currentQuantity: number };
-
-const CheckOut = () => {
-  const nav = useNavigate();
-  const queryClient = useQueryClient();
-  const [user] = useLocalStorage("user" as any, {});
-  const access_token = user.access_token || localStorage.getItem("access_token");
+const CartPage = ({product}: any) => {
+  const nav = useNavigate()
+  const queryClient = useQueryClient()
+  const [user] = useLocalStorage("user" as any, {})
+  const access_token = user.access_token || localStorage.getItem("access_token")
   const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
-  const MAX_REQUESTS = 10;
-  const requestQueue: (() => Promise<void>)[] = [];
-  const addRequestToQueue = (requestFn: () => Promise<void>) => {
-    if (requestQueue.length >= MAX_REQUESTS) {
-      // Xóa request cũ nhất nếu đã đạt đến giới hạn
-      requestQueue.shift();
-    }
-    requestQueue.push(requestFn);
-  };
-
-  const executeNextRequest = async () => {
-    if (requestQueue.length > 0) {
-      // Lấy request đầu tiên trong hàng đợi và thực hiện nó
-      const nextRequest = requestQueue.shift();
-      await nextRequest?.();
-    }
-  };
+  const [quantity, setQuantity] = useState<number | undefined>(product?.so_luong);
+  //lấy dữ liệu
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get(`/gio-hang`, {
+        const res = await instanceClient.get(`/gio-hang`, {
           headers: {
             Authorization: `Bearer ${access_token}`,
-          },
-        });
-        return response.data;
+          }
+        })
+        return res.data
       } catch (error) {
-        throw new Error("Error fetching cart data");
+        console.log(error)
       }
-    },
-  });
-  const { mutate: increaseQuantity } = useMutation({
-    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(
+    }
+  })
+  console.log(data)
+  // Thêm số lượng sản phẩm
+  // const { mutate } = useMutation({
+  //   mutationFn: async ({ productId, currentQuantity }: { productId: string, currentQuantity: number }) => {
+  //     try {
+  //       const res = await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`, {
+  //         so_luong: currentQuantity + 1
+  //       }, {
+  //         headers: {
+  //           Authorization: `Bearer ${access_token}`
+  //         }
+  //       })
+  //       return res.data
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["cart"] })
+  //   },
+  //   onError: (error) => {
+  //     console.log(error)
+  //   }
+  // })
+  // Tạo hàm debounced cho việc tăng số lượng
+  const debouncedIncreaseQuantity = debounce(async (productId: string, currentQuantity: number) => {
+    try {
+      const res = await instanceClient.put(
         `/gio-hang/tang-so-luong/${productId}`,
         { so_luong: currentQuantity + 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${access_token}` } }
       );
-    },
-    onMutate: ({ productId, currentQuantity }) => {
-      const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(
-        ["cart", access_token],
-        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
-          const updatedProducts = oldData.san_pham_giam_gia.map((product) => {
-            if (product.id === productId) {
-              return { ...product, so_luong: currentQuantity + 1 };
-            }
-            return product;
-          });
+      setQuantity(currentQuantity + 1); // Cập nhật số lượng trong state ngay lập tức
+      queryClient.invalidateQueries({ queryKey: ["cart"] }); // Invalidate cache to refresh data
+    } catch (error) {
+      console.log(error);
+    }
+  }, 500);
 
-          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map((product) => {
-            if (product.id === productId) {
-              return { ...product, so_luong: currentQuantity + 1 };
-            }
-            return product;
-          });
-
-          return {
-            ...oldData,
-            san_pham_giam_gia: updatedProducts,
-            san_pham_nguyen_gia: updatedOriginalProducts,
-          };
-        }
-      );
-
-      return { previousCartData };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
-      executeNextRequest()
-    },
-    onError: (error, _, context) => {
-      if (context?.previousCartData) {
-        queryClient.setQueryData(["cart", access_token], context.previousCartData);
-      }
-      const errorMessage = (error as any).response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.";
-      toast.error(errorMessage);
-      executeNextRequest()
-    },
-  });
-
-  const { mutate: decreaseQuantity } = useMutation({
-    mutationFn: async ({
-      productId,
-      currentQuantity,
-    }: {
-      productId: string;
-      currentQuantity: number;
-    }) => {
-      await instanceClient.put(
-        `/gio-hang/giam-so-luong/${productId}`,
+  // Tạo hàm debounced cho việc giảm số lượng
+  const debouncedDecreaseQuantity = debounce(async (productId: string, currentQuantity: number) => {
+    try {
+      const res = await instanceClient.put(
+        `/gio-hang/tang-so-luong/${productId}`,
         { so_luong: currentQuantity - 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${access_token}` } }
       );
-    },
-    onMutate: ({ productId, currentQuantity }) => {
-      const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(
-        ["cart", access_token],
-        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
-          const updatedProducts = oldData.san_pham_giam_gia.map((product) => {
-            if (product.id === productId) {
-              return { ...product, so_luong: currentQuantity - 1 };
-            }
-            return product;
-          });
-
-          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
-            (product) => {
-              if (product.id === productId) {
-                return { ...product, so_luong: currentQuantity - 1 };
-              }
-              return product;
-            }
-          );
-
-          return {
-            ...oldData,
-            san_pham_giam_gia: updatedProducts,
-            san_pham_nguyen_gia: updatedOriginalProducts,
-          };
-        }
-      );
-
-      return { previousCartData };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
-      executeNextRequest()
-    },
-    onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
-      if (context?.previousCartData) {
-        queryClient.setQueryData(
-          ["cart", access_token],
-          context.previousCartData
-        );
-      }
-      toast.error("Thao tác quá nhanh, vui lòng chậm lại");
-      executeNextRequest()
-    },
-  });
-
-  const debouncedIncreaseQuantity = debounce(
-    (productId, currentQuantity) => {
-      addRequestToQueue(() => new Promise<void>((resolve, reject) => {
-        increaseQuantity({ productId, currentQuantity }, {
-          onSuccess: resolve,
-          onError: reject,
-        });
-      }));
-      executeNextRequest(); 
-    },
-    2000,
-    { leading: true, trailing: false }
-  );
-  
-  const debouncedDecreaseQuantity = debounce(
-    (productId, currentQuantity) => {
-      addRequestToQueue(() => new Promise<void>((resolve, reject) => {
-        decreaseQuantity({ productId, currentQuantity }, {
-          onSuccess: resolve,
-          onError: reject,
-        });
-      }));
-      executeNextRequest(); 
-    },
-    2000,
-    { leading: true, trailing: false }
-  );
-  
-  const { mutate: Delete } = useMutation({
-    mutationFn: async (productId: string) => {
-      await instanceClient.delete(`/gio-hang/${productId}`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
-      toast.success("Xóa sản phẩm thành công.");
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Có lỗi xảy ra khi xóa sản phẩm.");
-    },
-  });
-  // tiet kiem
-  const totalSavings = useMemo(() => {
-    return data?.san_pham_giam_gia
-      .filter((product: any) => selectedProducts.includes(product.id))
-      .reduce((sum: number, product: any) => sum + product.tiet_kiem, 0);
-  }, [data, selectedProducts]);
-  // tong sanpham
-  const tongSoLuong = useMemo(() => {
-    return (
-      data?.san_pham_giam_gia
-        .filter((product: any) => selectedProducts.includes(product.id))
-        .reduce((sum: number, product: any) => sum + product.so_luong, 0) +
-      data?.san_pham_nguyen_gia
-        .filter((product: any) => selectedProducts.includes(product.id))
-        .reduce((sum: number, product: any) => sum + product.so_luong, 0)
-    );
-  }, [data, selectedProducts]);
-
-  // Tính tổng tiền
-  const totalSelectedPrice = selectedProducts.reduce((total, productId) => {
-    const productInDiscounts = data?.san_pham_giam_gia.find(
-      (product: any) => product.id === productId
-    );
-    const productInRegular = data?.san_pham_nguyen_gia.find(
-      (product: { id: number }) => product.id === Number(productId)
-    );
-
-    const quantity = (productInDiscounts?.so_luong || productInRegular?.so_luong) || 1;
-
-    if (productInDiscounts) {
-      return total + productInDiscounts.gia_hien_tai * quantity;
+      setQuantity(currentQuantity - 1); // Cập nhật số lượng trong state ngay lập tức
+      queryClient.invalidateQueries({ queryKey: ["cart"] }); // Invalidate cache to refresh data
+    } catch (error) {
+      console.log(error);
     }
-
-    if (productInRegular) {
-      return total + productInRegular.gia_hien_tai * quantity;
-    }
-
-    return total;
-  }, 0);
-  // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
-  const shippingFee = totalSelectedPrice > 498000 ? 0 : 20000;
-  const finalTotal = totalSelectedPrice + shippingFee;
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount);
-  };
-
-  const handleCheckout = () => {
-    if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
-      toast.error(
-        "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
-      );
-      return;
-    }
-    // Kiểm tra xem có sản phẩm nào được chọn hay không
-    if (!selectedProducts.length) {
-      toast.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
-      return;
-    }
-    nav("/shippingAddressPage");
-  };
-  const handleRemoveProduct = (productId: string) => {
-    Delete(productId);
-  };
-
-  // Xử lý khi chọn tất cả
-  const handleSelectAll = (isChecked: boolean) => {
-    if (isChecked) {
-      const allProductIds = [
-        ...data?.san_pham_giam_gia.map((product: any) => product.id),
-        ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
-      ];
-      setSelectedProducts(allProductIds);
-      localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
-      // Gọi SelectedProduct với tất cả ID
-      SelectedProduct({ gioHangIds: allProductIds, isChecked: true });
-    } else {
-      const allProductIds = [
-        ...data?.san_pham_giam_gia.map((product: any) => product.id),
-        ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
-      ];
-      setSelectedProducts([]); // Cập nhật trạng thái không chọn
-      localStorage.setItem('selectedProducts', JSON.stringify([]));
-      // Gọi SelectedProduct với tất cả ID và trạng thái không chọn
-      SelectedProduct({ gioHangIds: allProductIds, isChecked: false });
-    }
-  };
-
-  // chọn sản phẩm
-  const { mutate: SelectedProduct } = useMutation({
-    mutationFn: async ({
-      gioHangIds,
-      isChecked,
-    }: {
-      gioHangIds: string[];
-      isChecked: boolean;
-    }) => {
-      await instanceClient.post(
-        `/gio-hang/chon-san-pham`,
-        { gio_hang_ids: gioHangIds, chon: isChecked ? 1 : 0 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Có lỗi xảy ra khi chọn sản phẩm.");
-    },
-  });
-
-  const handleSelectProduct = (productId: string) => {
-    const isChecked = selectedProducts.includes(productId);
-    // Cập nhật trạng thái selectedProducts
-    const updatedSelectedProducts = isChecked
-      ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn sản phẩm
-      : [...selectedProducts, productId]; // Chọn sản phẩm
-    setSelectedProducts(updatedSelectedProducts);
-    console.log("check:", isChecked);
-    // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
-    SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
-    localStorage.setItem(
-      "selectedProducts",
-      JSON.stringify(updatedSelectedProducts)
-    );
-  };
-  useEffect(() => {
-    // Retrieve saved selection from localStorage on component mount
-    const savedSelectedProducts = localStorage.getItem("selectedProducts");
-    if (savedSelectedProducts) {
-      setSelectedProducts(JSON.parse(savedSelectedProducts));
-    }
-  }, []);
-
-  // Tải sản phẩm từ localStorage khi component khởi tạo
-  useEffect(() => {
-    const storedProducts = localStorage.getItem("selectedProducts");
-    if (storedProducts) {
-      setSelectedProducts(JSON.parse(storedProducts));
-    }
-  }, []);
-
-  // Lưu sản phẩm vào localStorage khi có sự thay đổi
-  useEffect(() => {
-    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
-  }, [selectedProducts]);
-  // 
-  useEffect(() => {
-    if (data) {
-      const preSelectedProducts = [
-        ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id),
-        ...(data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id)
-      ];
-
-      if (preSelectedProducts.length > 0) {
-        setSelectedProducts(prev => Array.from(new Set([...prev, ...preSelectedProducts])));
-      }
-    }
-  }, [data]);
+  }, 500);
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
@@ -405,38 +112,37 @@ const CheckOut = () => {
 
             <div className="grid lg:grid-cols-12 gap-4 px-0 justify-center">
               <div className="lg:col-span-8 col-span-6 md:px-0 px-3">
-              <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-[770px]">
-  <p className="font-bold text-black">
-    {totalSelectedPrice >= 500000 ? (
-      <>Chúc mừng! Đơn hàng của bạn được <span className="text-black">Miễn phí vận chuyển</span></>
-    ) : (
-      <>Thêm {formatCurrency(500000 - totalSelectedPrice)} để được <span className="text-black">Miễn phí vận chuyển</span></>
-    )}
-  </p>
+                <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-[770px]">
+                  <p className="font-bold text-black">
+                    {/* {totalSelectedPrice >= 500000 ? (
+                      <>Chúc mừng! Đơn hàng của bạn được <span className="text-black">Miễn phí vận chuyển</span></>
+                    ) : (
+                      <>Thêm {formatCurrency(500000 - totalSelectedPrice)} để được <span className="text-black">Miễn phí vận chuyển</span></>
+                    )} */}
+                  </p>
 
-  <div className="relative bg-gray-100 rounded-full h-2 mt-3">
-    <div
-      className={`h-full ${totalSelectedPrice >= 500000 ? 'bg-green-400' : 'bg-yellow-400'}`}
-      style={{
-        width: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
-      }}
-    >
-      <div
-        className="absolute top-0 flex items-center justify-center"
-        style={{
-          left: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
-          transform: 'translate(-40%, -40%)',
-          zIndex: 10,
-        }}
-      >
-        <div className={`w-8 h-8 rounded-full ${totalSelectedPrice >= 500000 ? 'bg-green-200' : 'bg-yellow-200'} flex items-center justify-center`}>
-          <Star className={`text-${totalSelectedPrice >= 500000 ? 'green' : 'yellow'}-500`} size={16} />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
+                  <div className="relative bg-gray-100 rounded-full h-2 mt-3">
+                    <div
+                      className="bg-yellow-400 h-full"
+                      style={{
+                        // width: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
+                      }}
+                    >
+                      <div
+                        className="absolute top-0 flex items-center justify-center"
+                        style={{
+                          // left: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
+                          transform: 'translate(-40%, -40%)',
+                          zIndex: 10,
+                        }}
+                      >
+                        <div className="w-8 h-8 rounded-full bg-yellow-200 flex items-center justify-center">
+                          <Star className="text-yellow-500" size={16} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <table className="min-w-full  ">
                   <thead>
@@ -446,7 +152,7 @@ const CheckOut = () => {
                           type="checkbox"
                           checked={selectedProducts.length === (data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length)}
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                          onChange={(e) => handleSelectAll(e.target.checked)}
+                          // onChange={(e) => handleSelectAll(e.target.checked)}
                           title="Select all products"
                         />
                       </th>
@@ -475,7 +181,7 @@ const CheckOut = () => {
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                               checked={product.chon === 1 || selectedProducts.includes(product.id)}
-                              onChange={() => handleSelectProduct(product.id)}
+                              // onChange={() => handleSelectProduct(product.id)}
                               title="Select discount product"
                             />
                           </td>
@@ -521,9 +227,9 @@ const CheckOut = () => {
                               {product.so_luong === 1 ? (
                                 <Popconfirm
                                   title="Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?"
-                                  onConfirm={() => handleRemoveProduct(product.id)}
                                   okText="Có"
                                   cancelText="Không"
+                                  // onConfirm={() => handleRemoveProduct(product.id)} // Thêm hàm xóa nếu cần
                                 >
                                   <button className="py-1 px-3 rounded-l-lg" title="Decrease quantity">
                                     <i className="fa-solid fa-minus" />
@@ -539,7 +245,7 @@ const CheckOut = () => {
                                 </button>
                               )}
                               <input
-                                value={product.so_luong}
+                                value={quantity}
                                 className="w-7 h-10 text-center"
                                 placeholder="Quantity"
                                 min="1"
@@ -553,7 +259,7 @@ const CheckOut = () => {
                                     toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
                                     return;
                                   }
-                                  debouncedIncreaseQuantity(product.id, product.so_luong);
+                                  debouncedIncreaseQuantity(product.id, product.so_luong); // Gọi hàm debounced để tăng số lượng
                                 }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
@@ -565,13 +271,13 @@ const CheckOut = () => {
                           </td>
 
                           <td className="px-4 py-2">
-                            {formatCurrency(
+                            {/* {formatCurrency(
                               product.gia_hien_tai * product.so_luong
-                            )}
+                            )} */}
                           </td>
                           <td className="px-4 py-2">
                             <button
-                              onClick={() => Delete(product.id)}
+                              // onClick={() => Delete(product.id)}
                               className="text-red-600 hover:text-red-800"
                               title="Remove product"
                             >
@@ -592,7 +298,7 @@ const CheckOut = () => {
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                               checked={product.chon === 1 || selectedProducts.includes(product.id)}
-                              onChange={() => handleSelectProduct(product.id)}
+                              // onChange={() => handleSelectProduct(product.id)}
                               title="Select regular price product"
                             />
                           </td>
@@ -612,7 +318,7 @@ const CheckOut = () => {
                                   {product.mau_sac}, {product.kich_thuoc}
                                 </p>
                                 <p className="text-gray-700 font-semibold mt-1">
-                                  {formatCurrency(product.gia_hien_tai)}
+                                  {/* {formatCurrency(product.gia_hien_tai)} */}
                                 </p>
                               </div>
                             </div>
@@ -622,7 +328,7 @@ const CheckOut = () => {
                               {product.so_luong === 1 ? (
                                 <Popconfirm
                                   title="Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?"
-                                  onConfirm={() => handleRemoveProduct(product.id)}
+                                  // onConfirm={() => handleRemoveProduct(product.id)}
                                   okText="Có"
                                   cancelText="Không"
                                 >
@@ -632,7 +338,7 @@ const CheckOut = () => {
                                 </Popconfirm>
                               ) : (
                                 <button
-                                  onClick={() => debouncedDecreaseQuantity(product.id, product.so_luong)}
+                                  // onClick={() => debouncedDecreaseQuantity(product.id, product.so_luong)}
                                   className="py-1 px-3 rounded-l-lg"
                                   title="Decrease quantity"
                                 >
@@ -651,10 +357,10 @@ const CheckOut = () => {
                               <button
                                 onClick={() => {
                                   if (product.so_luong >= product.so_luong_bien_the) {
-                                    toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
+                                    // toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
                                     return;
                                   }
-                                  debouncedIncreaseQuantity(product.id, product.so_luong);
+                                  // debouncedIncreaseQuantity(product.id, product.so_luong);
                                 }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
@@ -665,13 +371,13 @@ const CheckOut = () => {
                             </div>
                           </td>
                           <td className="px-4 py-2">
-                            {formatCurrency(
+                            {/* {formatCurrency(
                               product.gia_hien_tai * product.so_luong
-                            )}
+                            )} */}
                           </td>
                           <td className="px-4 py-2">
                             <button
-                              onClick={() => Delete(product.id)}
+                              // onClick={() => Delete(product.id)}
                               className="text-red-600 hover:text-red-800"
                               title="Remove product"
                             >
@@ -687,7 +393,7 @@ const CheckOut = () => {
               </div>
 
               {/* CHI TIẾT */}
-              <div className="lg:col-span-4 col-span-6">
+              {/* <div className="lg:col-span-4 col-span-6">
                 <div className="border px-4 py-1 lg:w-[359px] rounded-md">
                   <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
                   {selectedProducts.length === 0 ? (
@@ -754,13 +460,13 @@ const CheckOut = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
       )}
     </>
-  );
-};
+  )
+}
 
-export default CheckOut;
+export default CartPage
