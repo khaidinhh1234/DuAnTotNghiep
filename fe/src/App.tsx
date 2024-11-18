@@ -240,7 +240,35 @@ function App() {
             width: 80px; /* Điều chỉnh kích thước ảnh */
             animation: flyAroundBorder 20s linear infinite;
           }
+/* Scrollbar tổng quan */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px; /* Để hỗ trợ thanh cuộn ngang */
+}
+
+/* Vùng cuộn (Track) */
+::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #f1f1f1, #e6e6e6);
+  border-radius: 5px; /* Bo góc mượt hơn */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1); /* Hiệu ứng chìm */
+}
+
+/* Thanh cuộn (Thumb) */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #888, #666);
+  border-radius: 5px; /* Bo góc mượt hơn */
+  border: 2px solid #f1f1f1; /* Tạo viền để tăng độ tương phản */
+  transition: background 0.3s ease, transform 0.2s ease; /* Hiệu ứng mượt khi hover */
+}
+
+/* Hover trên thanh cuộn (Thumb) */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #555, #333);
+  transform: scale(1.1); /* Phóng to nhẹ khi hover */
+}
+
         `}
+
             </style>
 
             <ToastContainer />
