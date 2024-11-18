@@ -279,26 +279,19 @@ const ProductDetail: React.FC = () => {
   // useMutation để thêm sản phẩm vào giỏ hàng trên server khi có access_token
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-      try {
-        const response = await instanceClient.post(
-          "/gio-hang",
-          {
-            bien_the_san_pham_id: variantId,
-            so_luong: quantity,
+      const response = await instanceClient.post(
+        "/gio-hang",
+        {
+          bien_the_san_pham_id: variantId,
+          so_luong: quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-            },
-          }
-        );
-        return response.data;
-      } catch (error: any) {
-        throw new Error(
-          error.response?.data?.message ||
-            "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
-        );
-      }
+        }
+      );
+      return response.data;
     },
     onSuccess: (data) => {
       if (data?.status) {
@@ -703,8 +696,11 @@ const ProductDetail: React.FC = () => {
             className="absolute inset-0 border-t-2 border-red-500 transform rotate-45"
             style={{
               content: '""',
-              width: '120%',
-              left: '-10%',
+              borderTop: '2px solid rgba(255, 0, 0, 0.5)',
+              transform: 'rotate(45deg)',
+              transformOrigin: 'center',
+              width: '130%',
+              left: '-30%',
               top: '45%'
             }}
           />
@@ -760,7 +756,7 @@ const ProductDetail: React.FC = () => {
                     </button>
                   ))}
                 </div> */}
-                <div className="flex mt-3">
+<div className="flex mt-3">
   {Array.from(
     new Set(
       product?.bien_the_san_pham?.map(
@@ -777,19 +773,22 @@ const ProductDetail: React.FC = () => {
         key={index}
         onClick={() => isAvailable && handleSizeClick(size)}
         disabled={!isAvailable}
-        className={`w-10 h-10 rounded-md border border-blackL text-blackL 
+        className={`w-10 h-10 rounded-md border border-blackL text-blackL overflow-hidden
           hover:bg-blackL hover:text-white mr-2 
           ${selectedSize === size ? "bg-blackL text-white" : ""}
-          ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
+          ${!isAvailable ? "opacity-40 cursor-not-allowed relative" : ""}`}
       >
         {size}
         {!isAvailable && (
           <div 
-            className="absolute inset-0 border-t-2 border-red-500 transform rotate-45"
+            className="absolute inset-0"
             style={{
               content: '""',
-              width: '120%',
-              left: '-10%',
+              borderTop: '2px solid rgba(255, 0, 0, 0.5)',
+              transform: 'rotate(45deg)',
+              transformOrigin: 'center',
+              width: '130%',
+              left: '-30%',
               top: '45%'
             }}
           />
@@ -798,6 +797,8 @@ const ProductDetail: React.FC = () => {
     );
   })}
 </div>
+
+
               </div>
 
               <div className="mt-12 flex gap-5">
