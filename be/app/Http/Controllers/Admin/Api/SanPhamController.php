@@ -7,6 +7,7 @@ use App\Exports\SanPhamExports;
 use App\Http\Controllers\Controller;
 use App\Models\AnhBienThe;
 use App\Models\BienTheSanPham;
+use App\Models\GioHang;
 use App\Models\SanPham;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -199,6 +200,9 @@ class SanPhamController extends Controller
         $bienTheSanPham = [];
 
         foreach ($bienTheSanPhamTmp as $value) {
+            $gioHang = GioHang::where('bien_the_san_pham_id', $value['id'])->update([
+                'so_luong_bien_the' => $value['so_luong_bien_the']
+            ]);
             if ($value['so_luong_bien_the'] !== null) {
                 $bienTheSanPham[] = [
                     'bien_the_mau_sac_id' => $value['mau_sac_id'],
@@ -270,7 +274,13 @@ class SanPhamController extends Controller
         try {
             DB::beginTransaction();
 
-            $sanPham = SanPham::with(['bienTheSanPham.anhBienThe', 'boSuuTapSanPham'])->findOrFail($id);
+            $sanPham = SanPham::with(['bienTheSanPham','bienTheSanPham.anhBienThe', 'boSuuTapSanPham'])->findOrFail($id);
+            foreach ($sanPham->bienTheSanPham as $value) {
+                $gioHang = GioHang::where('bien_the_san_pham_id', $value->id)->first();
+                if ($gioHang) {
+                    $gioHang->delete();
+                }
+            }
             $sanPham->delete();
 
             DB::commit();
