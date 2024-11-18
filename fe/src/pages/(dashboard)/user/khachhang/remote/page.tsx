@@ -8,7 +8,6 @@ import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
-
 interface DataType {
   key: React.Key;
   anh_nguoi_dung: string;
@@ -49,6 +48,7 @@ const UserskhachangRemote: React.FC = () => {
         });
         return res.data;
       } catch (error) {
+        message.error("Khôi phục thất bại");
         console.log(error);
       }
     },

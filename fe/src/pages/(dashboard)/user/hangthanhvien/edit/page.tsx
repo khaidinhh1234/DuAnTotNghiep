@@ -55,8 +55,13 @@ const MemberRankEdit = () => {
 
   const { mutate } = useMutation({
     mutationFn: async (data) => {
-      const response = await instance.put(`/hangthanhvien/${id}`, data);
-      return response.data;
+      try {
+        const response = await instance.put(`/hangthanhvien/${id}`, data);
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Cập nhật hạng thành viên thất bại");
+      }
     },
     onSuccess: () => {
       message.success("Cập nhật hạng thành viên thành công");

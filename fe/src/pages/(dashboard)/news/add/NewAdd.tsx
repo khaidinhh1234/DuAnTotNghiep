@@ -39,31 +39,36 @@ const NewAdd = () => {
   // Mutation for adding news
   const { mutate } = useMutation({
     mutationFn: async (news: INew) => {
-      const response = await instance.post(`/tintuc`, news);
-      return response.data;
+      try {
+        const response = await instance.post(`/tintuc`, news);
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Thêm tin tức thất bại");
+      }
     },
     onSuccess: () => {
       message.success("Thêm tin tức thành công");
       form.resetFields();
       nav("/admin/news");
     },
-    onError: (error) => {
-      message.error(error.message);
-    },
   });
 
-  const updateContent = useCallback((content: string) => {
-    setEditorContent(content); // Chỉ lưu trữ nội dung
-    form.setFieldsValue({
-      noi_dung: content,
-    });
-  }, [form]);
+  const updateContent = useCallback(
+    (content: string) => {
+      setEditorContent(content); // Chỉ lưu trữ nội dung
+      form.setFieldsValue({
+        noi_dung: content,
+      });
+    },
+    [form]
+  );
 
   // Handle form submission
   // const onFinish = (values: any) => {
   //   const categoryData: INew = {
   //     ...values,
-  //     noi_dung: editorContent, 
+  //     noi_dung: editorContent,
   //     user_id: values.user_id,
   //   };
   //   mutate(categoryData);
@@ -77,12 +82,12 @@ const NewAdd = () => {
       }
 
       const categoryData: INew = {
-            ...values,
-            noi_dung: editorContent, 
-            user_id: values.user_id,
-            anh_tin_tuc: imageUrl,
-          };
-          mutate(categoryData);
+        ...values,
+        noi_dung: editorContent,
+        user_id: values.user_id,
+        anh_tin_tuc: imageUrl,
+      };
+      mutate(categoryData);
     } catch (error) {
       message.error("Lỗi khi tải ảnh lên");
     }
@@ -132,7 +137,9 @@ const NewAdd = () => {
                 <Form.Item
                   label="Tiêu đề"
                   name="tieu_de"
-                  rules={[{ required: true, message: "Tiêu đề bắt buộc phải nhập!" }]}
+                  rules={[
+                    { required: true, message: "Tiêu đề bắt buộc phải nhập!" },
+                  ]}
                 >
                   <Input placeholder="Nhập tiêu đề tin tức" />
                 </Form.Item>
@@ -164,7 +171,8 @@ const NewAdd = () => {
                 rules={[{ required: true, message: "Vui lòng chọn danh mục" }]}
               >
                 <Select placeholder="Vui lòng chọn danh mục" className="w-full">
-                  {Array.isArray(data?.categories) && data.categories.length > 0 ? (
+                  {Array.isArray(data?.categories) &&
+                  data.categories.length > 0 ? (
                     data.categories.map((newcategory: any) => (
                       <Option key={newcategory.id} value={newcategory.id}>
                         {newcategory.ten_danh_muc_tin_tuc}
@@ -194,7 +202,9 @@ const NewAdd = () => {
                 <Form.Item
                   label="Nội dung"
                   name="noi_dung"
-                  rules={[{ required: true, message: "Nội dung bắt buộc phải nhập!" }]}
+                  rules={[
+                    { required: true, message: "Nội dung bắt buộc phải nhập!" },
+                  ]}
                 >
                   <Editor
                     apiKey="4co2z7i0ky0nmudlm5lsoetsvp6g3u4110d77s2cq143a9in"

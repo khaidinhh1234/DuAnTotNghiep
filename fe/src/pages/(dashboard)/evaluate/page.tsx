@@ -8,6 +8,7 @@ import {
   Image,
   Input,
   InputRef,
+  message,
   Modal,
   Popconfirm,
   Rate,
@@ -36,7 +37,7 @@ const EvaluateAdmin = () => {
       return response.data;
     },
   });
-  console.log(data)
+  console.log(data);
   // const toggleExpand = (id: number) => {
   //   setExpandedKeys((prevKeys) =>
   //     prevKeys.includes(id)
@@ -53,29 +54,36 @@ const EvaluateAdmin = () => {
       id: number | string;
       phan_hoi: string;
     }) => {
-      const response = await instance.post(`/danhsachdanhgia/${id}`, {
-        phan_hoi,
-      });
-      return response.data;
+      try {
+        const response = await instance.post(`/danhsachdanhgia/${id}`, {
+          phan_hoi,
+        });
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Error sending reply");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["danhgiasanpham"] });
-    },
-    onError: (error) => {
-      console.error("Error:", error);
     },
   });
 
   const hideEvaluate = useMutation({
     mutationFn: async (id: number) => {
-      await instance.delete(`/danhsachdanhgia/${id}`);
+      try {
+        const response = await instance.delete(`/danhsachdanhgia/${id}`);
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Error hiding review");
+      }
+    
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["danhgiasanpham"] });
     },
-    onError: (error) => {
-      console.error("Error hiding review:", error);
-    },
+   
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -217,7 +225,7 @@ const EvaluateAdmin = () => {
             : record.mo_ta;
 
         return (
-          <div style={{textAlign: "left", paddingBottom: "60px"  }}>
+          <div style={{ textAlign: "left", paddingBottom: "60px" }}>
             <p>
               <strong>
                 {record.user?.ho + " " + record.user?.ten || "Người dùng ẩn"}
@@ -335,7 +343,7 @@ const EvaluateAdmin = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       > */}
-                 <Modal
+      <Modal
         open={isModalOpen}
         onCancel={handleCancel}
         width={800}
@@ -352,7 +360,8 @@ const EvaluateAdmin = () => {
             onClick={handleOk}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
-            Gửi    </button>,
+            Gửi{" "}
+          </button>,
         ]}
       >
         <h1 className="text-3xl font-bold">Chi tiết đánh giá</h1>

@@ -11,7 +11,7 @@ import AddCategorySelect from "@/components/AddCaterogySelect";
 
 const CategoriesEdit = () => {
   const { id } = useParams();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const nav = useNavigate();
   const [parentCategories, setParentCategories] = useState<ICategories[]>([]);
@@ -55,11 +55,12 @@ const CategoriesEdit = () => {
       form.setFieldsValue({
         ten_danh_muc: data.data.ten_danh_muc,
         cha_id: data.data.cha_id || null,
-        imageFile: data.data.anh_danh_muc ? [{ url: data.data.anh_danh_muc }] : [], // Thêm ảnh vào trường form nếu có
+        imageFile: data.data.anh_danh_muc
+          ? [{ url: data.data.anh_danh_muc }]
+          : [], // Thêm ảnh vào trường form nếu có
       });
     }
   }, [data, form]);
-
 
   const { mutate } = useMutation({
     mutationFn: async (category: ICategories) => {
@@ -67,6 +68,7 @@ const CategoriesEdit = () => {
         const response = await instance.put(`/danhmuc/${id}`, category);
         return response.data;
       } catch (error: any) {
+        message.error(error.response.data.message);
         throw new Error(
           error.response.data.message || "Error updating category"
         );
@@ -94,21 +96,19 @@ const CategoriesEdit = () => {
       }
       const categoryData: ICategories = {
         ...values,
-        cha_id: values.cha_id || null, 
-        anh_danh_muc: imageUrl, 
+        cha_id: values.cha_id || null,
+        anh_danh_muc: imageUrl,
       };
-  
-      // console.log("Dữ liệu gửi lên server: ", categoryData); 
-  
+
+      // console.log("Dữ liệu gửi lên server: ", categoryData);
+
       mutate(categoryData);
-  
     } catch (error) {
-      // console.error("Lỗi chi tiết:", error); 
+      // console.error("Lỗi chi tiết:", error);
       message.error("Lỗi khi tải ảnh lên");
     }
   };
-  
-  
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -167,10 +167,10 @@ const CategoriesEdit = () => {
                     <AddCategorySelect
                       categoriesData={allCategoriesData}
                       onChange={(value) => {
-                        console.log('Category selected:', value);
+                        console.log("Category selected:", value);
                         form.setFieldsValue({ cha_id: value }); // Đảm bảo lưu đúng vào cha_id
                       }}
-                      value={form.getFieldValue('cha_id')}
+                      value={form.getFieldValue("cha_id")}
                     />
                   ) : (
                     <Select disabled placeholder="Đang tải danh mục..." />
@@ -180,17 +180,25 @@ const CategoriesEdit = () => {
                   label="Thêm ảnh"
                   name="imageFile"
                   valuePropName="fileList"
-                  getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
-                  initialValue={data?.data.anh_danh_muc ? [{
-                    url: data.data.anh_danh_muc,
-                    name: 'image.jpg', 
-                    status: 'done',
-                  }] : []}
+                  getValueFromEvent={(e) =>
+                    Array.isArray(e) ? e : e?.fileList
+                  }
+                  initialValue={
+                    data?.data.anh_danh_muc
+                      ? [
+                          {
+                            url: data.data.anh_danh_muc,
+                            name: "image.jpg",
+                            status: "done",
+                          },
+                        ]
+                      : []
+                  }
                 >
                   <Upload
                     listType="picture"
                     maxCount={1}
-                    beforeUpload={() => false} 
+                    beforeUpload={() => false}
                   >
                     <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
                   </Upload>

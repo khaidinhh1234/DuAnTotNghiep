@@ -1,4 +1,3 @@
-
 // import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 // import instanceClient from "@/configs/client";
 // import { Link } from 'react-router-dom';
@@ -44,7 +43,7 @@
 //     queryKey: ['notifications', selectedType],
 //     queryFn: async () => {
 //       const response = await instanceClient.get(
-//         selectedType === NOTIFICATION_TYPES.ALL 
+//         selectedType === NOTIFICATION_TYPES.ALL
 //           ? '/thong-bao'
 //           : `/thong-bao?loai=${selectedType}`
 //       );
@@ -65,14 +64,14 @@
 //   const markAllAsReadMutation = useMutation({
 //     mutationFn: () => {
 //       const unreadNotifications = notificationResponse?.data?.filter(
-//         notif => notif.trang_thai_da_doc === "0" && 
+//         notif => notif.trang_thai_da_doc === "0" &&
 //         (selectedType === NOTIFICATION_TYPES.ALL || notif.loai === selectedType)
 //       ) || [];
-      
-//       const promises = unreadNotifications.map(notification=> 
+
+//       const promises = unreadNotifications.map(notification=>
 //         instanceClient.post(`/thong-bao/da-doc/${notification.id}`)
 //       );
-      
+
 //       return Promise.all(promises);
 //     },
 //     onSuccess: () => {
@@ -89,10 +88,10 @@
 //   if (isLoading) return <div>Loading...</div>;
 
 //   const notifications = notificationResponse?.data || [];
-//   const filteredNotifications = selectedType === NOTIFICATION_TYPES.ALL 
-//     ? notifications 
+//   const filteredNotifications = selectedType === NOTIFICATION_TYPES.ALL
+//     ? notifications
 //     : notifications.filter(notif => notif.loai === selectedType);
-  
+
 //   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 //   const paginatedNotifications = filteredNotifications.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
@@ -133,12 +132,12 @@
 //             <h2 className="text-lg font-semibold mb-4">Loại thông báo</h2>
 //             <ul className="space-y-2">
 //               {Object.values(NOTIFICATION_TYPES).map((type) => (
-//                 <li 
+//                 <li
 //                   key={type}
 //                   className={`
 //                     cursor-pointer p-2 rounded
-//                     ${selectedType === type 
-//                       ? 'bg-blue-500 text-white' 
+//                     ${selectedType === type
+//                       ? 'bg-blue-500 text-white'
 //                       : 'hover:bg-gray-100'
 //                     }
 //                   `}
@@ -154,7 +153,7 @@
 //                     {type === NOTIFICATION_TYPES.WALLET && <i className="fas fa-wallet mr-2" />}
 //                     {type}
 //                     <span className="ml-auto">
-//                       {notifications.filter(n => 
+//                       {notifications.filter(n =>
 //                         type === NOTIFICATION_TYPES.ALL || n.loai === type
 //                       ).length}
 //                     </span>
@@ -187,12 +186,12 @@
 //           <h2 className="text-lg font-semibold mb-4">Loại thông báo</h2>
 //           <ul className="space-y-2">
 //             {Object.values(NOTIFICATION_TYPES).map((type) => (
-//               <li 
+//               <li
 //                 key={type}
 //                 className={`
 //                   cursor-pointer p-2 rounded
-//                   ${selectedType === type 
-//                     ? 'bg-blue-500 text-white' 
+//                   ${selectedType === type
+//                     ? 'bg-blue-500 text-white'
 //                     : 'hover:bg-gray-100'
 //                   }
 //                 `}
@@ -208,7 +207,7 @@
 //                   {type === NOTIFICATION_TYPES.WALLET && <i className="fas fa-wallet mr-2" />}
 //                   {type}
 //                   <span className="ml-auto">
-//                     {notifications.filter(n => 
+//                     {notifications.filter(n =>
 //                       type === NOTIFICATION_TYPES.ALL || n.loai === type
 //                     ).length}
 //                   </span>
@@ -224,7 +223,7 @@
 //         <div className="flex justify-between items-center p-4 bg-white shadow">
 //           <h1 className="text-xl font-bold">Thông báo {selectedType}</h1>
 //           {hasUnreadNotifications && (
-//             <button 
+//             <button
 //               className="text-blue-500 text-sm hover:text-blue-700 transition-colors duration-200"
 //               onClick={() => markAllAsReadMutation.mutate()}
 //               disabled={markAllAsReadMutation.isPending}
@@ -237,11 +236,11 @@
 //         {Object.entries(groupedNotifications).map(([date, notifications]) => (
 //           <div key={date} className="mt-6">
 //             {notifications.map((notification) => (
-//               <div 
-//                 key={notification.id} 
+//               <div
+//                 key={notification.id}
 //                 className={`flex justify-between items-end border-b border-hrBlack pb-5 mb-5 cursor-pointer transition-colors duration-200 ${
-//                   notification.trang_thai_da_doc === "0" 
-//                     ? 'bg-gray-100 hover:bg-white' 
+//                   notification.trang_thai_da_doc === "0"
+//                     ? 'bg-gray-100 hover:bg-white'
 //                     : 'bg-white hover:bg-gray-100'
 //                 }`}
 //                 onClick={() => handleNotificationClick(notification)}
@@ -289,19 +288,19 @@
 // };
 
 // export default NotificationPage;
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { Pagination } from 'antd';
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Pagination } from "antd";
 
 type NotificationType = keyof typeof NOTIFICATION_TYPES;
 
 const NOTIFICATION_TYPES = {
-  ALL: 'Tất cả',
-  ORDER: 'Đơn hàng',
-  PROMOTION: 'Ưu đãi', 
-  WALLET: 'Ví tiền'
+  ALL: "Tất cả",
+  ORDER: "Đơn hàng",
+  PROMOTION: "Ưu đãi",
+  WALLET: "Ví tiền",
 } as const;
 
 interface NotificationResponse {
@@ -333,46 +332,60 @@ const ITEMS_PER_PAGE = 4;
 
 const NotificationPage = (): JSX.Element => {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [selectedType, setSelectedType] = useState<string>(NOTIFICATION_TYPES.ALL);
+  const [selectedType, setSelectedType] = useState<string>(
+    NOTIFICATION_TYPES.ALL
+  );
   const queryClient = useQueryClient();
 
-  const { data: notificationResponse, isLoading } = useQuery<NotificationResponse>({
-    queryKey: ['notifications', selectedType],
-    queryFn: async () => {
-      const response = await instanceClient.get<NotificationResponse>(
-        selectedType === NOTIFICATION_TYPES.ALL 
-          ? '/thong-bao'
-          : `/thong-bao?loai=${selectedType}`
-      );
-      return response.data;
-    }
-  });
+  const { data: notificationResponse, isLoading } =
+    useQuery<NotificationResponse>({
+      queryKey: ["notifications", selectedType],
+      queryFn: async () => {
+        const response = await instanceClient.get<NotificationResponse>(
+          selectedType === NOTIFICATION_TYPES.ALL
+            ? "/thong-bao"
+            : `/thong-bao?loai=${selectedType}`
+        );
+        return response.data;
+      },
+    });
 
   const markAsReadMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await instanceClient.post(`/thong-bao/da-doc/${id}`);
-      return response.data;
+      try {
+        const response = await instanceClient.post(`/thong-bao/da-doc/${id}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error marking as read:", error);
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      const unreadNotifications = notificationResponse?.data?.filter(
-        (notif: Notification) => notif.trang_thai_da_doc === "0" && 
-        (selectedType === NOTIFICATION_TYPES.ALL || notif.loai === selectedType)
-      ) || [];
-      
-      const promises = unreadNotifications.map((notification: Notification) => 
-        instanceClient.post(`/thong-bao/da-doc/${notification.id}`)
-      );
-      
-      return Promise.all(promises);
+      try {
+        const unreadNotifications =
+          notificationResponse?.data?.filter(
+            (notif: Notification) =>
+              notif.trang_thai_da_doc === "0" &&
+              (selectedType === NOTIFICATION_TYPES.ALL ||
+                notif.loai === selectedType)
+          ) || [];
+
+        const promises = unreadNotifications.map((notification: Notification) =>
+          instanceClient.post(`/thong-bao/da-doc/${notification.id}`)
+        );
+
+        return Promise.all(promises);
+      } catch (error) {
+        console.error("Error marking all as read:", error);
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 
@@ -385,21 +398,32 @@ const NotificationPage = (): JSX.Element => {
   if (isLoading) return <div>Loading...</div>;
 
   const notifications = notificationResponse?.data || [];
-  const filteredNotifications = selectedType === NOTIFICATION_TYPES.ALL 
-    ? notifications 
-    : notifications.filter((notif: Notification) => notif.loai === selectedType);
-  
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedNotifications = filteredNotifications.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const filteredNotifications =
+    selectedType === NOTIFICATION_TYPES.ALL
+      ? notifications
+      : notifications.filter(
+          (notif: Notification) => notif.loai === selectedType
+        );
 
-  const groupedNotifications = paginatedNotifications.reduce((groups: GroupedNotifications, notification) => {
-    const date = new Date(notification.created_at).toLocaleDateString('vi-VN');
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(notification);
-    return groups;
-  }, {});
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedNotifications = filteredNotifications.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  const groupedNotifications = paginatedNotifications.reduce(
+    (groups: GroupedNotifications, notification) => {
+      const date = new Date(notification.created_at).toLocaleDateString(
+        "vi-VN"
+      );
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(notification);
+      return groups;
+    },
+    {}
+  );
 
   const handlePageChange = (page: number): void => {
     setCurrentPage(page);
@@ -414,11 +438,11 @@ const NotificationPage = (): JSX.Element => {
       case NOTIFICATION_TYPES.PROMOTION:
         return `/shop/${notification.duong_dan}`;
       case NOTIFICATION_TYPES.WALLET:
-        return '/mypro/wallet';
+        return "/mypro/wallet";
       case NOTIFICATION_TYPES.ORDER:
         return `/mypro/myorder/${notification.duong_dan}`;
       default:
-        return '#';
+        return "#";
     }
   };
 
@@ -430,13 +454,14 @@ const NotificationPage = (): JSX.Element => {
             <h2 className="text-lg font-semibold mb-4">Loại thông báo</h2>
             <ul className="space-y-2">
               {Object.values(NOTIFICATION_TYPES).map((type) => (
-                <li 
+                <li
                   key={type}
                   className={`
                     cursor-pointer p-2 rounded
-                    ${selectedType === type 
-                      ? 'bg-blue-500 text-white' 
-                      : 'hover:bg-gray-100'
+                    ${
+                      selectedType === type
+                        ? "bg-blue-500 text-white"
+                        : "hover:bg-gray-100"
                     }
                   `}
                   onClick={() => {
@@ -445,15 +470,26 @@ const NotificationPage = (): JSX.Element => {
                   }}
                 >
                   <div className="flex items-center">
-                    {type === NOTIFICATION_TYPES.ALL && <i className="fas fa-bell mr-2" />}
-                    {type === NOTIFICATION_TYPES.ORDER && <i className="fas fa-shopping-cart mr-2" />}
-                    {type === NOTIFICATION_TYPES.PROMOTION && <i className="fas fa-tag mr-2" />}
-                    {type === NOTIFICATION_TYPES.WALLET && <i className="fas fa-wallet mr-2" />}
+                    {type === NOTIFICATION_TYPES.ALL && (
+                      <i className="fas fa-bell mr-2" />
+                    )}
+                    {type === NOTIFICATION_TYPES.ORDER && (
+                      <i className="fas fa-shopping-cart mr-2" />
+                    )}
+                    {type === NOTIFICATION_TYPES.PROMOTION && (
+                      <i className="fas fa-tag mr-2" />
+                    )}
+                    {type === NOTIFICATION_TYPES.WALLET && (
+                      <i className="fas fa-wallet mr-2" />
+                    )}
                     {type}
                     <span className="ml-auto">
-                      {notifications.filter(n => 
-                        type === NOTIFICATION_TYPES.ALL || n.loai === type
-                      ).length}
+                      {
+                        notifications.filter(
+                          (n) =>
+                            type === NOTIFICATION_TYPES.ALL || n.loai === type
+                        ).length
+                      }
                     </span>
                   </div>
                 </li>
@@ -467,7 +503,11 @@ const NotificationPage = (): JSX.Element => {
             <h1 className="text-xl font-bold">Thông báo {selectedType}</h1>
           </div>
           <div className="flex flex-col items-center justify-center py-10 pt-36">
-            <img src="/public/Shop.png" alt="No Notifications" className="w-48 h-48" />
+            <img
+              src="/public/Shop.png"
+              alt="No Notifications"
+              className="w-48 h-48"
+            />
             <p className="text-gray-500 mt-10">Chưa có thông báo nào</p>
           </div>
         </div>
@@ -482,13 +522,14 @@ const NotificationPage = (): JSX.Element => {
           <h2 className="text-lg font-semibold mb-4">Loại thông báo</h2>
           <ul className="space-y-2">
             {Object.values(NOTIFICATION_TYPES).map((type) => (
-              <li 
+              <li
                 key={type}
                 className={`
                   cursor-pointer p-2 rounded
-                  ${selectedType === type 
-                    ? 'bg-blue-500 text-white' 
-                    : 'hover:bg-gray-100'
+                  ${
+                    selectedType === type
+                      ? "bg-blue-500 text-white"
+                      : "hover:bg-gray-100"
                   }
                 `}
                 onClick={() => {
@@ -497,15 +538,26 @@ const NotificationPage = (): JSX.Element => {
                 }}
               >
                 <div className="flex items-center">
-                  {type === NOTIFICATION_TYPES.ALL && <i className="fas fa-bell mr-2" />}
-                  {type === NOTIFICATION_TYPES.ORDER && <i className="fas fa-shopping-cart mr-2" />}
-                  {type === NOTIFICATION_TYPES.PROMOTION && <i className="fas fa-tag mr-2" />}
-                  {type === NOTIFICATION_TYPES.WALLET && <i className="fas fa-wallet mr-2" />}
+                  {type === NOTIFICATION_TYPES.ALL && (
+                    <i className="fas fa-bell mr-2" />
+                  )}
+                  {type === NOTIFICATION_TYPES.ORDER && (
+                    <i className="fas fa-shopping-cart mr-2" />
+                  )}
+                  {type === NOTIFICATION_TYPES.PROMOTION && (
+                    <i className="fas fa-tag mr-2" />
+                  )}
+                  {type === NOTIFICATION_TYPES.WALLET && (
+                    <i className="fas fa-wallet mr-2" />
+                  )}
                   {type}
                   <span className="ml-auto">
-                    {notifications.filter(n => 
-                      type === NOTIFICATION_TYPES.ALL || n.loai === type
-                    ).length}
+                    {
+                      notifications.filter(
+                        (n) =>
+                          type === NOTIFICATION_TYPES.ALL || n.loai === type
+                      ).length
+                    }
                   </span>
                 </div>
               </li>
@@ -518,12 +570,14 @@ const NotificationPage = (): JSX.Element => {
         <div className="flex justify-between items-center p-4 bg-white shadow">
           <h1 className="text-xl font-bold">Thông báo {selectedType}</h1>
           {hasUnreadNotifications && (
-            <button 
+            <button
               className="text-blue-500 text-sm hover:text-blue-700 transition-colors duration-200"
               onClick={() => markAllAsReadMutation.mutate()}
               disabled={markAllAsReadMutation.isPending}
             >
-              {markAllAsReadMutation.isPending ? 'Đang xử lý...' : 'Đánh dấu Đã đọc tất cả'}
+              {markAllAsReadMutation.isPending
+                ? "Đang xử lý..."
+                : "Đánh dấu Đã đọc tất cả"}
             </button>
           )}
         </div>
@@ -531,12 +585,12 @@ const NotificationPage = (): JSX.Element => {
         {Object.entries(groupedNotifications).map(([date, notifications]) => (
           <div key={date} className="mt-6">
             {notifications.map((notification) => (
-              <div 
-                key={notification.id} 
+              <div
+                key={notification.id}
                 className={`flex justify-between items-end border-b border-hrBlack pb-5 mb-5 cursor-pointer transition-colors duration-200 ${
-                  notification.trang_thai_da_doc === "0" 
-                    ? 'bg-gray-100 hover:bg-white' 
-                    : 'bg-white hover:bg-gray-100'
+                  notification.trang_thai_da_doc === "0"
+                    ? "bg-gray-100 hover:bg-white"
+                    : "bg-white hover:bg-gray-100"
                 }`}
                 onClick={() => handleNotificationClick(notification)}
               >
@@ -552,16 +606,22 @@ const NotificationPage = (): JSX.Element => {
                   )}
                   <div className="px-4">
                     <Link to={getNotificationLink(notification)}>
-                      <h4 className="font-bold text-base mb-2">{notification.tieu_de}</h4>
+                      <h4 className="font-bold text-base mb-2">
+                        {notification.tieu_de}
+                      </h4>
                       <p className="text-[#A4A1AA]">{notification.noi_dung}</p>
                     </Link>
                   </div>
                 </div>
                 <p className="text-[#A4A1AA] text-xs">
-                  {date}-{new Date(notification.created_at).toLocaleTimeString('vi-VN', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
+                  {date}-
+                  {new Date(notification.created_at).toLocaleTimeString(
+                    "vi-VN",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  )}
                 </p>
               </div>
             ))}

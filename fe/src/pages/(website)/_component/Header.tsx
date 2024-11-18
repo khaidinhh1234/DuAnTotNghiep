@@ -300,7 +300,7 @@ const Header = () => {
   const mainMenuItems = [
     { id: 1, label: "Nam", slug: "nam" },
     { id: 2, label: "Nữ", slug: "nu" },
-    { id: 3, label: "Trẻ em", slug: "tre_em" },
+    { id: 3, label: "Trẻ em", slug: "tre-em" },
   ];
   return (
     <header className="h-12 relative">

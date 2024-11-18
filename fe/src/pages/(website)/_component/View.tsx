@@ -568,8 +568,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
               borderTop: '2px solid rgba(255, 0, 0, 0.5)',
               transform: 'rotate(45deg)',
               transformOrigin: 'center',
-              width: '100%',
-              left: '0',
+              width: '130%',
+              left: '-30%',
               top: '45%'
             }}
           />

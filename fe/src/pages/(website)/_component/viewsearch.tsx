@@ -51,18 +51,24 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
-      const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
-      if (
-        response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
-      ) {
-        message.success("Xóa sản phẩm yêu thích thành công");
+      try {
+        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+        if (
+          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+        ) {
+          message.success("Xóa sản phẩm yêu thích thành công");
+        }
+        if (
+          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+        ) {
+          message.success("Thêm sản phẩm yêu thích thành công");
+        }
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        console.error("API error", error); // Thêm log lỗi API
+        throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
-      if (
-        response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
-      ) {
-        message.success("Thêm sản phẩm yêu thích thành công");
-      }
-      return response.data;
     },
     onSuccess: () => {
       queryclient.invalidateQueries({
@@ -194,19 +200,26 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-      const response = await instanceClient.post(
-        "/gio-hang",
-        {
-          bien_the_san_pham_id: variantId,
-          so_luong: quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
+      try {
+        const response = await instanceClient.post(
+          "/gio-hang",
+          {
+            bien_the_san_pham_id: variantId,
+            so_luong: quantity,
           },
-        }
-      );
-      return response.data;
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error: any) {
+        throw new Error(
+          error.response?.data?.message ||
+            "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        );
+      }
     },
     onSuccess: (data) => {
       if (data.status) {
@@ -264,7 +277,18 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       addToCart(variantIdToUse);
     }
   };
-
+  const isVariantAvailable = (variants: any[], color: string, size?: string) => {
+    const filteredVariants = variants?.filter((variant: any) => {
+      if (size) {
+        return variant.mau_bien_the.ma_mau_sac === color && 
+               variant.kich_thuoc_bien_the.kich_thuoc === size &&
+               variant.so_luong_bien_the > 0;
+      }
+      return variant.mau_bien_the.ma_mau_sac === color &&
+             variant.so_luong_bien_the > 0;
+    });
+    return filteredVariants?.length > 0;
+  };
   return (
     <>
       <Link
@@ -483,19 +507,36 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       ) : null}
                     </h3>
                     <div className="flex space-x-2">
-                      {Array.from(uniqueColors).map((color, index) => (
-                        <button
-                          key={index}
-                          className={`w-9 h-9 rounded-md border-2 ${
-                            selectedColor === color ? "border-black" : ""
-                          }`}
-                          style={{
-                            backgroundColor: color as string,
-                          }}
-                          onClick={() => handleColorClick(color)}
-                        />
-                      ))}
-                    </div>
+  {Array.from(uniqueColors).map((color, index) => {
+    const isAvailable = isVariantAvailable(product?.bien_the_san_pham, color);
+    return (
+      <button
+        key={index}
+        className={`w-9 h-9 rounded-md border-2 overflow-hidden
+          ${selectedColor === color ? "border-black" : ""}
+          ${!isAvailable ? "opacity-40 cursor-not-allowed relative" : ""}`}
+        style={{ backgroundColor: color as string }}
+        onClick={() => isAvailable && handleColorClick(color)}
+        disabled={!isAvailable}
+      >
+        {!isAvailable && (
+          <div 
+            className="absolute inset-0"
+            style={{
+              content: '""',
+              borderTop: '2px solid rgba(255, 0, 0, 0.5)',
+              transform: 'rotate(45deg)',
+              transformOrigin: 'center',
+              width: '100%',
+              left: '0',
+              top: '45%'
+            }}
+          />
+        )}
+      </button>
+    );
+  })}
+</div>
                   </div>
 
                   <div className="items-center mt-4 mb-3">
@@ -508,18 +549,40 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       ) : null}
                     </h3>
                     <div className="flex mt-3">
-                      {sizesForSelectedColor?.map((size: any) => (
-                        <button
-                          key={size}
-                          onClick={() => handleSizeClick(size)}
-                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
-                            selectedSize === size ? "bg-blackL text-white" : ""
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
+  {sizesForSelectedColor?.map((size: any) => {
+    const isAvailable = selectedColor ? 
+      isVariantAvailable(product?.bien_the_san_pham, selectedColor, size) : 
+      false;
+    
+    return (
+      <button
+        key={size}
+        onClick={() => isAvailable && handleSizeClick(size)}
+        disabled={!isAvailable}
+        className={`w-10 h-10 rounded-md border border-blackL text-blackL overflow-hidden
+          hover:bg-blackL hover:text-white mr-2 
+          ${selectedSize === size ? "bg-blackL text-white" : ""}
+          ${!isAvailable ? "opacity-40 cursor-not-allowed relative" : ""}`}
+      >
+        {size}
+        {!isAvailable && (
+          <div 
+            className="absolute inset-0"
+            style={{
+              content: '""',
+              borderTop: '2px solid rgba(255, 0, 0, 0.5)',
+              transform: 'rotate(45deg)',
+              transformOrigin: 'center',
+              width: '130%',
+              left: '-30%',
+              top: '45%'
+            }}
+          />
+        )}
+      </button>
+    );
+  })}
+</div>
                   </div>
                   <div className="mt-12 flex gap-5">
                     <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">

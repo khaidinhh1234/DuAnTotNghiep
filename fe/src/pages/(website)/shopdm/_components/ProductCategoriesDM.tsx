@@ -1,8 +1,8 @@
 import instanceClient from "@/configs/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Slider } from "antd";
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ProductsListDM from "./ProductListDm";
 
 const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
@@ -57,11 +57,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     ...(price.length > 0 && { gia_tren: price[1] }),
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
-    // ...(tenDanhMucCha?.length ? { danh_muc_cha: tenDanhMucCha } : {}),
-    // ...(tenDanhMucCon?.length ? { danh_muc_con: tenDanhMucConCapBa } : {}),
-    // ...(tenDanhMucConCapBa?.length
-    //   ? { danh_muc_con_cap_ba: tenDanhMucConCapBa }
-    //   : {}),
   };
 
   const danhmuc = tenDanhMucConCapBa
@@ -237,54 +232,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   // console.log(sizes);
   // lọc
   const [page, setPage] = useState(1);
-  // const queryClient = useQueryClient();
-  // const { mutate: LOCMUTATE } = useMutation({
-  //   mutationFn: async () => {
-  //     try {
-  //       const response = await instanceClient.post(
-  //         `danhmuc?page=${page}`,
-  //         datas
-  //       );
-  //       if (response.data.status !== true) {
-  //         throw new Error("Error fetching product");
-  //       }
-  //       return response.data;
-  //     } catch (error) {
-  //       throw new Error("Lỗi khi lấy thông tin");
-  //     }
-  //   },
-  //   onSuccess: (data) => {
-  //     queryClient.setQueryData(["PRODUCTSLOC"], data);
-  //     // Chỉ invalidate nếu cần thiết, tránh reload liên tục
-  //     if (!isInDanhMucPage) {
-  //       queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
-  //     }
-  //   },
-  // });
-  // const { mutate } = useMutation({
-  //   mutationFn: async () => {
-  //     try {
-  //       // let url = "/danhmuc";
-  //       // if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
-  //       // if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
-  //       // if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
-  //       const response = await instanceClient.post(`loc-san-pham`, datas);
-  //       if (response.data.status !== true) {
-  //         throw new Error("Error fetching product");
-  //       }
-  //       return response.data;
-  //     } catch (error) {
-  //       throw new Error("Lỗi khi lấy thông tin");
-  //     }
-  //   },
-  //   onSuccess: () => {
-  //     // queryClient.setQueryData(["PRODUCTSLOC"], data);
-  //     // Chỉ invalidate nếu cần thiết, tránh reload liên tục
-  //     // if (!isInDanhMucPage) {
-  //     queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
-  //     // }
-  //   },
-  // });
+
   useEffect(() => {
     const isInDanhMucPage =
       tenDanhMucCha || tenDanhMucCon || tenDanhMucConCapBa;
@@ -445,17 +393,21 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                 </label>
                                 <i
                                   className={`fa-solid fa-plus mr-3 cursor-pointer ${
-                                    expanded.includes(`${index}-${indexCon}`)
+                                    expanded.includes(
+                                      `${index}-${indexCon}` as any
+                                    )
                                       ? "rotate-45"
                                       : ""
                                   }`}
                                   onClick={() =>
-                                    toggleExpand(`${index}-${indexCon}`)
+                                    toggleExpand(`${index}-${indexCon}` as any)
                                   }
                                 ></i>
                               </div>
 
-                              {expanded.includes(`${index}-${indexCon}`) &&
+                              {expanded.includes(
+                                `${index}-${indexCon}` as any
+                              ) &&
                                 itemcon.children?.map(
                                   (itemconcon: any, indexConCon: any) => (
                                     <div

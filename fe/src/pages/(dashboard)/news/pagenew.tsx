@@ -51,18 +51,14 @@ const PageNew: React.FC = () => {
         } else {
           throw new Error(response.data.message || "Failed to delete");
         }
-      } catch (error) {
-        console.error("Error deleting category:", error);
+      } catch (error: any) {
+        message.error(error.response.data.message);
         throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tintuc"] });
       message.success("Xóa tin tức thành công");
-    },
-    onError: (error) => {
-      console.error("Error deleting category:", error);
-      message.error("Xóa tin tức thất bại");
     },
   });
 

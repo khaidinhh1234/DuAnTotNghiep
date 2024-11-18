@@ -103,12 +103,16 @@ const HoanTien = () => {
   const { mutate } = useMutation({
     mutationKey: ["hoanTien"],
     mutationFn: async (data) => {
-      const response = await instanceClient.post(
-        `don-hang/hoan-hang/${slug}`,
-        data
-      );
-      navigate("/mypro/myorder");
-      return response.data;
+      try {
+        const response = await instanceClient.post(
+          `don-hang/hoan-hang/${slug}`,
+          data
+        );
+        return response.data;
+      } catch (error: any) {
+        message.error("Hoàn tiền thất bại!");
+        console.error(error);
+      }
     },
     onSuccess: () => {
       message.success("Hoàn tiền thành công!");

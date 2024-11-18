@@ -1,4 +1,3 @@
-
 import React from "react";
 // import { SearchOutlined } from "@ant-design/icons";
 import { Button, message, Space, Table } from "antd";
@@ -7,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import "@/global.css";
 
-import type {  TableColumnsType } from "antd";
+import type { TableColumnsType } from "antd";
 // import type { FilterDropdownProps } from "antd/es/table/interface";
 import instance from "@/configs/admin";
 
@@ -22,7 +21,6 @@ interface DataType {
   duong_dan_anh: string;
   ngay_hien_thi: string;
 }
-
 
 const ChuongTrinhUuDaiRemote: React.FC = () => {
   // const [searchedColumn, setSearchedColumn] = useState<string>("");
@@ -49,11 +47,13 @@ const ChuongTrinhUuDaiRemote: React.FC = () => {
     }));
   }, [data]);
   const queryClient = useQueryClient();
-  
+
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
       try {
-        const response = await instance.post(`/chuongtrinhuudai/thung-rac/${id}`);
+        const response = await instance.post(
+          `/chuongtrinhuudai/thung-rac/${id}`
+        );
         if (response.data.status) {
           message.open({
             type: "success",
@@ -64,7 +64,7 @@ const ChuongTrinhUuDaiRemote: React.FC = () => {
           throw new Error(response.data.message || "Failed to delete");
         }
       } catch (error) {
-        console.error("Error deleting category:", error);
+        message.error("Khôi phục thất bại");
         throw error;
       }
     },
@@ -164,7 +164,7 @@ const ChuongTrinhUuDaiRemote: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0]; // This will return the date in YYYY-MM-DD format
+    return date.toISOString().split("T")[0]; // This will return the date in YYYY-MM-DD format
   };
 
   const columns: TableColumnsType<DataType> = [
@@ -175,21 +175,21 @@ const ChuongTrinhUuDaiRemote: React.FC = () => {
       width: "5%",
     },
     {
-        title: "Ảnh",
-        width: "15%",
-        key: "duong_dan_anh",
-        dataIndex: "duong_dan_anh",
-        render: (duong_dan_anh: string) =>
-            duong_dan_anh ? (
-            <img
-              src={duong_dan_anh}
-              alt="Ảnh danh mục"
-              style={{ width: "80px", height: "80px", objectFit: "cover" }}
-            />
-          ) : (
-            <span>Ảnh không có</span>
-          ),
-      },
+      title: "Ảnh",
+      width: "15%",
+      key: "duong_dan_anh",
+      dataIndex: "duong_dan_anh",
+      render: (duong_dan_anh: string) =>
+        duong_dan_anh ? (
+          <img
+            src={duong_dan_anh}
+            alt="Ảnh danh mục"
+            style={{ width: "80px", height: "80px", objectFit: "cover" }}
+          />
+        ) : (
+          <span>Ảnh không có</span>
+        ),
+    },
     {
       title: "Tên ưu đãi",
       dataIndex: "ten_uu_dai",
@@ -210,22 +210,27 @@ const ChuongTrinhUuDaiRemote: React.FC = () => {
       dataIndex: "ngay_hien_thi",
       key: "ngay_hien_thi",
       render: (text) => formatDate(text),
-      sorter: (a, b) => new Date(a.ngay_hien_thi).getTime() - new Date(b.ngay_hien_thi).getTime(),
+      sorter: (a, b) =>
+        new Date(a.ngay_hien_thi).getTime() -
+        new Date(b.ngay_hien_thi).getTime(),
       width: "15%",
     },
     {
-        title: "Thời gian",
-        key: "thoi_gian",
-        render: (record) => `${formatDate(record.ngay_bat_dau)} - ${formatDate(record.ngay_ket_thuc)}`,
-        sorter: (a, b) => new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(),
-        width: "20%",
-      },
-      
+      title: "Thời gian",
+      key: "thoi_gian",
+      render: (record) =>
+        `${formatDate(record.ngay_bat_dau)} - ${formatDate(record.ngay_ket_thuc)}`,
+      sorter: (a, b) =>
+        new Date(a.ngay_bat_dau).getTime() - new Date(b.ngay_bat_dau).getTime(),
+      width: "20%",
+    },
+
     {
       title: "Giá trị ưu đãi",
       dataIndex: "gia_tri_uu_dai",
       key: "gia_tri_uu_dai",
-      render: (value, record) => `${value}${record.loai === 'phan_tram' ? '%' : ''}`,
+      render: (value, record) =>
+        `${value}${record.loai === "phan_tram" ? "%" : ""}`,
       width: "10%",
     },
     // {
@@ -235,22 +240,21 @@ const ChuongTrinhUuDaiRemote: React.FC = () => {
     //   render: (value) => value === 'phan_tram' ? 'Phần trăm' : 'Giá trị cố định',
     //   width: "10%",
     // },
-        {
-        title: "Quản trị",
-        key: "action",
-        render: (_, record) => (
-     <Space>
+    {
+      title: "Quản trị",
+      key: "action",
+      render: (_, record) => (
+        <Space>
           <Button
             className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
             onClick={() => mutate(record.id)}
           >
             Khôi phục
           </Button>
-          </Space>
-        ),
-        },
+        </Space>
+      ),
+    },
   ];
-
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -265,20 +269,19 @@ const ChuongTrinhUuDaiRemote: React.FC = () => {
         <div className="flex">
           <Link to="/admin/chuongtrinhuudai" className="mr-1">
             <Button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
-Quay lại            </Button>
+              Quay lại{" "}
+            </Button>
           </Link>
         </div>
       </div>
-      
+
       <div className="max-w-full">
-        
         <Table
           columns={columns}
           dataSource={chuongTrinhUuDai}
           pagination={{ pageSize: 10, className: "my-5" }}
           rowKey="id"
           loading={isLoading}
-
         />
       </div>
     </main>

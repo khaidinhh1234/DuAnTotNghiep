@@ -37,9 +37,17 @@ const Color = () => {
   }, [data, form]);
 
   const updateMutation = useMutation({
+
     mutationFn: async (values: IColor) => {
-      const response = await instance.put(`/admin/bienthemausac/${id}`, values);
-      return response.data;
+      try {
+        const response = await instance.put(`/admin/bienthemausac/${id}`, values);
+        return response.data;
+      }
+      catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Cập nhật màu sắc thất bại");
+      }
+    
     },
     onSuccess: () => {
       message.success("Cập nhật màu sắc thành công");

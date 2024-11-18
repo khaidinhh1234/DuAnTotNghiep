@@ -51,11 +51,8 @@ const NewCategory = () => {
           content: "Xóa danh mục thành công",
         });
         return res.data;
-      } catch (error) {
-        message.open({
-          type: "error",
-          content: "Xóa danh mục thất bại",
-        });
+      } catch (error: any) {
+        message.error(error.response.data.message);
         throw new Error("Error");
       }
     },
@@ -149,7 +146,6 @@ const NewCategory = () => {
       ),
   });
 
-
   const columns: TableColumnsType<NewCategories> = [
     {
       title: "STT",
@@ -188,7 +184,7 @@ const NewCategory = () => {
       width: "30%",
       key: "mo_ta",
       dataIndex: "mo_ta",
-      render: (text) => (text? text : "Chưa có dữ liệu"),
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Thời gian tạo",
