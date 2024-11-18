@@ -259,6 +259,7 @@ class ChuongTrinhUuDaiController extends Controller
     public function destroy(string $id)
     {
         try {
+            DB::beginTransaction();
             $uuDai = ChuongTrinhUuDai::find($id);
 
             if (!$uuDai) {
@@ -269,34 +270,39 @@ class ChuongTrinhUuDaiController extends Controller
                 ], 404);
             }
 
-            $sanPhams = $uuDai->sanPhams()->get();
+            $sanPhams = $uuDai->sanPhams()->with('bienTheSanPham')->get();
 
             foreach ($sanPhams as $sanPham) {
-                $bienTheSanPhams = $sanPham->bienTheSanPham()->get();
-
-                foreach ($bienTheSanPhams as $bienTheSanPham) {
+                foreach ($sanPham->bienTheSanPham as $bienTheSanPham) {
                     $bienTheSanPham->gia_khuyen_mai_tam_thoi = null;
 
                     try {
                         $bienTheSanPham->save();
                     } catch (\Exception $e) {
-                        // Log lỗi khi lưu biến thể sản phẩm
                         Log::error('Lỗi khi lưu biến thể ID: ' . $bienTheSanPham->id . ' - ' . $e->getMessage());
+                        return response()->json([
+                            'status' => false,
+                            'status_code' => 500,
+                            'message' => 'Lỗi khi cập nhật biến thể sản phẩm',
+                        ], 500);
                     }
                 }
             }
 
-            // Xóa chương trình ưu đãi sau khi đã cập nhật tất cả biến thể
+            DB::table('chuong_trinh_san_pham')
+                ->where('chuong_trinh_uu_dai_id', $uuDai->id)
+                ->update(['deleted_at' => Carbon::now()]);
+
             $uuDai->delete();
+            DB::commit();
 
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Xóa chương trình ưu đãi thành công',
             ], 200);
-
         } catch (\Exception $e) {
-            // Bắt lỗi và trả về phản hồi nếu có lỗi xảy ra
+            DB::rollBack();
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -305,7 +311,6 @@ class ChuongTrinhUuDaiController extends Controller
             ], 500);
         }
     }
-
 
 
     public function danhSachXoaMem()
@@ -377,7 +382,7 @@ class ChuongTrinhUuDaiController extends Controller
     public function getSanPhamChuaCoUuDai()
     {
         try {
-            $sanPhamDaCoUuDai = DB::table('chuong_trinh_san_pham')->pluck('san_pham_id')->toArray();
+            $sanPhamDaCoUuDai = DB::table('chuong_trinh_san_pham')->where('deleted_at', null)->groupBy('san_pham_id')->pluck('san_pham_id')->toArray();
 
             $sanPhamChuaCoUuDai = SanPham::whereNotIn('id', $sanPhamDaCoUuDai)->get();
 
