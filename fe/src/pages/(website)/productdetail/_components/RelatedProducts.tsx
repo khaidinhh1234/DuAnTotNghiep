@@ -88,23 +88,25 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ productId }) => {
       </div>
 
       <div className="grid grid-cols-12 justify-center gap-7">
-        {relatedProducts?.data?.map((product) => (
+        {relatedProducts?.data?.slice(0,4).map((product) => (
           <div
             key={product.id}
             className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
           >
             <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
               <div className="relative lg:w-full w-[350px] lg:h-[385px] h-[400px]">
-                {isPending ? (
-                  <span>
-                    <i className="z-20 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-                  </span>
-                ) : (
-                  <span onClick={() => mutate(product.id)}>
-                    <i className="z-20 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-                  </span>
-                )}
-               
+         
+                           {isPending ? (
+                      <span>
+                        <i className="z-10 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
+                      </span>
+                    ) : (
+                      <span onClick={() => mutate(product?.id)}>
+                        <i
+                          className={`${product?.trang_thai_yeu_thich  ? "text-red-500" : "text-black hover:text-white"} z-10 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black  w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
+                        />
+                      </span>
+                    )}
 
                 <Link to={`/product-detail/${product.duong_dan}`}>
                   <div className="relative">
