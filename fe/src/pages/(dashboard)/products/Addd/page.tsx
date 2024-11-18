@@ -366,6 +366,8 @@ const AddProducts: React.FC = () => {
               name="mo_ta_ngan"
               rules={[
                 { required: true, message: "Mô tả ngắn bắt buộc phải nhập!" },
+                { max: 225, message: "Mô tả ngắn không được vượt quá 225 ký tự!" },
+
               ]}
             >
               <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
