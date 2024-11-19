@@ -523,6 +523,30 @@ class GioHangController extends Controller
 
                 return $item;
             });
+
+            $gioHangs->transform(function ($item) use (&$tongGiaTriSanPham, &$tongTietKiem) {
+                $item->gia_hien_tai = $item->gia_ban;
+                $item->gia_cu = null;
+                $item->tiet_kiem = 0;
+
+                if (isset($item->gia_khuyen_mai_tam_thoi) && $item->gia_khuyen_mai_tam_thoi) {
+                    $item->gia_hien_tai = $item->gia_khuyen_mai_tam_thoi;
+                    $item->gia_cu = $item->gia_khuyen_mai;
+                } elseif (isset($item->gia_khuyen_mai) && $item->gia_khuyen_mai) {
+                    $item->gia_hien_tai = $item->gia_khuyen_mai;
+                    $item->gia_cu = $item->gia_ban;
+                }
+
+                if (isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu) {
+                    $item->tiet_kiem = ($item->gia_cu - $item->gia_hien_tai) * $item->so_luong;
+                    $tongTietKiem += $item->tiet_kiem;
+                }
+
+                $tongGiaTriSanPham += $item->gia_hien_tai * $item->so_luong;
+
+                return $item;
+            });
+
             $vanChuyen = 20000;
             $giamGiaVanChuyen = 0;
 
