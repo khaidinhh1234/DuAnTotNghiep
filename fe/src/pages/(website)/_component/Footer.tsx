@@ -728,31 +728,41 @@ const Footer = () => {
                     </Link>
                  </li>
                  <li className="mb-3">
+                   <Link to="/vourcher">Khuyến mại</Link>
+                 </li>
+                 <li className="mb-3">
+                   <Link to="/blog">Bài viết</Link>
+                 </li>
+                 <li className="mb-3">
+                   <Link to="/contact">Liên hệ</Link>
+                 </li>
+                 <li className="mb-3">
+                   <Link to="/shop/tre_em">Trẻ em</Link>
+                 </li>
+                 <li className="mb-3">
                   <Link to="/shop/nam">Nam</Link>
                 </li>
                  <li className="mb-3">
                    <Link to="/shop/nu">Nữ</Link>
 
                  </li>
-                <li className="mb-3">
-                   <Link to="/shop/tre_em">Trẻ em</Link>
-                 </li>
-                 <li className="mb-3">
-                   <Link to="/blog">Bài viết</Link>
-                 </li>
-                 <li className="mb-3">
-                   <Link to="/vourcher">Khuyến mại</Link>
-                 </li>
-                 <li className="mb-3">
-                   <Link to="/contact">Liên hệ</Link>
-                 </li>
+     
                </ul>
              </div>
             <div className="lg:col-span-2 col-span-6">
   <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
   <ul>
+                {websiteInfo?.footer_blogs.slice(0, 2).map((category: any) => (
+                  <li key={category.id} className="mb-3">
+                    <Link to={`/tin-tuc/${category.duong_dan}`}>
+                      {category.ten_danh_muc_tin_tuc}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+  <ul>
     {websiteInfo?.footer_blogs?.map((category : any) =>
-      category.tin_tuc?.slice(0, 5).map((news : any) => (
+      category.tin_tuc?.slice(0, 6).map((news : any) => (
         <li key={news.id} className="mb-3">
           <Link to={`/tin-tuc/${category.duong_dan}/${news.duong_dan}`}>
             {news.tieu_de}
