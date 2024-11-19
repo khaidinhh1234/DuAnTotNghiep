@@ -115,24 +115,18 @@ const Categories = ({ bo_suu_tap }: any) => {
                 }}
               >
                 {bo_suu_tap[activeTab]?.san_phams?.map((item: any, index: number) => (
-                  <SwiperSlide key={index} className="mx-2 lg:mx-0">
-                    <div className="relative group">
-                    {isPending ? (
-                      <span>
-                        <i className="z-10 fa-sharp-duotone fa-solid fa-loader fa-spin-pulse text-xl pt-1 bg-white hover:bg-black hover:text-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full" />
-                      </span>
-                    ) : (
-                      <span onClick={() => mutate(item?.id)}>
-                        <i
-                          className={`${item?.yeu_thich ? "text-red-500" : "text-black hover:text-white"} z-10 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black  w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
-                        />
-                      </span>
-                    )}
+                  <SwiperSlide key={index} className="group relative mx-2 lg:mx-0">
+                    <div className="relative">
+                    <span
+      onClick={() => mutate(item?.id)}
+      className={`z-10 text-xl bg-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 rounded-full transition-all duration-300 ${
+        item?.yeu_thich ? "text-red-500" : "text-black hover:text-white"
+      } opacity-0 invisible group-hover:opacity-100 group-hover:visible hover:bg-black`}
+    >
+      <i className="fa-solid fa-heart" />
+    </span>
                       <Link to={`/product-detail/${item.duong_dan}`}>
                         <div className="w-[400px] lg:w-[300px] lg:h-[400px] h-[500px] bg-neutral-200/70 relative">
-                          {/* <h1 className="text-neu tral-300 absolute pt-5 truncate flex items-center justify-center px-6 text-7xl font-bold text-center z-0">
-                            {item?.ten_san_pham?.substring(0, 5)}
-                          </h1> */}
                           <img
                             src={item.anh_san_pham}
                             alt={item.ten_san_pham}
@@ -154,6 +148,7 @@ const Categories = ({ bo_suu_tap }: any) => {
 
                         </div>
                       </Link>
+                      {/* hihi */}
                       <View id={item?.duong_dan} ID={item?.id} />
                     </div>
                     <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2 lg:w-[300px]">

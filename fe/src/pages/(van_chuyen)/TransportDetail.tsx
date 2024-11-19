@@ -1,7 +1,7 @@
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Image, message, Modal } from "antd";
+import { Image, message, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
@@ -491,7 +491,7 @@ const TransportDetail = ({ record }: any) => {
             <div className="flex flex-col gap-2 w-full">
               {/* Nút Giao hàng */}
               {record.trang_thai_van_chuyen === "Chờ xử lý" ||
-              record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
+                record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
                 <button
                   className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
                   onClick={() => {
@@ -524,6 +524,17 @@ const TransportDetail = ({ record }: any) => {
                   >
                     Giao hàng thành công
                   </button>
+                </div>
+              ) : null}
+
+              {/* Kết quả cuối cùng sau giao hàng */}
+              {isSuccessDeliveryOpen ? (
+                <div className="mt-4 text-center text-green-600 font-semibold">
+                  ✅ Giao hàng thành công!
+                </div>
+              ) : isFailureNoteVisible ? (
+                <div className="mt-4 text-center text-red-600 font-semibold">
+                  ❌ Giao hàng thất bại!
                 </div>
               ) : null}
 
@@ -580,14 +591,6 @@ const TransportDetail = ({ record }: any) => {
                       ? "Đang xử lý..."
                       : "Xác nhận giao hàng thành công"}
                   </button>
-                  {isImageSaved && (
-                    <Image
-                      src={webcam}
-                      alt="Ảnh xác thực"
-                      className="w-60 rounded-lg"
-                      preview={true}
-                    />
-                  )}
                 </div>
               )}
 
@@ -616,6 +619,51 @@ const TransportDetail = ({ record }: any) => {
                             {note}
                           </li>
                         ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Kết quả sau khi giao hàng */}
+              {record.trang_thai_van_chuyen === "Giao hàng thành công" && (
+                <div className="mt-4 text-center">
+                  <div className="text-green-600 font-semibold">
+                    ✅ Giao hàng thành công!
+                  </div>
+                  {/* Hiển thị ảnh xác thực */}
+                  {record.anh_xac_thuc && (
+                    <div className="mt-2">
+                      <Image
+                        src={record.anh_xac_thuc}
+                        alt="Ảnh xác thực"
+                        style={{
+                          maxHeight: '16rem',
+                          objectFit: 'contain', 
+                          border: '1px solid #ddd',
+                          borderRadius: '0.5rem', 
+                        }}
+                        preview={{
+                          mask: <span>Xem ảnh</span>,
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Kết quả sau khi thất bại */}
+              {record.trang_thai_van_chuyen === "Giao hàng thất bại" && (
+                <div className="mt-4 text-center">
+                  <div className="mt-4 text-center text-red-600 font-semibold">
+                    ❌ Giao hàng thất bại!
+                  </div>
+                  {record.ghi_chu && (
+                    <div className="mt-4">
+                      <h4 className="text-lg font-bold">Lịch sử giao hàng:</h4>
+                      <ul className="mt-2 list-disc list-inside text-left text-gray-700">
+                        <li >
+                          <span className="font-medium">{record.ghi_chu}</span>
+
+                        </li>
                       </ul>
                     </div>
                   )}
