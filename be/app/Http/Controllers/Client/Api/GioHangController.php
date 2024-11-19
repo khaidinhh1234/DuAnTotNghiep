@@ -475,6 +475,7 @@ class GioHangController extends Controller
                     'gio_hangs.chon',
                     'san_phams.ten_san_pham',
                     'san_phams.duong_dan',
+                    'san_phams.trang_thai',
                     'bien_the_san_phams.so_luong_bien_the as kho_hang',
                     'bien_the_san_phams.gia_ban',
                     'bien_the_san_phams.gia_khuyen_mai',
@@ -491,29 +492,37 @@ class GioHangController extends Controller
             $tongGiaTriSanPham = 0;
             $tongTietKiem = 0;
 
-            $gioHangs->transform(function ($item) use (&$tongGiaTriSanPham, &$tongTietKiem) {
+            $gioHangs->transform(function ($item) {
+                if ($item->so_luong > $item->kho_hang) {
+                    $item->so_luong = $item->kho_hang;
+
+                    DB::table('gio_hangs')
+                        ->where('id', $item->id)
+                        ->update(['so_luong' => $item->kho_hang]);
+                }
+
+                $bienThe = BienTheSanPham::with(['anhBienThe' => function ($query) {
+                    $query->first();
+                }])->find($item->bien_the_san_pham_id);
+
+                $item->hinh_anh = optional($bienThe->anhBienThe->first())->duong_dan_anh;
                 $item->gia_hien_tai = $item->gia_ban;
-                $item->gia_cu = null;
-                $item->tiet_kiem = 0;
+                $item->gia_cu = $item->gia_ban;
 
-                if (isset($item->gia_khuyen_mai_tam_thoi) && $item->gia_khuyen_mai_tam_thoi) {
+                if (!is_null($item->gia_khuyen_mai_tam_thoi) && $item->gia_khuyen_mai_tam_thoi > 0) {
                     $item->gia_hien_tai = $item->gia_khuyen_mai_tam_thoi;
-                    $item->gia_cu = $item->gia_khuyen_mai;
-                } elseif (isset($item->gia_khuyen_mai) && $item->gia_khuyen_mai) {
+                } elseif (!is_null($item->gia_khuyen_mai) && $item->gia_khuyen_mai > 0) {
                     $item->gia_hien_tai = $item->gia_khuyen_mai;
-                    $item->gia_cu = $item->gia_ban;
                 }
 
-                if (isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu) {
-                    $item->tiet_kiem = ($item->gia_cu - $item->gia_hien_tai) * $item->so_luong;
-                    $tongTietKiem += $item->tiet_kiem;
+                if ($item->trang_thai === 0) {
+                    DB::table('gio_hangs')
+                        ->where('id', $item->id)
+                        ->update(['deleted_at' => now()]);
                 }
-
-                $tongGiaTriSanPham += $item->gia_hien_tai * $item->so_luong;
 
                 return $item;
             });
-
             $vanChuyen = 20000;
             $giamGiaVanChuyen = 0;
 
