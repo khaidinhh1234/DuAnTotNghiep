@@ -1,23 +1,26 @@
-import { useLocalStorage } from "@/components/hook/useStoratge"
-import instanceClient from "@/configs/client"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Popconfirm } from "antd"
-import { debounce } from "lodash"
-import { Star } from "lucide-react"
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { toast } from "react-toastify"
+import { useLocalStorage } from "@/components/hook/useStoratge";
+import instanceClient from "@/configs/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Popconfirm } from "antd";
+import { debounce } from "lodash";
+import { Star } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const CartPage = ({product}: any) => {
-  const nav = useNavigate()
-  const queryClient = useQueryClient()
-  const [user] = useLocalStorage("user" as any, {})
-  const access_token = user.access_token || localStorage.getItem("access_token")
+const CartPage = ({ product }: any) => {
+  const nav = useNavigate();
+  const queryClient = useQueryClient();
+  const [user] = useLocalStorage("user" as any, {});
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
   const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
     const savedSelectedProducts = localStorage.getItem("selectedProducts");
     return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
   });
-  const [quantity, setQuantity] = useState<number | undefined>(product?.so_luong);
+  const [quantity, setQuantity] = useState<number | undefined>(
+    product?.so_luong
+  );
   //lấy dữ liệu
   const { data } = useQuery({
     queryKey: ["cart", access_token],
@@ -26,15 +29,15 @@ const CartPage = ({product}: any) => {
         const res = await instanceClient.get(`/gio-hang`, {
           headers: {
             Authorization: `Bearer ${access_token}`,
-          }
-        })
-        return res.data
+          },
+        });
+        return res.data;
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-  })
-  console.log(data)
+    },
+  });
+  console.log(data);
   // Thêm số lượng sản phẩm
   // const { mutate } = useMutation({
   //   mutationFn: async ({ productId, currentQuantity }: { productId: string, currentQuantity: number }) => {
@@ -59,38 +62,44 @@ const CartPage = ({product}: any) => {
   //   }
   // })
   // Tạo hàm debounced cho việc tăng số lượng
-  const debouncedIncreaseQuantity = debounce(async (productId: string, currentQuantity: number) => {
-    try {
-      const res = await instanceClient.put(
-        `/gio-hang/tang-so-luong/${productId}`,
-        { so_luong: currentQuantity + 1 },
-        { headers: { Authorization: `Bearer ${access_token}` } }
-      );
-      setQuantity(currentQuantity + 1); // Cập nhật số lượng trong state ngay lập tức
-      queryClient.invalidateQueries({ queryKey: ["cart"] }); // Invalidate cache to refresh data
-    } catch (error) {
-      console.log(error);
-    }
-  }, 500);
+  const debouncedIncreaseQuantity = debounce(
+    async (productId: string, currentQuantity: number) => {
+      try {
+        const res = await instanceClient.put(
+          `/gio-hang/tang-so-luong/${productId}`,
+          { so_luong: currentQuantity + 1 },
+          { headers: { Authorization: `Bearer ${access_token}` } }
+        );
+        setQuantity(currentQuantity + 1); // Cập nhật số lượng trong state ngay lập tức
+        queryClient.invalidateQueries({ queryKey: ["cart"] }); // Invalidate cache to refresh data
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    500
+  );
 
   // Tạo hàm debounced cho việc giảm số lượng
-  const debouncedDecreaseQuantity = debounce(async (productId: string, currentQuantity: number) => {
-    try {
-      const res = await instanceClient.put(
-        `/gio-hang/tang-so-luong/${productId}`,
-        { so_luong: currentQuantity - 1 },
-        { headers: { Authorization: `Bearer ${access_token}` } }
-      );
-      setQuantity(currentQuantity - 1); // Cập nhật số lượng trong state ngay lập tức
-      queryClient.invalidateQueries({ queryKey: ["cart"] }); // Invalidate cache to refresh data
-    } catch (error) {
-      console.log(error);
-    }
-  }, 500);
+  const debouncedDecreaseQuantity = debounce(
+    async (productId: string, currentQuantity: number) => {
+      try {
+        const res = await instanceClient.put(
+          `/gio-hang/tang-so-luong/${productId}`,
+          { so_luong: currentQuantity - 1 },
+          { headers: { Authorization: `Bearer ${access_token}` } }
+        );
+        setQuantity(currentQuantity - 1); // Cập nhật số lượng trong state ngay lập tức
+        queryClient.invalidateQueries({ queryKey: ["cart"] }); // Invalidate cache to refresh data
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    500
+  );
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
-        data?.san_pham_nguyen_gia?.length === 0 ? (
+      data?.san_pham_nguyen_gia?.length === 0 ? (
         <div className="flex flex-col items-center justify-center pt-32 pb-20">
           <img
             src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
@@ -124,15 +133,17 @@ const CartPage = ({product}: any) => {
                   <div className="relative bg-gray-100 rounded-full h-2 mt-3">
                     <div
                       className="bg-yellow-400 h-full"
-                      style={{
-                        // width: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
-                      }}
+                      style={
+                        {
+                          // width: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
+                        }
+                      }
                     >
                       <div
                         className="absolute top-0 flex items-center justify-center"
                         style={{
                           // left: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
-                          transform: 'translate(-40%, -40%)',
+                          transform: "translate(-40%, -40%)",
                           zIndex: 10,
                         }}
                       >
@@ -150,7 +161,11 @@ const CartPage = ({product}: any) => {
                       <th className="px-4 py-2">
                         <input
                           type="checkbox"
-                          checked={selectedProducts.length === (data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length)}
+                          checked={
+                            selectedProducts.length ===
+                            data?.san_pham_giam_gia.length +
+                              data?.san_pham_nguyen_gia.length
+                          }
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                           // onChange={(e) => handleSelectAll(e.target.checked)}
                           title="Select all products"
@@ -168,7 +183,6 @@ const CartPage = ({product}: any) => {
                     </tr>
                   </thead>
                   <tbody>
-
                     <>
                       {/* Sản phẩm giảm giá */}
                       {data?.san_pham_giam_gia?.map((product: any) => (
@@ -180,7 +194,10 @@ const CartPage = ({product}: any) => {
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
+                              checked={
+                                product.chon === 1 ||
+                                selectedProducts.includes(product.id)
+                              }
                               // onChange={() => handleSelectProduct(product.id)}
                               title="Select discount product"
                             />
@@ -211,13 +228,14 @@ const CartPage = ({product}: any) => {
                                 <p
                                   className="text-xs text-red-500 relative inline-block font-semibold tracking-wide"
                                   style={{
-                                    padding: '2px 10px',
-                                    border: '2px solid red',
-                                    clipPath: 'inset(0 10px)',
-                                    borderRadius: '16px',
+                                    padding: "2px 10px",
+                                    border: "2px solid red",
+                                    clipPath: "inset(0 10px)",
+                                    borderRadius: "16px",
                                   }}
                                 >
-                                  Đã tiết kiệm {product.tiet_kiem.toLocaleString()} ₫
+                                  Đã tiết kiệm{" "}
+                                  {product.tiet_kiem.toLocaleString()} ₫
                                 </p>
                               </div>
                             </div>
@@ -231,13 +249,21 @@ const CartPage = ({product}: any) => {
                                   cancelText="Không"
                                   // onConfirm={() => handleRemoveProduct(product.id)} // Thêm hàm xóa nếu cần
                                 >
-                                  <button className="py-1 px-3 rounded-l-lg" title="Decrease quantity">
+                                  <button
+                                    className="py-1 px-3 rounded-l-lg"
+                                    title="Decrease quantity"
+                                  >
                                     <i className="fa-solid fa-minus" />
                                   </button>
                                 </Popconfirm>
                               ) : (
                                 <button
-                                  onClick={() => debouncedDecreaseQuantity(product.id, product.so_luong)}
+                                  onClick={() =>
+                                    debouncedDecreaseQuantity(
+                                      product.id,
+                                      product.so_luong
+                                    )
+                                  }
                                   className="py-1 px-3 rounded-l-lg"
                                   title="Decrease quantity"
                                 >
@@ -255,15 +281,25 @@ const CartPage = ({product}: any) => {
                               />
                               <button
                                 onClick={() => {
-                                  if (product.so_luong >= product.so_luong_bien_the) {
-                                    toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
+                                  if (
+                                    product.so_luong >=
+                                    product.so_luong_bien_the
+                                  ) {
+                                    toast.error(
+                                      "Sản phẩm đã đạt đến số lượng tồn kho tối đa."
+                                    );
                                     return;
                                   }
-                                  debouncedIncreaseQuantity(product.id, product.so_luong); // Gọi hàm debounced để tăng số lượng
+                                  debouncedIncreaseQuantity(
+                                    product.id,
+                                    product.so_luong
+                                  ); // Gọi hàm debounced để tăng số lượng
                                 }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
-                                disabled={product.so_luong >= product.so_luong_bien_the}
+                                disabled={
+                                  product.so_luong >= product.so_luong_bien_the
+                                }
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>
@@ -297,7 +333,10 @@ const CartPage = ({product}: any) => {
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
-                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
+                              checked={
+                                product.chon === 1 ||
+                                selectedProducts.includes(product.id)
+                              }
                               // onChange={() => handleSelectProduct(product.id)}
                               title="Select regular price product"
                             />
@@ -332,7 +371,10 @@ const CartPage = ({product}: any) => {
                                   okText="Có"
                                   cancelText="Không"
                                 >
-                                  <button className="py-1 px-3 rounded-l-lg" title="Decrease quantity">
+                                  <button
+                                    className="py-1 px-3 rounded-l-lg"
+                                    title="Decrease quantity"
+                                  >
                                     <i className="fa-solid fa-minus" />
                                   </button>
                                 </Popconfirm>
@@ -356,7 +398,10 @@ const CartPage = ({product}: any) => {
                               />
                               <button
                                 onClick={() => {
-                                  if (product.so_luong >= product.so_luong_bien_the) {
+                                  if (
+                                    product.so_luong >=
+                                    product.so_luong_bien_the
+                                  ) {
                                     // toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
                                     return;
                                   }
@@ -364,7 +409,9 @@ const CartPage = ({product}: any) => {
                                 }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
-                                disabled={product.so_luong >= product.so_luong_bien_the}
+                                disabled={
+                                  product.so_luong >= product.so_luong_bien_the
+                                }
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>
@@ -466,7 +513,7 @@ const CartPage = ({product}: any) => {
         </section>
       )}
     </>
-  )
-}
+  );
+};
 
-export default CartPage
+export default CartPage;
