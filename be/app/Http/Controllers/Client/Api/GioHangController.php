@@ -542,4 +542,36 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
+public function update(Request $request, $id)
+{
+    try {
+        $request->validate([
+            'so_luong' => 'required|integer|min:1',
+        ]);
+        $gioHang = GioHang::findOrFail($id);
+        if ($gioHang->user_id != Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $bienTheSanPham = BienTheSanPham::findOrFail($gioHang->bien_the_san_pham_id);
+        if ($request->so_luong > $bienTheSanPham->so_luong_bien_the) {
+            return response()->json([
+                'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
+            ], 400);
+        }
+        $gioHang->update([
+            'so_luong' => $request->so_luong,
+        ]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã thay đổi số lượng sản phẩm thành công!',
+            'data' => $gioHang
+        ]);
+    }catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+        ], 500);
+    }
+}
 }
