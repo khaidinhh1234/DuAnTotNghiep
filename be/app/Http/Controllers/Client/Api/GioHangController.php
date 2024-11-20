@@ -475,6 +475,7 @@ class GioHangController extends Controller
                     'gio_hangs.chon',
                     'san_phams.ten_san_pham',
                     'san_phams.duong_dan',
+                    'san_phams.trang_thai',
                     'bien_the_san_phams.so_luong_bien_the as kho_hang',
                     'bien_the_san_phams.gia_ban',
                     'bien_the_san_phams.gia_khuyen_mai',
@@ -490,6 +491,38 @@ class GioHangController extends Controller
 
             $tongGiaTriSanPham = 0;
             $tongTietKiem = 0;
+
+            $gioHangs->transform(function ($item) {
+                if ($item->so_luong > $item->kho_hang) {
+                    $item->so_luong = $item->kho_hang;
+
+                    DB::table('gio_hangs')
+                        ->where('id', $item->id)
+                        ->update(['so_luong' => $item->kho_hang]);
+                }
+
+                $bienThe = BienTheSanPham::with(['anhBienThe' => function ($query) {
+                    $query->first();
+                }])->find($item->bien_the_san_pham_id);
+
+                $item->hinh_anh = optional($bienThe->anhBienThe->first())->duong_dan_anh;
+                $item->gia_hien_tai = $item->gia_ban;
+                $item->gia_cu = $item->gia_ban;
+
+                if (!is_null($item->gia_khuyen_mai_tam_thoi) && $item->gia_khuyen_mai_tam_thoi > 0) {
+                    $item->gia_hien_tai = $item->gia_khuyen_mai_tam_thoi;
+                } elseif (!is_null($item->gia_khuyen_mai) && $item->gia_khuyen_mai > 0) {
+                    $item->gia_hien_tai = $item->gia_khuyen_mai;
+                }
+
+                if ($item->trang_thai === 0) {
+                    DB::table('gio_hangs')
+                        ->where('id', $item->id)
+                        ->update(['deleted_at' => now()]);
+                }
+
+                return $item;
+            });
 
             $gioHangs->transform(function ($item) use (&$tongGiaTriSanPham, &$tongTietKiem) {
                 $item->gia_hien_tai = $item->gia_ban;
@@ -542,4 +575,36 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
+public function update(Request $request, $id)
+{
+    try {
+        $request->validate([
+            'so_luong' => 'required|integer|min:1',
+        ]);
+        $gioHang = GioHang::findOrFail($id);
+        if ($gioHang->user_id != Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        $bienTheSanPham = BienTheSanPham::findOrFail($gioHang->bien_the_san_pham_id);
+        if ($request->so_luong > $bienTheSanPham->so_luong_bien_the) {
+            return response()->json([
+                'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
+            ], 400);
+        }
+        $gioHang->update([
+            'so_luong' => $request->so_luong,
+        ]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã thay đổi số lượng sản phẩm thành công!',
+            'data' => $gioHang
+        ]);
+    }catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+        ], 500);
+    }
+}
 }
