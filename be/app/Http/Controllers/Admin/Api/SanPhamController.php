@@ -200,9 +200,6 @@ class SanPhamController extends Controller
         $bienTheSanPham = [];
 
         foreach ($bienTheSanPhamTmp as $value) {
-            $gioHang = GioHang::where('bien_the_san_pham_id', $value['id'])->update([
-                'so_luong_bien_the' => $value['so_luong_bien_the']
-            ]);
             if ($value['so_luong_bien_the'] != null) {
                 $bienTheSanPham[] = [
                     'bien_the_mau_sac_id' => $value['mau_sac_id'],
@@ -233,6 +230,10 @@ class SanPhamController extends Controller
                     ],
                     $bienThe
                 );
+
+                GioHang::where('bien_the_san_pham_id', $bienTheSP->id)->update([
+                    'so_luong' => $value['so_luong_bien_the']
+                ]);
 
                 AnhBienThe::where('bien_the_san_pham_id', $bienTheSP->id)->delete();
 
