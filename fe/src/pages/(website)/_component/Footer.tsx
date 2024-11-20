@@ -360,7 +360,6 @@
 //                 </div>
 //               </div>
 
-       
 //             </div>
 
 //             <div className="lg:col-span-2 col-span-6">
@@ -416,16 +415,16 @@
 // >
 //   {mapLoaded && (
 //     <>
-//       <Marker 
+//       <Marker
 //         position={center}
 //         animation={google.maps.Animation.DROP}
 //         onClick={() => setSelectedMarker(true)}
 //       />
-      
+
 //       <div className="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-lg z-10 max-w-[250px]">
 //         <h3 className="font-bold text-gray-800 text-base mb-1">Glow Clothing</h3>
 //         <p className="text-gray-600 text-sm mb-2">{websiteInfo?.dia_chi}</p>
-//         <button 
+//         <button
 //           className="bg-blue-500 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-600 transition-colors w-full flex items-center justify-center gap-2"
 //           onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`)}
 //         >
@@ -497,23 +496,23 @@
 // export default Footer;
 import { bank, logofooter } from "@/assets/img";
 import instance from "@/configs/client";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState, useCallback } from "react";
+import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useLoadScript, GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const Footer = () => {
   const [selectedMarker, setSelectedMarker] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapCenter, setMapCenter] = useState({
     lat: 21.0322882,
-    lng: 105.7505328
+    lng: 105.7505328,
   });
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg",
-    libraries: ['places']
+    libraries: ["places"],
   });
 
   const {
@@ -529,11 +528,11 @@ const Footer = () => {
   });
 
   const mapContainerStyle = {
-    width: '100%',
-    height: '350px',
-    borderRadius: '16px',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.15)',
-    marginTop: '20px'
+    width: "100%",
+    height: "350px",
+    borderRadius: "16px",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.15)",
+    marginTop: "20px",
   };
 
   const onLoad = useCallback(() => {
@@ -543,16 +542,19 @@ const Footer = () => {
   const updateMapCenter = useCallback(() => {
     if (apiResponse?.data?.dia_chi && isLoaded) {
       const geocoder = new window.google.maps.Geocoder();
-      
-      geocoder.geocode({ address: apiResponse.data.dia_chi }, (results, status) => {
-        if (status === 'OK' && results && results[0]) {
-          const { lat, lng } = results[0].geometry.location;
-          setMapCenter({
-            lat: lat(),
-            lng: lng()
-          });
+
+      geocoder.geocode(
+        { address: apiResponse.data.dia_chi },
+        (results, status) => {
+          if (status === "OK" && results && results[0]) {
+            const { lat, lng } = results[0].geometry.location;
+            setMapCenter({
+              lat: lat(),
+              lng: lng(),
+            });
+          }
         }
-      });
+      );
     }
   }, [apiResponse?.data?.dia_chi, isLoaded]);
 
@@ -560,98 +562,98 @@ const Footer = () => {
     disableDefaultUI: false,
     zoomControl: true,
     gestureHandling: "cooperative",
-    language: 'vi',
+    language: "vi",
     mapTypeControl: false,
     streetViewControl: false,
     fullscreenControl: false,
     styles: [
       {
-        "elementType": "geometry",
-        "stylers": [{"color": "#f5f5f5"}]
+        elementType: "geometry",
+        stylers: [{ color: "#f5f5f5" }],
       },
       {
-        "elementType": "labels.icon",
-        "stylers": [{"visibility": "on"}]
+        elementType: "labels.icon",
+        stylers: [{ visibility: "on" }],
       },
       {
-        "elementType": "labels.text.fill",
-        "stylers": [{"color": "#616161"}]
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#616161" }],
       },
       {
-        "elementType": "labels.text.stroke",
-        "stylers": [{"color": "#f5f5f5"}]
+        elementType: "labels.text.stroke",
+        stylers: [{ color: "#f5f5f5" }],
       },
       {
-        "featureType": "administrative.land_parcel",
-        "elementType": "labels.text.fill",
-        "stylers": [{"color": "#bdbdbd"}]
+        featureType: "administrative.land_parcel",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#bdbdbd" }],
       },
       {
-        "featureType": "poi",
-        "elementType": "geometry",
-        "stylers": [{"color": "#eeeeee"}]
+        featureType: "poi",
+        elementType: "geometry",
+        stylers: [{ color: "#eeeeee" }],
       },
       {
-        "featureType": "poi",
-        "elementType": "labels.text.fill",
-        "stylers": [{"color": "#757575"}]
+        featureType: "poi",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#757575" }],
       },
       {
-        "featureType": "poi.park",
-        "elementType": "geometry",
-        "stylers": [{"color": "#e5e5e5"}]
+        featureType: "poi.park",
+        elementType: "geometry",
+        stylers: [{ color: "#e5e5e5" }],
       },
       {
-        "featureType": "poi.park",
-        "elementType": "labels.text.fill",
-        "stylers": [{"color": "#9e9e9e"}]
+        featureType: "poi.park",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9e9e9e" }],
       },
       {
-        "featureType": "road",
-        "elementType": "geometry",
-        "stylers": [{"color": "#ffffff"}]
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [{ color: "#ffffff" }],
       },
       {
-        "featureType": "road.arterial",
-        "elementType": "labels.text.fill",
-        "stylers": [{"color": "#757575"}]
+        featureType: "road.arterial",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#757575" }],
       },
       {
-        "featureType": "road.highway",
-        "elementType": "geometry",
-        "stylers": [{"color": "#dadada"}]
+        featureType: "road.highway",
+        elementType: "geometry",
+        stylers: [{ color: "#dadada" }],
       },
       {
-        "featureType": "road.highway",
-        "elementType": "labels.text.fill",
-        "stylers": [{"color": "#616161"}]
+        featureType: "road.highway",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#616161" }],
       },
       {
-        "featureType": "road.local",
-        "elementType": "labels.text.fill",
-        "stylers": [{"color": "#9e9e9e"}]
+        featureType: "road.local",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9e9e9e" }],
       },
       {
-        "featureType": "transit.line",
-        "elementType": "geometry",
-        "stylers": [{"color": "#e5e5e5"}]
+        featureType: "transit.line",
+        elementType: "geometry",
+        stylers: [{ color: "#e5e5e5" }],
       },
       {
-        "featureType": "transit.station",
-        "elementType": "geometry",
-        "stylers": [{"color": "#eeeeee"}]
+        featureType: "transit.station",
+        elementType: "geometry",
+        stylers: [{ color: "#eeeeee" }],
       },
       {
-        "featureType": "water",
-        "elementType": "geometry",
-        "stylers": [{"color": "#c9c9c9"}]
+        featureType: "water",
+        elementType: "geometry",
+        stylers: [{ color: "#c9c9c9" }],
       },
       {
-        "featureType": "water",
-        "elementType": "labels.text.fill",
-        "stylers": [{"color": "#9e9e9e"}]
-      }
-    ]
+        featureType: "water",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9e9e9e" }],
+      },
+    ],
   };
 
   useEffect(() => {
@@ -701,7 +703,7 @@ const Footer = () => {
                 </div>
               </div>
             </div>
-{/* 
+            {/* 
             <div className="lg:col-span-2 col-span-6">
               <h1 className="text-xl font-semibold mb-3">Danh Mục Tin Tức</h1>
               <ul>
@@ -714,44 +716,40 @@ const Footer = () => {
                 ))}
               </ul>
             </div> */}
-         <div className="lg:col-span-2 col-span-6">
-               <h1 className="text-xl font-semibold mb-3">Thông tin</h1>
-               <ul>
-                 <li className="mb-3">
-                  <Link to="/">
-                   <p >Trang chủ</p>
-                   </Link>
-                 </li>
+            <div className="lg:col-span-2 col-span-6">
+              <h1 className="text-xl font-semibold mb-3">Thông tin</h1>
+              <ul>
                 <li className="mb-3">
-                <Link to="/ourstory">
-                   Giới thiệu
-                    </Link>
-                 </li>
-                 <li className="mb-3">
-                   <Link to="/vourcher">Khuyến mại</Link>
-                 </li>
-                 <li className="mb-3">
-                   <Link to="/blog">Bài viết</Link>
-                 </li>
-                 <li className="mb-3">
-                   <Link to="/contact">Liên hệ</Link>
-                 </li>
-                 <li className="mb-3">
-                   <Link to="/shop/tre_em">Trẻ em</Link>
-                 </li>
-                 <li className="mb-3">
+                  <Link to="/">
+                    <p>Trang chủ</p>
+                  </Link>
+                </li>
+                <li className="mb-3">
+                  <Link to="/ourstory">Giới thiệu</Link>
+                </li>
+                <li className="mb-3">
+                  <Link to="/vourcher">Khuyến mại</Link>
+                </li>
+                <li className="mb-3">
+                  <Link to="/blog">Bài viết</Link>
+                </li>
+                <li className="mb-3">
+                  <Link to="/contact">Liên hệ</Link>
+                </li>
+                <li className="mb-3">
+                  <Link to="/shop/tre_em">Trẻ em</Link>
+                </li>
+                <li className="mb-3">
                   <Link to="/shop/nam">Nam</Link>
                 </li>
-                 <li className="mb-3">
-                   <Link to="/shop/nu">Nữ</Link>
-
-                 </li>
-     
-               </ul>
-             </div>
+                <li className="mb-3">
+                  <Link to="/shop/nu">Nữ</Link>
+                </li>
+              </ul>
+            </div>
             <div className="lg:col-span-2 col-span-6">
-  <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
-  <ul>
+              <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
+              <ul>
                 {websiteInfo?.footer_blogs.slice(0, 2).map((category: any) => (
                   <li key={category.id} className="mb-3">
                     <Link to={`/tin-tuc/${category.duong_dan}`}>
@@ -760,18 +758,20 @@ const Footer = () => {
                   </li>
                 ))}
               </ul>
-  <ul>
-    {websiteInfo?.footer_blogs?.map((category : any) =>
-      category.tin_tuc?.slice(0, 6).map((news : any) => (
-        <li key={news.id} className="mb-3">
-          <Link to={`/tin-tuc/${category.duong_dan}/${news.duong_dan}`}>
-            {news.tieu_de}
-          </Link>
-        </li>
-      ))
-    )}
-  </ul>
-</div>
+              <ul>
+                {websiteInfo?.footer_blogs?.map((category: any) =>
+                  category.tin_tuc?.slice(0, 6).map((news: any) => (
+                    <li key={news.id} className="mb-3">
+                      <Link
+                        to={`/tin-tuc/${category.duong_dan}/${news.duong_dan}`}
+                      >
+                        {news.tieu_de}
+                      </Link>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
             <div className="lg:col-span-4 col-span-6">
               <h1 className="text-xl font-semibold mb-4">Địa Chỉ</h1>
               <p className="lg:w-80 mb-5">{websiteInfo?.cau_noi}</p>
@@ -791,18 +791,26 @@ const Footer = () => {
                     >
                       {mapLoaded && (
                         <>
-                          <Marker 
+                          <Marker
                             position={mapCenter}
                             animation={google.maps.Animation.DROP}
                             onClick={() => setSelectedMarker(true)}
                           />
-                          
+
                           <div className="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-lg z-10 max-w-[250px]">
-                            <h3 className="font-bold text-gray-800 text-base mb-1">Glow Clothing</h3>
-                            <p className="text-gray-600 text-sm mb-2">{websiteInfo?.dia_chi}</p>
-                            <button 
+                            <h3 className="font-bold text-gray-800 text-base mb-1">
+                              Glow Clothing
+                            </h3>
+                            <p className="text-gray-600 text-sm mb-2">
+                              {websiteInfo?.dia_chi}
+                            </p>
+                            <button
                               className="bg-blue-500 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-600 transition-colors w-full flex items-center justify-center gap-2"
-                              onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${mapCenter.lat},${mapCenter.lng}`)}
+                              onClick={() =>
+                                window.open(
+                                  `https://www.google.com/maps/dir/?api=1&destination=${mapCenter.lat},${mapCenter.lng}`
+                                )
+                              }
                             >
                               <i className="fas fa-directions"></i>
                               Chỉ đường

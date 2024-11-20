@@ -417,6 +417,7 @@ const CheckOut = () => {
       }
     }
   }, [data]);
+
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
@@ -623,10 +624,10 @@ const CheckOut = () => {
                                     );
                                     return;
                                   }
-                                  debouncedIncreaseQuantity(
-                                    product.id,
-                                    product.so_luong
-                                  );
+                                  // debouncedIncreaseQuantity(
+                                  //   product.id,
+                                  //   product.so_luong
+                                  // );
                                 }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
