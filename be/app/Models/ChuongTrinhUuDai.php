@@ -24,6 +24,7 @@ class ChuongTrinhUuDai extends Model
 
     public function sanPhams()
     {
-        return $this->belongsToMany(SanPham::class, 'chuong_trinh_san_pham', 'chuong_trinh_uu_dai_id', 'san_pham_id');
+        return $this->belongsToMany(SanPham::class, 'chuong_trinh_san_pham', 'chuong_trinh_uu_dai_id', 'san_pham_id')
+            ->withPivot('deleted_at');
     }
 }

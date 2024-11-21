@@ -81,6 +81,7 @@ class TrangChuController extends Controller
             ->whereNotNull('san_phams.danh_muc_id')
             ->groupBy('san_phams.id', 'san_phams.ten_san_pham', 'san_phams.duong_dan', 'san_phams.anh_san_pham')
             ->orderByDesc('san_phams.id')
+            ->take(8)
             ->get()
             ->map(function ($sanPham) {
                 $bienThe = BienTheSanPham::query()
@@ -292,19 +293,28 @@ class TrangChuController extends Controller
         ]);
 
         $query = trim($request->input('query'));
+<<<<<<< HEAD
+=======
+
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
         if (Auth::check()) {
             LichSuTimKiem::create([
                 'user_id' => Auth::id(),
                 'tim_kiem' => $query,
             ]);
+<<<<<<< HEAD
 }
+=======
+        }
+
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
         $sanPhamIds = SanPham::query()
             ->where('san_phams.trang_thai', 1)
             ->whereNotNull('san_phams.danh_muc_id')
             ->orderByDesc('san_phams.id')
             ->where(function ($q) use ($query) {
                 $q->where('ten_san_pham', 'like', '%' . $query . '%')
-                    ->orWhere('ma_san_pham', $query);
+                    ->orWhere('ma_san_pham', 'like', '%' . $query . '%');
             })
             ->pluck('id')->toArray();
 
@@ -337,12 +347,22 @@ class TrangChuController extends Controller
                     ->limit(10)
                     ->get();
 
+<<<<<<< HEAD
                     $duplicates = DB::table('lich_su_tim_kiems')
                         ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
                         ->where('user_id', Auth::id())
                         // ->whereRaw('LENGTH(tim_kiem) = 1')
                         ->groupBy('tim_kiem')
                         ->pluck('latest_id');
+=======
+                $duplicates = DB::table('lich_su_tim_kiems')
+                    ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
+                    ->where('user_id', Auth::id())
+                    ->whereRaw('LENGTH(tim_kiem) = 1')
+                    ->groupBy('tim_kiem')
+                    ->pluck('latest_id');
+>>>>>>> a31bf4bed7587221cb68ba6a1cc179e746e23d44
+
                 DB::table('lich_su_tim_kiems')
                     ->where('user_id', Auth::id())
                     ->whereNotIn('id', $duplicates)
@@ -448,7 +468,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->delete();
+            $user->lichSuTimKiem->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -468,7 +488,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->where('id', $id)->delete();
+            $user->lichSuTimKiem->where('id', $id)->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

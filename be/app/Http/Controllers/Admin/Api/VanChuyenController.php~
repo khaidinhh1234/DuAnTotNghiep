@@ -115,16 +115,16 @@ class VanChuyenController extends Controller
                     ]);
                 }
 
-                // $thongBao = ThongBao::create([
-                //     'user_id' => $vanChuyen->donHang->user_id,
-                //     'tieu_de' => 'Cập nhật trạng thái vận chuyển',
-                //     'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' đã được cập nhật trạng thái vận chuyển',
-                //     'loai' => 'Vận chuyển',
-                //     'duong_dan' => $vanChuyen->ma_van_chuyen,
-                //     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                // ]);
+                 $thongBao = ThongBao::create([
+                     'user_id' => $vanChuyen->donHang->user_id,
+                     'tieu_de' => 'Cập nhật trạng thái vận chuyển',
+                     'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' đã được cập nhật trạng thái vận chuyển',
+                     'loai' => 'Đơn hàng',
+                     'duong_dan' => $vanChuyen->ma_van_chuyen,
+                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                 ]);
 
-                // broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
             }
             DB::commit();
             return response()->json([
@@ -155,51 +155,56 @@ class VanChuyenController extends Controller
 
             DB::beginTransaction();
 
-            $vanChuyen = VanChuyen::findOrFail($id);
+            $vanChuyen = VanChuyen::query()->with('donHang')->findOrFail($id);
             $shipper = Auth::guard('api')->id();
 
             if ($vanChuyen->shipper_id != $shipper) {
-                throw new \Exception('Bạn không phải là shipper phụ trách đơn hàng này', 400);
+                throw new \Exception('Bạn không phải shipper của đơn hàng này', 400);
             }
 
             if ($vanChuyen->shipper_xac_nhan == 0) {
                 if ($validate['shipper_xac_nhan'] == 2) {
+                    $ghiChuHienTai = $vanChuyen->ghi_chu ? json_decode($vanChuyen->ghi_chu, true) : [];
+
                     if ($vanChuyen->so_lan_giao >= 2) {
+                        $ghiChuHienTai['lan3'] = $validate['ghi_chu']['lan3'] ?? 'Giao hàng thất bại lần 3';
                         $vanChuyen->update([
                             'trang_thai_van_chuyen' => VanChuyen::TTVC_GHTB,
                             'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
-                            'ghi_chu' => json_encode($validate['ghi_chu']),
+                            'ghi_chu' => json_encode($ghiChuHienTai),
                         ]);
 
                         $thongBao = ThongBao::create([
                             'user_id' => $vanChuyen->user_id,
-                            'tieu_de' => 'Thông báo: Giao hàng thất bại',
-                            'noi_dung' => 'Đơn hàng của bạn mã ' . $vanChuyen->ma_don_hang . ' đã được đánh dấu là giao hàng thất bại.',
+                            'tieu_de' => 'Đơn hàng giao thất bại',
+                            'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' đã giao thất bại sau 3 lần thử.',
                             'loai' => 'Đơn hàng',
-                            'duong_dan' => $vanChuyen->ma_don_hang,
-                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                            'duong_dan' => $vanChuyen->donHang->ma_don_hang,
+                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
                         ]);
-
                         broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
                         DB::commit();
-                        return response()->json([
-                            'status' => true,
-                            'status_code' => 200,
-                            'message' => 'Giao hàng thất bại lần thứ 3. Đơn hàng đã được cập nhật trạng thái thất bại.'
-                        ], 200);
+                        return response()->json(['status' => true, 'message' => 'Đơn hàng bị hủy sau 3 lần giao thất bại'], 200);
                     } else {
                         $vanChuyen->increment('so_lan_giao');
-                        $vanChuyen->update([
-                            'ghi_chu' => json_encode($validate['ghi_chu']),
+                        $lanKey = 'lan' . $vanChuyen->so_lan_giao;
+                        $ghiChuHienTai[$lanKey] = $validate['ghi_chu'][$lanKey] ?? 'Giao hàng thất bại lần ' . $vanChuyen->so_lan_giao;
+
+                        $vanChuyen->update(['ghi_chu' => json_encode($ghiChuHienTai)]);
+
+                        $thongBao = ThongBao::create([
+                            'user_id' => $vanChuyen->user_id,
+                            'tieu_de' => 'Đơn hàng giao thất bại',
+                            'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang. ' giao thất bại lần ' . $vanChuyen->so_lan_giao . '. Ghi chú: ' . $ghiChuHienTai[$lanKey],
+                            'loai' => 'Đơn hàng',
+                            'duong_dan' => $vanChuyen->donHang->ma_don_hang,
+                            'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
                         ]);
+                        broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
                         DB::commit();
-                        return response()->json([
-                            'status' => true,
-                            'status_code' => 200,
-                            'message' => 'Giao hàng thất bại lần ' . $vanChuyen->so_lan_giao
-                        ], 200);
+                        return response()->json(['status' => true, 'message' => 'Giao hàng thất bại lần ' . $vanChuyen->so_lan_giao], 200);
                     }
                 } elseif ($validate['shipper_xac_nhan'] == 1) {
                     $vanChuyen->update([
@@ -215,27 +220,25 @@ class VanChuyenController extends Controller
                         'trang_thai_don_hang' => DonHang::TTDH_CKHCN
                     ]);
 
-                    $thongBaoGiaoHangThanhCong = new ThongBaoTelegramController();
-                    $thongBaoGiaoHangThanhCong->thongBaoHoanTatGiaoHang($vanChuyen->id);
+                    $thongBao = ThongBao::create([
+                        'user_id' => $vanChuyen->user_id,
+                        'tieu_de' => 'Giao hàng thành công',
+                        'noi_dung' => 'Đơn hàng mã ' . $vanChuyen->donHang->ma_don_hang . ' đã giao hàng thành công.',
+                        'loai' => 'Đơn hàng',
+                        'duong_dan' => $vanChuyen->donHang->ma_don_hang,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
+                    ]);
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
                     DB::commit();
-                    return response()->json([
-                        'status' => true,
-                        'status_code' => 200,
-                        'message' => 'Xác nhận giao hàng thành công'
-                    ], 200);
+                    return response()->json(['status' => true, 'message' => 'Giao hàng thành công'], 200);
                 }
             }
         } catch (\Exception $exception) {
             DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'status_code' => 500,
-                'message' => $exception->getMessage()
-            ], 500);
+            return response()->json(['status' => false, 'message' => $exception->getMessage()], 500);
         }
     }
-
 
     public function layThongTinVanChuyen()
     {

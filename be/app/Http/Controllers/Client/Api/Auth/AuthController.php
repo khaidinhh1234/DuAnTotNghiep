@@ -9,6 +9,7 @@ use App\Models\HangThanhVien;
 use App\Models\User;
 use App\Models\VaiTro;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -53,12 +54,14 @@ class AuthController extends Controller
         }
         $user->vaiTros()->attach($member->id);
 
-        DB::table('vi_tiens')->insert([
-            'user_id' => $user->id,
-            'so_du' => 0,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
-        ]);
+       // Tạo ví tiền cho người dùng với mã xác minh ngẫu nhiên
+       DB::table('vi_tiens')->insert([
+        'user_id' => $user->id,
+        'so_du' => 0,
+        // 'ma_xac_minh' => Str::random(10), // Thêm mã xác minh ngẫu nhiên
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
         // Trả về phản hồi với token
         return response()->json([
             'status' => true,

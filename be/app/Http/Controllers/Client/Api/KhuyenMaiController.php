@@ -312,13 +312,14 @@ class KhuyenMaiController extends Controller
             $danhMucIdsWithSubCategories = array_unique($danhMucIdsWithSubCategories);
 
             $query = MaKhuyenMai::query()
-                ->where('trang_thai', 1)
-                ->where('ngay_bat_dau_suu_tam', '<=', now())
-                ->where('ngay_ket_thuc', '>=', now())
-//                ->whereIn("ap_dung_vi", $dataApDungVi)
-                ->whereDoesntHave('user', function ($q) use ($user) {
-                    $q->where('user_id', $user->id)->where('da_su_dung', true);
-                });
+                ->join('nguoi_dung_ma_khuyen_mai', 'ma_khuyen_mais.id', '=', 'nguoi_dung_ma_khuyen_mai.ma_khuyen_mai_id') // Thực hiện JOIN với bảng nguoi_dung_ma_khuyen_mai
+                ->where('ma_khuyen_mais.trang_thai', 1)
+                ->where('ma_khuyen_mais.ngay_bat_dau_suu_tam', '<=', now())
+                ->where('ma_khuyen_mais.ngay_ket_thuc', '>=', now())
+                ->whereColumn('ma_khuyen_mais.so_luong_da_su_dung', '<', 'ma_khuyen_mais.so_luong')
+                ->where('nguoi_dung_ma_khuyen_mai.user_id', $user->id)
+                ->where('nguoi_dung_ma_khuyen_mai.da_su_dung', 0)
+                ->select('ma_khuyen_mais.*');
 
             if ($request->filled('ma_code')) {
                 $query->where('ma_code', 'LIKE', '%' . $request->ma_code . '%');

@@ -7,6 +7,7 @@ use App\Exports\SanPhamExports;
 use App\Http\Controllers\Controller;
 use App\Models\AnhBienThe;
 use App\Models\BienTheSanPham;
+use App\Models\GioHang;
 use App\Models\SanPham;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -167,7 +168,7 @@ class SanPhamController extends Controller
             'ten_san_pham' => 'required|string|max:255|unique:san_phams,ten_san_pham,' . $id,
             'anh_san_pham' => 'required|string',
             'ma_san_pham' => 'required|string|max:255|unique:san_phams,ma_san_pham,' . $id,
-            'mo_ta_ngan' => 'required|string|max:255',
+            'mo_ta_ngan' => 'required|string',
             'noi_dung' => 'required|string',
             'danh_muc_id' => 'required|integer',
             'gia_tot' => 'nullable|boolean',
@@ -199,7 +200,7 @@ class SanPhamController extends Controller
         $bienTheSanPham = [];
 
         foreach ($bienTheSanPhamTmp as $value) {
-            if ($value['so_luong_bien_the'] !== null) {
+            if ($value['so_luong_bien_the'] != null) {
                 $bienTheSanPham[] = [
                     'bien_the_mau_sac_id' => $value['mau_sac_id'],
                     'bien_the_kich_thuoc_id' => $value['kich_thuoc_id'],
@@ -229,6 +230,10 @@ class SanPhamController extends Controller
                     ],
                     $bienThe
                 );
+
+                GioHang::where('bien_the_san_pham_id', $bienTheSP->id)->update([
+                    'so_luong' => $value['so_luong_bien_the']
+                ]);
 
                 AnhBienThe::where('bien_the_san_pham_id', $bienTheSP->id)->delete();
 
@@ -270,7 +275,13 @@ class SanPhamController extends Controller
         try {
             DB::beginTransaction();
 
-            $sanPham = SanPham::with(['bienTheSanPham.anhBienThe', 'boSuuTapSanPham'])->findOrFail($id);
+            $sanPham = SanPham::with(['bienTheSanPham','bienTheSanPham.anhBienThe', 'boSuuTapSanPham'])->findOrFail($id);
+            foreach ($sanPham->bienTheSanPham as $value) {
+                $gioHang = GioHang::where('bien_the_san_pham_id', $value->id)->first();
+                if ($gioHang) {
+                    $gioHang->delete();
+                }
+            }
             $sanPham->delete();
 
             DB::commit();
