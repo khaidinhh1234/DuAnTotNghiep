@@ -300,6 +300,7 @@ class DonHangClientController extends Controller
                 ->where('gio_hangs.chon', 1)
                 ->whereNull("gio_hangs.deleted_at")
                 ->select('san_phams.id as san_pham_id', 'bien_the_san_phams.id as bien_the_san_pham_id', 'gio_hangs.so_luong')
+                ->lockForUpdate()
                 ->get();
 
             if ($sanPhamDuocChon->isEmpty()) {
