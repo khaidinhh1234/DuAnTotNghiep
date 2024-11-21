@@ -52,6 +52,8 @@ const datas = [
 ];
 
 const TableUncomfirmedOrder: React.FC = () => {
+  const [searchText, setSearchText] = useState("");
+
   const queryClient = useQueryClient();
   const [trangthai, setTrangThai] = useState<string>();
   const [filteredData, setFilteredData] = useState<Transport[]>([]);
@@ -159,7 +161,53 @@ const TableUncomfirmedOrder: React.FC = () => {
       shipper_id: item.don_hang?.shipper?.ho_ten || "Chưa có dữ liệu",
     })
   );
+  const handleDateChange = (_: any, dateStrings: [string, string]) => {
+    const startDate = new Date(dateStrings[0]);
+    const endDate = new Date(dateStrings[1]);
+    // console.log("startDate", startDate);
+    // console.log("endDate", endDate);
 
+    const filtered = transport?.filter((record: any) => {
+      const recordDate = new Date(record.created_at);
+      return recordDate >= startDate && recordDate <= endDate;
+    });
+    // console.log("filtered", filtered);
+    setFilteredData(filtered || []);
+    // Thực hiện hành động gì đó, ví dụ như gọi API để lọc theo khoảng ngày
+  };
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchText(value);
+
+    if (value) {
+      console.log("value", transport);
+      const filtered = transport?.filter((item: any) => {
+        // Kiểm tra nếu các trường tồn tại trước khi gọi toLowerCase
+        const tenNguoiDatHang = item.ten_nguoi_dat_hang?.toLowerCase() || "";
+        const maDonHang = item.ma_don_hang?.toLowerCase() || "";
+        const maVanHang = item.ma_van_chuyen?.toLowerCase() || "";
+
+        const trangThaiDonHang = item.trang_thai_don_hang?.toLowerCase() || "";
+        const trangThaiThanhToan =
+          item.trang_thai_thanh_toan?.toLowerCase() || "";
+        const trangThaiVanChuyen =
+          item.trang_thai_van_chuyen?.toLowerCase() || "";
+
+        return (
+          tenNguoiDatHang.includes(value.toLowerCase()) ||
+          maDonHang.includes(value.toLowerCase()) ||
+          maVanHang.includes(value.toLowerCase()) ||
+          trangThaiDonHang.includes(value.toLowerCase()) ||
+          trangThaiThanhToan.includes(value.toLowerCase()) ||
+          trangThaiVanChuyen.includes(value.toLowerCase())
+        );
+      });
+      setFilteredData(filtered || []);
+    } else {
+      // Reset về dữ liệu gốc khi không có giá trị tìm kiếm
+      if (transport) setFilteredData(transport);
+    }
+  };
   const handleChange = (value: string) => {
     setTrangThai(value);
   };
@@ -208,7 +256,7 @@ const TableUncomfirmedOrder: React.FC = () => {
                     ? "text-green-500"
                     : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                       ? "text-red-500"
-                      : '')
+                      : "")
             }
           >
             {record.trang_thai_van_chuyen}
@@ -306,9 +354,13 @@ const TableUncomfirmedOrder: React.FC = () => {
         {/* Bộ lọc tìm kiếm */}
         <div style={{ marginBottom: 16 }}>
           <Space>
-            <Input placeholder="Tìm kiếm" prefix={<SearchOutlined />} />
+            <Input
+              placeholder="Tìm kiếm"
+              prefix={<SearchOutlined />}
+              onChange={(e: any) => handleSearchChange(e)}
+            />
 
-            <RangePicker />
+            <RangePicker onChange={handleDateChange} />
           </Space>
         </div>
         <Flex gap="middle" vertical>
