@@ -314,6 +314,7 @@ const CheckOut = () => {
       }
     }
   }, [data]);
+
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
@@ -493,11 +494,13 @@ const CheckOut = () => {
                                     return; // Dừng lại nếu đạt giới hạn
                                   }
 
+
                                   // Gọi hàm tăng số lượng nếu còn tồn kho
                                   increaseQuantity({
                                     productId: product.id,
                                     currentQuantity: product.so_luong,
                                   });
+
                                 }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
