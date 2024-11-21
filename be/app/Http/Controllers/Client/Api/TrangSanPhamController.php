@@ -113,7 +113,7 @@ class TrangSanPhamController extends Controller
 
             $danhMuc = DanhMuc::where('duong_dan', $loai)->first();
 
-            $danhMucCap2 = DanhMuc::with('children') 
+            $danhMucCap2 = DanhMuc::with('children')
                 ->where('cha_id', $danhMuc->id)
                 ->get();
 
@@ -123,7 +123,7 @@ class TrangSanPhamController extends Controller
             }])->get()->filter(function ($mauSac) {
                 return $mauSac->sanPhams->isNotEmpty();
             });
-
+            // dd($mauSacs);
             // Lấy tất cả kích thước theo đường dẫn của danh mục và loại kích thước
             $kichThuoc = BienTheKichThuoc::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
                 $query->where('duong_dan', $loai);
