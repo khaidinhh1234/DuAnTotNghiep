@@ -8,7 +8,7 @@ import {
   Table,
   TableColumnsType,
   TableProps,
-  Tabs
+  Tabs,
 } from "antd";
 import React, { useState, useEffect } from "react";
 
@@ -94,15 +94,17 @@ const AllTransport: React.FC = () => {
       if (dateRange) {
         const [start, end] = dateRange;
         filtered = filtered.filter((item: Transport) => {
-          const itemDate = new Date(item.created_at).toISOString().split("T")[0];
+          const itemDate = new Date(item.created_at)
+            .toISOString()
+            .split("T")[0];
           return itemDate >= start && itemDate <= end;
         });
       }
 
       // Lọc theo trạng thái vận chuyển
       if (activeTab !== "Tất cả") {
-        filtered = filtered.filter((item: Transport) =>
-          item.trang_thai_van_chuyen === activeTab
+        filtered = filtered.filter(
+          (item: Transport) => item.trang_thai_van_chuyen === activeTab
         );
       }
 
@@ -123,64 +125,48 @@ const AllTransport: React.FC = () => {
     don_hang_id: number;
     trang_thai_van_chuyen: string;
   }> = [
-      {
-        title: "Tất cả",
-        className: "text-xl w-1/2",
-        dataIndex: "created_at",
-        key: "created_at",
-        render: (_, record) => (
-          <div className="border rounded-lg p-4 mb-4">
-            <TransportDetail record={record} />
-          </div>
-        ),
-      },
-    ];
+    {
+      title: "Tất cả",
+      className: "text-xl w-1/2",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (_, record) => (
+        <div className="border rounded-lg p-4 mb-4">
+          <TransportDetail record={record} />
+        </div>
+      ),
+    },
+  ];
 
   return (
     <main className="flex flex-1 flex-col gap-0 p-0 lg:gap-6 lg:px-6 lg:py-10 container">
-  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mx-10 lg:mx-0">
-    <div className="text-left mb-4 lg:mb-0">
       <MainHeader /> {/* Logo và các thành phần khác trong MainHeader */}
-    </div>
-    <div className="lg:ml-auto text-left lg:text-right">
-      <h1 className="font-semibold text-lg lg:text-2xl">
-        Thông tin giao hàng
-        <i
-          className="fa-solid fa-arrow-right-from-bracket mx-5 hover:text-red-500 cursor-pointer"
-          onClick={logout}
-        ></i>
-      </h1>
-      <h1 className="font-semibold text-md lg:text-xl">Người giao hàng: !3223434</h1>
-      <h1 className="font-semibold text-md lg:text-xl">ID: VN-DC01432</h1>
-    </div>
-  </div>
-
-  {/* Các thành phần còn lại */}
-  <div className="lg:mx-10 mx-3 bg-white">
-    <Tabs
-      defaultActiveKey="Tất cả"
-      activeKey={activeTab}
-      onChange={(key) => setActiveTab(key)}
-      items={tabItems}
-    />
-    <div className="mb-4">
-      <Space>
-        <Input
-          placeholder="Tìm kiếm"
-          prefix={<SearchOutlined />}
-          onChange={handleSearchChange}
+      {/* Các thành phần còn lại */}
+      <h1 className="text-2xl mx-2 font-medium">Đơn hàng vận chuyển</h1>
+      <div className="lg:mx-10 mx-3 bg-white">
+        <Tabs
+          defaultActiveKey="Tất cả"
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key)}
+          items={tabItems}
         />
-        <RangePicker onChange={handleDateRangeChange} />
-      </Space>
-    </div>
-    <Table
-      columns={columns}
-      dataSource={filteredData}
-      pagination={{ pageSize: 10, className: "my-5" }}
-    />
-  </div>
-</main>
-
+        <div className="mb-4">
+          <Space>
+            <Input
+              placeholder="Tìm kiếm"
+              prefix={<SearchOutlined />}
+              onChange={handleSearchChange}
+            />
+            <RangePicker onChange={handleDateRangeChange} />
+          </Space>
+        </div>
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          pagination={{ pageSize: 10, className: "my-5" }}
+        />
+      </div>
+    </main>
   );
 };
 

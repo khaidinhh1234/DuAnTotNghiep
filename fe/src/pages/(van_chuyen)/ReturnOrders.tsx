@@ -8,7 +8,7 @@ import {
   Table,
   TableColumnsType,
   TableProps,
-  Tabs
+  Tabs,
 } from "antd";
 import React, { useState, useEffect } from "react";
 
@@ -86,14 +86,16 @@ const ReturnOrders: React.FC = () => {
       if (dateRange) {
         const [start, end] = dateRange;
         filtered = filtered.filter((item: Transport) => {
-          const itemDate = new Date(item.created_at).toISOString().split("T")[0];
+          const itemDate = new Date(item.created_at)
+            .toISOString()
+            .split("T")[0];
           return itemDate >= start && itemDate <= end;
         });
       }
 
       if (activeTab !== "Tất cả") {
-        filtered = filtered.filter((item: Transport) =>
-          item.trang_thai_hoan_hang === activeTab
+        filtered = filtered.filter(
+          (item: Transport) => item.trang_thai_hoan_hang === activeTab
         );
       }
 
@@ -107,22 +109,23 @@ const ReturnOrders: React.FC = () => {
     don_hang_id: number;
     trang_thai_hoan_hang: string;
   }> = [
-      {
-        title: "Tất cả",
-        className: "text-xl w-1/2",
-        dataIndex: "created_at",
-        key: "created_at",
-        render: (_, record) => (
-          <div className="border rounded-lg p-4 mb-4">
-            <ReturnOrderDetail record={record} />
-          </div>
-        ),
-      },
-    ];
+    {
+      title: "Tất cả",
+      className: "text-xl w-1/2",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (_, record) => (
+        <div className="border rounded-lg p-4 mb-4">
+          <ReturnOrderDetail record={record} />
+        </div>
+      ),
+    },
+  ];
 
   return (
     <main className="flex flex-1 flex-col gap-0 p-0 lg:gap-6 lg:px-6 lg:py-10 container">
-                <MainHeader/>
+      <MainHeader />
+      <h1 className="text-2xl mx-2 font-medium">Đơn hàng hoàn trả</h1>
 
       {/* <div className="flex justify-between items-start mx-10">
         <div className="flex gap-5 items-center">
@@ -149,14 +152,15 @@ const ReturnOrders: React.FC = () => {
         />
 
         <div style={{ marginBottom: 16 }}>
-          <Space>
+          <div className="sm:flex *:my-1">
             <Input
               placeholder="Tìm kiếm"
               prefix={<SearchOutlined />}
               onChange={handleSearchChange}
+              className="w-full sm:w-[20px]"
             />
             <RangePicker onChange={handleDateRangeChange} />
-          </Space>
+          </div>
         </div>
         <Table
           columns={columns}

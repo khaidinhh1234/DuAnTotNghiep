@@ -9,15 +9,15 @@ const MainHeader = () => {
 
   const menuItems = [
     {
-      key: 'orders',
-      label: 'Đơn hàng',
-      onClick: () => navigate('/shipper2')
+      key: "orders",
+      label: "Đơn hàng",
+      onClick: () => navigate("/shipper2"),
     },
     {
-      key: 'returns',
-      label: 'Đơn hoàn',
-      onClick: () => navigate('/return-orders')
-    }
+      key: "returns",
+      label: "Đơn hoàn",
+      onClick: () => navigate("/return-orders"),
+    },
   ];
 
   return (
@@ -32,10 +32,10 @@ const MainHeader = () => {
             <Menu
               className="absolute mt-2 w-48 bg-white rounded-md sm:w-60 md:w-72"
               items={menuItems}
-              selectedKeys={[location.pathname === '/' ? 'orders' : 'returns']}
+              // selectedKeys={[location.pathname === "/" ? "orders" : "returns"]}
               style={{
-                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                border: '1px solid #f0f0f0',
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                border: "1px solid #f0f0f0",
               }}
             />
           )}
@@ -52,23 +52,34 @@ const MainHeader = () => {
           Giao Hàng Glow Express
         </h1>
       </div>
-
       {/* Hiển thị Menu khi ở chế độ mobile */}
-      <div className="sm:hidden">
+      {/* <div className="sm:hidden">
         {menuVisible && (
           <Menu
             className="absolute mt-2 w-48 bg-white rounded-md sm:w-60 md:w-72"
             items={menuItems}
-            selectedKeys={[location.pathname === '/' ? 'orders' : 'returns']}
+            selectedKeys={[location.pathname === "/" ? "orders" : "returns"]}
             style={{
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              border: '1px solid #f0f0f0',
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              border: "1px solid #f0f0f0",
             }}
           />
         )}
-      </div>
+      </div>{" "} */}
+      {/* <div className="lg:ml-auto text-left lg:text-right">
+        <h1 className="font-semibold text-lg lg:text-2xl">
+          Thông tin giao hàng
+          <i
+            className="fa-solid fa-arrow-right-from-bracket mx-5 hover:text-red-500 cursor-pointer"
+            // onClick={logout}
+          ></i>
+        </h1>
+        <h1 className="font-semibold text-md lg:text-xl">
+          Người giao hàng: !3223434
+        </h1>
+        <h1 className="font-semibold text-md lg:text-xl">ID: VN-DC01432</h1>
+      </div> */}
     </div>
-
   );
 };
 

@@ -5,17 +5,19 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import { StyleProvider } from "@ant-design/cssinjs";
 import "./global.css";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import "./assets/js/index.js
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-    <BrowserRouter>   
+      <BrowserRouter>
         <StyleProvider layer>
           <App />
         </StyleProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+ 
     </QueryClientProvider>
   </React.StrictMode>
 );

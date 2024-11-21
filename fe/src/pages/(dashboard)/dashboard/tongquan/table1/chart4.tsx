@@ -113,6 +113,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
     return `${day}/${month}/${year}`;
   });
   // Whenever Chart1 changes (i.e., after refetch), update series and options
+  console.log(Chart1);
   useEffect(() => {
     if (Chart1) {
       setSeries([
