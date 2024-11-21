@@ -12,8 +12,9 @@ const formatter: StatisticProps["formatter"] = (value: any) => (
 interface ChartProps {
   datestart?: string;
   dateend?: string;
+  don_hang_chot?: any;
 }
-const Chart6 = ({ datestart, dateend }: ChartProps) => {
+const Chart6 = ({ datestart, dateend, don_hang_chot }: ChartProps) => {
   const date =
     datestart && dateend
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
@@ -53,18 +54,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     enabled: !!datestart && !!dateend,
   });
   // console.log(gttb);
-  const {
-    data: don,
 
-    refetch: refetch4,
-  } = useQuery({
-    queryKey: ["tongquanchart1", datestart, dateend],
-    queryFn: async () => {
-      const response = await instance.post("thong-ke/don-hang/chot", date);
-      return response.data;
-    },
-    enabled: !!datestart && !!dateend,
-  });
   // console.log(don);
   // const {
   //   data: soluong,
@@ -100,7 +90,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
   const san_pham = doanhso?.ti_le_tang_giam_san_pham > 0;
   const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
   const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;
-  const don_hang = don?.ti_le_tang_giam_don_hang > 0;
+  const don_hang = don_hang_chot?.ti_le_tang_giam_don_hang > 0;
 
   useEffect(() => {
     async () => {
@@ -123,13 +113,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
       }
     };
   }, [datestart, dateend, refetch3]);
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch4(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch4]);
+
   // useEffect(() => {
   //   if (datestart && dateend) {
   //     refetch9();
@@ -282,7 +266,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
           <p className="text-base font-semibold text-red-600">
             {" "}
             <Statistic
-              value={don?.tong_so_luong_don_hang || 0}
+              value={don_hang_chot?.tong_so_luong_don_hang || 0}
               formatter={formatter}
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
@@ -293,7 +277,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
             {don_hang ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
 
             <Statistic
-              value={don?.ti_le_tang_giam_don_hang || 0}
+              value={don_hang_chot?.ti_le_tang_giam_don_hang || 0}
               formatter={formatter}
               suffix="%"
               valueStyle={{

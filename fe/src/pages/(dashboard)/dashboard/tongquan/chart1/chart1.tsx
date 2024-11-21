@@ -6,45 +6,33 @@ import { Card, Statistic } from "antd";
 import { useEffect } from "react";
 import CountUp from "react-countup";
 
-interface ChartProps {
-  datestart?: string;
-  dateend?: string;
-}
-
-const Chart1 = ({ datestart, dateend }: ChartProps) => {
+const Chart1 = ({ don_hang_chot }: any) => {
   // console.log(datestart, dateend);
-  const date =
-    datestart && dateend
-      ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
-      : null;
+  // const date =
+  //   datestart && dateend
+  //     ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
+  //     : null;
 
-  const { data, refetch } = useQuery({
-    queryKey: ["tongquanchart1", datestart, dateend],
-    queryFn: async () => {
-      const response = await instance.post("thong-ke/don-hang/chot", date);
-      return response.data;
-    },
-    enabled: !!datestart && !!dateend,
-  });
+  // const { data, refetch } = useQuery({
+  //   queryKey: ["tongquanchart1", datestart, dateend],
+  //   queryFn: async () => {
+  //     const response = await instance.post("thong-ke/don-hang/chot", date);
+  //     return response.data;
+  //   },
+  //   enabled: !!datestart && !!dateend,
+  // });
 
   const formatter: StatisticProps["formatter"] = (value: any) => (
     <CountUp end={value as number} separator="," />
   );
-  const phantien = data?.ti_le_tang_giam_tien > 0;
-  const phandon = data?.ti_le_tang_giam_don_hang > 0;
+  const phantien = don_hang_chot?.ti_le_tang_giam_tien > 0;
+  const phandon = don_hang_chot?.ti_le_tang_giam_so_luong > 0;
 
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (isError) {
-  //   return <div>Error: {error.message}</div>;
-  // }
-  useEffect(() => {
-    if (datestart && dateend) {
-      refetch();
-    }
-  }, [datestart, dateend, refetch]);
+  // useEffect(() => {
+  //   if (datestart && dateend) {
+  //     refetch();
+  //   }
+  // }, [datestart, dateend, refetch]);
   // console.log(data);
   return (
     <Card className="shadow-md px-1 rounded-lg bg-white flex flex-col">
@@ -60,7 +48,7 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
             Tổng tiền: <br />
             <span className="text-2xl font-bold text-green-800">
               <Statistic
-                value={data?.tong_tien || 0}
+                value={don_hang_chot?.tong_tien || 0}
                 formatter={formatter}
                 suffix="đ"
                 valueStyle={{ color: "#00AA00" }}
@@ -72,7 +60,7 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
           >
             {phantien ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
             <Statistic
-              value={data?.ti_le_tang_giam_tien || 0}
+              value={don_hang_chot?.ti_le_tang_giam_tien || 0}
               formatter={formatter}
               suffix="%"
               valueStyle={{
@@ -87,7 +75,7 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
             Số lượng đơn hàng: <br />
             <span className="text-2xl font-bold text-black">
               <Statistic
-                value={data?.tong_so_luong_don_hang || 0}
+                value={don_hang_chot?.tong_so_luong || 0}
                 formatter={formatter}
               />
             </span>
@@ -97,7 +85,7 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
           >
             {phandon ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
             <Statistic
-              value={data?.ti_le_tang_giam_don_hang || 0}
+              value={don_hang_chot?.ti_le_tang_giam_don_hang || 0}
               formatter={formatter}
               suffix="%"
               valueStyle={{

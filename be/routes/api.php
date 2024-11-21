@@ -392,10 +392,10 @@ Route::middleware(['auth.sanctum'])
 
             // Thống kê tổng quan
             Route::group([], function () {
-                //  Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
-                // Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
-                //  Route::post('san-pham/ton-kho', [ThongKeTongQuanController::class, 'thongKeTongSanPham']);
-                // Route::post('don-hang/chot', [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
+                Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
+                Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
+                Route::post('san-pham/ton-kho', [ThongKeTongQuanController::class, 'thongKeTongSanPham']);
+                Route::post('don-hang/chot', [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
                 Route::post('tong-quan-theo-khoang1', [ThongKeTongQuanController::class, 'thongKeTongQuanTheoKhoang1']);
                 Route::post('doanh-thu/tong', [ThongKeTongQuanController::class, 'thongKeDoanhThuTong']);
                 Route::post('loi-nhuan', [ThongKeTongQuanController::class, 'thongKeLoiNhuan']);
