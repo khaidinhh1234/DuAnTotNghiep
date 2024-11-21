@@ -14,7 +14,7 @@ import VerificationModal from "./VerificationModal";
 
 const ShippingAddressPage = () => {
   const [trangthai, settrangthai] = useState("Thanh toán khi nhận hàng");
-
+  console.log(trangthai);
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
 
   const [user] = useLocalStorage("user" as any, {});
@@ -37,7 +37,10 @@ const ShippingAddressPage = () => {
   });
   const nav = useNavigate();
   const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [showPinRegistrationModal, setShowPinRegistrationModal] = useState(false);
+  const [showPinRegistrationModal, setShowPinRegistrationModal] =
+    useState(false);
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
 
   const [pendingOrderData, setPendingOrderData] = useState<{
     data: { ma_don_hang: string };
@@ -46,19 +49,19 @@ const ShippingAddressPage = () => {
     queryKey: ["walletStatus"],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get('/vi-tai-khoan');
+        const response = await instanceClient.get("/vi-tai-khoan");
         return response.data;
       } catch (error: any) {
         if (error.response?.status === 400) {
           return {
             status: false,
-            status_code: 400
+            status_code: 400,
           };
         }
         throw error;
       }
     },
-    retry: false
+    retry: false,
   });
 
   const { mutate } = useMutation({
@@ -138,7 +141,7 @@ const ShippingAddressPage = () => {
     setmacode(data ? data : ""); // Cập nhật trạng thái mã khuyến mãi
   };
   const { data: checkout } = useQuery({
-    queryKey: ["Checkout"],
+    queryKey: ["cart"],
     queryFn: async () => {
       try {
         const response = await instanceClient.get(`/gio-hang/chi-tiet`);
@@ -208,7 +211,9 @@ const ShippingAddressPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">Chưa đăng ký mã PIN</h2>
-            <p className="text-gray-600 mb-6">Bạn cần đăng ký mã PIN để thực hiện thao tác này</p>
+            <p className="text-gray-600 mb-6">
+              Bạn cần đăng ký mã PIN để thực hiện thao tác này
+            </p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={handleClosePinModal}
@@ -218,8 +223,8 @@ const ShippingAddressPage = () => {
               </button>
               <button
                 onClick={() => {
-                  nav('/mypro/wallet', {
-                    state: { openSettings: true }
+                  nav("/mypro/wallet", {
+                    state: { openSettings: true },
                   });
                   handleClosePinModal();
                 }}

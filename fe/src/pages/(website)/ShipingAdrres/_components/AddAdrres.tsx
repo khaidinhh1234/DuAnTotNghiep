@@ -5,7 +5,7 @@ const AddAddressForm = ({ register, products, errors, settrangthai }: any) => {
 
   return (
     <div className="">
-      <h3 className="title-h3">Sản phẩm đã đặt</h3>
+      <h3 className="title-h3">Sản phẩm đã chọn</h3>
       {/* <div className="px-2 mb-8">
         {[1, 2, 3].map((index) => (
           <div
@@ -305,7 +305,7 @@ const AddAddressForm = ({ register, products, errors, settrangthai }: any) => {
           type="radio"
           name="phuong_thuc_thanh_toan"
           id="cashOnDelivery"
-          onChange={() => console.log("Thanh toán khi nhận hàng")}
+          onChange={() => settrangthai("Thanh toán khi nhận hàng")}
           value="Thanh toán khi nhận hàng"
           defaultChecked
           // {...register("phuong_thuc_thanh_toan", { required: true })}

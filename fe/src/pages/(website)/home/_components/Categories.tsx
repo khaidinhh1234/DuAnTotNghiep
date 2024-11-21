@@ -100,7 +100,7 @@ const Categories = ({ bo_suu_tap }: any) => {
               <img
                 src={bo_suu_tap[activeTab]?.duong_dan_anh}
                 alt={bo_suu_tap[activeTab]?.ten}
-                className="w-full h-auto object-cover rounded-lg shadow-lg"
+                className="w-full h-[550px] object-cover rounded-lg shadow-lg "
               />
             </div>
             <div className="w-full lg:w-3/4">

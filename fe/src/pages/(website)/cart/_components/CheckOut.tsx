@@ -2,18 +2,51 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
+<<<<<<< HEAD
 import { Star } from "lucide-react";
+=======
+import { debounce } from "lodash";
+import { FastForward, Star } from "lucide-react";
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+type RequestPayload = { productId: string; currentQuantity: number };
 
 const CheckOut = () => {
   const nav = useNavigate();
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
+<<<<<<< HEAD
   const access_token = user.access_token || localStorage.getItem("access_token");
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 const [codeCONG, setCodeCODE] = useState()
+=======
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
+  const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
+    const savedSelectedProducts = localStorage.getItem("selectedProducts");
+    return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
+  });
+  const MAX_REQUESTS = 10;
+  const requestQueue: (() => Promise<void>)[] = [];
+  const addRequestToQueue = (requestFn: () => Promise<void>) => {
+    if (requestQueue.length >= MAX_REQUESTS) {
+      // Xóa request cũ nhất nếu đã đạt đến giới hạn
+      requestQueue.shift();
+    }
+    requestQueue.push(requestFn);
+  };
+
+  const executeNextRequest = async () => {
+    if (requestQueue.length > 0) {
+      // Lấy request đầu tiên trong hàng đợi và thực hiện nó
+      const nextRequest = requestQueue.shift();
+      await nextRequest?.();
+    }
+  };
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -32,6 +65,7 @@ const [codeCONG, setCodeCODE] = useState()
     },
   });
   const { mutate: increaseQuantity } = useMutation({
+<<<<<<< HEAD
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
       try {
         const res = await instanceClient.put(
@@ -48,10 +82,31 @@ const [codeCONG, setCodeCODE] = useState()
       } catch (error) {
         throw new Error("Error increasing product quantity");
       }
+=======
+    mutationFn: async ({
+      productId,
+      currentQuantity,
+    }: {
+      productId: string;
+      currentQuantity: number;
+    }) => {
+      await instanceClient.put(
+        `/gio-hang/tang-so-luong/${productId}`,
+        { so_luong: currentQuantity + 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
     },
     onMutate: async ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
+<<<<<<< HEAD
   
+=======
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
       queryClient.setQueryData(
         ["cart", access_token],
         (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
@@ -61,6 +116,7 @@ const [codeCONG, setCodeCODE] = useState()
             }
             return product;
           });
+<<<<<<< HEAD
   
           const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map((product) => {
             if (product.id === productId) {
@@ -69,6 +125,18 @@ const [codeCONG, setCodeCODE] = useState()
             return product;
           });
   
+=======
+
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
+            (product) => {
+              if (product.id === productId) {
+                return { ...product, so_luong: currentQuantity + 1 };
+              }
+              return product;
+            }
+          );
+
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
           return {
             ...oldData,
             san_pham_giam_gia: updatedProducts,
@@ -79,18 +147,30 @@ const [codeCONG, setCodeCODE] = useState()
   
       return { previousCartData };
     },
+<<<<<<< HEAD
     onSuccess: (data) => {
       // Luôn đồng bộ cache với dữ liệu từ server
       // if (codeCONG === 200) {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
       // }
+=======
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+      executeNextRequest();
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
     },
     onError: (error, _, context) => {
       if (context?.previousCartData) {
-        queryClient.setQueryData(["cart", access_token], context.previousCartData);
+        queryClient.setQueryData(
+          ["cart", access_token],
+          context.previousCartData
+        );
       }
-      const errorMessage = (error as any).response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.";
+      const errorMessage =
+        (error as any).response?.data?.message ||
+        "Có lỗi xảy ra, vui lòng thử lại.";
       toast.error(errorMessage);
+      executeNextRequest();
     },
   });
   
@@ -146,8 +226,13 @@ const [codeCONG, setCodeCODE] = useState()
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+      executeNextRequest();
     },
-    onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
+    onError: (
+      error: any,
+      _,
+      context: { previousCartData?: unknown } | undefined
+    ) => {
       if (context?.previousCartData) {
         queryClient.setQueryData(
           ["cart", access_token],
@@ -155,8 +240,49 @@ const [codeCONG, setCodeCODE] = useState()
         );
       }
       toast.error("Thao tác quá nhanh, vui lòng chậm lại");
+      executeNextRequest();
     },
   });
+
+  const debouncedIncreaseQuantity = debounce(
+    (productId, currentQuantity) => {
+      addRequestToQueue(
+        () =>
+          new Promise<void>((resolve, reject) => {
+            increaseQuantity(
+              { productId, currentQuantity },
+              {
+                onSuccess: resolve,
+                onError: reject,
+              }
+            );
+          })
+      );
+      executeNextRequest();
+    },
+    2000,
+    { leading: true, trailing: false }
+  );
+
+  const debouncedDecreaseQuantity = debounce(
+    (productId, currentQuantity) => {
+      addRequestToQueue(
+        () =>
+          new Promise<void>((resolve, reject) => {
+            decreaseQuantity(
+              { productId, currentQuantity },
+              {
+                onSuccess: resolve,
+                onError: reject,
+              }
+            );
+          })
+      );
+      executeNextRequest();
+    },
+    2000,
+    { leading: true, trailing: false }
+  );
 
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId: string) => {
@@ -202,8 +328,8 @@ const [codeCONG, setCodeCODE] = useState()
       (product: { id: number }) => product.id === Number(productId)
     );
 
-    // Đặt mặc định là 1 nếu không tìm thấy số lượng
-    const quantity = (productInDiscounts?.so_luong || productInRegular?.so_luong) || 1;
+    const quantity =
+      productInDiscounts?.so_luong || productInRegular?.so_luong || 1;
 
     if (productInDiscounts) {
       return total + productInDiscounts.gia_hien_tai * quantity;
@@ -213,7 +339,7 @@ const [codeCONG, setCodeCODE] = useState()
       return total + productInRegular.gia_hien_tai * quantity;
     }
 
-    return total; // Nếu không có sản phẩm nào, trả về tổng không thay đổi
+    return total;
   }, 0);
   // Tính tổng tiền cuối cùng (bao gồm phí giao hàng)
   const shippingFee = totalSelectedPrice > 498000 ? 0 : 20000;
@@ -251,7 +377,7 @@ const [codeCONG, setCodeCODE] = useState()
         ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
       ];
       setSelectedProducts(allProductIds);
-      localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
+      localStorage.setItem("selectedProducts", JSON.stringify(allProductIds));
       // Gọi SelectedProduct với tất cả ID
       SelectedProduct({ gioHangIds: allProductIds, isChecked: true });
     } else {
@@ -260,7 +386,7 @@ const [codeCONG, setCodeCODE] = useState()
         ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
       ];
       setSelectedProducts([]); // Cập nhật trạng thái không chọn
-      localStorage.setItem('selectedProducts', JSON.stringify([]));
+      localStorage.setItem("selectedProducts", JSON.stringify([]));
       // Gọi SelectedProduct với tất cả ID và trạng thái không chọn
       SelectedProduct({ gioHangIds: allProductIds, isChecked: false });
     }
@@ -293,6 +419,7 @@ const [codeCONG, setCodeCODE] = useState()
     },
   });
 
+<<<<<<< HEAD
   // const handleSelectProduct = (productId: string) => {
   //   const isChecked = selectedProducts.includes(productId);
   //   // Cập nhật trạng thái selectedProducts
@@ -316,22 +443,66 @@ const [codeCONG, setCodeCODE] = useState()
   //   }
   // }, []);
   // 
+=======
+  const handleSelectProduct = (productId: string) => {
+    const isChecked = selectedProducts.includes(productId);
+    // Cập nhật trạng thái selectedProducts
+    const updatedSelectedProducts = isChecked
+      ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn sản phẩm
+      : [...selectedProducts, productId]; // Chọn sản phẩm
+    setSelectedProducts(updatedSelectedProducts);
+    console.log("check:", isChecked);
+    // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
+    SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
+    localStorage.setItem(
+      "selectedProducts",
+      JSON.stringify(updatedSelectedProducts)
+    );
+  };
+  useEffect(() => {
+    // Retrieve saved selection from localStorage on component mount
+    const savedSelectedProducts = localStorage.getItem("selectedProducts");
+    if (savedSelectedProducts) {
+      setSelectedProducts(JSON.parse(savedSelectedProducts));
+    }
+  }, []);
+
+  // Tải sản phẩm từ localStorage khi component khởi tạo
+  useEffect(() => {
+    const storedProducts = localStorage.getItem("selectedProducts");
+    if (storedProducts) {
+      setSelectedProducts(JSON.parse(storedProducts));
+    }
+  }, []);
+
+  // Lưu sản phẩm vào localStorage khi có sự thay đổi
+  useEffect(() => {
+    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+  }, [selectedProducts]);
+  //
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
   useEffect(() => {
     if (data) {
       const preSelectedProducts = [
-        ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id),
-        ...(data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id)
+        ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map(
+          (p: any) => p.id
+        ),
+        ...(
+          data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []
+        ).map((p: any) => p.id),
       ];
 
       if (preSelectedProducts.length > 0) {
-        setSelectedProducts(prev => Array.from(new Set([...prev, ...preSelectedProducts])));
+        setSelectedProducts((prev) =>
+          Array.from(new Set([...prev, ...preSelectedProducts]))
+        );
       }
     }
   }, [data]);
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
-        data?.san_pham_nguyen_gia?.length === 0 ? (
+      data?.san_pham_nguyen_gia?.length === 0 ? (
         <div className="flex flex-col items-center justify-center pt-32 pb-20">
           <img
             src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
@@ -403,7 +574,11 @@ const [codeCONG, setCodeCODE] = useState()
                       <th className="px-4 py-2">
                         <input
                           type="checkbox"
-                          checked={selectedProducts.length === (data?.san_pham_giam_gia.length + data?.san_pham_nguyen_gia.length)}
+                          checked={
+                            selectedProducts.length ===
+                            data?.san_pham_giam_gia.length +
+                              data?.san_pham_nguyen_gia.length
+                          }
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                           onChange={(e) => handleSelectAll(e.target.checked)}
                           title="Select all products"
@@ -421,7 +596,6 @@ const [codeCONG, setCodeCODE] = useState()
                     </tr>
                   </thead>
                   <tbody>
-
                     <>
                       {/* Sản phẩm giảm giá */}
                       {data?.san_pham_giam_gia?.map((product: any) => (
@@ -433,8 +607,16 @@ const [codeCONG, setCodeCODE] = useState()
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+<<<<<<< HEAD
                               checked={product.chon === 1 || selectedProducts.includes(product.id)}
                               // onChange={() => handleSelectProduct(product.id)}
+=======
+                              checked={
+                                product.chon === 1 ||
+                                selectedProducts.includes(product.id)
+                              }
+                              onChange={() => handleSelectProduct(product.id)}
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
                               title="Select discount product"
                             />
                           </td>
@@ -464,13 +646,14 @@ const [codeCONG, setCodeCODE] = useState()
                                 <p
                                   className="text-xs text-red-500 relative inline-block font-semibold tracking-wide"
                                   style={{
-                                    padding: '2px 10px',
-                                    border: '2px solid red',
-                                    clipPath: 'inset(0 10px)',
-                                    borderRadius: '16px',
+                                    padding: "2px 10px",
+                                    border: "2px solid red",
+                                    clipPath: "inset(0 10px)",
+                                    borderRadius: "16px",
                                   }}
                                 >
-                                  Đã tiết kiệm {product.tiet_kiem.toLocaleString()} ₫
+                                  Đã tiết kiệm{" "}
+                                  {product.tiet_kiem.toLocaleString()} ₫
                                 </p>
                               </div>
                             </div>
@@ -480,21 +663,26 @@ const [codeCONG, setCodeCODE] = useState()
                               {product.so_luong === 1 ? (
                                 <Popconfirm
                                   title="Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?"
-                                  onConfirm={() => handleRemoveProduct(product.id)}
+                                  onConfirm={() =>
+                                    handleRemoveProduct(product.id)
+                                  }
                                   okText="Có"
                                   cancelText="Không"
                                 >
-                                  <button className="py-1 px-3 rounded-l-lg" title="Decrease quantity">
+                                  <button
+                                    className="py-1 px-3 rounded-l-lg"
+                                    title="Decrease quantity"
+                                  >
                                     <i className="fa-solid fa-minus" />
                                   </button>
                                 </Popconfirm>
                               ) : (
                                 <button
                                   onClick={() =>
-                                    decreaseQuantity({
-                                      productId: product.id,
-                                      currentQuantity: product.so_luong,
-                                    })
+                                    debouncedDecreaseQuantity(
+                                      product.id,
+                                      product.so_luong
+                                    )
                                   }
                                   className="py-1 px-3 rounded-l-lg"
                                   title="Decrease quantity"
@@ -513,25 +701,28 @@ const [codeCONG, setCodeCODE] = useState()
                               />
                               <button
                                 onClick={() => {
-                                  // Kiểm tra nếu số lượng sản phẩm hiện tại đã đạt đến số lượng tối đa của biến thể
-                                  if (product.so_luong >= product.so_luong_bien_the) {
-                                    toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
-                                    return; // Dừng lại nếu đạt giới hạn
+                                  if (
+                                    product.so_luong >=
+                                    product.so_luong_bien_the
+                                  ) {
+                                    toast.error(
+                                      "Sản phẩm đã đạt đến số lượng tồn kho tối đa."
+                                    );
+                                    return;
                                   }
-
-                                  // Gọi hàm tăng số lượng nếu còn tồn kho
-                                  increaseQuantity({
-                                    productId: product.id,
-                                    currentQuantity: product.so_luong,
-                                  });
+                                  debouncedIncreaseQuantity(
+                                    product.id,
+                                    product.so_luong
+                                  );
                                 }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
-                                disabled={product.so_luong >= product.so_luong_bien_the} // Vô hiệu hóa nút nếu đạt giới hạn
+                                disabled={
+                                  product.so_luong >= product.so_luong_bien_the
+                                }
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>
-
                             </div>
                           </td>
 
@@ -562,8 +753,16 @@ const [codeCONG, setCodeCODE] = useState()
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+<<<<<<< HEAD
                               checked={product.chon === 1 || selectedProducts.includes(product.id)}
                               // onChange={() => handleSelectProduct(product.id)}
+=======
+                              checked={
+                                product.chon === 1 ||
+                                selectedProducts.includes(product.id)
+                              }
+                              onChange={() => handleSelectProduct(product.id)}
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
                               title="Select regular price product"
                             />
                           </td>
@@ -593,21 +792,26 @@ const [codeCONG, setCodeCODE] = useState()
                               {product.so_luong === 1 ? (
                                 <Popconfirm
                                   title="Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?"
-                                  onConfirm={() => handleRemoveProduct(product.id)}
+                                  onConfirm={() =>
+                                    handleRemoveProduct(product.id)
+                                  }
                                   okText="Có"
                                   cancelText="Không"
                                 >
-                                  <button className="py-1 px-3 rounded-l-lg" title="Decrease quantity">
+                                  <button
+                                    className="py-1 px-3 rounded-l-lg"
+                                    title="Decrease quantity"
+                                  >
                                     <i className="fa-solid fa-minus" />
                                   </button>
                                 </Popconfirm>
                               ) : (
                                 <button
                                   onClick={() =>
-                                    decreaseQuantity({
-                                      productId: product.id,
-                                      currentQuantity: product.so_luong,
-                                    })
+                                    debouncedDecreaseQuantity(
+                                      product.id,
+                                      product.so_luong
+                                    )
                                   }
                                   className="py-1 px-3 rounded-l-lg"
                                   title="Decrease quantity"
@@ -625,15 +829,26 @@ const [codeCONG, setCodeCODE] = useState()
                                 readOnly
                               />
                               <button
-                                onClick={() =>
-                                  increaseQuantity({
-                                    productId: product.id,
-                                    currentQuantity: product.so_luong,
-                                  })
-                                }
+                                onClick={() => {
+                                  if (
+                                    product.so_luong >=
+                                    product.so_luong_bien_the
+                                  ) {
+                                    toast.error(
+                                      "Sản phẩm đã đạt đến số lượng tồn kho tối đa."
+                                    );
+                                    return;
+                                  }
+                                  debouncedIncreaseQuantity(
+                                    product.id,
+                                    product.so_luong
+                                  );
+                                }}
                                 className="py-1 px-3 rounded-r-lg"
                                 title="Increase quantity"
-                                disabled={product.so_luong >= product.so_luong_bien_the}
+                                disabled={
+                                  product.so_luong >= product.so_luong_bien_the
+                                }
                               >
                                 <i className="fa-solid fa-plus" />
                               </button>
@@ -673,7 +888,8 @@ const [codeCONG, setCodeCODE] = useState()
                         className="mx-auto my-4"
                       />
                       <p className="text-gray-500 mb-4">
-                        Vui lòng chọn các sản phẩm trong giỏ hàng trước khi thanh toán.
+                        Vui lòng chọn các sản phẩm trong giỏ hàng trước khi
+                        thanh toán.
                       </p>
                       <Button
                         disabled
@@ -694,7 +910,10 @@ const [codeCONG, setCodeCODE] = useState()
                         <div className="flex justify-between font-medium">
                           <p>Tiết kiệm</p>
                           <span className="px-2 text-red-500">
-                            {totalSavings ? totalSavings.toLocaleString("vn-VN") : "0"} ₫
+                            {totalSavings
+                              ? totalSavings.toLocaleString("vn-VN")
+                              : "0"}{" "}
+                            ₫
                           </span>
                         </div>
 
@@ -725,7 +944,6 @@ const [codeCONG, setCodeCODE] = useState()
                           </Button>
                         </Link>
                       </div>
-
                     </div>
                   )}
                 </div>

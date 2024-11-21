@@ -79,15 +79,7 @@ Route::middleware(['cache.headers:public;max_age=600;etag'])
             //            Route::get('sanpham/danhmuc/{slug}', [TrangSanPhamController::class, 'laySanPhamTheoDanhMuc']);
             Route::post('danhmuc/{tenDanhMucCha}/{tenDanhMucCon?}/{tenDanhMucConCapBa?}', [App\Http\Controllers\Client\Api\DanhMucController::class, 'laySanPhamTheoDanhMuc']);
             Route::get('lay-dm-ms-kt', [TrangSanPhamController::class, 'layDanhMucMauSacKichThuoc']);
-            // // Lấy ra danh mục cha
-    
 
-            // // Lấy ra màu sắc
-            // Route::get('/mau-sac', [TrangSanPhamController::class, 'mauSac']);
-    
-            // // lấy kích thước
-            // Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
-    
             Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
         })->middleware('throttle:60,1');
 
@@ -135,6 +127,7 @@ Route::middleware(['cache.headers:public;max_age=600;etag'])
             Route::post('/gio-hang', [GioHangController::class, 'store']);
             Route::put('/gio-hang/tang-so-luong/{id}', [GioHangController::class, 'tangSoLuong']);
             Route::put('/gio-hang/giam-so-luong/{id}', [GioHangController::class, 'giamSoLuong']);
+            Route::put('/gio-hang/update/{id}', [GioHangController::class, 'update']);
             Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
             Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
             Route::post('/gio-hang/chon-san-pham', [GioHangController::class, 'updateSelection']);
@@ -154,7 +147,7 @@ Route::middleware(['cache.headers:public;max_age=600;etag'])
             // Đơn hàng
             Route::patch('/xac-nhan-don-hang/{ma_don_hang}', [DonHangClientController::class, 'xacNhanDonHang']);
             Route::post('don-hang/huy-don-hang', [DonHangClientController::class, 'huyDonHang']);
-            Route::get('/don-hang', [DonHangClientController::class, 'donHangUser']);
+            Route::post('/danh-sach-don-hang', [DonHangClientController::class, 'donHangUser']);
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
             Route::post('/don-hang/hoan-hang/{ma_don_hang}', [DonHangClientController::class, 'hoanDonHang']);
 
@@ -355,7 +348,7 @@ Route::middleware(['auth.sanctum'])
         Route::get('thong-bao', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'index'])->name('thongbao.index');
         Route::post('thong-bao/da-doc/{id}', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'daXem']);
         //            });
-    
+
         // Liên hệ
         Route::middleware('auth.checkrole')
             ->group(function () {
@@ -464,7 +457,7 @@ Route::middleware(['auth.sanctum'])
         });
 
         // Lich su hoat dong
-    
+
         Route::get('/lich-su-hoat-dong', [LichSuHoatDongController::class, 'index']);
         Route::get('/lich-su-hoat-dong/{id}', [LichSuHoatDongController::class, 'show']);
     });
