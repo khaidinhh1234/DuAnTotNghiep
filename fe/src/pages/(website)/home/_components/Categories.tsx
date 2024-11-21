@@ -89,7 +89,7 @@ const Categories = ({ bo_suu_tap }: any) => {
                     }`}
                   key={index}
                   onClick={() => setActiveTab(index)}
-                title={item?.ten}>
+                  title={item?.ten}>
                   {item?.ten}
                 </button>
               ))}
@@ -117,14 +117,13 @@ const Categories = ({ bo_suu_tap }: any) => {
                 {bo_suu_tap[activeTab]?.san_phams?.map((item: any, index: number) => (
                   <SwiperSlide key={index} className="group relative mx-2 lg:mx-0">
                     <div className="relative">
-                    <span
-      onClick={() => mutate(item?.id)}
-      className={`z-10 text-xl bg-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 rounded-full transition-all duration-300 ${
-        item?.yeu_thich ? "text-red-500" : "text-black hover:text-white"
-      } opacity-0 invisible group-hover:opacity-100 group-hover:visible hover:bg-black`}
-    >
-      <i className="fa-solid fa-heart" />
-    </span>
+                      <span
+                        onClick={() => mutate(item?.id)}
+                        className={`z-10 text-xl bg-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 rounded-full transition-all duration-300 ${item?.yeu_thich ? "text-red-500" : "text-black hover:text-white"
+                          } opacity-0 invisible group-hover:opacity-100 group-hover:visible hover:bg-black`}
+                      >
+                        <i className="fa-solid fa-heart" />
+                      </span>
                       <Link to={`/product-detail/${item.duong_dan}`}>
                         <div className="w-[400px] lg:w-[300px] lg:h-[400px] h-[500px] bg-neutral-200/70 relative">
                           <img
@@ -148,7 +147,6 @@ const Categories = ({ bo_suu_tap }: any) => {
 
                         </div>
                       </Link>
-                      {/* hihi */}
                       <View id={item?.duong_dan} ID={item?.id} />
                     </div>
                     <div className="bg-slate-50 pt-4 px-4 rounded-md pb-2 lg:w-[300px]">

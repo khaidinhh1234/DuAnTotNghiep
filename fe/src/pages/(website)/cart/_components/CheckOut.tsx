@@ -2,8 +2,12 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
+<<<<<<< HEAD
+import { Star } from "lucide-react";
+=======
 import { debounce } from "lodash";
 import { FastForward, Star } from "lucide-react";
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -14,6 +18,11 @@ const CheckOut = () => {
   const nav = useNavigate();
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
+<<<<<<< HEAD
+  const access_token = user.access_token || localStorage.getItem("access_token");
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+const [codeCONG, setCodeCODE] = useState()
+=======
   const access_token =
     user.access_token || localStorage.getItem("access_token");
   const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
@@ -37,6 +46,7 @@ const CheckOut = () => {
       await nextRequest?.();
     }
   };
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -46,6 +56,8 @@ const CheckOut = () => {
             Authorization: `Bearer ${access_token}`,
           },
         });
+        console.log("dataAA:", response);
+        
         return response.data;
       } catch (error) {
         throw new Error("Error fetching cart data");
@@ -53,6 +65,24 @@ const CheckOut = () => {
     },
   });
   const { mutate: increaseQuantity } = useMutation({
+<<<<<<< HEAD
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
+      try {
+        const res = await instanceClient.put(
+          `/gio-hang/tang-so-luong/${productId}`,
+          { so_luong: currentQuantity + 1 },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        // setCodeCODE(res.data.status);
+        return res.data; // Trả dữ liệu từ server để dùng trong `onSuccess`
+      } catch (error) {
+        throw new Error("Error increasing product quantity");
+      }
+=======
     mutationFn: async ({
       productId,
       currentQuantity,
@@ -69,9 +99,14 @@ const CheckOut = () => {
           },
         }
       );
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
     },
-    onMutate: ({ productId, currentQuantity }) => {
+    onMutate: async ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
+<<<<<<< HEAD
+  
+=======
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
       queryClient.setQueryData(
         ["cart", access_token],
         (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
@@ -81,6 +116,16 @@ const CheckOut = () => {
             }
             return product;
           });
+<<<<<<< HEAD
+  
+          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map((product) => {
+            if (product.id === productId) {
+              return { ...product, so_luong: currentQuantity + 1 };
+            }
+            return product;
+          });
+  
+=======
 
           const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
             (product) => {
@@ -91,6 +136,7 @@ const CheckOut = () => {
             }
           );
 
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
           return {
             ...oldData,
             san_pham_giam_gia: updatedProducts,
@@ -98,12 +144,20 @@ const CheckOut = () => {
           };
         }
       );
-
+  
       return { previousCartData };
     },
+<<<<<<< HEAD
+    onSuccess: (data) => {
+      // Luôn đồng bộ cache với dữ liệu từ server
+      // if (codeCONG === 200) {
+      queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+      // }
+=======
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
       executeNextRequest();
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
     },
     onError: (error, _, context) => {
       if (context?.previousCartData) {
@@ -119,6 +173,7 @@ const CheckOut = () => {
       executeNextRequest();
     },
   });
+  
 
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({
@@ -245,6 +300,7 @@ const CheckOut = () => {
       toast.error(error.message || "Có lỗi xảy ra khi xóa sản phẩm.");
     },
   });
+
   // tiet kiem
   const totalSavings = useMemo(() => {
     return data?.san_pham_giam_gia
@@ -363,6 +419,31 @@ const CheckOut = () => {
     },
   });
 
+<<<<<<< HEAD
+  // const handleSelectProduct = (productId: string) => {
+  //   const isChecked = selectedProducts.includes(productId);
+  //   // Cập nhật trạng thái selectedProducts
+  //   const updatedSelectedProducts = isChecked
+  //     ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn sản phẩm
+  //     : [...selectedProducts, productId]; // Chọn sản phẩm
+  //   setSelectedProducts(updatedSelectedProducts);
+  //   console.log("check:", isChecked);
+  //   // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
+  //   SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
+  //   localStorage.setItem(
+  //     "selectedProducts",
+  //     JSON.stringify(updatedSelectedProducts)
+  //   );
+  // };
+  // useEffect(() => {
+  //   // Retrieve saved selection from localStorage on component mount
+  //   const savedSelectedProducts = localStorage.getItem("selectedProducts");
+  //   if (savedSelectedProducts) {
+  //     setSelectedProducts(JSON.parse(savedSelectedProducts));
+  //   }
+  // }, []);
+  // 
+=======
   const handleSelectProduct = (productId: string) => {
     const isChecked = selectedProducts.includes(productId);
     // Cập nhật trạng thái selectedProducts
@@ -399,6 +480,7 @@ const CheckOut = () => {
     localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
   }, [selectedProducts]);
   //
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
   useEffect(() => {
     if (data) {
       const preSelectedProducts = [
@@ -525,11 +607,16 @@ const CheckOut = () => {
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+<<<<<<< HEAD
+                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
+                              // onChange={() => handleSelectProduct(product.id)}
+=======
                               checked={
                                 product.chon === 1 ||
                                 selectedProducts.includes(product.id)
                               }
                               onChange={() => handleSelectProduct(product.id)}
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
                               title="Select discount product"
                             />
                           </td>
@@ -666,11 +753,16 @@ const CheckOut = () => {
                             <input
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+<<<<<<< HEAD
+                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
+                              // onChange={() => handleSelectProduct(product.id)}
+=======
                               checked={
                                 product.chon === 1 ||
                                 selectedProducts.includes(product.id)
                               }
                               onChange={() => handleSelectProduct(product.id)}
+>>>>>>> 60744055197dd8ab52f227abf172df88069082e4
                               title="Select regular price product"
                             />
                           </td>

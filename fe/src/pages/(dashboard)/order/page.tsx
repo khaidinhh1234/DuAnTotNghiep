@@ -270,19 +270,20 @@ const OrderAdmin: React.FC = () => {
                         : record.trang_thai_don_hang === "Hủy hàng"
                           ? "text-red-500" // Hủy hàng: màu đỏ
                           : record.trang_thai_don_hang ===
-                              "Đơn hàng bị từ chối nhân"
+                            "Đơn hàng bị từ chối nhân"
                             ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
                             : record.trang_thai_don_hang === "Hoàn hàng"
                               ? "text-blue-700" // Hoàn hàng: màu xanh đậm
                               : record.trang_thai_don_hang ===
-                                  "Chờ xác nhận hoàn hàng"
+                                "Chờ xác nhận hoàn hàng"
                                 ? "text-yellow-500" // Chờ xác nhận hoàn hàng: màu vàng đậm
                                 : record.trang_thai_don_hang ===
-                                    "Từ chối hoàn hàng"
+                                  "Từ chối hoàn hàng"
                                   ? "text-gray-500" // Từ chối hoàn hàng: màu xám
                                   : "text-gray-700") // Mặc định: màu xám đậm
             }
           >
+            {/* {record.trang_thai_don_hang} */}
             {record.trang_thai_don_hang === "Chờ xác nhận"
               ? "Chờ xác nhận"
               : record.trang_thai_don_hang === "Đã xác nhận"
@@ -295,16 +296,13 @@ const OrderAdmin: React.FC = () => {
                       ? "Hoàn tất đơn hàng"
                       : record.trang_thai_don_hang === "Hủy hàng"
                         ? "Hủy hàng"
-                        : record.trang_thai_don_hang ===
-                            "Đơn hàng bị từ chối nhân"
+                        : record.trang_thai_don_hang === "Đơn hàng bị từ chối nhân"
                           ? "Đơn hàng bị từ chối nhận"
-                          : record.trang_thai_don_hang === "Hoàn hàng"
+                          : record.trang_thai_don_hang === "Hoàn hàng"  
                             ? "Hoàn hàng"
-                            : record.trang_thai_don_hang ===
-                                "Chờ xác nhận hoàn hàng"
+                            : record.trang_thai_don_hang === "Chờ xác nhận hoàn hàng"
                               ? "Chờ xác nhận hoàn hàng"
-                              : record.trang_thai_don_hang ===
-                                  "Từ chối hoàn hàng"
+                              : record.trang_thai_don_hang === "Từ chối hoàn hàng"
                                 ? "Từ chối hoàn hàng"
                                 : "Giao hàng thất bại"}
           </div>
