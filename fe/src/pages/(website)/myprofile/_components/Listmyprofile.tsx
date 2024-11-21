@@ -14,6 +14,7 @@ import { uploadToCloudinary } from "@/configs/cloudinary";
 const ListMyProfile = ({ member }: any) => {
   const [avatarImage, setAvatarImage] = useState<string>("");
   const [{ user }, setUser] = useLocalStorage("user" as any, {});
+  console.log(user);
   const [tempImageUrl, setTempImageUrl] = useState<string>("");
 
   useEffect(() => {
@@ -44,7 +45,6 @@ const ListMyProfile = ({ member }: any) => {
       }
     },
   });
-
   const updateAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
       try {
@@ -234,7 +234,7 @@ const ListMyProfile = ({ member }: any) => {
               />
             </div>
             <p className="pt-4">
-              {user?.hang_thanh_vien?.chi_tieu_toi_da || 500.0}
+              {user?.hang_thanh_vien?.chi_tieu_toi_da ?? 500}
             </p>
           </div>
         </div>

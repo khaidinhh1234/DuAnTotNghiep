@@ -16,7 +16,9 @@ const MyOrder = () => {
   } = useInfiniteQuery({
     queryKey: ["MyOrder_LISTas"],
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await instanceClient.post(`don-hang?page=${pageParam}`);
+      const response = await instanceClient.post(
+        `danh-sach-don-hang?page=${pageParam}`
+      );
       if (response.status !== 200) {
         throw new Error("Lỗi khi lấy danh sách đơn hàng");
       }
