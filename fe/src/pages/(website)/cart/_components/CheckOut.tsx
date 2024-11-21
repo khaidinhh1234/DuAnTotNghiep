@@ -2,7 +2,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
-import { FastForward, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,11 +12,8 @@ const CheckOut = () => {
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
-  const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
-    const savedSelectedProducts = localStorage.getItem("selectedProducts");
-    return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
-  });
-
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+const [codeCONG, setCodeCODE] = useState()
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -26,6 +23,8 @@ const CheckOut = () => {
             Authorization: `Bearer ${access_token}`,
           },
         });
+        console.log("dataAA:", response);
+        
         return response.data;
       } catch (error) {
         throw new Error("Error fetching cart data");
@@ -34,20 +33,25 @@ const CheckOut = () => {
   });
   const { mutate: increaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(
-        `/gio-hang/tang-so-luong/${productId}`,
-        { so_luong: currentQuantity + 1 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
+      try {
+        const res = await instanceClient.put(
+          `/gio-hang/tang-so-luong/${productId}`,
+          { so_luong: currentQuantity + 1 },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        // setCodeCODE(res.data.status);
+        return res.data; // Trả dữ liệu từ server để dùng trong `onSuccess`
+      } catch (error) {
+        throw new Error("Error increasing product quantity");
+      }
     },
-    onMutate: ({ productId, currentQuantity }) => {
+    onMutate: async ({ productId, currentQuantity }) => {
       const previousCartData = queryClient.getQueryData(["cart", access_token]);
-
-      // Optimistic update for quantity increment
+  
       queryClient.setQueryData(
         ["cart", access_token],
         (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
@@ -57,14 +61,14 @@ const CheckOut = () => {
             }
             return product;
           });
-
+  
           const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map((product) => {
             if (product.id === productId) {
               return { ...product, so_luong: currentQuantity + 1 };
             }
             return product;
           });
-
+  
           return {
             ...oldData,
             san_pham_giam_gia: updatedProducts,
@@ -72,12 +76,14 @@ const CheckOut = () => {
           };
         }
       );
-
+  
       return { previousCartData };
     },
-    onSuccess: () => {
-      // toast.success("Số lượng sản phẩm đã được tăng thành công!");
+    onSuccess: (data) => {
+      // Luôn đồng bộ cache với dữ liệu từ server
+      // if (codeCONG === 200) {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
+      // }
     },
     onError: (error, _, context) => {
       if (context?.previousCartData) {
@@ -87,6 +93,7 @@ const CheckOut = () => {
       toast.error(errorMessage);
     },
   });
+  
 
   const { mutate: decreaseQuantity } = useMutation({
     mutationFn: async ({
@@ -138,7 +145,6 @@ const CheckOut = () => {
       return { previousCartData };
     },
     onSuccess: () => {
-      // toast.success("Số lượng sản phẩm đã được giảm thành công!");
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
     onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
@@ -168,6 +174,7 @@ const CheckOut = () => {
       toast.error(error.message || "Có lỗi xảy ra khi xóa sản phẩm.");
     },
   });
+
   // tiet kiem
   const totalSavings = useMemo(() => {
     return data?.san_pham_giam_gia
@@ -286,41 +293,28 @@ const CheckOut = () => {
     },
   });
 
-  const handleSelectProduct = (productId: string) => {
-    const isChecked = selectedProducts.includes(productId);
-    // Cập nhật trạng thái selectedProducts
-    const updatedSelectedProducts = isChecked
-      ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn sản phẩm
-      : [...selectedProducts, productId]; // Chọn sản phẩm
-    setSelectedProducts(updatedSelectedProducts);
-    console.log("check:", isChecked);
-    // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
-    SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
-    localStorage.setItem(
-      "selectedProducts",
-      JSON.stringify(updatedSelectedProducts)
-    );
-  };
-  useEffect(() => {
-    // Retrieve saved selection from localStorage on component mount
-    const savedSelectedProducts = localStorage.getItem("selectedProducts");
-    if (savedSelectedProducts) {
-      setSelectedProducts(JSON.parse(savedSelectedProducts));
-    }
-  }, []);
-
-  // Tải sản phẩm từ localStorage khi component khởi tạo
-  useEffect(() => {
-    const storedProducts = localStorage.getItem("selectedProducts");
-    if (storedProducts) {
-      setSelectedProducts(JSON.parse(storedProducts));
-    }
-  }, []);
-
-  // Lưu sản phẩm vào localStorage khi có sự thay đổi
-  useEffect(() => {
-    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
-  }, [selectedProducts]);
+  // const handleSelectProduct = (productId: string) => {
+  //   const isChecked = selectedProducts.includes(productId);
+  //   // Cập nhật trạng thái selectedProducts
+  //   const updatedSelectedProducts = isChecked
+  //     ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn sản phẩm
+  //     : [...selectedProducts, productId]; // Chọn sản phẩm
+  //   setSelectedProducts(updatedSelectedProducts);
+  //   console.log("check:", isChecked);
+  //   // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
+  //   SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
+  //   localStorage.setItem(
+  //     "selectedProducts",
+  //     JSON.stringify(updatedSelectedProducts)
+  //   );
+  // };
+  // useEffect(() => {
+  //   // Retrieve saved selection from localStorage on component mount
+  //   const savedSelectedProducts = localStorage.getItem("selectedProducts");
+  //   if (savedSelectedProducts) {
+  //     setSelectedProducts(JSON.parse(savedSelectedProducts));
+  //   }
+  // }, []);
   // 
   useEffect(() => {
     if (data) {
@@ -362,15 +356,22 @@ const CheckOut = () => {
                 <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-[770px]">
                   <p className="font-bold text-black">
                     {totalSelectedPrice >= 500000 ? (
-                      <>Chúc mừng! Đơn hàng của bạn được <span className="text-black">Miễn phí vận chuyển</span></>
+                      <>
+                        Chúc mừng! Đơn hàng của bạn được{" "}
+                        <span className="text-black">Miễn phí vận chuyển</span>
+                      </>
                     ) : (
-                      <>Thêm {formatCurrency(500000 - totalSelectedPrice)} để được <span className="text-black">Miễn phí vận chuyển</span></>
+                      <>
+                        Thêm {formatCurrency(500000 - totalSelectedPrice)} để
+                        được{" "}
+                        <span className="text-black">Miễn phí vận chuyển</span>
+                      </>
                     )}
                   </p>
 
                   <div className="relative bg-gray-100 rounded-full h-2 mt-3">
                     <div
-                      className="bg-yellow-400 h-full"
+                      className={`h-full ${totalSelectedPrice >= 500000 ? "bg-green-400" : "bg-yellow-400"}`}
                       style={{
                         width: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
                       }}
@@ -379,12 +380,17 @@ const CheckOut = () => {
                         className="absolute top-0 flex items-center justify-center"
                         style={{
                           left: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
-                          transform: 'translate(-40%, -40%)',
+                          transform: "translate(-40%, -40%)",
                           zIndex: 10,
                         }}
                       >
-                        <div className="w-8 h-8 rounded-full bg-yellow-200 flex items-center justify-center">
-                          <Star className="text-yellow-500" size={16} />
+                        <div
+                          className={`w-8 h-8 rounded-full ${totalSelectedPrice >= 500000 ? "bg-green-200" : "bg-yellow-200"} flex items-center justify-center`}
+                        >
+                          <Star
+                            className={`text-${totalSelectedPrice >= 500000 ? "green" : "yellow"}-500`}
+                            size={16}
+                          />
                         </div>
                       </div>
                     </div>
@@ -428,7 +434,7 @@ const CheckOut = () => {
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                               checked={product.chon === 1 || selectedProducts.includes(product.id)}
-                              onChange={() => handleSelectProduct(product.id)}
+                              // onChange={() => handleSelectProduct(product.id)}
                               title="Select discount product"
                             />
                           </td>
@@ -557,7 +563,7 @@ const CheckOut = () => {
                               type="checkbox"
                               className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
                               checked={product.chon === 1 || selectedProducts.includes(product.id)}
-                              onChange={() => handleSelectProduct(product.id)}
+                              // onChange={() => handleSelectProduct(product.id)}
                               title="Select regular price product"
                             />
                           </td>

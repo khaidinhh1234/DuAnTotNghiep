@@ -991,7 +991,7 @@ const ProductDetail: React.FC = () => {
                             ,
                             {
                               review?.bien_the_san_pham?.kich_thuoc_bien_the
-                                .kich_thuoc
+                                ?.kich_thuoc
                             }
                           </div>
                         </div>

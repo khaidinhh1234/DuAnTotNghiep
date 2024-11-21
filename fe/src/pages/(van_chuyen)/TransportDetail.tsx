@@ -11,7 +11,7 @@ const TransportDetail = ({ record }: any) => {
 
   useEffect(() => {
     const updateWidth = () => {
-      setModalWidth(window.innerWidth >= 768 ? 1200 : 400); // `1200px` khi md trở lên, `400px` cho màn hình nhỏ
+      setModalWidth(window.innerWidth >= 768 ? 1200 : 400);
     };
 
     // Gọi hàm khi component mount
@@ -35,7 +35,6 @@ const TransportDetail = ({ record }: any) => {
     enabled: !!id,
   });
 
-  console.log(data);
   const vanChuyenData = data?.data?.van_chuyen;
   console.log(vanChuyenData);
   const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map(
@@ -528,7 +527,7 @@ const TransportDetail = ({ record }: any) => {
               ) : null}
 
               {/* Kết quả cuối cùng sau giao hàng */}
-              {isSuccessDeliveryOpen ? (
+              {/* {isSuccessDeliveryOpen ? (
                 <div className="mt-4 text-center text-green-600 font-semibold">
                   ✅ Giao hàng thành công!
                 </div>
@@ -536,7 +535,7 @@ const TransportDetail = ({ record }: any) => {
                 <div className="mt-4 text-center text-red-600 font-semibold">
                   ❌ Giao hàng thất bại!
                 </div>
-              ) : null}
+              ) : null} */}
 
               {/* Phần hiển thị khi chọn Giao hàng thành công */}
               {isSuccessDeliveryOpen && (
@@ -637,7 +636,8 @@ const TransportDetail = ({ record }: any) => {
                         src={record.anh_xac_thuc}
                         alt="Ảnh xác thực"
                         style={{
-                          maxHeight: '16rem',
+                          width: '100%',
+                          maxHeight: '24rem',
                           objectFit: 'contain', 
                           border: '1px solid #ddd',
                           borderRadius: '0.5rem', 

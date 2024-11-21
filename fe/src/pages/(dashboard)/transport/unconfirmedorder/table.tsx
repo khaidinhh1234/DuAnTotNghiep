@@ -208,7 +208,7 @@ const TableUncomfirmedOrder: React.FC = () => {
                     ? "text-green-500"
                     : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                       ? "text-red-500"
-                      : "text-gray-500")
+                      : '')
             }
           >
             {record.trang_thai_van_chuyen}
