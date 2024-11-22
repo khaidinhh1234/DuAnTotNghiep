@@ -25,8 +25,7 @@ class TinTucController extends Controller
                 ->with(['tinTuc' => function ($query) {
                     $query->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'duong_dan', 'created_at')
                         ->with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
-                        ->orderBy('created_at', 'desc')
-                        ->limit(4);
+                        ->orderBy('created_at', 'desc');
                 }])
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -106,7 +105,6 @@ class TinTucController extends Controller
     public function xemBaiViet(Request $request, $duong_dan)
     {
         try {
-            // Bắt đầu transaction
             DB::beginTransaction();
 
             $baiVietDetail = TinTuc::where('duong_dan', $duong_dan)->first();
@@ -119,23 +117,22 @@ class TinTucController extends Controller
                 ], 404);
             }
 
-            // Kiểm tra nếu cần tăng lượt xem (tham số `tang_luot_xem` được gửi từ frontend)
-            if ($request->has('tang_luot_xem') && $request->tang_luot_xem == true) {
+            $key = 'bai_viet_da_xem_' . $baiVietDetail->id;
+            if (!session()->has($key)) {
                 $baiVietDetail->increment('luot_xem');
-                $baiVietDetail->touch(); // Cập nhật `updated_at`
+                session()->put($key, true);
             }
 
-            // Lấy danh mục tin tức, trừ các danh mục không cần thiết
             $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Lấy các bài viết khác cùng danh mục, ngoại trừ bài viết hiện tại
+
             $baiVietKhac = TinTuc::where('danh_muc_tin_tuc_id', $baiVietDetail->danh_muc_tin_tuc_id)
                 ->where('id', '<>', $baiVietDetail->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
-            // Lấy top 5 bài viết có lượt xem cao nhất
+
             $baiVietTopLuotXem = TinTuc::with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
                 ->orderBy('luot_xem', 'desc')
                 ->select('id', 'tieu_de', 'anh_tin_tuc', 'luot_xem', 'created_at', 'danh_muc_tin_tuc_id')
@@ -148,13 +145,14 @@ class TinTucController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
-                'baiVietDetail' => $baiVietDetail,
-                'baiVietKhac' => $baiVietKhac,
-                'baiVietTop' => $baiVietTopLuotXem,
-                'danhMucTinTuc' => $danhMucTinTuc,
+                'data' => [
+                    'baiVietDetail' => $baiVietDetail,
+                    'baiVietKhac' => $baiVietKhac,
+                    'baiVietTop' => $baiVietTopLuotXem,
+                    'danhMucTinTuc' => $danhMucTinTuc,
+                ]
             ], 200);
         } catch (\Exception $e) {
-            // Rollback nếu có lỗi
             DB::rollBack();
 
             return response()->json([
