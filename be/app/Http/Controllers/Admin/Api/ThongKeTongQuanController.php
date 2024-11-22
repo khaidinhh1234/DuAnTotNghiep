@@ -9,117 +9,114 @@ use App\Models\DonHangChiTiet;
 use App\Models\SanPham;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ThongKeTongQuanController extends Controller
 {
 
-    public function thongKeTongQuan(Request $request)
-    {
-        // Gọi hàm thống kê doanh thu theo khoảng
-        $doanhThuTheoKhoang = $this->doanhThuTheoKhoang($request);
+    // public function thongKeTongQuan(Request $request)
+    // {
+    //     // Gọi hàm thống kê doanh thu theo khoảng
+    //     $doanhThuTheoKhoang = $this->doanhThuTheoKhoang($request);
 
-        // Gọi hàm so sánh trạng thái đơn hàng trong khoảng
-        $trangThaiKhoangDonSoSanh = $this->trangThaiKhoangDonSoSanh($request);
+    //     // Gọi hàm so sánh trạng thái đơn hàng trong khoảng
+    //     $trangThaiKhoangDonSoSanh = $this->trangThaiKhoangDonSoSanh($request);
 
-        // Gọi hàm thống kê đơn hàng chốt
-        $thongKeDonHangChot = $this->thongKeDonHangChot($request);
+    //     // Gọi hàm thống kê đơn hàng chốt
+    //     $thongKeDonHangChot = $this->thongKeDonHangChot($request);
 
-        // Gọi hàm thống kê hoàn hàng
-        $thongKeHoanHang = $this->thongKeHoanHang($request);
+    //     // Gọi hàm thống kê hoàn hàng
+    //     $thongKeHoanHang = $this->thongKeHoanHang($request);
 
-        // Gọi hàm thống kê sản phẩm tồn kho
-        $thongKeSanPhamTonKho = $this->thongKeSanPhamTonKho($request);
+    //     // Gọi hàm thống kê sản phẩm tồn kho
+    //     $thongKeSanPhamTonKho = $this->thongKeSanPhamTonKho($request);
 
-        // Gọi hàm thống kê doanh thu tổng
-        $thongKeDoanhThuTong = $this->thongKeDoanhThuTong($request);
+    //     // Gọi hàm thống kê doanh thu tổng
+    //     $thongKeDoanhThuTong = $this->thongKeDoanhThuTong($request);
 
-        // Gọi hàm thống kê lợi nhuận
-        $thongKeLoiNhuan = $this->thongKeLoiNhuan($request);
+    //     // Gọi hàm thống kê lợi nhuận
+    //     $thongKeLoiNhuan = $this->thongKeLoiNhuan($request);
 
-        // Gọi hàm thống kê thanh toán online
-        $thongKeThanhToanOnline = $this->thongKeThanhToanOnline($request);
+    //     // Gọi hàm thống kê thanh toán online
+    //     $thongKeThanhToanOnline = $this->thongKeThanhToanOnline($request);
 
-        // Gọi hàm thống kê thanh toán offline
-        $thongKeThanhToanOff = $this->thongKeThanhToanOff($request);
+    //     // Gọi hàm thống kê thanh toán offline
+    //     $thongKeThanhToanOff = $this->thongKeThanhToanOff($request);
 
-        // Gọi hàm thống kê doanh số sản phẩm
-        $thongKeDoanhSoSanPham = $this->thongKeDoanhSoSanPham($request);
+    //     // Gọi hàm thống kê doanh số sản phẩm
+    //     $thongKeDoanhSoSanPham = $this->thongKeDoanhSoSanPham($request);
 
-        // Gọi hàm thống kê doanh thu trung bình
-        $thongKeDoanhThuTB = $this->thongKeDoanhThuTB($request);
+    //     // Gọi hàm thống kê doanh thu trung bình
+    //     $thongKeDoanhThuTB = $this->thongKeDoanhThuTB($request);
 
-        // Tổng hợp kết quả từ các hàm thống kê
-        return response()->json([
-            'doanh_thu_theo_khoang' => $doanhThuTheoKhoang->original,
-            'trang_thai_don_hang_so_sanh' => $trangThaiKhoangDonSoSanh->original,
-            'thong_ke_don_hang_chot' => $thongKeDonHangChot->original,
-            'thong_ke_hoan_hang' => $thongKeHoanHang->original,
-            'thong_ke_san_pham_ton_kho' => $thongKeSanPhamTonKho->original,
-            'thong_ke_doanh_thu' => $thongKeDoanhThuTong->original,
-            'thong_ke_loi_nhuan' => $thongKeLoiNhuan->original,
-            'thong_ke_thanh_toan_online' => $thongKeThanhToanOnline->original,
-            'thong_ke_thanh_toan_off' => $thongKeThanhToanOff->original,
-            'thong_ke_doanh_so_san_pham' => $thongKeDoanhSoSanPham->original,
-            'thong_ke_doanh_thu_tb' => $thongKeDoanhThuTB->original,
-        ]);
-    }
+    //     // Tổng hợp kết quả từ các hàm thống kê
+    //     return response()->json([
+    //         'doanh_thu_theo_khoang' => $doanhThuTheoKhoang->original,
+    //         'trang_thai_don_hang_so_sanh' => $trangThaiKhoangDonSoSanh->original,
+    //         'thong_ke_don_hang_chot' => $thongKeDonHangChot->original,
+    //         'thong_ke_hoan_hang' => $thongKeHoanHang->original,
+    //         'thong_ke_san_pham_ton_kho' => $thongKeSanPhamTonKho->original,
+    //         'thong_ke_doanh_thu' => $thongKeDoanhThuTong->original,
+    //         'thong_ke_loi_nhuan' => $thongKeLoiNhuan->original,
+    //         'thong_ke_thanh_toan_online' => $thongKeThanhToanOnline->original,
+    //         'thong_ke_thanh_toan_off' => $thongKeThanhToanOff->original,
+    //         'thong_ke_doanh_so_san_pham' => $thongKeDoanhSoSanPham->original,
+    //         'thong_ke_doanh_thu_tb' => $thongKeDoanhThuTB->original,
+    //     ]);
+    // }
+
     public function thongKeDonHangChot(Request $request)
     {
         $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
-
         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
-
 
         $trangThai = [
             DonHang::TTDH_CXH,
-            DonHang::TTDH_DXH,
-            DonHang::TTDH_DXL,
-            DonHang::TTDH_DGH,
-            DonHang::TTDH_HTDH,
-            DonHang::TTDH_CKHCN,
+            // DonHang::TTDH_DXH,
+            // DonHang::TTDH_DXL,
+            // DonHang::TTDH_DGH,
+            // DonHang::TTDH_HTDH,
+            // DonHang::TTDH_CKHCN,
         ];
 
-        // Lấy các đơn hàng chốt trong khoảng thời gian và không thuộc các trạng thái bị loại trừ
-        $donHangChot = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
-            ->whereBetween('created_at', values: [$ngayBatDau, $ngayKetThuc])
-            ->whereIn('trang_thai_don_hang', $trangThai)
-            ->get();
+        // Cache key for current period
+        $cacheKeyCurrent = "thong_ke_don_hang_chot_{$ngayBatDau}_{$ngayKetThuc}";
 
-        $tongTien = 0;
-        $tongSoLuongDonHang = $donHangChot->count();
-
-        // Tính tổng tiền của các đơn hàng chốt
-        $donHangChot->each(function ($donHang) use (&$tongTien) {
-            $tongTien += $donHang->tong_tien_don_hang;
+        $donHangChot = Cache::remember($cacheKeyCurrent, 60, function () use ($ngayBatDau, $ngayKetThuc, $trangThai) {
+            return DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
+                ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+                ->whereIn('trang_thai_don_hang', $trangThai)
+                ->get();
         });
 
-        // Lấy khoảng thời gian trước để so sánh
+        $tongTien = $donHangChot->sum('tong_tien_don_hang');
+        $tongSoLuongDonHang = $donHangChot->count();
+
+        // Calculate previous period dates
         $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
-        // Lấy các đơn hàng chốt trong khoảng thời gian trước và không thuộc các trạng thái bị loại trừ
-        $donHangChotTruoc = DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
-            ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
-            ->whereNotIn('trang_thai_don_hang', $trangThai)
-            ->get();
+        // Cache key for previous period
+        $cacheKeyPrevious = "thong_ke_don_hang_chot_truoc_{$ngayBatDauTruoc}_{$ngayKetThucTruoc}";
 
-        $tongTienTruoc = 0;
-        $tongSoLuongDonHangTruoc = $donHangChotTruoc->count();
-
-        // Tính tổng tiền của các đơn hàng chốt trước đó
-        $donHangChotTruoc->each(function ($donHang) use (&$tongTienTruoc) {
-            $tongTienTruoc += $donHang->tong_tien_don_hang;
+        $donHangChotTruoc = Cache::remember($cacheKeyPrevious, 60, function () use ($ngayBatDauTruoc, $ngayKetThucTruoc, $trangThai) {
+            return DonHang::with(['chiTiets.bienTheSanPham.sanPham'])
+                ->whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
+                ->whereIn('trang_thai_don_hang', $trangThai)
+                ->get();
         });
 
-        // Tính tỷ lệ tăng/giảm số lượng đơn hàng
+        $tongTienTruoc = $donHangChotTruoc->sum('tong_tien_don_hang');
+        $tongSoLuongDonHangTruoc = $donHangChotTruoc->count();
+
+        // Calculate percentage change
         $tiLeTangGiamDonHang = $tongSoLuongDonHangTruoc > 0
             ? (($tongSoLuongDonHang - $tongSoLuongDonHangTruoc) / $tongSoLuongDonHangTruoc) * 100
             : ($tongSoLuongDonHang > 0 ? 100 : 0);
 
-        // Tính tỷ lệ tăng/giảm tổng tiền
         $tiLeTangGiamTien = $tongTienTruoc > 0
             ? (($tongTien - $tongTienTruoc) / $tongTienTruoc) * 100
             : ($tongTien > 0 ? 100 : 0);
@@ -129,136 +126,118 @@ class ThongKeTongQuanController extends Controller
             'tong_tien' => $tongTien,
             'tong_so_luong_don_hang_truoc' => $tongSoLuongDonHangTruoc,
             'tong_tien_truoc' => $tongTienTruoc,
-            'ti_le_tang_giam_don_hang' => round($tiLeTangGiamDonHang, 2), // làm tròn đến 2 chữ số thập phân
-            'ti_le_tang_giam_tien' => round($tiLeTangGiamTien, 2), // làm tròn đến 2 chữ số thập phân
+            'ti_le_tang_giam_don_hang' => round($tiLeTangGiamDonHang, 2),
+            'ti_le_tang_giam_tien' => round($tiLeTangGiamTien, 2),
         ]);
     }
+
     public function thongKeHoanHang(Request $request)
     {
         // Lấy ngày bắt đầu và kết thúc từ request (hoặc mặc định là 10 ngày gần nhất)
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
+        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9))->startOfDay();
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
 
-        // Tính khoảng thời gian để so sánh trước đó
-        $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
+        // Tạo một cache key duy nhất dựa trên ngày bắt đầu và ngày kết thúc
+        $cacheKey = "thong_ke_hoan_hang_{$ngayBatDau->format('Ymd')}_{$ngayKetThuc->format('Ymd')}";
 
-        // Lấy các đơn hàng hoàn trả trong khoảng thời gian hiện tại
-        $donHangHoan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
-            ->whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc])
-            ->get();
-        // dd($donHangHoan);
-        // Tính tổng số lượng đơn hàng hoàn và tổng tiền hoàn (dựa trên tổng tiền đơn hàng)
-        $tongTienHoan = $donHangHoan->sum('tong_tien_don_hang');
-        $tongSoLuongDonHangHoan = $donHangHoan->count();
+        // Sử dụng cache để lưu kết quả trong 10 phút (600 giây)
+        return Cache::remember($cacheKey, 600, function () use ($ngayBatDau, $ngayKetThuc) {
+            // Tính khoảng thời gian để so sánh trước đó
+            $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
 
-        // Lấy khoảng thời gian trước đó để so sánh
-        $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
-        $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
+            // Lấy các đơn hàng hoàn trả trong khoảng thời gian hiện tại
+            $donHangHoan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
+                ->whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc])
+                ->get();
 
-        // Lấy các đơn hàng hoàn trả trong khoảng thời gian trước đó
-        $donHangHoanTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
-            ->whereBetween('ngay_hoan', [$ngayBatDauTruoc, $ngayKetThucTruoc])
-            ->get();
+            // Tính tổng số lượng đơn hàng hoàn và tổng tiền hoàn
+            $tongTienHoan = $donHangHoan->sum('tong_tien_don_hang');
+            $tongSoLuongDonHangHoan = $donHangHoan->count();
 
-        // Tính tổng số lượng đơn hàng hoàn trước đó và tổng tiền hoàn trước đó
-        $tongTienHoanTruoc = $donHangHoanTruoc->sum('tong_tien_don_hang');
-        $tongSoLuongDonHangHoanTruoc = $donHangHoanTruoc->count();
+            // Lấy khoảng thời gian trước đó để so sánh
+            $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
+            $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
-        // Tính tỷ lệ tăng giảm số lượng đơn hàng hoàn
-        $tiLeTangGiamDonHangHoan = $tongSoLuongDonHangHoanTruoc > 0
-            ? (($tongSoLuongDonHangHoan - $tongSoLuongDonHangHoanTruoc) / $tongSoLuongDonHangHoanTruoc) * 100
-            : ($tongSoLuongDonHangHoan > 0 ? 100 : 0);
+            // Lấy các đơn hàng hoàn trả trong khoảng thời gian trước đó
+            $donHangHoanTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
+                ->whereBetween('ngay_hoan', [$ngayBatDauTruoc, $ngayKetThucTruoc])
+                ->get();
 
-        // Tính tỷ lệ tăng giảm tổng tiền hoàn
-        $tiLeTangGiamTienHoan = $tongTienHoanTruoc > 0
-            ? (($tongTienHoan - $tongTienHoanTruoc) / $tongTienHoanTruoc) * 100
-            : ($tongTienHoan > 0 ? 100 : 0);
+            // Tính tổng số lượng đơn hàng hoàn trước đó và tổng tiền hoàn trước đó
+            $tongTienHoanTruoc = $donHangHoanTruoc->sum('tong_tien_don_hang');
+            $tongSoLuongDonHangHoanTruoc = $donHangHoanTruoc->count();
 
-        // Trả về kết quả thống kê
-        return response()->json([
-            'tong_so_luong_don_hang_hoan' => $tongSoLuongDonHangHoan,
-            'tong_tien_hoan' => $tongTienHoan,
-            'tong_so_luong_don_hang_hoan_truoc' => $tongSoLuongDonHangHoanTruoc,
-            'tong_tien_hoan_truoc' => $tongTienHoanTruoc,
-            'ti_le_tang_giam_don_hang_hoan' => $tiLeTangGiamDonHangHoan,  // Trả về số
-            'ti_le_tang_giam_tien_hoan' => $tiLeTangGiamTienHoan,          // Trả về số
-        ]);
+            // Tính tỷ lệ tăng giảm số lượng đơn hàng hoàn
+            $tiLeTangGiamDonHangHoan = $tongSoLuongDonHangHoanTruoc > 0
+                ? (($tongSoLuongDonHangHoan - $tongSoLuongDonHangHoanTruoc) / $tongSoLuongDonHangHoanTruoc) * 100
+                : ($tongSoLuongDonHangHoan > 0 ? 100 : 0);
+
+            // Tính tỷ lệ tăng giảm tổng tiền hoàn
+            $tiLeTangGiamTienHoan = $tongTienHoanTruoc > 0
+                ? (($tongTienHoan - $tongTienHoanTruoc) / $tongTienHoanTruoc) * 100
+                : ($tongTienHoan > 0 ? 100 : 0);
+
+            // Kết quả thống kê
+            return [
+                'tong_so_luong_don_hang_hoan' => $tongSoLuongDonHangHoan,
+                'tong_tien_hoan' => $tongTienHoan,
+                'tong_so_luong_don_hang_hoan_truoc' => $tongSoLuongDonHangHoanTruoc,
+                'tong_tien_hoan_truoc' => $tongTienHoanTruoc,
+                'ti_le_tang_giam_don_hang_hoan' => $tiLeTangGiamDonHangHoan,
+                'ti_le_tang_giam_tien_hoan' => $tiLeTangGiamTienHoan,
+            ];
+        });
     }
     public function thongKeTongSanPham(Request $request)
     {
-        // Lấy ngày bắt đầu và ngày kết thúc từ request hoặc mặc định
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
+        // Xác định khoảng thời gian
+        $ngayBatDau = $request->has('ngay_bat_dau')
+            ? Carbon::parse($request->input('ngay_bat_dau'))->setTimezone('Asia/Ho_Chi_Minh')->startOfDay()
+            : now()->subDays(10)->setTimezone('Asia/Ho_Chi_Minh')->startOfDay();
 
-        // Khoảng thời gian cần lấy dữ liệu
-        $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
+        $ngayKetThuc = $request->has('ngay_ket_thuc')
+            ? Carbon::parse($request->input('ngay_ket_thuc'))->setTimezone('Asia/Ho_Chi_Minh')->endOfDay()
+            : now()->setTimezone('Asia/Ho_Chi_Minh')->endOfDay();
+
+        $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc);
 
         // Lấy danh sách sản phẩm trong khoảng thời gian
         $sanPhamTonKho = SanPham::whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
-            ->with(['bienTheSanPham'])  // Lấy cả biến thể sản phẩm
+            ->with(['bienTheSanPham'])
             ->get();
 
-        // Khởi tạo biến để tính tổng số lượng, chi phí sản xuất và giá bán
+        // Khởi tạo biến tổng
         $tongSoLuongTonKhoTatCaSanPham = 0;
         $tongChiPhiSanXuat = 0;
         $tongGiaBan = 0;
-        $thongKeTonKho = [];
 
-        // Duyệt qua danh sách sản phẩm để tính toán
+        // Tính toán thống kê
         foreach ($sanPhamTonKho as $sanPham) {
-            $tongSoLuongTon = 0;
-            $chiPhiSanXuatSanPham = 0;
-            $giaBanSanPham = 0;
-
             foreach ($sanPham->bienTheSanPham as $bienThe) {
-
-                // Cộng dồn số lượng tồn, chi phí sản xuất và giá bán của từng biến thể
-                $tongSoLuongTon += $bienThe->so_luong_bien_the;
-                $chiPhiSanXuatSanPham += $bienThe->chi_phi_san_xuat * $bienThe->so_luong_bien_the;
-                $giaBanSanPham += $bienThe->gia_ban * $bienThe->so_luong_bien_the;
+                $tongSoLuongTonKhoTatCaSanPham += $bienThe->so_luong_bien_the;
+                $tongChiPhiSanXuat += $bienThe->chi_phi_san_xuat * $bienThe->so_luong_bien_the;
+                $tongGiaBan += $bienThe->gia_ban * $bienThe->so_luong_bien_the;
             }
-
-            // Cộng dồn vào tổng
-            $tongSoLuongTonKhoTatCaSanPham += $tongSoLuongTon;
-            $tongChiPhiSanXuat += $chiPhiSanXuatSanPham;
-            $tongGiaBan += $giaBanSanPham;
-
-            // Thêm sản phẩm vào mảng thống kê
-            $thongKeTonKho[] = [
-                'ten_san_pham' => $sanPham->ten_san_pham,
-                'ma_san_pham' => $sanPham->ma_san_pham,
-                'so_luong_ton' => $tongSoLuongTon,
-                'ngay_tao' => $sanPham->created_at->format('Y-m-d')
-            ];
         }
 
-        // Lấy dữ liệu của khoảng thời gian trước đó để so sánh
+        // Lấy dữ liệu của khoảng thời gian trước đó
         $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
         $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
 
         $sanPhamTonKhoTruoc = SanPham::whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
-            ->with(['bienTheSanPham'])
+            ->with(['bienTheSanPham:id,san_pham_id,so_luong_bien_the,chi_phi_san_xuat,gia_ban'])
             ->get();
 
-        // Khởi tạo biến để tính tổng số lượng tồn kho trước đó
         $tongSoLuongTonKhoTatCaSanPhamTruoc = 0;
         $tongChiPhiSanXuatTruoc = 0;
         $tongGiaBanTruoc = 0;
 
         foreach ($sanPhamTonKhoTruoc as $sanPham) {
-            $tongSoLuongTon = 0;
-            $chiPhiSanXuatSanPham = 0;
-            $giaBanSanPham = 0;
-
             foreach ($sanPham->bienTheSanPham as $bienThe) {
-                $tongSoLuongTon += $bienThe->so_luong_bien_the;
-                $chiPhiSanXuatSanPham += $bienThe->chi_phi_san_xuat * $bienThe->so_luong_bien_the;
-                $giaBanSanPham += $bienThe->gia_ban * $bienThe->so_luong_bien_the;
+                $tongSoLuongTonKhoTatCaSanPhamTruoc += $bienThe->so_luong_bien_the;
+                $tongChiPhiSanXuatTruoc += $bienThe->chi_phi_san_xuat * $bienThe->so_luong_bien_the;
+                $tongGiaBanTruoc += $bienThe->gia_ban * $bienThe->so_luong_bien_the;
             }
-
-            $tongSoLuongTonKhoTatCaSanPhamTruoc += $tongSoLuongTon;
-            $tongChiPhiSanXuatTruoc += $chiPhiSanXuatSanPham;
-            $tongGiaBanTruoc += $giaBanSanPham;
         }
 
         // Tính tỉ lệ tăng/giảm tồn kho
@@ -274,9 +253,102 @@ class ThongKeTongQuanController extends Controller
             'tong_so_luong_ton_kho_truoc' => $tongSoLuongTonKhoTatCaSanPhamTruoc,
             'tong_chi_phi_san_xuat_truoc' => $tongChiPhiSanXuatTruoc,
             'tong_gia_ban_truoc' => $tongGiaBanTruoc,
-            'ti_le_tang_giam_ton_kho' => round($tiLeTangGiamTonKho, 2)  // Đảm bảo trả về dạng số
+            'ti_le_tang_giam_ton_kho' => round($tiLeTangGiamTonKho, 2) // Làm tròn 2 chữ số thập phân
         ]);
     }
+    
+    public function thongKeTongQuanTheoKhoang1(Request $request)
+    {
+        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9))->startOfDay();
+        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
+        $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc) + 1;
+    
+        $ngayBatDauTruoc = $ngayBatDau->copy()->subDays($khoangThoiGian);
+        $ngayKetThucTruoc = $ngayKetThuc->copy()->subDays($khoangThoiGian);
+    
+        // **1. Thống kê đơn hàng chốt**
+        $donHangChot = DonHang::whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+            ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH])
+            ->get();
+        $tongTienChot = $donHangChot->sum('tong_tien_don_hang');
+        $tongSoLuongDonHangChot = $donHangChot->count();
+    
+        $donHangChotTruoc = DonHang::whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
+            ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH])
+            ->get();
+        $tongTienChotTruoc = $donHangChotTruoc->sum('tong_tien_don_hang');
+        $tongSoLuongDonHangChotTruoc = $donHangChotTruoc->count();
+    
+        $tiLeTangGiamDonHangChot = $tongSoLuongDonHangChotTruoc > 0
+            ? (($tongSoLuongDonHangChot - $tongSoLuongDonHangChotTruoc) / $tongSoLuongDonHangChotTruoc) * 100
+            : ($tongSoLuongDonHangChot > 0 ? 100 : 0);
+        $tiLeTangGiamTienChot = $tongTienChotTruoc > 0
+            ? (($tongTienChot - $tongTienChotTruoc) / $tongTienChotTruoc) * 100
+            : ($tongTienChot > 0 ? 100 : 0);
+    
+        // **2. Thống kê hoàn hàng**
+        $donHangHoan = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
+            ->whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc])
+            ->get();
+        $tongTienHoan = $donHangHoan->sum('tong_tien_don_hang');
+        $tongSoLuongDonHangHoan = $donHangHoan->count();
+    
+        $donHangHoanTruoc = DonHang::where('trang_thai_don_hang', DonHang::TTDH_HH)
+            ->whereBetween('ngay_hoan', [$ngayBatDauTruoc, $ngayKetThucTruoc])
+            ->get();
+        $tongTienHoanTruoc = $donHangHoanTruoc->sum('tong_tien_don_hang');
+        $tongSoLuongDonHangHoanTruoc = $donHangHoanTruoc->count();
+    
+        $tiLeTangGiamDonHangHoan = $tongSoLuongDonHangHoanTruoc > 0
+            ? (($tongSoLuongDonHangHoan - $tongSoLuongDonHangHoanTruoc) / $tongSoLuongDonHangHoanTruoc) * 100
+            : ($tongSoLuongDonHangHoan > 0 ? 100 : 0);
+        $tiLeTangGiamTienHoan = $tongTienHoanTruoc > 0
+            ? (($tongTienHoan - $tongTienHoanTruoc) / $tongTienHoanTruoc) * 100
+            : ($tongTienHoan > 0 ? 100 : 0);
+    
+        // **3. Thống kê tồn kho sản phẩm**
+        $sanPhamTonKho = SanPham::whereBetween('created_at', [$ngayBatDau, $ngayKetThuc])
+            ->with(['bienTheSanPham'])
+            ->get();
+    
+        $tongSoLuongTonKho = $sanPhamTonKho->sum(fn($sp) => $sp->bienTheSanPham->sum('so_luong_bien_the'));
+        $tongChiPhiSanXuat = $sanPhamTonKho->sum(fn($sp) => $sp->bienTheSanPham->sum(fn($bt) => $bt->chi_phi_san_xuat * $bt->so_luong_bien_the));
+        $tongGiaBan = $sanPhamTonKho->sum(fn($sp) => $sp->bienTheSanPham->sum(fn($bt) => $bt->gia_ban * $bt->so_luong_bien_the));
+    
+        $sanPhamTonKhoTruoc = SanPham::whereBetween('created_at', [$ngayBatDauTruoc, $ngayKetThucTruoc])
+            ->with(['bienTheSanPham'])
+            ->get();
+    
+        $tongSoLuongTonKhoTruoc = $sanPhamTonKhoTruoc->sum(fn($sp) => $sp->bienTheSanPham->sum('so_luong_bien_the'));
+    
+        $tiLeTangGiamTonKho = $tongSoLuongTonKhoTruoc > 0
+            ? (($tongSoLuongTonKho - $tongSoLuongTonKhoTruoc) / $tongSoLuongTonKhoTruoc) * 100
+            : ($tongSoLuongTonKho > 0 ? 100 : 0);
+    
+        return response()->json([
+            'don_hang_chot' => [
+                'tong_so_luong' => $tongSoLuongDonHangChot,
+                'tong_tien' => $tongTienChot,
+                'ti_le_tang_giam_so_luong' => round($tiLeTangGiamDonHangChot, 2),
+                'ti_le_tang_giam_tien' => round($tiLeTangGiamTienChot, 2),
+            ],
+            'don_hang_hoan' => [
+                'tong_so_luong' => $tongSoLuongDonHangHoan,
+                'tong_tien' => $tongTienHoan,
+                'ti_le_tang_giam_so_luong' => round($tiLeTangGiamDonHangHoan, 2),
+                'ti_le_tang_giam_tien' => round($tiLeTangGiamTienHoan, 2),
+            ],
+            'ton_kho_san_pham' => [
+                'tong_so_luong' => $tongSoLuongTonKho,
+                'tong_chi_phi_san_xuat' => $tongChiPhiSanXuat,
+                'tong_gia_ban' => $tongGiaBan,
+                'ti_le_tang_giam_ton_kho' => round($tiLeTangGiamTonKho, 2),
+            ],
+        ]);
+    }
+    
+    
+
     public function thongKeDoanhThuTong(Request $request)
     {
         try {
@@ -627,67 +699,70 @@ class ThongKeTongQuanController extends Controller
     }
     public function doanhThuTheoKhoang(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
+        $ngayBatDau = $request->has('ngay_bat_dau')
+            ? Carbon::parse($request->input('ngay_bat_dau'))->setTimezone('Asia/Ho_Chi_Minh')->startOfDay()
+            : now()->subDays(10)->setTimezone('Asia/Ho_Chi_Minh')->startOfDay();
+
+
+        $ngayKetThuc = $request->has('ngay_ket_thuc')
+            ? Carbon::parse($request->input('ngay_ket_thuc'))->setTimezone('Asia/Ho_Chi_Minh')->endOfDay()
+            : now()->setTimezone('Asia/Ho_Chi_Minh')->endOfDay();
 
         $khoangThoiGian = $ngayBatDau->diffInDays($ngayKetThuc);
 
-        // Lấy đơn hàng hoàn tất (TTDH_HTDH)
-        $donHangHoanTat = DonHang::whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
+        // Doanh thu hoàn tất
+        $doanhThuHoanTat = DonHang::selectRaw('DATE(ngay_hoan_thanh_don) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+            ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
             ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-            ->get();
+            ->groupBy('ngay')
+            ->get()
+            ->keyBy('ngay');
 
-        // Tính tổng doanh thu cho đơn hàng hoàn tất
-        $tongDoanhThuHoanTat = $donHangHoanTat->sum('tong_tien_don_hang');
 
-        // Lấy doanh thu theo từng ngày cho đơn hàng hoàn tất
-        $doanhThuHoanTatTheoNgay = [];
-        $ngayTrongKhoang = [];
-        for ($i = 0; $i <= $khoangThoiGian; $i++) {
-            $ngay = $ngayBatDau->copy()->addDays($i);
-            $doanhThuNgay = DonHang::whereDate('ngay_hoan_thanh_don', $ngay)
-                ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                ->sum('tong_tien_don_hang');
-            $doanhThuHoanTatTheoNgay[] = $doanhThuNgay;
-            $ngayTrongKhoang[] = $ngay->format('Y-m-d');
-        }
+        $tongDoanhThuHoanTat = $doanhThuHoanTat->sum('doanh_thu');
 
-        // Lấy đơn hàng hủy (TTDH_DH, TTDH_HH)
-        $donHangHoan = DonHang::whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc]) // Sửa 'updated_at' thành 'ngay_huy'
-
+        // Doanh thu hủy/hoàn
+        $doanhThuHoan = DonHang::selectRaw('DATE(ngay_hoan) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+            ->whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc])
             ->where('trang_thai_don_hang', DonHang::TTDH_HH)
+            ->groupBy('ngay')
+            ->get()
+            ->keyBy('ngay');
 
-            ->get();
+        $tongDoanhThuHoan = $doanhThuHoan->sum('doanh_thu');
 
-        // Tính tổng doanh thu cho đơn hàng hủy
-        $tongDoanhThuHoan = $donHangHoan->sum('tong_tien_don_hang');
-
-        // Lấy doanh thu theo từng ngày cho đơn hàng hủy
+        // Chuẩn bị dữ liệu doanh thu từng ngày
+        $doanhThuHoanTatTheoNgay = [];
         $doanhThuHoanTheoNgay = [];
+        $ngayTrongKhoang = [];
+
         for ($i = 0; $i <= $khoangThoiGian; $i++) {
-            $ngay = $ngayBatDau->copy()->addDays($i);
-            $doanhThuNgayHoan = DonHang::whereDate('ngay_hoan', $ngay) // Sửa 'updated_at' thành 'ngay_huy'
-
-                ->where('trang_thai_don_hang', DonHang::TTDH_HH)
-
-                ->sum('tong_tien_don_hang');
-            $doanhThuHoanTheoNgay[] = $doanhThuNgayHoan;
+            $ngay = $ngayBatDau->copy()->addDays($i)->format('Y-m-d');
+            $ngayTrongKhoang[] = $ngay;
+            $doanhThuHoanTatTheoNgay[] = $doanhThuHoanTat->get($ngay)->doanh_thu ?? 0;
+            $doanhThuHoanTheoNgay[] = $doanhThuHoan->get($ngay)->doanh_thu ?? 0;
         }
 
-        // Trả về kết quả
         return response()->json([
             'tong_doanh_thu_hoan_tat' => $tongDoanhThuHoanTat,
             'doanh_thu_hoan_tat_theo_ngay' => $doanhThuHoanTatTheoNgay,
             'tong_doanh_thu_huy_hoan' => $tongDoanhThuHoan,
             'doanh_thu_huy_hoan_theo_ngay' => $doanhThuHoanTheoNgay,
-            'ngay_trong_khoang' => $ngayTrongKhoang // Các ngày trong khoảng thời gian
+            'ngay_trong_khoang' => $ngayTrongKhoang,
         ]);
     }
+
     public function trangThaiKhoangDonSoSanh(Request $request)
     {
-        $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(10));
-        $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now());
+        $ngayBatDau = $request->has('ngay_bat_dau')
+            ? Carbon::parse($request->input('ngay_bat_dau'))->setTimezone('Asia/Ho_Chi_Minh')->startOfDay()
+            : now()->subDays(10)->setTimezone('Asia/Ho_Chi_Minh')->startOfDay();
 
+        $ngayKetThuc = $request->has('ngay_ket_thuc')
+            ? Carbon::parse($request->input('ngay_ket_thuc'))->setTimezone('Asia/Ho_Chi_Minh')->endOfDay()
+            : now()->setTimezone('Asia/Ho_Chi_Minh')->endOfDay();
+
+        // Tạo mảng ngày trong khoảng
         $khoangNgay = [];
         for ($date = $ngayBatDau->copy(); $date->lte($ngayKetThuc); $date->addDay()) {
             $khoangNgay[] = $date->format('Y-m-d');
@@ -697,12 +772,14 @@ class ThongKeTongQuanController extends Controller
         $soLuongHuyHang = [];
 
         foreach ($khoangNgay as $ngay) {
+            // Đếm số lượng đơn hoàn tất trong ngày
             $hoanTatDonHang = DonHang::whereDate('ngay_hoan_thanh_don', $ngay)
                 ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
                 ->count();
             $soLuongHTDH[] = $hoanTatDonHang;
 
-            $huyHang = DonHang::whereDate('ngay_huy', operator: $ngay)
+            // Đếm số lượng đơn hàng bị hủy trong ngày
+            $huyHang = DonHang::whereDate('ngay_huy', $ngay)
                 ->where('trang_thai_don_hang', DonHang::TTDH_DH)
                 ->count();
             $soLuongHuyHang[] = $huyHang;
@@ -711,9 +788,77 @@ class ThongKeTongQuanController extends Controller
         return response()->json([
             'ngay' => $khoangNgay,
             'so_luong_hoan_tat_don_hang' => $soLuongHTDH,
-            'so_luong_huy_hang' => $soLuongHuyHang
+            'so_luong_huy_hang' => $soLuongHuyHang,
         ]);
     }
+
+    public function thongKeTheoKhoangDoanhThuTrangThai(Request $request)
+{
+    $ngayBatDau = $request->has('ngay_bat_dau')
+        ? Carbon::parse($request->input('ngay_bat_dau'))->setTimezone('Asia/Ho_Chi_Minh')->startOfDay()
+        : now()->subDays(10)->setTimezone('Asia/Ho_Chi_Minh')->startOfDay();
+
+    $ngayKetThuc = $request->has('ngay_ket_thuc')
+        ? Carbon::parse($request->input('ngay_ket_thuc'))->setTimezone('Asia/Ho_Chi_Minh')->endOfDay()
+        : now()->setTimezone('Asia/Ho_Chi_Minh')->endOfDay();
+
+    $khoangNgay = [];
+    for ($date = $ngayBatDau->copy(); $date->lte($ngayKetThuc); $date->addDay()) {
+        $khoangNgay[] = $date->format('Y-m-d');
+    }
+
+    $doanhThuHoanTat = DonHang::selectRaw('DATE(ngay_hoan_thanh_don) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+        ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc])
+        ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+        ->groupBy('ngay')
+        ->get()
+        ->keyBy('ngay');
+
+    $tongDoanhThuHoanTat = $doanhThuHoanTat->sum('doanh_thu');
+
+    $doanhThuHoan = DonHang::selectRaw('DATE(ngay_hoan) as ngay, SUM(tong_tien_don_hang) as doanh_thu')
+        ->whereBetween('ngay_hoan', [$ngayBatDau, $ngayKetThuc])
+        ->where('trang_thai_don_hang', DonHang::TTDH_HH)
+        ->groupBy('ngay')
+        ->get()
+        ->keyBy('ngay');
+
+    $tongDoanhThuHoan = $doanhThuHoan->sum('doanh_thu');
+
+    $soLuongHTDH = [];
+    $soLuongHuyHang = [];
+    $doanhThuHoanTatTheoNgay = [];
+    $doanhThuHoanTheoNgay = [];
+
+    foreach ($khoangNgay as $ngay) {
+        // Đếm số lượng đơn hoàn tất
+        $soLuongHTDH[] = DonHang::whereDate('ngay_hoan_thanh_don', $ngay)
+            ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+            ->count();
+
+        // Đếm số lượng đơn hàng bị hủy
+        $soLuongHuyHang[] = DonHang::whereDate('ngay_huy', $ngay)
+            ->where('trang_thai_don_hang', DonHang::TTDH_DH)
+            ->count();
+
+        // Lấy doanh thu hoàn tất từng ngày
+        $doanhThuHoanTatTheoNgay[] = $doanhThuHoanTat->get($ngay)->doanh_thu ?? 0;
+
+        // Lấy doanh thu hủy/hoàn từng ngày
+        $doanhThuHoanTheoNgay[] = $doanhThuHoan->get($ngay)->doanh_thu ?? 0;
+    }
+
+    return response()->json([
+        'tong_doanh_thu_hoan_tat' => $tongDoanhThuHoanTat,
+        'doanh_thu_hoan_tat_theo_ngay' => $doanhThuHoanTatTheoNgay,
+        'tong_doanh_thu_huy_hoan' => $tongDoanhThuHoan,
+        'doanh_thu_huy_hoan_theo_ngay' => $doanhThuHoanTheoNgay,
+        'so_luong_hoan_tat_don_hang' => $soLuongHTDH,
+        'so_luong_huy_hang' => $soLuongHuyHang,
+        'ngay_trong_khoang' => $khoangNgay,
+    ]);
+}
+
     // Tổng quan theo ngày
     public function thanhToanTienMatTheoNgay(Request $request)
     {
@@ -861,7 +1006,7 @@ class ThongKeTongQuanController extends Controller
         $ngayBatDau = Carbon::today();
         $ngayKetThuc = Carbon::tomorrow();
         $trangThai = [
-            DonHang::TTDH_DGH,
+            // DonHang::TTDH_DGH,
             DonHang::TTDH_HTDH,
             DonHang::TTDH_CKHCN,
         ];
@@ -926,7 +1071,7 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThuc = Carbon::tomorrow();
 
         $trangThai = [
-            DonHang::TTDH_DGH,
+            // DonHang::TTDH_DGH,
             DonHang::TTDH_HTDH,
             DonHang::TTDH_CKHCN,
         ];
