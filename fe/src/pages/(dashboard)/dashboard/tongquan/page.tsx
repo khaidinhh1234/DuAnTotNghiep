@@ -1,5 +1,5 @@
-import { Col, Row, Segmented } from "antd";
-import { useState } from "react";
+import { Col, message, Row, Segmented } from "antd";
+import { useEffect, useState } from "react";
 import Chart1 from "./chart1/chart1";
 import Chart2 from "./chart2/chart2";
 import Chart3 from "./chart3/chart3";
@@ -16,19 +16,58 @@ import Table2chart5 from "./table2/chart5";
 import Table2chart6 from "./table2/chart6";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
-import Test from "../../test";
+import { useQuery } from "@tanstack/react-query";
+import instance from "@/configs/admin";
 const { RangePicker } = DatePicker;
 const Dashboard = () => {
-  const [datestart, setDatestart] = useState(dayjs().subtract(10, "day"));
-  const [dateend, setDateend] = useState(dayjs());
+  const today = dayjs().format("DD/MM/YYYY");
+  const [datestart, setDatestart] = useState<dayjs.Dayjs | null>(
+    dayjs().subtract(10, "day")
+  );
+  const [dateend, setDateend] = useState<dayjs.Dayjs | null>(dayjs());
   const [tab, setTab] = useState<string>("Trang chủ 1");
   const handleDateChange = (dates: any) => {
-    if (dates) {
+    if (dates && dates.length === 2) {
       const [startDate, endDate] = dates;
+
+      // Kiểm tra nếu ngày kết thúc vượt quá hôm nay
+      if (endDate.isAfter(dayjs(), "day")) {
+        message.error("Ngày kết thúc không được vượt quá hôm nay.");
+        return;
+      }
+
       setDatestart(startDate);
       setDateend(endDate);
+    } else {
+      setDatestart(null);
+      setDateend(null);
     }
   };
+  const disabledDate = (current: any | null) => {
+    return current && current.isAfter(dayjs().endOf("day"));
+  };
+  const { data, error } = useQuery({
+    queryKey: ["TONG_QUAN", datestart, dateend],
+    queryFn: async () => {
+      const response = await instance.post("thong-ke/tong-quan-theo-khoang1", {
+        ngay_bat_dau: datestart?.format("YYYY-MM-DD"),
+        ngay_ket_thuc: dateend?.format("YYYY-MM-DD"),
+      });
+      return response.data;
+    },
+    enabled: !!datestart && !!dateend,
+  });
+
+  // Log dữ liệu để kiểm tra
+  useEffect(() => {
+    if (error) console.error("Error fetching data:", error);
+    console.log("Fetched data:", data);
+  }, [data, error]);
+  console.log(data);
+
+  const don_hang_chot = data?.don_hang_chot;
+  const don_hang_hoan = data?.don_hang_hoan;
+  const soluonsp = data?.ton_kho_san_pham;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -38,19 +77,20 @@ const Dashboard = () => {
           <RangePicker
             onChange={handleDateChange}
             value={[datestart, dateend]} // Hiển thị giá trị ngày từ state
-            defaultValue={[dayjs().subtract(10, "day"), dayjs()]} // Giá trị mặc định từ 10 ngày trước đến hôm nay
+            defaultValue={[dayjs().subtract(10, "day"), dayjs()]}
+            disabledDate={disabledDate}
           />
         </div>
       </div>
       <Row gutter={16}>
         <Col span={12} sm={8}>
-          <Chart1 datestart={datestart as any} dateend={dateend as any} />
+          <Chart1 don_hang_chot={don_hang_chot} />
         </Col>
         <Col span={12} sm={8}>
-          <Chart2 datestart={datestart as any} dateend={dateend as any} />
+          <Chart2 don_hang_hoan={don_hang_hoan} />
         </Col>
         <Col span={12} sm={8}>
-          <Chart3 datestart={datestart as any} dateend={dateend as any} />
+          <Chart3 soluonsp={soluonsp} />
         </Col>
       </Row>
       <div className="mt-6 grid grid-cols-8 gap-5">
@@ -95,6 +135,7 @@ const Dashboard = () => {
                       <Tablechart4
                         datestart={datestart as any}
                         dateend={dateend as any}
+                        don_hang_chot={don_hang_chot}
                       />
                       {/* <Test /> */}
                     </div>
@@ -106,6 +147,7 @@ const Dashboard = () => {
                       <Tablechart6
                         datestart={datestart as any}
                         dateend={dateend as any}
+                        don_hang_chot={don_hang_chot}
                       />
                     </div>
                   );
@@ -115,6 +157,7 @@ const Dashboard = () => {
                       <Tablechart4
                         datestart={datestart as any}
                         dateend={dateend as any}
+                        don_hang_chot={don_hang_chot}
                       />{" "}
                       {/* <Test /> */}
                     </div>
@@ -126,7 +169,8 @@ const Dashboard = () => {
         <div className="col-span-3">
           <div className="shadow-md bg-white rounded-md px-6 py-7">
             <h2 className="text-xl font-bold mb-3">
-              Thông tin kinh doanh hôm nay
+              Thông tin kinh doanh hôm nay:
+              <span className="text-xl">{today}</span>
             </h2>
             <div className="flex gap-5 mb-3">
               <div>
