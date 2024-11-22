@@ -58,7 +58,7 @@ const Chart3 = ({ datestart, dateend }: ChartProps) => {
             </div>
           </div>
           <div className="flex justify-between">
-            <div className="text-black text-lg">Đơn chốt:</div>
+            <div className="text-black text-lg">Số đơn:</div>
             <div className="text-black text-lg font-semibold">
               {" "}
               <Statistic

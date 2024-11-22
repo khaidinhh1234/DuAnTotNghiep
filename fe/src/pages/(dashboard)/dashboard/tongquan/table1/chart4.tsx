@@ -10,9 +10,10 @@ import CountUp from "react-countup";
 interface ChartProps {
   datestart?: string;
   dateend?: string;
+  don_hang_chot?: any;
 }
 
-const Chart4 = ({ datestart, dateend }: ChartProps) => {
+const Chart4 = ({ datestart, dateend, don_hang_chot }: ChartProps) => {
   const date =
     datestart && dateend
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
@@ -51,18 +52,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
     },
     enabled: !!datestart && !!dateend,
   });
-  const {
-    data: don,
 
-    refetch: refetch4,
-  } = useQuery({
-    queryKey: ["tongquanchart1", datestart, dateend],
-    queryFn: async () => {
-      const response = await instance.post("thong-ke/don-hang/chot", date);
-      return response.data;
-    },
-    enabled: !!datestart && !!dateend,
-  });
   const { data: Chart1, refetch } = useQuery({
     queryKey: ["tongquan1chart1", datestart, dateend],
     queryFn: async () => {
@@ -80,7 +70,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
   const san_pham = doanhso?.ti_le_tang_giam_san_pham > 0;
   const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
   const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;
-  const don_hang = don?.ti_le_tang_giam_don_hang > 0;
+  const don_hang = don_hang_chot?.ti_le_tang_giam_so_luong > 0;
 
   const formatter: StatisticProps["formatter"] = (value: any) => (
     <CountUp end={value as number} separator="," />
@@ -94,62 +84,16 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
   //   return <div>Error: {error.message}</div>;
   // }
   useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch7(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch7]);
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch2(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch2]);
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch3(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch3]);
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch4(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch4]);
+    if (datestart && dateend) {
+      refetch7();
+      refetch2();
+      refetch3();
+    }
+  }, [datestart, dateend, refetch7, refetch2, refetch3]);
 
   // const date2 = Chart1?.ngay_trong_khoang.map((item: any) => item);
   const [series, setSeries] = useState<{ name: string; data: any[] }[]>([]);
-  const [options, setOptions] = useState({
-    chart: {
-      height: 350,
-      type: "area",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      type: "datetime", // Make sure it's using "datetime" instead of "date"
-      categories: [],
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy",
-      },
-    },
-    yaxis: {
-      labels: {
-        formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
-      },
-    },
-  });
+  const [options, setOptions] = useState({});
   const formattedDates = Chart1?.ngay_trong_khoang?.map((date: any) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
@@ -170,14 +114,32 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
           data: Chart1?.doanh_thu_huy_hoan_theo_ngay,
         },
       ]);
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        xaxis: {
-          ...prevOptions.xaxis,
-          type: "category", // Use "category" for custom date format
-          categories: formattedDates || [],
+      setOptions({
+        chart: {
+          height: 350,
+          type: "area",
         },
-      }));
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "smooth",
+        },
+        xaxis: {
+          type: "datetime", // Make sure it's using "datetime" instead of "date"
+          categories: formattedDates,
+        },
+        tooltip: {
+          x: {
+            format: "dd/MM/yyyy",
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
+          },
+        },
+      });
     }
   }, [Chart1, datestart, dateend]); // Run when Chart1 data changes (i.e., after refetch)
 
@@ -200,7 +162,6 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
             <Statistic
               value={doanhso?.tong_doanh_so_hien_tai || 0}
               formatter={formatter}
-              suffix="đ"
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
           </p>
@@ -276,7 +237,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
           <p className="text-base font-semibold text-red-600">
             {" "}
             <Statistic
-              value={don?.tong_so_luong_don_hang || 0}
+              value={don_hang_chot?.tong_so_luong || 0}
               formatter={formatter}
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
@@ -287,7 +248,7 @@ const Chart4 = ({ datestart, dateend }: ChartProps) => {
             {don_hang ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
 
             <Statistic
-              value={don?.ti_le_tang_giam_don_hang || 0}
+              value={don_hang_chot?.ti_le_tang_giam_so_luong || 0}
               formatter={formatter}
               suffix="%"
               valueStyle={{
