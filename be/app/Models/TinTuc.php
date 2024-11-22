@@ -17,6 +17,7 @@ class TinTuc extends Model
         'anh_tin_tuc',
         'noi_dung',
         'duong_dan',
+        'luot_xem',
     ];
 
     public function user()

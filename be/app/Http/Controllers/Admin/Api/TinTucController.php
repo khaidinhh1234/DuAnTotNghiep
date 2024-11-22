@@ -55,6 +55,7 @@ class TinTucController extends Controller
                 'anh_tin_tuc' => 'nullable',
                 'noi_dung' => 'required|string',
                 'duong_dan' => 'nullable',
+                'luot_xem' => 'nullable',
             ]);
 
             $validatedTinTuc['user_id'] = Auth::guard('api')->id();
