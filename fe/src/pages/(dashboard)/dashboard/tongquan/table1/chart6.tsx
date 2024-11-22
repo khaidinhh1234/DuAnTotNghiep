@@ -12,8 +12,9 @@ const formatter: StatisticProps["formatter"] = (value: any) => (
 interface ChartProps {
   datestart?: string;
   dateend?: string;
+  don_hang_chot?: any;
 }
-const Chart6 = ({ datestart, dateend }: ChartProps) => {
+const Chart6 = ({ datestart, dateend, don_hang_chot }: ChartProps) => {
   const date =
     datestart && dateend
       ? { ngay_bat_dau: datestart, ngay_ket_thuc: dateend }
@@ -53,18 +54,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
     enabled: !!datestart && !!dateend,
   });
   // console.log(gttb);
-  const {
-    data: don,
 
-    refetch: refetch4,
-  } = useQuery({
-    queryKey: ["tongquanchart1", datestart, dateend],
-    queryFn: async () => {
-      const response = await instance.post("thong-ke/don-hang/chot", date);
-      return response.data;
-    },
-    enabled: !!datestart && !!dateend,
-  });
   // console.log(don);
   // const {
   //   data: soluong,
@@ -100,7 +90,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
   const san_pham = doanhso?.ti_le_tang_giam_san_pham > 0;
   const loi_nhuan = loinhuan?.ti_le_tang_giam_doanh_thu > 0;
   const gt_tb = gttb?.ti_le_tang_giam_doanh_thu_tb > 0;
-  const don_hang = don?.ti_le_tang_giam_don_hang > 0;
+  const don_hang = don_hang_chot?.ti_le_tang_giam_so_luong > 0;
 
   useEffect(() => {
     async () => {
@@ -123,46 +113,14 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
       }
     };
   }, [datestart, dateend, refetch3]);
-  useEffect(() => {
-    async () => {
-      if (datestart && dateend) {
-        await refetch4(); // Await refetch to handle async operation
-      }
-    };
-  }, [datestart, dateend, refetch4]);
+
   // useEffect(() => {
   //   if (datestart && dateend) {
   //     refetch9();
   //   }
   // }, [datestart, dateend, refetch9]);
   const [series, setSeries] = useState<{ name: string; data: any[] }[]>([]);
-  const [options, setOptions] = useState({
-    chart: {
-      height: 350,
-      type: "area",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      type: "datetime", // Make sure it's using "datetime" instead of "date"
-      categories: [],
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yyyy",
-      },
-    },
-    colors: ["#FF0000", "#00FF00"],
-    yaxis: {
-      labels: {
-        formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
-      },
-    },
-  });
+  const [options, setOptions] = useState({});
   const formattedDates = Chart2?.ngay?.map((date: any) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
@@ -183,14 +141,33 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
           data: Chart2?.so_luong_hoan_tat_don_hang,
         },
       ]);
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        xaxis: {
-          ...prevOptions.xaxis,
-          type: "category", // Use "category" for custom date format
-          categories: formattedDates || [],
+      setOptions({
+        chart: {
+          height: 350,
+          type: "area",
         },
-      }));
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: "smooth",
+        },
+        xaxis: {
+          type: "datetime", // Make sure it's using "datetime" instead of "date"
+          categories: formattedDates,
+        },
+        tooltip: {
+          x: {
+            format: "dd/MM/yyyy",
+          },
+        },
+        colors: ["#FF0000", "#00FF00"],
+        yaxis: {
+          labels: {
+            formatter: (val: number) => `${val.toLocaleString("vi-VN")} đ`,
+          },
+        },
+      });
     }
   }, [Chart2, datestart, dateend]); // Run when Chart1 data changes (i.e., after refetch)
 
@@ -201,7 +178,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
         await chart2(); // Await refetch to handle async operation
       }
     };
-  }, [datestart, dateend, series, options]);
+  }, [datestart, dateend, series, options, chart2]);
   console.log(Chart2);
   return (
     <div className="bg-white p-4 rounded-md shadow">
@@ -213,7 +190,6 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
             <Statistic
               value={doanhso?.tong_doanh_so_hien_tai || 0}
               formatter={formatter}
-              suffix="đ"
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
           </p>
@@ -289,7 +265,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
           <p className="text-base font-semibold text-red-600">
             {" "}
             <Statistic
-              value={don?.tong_so_luong_don_hang || 0}
+              value={don_hang_chot?.tong_so_luong || 0}
               formatter={formatter}
               valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
             />
@@ -300,7 +276,7 @@ const Chart6 = ({ datestart, dateend }: ChartProps) => {
             {don_hang ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
 
             <Statistic
-              value={don?.ti_le_tang_giam_don_hang || 0}
+              value={don_hang_chot?.ti_le_tang_giam_so_luong || 0}
               formatter={formatter}
               suffix="%"
               valueStyle={{
