@@ -12,10 +12,8 @@ const CheckOut = () => {
   const queryClient = useQueryClient();
   const [user] = useLocalStorage("user" as any, {});
   const access_token = user.access_token || localStorage.getItem("access_token");
-  const [selectedProducts, setSelectedProducts] = useState<string[]>(() => {
-    const savedSelectedProducts = localStorage.getItem("selectedProducts");
-    return savedSelectedProducts ? JSON.parse(savedSelectedProducts) : [];
-  });
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [fadeEffect, setFadeEffect] = useState<{ [key: string]: boolean }>({});
 
   const { data } = useQuery({
     queryKey: ["cart", access_token],
@@ -44,58 +42,24 @@ const CheckOut = () => {
         }
       );
     },
-    onMutate: ({ productId, currentQuantity }) => {
-      const previousCartData = queryClient.getQueryData(["cart", access_token]);
-
-      // Optimistic update for quantity increment
-      queryClient.setQueryData(
-        ["cart", access_token],
-        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
-          const updatedProducts = oldData.san_pham_giam_gia.map((product) => {
-            if (product.id === productId) {
-              return { ...product, so_luong: currentQuantity + 1 };
-            }
-            return product;
-          });
-
-          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map((product) => {
-            if (product.id === productId) {
-              return { ...product, so_luong: currentQuantity + 1 };
-            }
-            return product;
-          });
-
-          return {
-            ...oldData,
-            san_pham_giam_gia: updatedProducts,
-            san_pham_nguyen_gia: updatedOriginalProducts,
-          };
-        }
-      );
-
-      return { previousCartData };
-    },
-    onSuccess: () => {
-      // toast.success("Số lượng sản phẩm đã được tăng thành công!");
+    onSuccess: (_, { productId }) => {
+      // Gây hiệu ứng fade và vô hiệu hóa nút bấm
+      setFadeEffect((prev) => ({ ...prev, [productId]: true }));
+      setTimeout(() => {
+        setFadeEffect((prev) => ({ ...prev, [productId]: false }));
+      }, 1000); // Hiệu ứng kéo dài 300ms
+  
+      // Làm mới dữ liệu giỏ hàng
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
-    onError: (error, _, context) => {
-      if (context?.previousCartData) {
-        queryClient.setQueryData(["cart", access_token], context.previousCartData);
-      }
-      const errorMessage = (error as any).response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.";
-      toast.error(errorMessage);
+    onError: () => {
+      toast.error("Có lỗi xảy ra khi tăng số lượng.");
     },
   });
+  
 
   const { mutate: decreaseQuantity } = useMutation({
-    mutationFn: async ({
-      productId,
-      currentQuantity,
-    }: {
-      productId: string;
-      currentQuantity: number;
-    }) => {
+    mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
       await instanceClient.put(
         `/gio-hang/giam-so-luong/${productId}`,
         { so_luong: currentQuantity - 1 },
@@ -106,51 +70,21 @@ const CheckOut = () => {
         }
       );
     },
-    onMutate: ({ productId, currentQuantity }) => {
-      const previousCartData = queryClient.getQueryData(["cart", access_token]);
-      queryClient.setQueryData(
-        ["cart", access_token],
-        (oldData: { san_pham_giam_gia: any[]; san_pham_nguyen_gia: any[] }) => {
-          const updatedProducts = oldData.san_pham_giam_gia.map((product) => {
-            if (product.id === productId) {
-              return { ...product, so_luong: currentQuantity - 1 };
-            }
-            return product;
-          });
-
-          const updatedOriginalProducts = oldData.san_pham_nguyen_gia.map(
-            (product) => {
-              if (product.id === productId) {
-                return { ...product, so_luong: currentQuantity - 1 };
-              }
-              return product;
-            }
-          );
-
-          return {
-            ...oldData,
-            san_pham_giam_gia: updatedProducts,
-            san_pham_nguyen_gia: updatedOriginalProducts,
-          };
-        }
-      );
-
-      return { previousCartData };
-    },
-    onSuccess: () => {
-      // toast.success("Số lượng sản phẩm đã được giảm thành công!");
+    onSuccess: (_, { productId }) => {
+      // Gây hiệu ứng fade và vô hiệu hóa nút bấm
+      setFadeEffect((prev) => ({ ...prev, [productId]: true }));
+      setTimeout(() => {
+        setFadeEffect((prev) => ({ ...prev, [productId]: false }));
+      }, 1000); // Hiệu ứng kéo dài 300ms
+  
+      // Làm mới dữ liệu giỏ hàng
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
     },
-    onError: (error: any, _, context: { previousCartData?: unknown } | undefined) => {
-      if (context?.previousCartData) {
-        queryClient.setQueryData(
-          ["cart", access_token],
-          context.previousCartData
-        );
-      }
-      toast.error("Thao tác quá nhanh, vui lòng chậm lại");
+    onError: () => {
+      toast.error("Có lỗi xảy ra khi giảm số lượng.");
     },
   });
+  
 
   const { mutate: Delete } = useMutation({
     mutationFn: async (productId: string) => {
@@ -244,7 +178,7 @@ const CheckOut = () => {
         ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
       ];
       setSelectedProducts(allProductIds);
-      localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
+      // localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
       // Gọi SelectedProduct với tất cả ID
       SelectedProduct({ gioHangIds: allProductIds, isChecked: true });
     } else {
@@ -253,7 +187,7 @@ const CheckOut = () => {
         ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
       ];
       setSelectedProducts([]); // Cập nhật trạng thái không chọn
-      localStorage.setItem('selectedProducts', JSON.stringify([]));
+      // localStorage.setItem('selectedProducts', JSON.stringify([]));
       // Gọi SelectedProduct với tất cả ID và trạng thái không chọn
       SelectedProduct({ gioHangIds: allProductIds, isChecked: false });
     }
@@ -293,13 +227,13 @@ const CheckOut = () => {
       ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn sản phẩm
       : [...selectedProducts, productId]; // Chọn sản phẩm
     setSelectedProducts(updatedSelectedProducts);
-    console.log("check:", isChecked);
+    // console.log("check:", isChecked);
     // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
     SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
-    localStorage.setItem(
-      "selectedProducts",
-      JSON.stringify(updatedSelectedProducts)
-    );
+    // localStorage.setItem(
+    //   "selectedProducts",
+    //   JSON.stringify(updatedSelectedProducts)
+    // );
   };
   useEffect(() => {
     // Retrieve saved selection from localStorage on component mount
@@ -310,17 +244,17 @@ const CheckOut = () => {
   }, []);
 
   // Tải sản phẩm từ localStorage khi component khởi tạo
-  useEffect(() => {
-    const storedProducts = localStorage.getItem("selectedProducts");
-    if (storedProducts) {
-      setSelectedProducts(JSON.parse(storedProducts));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedProducts = localStorage.getItem("selectedProducts");
+  //   if (storedProducts) {
+  //     setSelectedProducts(JSON.parse(storedProducts));
+  //   }
+  // }, []);
 
-  // Lưu sản phẩm vào localStorage khi có sự thay đổi
-  useEffect(() => {
-    localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
-  }, [selectedProducts]);
+  // // Lưu sản phẩm vào localStorage khi có sự thay đổi
+  // useEffect(() => {
+  //   localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+  // }, [selectedProducts]);
   // 
   useEffect(() => {
     if (data) {
@@ -421,7 +355,7 @@ const CheckOut = () => {
                       {data?.san_pham_giam_gia?.map((product: any) => (
                         <tr
                           key={product.id}
-                          className="border-b border-gray-200 hover:bg-gray-100"
+                          className={`p-4 border rounded-md ${fadeEffect[product.id] ? "opacity-50 transition-opacity duration-300" : ""}`}
                         >
                           <td className="px-4 py-2">
                             <input

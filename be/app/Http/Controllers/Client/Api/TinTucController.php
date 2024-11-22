@@ -25,8 +25,8 @@ class TinTucController extends Controller
                 ->with(['tinTuc' => function ($query) {
                     $query->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'duong_dan', 'created_at')
                         ->with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
-                        ->orderBy('created_at', 'desc')
-                        ->limit(4);
+                        ->orderBy('created_at', 'desc');
+                        // ->limit(4);
                 }])
                 ->orderBy('created_at', 'desc')
                 ->get();
