@@ -21,7 +21,7 @@ class TinTucController extends Controller
 
             // Lấy bài viết theo từng danh mục tin tức
             $loadBaiVietTheoDanhMuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
-                ->select('id', 'ten_danh_muc_tin_tuc', 'created_at')
+                ->select('id', 'ten_danh_muc_tin_tuc', 'duong_dan' , 'created_at')
                 ->with(['tinTuc' => function ($query) {
                     $query->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'duong_dan', 'created_at')
                         ->with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
