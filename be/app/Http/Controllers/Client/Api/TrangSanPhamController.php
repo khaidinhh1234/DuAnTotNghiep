@@ -103,6 +103,7 @@ class TrangSanPhamController extends Controller
     //         ], 500);
     //     }
     // }
+
     public function layDanhMucMauSacKichThuoc(Request $request)
     {
         // $id = $request->get('id') ?? null;
@@ -123,7 +124,7 @@ class TrangSanPhamController extends Controller
             }])->get()->filter(function ($mauSac) {
                 return $mauSac->sanPhams->isNotEmpty();
             });
-            // dd($mauSacs);
+
             // Lấy tất cả kích thước theo đường dẫn của danh mục và loại kích thước
             $kichThuoc = BienTheKichThuoc::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
                 $query->where('duong_dan', $loai);
@@ -156,7 +157,6 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-
     public function locSanPham(Request $request)
     {
         DB::beginTransaction(); // Bắt đầu giao dịch

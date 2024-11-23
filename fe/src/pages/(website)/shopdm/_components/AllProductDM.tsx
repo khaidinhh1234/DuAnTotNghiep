@@ -39,7 +39,7 @@ const AllProductDM = () => {
           <div className=" flex  mt-20 text-2xl font-bold">
             <h1 className="font-bold">Danh Mục </h1>{" "}
             <p className="pl-2 capitalize ">
-              {data?.data?.Danh_muc?.ten_danh_muc ?? "Không xác định"}
+              {data?.data?.danh_muc?.ten_danh_muc ?? "Không xác định"}
             </p>
           </div>
         </div>

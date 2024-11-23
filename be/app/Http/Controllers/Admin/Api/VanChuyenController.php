@@ -23,7 +23,7 @@ class VanChuyenController extends Controller
             if ($auth->user()->vaiTros->contains('ten_vai_tro', 'Người giao hàng')) {
                 $query->where('shipper_id', $auth->id());
             }
-            $vanChuyen = $query->get();
+            $vanChuyen = $query->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

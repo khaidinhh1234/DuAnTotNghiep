@@ -201,8 +201,8 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
   });
 
-  const products = data?.data?.San_pham;
-  console.log(products);
+  const products = data?.data?.san_pham.data;
+
   const { data: locsanpham, refetch } = useQuery({
     queryKey: ["LOCSAMPHAM"],
     queryFn: async () => {
@@ -324,7 +324,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                 >
                   <h2 className="font-bold mb-2 text-lg normal-case">
                     Danh mục{" "}
-                    {data?.data?.Danh_muc?.ten_danh_muc ?? "Không xác định"}
+                    {data?.data?.danh_muc?.ten_danh_muc ?? "Không xác định"}
                   </h2>
                   <button className="mr-3">
                     {showcate ? (

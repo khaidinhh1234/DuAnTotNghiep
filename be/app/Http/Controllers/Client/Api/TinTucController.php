@@ -120,6 +120,7 @@ class TinTucController extends Controller
             $key = 'bai_viet_da_xem_' . $baiVietDetail->id;
             if (!session()->has($key)) {
                 $baiVietDetail->increment('luot_xem');
+                $baiVietDetail->touch(); // Cập nhật trường `updated_at`
                 session()->put($key, true);
             }
 
