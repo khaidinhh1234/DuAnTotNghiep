@@ -212,7 +212,7 @@ const EvaluateAdmin = () => {
       sorter: (a: any, b: any) => a.mo_ta?.localeCompare(b.mo_ta) || 0,
       render: (record: IEvaluate) => {
         const content =
-          record.mo_ta.length > 100
+          record?.mo_ta?.length > 100
             ? `${record.mo_ta.substring(0, 100)}...`
             : record.mo_ta;
 
