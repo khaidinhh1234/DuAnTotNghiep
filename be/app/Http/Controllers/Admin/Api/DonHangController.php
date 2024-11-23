@@ -447,6 +447,7 @@ class DonHangController extends Controller
                     'ngay_tao' => Carbon::now(),
                     'hoan_tien_id' => $id,
                 ]);
+                $donHang->update(['ngay_hoan' => Carbon::now()]);
                 $mess = 'Xác nhận hoàn hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $hoanTien->update(['trang_thai' => 'tu_choi']);
