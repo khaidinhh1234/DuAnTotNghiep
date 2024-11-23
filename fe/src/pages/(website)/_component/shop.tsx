@@ -1,6 +1,6 @@
 
 import Method from "../_component/Method";
-import AllProduct from "../shop/_components/AllProduct";
+import AllProduct from "./AllProduct";
 import ProductCategories from "./ProductCategories";
 // import { sanPham2 } from "@/assets/img";
 

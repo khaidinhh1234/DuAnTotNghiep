@@ -1,5 +1,5 @@
 import Method from "../_component/Method";
-import AllProduct from "../shop/_components/AllProduct";
+import AllProduct from "./_components/AllProduct";
 import ProductCategories1 from "./_components/ProductCategories1";
 // import { sanPham2 } from "@/assets/img";
 
@@ -25,9 +25,8 @@ const Page3 = () => {
         }
 
         return response.data;
-      } catch (error) {
-        message.error("Xóa sản phẩm yêu thích thất bại");
-        console.error("API error", error); // Thêm log lỗi API
+      } catch (error: any) {
+        message.error(error.response.data.message);
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
     },

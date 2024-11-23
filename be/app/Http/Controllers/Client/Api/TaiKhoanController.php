@@ -60,9 +60,9 @@ class TaiKhoanController extends Controller
             if (!$viUser) {
                 return response()->json([
                     'status' => false,
-                    'status_code' => 404,
+                    'status_code' => 400,
                     'message' => 'Người dùng chưa có ví tiền',
-                ], 404);
+                ], 400);
             }
             if ($request->method() == 'GET') {
                 if (($viUser->ma_xac_minh == "")) {

@@ -3,19 +3,20 @@ import type { PaginationProps } from "antd";
 import { Pagination } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
- import View from "./View";
+ import View from "./viewsearch";
+
 
 const SearchResultsPage = ({ products, Wishlist, isPending, data, onPage, query }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(data?.current_page ?? 1);
   const [pageSize, setPageSize] = useState(data?.per_page);
-
+  const [searchData] = useState(new URLSearchParams(window.location.search).get('query'));
   const handleMouseEnter = (productId: number, variantIndex: any) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
   };
-
+// console.log("qi", searchData);
   const handleWishlist = (id: any) => {
     Wishlist(id);
   };
@@ -35,10 +36,10 @@ const SearchResultsPage = ({ products, Wishlist, isPending, data, onPage, query 
   return (
     <>
       <div className="container">
-        {query && (
-          <div className="-mt-16">
-            <h1 className="font-bold text-xl text-gray-600">Kết quả tìm kiếm cho</h1>
-            <h2 className="font-bold text-xl text-gray-600">{query}</h2>
+        {searchData && (
+          <div className="-mt-20">
+            <h1 className="font-bold text-xl text-gray-600">Kết quả tìm kiếm cho : {searchData}</h1>
+            {/* <h2 className="font-bold text-xl text-gray-600">{searchData}</h2> */}
           </div>
         )}
 
@@ -80,7 +81,15 @@ const SearchResultsPage = ({ products, Wishlist, isPending, data, onPage, query 
                             />
                           </div>
                         </Link>
-                        <View id={product?.duong_dan} ID={product?.id} />
+                        <div onClick={(e) => e.stopPropagation()}>
+  <View 
+    id={product?.duong_dan} 
+    ID={product?.id}
+    searchParams={searchData} 
+  />
+</div>
+
+
                       </div>
 
                       <Link to={`/product-detail/${product?.duong_dan}`}>
