@@ -32,7 +32,7 @@ class DonHangController extends Controller
     public function index()
     {
         try {
-            $donHangs = DonHang::with('chiTiets', 'user')->get();
+            $donHangs = DonHang::with('chiTiets', 'user')->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

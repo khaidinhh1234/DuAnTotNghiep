@@ -305,7 +305,7 @@ const AddAddressForm = ({ register, products, errors, settrangthai }: any) => {
           type="radio"
           name="phuong_thuc_thanh_toan"
           id="cashOnDelivery"
-          onChange={() => console.log("Thanh toán khi nhận hàng")}
+          onChange={() => settrangthai("Thanh toán khi nhận hàng")}
           value="Thanh toán khi nhận hàng"
           defaultChecked
           // {...register("phuong_thuc_thanh_toan", { required: true })}

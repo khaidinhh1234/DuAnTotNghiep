@@ -103,6 +103,7 @@ class TrangSanPhamController extends Controller
     //         ], 500);
     //     }
     // }
+
     public function layDanhMucMauSacKichThuoc(Request $request)
     {
         // $id = $request->get('id') ?? null;
@@ -111,8 +112,11 @@ class TrangSanPhamController extends Controller
             // Bắt đầu transaction
             DB::beginTransaction();
 
-            // Lấy danh mục cha và danh mục con
-            $danhMuc = DanhMuc::with('children.children')->where('duong_dan', $loai)->get();
+            $danhMuc = DanhMuc::where('duong_dan', $loai)->first();
+
+            $danhMucCap2 = DanhMuc::with('children')
+                ->where('cha_id', $danhMuc->id)
+                ->get();
 
             // Lấy tất cả màu sắc theo đường dẫn của danh mục
             $mauSacs = BienTheMauSac::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
@@ -124,8 +128,7 @@ class TrangSanPhamController extends Controller
             // Lấy tất cả kích thước theo đường dẫn của danh mục và loại kích thước
             $kichThuoc = BienTheKichThuoc::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
                 $query->where('duong_dan', $loai);
-            }]);
-            $kichThuoc = $kichThuoc->get()->filter(function ($kichThuoc) {
+            }])->get()->filter(function ($kichThuoc) {
                 return $kichThuoc->sanPhams->isNotEmpty();
             });
 
@@ -137,8 +140,9 @@ class TrangSanPhamController extends Controller
                 'status_code' => 200,
                 'message' => 'Lấy dữ liệu thành công.',
                 'danhMucCha' => $danhMuc,
-                'mauSac' => $mauSacs,
-                'kichThuoc' => $kichThuoc
+                'danhMucCap2' => $danhMucCap2,
+                'mauSac' => $mauSacs->values(),
+                'kichThuoc' => $kichThuoc->values(),
             ], 200);
         } catch (Exception $e) {
             // Rollback nếu có lỗi
@@ -153,7 +157,6 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-
     public function locSanPham(Request $request)
     {
         DB::beginTransaction(); // Bắt đầu giao dịch
@@ -170,10 +173,10 @@ class TrangSanPhamController extends Controller
             $giaTren = $request->gia_tren ?? null;
 
             // Tạo truy vấn sản phẩm
-            $query = SanPham::query()->where('trang_thai', 1)
-            ->whereHas('danhMuc', function ($query) use ($loaiDanhMuc) {
-                $query->where('duong_dan', $loaiDanhMuc);
-            });
+            $query = SanPham::query()
+                ->whereHas('danhMuc.parent.parent', function ($query) use ($loaiDanhMuc) {
+                    $query->where('duong_dan', $loaiDanhMuc);
+                })->where('trang_thai', 1);
 
             // Lọc theo danh mục cha và con
             if (!empty($danhMucChaIds) || !empty($danhMucConIds) || !empty($danhMucChauIds)) {
@@ -226,13 +229,13 @@ class TrangSanPhamController extends Controller
             // Sửa lại phần tính giá để tránh lỗi SQL
             $query->select([
                 'san_phams.id',
+                'san_phams.danh_muc_id',
                 'san_phams.ten_san_pham',
                 'san_phams.duong_dan',
                 'san_phams.anh_san_pham',
                 'san_phams.hang_moi',
                 DB::raw('MIN(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_thap_nhat'),
                 DB::raw('MAX(COALESCE(bien_the_san_phams.gia_khuyen_mai_tam_thoi, bien_the_san_phams.gia_khuyen_mai, bien_the_san_phams.gia_ban)) as gia_cao_nhat'),
-
             ])
                 ->join('bien_the_san_phams', 'san_phams.id', '=', 'bien_the_san_phams.san_pham_id')
                 ->groupBy('san_phams.id');
@@ -242,7 +245,8 @@ class TrangSanPhamController extends Controller
                 'bienTheSanPham' => function ($query) {
                     $query->with(['anhBienThe', 'mauBienThe', 'kichThuocBienThe']);
                 }
-            ])->paginate(12);
+            ])
+                ->paginate(12);
 
             // Gộp thông tin màu sắc, kích thước và ảnh biến thể
             $sanPhams->getCollection()->transform(function ($sanPham) {
@@ -282,6 +286,7 @@ class TrangSanPhamController extends Controller
                 return [
                     'id' => $sanPham->id,
                     'ten_san_pham' => $sanPham->ten_san_pham,
+                    'danh_muc' => $sanPham->danhMuc->id,
                     'duong_dan' => $sanPham->duong_dan,
                     'anh_san_pham' => $sanPham->anh_san_pham,
                     'hang_moi' => $sanPham->hang_moi,

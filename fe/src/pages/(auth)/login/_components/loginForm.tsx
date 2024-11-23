@@ -24,9 +24,7 @@ const LoginForm = () => {
     mutationFn: async (user: IUser) => {
       // console.log(user);
       const { data } = await instance.post("/login", user);
-
       localStorage.setItem("user", JSON.stringify(data));
-      // console.log(data);
       localStorage.setItem("accessToken", data?.access_token);
       const users = JSON.parse(localStorage.getItem("user") || "{}");
       const isDeliveryPerson = users?.user?.vai_tros?.some(
@@ -37,9 +35,13 @@ const LoginForm = () => {
       );
       if (isDeliveryPerson) {
         message.success("Đăng nhập thành công");
+        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("accessToken", data?.access_token);
         return nav("/shipper2");
       } else if (hasPermission && !isDeliveryPerson) {
         message.success("Đăng nhập thành công");
+        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("accessToken", data?.access_token);
         return nav("/admin/dashboard/list");
       } else {
         toast.success(" Glow Clothing Xin chào bạn");
