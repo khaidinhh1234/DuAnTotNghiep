@@ -419,13 +419,13 @@ class MoMoController extends Controller
             'phuong_thuc_thanh_toan' => 'required|string',
             'ma_xac_minh' => 'nullable|string|min:6|max:6',
         ]);
-    
+
         try {
             $user = Auth::user();
             $userId = Auth::id();
             $ma_don_hang = explode("-", $request->ma_don_hang)[0];
             $donHang = DonHang::where('ma_don_hang', $request->ma_don_hang)->first();
-    
+
             // Thanh toán qua MoMo
             if (in_array($request->phuong_thuc_thanh_toan, [DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR])) {
                 $mangRequest = [
@@ -439,13 +439,13 @@ class MoMoController extends Controller
                 $url = $this->thanhToanOnlineMomo(new Request($mangRequest));
                 return response()->json(['url' => $url->original['payUrl']]);
             }
-    
+
             // Thanh toán trực tiếp
             if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT) {
                 $donHang->update([
                     'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
                 ]);
-    
+
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
                     'tieu_de' => 'Đơn hàng đã được đặt',
@@ -454,7 +454,7 @@ class MoMoController extends Controller
                     'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
-    
+
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHang));
                 return response()->json([
@@ -464,21 +464,19 @@ class MoMoController extends Controller
                     'data' => $donHang,
                 ], 200);
             }
-    
+
             // Thanh toán qua ví tiền
             if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_VT) {
                 $viTien = $user->viTien;
-    
+
                 // Kiểm tra mã xác minh
                 if (!Hash::check($request->ma_xac_minh, $viTien->ma_xac_minh)) {
                     return response()->json([
                         'status' => false,
-
-'message' => 'Mã xác minh không chính xác.',
-
+                        'message' => 'Mã xác minh không chính xác.',
                     ], 400);
                 }
-    
+
                 // Kiểm tra số dư
                 if ($viTien->so_du < $donHang->tong_tien_don_hang) {
                     return response()->json([
@@ -486,15 +484,15 @@ class MoMoController extends Controller
                         'message' => 'Số dư trong ví tiền không đủ để thanh toán.',
                     ], 400);
                 }
-    
+
                 // Cập nhật đơn hàng và số dư
                 $donHang->update([
                     'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
                     'trang_thai_thanh_toan' => DonHang::TTTT_DTT,
                 ]);
-    
+
                 $viTien->update(['so_du' => $viTien->so_du - $donHang->tong_tien_don_hang]);
-    
+
                 LichSuGiaoDich::create([
                     'vi_tien_id' => $viTien->id,
                     'so_du_truoc' => $viTien->so_du,
@@ -502,7 +500,7 @@ class MoMoController extends Controller
                     'ngay_thay_doi' => now(),
                     'mo_ta' => "Thanh toán đơn hàng {$donHang->ma_don_hang}",
                 ]);
-    
+
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
                     'tieu_de' => 'Đơn hàng đã được đặt',
@@ -511,10 +509,10 @@ class MoMoController extends Controller
                     'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
-    
+
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 event(new SendMail($request->email_nguoi_dat_hang, $donHang->ten_nguoi_dat_hang, $donHang));
-    
+
                 return response()->json([
                     'status' => true,
                     'status_code' => 200,
