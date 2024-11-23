@@ -120,4 +120,75 @@ class DanhGiaController extends Controller
             ], 500);
         }
     }
+    public function xoaDanhGia(DanhGia $danhgia)
+    {
+        try {
+            DB::beginTransaction();
+            $danhgia->delete();
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Đánh giá đã được xóa thành công.',
+            ]);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi xóa đánh giá.',
+                'error' => $exception->getMessage(),
+            ], 500);
+        }
+    }
+    public function danhSachDanhGiaBiXoa()
+    {
+        try {
+            $danhGiasBiXoa = DanhGia::onlyTrashed()
+                ->with([
+                    'sanPham:id,ten_san_pham,anh_san_pham',
+                    'anhDanhGias:id,anh_danh_gia,danh_gia_id',
+                    'user:id,ho,ten,email',
+                ])
+                ->orderBy('deleted_at', 'desc')
+                ->get();
+
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Danh sách đánh giá đã bị xóa',
+                'data' => $danhGiasBiXoa,
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh sách đánh giá bị xóa.',
+                'error' => $exception->getMessage(),
+            ], 500);
+        }
+    }
+    public function khoiPhucDanhGia($id)
+    {
+        try {
+            DB::beginTransaction();
+            $danhGia = DanhGia::onlyTrashed()->findOrFail($id);
+            $danhGia->restore();
+            Db::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Đánh giá đã được khôi phục thành công.',
+                'data' => $danhGia,
+            ]);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi khôi phục đánh giá.',
+                'error' => $exception->getMessage(),
+            ], 500);
+        }
+    }
 }
