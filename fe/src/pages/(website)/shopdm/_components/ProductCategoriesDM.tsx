@@ -1,8 +1,8 @@
 import instanceClient from "@/configs/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Slider } from "antd";
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ProductsListDM from "./ProductListDm";
 
 const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
@@ -17,18 +17,12 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     []
   );
 
-  console.log(selectedParentIds);
-
-  console.log(selectedChildIds);
-  console.log(selectedGrandchildIds);
   // lọc giá
   const [price, setPrice] = useState([0, 1000000]);
   // size
   const [selectedSize, setselectedSize] = useState<number[]>([]);
-  console.log(selectedSize);
   // mau sac
   const [selectedMau, setSelectedMau] = useState<number[]>([]);
-  console.log(selectedMau);
   // mau sac
   const handleItemClick = (id: number) => {
     setSelectedMau(
@@ -53,25 +47,18 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   //data
   const datas = {
     ...(selectedParentIds.length > 0 && {
-      danh_muc_cha_ids: [...selectedParentIds],
+      danh_muc_con_ids: [...selectedParentIds],
     }),
     ...(selectedChildIds.length > 0 && {
-      danh_muc_con_ids: [...selectedChildIds],
+      danh_muc_chau_ids: [...selectedChildIds],
     }),
-    ...(selectedGrandchildIds.length > 0 && {
-      danh_muc_chau_ids: [...selectedGrandchildIds],
-    }),
+
     ...(price.length > 0 && { gia_duoi: price[0] }),
     ...(price.length > 0 && { gia_tren: price[1] }),
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
-    // ...(tenDanhMucCha?.length ? { danh_muc_cha: tenDanhMucCha } : {}),
-    // ...(tenDanhMucCon?.length ? { danh_muc_con: tenDanhMucConCapBa } : {}),
-    // ...(tenDanhMucConCapBa?.length
-    //   ? { danh_muc_con_cap_ba: tenDanhMucConCapBa }
-    //   : {}),
   };
-  console.log("data", datas);
+
   const danhmuc = tenDanhMucConCapBa
     ? tenDanhMucConCapBa
     : tenDanhMucCon
@@ -130,6 +117,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     childId: number,
     grandchildren: any[]
   ) => {
+    // Cập nhật trạng thái của con
     setChildChecked((prev) => ({
       ...prev,
       [parentIndex]: {
@@ -138,13 +126,27 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       },
     }));
 
+    // Cập nhật danh sách con được chọn
     if (checked) {
       setSelectedChildIds((prev) => [...prev, childId]);
       const grandchildIds = grandchildren.map(
         (grandchild: any) => grandchild.id
       );
       setSelectedGrandchildIds((prev) => [...prev, ...grandchildIds]);
+
+      // Đảm bảo cha được chọn
+      setParentChecked((prevState) => ({
+        ...prevState,
+        [parentIndex]: true,
+      }));
+      setSelectedParentIds((prev) => {
+        if (!prev.includes(parentIndex)) {
+          return [...prev, parentIndex];
+        }
+        return prev;
+      });
     } else {
+      // Bỏ chọn con
       setSelectedChildIds((prev) => prev.filter((id) => id !== childId));
       const grandchildIds = grandchildren.map(
         (grandchild: any) => grandchild.id
@@ -152,41 +154,55 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       setSelectedGrandchildIds((prev) =>
         prev.filter((id) => !grandchildIds.includes(id))
       );
+
+      // Kiểm tra nếu không còn con nào được chọn, bỏ chọn cha
+      setChildChecked((prev) => {
+        const allChildrenUnchecked = Object.values(
+          prev[parentIndex] || {}
+        ).every((isChecked) => !isChecked);
+
+        if (allChildrenUnchecked) {
+          setParentChecked((prevState) => ({
+            ...prevState,
+            [parentIndex]: false,
+          }));
+          setSelectedParentIds((prev) =>
+            prev.filter((id) => id !== parentIndex)
+          );
+        }
+        return prev;
+      });
     }
   };
 
-  //   const { data: categoriesData } = useQuery({
-  //     queryKey: ["CATEGORIES", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
-  //     queryFn: async () => {
-  //       if (!tenDanhMucCha || !tenDanhMucCon || !tenDanhMucConCapBa) return null;
-  //       const response = await instanceClient.post(`danhmuc/${tenDanhMucCha}/${tenDanhMucCon}/${tenDanhMucConCapBa}`);
-  //       return response.data;
-  //     },
-  //     enabled: !!tenDanhMucCha && !!tenDanhMucCon && !!tenDanhMucConCapBa,
-  //   });
-  // console.log(categoriesData?.data?.san_pham)
   const { data, refetch: refetch2 } = useQuery({
-    queryKey: ["PRODUCTSLOC"],
+    queryKey: ["SANPHAM_LOC", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
     queryFn: async () => {
       try {
-        const response = await instanceClient.post(`loc-san-pham`, {
-          loai_danh_muc: danhmuc,
-        });
+        let url = "danhmuc";
 
-        if (response.data.status !== true) {
-          throw new Error("Error fetching product");
+        // Ưu tiên danh mục cấp 3 -> danh mục con -> danh mục cha
+        if (tenDanhMucConCapBa) {
+          url += `/${tenDanhMucConCapBa}`;
+        } else if (tenDanhMucCon) {
+          url += `/${tenDanhMucCon}`;
+        } else if (tenDanhMucCha) {
+          url += `/${tenDanhMucCha}`;
+        } else {
+          throw new Error("Không có danh mục hợp lệ");
         }
 
+        const response = await instanceClient.post(url, datas);
         return response.data;
       } catch (error) {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
+    enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
   });
 
-  console.log("data", data?.data?.data);
-
-  // danh mục
+  const products = data?.data?.San_pham;
+  console.log(products);
   const { data: locsanpham, refetch } = useQuery({
     queryKey: ["LOCSAMPHAM"],
     queryFn: async () => {
@@ -203,68 +219,20 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       }
     },
   });
+  // console.log(locsanpham);
   useEffect(() => {
     refetch();
     refetch2();
-  }, [danhmuc, refetch, refetch2]);
-  console.log(locsanpham);
+    datas;
+  }, [danhmuc, refetch, refetch2, datas]);
+  // console.log(locsanpham);
   const mau_sac = locsanpham?.mauSac;
 
   const sizes = locsanpham?.kichThuoc;
   // console.log(sizes);
   // lọc
   const [page, setPage] = useState(1);
-  const queryClient = useQueryClient();
-  const { mutate: LOCMUTATE } = useMutation({
-    mutationFn: async () => {
-      try {
-        const response = await instanceClient.post(
-          `danhmuc?page=${page}`,
-          datas
-        );
-        if (response.data.status !== true) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["PRODUCTSLOC"], data);
-      // Chỉ invalidate nếu cần thiết, tránh reload liên tục
-      if (!isInDanhMucPage) {
-        queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
-      }
-    },
-  });
-  const { mutate } = useMutation({
-    mutationFn: async () => {
-      try {
-        // let url = "/danhmuc";
-        // if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
-        // if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
-        // if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
-        const response = await instanceClient.post(
-          `loc-san-pham?page=${page}`,
-          datas
-        );
-        if (response.data.status !== true) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
-      }
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["PRODUCTSLOC"], data);
-      // Chỉ invalidate nếu cần thiết, tránh reload liên tục
-      if (!isInDanhMucPage) {
-        queryClient.invalidateQueries({ queryKey: ["PRODUCTSLOC"] });
-      }
-    },
-  });
+
   useEffect(() => {
     const isInDanhMucPage =
       tenDanhMucCha || tenDanhMucCon || tenDanhMucConCapBa;
@@ -278,17 +246,17 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       price.length > 0
     ) {
       if (isInDanhMucPage) {
-        mutate();
+        // mutate();
       } else {
-        LOCMUTATE();
+        // LOCMUTATE();
       }
     }
   }, [
     selectedParentIds,
     selectedChildIds,
     selectedGrandchildIds,
-    mutate,
-    LOCMUTATE,
+    // mutate,
+    // LOCMUTATE,
     selectedSize,
     selectedMau,
     price,
@@ -297,11 +265,10 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   const onPage = (page: number) => {
     setPage(page);
   };
-  const danh_muc = locsanpham?.danhMucCha;
+  const danh_muc = locsanpham?.danhMucCap2;
   // console.log(danh_muc);
-  const products = data?.data?.data;
+  // const products = data?.data?.data;
   // console.log(products);
-  const location = useLocation();
 
   // toanmoi
   const [grandchildChecked, setGrandchildChecked] = useState<{
@@ -355,8 +322,9 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                   className="flex justify-between items-center cursor-pointer"
                   onClick={() => setShowcate(!showcate)}
                 >
-                  <h2 className="font-bold mb-2 text-lg capitalize">
-                    Danh mục {danhmuc}
+                  <h2 className="font-bold mb-2 text-lg normal-case">
+                    Danh mục{" "}
+                    {data?.data?.Danh_muc?.ten_danh_muc ?? "Không xác định"}
                   </h2>
                   <button className="mr-3">
                     {showcate ? (
@@ -367,7 +335,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                   </button>
                 </div>
                 {showcate ? (
-                  <div className="mt-7">
+                  <div className="mt-7 capitalize">
                     {danh_muc?.map((item: any, index: any) => (
                       <div key={index}>
                         <div className="flex justify-between items-center my-4">
@@ -384,7 +352,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                   item.children,
                                   item.id
                                 );
-                                isChecked && mutate(item.id);
+                                // isChecked && mutate(item.id);
                               }}
                             />
                             {item.ten_danh_muc}
@@ -418,24 +386,28 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                         itemcon.id,
                                         itemcon.children
                                       );
-                                      isChecked && mutate(itemcon.id);
+                                      // isChecked && mutate(itemcon.id);
                                     }}
                                   />
                                   {itemcon.ten_danh_muc}
                                 </label>
                                 <i
                                   className={`fa-solid fa-plus mr-3 cursor-pointer ${
-                                    expanded.includes(`${index}-${indexCon}`)
+                                    expanded.includes(
+                                      `${index}-${indexCon}` as any
+                                    )
                                       ? "rotate-45"
                                       : ""
                                   }`}
                                   onClick={() =>
-                                    toggleExpand(`${index}-${indexCon}`)
+                                    toggleExpand(`${index}-${indexCon}` as any)
                                   }
                                 ></i>
                               </div>
 
-                              {expanded.includes(`${index}-${indexCon}`) &&
+                              {expanded.includes(
+                                `${index}-${indexCon}` as any
+                              ) &&
                                 itemcon.children?.map(
                                   (itemconcon: any, indexConCon: any) => (
                                     <div
@@ -463,7 +435,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                               isChecked,
                                               itemconcon.id
                                             );
-                                            isChecked && mutate(itemconcon.id);
+                                            // isChecked && mutate(itemconcon.id);
                                           }}
                                         />
                                         {itemconcon.ten_danh_muc}
@@ -508,7 +480,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                         max={1000000}
                         onAfterChange={(value) => {
                           setPrice(value as [number, number]);
-                          mutate();
+                          // mutate();
                         }}
                         tipFormatter={(value: any) =>
                           `${value.toLocaleString()} đ`
@@ -584,7 +556,15 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                         }`}
                         onClick={() => handleCheckboxChange(item.id)}
                       >
-                        <span className="text-sm ">{item.kich_thuoc}</span>
+                        <span className="text-sm mr-1">{item.kich_thuoc}</span>-
+                        <span className="text-sm ml-1">
+                          {" "}
+                          {item.loai_kich_thuoc === "nam"
+                            ? "Nam"
+                            : item.loai_kich_thuoc === "nu"
+                              ? "Nữ"
+                              : "Trẻ em"}
+                        </span>{" "}
                       </div>
                     ))}
                   </div>

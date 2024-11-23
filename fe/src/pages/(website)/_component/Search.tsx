@@ -1,4 +1,3 @@
-
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Modal } from "antd";
 import { useEffect, useState, useCallback } from "react";
@@ -6,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { logo } from "@/assets/img";
-import debounce from 'lodash/debounce';
+import debounce from "lodash/debounce";
 
 interface SearchResponse {
   status: boolean;
@@ -16,8 +15,8 @@ interface SearchResponse {
     original: {
       data: {
         data: SearchResult[];
-      }
-    }
+      };
+    };
   };
 }
 
@@ -46,13 +45,15 @@ const Search = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
-  const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(null);
+  const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
+    null
+  );
   const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([]);
 
   const { data: historyData, refetch: refetchHistory } = useQuery({
-    queryKey: ['searchHistory'],
+    queryKey: ["searchHistory"],
     queryFn: async () => {
-      const response = await instanceClient.get('/lich-su-tim-kiem');
+      const response = await instanceClient.get("/lich-su-tim-kiem");
       return response.data;
     },
     enabled: isModalVisible,
@@ -73,7 +74,7 @@ const Search = () => {
   const removeSearchTerm = async (id: number) => {
     try {
       await instanceClient.delete(`/tim-kiem-goi-y/xoa/${id}`);
-      setSearchHistory(prev => prev.filter(item => item.id !== id));
+      setSearchHistory((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
       console.error("Error removing search term:", error);
     }
@@ -81,7 +82,7 @@ const Search = () => {
 
   const clearHistory = async () => {
     try {
-      await instanceClient.delete('/tim-kiem-goi-y/xoa-toan-bo');
+      await instanceClient.delete("/tim-kiem-goi-y/xoa-toan-bo");
       setSearchHistory([]);
     } catch (error) {
       console.error("Error clearing search history:", error);
@@ -132,7 +133,8 @@ const Search = () => {
               <div className="relative">
                 <img
                   src={
-                    hoveredProductId === product.id && hoveredVariantIndex !== null
+                    hoveredProductId === product.id &&
+                    hoveredVariantIndex !== null
                       ? product.mau_sac_va_anh[hoveredVariantIndex].hinh_anh
                       : product.anh_san_pham
                   }
@@ -159,15 +161,15 @@ const Search = () => {
             </Link>
 
             <p className="font-semibold text-base">
-              {product.gia_thap_nhat === product.gia_cao_nhat
-                ? `${product.gia_cao_nhat.toLocaleString("vi-VN")} đ`
-                : (
-                  <>
-                    {`${product.gia_thap_nhat.toLocaleString("vi-VN")} đ`}
-                    <i className="fa-solid fa-minus text-xs mx-1 text-slate-500"></i>
-                    {`${product.gia_cao_nhat.toLocaleString("vi-VN")} đ`}
-                  </>
-                )}
+              {product.gia_thap_nhat === product.gia_cao_nhat ? (
+                `${product.gia_cao_nhat.toLocaleString("vi-VN")} đ`
+              ) : (
+                <>
+                  {`${product.gia_thap_nhat.toLocaleString("vi-VN")} đ`}
+                  <i className="fa-solid fa-minus text-xs mx-1 text-slate-500"></i>
+                  {`${product.gia_cao_nhat.toLocaleString("vi-VN")} đ`}
+                </>
+              )}
             </p>
 
             <div className="font-bold text-base flex items-center">
@@ -175,7 +177,8 @@ const Search = () => {
                 <button
                   key={index}
                   className={`w-6 h-6 rounded-full border mr-1 ${
-                    hoveredProductId === product.id && hoveredVariantIndex === index
+                    hoveredProductId === product.id &&
+                    hoveredVariantIndex === index
                       ? "border-black"
                       : "border-gray-300 hover:border-black"
                   }`}
@@ -195,7 +198,9 @@ const Search = () => {
       return (
         <div className="p-4 flex flex-col items-center">
           <div className="flex items-center space-x-2 mb-3">
-            <h3 className="text-gray-600 font-medium mr-96">Tìm kiếm gần đây</h3>
+            <h3 className="text-gray-600 font-medium mr-96">
+              Tìm kiếm gần đây
+            </h3>
             <button
               onClick={clearHistory}
               className="text-gray-400 hover:text-gray-600"
@@ -229,7 +234,7 @@ const Search = () => {
 
   const renderSearchResults = () => {
     const products = searchResponse?.san_pham?.original?.data?.data || [];
-    
+
     return (
       <>
         {searchValue && (
@@ -293,9 +298,7 @@ const Search = () => {
         width="100vw"
         className="search-modal"
         modalRender={(modal) => (
-          <div style={{ marginTop: "-90px", padding: "0" }}>
-            {modal}
-          </div>
+          <div style={{ marginTop: "-90px", padding: "0" }}>{modal}</div>
         )}
         closeIcon={
           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
