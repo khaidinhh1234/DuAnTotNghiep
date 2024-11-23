@@ -89,8 +89,8 @@ Route::middleware([])
             // Route::get('/kich-thuoc', [TrangSanPhamController::class, 'kichThuoc'])->name('kich-thuoc');
 
             Route::post('/loc-san-pham', [TrangSanPhamController::class, 'locSanPham'])->name('loc-san-pham');
-        });
-        // ->middleware('throttle:60,1');
+        })->middleware('throttle:60,1');
+
 
         // Client Tin tức
         Route::get('load-danh-muc-tin-tuc', [ApiTinTucController::class, 'loadDanhMucTinTucVaBaiViet']);
@@ -400,27 +400,27 @@ Route::middleware(['auth.sanctum'])
 
             // Thống kê tổng quan
             Route::group([], function () {
-                Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
-               Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
-                Route::post('san-pham/ton-kho', [ThongKeTongQuanController::class, 'thongKeTongSanPham']);
-               Route::post('don-hang/chot', [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
-               Route::post('tong-quan-theo-khoang1', [ThongKeTongQuanController::class, 'thongKeTongQuanTheoKhoang1']);
-               Route::post('doanh-thu/tong', [ThongKeTongQuanController::class, 'thongKeDoanhThuTong']);
-               Route::post('loi-nhuan', [ThongKeTongQuanController::class, 'thongKeLoiNhuan']);
-               Route::post('doanh-thu/thanh-toan-online', [ThongKeTongQuanController::class, 'thongKeThanhToanOnline']);
-               Route::post('doanh-thu/thanh-toan-off', [ThongKeTongQuanController::class, 'thongKeThanhToanOff']);
-               Route::post('doanh-so-san-pham', [ThongKeTongQuanController::class, 'thongKeDoanhSoSanPham']);
-               Route::post('doanh-thu/tb', [ThongKeTongQuanController::class, 'thongKeDoanhThuTB']);
-               Route::post('don-hang/trang-thai', [ThongKeTongQuanController::class, 'trangThaiKhoangDonSoSanh']);
-               Route::post('doanh-thu/so-sanh', [ThongKeTongQuanController::class, 'doanhThuTheoKhoang']);
-               Route::post('doanh-thu-trang-thai', [ThongKeTongQuanController::class, 'thongKeTheoKhoangDoanhThuTrangThai']);
+                // Route::post('/huy-hang-theo-thang', [ThongKeTongQuanController::class, 'thongKeHuyHang']);
+                // Route::post('don-hang/hoan-hang', [ThongKeTongQuanController::class, 'thongKeHoanHang']);
+                // Route::post('san-pham/ton-kho', [ThongKeTongQuanController::class, 'thongKeTongSanPham']);
+                // Route::post('don-hang/chot', [ThongKeTongQuanController::class, 'thongKeDonHangChot']);
+                Route::post('tong-quan-theo-khoang1', [ThongKeTongQuanController::class, 'thongKeTongQuanTheoKhoang1']);
+                Route::post('doanh-thu/tong', [ThongKeTongQuanController::class, 'thongKeDoanhThuTong']);
+                Route::post('loi-nhuan', [ThongKeTongQuanController::class, 'thongKeLoiNhuan']);
+                Route::post('doanh-thu/thanh-toan-online', [ThongKeTongQuanController::class, 'thongKeThanhToanOnline']);
+                Route::post('doanh-thu/thanh-toan-off', [ThongKeTongQuanController::class, 'thongKeThanhToanOff']);
+                Route::post('doanh-so-san-pham', [ThongKeTongQuanController::class, 'thongKeDoanhSoSanPham']);
+                Route::post('doanh-thu/tb', [ThongKeTongQuanController::class, 'thongKeDoanhThuTB']);
+                Route::post('don-hang/trang-thai', [ThongKeTongQuanController::class, 'trangThaiKhoangDonSoSanh']);
+                Route::post('doanh-thu/so-sanh', [ThongKeTongQuanController::class, 'doanhThuTheoKhoang']);
+                Route::post('doanh-thu-trang-thai', [ThongKeTongQuanController::class, 'thongKeTheoKhoangDoanhThuTrangThai']);
 
-               Route::get('thanh-toan-tien-mat-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanTienMatTheoNgay']);
-               Route::get('thanh-toan-online-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanOnlineTheoNgay']);
-               Route::get('tong-quan-theo-ngay', [ThongKeTongQuanController::class, 'thongKeTongQuanTrongNgay']);
-               Route::get('doanh-thu-loi-nhuan-theo-ngay', [ThongKeTongQuanController::class, 'doanhThuLoiNhuanRoi']);
-               Route::get('doanh-thu-va-don-theo-ngay', [ThongKeTongQuanController::class, 'thongKeDoanhThuTrongNgay']);
-           })->middleware('throttle:10,1');
+                Route::get('thanh-toan-tien-mat-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanTienMatTheoNgay']);
+                Route::get('thanh-toan-online-theo-ngay', [ThongKeTongQuanController::class, 'thanhToanOnlineTheoNgay']);
+                Route::get('tong-quan-theo-ngay', [ThongKeTongQuanController::class, 'thongKeTongQuanTrongNgay']);
+                Route::get('doanh-thu-loi-nhuan-theo-ngay', [ThongKeTongQuanController::class, 'doanhThuLoiNhuanRoi']);
+                Route::get('doanh-thu-va-don-theo-ngay', [ThongKeTongQuanController::class, 'thongKeDoanhThuTrongNgay']);
+            })->middleware('throttle:10,1');
 
             Route::get('/don-hang-theo-trang-thai', [ThongKeDonHangController::class, 'thongKeDonHangTheoTrangThai']);
 

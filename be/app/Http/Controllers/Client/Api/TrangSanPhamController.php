@@ -103,7 +103,7 @@ class TrangSanPhamController extends Controller
     //         ], 500);
     //     }
     // }
-    
+
     public function layDanhMucMauSacKichThuoc(Request $request)
     {
         // $id = $request->get('id') ?? null;
@@ -114,7 +114,7 @@ class TrangSanPhamController extends Controller
 
             $danhMuc = DanhMuc::where('duong_dan', $loai)->first();
 
-            $danhMucCap2 = DanhMuc::with('children') 
+            $danhMucCap2 = DanhMuc::with('children')
                 ->where('cha_id', $danhMuc->id)
                 ->get();
 
@@ -157,7 +157,6 @@ class TrangSanPhamController extends Controller
             ], 500);
         }
     }
-
     public function locSanPham(Request $request)
     {
         DB::beginTransaction(); // Bắt đầu giao dịch

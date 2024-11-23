@@ -240,123 +240,62 @@ const UsersAdminNhanvien: React.FC = () => {
       title: "Thông tin",
       key: "thong_tin",
       width: "25%",
-      render: (record) =>
-        record.giaohanng ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              border: "1px solid #e0e0e0",
-              height: "120px",
-              padding: "15px",
-              borderRadius: "15px",
-              backgroundColor: "#f7fafd",
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-              transition: "background-color 0.3s ease",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#e0f7fa";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#f7fafd";
-            }}
-          >
-            {record.anh_nguoi_dung ? (
-              <img
-                src={record.anh_nguoi_dung}
-                alt="Avatar"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  borderRadius: "12px",
-                  marginRight: "20px",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  borderRadius: "12px",
-                  backgroundColor: "#ccc",
-                  marginRight: "20px",
-                }}
-              />
-            )}
-            <div>
-              <div
-                style={{
-                  fontWeight: "bold",
-                  marginBottom: "8px",
-                  fontSize: "16px",
-                }}
-              >
-                {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
-              </div>
-              <div style={{ color: "#888", fontSize: "16px" }}>
-                {record.email ? record.email : "Chưa có dữ liệu"}
-              </div>
-            </div>
-          </div>
-        ) : (
-          <Link
-            to={`show/${record.key}`}
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
+      render: (record) => (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            border: "1px solid white",
+            padding: "10px",
+            borderRadius: "8px",
+            backgroundColor: "#f0faff",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = "#AABBCC";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = "#f0faff";
+          }}
+        >
+          {record.anh_nguoi_dung ? (
+            <img
+              src={record.anh_nguoi_dung}
+              alt="Avatar"
+              style={{
+                width: "60px",
+                height: "60px",
+                borderRadius: "50%",
+                marginRight: "10px",
+              }}
+            />
+          ) : (
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                border: "1px solid #e0e0e0",
-                height: "120px",
-                padding: "15px",
-                borderRadius: "15px",
-                backgroundColor: "#f7fafd",
-                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                width: "50px",
+                height: "50px",
+                borderRadius: "70%",
+                backgroundColor: "#ccc",
+                marginRight: "10px",
+              }}
+            />
+          )}
+          <div>
+            <div style={{ fontWeight: "bold" }}>
+              {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+            </div>
+            <div
+              style={{
+                marginTop: "5px",
+                fontSize: "14px",
+                color: "#333",
               }}
             >
-              {/* Same content as above without the link */}
-              {record.anh_nguoi_dung ? (
-                <img
-                  src={record.anh_nguoi_dung}
-                  alt="Avatar"
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    borderRadius: "12px",
-                    marginRight: "20px",
-                    objectFit: "cover",
-                  }}
-                />
-              ) : (
-                <div
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    borderRadius: "12px",
-                    backgroundColor: "#ccc",
-                    marginRight: "20px",
-                  }}
-                />
-              )}
-              <div>
-                <div
-                  style={{
-                    fontWeight: "bold",
-                    marginBottom: "8px",
-                    fontSize: "16px",
-                  }}
-                >
-                  {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
-                </div>
-                <div style={{ color: "#888", fontSize: "16px" }}>
-                  {record.email ? record.email : "Chưa có dữ liệu"}
-                </div>
-              </div>
+              {record.email ? record.email : "Chưa có dữ liệu"}
             </div>
-          </Link>
-        ),
+          </div>
+        </div>
+      ),
     },
 
     {
