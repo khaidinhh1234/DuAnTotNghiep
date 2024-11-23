@@ -169,17 +169,23 @@ const EditProducts: React.FC = () => {
   const removeVariant = (index: number) => {
     setVariants((prev) => prev.filter((_, i) => i !== index));
   };
-
   const addVariant = (value: "color" | "size") => {
     setVariants((prev) => {
       const variantExists = prev.some((v) => v.type === value);
       if (!variantExists) {
-        return [...prev, { type: value, values: [], sizeType: selectedSizeType || undefined }];
+        if (value === 'size' && !selectedSizeType) {
+          message.warning('Vui lòng chọn loại kích thước trước');
+          return prev;
+        }
+        return [...prev, {
+          type: value,
+          values: [],
+          sizeType: value === 'size' ? selectedSizeType : undefined
+        }];
       }
       return prev;
     });
   };
-
   const groupSizesByType = (sizes: any[]) => {
     return sizes.reduce((acc, size) => {
       if (!acc[size.loai_kich_thuoc]) {
@@ -245,7 +251,31 @@ const EditProducts: React.FC = () => {
   useEffect(() => {
     generateVariantCombinations();
   }, [variants, mausac, kichthuoc]);
+  const [lockedColors, setLockedColors] = useState<number[]>([]);
 
+  useEffect(() => {
+    if (productData?.data?.bien_the_san_pham?.length > 0) {
+      const existingColors = new Set<number>();
+      productData.data.bien_the_san_pham.forEach((variant: any) => {
+        if (variant.mau_bien_the?.id) {
+          existingColors.add(variant.mau_bien_the.id);
+        }
+      });
+      setLockedColors(Array.from(existingColors));
+    }
+  }, [productData]);
+  useEffect(() => {
+    if (productData?.data?.bien_the_san_pham?.length > 0) {
+      const existingSizes = new Set<number>();
+      productData.data.bien_the_san_pham.forEach((variant: any) => {
+        if (variant.kich_thuoc_bien_the?.id) {
+          existingSizes.add(variant.kich_thuoc_bien_the.id);
+        }
+      });
+      setLockedSizes(Array.from(existingSizes));
+    }
+  }, [productData]);
+  const [lockedSizes, setLockedSizes] = useState<number[]>([]);
   useEffect(() => {
     console.log("productImage:", productImage);
     console.log("productImageList:", productImageList);
@@ -297,6 +327,7 @@ const EditProducts: React.FC = () => {
         ]);
 
         setSelectedSizeType(sizeType);
+
 
         const newCombinations = productData.data.bien_the_san_pham.map((v: any) => ({
           id: `${v.bien_the_mau_sac_id || v.mau_sac_id}-${v.bien_the_kich_thuoc_id || v.kich_thuoc_id}`,
@@ -473,6 +504,9 @@ const EditProducts: React.FC = () => {
               name="mo_ta_ngan"
               rules={[
                 { required: true, message: "Mô tả ngắn bắt buộc phải nhập!" },
+                { min: 30, message: "Mô tả ngắn phải có ít nhất 30 ký tự!" },
+                { max: 225, message: "Mô tả ngắn không được vượt quá 225 ký tự!" },
+
               ]}
             >
               <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
@@ -610,6 +644,7 @@ const EditProducts: React.FC = () => {
                           placeholder="Chọn loại kích thước"
                           onChange={handleSizeTypeChange}
                           value={selectedSizeType}
+                          disabled={variant.values.length > 0}
                         >
                           {Object.keys(groupSizesByType(kichthuoc?.data || [])).map((type) => (
                             <Select.Option key={type} value={type}>
@@ -622,12 +657,21 @@ const EditProducts: React.FC = () => {
                             mode="multiple"
                             style={{ width: "100%" }}
                             placeholder="Chọn kích thước"
-                            onChange={(values) => updateVariantValues(index, values)}
+                            onChange={(values) => {
+                              // Combine locked sizes with newly selected sizes
+                              const newValues = Array.from(new Set([...lockedSizes, ...values]));
+                              updateVariantValues(index, newValues);
+                            }}
                             value={variant.values}
                           >
                             {groupSizesByType(kichthuoc?.data || [])[selectedSizeType]?.map((size: any) => (
-                              <Select.Option key={size.id} value={size.id}>
+                              <Select.Option
+                                key={size.id}
+                                value={size.id}
+                                disabled={lockedSizes.includes(size.id)}
+                              >
                                 {size.kich_thuoc}
+                                {lockedSizes.includes(size.id) && ""}
                               </Select.Option>
                             ))}
                           </Select>
@@ -638,17 +682,25 @@ const EditProducts: React.FC = () => {
                         mode="multiple"
                         style={{ width: "100%" }}
                         placeholder="Chọn màu sắc"
-                        onChange={(values) => updateVariantValues(index, values)}
+                        onChange={(values) => {
+                          const newValues = Array.from(new Set([...lockedColors, ...values]));
+                          updateVariantValues(index, newValues);
+                        }}
                         value={variant.values}
                       >
-                        {mausac?.data.map((color: any) => (
-                          <Select.Option key={color.id} value={color.id}>
+                        {mausac?.data?.map((color: any) => (
+                          <Select.Option
+                            key={color.id}
+                            value={color.id}
+                            disabled={lockedColors.includes(color.id)}
+                          >
                             <div className="flex items-center">
                               <div
                                 className="w-4 h-4 rounded-full mr-2"
                                 style={{ backgroundColor: color.ma_mau_sac }}
                               />
                               {color.ten_mau_sac}
+                              {lockedColors.includes(color.id) && ""}
                             </div>
                           </Select.Option>
                         ))}
@@ -704,16 +756,19 @@ const EditProducts: React.FC = () => {
 
                           rules={[
                             {
-                              required: true,
-                              message: "Vui lòng nhập chi phí sản xuất!",
+                              type: "number",
+                              min: 1000,
+                              message: "Chi phí sản xuất phải lớn hơn 1000!",
                             },
-                            { type: "number", min: 1000, message: "Giá bán phải lớn hơn hoặc bằng 1000!" },
-
                             {
                               validator: (_, value) => {
-                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
+                                const giaBan = form.getFieldValue(
+                                  `gia_ban-${index}`
+                                );
                                 if (value && giaBan && value >= giaBan) {
-                                  return Promise.reject("Chi phí sản xuất  phải nhỏ hơn giá bán!");
+                                  return Promise.reject(
+                                    "Chi phí sản xuất phải nhỏ hơn giá bán!"
+                                  );
                                 }
                                 return Promise.resolve();
                               },
@@ -736,25 +791,22 @@ const EditProducts: React.FC = () => {
                           className="my-0 px-5"
                           initialValue={combo.gia_khuyen_mai}
                           rules={[
-                            { required: true, message: "Vui lòng nhập giá khuyến mãi!" },
-                            {
-                              type: "number",
-                              min: 0,
-                              message: "Giá khuyến mãi phải lớn hơn hoặc bằng 0!",
-                            },
+
                             {
                               validator: (_, value) => {
-                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
-                                if (value === 0 || (value > 0 && value >= 1000)) {
-                                  if (giaBan && value >= giaBan) {
-                                    return Promise.reject(new Error("Giá khuyến mãi phải nhỏ hơn giá bán!"));
-                                  }
-                                  return Promise.resolve();
+                                const giaBan = form.getFieldValue(
+                                  `gia_ban-${index}`
+                                );
+                                if (value && giaBan && value >= giaBan) {
+                                  return Promise.reject(
+                                    "Giá khuyến mãi phải nhỏ hơn giá bán!"
+                                  );
                                 }
-                                return Promise.reject(new Error("Giá khuyến mãi phải bằng 0 hoặc lớn hơn hoặc bằng 1000!"));
+                                return Promise.resolve();
                               },
                             },
                           ]}
+
                         >
                           <InputNumber placeholder="0" style={{ width: "100%" }} min={0} />
                         </Form.Item>

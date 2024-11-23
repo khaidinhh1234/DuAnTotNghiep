@@ -202,7 +202,7 @@ function TaiChinh() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Xác nhận mật khẩu ví</h2>
+              <h2 className="text-xl font-semibold">Xác nhận mã pin ví</h2>
               <button
                 onClick={() => navigate('/mypro/myprofile')}
                 className="text-gray-500 hover:text-gray-700"
@@ -210,7 +210,7 @@ function TaiChinh() {
                 <i className="fas fa-times"></i>
               </button>
             </div>
-            <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
+            <p className="text-gray-600 mb-6">Vui lòng nhập mã pin ví gồm 6 chữ số</p>
 
             <div className="mb-6">
               <div className="flex justify-between space-x-2">
@@ -232,7 +232,7 @@ function TaiChinh() {
                 onClick={() => setShowForgotPinModal(true)}
                 className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
               >
-                Quên mật khẩu?
+                Quên mã pin?
               </button>
             </div>
 
@@ -258,9 +258,9 @@ function TaiChinh() {
       {showForgotPinModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
+            <h2 className="text-xl font-semibold mb-4">Xác nhận quên mã pin</h2>
             <p className="text-gray-600 mb-6">
-              Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi đến email của bạn.
+              Bạn có chắc chắn muốn lấy lại mã pin? Chúng tôi sẽ gửi đến email của bạn.
             </p>
 
             <div className="flex justify-end space-x-3">

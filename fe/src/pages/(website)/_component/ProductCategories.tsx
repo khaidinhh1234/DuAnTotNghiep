@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
-import {  useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
-import { Slider } from "antd";
+import { message, Slider } from "antd";
 import SearchResultsPage from "./SearchResultsPage";
 
 const ProductCategories = ({ handleWishlist, isPending }: any) => {
@@ -50,8 +49,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ...(price.length > 0 && { gia_tren: price[1] }),
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
-    ...(query && { query: query })
-
+    ...(query && { query: query }),
   };
   // console.log(datas);
   // lọc danh mục
@@ -120,18 +118,20 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [_, setProducts] = useState([]);
   useEffect(() => {
     const fetchProducts = async () => {
-        try {
-            const response = await instanceClient.get(`/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`);
-            if (response.data.status) {
-                setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
-            }
-        } catch (error) {
-            console.error("Lỗi khi lấy sản phẩm:", error);
+      try {
+        const response = await instanceClient.get(
+          `/sanpham/danhmuc/${tenDanhMucCha}/${tenDanhMucCon}`
+        );
+        if (response.data.status) {
+          setProducts(response.data.data); // Giả sử dữ liệu trả về là mảng sản phẩm
         }
+      } catch (error) {
+        console.error("Lỗi khi lấy sản phẩm:", error);
+      }
     };
-    
+
     fetchProducts();
-}, [tenDanhMucCha, tenDanhMucCon]);
+  }, [tenDanhMucCha, tenDanhMucCon]);
   // ALL sản phẩm
   const { data } = useQuery({
     queryKey: ["PRODUCTSLOC", datas],
@@ -147,20 +147,37 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
 
   // console.log("data", data?.data?.data);
   // danh mục
-  const { data: locsanpham } = useQuery({
-    queryKey: ["LOCSLIBAR"],
-    queryFn: async () => {
-      try {
-        const response = await instanceClient.get("lay-dm-ms-kt");
-        if (response.data.status_code !== 200) {
-          throw new Error("Error fetching product");
-        }
-        return response.data;
-      } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
+// Replace the existing useQuery for locsanpham with:
+const { data: locsanpham } = useQuery({
+  queryKey: ["LOCSLIBAR"],
+  queryFn: async () => {
+    try {
+      const response = await instanceClient.post("/tim-kiem-goi-y", {
+        query: query || undefined,
+        danh_muc_cha_ids: parentIds.length > 0 ? parentIds : undefined,
+        danh_muc_con_ids: childIds.length > 0 ? childIds : undefined,
+        gia_duoi: price[0],
+        gia_tren: price[1],
+        kich_thuoc_ids: selectedSize.length > 0 ? selectedSize : undefined,
+        mau_sac_ids: selectedMau.length > 0 ? selectedMau : undefined
+      });
+
+      if (response.data.status_code !== 200) {
+        throw new Error("Error fetching filtered products");
       }
-    },
-  });
+
+      return {
+        danhMucCha: response.data.danh_sach_loc?.original?.danhMuc || [],
+        mauSac: response.data.danh_sach_loc?.original?.mauSac || [],
+        kichThuoc: response.data.danh_sach_loc?.original?.kichThuoc || []
+      };
+    } catch (error) {
+      throw new Error("Error filtering products");
+    }
+  },
+  enabled: true // Query will run immediately
+});
+
 
   const mau_sac = locsanpham?.mauSac;
 
@@ -171,8 +188,16 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async () => {
-      const response = await instanceClient.post(`/tim-kiem-goi-y?page=${page}`, datas);
-      return response.data;
+      try {
+        const response = await instanceClient.post(
+          `/tim-kiem-goi-y?page=${page}`,
+          datas
+        );
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        throw new Error("Lỗi khi lấy thông tin");
+      }
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["PRODUCTSLOC"], data);
@@ -195,8 +220,17 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
     ) {
       mutate(); // Gọi mutate khi có sự thay đổi
     }
-  }, [parentIds, childIds, mutate, selectedSize, selectedMau, price, page,query]);
-  
+  }, [
+    parentIds,
+    childIds,
+    mutate,
+    selectedSize,
+    selectedMau,
+    price,
+    page,
+    query,
+  ]);
+
   return (
     <div>
       {" "}
@@ -347,64 +381,26 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                   </button>
                 </div>
                 {showcolor ? (
-                  <div className="flex flex-col mb-12">
+                  <div className="grid grid-cols-3 gap-4 mt-5 mb-12">
                     {mau_sac?.map((item: any, index: number) => (
                       <div
                         key={index}
-                        className="flex justify-between items-center mt-3 cursor-pointer"
+                        className="flex flex-col items-center cursor-pointer"
                         onClick={() => handleItemClick(item.id)}
                       >
-                        <div className="flex items-center font-semibold">
-                          <span
-                            className={`w-6 h-6 inline-block mr-2 rounded-[4px] border ${
-                              selectedMau.includes(item.id)
-                                ? "border-[3px]  border-blue-300"
-                                : ""
-                            }`}
-                            style={{ backgroundColor: item.ma_mau_sac }}
-                          ></span>
-                          <span>{item.ten_mau_sac}</span>
-                        </div>
-                        <span className="px-3">
-                          ({item?.so_luong_san_pham})
+                        <span
+                          className={`w-7 h-7 inline-block rounded-full border-2 ${
+                            selectedMau.includes(item.id)
+                              ? "border-blue-400"
+                              : "border-gray-300"
+                          }`}
+                          style={{ backgroundColor: item.ma_mau_sac }}
+                        ></span>
+                        <span className="mt-2 text-sm font-semibold">
+                          {item.ten_mau_sac}
                         </span>
                       </div>
                     ))}
-                    {/* <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-blue-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Blue </span>
-                      </div>
-                      <span className="px-3"> (14)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-orange-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Orange </span>
-                      </div>
-                      <span className="px-3"> (8)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-black inline-block mr-2 rounded-[4px]"></span>
-                        <span>Black </span>
-                      </div>
-                      <span className="px-3"> (9)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-green-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Green </span>
-                      </div>
-                      <span className="px-3"> (4)</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-3">
-                      <div className="flex items-center font-semibold">
-                        <span className="w-6 h-6 bg-yellow-500 inline-block mr-2 rounded-[4px]"></span>
-                        <span>Yellow </span>
-                      </div>
-                      <span className="px-3"> (2)</span>
-                    </div> */}
                   </div>
                 ) : null}
               </div>
@@ -423,71 +419,40 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                   )}
                 </div>
                 {showsize ? (
-                  <div>
+                  <div className="grid grid-cols-3 gap-2">
                     {sizes?.map((item: any, index: any) => (
                       <div
-                        className="flex justify-between items-center my-4 "
                         key={index}
+                        className={`flex items-center justify-center w-15 h-10 border rounded-lg cursor-pointer ${
+                          selectedSize.includes(item.id)
+                            ? "border-blue-500 bg-blue-100"
+                            : "border-gray-300"
+                        }`}
+                        onClick={() => handleCheckboxChange(item.id)}
                       >
-                        <label className="flex font-normal">
-                          <input
-                            type="checkbox"
-                            className="mr-2"
-                            onChange={() => handleCheckboxChange(item.id)}
-                            checked={selectedSize.includes(item.id)}
-                          />
-                          {item.kich_thuoc} /{" "}
+                        <span className="text-sm mr-1">{item.kich_thuoc}</span>-
+                        <span className="text-sm ml-1">
+                          {" "}
                           {item.loai_kich_thuoc === "nam"
                             ? "Nam"
                             : item.loai_kich_thuoc === "nu"
                               ? "Nữ"
                               : "Trẻ em"}
-                        </label>
-                        <span>({item?.so_luong_san_pham})</span>
+                        </span>{" "}
                       </div>
                     ))}
-                    {/* <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> M
-                      </label>
-                      <span>(20)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> L
-                      </label>
-                      <span>(7)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XL
-                      </label>
-                      <span>(16)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XXL
-                      </label>
-                      <span>(10)</span>
-                    </div>
-                    <div className="flex justify-between items-center my-4">
-                      <label className="flex font-normal">
-                        <input type="checkbox" className="mr-2" /> XXXL
-                      </label>
-                      <span>(2)</span>
-                    </div> */}
                   </div>
                 ) : null}
               </div>
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-            <SearchResultsPage
-             data={data}
-             onPage={setPage}
-             products={data?.san_pham?.original?.data?.data || []}
+              <SearchResultsPage
+                data={data}
+                onPage={setPage}
+                products={data?.san_pham?.original?.data?.data || []}
                 Wishlist={handleWishlist}
-                 isPending={isPending}
+                isPending={isPending}
               />
             </div>
           </div>

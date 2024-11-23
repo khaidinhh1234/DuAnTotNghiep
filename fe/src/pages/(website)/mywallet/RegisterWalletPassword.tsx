@@ -56,7 +56,7 @@ const setupPasswordMutation = useMutation({
     setShowChangePassword(false);
     onClose();
     resetPasswordFields();
-    toast.success('Thiết lập mật khẩu thành công!');
+    toast.success('Thiết lập mã pin thành công!');
   },
   onError: () => {
     toast.error('Có lỗi xảy ra. Vui lòng thử lại!');
@@ -69,7 +69,7 @@ const setupPasswordMutation = useMutation({
     const oldPasswordString = oldPassword.join('');
 
     if (passwordString !== confirmPasswordString) {
-      toast.error('Mật khẩu không khớp');
+      toast.error('Mã pin không khớp');
       return;
     }
 
@@ -80,7 +80,7 @@ const setupPasswordMutation = useMutation({
 
     if (showChangePassword) {
       if (oldPasswordString.length !== 6) {
-        toast.error('Vui lòng nhập đủ 6 số cho mật khẩu cũ');
+        toast.error('Vui lòng nhập đủ 6 số cho mã pin cũ');
         return;
       }
       setupPasswordMutation.mutate({
@@ -190,7 +190,7 @@ const setupPasswordMutation = useMutation({
             }}
             className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-between"
           >
-            <span>Đăng ký mật khẩu ví</span>
+            <span>Đăng ký mã pin ví</span>
             <i className="fa-solid fa-chevron-right text-gray-400"></i>
           </button>
         ) : (
@@ -202,7 +202,7 @@ const setupPasswordMutation = useMutation({
             }}
             className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-between"
           >
-            <span>Đổi mật khẩu ví</span>
+            <span>Đổi mã pin ví</span>
             <i className="fa-solid fa-chevron-right text-gray-400"></i>
           </button>
 
@@ -241,7 +241,7 @@ const setupPasswordMutation = useMutation({
         <div className="space-y-4">
           {showChangePassword && (
             <div className="mb-6">
-              <label className="block text-gray-700 font-semibold mb-2">Nhập mật khẩu ví cũ</label>
+              <label className="block text-gray-700 font-semibold mb-2">Nhập mã pin ví cũ</label>
               <div className="flex justify-between space-x-2">
                 {oldPassword.map((digit, index) => (
                   <input
@@ -260,7 +260,7 @@ const setupPasswordMutation = useMutation({
 
           <div className="mb-6">
             <label className="block text-gray-700 font-semibold mb-2">
-              {showChangePassword ? 'Nhập mật khẩu ví mới' : 'Nhập mật khẩu ví'}
+              {showChangePassword ? 'Nhập mã pin ví mới' : 'Nhập mã pin ví'}
             </label>
             <div className="flex justify-between space-x-2">
               {password.map((digit, index) => (
@@ -278,7 +278,7 @@ const setupPasswordMutation = useMutation({
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 font-semibold mb-2">Nhập lại mật khẩu ví</label>
+            <label className="block text-gray-700 font-semibold mb-2">Nhập lại mã pin ví</label>
             <div className="flex justify-between space-x-2">
               {confirmPassword.map((digit, index) => (
                 <input
@@ -310,8 +310,8 @@ const setupPasswordMutation = useMutation({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96">
         {!showRegistration && !showChangePassword && renderMainMenu()}
-        {showRegistration && renderPasswordForm('Đăng ký mật khẩu ví')}
-        {showChangePassword && renderPasswordForm('Đổi mật khẩu ví')}
+        {showRegistration && renderPasswordForm('Đăng ký mã pin ví')}
+        {showChangePassword && renderPasswordForm('Đổi mã pin ví')}
       </div>
     </div>
   );
