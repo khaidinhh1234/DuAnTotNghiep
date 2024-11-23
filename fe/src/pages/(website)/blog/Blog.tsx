@@ -42,6 +42,7 @@ const Blog = () => {
             ) : (
                 <div className="mt-10 pl-20 pb-20">
                     {/* Hiển thị danh mục tin tức */}
+                    <h2 className="text-5xl font-bold mb-4 text-center mt-20">Danh mục tin tức</h2>
                     {data?.Danh_muc_tin_tuc?.length > 0 && (
                         <Swiper
                             spaceBetween={20}
@@ -78,12 +79,12 @@ const Blog = () => {
                         .map((category: any) => (
                             <div key={category.id} className="mb-6 mt-20">
                                 <Link to={`/danhmuctintuc/${category.duong_dan}`}>
-                                    <h2 className="text-5xl font-bold mb-4">{category.ten_danh_muc_tin_tuc}</h2>
+                                    <h2 className="text-3xl font-bold mb-0">{category.ten_danh_muc_tin_tuc}</h2>
                                 </Link>
                                 <div className="flex items-center justify-between">
-                                    <h4 className="text-2xl font-bold mb-4 mt-10">Mới nhất</h4>
+                                    <h4 className="text-xl font-bold mb-4 mt-10">Mới nhất</h4>
                                     <Link to={`/danhmuctintuc/${category.duong_dan}`}>
-                                        <h4 className="text-2xl font-bold mb-4 mt-10 text-right hover:text-red-500 mr-10">
+                                        <h4 className="text-xl font-bold mb-4 mt-10 text-right hover:text-red-500 mr-10">
                                             Xem thêm <i className="fa-solid fa-arrow-right"></i>
                                         </h4>
                                     </Link>
@@ -103,7 +104,7 @@ const Blog = () => {
                                                         <h3 className="text-2xl font-semibold hover:text-red-500">
                                                             {article.tieu_de}
                                                         </h3>
-                                                        <span className="text-xl text-gray-400">
+                                                        <span className="text-lg text-gray-400">
                                                             {article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc} | {formatDate(article.created_at)}
                                                         </span>
                                                     </Link>
