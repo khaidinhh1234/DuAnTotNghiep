@@ -19,6 +19,7 @@ use App\Models\SanPham;
 use App\Models\ThongBao;
 use App\Models\User;
 use App\Models\YeuCauRutTien;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -601,6 +602,7 @@ class DonHangClientController extends Controller
             $donHang->update([
                 'li_do_huy_hang' => $lidoHuyHang,
                 'trang_thai_don_hang' => DonHang::TTDH_DH,
+                'ngay_huy' => Carbon::now(),
             ]);
 
             if (
@@ -729,7 +731,6 @@ class DonHangClientController extends Controller
     {
         $request->validate([
             'so_tien' => 'required|numeric|min:1',
-            'ma_xac_minh' => 'required|string|min:6|max:6',
         ]);
 
         $userId = Auth::id();
@@ -742,7 +743,6 @@ class DonHangClientController extends Controller
                 'message' => 'Ví tiền không tồn tại.',
             ], 400);
         }
-        $maXacThuc = $request->input('ma_xac_minh');
         $soTien = $request->input('so_tien');
         $nganHangId = $id;
         DB::beginTransaction();
@@ -750,7 +750,6 @@ class DonHangClientController extends Controller
         try {
             $user = User::findOrFail($userId);
             $viUser = $user->viTien;
-            if (Hash::check($maXacThuc, $user->viTien->ma_xac_minh)) {
                 if ($user->viTien->so_du < $soTien) {
                     return response()->json([
                         'status' => false,
@@ -828,13 +827,6 @@ class DonHangClientController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
-
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Mã xác thực không chính xác.',
-                ], 400);
-            }
 
             DB::commit();
             return response()->json([

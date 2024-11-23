@@ -122,13 +122,13 @@ class TaiKhoanController extends Controller
             'ten_chu_tai_khoan' => 'required|string|max:255',
             'ngan_hang' => 'required|string|max:255',
             'logo_ngan_hang' => 'required|string|max:255',
-            'ma_xac_minh' => 'required|string|max:6',
+            // 'ma_xac_minh' => 'required|string|max:6',
         ]);
         try {
             $userId = Auth::id();
             $user = User::find($userId);
-            $maXacMinh = $validate['ma_xac_minh'];
-            if (Hash::check($maXacMinh, $user->viTien->ma_xac_minh)) {
+            // $maXacMinh = $validate['ma_xac_minh'];
+            // if (Hash::check($maXacMinh, $user->viTien->ma_xac_minh)) {
                 $nganHang = NganHang::firstOrCreate(
                     [
                         'user_id' => $userId,
@@ -145,13 +145,13 @@ class TaiKhoanController extends Controller
                         'logo_ngan_hang' => $validate['logo_ngan_hang'],
                     ]
                 );
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Mã xác minh không chính xác',
-                ], 400);
-            }
+            // } else {
+            //     return response()->json([
+            //         'status' => false,
+            //         'status_code' => 400,
+            //         'message' => 'Mã xác minh không chính xác',
+            //     ], 400);
+            // }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -192,11 +192,11 @@ class TaiKhoanController extends Controller
     public function huyLienKetNganHang(Request $request, $id)
     {
         $request->validate([
-            'ma_xac_minh' => 'required|string|max:6',
+            // 'ma_xac_minh' => 'required|string|max:6',
         ]);
         try {
             $user = Auth::user();
-            $maXacMinh = $request->ma_xac_minh;
+            // $maXacMinh = $request->ma_xac_minh;
             $nganHang = $user->nganHang->find($id);
             if (!$nganHang) {
                 return response()->json([
@@ -205,15 +205,15 @@ class TaiKhoanController extends Controller
                     'message' => 'Không tìm thấy ngân hàng',
                 ], 404);
             }
-            if (Hash::check($maXacMinh, $user->viTien->ma_xac_minh)) {
+            // if (Hash::check($maXacMinh, $user->viTien->ma_xac_minh)) {
                 $nganHang->delete();
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Mã xác minh không chính xác',
-                ], 400);
-            }
+            // } else {
+            //     return response()->json([
+            //         'status' => false,
+            //         'status_code' => 400,
+            //         'message' => 'Mã xác minh không chính xác',
+            //     ], 400);
+            // }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -297,13 +297,13 @@ class TaiKhoanController extends Controller
     {
         $request->validate([
             'so_tien' => 'required|numeric',
-            'ma_xac_minh' => 'required|string|max:6',
+            // 'ma_xac_minh' => 'required|string|max:6',
         ]);
         try {
             $user = Auth::user();
             $viUser = $user->viTien;
-            $maXacMinh = $request->ma_xac_minh;
-            if (Hash::check($maXacMinh, $viUser->ma_xac_minh)) {
+            // $maXacMinh = $request->ma_xac_minh;
+            // if (Hash::check($maXacMinh, $viUser->ma_xac_minh)) {
                 $giaoDichVi = GiaoDichVi::create([
                     'vi_tien_id' => $viUser->id,
                     'so_tien' => $request->so_tien,
@@ -319,13 +319,13 @@ class TaiKhoanController extends Controller
                     'ngay_thay_doi' => now(),
                     'mo_ta' => 'Nạp tiền vào ví',
                 ]);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 400,
-                    'message' => 'Mã xác minh không chính xác',
-                ], 400);
-            }
+            // } else {
+            //     return response()->json([
+            //         'status' => false,
+            //         'status_code' => 400,
+            //         'message' => 'Mã xác minh không chính xác',
+            //     ], 400);
+            // }
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
