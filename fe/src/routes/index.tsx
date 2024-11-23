@@ -147,7 +147,7 @@ import Page4 from "@/pages/(website)/_component/shop";
 
 import Page3 from "@/pages/(website)/Shopuudai/shop";
 import HoanTien from "@/pages/(website)/myOrder/_components/Hoan";
-
+import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
 const Router = () => {
   //
 
@@ -199,6 +199,7 @@ const Router = () => {
             <Route path="/mypro/notification" element={<Notification />} />{" "}
             <Route path="/mypro/notificationKm" element={<Notificationkm />} />{" "}
             <Route path="/mypro/setting" element={<Setting />} />
+            <Route path="/mypro/danhgia/:slug" element={<Danhgias />} />
             {/* <Route path="/mypro/hoanhang/:slug" element={<HoanTien />} /> */}
             <Route path="/mypro/hoanhang/:slug" element={<HoanTien />} />
             {/* <Route path="/mypro/wallet" element={<TaiChinh />} />
