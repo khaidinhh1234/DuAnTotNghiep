@@ -78,10 +78,11 @@ class TrangChiTietSpController extends Controller
                 ], 404);
             }
 
-            // Kiểm tra nếu cần tăng lượt xem (tham số `tang_luot_xem` được gửi từ frontend)
-            if ($request->has('tang_luot_xem') && $request->tang_luot_xem == true) {
+            // Tăng lượt xem sản phẩm nếu chưa được xem trong session
+            $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
+            if (!session()->has($key)) {
                 $chiTietSanPham->increment('luot_xem');
-                $chiTietSanPham->touch(); // Cập nhật `updated_at`
+                session()->put($key, true);
             }
 
             // Cập nhật trạng thái đánh giá hữu ích
@@ -324,7 +325,7 @@ class TrangChiTietSpController extends Controller
 
         // Lấy danh mục chính (nếu có cha)
         $danhMuc = $sanPham->danhMuc->cha_id ? DanhMuc::find($sanPham->danhMuc->cha_id) : $sanPham->danhMuc;
-    //  dd($danhMuc);
+        //  dd($danhMuc);
         // Lấy tên danh mục và giới tính (sử dụng cho việc lọc kích thước)
         $tenDanhMuc = strtolower($danhMuc->ten_danh_muc);
 
@@ -377,9 +378,9 @@ class TrangChiTietSpController extends Controller
         $kichThuocGoiY = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
             ->where(function ($query) use ($chieuCao, $canNang) {
                 $query->whereBetween('chieu_cao_toi_thieu', [$chieuCao - 10, $chieuCao + 10])
-                      ->orWhereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
-                      ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
-                      ->orWhereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
+                    ->orWhereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
+                    ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
+                    ->orWhereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
             })
             ->pluck('kich_thuoc');
 
