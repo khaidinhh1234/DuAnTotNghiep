@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
-use App\Events\SendMail;
 use App\Exports\SanPhamExports;
 use App\Http\Controllers\Controller;
 use App\Models\AnhBienThe;

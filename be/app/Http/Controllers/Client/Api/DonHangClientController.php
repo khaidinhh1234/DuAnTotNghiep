@@ -57,7 +57,7 @@ class DonHangClientController extends Controller
         try {
             $user = Auth::guard('api')->user();
 
-            $pageSize = $request->get('pageSize', 2);
+            $pageSize = $request->get('pageSize', 10);
             if ($request->all() == null) {
                 $donHang = DonHang::where('user_id', $user->id)->with([
                     'chiTiets.bienTheSanPham.sanPham',
@@ -129,12 +129,17 @@ class DonHangClientController extends Controller
                     'danhGias.user',
                     'vanChuyen',
                 ])
-                    ->where('trang_thai_don_hang', $request->trang_thai_don_hang)
-                    ->orWhere('ma_don_hang', 'like', '%' . $request->ma_don_hang . '%')
-                    ->orWhereHas('chiTiets.bienTheSanPham.sanPham', function ($query) use ($request) {
-                        $query->where('ten_san_pham', 'like', '%' . $request->ten_san_pham . '%');
-                    })
-                    ->orderByDesc('created_at')->paginate($pageSize);
+                ->when($request->filled('trang_thai_don_hang'), function ($query) use ($request) {
+                    $query->where('trang_thai_don_hang', 'like', $request->trang_thai_don_hang)
+                    ->orWhere('trang_thai_thanh_toan', 'like', $request->trang_thai_don_hang);
+                })
+                ->where(function ($query) use ($request) {
+                    $query->where('ma_don_hang', 'like', '%' . $request->loc . '%')
+                        ->orWhereHas('chiTiets.bienTheSanPham.sanPham', function ($query) use ($request) {
+                            $query->where('ten_san_pham', 'like', '%' . $request->loc . '%');
+                        });
+                })
+                ->orderByDesc('created_at')->paginate($pageSize);
                 // Thực hiện các tính toán cho từng đơn hàng
                 $donHang->each(function ($item) {
                     $item['tong_tien_da_giam'] = $item['tong_tien_don_hang'] - $item['so_tien_giam_gia'];
