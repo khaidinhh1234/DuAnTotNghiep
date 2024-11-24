@@ -152,6 +152,7 @@ import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
 
 import ReturnOrders1 from "@/pages/(dashboard)/dohoan/hoanhang/page";
 import ReturnOrders from "@/pages/(van_chuyen)/ReturnOrders";
+import RemoteEvaluate from "@/pages/(dashboard)/evaluate/RemoteEvaluate";
 
 const Router = () => {
   //
@@ -374,6 +375,7 @@ const Router = () => {
           <Route path="users/rank/edit/:id" element={<MemberRank />} />
           {/* Đánh giá */}
           <Route path="evaluates" element={<EvaluateAdmin />} />
+          <Route path="remote/evaluates" element={<RemoteEvaluate />} />
           {/* liên hệ */}
           <Route path="support" element={<PageSupport />} />
           <Route path="support/feedback" element={<Feedback />} />
