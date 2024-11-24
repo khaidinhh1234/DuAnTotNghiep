@@ -53,23 +53,8 @@ const ChuongTrinhUuDaiAdd: React.FC = () => {
     },
   });
 
-  const { data: categoriesData } = useQuery({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const response = await instance.get("/danhmuc");
-      return response.data;
-    },
-  });
 
-  useEffect(() => {
-    if (availableProductsData) {
-      setAvailableProducts(availableProductsData.data);
-      setFilteredProducts(availableProductsData.data);
-    }
-    if (categoriesData) {
-      setCategories(categoriesData.data);
-    }
-  }, [availableProductsData, categoriesData]);
+
 
 
   const validateDates = (_: any) => {
@@ -94,7 +79,7 @@ const ChuongTrinhUuDaiAdd: React.FC = () => {
   const handleProductChange = (selectedValues: number[]) => {
     if (!isAllSelected) {
       setSelectedProducts(selectedValues);
-      form.setFieldsValue({ san_pham: selectedValues }); // Update form values
+      form.setFieldsValue({ san_pham: selectedValues }); 
     }
   };
 
@@ -102,13 +87,13 @@ const ChuongTrinhUuDaiAdd: React.FC = () => {
     const allProductIds = filteredProducts.map(product => product.id);
     setIsAllSelected(true);
     setSelectedProducts(allProductIds);
-    form.setFieldsValue({ san_pham: allProductIds }); // Update form values
+    form.setFieldsValue({ san_pham: allProductIds }); 
   };
 
   const handleDeselectAll = () => {
     setIsAllSelected(false);
     setSelectedProducts([]);
-    form.setFieldsValue({ san_pham: [] }); // Update form values
+    form.setFieldsValue({ san_pham: [] }); 
   };
 
   const getAllChildCategories = (category: IDanhMuc): string[] => {
@@ -358,19 +343,8 @@ const ChuongTrinhUuDaiAdd: React.FC = () => {
                 </Col>
               </Row> */}
 <Row gutter={16}>
-  <Col span={5}>
-    <Form.Item label="Lọc ">
-      <TreeSelect
-        treeData={renderTreeNodes(categories)}
-        onChange={handleCategoryChange}
-        treeCheckable
-        showCheckedStrategy={TreeSelect.SHOW_PARENT}
-        placeholder="Chọn danh mục"
-        style={{ width: '100%' }}
-      />
-    </Form.Item>
-  </Col>
-  <Col span={15}>
+
+  <Col span={19}>
     <Form.Item
       label="Sản phẩm áp dụng"
       name="san_pham"

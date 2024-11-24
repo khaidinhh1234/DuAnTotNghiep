@@ -34,6 +34,7 @@ interface DataType {
   noi_dung: string;
   trang_thai: number;
   tongSoLuong: number;
+  ma_san_pham: string;
 }
 
 export interface Category {
@@ -100,6 +101,24 @@ const ProductsAdmin: React.FC = () => {
     },
   });
 
+  const { mutate: mutateExcel } = useMutation({
+    mutationFn: async () => {
+      const res = await instance.get("sanpham/exports", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "sanpham.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    onError: (error) => {
+      console.error("Error exporting excel:", error);
+      message.error("Xuất file excel thất bại");
+    },
+  });
   const bulkActionMutation = useMutation({
     mutationFn: async ({
       action,
@@ -289,6 +308,14 @@ const ProductsAdmin: React.FC = () => {
       sorter: (a, b) => a.ten_san_pham.localeCompare(b.ten_san_pham),
     },
     {
+      title: "Mã sản phẩm",
+      dataIndex: "ma_san_pham",
+      key: "ma_san_pham",
+      width: "15%",
+      ...getColumnSearchProps("ma_san_pham"),
+      sorter: (a, b) => a.ma_san_pham.localeCompare(b.ma_san_pham),
+    },
+    {
       title: "Danh mục",
       dataIndex: "ten_danh_muc",
       key: "ten_danh_muc",
@@ -296,11 +323,13 @@ const ProductsAdmin: React.FC = () => {
       ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a, b) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
     },
+
     {
       title: "Kho",
       dataIndex: "tongSoLuong",
       key: "tongSoLuong",
       width: "15%",
+      sorter: (a, b) => a.tongSoLuong - b.tongSoLuong,
       render: (text) => {
         return text ? (
           `${text.toLocaleString()} `
@@ -369,7 +398,8 @@ const ProductsAdmin: React.FC = () => {
           item?.danh_muc?.ten_danh_muc
             .toLowerCase()
             .includes(value.toLowerCase()) ||
-          item?.mo_ta_ngan?.toLowerCase().includes(value.toLowerCase())
+          item?.mo_ta_ngan?.toLowerCase().includes(value.toLowerCase()) ||
+          item?.ma_san_pham?.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredData(filtered || []);
     } else {
@@ -438,9 +468,9 @@ const ProductsAdmin: React.FC = () => {
             <Button
               type="primary"
               className=" text-white font-bold py-2 px-5 rounded h-8"
-              // onClick={() => handleKeyDown}
+              onClick={() => mutateExcel()}
             >
-              Xuất dữ liệu Excel
+              {isLoading ? "Đang tải..." : "Xuất Excel"}
             </Button>
           </div>
         </div>

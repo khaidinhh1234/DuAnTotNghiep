@@ -55,4 +55,8 @@ class SanPham extends Model
         return $this->belongsToMany(User::class, 'san_pham_yeu_thich', 'san_pham_id', 'user_id');
     }
 
+    public function boSuuTap()
+    {
+        return $this->belongsToMany(BoSuuTap::class, 'bo_suu_tap_san_pham', 'san_pham_id', 'bo_suu_tap_id');
+    }
 }

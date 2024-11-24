@@ -60,7 +60,7 @@
 }
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   Autoplay,
@@ -71,7 +71,7 @@ import {
 } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import instance from "@/configs/admin";
-import { Button, Modal, Image, Rate } from "antd";
+import { Button, Modal, Image, Rate, message } from "antd";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/free-mode";
@@ -591,13 +591,13 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                       </span>
                     </div>
                     <div>
-                      <Button
+                      {/* <Button
                         type="primary"
                         className=" text-white font-bold py-2 px-4 rounded h-8"
-                        // onClick={() => handleKeyDown}
+                        onClick={() => mutateExcel()}
                       >
                         Xuất dữ liệu Excel
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </div>

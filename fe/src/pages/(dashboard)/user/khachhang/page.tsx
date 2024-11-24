@@ -60,13 +60,13 @@ const UsersAdminkhachhang: React.FC = () => {
         const res = await instance.delete(`/taikhoan/${id}`);
         message.open({
           type: "success",
-          content: "Xóa thành công",
+          content: "Chặn tài khoản thành công",
         });
         return res.data;
       } catch (error) {
         message.open({
           type: "error",
-          content: "Xóa thất bại",
+          content: "Chặn tài khoản thất bại",
         });
       }
     },

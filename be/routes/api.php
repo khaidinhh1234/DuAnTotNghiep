@@ -127,7 +127,7 @@ Route::middleware([])
         Route::get('bo-suu-tap/{slug}', [BoSuuTapController::class, 'show']);
 
         Route::middleware('auth.sanctum')->group(function () {
-            // xóa lịch xử tìm kiếm
+            // Xóa lịch xử tìm kiếm
             Route::delete('tim-kiem-goi-y/xoa-toan-bo', [TrangChuController::class, 'xoaLichSuTimKiem']);
             Route::delete('tim-kiem-goi-y/xoa/{id}', [TrangChuController::class, 'xoaMotLichSuTimKiem']);
 
@@ -200,6 +200,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('danhmuc/thung-rac', [DanhMucController::class, 'danhSachDanhMucDaXoa'])->name('danhmuc.thungrac');
                 Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
                 Route::post('danhmuc/thung-rac/{id}', [DanhMucController::class, 'khoiPhucDanhMuc'])->name('danhmuc.khoiphuc');
+                Route::get('/xuatfile', [DanhMucController::class, 'exportDanhMuc'])->withoutMiddleware('auth.checkrole');
                 Route::get('danhmuc/{id}', [DanhMucController::class, 'show'])->name('danhmuc.show');
                 Route::get('danhmuc/loadAll', [DanhMucController::class, 'loadAll'])->name('danhmuc.loadAll');
             });

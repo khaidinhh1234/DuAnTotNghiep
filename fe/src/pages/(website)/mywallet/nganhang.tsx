@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import instanceClient from "@/configs/client";
 import CreditCardForm from "./cart";
@@ -46,22 +46,8 @@ const BankAccount = () => {
   const [showCreditCardModal, setShowCreditCardModal] = useState(false);
   const [selectedBank, setSelectedBank] = useState<Bank | null>(null);
   const [selectedBanks, setSelectedBanks] = useState<string[]>([]);
-  const [showPinRegistrationModal, setShowPinRegistrationModal] = useState(false);
-  const [showPinModal, setShowPinModal] = useState(false);
-  const [showForgotPinModal, setShowForgotPinModal] = useState(false);
-  const [selectedBankToDelete, setSelectedBankToDelete] = useState<string | null>(null);
-  const [pins, setPins] = useState(['', '', '', '', '', '']);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
-  const { data: walletData } = useQuery({
-    queryKey: ['walletStatus'],
-    queryFn: async () => {
-      const response = await instanceClient.get('/vi-tai-khoan');
-      return response.data;
-    }
-  });
 
   const { data: linkedBanks = [], isLoading, isError } = useQuery({
     queryKey: ['linkedBanks'],
@@ -71,38 +57,17 @@ const BankAccount = () => {
     staleTime: 0
   });
 
-  const forgotPinMutation = useMutation({
-    mutationFn: async () => {
-      const response = await instanceClient.get('/quen-ma-xac-minh');
-      return response.data;
-    },
-    onSuccess: () => {
-      toast.success('Yêu cầu lấy lại mã PIN đã được gửi đến email của bạn');
-      setShowForgotPinModal(false);
-    },
-    onError: (error: any) => {
-      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
-      toast.error(errorMessage);
-    }
-  });
-
   const deleteBankMutation = useMutation({
-    mutationFn: (data: { bankId: string, ma_xac_minh: string }) => {
-      return instanceClient.post(`/huy-lien-ket-ngan-hang/${data.bankId}`, {
-        ma_xac_minh: data.ma_xac_minh
-      });
+    mutationFn: (bankId: string) => {
+      return instanceClient.post(`/huy-lien-ket-ngan-hang/${bankId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['linkedBanks'] });
       toast.success('Xóa tài khoản ngân hàng thành công');
-      setShowPinModal(false);
-      setSelectedBankToDelete(null);
-      resetPins();
     },
     onError: (error: any) => {
       const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
       toast.error(errorMessage);
-      resetPins();
     }
   });
 
@@ -111,10 +76,6 @@ const BankAccount = () => {
   };
 
   const handleBankSelection = (bank: any) => {
-    if (!walletData?.status) {
-      setShowPinRegistrationModal(true);
-      return;
-    }
     setSelectedBank({
       name: bank?.name,
       logo: bank?.logo,
@@ -134,10 +95,6 @@ const BankAccount = () => {
   };
 
   const handleWithdraw = () => {
-    if (!walletData?.status) {
-      setShowPinRegistrationModal(true);
-      return;
-    }
     const selectedBankId = selectedBanks[0];
     const selectedBank = linkedBanks.find((bank: { id: string }) => bank.id === selectedBankId);
     navigate('/mypro/WithdrawPage', {
@@ -157,87 +114,8 @@ const BankAccount = () => {
     setSelectedBanks(checked ? [bankId] : []);
   };
 
-  const handleAddBankClick = () => {
-    if (!walletData?.status) {
-      setShowPinRegistrationModal(true);
-      return;
-    }
-    setShowBankSelection(true);
-  };
-
   const handleDeleteBank = (bankId: string) => {
-    if (walletData?.status) {
-      setSelectedBankToDelete(bankId);
-      setShowPinModal(true);
-    } else {
-      setShowPinRegistrationModal(true);
-    }
-  };
-
-  const resetPins = () => {
-    setPins(['', '', '', '', '', '']);
-    inputRefs.current[0]?.focus();
-  };
-
-  const handleChange = (index: number, value: string) => {
-    if (value.match(/^[0-9]$/)) {
-      const newPins = [...pins];
-      newPins[index] = value;
-      setPins(newPins);
-      if (index < 5) {
-        inputRefs.current[index + 1]?.focus();
-      }
-    }
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !pins[index] && index > 0) {
-      const newPins = [...pins];
-      newPins[index - 1] = '';
-      setPins(newPins);
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handlePinSubmit = () => {
-    if (selectedBankToDelete) {
-      deleteBankMutation.mutate({
-        bankId: selectedBankToDelete,
-        ma_xac_minh: pins.join('')
-      });
-    }
-  };
-
-  const PinRegistrationModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-    if (!isOpen) return null;
-
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 w-96">
-          <h2 className="text-xl font-semibold mb-4">Chưa đăng ký mã PIN</h2>
-          <p className="text-gray-600 mb-6">Bạn cần đăng ký mã PIN để thực hiện thao tác này</p>
-          <div className="flex justify-end space-x-3">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800"
-            >
-              Đóng
-            </button>
-            <button
-              onClick={() => {
-                navigate('/mypro/wallet', {
-                  state: { openSettings: true }
-                });
-                onClose();
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Đăng ký PIN
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    deleteBankMutation.mutate(bankId);
   };
 
   if (isLoading) {
@@ -260,11 +138,9 @@ const BankAccount = () => {
     <div className="w-full h-screen relative">
       <div className="flex items-center justify-between px-4 py-4 bg-white font-bold text-lg border-b border-gray-200">
         <div className="flex items-center">
-        <Link to="/mypro/wallet">
-
-         <i className="fa-light fa-wallet mr-2"></i>
-         </Link>
-
+          <Link to="/mypro/wallet">
+            <i className="fa-light fa-wallet mr-2"></i>
+          </Link>
           Tài khoản Ngân hàng liên kết
         </div>
         {selectedBanks.length > 0 && (
@@ -309,9 +185,9 @@ const BankAccount = () => {
                   <div className="font-medium">{bank.bankName}</div>
                   <div className="text-sm text-gray-500">{bank.accountHolder}</div>
                 </div>
-                <div className="text-gray-500">*{bank.accountNumber.slice(-4)}</div>
+                <div className="text-gray-500">***{bank.accountNumber.slice(-4)}</div>
                 <div className={`w-3 h-3 ml-2 transform border-r-2 border-b-2 border-gray-500 transition-transform duration-200 ${selectedBankId === bank.id ? 'rotate-[225deg]' : 'rotate-45'}`}></div>
-                </div>
+              </div>
               <div 
                 className={`bg-gray-50 overflow-hidden transition-all duration-300 ease-in-out ${
                   selectedBankId === bank.id ? 'max-h-64 py-4' : 'max-h-0'
@@ -345,7 +221,7 @@ const BankAccount = () => {
           ))}
           <div 
             className="flex items-center px-4 py-4 bg-white border-b border-gray-200 cursor-pointer hover:bg-gray-100 text-gray-500"
-            onClick={handleAddBankClick}
+            onClick={() => setShowBankSelection(true)}
           >
             <i className="fa-light fa-square-plus mr-2"></i>
             Thêm Tài khoản Ngân hàng liên kết
@@ -380,88 +256,6 @@ const BankAccount = () => {
           </div>
         </div>
       )}
-
-      {showPinModal && walletData?.status && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4">Xác nhận mật khẩu ví</h2>
-            <p className="text-gray-600 mb-6">Vui lòng nhập mật khẩu ví gồm 6 chữ số</p>
-
-            <div className="mb-6">
-              <div className="flex justify-between space-x-2">
-                {pins.map((pin, index) => (
-                  <input
-                    key={index}
-                    type="password"
-                    maxLength={1}
-                    value={pin}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    onChange={(e) => handleChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                ))}
-              </div>
-              <button 
-                onClick={() => setShowForgotPinModal(true)}
-                className="text-blue-600 hover:text-blue-800 text-sm mt-4 block"
-              >
-                Quên mật khẩu?
-              </button>
-            </div>
-
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => {
-                  resetPins();
-                  setShowPinModal(false);
-                  setSelectedBankToDelete(null);
-                }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handlePinSubmit}
-                disabled={pins.some(pin => !pin) || deleteBankMutation.isPending}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                {deleteBankMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showForgotPinModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4">Xác nhận quên mật khẩu</h2>
-            <p className="text-gray-600 mb-6">Bạn có chắc chắn muốn lấy lại mật khẩu ví? Chúng tôi sẽ gửi đến email của bạn.</p>
-
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowForgotPinModal(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={() => forgotPinMutation.mutate()}
-                disabled={forgotPinMutation.isPending}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
-                {forgotPinMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <PinRegistrationModal 
-        isOpen={showPinRegistrationModal} 
-        onClose={() => setShowPinRegistrationModal(false)} 
-      />
     </div>
   );
 };

@@ -176,65 +176,6 @@ const UsersAdminNhanvien: React.FC = () => {
       key: "key",
       className: "pl-5",
     },
-    // {
-    //   title: "Thông tin",
-    //   key: "thong_tin",
-    //   width: "30%",
-    //   render: (record) => (
-    //     <Link to={`show/${record.key}`} style={{ textDecoration: "none", color: "inherit" }}>
-    //       <div
-    //         style={{
-    //           display: "flex",
-    //           alignItems: "center",
-    //           border: "1px solid white",
-    //           height: "30px",
-    //           padding: "60px",
-    //           borderRadius: "8px",
-    //           backgroundColor: "#f0faff",
-    //           transition: "background-color 0.3s ease",
-    //         }}
-    //         onMouseOver={(e) => {
-    //           e.currentTarget.style.backgroundColor = "#AABBCC";
-    //         }}
-    //         onMouseOut={(e) => {
-    //           e.currentTarget.style.backgroundColor = "#f0faff";
-    //         }}
-    //       >
-    //         {record.anh_nguoi_dung ? (
-    //           <img
-    //             src={record.anh_nguoi_dung}
-    //             alt="Avatar"
-    //             style={{ width: "60px", height: "60px", borderRadius: "50%", marginRight: "10px" }}
-    //           />
-    //         ) : (
-    //           <div
-    //             style={{
-    //               width: "50px",
-    //               height: "50px",
-    //               borderRadius: "70%",
-    //               backgroundColor: "#ccc",
-    //               marginRight: "10px",
-    //             }}
-    //           />
-    //         )}
-    //         <div>
-    //           <div style={{ fontWeight: "bold" }}>
-    //             {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
-    //           </div>
-    //           <div
-    //             style={{
-    //               marginTop: "5px",
-    //               fontSize: "14px",
-    //               color: "#333",
-    //             }}
-    //           >
-    //             {record.email ? record.email : "Chưa có dữ liệu"}
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </Link>
-    //   ),
-    // },
 
     {
       title: "Thông tin",
@@ -313,75 +254,27 @@ const UsersAdminNhanvien: React.FC = () => {
         )),
       key: "vai_tros",
       width: "15%",
-      sorter: (a: any, b: any) => a.vai_tros.length - b.vai_tros.length,
+      sorter: (a: any, b: any) => a.so_dien_thoai - b.so_dien_thoai,
     },
 
-    // {
-    //   title: "Ảnh người dùng",
-    //   render: (record) =>
-    //     record.anh_nguoi_dung ? (
-    //       <Image
-    //         src={record.anh_nguoi_dung}
-    //         alt=""
-    //         className="w-20 h-20 object-cover rounded-lg p-2 border"
-    //       />
-    //     ) : (
-    //       <img
-    //         src="https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
-    //         alt=""
-    //         className="w-20 h-20 object-cover rounded-lg p-2 border"
-    //       />
-    //     ),
-    //   className: "pl-10",
-    //   width: "15%",
-    //   key: "anh_nguoi_dung",
-    // },
-    // {
-    //   title: "Tên",
-    //   dataIndex: "ten",
-    //   key: "ten",
-    //   width: "5%",
-    //   ...getColumnSearchProps("ten"),
-    //   sorter: (a: any, b: any) => a.ten.length - b.ten.length,
-    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
-    // },
-    // {
-    //   title: "Họ",
-    //   dataIndex: "ho",
-    //   key: "ho",
-    //   width: "5%",
-    //   ...getColumnSearchProps("ho"),
-    //   sorter: (a: any, b: any) => a.ho.length - b.ho.length,
-    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
-    // },
-    // {
-    //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
-    //   width: "20%",
-    //   ...getColumnSearchProps("email"),
-    //   sorter: (a: any, b: any) => a.email.length - b.email.length,
-    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
-    // },
     {
       title: "Số điện thoại",
       dataIndex: "so_dien_thoai",
       key: "so_dien_thoai",
       width: "15%",
       ...getColumnSearchProps("so_dien_thoai"),
-      sorter: (a: any, b: any) =>
-        a.so_dien_thoai.length - b.so_dien_thoai.length,
+      sorter: (a: any, b: any) => a.so_dien_thoai - b.so_dien_thoai,
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
-    // {
-    //   title: "Địa chỉ",
-    //   dataIndex: "dia_chi",
-    //   key: "dia_chi",
-    //   width: "20%",
-    //   ...getColumnSearchProps("dia_chi"),
-    //   sorter: (a: any, b: any) => a.dia_chi.length - b.dia_chi.length,
-    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
-    // },
+    {
+      title: "Địa chỉ",
+      dataIndex: "dia_chi",
+      key: "dia_chi",
+      width: "20%",
+      sorter: (a: any, b: any) =>
+        (a.dia_chi?.length || 0) - (b.dia_chi?.length || 0),
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
+    },
     {
       title: "Giới tính",
       dataIndex: "gioi_tinh",
@@ -391,14 +284,6 @@ const UsersAdminNhanvien: React.FC = () => {
       sorter: (a: any, b: any) => (a.gioi_tinh || 0) - (b.gioi_tinh || 0),
       render: (text) => (text == 1 ? "Nam" : text == 2 ? "Nữ" : "Khác"),
     },
-    // {
-    //   title: "Ngày sinh",
-    //   dataIndex: "ngay_sinh",
-    //   key: "ngay_sinh",
-    //   width: "15%",
-    //   ...getColumnSearchProps("ngay_sinh"),
-    //   render: (text) => (text ? text : "Chưa có dữ liệu"),
-    // },
 
     {
       title: "Quản trị",
@@ -424,11 +309,6 @@ const UsersAdminNhanvien: React.FC = () => {
               Chỉnh sửa
             </Button>
           </Link>{" "}
-          {/* <Link to={`show/${record.key}`}>
-            <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
-              xem
-            </Button>
-          </Link> */}
         </Space>
       ),
     },
@@ -451,7 +331,9 @@ const UsersAdminNhanvien: React.FC = () => {
         (item: any) =>
           item.ten?.toLowerCase().includes(value.toLowerCase()) ||
           item.email?.toLowerCase().includes(value.toLowerCase()) ||
-          item.ho?.toLowerCase().includes(value.toLowerCase())
+          item.ho?.toLowerCase().includes(value.toLowerCase()) ||
+          item.so_dien_thoai?.toLowerCase().includes(value.toLowerCase()) ||
+          item.dia_chi?.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredData(filtered || []);
     } else {
@@ -497,7 +379,7 @@ const UsersAdminNhanvien: React.FC = () => {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
+          className="flex-grow max-w-[300px]"
         />
       </div>
       <div className=" ">

@@ -44,8 +44,11 @@ class GioHangController extends Controller
                 )
                 ->get();
 
-            $gioHangs->transform(function ($item) {
+            $messages = [];
+
+            $gioHangs->transform(function ($item) use (&$messages) {
                 if ($item->so_luong > $item->kho_hang) {
+                    $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã được cập nhật số lượng vì vượt quá kho.";
                     $item->so_luong = $item->kho_hang;
 
                     DB::table('gio_hangs')
@@ -67,7 +70,8 @@ class GioHangController extends Controller
                     $item->gia_hien_tai = $item->gia_khuyen_mai;
                 }
 
-                if ($item->trang_thai === 0) {
+                if ($item->trang_thai === 0 || $item->kho_hang === 0) {
+                    $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã bị xóa khỏi giỏ hàng vì không còn khả dụng.";
                     DB::table('gio_hangs')
                         ->where('id', $item->id)
                         ->update(['deleted_at' => now()]);
@@ -95,6 +99,7 @@ class GioHangController extends Controller
                 'san_pham_giam_gia' => $sanPhamGiamGia->values(),
                 'san_pham_nguyen_gia' => $sanPhamNguyenGia->values(),
                 'tong_so_luong' => $tongSoLuong,
+                'thong_bao' => $messages,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -104,6 +109,7 @@ class GioHangController extends Controller
         }
     }
 
+
     public function store(Request $request)
     {
         try {
@@ -111,6 +117,13 @@ class GioHangController extends Controller
                 'bien_the_san_pham_id' => 'required|exists:bien_the_san_phams,id',
                 'so_luong' => 'required|integer|min:1',
             ]);
+
+            if(Auth::user()->vaiTros()->whereNot('ten_vai_tro', 'Khách hàng')->exists()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Không thể thêm sản phẩm vào giỏ hàng.'
+                ]);
+            }
 
             $bienTheSanPham = BienTheSanPham::findOrFail($request->bien_the_san_pham_id);
 

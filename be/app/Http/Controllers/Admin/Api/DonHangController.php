@@ -230,7 +230,6 @@ class DonHangController extends Controller
                     continue;
                 }
 
-
                 $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
 
                 // Kiểm tra nếu trạng thái mới là 'hoàn tất' và cập nhật hạng thành viên

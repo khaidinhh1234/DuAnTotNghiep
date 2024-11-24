@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Table, Space, Tag, Button, message, Popconfirm, Modal } from "antd";
+import {
+  Table,
+  Space,
+  Tag,
+  Button,
+  message,
+  Popconfirm,
+  Modal,
+  Tabs,
+} from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TableColumnsType } from "antd";
 import instance from "@/configs/admin";
@@ -41,6 +50,7 @@ const WithdrawalRequests: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<string>("Tất cả");
 
   const { data, isLoading } = useQuery({
     queryKey: ["withdrawal-requests"],
@@ -61,9 +71,6 @@ const WithdrawalRequests: React.FC = () => {
       message.success("Xác nhận rút tiền thành công");
       queryClient.invalidateQueries({ queryKey: ["withdrawal-requests"] });
     },
-    onError: () => {
-      message.error("Xác nhận rút tiền thất bại");
-    },
   });
   const { mutate: rejectWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
@@ -75,9 +82,6 @@ const WithdrawalRequests: React.FC = () => {
     onSuccess: () => {
       message.success("Từ chối yêu cầu rút tiền thành công");
       queryClient.invalidateQueries({ queryKey: ["withdrawal-requests"] });
-    },
-    onError: () => {
-      message.error("Từ chối yêu cầu rút tiền thất bại");
     },
   });
   const showBankModal = (bankInfo: BankInfo) => {
@@ -102,13 +106,14 @@ const WithdrawalRequests: React.FC = () => {
       currency: "VND",
     }).format(amount);
   };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Đã rút":
         return "green";
       case "Chờ duyệt":
         return "blue";
-      case "Từ chối":
+      case "Thất bại":
         return "red";
       default:
         return "default";
@@ -302,9 +307,7 @@ const WithdrawalRequests: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="text-lg font-semibold">
-                        <span className="uppercase">
-                          {selectedBank.ten_chu_tai_khoan}
-                        </span>{" "}
+                        Chủ TK: {selectedBank.ten_chu_tai_khoan}
                       </p>
                       <CopyOutlined
                         className="cursor-pointer hover:text-blue-400 transition-colors -mt-4"

@@ -185,7 +185,24 @@ const CategoriesAdmin: React.FC = () => {
         text
       ),
   });
-
+  const { mutate: mutateExoprt } = useMutation({
+    mutationFn: async () => {
+      const res = await instance.get("xuatfile", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "danhmuc.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    onError: (error) => {
+      console.error("Error exporting excel:", error);
+      message.error("Xuất file excel thất bại");
+    },
+  });
   const columns: TableColumnsType<ICategories> = [
     {
       // dataIndex: 'index',
@@ -310,7 +327,7 @@ const CategoriesAdmin: React.FC = () => {
             <Button
               type="primary"
               className=" text-white font-bold py-2 px-4 rounded h-8"
-              // onClick={() => handleKeyDown}
+              onClick={() => mutateExoprt()}
             >
               Xuất dữ liệu Excel
             </Button>

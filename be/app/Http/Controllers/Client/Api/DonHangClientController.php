@@ -350,6 +350,7 @@ class DonHangClientController extends Controller
             ]);
         }
     }
+
     public function taoDonHang(Request $request)
     {
         $request->validate([
@@ -363,11 +364,20 @@ class DonHangClientController extends Controller
             'ma_xac_minh' => 'nullable|string|max:6',
         ]);
 
-        DB::beginTransaction();
+        $userId = Auth::id();
+        $user = User::findOrFail($userId);
 
+        if ($user->vaiTros()->where('ten_vai_tro', '!=', 'Khách hàng')->exists()) {
+            $vaiTroKhongHopLe = $user->vaiTros()->where('ten_vai_tro', '!=', 'Khách hàng')->pluck('ten_vai_tro')->first();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Không thể đặt hàng với vai trò ' . $vaiTroKhongHopLe,
+            ]);
+        }
         try {
-            $userId = Auth::id();
-            $user = User::findOrFail($userId);
+            DB::beginTransaction();
+
             $sanPhamDuocChon = DB::table('gio_hangs')
                 ->join('bien_the_san_phams', 'gio_hangs.bien_the_san_pham_id', '=', 'bien_the_san_phams.id')
                 ->join('san_phams', 'bien_the_san_phams.san_pham_id', '=', 'san_phams.id')
@@ -388,7 +398,7 @@ class DonHangClientController extends Controller
                 $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
 
                 if ($sanPham->so_luong > $bienTheSanPham->so_luong_bien_the) {
-                    return response()->json(['status' => false, 'message' => 'Số lượng sản phẩm không hợp lệ.'], 400);
+                    return response()->json(['status' => false, 'message' => "Sản phẩm {$bienTheSanPham->sanPham->ten_san_pham} không đủ hàng hoặc hết hàng"], 400);
                 }
 
                 $gia = $bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $bienTheSanPham->gia_khuyen_mai ?? $bienTheSanPham->gia_ban;
@@ -485,7 +495,9 @@ class DonHangClientController extends Controller
             }
 
             foreach ($sanPhamDuocChon as $sanPham) {
-                $bienTheSanPham = BienTheSanPham::findOrFail($sanPham->bien_the_san_pham_id);
+                $bienTheSanPham = BienTheSanPham::where('id', $sanPham->bien_the_san_pham_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
                 $soLuongMua = $sanPham->so_luong;
 
                 $bienTheSanPham->so_luong_bien_the -= $soLuongMua;

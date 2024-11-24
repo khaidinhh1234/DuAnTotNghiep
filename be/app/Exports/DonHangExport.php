@@ -52,11 +52,11 @@ class DonHangExport implements FromCollection, WithHeadings, WithMapping
             $kichThuoc = $chiTiet->bienTheSanPham->kichThuocBienThe->kich_thuoc ?? 'Không có';
 
             return "Sản Phẩm: " . $chiTiet->bienTheSanPham->sanPham->ten_san_pham .
-                   " - Màu: " . $mauSac .
-                   " - Kích Thước: " . $kichThuoc .
-                   " - Số Lượng: " . $chiTiet->so_luong .
-                   " - Giá: " . number_format($chiTiet->gia, 0, ',', '.') .
-                   " - Thành Tiền: " . number_format($chiTiet->thanh_tien, 0, ',', '.');
+                " - Màu: " . $mauSac .
+                " - Kích Thước: " . $kichThuoc .
+                " - Số Lượng: " . $chiTiet->so_luong .
+                " - Giá: " . number_format($chiTiet->gia, 0, ',', '.') .
+                " - Thành Tiền: " . number_format($chiTiet->thanh_tien, 0, ',', '.');
         })->implode('; ');
 
         return [
