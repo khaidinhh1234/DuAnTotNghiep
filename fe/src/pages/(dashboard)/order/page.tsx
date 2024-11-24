@@ -52,7 +52,7 @@ const datas = [
   },
   {
     value: "2",
-    label: "Hoàn tất đơn hàng",
+    label: "Hoàn tất Chuẩn bị",
   },
   {
     value: "3",
@@ -74,7 +74,6 @@ const OrderAdmin: React.FC = () => {
       return response.data;
     },
   });
-  console.log("sadfda", data);
   const order: DataType[] | undefined = data?.data;
   const handleDateChange = (_: any, dateStrings: [string, string]) => {
     const startDate = new Date(dateStrings[0]);
@@ -432,6 +431,7 @@ const OrderAdmin: React.FC = () => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [trangthai, setTrangThai] = useState<string>();
+  console.log("trangthai", trangthai);
   const [loading, setLoading] = useState(false);
   const [formcheck, setFormCheck] = useState(false);
 
@@ -439,17 +439,17 @@ const OrderAdmin: React.FC = () => {
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {
-      console.log("data", data);
       try {
         const trangthais =
-          trangthai == "1"
+          trangthai === "1"
             ? "Đã xác nhận"
             : trangthai == "2"
               ? "Đang xử lý"
               : trangthai == "3"
-                ? "Đã giao hàng thành công"
-                : "Đã hủy hàng";
-
+                ? "Hủy hàng"
+                : "Đã xác nhận";
+        console.log("trangthais", trangthais);
+        console.log("data", data);
         const response = await instance.put("donhang/trang-thai-don-hang", {
           trang_thai_don_hang: trangthais,
           id: data,
@@ -469,7 +469,6 @@ const OrderAdmin: React.FC = () => {
         }
         return response.data;
       } catch (error: any) {
-        console.error(error.message);
         throw new Error(error.message);
       }
     },
@@ -480,7 +479,6 @@ const OrderAdmin: React.FC = () => {
       setLoading(false);
     },
     onError: (error: any) => {
-      console.error("Error updating order:", error.message);
       message.open({
         type: "error",
         content: `Cập nhật trạng thái đơn hàng thất bại: ${error.message}`,
@@ -522,9 +520,9 @@ const OrderAdmin: React.FC = () => {
 
   const [filteredData, setFilteredData] = useState<DataType[]>([]);
   const dataSource: OrderData[] | undefined = filteredData?.map(
-    (item: DataType, i: number): OrderData => ({
+    (item: DataType): OrderData => ({
       ...item,
-      key: i + 1,
+      key: item.id,
     })
   );
   // Cập nhật dữ liệu khi nhận được từ API

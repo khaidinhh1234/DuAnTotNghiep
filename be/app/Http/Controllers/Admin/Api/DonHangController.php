@@ -216,6 +216,7 @@ class DonHangController extends Controller
                     DonHang::TTDH_DGH => [DonHang::TTDH_CKHCN, DonHang::TTDH_DHTB],
                     DonHang::TTDH_CKHCN => [DonHang::TTDH_HTDH],
                     DonHang::TTDH_HTDH => [DonHang::TTDH_HH],
+                    DonHang::TTDH_DH => [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL],
                 ];
 
                 if (!isset($validTransitions[$donHang->trang_thai_don_hang]) || !in_array($request->trang_thai_don_hang, $validTransitions[$donHang->trang_thai_don_hang])) {
@@ -280,7 +281,7 @@ class DonHangController extends Controller
 
                 $thongBao = ThongBao::create([
                     'user_id' => $userAdmin->id,
-                    'tieu_de' => 'Đơn hàng '.$donHang->ma_don_hang.' đã có cập nhật mới',
+                    'tieu_de' => 'Đơn hàng ' . $donHang->ma_don_hang . ' đã có cập nhật mới',
                     'noi_dung' => '',
                     'loai' => 'Rút tiền',
                     'duong_dan' => $donHang->ma_don_hang,
