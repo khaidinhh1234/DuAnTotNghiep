@@ -8,6 +8,7 @@ import moment from 'moment';
 
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
+import { UploadFile } from "antd/lib";
 
 interface ISanPham {
   id: number;
@@ -65,28 +66,14 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
     },
   });
 
-  const { data: categoriesData } = useQuery({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const response = await instance.get("/danhmuc");
-      return response.data;
-    },
-  });
 
-  useEffect(() => {
-    if (availableProductsData) {
-      setAvailableProducts(availableProductsData.data);
-      setFilteredProducts(availableProductsData.data);
-    }
-    if (categoriesData) {
-      setCategories(categoriesData.data);
-    }
-  }, [availableProductsData, categoriesData]);
+
 
   useEffect(() => {
     if (chuongTrinhUuDaiData) {
       const selectedProductIds = chuongTrinhUuDaiData.san_phams.map((sp: any) => sp.id);
       setSelectedProducts(selectedProductIds);
+      
       form.setFieldsValue({
         ten_uu_dai: chuongTrinhUuDaiData.ten_uu_dai,
         mo_ta: chuongTrinhUuDaiData.mo_ta,
@@ -97,24 +84,32 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
         ],
         gia_tri_uu_dai: chuongTrinhUuDaiData.gia_tri_uu_dai,
         loai: chuongTrinhUuDaiData.loai,
-        san_pham: selectedProductIds, // Set the san_pham field value
+        san_pham: selectedProductIds,
       });
-      if (chuongTrinhUuDaiData && chuongTrinhUuDaiData.duong_dan_anh) {
-        setFileList([
-          {
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            url: chuongTrinhUuDaiData.duong_dan_anh,
-          },
-          console.log(chuongTrinhUuDaiData.duong_dan_anh),
-        ]);
+  
+      if (chuongTrinhUuDaiData.duong_dan_anh) {
+        setFileList([{
+          uid: '-1',
+          name: 'image.png',
+          status: 'done',
+          url: chuongTrinhUuDaiData.duong_dan_anh,
+          thumbUrl: chuongTrinhUuDaiData.duong_dan_anh
+        }]);
       }
     }
-    console.log(chuongTrinhUuDaiData);
   }, [chuongTrinhUuDaiData, form]);
-
-
+  
+  useEffect(() => {
+    if (chuongTrinhUuDaiData?.duong_dan_anh) {
+      const imageFile: UploadFile = {
+        uid: '1',
+        name: 'image.png',
+        status: 'done',
+        url: chuongTrinhUuDaiData.duong_dan_anh,
+      };
+      setFileList([imageFile]);
+    }
+  }, [chuongTrinhUuDaiData]);
   const handleImageChange = ({ fileList: newFileList }: any) => {
     setFileList(newFileList);
   };
@@ -298,30 +293,20 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
                 <Input placeholder="Nhập tên ưu đãi" />
               </Form.Item>
               <Form.Item
-      label="Ảnh ưu đãi"
-      name="imageFile"
-      valuePropName="fileList"
-      getValueFromEvent={(e) => {
-        if (Array.isArray(e)) {
-          return e;
-        }
-        return e && e.fileList;
-      }}
-    >
-      <Upload
-        listType="picture-card"
-        fileList={fileList}
-        onChange={handleImageChange}
-        beforeUpload={() => false}
-        maxCount={1}
-      >
-        {fileList.length < 1 && (
-          <div>
-            <UploadOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
-          </div>
-        )}
-      </Upload>
+  label="Ảnh ưu đãi"
+  name="imageFile"
+>
+  <Upload
+    listType="picture"
+    fileList={fileList}
+    onChange={handleImageChange}
+    beforeUpload={() => false}
+    maxCount={1}
+  >
+    {fileList.length < 1 && (
+      <Button icon={<UploadOutlined />}>Upload</Button>
+    )}
+  </Upload>
     </Form.Item>
 
               <Form.Item
@@ -380,19 +365,8 @@ const ChuongTrinhUuDaiEdit: React.FC = () => {
                   </Form.Item>
 
               <Row gutter={16}>
-                <Col span={5}>
-                  <Form.Item label="Lọc ">
-                    <TreeSelect
-                      treeData={renderTreeNodes(categories)}
-                      onChange={handleCategoryChange}
-                      treeCheckable
-                      showCheckedStrategy={TreeSelect.SHOW_PARENT}
-                      placeholder="Chọn danh mục"
-                      style={{ width: '100%' }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={15}>
+                
+                <Col span={19}>
                 
                       <Form.Item
       label="Sản phẩm áp dụng"

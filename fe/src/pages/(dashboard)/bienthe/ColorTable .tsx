@@ -59,8 +59,12 @@ const ColorManagement: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["colors"] });
       message.success("Xóa màu sắc thành công");
     },
-    onError: () => {
-      message.error("Xóa màu sắc thất bại");
+    onError: (error: any) => {
+      if (error.response && error.response.data) {
+        message.error(error.response.data.message );
+      } else {
+        message.error("Xóa màu thất bại");
+      }
     },
   });
 
@@ -299,7 +303,7 @@ const ColorManagement: React.FC = () => {
       <Form
         form={form}
         onFinish={handleAddColor}
-        className="mt-4"
+        className="mt-4 mb-[88px]"
         layout="inline"
         style={{
           display: "flex",
