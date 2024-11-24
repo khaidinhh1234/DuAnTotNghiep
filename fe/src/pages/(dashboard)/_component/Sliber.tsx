@@ -10,6 +10,7 @@ import {
   Package,
   ShoppingCart,
   Tag,
+  Truck,
   User,
 } from "lucide-react";
 import React, { useEffect } from "react";
@@ -109,7 +110,7 @@ const SiderComponent: React.FC = () => {
                 </Menu.Item>
               )}
               {quyen.includes("admin.vanchuyen.index") && (
-                <SubMenu key="van-chuyen" title="Vận chuyển">
+                <SubMenu icon={<Truck />} key="van-chuyen" title="Vận chuyển">
                   <Menu.Item key="/admin/orders/uncomfirmedorder">
                     Đơn hàng
                   </Menu.Item>
