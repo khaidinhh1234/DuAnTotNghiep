@@ -48,12 +48,7 @@ const PageSupport: React.FC = () => {
     }
   })
 
-  const dataSource = data?.data.map((support: Support, index: number) => ({
-    key: support.id,
-    ...support,
-    index: index + 1,
-    user_id: `${support?.user?.ho} ${support?.user?.ten}` || "Chưa có dữ liệu",
-  })) || [];
+ 
   const mutation = useMutation({
     mutationFn: async ({
       id,
@@ -107,6 +102,7 @@ const PageSupport: React.FC = () => {
       }
     }
   }, [support, activeTab]);
+  
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
@@ -189,9 +185,15 @@ const PageSupport: React.FC = () => {
         text
       ),
   });
+  const dataSource = data?.data.map((support: Support, index: number) => ({
+    key: support.id,
+    ...support,
+    index: index + 1,
+    user_id: `${support?.user?.ho} ${support?.user?.ten}` || "Chưa có dữ liệu",
+  })) || [];
   const columns: TableColumnsType<Support> = [
     {
-      title: 'ID',
+      title: 'STT',
       dataIndex: 'index',
       key: 'id',
     },
