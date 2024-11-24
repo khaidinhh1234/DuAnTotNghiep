@@ -72,6 +72,7 @@ const Detail = ({ record }: any) => {
     },
   });
   const tong = data?.data;
+  console.log(tong, "tong");
   const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
@@ -220,14 +221,15 @@ const Detail = ({ record }: any) => {
                         ? "text-blue-500" // Đang xử lý: màu xanh dương
                         : record.trang_thai_don_hang === "Đang giao hàng"
                           ? "text-purple-500" // Đang giao hàng: màu tím
-                          : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
-                            ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
+                          : record.trang_thai_don_hang ===
+                              "Chờ khách hàng xác nhận"
+                            ? "bg-pink-500"
                             : record.trang_thai_don_hang ===
-                                "Chờ khách hàng xác nhận"
-                              ? "bg-pink-500"
+                                "Đơn hàng bị từ chối nhan"
+                              ? "bg-red-500"
                               : record.trang_thai_don_hang ===
-                                  "Đơn hàng bị từ chối nhan"
-                                ? "bg-red-500"
+                                  "Hoàn tất đơn hàng"
+                                ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
                                 : record.trang_thai_don_hang === "Hủy hàng"
                                   ? "bg-red-500"
                                   : record.trang_thai_don_hang === "Hoàn hàng"
@@ -375,95 +377,10 @@ const Detail = ({ record }: any) => {
                     ))}
                   </tbody>
                 </table>
-                {record?.trang_thai_don_hang !== "Đã xác nhận" &&
-                  record?.trang_thai_don_hang !== "Hủy hàng" &&
-                  record?.trang_thai_don_hang !== "Chờ xử lý" && (
-                    <div className="grid grid-cols-2 gap-5 my-5">
-                      <div>
-                        <div className="flex justify-between">
-                          <p>Lấy hàng</p> <span> Hà Nội</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <p>Mã Vận chuyển</p> <span> 100023874</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <p>Nhà vận chuyển</p> <span> Hà Nội</span>
-                        </div>
-                      </div>{" "}
-                      <div>
-                        <div className="flex justify-between">
-                          <p>Trạng thái vận chuyển</p>{" "}
-                          <span
-                            className={`   ${
-                              record.trang_thai_don_hang == "Chờ xác nhận"
-                                ? "bg-blue-500"
-                                : record.trang_thai_don_hang == "Đã xác nhận"
-                                  ? "bg-green-500"
-                                  : record.trang_thai_don_hang == "Đang xử lý"
-                                    ? "bg-yellow-500"
-                                    : record.trang_thai_don_hang ==
-                                        "Đang giao hàng"
-                                      ? "bg-purple-500"
-                                      : record.trang_thai_don_hang ==
-                                          "Hoàn tất đơn hàng"
-                                        ? "bg-green-500"
-                                        : record.trang_thai_don_hang ==
-                                            "Chờ khách hàng xác nhận"
-                                          ? "bg-pink-500"
-                                          : record.trang_thai_don_hang ==
-                                              "Đơn hàng bị từ chối nhan"
-                                            ? "bg-red-500"
-                                            : record.trang_thai_don_hang ==
-                                                "Hủy hàng"
-                                              ? "bg-red-500"
-                                              : record.trang_thai_don_hang ==
-                                                  "Hoàn hàng"
-                                                ? "bg-green-500"
-                                                : "bg-red-500"
-                            }
-                        } text-white px-2 font-bold rounded-lg h-6`}
-                          >
-                            {" "}
-                            {record.trang_thai_don_hang == "Chờ xác nhận"
-                              ? "Chờ xác nhận"
-                              : record.trang_thai_don_hang == "Đã xác nhận"
-                                ? "Chuẩn bị giao"
-                                : record.trang_thai_don_hang == "Đang xử lý"
-                                  ? "Chờ lấy hàng"
-                                  : record.trang_thai_don_hang ==
-                                      "Đang giao hàng"
-                                    ? "Đang giao hàng"
-                                    : record.trang_thai_don_hang ==
-                                        "Hoàn tất đơn hàng"
-                                      ? "Hoàn tất đơn hàng"
-                                      : record.trang_thai_don_hang ==
-                                          "Chờ khách hàng xác nhận"
-                                        ? "Chờ khách hàng xác nhận"
-                                        : record.trang_thai_don_hang ==
-                                            "Đơn hàng bị từ chối nhan"
-                                          ? "Đơn hàng bị từ chối nhan"
-                                          : record.trang_thai_don_hang ==
-                                              "Hủy hàng"
-                                            ? "Hủy hàng"
-                                            : record.trang_thai_don_hang ==
-                                                "Hoàn hàng"
-                                              ? "Hoàn hàng"
-                                              : "Đã hủy"}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <p>Tổng khối lượng</p> <span> 0.00kg</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <p>Tiền thu hộ</p> <span> {}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
               </div>
             </div>
             <div className="px-5">
-              <h1 className="text-xl font-bold mt-5">Đã nhận hàng</h1>
+              <h1 className="text-xl font-bold mt-5">Địa chỉ nhận hàng</h1>
               <div className="grid grid-cols-1 gap-5 w-full">
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">
@@ -501,7 +418,7 @@ const Detail = ({ record }: any) => {
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Vận chuyển</h1>
                   <p className="text-base font-semibold">
-                    <span>{tong?.tien_ship}</span> VNĐ
+                    <span>{tong?.tien_ship?.toLocaleString("vi-VN")}</span> VNĐ
                   </p>
                 </div>
                 <div className="flex justify-between">

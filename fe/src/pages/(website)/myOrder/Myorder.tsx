@@ -1,10 +1,19 @@
 import instanceClient from "@/configs/client";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProductList from "./_components/product";
 import HoanTien from "./_components/Hoan";
+import { Tabs } from "antd";
 
 const MyOrder = () => {
+  const [activeTab, setActiveTab] = useState<string>("Tất cả");
+  const [timkiem, setTimkiem] = useState<string>("");
+  console.log(timkiem);
+  console.log(activeTab);
+  const datas = {
+    trang_thai: activeTab,
+    timkiem: timkiem || "",
+  };
   const {
     data,
     isLoading,
@@ -16,7 +25,13 @@ const MyOrder = () => {
   } = useInfiniteQuery({
     queryKey: ["MyOrder_LISTas"],
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await instanceClient.get(`don-hang?page=${pageParam}`);
+      const response = await instanceClient.post(
+        `danh-sach-don-hang?page=${pageParam}`,
+        {
+          trang_thai: datas.trang_thai,
+          ...(datas.timkiem && { ten_san_pham: datas.timkiem }),
+        }
+      );
       if (response.status !== 200) {
         throw new Error("Lỗi khi lấy danh sách đơn hàng");
       }
@@ -29,7 +44,6 @@ const MyOrder = () => {
     },
     initialPageParam: 1,
   });
-
   const loadMoreRef = useRef(null);
 
   useEffect(() => {
@@ -57,12 +71,28 @@ const MyOrder = () => {
   //     return { ...page, chitiet: page.data };
   //   }) || [];
   const orders = data?.pages.flatMap((page) => page.data.don_hang) || [];
+  console.log(datas);
+  const tabItems = [
+    { label: "Tổng đơn hàng", key: "Tất cả" },
+    { label: "Chưa thanh toán", key: "Chờ thanh toán" },
+    { label: "Đã giao hàng", key: "Đã giao hàng" },
+    { label: "Hoàn tất đơn hàng", key: "Hoàn thành" },
 
-  // console.log(tong);
+    { label: "Đã hủy", key: "Đã hủy" },
+
+    { label: "Đã hoàn", key: "Trả hàng/Hoàn tiền" },
+  ];
   return (
     <div>
       {/* Hiển thị danh sách đơn hàng */}
-      <ProductList donhang={orders} />
+
+      <ProductList
+        donhang={orders}
+        activeTab={activeTab}
+        tabItems={tabItems}
+        setActiveTab={setActiveTab}
+        handleSumit={setTimkiem}
+      />
       {/* Nút tải thêm nếu còn trang tiếp theo */}
       <div
         ref={loadMoreRef}

@@ -1,9 +1,12 @@
 import instance from "@/configs/admin";
+import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Input, message, Space, Table, TableColumnsType } from "antd";
-import { useState } from "react";
+import { Button, Input, message, Space, Table } from "antd";
+import { useRef, useState } from "react";
+import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-
+import type { InputRef, TableColumnsType } from "antd";
+import type { FilterDropdownProps } from "antd/es/table/interface";
 const { Search } = Input;
 
 interface UserPrivilegeDataType {
@@ -12,8 +15,34 @@ interface UserPrivilegeDataType {
   description: string;
 }
 
+interface DataType {
+  ten_vai_tro: string;
+  mo_ta: string;
+  key: React.Key;
+}
+
+type DataIndex = keyof DataType;
 const UserPrivilegeAdmin = () => {
+  const [searchedColumn, setSearchedColumn] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
+  const searchInput = useRef<InputRef>(null);
+
   const queryClient = useQueryClient();
+
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps["confirm"],
+    dataIndex: DataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
+  };
   const { mutate } = useMutation({
     mutationFn: async (id: number) => {
       try {
@@ -36,11 +65,80 @@ const UserPrivilegeAdmin = () => {
       });
     },
   });
+  const getColumnSearchProps = (dataIndex: DataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }: any) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Tìm ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Tìm kiếm
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+    onFilter: (value: any, record: any) =>
+      record[dataIndex]
+        ?.toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible: any) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text: any) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
   const columns: TableColumnsType<UserPrivilegeDataType> = [
     {
-      title: <div className="w-[40%] pl-8 ">Vai trò</div>,
+      title: <div className="w-[40%] pl-5">Vai trò</div>,
       dataIndex: "ten_vai_tro",
-      render: (text) => <div className="w-[50%] pl-8">{text}</div>,
+      // render: (text) => <div className="w-[50%] pl-8">{text}</div>,
+      className: "w-[40%] pl-20",
+      ...getColumnSearchProps("ten_vai_tro"),
     },
     {
       title: <div className="w-[40%] pl-8 ">Mô tả vai trò</div>,
@@ -60,7 +158,6 @@ const UserPrivilegeAdmin = () => {
             </Link>
           ) : (
             <>
-              {" "}
               <Button
                 className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300"
                 onClick={() => mutate(record.key as number)}
@@ -83,13 +180,7 @@ const UserPrivilegeAdmin = () => {
       ),
     },
   ];
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 7,
-  });
-  const handleTableChange = (pagination: any) => {
-    setPagination(pagination);
-  };
+
   // const queryClient = useQueryClient();
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["VAITRO_KEY"],
@@ -112,26 +203,15 @@ const UserPrivilegeAdmin = () => {
       return { ...item, key: item.id };
     })
     .reverse();
-  console.log("vaitro", vaitro);
-  // console.log(vaitro);
   const [filteredData, setFilteredData] = useState(vaitro);
-
   const onSearch = (value: string) => {
     const filtered = vaitro?.filter(
       (item: any) =>
-        item.ten_vai_tro.toLowerCase().includes(value.toLowerCase())
-      // ||
-      //   item.description.toLowerCase().includes(value.toLowerCase())
+        item.ten_vai_tro.toLowerCase().includes(value.toLowerCase()) ||
+        item.mo_ta.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredData(filtered);
   };
-
-  // const rowSelection: TableRowSelection<UserPrivilegeDataType> = {
-  //   onChange: (selectedRowKeys) => {
-  //     console.log("Selected Row Keys:", selectedRowKeys);
-  //   },
-  // };
-
   if (isError) return <div>Error...</div>;
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
@@ -160,10 +240,10 @@ const UserPrivilegeAdmin = () => {
       <div>
         <Table
           columns={columns}
-          dataSource={vaitro}
+          dataSource={filteredData}
           pagination={{ pageSize: 10, className: "my-5" }}
           rowKey="id"
-          onChange={handleTableChange}
+          // onChange={handleTableChange}
           loading={isLoading}
         />
       </div>
