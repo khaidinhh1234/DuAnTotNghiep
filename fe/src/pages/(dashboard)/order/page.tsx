@@ -74,6 +74,7 @@ const OrderAdmin: React.FC = () => {
       return response.data;
     },
   });
+  console.log("sadfda", data);
   const order: DataType[] | undefined = data?.data;
   const handleDateChange = (_: any, dateStrings: [string, string]) => {
     const startDate = new Date(dateStrings[0]);
@@ -574,9 +575,9 @@ const OrderAdmin: React.FC = () => {
     { label: "Đã xác nhận", key: "Đã xác nhận" },
     { label: "Hoàn tất chuẩn bị", key: "Đang xử lý" },
 
-    { label: "Giao hàng thất bại", key: "Giao hàng thất bại" },
+    { label: "Giao hàng thất bại", key: "Đơn hàng bị từ chối nhân" },
 
-    { label: "Giao hàng thành công", key: "Giao hàng thành công" },
+    { label: "Giao hàng thành công", key: "Hoàn tất đơn hàng" },
     { label: "Chưa thanh toán", key: "Chưa thanh toán" },
 
     { label: "Đã thanh toán", key: "Đã thanh toán" },

@@ -175,11 +175,11 @@ const ListMyProfile = ({ member }: any) => {
             <p className="mb-0">
               <i className="fa-solid fa-person-half-dress"></i>
               <span className="mx-2">
-                {data?.data?.gioi_tinh === 3
-                  ? "Khác"
-                  : data?.data?.gioi_tinh == null
-                    ? "Không có thông tin"
-                    : ""}
+                {data?.data?.gioi_tinh === 1
+                  ? "Nam"
+                  : data?.data?.gioi_tinh === 2
+                    ? "Nữ"
+                    : "khác"}
               </span>
             </p>
             <h1 className="text-base font-semibold mt-5">Thông tin liên hệ:</h1>

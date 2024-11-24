@@ -1,5 +1,5 @@
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Slider } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -190,6 +190,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
   });
   const products = data?.data?.san_pham.data;
+  const queryClient = useQueryClient();
   const { data: locsanpham, refetch } = useQuery({
     queryKey: ["LOCSAMPHAM"],
     queryFn: async () => {
@@ -205,7 +206,9 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
+    enabled: !!danhmuc && !!datas, // chỉ gọi khi có `danhmuc` và `datas`
   });
+
   useEffect(() => {
     refetch();
     refetch2();
@@ -245,6 +248,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     setPage(page);
   };
   const danh_muc = locsanpham?.danhMucCap2;
+
   // toanmoi
   const [grandchildChecked, setGrandchildChecked] = useState<{
     [key: string]: { [key: string]: { [key: string]: boolean } };
@@ -275,6 +279,8 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       );
     }
   };
+
+  //   1233412312
   return (
     <div>
       {" "}
@@ -325,6 +331,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                   item.children,
                                   item.id
                                 );
+                                // isChecked && mutate(item.id);
                               }}
                             />
                             {item.ten_danh_muc}
@@ -336,6 +343,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                             onClick={() => toggleExpand(index)}
                           ></i>
                         </div>
+
                         {expanded.includes(index) &&
                           item.children?.map((itemcon: any, indexCon: any) => (
                             <div key={indexCon} className="ml-4">
@@ -357,6 +365,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
                                         itemcon.id,
                                         itemcon.children
                                       );
+                                      // isChecked && mutate(itemcon.id);
                                     }}
                                   />
                                   {itemcon.ten_danh_muc}

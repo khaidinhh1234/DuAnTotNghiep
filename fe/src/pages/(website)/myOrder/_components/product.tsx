@@ -1,7 +1,7 @@
 import { sanPham2 } from "@/assets/img";
 import instanceClient from "@/configs/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
+import { message, Tabs } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HoanTien from "./Hoan";
@@ -136,7 +136,6 @@ const ProductItem = ({
           return;
         }
         if (data.phuong_thuc_thanh_toan !== "Thanh toán khi nhận hàng") {
-          
           const response = await instanceClient.post("thanh-toan-lai", data);
           if (response.data && response.data.url) {
             window.location.href = response.data.url; // Redirect the user to the MoMo payment interface
@@ -182,23 +181,25 @@ const ProductItem = ({
     try {
       const paymentData = {
         ma_don_hang,
-        phuong_thuc_thanh_toan: "Ví tiền", 
-        ma_xac_minh: verificationCode
+        phuong_thuc_thanh_toan: "Ví tiền",
+        ma_xac_minh: verificationCode,
       };
-  
+
       const response = await instanceClient.post("thanh-toan-lai", paymentData);
-      
+
       if (response.status === 200) {
         toast.success("Thanh toán bằng ví thành công");
         setIsVerificationModalOpen(false);
         setPayment(false);
         nav(`/thankyou?orderId=${ma_don_hang}&resultCode=0`);
       }
-    } catch (error : any) {
-      toast.error(error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại."
+      );
     }
   };
-  
+
   const PaymentClose = [
     {
       name: "Thanh toán quét mã MoMoQR",
@@ -281,11 +282,10 @@ const ProductItem = ({
                     Thanh toán ngay
                   </button>
                   <VerificationModal
-      isOpen={isVerificationModalOpen}
-      onClose={() => setIsVerificationModalOpen(false)} 
-      onVerify={handleVerification}
-    />
-
+                    isOpen={isVerificationModalOpen}
+                    onClose={() => setIsVerificationModalOpen(false)}
+                    onVerify={handleVerification}
+                  />
                 </div>{" "}
               </form>
             </div>
@@ -578,9 +578,22 @@ const ProductItem = ({
 };
 
 // Component hiển thị danh sách sản phẩm
-const ProductList = ({ donhang }: any) => {
+const ProductList = ({
+  donhang,
+  tabItems,
+  setActiveTab,
+  activeTab,
+  handleSumit,
+}: any) => {
   const don_hang = donhang;
-  console.log(don_hang);
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Ngăn trình duyệt refresh
+      handleSumit(searchValue); // Gửi giá trị qua hàm handleSubmit
+    }
+  };
   return (
     <>
       <div className="flex flex-row lg:justify-between lg:items-center">
@@ -594,7 +607,37 @@ const ProductList = ({ donhang }: any) => {
           Lịch sử giao dịch
         </Link>
       </div>
-
+      <div className="text-xl mx-5">
+        {" "}
+        <Tabs
+          defaultActiveKey="Tất cả"
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key)}
+          items={tabItems}
+          className="text-2xl"
+        />
+        <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 shadow-sm">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 text-gray-400 mr-2"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12.9 14.32a8 8 0 111.414-1.415l4.387 4.387a1 1 0 01-1.415 1.415l-4.386-4.387zM8 14a6 6 0 100-12 6 6 0 000 12z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <input
+            type="text"
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Bạn có thể tìm kiếm theo Mã đơn hàng hoặc Tên Sản phẩm"
+            className="w-full bg-gray-100 text-sm focus:outline-none placeholder-gray-500"
+          />
+        </div>
+      </div>
       <div className="lg:col-span-9 col-span-8 lg:pl-4 h-full">
         <form>
           {don_hang && don_hang.length ? (
