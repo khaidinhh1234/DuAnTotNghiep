@@ -590,6 +590,15 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
                         Thông tin bảo mật và mã hoá
                       </span>
                     </div>
+                    <div>
+                      <Button
+                        type="primary"
+                        className=" text-white font-bold py-2 px-4 rounded h-8"
+                        // onClick={() => handleKeyDown}
+                      >
+                        Xuất dữ liệu Excel
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -599,7 +608,7 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
           <div className="border-t pt-6">
             <h1 className="text-2xl font-semibold mb-4">Chi tiết sản phẩm</h1>
             <div className="mb-8 flex justify-center"></div>
-        
+
             <div
               className={`description mb-4 text-sm px-5 whitespace-pre-wrap ${
                 isDescriptionExpanded ? "" : "line-clamp-3"

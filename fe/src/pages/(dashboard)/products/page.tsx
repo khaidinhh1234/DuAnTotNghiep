@@ -1,5 +1,3 @@
-
-
 import "@/global.css";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -435,6 +433,15 @@ const ProductsAdmin: React.FC = () => {
               onKeyDown={handleKeyDown}
               className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
             />
+          </div>
+          <div>
+            <Button
+              type="primary"
+              className=" text-white font-bold py-2 px-5 rounded h-8"
+              // onClick={() => handleKeyDown}
+            >
+              Xuất dữ liệu Excel
+            </Button>
           </div>
         </div>
       </div>

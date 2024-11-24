@@ -1,6 +1,6 @@
 import instance from "@/configs/admin";
 // import { Loading3QuartersOutlined } from "@ant-design/icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   DatePicker,
@@ -24,12 +24,13 @@ type FieldType = {
 };
 
 const UserskhachhangEdit = () => {
+  const queryClient = useQueryClient();
   const nav = useNavigate();
   const [form] = Form.useForm();
   const { id } = useParams();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["USERID", id],
+    queryKey: ["UserKey", id],
     queryFn: async () => {
       try {
         const res = await instance.get(`/taikhoan/${id}`);
@@ -56,6 +57,7 @@ const UserskhachhangEdit = () => {
       });
       nav("/admin/users/khachhang");
       form.resetFields();
+      queryClient.invalidateQueries({ queryKey: ["UserKey"] });
     },
     onError: (error: any) => {
       message.open({

@@ -1,19 +1,12 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import {
-  Button,
-  Input,
-  message,
-  Popconfirm,
-  Space,
-  Table,
-} from "antd";
+import { Button, Input, message, Popconfirm, Space, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
-import {  Spin } from "antd";
+import { Spin } from "antd";
 import instance from "@/configs/admin";
 const contentStyle: React.CSSProperties = {
   padding: 50,
@@ -41,7 +34,7 @@ type DataIndex = keyof DataType;
 const UsersAdminkhachhang: React.FC = () => {
   const queryClient = useQueryClient();
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["productskey"],
+    queryKey: ["UserKey"],
     queryFn: async () => {
       const res = await instance.get("/taikhoan");
       return res.data;
@@ -79,7 +72,7 @@ const UsersAdminkhachhang: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["productskey"],
+        queryKey: ["UserKey"],
       });
     },
   });
@@ -186,7 +179,10 @@ const UsersAdminkhachhang: React.FC = () => {
       key: "thong_tin",
       width: "20%",
       render: (record) => (
-        <Link to={`show/${record.key}`} style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to={`show/${record.key}`}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <div
             style={{
               display: "flex",
@@ -195,20 +191,25 @@ const UsersAdminkhachhang: React.FC = () => {
               padding: "10px",
               borderRadius: "8px",
               backgroundColor: "#f0faff",
-              transition: "background-color 0.3s ease", 
+              transition: "background-color 0.3s ease",
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = "#AABBCC"; 
+              e.currentTarget.style.backgroundColor = "#AABBCC";
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = "#f0faff"; 
+              e.currentTarget.style.backgroundColor = "#f0faff";
             }}
           >
             {record.anh_nguoi_dung ? (
               <img
                 src={record.anh_nguoi_dung}
                 alt="Avatar"
-                style={{ width: "60px", height: "60px", borderRadius: "50%", marginRight: "10px" }}
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "50%",
+                  marginRight: "10px",
+                }}
               />
             ) : (
               <div
@@ -365,8 +366,10 @@ const UsersAdminkhachhang: React.FC = () => {
       const filtered = user?.filter(
         (item: any) =>
           item.ten?.toLowerCase().includes(value.toLowerCase()) ||
-        item.email?.toLowerCase().includes(value.toLowerCase()) ||
-        item.ho?.toLowerCase().includes(value.toLowerCase())
+          item.email?.toLowerCase().includes(value.toLowerCase()) ||
+          item.ho?.toLowerCase().includes(value.toLowerCase()) ||
+          item.so_dien_thoai?.toLowerCase().includes(value.toLowerCase()) ||
+          item.dia_chi?.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredData(filtered || []);
     } else {
@@ -410,16 +413,15 @@ const UsersAdminkhachhang: React.FC = () => {
         </div>
       </div>
       <div className="max-w-sm my-2">
-
-      <Input
-            placeholder="Tìm kiếm..."
-            size="large"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
-          />
-        </div>
+        <Input
+          placeholder="Tìm kiếm..."
+          size="large"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
+        />
+      </div>
       <div className=" ">
         <Table
           columns={columns}

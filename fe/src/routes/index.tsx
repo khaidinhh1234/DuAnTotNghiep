@@ -152,6 +152,7 @@ import Danhgias from "@/pages/(website)/myOrder/_components/Danhgias";
 
 import ReturnOrders1 from "@/pages/(dashboard)/dohoan/hoanhang/page";
 import ReturnOrders from "@/pages/(van_chuyen)/ReturnOrders";
+import Test from "@/pages/(dashboard)/test";
 
 const Router = () => {
   //
@@ -322,7 +323,6 @@ const Router = () => {
           <Route path="orders/donhoan" element={<RefundRequests />} />
           <Route path="orders/collect" element={<Collect />} />
           <Route path="orders/hoanhang" element={<ReturnOrders1 />} />
-
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
           <Route path="add-vocher" element={<AddVoucher />} />
@@ -432,7 +432,7 @@ const Router = () => {
           {/* Error */}
           <Route path="*" element={<NotFoundPage />} />
           {/* Chưa dùng đến */}
-          <Route path="test" element={<Test23 />} />
+          <Route path="test" element={<Test />} />
           <Route path="ADmin/privilegeadmin" element={<PagePrivilegeAdmin />} />
           <Route path="add-admin" element={<PageAddAdmin />} />
         </Route>{" "}
