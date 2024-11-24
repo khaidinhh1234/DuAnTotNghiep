@@ -145,8 +145,16 @@ const ProductItem = ({
             message.success("Chờ  xử lý Thanh toán");
           }
         } else if (data.phuong_thuc_thanh_toan === "Thanh toán khi nhận hàng") {
-          message.success("Đặt hàng thành công");
-          nav(`/thankyou?orderId=${data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
+          const response = await instanceClient.post("thanh-toan-lai", data);
+          // if (response.data && response.data.url) {
+          //   window.location.href = response.data.url; // Redirect the user to the MoMo payment interface
+          // }
+          if (response.status === 200) {
+            // message.success("Thanh toán MoMo thành công");
+            message.success("Đặt hàng thành công");
+            nav(`/thankyou?orderId=${data.ma_don_hang}&resultCode=0`);
+          }
+          // Chuyển hướng người dùng đến trang cảm ơn
         } else {
           message.error("Đặt hàng thất bại");
           throw new Error("Error during order creation or MoMo payment");
@@ -174,7 +182,7 @@ const ProductItem = ({
   const handlethanhtoan = (e: any) => {
     e.preventDefault();
     const data = { ma_don_hang, phuong_thuc_thanh_toan };
-    // console.log(data);
+    console.log(data);
     mutatePayment(data);
   };
   const handleVerification = async (verificationCode: string) => {
@@ -610,7 +618,7 @@ const ProductList = ({
       <div className="text-xl mx-5">
         {" "}
         <Tabs
-          defaultActiveKey="Tất cả"
+          defaultActiveKey=""
           activeKey={activeTab}
           onChange={(key) => setActiveTab(key)}
           items={tabItems}

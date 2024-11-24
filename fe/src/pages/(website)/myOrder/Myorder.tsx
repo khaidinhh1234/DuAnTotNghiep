@@ -6,14 +6,15 @@ import HoanTien from "./_components/Hoan";
 import { Tabs } from "antd";
 
 const MyOrder = () => {
-  const [activeTab, setActiveTab] = useState<string>("Tất cả");
+  const [activeTab, setActiveTab] = useState<string>("");
   const [timkiem, setTimkiem] = useState<string>("");
   console.log(timkiem);
   console.log(activeTab);
   const datas = {
-    trang_thai: activeTab,
-    timkiem: timkiem || "",
+    trang_thai_don_hang: activeTab,
+    loc: timkiem || "",
   };
+  console.log(datas);
   const {
     data,
     isLoading,
@@ -21,21 +22,20 @@ const MyOrder = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    status,
   } = useInfiniteQuery({
-    queryKey: ["MyOrder_LISTas"],
+    queryKey: ["MyOrder_LISTas", datas],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await instanceClient.post(
         `danh-sach-don-hang?page=${pageParam}`,
         {
-          trang_thai: datas.trang_thai,
-          ...(datas.timkiem && { ten_san_pham: datas.timkiem }),
+          trang_thai_don_hang: datas.trang_thai_don_hang,
+          ...(datas.loc && { ten_san_pham: datas.loc }),
         }
       );
       if (response.status !== 200) {
         throw new Error("Lỗi khi lấy danh sách đơn hàng");
       }
-      return response.data; // Giả sử response.data chứa cấu trúc như bạn đã cung cấp
+      return response.data;
     },
     getNextPageParam: (lastPage) => {
       return lastPage.data.pagination.has_more_pages
@@ -44,9 +44,12 @@ const MyOrder = () => {
     },
     initialPageParam: 1,
   });
-  const loadMoreRef = useRef(null);
+
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!loadMoreRef.current) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -56,10 +59,11 @@ const MyOrder = () => {
       { threshold: 1.0 }
     );
 
-    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
+    const currentRef = loadMoreRef.current;
+    observer.observe(currentRef);
 
     return () => {
-      if (loadMoreRef.current) observer.unobserve(loadMoreRef.current);
+      observer.unobserve(currentRef);
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
@@ -73,14 +77,14 @@ const MyOrder = () => {
   const orders = data?.pages.flatMap((page) => page.data.don_hang) || [];
   console.log(datas);
   const tabItems = [
-    { label: "Tổng đơn hàng", key: "Tất cả" },
-    { label: "Chưa thanh toán", key: "Chờ thanh toán" },
-    { label: "Đã giao hàng", key: "Đã giao hàng" },
-    { label: "Hoàn tất đơn hàng", key: "Hoàn thành" },
+    { label: "Tổng đơn hàng", key: "" },
+    { label: "Chờ thanh toán", key: "Chưa thanh toán" },
+    { label: "Đang giao hàng", key: "Đang giao hàng" },
+    { label: "Hoàn thành", key: "Hoàn tất đơn hàng" },
 
-    { label: "Đã hủy", key: "Đã hủy" },
+    { label: "Đã hủy", key: "Hủy hàng" },
 
-    { label: "Đã hoàn", key: "Trả hàng/Hoàn tiền" },
+    { label: "Trả hàng/Hoàn tiền", key: "Hoàn hàng" },
   ];
   return (
     <div>

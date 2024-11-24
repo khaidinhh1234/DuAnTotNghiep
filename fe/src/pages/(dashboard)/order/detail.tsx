@@ -72,7 +72,6 @@ const Detail = ({ record }: any) => {
     },
   });
   const tong = data?.data;
-  console.log(tong, "tong");
   const products = data?.data?.don_hang?.chi_tiets?.map((item: any) => {
     return {
       ...item,
