@@ -6,6 +6,7 @@ use App\Exports\SanPhamExports;
 use App\Http\Controllers\Controller;
 use App\Models\AnhBienThe;
 use App\Models\BienTheSanPham;
+use App\Models\GioHang;
 use App\Models\SanPham;
 use App\Models\User;
 use Illuminate\Http\Request;
