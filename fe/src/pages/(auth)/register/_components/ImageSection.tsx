@@ -6,7 +6,7 @@ const ImageSection = () => {
       <img
         src={logo}
         alt="Krist Logo"
-        className="absolute top-5 left-5 w-22 md:w-34"
+        className="absolute top-5 left-5 w-[150px] md:w-34"
       />
       <img
         src={login}

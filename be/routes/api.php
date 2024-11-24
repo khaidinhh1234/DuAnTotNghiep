@@ -155,7 +155,7 @@ Route::middleware([])
             // Đơn hàng
             Route::patch('/xac-nhan-don-hang/{ma_don_hang}', [DonHangClientController::class, 'xacNhanDonHang']);
             Route::post('don-hang/huy-don-hang', [DonHangClientController::class, 'huyDonHang']);
-            Route::get('/don-hang', [DonHangClientController::class, 'donHangUser']);
+            Route::post('/danh-sach-don-hang', [DonHangClientController::class, 'donHangUser']);
             Route::get('/don-hang/{ma_don_hang}', [DonHangClientController::class, 'donHangUserDetail']);
             Route::post('/don-hang/hoan-hang/{ma_don_hang}', [DonHangClientController::class, 'hoanDonHang']);
 
@@ -252,6 +252,9 @@ Route::middleware(['auth.sanctum'])
         Route::get('danhsachdanhgia', [AdminDanhGiaController::class, 'danhSachDanhGiaAll'])->name('danhgia.index')->middleware('auth.checkrole');
         Route::get('sanpham/{sanpham}/danhgia', [AdminDanhGiaController::class, 'DanhGiaTheoSanPham']);
         Route::post('danhsachdanhgia/{danhgia}', [AdminDanhGiaController::class, 'phanHoiDanhGia'])->name('danhgia.phanhoi')->middleware('auth.checkrole');
+        Route::delete('an-danh-gia/{danhgia}', [AdminDanhGiaController::class, 'xoaDanhGia'])->name('danhgia.destroy');
+        Route::get('danh-gia-bi-xoa', [AdminDanhGiaController::class, 'danhSachDanhGiaBiXoa'])->name('danhgia.thungrac');
+        Route::post('danh-gia-khoi-phuc/{id}', [AdminDanhGiaController::class, 'khoiPhucDanhGia'])->name('danhgia.khoiphuc');
 
         // Đơn hàng
         Route::middleware('auth.checkrole')

@@ -1,9 +1,15 @@
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Image, message, Rate } from "antd";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button, Image, message, Modal, Rate } from "antd";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -24,6 +30,7 @@ import "swiper/css/thumbs";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Footer from "./Footer";
 import RelatedProducts from "./RelatedProducts";
+import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -38,11 +45,10 @@ interface ProductData {
     ten_danh_muc: string;
     cha_id?: number;
     id?: number;
-
   };
   cha_danh_muc: {
     id?: number;
-  }; 
+  };
   ong_danh_muc: {
     id?: number;
   };
@@ -135,7 +141,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   // const [token, setToken] = useState<string | null>(null);
-
+  const nav = useNavigate();
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
     user.access_token || localStorage.getItem("access_token");
@@ -156,9 +162,12 @@ const ProductDetail: React.FC = () => {
     // Hàm tăng lượt xem sau 10 giây
     const incrementView = async () => {
       try {
-        const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`, {
-          params: { tang_luot_xem: true },
-        });
+        const response = await instanceClient.get(
+          `/chi-tiet-san-pham/${slug}`,
+          {
+            params: { tang_luot_xem: true },
+          }
+        );
         console.log("Lượt xem đã tăng:", response.data);
         viewedRef.current = true; // Đánh dấu đã tăng lượt xem
       } catch (error) {
@@ -223,12 +232,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                ...review,
-                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                danh_gia_huu_ich_count: variables.isLiked
-                  ? review.danh_gia_huu_ich_count - 1
-                  : review.danh_gia_huu_ich_count + 1,
-              }
+                  ...review,
+                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                  danh_gia_huu_ich_count: variables.isLiked
+                    ? review.danh_gia_huu_ich_count - 1
+                    : review.danh_gia_huu_ich_count + 1,
+                }
               : review
           ),
         };
@@ -239,6 +248,7 @@ const ProductDetail: React.FC = () => {
     },
   });
   // add to cart
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
@@ -252,29 +262,21 @@ const ProductDetail: React.FC = () => {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
-
+    console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
     if (!access_token) {
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      const existingItem = cart.find(
-        (item: { variantId: number; quantity: number }) =>
-          item.variantId === variantIdToUse
-      );
-
-
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
-        cart.push({ variantId: variantIdToUse, quantity });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-      toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
-    } else {
-      addToCart(variantIdToUse);
+      setIsModalVisible(true); // Hiển thị modal đăng nhập
+      // nav("/login")
+      return;
     }
+    // if (!access_token) {
+    //   toast.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
+    //   return;
+    // }
+
+    addToCart(variantIdToUse);
   };
-  // useMutation thêm sản phẩm vào giỏ hàng trên server khi có access_token
+
+  // useMutation để thêm sản phẩm vào giỏ hàng trên server khi có access_token
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
       const response = await instanceClient.post(
@@ -289,11 +291,9 @@ const ProductDetail: React.FC = () => {
           },
         }
       );
-      // console.log("Phản hồi từ server:", response.data); // Kiểm tra phản hồi
       return response.data;
     },
     onSuccess: (data) => {
-      // console.log("Thêm vào giỏ hàng thành công:", data); // Kiểm tra dữ liệu thành công
       if (data?.status) {
         toast.success(data.message);
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
@@ -302,10 +302,10 @@ const ProductDetail: React.FC = () => {
       }
     },
     onError: (error: any) => {
-      console.error("Lỗi khi thêm vào giỏ hàng:", error); // Kiểm tra lỗi
+      console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error(
         error.response?.data?.message ||
-        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
@@ -430,12 +430,12 @@ const ProductDetail: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["product", slug],
+        queryKey: ["product", slug, "PRODUCT_DETAIL"],
       });
     },
-    onError: (error) => {
-      message.error("Xóa sản phẩm yêu thích thất bại");
-      console.error("API error", error);
+    onError: (error: any) => {
+      message.error(error?.response?.data?.mess);
+      throw new Error("Xóa sản phẩm yêu thích thất bại");
     },
   });
   const handleClickHeart = (id: any) => {
@@ -457,10 +457,30 @@ const ProductDetail: React.FC = () => {
   const toggleDescription = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
+  const isVariantAvailable = (
+    variants: any[],
+    color: string,
+    size?: string
+  ) => {
+    if (size) {
+      // Check specific color and size combination
+      return variants.some(
+        (v) =>
+          v.mau_bien_the.ma_mau_sac === color &&
+          v.kich_thuoc_bien_the.kich_thuoc === size &&
+          v.so_luong_bien_the > 0
+      );
+    }
+    // Check if any size is available for this color
+    return variants.some(
+      (v) => v.mau_bien_the.ma_mau_sac === color && v.so_luong_bien_the > 0
+    );
+  };
+
   if (isLoading) return <div>Đang tải...</div>;
   // if (isError) return <div>Có lỗi khi tải thông tin sản phẩm</div>;
   // console.log(product);
-  
+
   return (
     <>
       <section>
@@ -537,7 +557,7 @@ const ProductDetail: React.FC = () => {
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                // className="mySwiper1"
+                  // className="mySwiper1"
                 >
                   {currentImages?.map((image, index) => (
                     <SwiperSlide key={`thumb-${index}`}>
@@ -570,10 +590,11 @@ const ProductDetail: React.FC = () => {
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
-                          ? "bg-[#3CD139]/10 text-[#3CD139]"
-                          : "bg-red-500 text-white"
-                          }`}
+                        className={` text-sm px-2 py-1 rounded-sm ${
+                          selectedVariant?.so_luong_bien_the > 0
+                            ? "bg-[#3CD139]/10 text-[#3CD139]"
+                            : "bg-red-500 text-white"
+                        }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -639,7 +660,7 @@ const ProductDetail: React.FC = () => {
                     <span className="font-normal">{selectedColorDisplay}</span>
                   ) : null}
                 </h3>
-                <div className="flex space-x-2">
+                {/* <div className="flex space-x-2">
                   {Array.from(
                     new Set(
                       product?.bien_the_san_pham?.map(
@@ -654,6 +675,46 @@ const ProductDetail: React.FC = () => {
                       onClick={() => handleColorClick(color)}
                     />
                   ))}
+                </div> */}
+                <div className="flex space-x-2">
+                  {Array.from(
+                    new Set(
+                      product?.bien_the_san_pham?.map(
+                        (v) => v?.mau_bien_the?.ma_mau_sac
+                      )
+                    )
+                  ).map((color, index) => {
+                    const isAvailable = isVariantAvailable(
+                      product?.bien_the_san_pham as any,
+                      color
+                    );
+                    return (
+                      <button
+                        key={index}
+                        className={`w-9 h-9 rounded-md border-2 ${
+                          selectedColor === color ? "border-black" : ""
+                        } ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
+                        style={{ backgroundColor: color }}
+                        onClick={() => isAvailable && handleColorClick(color)}
+                        disabled={!isAvailable}
+                      >
+                        {!isAvailable && (
+                          <div
+                            className="absolute inset-0 border-t-2 border-red-500 transform rotate-45"
+                            style={{
+                              content: '""',
+                              borderTop: "2px solid rgba(255, 0, 0, 0.5)",
+                              transform: "rotate(45deg)",
+                              transformOrigin: "center",
+                              width: "130%",
+                              left: "-30%",
+                              top: "45%",
+                            }}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -675,11 +736,16 @@ const ProductDetail: React.FC = () => {
                   <SizeGuideModal
                     isOpen={isModalOpen}
                     onClose={toggleModal}
-                    categoryId={product?.ong_danh_muc?.id ?? product?.cha_danh_muc?.id ?? product?.danh_muc?.id ?? 0}
+                    categoryId={
+                      product?.ong_danh_muc?.id ??
+                      product?.cha_danh_muc?.id ??
+                      product?.danh_muc?.id ??
+                      0
+                    }
                     productDetailId={product?.id ?? 0}
                   />
                 </div>
-
+                {/* 
                 <div className="flex mt-3">
                   {Array.from(
                     new Set(
@@ -696,15 +762,58 @@ const ProductDetail: React.FC = () => {
                       {size}
                     </button>
                   ))}
+                </div> */}
+                <div className="flex mt-3">
+                  {Array.from(
+                    new Set(
+                      product?.bien_the_san_pham?.map(
+                        (v) => v?.kich_thuoc_bien_the?.kich_thuoc
+                      )
+                    )
+                  ).map((size, index) => {
+                    const isAvailable = selectedColor
+                      ? isVariantAvailable(
+                          product?.bien_the_san_pham as any,
+                          selectedColor,
+                          size
+                        )
+                      : false;
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => isAvailable && handleSizeClick(size)}
+                        disabled={!isAvailable}
+                        className={`w-10 h-10 rounded-md border border-blackL text-blackL overflow-hidden
+          hover:bg-blackL hover:text-white mr-2 
+          ${selectedSize === size ? "bg-blackL text-white" : ""}
+          ${!isAvailable ? "opacity-40 cursor-not-allowed relative" : ""}`}
+                      >
+                        {size}
+                        {!isAvailable && (
+                          <div
+                            className="absolute inset-0"
+                            style={{
+                              content: '""',
+                              borderTop: "2px solid rgba(255, 0, 0, 0.5)",
+                              transform: "rotate(45deg)",
+                              transformOrigin: "center",
+                              width: "130%",
+                              left: "-30%",
+                              top: "45%",
+                            }}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               <div className="mt-12 flex gap-5">
                 <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                   <button
-                    onClick={() =>
-                      setQuantity((prev) => Math.max(1, prev - 1))
-                    }
+                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
                     className="py-2 pr-2"
                   >
                     <i className="fa-solid fa-minus" />
@@ -716,11 +825,23 @@ const ProductDetail: React.FC = () => {
                     min="1"
                     max={selectedVariant?.so_luong_bien_the || 1}
                     value={quantity}
-                    onChange={(e) =>
-                      setQuantity(Math.max(1, parseInt(e.target.value, 10)))
-                    }
+                    onChange={(e) => {
+                      const inputQuantity = parseInt(e.target.value, 10);
+                      // Kiểm tra nếu inputQuantity vượt quá số lượng kho
+                      if (
+                        inputQuantity >
+                        (selectedVariant?.so_luong_bien_the || 1)
+                      ) {
+                        if (selectedVariant) {
+                          setQuantity(selectedVariant.so_luong_bien_the); // Đặt về số lượng kho tối đa
+                        }
+                      } else {
+                        setQuantity(Math.max(1, inputQuantity)); // Đảm bảo số lượng không thấp hơn 1
+                      }
+                    }}
                     className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                   />
+
                   <button
                     onClick={() =>
                       setQuantity((prev) =>
@@ -730,31 +851,39 @@ const ProductDetail: React.FC = () => {
                         )
                       )
                     }
-                  className="py-2 pl-2"
+                    className="py-2 pl-2"
                   >
-                  <i className="fa-solid fa-plus" />
+                    <i className="fa-solid fa-plus" />
+                  </button>
+                </div>
+                <button
+                  onClick={handleAddToCart}
+                  className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
+                >
+                  Thêm vào giỏ hàng
+                </button>
+                <Modal
+                  visible={isModalVisible}
+                  onCancel={() => setIsModalVisible(false)}
+                  footer={null}
+                  width={500}
+                >
+                  <LoginPopup />
+                </Modal>
+                <button
+                  onClick={() => handleClickHeart(product?.id)}
+                  className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
+`}
+                >
+                  <i
+                    className={`fa-heart text-3xl text-red-600 ${product?.trang_thai_yeu_thich ? "fa-solid " : "fa-regular "}`}
+                  />
                 </button>
               </div>
-              <button
-                onClick={handleAddToCart}
-                className="btn-black xl:w-[340px] w-[250px] lg:w-[250px] md:w-[340px] xl:h-14 lg:h-10  md:h-14 h-10 rounded-lg"
-              >
-                Thêm vào giỏ hàng
-              </button>
-              <button
-                onClick={() => handleClickHeart(product?.id)}
-                className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
-`}
-              >
-                <i
-                  className={`fa-heart text-3xl text-red-600 ${product?.trang_thai_yeu_thich ? "fa-solid " : "fa-regular "}`}
-                />
-              </button>
             </div>
           </div>
         </div>
-      </div>
-    </section >
+      </section>
 
       <div className="max-w-6xl mx-auto p-8">
         <div className="flex space-x-8 border-b pb-2 mb-4">
@@ -780,10 +909,11 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${isDescriptionExpanded
-                ? "h-auto"
-                : "max-h-[500px] overflow-hidden"
-                }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
+                isDescriptionExpanded
+                  ? "h-auto"
+                  : "max-h-[500px] overflow-hidden"
+              }`}
             >
               <div
                 dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
@@ -870,7 +1000,7 @@ const ProductDetail: React.FC = () => {
                             ,
                             {
                               review?.bien_the_san_pham?.kich_thuoc_bien_the
-                                .kich_thuoc
+                                ?.kich_thuoc
                             }
                           </div>
                         </div>
@@ -1010,73 +1140,24 @@ const ProductDetail: React.FC = () => {
         )}
       </div>
 
-  {/* <div className="container mx-14 pb-10">
-        <h2 className="mx-14 text-4xl font-medium tracking-[1px] mb-12">
-          Sản phẩm cùng loại        </h2>
-        <div className="mx-14 lg:flex lg:gap-7 h-[500px]">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {relatedProducts?.data.map((product) => (
-              <div key={product.id} className="xl:col-span-1 lg:col-span-1 col-span-1 md:col-span-1 mb-2 w-[264px] mx-auto">
-                <div className="product-card hover:bg-zinc-100">
-                  <div className="w-full h-[332px] relative">
-                    <a href="#">
-                      <i className="fa-regular fa-star text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-5 right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white" />
-                    </a>
-                    <a href="#">
-                      <i className="fa-solid fa-arrow-right-arrow-left text-lg bg-white px-4 py-[14px] rounded-full absolute top-[70px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white" />
-                    </a>
-                    <a href="#">
-                      <i className="fa-regular fa-eye text-lg bg-white px-[13px] py-[14px] rounded-full absolute top-[121px] right-6 btn invisible opacity-0 transition-opacity duration-300 hover:bg-black hover:text-white" />
-                    </a>
-                    <img
-                      src={product.anh_san_pham}
-                      alt={product.ten_san_pham}
-                      className="w-[285px] h-[320px] object-cover"
-                    />
-                    <button className="hover:bg-blackL hover:text-white absolute px-[75px] py-3 left-4 rounded-lg bottom-5 bg-white invisible opacity-30 transition-opacity btn duration-300">
-                      Add to Cart
-                    </button>
-                  </div>
-                  <div className="bg-white pt-4">
-                    <a href="#">
-                      <h5 className="font-bold text-lg">{product.ten_san_pham}</h5>
-                    </a>
-                    <p className="my-1 font-normal">
-                      {product.mo_ta_ngan}
-                    </p>
-                    <p className="font-medium text-lg">
-                      {product.gia_ban}
-                      <span className="text-black/20 line-through px-1">
-                        {product.gia_goc}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div> */}
       <RelatedProducts productId={product?.id ?? 0} />
 
       <Footer />
-  {
-    previewImage && (
-      <Image
-        style={{ display: "none" }}
-        preview={{
-          visible: previewOpen,
-          src: previewImage,
-          onVisibleChange: (visible) => {
-            setPreviewOpen(visible);
-            if (!visible) {
-              setPreviewImage("");
-            }
-          },
-        }}
-      />
-    )
-  }
+      {previewImage && (
+        <Image
+          style={{ display: "none" }}
+          preview={{
+            visible: previewOpen,
+            src: previewImage,
+            onVisibleChange: (visible) => {
+              setPreviewOpen(visible);
+              if (!visible) {
+                setPreviewImage("");
+              }
+            },
+          }}
+        />
+      )}
     </>
   );
 };

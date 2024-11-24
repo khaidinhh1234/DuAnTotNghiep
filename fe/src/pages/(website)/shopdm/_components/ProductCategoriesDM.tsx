@@ -1,5 +1,5 @@
 import instanceClient from "@/configs/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Slider } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -25,14 +25,12 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
   const [selectedMau, setSelectedMau] = useState<number[]>([]);
   // mau sac
   const handleItemClick = (id: number) => {
-    setSelectedMau(
-      (prevSelectedSize) =>
-        prevSelectedSize.includes(id)
-          ? prevSelectedSize.filter((itemId) => itemId !== id) // Deselect if already clicked
-          : [...prevSelectedSize, id] // Add to the list if not yet selected
+    setSelectedMau((prevSelectedSize) =>
+      prevSelectedSize.includes(id)
+        ? prevSelectedSize.filter((itemId) => itemId !== id)
+        : [...prevSelectedSize, id]
     );
   };
-
   // size
   const handleCheckboxChange = (id: number) => {
     setselectedSize((prevSize) =>
@@ -41,9 +39,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
         : [...prevSize, id]
     );
   };
-
   const { tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa } = useParams();
-
   //data
   const datas = {
     ...(selectedParentIds.length > 0 && {
@@ -52,13 +48,11 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     ...(selectedChildIds.length > 0 && {
       danh_muc_chau_ids: [...selectedChildIds],
     }),
-
     ...(price.length > 0 && { gia_duoi: price[0] }),
     ...(price.length > 0 && { gia_tren: price[1] }),
     ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
     ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
   };
-
   const danhmuc = tenDanhMucConCapBa
     ? tenDanhMucConCapBa
     : tenDanhMucCon
@@ -108,7 +102,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       setChildChecked((prevState) => ({ ...prevState, [index]: [] }));
     }
   };
-
   // toanmoi
   const handleChildChange = (
     parentIndex: number,
@@ -125,7 +118,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
         [childIndex]: checked,
       },
     }));
-
     // Cập nhật danh sách con được chọn
     if (checked) {
       setSelectedChildIds((prev) => [...prev, childId]);
@@ -133,7 +125,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
         (grandchild: any) => grandchild.id
       );
       setSelectedGrandchildIds((prev) => [...prev, ...grandchildIds]);
-
       // Đảm bảo cha được chọn
       setParentChecked((prevState) => ({
         ...prevState,
@@ -154,7 +145,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       setSelectedGrandchildIds((prev) =>
         prev.filter((id) => !grandchildIds.includes(id))
       );
-
       // Kiểm tra nếu không còn con nào được chọn, bỏ chọn cha
       setChildChecked((prev) => {
         const allChildrenUnchecked = Object.values(
@@ -174,7 +164,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       });
     }
   };
-
   const { data, refetch: refetch2 } = useQuery({
     queryKey: ["SANPHAM_LOC", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
     queryFn: async () => {
@@ -200,9 +189,8 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     },
     enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
   });
-
   const products = data?.data?.san_pham.data;
-
+  const queryClient = useQueryClient();
   const { data: locsanpham, refetch } = useQuery({
     queryKey: ["LOCSAMPHAM"],
     queryFn: async () => {
@@ -218,21 +206,18 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
+    enabled: !!danhmuc && !!datas, // chỉ gọi khi có `danhmuc` và `datas`
   });
-  // console.log(locsanpham);
+
   useEffect(() => {
     refetch();
     refetch2();
     datas;
   }, [danhmuc, refetch, refetch2, datas]);
-  // console.log(locsanpham);
   const mau_sac = locsanpham?.mauSac;
-
   const sizes = locsanpham?.kichThuoc;
-  // console.log(sizes);
   // lọc
   const [page, setPage] = useState(1);
-
   useEffect(() => {
     const isInDanhMucPage =
       tenDanhMucCha || tenDanhMucCon || tenDanhMucConCapBa;
@@ -246,7 +231,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
       price.length > 0
     ) {
       if (isInDanhMucPage) {
-        // mutate();
       } else {
         // LOCMUTATE();
       }
@@ -255,8 +239,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     selectedParentIds,
     selectedChildIds,
     selectedGrandchildIds,
-    // mutate,
-    // LOCMUTATE,
     selectedSize,
     selectedMau,
     price,
@@ -266,9 +248,6 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
     setPage(page);
   };
   const danh_muc = locsanpham?.danhMucCap2;
-  // console.log(danh_muc);
-  // const products = data?.data?.data;
-  // console.log(products);
 
   // toanmoi
   const [grandchildChecked, setGrandchildChecked] = useState<{

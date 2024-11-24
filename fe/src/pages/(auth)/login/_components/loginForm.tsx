@@ -51,10 +51,9 @@ const LoginForm = () => {
 
     onError: (error: any) => {
       if (
-        error.response.data.message ==
-        "Tài khoản hoặc mật khẩu không chính xác."
+        error.response.data.message == "Tài khoản hoặc mật khẩu không chính xác"
       ) {
-        toast.error("Tài khoản hoặc mật khâu không chính xác");
+        toast.error("Tài khoản hoặc mật khẩu không chính xác");
       } else {
         toast.error("Đăng nhập thất bại");
       }

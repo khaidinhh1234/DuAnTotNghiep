@@ -1,9 +1,10 @@
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
+import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message, Modal, Rate } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   Autoplay,
@@ -14,6 +15,7 @@ import {
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 const View = ({ id, ID }: { id: string; ID: number }) => {
+  const nav = useNavigate()
   // console.log(id);
   // console.log(ID);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -67,9 +69,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
         }
 
         return response.data;
-      } catch (error) {
-        message.error("Xóa sản phẩm yêu thích thất bại");
-        console.error("API error", error); // Thêm log lỗi API
+      } catch (error: any) {
+        message.error(error?.response?.data?.mess);
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
     },
@@ -202,9 +203,14 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     setPreviewOpen(true);
   };
 
-  // -
-
-  // +
+  const selectedVariant = useMemo(() => {
+    if (!product || !selectedColor || !selectedSize) return null;
+    return product?.bien_the_san_pham?.find(
+      (v: any) =>
+        v?.mau_bien_the?.ma_mau_sac === selectedColor &&
+        v?.kich_thuoc_bien_the?.kich_thuoc === selectedSize
+    );
+  }, [product, selectedColor, selectedSize]);
 
   // const images = [product, products1, products2, sanPham2];
 
@@ -239,7 +245,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     onSuccess: (data) => {
       if (data.status) {
         toast.success(data.message);
-        queryclient.invalidateQueries({ queryKey: ["cart", access_token] }); // Làm mới giỏ hàng
+        queryclient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
         toast.error(data.message);
       }
@@ -247,12 +253,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     onError: (error: any) => {
       toast.error(
         error.response?.data?.message ||
-          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
-
-  const MAX_QUANTITY = 10;
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const handleAddToCart = () => {
     if (quantity < 1) {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
@@ -266,33 +271,30 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
-
+    console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
     if (!access_token) {
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      const existingItem = cart.find(
-        (item: { variantId: number; quantity: number }) =>
-          item.variantId === variantIdToUse
-      );
-
-      const currentQuantity = existingItem ? existingItem.quantity : 0;
-
-      if (currentQuantity + quantity > MAX_QUANTITY) {
-        toast.error(`Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`);
-        return;
-      }
-
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
-        cart.push({ variantId: variantIdToUse, quantity });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-      toast.success("Sản phẩm đã được thêm vào giỏ hàng trong localStorage.");
-    } else {
-      addToCart(variantIdToUse);
+      setIsModalVisible(true); // Hiển thị modal đăng nhập
+      // nav("/login")
+      return;
     }
+    // if (!access_token) {
+    //   toast.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
+    //   return;
+    // }
+
+    addToCart(variantIdToUse);
+  };
+  const isVariantAvailable = (variants: any[], color: string, size?: string) => {
+    const filteredVariants = variants?.filter((variant: any) => {
+      if (size) {
+        return variant.mau_bien_the.ma_mau_sac === color &&
+          variant.kich_thuoc_bien_the.kich_thuoc === size &&
+          variant.so_luong_bien_the > 0;
+      }
+      return variant.mau_bien_the.ma_mau_sac === color &&
+        variant.so_luong_bien_the > 0;
+    });
+    return filteredVariants?.length > 0;
   };
   return (
     <>
@@ -421,6 +423,20 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     </div>
                     <h4 className=" text-xl font-normal">
                       {product?.ma_san_pham}
+                      {selectedVariant && (
+                        <div className="mt-2">
+                          <a
+                            className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                                ? "bg-[#3CD139]/10 text-[#3CD139]"
+                                : "bg-red-500 text-white"
+                              }`}
+                          >
+                            {selectedVariant?.so_luong_bien_the > 0
+                              ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
+                              : "Hết hàng"}
+                          </a>
+                        </div>
+                      )}
                     </h4>
                     <div className="stars_reviews d-flex ">
                       <span>
@@ -443,8 +459,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         <>
                           {gia?.gia_khuyen_mai_tam_thoi
                             ? gia?.gia_khuyen_mai_tam_thoi.toLocaleString(
-                                "vi-VN"
-                              )
+                              "vi-VN"
+                            )
                             : (gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ??
                               0)}{" "}
                           đ
@@ -458,7 +474,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                                 ? gia?.gia_ban - gia?.gia_khuyen_mai_tam_thoi
                                 : gia?.gia_ban - gia?.gia_khuyen_mai) /
                                 gia?.gia_ban) *
-                                100
+                              100
                             )}
                             %
                           </span>
@@ -484,19 +500,37 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       ) : null}
                     </h3>
                     <div className="flex space-x-2">
-                      {Array.from(uniqueColors).map((color, index) => (
-                        <button
-                          key={index}
-                          className={`w-9 h-9 rounded-md border-2 ${
-                            selectedColor === color ? "border-black" : ""
-                          }`}
-                          style={{
-                            backgroundColor: color as string,
-                          }}
-                          onClick={() => handleColorClick(color)}
-                        />
-                      ))}
+                      {Array.from(uniqueColors).map((color, index) => {
+                        const isAvailable = isVariantAvailable(product?.bien_the_san_pham, color);
+                        return (
+                          <button
+                            key={index}
+                            className={`w-9 h-9 rounded-md border-2 overflow-hidden
+          ${selectedColor === color ? "border-black" : ""}
+          ${!isAvailable ? "opacity-40 cursor-not-allowed relative" : ""}`}
+                            style={{ backgroundColor: color as string }}
+                            onClick={() => isAvailable && handleColorClick(color)}
+                            disabled={!isAvailable}
+                          >
+                            {!isAvailable && (
+                              <div
+                                className="absolute inset-0"
+                                style={{
+                                  content: '""',
+                                  borderTop: '2px solid rgba(255, 0, 0, 0.5)',
+                                  transform: 'rotate(45deg)',
+                                  transformOrigin: 'center',
+                                  width: '100%',
+                                  left: '0',
+                                  top: '45%'
+                                }}
+                              />
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
+
                   </div>
 
                   <div className="items-center mt-4 mb-3">
@@ -509,17 +543,39 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       ) : null}
                     </h3>
                     <div className="flex mt-3">
-                      {sizesForSelectedColor?.map((size: any) => (
-                        <button
-                          key={size}
-                          onClick={() => handleSizeClick(size)}
-                          className={`w-10 h-10 rounded-md border border-blackL text-blackL hover:bg-blackL hover:text-white mr-2 ${
-                            selectedSize === size ? "bg-blackL text-white" : ""
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
+                      {sizesForSelectedColor?.map((size: any) => {
+                        const isAvailable = selectedColor ?
+                          isVariantAvailable(product?.bien_the_san_pham, selectedColor, size) :
+                          false;
+
+                        return (
+                          <button
+                            key={size}
+                            onClick={() => isAvailable && handleSizeClick(size)}
+                            disabled={!isAvailable}
+                            className={`w-10 h-10 rounded-md border border-blackL text-blackL overflow-hidden
+          hover:bg-blackL hover:text-white mr-2 
+          ${selectedSize === size ? "bg-blackL text-white" : ""}
+          ${!isAvailable ? "opacity-40 cursor-not-allowed relative" : ""}`}
+                          >
+                            {size}
+                            {!isAvailable && (
+                              <div
+                                className="absolute inset-0"
+                                style={{
+                                  content: '""',
+                                  borderTop: '2px solid rgba(255, 0, 0, 0.5)',
+                                  transform: 'rotate(45deg)',
+                                  transformOrigin: 'center',
+                                  width: '130%',
+                                  left: '-30%',
+                                  top: '45%'
+                                }}
+                              />
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                   <div className="mt-12 flex gap-5">
@@ -528,7 +584,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         onClick={() =>
                           setQuantity((prev) => Math.max(1, prev - 1))
                         }
-                        className="py-2 pr-2"
+                        className={`py-2 pr-2 ${quantity === 1 ? "cursor-not-allowed" : ""}`}
                       >
                         <i className="fa-solid fa-minus" />
                       </button>
@@ -536,26 +592,32 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         type="number"
                         id="numberInput"
                         defaultValue={1}
-                        min={1}
-                        max={100}
+                        min="1"
+                        max={selectedVariant?.so_luong_bien_the || 1}
                         value={quantity}
-                        onChange={(e) =>
-                          setQuantity(Math.max(1, parseInt(e.target.value, 10)))
-                        }
+                        onChange={(e) => {
+                          const inputQuantity = parseInt(e.target.value, 10);
+                          // Kiểm tra nếu inputQuantity vượt quá số lượng kho
+                          if (inputQuantity > (selectedVariant?.so_luong_bien_the || 1)) {
+                            if (selectedVariant) {
+                              setQuantity(selectedVariant.so_luong_bien_the); // Đặt về số lượng kho tối đa
+                            }
+                          } else {
+                            setQuantity(Math.max(1, inputQuantity)); // Đảm bảo số lượng không thấp hơn 1
+                          }
+                        }}
                         className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                       />
                       <button
-                        onClick={() => {
-                          if (quantity >= MAX_QUANTITY) {
-                            toast.error(
-                              `Số lượng tối đa cho mỗi sản phẩm là ${MAX_QUANTITY}.`
-                            );
-                          } else {
-                            setQuantity((prev) => prev + 1);
-                          }
-                        }}
+                        onClick={() =>
+                          setQuantity((prev) =>
+                            Math.min(
+                              selectedVariant?.so_luong_bien_the || 1,
+                              prev + 1
+                            )
+                          )
+                        }
                         className="py-2 pl-2"
-                        disabled={quantity >= MAX_QUANTITY}
                       >
                         <i className="fa-solid fa-plus" />
                       </button>
@@ -566,6 +628,14 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     >
                       Thêm vào giỏ hàng
                     </button>
+                    <Modal
+                      visible={isModalVisible}
+                      onCancel={() => setIsModalVisible(false)}
+                      footer={null}
+                      width={500}
+                    >
+                      <LoginPopup />
+                    </Modal>
                     <button
                       onClick={() => handleClickHeart(ID)}
                       className={`border border-black xl:w-16 lg:w-11 md:w-16 w-11 xl:h-14 lg:h-10 md:h-14 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-slate-400/50 
