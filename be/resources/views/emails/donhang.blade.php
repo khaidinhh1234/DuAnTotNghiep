@@ -8,28 +8,29 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #ff66ff; /* Nền hồng chói */
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #f8f9fa; /* Nền xám nhạt */
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            color: #ff0000; /* Chữ đỏ */
+            color: #333333; /* Chữ xám đậm */
             line-height: 1.6;
         }
 
         .email-container {
             max-width: 600px;
             margin: auto;
-            background: #ff9900; /* Nền cam */
-            border: 10px double #33cc33; /* Viền xanh lá */
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            background: #ffffff; /* Nền trắng */
+            border: 1px solid #dddddd; /* Viền xám nhạt */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            text-align: center;
+            text-align: left;
         }
 
         .header {
-            background-color: #0000ff; /* Nền xanh dương */
+            background-color: #343a40; /* Nền xám đậm */
             padding: 15px;
+            text-align: center;
         }
 
         .header img {
@@ -39,18 +40,17 @@
         }
 
         h1 {
-            font-size: 36px;
+            font-size: 24px;
             margin-bottom: 5px;
-            color: #ffff00; /* Màu vàng chói */
-            text-shadow: 3px 3px 5px black; /* Đổ bóng đen */
+            color: #ffffff; /* Chữ trắng */
         }
 
         h2 {
-            font-size: 28px;
-            color: #ff33cc; /* Màu hồng neon */
+            font-size: 20px;
+            color: #343a40; /* Chữ xám đậm */
             margin: 15px 0 10px;
             padding-bottom: 5px;
-            border-bottom: 3px dotted #cc33ff; /* Viền chấm tím neon */
+            border-bottom: 2px solid #dddddd; /* Viền xám nhạt */
         }
 
         .footer {
@@ -58,28 +58,28 @@
             font-size: 14px;
             color: #ffffff;
             padding: 15px;
-            background-color: #660066; /* Nền tím đậm */
-            border-top: 5px solid #ff3333; /* Viền đỏ */
+            background-color: #343a40; /* Nền xám đậm */
+            border-top: 1px solid #dddddd; /* Viền xám nhạt */
         }
 
         .table {
             border-collapse: collapse;
             margin: 15px 0;
             width: 100%;
-            color: #ffffff;
+            color: #333333; /* Chữ xám đậm */
         }
 
         .table th,
         .table td {
             vertical-align: middle;
             padding: 8px;
-            border: 3px dashed #3333cc; /* Viền xanh lam */
-            background-color: #ff66cc; /* Nền hồng sáng */
+            border: 1px solid #dddddd; /* Viền xám nhạt */
+            background-color: #ffffff; /* Nền trắng */
         }
 
         .table th {
-            background-color: #ffcc00; /* Nền vàng sáng */
-            color: #00ff00; /* Chữ xanh lá chói */
+            background-color: #f8f9fa; /* Nền xám nhạt */
+            color: #343a40; /* Chữ xám đậm */
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -87,41 +87,41 @@
         .product-image {
             width: 80px;
             height: auto;
-            border: 4px solid #00ffcc; /* Viền xanh dương nhạt */
+            border: 1px solid #dddddd; /* Viền xám nhạt */
             border-radius: 5px;
         }
 
         .summary {
-            background-color: #ccff66; /* Nền xanh nhạt */
+            background-color: #f8f9fa; /* Nền xám nhạt */
             border-radius: 5px;
             padding: 15px;
             margin-top: 20px;
             font-size: 18px;
-            color: #6600cc; /* Chữ tím đậm */
+            color: #333333; /* Chữ xám đậm */
         }
 
         .highlight {
-            color: #ff0033; /* Màu đỏ đậm */
+            color: #dc3545; /* Màu đỏ */
             font-weight: bold;
         }
 
         .cta-button {
             display: inline-block;
-            background-color: #ff66ff; /* Nền hồng chói */
-            color: #000000; /* Chữ đen */
+            background-color: #007bff; /* Nền xanh dương */
+            color: #ffffff; /* Chữ trắng */
             text-decoration: none;
-            padding: 15px 20px;
-            border-radius: 10px;
+            padding: 10px 20px;
+            border-radius: 5px;
             font-weight: bold;
             margin-top: 15px;
             transition: background-color 0.3s;
-            font-size: 18px;
-            border: 3px dotted #33cc33; /* Viền xanh lá */
+            font-size: 16px;
+            border: 1px solid #007bff; /* Viền xanh dương */
         }
 
         .cta-button:hover {
-            background-color: #00ccff; /* Nền xanh dương nhạt khi hover */
-            color: #ffff00; /* Chữ vàng khi hover */
+            background-color: #0056b3; /* Nền xanh dương đậm khi hover */
+            color: #ffffff; /* Chữ trắng khi hover */
         }
 
         /* Responsive Design */
@@ -149,7 +149,7 @@
 <body>
 <div class="email-container">
     <div class="header">
-        <img src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1726411972/Screenshot_2024-09-15_215232_d3dt3j.png" alt="Logo Công Ty">
+        <img src="https://res.cloudinary.com/dpundwxg1/image/upload/v1732433902/image-removebg-preview_nce4uq.png" alt="Logo Công Ty" style="background: none;">
         <h1>HÓA ĐƠN ĐẶT HÀNG</h1>
     </div>
 
