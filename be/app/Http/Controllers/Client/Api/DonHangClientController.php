@@ -129,17 +129,17 @@ class DonHangClientController extends Controller
                     'danhGias.user',
                     'vanChuyen',
                 ])
-                ->when($request->filled('trang_thai_don_hang'), function ($query) use ($request) {
-                    $query->where('trang_thai_don_hang', 'like', $request->trang_thai_don_hang)
-                    ->orWhere('trang_thai_thanh_toan', 'like', $request->trang_thai_don_hang);
-                })
-                ->where(function ($query) use ($request) {
-                    $query->where('ma_don_hang', 'like', '%' . $request->loc . '%')
-                        ->orWhereHas('chiTiets.bienTheSanPham.sanPham', function ($query) use ($request) {
-                            $query->where('ten_san_pham', 'like', '%' . $request->loc . '%');
-                        });
-                })
-                ->orderByDesc('created_at')->paginate($pageSize);
+                    ->when($request->filled('trang_thai_don_hang'), function ($query) use ($request) {
+                        $query->where('trang_thai_don_hang', 'like', $request->trang_thai_don_hang)
+                            ->orWhere('trang_thai_thanh_toan', 'like', $request->trang_thai_don_hang);
+                    })
+                    ->where(function ($query) use ($request) {
+                        $query->where('ma_don_hang', 'like', '%' . $request->loc . '%')
+                            ->orWhereHas('chiTiets.bienTheSanPham.sanPham', function ($query) use ($request) {
+                                $query->where('ten_san_pham', 'like', '%' . $request->loc . '%');
+                            });
+                    })
+                    ->orderByDesc('created_at')->paginate($pageSize);
                 // Thực hiện các tính toán cho từng đơn hàng
                 $donHang->each(function ($item) {
                     $item['tong_tien_da_giam'] = $item['tong_tien_don_hang'] - $item['so_tien_giam_gia'];

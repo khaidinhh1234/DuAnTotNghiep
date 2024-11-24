@@ -196,8 +196,6 @@ const UserPrivilegeAdmin = () => {
       }
     },
   });
-  console.log("Data:", data);
-  console.log("Fetching:", isFetching);
   const vaitro = data?.data
     .map((item: any) => {
       return { ...item, key: item.id };

@@ -530,5 +530,4 @@ class MoMoController extends Controller
             ], 500);
         }
     }
-
 }
