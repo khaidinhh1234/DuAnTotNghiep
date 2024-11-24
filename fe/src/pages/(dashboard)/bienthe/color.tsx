@@ -38,7 +38,7 @@ const Color = () => {
 
   const updateMutation = useMutation({
     mutationFn: async (values: IColor) => {
-      const response = await instance.put(`/admin/bienthemausac/${id}`, values);
+      const response = await instance.put(`/bienthemausac/${id}`, values);
       return response.data;
     },
     onSuccess: () => {
