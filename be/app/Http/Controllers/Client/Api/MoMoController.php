@@ -444,6 +444,7 @@ class MoMoController extends Controller
             if ($request->phuong_thuc_thanh_toan == DonHang::PTTT_TT) {
                 $donHang->update([
                     'phuong_thuc_thanh_toan' => $request->phuong_thuc_thanh_toan,
+                    'trang_thai_thanh_toan' => DonHang::TTTT_CTT,
                 ]);
 
                 $thongBao = ThongBao::create([
@@ -529,5 +530,4 @@ class MoMoController extends Controller
             ], 500);
         }
     }
-
 }

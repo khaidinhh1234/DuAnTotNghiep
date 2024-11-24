@@ -1,11 +1,12 @@
 
 import instance from "@/configs/admin";
-// import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Form,
   Input,
+  InputRef,
   message,
   Popconfirm,
   Select,
@@ -14,8 +15,8 @@ import {
   Table,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import React from "react";
-// import Highlighter from "react-highlight-words";
+import React, { useRef, useState } from "react";
+import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
 interface SizeDataType {
@@ -23,13 +24,25 @@ interface SizeDataType {
   id: number;
   kich_thuoc: string;
   loai_kich_thuoc: string;
+  chieu_cao_toi_thieu: number;
+  chieu_cao_toi_da: number;
+  can_nang_toi_thieu: number;
+  can_nang_toi_da: number;
 }
 
+interface FilterDropdownProps {
+  setSelectedKeys: (keys: string[]) => void;
+  selectedKeys: string[];
+  confirm: () => void;
+  clearFilters: () => void;
+}
+
+type SizeDataIndex = keyof SizeDataType;
 
 const SizeManagement: React.FC = () => {
-  // const [searchedColumn, setSearchedColumn] = useState<string>("");
-  // const [searchText, setSearchText] = useState<string>("");
-  // const searchInput = useRef<InputRef>(null);
+  const [searchedColumn, setSearchedColumn] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
+  const searchInput = useRef<InputRef>(null);
   const [form] = Form.useForm();
 
   const queryClient = useQueryClient();
@@ -61,9 +74,13 @@ const SizeManagement: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["size"] });
       message.success("Xóa kích thước thành công");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error deleting kích thước:", error);
-      message.error("Xóa kích thước thất bại");
+      if (error.response && error.response.data) {
+        message.error(error.response.data.message);
+      } else {
+        message.error("Xóa kích thước thất bại");
+      }
     },
   });
 
@@ -71,6 +88,10 @@ const SizeManagement: React.FC = () => {
     mutationFn: async (newSize: {
       kich_thuoc: string;
       loai_kich_thuoc: string;
+      chieu_cao_toi_thieu: number;
+      chieu_cao_toi_da: number;
+      can_nang_toi_thieu: number;
+      can_nang_toi_da: number;
     }) => {
       const existingSize = sizes.find(
         (size: any) =>
@@ -109,112 +130,118 @@ const SizeManagement: React.FC = () => {
       addSizeMutation.mutate({
         kich_thuoc: values.tensize,
         loai_kich_thuoc: values.loai_kich_thuoc,
+        chieu_cao_toi_thieu: Number(values.chieu_cao_toi_thieu),
+        chieu_cao_toi_da: Number(values.chieu_cao_toi_da),
+        can_nang_toi_thieu: Number(values.can_nang_toi_thieu),
+        can_nang_toi_da: Number(values.can_nang_toi_da),
       });
     });
   };
 
-  // const handleSearch = (
-  //   selectedKeys: string[],
-  //   confirm: () => void,
-  //   dataIndex: SizeDataIndex
-  // ) => {
-  //   confirm();
-  //   setSearchText(selectedKeys[0]);
-  //   setSearchedColumn(dataIndex);
-  // };
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: () => void,
+    dataIndex: SizeDataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
 
-  // const handleReset = (clearFilters: () => void) => {
-  //   clearFilters();
-  //   setSearchText("");
-  // };
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
+  };
 
-  // const getColumnSearchProps = (dataIndex: SizeDataIndex) => ({
-  //   filterDropdown: ({
-  //     setSelectedKeys,
-  //     selectedKeys,
-  //     confirm,
-  //     clearFilters,
-  //   }: any) => (
-  //     <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-  //       <Input
-  //         ref={searchInput}
-  //         placeholder={`Tìm ${dataIndex}`}
-  //         value={selectedKeys[0]}
-  //         onChange={(e) =>
-  //           setSelectedKeys(e.target.value ? [e.target.value] : [])
-  //         }
-  //         onPressEnter={() =>
-  //           handleSearch(selectedKeys as string[], confirm, dataIndex)
-  //         }
-  //         style={{ marginBottom: 8, display: "block" }}
-  //       />
-  //       <Space>
-  //         <Button
-  //           type="primary"
-  //           onClick={() =>
-  //             handleSearch(selectedKeys as string[], confirm, dataIndex)
-  //           }
-  //           icon={<SearchOutlined />}
-  //           size="small"
-  //           style={{ width: 90 }}
-  //         >
-  //           Tìm kiếm
-  //         </Button>
-  //         <Button
-  //           onClick={() => clearFilters && handleReset(clearFilters)}
-  //           size="small"
-  //           style={{ width: 90 }}
-  //         >
-  //           Reset
-  //         </Button>
-  //       </Space>
-  //     </div>
-  //   ),
-  //   filterIcon: (filtered: boolean) => (
-  //     <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
-  //   ),
-  //   onFilter: (value: string, record: SizeDataType) =>
-  //     record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-  //   onFilterDropdownOpenChange: (visible: boolean) => {
-  //     if (visible) {
-  //       setTimeout(() => searchInput.current?.select(), 100);
-  //     }
-  //   },
-  //   render: (text: string) =>
-  //     searchedColumn === dataIndex ? (
-  //       <Highlighter
-  //         highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-  //         searchWords={[searchText]}
-  //         autoEscape
-  //         textToHighlight={text ? text.toString() : ""}
-  //       />
-  //     ) : (
-  //       text
-  //     ),
-  // });
+  const getColumnSearchProps = (dataIndex: SizeDataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }: FilterDropdownProps) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Tìm ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Tìm kiếm
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+    onFilter: (value: string, record: SizeDataType) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible: boolean) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text: string) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
 
   const columns: ColumnsType<SizeDataType> = [
     {
       title: "STT",
       key: "stt",
       render: (_, __, index) => index + 1,
-      width: "10%",
+      width: "5%",
     },
     {
-      title: "Tên Size",
+      title: "Tên",
       dataIndex: "kich_thuoc",
       key: "kich_thuoc",
-      width: "50%",
-      sorter: (a: any, b: any) => a.kich_thuoc.localeCompare(b.kich_thuoc),
-      // ...getColumnSearchProps("kich_thuoc"),
+      width: "15%",
+      sorter: (a: SizeDataType, b: SizeDataType) =>
+        a.kich_thuoc.localeCompare(b.kich_thuoc),
+      ...getColumnSearchProps("kich_thuoc"),
     },
     {
-      title: "Loại kích thước",
+      title: "Loại",
       dataIndex: "loai_kich_thuoc",
       key: "loai_kich_thuoc",
-      width: "50%",
-      // sorter: (a, b) => a.loai_kich_thuoc.localeCompare(b.loai_kich_thuoc),
-      // ...getColumnSearchProps("loai_kich_thuoc"),
+      width: "15%",
+      sorter: (a: SizeDataType, b: SizeDataType) =>
+        a.loai_kich_thuoc.localeCompare(b.loai_kich_thuoc),
+      ...getColumnSearchProps("loai_kich_thuoc"),
       render: (text: string) => {
         switch (text) {
           case "nam":
@@ -229,8 +256,23 @@ const SizeManagement: React.FC = () => {
       },
     },
     {
+      title: "Chiều cao (cm)",
+      key: "chieu_cao",
+      width: "20%",
+      render: (_, record) =>
+        `${record.chieu_cao_toi_thieu} - ${record.chieu_cao_toi_da}`,
+    },
+    {
+      title: "Cân nặng (kg)",
+      key: "can_nang",
+      width: "20%",
+      render: (_, record) =>
+        `${record.can_nang_toi_thieu} - ${record.can_nang_toi_da}`,
+    },
+    {
       title: "Quản trị",
       key: "action",
+      width: "25%",
       render: (_, item) => (
         <Space>
           <Popconfirm
@@ -257,7 +299,7 @@ const SizeManagement: React.FC = () => {
   if (isError)
     return (
       <div>
-        <div className="flex items-center justify-center  mt-[250px]">
+        <div className="flex items-center justify-center mt-[250px]">
           <div className=" ">
             <Spin size="large" />
           </div>
@@ -265,51 +307,150 @@ const SizeManagement: React.FC = () => {
       </div>
     );
 
-  // const validateSize = (_: any, value: string) => {
-  //   const validSizes = ['S', 'M', 'L', 'XL', 'XXL'];
-  //   if (form.getFieldValue('loai_kich_thuoc') === 'nam' && !validSizes.includes(value.toUpperCase())) {
-  //     return Promise.reject('Kích thước cho nam chỉ được phép từ S đến XXL.');
-  //   }
-  //   return Promise.resolve();
-  // };
-
   return (
     <>
-      <Form form={form} className="mt-4 flex space-x-2">
-        <Form.Item
-          className="flex-grow mb-0"
-          name="tensize"
-          rules={[
-            { required: true, message: "Vui lòng nhập tên kích thước" },
-            { max: 50, message: "Tên kích thước không được quá 50 ký tự" },
-            {
-              pattern: /^[^\s]+(\s+[^\s]+)*$/,
-              message: "Vui lòng nhập họ không chứa ký tự trắng!",
-            },
-            // { validator: validateSize },
-          ]}
-        >
-          <Input placeholder="Tên kích thước" />
-        </Form.Item>
-        <Form.Item
-          className="flex-grow mb-0"
-          name="loai_kich_thuoc"
-          rules={[{ required: true, message: "Vui lòng chọn loại kích thước" }]}
-        >
-          <Select placeholder="Chọn loại kích thước">
-            <Select.Option value="nam">Nam</Select.Option>
-            <Select.Option value="nu">Nữ</Select.Option>
-            <Select.Option value="tre_em">Trẻ em</Select.Option>
-          </Select>
-        </Form.Item>
-        <Button
-          type="primary"
-          className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
-          onClick={handleAddSize}
-        >
-          Thêm size
-        </Button>
-      </Form>
+     <Form form={form} className="mt-4 space-y-2">
+  <div className="grid grid-cols-3 gap-4">
+    <Form.Item
+      className="mb-0"
+      name="tensize"
+      rules={[
+        { required: true, message: "Vui lòng nhập tên kích thước" },
+        { max: 50, message: "Tên kích thước không được quá 50 ký tự" },
+        {
+          pattern: /^[^\s]+(\s+[^\s]+)*$/,
+          message: "Vui lòng nhập họ không chứa ký tự trắng!",
+        },
+      ]}
+    >
+      <Input placeholder="Tên kích thước" />
+    </Form.Item>
+
+    <Form.Item
+      className="mb-0"
+      name="loai_kich_thuoc"
+      rules={[{ required: true, message: "Vui lòng chọn loại kích thước" }]}
+    >
+      <Select placeholder="Chọn loại kích thước">
+        <Select.Option value="nam">Nam</Select.Option>
+        <Select.Option value="nu">Nữ</Select.Option>
+        <Select.Option value="tre_em">Trẻ em</Select.Option>
+      </Select>
+    </Form.Item>
+
+    <Form.Item
+      className="mb-0"
+      name="chieu_cao_toi_thieu"
+      rules={[
+        { required: true, message: "Vui lòng nhập chiều cao tối thiểu" },
+        {
+          validator: (_, value) => {
+            if (!value) return Promise.resolve();
+            const num = Number(value);
+            if (isNaN(num)) {
+              return Promise.reject('Vui lòng nhập số');
+            }
+            if (num <= 0) {
+              return Promise.reject('Vui lòng nhập số lớn hơn 0');
+            }
+            return Promise.resolve();
+          }
+        }
+      ]}
+    >
+      <Input type="number" placeholder="Chiều cao tối thiểu (cm)" />
+    </Form.Item>
+
+    <Form.Item
+      className="mb-0"
+      name="chieu_cao_toi_da"
+      rules={[
+        { required: true, message: "Vui lòng nhập chiều cao tối đa" },
+        {
+          validator: (_, value) => {
+            if (!value) return Promise.resolve();
+            const num = Number(value);
+            if (isNaN(num)) {
+              return Promise.reject('Vui lòng nhập số');
+            }
+            if (num <= 0) {
+              return Promise.reject('Vui lòng nhập số lớn hơn 0');
+            }
+            const minHeight = form.getFieldValue('chieu_cao_toi_thieu');
+            if (value && minHeight && num <= Number(minHeight)) {
+              return Promise.reject('Chiều cao tối đa phải lớn hơn chiều cao tối thiểu');
+            }
+            return Promise.resolve();
+          }
+        }
+      ]}
+    >
+      <Input type="number" placeholder="Chiều cao tối đa (cm)" />
+    </Form.Item>
+
+    <Form.Item
+      className="mb-0"
+      name="can_nang_toi_thieu"
+      rules={[
+        { required: true, message: "Vui lòng nhập cân nặng tối thiểu" },
+        {
+          validator: (_, value) => {
+            if (!value) return Promise.resolve();
+            const num = Number(value);
+            if (isNaN(num)) {
+              return Promise.reject('Vui lòng nhập số');
+            }
+            if (num <= 0) {
+              return Promise.reject('Vui lòng nhập số lớn hơn 0');
+            }
+            return Promise.resolve();
+          }
+        }
+      ]}
+    >
+      <Input type="number" placeholder="Cân nặng tối thiểu (kg)" />
+    </Form.Item>
+
+    <Form.Item
+      className="mb-0"
+      name="can_nang_toi_da"
+      rules={[
+        { required: true, message: "Vui lòng nhập cân nặng tối đa" },
+        {
+          validator: (_, value) => {
+            if (!value) return Promise.resolve();
+            const num = Number(value);
+            if (isNaN(num)) {
+              return Promise.reject('Vui lòng nhập số');
+            }
+            if (num <= 0) {
+              return Promise.reject('Vui lòng nhập số lớn hơn 0');
+            }
+            const minWeight = form.getFieldValue('can_nang_toi_thieu');
+            if (value && minWeight && num <= Number(minWeight)) {
+              return Promise.reject('Cân nặng tối đa phải lớn hơn cân nặng tối thiểu');
+            }
+            return Promise.resolve();
+          }
+        }
+      ]}
+    >
+      <Input type="number" placeholder="Cân nặng tối đa (kg)" />
+    </Form.Item>
+  </div>
+  <div className="flex justify-end mt-4">
+  <Button
+    type="primary"
+    className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors"
+    onClick={handleAddSize}
+  >
+    Thêm size
+  </Button>
+</div>
+
+</Form>
+
+
       <br />
       <Table
         columns={columns}
@@ -323,3 +464,4 @@ const SizeManagement: React.FC = () => {
 };
 
 export default SizeManagement;
+
