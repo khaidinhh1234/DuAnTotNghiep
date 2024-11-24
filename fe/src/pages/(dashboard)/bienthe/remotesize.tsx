@@ -1,35 +1,45 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Space, Spin, Table } from "antd";
-import React from "react";
-
+import { Button, Input, InputRef, message, Space, Spin, Table } from "antd";
+import React, { useRef, useState } from "react";
+import Highlighter from "react-highlight-words";
+import { SearchOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-
 import instance from "@/configs/admin";
 
-const Remotesize: React.FC = () => {
-  const queryClient = useQueryClient(); // Sử dụng queryClient để invalidate queries
-  // const { id } = useParams();
+interface SizeDataType {
+  key: string;
+  id: number;
+  kich_thuoc: string;
+  loai_kich_thuoc: string;
+}
 
-  // Fetch danh mục đã xóa
+interface FilterDropdownProps {
+  setSelectedKeys: (keys: string[]) => void;
+  selectedKeys: string[];
+  confirm: () => void;
+  clearFilters: () => void;
+}
+
+type SizeDataIndex = keyof SizeDataType;
+
+const Remotesize: React.FC = () => {
+  const [searchedColumn, setSearchedColumn] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
+  const searchInput = useRef<InputRef>(null);
+  const queryClient = useQueryClient();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["size"],
     queryFn: async () => {
-      try {
-        const response = await instance.get("/bienthekichthuoc/thung-rac");
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching remote :", error);
-        throw new Error("Error fetching remote ");
-      }
+      const response = await instance.get("/bienthekichthuoc/thung-rac");
+      return response.data;
     },
   });
 
-  // Xử lý khôi phục danh mục
-  const handleRestore = async (id: string) => {
+  const handleRestore = async (id: number) => {
     try {
       await instance.post(`/bienthekichthuoc/thung-rac/${id}`);
       message.success("Khôi kích thước sản phẩm mục thành công");
-      // Refresh lại dữ liệu sau khi khôi phục
       queryClient.invalidateQueries({ queryKey: ["size"] });
     } catch (error) {
       console.error("Error restoring category:", error);
@@ -37,18 +47,85 @@ const Remotesize: React.FC = () => {
     }
   };
 
-  // Xử lý xóa danh mục vĩnh viễn
-  // const handleDelete = async (id: string) => {
-  //   try {
-  //     await instance.delete(`/admin/danhmuc/${id}`);
-  //     toast.success("Xóa danh mục vĩnh viễn thành công");
-  //     // Refresh lại dữ liệu sau khi xóa vĩnh viễn
-  //     queryClient.invalidateQueries(["danhmuc-remote"]);
-  //   } catch (error) {
-  //     console.error("Error deleting category:", error);
-  //     toast.error("Xóa danh mục vĩnh viễn thất bại");
-  //   }
-  // };
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: () => void,
+    dataIndex: SizeDataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText("");
+  };
+
+  const getColumnSearchProps = (dataIndex: SizeDataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }: FilterDropdownProps) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Tìm ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Tìm kiếm
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
+    ),
+    onFilter: (value: string, record: SizeDataType) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownOpenChange: (visible: boolean) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text: string) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      ),
+  });
 
   const columns = [
     {
@@ -57,37 +134,59 @@ const Remotesize: React.FC = () => {
       dataIndex: "id",
     },
     {
-      title: "Tên kích thước",
-      key: "kich_thuoc",
+      title: "Tên Size",
       dataIndex: "kich_thuoc",
+      key: "kich_thuoc",
+      width: "50%",
+      sorter: (a: SizeDataType, b: SizeDataType) => a.kich_thuoc.localeCompare(b.kich_thuoc),
+      ...getColumnSearchProps("kich_thuoc"),
     },
-
+    {
+      title: "Loại kích thước",
+      dataIndex: "loai_kich_thuoc",
+      key: "loai_kich_thuoc",
+      width: "50%",
+      sorter: (a: SizeDataType, b: SizeDataType) => a.loai_kich_thuoc.localeCompare(b.loai_kich_thuoc),
+      ...getColumnSearchProps("loai_kich_thuoc"),
+      render: (text: string) => {
+        switch (text) {
+          case "nam":
+            return "Nam";
+          case "nu":
+            return "Nữ";
+          case "tre_em":
+            return "Trẻ em";
+          default:
+            return text;
+        }
+      },
+    },
     {
       title: "Quản trị",
       key: "action",
-      render: (_: any, record: any) => (
+      render: (_: unknown, record: SizeDataType) => (
         <Space>
           <Button
-            className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
+            className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
             onClick={() => handleRestore(record.id)}
           >
             Khôi phục
           </Button>
-          {/* <Button onClick={() => handleDelete(record.id)} danger>Xóa vĩnh viễn</Button> */}
         </Space>
       ),
     },
   ];
-  if (isError)
+
+  if (isError) {
     return (
-      <div>
-        <div className="flex items-center justify-center  mt-[250px]">
-          <div className=" ">
-            <Spin size="large" />
-          </div>
+      <div className="flex items-center justify-center mt-[250px]">
+        <div>
+          <Spin size="large" />
         </div>
       </div>
     );
+  }
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
@@ -99,7 +198,7 @@ const Remotesize: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <h1 className="font-semibold md:text-3xl">Biến thể kích thước</h1>
         <Link to="/admin/products/bienthe">
-          <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+          <Button className="bg-gradient-to-r from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
             Quay lại
           </Button>
         </Link>

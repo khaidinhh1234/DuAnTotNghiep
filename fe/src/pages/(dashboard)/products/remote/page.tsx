@@ -329,7 +329,7 @@ import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType, TableColumnType } from "antd";
-import { Button, Input, message, Popconfirm, Space, Spin, Table } from "antd";
+import { Button, Input, message, Space, Spin, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
@@ -344,6 +344,7 @@ interface DataType {
   ten_danh_muc: string;
   luot_xem: number;
   mo_ta_ngan: string;
+  ma_san_pham: string;
   noi_dung: string;
   tongSoLuong: number;
 }
@@ -429,24 +430,24 @@ const ProductsRemote: React.FC = () => {
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      await instance.delete(`/admin/sanpham/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sanpham-remote"] });
-      message.open({
-        type: "success",
-        content: "Xóa sản phẩm vĩnh viễn thành công",
-      });
-    },
-    onError: () => {
-      message.open({
-        type: "error",
-        content: "Xóa sản phẩm vĩnh viễn thất bại",
-      });
-    },
-  });
+  // const deleteMutation = useMutation({
+  //   mutationFn: async (id: string) => {
+  //     await instance.delete(`/admin/sanpham/${id}`);
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["sanpham-remote"] });
+  //     message.open({
+  //       type: "success",
+  //       content: "Xóa sản phẩm vĩnh viễn thành công",
+  //     });
+  //   },
+  //   onError: () => {
+  //     message.open({
+  //       type: "error",
+  //       content: "Xóa sản phẩm vĩnh viễn thất bại",
+  //     });
+  //   },
+  // });
 
   const handleRestoreSingle = (id: string) => {
     restoreSingleProductMutation.mutate(id);
@@ -460,9 +461,9 @@ const ProductsRemote: React.FC = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
-    deleteMutation.mutate(id);
-  };
+  // const handleDelete = (id: string) => {
+  //   deleteMutation.mutate(id);
+  // };
 
   const handleSearch = (
     selectedKeys: string[],
@@ -551,25 +552,59 @@ const ProductsRemote: React.FC = () => {
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: "Ảnh sản phẩm",
-      render: (record) => (
-        <img
-          src={record.anh_san_pham}
-          alt=""
-          className="w-20 h-20 object-cover rounded-lg p-2 border "
-        />
-      ),
-      className: "pl-10",
-      width: "15%",
-      key: "anh_san_pham",
-    },
-    {
-      title: "Tên sản phẩm",
+      title: "Thông tin sản phẩm",
       dataIndex: "ten_san_pham",
       key: "ten_san_pham",
-      width: "15%",
+      width: "30%",
       ...getColumnSearchProps("ten_san_pham"),
       sorter: (a, b) => a.ten_san_pham.length - b.ten_san_pham.length,
+      render: (text, item) => (
+        <div className="flex gap-5 p-2 bg-slate-100 shadow-md rounded-lg hover:bg-slate-300 hover:shadow-2xl transition duration-300 cursor-pointer">
+          <div className="border rounded-lg overflow-hidden">
+            <img
+              src={item.anh_san_pham || "https://via.placeholder.com/150"}
+              alt="product"
+              className="w-20 h-20 object-cover"
+            />
+          </div>
+          <div>
+            {/* Text tên sản phẩm */}
+            <p className="text-lg font-bold truncate w-40">{item.ten_san_pham}</p>
+            {/* Mô tả ngắn */}
+            <p className="text-xs text-gray-500 truncate w-40">{item.mo_ta_ngan}</p>
+          </div>
+        </div>
+      ),
+    },
+    
+    // {
+    //   title: "Ảnh sản phẩm",
+    //   render: (record) => (
+    //     <img
+    //       src={record.anh_san_pham}
+    //       alt=""
+    //       className="w-20 h-20 object-cover rounded-lg p-2 border "
+    //     />
+    //   ),
+    //   className: "pl-10",
+    //   width: "15%",
+    //   key: "anh_san_pham",
+    // },
+    // {
+    //   title: "Tên sản phẩm",
+    //   dataIndex: "ten_san_pham",
+    //   key: "ten_san_pham",
+    //   width: "15%",
+    //   ...getColumnSearchProps("ten_san_pham"),
+    //   sorter: (a, b) => a.ten_san_pham.length - b.ten_san_pham.length,
+    // },
+    {
+      title: "Mã sản phẩm",
+      dataIndex: "ma_san_pham",
+      key: "ma_san_pham",
+      width: "15%",
+      ...getColumnSearchProps("ma_san_pham"),
+      sorter: (a, b) => a.ma_san_pham.length - b.ma_san_pham.length,
     },
     {
       title: "Danh mục",
@@ -584,6 +619,7 @@ const ProductsRemote: React.FC = () => {
       dataIndex: "tongSoLuong",
       key: "tongSoLuong",
       width: "15%",
+      sorter: (a, b) => a.tongSoLuong - b.tongSoLuong,
       render: (text) => {
         return text ? (
           `${text.toLocaleString()} `
@@ -597,7 +633,7 @@ const ProductsRemote: React.FC = () => {
       key: "action",
       render: (_, record) => (
         <Space>
-          <Popconfirm
+          {/* <Popconfirm
             title="Xóa vĩnh viễn sản phẩm"
             description="Bạn có chắc chắn muốn xóa vĩnh viễn không?"
             okText="Có"
@@ -607,7 +643,7 @@ const ProductsRemote: React.FC = () => {
             <Button className="bg-white text-red-500 border border-red-500 rounded-lg hover:bg-red-50 hover:text-red-600 shadow-md transition-colors">
               Xóa vĩnh viễn
             </Button>
-          </Popconfirm>
+          </Popconfirm> */}
           <Button
             onClick={() => handleRestoreSingle(record.id)}
             className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"

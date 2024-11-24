@@ -36,6 +36,7 @@ interface DataType {
   noi_dung: string;
   trang_thai: number;
   tongSoLuong: number;
+  ma_san_pham: string;
 }
 
 export interface Category {
@@ -283,12 +284,21 @@ const ProductsAdmin: React.FC = () => {
   );
 
   const columns: TableColumnsType<DataType> = [
+    
     {
       title: "Sản phẩm",
       key: "ten_san_pham",
       render: (item: any) => <Detail item={item} />,
       width: "25%",
       sorter: (a, b) => a.ten_san_pham.localeCompare(b.ten_san_pham),
+    },
+    {
+      title: "Mã sản phẩm",
+      dataIndex: "ma_san_pham",
+      key: "ma_san_pham",
+      width: "15%",
+      ...getColumnSearchProps("ma_san_pham"),
+      sorter: (a, b) => a.ma_san_pham.localeCompare(b.ma_san_pham),
     },
     {
       title: "Danh mục",
@@ -298,11 +308,13 @@ const ProductsAdmin: React.FC = () => {
       ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a, b) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
     },
+ 
     {
       title: "Kho",
       dataIndex: "tongSoLuong",
       key: "tongSoLuong",
       width: "15%",
+      sorter: (a, b) => a.tongSoLuong - b.tongSoLuong,
       render: (text) => {
         return text ? (
           `${text.toLocaleString()} `
@@ -371,7 +383,9 @@ const ProductsAdmin: React.FC = () => {
           item?.danh_muc?.ten_danh_muc
             .toLowerCase()
             .includes(value.toLowerCase()) ||
-          item?.mo_ta_ngan?.toLowerCase().includes(value.toLowerCase())
+          item?.mo_ta_ngan?.toLowerCase().includes(value.toLowerCase()) ||
+          item?.ma_san_pham?.toLowerCase().includes(value.toLowerCase())
+
       );
       setFilteredData(filtered || []);
     } else {
