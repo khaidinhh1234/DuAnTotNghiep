@@ -78,7 +78,7 @@ const ListMyProfile = ({ member }: any) => {
       updateAvatarMutation.mutate(info.file.originFileObj);
     }
   };
-  // console.log(data);
+  console.log(data);
   function convertDateToVietnameseFormat(dateString: any) {
     if (!dateString) return ""; // Kiểm tra nếu không có dữ liệu
     const date = new Date(dateString);
@@ -149,7 +149,9 @@ const ListMyProfile = ({ member }: any) => {
                   ""
                 ))}
             </h1>
-            <span className="font-medium">{data?.data?.email}</span>
+            <span className="font-medium">
+              {data?.data?.email ?? "không có dữ liệu"}
+            </span>
           </div>
         </div>
         <Link
@@ -169,7 +171,9 @@ const ListMyProfile = ({ member }: any) => {
             <p className="mb-1">
               <i className="fa-solid fa-cake-candles"></i>
               <span className="mx-2">
-                {convertDateToVietnameseFormat(data?.data?.ngay_sinh)}
+                {data?.data?.ngay_sinh
+                  ? convertDateToVietnameseFormat(data?.data?.ngay_sinh)
+                  : "không có dữ liệu"}
               </span>
             </p>
             <p className="mb-0">
@@ -179,22 +183,30 @@ const ListMyProfile = ({ member }: any) => {
                   ? "Nam"
                   : data?.data?.gioi_tinh === 2
                     ? "Nữ"
-                    : "khác"}
+                    : data?.data?.gioi_tinh === 2
+                      ? "khác"
+                      : "không có dữ liệu"}
               </span>
             </p>
             <h1 className="text-base font-semibold mt-5">Thông tin liên hệ:</h1>
             <p className="mb-0">
               <i className="fa-solid fa-phone-volume text-lg"></i>
-              <span className="mx-2">{data?.data?.so_dien_thoai}</span>
+              <span className="mx-2">
+                {data?.data?.so_dien_thoai ?? "không có dữ liệu"}
+              </span>
             </p>
             <p>
               <i className="fa-regular fa-envelope text-lg"></i>
-              <span className="mx-2">{data?.data?.email}</span>
+              <span className="mx-2">
+                {data?.data?.email ?? "không có dữ liệu"}
+              </span>
             </p>
             <h1 className="text-base font-semibold mt-5">Nơi ở hiện tại:</h1>
             <p className="mb-0">
               <i className="fa-solid fa-map-marker-alt text-lg"></i>
-              <span className="mx-2">{data?.data?.dia_chi}</span>
+              <span className="mx-2">
+                {data?.data?.dia_chi ?? "không có dữ liệu"}
+              </span>
             </p>
           </div>
         </div>

@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { lienhetype } from "@/common/types/product";
 import { useEffect, useState } from "react";
 
-const ContactPage = ({}) => {
+const ContactPage = () => {
   const {
     register,
     handleSubmit,
@@ -29,9 +29,9 @@ const ContactPage = ({}) => {
     email?: string;
     dia_chi?: string;
   }
-  
+
   const [websiteInfo, setWebsiteInfo] = useState<WebsiteInfo | null>(null);
-  
+
   useEffect(() => {
     const storedInfo = localStorage.getItem("websiteInfo");
     if (storedInfo) {
@@ -123,7 +123,7 @@ const ContactPage = ({}) => {
                     <input
                       type="email"
                       {...register("email")}
-                      placeholder="Email / Số điện thoại của bạn"
+                      placeholder="Email của bạn"
                       className={`border rounded-lg px-3 py-2 ${
                         errors.email ? "border-red-600" : "border-stone-500"
                       }`}

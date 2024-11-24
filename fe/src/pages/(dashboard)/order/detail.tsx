@@ -79,7 +79,7 @@ const Detail = ({ record }: any) => {
   });
   // const donhang = data?.data;
   const thongtin = data?.data.thong_tin;
-
+  console.log(tong, "thongtin");
   // console.log("data", products);
   // console.log(vanchuyen, "vanchuyen");
   const handleCancel = () => {
@@ -262,7 +262,7 @@ const Detail = ({ record }: any) => {
                                           "Từ chối hoàn hàng"
                                         ? "text-gray-500" // Từ chối hoàn hàng: màu xám
                                         : "text-gray-700" // Các trạng thái khác: màu đỏ
-                  } text-white px-2 py-1 font-bold rounded-lg`}
+                  }  px-2 py-1 font-bold rounded-lg`}
                 >
                   {record.trang_thai_don_hang === "Chờ xác nhận"
                     ? "Chờ xác nhận"
@@ -417,7 +417,11 @@ const Detail = ({ record }: any) => {
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Vận chuyển</h1>
                   <p className="text-base font-semibold">
-                    <span>{tong?.tien_ship?.toLocaleString("vi-VN")}</span> VNĐ
+                    <span>
+                      {tong?.tien_ship !== 0
+                        ? tong?.tien_ship?.toLocaleString("vi-VN") + " VNĐ"
+                        : "Miễn phí ship"}
+                    </span>{" "}
                   </p>
                 </div>
                 <div className="flex justify-between">
@@ -461,12 +465,12 @@ const Detail = ({ record }: any) => {
                 ) : record.trang_thai_don_hang === "Đã xác nhận" ? (
                   <>
                     <button
-                      className="w-full py-2 border bg-green-500 rounded-lg text-white hover:bg-green-400"
+                      className="w-full py-2 border bg-green-700 rounded-lg text-white hover:bg-green-600"
                       onClick={() =>
                         mutate({ id: record.id, action: "Đang xử lý" })
                       }
                     >
-                      Hoàn tất đơn hàng
+                      Hoàn tất chuẩn bị hàng
                     </button>{" "}
                     <button
                       className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"

@@ -134,39 +134,37 @@ const Header = () => {
             >
               <Package className="h-6 w-6" />
               {/* <i class="fa-sharp fa-solid fa-g text-black"></i> */}
-              <span>GLOW CLOTHING</span>
+              <span>GLOW CLOWTHING</span>
             </Link>
-
           </div>
-
-
         </form>
       </div>
       <div>
-      <span
-                ref={notificationRef}
-                className="relative"
-                onMouseEnter={() => setShowNotifications(true)}
-                onMouseLeave={() => setShowNotifications(false)}
-              >
-                <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
-                  {unreadCount > 0 && (
-                    <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
-                      {unreadCount}
-                    </span>
-                  )}
-                </i>
+        <span
+          ref={notificationRef}
+          className="relative"
+          onMouseEnter={() => setShowNotifications(true)}
+          onMouseLeave={() => setShowNotifications(false)}
+        >
+          <i className="fa-regular fa-bell text-xl relative cursor-pointer px-1">
+            {unreadCount > 0 && (
+              <span className="absolute -bottom-1 left-[10px] w-4 h-4 text-[10px] bg-red-500 rounded-full text-white flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </i>
 
-                <div
-                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
-                    showNotifications
-                      ? "opacity-100"
-                      : "opacity-0 pointer-events-none"
-                  }`}
-                >
-                  <Notifications onUnreadCountChange={setUnreadCount} />
-                </div>
-              </span>      </div>
+          <div
+            className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
+              showNotifications
+                ? "opacity-100"
+                : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <Notifications onUnreadCountChange={setUnreadCount} />
+          </div>
+        </span>{" "}
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">

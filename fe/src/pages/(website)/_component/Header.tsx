@@ -538,7 +538,7 @@ const Header = () => {
                             />
                             <h6 className="font-semibold mx-2 text-lg ">
                               {" "}
-                              {member.ten + " " + member.ho}
+                              {member.ho + " " + member.ten}
                             </h6>
                           </a>
                         </li>

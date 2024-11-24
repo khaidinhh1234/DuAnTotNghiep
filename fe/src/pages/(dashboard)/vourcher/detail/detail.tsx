@@ -69,7 +69,11 @@ const Detail = ({ record }: any) => {
               {record.mo_ta}
             </h1>{" "}
             <h1 className="text-white text-xl font-semibold tracking-tight my-3">
-              {record?.ap_dung}
+              {record.danh_mucs.length > 0
+                ? "Áp dụng cho Danh mục "
+                : record.san_phams.length > 0
+                  ? "Áp dụng cho Sản phẩm "
+                  : "Áp dụng cho toàn bộ sản phẩm"}
             </h1>
             <h1 className="text-white text-3xl font-extrabold my-7">
               {record.ma_code}

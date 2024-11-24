@@ -693,9 +693,9 @@ const ProductList = ({
               />
             ))
           ) : (
-            <div className="col-span-9 h-[430px] flex items-center justify-center">
+            <div className="col-span-9 h-[300px] flex items-center justify-center my-10">
               <img
-                src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730026893/cach-huy-don-hang-tren-shopee-04-removebg-preview_2_db7yq1.png"
+                src="https://res.cloudinary.com/dpypwbeis/image/upload/v1732455719/wn8247iegfvm4sfvhsno.png "
                 alt="No orders"
                 className="w-1/2 h-full mx-auto"
               />

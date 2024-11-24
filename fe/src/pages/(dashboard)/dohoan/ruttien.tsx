@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Table, Space, Tag, Button, message, Popconfirm, Modal, Tabs } from "antd";
+import {
+  Table,
+  Space,
+  Tag,
+  Button,
+  message,
+  Popconfirm,
+  Modal,
+  Tabs,
+} from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TableColumnsType } from "antd";
 import instance from "@/configs/admin";
@@ -53,15 +62,10 @@ const WithdrawalRequests: React.FC = () => {
 
   const { mutate: confirmWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
-      try {
-        const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
-          trang_thai: "da_rut",
-        });
-        return response.data;
-      } catch (error: any) {
-        message.error("Xác nhận rút tiền thất bại");
-        throw new Error("Xác nhận rút tiền thất bại");
-      }
+      const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
+        trang_thai: "da_rut",
+      });
+      return response.data;
     },
     onSuccess: () => {
       message.success("Xác nhận rút tiền thành công");
@@ -70,15 +74,10 @@ const WithdrawalRequests: React.FC = () => {
   });
   const { mutate: rejectWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
-      try {
-        const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
-          trang_thai: "that_bai",
-        });
-        return response.data;
-      } catch (error: any) {
-        message.error("Từ chối yêu cầu rút tiền thất bại");
-        throw new Error("Từ chối yêu cầu rút tiền thất bại");
-      }
+      const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
+        trang_thai: "tu_choi",
+      });
+      return response.data;
     },
     onSuccess: () => {
       message.success("Từ chối yêu cầu rút tiền thành công");
@@ -121,16 +120,6 @@ const WithdrawalRequests: React.FC = () => {
     }
   };
 
-  const tabItems = [
-    { label: "Tất cả", key: "all" },
-    { label: "Chờ Duyệt", key: "Chờ duyệt" },
-    { label: "Đã rút", key: "Đã rút" },
-    { label: "Thất bại", key: "Thất bại" }
-  ];
-  const filteredData = data?.data?.filter((item: WithdrawalRequest) => {
-    if (activeTab === "all") return true;
-    return item.trang_thai === activeTab;
-  });
   const columns: TableColumnsType<WithdrawalRequest> = [
     {
       title: "Mã ví",
@@ -151,7 +140,11 @@ const WithdrawalRequests: React.FC = () => {
       key: "ngan_hang",
       width: "15%",
       render: (bank: BankInfo) => (
-        <Button type="link" onClick={() => showBankModal(bank)}>
+        <Button
+          type="link"
+          onClick={() => showBankModal(bank)}
+          className="text-sky-500  underline decoration-sky-500"
+        >
           {bank.ngan_hang}
         </Button>
       ),
@@ -252,15 +245,10 @@ const WithdrawalRequests: React.FC = () => {
             Danh sách yêu cầu rút tiền
           </h1>
         </div>
-        <Tabs
-                activeKey={activeTab}
-                onChange={setActiveTab}
-                items={tabItems}
-            />
 
         <Table
           columns={columns}
-          dataSource={filteredData}
+          dataSource={data?.data}
           pagination={{
             pageSize: 10,
             className: "my-5",
