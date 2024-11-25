@@ -25,7 +25,7 @@ const ShowNhanvien = () => {
   const user = data?.data?.tai_khoan;
   // console.log(user);
   const trangthai = data?.data;
-  // console.log(trangthai);
+  console.log(trangthai);
   // console.log(user.don_hangs.length);
   const phantram =
     ((trangthai?.tong_tien_don_hang -
@@ -71,7 +71,7 @@ const ShowNhanvien = () => {
           </div>
           <div className="text-2xl font-bold text-gray-500">
             <i className="fa-solid fa-rotate-reverse"></i>
-            <span className="px-2">{trangthai?.so_luong_hoan ?? 0} </span>
+            <span className="px-2">{trangthai?.tong_don_hoan ?? 0} </span>
             <br />
             <span className="text-gray-500 text-lg"> Trả hàng</span>
           </div>

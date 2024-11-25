@@ -213,11 +213,12 @@ const DetailTransport = ({ record }: any) => {
   const vanchuyenData = data?.data?.van_chuyen?.don_hang;
   const shipper = data?.data?.van_chuyen?.shipper;
   const mavanchuyen = data?.data?.van_chuyen?.ma_van_chuyen;
-  console.log("vanchuyenData", data?.data);
+  console.log("vanchuyenData", data);
   const thongtin = data?.data?.thong_tin;
   const handleCancel = () => {
     setOpen(false);
   };
+  const tong = data?.data;
 
   // const { mutate } = useMutation({
   //   mutationFn: async ({
@@ -470,16 +471,14 @@ const DetailTransport = ({ record }: any) => {
                     Số lượng sản phẩm :{" "}
                   </h1>
                   <p className="text-base font-semibold">
-                    <span>{data?.data?.tong_so_luong}</span> sản phẩm
+                    <span>{tong?.tong_so_luong}</span> sản phẩm
                   </p>
                 </div>
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {data?.data?.tong_thanh_tien_san_pham.toLocaleString(
-                        "vi-VN"
-                      )}
+                      {tong?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
                     </span>{" "}
                     VNĐ
                   </p>
@@ -489,8 +488,8 @@ const DetailTransport = ({ record }: any) => {
                   <p className="text-base font-semibold">
                     -{" "}
                     <span>
-                      {data?.data?.van_chuyen?.don_hang?.so_tien_giam_gia
-                        ? data?.data?.van_chuyen?.don_hang?.so_tien_giam_gia.toLocaleString(
+                      {tong?.van_chuyen?.don_hang?.so_tien_giam_gia
+                        ? tong?.van_chuyen?.don_hang?.so_tien_giam_gia.toLocaleString(
                             "vi-VN"
                           )
                         : 0}{" "}
@@ -501,7 +500,11 @@ const DetailTransport = ({ record }: any) => {
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Vận chuyển</h1>
                   <p className="text-base font-semibold">
-                    <span>20.000</span> VNĐ
+                    <span>
+                      {tong?.tien_ship !== 0
+                        ? tong?.tien_ship?.toLocaleString("vi-VN") + " VNĐ"
+                        : "Miễn phí ship"}
+                    </span>{" "}
                   </p>
                 </div>
                 <div className="flex justify-between">
@@ -510,7 +513,7 @@ const DetailTransport = ({ record }: any) => {
                   </h1>
                   <p className="text-lg font-bold">
                     {" "}
-                    {(record?.tien_cod + 20000).toLocaleString("vi-VN")} VNĐ
+                    {tong?.tong_tien?.toLocaleString("vi-VN") ?? 0} VNĐ
                   </p>
                 </div>
               </div>

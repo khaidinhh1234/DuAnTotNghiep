@@ -17,8 +17,7 @@ class VanChuyenController extends Controller
 {
     public function index()
     {
-        $auth = Auth::guard('api');
-        ;
+        $auth = Auth::guard('api');;
 
         try {
             $query = VanChuyen::query()->with('donHang');
@@ -53,6 +52,8 @@ class VanChuyenController extends Controller
                 'donHang'
             ])->findOrFail($id);
             $vanChuyen->makeHidden(['ghi_chu']);
+            $donHang = $vanChuyen->donHang;
+            // dd($donHang);
             $vanchuyen['ghichu'] = json_decode($vanChuyen->ghi_chu);
             // Tính toán tổng số lượng và tổng tiền
             $tongSoLuong = $vanChuyen->donHang->chiTiets->sum('so_luong');
@@ -60,33 +61,33 @@ class VanChuyenController extends Controller
 
             //Thong tin user
             if (
-                $vanChuyen->donHang->ten_nguoi_dat_hang == ""
-                && $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang == ""
-                && $vanChuyen->donHang->dia_chi_nguoi_dat_hang == ""
+                $donHang->ten_nguoi_dat_hang == ""
+                && $donHang->so_dien_thoai_nguoi_dat_hang == ""
+                && $donHang->dia_chi_nguoi_dat_hang == ""
             ) {
-                $thongTin = $vanChuyen->donHang->user;
+                $thongTin = $donHang->user;
             } else {
                 $thongTin = [
-                    'ten_nguoi_dat_hang' => $vanChuyen->donHang->ten_nguoi_dat_hang === "" ? ($vanChuyen->donHang->user->ho . " " . $vanChuyen->donHang->user->ten) : $vanChuyen->donHang->ten_nguoi_dat_hang,
-                    'so_dien_thoai_nguoi_dat_hang' => $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang === "" ? $vanChuyen->donHang->user->so_dien_thoai : $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang,
-                    'dia_chi_nguoi_dat_hang' => $vanChuyen->donHang->dia_chi_nguoi_dat_hang === "" ? $vanChuyen->donHang->user->dia_chi : $vanChuyen->donHang->dia_chi_nguoi_dat_hang
+                    'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang === "" ? ($donHang->user->ho . " " . $donHang->user->ten) : $donHang->ten_nguoi_dat_hang,
+                    'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang === "" ? $donHang->user->so_dien_thoai : $donHang->so_dien_thoai_nguoi_dat_hang,
+                    'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang === "" ? $donHang->user->dia_chi : $donHang->dia_chi_nguoi_dat_hang
                 ];
             }
-            $maGiamGia = MaKhuyenMai::where('ma_code', $vanChuyen->donHang->ma_giam_gia)->first();
+            $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
             $soTienGiamGia = 0;
-            if ($$vanChuyen->donHang->ma_giam_gia) {
+            if ($donHang->ma_giam_gia) {
 
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                    ? ($$vanChuyen->donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
+                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
                     : $maGiamGia->giam_gia;
 
-                if ($soTienGiamGia > $vanChuyen->donHang->tong_tien_don_hang) {
-                    $soTienGiamGia = $vanChuyen->donHang->tong_tien_don_hang;
+                if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
+                    $soTienGiamGia = $donHang->tong_tien_don_hang;
                 }
             }
             // Tính tiền ship
-            $tienShip = $vanChuyen->donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
-            $tietKiemShip = $vanChuyen->donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
+            $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
+            $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
 
             return response()->json([
                 'status' => true,
@@ -99,7 +100,7 @@ class VanChuyenController extends Controller
                     'tien_ship' => $tienShip,
                     'so_tien_giam_gia' => $soTienGiamGia,
                     'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
-                    'tong_tien' => $vanChuyen->donHang->tong_tien_don_hang - $soTienGiamGia,
+                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
                     'ghi_chu' => $vanchuyen['ghichu'],
                     'anh_xac_thuc' => $vanChuyen->anh_xac_thuc
                 ]
@@ -113,6 +114,7 @@ class VanChuyenController extends Controller
             ], 404);
         }
     }
+
     public function capNhatTrangThaiVanChuyen(Request $request)
     {
         try {
