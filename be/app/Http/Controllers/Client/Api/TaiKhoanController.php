@@ -31,7 +31,7 @@ class TaiKhoanController extends Controller
         ]);
 
         $userId = Auth::guard('api')->user()->id;
-        $user = User::find($userId);
+        $user = User::with('hangThanhVien')->find(id: $userId);
 
         if (!$user) {
             return response()->json([
