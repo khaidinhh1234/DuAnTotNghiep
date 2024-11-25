@@ -507,7 +507,7 @@ const Header = () => {
                   </i>
                 </a>
                 {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
-                <CartOverlay isVisible={isCartVisible} />
+                {/* <CartOverlay isVisible={isCartVisible} /> */}
                 {/* </div> */}
               </span>
               {member ? (
