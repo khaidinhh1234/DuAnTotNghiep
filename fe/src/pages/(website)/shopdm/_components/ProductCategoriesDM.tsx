@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductsListDM from "./ProductListDm";
 
-const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
+const ProductCategoriesDM = ({ isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
   const [showcolor, setShowcolor] = useState(true);
   const [showprice, setShowprice] = useState(true);
@@ -552,13 +552,7 @@ const ProductCategoriesDM = ({ handleWishlist, isPending }: any) => {
             </div>
             {/* <!-- Product Listings --> */}
             <div className="sm:w-4/5 w-3/4 px-5">
-              <ProductsListDM
-                data={data}
-                onPage={onPage}
-                products={products}
-                Wishlist={handleWishlist}
-                isPending={isPending}
-              />
+              <ProductsListDM data={data} onPage={onPage} products={products} />
             </div>
           </div>
         </div>
