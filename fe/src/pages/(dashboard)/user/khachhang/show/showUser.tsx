@@ -66,7 +66,7 @@ const ShowNhanvien = () => {
           </div>
           <div className="text-2xl font-bold text-gray-500">
             <i className="fa-solid fa-rotate-reverse"></i>
-            <span className="px-2">0 </span>
+            <span className="px-2">{trangthai?.so_luong_hoan ?? 0} </span>
             <br />
             <span className="text-gray-500 text-lg"> Trả hàng</span>
           </div>
@@ -174,7 +174,7 @@ const ShowNhanvien = () => {
                   </p>
                   <div className="w-40">
                     <Progress
-                      percent={phantram}
+                      percent={phantram ?? 43}
                       strokeColor={{
                         "0%": "#6dd5ed",
                         "100%": "#00bfff", // Màu chuyển tiếp

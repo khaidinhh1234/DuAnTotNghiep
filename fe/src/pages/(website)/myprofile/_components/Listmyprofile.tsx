@@ -44,7 +44,7 @@ const ListMyProfile = ({ member }: any) => {
       }
     },
   });
-
+  console.log(data);
   const updateAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
       const imageUrl = await uploadToCloudinary(file);

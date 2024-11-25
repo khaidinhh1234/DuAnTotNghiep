@@ -27,7 +27,6 @@ const UserskhachhangAdd = () => {
         const res = await instance.post("/taikhoan", datas);
         return res.data;
       } catch (error: any) {
-        console.log(error.response.data.error.email);
         message.open({
           type: "error",
           content:

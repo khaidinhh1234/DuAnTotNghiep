@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Progress } from "antd";
 import { Link, useParams } from "react-router-dom";
 // import Detail from "../detail";
- import Detail from "@/pages/(dashboard)/user/khachhang/detail";
-
+import Detail from "@/pages/(dashboard)/user/khachhang/detail";
 
 const ShowUser = () => {
   const { id } = useParams();
@@ -28,7 +27,8 @@ const ShowUser = () => {
       (user?.hang_thanh_vien?.chi_tieu_toi_da -
         user?.hang_thanh_vien?.chi_tieu_toi_thieu)) *
     100;
-
+  // console.log(phantram);
+  // console.log(trangthai);
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error</div>;
   return (
