@@ -226,21 +226,6 @@ const ProductItem = ({
 
   return (
     <>
-      {/* {danhgia && (
-        <>
-          <Danhgia setDanhgia={setDanhgia} slug={ma_don_hang} />
-        </>
-      )} */}
-      {/* {Hoan && (
-        <>
-          <HoanTien
-            chi_tiet_don_hangs={chi_tiet_don_hangs}
-            setHoan={setHoan}
-            tong_tien={tong_tien}
-            setValues={setValues}
-          />
-        </>
-      )} */}
       {Payment && (
         <>
           <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
@@ -451,19 +436,7 @@ const ProductItem = ({
               Xem Đơn Hàng
             </button>
           </Link>
-          {danh_gias?.length <= 0
-            ? (status === "Hoàn tất đơn hàng" ||
-                status === "Chờ khách hàng xác nhận") && (
-                <div className={"mt-3 -mb-2"}>
-                  <Link
-                    to={`/mypro/danhgia/${ma_don_hang}`}
-                    className="  shadow-md shadow-slate-600/50 hover:text-white  bg-black hover:bg-black/70 font-medium  text-base py-4 px-10  rounded-lg text-white "
-                  >
-                    Đánh giá
-                  </Link>
-                </div>
-              )
-            : ""}
+
           <br />
           {status === "Hoàn tất đơn hàng" &&
             trang_thai_thanh_toan == "Đã thanh toán" && (
@@ -566,11 +539,9 @@ const ProductItem = ({
                 console.log("click");
               }}
             >
-              {status === "Hoàn tất đơn hàng"
-                ? "Đánh giá"
-                : status === "Chờ khách hàng xác nhận"
-                  ? "Đã nhận hàng"
-                  : "Hủy Đơn Hàng"}
+              {status === "Chờ khách hàng xác nhận"
+                ? "Đã nhận hàng"
+                : "Hủy Đơn Hàng"}
             </button>
           )}
 

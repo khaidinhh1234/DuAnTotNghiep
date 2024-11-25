@@ -6,7 +6,7 @@ import View from "../../_component/View";
 import Product from "../../_component/Product";
 const ProductsListDM = ({
   products,
-  Wishlist,
+
   // isPending,
   // data,
   // onPage,
@@ -20,10 +20,9 @@ const ProductsListDM = ({
     setHoveredVariantIndex(variantIndex);
   };
 
-  const handleWishlist = (id: any) => {
-    Wishlist(id) as any;
-  };
-
+  // const handleWishlist = (id: any) => {
+  //   Wishlist(id) as any;
+  // };
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4  overflow-hidden">
@@ -49,6 +48,7 @@ const ProductsListDM = ({
                     key={index}
                     product={product}
                     index={index}
+                    prowish={product?.trang_thai_yeu_thich}
                     hoveredProductId={hoveredProductId}
                     hoveredVariantIndex={hoveredVariantIndex}
                     handleMouseEnter={handleMouseEnter}
