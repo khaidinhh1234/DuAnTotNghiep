@@ -409,6 +409,12 @@ class DonHangClientController extends Controller
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
 
                 if ($maGiamGia) {
+                    if ($maGiamGia->ap_dung_vi === 1 && $request->phuong_thuc_thanh_toan !== DonHang::PTTT_VT) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Mã giảm giá chỉ áp dụng cho phương thức thanh toán bằng ví.'
+                        ]);
+                    }
                     $sanPhamIds = $sanPhamDuocChon->pluck('san_pham_id')->toArray();
                     $sanPhamDanhMucIds = SanPham::whereIn('id', $sanPhamIds)->pluck('danh_muc_id')->unique()->toArray();
                     $danhMucIds = $maGiamGia->danhMucs()->pluck('id')->toArray();
