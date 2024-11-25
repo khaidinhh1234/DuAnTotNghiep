@@ -388,15 +388,16 @@ const TransportDetail = ({ record }: any) => {
                   : `${thongtin?.ten_nguoi_dat_hang || ""} (+${thongtin?.so_dien_thoai_nguoi_dat_hang || ""})`}
               </p>
               <p className="text-gray-500 text-sm">
+                Địa chỉ: {" "}
                 {record.van_chuyen?.don_hang?.dia_chi_nguoi_dat_hang
                   ? record.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
                   : thongtin?.dia_chi_nguoi_dat_hang}
               </p>{" "}
               <p className="text-gray-500 text-sm">
-                ghi chú :{" "}
+                Ghi chú :{" "}
                 {record?.van_chuyen?.don_hang.ghi_chu
                   ? record.van_chuyen?.don_hang.ghi_chu
-                  : donhang?.ghi_chu}
+                  : donhang?.ghi_chu || "Không có ghi chú"}
               </p>
             </div>
           </div>

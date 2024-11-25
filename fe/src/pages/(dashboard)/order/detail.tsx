@@ -27,7 +27,11 @@ const Detail = ({ record }: any) => {
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
-
+  const numberOfRatings = 2; 
+  const averageRating = (item: any) => {
+    const totalStars = (item?.so_sao_san_pham || 0) + (item?.so_sao_dich_vu_van_chuyen || 0);
+    return totalStars / numberOfRatings;
+  };
   const { data } = useQuery({
     queryKey: ["ORDER_DETAIL", record.id],
     queryFn: async () => {
@@ -563,7 +567,10 @@ const Detail = ({ record }: any) => {
                                 {item?.user?.ho} {item?.user?.ten}
                               </h5>
                               {/* Giảm kích thước sao bằng scale-50 */}
-                              <Rate disabled defaultValue={2} />
+                              <Rate disabled
+                                allowHalf
+                                value={averageRating(item)}
+                              />
                             </div>
                           </div>
                           <div className="text-blue-800 mx-4 mb-2">

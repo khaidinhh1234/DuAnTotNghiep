@@ -58,7 +58,7 @@ const ViewNew: React.FC = () => {
           {tieu_de}
         </Title>
         <Text strong style={{ color: "#555" }}>
-          Tác giả: {user?.ten || "Chưa có dữ liệu"}
+          Tác giả: {user?.ho + " " + user?.ten || "Chưa có dữ liệu"}
         </Text>
         <br />
         <Text style={{ color: "#555" }}>

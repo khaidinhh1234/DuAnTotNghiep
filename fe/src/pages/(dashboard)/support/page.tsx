@@ -185,12 +185,27 @@ const PageSupport: React.FC = () => {
         text
       ),
   });
-  const dataSource = data?.data.map((support: Support, index: number) => ({
+  useEffect(() => {
+    if (support) {
+      if (activeTab === "Tất cả") {
+        setFilteredData(support);
+      } else {
+        const filtered = support.filter(
+          (item) => item.trang_thai_lien_he === activeTab
+        );
+        setFilteredData(filtered);
+      }
+    }
+  }, [support, activeTab]);
+  
+  const dataSource = filteredData.map((support: Support, index: number) => ({
     key: support.id,
     ...support,
     index: index + 1,
     user_id: `${support?.user?.ho} ${support?.user?.ten}` || "Chưa có dữ liệu",
-  })) || [];
+  }));
+  
+  
   const columns: TableColumnsType<Support> = [
     {
       title: 'STT',
