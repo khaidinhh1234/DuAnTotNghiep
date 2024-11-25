@@ -32,7 +32,7 @@ const IntroCard = ({ profile }: any) => {
   // }
 
   // const { email, so_dien_thoai, dia_chi, ngay_sinh, gioi_tinh } = data.data;
-
+  // console.log(thongtin);
   return (
     <Card className="p-4 shadow-md">
       <Title level={4} className="mb-4 font-semibold">
@@ -89,7 +89,12 @@ const IntroCard = ({ profile }: any) => {
         </Col>
         <Col span={22}>
           <Text className="text-lg">
-            Giới tính: {thongtin?.gioi_tinh ?? "không có thông tin"}
+            Giới tính:{" "}
+            {thongtin?.gioi_tinh == 1
+              ? "Nam"
+              : thongtin?.gioi_tinh == 2
+                ? "Nữ"
+                : "Khác"}
           </Text>
         </Col>
       </Row>
