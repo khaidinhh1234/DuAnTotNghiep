@@ -26,8 +26,8 @@ const ShopDM = () => {
         }
 
         return response.data;
-      } catch (error) {
-        message.error("Xóa sản phẩm yêu thích thất bại");
+      } catch (error: any) {
+        message.error(error.response.data.message);
         console.error("API error", error); // Thêm log lỗi API
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }

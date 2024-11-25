@@ -43,8 +43,8 @@ const Banner = () => {
               arrows={true}
               effect="fade"
             >
-              {promotions.length != 0 ? (
-                promotions?.map((promotion) => (
+              {promotions.length > 0 ? (
+                promotions.map((promotion) => (
                   <div key={promotion?.id}>
                     <a href={`/shopp/${promotion?.duong_dan}`}>
                       <img

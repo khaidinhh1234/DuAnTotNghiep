@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Api;
 
+use App\Exports\DanhMucExports;
 use App\Http\Controllers\Controller;
 use App\Models\DanhMuc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 class DanhMucController extends Controller
 {
@@ -73,7 +72,7 @@ class DanhMucController extends Controller
             $validateDanhMuc = $request->validate([
                 'ten_danh_muc' => 'required|max:255',
                 'cha_id' => 'nullable',
-                'anh_danh_muc' => 'nullable' ,
+                'anh_danh_muc' => 'nullable',
                 'duong_dan' => 'nullable',
 
             ]);
@@ -255,5 +254,9 @@ class DanhMucController extends Controller
                 'error' => $exception->getMessage()
             ], 500);
         }
+    }
+    public function exportDanhMuc()
+    {
+        return Excel::download(new DanhMucExports, 'danhmuc.xlsx');
     }
 }

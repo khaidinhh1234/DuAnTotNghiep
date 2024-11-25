@@ -8,7 +8,7 @@ const Contact = () => {
 
   return (
     <>
-      <ContactPage user={user} />
+      <ContactPage />
       <Method />
     </>
   );

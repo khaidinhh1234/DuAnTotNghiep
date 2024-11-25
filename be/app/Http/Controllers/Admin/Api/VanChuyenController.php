@@ -249,8 +249,10 @@ class VanChuyenController extends Controller
                         'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
                     ]);
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
-                    $thongBaoGiaoHangThanhCong = new ThongBaoTelegramController();
-                    $thongBaoGiaoHangThanhCong->thongBaoHoanTatGiaoHang($vanChuyen->id);
+
+                    $thongBaoHoanTatGiaoHang = new ThongBaoTelegramController();
+                    $thongBaoHoanTatGiaoHang->guiThongBaoHoanTatGiaoHang($vanChuyen->id);
+
                     DB::commit();
                     return response()->json(['status' => true, 'message' => 'Giao hàng thành công'], 200);
                 }

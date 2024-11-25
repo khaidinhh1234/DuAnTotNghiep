@@ -10,7 +10,10 @@ import {
   Package,
   ShoppingCart,
   Tag,
+  BarChart2,
+  Truck,
   User,
+  MessageCircleDashed,
 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -50,7 +53,7 @@ const SiderComponent: React.FC = () => {
           className="text-black py-5 font-semibold text-base space-y-4"
         >
           {vaitro?.includes("Người giao hàng") ? null : (
-            <SubMenu key="sub1" icon={<Package />} title="Thống kê">
+            <SubMenu key="sub1" icon={<BarChart2 />} title="Thống kê">
               <Menu.Item key="/admin/dashboard/list">Tổng quan</Menu.Item>
               <Menu.Item key="/admin/dashboard/doanhthu">Doanh thu</Menu.Item>
               <Menu.Item key="/admin/dashboard/sanpham">Sản phẩm</Menu.Item>
@@ -89,7 +92,7 @@ const SiderComponent: React.FC = () => {
             </SubMenu>
           )}
 
-{quyen?.includes("admin.donhang.index") && (
+          {quyen?.includes("admin.donhang.index") && (
             <SubMenu key="sub4" icon={<ShoppingCart />} title="Đơn hàng">
               <Menu.Item key="/admin/orders/transport">Tổng quan</Menu.Item>
 
@@ -109,16 +112,13 @@ const SiderComponent: React.FC = () => {
                 </Menu.Item>
               )}
               {quyen.includes("admin.vanchuyen.index") && (
-                <SubMenu key="van-chuyen" title="Vận chuyển">
+                <SubMenu icon={<Truck />} key="van-chuyen" title="Vận chuyển">
                   <Menu.Item key="/admin/orders/uncomfirmedorder">
                     Đơn hàng
                   </Menu.Item>
-                  <Menu.Item key="/admin/orders/hoanhang">
-                    Đơn hoàn
-                  </Menu.Item>
+                  <Menu.Item key="/admin/orders/hoanhang">Đơn hoàn</Menu.Item>
                 </SubMenu>
               )}
-
             </SubMenu>
           )}
           {quyen?.includes("admin.rut-tien.xacnhan") && (
@@ -162,7 +162,7 @@ const SiderComponent: React.FC = () => {
             </Menu.Item>
           )}
           {quyen?.includes("admin.danhgia.index") && (
-            <Menu.Item key="/admin/evaluates" icon={<Newspaper />}>
+            <Menu.Item key="/admin/evaluates" icon={<MessageCircleDashed />}>
               Đánh giá
             </Menu.Item>
           )}

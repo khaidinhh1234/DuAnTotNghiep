@@ -116,21 +116,13 @@ const VoucherAdmin: React.FC = () => {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchText(value);
-    // console.log(value);
+    console.log(value);
     if (value) {
       const filtered = vouchers?.filter(
         (item: PromotionType) =>
           // Tìm kiếm trong các trường mong muốn
           item.mo_ta.toLowerCase().includes((value as string).toLowerCase()) ||
-          item.ma_code
-            .toLowerCase()
-            .includes((value as string).toLowerCase()) ||
-          (item.hang_thanh_viens &&
-            Array.isArray(item.hang_thanh_viens) &&
-            item.hang_thanh_viens
-              .map((hang: any) => hang.toLowerCase())
-              .join(", ")
-              .includes((value as string).toLowerCase()))
+          item.ma_code.toLowerCase().includes((value as string).toLowerCase())
       ); // Bạn có thể thêm các trường khác nếu cần
 
       setFilteredData(filtered);
@@ -141,10 +133,6 @@ const VoucherAdmin: React.FC = () => {
 
   const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
 
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 5,
-  });
   // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const searchInput = useRef<InputRef>(null);
 
@@ -162,80 +150,6 @@ const VoucherAdmin: React.FC = () => {
     clearFilters();
     setSearchText("");
   };
-
-  const handleTableChange = (pagination: any) => {
-    setPagination(pagination);
-  };
-
-  const getColumnSearchProps = (
-    dataIndex: DataIndex
-  ): TableColumnType<PromotionType> => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() =>
-            handleSearch(selectedKeys as string[], confirm, dataIndex)
-          }
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() =>
-              handleSearch(selectedKeys as string[], confirm, dataIndex)
-            }
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Tìm kiếm
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />
-    ),
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
-    },
-    render: (text) =>
-      searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ""}
-        />
-      ) : (
-        text
-      ),
-  });
 
   const columns: TableColumnsType<PromotionType> = [
     {
@@ -260,11 +174,8 @@ const VoucherAdmin: React.FC = () => {
     {
       title: "Số lượng",
       key: "so_luong",
-      ...getColumnSearchProps("so_luong"),
-      onFilter: (value: boolean | React.Key, record: any) =>
-        record.so_luong.toString().includes(String(value)) ||
-        record.so_luong_da_su_dung.toString().includes(String(value)), // Tìm kiếm trong cả so_luong và so_luong_da_su_dung
-      sorter: (a: any, b: any) => a.so_luong - b.so_luong, // Sắp xếp theo số
+
+      sorter: (a: any, b: any) => a.so_luong_da_su_dung - b.so_luong_da_su_dung,
 
       width: "25%",
       render: (record) => (
@@ -430,7 +341,6 @@ const VoucherAdmin: React.FC = () => {
         <Table
           columns={columns}
           dataSource={filteredData}
-          onChange={handleTableChange}
           rowKey="key"
           pagination={{ pageSize: 10, className: "my-5" }}
           loading={isLoading}

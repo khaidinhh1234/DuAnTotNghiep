@@ -1,6 +1,14 @@
-
 import React, { useState } from "react";
-import { Table, Space, Tag, Button, message, Popconfirm, Modal } from "antd";
+import {
+  Table,
+  Space,
+  Tag,
+  Button,
+  message,
+  Popconfirm,
+  Modal,
+  Tabs,
+} from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { TableColumnsType } from "antd";
 import instance from "@/configs/admin";
@@ -42,6 +50,7 @@ const WithdrawalRequests: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<string>("Tất cả");
 
   const { data, isLoading } = useQuery({
     queryKey: ["withdrawal-requests"],
@@ -54,7 +63,7 @@ const WithdrawalRequests: React.FC = () => {
   const { mutate: confirmWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
       const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
-        trang_thai: "da_rut"
+        trang_thai: "da_rut",
       });
       return response.data;
     },
@@ -62,23 +71,17 @@ const WithdrawalRequests: React.FC = () => {
       message.success("Xác nhận rút tiền thành công");
       queryClient.invalidateQueries({ queryKey: ["withdrawal-requests"] });
     },
-    onError: () => {
-      message.error("Xác nhận rút tiền thất bại");
-    },
   });
   const { mutate: rejectWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
       const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
-        trang_thai: "tu_choi"
+        trang_thai: "tu_choi",
       });
       return response.data;
     },
     onSuccess: () => {
       message.success("Từ chối yêu cầu rút tiền thành công");
       queryClient.invalidateQueries({ queryKey: ["withdrawal-requests"] });
-    },
-    onError: () => {
-      message.error("Từ chối yêu cầu rút tiền thất bại");
     },
   });
   const showBankModal = (bankInfo: BankInfo) => {
@@ -98,24 +101,24 @@ const WithdrawalRequests: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', { 
-      style: 'currency', 
-      currency: 'VND' 
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(amount);
   };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Đã rút":
         return "green";
       case "Chờ duyệt":
         return "blue";
-      case "Từ chối":
+      case "Thất bại":
         return "red";
       default:
         return "default";
     }
   };
-  
 
   const columns: TableColumnsType<WithdrawalRequest> = [
     {
@@ -137,7 +140,11 @@ const WithdrawalRequests: React.FC = () => {
       key: "ngan_hang",
       width: "15%",
       render: (bank: BankInfo) => (
-        <Button type="link" onClick={() => showBankModal(bank)}>
+        <Button
+          type="link"
+          onClick={() => showBankModal(bank)}
+          className="text-sky-500  underline decoration-sky-500"
+        >
           {bank.ngan_hang}
         </Button>
       ),
@@ -146,11 +153,7 @@ const WithdrawalRequests: React.FC = () => {
       title: "Trạng thái",
       dataIndex: "trang_thai",
       key: "trang_thai",
-      render: (status) => (
-        <Tag color={getStatusColor(status)}>
-          {status}
-        </Tag>
-      ),
+      render: (status) => <Tag color={getStatusColor(status)}>{status}</Tag>,
       width: "12%",
     },
     {
@@ -168,61 +171,64 @@ const WithdrawalRequests: React.FC = () => {
       width: "15%",
     },
     {
-        title: "Thao tác",
-        key: "action",
-        width: "20%",
-        render: (_, record) => (
-          <Space>
-            {record.trang_thai === "Chờ duyệt" && (
-              <>
-                <Popconfirm
-                  title="Xác nhận rút tiền"
-                  description="Bạn có chắc chắn muốn xác nhận yêu cầu rút tiền này?"
-                  onConfirm={() => confirmWithdrawal(record.id)}
-                  okButtonProps={{
-                    className: "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium"
+      title: "Thao tác",
+      key: "action",
+      width: "20%",
+      render: (_, record) => (
+        <Space>
+          {record.trang_thai === "Chờ duyệt" && (
+            <>
+              <Popconfirm
+                title="Xác nhận rút tiền"
+                description="Bạn có chắc chắn muốn xác nhận yêu cầu rút tiền này?"
+                onConfirm={() => confirmWithdrawal(record.id)}
+                okButtonProps={{
+                  className:
+                    "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium",
                 }}
                 cancelButtonProps={{
-                    className: "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium"
+                  className:
+                    "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium",
                 }}
-                  okText="Xác nhận"
-                  cancelText="Hủy"
+                okText="Xác nhận"
+                cancelText="Hủy"
+              >
+                <Button
+                  type="primary"
+                  className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
                 >
-                  <Button 
-                    type="primary"
-                    className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
-                  >
-                    Xác nhận rút tiền
-                  </Button>
-                </Popconfirm>
-                
-                <Popconfirm
-                  title="Từ chối rút tiền"
-                  description="Bạn có chắc chắn muốn từ chối yêu cầu rút tiền này?"
-                  onConfirm={() => rejectWithdrawal(record.id)}
-                  okButtonProps={{
-                    className: "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium"
+                  Xác nhận rút tiền
+                </Button>
+              </Popconfirm>
+
+              <Popconfirm
+                title="Từ chối rút tiền"
+                description="Bạn có chắc chắn muốn từ chối yêu cầu rút tiền này?"
+                onConfirm={() => rejectWithdrawal(record.id)}
+                okButtonProps={{
+                  className:
+                    "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium",
                 }}
                 cancelButtonProps={{
-                    className: "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium"
+                  className:
+                    "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium",
                 }}
-                  okText="Xác nhận"
-                  cancelText="Hủy"
+                okText="Xác nhận"
+                cancelText="Hủy"
+              >
+                <Button
+                  danger
+                  type="primary"
+                  className="bg-gradient-to-l from-red-400 to-red-500 text-white hover:from-red-500 hover:to-red-600 border border-red-300 font-bold"
                 >
-                  <Button 
-                    danger
-                    type="primary"
-                    className="bg-gradient-to-l from-red-400 to-red-500 text-white hover:from-red-500 hover:to-red-600 border border-red-300 font-bold"
-                  >
-                    Từ chối
-                  </Button>
-                </Popconfirm>
-              </>
-            )}
-          </Space>
-        ),
-      },
-      
+                  Từ chối
+                </Button>
+              </Popconfirm>
+            </>
+          )}
+        </Space>
+      ),
+    },
   ];
 
   return (
@@ -233,16 +239,18 @@ const WithdrawalRequests: React.FC = () => {
             Quản trị / <span className="font-semibold">Yêu cầu rút tiền</span>
           </h1>
         </div>
-        
+
         <div className="flex items-center justify-between mb-4">
-          <h1 className="font-semibold md:text-3xl">Danh sách yêu cầu rút tiền</h1>
+          <h1 className="font-semibold md:text-3xl">
+            Danh sách yêu cầu rút tiền
+          </h1>
         </div>
-        
+
         <Table
           columns={columns}
           dataSource={data?.data}
-          pagination={{ 
-            pageSize: 10, 
+          pagination={{
+            pageSize: 10,
             className: "my-5",
           }}
           rowKey="id"
@@ -257,66 +265,79 @@ const WithdrawalRequests: React.FC = () => {
         footer={null}
         width={480}
       >
-   {selectedBank && (
-  <div className="w-full max-w-md mx-auto">
-    <div className="rounded-2xl bg-white p-6">
-      <div className="mb-6">
-        <div 
-          className="relative h-56 w-full rounded-xl p-6 text-white shadow-md"
-          style={{
-            backgroundImage: "url('/istockphoto-1332736514-1024x1024.jpg')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        >
-          <div className="absolute right-6 top-6 text-xl font-bold italic tracking-wider text-white drop-shadow-lg">
-            <h2 className="text-lg font-semibold">{selectedBank.ngan_hang}</h2>
-          </div>
-          <div className="absolute left-6 top-4 h-14 w-20 rounded shadow">
-            <img 
-              src={selectedBank.logo_ngan_hang} 
-              alt={selectedBank.ngan_hang} 
-              className="h-14 w-20 object-contain" 
-            />
-          </div>
-          <div className="absolute bottom-6 left-8 ">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-lg font-semibold">STK: {selectedBank.tai_khoan_ngan_hang}</p>
-              <CopyOutlined 
-                className="cursor-pointer hover:text-blue-400 transition-colors -mt-4"
-                onClick={() => {
-                  navigator.clipboard.writeText(selectedBank.tai_khoan_ngan_hang);
-                  message.success('Đã sao chép số tài khoản');
-                }}
-              />
+        {selectedBank && (
+          <div className="w-full max-w-md mx-auto">
+            <div className="rounded-2xl bg-white p-6">
+              <div className="mb-6">
+                <div
+                  className="relative h-56 w-full rounded-xl p-6 text-white shadow-md"
+                  style={{
+                    backgroundImage:
+                      "url('/istockphoto-1332736514-1024x1024.jpg')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                >
+                  <div className="absolute right-6 top-6 text-xl font-bold italic tracking-wider text-white drop-shadow-lg">
+                    <h2 className="text-lg font-semibold">
+                      {selectedBank.ngan_hang}
+                    </h2>
+                  </div>
+                  <div className="absolute left-6 top-4 h-14 w-20 rounded shadow">
+                    <img
+                      src={selectedBank.logo_ngan_hang}
+                      alt={selectedBank.ngan_hang}
+                      className="h-14 w-20 object-contain"
+                    />
+                  </div>
+                  <div className="absolute bottom-6 left-8 ">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-lg font-semibold">
+                        STK: {selectedBank.tai_khoan_ngan_hang}
+                      </p>
+                      <CopyOutlined
+                        className="cursor-pointer hover:text-blue-400 transition-colors -mt-4"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            selectedBank.tai_khoan_ngan_hang
+                          );
+                          message.success("Đã sao chép số tài khoản");
+                        }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-lg font-semibold">
+                        Chủ TK: {selectedBank.ten_chu_tai_khoan}
+                      </p>
+                      <CopyOutlined
+                        className="cursor-pointer hover:text-blue-400 transition-colors -mt-4"
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            selectedBank.ten_chu_tai_khoan
+                          );
+                          message.success("Đã sao chép tên chủ tài khoản");
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4 mt-6">
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <span className="text-gray-600">Ngày tạo</span>
+                  <span className="font-medium">
+                    {formatDate(selectedBank.created_at)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                  <span className="text-gray-600">Mã ngân hàng</span>
+                  <span className="font-medium">#{selectedBank.id}</span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center justify-between">
-              <p className="text-lg font-semibold">Chủ TK: {selectedBank.ten_chu_tai_khoan}</p>
-              <CopyOutlined 
-                className="cursor-pointer hover:text-blue-400 transition-colors -mt-4"
-                onClick={() => {
-                  navigator.clipboard.writeText(selectedBank.ten_chu_tai_khoan);
-                  message.success('Đã sao chép tên chủ tài khoản');
-                }}
-              />
-            </div>
           </div>
-        </div>
-      </div>
-      
-      <div className="space-y-4 mt-6">
-        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-          <span className="text-gray-600">Ngày tạo</span>
-          <span className="font-medium">{formatDate(selectedBank.created_at)}</span>
-        </div>
-        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-          <span className="text-gray-600">Mã ngân hàng</span>
-          <span className="font-medium">#{selectedBank.id}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+        )}
       </Modal>
     </>
   );
