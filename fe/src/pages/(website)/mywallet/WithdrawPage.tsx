@@ -26,10 +26,14 @@ const WithdrawPage = () => {
   const { data: walletData } = useQuery({
     queryKey: ['walletData'],
     queryFn: async () => {
-      const response = await instanceClient.get('/vi-tai-khoan');
+      const walletVerificationCode = localStorage.getItem('walletVerificationCode');
+      const response = await instanceClient.post('/vi-tai-khoan', {
+        ma_xac_minh: walletVerificationCode
+      });
       return response.data;
     }
   });
+
 
   const withdrawalMutation = useMutation({
     mutationFn: (withdrawalData: { so_tien: number }) => 
@@ -54,7 +58,7 @@ const WithdrawPage = () => {
   };
 
   const walletBalance = walletData?.data?.viUser?.so_du || 0;
-
+console.log(walletBalance)
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 0;
     

@@ -626,12 +626,12 @@ const EditProducts: React.FC = () => {
                 <div key={index} className="mb-6 bg-gray-50 p-4 rounded-md">
                   <h3 className="text-lg font-medium mb-2 flex justify-between items-center">
                     Biến thể {variant.type === "color" ? "Màu sắc" : "Kích thước"}
-                    <button
+                    {/* <button
                       className="text-white text-xs hover:bg-red-500 bg-red-400 gap-1 px-2 py-1 rounded-md flex items-center"
                       onClick={() => removeVariant(index)}
                     >
                       <i className="fa-solid fa-trash-can" /> Xóa
-                    </button>
+                    </button> */}
                   </h3>
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -658,7 +658,6 @@ const EditProducts: React.FC = () => {
                             style={{ width: "100%" }}
                             placeholder="Chọn kích thước"
                             onChange={(values) => {
-                              // Combine locked sizes with newly selected sizes
                               const newValues = Array.from(new Set([...lockedSizes, ...values]));
                               updateVariantValues(index, newValues);
                             }}
