@@ -255,9 +255,9 @@ class DonHangController extends Controller
                         'cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? VanChuyen::TTCOD_KT : VanChuyen::TTCOD_CN,
                         'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? 0 : $donHang->tong_tien_don_hang,
                     ]);
-                    //                    $thongBaoTele = new ThongBaoTelegramController();
-                    //
-                    //                    $thongBaoTele->thongBaoDonHangMoi($vanChuyen->id);
+                                       $thongBaoTele = new ThongBaoTelegramController();
+                    
+                                       $thongBaoTele->thongBaoDonHangMoi($vanChuyen->id);
                 }
 
                 $thongBao = ThongBao::create([

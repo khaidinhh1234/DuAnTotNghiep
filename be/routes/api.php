@@ -59,7 +59,7 @@ Route::middleware([])
     ->name('client.')
     ->prefix('client')
     ->group(function () {
-        // Trang chủ
+        // Trang chủ    
         Route::get('trangchu', [TrangChuController::class, 'index']);
         Route::get('thong-tin-web', [TrangChuController::class, 'thongTinWeb']);
         Route::post('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
