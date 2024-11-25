@@ -18,7 +18,7 @@ import { Upload } from "antd";
 
 const { Text, Title } = Typography;
 
-const ProfileBanner = ({ profile, setpass }: any) => {
+const ProfileBanner = ({ profile }: any) => {
   const [avatarImage, setAvatarImage] = useState<string>("");
   const [{ user }] = useLocalStorage("user" as any, {});
   const url = user.anh_nguoi_dung;
@@ -144,13 +144,13 @@ const ProfileBanner = ({ profile, setpass }: any) => {
                 icon={<YoutubeFilled className="text-white" />}
                 style={{ backgroundColor: "#CD201F" }}
               />
-              <Button
+              {/* <Button
                 type="default"
                 className="text-white bg-slate-950"
                 onClick={() => setpass(true)}
               >
                 Đổi mật khẩu
-              </Button>
+              </Button> */}
             </div>
           </Col>
         </Row>
