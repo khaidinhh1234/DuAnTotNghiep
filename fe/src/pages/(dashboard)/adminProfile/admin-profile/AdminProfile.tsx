@@ -17,7 +17,7 @@ const AdminProfile = () => {
   // const { id } = useParams();
   // console.log(id);
 
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["taikhoanid", id],
     queryFn: async () => {
       try {
@@ -28,7 +28,7 @@ const AdminProfile = () => {
       }
     },
   });
-
+  console.log(data);
   const profile = data?.data;
 
   return (
@@ -36,7 +36,7 @@ const AdminProfile = () => {
       <div className="">
         <Row gutter={[16, 16]} className="space-y-3">
           <Col span={24} className="w-full">
-            <ProfileBanner profile={profile} />
+            <ProfileBanner profile={profile} refetch={refetch} />
           </Col>
 
           {/* Thẻ giới thiệu và Thẻ ảnh */}

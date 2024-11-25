@@ -3,8 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Progress } from "antd";
 import { Link, useParams } from "react-router-dom";
 import Detail from "../detail";
+import { useState } from "react";
 
 const ShowNhanvien = () => {
+  const [quanlity, setQuanlity] = useState(5);
+  const handleSeeMore = () => {
+    setQuanlity(quanlity + 5);
+  };
   const { id } = useParams();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["USERID", id],
@@ -18,10 +23,10 @@ const ShowNhanvien = () => {
     },
   });
   const user = data?.data?.tai_khoan;
-  console.log(user);
+  // console.log(user);
   const trangthai = data?.data;
-  // console.log(trangthai);
-
+  console.log(trangthai);
+  // console.log(user.don_hangs.length);
   const phantram =
     ((trangthai?.tong_tien_don_hang -
       user?.hang_thanh_vien?.chi_tieu_toi_thieu) /
@@ -66,7 +71,7 @@ const ShowNhanvien = () => {
           </div>
           <div className="text-2xl font-bold text-gray-500">
             <i className="fa-solid fa-rotate-reverse"></i>
-            <span className="px-2">0 </span>
+            <span className="px-2">{trangthai?.tong_don_hoan ?? 0} </span>
             <br />
             <span className="text-gray-500 text-lg"> Trả hàng</span>
           </div>
@@ -174,7 +179,7 @@ const ShowNhanvien = () => {
                   </p>
                   <div className="w-40">
                     <Progress
-                      percent={phantram}
+                      percent={phantram ?? 43}
                       strokeColor={{
                         "0%": "#6dd5ed",
                         "100%": "#00bfff", // Màu chuyển tiếp
@@ -200,7 +205,7 @@ const ShowNhanvien = () => {
           <table className="min-w-full w-full ">
             <tbody>
               {user?.don_hangs.length > 0 ? (
-                user?.don_hangs?.map((don_hang: any) => (
+                user?.don_hangs?.slice(0, quanlity).map((don_hang: any) => (
                   <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
                     <td className="py-5">
                       <strong className="text-gray-500">Mã đơn hàng:</strong>
@@ -305,7 +310,17 @@ const ShowNhanvien = () => {
 
               {/* Các hàng khác */}
             </tbody>
-          </table>
+          </table>{" "}
+          {user?.don_hangs?.length > quanlity && (
+            <div className="col-span-12 text-center mt-4 mx-auto">
+              <button
+                onClick={handleSeeMore}
+                className="bg-black/70 text-white px-4 py-2 rounded-md hover:bg-white hover:text-black/50 border border-black/60"
+              >
+                Xem thêm
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </main>

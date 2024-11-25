@@ -22,34 +22,6 @@ const Bestseller = ({ products, sectionTitle, isPromotional = false }: any) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
   };
-
-  const queryclient = useQueryClient();
-  const { mutate, isPending } = useMutation({
-    mutationFn: async (id: any) => {
-      try {
-        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
-        if (
-          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
-        ) {
-          message.success("Xóa sản phẩm yêu thích thành công");
-        }
-        if (
-          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
-        ) {
-          message.success("Thêm sản phẩm yêu thích thành công");
-        }
-        return response.data;
-      } catch (error: any) {
-        message.error(error?.response?.data?.mess);
-      }
-    },
-    onSuccess: () => {
-      queryclient.invalidateQueries({
-        queryKey: ["TRANG_CHU_CLIENT"],
-      });
-    },
-  });
-  console.log(products);
   return (
     <section>
       <div className="container mb-28">

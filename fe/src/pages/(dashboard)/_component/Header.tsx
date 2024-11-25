@@ -34,6 +34,7 @@ import { useRef, useState } from "react";
 
 const Header = () => {
   const [user] = useLocalStorage("user" as any, {});
+
   const vaitro =
     user?.user?.vai_tros?.map((item: any) => item.ten_vai_tro) || [];
   const ten = user?.user?.ho + " " + user?.user?.ten;
@@ -168,7 +169,11 @@ const Header = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">
-            <img src={anh} alt="" className="w-[30px] h-[30px] rounded-full" />
+            <img
+              src={anh}
+              alt={anh}
+              className="w-[30px] h-[30px] rounded-full"
+            />
             <span className="sr-only">Toggle user menu</span>
           </Button>
         </DropdownMenuTrigger>

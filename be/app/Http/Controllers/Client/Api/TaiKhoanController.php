@@ -31,8 +31,10 @@ class TaiKhoanController extends Controller
         ]);
 
         $userId = Auth::guard('api')->user()->id;
-        $user = User::with('hangThanhVien')->find(id: $userId);
-
+        $user = User::with('hangThanhVien', 'donHangs')->find(id: $userId);
+        $tongTienHang = $user->donHangs->filter(function ($donHang) {
+            return $donHang->trang_thai_don_hang == DonHang::TTDH_HTDH;
+        })->sum('tong_tien_don_hang');
         if (!$user) {
             return response()->json([
                 'status' => false,
@@ -45,7 +47,10 @@ class TaiKhoanController extends Controller
                 'status' => true,
                 'status_code' => 200,
                 'message' => 'Cập nhật thông tin thành công',
-                'data' => $user,
+                'data' => [
+                    'user' => $user,
+                    'tong_tien_hang' => $tongTienHang,
+                ],
             ], 200);
         }
     }
@@ -129,22 +134,22 @@ class TaiKhoanController extends Controller
             $user = User::find($userId);
             // $maXacMinh = $validate['ma_xac_minh'];
             // if (Hash::check($maXacMinh, $user->viTien->ma_xac_minh)) {
-                $nganHang = NganHang::firstOrCreate(
-                    [
-                        'user_id' => $userId,
-                        'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
-                        'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
-                        'ngan_hang' => $validate['ngan_hang'],
-                        'logo_ngan_hang' => $validate['logo_ngan_hang'],
-                    ],
-                    [
-                        'user_id' => $userId,
-                        'ngan_hang' => $validate['ngan_hang'],
-                        'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
-                        'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
-                        'logo_ngan_hang' => $validate['logo_ngan_hang'],
-                    ]
-                );
+            $nganHang = NganHang::firstOrCreate(
+                [
+                    'user_id' => $userId,
+                    'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
+                    'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
+                    'ngan_hang' => $validate['ngan_hang'],
+                    'logo_ngan_hang' => $validate['logo_ngan_hang'],
+                ],
+                [
+                    'user_id' => $userId,
+                    'ngan_hang' => $validate['ngan_hang'],
+                    'tai_khoan_ngan_hang' => $validate['tai_khoan_ngan_hang'],
+                    'ten_chu_tai_khoan' => $validate['ten_chu_tai_khoan'],
+                    'logo_ngan_hang' => $validate['logo_ngan_hang'],
+                ]
+            );
             // } else {
             //     return response()->json([
             //         'status' => false,
@@ -206,7 +211,7 @@ class TaiKhoanController extends Controller
                 ], 404);
             }
             // if (Hash::check($maXacMinh, $user->viTien->ma_xac_minh)) {
-                $nganHang->delete();
+            $nganHang->delete();
             // } else {
             //     return response()->json([
             //         'status' => false,
@@ -304,21 +309,21 @@ class TaiKhoanController extends Controller
             $viUser = $user->viTien;
             // $maXacMinh = $request->ma_xac_minh;
             // if (Hash::check($maXacMinh, $viUser->ma_xac_minh)) {
-                $giaoDichVi = GiaoDichVi::create([
-                    'vi_tien_id' => $viUser->id,
-                    'so_tien' => $request->so_tien,
-                    'loai_giao_dich' => 'nap_tien',
-                    'mo_ta' => 'Nạp tiền vào ví',
-                    'thoi_gian_giao_dich' => now(),
-                ]);
+            $giaoDichVi = GiaoDichVi::create([
+                'vi_tien_id' => $viUser->id,
+                'so_tien' => $request->so_tien,
+                'loai_giao_dich' => 'nap_tien',
+                'mo_ta' => 'Nạp tiền vào ví',
+                'thoi_gian_giao_dich' => now(),
+            ]);
 
-                LichSuGiaoDich::create([
-                    'vi_tien_id' => $viUser->id,
-                    'so_du_truoc' => $viUser->so_du,
-                    'so_du_sau' => $viUser->so_du + $request->so_tien,
-                    'ngay_thay_doi' => now(),
-                    'mo_ta' => 'Nạp tiền vào ví',
-                ]);
+            LichSuGiaoDich::create([
+                'vi_tien_id' => $viUser->id,
+                'so_du_truoc' => $viUser->so_du,
+                'so_du_sau' => $viUser->so_du + $request->so_tien,
+                'ngay_thay_doi' => now(),
+                'mo_ta' => 'Nạp tiền vào ví',
+            ]);
             // } else {
             //     return response()->json([
             //         'status' => false,

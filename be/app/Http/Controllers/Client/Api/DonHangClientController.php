@@ -150,11 +150,11 @@ class DonHangClientController extends Controller
                 // Xử lý dữ liệu chi tiết đơn hàng và đánh giá
                 $donHang->flatMap(function ($order) {
                     return $order->chiTiets->map(function ($chiTiet) {
-                        $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
-                        $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
+                        $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray() ?? '';
+                        $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh ?? '';
                         $gia_giam = $chiTiet->bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban;
                         return [
-                            'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham,
+                            'ten_san_pham' => $chiTiet->bienTheSanPham->sanPham->ten_san_pham ?? '',
                             'anh_san_pham' => $anhSanPham,
                             'anh_bien_the' => $anhBienThe,
                             'mau_bien_the' => $chiTiet->bienTheSanPham->mauBienThe->ten_mau_sac,
@@ -222,7 +222,6 @@ class DonHangClientController extends Controller
             ]);
         }
     }
-
 
     public function donHangUserDetail(string $maDonHang)
     {

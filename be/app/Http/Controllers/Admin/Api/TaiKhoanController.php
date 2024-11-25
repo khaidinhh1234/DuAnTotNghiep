@@ -132,7 +132,7 @@ class TaiKhoanController extends Controller
             // $quyen = [];
             $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs', 'sanPhamYeuThich')->findOrFail($id);
             $tongTienDonhangThanhCong = $taiKhoan->donHangs()->where('trang_thai_don_hang', DonHang::TTDH_HTDH)->where('trang_thai_thanh_toan', 'Đã thanh toán')->sum('tong_tien_don_hang');
-
+            $tongDonHoan = $taiKhoan->donHangs()->where('trang_thai_don_hang', DonHang::TTDH_HH)->count();
             // $quyen = $taiKhoan->vaiTros->flatMap(function ($vaiTro) {
             //     return $vaiTro->quyens->pluck('ten_quyen');
             // })->unique()->values()->all();
@@ -141,6 +141,7 @@ class TaiKhoanController extends Controller
                 'tai_khoan' => $taiKhoan,
                 // 'quyen' => $quyen,
                 'tong_tien_don_hang' => (int)$tongTienDonhangThanhCong,
+                'tong_don_hoan' => $tongDonHoan,
                 'so_luong_danh_gia' => count($taiKhoan->danhGias),
                 'so_luong_don_hang' => count($taiKhoan->donHangs),
                 'so_luong_yeu_thich' => count($taiKhoan->sanPhamYeuThich)
