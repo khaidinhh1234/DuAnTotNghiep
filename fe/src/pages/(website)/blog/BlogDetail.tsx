@@ -29,28 +29,51 @@ const BlogDetail = () => {
         return new Intl.DateTimeFormat("vi-VN", options).format(date)
     }
 
-    // Tăng lượt xem
-    const incrementView = () => {
-        if (!viewed) {
+ // Tăng lượt xem nếu chưa xem trong 24 giờ
+ useEffect(() => {
+    if (duong_dan) {
+        const viewedArticles = JSON.parse(localStorage.getItem("viewedArticles") || "{}")
+        const currentTime = Date.now()
+
+        // Kiểm tra nếu đã có bài viết trong LocalStorage
+        if (!viewedArticles[duong_dan]) {
+            // Nếu chưa xem, tăng lượt xem và lưu thời gian vào LocalStorage
             instanceClient
                 .post(`/xem-bai-viet/${duong_dan}`, { tang_luot_xem: true })
-                .then((response) => {
-                    console.log("Lượt xem đã tăng:", response.data)
+                .then(() => {
+                    console.log("Lượt xem đã tăng")
+                    viewedArticles[duong_dan] = currentTime
+                    localStorage.setItem("viewedArticles", JSON.stringify(viewedArticles))
                     setViewed(true)
                 })
                 .catch((error) => {
                     console.error("Lỗi khi tăng lượt xem:", error)
                 })
+        } else {
+            // Nếu đã xem, kiểm tra xem có quá 24 giờ chưa
+            const lastViewedTime = viewedArticles[duong_dan]
+            const hoursPassed = (currentTime - lastViewedTime) / (1000 * 60 * 60)
+
+            if (hoursPassed > 24) {
+                // Nếu đã quá 24 giờ, tăng lượt xem lại
+                instanceClient
+                    .post(`/xem-bai-viet/${duong_dan}`, { tang_luot_xem: true })
+                    .then(() => {
+                        console.log("Lượt xem đã tăng")
+                        viewedArticles[duong_dan] = currentTime
+                        localStorage.setItem("viewedArticles", JSON.stringify(viewedArticles))
+                        setViewed(true)
+                    })
+                    .catch((error) => {
+                        console.error("Lỗi khi tăng lượt xem:", error)
+                    })
+            } else {
+                // Nếu chưa đủ 24 giờ, chỉ đánh dấu đã xem
+                setViewed(true)
+            }
         }
     }
-
-    useEffect(() => {
-        if (data && !viewed) {
-            const timeoutId = setTimeout(() => incrementView(), 10000) 
-            return () => clearTimeout(timeoutId) 
-        }
-    }, [data, viewed, duong_dan])
-
+}, [duong_dan])
 
     return (
         <div>
@@ -87,11 +110,13 @@ const BlogDetail = () => {
                         {data?.data?.baiVietTop && data?.data?.baiVietTop.length > 0 ? (
                             data?.data?.baiVietTop.map((baiViet: any) => (
                                 <div key={baiViet.id} className="flex items-start">
+                                    {/* <Link to={`/xem-bai-viet/${baiViet.duong_dan}`}> */}
                                     <img
                                         src={baiViet.anh_tin_tuc}
                                         alt={baiViet.tieu_de}
                                         className="w-16 h-16 rounded object-cover mr-4"
                                     />
+                                    {/* </Link> */}
                                     <div>
                                         <h4 className="text-lg font-medium">{baiViet.tieu_de}</h4>
                                         <p className="text-gray-500 text-sm">

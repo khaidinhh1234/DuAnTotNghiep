@@ -130,7 +130,7 @@ const ProductDetail: React.FC = () => {
   const { slug } = useParams();
 
   const [thumbsSwiper, setThumbsSwiper] = useState<any | null>(null);
-  console.log(thumbsSwiper);
+  // console.log(thumbsSwiper);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -158,34 +158,26 @@ const ProductDetail: React.FC = () => {
   // const [isReady, setIsReady] = useState(false);
   const viewedRef = useRef(false);
 
-  useEffect(() => {
-    // Hàm tăng lượt xem sau 10 giây
-    const incrementView = async () => {
-      try {
-        const response = await instanceClient.get(
-          `/chi-tiet-san-pham/${slug}`,
-          {
-            params: { tang_luot_xem: true },
-          }
-        );
-        console.log("Lượt xem đã tăng:", response.data);
-        viewedRef.current = true; // Đánh dấu đã tăng lượt xem
-      } catch (error) {
-        console.error("Lỗi khi tăng lượt xem:", error);
-      }
-    };
-
-    // Chỉ gọi API tăng lượt xem khi slug đã có và chưa tăng lượt xem
-    if (slug && !viewedRef.current) {
-      // Đợi 10 giây mới gọi API
-      const timer = setTimeout(() => {
-        incrementView();
-      }, 10000); // 10000 ms = 10 giây
-
-      // Cleanup khi component unmount hoặc slug thay đổi
-      return () => clearTimeout(timer);
+useEffect(() => {
+  // Hàm tăng lượt xem
+  const incrementView = async () => {
+    try {
+      const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`, {
+        params: { tang_luot_xem: true },
+      });
+      console.log("Lượt xem đã tăng:", response.data);
+      viewedRef.current = true; // Đánh dấu đã tăng lượt xem
+    } catch (error) {
+      console.error("Lỗi khi tăng lượt xem:", error);
     }
-  }, [slug]); // Dùng slug làm dependency để hiệu ứng chạy lại khi slug thay đổi
+  };
+
+  // Chỉ gọi API tăng lượt xem khi slug đã có và chưa tăng lượt xem
+  if (slug && !viewedRef.current) {
+    incrementView();
+  }
+}, [slug]); // Dependency là slug
+
 
   // useEffect(() => {
   //   const storedToken = localStorage.getItem("accessToken");
@@ -205,7 +197,7 @@ const ProductDetail: React.FC = () => {
       return response.data.data;
     },
   });
-  console.log(product);
+  // console.log(product);
   // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
   //   queryKey: ["relatedProducts", id],
   //   queryFn: () => fetchRelatedProducts(Number(id)),

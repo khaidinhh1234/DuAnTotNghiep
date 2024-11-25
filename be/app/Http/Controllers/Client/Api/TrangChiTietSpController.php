@@ -10,6 +10,7 @@ use App\Models\DanhGia;
 use App\Models\DanhMuc;
 use App\Models\SanPham;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -79,11 +80,22 @@ class TrangChiTietSpController extends Controller
             }
 
             // Tăng lượt xem sản phẩm nếu chưa được xem trong session
-            $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
-            if (!session()->has($key)) {
-                $chiTietSanPham->increment('luot_xem');
-                session()->put($key, true);
-            }
+            // $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
+            // if (!session()->has($key)) {
+            //     $chiTietSanPham->increment('luot_xem');
+            //     session()->put($key, true);
+            // }
+            $userId = auth()->id() ?? 'guest';
+        $key = 'san_pham_da_xem_' . $chiTietSanPham->id . '_' . $userId . '_' . $request->ip();
+
+        // Sử dụng Cache để hạn chế lượt xem liên tiếp (VD: 24 giờ)
+        if (!Cache::has($key)) {
+            // Tăng số lượt xem
+            $chiTietSanPham->increment('luot_xem');
+            $chiTietSanPham->touch(); // Cập nhật `updated_at`
+            // Lưu khóa trong Cache với thời gian 24 giờ
+            Cache::put($key, true, now()->addHours(24));
+        }
 
             // Cập nhật trạng thái đánh giá hữu ích
             foreach ($chiTietSanPham->danhGias as $danhGia) {
