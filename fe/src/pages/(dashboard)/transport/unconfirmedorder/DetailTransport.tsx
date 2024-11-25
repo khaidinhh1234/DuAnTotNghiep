@@ -1,7 +1,7 @@
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Modal } from "antd";
+import { Button, Image, message, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 interface Transport {
@@ -212,11 +212,13 @@ const DetailTransport = ({ record }: any) => {
   // console.log(products);
   const vanchuyenData = data?.data?.van_chuyen?.don_hang;
   const shipper = data?.data?.van_chuyen?.shipper;
-
+  console.log("shipper", shipper);
+  console.log("vanchuyenData", vanchuyenData);
   const thongtin = data?.data?.thong_tin;
   const handleCancel = () => {
     setOpen(false);
   };
+
   const { mutate } = useMutation({
     mutationFn: async ({
       id,
@@ -240,10 +242,10 @@ const DetailTransport = ({ record }: any) => {
             }
           );
         } else {
-          // console.log("Đang cập nhật trạng thái vận chuyển:", {
-          //   trang_thai_van_chuyen: action,
-          //   id: [id],
-          // });
+          console.log("Đang cập nhật trạng thái vận chuyển:", {
+            trang_thai_van_chuyen: action,
+            id: [id],
+          });
 
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
             trang_thai_van_chuyen: action,
@@ -252,8 +254,8 @@ const DetailTransport = ({ record }: any) => {
         }
         return response.data; // Trả về dữ liệu phản hồi
       } catch (error) {
-        // console.error("Lỗi khi thực hiện yêu cầu API:", error);
-        // alert("Không thể cập nhật trạng thái đơn hàng!");
+        console.error("Lỗi khi thực hiện yêu cầu API:", error);
+        message.error("Có lỗi xảy ra khi xác nhận giao hàng.");
         throw error; // Ném lại lỗi để xử lý bên ngoài nếu cần
       }
     },
@@ -261,9 +263,7 @@ const DetailTransport = ({ record }: any) => {
       queryClient.invalidateQueries({ queryKey: ["vanchuyen"] }); // Làm mới dữ liệu sau khi thành công
     },
   });
-  const vanChuyen = data?.data?.van_chuyen;
-  const tong = data?.data;
-  console.log(tong);
+
   return (
     <div>
       {" "}
@@ -295,33 +295,31 @@ const DetailTransport = ({ record }: any) => {
                 </p>{" "}
               </div>{" "}
               <div
-                className={`font-bold text-[15px] ${
-                  record.trang_thai_van_chuyen === "Chờ xử lý"
+                className={`font-bold text-[15px] ${record.trang_thai_van_chuyen === "Chờ xử lý"
                     ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
                     : record.trang_thai_van_chuyen === "Đang giao hàng"
                       ? "text-purple-500" // Đang giao hàng: màu tím
                       : record.trang_thai_van_chuyen ===
-                          "Đã giao hàng thành công"
+                        "Đã giao hàng thành công"
                         ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                           ? "text-red-500" // Giao hàng thất bại: màu đ��
                           : ``
-                }`}
+                  }`}
               >
                 <div
-                  className={`${
-                    record.trang_thai_van_chuyen === "Chờ xử lý"
+                  className={`${record.trang_thai_van_chuyen === "Chờ xử lý"
                       ? "bg-blue-400" // Chờ xác nhận: màu vàng nhạt
                       : record.trang_thai_van_chuyen === "Đang giao hàng"
                         ? "bg-purple-500" // Đang giao hàng: màu tím
                         : record.trang_thai_van_chuyen ===
-                            "Giao hàng thành công"
+                          "Giao hàng thành công"
                           ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
                           : record.trang_thai_van_chuyen ===
-                              "Giao hàng thất bại"
+                            "Giao hàng thất bại"
                             ? "bg-red-500" // Giao hàng thất bại: màu đ��
                             : "bg-red-500" // Các trạng thái khác: màu đỏ
-                  } text-white px-2 py-1 font-bold rounded-lg`}
+                    } text-white px-2 py-1 font-bold rounded-lg`}
                 >
                   {record.trang_thai_van_chuyen === "Chờ xử lý"
                     ? "Chờ xử lý" // Chờ xác nhận: màu vàng nhạt
@@ -410,33 +408,31 @@ const DetailTransport = ({ record }: any) => {
                 <div className="grid grid-cols-2 gap-5 my-5">
                   <div>
                     <div className="flex justify-between">
-                      <p>Lấy hàng</p> <span> Glow Clowthing Hà Nội</span>
+                      <p>Lấy hàng</p> <span> Hà Nội</span>
                     </div>
                     <div className="flex justify-between">
-                      <p>Mã Vận chuyển</p>{" "}
-                      <span> {vanChuyen?.ma_van_chuyen}</span>
+                      <p>Mã Vận chuyển</p> <span> 100023874</span>
                     </div>
                     <div className="flex justify-between">
-                      <p>Nhà vận chuyển</p> <span> Glow Express</span>
+                      <p>Nhà vận chuyển</p> <span> Hà Nội</span>
                     </div>
                   </div>{" "}
                   <div>
                     <div className="flex justify-between">
                       <p>Trạng thái vận chuyển</p>{" "}
                       <span
-                        className={`   ${
-                          record.trang_thai_van_chuyen == "Chờ xử lý"
+                        className={`   ${record.trang_thai_van_chuyen == "Chờ xử lý"
                             ? "bg-blue-500"
                             : record.trang_thai_van_chuyen == "Đang giao hàng"
                               ? "bg-purple-500"
                               : record.trang_thai_van_chuyen ==
-                                  "Giao hàng thành công"
+                                "Giao hàng thành công"
                                 ? "bg-green-500"
                                 : record.trang_thai_van_chuyen ==
-                                    "Giao hàng thất bại"
+                                  "Giao hàng thất bại"
                                   ? "bg-red-500"
                                   : record
-                        }
+                          }
                         } text-white px-2 font-bold rounded-lg h-6`}
                       >
                         {" "}
@@ -447,10 +443,10 @@ const DetailTransport = ({ record }: any) => {
                             : record.trang_thai_van_chuyen == "Đang giao hàng"
                               ? "Đang giao hàng"
                               : record.trang_thai_van_chuyen ==
-                                  "Giao hàng thành công"
+                                "Giao hàng thành công"
                                 ? "Giao hàng thành công"
                                 : record.trang_thai_van_chuyen ==
-                                    "Giao hàng thất bại"
+                                  "Giao hàng thất bại"
                                   ? "Giao hàng thất bại"
                                   : record}
                       </span>
@@ -470,19 +466,16 @@ const DetailTransport = ({ record }: any) => {
                     Số lượng sản phẩm :{" "}
                   </h1>
                   <p className="text-base font-semibold">
-                    <span>{tong?.tong_so_luong}</span> sản phẩm
+                    <span>{data?.data?.tong_so_luong}</span> sản phẩm
                   </p>
                 </div>
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {
-                        tong?.tong_thanh_tien_san_pham?.toLocaleString(
-                          "vi-VN"
-                        ) ?? 0
-                        // .toLocaleString()
-                      }
+                      {data?.data?.tong_thanh_tien_san_pham.toLocaleString(
+                        "vi-VN"
+                      )}
                     </span>{" "}
                     VNĐ
                   </p>
@@ -490,9 +483,12 @@ const DetailTransport = ({ record }: any) => {
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Giảm giá</h1>
                   <p className="text-base font-semibold">
+                    -{" "}
                     <span>
-                      {tong?.so_tien_giam_gia
-                        ? "-" + tong?.so_tien_giam_gia?.toLocaleString("vi-VN")
+                      {data?.data?.van_chuyen?.don_hang?.so_tien_giam_gia
+                        ? data?.data?.van_chuyen?.don_hang?.so_tien_giam_gia.toLocaleString(
+                          "vi-VN"
+                        )
                         : 0}{" "}
                       VNĐ
                     </span>
@@ -501,11 +497,7 @@ const DetailTransport = ({ record }: any) => {
                 <div className="flex justify-between">
                   <h1 className="text-lg font-semibold">Vận chuyển</h1>
                   <p className="text-base font-semibold">
-                    <span>
-                      {tong?.tien_ship !== 0
-                        ? tong?.tien_ship?.toLocaleString("vi-VN") + " VNĐ"
-                        : "Miễn phí ship"}
-                    </span>{" "}
+                    <span>20.000</span> VNĐ
                   </p>
                 </div>
                 <div className="flex justify-between">
@@ -513,7 +505,8 @@ const DetailTransport = ({ record }: any) => {
                     Tổng giá trị đơn hàng <br />
                   </h1>
                   <p className="text-lg font-bold">
-                    {tong?.tong_tien?.toLocaleString("vi-VN") ?? 0} VNĐ
+                    {" "}
+                    {(record?.tien_cod + 20000).toLocaleString("vi-VN")} VNĐ
                   </p>
                 </div>
               </div>
@@ -525,23 +518,68 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
-                {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
-                  <span className="w-full py-1 px-2 text-base font-medium text-blue-400 border-b-2 border-blue-400 hover:text-blue-600 hover:border-blue-600 transition-all duration-300 ease-in-out cursor-default text-center ">
+                {record.trang_thai_van_chuyen === "Đang xử lý" ? (
+                  <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
                     Chờ lấy hàng
                   </span>
                 ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-purple-500 border-b-2 border-purple-500 hover:text-purple-600 hover:border-purple-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     Đang giao hàng
                   </span>
-                ) : record.trang_thai_van_chuyen === "Hoàn tất đơn hàng" ? (
+                ) : record.trang_thai_van_chuyen === "Giao hàng thành công" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-green-500 border-b-2 border-green-500 hover:text-green-600 hover:border-green-600 transition-all duration-300 ease-in-out cursor-default text-center">
-                    Hoàn tất đơn hàng
+                    Giao hàng thành công
                   </span>
-                ) : (
+                ) : record.trang_thai_van_chuyen === "Giao hàng thất bại" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-red-500 border-b-2 border-red-500 hover:text-red-600 hover:border-red-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     Giao hàng thất bại
                   </span>
-                )}
+                ) : null}
+                {/* Kết quả sau khi giao hàng */}
+              {record.trang_thai_van_chuyen === "Giao hàng thành công" && (
+                <div className="mt-4 text-center">
+                  {/* <div className="text-green-600 font-semibold">
+                    ✅ Giao hàng thành công!
+                  </div> */}
+                  {/* Hiển thị ảnh xác thực */}
+                  {record.anh_xac_thuc && (
+                    <div className="mt-2">
+                      <Image
+                        src={record.anh_xac_thuc}
+                        alt="Ảnh xác thực"
+                        style={{
+                          maxHeight: '16rem',
+                          objectFit: 'contain', 
+                          border: '1px solid #ddd',
+                          borderRadius: '0.5rem', 
+                        }}
+                        preview={{
+                          mask: <span>Xem ảnh</span>,
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Kết quả sau khi thất bại */}
+              {record.trang_thai_van_chuyen === "Giao hàng thất bại" && (
+                <div className="mt-4 text-center">
+                  {/* <div className="mt-4 text-center text-red-600 font-semibold">
+                    ❌ Giao hàng thất bại!
+                  </div> */}
+                  {record.ghi_chu && (
+                    <div className="mt-4">
+                      <h4 className="text-lg font-bold">Lịch sử giao hàng:</h4>
+                      <ul className="mt-2 list-disc list-inside text-left text-gray-700">
+                        <li >
+                          <span className="font-medium">{record.ghi_chu}</span>
+
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
               </div>
             </div>{" "}
             <div className=" bg-slate-100 p-5 border rounded-lg my-2">

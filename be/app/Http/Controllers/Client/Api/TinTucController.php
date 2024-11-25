@@ -8,6 +8,7 @@ use App\Models\TinTuc;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class TinTucController extends Controller
 {
@@ -21,7 +22,7 @@ class TinTucController extends Controller
 
             // Lấy bài viết theo từng danh mục tin tức
             $loadBaiVietTheoDanhMuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
-                ->select('id', 'ten_danh_muc_tin_tuc', 'duong_dan' , 'created_at')
+                ->select('id', 'ten_danh_muc_tin_tuc', 'duong_dan', 'created_at')
                 ->with(['tinTuc' => function ($query) {
                     $query->select('id', 'tieu_de', 'noi_dung', 'anh_tin_tuc', 'danh_muc_tin_tuc_id', 'luot_xem', 'duong_dan', 'created_at')
                         ->with('danhMucTinTuc:id,ten_danh_muc_tin_tuc')
@@ -117,13 +118,24 @@ class TinTucController extends Controller
                 ], 404);
             }
 
-            $key = 'bai_viet_da_xem_' . $baiVietDetail->id;
-            if (!session()->has($key)) {
+            // $key = 'bai_viet_da_xem_' . $baiVietDetail->id . '_' . $request->ip();
+            // if (!session()->has($key)) {
+            //     $baiVietDetail->increment('luot_xem');
+            //     $baiVietDetail->touch();
+            //     session()->put($key, true);
+            // }
+            // Khóa session kết hợp với IP và userId nếu có
+            $userId = auth()->id() ?? 'guest'; // Nếu không có user, dùng 'guest'
+            $key = 'bai_viet_da_xem_' . $baiVietDetail->id . '_' . $userId . '_' . $request->ip();
+
+            // Sử dụng Cache để hạn chế lượt xem liên tiếp (VD: 24 giờ)
+            if (!Cache::has($key)) {
+                // Tăng số lượt xem
                 $baiVietDetail->increment('luot_xem');
                 $baiVietDetail->touch(); // Cập nhật trường `updated_at`
-                session()->put($key, true);
+                // Lưu khóa trong Cache 24 giờ
+                Cache::put($key, true, now()->addHours(24)); // Khóa trong 24 giờ
             }
-
             $danhMucTinTuc = DanhMucTinTuc::whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
                 ->orderBy('created_at', 'desc')
                 ->get();
