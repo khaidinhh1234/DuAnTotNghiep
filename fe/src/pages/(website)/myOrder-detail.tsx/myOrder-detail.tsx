@@ -109,7 +109,7 @@ const MyOrderdetail = () => {
         ),
     },
     {
-      title: "Đơn hàng đã được Đánh Giá",
+      title: "Đánh Giá Đơn hàng",
 
       icon:
         current >= 4 ? (
@@ -128,7 +128,7 @@ const MyOrderdetail = () => {
         </>
       )}
       {view && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
+        <div className="fixed inset-0 pt-96 overflow-y-auto flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full space-y-4 overflow-y-auto h-auto">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
               Đánh giá của bạn
@@ -471,21 +471,23 @@ const MyOrderdetail = () => {
             <h1 className="text-xl font-semibold">
               Địa chỉ nhận hàng{" "}
               {(donhang?.trang_thai_don_hang === "Hoàn tất đơn hàng" ||
-                donhang?.trang_thai_don_hang === "Chờ khách hàng xác nhận") && (
-                <Link
-                  to={
-                    chitiet?.anh_xac_thuc
-                      ? chitiet?.anh_xac_thuc
-                      : "https://res.cloudinary.com/dpypwbeis/image/upload/v1731121361/ewrlhy9lsbiq1gxhgcsl.jpg"
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 text-sm underline cursor-pointer "
-                >
-                  Xem ảnh giao hàng
-                </Link>
-              )}
+                donhang?.trang_thai_don_hang === "Chờ khách hàng xác nhận") &&
+                chitiet?.anh_xac_thuc && (
+                  <Link
+                    to={
+                      chitiet?.anh_xac_thuc
+                        ? chitiet?.anh_xac_thuc
+                        : "https://res.cloudinary.com/dpypwbeis/image/upload/v1731121361/ewrlhy9lsbiq1gxhgcsl.jpg"
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 text-sm underline cursor-pointer"
+                  >
+                    Xem ảnh giao hàng
+                  </Link>
+                )}
             </h1>
+
             <p>
               <UserOutlined />{" "}
               {donhang?.ten_nguoi_dat_hang ??
@@ -525,8 +527,8 @@ const MyOrderdetail = () => {
               <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p>
               <p>
                 {(chitiet?.tien_ship != 0
-                  ? (chitiet?.tien_ship ?? "FreeShip")
-                  : "FreeShip"
+                  ? (chitiet?.tien_ship ?? "Miễn Phí Ship")
+                  : "Miễn Phí Ship"
                 ).toLocaleString("vn-VN")}{" "}
               </p>
               <p>

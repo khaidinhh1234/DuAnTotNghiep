@@ -122,7 +122,7 @@ const HoanTien = () => {
   return (
     <div>
       {" "}
-      <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
+      <div className="fixed inset-0 overflow-auto pt-96 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
         <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full space-y-4 overflow-y-auto h-auto">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">
             Yêu cầu Trả hàng /Hoàn tiền
