@@ -251,7 +251,7 @@ class VanChuyenController extends Controller
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
 
                     $thongBaoHoanTatGiaoHang = new ThongBaoTelegramController();
-                    $thongBaoHoanTatGiaoHang->guiThongBaoHoanTatGiaoHang($vanChuyen->id);
+                    $thongBaoHoanTatGiaoHang->thongBaoHoanTatGiaoHang($vanChuyen->id);
 
                     DB::commit();
                     return response()->json(['status' => true, 'message' => 'Giao hàng thành công'], 200);
