@@ -130,7 +130,7 @@ const ProductDetail: React.FC = () => {
   const { slug } = useParams();
 
   const [thumbsSwiper, setThumbsSwiper] = useState<any | null>(null);
-  console.log(thumbsSwiper);
+  // console.log(thumbsSwiper);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -156,37 +156,47 @@ const ProductDetail: React.FC = () => {
     null
   ); //laybienthe
   // const [isReady, setIsReady] = useState(false);
-  const viewedRef = useRef(false);
-
+  const [viewed, setViewed] = useState(false);
   useEffect(() => {
-    // Hàm tăng lượt xem sau 10 giây
-    const incrementView = async () => {
-      try {
-        const response = await instanceClient.get(
-          `/chi-tiet-san-pham/${slug}`,
-          {
-            params: { tang_luot_xem: true },
-          }
-        );
-        console.log("Lượt xem đã tăng:", response.data);
-        viewedRef.current = true; // Đánh dấu đã tăng lượt xem
-      } catch (error) {
-        console.error("Lỗi khi tăng lượt xem:", error);
+    if (slug) {
+      const viewedProduct = JSON.parse(localStorage.getItem("viewedProduct") || "{}");
+      const currentTime = Date.now();
+
+      if (!viewedProduct[slug]) {
+        instanceClient.get(`/chi-tiet-san-pham/${slug}`, {
+          params: { tang_luot_xem: "true" },
+        })
+          .then(() => {
+            console.log("Lượt xem đã tăng");
+            viewedProduct[slug] = currentTime;
+            localStorage.setItem("viewedProduct", JSON.stringify(viewedProduct));
+            setViewed(true);
+          })
+          .catch((error) => {
+            console.error("Lỗi khi tăng lượt xem:", error);
+          });
+      } else {
+        const lastViewedTime = viewedProduct[slug];
+        const hoursPassed = (currentTime - lastViewedTime) / (1000 * 60 * 60);
+
+        if (hoursPassed > 24) {
+          instanceClient
+            .post(`/xem-bai-viet/${slug}`, { tang_luot_xem: "true" })
+            .then(() => {
+              console.log("Lượt xem đã tăng");
+              viewedProduct[slug] = currentTime;
+              localStorage.setItem("viewedProduct", JSON.stringify(viewedProduct));
+              setViewed(true);
+            })
+            .catch((error) => {
+              console.error("Lỗi khi tăng lượt xem:", error);
+            });
+        } else {
+          setViewed(true);
+        }
       }
-    };
-
-    // Chỉ gọi API tăng lượt xem khi slug đã có và chưa tăng lượt xem
-    if (slug && !viewedRef.current) {
-      // Đợi 10 giây mới gọi API
-      const timer = setTimeout(() => {
-        incrementView();
-      }, 10000); // 10000 ms = 10 giây
-
-      // Cleanup khi component unmount hoặc slug thay đổi
-      return () => clearTimeout(timer);
     }
-  }, [slug]); // Dùng slug làm dependency để hiệu ứng chạy lại khi slug thay đổi
-
+  }, [slug]);
   // useEffect(() => {
   //   const storedToken = localStorage.getItem("accessToken");
   //   if (storedToken) {
@@ -205,7 +215,7 @@ const ProductDetail: React.FC = () => {
       return response.data.data;
     },
   });
-  console.log(product);
+  // console.log(product);
   // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
   //   queryKey: ["relatedProducts", id],
   //   queryFn: () => fetchRelatedProducts(Number(id)),
@@ -232,12 +242,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                  ...review,
-                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                  danh_gia_huu_ich_count: variables.isLiked
-                    ? review.danh_gia_huu_ich_count - 1
-                    : review.danh_gia_huu_ich_count + 1,
-                }
+                ...review,
+                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                danh_gia_huu_ich_count: variables.isLiked
+                  ? review.danh_gia_huu_ich_count - 1
+                  : review.danh_gia_huu_ich_count + 1,
+              }
               : review
           ),
         };
@@ -254,31 +264,27 @@ const ProductDetail: React.FC = () => {
       toast.error("Số lượng phải lớn hơn hoặc bằng 1");
       return;
     }
-
     const firstVariant = product?.bien_the_san_pham[0];
     const variantIdToUse = selectedVariantId || firstVariant?.id;
-
     if (!variantIdToUse) {
       toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
       return;
     }
-    console.log("Access Token: ", access_token); // In ra giá trị để kiểm tra
     if (!access_token) {
-      setIsModalVisible(true); // Hiển thị modal đăng nhập
-      // nav("/login")
+      setIsModalVisible(true); 
       return;
     }
-    // if (!access_token) {
-    //   toast.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
-    //   return;
-    // }
 
     addToCart(variantIdToUse);
   };
 
-  // useMutation để thêm sản phẩm vào giỏ hàng trên server khi có access_token
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
+      console.log("Payload gửi lên:", {
+        bien_the_san_pham_id: variantId,
+        so_luong: quantity,
+      });
+  
       const response = await instanceClient.post(
         "/gio-hang",
         {
@@ -305,7 +311,7 @@ const ProductDetail: React.FC = () => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error(
         error.response?.data?.message ||
-          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
@@ -378,23 +384,34 @@ const ProductDetail: React.FC = () => {
   }, [product]);
   const handleColorClick = (color: string) => {
     setSelectedColor(color);
+  
+    // Tìm biến thể dựa trên cả màu và kích thước
     const selectedVariant = product?.bien_the_san_pham?.find(
-      (v) => v?.mau_bien_the?.ma_mau_sac === color
+      (v) =>
+        v?.mau_bien_the?.ma_mau_sac === color &&
+        v?.kich_thuoc_bien_the?.kich_thuoc === selectedSize
     );
+  
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
     updateImages(color, selectedSize);
   };
-
+  
   const handleSizeClick = (size: string) => {
     setSelectedSize(size);
+  
+    // Tìm biến thể dựa trên cả màu và kích thước
     const selectedVariant = product?.bien_the_san_pham?.find(
-      (v) => v?.kich_thuoc_bien_the?.kich_thuoc === size
+      (v) =>
+        v?.kich_thuoc_bien_the?.kich_thuoc === size &&
+        v?.mau_bien_the?.ma_mau_sac === selectedColor
     );
+  
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedSizeDisplay(size);
     updateImages(selectedColor, size);
   };
+  
 
   const updateImages = (color: string | null, size: string | null) => {
     if (color && size && product) {
@@ -557,7 +574,7 @@ const ProductDetail: React.FC = () => {
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                  // className="mySwiper1"
+                // className="mySwiper1"
                 >
                   {currentImages?.map((image, index) => (
                     <SwiperSlide key={`thumb-${index}`}>
@@ -590,11 +607,10 @@ const ProductDetail: React.FC = () => {
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${
-                          selectedVariant?.so_luong_bien_the > 0
+                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
                             ? "bg-[#3CD139]/10 text-[#3CD139]"
                             : "bg-red-500 text-white"
-                        }`}
+                          }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -691,9 +707,8 @@ const ProductDetail: React.FC = () => {
                     return (
                       <button
                         key={index}
-                        className={`w-9 h-9 rounded-md border-2 ${
-                          selectedColor === color ? "border-black" : ""
-                        } ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
+                        className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? "border-black" : ""
+                          } ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
                         style={{ backgroundColor: color }}
                         onClick={() => isAvailable && handleColorClick(color)}
                         disabled={!isAvailable}
@@ -773,10 +788,10 @@ const ProductDetail: React.FC = () => {
                   ).map((size, index) => {
                     const isAvailable = selectedColor
                       ? isVariantAvailable(
-                          product?.bien_the_san_pham as any,
-                          selectedColor,
-                          size
-                        )
+                        product?.bien_the_san_pham as any,
+                        selectedColor,
+                        size
+                      )
                       : false;
 
                     return (
@@ -909,11 +924,10 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
-                isDescriptionExpanded
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${isDescriptionExpanded
                   ? "h-auto"
                   : "max-h-[500px] overflow-hidden"
-              }`}
+                }`}
             >
               <div
                 dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}

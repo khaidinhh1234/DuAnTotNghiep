@@ -8,7 +8,6 @@ import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 
-
 interface DataType {
   key: React.Key;
   anh_nguoi_dung: string;
@@ -26,16 +25,16 @@ type DataIndex = keyof DataType;
 
 const UserskhachangRemote: React.FC = () => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["productskey"],
+    queryKey: ["UserKey"],
     queryFn: async () => {
       const res = await instance.get("/taikhoan/thung-rac");
       return res.data;
     },
   });
   // (data?.data);
-  const user = data?.data.map((item: any) => {
+  const user = data?.data.map((item: any, index: any) => {
     // console.log(item.deleted_at);
-    return { ...item, key: item.id };
+    return { ...item, key: index + 1 };
   });
   console.log(user);
   const queryClient = useQueryClient();
@@ -54,7 +53,7 @@ const UserskhachangRemote: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["productskey"],
+        queryKey: ["UserKey"],
       });
     },
   });
@@ -154,57 +153,75 @@ const UserskhachangRemote: React.FC = () => {
       className: "pl-5",
     },
     {
-      title: "Ảnh người dùng",
-      render: (record) =>
-        record.anh_nguoi_dung ? (
-          <Image
-            src={record.anh_nguoi_dung}
-            alt=""
-            className="w-20 h-20 object-cover rounded-lg p-2 border"
-          />
-        ) : (
-          <img
-            src="https://cdn.pixabay.com/animation/2023/10/10/13/27/13-27-45-28_512.gif"
-            alt=""
-            className="w-20 h-20 object-cover rounded-lg p-2 border"
-          />
-        ),
-      className: "pl-10",
-      width: "15%",
-      key: "anh_nguoi_dung",
-    },
-    {
-      title: "Tên",
-      dataIndex: "ten",
-      key: "ten",
-      width: "5%",
-      ...getColumnSearchProps("ten"),
-      sorter: (a: any, b: any) => a.ten.length - b.ten.length,
-    },
-    {
-      title: "Họ",
-      dataIndex: "ho",
-      key: "ho",
-      width: "5%",
-      ...getColumnSearchProps("ho"),
-      sorter: (a: any, b: any) => a.ho.length - b.ho.length,
+      title: "Thông tin",
+      key: "thong_tin",
+      width: "25%",
+      render: (record) => (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            border: "1px solid white",
+            padding: "10px",
+            borderRadius: "8px",
+            backgroundColor: "#f0faff",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = "#AABBCC";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = "#f0faff";
+          }}
+        >
+          {record.anh_nguoi_dung ? (
+            <img
+              src={record.anh_nguoi_dung}
+              alt="Avatar"
+              style={{
+                width: "60px",
+                height: "60px",
+                borderRadius: "50%",
+                marginRight: "10px",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "50px",
+                height: "50px",
+                borderRadius: "70%",
+                backgroundColor: "#ccc",
+                marginRight: "10px",
+              }}
+            />
+          )}
+          <div>
+            <div style={{ fontWeight: "bold" }}>
+              {`${record.ho} ${record.ten}` || "Chưa có dữ liệu"}
+            </div>
+            <div
+              style={{
+                marginTop: "5px",
+                fontSize: "14px",
+                color: "#333",
+              }}
+            >
+              {record.email ? record.email : "Chưa có dữ liệu"}
+            </div>
+          </div>
+        </div>
+      ),
     },
 
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: "20%",
-      ...getColumnSearchProps("email"),
-      sorter: (a: any, b: any) => a.email.length - b.email.length,
-    },
     {
       title: "Số điện thoại",
       dataIndex: "so_dien_thoai",
       key: "so_dien_thoai",
-      width: "15%",
-      ...getColumnSearchProps("so_dien_thoai"),
-      sorter: (a: any, b: any) => a.so_dien_thoai - b.so_dien_thoai,
+      width: "10%",
+      // ...getColumnSearchProps("so_dien_thoai"),
+      sorter: (a: any, b: any) =>
+        (a.so_dien_thoai || 0) - (b.so_dien_thoai || 0),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
@@ -212,9 +229,8 @@ const UserskhachangRemote: React.FC = () => {
       dataIndex: "dia_chi",
       key: "dia_chi",
       width: "20%",
-      ...getColumnSearchProps("dia_chi"),
-      sorter: (a: any, b: any) =>
-        (a.dia_chi?.length || 0) - (b.dia_chi?.length || 0),
+      // ...getColumnSearchProps("dia_chi"),
+      sorter: (a: any, b: any) => (a.dia_chi || 0) - (b.dia_chi || 0),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
@@ -225,15 +241,6 @@ const UserskhachangRemote: React.FC = () => {
       // ...getColumnSearchProps("gioi_tinh"),
       sorter: (a: any, b: any) => (a.gioi_tinh || 0) - (b.gioi_tinh || 0),
       render: (text) => (text == "1" ? "Nam" : text == "2" ? "Nữ" : "Khác"),
-    },
-    {
-      title: "Ngày sinh",
-      dataIndex: "ngay_sinh",
-      key: "ngay_sinh",
-      width: "15%",
-      ...getColumnSearchProps("ngay_sinh"),
-      sorter: (a: any, b: any) => (a.ngay_sinh || 0) - (b.ngay_sinh || 0),
-      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
 
     {
@@ -287,7 +294,7 @@ const UserskhachangRemote: React.FC = () => {
         </div>
       </div>
       <div className=" ">
-        <div className="max-w-xs my-2">
+        {/* <div className="max-w-xs my-2">
           <Input
             placeholder="Tìm kiếm..."
             size="large"
@@ -295,7 +302,7 @@ const UserskhachangRemote: React.FC = () => {
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
-        </div>
+        </div> */}
         <Table
           columns={columns}
           dataSource={user}

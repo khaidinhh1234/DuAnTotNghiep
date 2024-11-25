@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Col, DatePicker, Input, Space, Table } from "antd";
 import { useState } from "react";
 import Banner from "./banner";
+import ProfileBanner from "../adminProfile/profile/ProfileBanner";
+import { useLocalStorage } from "@/components/hook/useStoratge";
 const { RangePicker } = DatePicker;
 export function ActionLog() {
   const { data: lichsu } = useQuery({
@@ -232,12 +234,26 @@ export function ActionLog() {
       if (datas) setFilteredData(datas);
     }
   };
+  const [user] = useLocalStorage("user" as any, {});
+  const id = user?.user?.id;
+  const { data } = useQuery({
+    queryKey: ["taikhoanid", id],
+    queryFn: async () => {
+      try {
+        const res = await instance.get(`/taikhoan/${id}`);
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
 
+  const profile = data?.data;
   return (
     <div className="flex min-h-screen w-full flex-col">
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <Col span={24} className="w-full">
-          <Banner />
+          <ProfileBanner profile={profile} />
         </Col>
 
         <div className="max-w-8xl bg-white rounded-md p-5">

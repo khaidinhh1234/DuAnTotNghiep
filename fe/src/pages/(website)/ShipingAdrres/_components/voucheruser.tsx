@@ -48,6 +48,10 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
           handleCancel();
         },
       });
+    } else if (selectedDiscount === null && clickedIndex == null) {
+      onSelectVoucher({ giam_gia: null, index: null });
+      setCode("");
+      handleCancel();
     } else {
       message.error("Vui lòng chọn mã giảm giá trước khi áp dụng.");
     }

@@ -16,7 +16,8 @@ class VanChuyenController extends Controller
 {
     public function index()
     {
-        $auth = Auth::guard('api');;
+        $auth = Auth::guard('api');
+        ;
 
         try {
             $query = VanChuyen::query()->with('donHang');
@@ -213,7 +214,7 @@ class VanChuyenController extends Controller
                         $thongBao = ThongBao::create([
                             'user_id' => $vanChuyen->user_id,
                             'tieu_de' => 'Đơn hàng giao thất bại',
-                            'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang. ' giao thất bại lần ' . $vanChuyen->so_lan_giao . '. Ghi chú: ' . $ghiChuHienTai[$lanKey],
+                            'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' giao thất bại lần ' . $vanChuyen->so_lan_giao . '. Ghi chú: ' . $ghiChuHienTai[$lanKey],
                             'loai' => 'Đơn hàng',
                             'duong_dan' => $vanChuyen->donHang->ma_don_hang,
                             'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
@@ -237,6 +238,8 @@ class VanChuyenController extends Controller
                         'trang_thai_don_hang' => DonHang::TTDH_CKHCN
                     ]);
 
+
+
                     $thongBao = ThongBao::create([
                         'user_id' => $vanChuyen->user_id,
                         'tieu_de' => 'Giao hàng thành công',
@@ -246,8 +249,10 @@ class VanChuyenController extends Controller
                         'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
                     ]);
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
                     $thongBaoHoanTatGiaoHang = new ThongBaoTelegramController();
-                    $thongBaoHoanTatGiaoHang->guiThongBaoHoanTatGiaoHang($vanChuyen->id);
+                    $thongBaoHoanTatGiaoHang->thongBaoHoanTatGiaoHang($vanChuyen->id);
+
                     DB::commit();
                     return response()->json(['status' => true, 'message' => 'Giao hàng thành công'], 200);
                 }
