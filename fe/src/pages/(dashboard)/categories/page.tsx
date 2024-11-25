@@ -44,7 +44,7 @@ const CategoriesAdmin: React.FC = () => {
   //     key: category.id,
   //     ...category,
   //   })) || [];
-  let currentIndex = 1; // Initialize the currentIndex outside of the function
+  let currentIndex = 1;
 
   const generateDataSource = (
     categories: ICategories[],
@@ -306,7 +306,17 @@ const CategoriesAdmin: React.FC = () => {
         </h1>
       </div>
       <div className="flex items-start justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Danh sách danh mục</h1>
+        <div>
+          <h1 className="font-semibold md:text-3xl">Danh sách danh mục</h1>
+          {/* <div className="mt-4">
+          </div> */}
+          <div className="mt-4">
+            <Space>
+              <Input placeholder="Tìm kiếm" prefix={<SearchOutlined />} />
+            </Space>
+          </div>
+        </div>
+
         <div>
           <div className="flex mb-2 justify-end">
             {" "}

@@ -10,8 +10,8 @@ use App\Models\DanhGia;
 use App\Models\DanhMuc;
 use App\Models\SanPham;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class TrangChiTietSpController extends Controller
@@ -79,23 +79,22 @@ class TrangChiTietSpController extends Controller
                 ], 404);
             }
 
-            // Tăng lượt xem sản phẩm nếu chưa được xem trong session
-            // $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
-            // if (!session()->has($key)) {
-            //     $chiTietSanPham->increment('luot_xem');
-            //     session()->put($key, true);
-            // }
-            $userId = auth()->id() ?? 'guest';
-        $key = 'san_pham_da_xem_' . $chiTietSanPham->id . '_' . $userId . '_' . $request->ip();
-
-        // Sử dụng Cache để hạn chế lượt xem liên tiếp (VD: 24 giờ)
-        if (!Cache::has($key)) {
-            // Tăng số lượt xem
-            $chiTietSanPham->increment('luot_xem');
-            $chiTietSanPham->touch(); // Cập nhật `updated_at`
-            // Lưu khóa trong Cache với thời gian 24 giờ
-            Cache::put($key, true, now()->addHours(24));
-        }
+            $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
+            if (Auth::guard('api')->check()) {
+                $key .= '_user_' . Auth::guard('api')->user()->id;
+            } else {
+                $key .= '_guest_' . $request->ip();
+            }
+    
+            // Kiểm tra xem sản phẩm đã được xem trong 24 giờ chưa
+            $lastViewed = Cache::get($key);
+    
+            if (!$lastViewed || !($lastViewed instanceof \Carbon\Carbon) || now()->diffInHours($lastViewed) > 24) {
+                // Tăng lượt xem nếu chưa được xem trong 24 giờ
+                $chiTietSanPham->increment('luot_xem');
+                // Lưu thông tin vào Cache với thời gian hết hạn là 24 giờ
+                Cache::put($key, now(), 24 * 60); // 24 giờ
+            }
 
             // Cập nhật trạng thái đánh giá hữu ích
             foreach ($chiTietSanPham->danhGias as $danhGia) {

@@ -35,12 +35,12 @@ const EvaluateAdmin = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["danhgiasanpham"],
     queryFn: async () => {
-     try {
-      const response = await instance.get(`/danhsachdanhgia`);
-      return response.data;
-     } catch (error) {
+      try {
+        const response = await instance.get(`/danhsachdanhgia`);
+        return response.data;
+      } catch (error) {
         console.error("Error:", error);
-     }
+      }
     },
   });
   console.log(data)
@@ -52,14 +52,14 @@ const EvaluateAdmin = () => {
       id: number | string;
       phan_hoi: string;
     }) => {
-     try {
-      const response = await instance.post(`/danhsachdanhgia/${id}`, {
-        phan_hoi,
-      });
-      return response.data;
-     } catch (error) {
+      try {
+        const response = await instance.post(`/danhsachdanhgia/${id}`, {
+          phan_hoi,
+        });
+        return response.data;
+      } catch (error) {
         console.error("Error:", error);
-     }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["danhgiasanpham"] });
@@ -329,7 +329,7 @@ const EvaluateAdmin = () => {
             cancelText="Không"
           >
             <Button
-            // onClick={() => hideEvaluate.mutate(record.id as number)}
+              // onClick={() => hideEvaluate.mutate(record.id as number)}
               className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
               Ẩn
             </Button>
@@ -350,14 +350,13 @@ const EvaluateAdmin = () => {
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">Đánh giá sản phẩm</h1>
         <div className="flex">
-
-                    <Link to="/admin/remote/evaluates">
-                        <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-                            {/* <DeleteOutlined className="mr-1" /> */}
-                            Danh sách ẩn
-                        </Button>
-                    </Link>
-                </div>
+          <Link to="/admin/remote/evaluates">
+            <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
+              {/* <DeleteOutlined className="mr-1" /> */}
+              Danh sách ẩn
+            </Button>
+          </Link>
+        </div>
       </div>
       <Table
         columns={columns}

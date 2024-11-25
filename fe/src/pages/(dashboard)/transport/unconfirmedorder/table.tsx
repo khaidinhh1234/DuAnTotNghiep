@@ -49,6 +49,7 @@ const datas = [
   { value: "1", label: "Đang giao hàng" },
   { value: "2", label: "Giao hàng thành công" },
   { value: "3", label: "Giao hàng thất bại" },
+  { label: "Giao hàng thất bại", key: "Giao hàng thất bại" },
 ];
 
 const TableUncomfirmedOrder: React.FC = () => {
@@ -59,6 +60,8 @@ const TableUncomfirmedOrder: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("Tất cả");
+  const [searchText, setSearchText] = useState("");
+  const [dateRange, setDateRange] = useState<[string, string] | null>(null);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
@@ -67,6 +70,47 @@ const TableUncomfirmedOrder: React.FC = () => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+  const handleDateRangeChange = (dates: any, dateStrings: [string, string]) => {
+    setDateRange(dateStrings);
+  };
+  const { data, isLoading } = useQuery({
+    queryKey: ["vanchuyen"],
+    queryFn: async () => {
+      const response = await instance.get("/vanchuyen");
+      return response.data;
+    },
+  });
+
+  useEffect(() => {
+    if (data?.data) {
+      let filtered = data.data;
+
+      if (searchText) {
+        filtered = filtered.filter((item: Transport) =>
+          item.ma_van_chuyen.toLowerCase().includes(searchText.toLowerCase())
+        );
+      }
+
+      if (dateRange) {
+        const [start, end] = dateRange;
+        filtered = filtered.filter((item: Transport) => {
+          const itemDate = new Date(item.created_at).toISOString().split("T")[0];
+          return itemDate >= start && itemDate <= end;
+        });
+      }
+
+      if (activeTab !== "Tất cả") {
+        filtered = filtered.filter((item: Transport) =>
+          item.trang_thai_van_chuyen === activeTab
+        );
+      }
+
+      setFilteredData(filtered);
+    }
+  }, [searchText, dateRange, activeTab, data]);
 
   const { mutate } = useMutation({
     mutationFn: async (data: React.Key[]) => {
@@ -119,13 +163,13 @@ const TableUncomfirmedOrder: React.FC = () => {
     },
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["vanchuyen"],
-    queryFn: async () => {
-      const response = await instance.get("/vanchuyen");
-      return response.data;
-    },
-  });
+  // const { data, isLoading } = useQuery({
+  //   queryKey: ["vanchuyen"],
+  //   queryFn: async () => {
+  //     const response = await instance.get("/vanchuyen");
+  //     return response.data;
+  //   },
+  // });
   // console.log(data);
 
   const start = () => {
@@ -274,6 +318,7 @@ const TableUncomfirmedOrder: React.FC = () => {
     { label: "Chờ xử lý", key: "Chờ xử lý" },
     { label: "Đang giao hàng", key: "Đang giao hàng" },
     { label: "Giao hàng thành công", key: "Giao hàng thành công" },
+    { label: "Giao hàng thất bại", key: "Giao hàng thất bại" },
   ];
 
   return (
@@ -305,64 +350,20 @@ const TableUncomfirmedOrder: React.FC = () => {
         {/* Bộ lọc tìm kiếm */}
         <div style={{ marginBottom: 16 }}>
           <Space>
-            <Input placeholder="Tìm kiếm" prefix={<SearchOutlined />} />
-
-            <RangePicker />
+            <Input
+              placeholder="Tìm kiếm"
+              prefix={<SearchOutlined />}
+              onChange={handleSearchChange}
+            />
+            <RangePicker onChange={handleDateRangeChange} />
           </Space>
-          
         </div>
-        <Flex gap="middle" vertical>
-          <Flex align="center" gap="middle" className="relative">
-            <Button
-              type="primary"
-              onClick={start}
-              disabled={!hasSelected}
-              loading={loading}
-              className="text-white"
-            >
-              Thao tác
-            </Button>
-
-            {formcheck && (
-              <div className="bg-white absolute left-0 top-10 z-10 w-80 h-36 rounded-lg shadow-md p-3">
-                <p>Cập nhật trạng thái đơn hàng theo:</p>
-                <Select
-                  defaultValue={datas[0].label}
-                  style={{ width: "100%" }}
-                  onChange={handleChange}
-                  options={datas}
-                />
-                <br />
-                <div className="my-5 flex justify-between">
-                  <Popconfirm
-                    title="Trạng thái"
-                    description="Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng này?"
-                    okText="Có"
-                    onConfirm={() => mutate(selectedRowKeys)}
-                    cancelText="Không"
-                  >
-                    <Button
-                      type="primary"
-                      className="bg-red-500 text-white hover:bg-red-700"
-                      disabled={!hasSelected}
-                      loading={loading}
-                    >
-                      Xác nhận
-                    </Button>
-                  </Popconfirm>
-                </div>
-              </div>
-            )}
-            {hasSelected ? `Đã chọn ${selectedRowKeys.length} đơn` : ""}
-          </Flex>
           <Table<Transport>
-            rowSelection={rowSelection}
             columns={columns}
             dataSource={dataSource}
             loading={isLoading}
             pagination={{ pageSize: 10, className: "my-5" }}
           />
-        </Flex>
       </div>
     </main>
   );
