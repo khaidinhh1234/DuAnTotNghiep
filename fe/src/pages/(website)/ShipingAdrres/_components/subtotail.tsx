@@ -94,7 +94,7 @@ const Subtotal = ({ tong_tien, Macode, trangthai, isPending }: any) => {
           type="submit"
           className=" block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
         >
-          {isPending ? "Đặt hàng ngay" : "Đang xử lý..."}
+          {isPending ? "Đang xử lý..." : "Đặt hàng ngay"}
         </button>
         {/* </a> */}
       </div>
