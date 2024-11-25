@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaiKhoanRequest;
 use App\Http\Requests\UpdateTaiKhoanRequest;
+use App\Models\DonHang;
 use App\Models\HangThanhVien;
 use App\Models\User;
 use App\Models\VaiTro;
@@ -130,7 +131,7 @@ class TaiKhoanController extends Controller
         try {
             // $quyen = [];
             $taiKhoan = User::query()->with('vaiTros', 'hangThanhVien', 'danhGias', 'donHangs', 'sanPhamYeuThich')->findOrFail($id);
-            $tongTienDonhangThanhCong = $taiKhoan->donHangs()->where('trang_thai_don_hang', 'Giao hàng thành công')->where('trang_thai_thanh_toan', 'Đã thanh toán')->sum('tong_tien_don_hang');
+            $tongTienDonhangThanhCong = $taiKhoan->donHangs()->where('trang_thai_don_hang', DonHang::TTDH_HTDH)->where('trang_thai_thanh_toan', 'Đã thanh toán')->sum('tong_tien_don_hang');
 
             // $quyen = $taiKhoan->vaiTros->flatMap(function ($vaiTro) {
             //     return $vaiTro->quyens->pluck('ten_quyen');
@@ -230,9 +231,17 @@ class TaiKhoanController extends Controller
         try {
             DB::beginTransaction();
             $taiKhoan = User::query()->findOrFail($id);
-            $taiKhoan->vaiTros()->sync([]);
+            $vaiTro = $taiKhoan->vaiTros;
+            if ($vaiTro->contains('ten_vai_tro', 'Quản trị viên')) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 400,
+                    'message' => 'Không thể xóa tài khoản quản trị viên.'
+                ], 400);
+            } else {
+                $taiKhoan->delete();
+            }
 
-            $taiKhoan->delete();
             DB::commit();
             return response()->json([
                 'status' => true,
@@ -276,8 +285,6 @@ class TaiKhoanController extends Controller
             DB::beginTransaction();
             $taiKhoan = User::onlyTrashed()->findOrFail($id);
             $taiKhoan->restore();
-            $member = VaiTro::query()->where('ten_vai_tro',  'Khách hàng')->first();
-            $taiKhoan->vaiTros()->attach($member->id);
             DB::commit();
             return response()->json([
                 'success' => true,

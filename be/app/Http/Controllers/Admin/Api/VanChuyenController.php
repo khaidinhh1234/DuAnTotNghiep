@@ -6,6 +6,7 @@ use App\Events\DonHangHoanTat;
 use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
 use App\Models\DonHang;
+use App\Models\MaKhuyenMai;
 use App\Models\ThongBao;
 use App\Models\VanChuyen;
 use Illuminate\Http\Request;
@@ -58,7 +59,6 @@ class VanChuyenController extends Controller
             $tongTienSanPham = $vanChuyen->donHang->chiTiets->sum('thanh_tien');
 
             //Thong tin user
-
             if (
                 $vanChuyen->donHang->ten_nguoi_dat_hang == ""
                 && $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang == ""
@@ -72,6 +72,22 @@ class VanChuyenController extends Controller
                     'dia_chi_nguoi_dat_hang' => $vanChuyen->donHang->dia_chi_nguoi_dat_hang === "" ? $vanChuyen->donHang->user->dia_chi : $vanChuyen->donHang->dia_chi_nguoi_dat_hang
                 ];
             }
+            $maGiamGia = MaKhuyenMai::where('ma_code', $vanChuyen->donHang->ma_giam_gia)->first();
+            $soTienGiamGia = 0;
+            if ($$vanChuyen->donHang->ma_giam_gia) {
+
+                $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                    ? ($$vanChuyen->donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
+                    : $maGiamGia->giam_gia;
+
+                if ($soTienGiamGia > $vanChuyen->donHang->tong_tien_don_hang) {
+                    $soTienGiamGia = $vanChuyen->donHang->tong_tien_don_hang;
+                }
+            }
+            // Tính tiền ship
+            $tienShip = $vanChuyen->donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
+            $tietKiemShip = $vanChuyen->donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -80,6 +96,10 @@ class VanChuyenController extends Controller
                     'van_chuyen' => $vanChuyen,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'tien_ship' => $tienShip,
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+                    'tong_tien' => $vanChuyen->donHang->tong_tien_don_hang - $soTienGiamGia,
                     'ghi_chu' => $vanchuyen['ghichu'],
                     'anh_xac_thuc' => $vanChuyen->anh_xac_thuc
                 ]
