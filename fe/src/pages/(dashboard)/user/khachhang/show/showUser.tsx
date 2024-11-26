@@ -3,8 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Progress } from "antd";
 import { Link, useParams } from "react-router-dom";
 import Detail from "../detail";
+import { useState } from "react";
 
 const ShowNhanvien = () => {
+  const [quanlity, setQuanlity] = useState(5);
+  const handleSeeMore = () => {
+    setQuanlity(quanlity + 5);
+  };
   const { id } = useParams();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["USERID", id],
@@ -18,12 +23,13 @@ const ShowNhanvien = () => {
     },
   });
   const user = data?.data?.tai_khoan;
-  console.log(user);
+  // console.log(user);
   const trangthai = data?.data;
-  // console.log(trangthai);
-
+  console.log(trangthai);
+  // console.log(user.don_hangs.length);
   const phantram =
-    ((trangthai - user?.hang_thanh_vien?.chi_tieu_toi_thieu) /
+    ((trangthai?.tong_tien_don_hang -
+      user?.hang_thanh_vien?.chi_tieu_toi_thieu) /
       (user?.hang_thanh_vien?.chi_tieu_toi_da -
         user?.hang_thanh_vien?.chi_tieu_toi_thieu)) *
     100;
@@ -65,7 +71,7 @@ const ShowNhanvien = () => {
           </div>
           <div className="text-2xl font-bold text-gray-500">
             <i className="fa-solid fa-rotate-reverse"></i>
-            <span className="px-2">0 </span>
+            <span className="px-2">{trangthai?.tong_don_hoan ?? 0} </span>
             <br />
             <span className="text-gray-500 text-lg"> Trả hàng</span>
           </div>
@@ -94,11 +100,11 @@ const ShowNhanvien = () => {
               <p className="text-black font-bold">
                 Địa chỉ giao hàng:{" "}
                 <span className="text-gray-500 font-semibold">
-                  {user?.dia_chi}
+                  {user?.dia_chi ?? "Chưa cập nhật"}
                 </span>
               </p>
 
-              <Link to={`/admin/users/nhanvien/edit/${user?.id}`}>
+              <Link to={`/admin/users/khachhang/edit/${user?.id}`}>
                 <button className=" mx-auto flex gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition duration-200">
                   <div>
                     <i
@@ -167,13 +173,13 @@ const ShowNhanvien = () => {
                 <p className="flex justify-center items-center gap-3 ">
                   <p className="pt-4">
                     {(user?.hang_thanh_vien?.chi_tieu_toi_thieu
-                      ? user?.hang_thanh_vien?.chi_tieu_toi_thieu
+                      ? user?.hang_thanh_vien?.chi_tieu_toi_thieu?.toLocaleString()
                       : 0
                     ).toLocaleString("vi-VN")}{" "}
                   </p>
                   <div className="w-40">
                     <Progress
-                      percent={phantram}
+                      percent={phantram ?? 43}
                       strokeColor={{
                         "0%": "#6dd5ed",
                         "100%": "#00bfff", // Màu chuyển tiếp
@@ -186,7 +192,7 @@ const ShowNhanvien = () => {
                   </div>{" "}
                   <p className="pt-4">
                     {user?.hang_thanh_vien?.chi_tieu_toi_da
-                      ? user?.hang_thanh_vien?.chi_tieu_toi_da
+                      ? user?.hang_thanh_vien?.chi_tieu_toi_da?.toLocaleString()
                       : 0}{" "}
                   </p>
                 </p>
@@ -198,70 +204,123 @@ const ShowNhanvien = () => {
           <h3 className="text-2xl font-bold">Danh sách đơn hàng</h3>
           <table className="min-w-full w-full ">
             <tbody>
-              {user?.don_hangs?.map((don_hang: any) => (
+              {user?.don_hangs.length > 0 ? (
+                user?.don_hangs?.slice(0, quanlity).map((don_hang: any) => (
+                  <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
+                    <td className="py-5">
+                      <strong className="text-gray-500">Mã đơn hàng:</strong>
+                      <p className="text-gray-600 font-bold my-2">
+                        {don_hang?.ma_don_hang}
+                      </p>
+                    </td>
+                    <td className="p-5">
+                      <strong className="text-gray-500">Ngày đặt hàng:</strong>
+                      <p className="text-gray-600 font-bold my-2">
+                        {new Date(don_hang?.created_at).toLocaleDateString(
+                          "vi-VN",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          }
+                        )}
+                      </p>
+                    </td>
+
+                    <td className="p-5">
+                      <strong className="text-gray-500">Đơn giá:</strong>
+                      <p className="text-gray-600 font-bold my-2">
+                        {don_hang?.tong_tien_don_hang.toLocaleString("vi-VN")}{" "}
+                        VNĐ
+                      </p>
+                    </td>
+                    <td className="p-5">
+                      <strong className="text-gray-500">Trạng thái:</strong>
+                      <p
+                        className={`font-bold my-2 ${
+                          don_hang?.trang_thai_don_hang === "Chờ xác nhận"
+                            ? "text-yellow-500"
+                            : don_hang?.trang_thai_don_hang === "Đã xác nhận"
+                              ? "text-blue-500"
+                              : don_hang?.trang_thai_don_hang === "Đang xử lý"
+                                ? "text-orange-500"
+                                : don_hang?.trang_thai_don_hang ===
+                                    "Đang giao hàng"
+                                  ? "text-purple-500"
+                                  : don_hang?.trang_thai_don_hang ===
+                                      "Đã giao hàng thành công"
+                                    ? "text-green-500"
+                                    : don_hang?.trang_thai_don_hang ===
+                                        "Hủy hàng"
+                                      ? "text-red-500"
+                                      : ""
+                        }`}
+                      >
+                        {don_hang?.trang_thai_don_hang}
+                      </p>
+                    </td>
+                    <td className="p-5">
+                      {/* <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
+                        Xem chi tiết
+                      </button> */}
+                      <Detail record={don_hang} />
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr className="border-b border-gray-200 hover:bg-gray-100 h-20">
                   <td className="py-5">
                     <strong className="text-gray-500">Mã đơn hàng:</strong>
                     <p className="text-gray-600 font-bold my-2">
-                      {don_hang?.ma_don_hang}
+                      Không có dữ liệu
                     </p>
                   </td>
                   <td className="p-5">
                     <strong className="text-gray-500">Ngày đặt hàng:</strong>
                     <p className="text-gray-600 font-bold my-2">
-                      {new Date(don_hang?.created_at).toLocaleDateString(
-                        "vi-VN",
-                        {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        }
-                      )}
+                      Không có dữ liệu
                     </p>
                   </td>
 
                   <td className="p-5">
                     <strong className="text-gray-500">Đơn giá:</strong>
                     <p className="text-gray-600 font-bold my-2">
-                      {don_hang?.tong_tien_don_hang.toLocaleString("vi-VN")} VNĐ
+                      Không có dữ liệu
                     </p>
                   </td>
                   <td className="p-5">
                     <strong className="text-gray-500">Trạng thái:</strong>
                     <p
-                      className={`font-bold my-2 ${
-                        don_hang?.trang_thai_don_hang === "Chờ xác nhận"
-                          ? "text-yellow-500"
-                          : don_hang?.trang_thai_don_hang === "Đã xác nhận"
-                            ? "text-blue-500"
-                            : don_hang?.trang_thai_don_hang === "Đang xử lý"
-                              ? "text-orange-500"
-                              : don_hang?.trang_thai_don_hang ===
-                                  "Đang giao hàng"
-                                ? "text-purple-500"
-                                : don_hang?.trang_thai_don_hang ===
-                                    "Đã giao hàng thành công"
-                                  ? "text-green-500"
-                                  : don_hang?.trang_thai_don_hang === "Hủy hàng"
-                                    ? "text-red-500"
-                                    : ""
-                      }`}
+                      className={`font-bold my-2  text-red-500
+                                      
+                        `}
                     >
-                      {don_hang?.trang_thai_don_hang}
+                      Không có dữ liệu
                     </p>
                   </td>
                   <td className="p-5">
                     {/* <button className="bg-white text-black px-4 py-2 rounded-lg hover:bg-gray-100 border transition duration-200">
                         Xem chi tiết
                       </button> */}
-                    <Detail record={don_hang} />
+                    {/* <Detail record={don_hang} /> */}
+                    {/* Không có dữ liệu */}
                   </td>
                 </tr>
-              ))}
+              )}
 
               {/* Các hàng khác */}
             </tbody>
-          </table>
+          </table>{" "}
+          {user?.don_hangs?.length > quanlity && (
+            <div className="col-span-12 text-center mt-4 mx-auto">
+              <button
+                onClick={handleSeeMore}
+                className="bg-black/70 text-white px-4 py-2 rounded-md hover:bg-white hover:text-black/50 border border-black/60"
+              >
+                Xem thêm
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </main>

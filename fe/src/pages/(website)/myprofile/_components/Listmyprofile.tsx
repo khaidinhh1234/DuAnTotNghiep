@@ -45,6 +45,7 @@ const ListMyProfile = ({ member }: any) => {
     },
   });
 
+  // console.log(hang_thanh_vien);
   const updateAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
       const imageUrl = await uploadToCloudinary(file);
@@ -78,7 +79,8 @@ const ListMyProfile = ({ member }: any) => {
       updateAvatarMutation.mutate(info.file.originFileObj);
     }
   };
-  // console.log(data);
+  const userpro = data?.data.user;
+  const hang_thanh_vien = userpro?.hang_thanh_vien;
   function convertDateToVietnameseFormat(dateString: any) {
     if (!dateString) return ""; // Kiểm tra nếu không có dữ liệu
     const date = new Date(dateString);
@@ -89,9 +91,9 @@ const ListMyProfile = ({ member }: any) => {
     return `${day} tháng ${month} Năm ${year}`;
   }
   const phantram =
-    ((data?.data - user?.hang_thanh_vien?.chi_tieu_toi_thieu) /
-      (user?.hang_thanh_vien?.chi_tieu_toi_da -
-        user?.hang_thanh_vien?.chi_tieu_toi_thieu)) *
+    ((data?.data?.tong_tien_hang - hang_thanh_vien?.chi_tieu_toi_thieu) /
+      (hang_thanh_vien?.chi_tieu_toi_da -
+        hang_thanh_vien?.chi_tieu_toi_thieu)) *
     100;
   return (
     <>
@@ -139,17 +141,19 @@ const ListMyProfile = ({ member }: any) => {
           </div>
           <div className="text-center md:text-left">
             <h1 className="text-2xl tracking-wider font-semibold mt-2">
-              {data?.data?.ho} {data?.data?.ten}
-              {data?.data?.gioi_tinh !== null &&
-                (data?.data?.gioi_tinh === 1 ? (
+              {userpro?.ho} {userpro?.ten}
+              {userpro?.gioi_tinh !== null &&
+                (userpro?.gioi_tinh === 1 ? (
                   <i className="fa-solid fa-mars text-[#74C0FC] mx-2"></i>
-                ) : data?.data?.gioi_tinh === 2 ? (
+                ) : userpro?.gioi_tinh === 2 ? (
                   <i className="fa-regular fa-venus text-[#f39bf0] mx-2"></i>
                 ) : (
                   ""
                 ))}
             </h1>
-            <span className="font-medium">{data?.data?.email}</span>
+            <span className="font-medium">
+              {userpro?.email ?? "không có dữ liệu"}
+            </span>
           </div>
         </div>
         <Link
@@ -169,59 +173,69 @@ const ListMyProfile = ({ member }: any) => {
             <p className="mb-1">
               <i className="fa-solid fa-cake-candles"></i>
               <span className="mx-2">
-                {convertDateToVietnameseFormat(data?.data?.ngay_sinh)}
+                {userpro?.ngay_sinh
+                  ? convertDateToVietnameseFormat(userpro?.ngay_sinh)
+                  : "không có dữ liệu"}
               </span>
             </p>
             <p className="mb-0">
               <i className="fa-solid fa-person-half-dress"></i>
               <span className="mx-2">
-                {data?.data?.gioi_tinh === 1
+                {userpro?.gioi_tinh === 1
                   ? "Nam"
-                  : data?.data?.gioi_tinh === 2
+                  : userpro?.gioi_tinh === 2
                     ? "Nữ"
-                    : "khác"}
+                    : userpro?.gioi_tinh === 2
+                      ? "khác"
+                      : "không có dữ liệu"}
               </span>
             </p>
             <h1 className="text-base font-semibold mt-5">Thông tin liên hệ:</h1>
             <p className="mb-0">
               <i className="fa-solid fa-phone-volume text-lg"></i>
-              <span className="mx-2">{data?.data?.so_dien_thoai}</span>
+              <span className="mx-2">
+                {userpro?.so_dien_thoai ?? "không có dữ liệu"}
+              </span>
             </p>
             <p>
               <i className="fa-regular fa-envelope text-lg"></i>
-              <span className="mx-2">{data?.data?.email}</span>
+              <span className="mx-2">
+                {userpro?.email ?? "không có dữ liệu"}
+              </span>
             </p>
             <h1 className="text-base font-semibold mt-5">Nơi ở hiện tại:</h1>
             <p className="mb-0">
               <i className="fa-solid fa-map-marker-alt text-lg"></i>
-              <span className="mx-2">{data?.data?.dia_chi}</span>
+              <span className="mx-2">
+                {userpro?.dia_chi ?? "không có dữ liệu"}
+              </span>
             </p>
           </div>
         </div>
         <div>
           <h3 className="text-gray-400 text-lg text-center">Hạng thành viên</h3>
           <h2 className="text-center text-2xl font-bold">
-            {user?.hang_thanh_vien?.ten_hang_thanh_vien ?? "Thành viên mới"}
+            {hang_thanh_vien?.ten_hang_thanh_vien ?? "Thành viên mới"}
           </h2>
           <div className="w-60 mx-auto">
             <img
               src={
-                user?.hang_thanh_vien?.anh_hang_thanh_vien ||
+                hang_thanh_vien?.anh_hang_thanh_vien ||
                 "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729619625/game-level-icons-medals-stars-ui-badges-trophy_xsikh1.png"
               }
-              alt={user?.hang_thanh_vien?.anh_hang_thanh_vien}
+              alt={hang_thanh_vien?.anh_hang_thanh_vien}
               className="w-full"
             />
           </div>
           <div className="flex justify-center items-center gap-3 mt-4">
             <p className="pt-4">
-              {(user?.hang_thanh_vien?.chi_tieu_toi_thieu || 0).toLocaleString(
+              {(hang_thanh_vien?.chi_tieu_toi_thieu || 0).toLocaleString(
                 "vi-VN"
               )}
             </p>
             <div className="w-40">
               <Progress
-                percent={phantram}
+                percent={phantram ?? 43}
                 strokeColor={{ "0%": "#6dd5ed", "100%": "#00bfff" }}
                 trailColor="#333"
                 strokeWidth={10}
@@ -229,9 +243,7 @@ const ListMyProfile = ({ member }: any) => {
                 style={{ borderRadius: "25px" }}
               />
             </div>
-            <p className="pt-4">
-              {user?.hang_thanh_vien?.chi_tieu_toi_da || 500.0}
-            </p>
+            <p className="pt-4">{hang_thanh_vien?.chi_tieu_toi_da || 500.0}</p>
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ use App\Events\DonHangHoanTat;
 use App\Events\ThongBaoMoi;
 use App\Http\Controllers\Controller;
 use App\Models\DonHang;
+use App\Models\MaKhuyenMai;
 use App\Models\ThongBao;
 use App\Models\VanChuyen;
 use Illuminate\Http\Request;
@@ -51,26 +52,43 @@ class VanChuyenController extends Controller
                 'donHang'
             ])->findOrFail($id);
             $vanChuyen->makeHidden(['ghi_chu']);
+            $donHang = $vanChuyen->donHang;
+            // dd($donHang);
             $vanchuyen['ghichu'] = json_decode($vanChuyen->ghi_chu);
             // Tính toán tổng số lượng và tổng tiền
             $tongSoLuong = $vanChuyen->donHang->chiTiets->sum('so_luong');
             $tongTienSanPham = $vanChuyen->donHang->chiTiets->sum('thanh_tien');
 
             //Thong tin user
-
             if (
-                $vanChuyen->donHang->ten_nguoi_dat_hang == ""
-                && $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang == ""
-                && $vanChuyen->donHang->dia_chi_nguoi_dat_hang == ""
+                $donHang->ten_nguoi_dat_hang == ""
+                && $donHang->so_dien_thoai_nguoi_dat_hang == ""
+                && $donHang->dia_chi_nguoi_dat_hang == ""
             ) {
-                $thongTin = $vanChuyen->donHang->user;
+                $thongTin = $donHang->user;
             } else {
                 $thongTin = [
-                    'ten_nguoi_dat_hang' => $vanChuyen->donHang->ten_nguoi_dat_hang === "" ? ($vanChuyen->donHang->user->ho . " " . $vanChuyen->donHang->user->ten) : $vanChuyen->donHang->ten_nguoi_dat_hang,
-                    'so_dien_thoai_nguoi_dat_hang' => $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang === "" ? $vanChuyen->donHang->user->so_dien_thoai : $vanChuyen->donHang->so_dien_thoai_nguoi_dat_hang,
-                    'dia_chi_nguoi_dat_hang' => $vanChuyen->donHang->dia_chi_nguoi_dat_hang === "" ? $vanChuyen->donHang->user->dia_chi : $vanChuyen->donHang->dia_chi_nguoi_dat_hang
+                    'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang === "" ? ($donHang->user->ho . " " . $donHang->user->ten) : $donHang->ten_nguoi_dat_hang,
+                    'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang === "" ? $donHang->user->so_dien_thoai : $donHang->so_dien_thoai_nguoi_dat_hang,
+                    'dia_chi_nguoi_dat_hang' => $donHang->dia_chi_nguoi_dat_hang === "" ? $donHang->user->dia_chi : $donHang->dia_chi_nguoi_dat_hang
                 ];
             }
+            $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
+            $soTienGiamGia = 0;
+            if ($donHang->ma_giam_gia) {
+
+                $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
+                    ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
+                    : $maGiamGia->giam_gia;
+
+                if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
+                    $soTienGiamGia = $donHang->tong_tien_don_hang;
+                }
+            }
+            // Tính tiền ship
+            $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
+            $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -79,6 +97,10 @@ class VanChuyenController extends Controller
                     'van_chuyen' => $vanChuyen,
                     'tong_so_luong' => $tongSoLuong,
                     'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'tien_ship' => $tienShip,
+                    'so_tien_giam_gia' => $soTienGiamGia,
+                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
                     'ghi_chu' => $vanchuyen['ghichu'],
                     'anh_xac_thuc' => $vanChuyen->anh_xac_thuc
                 ]
@@ -92,6 +114,7 @@ class VanChuyenController extends Controller
             ], 404);
         }
     }
+
     public function capNhatTrangThaiVanChuyen(Request $request)
     {
         try {
@@ -213,7 +236,7 @@ class VanChuyenController extends Controller
                         $thongBao = ThongBao::create([
                             'user_id' => $vanChuyen->user_id,
                             'tieu_de' => 'Đơn hàng giao thất bại',
-                            'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang. ' giao thất bại lần ' . $vanChuyen->so_lan_giao . '. Ghi chú: ' . $ghiChuHienTai[$lanKey],
+                            'noi_dung' => 'Đơn hàng ' . $vanChuyen->donHang->ma_don_hang . ' giao thất bại lần ' . $vanChuyen->so_lan_giao . '. Ghi chú: ' . $ghiChuHienTai[$lanKey],
                             'loai' => 'Đơn hàng',
                             'duong_dan' => $vanChuyen->donHang->ma_don_hang,
                             'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
@@ -237,6 +260,8 @@ class VanChuyenController extends Controller
                         'trang_thai_don_hang' => DonHang::TTDH_CKHCN
                     ]);
 
+
+
                     $thongBao = ThongBao::create([
                         'user_id' => $vanChuyen->user_id,
                         'tieu_de' => 'Giao hàng thành công',
@@ -246,8 +271,10 @@ class VanChuyenController extends Controller
                         'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png',
                     ]);
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
                     $thongBaoHoanTatGiaoHang = new ThongBaoTelegramController();
-                    $thongBaoHoanTatGiaoHang->guiThongBaoHoanTatGiaoHang($vanChuyen->id);
+                    $thongBaoHoanTatGiaoHang->thongBaoHoanTatGiaoHang($vanChuyen->id);
+
                     DB::commit();
                     return response()->json(['status' => true, 'message' => 'Giao hàng thành công'], 200);
                 }

@@ -1,5 +1,3 @@
-
-
 import "@/global.css";
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -103,6 +101,24 @@ const ProductsAdmin: React.FC = () => {
     },
   });
 
+  const { mutate: mutateExcel } = useMutation({
+    mutationFn: async () => {
+      const res = await instance.get("sanpham/exports", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "sanpham.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    onError: (error) => {
+      console.error("Error exporting excel:", error);
+      message.error("Xuất file excel thất bại");
+    },
+  });
   const bulkActionMutation = useMutation({
     mutationFn: async ({
       action,
@@ -284,7 +300,6 @@ const ProductsAdmin: React.FC = () => {
   );
 
   const columns: TableColumnsType<DataType> = [
-    
     {
       title: "Sản phẩm",
       key: "ten_san_pham",
@@ -308,7 +323,7 @@ const ProductsAdmin: React.FC = () => {
       ...getColumnSearchProps("ten_danh_muc"),
       sorter: (a, b) => a.ten_danh_muc.localeCompare(b.ten_danh_muc),
     },
- 
+
     {
       title: "Kho",
       dataIndex: "tongSoLuong",
@@ -385,7 +400,6 @@ const ProductsAdmin: React.FC = () => {
             .includes(value.toLowerCase()) ||
           item?.mo_ta_ngan?.toLowerCase().includes(value.toLowerCase()) ||
           item?.ma_san_pham?.toLowerCase().includes(value.toLowerCase())
-
       );
       setFilteredData(filtered || []);
     } else {
@@ -449,6 +463,15 @@ const ProductsAdmin: React.FC = () => {
               onKeyDown={handleKeyDown}
               className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
             />
+          </div>
+          <div>
+            <Button
+              type="primary"
+              className=" text-white font-bold py-2 px-5 rounded h-8"
+              onClick={() => mutateExcel()}
+            >
+              {isLoading ? "Đang tải..." : "Xuất Excel"}
+            </Button>
           </div>
         </div>
       </div>

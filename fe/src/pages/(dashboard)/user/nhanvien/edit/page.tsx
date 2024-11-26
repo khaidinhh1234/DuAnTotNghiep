@@ -253,17 +253,28 @@ const UsersnhanvienEdit = () => {
                       required: true,
                       message: "Ngày sinh bắt buộc phải nhập!",
                     },
+                    {
+                      validator: (_, value) => {
+                        if (!value) return Promise.resolve();
+                        const today = new Date();
+                        const birthDate = new Date(value);
+                        let age = today.getFullYear() - birthDate.getFullYear();
+                        if (age < 3)
+                          return Promise.reject(
+                            new Error("Khách hàng yêu cầu độ tuổi phù hợp!")
+                          );
+                        if (birthDate > today)
+                          return Promise.reject(
+                            new Error(
+                              "Ngày sinh không được là ngày trong tương lai!"
+                            )
+                          );
+                        return Promise.resolve();
+                      },
+                    },
                   ]}
                 >
-                  <DatePicker
-                    className="w-full"
-                    disabledDate={(current) =>
-                      current && current.isBefore(dayjs().startOf("day"))
-                    }
-                    // onChange={(date) => {
-                    //   form.setFieldsValue({ ngay_sinh: date }); // Cập nhật giá trị ngay_sinh trong form
-                    // }}
-                  />
+                  <DatePicker />
                 </Form.Item>
                 <Form.Item
                   label="Vai trò"

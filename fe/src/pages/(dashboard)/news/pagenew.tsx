@@ -36,10 +36,12 @@ const PageNew: React.FC = () => {
       key: newsItem.id,
       ...newsItem,
       index: index + 1,
-      user_id: newsItem.user?.ten || "Chưa có dữ liệu",
+      user_id: newsItem.user?.ho + " " + newsItem.user?.ten || "Chưa có dữ liệu",
       danh_muc_tin_tuc_id:
         newsItem?.danh_muc_tin_tuc?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu",
+
     })) || [];
+
   // console.log(dataSource);
 
   const { mutate } = useMutation({

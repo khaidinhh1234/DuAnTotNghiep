@@ -226,21 +226,6 @@ const ProductItem = ({
 
   return (
     <>
-      {/* {danhgia && (
-        <>
-          <Danhgia setDanhgia={setDanhgia} slug={ma_don_hang} />
-        </>
-      )} */}
-      {/* {Hoan && (
-        <>
-          <HoanTien
-            chi_tiet_don_hangs={chi_tiet_don_hangs}
-            setHoan={setHoan}
-            tong_tien={tong_tien}
-            setValues={setValues}
-          />
-        </>
-      )} */}
       {Payment && (
         <>
           <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
@@ -451,19 +436,7 @@ const ProductItem = ({
               Xem Đơn Hàng
             </button>
           </Link>
-          {danh_gias?.length <= 0
-            ? (status === "Hoàn tất đơn hàng" ||
-                status === "Chờ khách hàng xác nhận") && (
-                <div className={"mt-3 -mb-2"}>
-                  <Link
-                    to={`/mypro/danhgia/${ma_don_hang}`}
-                    className="  shadow-md shadow-slate-600/50 hover:text-white  bg-black hover:bg-black/70 font-medium  text-base py-4 px-10  rounded-lg text-white "
-                  >
-                    Đánh giá
-                  </Link>
-                </div>
-              )
-            : ""}
+
           <br />
           {status === "Hoàn tất đơn hàng" &&
             trang_thai_thanh_toan == "Đã thanh toán" && (
@@ -566,11 +539,9 @@ const ProductItem = ({
                 console.log("click");
               }}
             >
-              {status === "Hoàn tất đơn hàng"
-                ? "Đánh giá"
-                : status === "Chờ khách hàng xác nhận"
-                  ? "Đã nhận hàng"
-                  : "Hủy Đơn Hàng"}
+              {status === "Chờ khách hàng xác nhận"
+                ? "Đã nhận hàng"
+                : "Hủy Đơn Hàng"}
             </button>
           )}
 
@@ -693,9 +664,9 @@ const ProductList = ({
               />
             ))
           ) : (
-            <div className="col-span-9 h-[430px] flex items-center justify-center">
+            <div className="col-span-9 h-[300px] flex items-center justify-center my-10">
               <img
-                src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730026893/cach-huy-don-hang-tren-shopee-04-removebg-preview_2_db7yq1.png"
+                src="https://res.cloudinary.com/dpypwbeis/image/upload/v1732455719/wn8247iegfvm4sfvhsno.png "
                 alt="No orders"
                 className="w-1/2 h-full mx-auto"
               />

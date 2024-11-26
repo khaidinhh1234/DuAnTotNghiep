@@ -265,22 +265,24 @@ const OrderAdmin: React.FC = () => {
                     ? "text-blue-500" // Đang xử lý: màu xanh dương
                     : record.trang_thai_don_hang === "Đang giao hàng"
                       ? "text-purple-500" // Đang giao hàng: màu tím
-                      : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
-                        ? "text-green-500" // Hoàn tất đơn hàng: màu xanh lá
-                        : record.trang_thai_don_hang === "Hủy hàng"
-                          ? "text-red-500" // Hủy hàng: màu đỏ
-                          : record.trang_thai_don_hang ===
-                              "Đơn hàng bị từ chối nhân"
-                            ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
-                            : record.trang_thai_don_hang === "Hoàn hàng"
-                              ? "text-blue-700" // Hoàn hàng: màu xanh đậm
-                              : record.trang_thai_don_hang ===
-                                  "Chờ xác nhận hoàn hàng"
-                                ? "text-yellow-500" // Chờ xác nhận hoàn hàng: màu vàng đậm
+                      : record.trang_thai_don_hang === "Chờ khách hàng xác nhận"
+                        ? "text-green-700"
+                        : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
+                          ? "text-green-500" // Hoàn tất đơn hàng: màu xanh lá
+                          : record.trang_thai_don_hang === "Hủy hàng"
+                            ? "text-red-500" // Hủy hàng: màu đỏ
+                            : record.trang_thai_don_hang ===
+                                "Đơn hàng bị từ chối nhân"
+                              ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
+                              : record.trang_thai_don_hang === "Hoàn hàng"
+                                ? "text-blue-700" // Hoàn hàng: màu xanh đậm
                                 : record.trang_thai_don_hang ===
-                                    "Từ chối hoàn hàng"
-                                  ? "text-gray-500" // Từ chối hoàn hàng: màu xám
-                                  : "text-gray-700") // Mặc định: màu xám đậm
+                                    "Chờ xác nhận hoàn hàng"
+                                  ? "text-yellow-500" // Chờ xác nhận hoàn hàng: màu vàng đậm
+                                  : record.trang_thai_don_hang ===
+                                      "Từ chối hoàn hàng"
+                                    ? "text-gray-500" // Từ chối hoàn hàng: màu xám
+                                    : "text-gray-700") // Mặc định: màu xám đậm
             }
           >
             {record.trang_thai_don_hang === "Chờ xác nhận"
@@ -291,22 +293,24 @@ const OrderAdmin: React.FC = () => {
                   ? "Chờ lấy hàng"
                   : record.trang_thai_don_hang === "Đang giao hàng"
                     ? "Đang giao hàng"
-                    : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
-                      ? "Hoàn tất đơn hàng"
-                      : record.trang_thai_don_hang === "Hủy hàng"
-                        ? "Hủy hàng"
-                        : record.trang_thai_don_hang ===
-                            "Đơn hàng bị từ chối nhân"
-                          ? "Đơn hàng bị từ chối nhận"
-                          : record.trang_thai_don_hang === "Hoàn hàng"
-                            ? "Hoàn hàng"
-                            : record.trang_thai_don_hang ===
-                                "Chờ xác nhận hoàn hàng"
-                              ? "Chờ xác nhận hoàn hàng"
+                    : record.trang_thai_don_hang === "Chờ khách hàng xác nhận"
+                      ? "Hoàn tất (chờ xác nhận)"
+                      : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
+                        ? "Hoàn tất đơn hàng"
+                        : record.trang_thai_don_hang === "Hủy hàng"
+                          ? "Hủy hàng"
+                          : record.trang_thai_don_hang ===
+                              "Đơn hàng bị từ chối nhân"
+                            ? "Đơn hàng bị từ chối nhận"
+                            : record.trang_thai_don_hang === "Hoàn hàng"
+                              ? "Hoàn hàng"
                               : record.trang_thai_don_hang ===
-                                  "Từ chối hoàn hàng"
-                                ? "Từ chối hoàn hàng"
-                                : "Giao hàng thất bại"}
+                                  "Chờ xác nhận hoàn hàng"
+                                ? "Chờ xác nhận hoàn hàng"
+                                : record.trang_thai_don_hang ===
+                                    "Từ chối hoàn hàng"
+                                  ? "Từ chối hoàn hàng"
+                                  : "Giao hàng thất bại"}
           </div>
         );
       },

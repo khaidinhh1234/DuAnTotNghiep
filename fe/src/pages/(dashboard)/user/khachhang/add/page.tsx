@@ -4,7 +4,7 @@ import { Button, DatePicker, Form, Input, message, Radio } from "antd";
 import { FormProps } from "antd";
 
 import instance from "@/configs/admin";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 type FieldType = {
   ho?: string;
@@ -18,6 +18,7 @@ type FieldType = {
 };
 const UserskhachhangAdd = () => {
   // const [messageApi, contextHolder] = message.useMessage();
+  const queryClient = useQueryClient();
   const nav = useNavigate();
   const mutate = useMutation({
     mutationFn: async (data: any) => {
@@ -26,7 +27,6 @@ const UserskhachhangAdd = () => {
         const res = await instance.post("/taikhoan", datas);
         return res.data;
       } catch (error: any) {
-        console.log(error.response.data.error.email);
         message.open({
           type: "error",
           content:
@@ -42,6 +42,7 @@ const UserskhachhangAdd = () => {
         });
         nav("/admin/users/khachhang");
       }
+      queryClient.invalidateQueries({ queryKey: ["UserKey"] });
       // form.resetFields();
     },
   });

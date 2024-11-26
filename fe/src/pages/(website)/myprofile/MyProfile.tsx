@@ -1,5 +1,4 @@
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import MyProfilePage from "./_components/MyProfile";
 import ListMyProfile from "./_components/Listmyprofile";
 
 const MyProfile = () => {

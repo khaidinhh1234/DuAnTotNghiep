@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import Voucheruser from "./voucheruser";
 
-const Subtotal = ({ tong_tien, Macode, trangthai }: any) => {
+const Subtotal = ({ tong_tien, Macode, trangthai, isPending }: any) => {
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
   const ap = trangthai === "Ví tiền" ? 1 : 0;
   useEffect(() => {
     if (selectedDiscount === null) return;
   }, [selectedDiscount]);
   const handleSelectVoucher = (data: number | any) => {
+    console.log(data);
     setSelectedDiscount(data.giam_gia);
 
     Macode(data.index);
@@ -93,7 +94,7 @@ const Subtotal = ({ tong_tien, Macode, trangthai }: any) => {
           type="submit"
           className=" block btn-black px-10 w-[320px] my-4 mx-auto py-4 rounded-lg text-md font-medium"
         >
-          Đặt hàng ngay
+          {isPending ? "Đang xử lý..." : "Đặt hàng ngay"}
         </button>
         {/* </a> */}
       </div>

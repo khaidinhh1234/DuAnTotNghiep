@@ -1,15 +1,7 @@
 import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { InputRef, TableColumnsType } from "antd";
-import {
-  Button,
-  Input,
-  message,
-  Popconfirm,
-  Space,
-  Spin,
-  Table,
-} from "antd";
+import { Button, Input, message, Popconfirm, Space, Spin, Table } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
@@ -52,28 +44,32 @@ const CategoriesAdmin: React.FC = () => {
   //     key: category.id,
   //     ...category,
   //   })) || [];
-  let currentIndex = 1; // Initialize the currentIndex outside of the function
+  let currentIndex = 1;
 
-const generateDataSource = (categories: ICategories[], parentKey = "", isParent = true): ICategories[] => {
-  return categories.map((category: ICategories) => {
-    const key = `${parentKey}-${category.id}`;
-    const children = category.children ? generateDataSource(category.children, key, false) : [];
+  const generateDataSource = (
+    categories: ICategories[],
+    parentKey = "",
+    isParent = true
+  ): ICategories[] => {
+    return categories.map((category: ICategories) => {
+      const key = `${parentKey}-${category.id}`;
+      const children = category.children
+        ? generateDataSource(category.children, key, false)
+        : [];
 
-    // Assign the current index for the category
-    const index = isParent ? currentIndex++ : undefined;
+      // Assign the current index for the category
+      const index = isParent ? currentIndex++ : undefined;
 
-    return {
-      key: key, 
-      index: index, // Assign the sequential index
-      ...category,
-      children,
-    };
-  });
-};
+      return {
+        key: key,
+        index: index, // Assign the sequential index
+        ...category,
+        children,
+      };
+    });
+  };
 
-const dataSource = data?.data ? generateDataSource(data.data) : [];
-
-
+  const dataSource = data?.data ? generateDataSource(data.data) : [];
 
   const { mutate } = useMutation({
     mutationFn: async (id: string | number) => {
@@ -189,7 +185,24 @@ const dataSource = data?.data ? generateDataSource(data.data) : [];
         text
       ),
   });
-
+  const { mutate: mutateExoprt } = useMutation({
+    mutationFn: async () => {
+      const res = await instance.get("xuatfile", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "danhmuc.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    onError: (error) => {
+      console.error("Error exporting excel:", error);
+      message.error("Xuất file excel thất bại");
+    },
+  });
   const columns: TableColumnsType<ICategories> = [
     {
       // dataIndex: 'index',
@@ -292,21 +305,43 @@ const dataSource = data?.data ? generateDataSource(data.data) : [];
           Quản trị / <span className="font-semibold px-px">Danh mục</span>
         </h1>
       </div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Danh sách danh mục</h1>
-        <div className="flex">
-          <Link to="/admin/categories/add" className="mr-1">
-            <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
-              <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
-              Thêm
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <h1 className="font-semibold md:text-3xl">Danh sách danh mục</h1>
+          {/* <div className="mt-4">
+          </div> */}
+          <div className="mt-4">
+            <Space>
+              <Input placeholder="Tìm kiếm" prefix={<SearchOutlined />} />
+            </Space>
+          </div>
+        </div>
+
+        <div>
+          <div className="flex mb-2 justify-end">
+            {" "}
+            <Link to="/admin/categories/add" className="mr-1">
+              <Button className="bg-gradient-to-r  from-blue-500 to-blue-400 text-white rounded-lg py-1 hover:bg-blue-600 shadow-md transition-colors">
+                <i className="fa-sharp fa-solid fa-plus text-2xl"></i>
+                Thêm
+              </Button>
+            </Link>
+            <Link to="/admin/categories/remote">
+              <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
+                <DeleteOutlined className="mr-1" />
+                Thùng rác
+              </Button>
+            </Link>{" "}
+          </div>
+          <div className="flex  justify-end">
+            <Button
+              type="primary"
+              className=" text-white font-bold py-2 px-4 rounded h-8"
+              onClick={() => mutateExoprt()}
+            >
+              Xuất dữ liệu Excel
             </Button>
-          </Link>
-          <Link to="/admin/categories/remote">
-            <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-              <DeleteOutlined className="mr-1" />
-              Thùng rác
-            </Button>
-          </Link>
+          </div>
         </div>
       </div>
       <Table
@@ -319,4 +354,3 @@ const dataSource = data?.data ? generateDataSource(data.data) : [];
 };
 
 export default CategoriesAdmin;
-
