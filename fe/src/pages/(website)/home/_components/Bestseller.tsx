@@ -1,9 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
-import instanceClient from "@/configs/client";
-import View from "../../_component/View";
 import Product from "../../_component/Product";
 // import useDebounce from "@/components/hook/useDebounce";
 
@@ -12,7 +7,7 @@ const Bestseller = ({ products, sectionTitle, isPromotional = false }: any) => {
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
   );
-  const [visibleProductsCount, setVisibleProductsCount] = useState(4);
+  const [visibleProductsCount, setVisibleProductsCount] = useState(8);
 
   const handleSeeMore = () => {
     setVisibleProductsCount(visibleProductsCount + 8);

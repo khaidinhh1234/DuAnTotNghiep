@@ -358,9 +358,12 @@ class ThongKeTongQuanController extends Controller
             $ngayBatDau = Carbon::parse($request->input('ngay_bat_dau') ?? now()->subDays(9));
             $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
             $trangThai = [
+                DonHang::TTDH_DXH,
                 DonHang::TTDH_DGH,
                 DonHang::TTDH_HTDH,
                 DonHang::TTDH_CKHCN,
+                DonHang::TTDH_CXNHH
+
             ];
             $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThai)
                 ->where(function ($query) use ($ngayBatDau, $ngayKetThuc) {
@@ -424,9 +427,12 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThuc = Carbon::parse($request->input('ngay_ket_thuc') ?? now())->endOfDay();
 
         $trangThai = [
+            DonHang::TTDH_DXH,
             DonHang::TTDH_DGH,
             DonHang::TTDH_HTDH,
             DonHang::TTDH_CKHCN,
+            DonHang::TTDH_CXNHH
+
         ];
 
         $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThai)
@@ -891,6 +897,7 @@ class ThongKeTongQuanController extends Controller
             DB::beginTransaction();
             $today = Carbon::today();
             $trangThai = [
+                DonHang::TTDH_DXH,
                 DonHang::TTDH_DGH,
                 DonHang::TTDH_HTDH,
                 DonHang::TTDH_CKHCN,
@@ -996,8 +1003,11 @@ class ThongKeTongQuanController extends Controller
         $ngayKetThuc = Carbon::tomorrow();
         $trangThai = [
             // DonHang::TTDH_DGH,
+            DonHang::TTDH_DXH,
+            DonHang::TTDH_DGH,
             DonHang::TTDH_HTDH,
             DonHang::TTDH_CKHCN,
+            DonHang::TTDH_CXNHH
         ];
 
         // Tạo khoảng thời gian cách nhau 2 giờ
@@ -1061,8 +1071,11 @@ class ThongKeTongQuanController extends Controller
 
         $trangThai = [
             // DonHang::TTDH_DGH,
+            DonHang::TTDH_DXH,
             DonHang::TTDH_HTDH,
             DonHang::TTDH_CKHCN,
+            DonHang::TTDH_CXNHH
+
         ];
 
         $donHangs = DonHang::whereIn('trang_thai_don_hang', $trangThai)

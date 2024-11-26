@@ -141,7 +141,7 @@ const ProductDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   // const [token, setToken] = useState<string | null>(null);
-  const nav = useNavigate();
+  // const nav = useNavigate();
   const [user] = useLocalStorage("user" as any, {});
   const access_token =
     user.access_token || localStorage.getItem("access_token");
@@ -159,11 +159,16 @@ const ProductDetail: React.FC = () => {
   const [viewed, setViewed] = useState(false);
   useEffect(() => {
     if (slug) {
-      const viewedProduct = JSON.parse(localStorage.getItem("viewedProduct") || "{}");
+      const viewedProduct = JSON.parse(
+        localStorage.getItem("viewedProduct") || "{}"
+      );
       const currentTime = Date.now();
-  
+
       // Kiểm tra nếu sản phẩm chưa được xem hoặc đã qua 24 giờ
-      if (!viewedProduct[slug] || (currentTime - viewedProduct[slug]) / (1000 * 60 * 60) > 24) {
+      if (
+        !viewedProduct[slug] ||
+        (currentTime - viewedProduct[slug]) / (1000 * 60 * 60) > 24
+      ) {
         instanceClient
           .get(`/chi-tiet-san-pham/${slug}`, {
             params: { tang_luot_xem: "true" },
@@ -172,7 +177,10 @@ const ProductDetail: React.FC = () => {
             console.log("Lượt xem đã tăng");
             // Cập nhật thời gian xem
             viewedProduct[slug] = currentTime;
-            localStorage.setItem("viewedProduct", JSON.stringify(viewedProduct));
+            localStorage.setItem(
+              "viewedProduct",
+              JSON.stringify(viewedProduct)
+            );
             setViewed(true);
           })
           .catch((error) => {
@@ -183,7 +191,7 @@ const ProductDetail: React.FC = () => {
       }
     }
   }, [slug]);
-  
+
   // useEffect(() => {
   //   const storedToken = localStorage.getItem("accessToken");
   //   if (storedToken) {
@@ -194,15 +202,22 @@ const ProductDetail: React.FC = () => {
   // }, []);
 
   const queryClient = useQueryClient();
-
+  const nav = useNavigate();
   const { data: product, isLoading } = useQuery<ProductData>({
     queryKey: ["product", slug],
     queryFn: async () => {
-      const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`);
-      return response.data.data;
+      try {
+        const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`);
+        return response.data.data;
+      } catch (error) {
+        message.error("Sản phẩm không tồn tại");
+        nav("/404");
+      }
+      // const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`);
+      // return response.data.data;
     },
   });
-  // console.log(product);
+  console.log(product);
   // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
   //   queryKey: ["relatedProducts", id],
   //   queryFn: () => fetchRelatedProducts(Number(id)),
@@ -229,12 +244,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                ...review,
-                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                danh_gia_huu_ich_count: variables.isLiked
-                  ? review.danh_gia_huu_ich_count - 1
-                  : review.danh_gia_huu_ich_count + 1,
-              }
+                  ...review,
+                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                  danh_gia_huu_ich_count: variables.isLiked
+                    ? review.danh_gia_huu_ich_count - 1
+                    : review.danh_gia_huu_ich_count + 1,
+                }
               : review
           ),
         };
@@ -258,7 +273,7 @@ const ProductDetail: React.FC = () => {
       return;
     }
     if (!access_token) {
-      setIsModalVisible(true); 
+      setIsModalVisible(true);
       return;
     }
 
@@ -271,7 +286,7 @@ const ProductDetail: React.FC = () => {
         bien_the_san_pham_id: variantId,
         so_luong: quantity,
       });
-  
+
       const response = await instanceClient.post(
         "/gio-hang",
         {
@@ -298,7 +313,7 @@ const ProductDetail: React.FC = () => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
       toast.error(
         error.response?.data?.message ||
-        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
@@ -371,34 +386,33 @@ const ProductDetail: React.FC = () => {
   }, [product]);
   const handleColorClick = (color: string) => {
     setSelectedColor(color);
-  
+
     // Tìm biến thể dựa trên cả màu và kích thước
     const selectedVariant = product?.bien_the_san_pham?.find(
       (v) =>
         v?.mau_bien_the?.ma_mau_sac === color &&
         v?.kich_thuoc_bien_the?.kich_thuoc === selectedSize
     );
-  
+
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
     updateImages(color, selectedSize);
   };
-  
+
   const handleSizeClick = (size: string) => {
     setSelectedSize(size);
-  
+
     // Tìm biến thể dựa trên cả màu và kích thước
     const selectedVariant = product?.bien_the_san_pham?.find(
       (v) =>
         v?.kich_thuoc_bien_the?.kich_thuoc === size &&
         v?.mau_bien_the?.ma_mau_sac === selectedColor
     );
-  
+
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedSizeDisplay(size);
     updateImages(selectedColor, size);
   };
-  
 
   const updateImages = (color: string | null, size: string | null) => {
     if (color && size && product) {
@@ -434,7 +448,7 @@ const ProductDetail: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["product", slug, "PRODUCT_DETAIL"],
+        queryKey: ["product"],
       });
     },
     onError: (error: any) => {
@@ -443,6 +457,7 @@ const ProductDetail: React.FC = () => {
     },
   });
   const handleClickHeart = (id: any) => {
+    console.log(id);
     toggleFavorite(id);
   };
   const handleCopy = () => {
@@ -561,7 +576,7 @@ const ProductDetail: React.FC = () => {
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                // className="mySwiper1"
+                  // className="mySwiper1"
                 >
                   {currentImages?.map((image, index) => (
                     <SwiperSlide key={`thumb-${index}`}>
@@ -594,10 +609,11 @@ const ProductDetail: React.FC = () => {
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                        className={` text-sm px-2 py-1 rounded-sm ${
+                          selectedVariant?.so_luong_bien_the > 0
                             ? "bg-[#3CD139]/10 text-[#3CD139]"
                             : "bg-red-500 text-white"
-                          }`}
+                        }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -694,8 +710,9 @@ const ProductDetail: React.FC = () => {
                     return (
                       <button
                         key={index}
-                        className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? "border-black" : ""
-                          } ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
+                        className={`w-9 h-9 rounded-md border-2 ${
+                          selectedColor === color ? "border-black" : ""
+                        } ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
                         style={{ backgroundColor: color }}
                         onClick={() => isAvailable && handleColorClick(color)}
                         disabled={!isAvailable}
@@ -775,10 +792,10 @@ const ProductDetail: React.FC = () => {
                   ).map((size, index) => {
                     const isAvailable = selectedColor
                       ? isVariantAvailable(
-                        product?.bien_the_san_pham as any,
-                        selectedColor,
-                        size
-                      )
+                          product?.bien_the_san_pham as any,
+                          selectedColor,
+                          size
+                        )
                       : false;
 
                     return (
@@ -911,10 +928,11 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${isDescriptionExpanded
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
+                isDescriptionExpanded
                   ? "h-auto"
                   : "max-h-[500px] overflow-hidden"
-                }`}
+              }`}
             >
               <div
                 dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}

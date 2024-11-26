@@ -15,7 +15,7 @@ import {
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 const View = ({ id, ID }: { id: string; ID: number }) => {
-  const nav = useNavigate()
+  const nav = useNavigate();
   // console.log(id);
   // console.log(ID);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -40,7 +40,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     user.access_token || localStorage.getItem("access_token");
   //   console.log(id);
   const { data } = useQuery({
-    queryKey: ["PRODUCT_DETAIL", id],
+    queryKey: ["PRODUCTS_KEY", id],
     queryFn: async () => {
       try {
         const response = await instanceClient.get(`chi-tiet-san-pham/${id}`);
@@ -76,7 +76,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     },
     onSuccess: () => {
       queryclient.invalidateQueries({
-        queryKey: ["PRODUCT_DETAIL", id],
+        queryKey: ["PRODUCTS_KEY"],
       });
     },
   });
@@ -253,7 +253,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
     onError: (error: any) => {
       toast.error(
         error.response?.data?.message ||
-        "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
       );
     },
   });
@@ -284,15 +284,23 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
 
     addToCart(variantIdToUse);
   };
-  const isVariantAvailable = (variants: any[], color: string, size?: string) => {
+  const isVariantAvailable = (
+    variants: any[],
+    color: string,
+    size?: string
+  ) => {
     const filteredVariants = variants?.filter((variant: any) => {
       if (size) {
-        return variant.mau_bien_the.ma_mau_sac === color &&
+        return (
+          variant.mau_bien_the.ma_mau_sac === color &&
           variant.kich_thuoc_bien_the.kich_thuoc === size &&
-          variant.so_luong_bien_the > 0;
+          variant.so_luong_bien_the > 0
+        );
       }
-      return variant.mau_bien_the.ma_mau_sac === color &&
-        variant.so_luong_bien_the > 0;
+      return (
+        variant.mau_bien_the.ma_mau_sac === color &&
+        variant.so_luong_bien_the > 0
+      );
     });
     return filteredVariants?.length > 0;
   };
@@ -426,10 +434,11 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                       {selectedVariant && (
                         <div className="mt-2">
                           <a
-                            className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                            className={` text-sm px-2 py-1 rounded-sm ${
+                              selectedVariant?.so_luong_bien_the > 0
                                 ? "bg-[#3CD139]/10 text-[#3CD139]"
                                 : "bg-red-500 text-white"
-                              }`}
+                            }`}
                           >
                             {selectedVariant?.so_luong_bien_the > 0
                               ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -459,8 +468,8 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         <>
                           {gia?.gia_khuyen_mai_tam_thoi
                             ? gia?.gia_khuyen_mai_tam_thoi.toLocaleString(
-                              "vi-VN"
-                            )
+                                "vi-VN"
+                              )
                             : (gia?.gia_khuyen_mai?.toLocaleString("vi-VN") ??
                               0)}{" "}
                           đ
@@ -474,7 +483,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                                 ? gia?.gia_ban - gia?.gia_khuyen_mai_tam_thoi
                                 : gia?.gia_ban - gia?.gia_khuyen_mai) /
                                 gia?.gia_ban) *
-                              100
+                                100
                             )}
                             %
                           </span>
@@ -501,7 +510,10 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     </h3>
                     <div className="flex space-x-2">
                       {Array.from(uniqueColors).map((color, index) => {
-                        const isAvailable = isVariantAvailable(product?.bien_the_san_pham, color);
+                        const isAvailable = isVariantAvailable(
+                          product?.bien_the_san_pham,
+                          color
+                        );
                         return (
                           <button
                             key={index}
@@ -509,7 +521,9 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
           ${selectedColor === color ? "border-black" : ""}
           ${!isAvailable ? "opacity-40 cursor-not-allowed relative" : ""}`}
                             style={{ backgroundColor: color as string }}
-                            onClick={() => isAvailable && handleColorClick(color)}
+                            onClick={() =>
+                              isAvailable && handleColorClick(color)
+                            }
                             disabled={!isAvailable}
                           >
                             {!isAvailable && (
@@ -517,12 +531,12 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                                 className="absolute inset-0"
                                 style={{
                                   content: '""',
-                                  borderTop: '2px solid rgba(255, 0, 0, 0.5)',
-                                  transform: 'rotate(45deg)',
-                                  transformOrigin: 'center',
-                                  width: '100%',
-                                  left: '0',
-                                  top: '45%'
+                                  borderTop: "2px solid rgba(255, 0, 0, 0.5)",
+                                  transform: "rotate(45deg)",
+                                  transformOrigin: "center",
+                                  width: "100%",
+                                  left: "0",
+                                  top: "45%",
                                 }}
                               />
                             )}
@@ -530,7 +544,6 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         );
                       })}
                     </div>
-
                   </div>
 
                   <div className="items-center mt-4 mb-3">
@@ -544,9 +557,13 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                     </h3>
                     <div className="flex mt-3">
                       {sizesForSelectedColor?.map((size: any) => {
-                        const isAvailable = selectedColor ?
-                          isVariantAvailable(product?.bien_the_san_pham, selectedColor, size) :
-                          false;
+                        const isAvailable = selectedColor
+                          ? isVariantAvailable(
+                              product?.bien_the_san_pham,
+                              selectedColor,
+                              size
+                            )
+                          : false;
 
                         return (
                           <button
@@ -564,12 +581,12 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                                 className="absolute inset-0"
                                 style={{
                                   content: '""',
-                                  borderTop: '2px solid rgba(255, 0, 0, 0.5)',
-                                  transform: 'rotate(45deg)',
-                                  transformOrigin: 'center',
-                                  width: '130%',
-                                  left: '-30%',
-                                  top: '45%'
+                                  borderTop: "2px solid rgba(255, 0, 0, 0.5)",
+                                  transform: "rotate(45deg)",
+                                  transformOrigin: "center",
+                                  width: "130%",
+                                  left: "-30%",
+                                  top: "45%",
                                 }}
                               />
                             )}
@@ -598,7 +615,10 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
                         onChange={(e) => {
                           const inputQuantity = parseInt(e.target.value, 10);
                           // Kiểm tra nếu inputQuantity vượt quá số lượng kho
-                          if (inputQuantity > (selectedVariant?.so_luong_bien_the || 1)) {
+                          if (
+                            inputQuantity >
+                            (selectedVariant?.so_luong_bien_the || 1)
+                          ) {
                             if (selectedVariant) {
                               setQuantity(selectedVariant.so_luong_bien_the); // Đặt về số lượng kho tối đa
                             }

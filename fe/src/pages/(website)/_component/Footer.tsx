@@ -232,7 +232,7 @@ const Footer = () => {
                   <Link to="/ourstory">Giới thiệu</Link>
                 </li>
                 <li className="mb-3">
-                  <Link to="/vourcher">Khuyến mại</Link>
+                  <Link to="/vourcher">Khuyến mãi</Link>
                 </li>
                 <li className="mb-3">
                   <Link to="/blog">Bài viết</Link>

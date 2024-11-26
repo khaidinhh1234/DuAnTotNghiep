@@ -42,7 +42,7 @@ const LoginForm = () => {
         message.success("Đăng nhập thành công");
         localStorage.setItem("user", JSON.stringify(data));
         localStorage.setItem("accessToken", data?.access_token);
-        return nav("/admin/dashboard/list");
+        return nav("/admin");
       } else {
         toast.success(" Glow Clothing Xin chào bạn");
         return nav("/");

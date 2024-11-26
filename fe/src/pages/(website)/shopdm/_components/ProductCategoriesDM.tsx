@@ -165,7 +165,12 @@ const ProductCategoriesDM = ({ isPending }: any) => {
     }
   };
   const { data, refetch: refetch2 } = useQuery({
-    queryKey: ["SANPHAM_LOC", tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa],
+    queryKey: [
+      "PRODUCTS_KEY",
+      tenDanhMucCha,
+      tenDanhMucCon,
+      tenDanhMucConCapBa,
+    ],
     queryFn: async () => {
       try {
         let url = "danhmuc";
@@ -192,7 +197,7 @@ const ProductCategoriesDM = ({ isPending }: any) => {
   const products = data?.data?.san_pham.data;
   const queryClient = useQueryClient();
   const { data: locsanpham, refetch } = useQuery({
-    queryKey: ["LOCSAMPHAM"],
+    queryKey: ["PRODUCTS_KEY"],
     queryFn: async () => {
       try {
         const response = await instanceClient.get(

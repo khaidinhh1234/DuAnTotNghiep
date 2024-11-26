@@ -6,7 +6,7 @@ import { useState } from "react";
 const MainHeader = () => {
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
-
+  const nav = useNavigate();
   const menuItems = [
     {
       key: "orders",
@@ -19,29 +19,29 @@ const MainHeader = () => {
       onClick: () => navigate("/return-orders"),
     },
   ];
-
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user"); //
+    nav("/login");
+    // setUser(null);
+  };
   return (
-    <div className="flex justify-between items-center p-4">
-      <div className="flex gap-5 items-center">
-        <div className="relative mr-4" style={{ zIndex: 1000 }}>
+    <div className="flex justify-between items-center p-4 bg-white">
+      {/* Logo và Menu */}
+      <div className="flex items-center gap-5">
+        <div className="relative">
           <MenuOutlined
-            className="text-2xl cursor-pointer hover:text-blue-500 transition-colors sm:hidden" // Ẩn trên màn hình lớn
+            className="text-2xl cursor-pointer hover:text-blue-500 transition-colors sm:hidden"
             onClick={() => setMenuVisible(!menuVisible)}
           />
           {menuVisible && (
             <Menu
-              className="absolute mt-2 w-48 bg-white rounded-md sm:w-60 md:w-72"
+              className="absolute top-10 left-0 w-48 bg-white rounded-md shadow-md sm:w-60 md:w-72"
               items={menuItems}
-              // selectedKeys={[location.pathname === "/" ? "orders" : "returns"]}
-              style={{
-                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                border: "1px solid #f0f0f0",
-              }}
             />
           )}
         </div>
-
-        <Link to="/">
+        <Link to="/shipper2">
           <img
             src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729398683/Black_and_White_Circle_Business_Logo_1_ieyoum.png"
             alt="Logo"
@@ -52,25 +52,16 @@ const MainHeader = () => {
           Giao Hàng Glow Express
         </h1>
       </div>
-      {/* Hiển thị Menu khi ở chế độ mobile */}
-      {/* <div className="sm:hidden">
-        {menuVisible && (
-          <Menu
-            className="absolute mt-2 w-48 bg-white rounded-md sm:w-60 md:w-72"
-            items={menuItems}
-            selectedKeys={[location.pathname === "/" ? "orders" : "returns"]}
-            style={{
-              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-              border: "1px solid #f0f0f0",
-            }}
-          />
-        )}
-      </div>{" "} */}
+      <div className="hover:text-red-500 cursor-pointer" onClick={logout}>
+        <span>Thoát</span>
+        <i className="fa-solid fa-arrow-right-from-bracket ml-1 mr-5 "></i>
+      </div>
+      {/* Thông tin giao hàng */}
       {/* <div className="lg:ml-auto text-left lg:text-right">
         <h1 className="font-semibold text-lg lg:text-2xl">
           Thông tin giao hàng
           <i
-            className="fa-solid fa-arrow-right-from-bracket mx-5 hover:text-red-500 cursor-pointer"
+            className="fa-solid fa-arrow-right-from-bracket ml-5 hover:text-red-500 cursor-pointer"
             // onClick={logout}
           ></i>
         </h1>

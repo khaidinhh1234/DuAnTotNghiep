@@ -21,7 +21,7 @@ trait AuditTrait
                     'du_lieu_moi' => $model->getAttributes(),
                     'nguoi_thao_tac' => $user->id,
                     'dia_chi_ip' => request()->ip(),
-                    'mo_ta' => 'Thêm mới bản ghi trong bảng < ' . $tenBang. ' >',
+                    'mo_ta' => 'Thêm mới bản ghi trong bảng < ' . $tenBang . ' >',
                 ]);
             }
         });
@@ -64,7 +64,7 @@ trait AuditTrait
                     'du_lieu_cu' => $model->getAttributes(),
                     'nguoi_thao_tac' => $user->id,
                     'dia_chi_ip' => request()->ip(),
-                    'mo_ta' => 'Xóa bản ghi '.$model->id.' khỏi bảng < ' . $tenBang.' >',
+                    'mo_ta' => 'Xóa bản ghi ' . $model->id . ' khỏi bảng < ' . $tenBang . ' >',
                 ]);
             }
         });
@@ -82,7 +82,7 @@ trait AuditTrait
                         'du_lieu_moi' => $model->getAttributes(),
                         'nguoi_thao_tac' => $user->id,
                         'dia_chi_ip' => request()->ip(),
-                        'mo_ta' => 'Khôi phục bản ghi '.$model->id.' trong bảng < ' . $tenBang.' >',
+                        'mo_ta' => 'Khôi phục bản ghi ' . $model->id . ' trong bảng < ' . $tenBang . ' >',
                     ]);
                 }
             });
@@ -114,7 +114,7 @@ trait AuditTrait
             'so_luong_bien_the' => 'Số lượng biến thể',
             'chi_phi_san_xuat' => 'Chi phí sản xuất',
             'gia_ban' => 'Giá bán',
-            'gia_khuyen_mai' => 'Giá khuyến mại',
+            'gia_khuyen_mai' => 'Giá khuyến mãi',
             'gia_khuyen_mai_tam_thoi' => 'Giá khuyến mãi tạm thời',
 
             'bo_suu_taps' => 'Bộ sưu tập',
@@ -200,6 +200,4 @@ trait AuditTrait
 
         return $fields[$key] ?? $key;
     }
-
-
 }
