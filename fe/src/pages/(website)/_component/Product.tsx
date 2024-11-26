@@ -31,7 +31,7 @@ const Product = ({
                 className={`cursor-pointer text-red-500 z-10 fa-solid fa-trash text-xl pt-1 bg-white w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
               />
             </span>
-          )}{" "}
+          )}
           {prowish !== undefined && (
             <span>
               <i

@@ -448,7 +448,7 @@ const MemberRankForm: React.FC = () => {
               { required: true, message: "Vui lòng nhập tên hạng thành viên" },
             ]}
           >
-            <Input placeholder="Diamond" />
+            <Input placeholder="Tên hạng thành viên" />
           </Form.Item>
 
           <Form.Item
@@ -495,14 +495,7 @@ const MemberRankForm: React.FC = () => {
               ]}
               className="flex-1"
             >
-              <InputNumber
-                formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
-                addonAfter="VND"
-                className="w-full"
-              />
+              <InputNumber addonAfter="VND" className="w-full" />
             </Form.Item>
 
             <Form.Item
@@ -526,14 +519,7 @@ const MemberRankForm: React.FC = () => {
               ]}
               className="flex-1"
             >
-              <InputNumber
-                formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-                parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
-                addonAfter="VND"
-                className="w-full"
-              />
+              <InputNumber addonAfter="VND" className="w-full" />
             </Form.Item>
           </div>
           <div className="flex justify-start space-x-1 mt-6">

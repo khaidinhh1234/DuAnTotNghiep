@@ -33,16 +33,16 @@ interface Transport {
   id: number;
   created_at: string;
   don_hang_id: number;
-  shipper_id: number
+  shipper_id: number;
   ma_van_chuyen: string;
   trang_thai_van_chuyen: string;
   cod: number;
   tien_cod: number;
   anh_xac_thuc: string;
-  khach_hang_xac_nhan: string
-  shipper_xac_nhan: string
-  so_lan_giao: string
-  ghi_chu: string
+  khach_hang_xac_nhan: string;
+  shipper_xac_nhan: string;
+  so_lan_giao: string;
+  ghi_chu: string;
 }
 
 const datas = [
@@ -97,14 +97,16 @@ const TableUncomfirmedOrder: React.FC = () => {
       if (dateRange) {
         const [start, end] = dateRange;
         filtered = filtered.filter((item: Transport) => {
-          const itemDate = new Date(item.created_at).toISOString().split("T")[0];
+          const itemDate = new Date(item.created_at)
+            .toISOString()
+            .split("T")[0];
           return itemDate >= start && itemDate <= end;
         });
       }
 
       if (activeTab !== "Tất cả") {
-        filtered = filtered.filter((item: Transport) =>
-          item.trang_thai_van_chuyen === activeTab
+        filtered = filtered.filter(
+          (item: Transport) => item.trang_thai_van_chuyen === activeTab
         );
       }
 
@@ -198,7 +200,8 @@ const TableUncomfirmedOrder: React.FC = () => {
       key: item.id,
       ...item,
       don_hang_id: item.don_hang?.ma_don_hang || "Chưa có dữ liệu",
-      trang_thai_thanh_toan: item.don_hang?.trang_thai_thanh_toan || "Chưa có dữ liệu",
+      trang_thai_thanh_toan:
+        item.don_hang?.trang_thai_thanh_toan || "Chưa có dữ liệu",
       shipper_id: item.don_hang?.shipper?.ho_ten || "Chưa có dữ liệu",
     })
   );
@@ -286,7 +289,7 @@ const TableUncomfirmedOrder: React.FC = () => {
       },
     },
     {
-      title: "Tổng tiền",
+      title: "Tổng tiền COD",
       dataIndex: "tien_cod",
       // key: "tien_cod",
       render: (_, record) => {
@@ -341,12 +344,12 @@ const TableUncomfirmedOrder: React.FC = () => {
         </div>
       </div> */}
       <div>
-      <Tabs
-            defaultActiveKey="Tất cả"
-            activeKey={activeTab}
-            onChange={(key) => setActiveTab(key)}
-            items={tabItems}
-          />
+        <Tabs
+          defaultActiveKey="Tất cả"
+          activeKey={activeTab}
+          onChange={(key) => setActiveTab(key)}
+          items={tabItems}
+        />
         {/* Bộ lọc tìm kiếm */}
         <div style={{ marginBottom: 16 }}>
           <Space>
@@ -358,12 +361,12 @@ const TableUncomfirmedOrder: React.FC = () => {
             <RangePicker onChange={handleDateRangeChange} />
           </Space>
         </div>
-          <Table<Transport>
-            columns={columns}
-            dataSource={dataSource}
-            loading={isLoading}
-            pagination={{ pageSize: 10, className: "my-5" }}
-          />
+        <Table<Transport>
+          columns={columns}
+          dataSource={dataSource}
+          loading={isLoading}
+          pagination={{ pageSize: 10, className: "my-5" }}
+        />
       </div>
     </main>
   );

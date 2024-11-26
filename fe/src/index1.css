@@ -1,3 +1,30 @@
-.custom-modal .ant-modal {
-  margin-top: -40px !important; /* Điều chỉnh giá trị này theo ý muốn */
+.promotion-carousel .slick-dots li button {
+  background: rgba(239, 68, 68, 0.5) !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+}
+
+.promotion-carousel .slick-dots li.slick-active button {
+  background: rgb(239, 68, 68) !important;
+  transform: scale(1.2);
+}
+
+.promotion-carousel .slick-prev,
+.promotion-carousel .slick-next {
+  font-size: 24px !important;
+  color: white !important;
+  background: rgba(239, 68, 68, 0.7) !important;
+  border-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+}
+
+.promotion-carousel .slick-prev:hover,
+.promotion-carousel .slick-next:hover {
+  background: rgb(239, 68, 68) !important;
 }

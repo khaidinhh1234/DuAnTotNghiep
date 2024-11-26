@@ -4,31 +4,79 @@ import {
   FacebookFilled,
   FormOutlined,
   HeartOutlined,
-  TruckOutlined,
   TwitterCircleFilled,
-  UserOutlined,
   YoutubeFilled,
 } from "@ant-design/icons";
-import { Avatar, Button, Card, Col, Row, Typography } from "antd";
-import { useState } from "react";
+import { Avatar, Button, Card, Col, message, Row, Typography } from "antd";
+import { useEffect, useState } from "react";
 // import ProfileTab from './ProfileTab';
 import { banner } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { Upload } from "antd";
-
+// import ProfileTab from './ProfileTab';
+import instanceClient from "@/configs/client";
+import { uploadToCloudinary } from "@/configs/cloudinary";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 const { Text, Title } = Typography;
 
-const ProfileBanner = ({ profile }: any) => {
+const ProfileBanner = ({ profile, refetch }: any) => {
   const [avatarImage, setAvatarImage] = useState<string>("");
-  const [{ user }] = useLocalStorage("user" as any, {});
+  const [{ user }, setUser] = useLocalStorage("user" as any, {});
+  const [tempImageUrl, setTempImageUrl] = useState<string>("");
+
   const url = user.anh_nguoi_dung;
   const vaitro = user.vai_tros.map((item: any) => item.ten_vai_tro);
-  const handleAvatarChange = (info: any) => {
-    if (info.file && info.file.originFileObj) {
-      const file = URL.createObjectURL(info.file.originFileObj);
-      setAvatarImage(file);
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "user") {
+        const newUser = JSON.parse(event.newValue || "{}");
+        setUser(newUser);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Dọn dẹp khi component unmount
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [setUser]);
+
+  // console.log(hang_thanh_vien);
+  const updateAvatarMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const imageUrl = await uploadToCloudinary(file);
+      await instanceClient.post("/cap-nhat-thong-tin", {
+        anh_nguoi_dung: imageUrl,
+      });
+      return imageUrl;
+    },
+    onSuccess: (imageUrl) => {
+      setUser((prev: any) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          anh_nguoi_dung: imageUrl,
+        },
+      }));
+      setAvatarImage(imageUrl);
+      setTempImageUrl("");
+      refetch();
+    },
+    // onError: () => {
+    //   setTempImageUrl("");
+    //   toast.error("Không thể cập nhật ảnh đại diện");
+    // },
+  });
+
+  const handleAvatarChange = async (info: any) => {
+    if (info.file?.originFileObj) {
+      setTempImageUrl(URL.createObjectURL(info.file.originFileObj));
+      updateAvatarMutation.mutate(info.file.originFileObj);
     }
   };
+
   // console.log("Profile:", profile);
   return (
     <>
@@ -85,22 +133,43 @@ const ProfileBanner = ({ profile }: any) => {
           >
             <div className="flex justify-center mt-[-70px] relative">
               <div className="text-center">
-                <div className="relative w-28 h-28 mx-auto rounded-full bg-gradient-to-r">
+                <div className="relative w-26 h-26 mx-auto rounded-full bg-gradient-to-r">
                   <Avatar
-                    src={avatarImage || url}
-                    size={110}
-                    className="border-4 border-white shadow-lg"
+                    src={tempImageUrl || avatarImage || url}
+                    size={100}
+                    className="border-4 border-white shadow-lg bg-top bg-no-repeat"
                   />
+                  {updateAvatarMutation.isPending && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                      <div className="flex gap-1">
+                        <span className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]">
+                          .
+                        </span>
+                        <span className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.2s]">
+                          .
+                        </span>
+                        <span className="w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.1s]">
+                          .
+                        </span>
+                      </div>
+                    </div>
+                  )}
                   <Upload
                     showUploadList={false}
                     onChange={handleAvatarChange}
-                    className="absolute bottom-0 right-0 "
+                    className="absolute bottom-0 right-0"
+                    disabled={updateAvatarMutation.isPending}
                   >
                     <Button
                       type="primary"
                       shape="circle"
                       icon={<CameraOutlined />}
-                      className="bg-blue-400 hover:bg-blue-500 text-white p-2"
+                      disabled={updateAvatarMutation.isPending}
+                      className={`${
+                        updateAvatarMutation.isPending
+                          ? "bg-gray-400"
+                          : "bg-blue-400 hover:bg-blue-500"
+                      } text-white p-2`}
                     />
                   </Upload>
                 </div>

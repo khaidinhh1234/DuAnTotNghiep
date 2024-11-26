@@ -36,49 +36,49 @@ const Detail = ({ record }: any) => {
   });
 
   // const donhang = data?.data;
-  console.log("data", data);
-  console.log("data", products);
+  // console.log("data", data);
+  // console.log("data", products);
 
   const handleCancel = () => {
     setOpen(false);
   };
 
-  const { mutate } = useMutation({
-    mutationFn: async ({ id, action }: any) => {
-      console.log("data", id, action);
+  // const { mutate } = useMutation({
+  //   mutationFn: async ({ id, action }: any) => {
+  //     console.log("data", id, action);
 
-      try {
-        const response = await instance.put("/donhang/trang-thai-don-hang", {
-          trang_thai_don_hang: action,
-          id: [id],
-        });
-        const error = response.data.message;
+  //     try {
+  //       const response = await instance.put("/donhang/trang-thai-don-hang", {
+  //         trang_thai_don_hang: action,
+  //         id: [id],
+  //       });
+  //       const error = response.data.message;
 
-        if (error === "Cập nhật trạng thái đơn hàng thành công") {
-          message.open({
-            type: "success",
-            content: error,
-          });
-        } else {
-          message.open({
-            type: "success",
-            content: error,
-          });
-        }
-        return response.data;
-      } catch (error) {
-        message.open({
-          type: "error",
-          content: "Không thể cập nhật trạng thái đơn hàng!",
-        });
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["ORDERS"],
-      });
-    },
-  });
+  //       if (error === "Cập nhật trạng thái đơn hàng thành công") {
+  //         message.open({
+  //           type: "success",
+  //           content: error,
+  //         });
+  //       } else {
+  //         message.open({
+  //           type: "success",
+  //           content: error,
+  //         });
+  //       }
+  //       return response.data;
+  //     } catch (error) {
+  //       message.open({
+  //         type: "error",
+  //         content: "Không thể cập nhật trạng thái đơn hàng!",
+  //       });
+  //     }
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["ORDERS"],
+  //     });
+  //   },
+  // });
   const tong = data?.data;
   const thongtin = data?.data.thong_tin;
   // if (isLoading) {

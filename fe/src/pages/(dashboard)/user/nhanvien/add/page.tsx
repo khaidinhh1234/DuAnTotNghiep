@@ -46,25 +46,21 @@ const UsersNhanvienAdd = () => {
     mutationFn: async (data) => {
       try {
         const res = await instance.post("/taikhoan", data);
-        return res.data;
-      } catch (error) {
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      message.open({
-        type: "success",
-        content: "Thêm tài khoản Nhân viên thành công",
-      });
-      nav("/admin/users/nhanvien");
 
-      // form.resetFields();
-    },
-    onError: (error: any) => {
-      message.open({
-        type: "error",
-        content: error?.response?.data?.message || "Có lỗi xảy ra",
-      });
+        message.open({
+          type: "success",
+          content: "Thêm tài khoản Nhân viên thành công",
+        });
+        nav("/admin/users/nhanvien");
+        return res.data;
+      } catch (error: any) {
+        console.log(error.response.data.error.email);
+        message.open({
+          type: "error",
+          content:
+            error?.response?.data?.message || error.response.data.error.email,
+        });
+      }
     },
   });
   const [isPending] = useState(false);

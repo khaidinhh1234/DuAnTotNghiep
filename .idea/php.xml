@@ -160,6 +160,8 @@
       <path value="$PROJECT_DIR$/be/vendor/cloudinary/cloudinary_php" />
       <path value="$PROJECT_DIR$/be/vendor/cloudinary/transformation-builder-sdk" />
       <path value="$PROJECT_DIR$/be/vendor/cloudinary-labs/cloudinary-laravel" />
+      <path value="$PROJECT_DIR$/be/vendor/irazasyed/telegram-bot-sdk" />
+      <path value="$PROJECT_DIR$/be/vendor/league/event" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
