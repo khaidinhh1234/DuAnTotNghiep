@@ -45,13 +45,13 @@ const TransportDetail = ({ record }: any) => {
     }
   );
   const thongtin = data?.data?.thong_tin;
-  console.log(thongtin);
+  // console.log(thongtin);
   const donhang = data?.data?.van_chuyen?.don_hang;
 
   const vanchuyen = data?.data?.van_chuyen;
 
-  const webcam = data?.data?.anh_xac_thuc;
-  console.log(webcam);
+  // const webcam = data?.data?.anh_xac_thuc;
+  // console.log(webcam);
   const handleCancel = () => {
     setOpen(false);
   };
@@ -85,7 +85,6 @@ const TransportDetail = ({ record }: any) => {
           });
         }
         return response.data;
-
       } catch (error) {
         message.error("Lỗi xảy ra");
       }
@@ -228,7 +227,7 @@ const TransportDetail = ({ record }: any) => {
         acc[`lan${index + 1}`] = note;
         return acc;
       }, {});
-      
+
       const response = await instance.put(
         `/vanchuyen/xac-nhan-van-chuyen/${record.id}`,
         {
@@ -239,7 +238,7 @@ const TransportDetail = ({ record }: any) => {
 
       if (response.data.status) {
         message.success("Ghi chú đã được gửi thành công");
-        setNoteSubmissionCount(noteSubmissionCount + 1); 
+        setNoteSubmissionCount(noteSubmissionCount + 1);
 
         if (noteSubmissionCount + 1 === 2) {
           setButtonLabel("Xác nhận giao hàng thất bại");
@@ -267,7 +266,7 @@ const TransportDetail = ({ record }: any) => {
         ghi_chu: ghiChuCapNhat, // Gửi ghi chú đầy đủ
         id: [record.id],
       });
-  
+
       if (response.data.status) {
         // Cập nhật state cục bộ
         setFilteredData((prev) =>
@@ -277,7 +276,7 @@ const TransportDetail = ({ record }: any) => {
               : item
           )
         );
-        setIsDeliveryConfirmed(true); 
+        setIsDeliveryConfirmed(true);
 
         // Ẩn form ghi chú
         setIsFailureNoteVisible(false);
@@ -292,7 +291,7 @@ const TransportDetail = ({ record }: any) => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div>
       {" "}
@@ -425,7 +424,7 @@ const TransportDetail = ({ record }: any) => {
                   : `${thongtin?.ten_nguoi_dat_hang || ""} (+${thongtin?.so_dien_thoai_nguoi_dat_hang || ""})`}
               </p>
               <p className="text-gray-500 text-sm">
-                Địa chỉ: {" "}
+                Địa chỉ:{" "}
                 {record.van_chuyen?.don_hang?.dia_chi_nguoi_dat_hang
                   ? record.van_chuyen?.don_hang.dia_chi_nguoi_dat_hang
                   : thongtin?.dia_chi_nguoi_dat_hang}
@@ -528,7 +527,7 @@ const TransportDetail = ({ record }: any) => {
             <div className="flex flex-col gap-2 w-full">
               {/* Nút Giao hàng */}
               {record.trang_thai_van_chuyen === "Chờ xử lý" ||
-                record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
+              record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
                 <button
                   className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
                   onClick={() => {
@@ -614,45 +613,47 @@ const TransportDetail = ({ record }: any) => {
                       onClick={handleSave}
                       disabled={loading || isImageSaved}
                     >
-                      {loading ? "Đang xử lý..." : "Xác nhận giao hàng thành công"}
+                      {loading
+                        ? "Đang xử lý..."
+                        : "Xác nhận giao hàng thành công"}
                     </button>
                   )}
                 </div>
               )}
               {/* Phần hiển thị khi chọn Giao hàng thất bại */}
               {isFailureNoteVisible && (
-  <div className="flex flex-col mt-4">
-    <textarea
-      value={currentNote}
-      onChange={(e) => setCurrentNote(e.target.value)}
-      placeholder="Nhập ghi chú tại đây"
-      className="w-full border rounded-lg p-2"
-    />
-    <button
-      className="w-full py-2 border bg-blue-500 rounded-lg text-white hover:bg-blue-700 font-semibold mt-2"
-      onClick={
-        buttonLabel === "Xác nhận giao hàng thất bại"
-          ? handleFailureConfirm
-          : handleSendNote
-      }
-      disabled={loading}
-    >
-      {buttonLabel}
-    </button>
-    {notes.length > 0 && (
-      <div className="mt-4">
-        <h3 className="font-semibold">Danh sách ghi chú:</h3>
-        <ul className="list-disc pl-5">
-          {notes.map((note: any, index: number) => (
-            <h5 key={index} className="mt-1">
-              {note}
-            </h5>
-          ))}
-        </ul>
-      </div>
-    )}
-  </div>
-)}
+                <div className="flex flex-col mt-4">
+                  <textarea
+                    value={currentNote}
+                    onChange={(e) => setCurrentNote(e.target.value)}
+                    placeholder="Nhập ghi chú tại đây"
+                    className="w-full border rounded-lg p-2"
+                  />
+                  <button
+                    className="w-full py-2 border bg-blue-500 rounded-lg text-white hover:bg-blue-700 font-semibold mt-2"
+                    onClick={
+                      buttonLabel === "Xác nhận giao hàng thất bại"
+                        ? handleFailureConfirm
+                        : handleSendNote
+                    }
+                    disabled={loading}
+                  >
+                    {buttonLabel}
+                  </button>
+                  {notes.length > 0 && (
+                    <div className="mt-4">
+                      <h3 className="font-semibold">Danh sách ghi chú:</h3>
+                      <ul className="list-disc pl-5">
+                        {notes.map((note: any, index: number) => (
+                          <h5 key={index} className="mt-1">
+                            {note}
+                          </h5>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Kết quả sau khi giao hàng */}
               {record.trang_thai_van_chuyen === "Giao hàng thành công" && (
@@ -667,11 +668,11 @@ const TransportDetail = ({ record }: any) => {
                         src={record.anh_xac_thuc}
                         alt="Ảnh xác thực"
                         style={{
-                          width: '100%',
-                          maxHeight: '24rem',
-                          objectFit: 'contain',
-                          border: '1px solid #ddd',
-                          borderRadius: '0.5rem',
+                          width: "100%",
+                          maxHeight: "24rem",
+                          objectFit: "contain",
+                          border: "1px solid #ddd",
+                          borderRadius: "0.5rem",
                         }}
                         preview={{
                           mask: <span>Xem ảnh</span>,
@@ -691,9 +692,8 @@ const TransportDetail = ({ record }: any) => {
                     <div className="mt-4">
                       <h4 className="text-lg font-bold">Lịch sử giao hàng:</h4>
                       <ul className="mt-2 list-disc list-inside text-left text-gray-700">
-                        <li >
+                        <li>
                           <span className="font-medium">{record.ghi_chu}</span>
-
                         </li>
                       </ul>
                     </div>

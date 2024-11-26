@@ -371,7 +371,7 @@
 
                     <a href="#" className="hover:text-blue-500">Giới thiệu</a>
                     <a href="#" className="hover:text-blue-500">Bài viết</a>
-                    <a href="#" className="hover:text-blue-500">Khuyến mại</a>
+                    <a href="#" className="hover:text-blue-500">Khuyến mãi</a>
                     <a href="#" className="hover:text-blue-500">Liên hệ</a>
                 </nav>
 

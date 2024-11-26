@@ -14,11 +14,19 @@ import VerificationModal from "./VerificationModal";
 
 const ShippingAddressPage = () => {
   const [trangthai, settrangthai] = useState("Thanh toán khi nhận hàng");
-  console.log(trangthai);
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
-
-  const [user] = useLocalStorage("user" as any, {});
-  const member = user?.user;
+  const { data } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.post("/cap-nhat-thong-tin");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    },
+  });
+  const khachhang = data?.data?.user;
   // console.log(member);
   const {
     register,
@@ -28,10 +36,10 @@ const ShippingAddressPage = () => {
   } = useForm({
     resolver: zodResolver(checkout_address),
     defaultValues: {
-      ten_nguoi_dat_hang: member?.ho + " " + member?.ten || "",
-      so_dien_thoai_nguoi_dat_hang: member?.so_dien_thoai || "",
-      dia_chi_nguoi_dat_hang: member?.dia_chi || "",
-      email_nguoi_dat_hang: member?.email || "",
+      ten_nguoi_dat_hang: khachhang?.ho + " " + khachhang?.ten || "",
+      so_dien_thoai_nguoi_dat_hang: khachhang?.so_dien_thoai || "",
+      dia_chi_nguoi_dat_hang: khachhang?.dia_chi || "",
+      email_nguoi_dat_hang: khachhang?.email || "",
       phuong_thuc_thanh_toan: "Thanh toán khi nhận hàng",
     },
   });

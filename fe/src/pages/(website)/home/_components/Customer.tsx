@@ -77,7 +77,7 @@ const Customer = ({ danhgia }: any) => {
                           className="text-2xl"
                         />
                       </div>
-                      <p className="text-gray-600 font-medium mb-5 w-[330px] text-start">
+                      <p className="text-gray-600 font-medium mb-5 w-[300px] text-start">
                         {item?.mo_ta}
                       </p>
                     </div>

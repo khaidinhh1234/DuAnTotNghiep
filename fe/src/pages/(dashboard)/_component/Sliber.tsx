@@ -15,7 +15,7 @@ import {
   User,
   MessageCircleDashed,
 } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const { Sider } = Layout;
@@ -23,35 +23,40 @@ const { SubMenu } = Menu;
 
 const SiderComponent: React.FC = () => {
   const navigate = useNavigate();
-
+  const [collapsed, setCollapsed] = useState(false); // State for handling collapse
   const handleMenuClick = ({ key }: { key: string }) => {
-    navigate(key);
+    navigate(key); // Navigates to the selected route
   };
-  const [user] = useLocalStorage("user" as any, {});
-  const quyen = user.quyen;
-  // console.log(quyen);
-  // console.log(user);
+
+  const [user] = useLocalStorage("user" as any, {}); // Gets user data from localStorage
+  const quyen = user.quyen; // User's permissions
   const vaitro =
-    user?.user?.vai_tros?.map((item: any) => item.ten_vai_tro) || [];
-  // console.log(vaitro);
+    user?.user?.vai_tros?.map((item: any) => item.ten_vai_tro) || []; // User's roles
+
   useEffect(() => {
     if (vaitro.includes("Người giao hàng")) {
-      navigate("/admin/orders/uncomfirmedorder");
+      navigate("/admin/orders/uncomfirmedorder"); // Redirect to unconfirmed orders if the role is "Người giao hàng"
     }
   }, [quyen]);
+
   return (
     <Layout className="min-h-screen flex">
       <Sider
         width={320}
-        className="bg-white text-black overflow-y-auto h-[900px]"
+        className="bg-white text-white overflow-y-auto h-[900px]"
         style={{ position: "relative" }}
+        collapsible
+        collapsed={collapsed} // State for collapse
+        onCollapse={setCollapsed} // Toggle collapse state
+        breakpoint="lg" // Sidebar will collapse on screens smaller than "lg"
       >
         <Menu
           mode="inline"
           defaultSelectedKeys={["/admin/dashboard"]}
           onClick={handleMenuClick}
-          className="text-black py-5 font-semibold text-base space-y-4"
+          className="text-white py-5 font-semibold text-base space-y-4"
         >
+          {/* Thống kê (Statistics) Menu */}
           {vaitro?.includes("Người giao hàng") ? null : (
             <SubMenu key="sub1" icon={<BarChart2 />} title="Thống kê">
               <Menu.Item key="/admin/dashboard/list">Tổng quan</Menu.Item>
@@ -60,6 +65,8 @@ const SiderComponent: React.FC = () => {
               <Menu.Item key="/admin/dashboard/taikhoan">Khách hàng</Menu.Item>
             </SubMenu>
           )}
+
+          {/* Sản phẩm (Products) Menu */}
           {(quyen?.includes("admin.sanpham.index") ||
             (quyen?.includes("admin.bienthekichthuoc.index") &&
               quyen?.includes("admin.bienthemausac.index")) ||
@@ -80,6 +87,7 @@ const SiderComponent: React.FC = () => {
             </SubMenu>
           )}
 
+          {/* Danh mục (Categories) Menu */}
           {(quyen?.includes("admin.danhmuctintuc.index") ||
             quyen?.includes("admin.danhmuc.index")) && (
             <SubMenu key="sub3" icon={<Folder />} title="Danh mục">
@@ -88,24 +96,19 @@ const SiderComponent: React.FC = () => {
               )}
               {quyen?.includes("admin.danhmuctintuc.index") && (
                 <Menu.Item key="/admin/newcategory">Danh mục tin tức</Menu.Item>
-              )}{" "}
+              )}
             </SubMenu>
           )}
 
+          {/* Đơn hàng (Orders) Menu */}
           {quyen?.includes("admin.donhang.index") && (
             <SubMenu key="sub4" icon={<ShoppingCart />} title="Đơn hàng">
               <Menu.Item key="/admin/orders/transport">Tổng quan</Menu.Item>
-
               {quyen.includes("admin.donhang.index") && (
                 <Menu.Item key="/admin/orders/list">
                   Danh sách đơn hàng
                 </Menu.Item>
               )}
-              {/* {quyen.includes("admin.vanchuyen.index") && (
-                <Menu.Item key="/admin/orders/uncomfirmedorder">
-                  Vận chuyển
-                </Menu.Item>
-              )} */}
               {quyen.includes("admin.donhang.hoanhang") && (
                 <Menu.Item key="/admin/orders/donhoan">
                   Danh sách đơn hoàn
@@ -121,6 +124,8 @@ const SiderComponent: React.FC = () => {
               )}
             </SubMenu>
           )}
+
+          {/* Other Menus */}
           {quyen?.includes("admin.rut-tien.xacnhan") && (
             <Menu.Item
               key="/admin/orders/ruttien"
@@ -130,6 +135,7 @@ const SiderComponent: React.FC = () => {
             </Menu.Item>
           )}
 
+          {/* Tài khoản (Account) Menu */}
           {(quyen?.includes("admin.taikhoan.index") ||
             quyen?.includes("admin.hangthanhvien.index")) && (
             <SubMenu key="sub5" icon={<User />} title="Tài khoản">
@@ -143,11 +149,12 @@ const SiderComponent: React.FC = () => {
               )}
             </SubMenu>
           )}
-          {(quyen?.includes("admin.chuongtrinhuudai.index") ||
-            quyen?.includes("admin.makhuyenmai.index")) && (
-            <SubMenu key="sub6" icon={<Tag />} title="Khuyến mại & Ưu đãi">
+
+          {/* Other Menus */}
+          {quyen?.includes("admin.chuongtrinhuudai.index") && (
+            <SubMenu key="sub6" icon={<Tag />} title="Khuyến mãi & Ưu đãi">
               {quyen?.includes("admin.makhuyenmai.index") && (
-                <Menu.Item key="/admin/vouchers">Mã khuyến mại</Menu.Item>
+                <Menu.Item key="/admin/vouchers">Mã khuyến mãi</Menu.Item>
               )}
               {quyen?.includes("admin.chuongtrinhuudai.index") && (
                 <Menu.Item key="/admin/chuongtrinhuudai">
@@ -166,7 +173,6 @@ const SiderComponent: React.FC = () => {
               Đánh giá
             </Menu.Item>
           )}
-
           {quyen?.includes("admin.lienhe.index") && (
             <Menu.Item key="/admin/support" icon={<Mail />}>
               Liên hệ
@@ -177,20 +183,6 @@ const SiderComponent: React.FC = () => {
               Phân quyền
             </Menu.Item>
           )}
-
-          {quyen?.includes("admin.thongtinweb.index") && (
-            <SubMenu key="sub7" icon={<AlignJustify />} title="Nội dung">
-              <Menu.Item key="/admin/Content/qlfooter">Footer</Menu.Item>
-              <Menu.Item key="/admin/Content/qlbanner">Banner</Menu.Item>
-            </SubMenu>
-          )}
-
-          {quyen?.includes("admin.vanchuyen.index") &&
-            vaitro?.includes("Người giao hàng") && (
-              <Menu.Item key="/admin/orders/uncomfirmedorder">
-                Vận chuyển
-              </Menu.Item>
-            )}
         </Menu>
       </Sider>
     </Layout>

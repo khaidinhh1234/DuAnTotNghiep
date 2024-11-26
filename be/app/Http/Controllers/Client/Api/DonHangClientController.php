@@ -118,9 +118,7 @@ class DonHangClientController extends Controller
                     return $order->chiTiets->sum('thanh_tien');
                 });
             } else {
-                $donHang = DonHang::query()
-                    ->where('user_id', $user->id)
-                    ->with([
+                $donHang = DonHang::where('user_id', $user->id)->with([
                         'chiTiets.bienTheSanPham.sanPham',
                         'chiTiets.bienTheSanPham.mauBienThe',
                         'chiTiets.bienTheSanPham.kichThuocBienThe',
@@ -231,15 +229,16 @@ class DonHangClientController extends Controller
                 'chiTiets.bienTheSanPham.mauBienThe',
                 'chiTiets.bienTheSanPham.kichThuocBienThe',
                 'chiTiets.bienTheSanPham.anhBienThe',
-                'danhGias.user',
+                'danhGias' => function ($query) {
+                    $query->withTrashed();
+                },
                 'vanChuyen',
             ])->where('ma_don_hang', $maDonHang)->firstOrFail();
 
-            //Lấy mã giảm giá
+
             $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
             $soTienGiamGia = 0;
             if ($donHang->ma_giam_gia) {
-
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
                     ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
                     : $maGiamGia->giam_gia;
@@ -249,6 +248,7 @@ class DonHangClientController extends Controller
                 }
             }
 
+            // Xử lý chi tiết đơn hàng
             $chiTietDonHang = $donHang->chiTiets->map(function ($chiTiet) {
                 $anhBienThe = $chiTiet->bienTheSanPham->anhBienThe->pluck('duong_dan_anh')->toArray();
                 $anhSanPham = $chiTiet->bienTheSanPham->sanPham->duong_dan_anh;
@@ -260,22 +260,21 @@ class DonHangClientController extends Controller
                     'kich_thuoc_bien_the' => $chiTiet->bienTheSanPham->kichThuocBienThe->kich_thuoc,
                     'anh_bien_the' => $anhBienThe,
                     'so_luong' => $chiTiet->so_luong,
-                    'gia' => $chiTiet->bianTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban,
+                    'gia' => $chiTiet->bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban,
                     'thanh_tien' => $chiTiet->so_luong * ($chiTiet->bienTheSanPham->gia_khuyen_mai_tam_thoi ?? $chiTiet->bienTheSanPham->gia_khuyen_mai ?? $chiTiet->bienTheSanPham->gia_ban),
                 ];
             });
 
-            $danhGiaDonHang = $donHang->danhGias->map(function ($danhGia) {
-                return [
-                    'so_sao_san_pham' => $danhGia->so_sao_san_pham,
-                    'so_sao_dich_vu_van_chuyen' => $danhGia->so_sao_dich_vu_van_chuyen,
-                    'chat_luong_san_pham' => $danhGia->chat_luong_san_pham,
-                    'mo_ta' => $danhGia->mo_ta,
-                    'phan_hoi' => $danhGia->phan_hoi,
-                    'huu_ich' => $danhGia->huu_ich
-                ];
+            // Tách đánh giá chưa bị xóa và đã bị xóa mềm
+            $danhGiaChuaXoa = $donHang->danhGias->filter(function ($danhGia) {
+                return !$danhGia->trashed(); // Lấy đánh giá chưa bị xóa
             });
 
+            $danhGiaDaXoa = $donHang->danhGias->filter(function ($danhGia) {
+                return $danhGia->trashed(); // Lấy đánh giá đã bị xóa mềm
+            });
+
+            // Thông tin người đặt hàng
             $thongTin = [
                 'ten_nguoi_dat_hang' => $donHang->ten_nguoi_dat_hang ?: ($donHang->user->ho . " " . $donHang->user->ten),
                 'so_dien_thoai_nguoi_dat_hang' => $donHang->so_dien_thoai_nguoi_dat_hang ?: $donHang->user->so_dien_thoai,
@@ -288,6 +287,7 @@ class DonHangClientController extends Controller
             // Tính tiền ship
             $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
             $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
+
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -302,7 +302,8 @@ class DonHangClientController extends Controller
                     'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
                     'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? "",
-                    'danh_gia' => $danhGiaDonHang
+                    'danh_gia_chua_xoa' => $danhGiaChuaXoa->values(),
+                    'danh_gia_da_xoa' => $danhGiaDaXoa->values(),
                 ]
             ], 200);
         } catch (\Exception $e) {

@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 
-const ListMyProfile = ({ member }: any) => {
+const ListMyProfile = () => {
   const [avatarImage, setAvatarImage] = useState<string>("");
   const [{ user }, setUser] = useLocalStorage("user" as any, {});
   const [tempImageUrl, setTempImageUrl] = useState<string>("");
@@ -23,10 +23,7 @@ const ListMyProfile = ({ member }: any) => {
         setUser(newUser);
       }
     };
-
     window.addEventListener("storage", handleStorageChange);
-
-    // Dọn dẹp khi component unmount
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
@@ -143,9 +140,9 @@ const ListMyProfile = ({ member }: any) => {
             <h1 className="text-2xl tracking-wider font-semibold mt-2">
               {userpro?.ho} {userpro?.ten}
               {userpro?.gioi_tinh !== null &&
-                (userpro?.gioi_tinh === 1 ? (
+                (userpro?.gioi_tinh == 1 ? (
                   <i className="fa-solid fa-mars text-[#74C0FC] mx-2"></i>
-                ) : userpro?.gioi_tinh === 2 ? (
+                ) : userpro?.gioi_tinh == 2 ? (
                   <i className="fa-regular fa-venus text-[#f39bf0] mx-2"></i>
                 ) : (
                   ""
@@ -181,11 +178,11 @@ const ListMyProfile = ({ member }: any) => {
             <p className="mb-0">
               <i className="fa-solid fa-person-half-dress"></i>
               <span className="mx-2">
-                {userpro?.gioi_tinh === 1
+                {userpro?.gioi_tinh == 1
                   ? "Nam"
-                  : userpro?.gioi_tinh === 2
+                  : userpro?.gioi_tinh == 2
                     ? "Nữ"
-                    : userpro?.gioi_tinh === 2
+                    : userpro?.gioi_tinh == 3
                       ? "khác"
                       : "không có dữ liệu"}
               </span>
@@ -243,81 +240,13 @@ const ListMyProfile = ({ member }: any) => {
                 style={{ borderRadius: "25px" }}
               />
             </div>
-            <p className="pt-4">{hang_thanh_vien?.chi_tieu_toi_da || 500.0}</p>
+            <p className="pt-4">
+              {hang_thanh_vien?.chi_tieu_toi_da.toLocaleString("vi-VN") ||
+                "1.000.000"}
+            </p>
           </div>
         </div>
       </div>
-
-      {/* <form className="my-8 mb-8">
-                  <div className="flex justify-between  mb-7">
-                    <div className="">
-                      <label htmlFor="name" className="text-md px-3">
-                        {" "}
-                        Tên
-                      </label>
-                      <br />
-                      <input
-                        type="text"
-                        defaultValue="Robert"
-                        readOnly
-                        className="cursor-default border border-t-2 border-l-2 border-blackL px-5 py-3 xl:w-[403px] lg:w-[350px] md:w-[353px] sm:w-[273px] h-14 focus:ring-1 focus:ring-slate-500 rounded-xl mr-2"
-                      />
-                    </div>
-                    <div className="">
-                      <label htmlFor="name" className="text-md px-3">
-                        Họ
-                      </label>
-                      <br />
-                      <input
-                        type="text"
-                        defaultValue="Fox"
-                        readOnly
-                        className="border border-t-2 border-l-2 border-blackL px-5 py-3 xl:w-[403px]  lg:w-[350px] md:w-[353px] sm:w-[273px] h-14 focus:ring-1 focus:ring-slate-500 rounded-xl"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex justify-between  mb-7">
-                    <div className="">
-                      <label htmlFor="name" className="text-md px-3">
-                        {" "}
-                        Số Điện Thoại
-                      </label>
-                      <br />
-                      <input
-                        id="name"
-                        type="number"
-                        readOnly
-                        className="cursor-default border border-t-2 border-l-2 border-blackL px-5 py-3 xl:w-[403px]  lg:w-[350px] md:w-[353px] sm:w-[273px] h-14 focus:ring-1 focus:ring-slate-500 rounded-xl mr-2"
-                      />
-                    </div>
-                    <div className="">
-                      <label htmlFor="name" className="text-md px-3">
-                        Địa Chỉ Email
-                      </label>
-                      <br />
-                      <input
-                        type="text"
-                        defaultValue="rebert@gmail.com"
-                        readOnly
-                        className="border border-t-2 border-l-2 border-blackL px-5 py-3 xl:w-[403px]  lg:w-[350px] md:w-[353px] sm:w-[273px] h-14 focus:ring-1 focus:ring-slate-500 rounded-xl"
-                      />
-                    </div>
-                  </div>
-                  <div className="my-5">
-                    <label htmlFor="name" className="text-md px-1">
-                      {" "}
-                      Địa Chỉ
-                    </label>
-                    <br />
-                    <input
-                      id="name"
-                      type="text"
-                      defaultValue="Đối Diện Bưu Điện Hà Đông(15 Quang Trung Hà Đông)"
-                      readOnly
-                      className="border border-t-2 border-l-2 border-blackL px-5 py-3 w-full focus:ring-1 focus:ring-slate-500 rounded-xl"
-                    />
-                  </div>
-                </form> */}
     </>
   );
 };
