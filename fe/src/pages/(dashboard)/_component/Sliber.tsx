@@ -145,9 +145,9 @@ const SiderComponent: React.FC = () => {
           )}
           {(quyen?.includes("admin.chuongtrinhuudai.index") ||
             quyen?.includes("admin.makhuyenmai.index")) && (
-            <SubMenu key="sub6" icon={<Tag />} title="Khuyến mại & Ưu đãi">
+            <SubMenu key="sub6" icon={<Tag />} title="Khuyến mãi & Ưu đãi">
               {quyen?.includes("admin.makhuyenmai.index") && (
-                <Menu.Item key="/admin/vouchers">Mã khuyến mại</Menu.Item>
+                <Menu.Item key="/admin/vouchers">Mã khuyến mãi</Menu.Item>
               )}
               {quyen?.includes("admin.chuongtrinhuudai.index") && (
                 <Menu.Item key="/admin/chuongtrinhuudai">

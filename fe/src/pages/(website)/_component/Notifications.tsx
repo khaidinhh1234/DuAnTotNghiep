@@ -16,7 +16,7 @@ interface Notification {
   duong_dan: string;
   id_duong_dan: string;
   created_at: string;
-  loai: "Đơn hàng" | "Yêu cầu rút tiền" | "Khuyến mại";
+  loai: "Đơn hàng" | "Yêu cầu rút tiền" | "Khuyến mãi";
 }
 
 interface NotificationResponse {
@@ -35,7 +35,7 @@ const getNotificationRoute = (notification: Notification): string => {
       return `/mypro/myorder/${notification.duong_dan}`;
     case "Yêu cầu rút tiền":
       return "/mypro/wallet";
-    case "Khuyến mại":
+    case "Khuyến mãi":
       return `/shop/${notification.duong_dan}`;
     default:
       return "#";
