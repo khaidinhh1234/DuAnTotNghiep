@@ -13,7 +13,6 @@ import {
 import React, { useState, useEffect } from "react";
 
 import TransportDetail from "./TransportDetail";
-import { Link } from "react-router-dom";
 import MainHeader from "./MainHeader";
 
 type TableRowSelection<T extends object = object> =
@@ -76,13 +75,15 @@ const AllTransport: React.FC = () => {
   useEffect(() => {
     if (data?.data) {
       let filtered = data.data;
-
+  
+      // Lọc dữ liệu theo từ khóa tìm kiếm
       if (searchText) {
         filtered = filtered.filter((item: Transport) =>
           item.ma_van_chuyen.toLowerCase().includes(searchText.toLowerCase())
         );
       }
-
+  
+      // Lọc dữ liệu theo khoảng ngày
       if (dateRange) {
         const [start, end] = dateRange;
         filtered = filtered.filter((item: Transport) => {
@@ -90,16 +91,23 @@ const AllTransport: React.FC = () => {
           return itemDate >= start && itemDate <= end;
         });
       }
-
+  
+      // Lọc dữ liệu theo tab trạng thái
       if (activeTab !== "Tất cả") {
         filtered = filtered.filter((item: Transport) =>
           item.trang_thai_van_chuyen === activeTab
         );
       }
-
+  
+      // Sắp xếp dữ liệu theo ngày (mới nhất lên trên)
+      filtered.sort((a, b) => {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+  
       setFilteredData(filtered);
     }
   }, [searchText, dateRange, activeTab, data]);
+  
 
   const columns: TableColumnsType<{
     id: number;
