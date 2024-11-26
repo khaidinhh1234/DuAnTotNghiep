@@ -495,7 +495,7 @@ const Header = () => {
                 onMouseLeave={() => setIsCartVisible(false)}
               >
                 {" "}
-                <a href="/gio-hang">
+                <Link to="/gio-hang">
                   <i className="fa-regular fa-bag-shopping text-xl relative px-1">
                     <span
                       className={`${
@@ -505,7 +505,7 @@ const Header = () => {
                       {totalUniqueProducts || 0}{" "}
                     </span>
                   </i>
-                </a>
+                </Link>
                 {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
                 {/* <CartOverlay isVisible={isCartVisible} /> */}
                 {/* </div> */}
