@@ -8,7 +8,7 @@ import {
   Table,
   TableColumnsType,
   TableProps,
-  Tabs
+  Tabs,
 } from "antd";
 import React, { useState, useEffect } from "react";
 
@@ -75,39 +75,42 @@ const AllTransport: React.FC = () => {
   useEffect(() => {
     if (data?.data) {
       let filtered = data.data;
-  
+
       // Lọc dữ liệu theo từ khóa tìm kiếm
       if (searchText) {
         filtered = filtered.filter((item: Transport) =>
           item.ma_van_chuyen.toLowerCase().includes(searchText.toLowerCase())
         );
       }
-  
+
       // Lọc dữ liệu theo khoảng ngày
       if (dateRange) {
         const [start, end] = dateRange;
         filtered = filtered.filter((item: Transport) => {
-          const itemDate = new Date(item.created_at).toISOString().split("T")[0];
+          const itemDate = new Date(item.created_at)
+            .toISOString()
+            .split("T")[0];
           return itemDate >= start && itemDate <= end;
         });
       }
-  
+
       // Lọc dữ liệu theo tab trạng thái
       if (activeTab !== "Tất cả") {
-        filtered = filtered.filter((item: Transport) =>
-          item.trang_thai_van_chuyen === activeTab
+        filtered = filtered.filter(
+          (item: Transport) => item.trang_thai_van_chuyen === activeTab
         );
       }
-  
+
       // Sắp xếp dữ liệu theo ngày (mới nhất lên trên)
-      filtered.sort((a, b) => {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      filtered.sort((a: any, b: any) => {
+        return (
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
       });
-  
+
       setFilteredData(filtered);
     }
   }, [searchText, dateRange, activeTab, data]);
-  
 
   const columns: TableColumnsType<{
     id: number;
@@ -115,22 +118,22 @@ const AllTransport: React.FC = () => {
     don_hang_id: number;
     trang_thai_van_chuyen: string;
   }> = [
-      {
-        title: "Tất cả",
-        className: "text-xl w-1/2",
-        dataIndex: "created_at",
-        key: "created_at",
-        render: (_, record) => (
-          <div className="border rounded-lg p-4 mb-4">
-            <TransportDetail record={record} />
-          </div>
-        ),
-      },
-    ];
+    {
+      title: "Tất cả",
+      className: "text-xl w-1/2",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (_, record) => (
+        <div className="border rounded-lg p-4 mb-4">
+          <TransportDetail record={record} />
+        </div>
+      ),
+    },
+  ];
 
   return (
     <main className="flex flex-1 flex-col gap-0 p-0 lg:gap-6 lg:px-6 lg:py-10 container">
-           <MainHeader />
+      <MainHeader />
       {/* <div className="flex justify-between items-start mx-10">
         <div className="flex gap-5 items-center">
           <Link to='/'>

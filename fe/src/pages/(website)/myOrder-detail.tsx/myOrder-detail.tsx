@@ -43,7 +43,7 @@ const MyOrderdetail = () => {
   };
   // console.log("Data:", data);
   const chitiet = data?.data;
-  // console.log("Chi tiết đơn hàng:", chitiet);
+  console.log("Chi tiết đơn hàng:", chitiet?.danh_gia?.length);
   // console.log(chitiet);
   // const chitietsanpham = data?.data?.don_hang;
   const thongtin = data?.data?.thong_tin;
@@ -284,15 +284,15 @@ const MyOrderdetail = () => {
                 : donhang?.trang_thai_don_hang}
           </h1>
           {chitiet?.danh_gia?.length <= 0 ? (
-            donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
-            (donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng" && (
+            (donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
+              donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng") && (
               <button
                 className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
                 onClick={() => handleDanhgia()}
               >
                 Đánh giá
               </button>
-            ))
+            )
           ) : (
             <button
               className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
