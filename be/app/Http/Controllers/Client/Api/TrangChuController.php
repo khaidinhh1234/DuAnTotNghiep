@@ -234,8 +234,6 @@ class TrangChuController extends Controller
             ->whereIn('so_sao_san_pham', [5])
             ->orderByDesc('id')
             ->get()
-            ->unique('user.id')
-            ->unique('sanPham.id')
             ->take(8);
 
         $dataTinTucMoi = TinTuc::query()
