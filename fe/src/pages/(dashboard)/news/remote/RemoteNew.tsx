@@ -2,7 +2,7 @@ import { INew } from "@/common/types/new";
 import instance from "@/configs/admin";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Popconfirm, Space, Table, TableColumnsType } from "antd";
+import { Button, message, Popconfirm, Space, Table, TableColumnsType } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -30,11 +30,11 @@ const RemoteNew: React.FC = () => {
   const handleRestore = async (id: number) => {
     try {
       await instance.post(`/tintuc/thung-rac/${id}`);
-      toast.success("Khôi phục tin tức thành công");
+      message.success("Khôi phục tin tức thành công");
       queryClient.invalidateQueries({ queryKey: ["tintuc-da-xoa"] }); // Invalidate query sau khi khôi phục
     } catch (error) {
       console.error("Error restoring news:", error);
-      toast.error("Khôi phục tin tức thất bại");
+      message.error("Khôi phục tin tức thất bại");
     }
   };
 
@@ -43,11 +43,11 @@ const RemoteNew: React.FC = () => {
     data?.data.map((newsItem: any) => ({
       key: newsItem.id,
       ...newsItem,
-      user_id: newsItem.user?.ten || "Chưa có dữ liệu", // Kiểm tra user
+      user_id: newsItem.user?.ho + " " + newsItem.user?.ten || "Chưa có dữ liệu",
       danh_muc_tin_tuc_id:
         newsItem.danh_muc_tin_tuc_id?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu", // Kiểm tra danh mục
     })) || [];
-  console.log("toan", dataSource);
+  // console.log("toan", dataSource);
   const columns: TableColumnsType<INew> = [
     {
       title: "STT",

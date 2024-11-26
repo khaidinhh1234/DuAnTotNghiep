@@ -27,7 +27,7 @@ const TransportDetail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const id = record?.id;
   const { data } = useQuery({
-    queryKey: ["SHIPPER", id],
+    queryKey: ["vanchuyen", id],
     queryFn: async () => {
       const response = await instance.get(`/vanchuyen/${id}`);
       return response.data;
@@ -84,13 +84,8 @@ const TransportDetail = ({ record }: any) => {
             // ghi_chu: notes,
           });
         }
-        // const error = response.data.message;
         return response.data;
-        // if (error) {
-        //     message.success(error);
-        // } else {
-        //     message.success("Cập nhật thành công");
-        // }
+
       } catch (error) {
         message.error("Lỗi xảy ra");
       }
@@ -113,6 +108,7 @@ const TransportDetail = ({ record }: any) => {
   });
   const [currentNote, setCurrentNote] = useState(""); // Để lưu ghi chú hiện tại
   const [isFailureNoteVisible, setIsFailureNoteVisible] = useState(false);
+  const [isDeliveryConfirmed, setIsDeliveryConfirmed] = useState(false);
 
   // const [noteCount, setNoteCount] = useState(0);
   const [isSuccessDeliveryOpen, setIsSuccessDeliveryOpen] = useState(false);
@@ -175,6 +171,7 @@ const TransportDetail = ({ record }: any) => {
   const handleSave = async () => {
     try {
       setLoading(true);
+
       if (!url) {
         message.error("Vui lòng chụp ảnh trước khi xác nhận");
         setLoading(false);
@@ -203,6 +200,9 @@ const TransportDetail = ({ record }: any) => {
       setIsImageSaved(true);
       setUrl(null);
       setIsWebcamVisible(false);
+
+      // Đánh dấu trạng thái giao hàng thành công
+      setIsDeliveryConfirmed(true);
     } catch (error) {
       message.error("Lỗi khi xác nhận giao hàng");
     } finally {
@@ -527,17 +527,6 @@ const TransportDetail = ({ record }: any) => {
                 </div>
               ) : null}
 
-              {/* Kết quả cuối cùng sau giao hàng */}
-              {/* {isSuccessDeliveryOpen ? (
-                <div className="mt-4 text-center text-green-600 font-semibold">
-                  ✅ Giao hàng thành công!
-                </div>
-              ) : isFailureNoteVisible ? (
-                <div className="mt-4 text-center text-red-600 font-semibold">
-                  ❌ Giao hàng thất bại!
-                </div>
-              ) : null} */}
-
               {/* Phần hiển thị khi chọn Giao hàng thành công */}
               {isSuccessDeliveryOpen && (
                 <div className="flex flex-col gap-2 mt-4">
@@ -582,17 +571,18 @@ const TransportDetail = ({ record }: any) => {
                       )}
                     </div>
                   )}
-                  <button
-                    className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
-                    onClick={handleSave}
-                    disabled={loading || isImageSaved}
-                  >
-                    {loading
-                      ? "Đang xử lý..."
-                      : "Xác nhận giao hàng thành công"}
-                  </button>
+                  {!isDeliveryConfirmed && ( // Chỉ hiển thị nút nếu chưa xác nhận
+                    <button
+                      className="w-full py-2 border bg-purple-500 rounded-lg text-white hover:bg-purple-400 mt-7"
+                      onClick={handleSave}
+                      disabled={loading || isImageSaved}
+                    >
+                      {loading ? "Đang xử lý..." : "Xác nhận giao hàng thành công"}
+                    </button>
+                  )}
                 </div>
               )}
+
 
               {/* Phần hiển thị khi chọn Giao hàng thất bại */}
               {isFailureNoteVisible && (
@@ -639,9 +629,9 @@ const TransportDetail = ({ record }: any) => {
                         style={{
                           width: '100%',
                           maxHeight: '24rem',
-                          objectFit: 'contain', 
+                          objectFit: 'contain',
                           border: '1px solid #ddd',
-                          borderRadius: '0.5rem', 
+                          borderRadius: '0.5rem',
                         }}
                         preview={{
                           mask: <span>Xem ảnh</span>,

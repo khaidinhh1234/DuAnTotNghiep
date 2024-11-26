@@ -161,13 +161,16 @@ const ProductDetail: React.FC = () => {
     if (slug) {
       const viewedProduct = JSON.parse(localStorage.getItem("viewedProduct") || "{}");
       const currentTime = Date.now();
-
-      if (!viewedProduct[slug]) {
-        instanceClient.get(`/chi-tiet-san-pham/${slug}`, {
-          params: { tang_luot_xem: "true" },
-        })
+  
+      // Kiểm tra nếu sản phẩm chưa được xem hoặc đã qua 24 giờ
+      if (!viewedProduct[slug] || (currentTime - viewedProduct[slug]) / (1000 * 60 * 60) > 24) {
+        instanceClient
+          .get(`/chi-tiet-san-pham/${slug}`, {
+            params: { tang_luot_xem: "true" },
+          })
           .then(() => {
             console.log("Lượt xem đã tăng");
+            // Cập nhật thời gian xem
             viewedProduct[slug] = currentTime;
             localStorage.setItem("viewedProduct", JSON.stringify(viewedProduct));
             setViewed(true);
@@ -176,27 +179,11 @@ const ProductDetail: React.FC = () => {
             console.error("Lỗi khi tăng lượt xem:", error);
           });
       } else {
-        const lastViewedTime = viewedProduct[slug];
-        const hoursPassed = (currentTime - lastViewedTime) / (1000 * 60 * 60);
-
-        if (hoursPassed > 24) {
-          instanceClient
-            .post(`/xem-bai-viet/${slug}`, { tang_luot_xem: "true" })
-            .then(() => {
-              console.log("Lượt xem đã tăng");
-              viewedProduct[slug] = currentTime;
-              localStorage.setItem("viewedProduct", JSON.stringify(viewedProduct));
-              setViewed(true);
-            })
-            .catch((error) => {
-              console.error("Lỗi khi tăng lượt xem:", error);
-            });
-        } else {
-          setViewed(true);
-        }
+        setViewed(true); // Đã xem trong vòng 24 giờ
       }
     }
   }, [slug]);
+  
   // useEffect(() => {
   //   const storedToken = localStorage.getItem("accessToken");
   //   if (storedToken) {
