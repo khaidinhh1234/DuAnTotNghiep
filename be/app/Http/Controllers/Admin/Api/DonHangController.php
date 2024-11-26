@@ -14,6 +14,7 @@ use App\Models\Hoan_hang;
 use App\Models\HoanTien;
 use App\Models\MaKhuyenMai;
 use App\Models\ThongBao;
+use App\Models\ThongTinWeb;
 use App\Models\User;
 use App\Models\VanChuyen;
 use App\Models\YeuCauRutTien;
@@ -258,7 +259,6 @@ class DonHangController extends Controller
 
                     $thongBaoTele = new ThongBaoTelegramController();
                     $thongBaoTele->thongBaoDonHangMoi($vanChuyen->id);
-
                 }
 
                 $thongBao = ThongBao::create([
@@ -318,10 +318,23 @@ class DonHangController extends Controller
 
     public function inHoaDon(string $id)
     {
-        $hoaDon = DonHang::query()->with('user', 'chiTiets')->findOrFail($id);
-
+        $thongTinWeb = ThongTinWeb::first();
+        $hoaDon = DonHang::query()
+            ->with([
+                'user',
+                'chiTiets.bienTheSanPham.sanPham',
+                'chiTiets.bienTheSanPham.mauBienThe',
+                'chiTiets.bienTheSanPham.kichThuocBienThe',
+                'vanChuyen'
+            ])
+            ->find($id);
+        if (is_null($hoaDon['ten_nguoi_dat_hang']) && is_null($hoaDon['so_dien_thoai_nguoi_dat_hang']) && is_null($hoaDon['dia_chi_nguoi_dat_hang'])) {
+            $hoaDon['ten_nguoi_dat_hang'] = $hoaDon->user->ho . ' ' . $hoaDon->user->ten;
+            $hoaDon['so_dien_thoai_nguoi_dat_hang'] = $hoaDon->user->so_dien_thoai;
+            $hoaDon['dia_chi_nguoi_dat_hang'] = $hoaDon->user->dia_chi;
+        }
         if ($hoaDon) {
-            $pdf = Pdf::loadView('hoadon.bill', compact('hoaDon'));
+            $pdf = Pdf::loadView('hoadon.bill', compact('hoaDon', 'thongTinWeb'));
             return $pdf->download('Hoadon' . $id . '.pdf');
         }
         return response()->json([
@@ -448,13 +461,15 @@ class DonHangController extends Controller
                     'ngay_tao' => Carbon::now(),
                     'hoan_tien_id' => $id,
                 ]);
-                $donHang->update(['ngay_hoan' => Carbon::now()]);
                 $mess = 'Xác nhận hoàn hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $hoanTien->update(['trang_thai' => 'tu_choi']);
                 $giaoDichVi->update(['trang_thai' => 'that_bai']);
 
-                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_TCHH]);
+                $donHang->update([
+                    'trang_thai_don_hang' => DonHang::TTDH_TCHH,
+                    'ngay_hoan' => null
+                ]);
                 //Lưu giao dịch
                 DB::table('lich_su_giao_diches')->insert([
                     'vi_tien_id' => $giaoDichVi->viTien->id,

@@ -56,7 +56,6 @@ class DonHangClientController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-
             $pageSize = $request->get('pageSize', 10);
             if ($request->all() == null) {
                 $donHang = DonHang::where('user_id', $user->id)->with([
@@ -67,14 +66,12 @@ class DonHangClientController extends Controller
                     'danhGias.user',
                     'vanChuyen',
                 ])->orderByDesc('created_at')->paginate($pageSize);
-
                 // Thực hiện các tính toán cho từng đơn hàng
                 $donHang->each(function ($item) {
                     $item['tong_tien_da_giam'] = $item['tong_tien_don_hang'] - $item['so_tien_giam_gia'];
                     $item['tongSoLuong'] = $item->chiTiets->sum('so_luong');
                     $item['tongTienSanPham'] = $item->chiTiets->sum('thanh_tien');
                 });
-
                 // Xử lý dữ liệu chi tiết đơn hàng và đánh giá
                 $donHang->flatMap(function ($order) {
                     return $order->chiTiets->map(function ($chiTiet) {
@@ -121,24 +118,27 @@ class DonHangClientController extends Controller
                     return $order->chiTiets->sum('thanh_tien');
                 });
             } else {
-                $donHang = DonHang::where('user_id', $user->id)->with([
-                    'chiTiets.bienTheSanPham.sanPham',
-                    'chiTiets.bienTheSanPham.mauBienThe',
-                    'chiTiets.bienTheSanPham.kichThuocBienThe',
-                    'chiTiets.bienTheSanPham.anhBienThe',
-                    'danhGias.user',
-                    'vanChuyen',
-                ])
+                $donHang = DonHang::query()
+                    ->where('user_id', $user->id)
+                    ->with([
+                        'chiTiets.bienTheSanPham.sanPham',
+                        'chiTiets.bienTheSanPham.mauBienThe',
+                        'chiTiets.bienTheSanPham.kichThuocBienThe',
+                        'chiTiets.bienTheSanPham.anhBienThe',
+                        'danhGias.user',
+                        'vanChuyen',
+                    ])
                     ->when($request->filled('trang_thai_don_hang'), function ($query) use ($request) {
-                        $query->where('trang_thai_don_hang', 'like', $request->trang_thai_don_hang)
-                            ->orWhere('trang_thai_thanh_toan', 'like', $request->trang_thai_don_hang);
+                        $query->where('trang_thai_don_hang', $request->trang_thai_don_hang)
+                            ->orWhere('trang_thai_thanh_toan', $request->trang_thai_don_hang);
                     })
-                    ->where(function ($query) use ($request) {
+                    ->when($request->filled('loc'), function ($query) use ($request) {
                         $query->where('ma_don_hang', 'like', '%' . $request->loc . '%')
                             ->orWhereHas('chiTiets.bienTheSanPham.sanPham', function ($query) use ($request) {
                                 $query->where('ten_san_pham', 'like', '%' . $request->loc . '%');
                             });
                     })
+                    ->where('user_id', $user->id)
                     ->orderByDesc('created_at')->paginate($pageSize);
                 // Thực hiện các tính toán cho từng đơn hàng
                 $donHang->each(function ($item) {
@@ -146,7 +146,7 @@ class DonHangClientController extends Controller
                     $item['tongSoLuong'] = $item->chiTiets->sum('so_luong');
                     $item['tongTienSanPham'] = $item->chiTiets->sum('thanh_tien');
                 });
-
+                // dd($donHang->toArray());
                 // Xử lý dữ liệu chi tiết đơn hàng và đánh giá
                 $donHang->flatMap(function ($order) {
                     return $order->chiTiets->map(function ($chiTiet) {
@@ -689,11 +689,11 @@ class DonHangClientController extends Controller
                     'message' => 'Đơn hàng không tồn tại hoặc không thể hủy.',
                 ], 400);
             }
-
+            $thoiGian = Carbon::now();
             $donHang->update([
                 'li_do_huy_hang' => $lidoHuyHang,
                 'trang_thai_don_hang' => DonHang::TTDH_DH,
-                'ngay_huy' => Carbon::now(),
+                'ngay_huy' => $thoiGian,
             ]);
 
             if (
@@ -774,6 +774,7 @@ class DonHangClientController extends Controller
                 'trang_thai_don_hang' => DonHang::TTDH_CXNHH,
                 'li_do_hoan_hang' => $validated['li_do_hoan_hang'],
                 'hinh_anh_hoan_tra' => $validated['hinh_anh_hoan_tra'],
+                'ngay_hoan' => now(),
             ]);
             $viTienId = User::find($userId)->viTien->id;
             $giaoDichVi = GiaoDichVi::create([
