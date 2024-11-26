@@ -203,38 +203,84 @@ const MyOrderdetail = () => {
                 ))}
 
               <div className="mx-5">
-                {chitiet?.danh_gia
-                  ?.slice(0, 1)
-                  .map((item: any, index: number) => (
-                    <div className="border-b border-gray-300 py-5" key={index}>
-                      <div className="flex  items-start gap-5">
-                        <div>
-                          <img
-                            src={`${member?.anh_nguoi_dung}??https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png`}
-                            alt=""
-                            className="w-11 h-11 rounded-full"
-                          />
-                        </div>
-                        <div>
-                          <h1 className=" text-base font-semibold">
-                            {member?.ho + " " + member?.ten}
-                          </h1>
+                {chitiet?.danh_gia_chua_xoa &&
+                  chitiet?.danh_gia_chua_xoa
+                    ?.slice(0, 1)
+                    .map((item: any, index: number) => (
+                      <div
+                        className="border-b border-gray-300 py-5"
+                        key={index}
+                      >
+                        <div className="flex  items-start gap-5">
+                          <div>
+                            <img
+                              src={`${member?.anh_nguoi_dung}??https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png`}
+                              alt=""
+                              className="w-11 h-11 rounded-full"
+                            />
+                          </div>
+                          <div>
+                            <h1 className=" text-base font-semibold">
+                              {member?.ho + " " + member?.ten}
+                            </h1>
 
-                          <Rate disabled defaultValue={item?.so_sao_san_pham} />
+                            <Rate
+                              disabled
+                              defaultValue={item?.so_sao_san_pham}
+                            />
 
-                          <h1 className="text-black/60 font-medium">
-                            Chất lượng sản phẩm:{" "}
-                            <span className="text-black">
-                              {item?.chat_luong_san_pham}
-                            </span>
-                          </h1>
-                          <h1 className="text-black font-semibold">
-                            {item?.mo_ta}
-                          </h1>
+                            <h1 className="text-black/60 font-medium">
+                              Chất lượng sản phẩm:{" "}
+                              <span className="text-black">
+                                {item?.chat_luong_san_pham}
+                              </span>
+                            </h1>
+                            <h1 className="text-black font-semibold">
+                              {item?.mo_ta}
+                            </h1>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                {chitiet?.danh_gia_da_xoa &&
+                  chitiet?.danh_gia_da_xoa
+                    ?.slice(0, 1)
+                    .map((item: any, index: number) => (
+                      <div
+                        className="border-b border-gray-300 py-5"
+                        key={index}
+                      >
+                        <div className="flex  items-start gap-5">
+                          <div>
+                            <img
+                              src={`${member?.anh_nguoi_dung}??https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png`}
+                              alt=""
+                              className="w-11 h-11 rounded-full"
+                            />
+                          </div>
+                          <div>
+                            <h1 className=" text-base font-semibold">
+                              {member?.ho + " " + member?.ten}
+                            </h1>
+
+                            <Rate
+                              disabled
+                              defaultValue={item?.so_sao_san_pham}
+                            />
+
+                            <h1 className="text-black/60 font-medium">
+                              Chất lượng sản phẩm:{" "}
+                              <span className="text-black">
+                                {item?.chat_luong_san_pham}
+                              </span>
+                            </h1>
+                            <h1 className="text-black font-semibold">
+                              {item?.mo_ta}
+                            </h1>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
               </div>
               <div className="flex justify-end mt-5 ">
                 <button
@@ -283,7 +329,8 @@ const MyOrderdetail = () => {
                 ? "Chờ lấy hàng"
                 : donhang?.trang_thai_don_hang}
           </h1>
-          {chitiet?.danh_gia?.length <= 0 ? (
+          {chitiet?.danh_gia_chua_xoa?.length <= 0 &&
+          chitiet?.danh_gia_da_xoa?.length <= 0 ? (
             (donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
               donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng") && (
               <button
