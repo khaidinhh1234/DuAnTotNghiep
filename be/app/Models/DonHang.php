@@ -66,7 +66,9 @@ class DonHang extends Model
         'li_do_hoan_hang',
         'hinh_anh_hoan_tra',
         'li_do_huy_hang',
-        'mien_phi_van_chuyen'
+        'mien_phi_van_chuyen',
+        'ngay_huy',
+        'ngay_hoan'
     ];
 
     // Relationship with DonHangChiTiet
