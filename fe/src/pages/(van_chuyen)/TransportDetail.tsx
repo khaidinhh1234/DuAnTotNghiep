@@ -81,7 +81,7 @@ const TransportDetail = ({ record }: any) => {
           response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
             trang_thai_van_chuyen: action,
             id: [id],
-            // ghi_chu: notes,
+            ghi_chu: notes,
           });
         }
         return response.data;
@@ -109,6 +109,7 @@ const TransportDetail = ({ record }: any) => {
   const [currentNote, setCurrentNote] = useState(""); // Để lưu ghi chú hiện tại
   const [isFailureNoteVisible, setIsFailureNoteVisible] = useState(false);
   const [isDeliveryConfirmed, setIsDeliveryConfirmed] = useState(false);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
 
   // const [noteCount, setNoteCount] = useState(0);
   const [isSuccessDeliveryOpen, setIsSuccessDeliveryOpen] = useState(false);
@@ -222,13 +223,12 @@ const TransportDetail = ({ record }: any) => {
       const newNote = currentNote.trim();
       const updatedNotes = [...notes, newNote];
       setNotes(updatedNotes);
-      // localStorage.setItem('deliveryNotes', JSON.stringify(updatedNotes));
       setCurrentNote("");
-
-      // Gửi ghi chú lên server
-      const ghiChuCapNhat = updatedNotes.map((note, index) => ({
-        [`lan${index + 1}`]: note,
-      }));
+      const ghiChuCapNhat = updatedNotes.reduce((acc, note, index) => {
+        acc[`lan${index + 1}`] = note;
+        return acc;
+      }, {});
+      
       const response = await instance.put(
         `/vanchuyen/xac-nhan-van-chuyen/${record.id}`,
         {
@@ -239,15 +239,15 @@ const TransportDetail = ({ record }: any) => {
 
       if (response.data.status) {
         message.success("Ghi chú đã được gửi thành công");
-        setNoteSubmissionCount(noteSubmissionCount + 1); // Tăng số lần gửi ghi chú
+        setNoteSubmissionCount(noteSubmissionCount + 1); 
 
-        // Kiểm tra nếu đã gửi 2 lần
         if (noteSubmissionCount + 1 === 2) {
           setButtonLabel("Xác nhận giao hàng thất bại");
         }
       } else {
         message.error(response.data.message || "Có lỗi xảy ra");
       }
+      setIsDeliveryConfirmed(true);
     } catch (error) {
       console.error("Lỗi khi gửi ghi chú:", error);
       message.error("Lỗi khi gửi ghi chú");
@@ -255,6 +255,44 @@ const TransportDetail = ({ record }: any) => {
       setLoading(false);
     }
   };
+  const handleFailureConfirm = async () => {
+    try {
+      setLoading(true);
+      const ghiChuCapNhat = notes.reduce((acc: any, note: any, index: any) => {
+        acc[`lan${index + 1}`] = note;
+        return acc;
+      }, {});
+      const response = await instance.put("/vanchuyen/trang-thai-van-chuyen", {
+        trang_thai_van_chuyen: "Giao hàng thất bại",
+        ghi_chu: ghiChuCapNhat, // Gửi ghi chú đầy đủ
+        id: [record.id],
+      });
+  
+      if (response.data.status) {
+        // Cập nhật state cục bộ
+        setFilteredData((prev) =>
+          prev.map((item) =>
+            item.id === record.id
+              ? { ...item, trang_thai_van_chuyen: "Giao hàng thất bại" }
+              : item
+          )
+        );
+        setIsDeliveryConfirmed(true); 
+
+        // Ẩn form ghi chú
+        setIsFailureNoteVisible(false);
+        message.success("Xác nhận giao hàng thất bại thành công");
+      } else {
+        message.error(response.data.message || "Có lỗi xảy ra");
+      }
+    } catch (error) {
+      console.error("Lỗi khi xác nhận giao hàng thất bại:", error);
+      message.error("Lỗi khi xác nhận giao hàng thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   return (
     <div>
       {" "}
@@ -298,7 +336,6 @@ const TransportDetail = ({ record }: any) => {
               </p>
             </div>
           </div>
-
           <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
             <div className="w-full md:w-3/4">
               {products ? (
@@ -582,38 +619,41 @@ const TransportDetail = ({ record }: any) => {
                   )}
                 </div>
               )}
-
-
               {/* Phần hiển thị khi chọn Giao hàng thất bại */}
               {isFailureNoteVisible && (
-                <div className="flex flex-col mt-4">
-                  <textarea
-                    value={currentNote}
-                    onChange={(e) => setCurrentNote(e.target.value)}
-                    placeholder="Nhập ghi chú tại đây"
-                    className="w-full border rounded-lg p-2"
-                  />
-                  <button
-                    className="w-full py-2 border bg-blue-500 rounded-lg text-white hover:bg-blue-700 font-semibold mt-2"
-                    onClick={handleSendNote}
-                    disabled={loading}
-                  >
-                    {buttonLabel}
-                  </button>
-                  {notes.length > 0 && (
-                    <div className="mt-4">
-                      <h3 className="font-semibold">Danh sách ghi chú:</h3>
-                      <ul className="list-disc pl-5">
-                        {notes.map((note: any, index: number) => (
-                          <li key={index} className="mt-1">
-                            {note}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
+  <div className="flex flex-col mt-4">
+    <textarea
+      value={currentNote}
+      onChange={(e) => setCurrentNote(e.target.value)}
+      placeholder="Nhập ghi chú tại đây"
+      className="w-full border rounded-lg p-2"
+    />
+    <button
+      className="w-full py-2 border bg-blue-500 rounded-lg text-white hover:bg-blue-700 font-semibold mt-2"
+      onClick={
+        buttonLabel === "Xác nhận giao hàng thất bại"
+          ? handleFailureConfirm
+          : handleSendNote
+      }
+      disabled={loading}
+    >
+      {buttonLabel}
+    </button>
+    {notes.length > 0 && (
+      <div className="mt-4">
+        <h3 className="font-semibold">Danh sách ghi chú:</h3>
+        <ul className="list-disc pl-5">
+          {notes.map((note: any, index: number) => (
+            <h5 key={index} className="mt-1">
+              {note}
+            </h5>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+)}
+
               {/* Kết quả sau khi giao hàng */}
               {record.trang_thai_van_chuyen === "Giao hàng thành công" && (
                 <div className="mt-4 text-center">
