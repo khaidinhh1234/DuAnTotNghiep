@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:cap-nhat-trang-thai-tu-choi-rut-tien')->everyMinute();
         $schedule->command('fake:thongbao')->everyMinute();
         $schedule->command('member:update-rank')->everyMinute();
+        $schedule->command('app:xoa-don-chua-thanh-toan')->everyMinute();
     }
 
     /**
