@@ -25,10 +25,9 @@ class GioHangController extends Controller
                 ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                 ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
                 ->where('gio_hangs.user_id', $userId)
-                ->where("gio_hangs.deleted_at", null)
+                ->whereNull("gio_hangs.deleted_at")
                 ->select(
                     'gio_hangs.id',
-                    'gio_hangs.deleted_at',
                     'gio_hangs.bien_the_san_pham_id',
                     'gio_hangs.so_luong',
                     'gio_hangs.chon',
@@ -47,6 +46,20 @@ class GioHangController extends Controller
             $messages = [];
 
             $gioHangs->transform(function ($item) use (&$messages) {
+                if ($item->kho_hang === 0) {
+                    $item->het_hang = true;
+                    $item->chon = false;
+                    $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã hết hàng.";
+
+                    DB::table('gio_hangs')
+                        ->where('id', $item->id)
+                        ->update(['chon' => false, 'het_hang' => true]);
+
+                    return $item;
+                } else {
+                    $item->het_hang = false;
+                }
+
                 if ($item->so_luong > $item->kho_hang) {
                     $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã được cập nhật số lượng vì vượt quá kho.";
                     $item->so_luong = $item->kho_hang;
@@ -70,13 +83,6 @@ class GioHangController extends Controller
                     $item->gia_hien_tai = $item->gia_khuyen_mai;
                 }
 
-                if ($item->trang_thai === 0 || $item->kho_hang === 0) {
-                    $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã bị xóa khỏi giỏ hàng vì không còn khả dụng.";
-                    DB::table('gio_hangs')
-                        ->where('id', $item->id)
-                        ->update(['deleted_at' => now()]);
-                }
-
                 return $item;
             });
 
@@ -91,13 +97,18 @@ class GioHangController extends Controller
                 return is_null($item->gia_khuyen_mai) && is_null($item->gia_khuyen_mai_tam_thoi);
             });
 
-            $tongSoLuong = $gioHangs->sum('so_luong');
+            $sanPhamHetHang = $gioHangs->filter(function ($item) {
+                return $item->het_hang === true;
+            });
+
+            $tongSoLuong = $gioHangs->where('het_hang', false)->sum('so_luong');
 
             return response()->json([
                 'status' => true,
                 'message' => 'Danh sách giỏ hàng đã được lấy thành công.',
                 'san_pham_giam_gia' => $sanPhamGiamGia->values(),
                 'san_pham_nguyen_gia' => $sanPhamNguyenGia->values(),
+                'san_pham_het_hang' => $sanPhamHetHang->values(),
                 'tong_so_luong' => $tongSoLuong,
                 'thong_bao' => $messages,
             ]);
@@ -108,6 +119,7 @@ class GioHangController extends Controller
             ], 500);
         }
     }
+
 
 
     public function store(Request $request)
@@ -505,6 +517,20 @@ class GioHangController extends Controller
             $tongTietKiem = 0;
 
             $gioHangs->transform(function ($item) use (&$tongGiaTriSanPham, &$tongTietKiem) {
+                if ($item->kho_hang === 0) {
+                    $item->het_hang = true;
+                    $item->chon = false;
+                    $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã hết hàng.";
+
+                    DB::table('gio_hangs')
+                        ->where('id', $item->id)
+                        ->update(['chon' => false, 'het_hang' => true]);
+
+                    return $item;
+                } else {
+                    $item->het_hang = false;
+                }
+
                 $item->gia_hien_tai = $item->gia_ban;
                 $item->gia_cu = null;
                 $item->tiet_kiem = 0;
