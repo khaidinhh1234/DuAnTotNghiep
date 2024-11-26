@@ -30,6 +30,7 @@ class GioHangController extends Controller
                     'gio_hangs.id',
                     'gio_hangs.bien_the_san_pham_id',
                     'gio_hangs.so_luong',
+                    'gio_hangs.het_hang',
                     'gio_hangs.chon',
                     'san_phams.ten_san_pham',
                     'san_phams.duong_dan',
@@ -41,23 +42,22 @@ class GioHangController extends Controller
                     'bien_the_mau_sacs.ten_mau_sac as mau_sac',
                     'bien_the_kich_thuocs.kich_thuoc'
                 )
+                ->orderBy('gio_hangs.created_at', 'desc')
                 ->get();
 
             $messages = [];
 
             $gioHangs->transform(function ($item) use (&$messages) {
                 if ($item->kho_hang === 0) {
-                    $item->het_hang = true;
-                    $item->chon = false;
+                    $item->het_hang = 1;
+                    $item->chon = 0;
                     $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã hết hàng.";
 
                     DB::table('gio_hangs')
                         ->where('id', $item->id)
-                        ->update(['chon' => false, 'het_hang' => true]);
+                        ->update(['chon' => 0, 'het_hang' => 1]);
 
                     return $item;
-                } else {
-                    $item->het_hang = false;
                 }
 
                 if ($item->so_luong > $item->kho_hang) {
@@ -87,21 +87,26 @@ class GioHangController extends Controller
             });
 
             $sanPhamGiamGia = $gioHangs->filter(function ($item) {
-                return isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu;
+                return  $item->het_hang === 0 && isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu;
             })->map(function ($item) {
                 $item->tiet_kiem = ($item->gia_cu - $item->gia_hien_tai) * $item->so_luong;
                 return $item;
             });
 
             $sanPhamNguyenGia = $gioHangs->filter(function ($item) {
-                return is_null($item->gia_khuyen_mai) && is_null($item->gia_khuyen_mai_tam_thoi);
+                return is_null($item->gia_khuyen_mai) && is_null($item->gia_khuyen_mai_tam_thoi) && $item->het_hang === 0;
             });
 
             $sanPhamHetHang = $gioHangs->filter(function ($item) {
-                return $item->het_hang === true;
+                return $item->het_hang === 1 && isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu;
+            })->map(function ($item) {
+                if ($item->het_hang === 1) {
+                    $item->tiet_kiem = ($item->gia_cu - $item->gia_hien_tai) * $item->so_luong;
+                }
+                return $item;
             });
 
-            $tongSoLuong = $gioHangs->where('het_hang', false)->sum('so_luong');
+            $tongSoLuong = $gioHangs->where('het_hang', 0)->sum('so_luong');
 
             return response()->json([
                 'status' => true,
@@ -575,6 +580,38 @@ class GioHangController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'so_luong' => 'required|integer|min:1',
+            ]);
+            $gioHang = GioHang::findOrFail($id);
+            if ($gioHang->user_id != Auth::id()) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+            $bienTheSanPham = BienTheSanPham::findOrFail($gioHang->bien_the_san_pham_id);
+            if ($request->so_luong > $bienTheSanPham->so_luong_bien_the) {
+                return response()->json([
+                    'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
+                ], 400);
+            }
+            $gioHang->update([
+                'so_luong' => $request->so_luong,
+            ]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Đã thay đổi số lượng sản phẩm thành công!',
+                'data' => $gioHang
+            ]);
+        }catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
