@@ -214,7 +214,6 @@ class TrangChuController extends Controller
 
                 foreach ($sanPham->bienTheSanPham as $bienThe) {
                     $currentPrice = $bienThe->gia_hien_tai;
-
                     if ($lowestPrice === null || $currentPrice < $lowestPrice) {
                         $lowestPrice = $currentPrice;
                     }
