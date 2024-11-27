@@ -1,13 +1,23 @@
-const Test = () => {
-  const invoiceData = {
-    customerName: "Nguyễn Văn A",
-    items: [
-      { name: "Áo thun", quantity: 2, price: 200000 },
-      { name: "Quần jeans", quantity: 1, price: 500000 },
-    ],
-    total: 900000,
-  };
+const getDateAndTimeWithSeconds = (utcDate) => {
+  const date = new Date(utcDate);
 
+  // Lấy ngày, tháng và năm
+  const day = date.getDate();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+
+  // Lấy giờ, phút và giây gốc
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+};
+const Hoadon = ({ record }: any) => {
+  console.log("recode", record.created_at);
+
+  const result = getDateAndTimeWithSeconds(record.created_at);
+  console.log(result);
   const handlePrint = () => {
     const content = document.getElementById("invoice-content");
     const win = window.open("", "", "width=700,height=900");
@@ -19,7 +29,6 @@ const Test = () => {
       console.error("Invoice content not found");
     }
   };
-
   return (
     <div
       className="flex flex-col items-center p-4 space-y-4"
@@ -78,7 +87,7 @@ const Test = () => {
                 Mã vận đơn: <strong>SPXVN02385693557B</strong>
               </p>
               <p style={{ fontSize: "16px", margin: "5px 0" }}>
-                Mã đơn hàng: <strong>2211168M5W6ABM</strong>
+                Mã đơn hàng: <strong>{record.ma_don_hang}</strong>
               </p>
             </div>
           </div>
@@ -116,9 +125,15 @@ const Test = () => {
               >
                 Thông tin Người Mua
               </h3>
-              <p>Lê Văn Hùng</p>
-              <p>0342278284</p>
-              <p>161/3 Đường Số 1, Phường 13, Quận Gò Vấp, TP. Hồ Chí Minh</p>
+              <p>
+                {record?.ten_nguoi_dat_hang ??
+                  record?.user?.ho + record?.user?.ten}
+              </p>
+              <p>
+                {record?.so_dien_thoai_nguoi_dat_hang ??
+                  record?.user?.so_dien_thoai}
+              </p>
+              <p>{record?.dia_chi_nguoi_dat_hang ?? record?.user?.dia_chi}</p>
             </div>
           </div>
 
@@ -259,4 +274,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default Hoadon;

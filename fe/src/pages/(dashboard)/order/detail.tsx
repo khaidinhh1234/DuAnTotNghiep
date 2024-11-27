@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Input, message, Modal, Rate } from "antd";
 import { SpadeIcon } from "lucide-react";
 import { useState } from "react";
+import Hoadon from "./hoadon";
 
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
@@ -27,9 +28,10 @@ const Detail = ({ record }: any) => {
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
-  const numberOfRatings = 2; 
+  const numberOfRatings = 2;
   const averageRating = (item: any) => {
-    const totalStars = (item?.so_sao_san_pham || 0) + (item?.so_sao_dich_vu_van_chuyen || 0);
+    const totalStars =
+      (item?.so_sao_san_pham || 0) + (item?.so_sao_dich_vu_van_chuyen || 0);
     return totalStars / numberOfRatings;
   };
   const { data } = useQuery({
@@ -473,22 +475,21 @@ const Detail = ({ record }: any) => {
                   </>
                 ) : record.trang_thai_don_hang === "Đã xác nhận" ? (
                   <>
-                    <button
-                      className="w-full py-2 border bg-green-700 rounded-lg text-white hover:bg-green-600"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Đang xử lý" })
-                      }
-                    >
-                      Hoàn tất chuẩn bị hàng
-                    </button>{" "}
-                    <button
-                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Hủy hàng" })
-                      }
-                    >
-                      Hủy
-                    </button>
+                    <div className="h-auto">
+                      {" "}
+                      <button
+                        className="w-full py-2 border bg-green-700 rounded-lg text-white hover:bg-green-600"
+                        onClick={() =>
+                          mutate({ id: record.id, action: "Đang xử lý" })
+                        }
+                      >
+                        Hoàn tất chuẩn bị hàng
+                      </button>{" "}
+                      <div className="h-16">
+                        {" "}
+                        <Hoadon record={record} />
+                      </div>
+                    </div>
                   </>
                 ) : record.trang_thai_don_hang === "Đang xử lý" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
@@ -577,7 +578,8 @@ const Detail = ({ record }: any) => {
                                 {item?.user?.ho} {item?.user?.ten}
                               </h5>
                               {/* Giảm kích thước sao bằng scale-50 */}
-                              <Rate disabled
+                              <Rate
+                                disabled
                                 allowHalf
                                 value={averageRating(item)}
                               />
