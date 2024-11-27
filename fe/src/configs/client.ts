@@ -9,7 +9,8 @@ const instanceClient = axios.create({
     "http://duantotnghiep.test/be/public/api/client/",
 
   headers: {
-    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
   },
 });
 
