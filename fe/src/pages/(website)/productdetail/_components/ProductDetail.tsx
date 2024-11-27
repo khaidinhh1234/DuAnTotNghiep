@@ -282,11 +282,6 @@ const ProductDetail: React.FC = () => {
 
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-      console.log("Payload gửi lên:", {
-        bien_the_san_pham_id: variantId,
-        so_luong: quantity,
-      });
-
       const response = await instanceClient.post(
         "/gio-hang",
         {
@@ -457,7 +452,6 @@ const ProductDetail: React.FC = () => {
     },
   });
   const handleClickHeart = (id: any) => {
-    console.log(id);
     toggleFavorite(id);
   };
   const handleCopy = () => {

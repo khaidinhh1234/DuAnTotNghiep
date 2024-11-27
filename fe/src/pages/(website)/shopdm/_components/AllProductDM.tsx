@@ -31,7 +31,6 @@ const AllProductDM = () => {
     },
     enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
   });
-  console.log(data);
   return (
     <>
       <section>

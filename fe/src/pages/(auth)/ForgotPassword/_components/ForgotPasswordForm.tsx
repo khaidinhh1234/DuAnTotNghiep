@@ -19,7 +19,6 @@ const ForgotPasswordForm = () => {
   const nav = useNavigate();
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
-      console.log(user);
       try {
         const res = await instance.post("/forgot-password", user);
         toast.success(" Gửi yêu cầu  thành công");
@@ -27,7 +26,6 @@ const ForgotPasswordForm = () => {
         // console.log(res);
         return res.data;
       } catch (error: any) {
-        console.log(error);
         if (error.response.data == "Email already exists") {
           toast.error("Email  đã tồn tại");
         } else {

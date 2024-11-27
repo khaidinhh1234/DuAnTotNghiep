@@ -1,4 +1,8 @@
-const getDateAndTimeWithSeconds = (utcDate) => {
+import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
+const getDateAndTimeWithSeconds = (utcDate: any) => {
   const date = new Date(utcDate);
 
   // Lấy ngày, tháng và năm
@@ -13,11 +17,39 @@ const getDateAndTimeWithSeconds = (utcDate) => {
 
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 };
-const Hoadon = ({ record }: any) => {
-  console.log("recode", record.created_at);
+const Hoadon = ({ record, products, tong }: any) => {
+  const [code, setCode] = useState("");
 
+  const generateRandomCode = () => {
+    const prefix = "HC";
+    const middleNumbers = Math.floor(Math.random() * 90 + 10); // Số ngẫu nhiên từ 10 đến 99
+    const suffixNumbers = Math.floor(Math.random() * 90 + 10); // Số ngẫu nhiên từ 10 đến 99
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const randomLetter1 = letters.charAt(
+      Math.floor(Math.random() * letters.length)
+    );
+    const randomLetter2 = letters.charAt(
+      Math.floor(Math.random() * letters.length)
+    );
+    const randomLetter3 = Math.floor(Math.random() * 90 + 10);
+
+    return `${prefix}-${middleNumbers}-${suffixNumbers}-${randomLetter1}${randomLetter2}${randomLetter3}`;
+  };
+
+  const { data } = useQuery({
+    queryKey: ["SHIPPER"],
+    queryFn: async () => {
+      const response = await instance.get(`/vanchuyen/${record.id}`);
+      return response.data;
+    },
+  });
+
+  const mavanchuyen = data?.data?.van_chuyen;
+  useEffect(() => {
+    const randomCode = generateRandomCode();
+    setCode(randomCode);
+  }, []);
   const result = getDateAndTimeWithSeconds(record.created_at);
-  console.log(result);
   const handlePrint = () => {
     const content = document.getElementById("invoice-content");
     const win = window.open("", "", "width=700,height=900");
@@ -36,7 +68,7 @@ const Hoadon = ({ record }: any) => {
     >
       <button
         onClick={handlePrint}
-        className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors"
+        className="w-full py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors"
       >
         In Hóa Đơn
       </button>
@@ -84,7 +116,7 @@ const Hoadon = ({ record }: any) => {
             <div style={{ textAlign: "right" }}>
               <div style={{ marginBottom: "10px" }}>/*************/</div>
               <p style={{ fontSize: "16px", margin: "5px 0" }}>
-                Mã vận đơn: <strong>SPXVN02385693557B</strong>
+                Mã vận đơn: <strong>{mavanchuyen?.ma_van_chuyen}</strong>
               </p>
               <p style={{ fontSize: "16px", margin: "5px 0" }}>
                 Mã đơn hàng: <strong>{record.ma_don_hang}</strong>
@@ -147,7 +179,7 @@ const Hoadon = ({ record }: any) => {
                 fontSize: "30px",
               }}
             >
-              HC-51-03-GV13
+              {code}
             </h2>
           </div>
 
@@ -168,11 +200,47 @@ const Hoadon = ({ record }: any) => {
                 marginBottom: "20px",
               }}
             >
-              <h3>Nội dung hàng:</h3>
+              <h3>Nội dung hàng:</h3>{" "}
               <ol>
-                <li>Áo thời trang nữ - Đỏ - XL SL:10</li>
-                <li>Áo thời trang nữ - Đỏ - XL SL:10</li>
-                <li>Áo thời trang nữ - Đỏ - XL SL:10</li>
+                {products?.slice(0, 3).map((item: any) => (
+                  <li key={item?.id}>
+                    <span
+                      style={{
+                        display: "inline-block" /* Để áp dụng kích thước */,
+                        maxWidth: "300px" /* Giới hạn độ rộng */,
+                        whiteSpace: "nowrap" /* Không cho xuống dòng */,
+                        overflow: "hidden" /* Ẩn phần nội dung thừa */,
+                        textOverflow:
+                          "ellipsis" /* Thêm dấu "..." khi quá dài */,
+                      }}
+                    >
+                      {" "}
+                      {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
+                    </span>{" "}
+                    <p className="">
+                      Màu :{" "}
+                      <span>
+                        {item?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
+                      </span>{" "}
+                      - Size :{" "}
+                      <span>
+                        {" "}
+                        {
+                          item?.bien_the_san_pham?.kich_thuoc_bien_the
+                            ?.kich_thuoc
+                        }
+                        /
+                        {
+                          item?.bien_the_san_pham?.kich_thuoc_bien_the
+                            ?.loai_kich_thuoc
+                        }
+                      </span>
+                      - SL: {item?.so_luong}
+                    </p>{" "}
+                  </li>
+                ))}{" "}
+                {products?.length > 3 &&
+                  "........................................"}
               </ol>
               <p style={{ fontSize: "12px", color: "#555", marginTop: "auto" }}>
                 Kiểm tra tên sản phẩm và đối chiếu, Mã vận chuyển/mã đơn hàng
@@ -196,8 +264,7 @@ const Hoadon = ({ record }: any) => {
                   fontWeight: "bold",
                 }}
               >
-                2021-09-23 <br />
-                10:00:00
+                {result}
               </p>
             </div>
           </div>
@@ -231,12 +298,20 @@ const Hoadon = ({ record }: any) => {
                   padding: "0 10px",
                 }}
               >
-                182,700 VND
+                {mavanchuyen?.tien_cod?.toLocaleString("vi-VN") ??
+                  tong?.tong_tien?.toLocaleString("vi-VN") ??
+                  0}{" "}
+                VNĐ
               </h1>
             </div>
             <div>
               <span
-                style={{ fontSize: "15px", fontWeight: "bold", color: "#000" }}
+                style={{
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                  color: "#000",
+                  margin: "0px 40px",
+                }}
               >
                 Chữ ký Người nhận:
               </span>

@@ -122,7 +122,6 @@ const CategoriesAdd = () => {
                   <AddCategorySelect
                     categoriesData={allCategoriesData}
                     onChange={(value) => {
-                      console.log("Category selected:", value);
                       form.setFieldsValue({ category: value });
                     }}
                     value={form.getFieldValue("category")}

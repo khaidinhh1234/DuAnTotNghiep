@@ -136,7 +136,6 @@ interface Product {
 }
 
 const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
-  console.log(item);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -157,7 +156,6 @@ const Detail: React.FC<ProductDetailProps> = ({ item }: any) => {
       return response.data;
     },
   });
-  console.log(data);
   const averageRating = useMemo(() => {
     if (!data || !data.data || data.data.danh_gias.length === 0) return 0;
     const totalStars = data.data.danh_gias.reduce(

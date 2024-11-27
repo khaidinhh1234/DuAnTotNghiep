@@ -130,7 +130,6 @@ const ShippingAddressPage = () => {
   };
 
   const onsubmit = (formData: any) => {
-    console.log(trangthai);
     // console.log(formData);
     // Kết hợp dữ liệu với mã khuyến mãi
     // Kiểm tra nếu tất cả các trường (ngoại trừ macode) đều có giá trị
@@ -140,7 +139,6 @@ const ShippingAddressPage = () => {
     );
     if (isDataComplete) {
       // Gọi hàm mutate với dữ liệu đã kết hợp
-      console.log(formData);
 
       mutate({ ...formData, macode, phuong_thuc_thanh_toan: trangthai });
       reset(); // Reset form sau khi gửi dữ liệu

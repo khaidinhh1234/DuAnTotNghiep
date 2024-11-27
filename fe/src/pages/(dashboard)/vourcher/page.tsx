@@ -116,7 +116,6 @@ const VoucherAdmin: React.FC = () => {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchText(value);
-    console.log(value);
     if (value) {
       const filtered = vouchers?.filter(
         (item: PromotionType) =>
