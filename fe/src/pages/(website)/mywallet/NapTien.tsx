@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Checkbox } from 'antd';
 import instanceClient from "@/configs/client";
 import { Link } from "react-router-dom";
 
 const NapTien: React.FC = () => {
+  const queryClient = useQueryClient()
   const [amount, setAmount] = useState<string>("");
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("");
 
@@ -25,6 +26,7 @@ const NapTien: React.FC = () => {
       if (response.payUrl) {
         window.location.href = response.payUrl;
       }
+      queryClient.invalidateQueries({ queryKey: ['walletData']})
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Có lỗi xảy ra');

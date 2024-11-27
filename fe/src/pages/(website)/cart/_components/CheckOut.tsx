@@ -117,10 +117,13 @@ const CheckOut = () => {
   const tongSoLuong = useMemo(() => {
     return (
       data?.san_pham_giam_gia
-        .filter((product: any) => selectedProducts.includes(product.id))
+        ?.filter((product: any) => selectedProducts.includes(product.id))
         .reduce((sum: number, product: any) => sum + product.so_luong, 0) +
       data?.san_pham_nguyen_gia
-        .filter((product: any) => selectedProducts.includes(product.id))
+        ?.filter((product: any) => selectedProducts.includes(product.id))
+        .reduce((sum: number, product: any) => sum + product.so_luong, 0) +
+        data?.san_pham_het_hang
+        ?.filter((product: any) => selectedProducts.includes(product.id))
         .reduce((sum: number, product: any) => sum + product.so_luong, 0)
     );
   }, [data, selectedProducts]);
@@ -158,7 +161,7 @@ const CheckOut = () => {
   };
 
   const handleCheckout = () => {
-    if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
+    if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length && !data?.san_pham_het_hang.length) {
       toast.error(
         "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
       );
@@ -181,6 +184,7 @@ const CheckOut = () => {
       const allProductIds = [
         ...data?.san_pham_giam_gia.map((product: any) => product.id),
         ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
+        ...data?.san_pham_het_hang.map((product: any) => product.id),
       ];
       setSelectedProducts(allProductIds);
       localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
@@ -190,6 +194,7 @@ const CheckOut = () => {
       const allProductIds = [
         ...data?.san_pham_giam_gia.map((product: any) => product.id),
         ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
+        ...data?.san_pham_het_hang.map((product: any) => product.id),
       ];
       setSelectedProducts([]); // Cập nhật trạng thái không chọn
       localStorage.setItem('selectedProducts', JSON.stringify([]));
@@ -265,7 +270,8 @@ const CheckOut = () => {
     if (data) {
       const preSelectedProducts = [
         ...(data.san_pham_giam_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id),
-        ...(data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id)
+        ...(data.san_pham_nguyen_gia?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id),
+        ...(data.san_pham_het_hang?.filter((p: any) => p.chon === 1) || []).map((p: any) => p.id)
       ];
 
       if (preSelectedProducts.length > 0) {
@@ -277,7 +283,8 @@ const CheckOut = () => {
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
-        data?.san_pham_nguyen_gia?.length === 0 ? (
+        data?.san_pham_nguyen_gia?.length === 0 &&
+        data?.san_pham_het_hang?.length === 0 ? (
         <div className="flex flex-col items-center justify-center pt-32 pb-20">
           <img
             src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
@@ -604,6 +611,122 @@ const CheckOut = () => {
                         </tr>
                       ))}
                       {/* End sản phẩm nguyên giá */}
+                      {/* sản phẩm hết hàng */}
+                      {data?.san_pham_het_hang?.map((product: any) => (
+                        <tr
+                          key={product.id}
+                          // className="border-b border-gray-200 hover:bg-gray-100"
+                          className="border-b border-gray-200 hover:bg-gray-100 opacity-50"
+                        >
+                          <td className="px-4 py-2">
+                            <input
+                              type="checkbox"
+                              className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+                              checked={product.chon === 1 || selectedProducts.includes(product.id)}
+                              onChange={() => handleSelectProduct(product.id)}
+                              title="Select regular price product"
+                            />
+                          </td>
+                          {/* Thông tin sản phẩm */}
+                          <td className="px-4 py-2">
+                            <div className="flex items-start gap-4">
+                              <img
+                                src={product.hinh_anh}
+                                alt={product.ten_san_pham}
+                                className="w-32 h-40 object-cover rounded-md"
+                              />
+                              <div>
+                                <h3 className="font-semibold text-gray-700">
+                                  {product.ten_san_pham}
+                                </h3>
+                                <p className="text-gray-500">
+                                  {product.mau_sac}, {product.kich_thuoc}
+                                </p>
+                                <p className="text-gray-700 font-semibold mt-1">
+                                  {formatCurrency(product.gia_hien_tai)}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="hidden lg:table-cell px-4 py-2 text-center align-middle">
+                            <div className="flex items-center justify-center border rounded-lg mx-auto w-fit">
+                              {product.so_luong === 1 ? (
+                                <Popconfirm
+                                  title="Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?"
+                                  onConfirm={() => handleRemoveProduct(product.id)}
+                                  okText="Có"
+                                  cancelText="Không"
+                                >
+                                  <button className="py-1 px-3 rounded-l-lg" title="Decrease quantity">
+                                    <i className="fa-solid fa-minus" />
+                                  </button>
+                                </Popconfirm>
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    if (!isProcessing[product.id]) {
+                                      decreaseQuantity({ productId: product.id, currentQuantity: product.quantity });
+                                    }
+                                  }}
+                                  className="py-1 px-3 rounded-l-lg"
+                                  title="Decrease quantity"
+                                  disabled={isProcessing[product.id] || product.quantity <= 1 || fadeEffect[product.id]}
+                                >
+                                  <i className="fa-solid fa-minus" />
+                                </button>
+                              )}
+                              <input
+                                value={product.so_luong}
+                                className="w-7 h-10 text-center"
+                                placeholder="Quantity"
+                                min="1"
+                                max={product.so_luong_bien_the}
+                                title="Product Quantity"
+                                readOnly
+                              />
+                              <button
+                                onClick={() => {
+                                  // Kiểm tra nếu số lượng sản phẩm hiện tại đã đạt đến số lượng tối đa của biến thể
+                                  if (product.so_luong >= product.so_luong_bien_the) {
+                                    toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
+                                    return; // Dừng lại nếu đạt giới hạn
+                                  }
+
+                                  // Gọi hàm tăng số lượng nếu còn tồn kho
+                                  if (!isProcessing[product.id]) {
+                                    increaseQuantity({
+                                      productId: product.id,
+                                      currentQuantity: product.so_luong,
+                                    });
+                                  }
+                                }}
+                                className="py-1 px-3 rounded-r-lg"
+                                title="Increase quantity"
+                                disabled={product.so_luong >= product.so_luong_bien_the || fadeEffect[product.id] || isProcessing[product.id]} // Vô hiệu hóa nút nếu đạt giới hạn
+                              >
+                                <i className="fa-solid fa-plus" />
+                              </button>
+
+                            </div>
+                          </td>
+                          <td className="px-4 py-2">
+                            {formatCurrency(
+                              product.gia_hien_tai * product.so_luong
+                            )}
+                          </td>
+                          <td className="px-4 py-2">
+                            <button
+                              onClick={() => Delete(product.id)}
+                              className="text-red-600 hover:text-red-800"
+                              title="Remove product"
+                            >
+                              <i className="fa-regular fa-trash-can" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {/* end sản phẩm hết hàng */}
+                      {/* {data.thong_bao} */}
                     </>
                   </tbody>
                 </table>

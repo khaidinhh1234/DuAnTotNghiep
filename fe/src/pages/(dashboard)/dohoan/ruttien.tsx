@@ -75,7 +75,7 @@ const WithdrawalRequests: React.FC = () => {
   const { mutate: rejectWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
       const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
-        trang_thai: "tu_choi",
+        trang_thai: "that_bai",
       });
       return response.data;
     },
