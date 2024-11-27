@@ -53,17 +53,12 @@ class GioHangController extends Controller
                         DB::table('gio_hangs')->where('id', $item->id)->update(['chon' => 0, 'het_hang' => 1]);
                         $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã hết hàng.";
                     }
-                    $item->het_hang = 1;
-                    $item->chon = 0;
                 }
                 else {
                     if ($item->het_hang === 1) {
                         DB::table('gio_hangs')->where('id', $item->id)->update(['het_hang' => 0, 'chon' => 1]);
                         $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã có hàng trở lại.";
                     }
-                    $item->het_hang = 0;
-                    $item->chon = 1;
-
                     if ($item->so_luong > $item->kho_hang) {
                         $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã được cập nhật số lượng vì vượt quá kho.";
                         $item->so_luong = $item->kho_hang;
