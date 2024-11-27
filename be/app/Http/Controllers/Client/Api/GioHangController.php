@@ -49,24 +49,27 @@ class GioHangController extends Controller
 
             $gioHangs->transform(function ($item) use (&$messages) {
                 if ($item->kho_hang === 0) {
+                    if ($item->het_hang === 0) {
+                        DB::table('gio_hangs')->where('id', $item->id)->update(['chon' => 0, 'het_hang' => 1]);
+                        $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã hết hàng.";
+                    }
                     $item->het_hang = 1;
                     $item->chon = 0;
-                    $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã hết hàng.";
-
-                    DB::table('gio_hangs')
-                        ->where('id', $item->id)
-                        ->update(['chon' => 0, 'het_hang' => 1]);
-
-                    return $item;
                 }
+                else {
+                    if ($item->het_hang === 1) {
+                        DB::table('gio_hangs')->where('id', $item->id)->update(['het_hang' => 0, 'chon' => 1]);
+                        $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã có hàng trở lại.";
+                    }
+                    $item->het_hang = 0;
+                    $item->chon = 1;
 
-                if ($item->so_luong > $item->kho_hang) {
-                    $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã được cập nhật số lượng vì vượt quá kho.";
-                    $item->so_luong = $item->kho_hang;
+                    if ($item->so_luong > $item->kho_hang) {
+                        $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã được cập nhật số lượng vì vượt quá kho.";
+                        $item->so_luong = $item->kho_hang;
 
-                    DB::table('gio_hangs')
-                        ->where('id', $item->id)
-                        ->update(['so_luong' => $item->kho_hang]);
+                        DB::table('gio_hangs')->where('id', $item->id)->update(['so_luong' => $item->kho_hang]);
+                    }
                 }
 
                 $bienThe = BienTheSanPham::with(['anhBienThe' => function ($query) {
@@ -87,7 +90,7 @@ class GioHangController extends Controller
             });
 
             $sanPhamGiamGia = $gioHangs->filter(function ($item) {
-                return  $item->het_hang === 0 && isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu;
+                return $item->het_hang === 0 && isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu;
             })->map(function ($item) {
                 $item->tiet_kiem = ($item->gia_cu - $item->gia_hien_tai) * $item->so_luong;
                 return $item;
@@ -98,15 +101,10 @@ class GioHangController extends Controller
             });
 
             $sanPhamHetHang = $gioHangs->filter(function ($item) {
-                return $item->het_hang === 1 && isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu;
-            })->map(function ($item) {
-                if ($item->het_hang === 1) {
-                    $item->tiet_kiem = ($item->gia_cu - $item->gia_hien_tai) * $item->so_luong;
-                }
-                return $item;
+                return $item->het_hang === 1;
             });
 
-            $tongSoLuong = $gioHangs->where('het_hang', 0)->sum('so_luong');
+            $tongSoLuong = $gioHangs->sum('so_luong');
 
             return response()->json([
                 'status' => true,
