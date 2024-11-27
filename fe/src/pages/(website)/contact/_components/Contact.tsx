@@ -57,7 +57,6 @@ const ContactPage = () => {
 
   const onSubmit = (data: any) => {
     mutate(data);
-    console.log(data);
   };
 
   return (

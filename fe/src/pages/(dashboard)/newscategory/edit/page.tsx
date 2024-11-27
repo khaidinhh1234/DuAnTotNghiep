@@ -50,7 +50,6 @@ const NewCategoriesEdit = () => {
       let imageUrl = null;
       if (values.imageFile && values.imageFile[0]) {
         imageUrl = await uploadToCloudinary(values.imageFile[0].originFileObj);
-        console.log("Image URL from Cloudinary:", imageUrl);
       }
       const categoryData = {
         ...values,
@@ -61,9 +60,7 @@ const NewCategoriesEdit = () => {
       message.error("Lỗi khi tải ảnh lên");
     }
   };
-  
-  
-  
+
   if (isLoading) {
     return <Spin />;
   }
@@ -109,8 +106,14 @@ const NewCategoriesEdit = () => {
                 label="Tên danh mục tin tức"
                 name="ten_danh_muc_tin_tuc"
                 rules={[
-                  { required: true, message: "Tên danh mục bắt buộc phải nhập!" },
-                  { pattern: /^[^\s]+(\s+[^\s]+)*$/, message: "Vui lòng không chứa ký tự trắng!" },
+                  {
+                    required: true,
+                    message: "Tên danh mục bắt buộc phải nhập!",
+                  },
+                  {
+                    pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                    message: "Vui lòng không chứa ký tự trắng!",
+                  },
                 ]}
               >
                 <Input placeholder="Nhập tên danh mục tin tức" />
@@ -120,7 +123,10 @@ const NewCategoriesEdit = () => {
                 name="mo_ta"
                 rules={[
                   { required: true, message: "Mô tả bắt buộc phải nhập!" },
-                  { pattern: /^[^\s]+(\s+[^\s]+)*$/, message: "Vui lòng không chứa ký tự trắng!" },
+                  {
+                    pattern: /^[^\s]+(\s+[^\s]+)*$/,
+                    message: "Vui lòng không chứa ký tự trắng!",
+                  },
                 ]}
               >
                 <Input placeholder="Nhập mô tả tin tức" />
@@ -148,7 +154,7 @@ const NewCategoriesEdit = () => {
                 label="Thêm ảnh"
                 name="imageFile"
                 valuePropName="fileList"
-                getValueFromEvent={(e) => Array.isArray(e) ? e : e?.fileList}
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
               >
                 <Upload
                   listType="picture"
@@ -156,12 +162,14 @@ const NewCategoriesEdit = () => {
                   beforeUpload={() => false}
                   defaultFileList={
                     data?.data.hinh_anh
-                      ? [{
-                        uid: '-1', // ID duy nhất cho file
-                        name: 'image.jpg',
-                        url: data.data.hinh_anh,
-                        status: 'done',
-                      }]
+                      ? [
+                          {
+                            uid: "-1", // ID duy nhất cho file
+                            name: "image.jpg",
+                            url: data.data.hinh_anh,
+                            status: "done",
+                          },
+                        ]
                       : []
                   }
                 >

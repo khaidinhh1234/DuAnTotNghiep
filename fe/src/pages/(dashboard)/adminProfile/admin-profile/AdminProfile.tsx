@@ -13,12 +13,11 @@ const AdminProfile = () => {
   // const [pass, setpass] = useState(false);
   const [user] = useLocalStorage("user" as any, {});
   const id = user?.user?.id;
-  console.log(id);
   // const { id } = useParams();
-  // console.log(id);
+  console.log(id);
 
   const { data, refetch } = useQuery({
-    queryKey: ["taikhoanid", id],
+    queryKey: ["taikhoanid"],
     queryFn: async () => {
       try {
         const res = await instance.get(`/taikhoan/${id}`);

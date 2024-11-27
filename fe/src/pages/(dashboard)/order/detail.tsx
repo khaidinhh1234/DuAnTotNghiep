@@ -85,7 +85,7 @@ const Detail = ({ record }: any) => {
   });
   // const donhang = data?.data;
   const thongtin = data?.data.thong_tin;
-  console.log(tong, "thongtin");
+  // console.log(tong, "thongtin");
   // console.log("data", products);
   // console.log(vanchuyen, "vanchuyen");
   const handleCancel = () => {
@@ -485,16 +485,19 @@ const Detail = ({ record }: any) => {
                       >
                         Hoàn tất chuẩn bị hàng
                       </button>{" "}
-                      <div className="h-16">
-                        {" "}
-                        <Hoadon record={record} />
-                      </div>
                     </div>
                   </>
                 ) : record.trang_thai_don_hang === "Đang xử lý" ? (
-                  <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
-                    Chờ lấy hàng
-                  </span>
+                  <>
+                    {" "}
+                    <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
+                      Chờ lấy hàng
+                    </span>
+                    <div className="h-16">
+                      {" "}
+                      <Hoadon record={record} products={products} tong={tong} />
+                    </div>
+                  </>
                 ) : record.trang_thai_don_hang === "Đang giao hàng" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-purple-500 border-b-2 border-purple-500 hover:text-purple-600 hover:border-purple-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     Đang giao hàng

@@ -12,8 +12,6 @@ const Chart2: React.FC = () => {
     },
   });
 
-  console.log(chart2);
-
   const [series, setSeries] = useState<
     { name: string; type: string; data: any[] }[]
   >([]);

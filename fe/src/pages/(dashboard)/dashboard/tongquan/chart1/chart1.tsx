@@ -35,18 +35,19 @@ const Chart1 = ({ don_hang_chot }: any) => {
   // }, [datestart, dateend, refetch]);
   // console.log(data);
   return (
-    <Card className="shadow-md px-1 rounded-lg bg-white flex flex-col">
+    <Card className="shadow-md rounded-lg bg-white px-0 sm:px-1 flex flex-col">
       <div className="flex items-center mb-2">
-        <div className="bg-green-600 py-[7px] px-3 flex items-center rounded-full mr-2">
+        <div className="bg-green-600 py-2 px-3 flex items-center rounded-full mr-2">
           <i className="fa-regular fa-box-check text-white text-xl"></i>
         </div>
-        <h3 className="text-lg font-bold">Tổng hàng chốt</h3>
+        <h3 className="text-lg sm:text-xl font-bold">Tổng hàng chốt</h3>
       </div>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <div className="text-black">
-            Tổng tiền: <br />
-            <span className="text-2xl font-bold text-green-800">
+            Tổng tiền:
+            <br />
+            <span className="text-xl sm:text-2xl font-bold text-green-800">
               <Statistic
                 value={don_hang_chot?.tong_tien || 0}
                 formatter={formatter}
@@ -56,7 +57,9 @@ const Chart1 = ({ don_hang_chot }: any) => {
             </span>
           </div>
           <div
-            className={`flex items-center gap-1 mt-1 ${phantien ? "text-green-600" : "text-red-600"}`}
+            className={`flex items-center gap-2 mt-1 ${
+              phantien ? "text-green-600" : "text-red-600"
+            }`}
           >
             {phantien ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
             <Statistic
@@ -66,14 +69,15 @@ const Chart1 = ({ don_hang_chot }: any) => {
               valueStyle={{
                 fontSize: "14px",
                 color: phantien ? "green" : "red",
-              }} // Giảm font size ở đây
+              }}
             />
           </div>
         </div>
         <div>
           <div className="text-black">
-            Số lượng đơn hàng: <br />
-            <span className="text-2xl font-bold text-black">
+            Số lượng đơn hàng:
+            <br />
+            <span className="text-xl sm:text-2xl font-bold">
               <Statistic
                 value={don_hang_chot?.tong_so_luong || 0}
                 formatter={formatter}
@@ -81,7 +85,9 @@ const Chart1 = ({ don_hang_chot }: any) => {
             </span>
           </div>
           <div
-            className={`flex items-center gap-1 mt-1 ${phandon ? "text-green-600" : "text-red-600"}`}
+            className={`flex items-center gap-2 mt-1 ${
+              phandon ? "text-green-600" : "text-red-600"
+            }`}
           >
             {phandon ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
             <Statistic
@@ -91,7 +97,7 @@ const Chart1 = ({ don_hang_chot }: any) => {
               valueStyle={{
                 fontSize: "14px",
                 color: phandon ? "green" : "red",
-              }} // Giảm font size ở đây
+              }}
             />
           </div>
         </div>

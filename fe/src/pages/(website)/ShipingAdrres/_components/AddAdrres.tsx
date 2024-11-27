@@ -1,8 +1,6 @@
 import { useState } from "react";
 
 const AddAddressForm = ({ register, products, errors, settrangthai }: any) => {
-  console.log("products", products);
-
   return (
     <div className="">
       <h3 className="title-h3">Sản phẩm đã đặt</h3>

@@ -31,12 +31,19 @@ const UserskhachangRemote: React.FC = () => {
       return res.data;
     },
   });
-  // (data?.data);
-  const user = data?.data.map((item: any, index: any) => {
-    // console.log(item.deleted_at);
-    return { ...item, key: index + 1 };
-  });
-  console.log(user);
+  console.log(data);
+  const user = data?.data
+    ?.filter((item: any) =>
+      item?.vai_tros?.some((item: any) => item?.ten_vai_tro === "Khách hàng")
+    )
+    .map((item: any, index: number) => {
+      // console.log(item);
+      return {
+        ...item,
+        key: index + 1,
+        index: index,
+      };
+    });
   const queryClient = useQueryClient();
   const mutate = useMutation({
     mutationFn: async (id: number) => {
@@ -278,7 +285,10 @@ const UserskhachangRemote: React.FC = () => {
       <div className="flex items-center">
         <h1 className=" md:text-base">
           Quản trị / Tài khoản /
-          <span className="font-semibold px-px="> Chặn tài khoản</span>{" "}
+          <span className="font-semibold px-px=">
+            {" "}
+            Chặn tài khoản khách hàng
+          </span>{" "}
         </h1>
       </div>
       <div className="flex items-center justify-between">

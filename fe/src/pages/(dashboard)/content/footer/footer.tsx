@@ -1,4 +1,3 @@
-
 import instance from "@/configs/admin";
 import { uploadToCloudinary } from "@/configs/cloudinary";
 import {
@@ -49,7 +48,6 @@ const Contents = () => {
     queryKey: ["websiteInfo"],
     queryFn: async () => {
       const response = await instance.get("/thong-tin-web");
-      console.log("Raw API Response:", response.data);
       return response.data;
     },
   });
@@ -165,7 +163,6 @@ const Contents = () => {
     </div>
   );
 
-
   if (isLoading)
     return (
       <div className="flex items-center justify-center mt-[250px]">
@@ -186,7 +183,11 @@ const Contents = () => {
       label: "Tên Doanh Nghiệp",
       value: localWebsiteInfo?.ten_doanh_nghiep || "",
     },
-    { key: "dia_chi", label: "Địa Chỉ", value: localWebsiteInfo?.dia_chi || "" },
+    {
+      key: "dia_chi",
+      label: "Địa Chỉ",
+      value: localWebsiteInfo?.dia_chi || "",
+    },
     { key: "email", label: "Email", value: localWebsiteInfo?.email || "" },
     {
       key: "so_dien_thoai_dat_hang",
@@ -198,7 +199,11 @@ const Contents = () => {
       label: "SĐT Khiếu Nại",
       value: localWebsiteInfo?.so_dien_thoai_khieu_nai || "",
     },
-    { key: "cau_noi", label: "Câu Nói", value: localWebsiteInfo?.cau_noi || "" },
+    {
+      key: "cau_noi",
+      label: "Câu Nói",
+      value: localWebsiteInfo?.cau_noi || "",
+    },
   ];
 
   const socialLinks = [
@@ -230,7 +235,6 @@ const Contents = () => {
   ];
 
   return (
-
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
@@ -327,7 +331,6 @@ const Contents = () => {
                         />
                       </Form.Item>
                     )}
-                    
                   />
                 </Table>
               </div>
@@ -367,7 +370,6 @@ const Contents = () => {
                       />
                     </Form.Item>
                   )}
-                  
                 />
               </Table>
             </div>

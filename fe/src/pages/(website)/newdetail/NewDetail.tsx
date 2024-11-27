@@ -31,8 +31,9 @@ const NewDetail = () => {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["baiviet", duong_dan],
     queryFn: async () => {
-      const response = await instanceClient.post(`/tin-tuc-theo-danh-muc/${duong_dan}`);
-      console.log("Response data:", response.data);
+      const response = await instanceClient.post(
+        `/tin-tuc-theo-danh-muc/${duong_dan}`
+      );
       return response.data;
     },
   });
@@ -52,14 +53,20 @@ const NewDetail = () => {
     refetch();
 
     // Cuộn lên phần bài viết mới nhất
-    latestArticleRef.current?.scrollIntoView({ behavior: 'smooth' });
+    latestArticleRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const noi_dung = selectedArticle ? selectedArticle.noi_dung : data?.baiVietMoiNhatCuaDanhMuc?.noi_dung || "";
+  const noi_dung = selectedArticle
+    ? selectedArticle.noi_dung
+    : data?.baiVietMoiNhatCuaDanhMuc?.noi_dung || "";
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('vi-VN', options).format(date);
+    return new Intl.DateTimeFormat("vi-VN", options).format(date);
   };
   return (
     <>
@@ -73,17 +80,32 @@ const NewDetail = () => {
                 className="w-full h-[700px] rounded-[5px] object-cover"
               />
               <div className="mt-4">
-                <span className="text-xs text-gray-400">{selectedArticle.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span>
-                <h2 className="text-2xl font-bold mb-2">{selectedArticle.tieu_de}</h2>
-                <p className="text-gray-700 mb-4" dangerouslySetInnerHTML={{
-                  __html: isExpanded ? noi_dung : noi_dung.substring(0, 500) + '...'
-                }}></p>
+                <span className="text-xs text-gray-400">
+                  {selectedArticle.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}
+                </span>
+                <h2 className="text-2xl font-bold mb-2">
+                  {selectedArticle.tieu_de}
+                </h2>
+                <p
+                  className="text-gray-700 mb-4"
+                  dangerouslySetInnerHTML={{
+                    __html: isExpanded
+                      ? noi_dung
+                      : noi_dung.substring(0, 500) + "...",
+                  }}
+                ></p>
                 {noi_dung.length > 500 && (
-                  <button onClick={toggleExpand} className="text-sky-600 hover:text-sky-500">
-                    {isExpanded ? 'Thu gọn' : 'Xem thêm'}
+                  <button
+                    onClick={toggleExpand}
+                    className="text-sky-600 hover:text-sky-500"
+                  >
+                    {isExpanded ? "Thu gọn" : "Xem thêm"}
                   </button>
-                )} <br />
-                <span className="text-sm text-gray-400">Ngày tạo: {formatDate(selectedArticle.created_at)}</span>
+                )}{" "}
+                <br />
+                <span className="text-sm text-gray-400">
+                  Ngày tạo: {formatDate(selectedArticle.created_at)}
+                </span>
               </div>
             </div>
           ) : data?.baiVietMoiNhatCuaDanhMuc ? (
@@ -94,17 +116,36 @@ const NewDetail = () => {
                 className="w-full h-[700px] rounded-[5px] object-cover"
               />
               <div className="mt-4">
-                <span className="text-xs text-gray-400">{data.baiVietMoiNhatCuaDanhMuc.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span>
-                <h2 className="text-2xl font-bold mb-2">{data.baiVietMoiNhatCuaDanhMuc.tieu_de}</h2>
-                <p className="text-gray-700 mb-4" dangerouslySetInnerHTML={{
-                  __html: isExpanded ? noi_dung : noi_dung.substring(0, 500) + '...'
-                }}></p>
+                <span className="text-xs text-gray-400">
+                  {
+                    data.baiVietMoiNhatCuaDanhMuc.danh_muc_tin_tuc
+                      .ten_danh_muc_tin_tuc
+                  }
+                </span>
+                <h2 className="text-2xl font-bold mb-2">
+                  {data.baiVietMoiNhatCuaDanhMuc.tieu_de}
+                </h2>
+                <p
+                  className="text-gray-700 mb-4"
+                  dangerouslySetInnerHTML={{
+                    __html: isExpanded
+                      ? noi_dung
+                      : noi_dung.substring(0, 500) + "...",
+                  }}
+                ></p>
                 {noi_dung.length > 500 && (
-                  <button onClick={toggleExpand} className="text-sky-600 hover:text-sky-500">
-                    {isExpanded ? 'Thu gọn' : 'Xem thêm'}
+                  <button
+                    onClick={toggleExpand}
+                    className="text-sky-600 hover:text-sky-500"
+                  >
+                    {isExpanded ? "Thu gọn" : "Xem thêm"}
                   </button>
-                )} <br />
-                <span className="text-sm text-gray-400">Ngày tạo: {formatDate(data.baiVietMoiNhatCuaDanhMuc.created_at)}</span>
+                )}{" "}
+                <br />
+                <span className="text-sm text-gray-400">
+                  Ngày tạo:{" "}
+                  {formatDate(data.baiVietMoiNhatCuaDanhMuc.created_at)}
+                </span>
               </div>
             </div>
           ) : (
@@ -118,16 +159,26 @@ const NewDetail = () => {
           <div className="space-y-4">
             {Array.isArray(data?.baiVietTop) && data.baiVietTop.length > 0 ? (
               data.baiVietTop.map((article: any) => (
-                <div key={article.id} className="flex items-start space-x-3" onClick={() => handleArticleClick(article)}>
+                <div
+                  key={article.id}
+                  className="flex items-start space-x-3"
+                  onClick={() => handleArticleClick(article)}
+                >
                   <img
                     src={article.anh_tin_tuc}
                     alt="Article Thumbnail"
                     className="w-36 h-18 rounded-lg object-cover cursor-pointer"
                   />
                   <div>
-                    <span className="text-xs text-gray-400 ">{article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span>
-                    <h3 className="text-lg font-medium hover:text-red-500">{article.tieu_de}</h3>
-                    <span className="text-xs text-gray-400">{formatDate(article.created_at)}</span>
+                    <span className="text-xs text-gray-400 ">
+                      {article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}
+                    </span>
+                    <h3 className="text-lg font-medium hover:text-red-500">
+                      {article.tieu_de}
+                    </h3>
+                    <span className="text-xs text-gray-400">
+                      {formatDate(article.created_at)}
+                    </span>
                   </div>
                 </div>
               ))
@@ -136,11 +187,11 @@ const NewDetail = () => {
             )}
           </div>
         </div>
-
       </div>
       <div className="mt-10 pl-20 pb-20">
         <h2 className="text-xl font-semibold mb-4">Bài Viết Liên Quan</h2>
-        {Array.isArray(data?.baiVietKhacCuaDanhMuc) && data.baiVietKhacCuaDanhMuc.length > 0 ? (
+        {Array.isArray(data?.baiVietKhacCuaDanhMuc) &&
+        data.baiVietKhacCuaDanhMuc.length > 0 ? (
           <Swiper
             spaceBetween={20}
             slidesPerView={5}
@@ -148,15 +199,24 @@ const NewDetail = () => {
           >
             {data.baiVietKhacCuaDanhMuc.map((article: Article) => (
               <SwiperSlide key={article.id}>
-                <div className="p-4 bg-white rounded-lg shadow-md" onClick={() => handleArticleClick(article)}>
+                <div
+                  className="p-4 bg-white rounded-lg shadow-md"
+                  onClick={() => handleArticleClick(article)}
+                >
                   <img
                     src={article.anh_tin_tuc}
                     alt="Related Article Thumbnail"
                     className="w-full h-[250px] rounded-lg object-cover mb-3 cursor-pointer"
                   />
-                  <span className="text-xs text-gray-400 text-left block">{article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}</span>
-                  <h3 className="text-lg font-medium hover:text-red-500 text-left">{article.tieu_de}</h3>
-                  <span className="text-xs text-gray-400 text-left block">{formatDate(article.created_at)}</span>
+                  <span className="text-xs text-gray-400 text-left block">
+                    {article.danh_muc_tin_tuc.ten_danh_muc_tin_tuc}
+                  </span>
+                  <h3 className="text-lg font-medium hover:text-red-500 text-left">
+                    {article.tieu_de}
+                  </h3>
+                  <span className="text-xs text-gray-400 text-left block">
+                    {formatDate(article.created_at)}
+                  </span>
                 </div>
               </SwiperSlide>
             ))}
@@ -165,7 +225,6 @@ const NewDetail = () => {
           <p>Chưa có bài viết nào.</p>
         )}
       </div>
-
     </>
   );
 };

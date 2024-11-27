@@ -40,8 +40,8 @@ const SiderComponent: React.FC = () => {
   }, [quyen]);
 
   return (
-    <Layout className="min-h-screen flex">
-      <Sider
+    <>
+      {/* <Sider
         width={320}
         className="bg-white text-white overflow-y-auto h-[900px]"
         style={{ position: "relative" }}
@@ -49,143 +49,141 @@ const SiderComponent: React.FC = () => {
         collapsed={collapsed} // State for collapse
         onCollapse={setCollapsed} // Toggle collapse state
         breakpoint="lg" // Sidebar will collapse on screens smaller than "lg"
+      > */}
+      <Menu
+        mode="inline"
+        defaultSelectedKeys={["/admin/dashboard"]}
+        onClick={handleMenuClick}
+        className="text-white py-5 font-semibold text-base space-y-4"
       >
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={["/admin/dashboard"]}
-          onClick={handleMenuClick}
-          className="text-white py-5 font-semibold text-base space-y-4"
-        >
-          {/* Thống kê (Statistics) Menu */}
-          {vaitro?.includes("Người giao hàng") ? null : (
-            <SubMenu key="sub1" icon={<BarChart2 />} title="Thống kê">
-              <Menu.Item key="/admin/dashboard/list">Tổng quan</Menu.Item>
-              <Menu.Item key="/admin/dashboard/doanhthu">Doanh thu</Menu.Item>
-              <Menu.Item key="/admin/dashboard/sanpham">Sản phẩm</Menu.Item>
-              <Menu.Item key="/admin/dashboard/taikhoan">Khách hàng</Menu.Item>
-            </SubMenu>
-          )}
+        {/* Thống kê (Statistics) Menu */}
+        {vaitro?.includes("Người giao hàng") ? null : (
+          <SubMenu key="sub1" icon={<BarChart2 />} title="Thống kê">
+            <Menu.Item key="/admin/dashboard/list">Tổng quan</Menu.Item>
+            <Menu.Item key="/admin/dashboard/doanhthu">Doanh thu</Menu.Item>
+            <Menu.Item key="/admin/dashboard/sanpham">Sản phẩm</Menu.Item>
+            <Menu.Item key="/admin/dashboard/taikhoan">Khách hàng</Menu.Item>
+          </SubMenu>
+        )}
 
-          {/* Sản phẩm (Products) Menu */}
-          {(quyen?.includes("admin.sanpham.index") ||
-            (quyen?.includes("admin.bienthekichthuoc.index") &&
-              quyen?.includes("admin.bienthemausac.index")) ||
-            quyen?.includes("admin.bosuutap.index")) && (
-            <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
-              {quyen?.includes("admin.sanpham.index") && (
-                <Menu.Item key="/admin/products/list">
-                  Danh sách sản phẩm
+        {/* Sản phẩm (Products) Menu */}
+        {(quyen?.includes("admin.sanpham.index") ||
+          (quyen?.includes("admin.bienthekichthuoc.index") &&
+            quyen?.includes("admin.bienthemausac.index")) ||
+          quyen?.includes("admin.bosuutap.index")) && (
+          <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
+            {quyen?.includes("admin.sanpham.index") && (
+              <Menu.Item key="/admin/products/list">
+                Danh sách sản phẩm
+              </Menu.Item>
+            )}
+            {quyen?.includes("admin.bienthekichthuoc.index") &&
+              quyen?.includes("admin.bienthemausac.index") && (
+                <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
+              )}
+            {quyen?.includes("admin.bosuutap.index") && (
+              <Menu.Item key="/admin/products/tags">Bộ sưu tập</Menu.Item>
+            )}
+          </SubMenu>
+        )}
+
+        {/* Danh mục (Categories) Menu */}
+        {(quyen?.includes("admin.danhmuctintuc.index") ||
+          quyen?.includes("admin.danhmuc.index")) && (
+          <SubMenu key="sub3" icon={<Folder />} title="Danh mục">
+            {quyen?.includes("admin.danhmuc.index") && (
+              <Menu.Item key="/admin/categories">Danh mục sản phẩm</Menu.Item>
+            )}
+            {quyen?.includes("admin.danhmuctintuc.index") && (
+              <Menu.Item key="/admin/newcategory">Danh mục tin tức</Menu.Item>
+            )}
+          </SubMenu>
+        )}
+
+        {/* Đơn hàng (Orders) Menu */}
+        {quyen?.includes("admin.donhang.index") && (
+          <SubMenu key="sub4" icon={<ShoppingCart />} title="Đơn hàng">
+            <Menu.Item key="/admin/orders/transport">Tổng quan</Menu.Item>
+            {quyen.includes("admin.donhang.index") && (
+              <Menu.Item key="/admin/orders/list">Danh sách đơn hàng</Menu.Item>
+            )}
+            {quyen.includes("admin.donhang.hoanhang") && (
+              <Menu.Item key="/admin/orders/donhoan">
+                Danh sách đơn hoàn
+              </Menu.Item>
+            )}
+            {quyen.includes("admin.vanchuyen.index") && (
+              <SubMenu icon={<Truck />} key="van-chuyen" title="Vận chuyển">
+                <Menu.Item key="/admin/orders/uncomfirmedorder">
+                  Đơn hàng
                 </Menu.Item>
-              )}
-              {quyen?.includes("admin.bienthekichthuoc.index") &&
-                quyen?.includes("admin.bienthemausac.index") && (
-                  <Menu.Item key="/admin/products/bienthe">Biến thể</Menu.Item>
-                )}
-              {quyen?.includes("admin.bosuutap.index") && (
-                <Menu.Item key="/admin/products/tags">Bộ sưu tập</Menu.Item>
-              )}
-            </SubMenu>
-          )}
+                <Menu.Item key="/admin/orders/hoanhang">Đơn hoàn</Menu.Item>
+              </SubMenu>
+            )}
+          </SubMenu>
+        )}
 
-          {/* Danh mục (Categories) Menu */}
-          {(quyen?.includes("admin.danhmuctintuc.index") ||
-            quyen?.includes("admin.danhmuc.index")) && (
-            <SubMenu key="sub3" icon={<Folder />} title="Danh mục">
-              {quyen?.includes("admin.danhmuc.index") && (
-                <Menu.Item key="/admin/categories">Danh mục sản phẩm</Menu.Item>
-              )}
-              {quyen?.includes("admin.danhmuctintuc.index") && (
-                <Menu.Item key="/admin/newcategory">Danh mục tin tức</Menu.Item>
-              )}
-            </SubMenu>
-          )}
+        {/* Other Menus */}
+        {quyen?.includes("admin.rut-tien.xacnhan") && (
+          <Menu.Item
+            key="/admin/orders/ruttien"
+            icon={<DollarOutlined style={{ fontSize: "24px" }} />}
+          >
+            Rút tiền
+          </Menu.Item>
+        )}
 
-          {/* Đơn hàng (Orders) Menu */}
-          {quyen?.includes("admin.donhang.index") && (
-            <SubMenu key="sub4" icon={<ShoppingCart />} title="Đơn hàng">
-              <Menu.Item key="/admin/orders/transport">Tổng quan</Menu.Item>
-              {quyen.includes("admin.donhang.index") && (
-                <Menu.Item key="/admin/orders/list">
-                  Danh sách đơn hàng
-                </Menu.Item>
+        {/* Tài khoản (Account) Menu */}
+        {(quyen?.includes("admin.taikhoan.index") ||
+          quyen?.includes("admin.hangthanhvien.index")) && (
+          <SubMenu key="sub5" icon={<User />} title="Tài khoản">
+            <Menu.Item key="/admin/users/khachhang">Khách hàng</Menu.Item>
+            {quyen?.includes("admin.taikhoan.index") &&
+              vaitro.includes("Quản trị viên") && (
+                <Menu.Item key="/admin/users/nhanvien">Nhân viên</Menu.Item>
               )}
-              {quyen.includes("admin.donhang.hoanhang") && (
-                <Menu.Item key="/admin/orders/donhoan">
-                  Danh sách đơn hoàn
-                </Menu.Item>
-              )}
-              {quyen.includes("admin.vanchuyen.index") && (
-                <SubMenu icon={<Truck />} key="van-chuyen" title="Vận chuyển">
-                  <Menu.Item key="/admin/orders/uncomfirmedorder">
-                    Đơn hàng
-                  </Menu.Item>
-                  <Menu.Item key="/admin/orders/hoanhang">Đơn hoàn</Menu.Item>
-                </SubMenu>
-              )}
-            </SubMenu>
-          )}
+            {quyen?.includes("admin.hangthanhvien.index") && (
+              <Menu.Item key="/admin/users/rank">Hạng thành viên</Menu.Item>
+            )}
+          </SubMenu>
+        )}
 
-          {/* Other Menus */}
-          {quyen?.includes("admin.rut-tien.xacnhan") && (
-            <Menu.Item
-              key="/admin/orders/ruttien"
-              icon={<DollarOutlined style={{ fontSize: "24px" }} />}
-            >
-              Rút tiền
-            </Menu.Item>
-          )}
-
-          {/* Tài khoản (Account) Menu */}
-          {(quyen?.includes("admin.taikhoan.index") ||
-            quyen?.includes("admin.hangthanhvien.index")) && (
-            <SubMenu key="sub5" icon={<User />} title="Tài khoản">
-              <Menu.Item key="/admin/users/khachhang">Khách hàng</Menu.Item>
-              {quyen?.includes("admin.taikhoan.index") &&
-                vaitro.includes("Quản trị viên") && (
-                  <Menu.Item key="/admin/users/nhanvien">Nhân viên</Menu.Item>
-                )}
-              {quyen?.includes("admin.hangthanhvien.index") && (
-                <Menu.Item key="/admin/users/rank">Hạng thành viên</Menu.Item>
-              )}
-            </SubMenu>
-          )}
-
-          {/* Other Menus */}
-          {quyen?.includes("admin.chuongtrinhuudai.index") && (
-            <SubMenu key="sub6" icon={<Tag />} title="Khuyến mãi & Ưu đãi">
-              {quyen?.includes("admin.makhuyenmai.index") && (
-                <Menu.Item key="/admin/vouchers">Mã khuyến mãi</Menu.Item>
-              )}
-              {quyen?.includes("admin.chuongtrinhuudai.index") && (
-                <Menu.Item key="/admin/chuongtrinhuudai">
-                  Chương trình ưu đãi
-                </Menu.Item>
-              )}
-            </SubMenu>
-          )}
-          {quyen?.includes("admin.tintuc.index") && (
-            <Menu.Item key="/admin/news" icon={<Newspaper />}>
-              Tin tức
-            </Menu.Item>
-          )}
-          {quyen?.includes("admin.danhgia.index") && (
-            <Menu.Item key="/admin/evaluates" icon={<MessageCircleDashed />}>
-              Đánh giá
-            </Menu.Item>
-          )}
-          {quyen?.includes("admin.lienhe.index") && (
-            <Menu.Item key="/admin/support" icon={<Mail />}>
-              Liên hệ
-            </Menu.Item>
-          )}
-          {quyen?.includes("admin.vaitro.index") && (
-            <Menu.Item key="/admin/ADmin/userprivileges" icon={<Lock />}>
-              Phân quyền
-            </Menu.Item>
-          )}
-        </Menu>
-      </Sider>
-    </Layout>
+        {/* Other Menus */}
+        {quyen?.includes("admin.chuongtrinhuudai.index") && (
+          <SubMenu key="sub6" icon={<Tag />} title="Khuyến mãi & Ưu đãi">
+            {quyen?.includes("admin.makhuyenmai.index") && (
+              <Menu.Item key="/admin/vouchers">Mã khuyến mãi</Menu.Item>
+            )}
+            {quyen?.includes("admin.chuongtrinhuudai.index") && (
+              <Menu.Item key="/admin/chuongtrinhuudai">
+                Chương trình ưu đãi
+              </Menu.Item>
+            )}
+          </SubMenu>
+        )}
+        {quyen?.includes("admin.tintuc.index") && (
+          <Menu.Item key="/admin/news" icon={<Newspaper />}>
+            Tin tức
+          </Menu.Item>
+        )}
+        {quyen?.includes("admin.danhgia.index") && (
+          <Menu.Item key="/admin/evaluates" icon={<MessageCircleDashed />}>
+            Đánh giá
+          </Menu.Item>
+        )}
+        {quyen?.includes("admin.lienhe.index") && (
+          <Menu.Item key="/admin/support" icon={<Mail />}>
+            Liên hệ
+          </Menu.Item>
+        )}
+        {quyen?.includes("admin.vaitro.index") && (
+          <Menu.Item key="/admin/ADmin/userprivileges" icon={<Lock />}>
+            Phân quyền
+          </Menu.Item>
+        )}
+      </Menu>
+      {/* </Sider> */}
+    </>
   );
 };
 

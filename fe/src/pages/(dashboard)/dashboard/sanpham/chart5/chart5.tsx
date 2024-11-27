@@ -36,7 +36,6 @@ const Chart5 = ({ datestart, dateend, top }: any) => {
     enabled: !!datestart && !!dateend && !!top,
   });
 
-  console.log(data);
   const [series, setSeries] = useState<{ name: string; data: any[] }[]>([]);
   // console.log(data);
   const [options, setOptions] = useState({});

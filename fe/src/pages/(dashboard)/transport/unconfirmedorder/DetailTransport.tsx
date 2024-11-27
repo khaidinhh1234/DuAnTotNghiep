@@ -213,7 +213,7 @@ const DetailTransport = ({ record }: any) => {
   const vanchuyenData = data?.data?.van_chuyen?.don_hang;
   const shipper = data?.data?.van_chuyen?.shipper;
   const mavanchuyen = data?.data?.van_chuyen?.ma_van_chuyen;
-  console.log("vanchuyenData", data);
+  // console.log("vanchuyenData", data);
   const thongtin = data?.data?.thong_tin;
   const handleCancel = () => {
     setOpen(false);

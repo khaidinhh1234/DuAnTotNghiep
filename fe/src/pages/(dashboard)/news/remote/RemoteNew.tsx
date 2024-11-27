@@ -2,7 +2,14 @@ import { INew } from "@/common/types/new";
 import instance from "@/configs/admin";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, message, Popconfirm, Space, Table, TableColumnsType } from "antd";
+import {
+  Button,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  TableColumnsType,
+} from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -17,7 +24,6 @@ const RemoteNew: React.FC = () => {
     queryFn: async () => {
       try {
         const response = await instance.get("/tintuc/thung-rac");
-        console.log("Remote news data:", response.data); // Log phản hồi
         return response.data;
       } catch (error) {
         console.error("Error fetching remote news:", error);
@@ -43,7 +49,8 @@ const RemoteNew: React.FC = () => {
     data?.data.map((newsItem: any) => ({
       key: newsItem.id,
       ...newsItem,
-      user_id: newsItem.user?.ho + " " + newsItem.user?.ten || "Chưa có dữ liệu",
+      user_id:
+        newsItem.user?.ho + " " + newsItem.user?.ten || "Chưa có dữ liệu",
       danh_muc_tin_tuc_id:
         newsItem.danh_muc_tin_tuc_id?.ten_danh_muc_tin_tuc || "Chưa có dữ liệu", // Kiểm tra danh mục
     })) || [];
