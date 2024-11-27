@@ -370,6 +370,12 @@ const UsersAdminNhanvien: React.FC = () => {
               Thêm
             </Button>
           </Link>
+          <Link to="/admin/users/nhanvien/remote">
+            <Button className="bg-gradient-to-r  from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
+              {/* <DeleteOutlined className="mr-1" /> */}
+              Chặn
+            </Button>
+          </Link>
         </div>
       </div>
       <div className="max-w-sm my-2">

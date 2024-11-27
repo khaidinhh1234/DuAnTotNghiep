@@ -16,7 +16,6 @@ const Change = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
-  console.log(token);
   const { data, isLoading } = useQuery({
     queryKey: ["check"],
     queryFn: async () => {
@@ -45,7 +44,6 @@ const Change = () => {
     mutationFn: async (user: IUser) => {
       try {
         const res = await instance.post("/reset-password", user);
-        console.log(res);
         if (res.data.status) {
           toast.success(res.data.message);
           setTimeout(() => {

@@ -435,7 +435,6 @@ const OrderAdmin: React.FC = () => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [trangthai, setTrangThai] = useState<string>();
-  console.log("trangthai", trangthai);
   const [loading, setLoading] = useState(false);
   const [formcheck, setFormCheck] = useState(false);
 
@@ -452,8 +451,6 @@ const OrderAdmin: React.FC = () => {
               : trangthai == "3"
                 ? "Hủy hàng"
                 : "Đã xác nhận";
-        console.log("trangthais", trangthais);
-        console.log("data", data);
         const response = await instance.put("donhang/trang-thai-don-hang", {
           trang_thai_don_hang: trangthais,
           id: data,

@@ -35,7 +35,6 @@ const Feedback = () => {
       return response.data;
     },
   });
-  console.log(data)
   // const toggleExpand = (id: number) => {
   //   setExpandedKeys((prevKeys) =>
   //     prevKeys.includes(id)
@@ -43,7 +42,7 @@ const Feedback = () => {
   //       : [...prevKeys, id]
   //   );
   // };
-  
+
   // Mutation to send replies to API
   const mutation = useMutation({
     mutationFn: async ({
@@ -57,30 +56,27 @@ const Feedback = () => {
         message.open({
           type: "success",
           content: "Phản hồi thành công!",
-        })
+        });
         const response = await instance.put(`/lien-he/${id}`, {
           noi_dung_phan_hoi: noi_dung_phan_hoi,
         });
-    //  console.log(response ,'ưefdas')
+        //  console.log(response ,'ưefdas')
         return response.data;
       } catch (error) {
         throw error;
       }
     },
     onSuccess: () => {
-      
       queryClient.invalidateQueries({ queryKey: ["phanhoilienhe"] });
     },
     onError: (error) => {
       console.error("Error:", error);
-      message.error("Có lỗi xảy ra khi phản hồi"); 
+      message.error("Có lỗi xảy ra khi phản hồi");
     },
   });
-  
 
   const hideEvaluate = useMutation({
     mutationFn: async (id: number) => {
-
       await instance.delete(`/lien-he/${id}`);
     },
     onSuccess: () => {
@@ -230,7 +226,7 @@ const Feedback = () => {
             : record.mo_ta;
 
         return (
-          <div style={{textAlign: "left", paddingBottom: "60px"  }}>
+          <div style={{ textAlign: "left", paddingBottom: "60px" }}>
             <p>
               <strong>
                 {record.user?.ho + " " + record.user?.ten || "Người dùng ẩn"}

@@ -38,7 +38,6 @@ const Chart6 = () => {
       return res.data;
     },
   });
-  console.log(data);
   const { mutate } = useMutation({
     mutationFn: async ({
       nam,

@@ -15,7 +15,8 @@ const { Title, Text } = Typography;
 
 const IntroCard = ({ profile }: any) => {
   const thongtin = profile?.tai_khoan;
-
+  const [user] = useLocalStorage("user" as any, {});
+  const chitiet = user?.user;
   // Xử lý khi đang loading
   // if (isLoading) {
   //   return <p>Loading...</p>;
@@ -45,7 +46,7 @@ const IntroCard = ({ profile }: any) => {
         </Col>
         <Col span={22}>
           <Text className="text-lg">
-            Email: {thongtin?.email ?? "không có thông tin"}
+            Email: {thongtin?.email ?? chitiet?.email ?? "không có thông tin"}
           </Text>
         </Col>
       </Row>
@@ -56,7 +57,10 @@ const IntroCard = ({ profile }: any) => {
         </Col>
         <Col span={22}>
           <Text className="text-lg">
-            Số điện thoại:{thongtin?.so_dien_thoai ?? "không có thông tin"}
+            Số điện thoại:
+            {thongtin?.so_dien_thoai ??
+              chitiet?.so_dien_thoai ??
+              "không có thông tin"}
           </Text>
         </Col>
       </Row>
@@ -67,7 +71,8 @@ const IntroCard = ({ profile }: any) => {
         </Col>
         <Col span={22}>
           <Text className="text-lg">
-            Địa chỉ: {thongtin?.dia_chi ?? "không có thông tin"}
+            Địa chỉ:{" "}
+            {thongtin?.dia_chi ?? chitiet?.dia_chi ?? "không có thông tin"}
           </Text>
         </Col>
       </Row>
@@ -78,7 +83,8 @@ const IntroCard = ({ profile }: any) => {
         </Col>
         <Col span={22}>
           <Text className="text-lg">
-            Ngày sinh: {thongtin?.ngay_sinh ?? "không có thông tin"}
+            Ngày sinh:{" "}
+            {thongtin?.ngay_sinh ?? chitiet?.ngay_sinh ?? "không có thông tin"}
           </Text>
         </Col>
       </Row>
@@ -90,9 +96,9 @@ const IntroCard = ({ profile }: any) => {
         <Col span={22}>
           <Text className="text-lg">
             Giới tính:{" "}
-            {thongtin?.gioi_tinh == 1
+            {thongtin?.gioi_tinh == 1 || chitiet?.gioi_tinh == "1"
               ? "Nam"
-              : thongtin?.gioi_tinh == 2
+              : thongtin?.gioi_tinh == 2 || chitiet?.gioi_tinh == "2"
                 ? "Nữ"
                 : "Khác"}
           </Text>

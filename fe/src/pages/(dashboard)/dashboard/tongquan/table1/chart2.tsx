@@ -39,15 +39,15 @@ const Chart2 = ({ datestart, dateend }: ChartProps) => {
   return (
     <div>
       {" "}
-      <Card className=" rounded-lg bg-[#F2F4F7] w-72">
-        <div className="">
-          <div className="flex justify-between">
+      <Card className="rounded-lg bg-[#F2F4F7] w-full sm:w-72 px-4">
+        <div className="space-y-1">
+          <div className="flex justify-between items-center">
             <div className="text-black">Thanh toán Online:</div>
             <div className="text-black">_</div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <div className="text-black">Doanh thu:</div>
-            <div className="text-black font-bold text-lg">
+            <div className="text-black font-bold text-md">
               {" "}
               <Statistic
                 value={data?.tong_doanh_thu || 0}
@@ -57,7 +57,7 @@ const Chart2 = ({ datestart, dateend }: ChartProps) => {
               />
             </div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <div className="text-black text-lg">Số đơn:</div>
             <div className="text-black text-lg font-semibold">
               <Statistic

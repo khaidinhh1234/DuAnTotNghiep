@@ -96,7 +96,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 );
 
 const fetchNotifications = async (): Promise<NotificationResponse> => {
-  const response = await instance.get<NotificationResponse>("/thong-bao");
+  const accessToken = JSON.parse(localStorage.getItem("accessToken") || "{}");
+
+  const response = await instance.get<NotificationResponse>("/thong-bao", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
   return response.data;
 };
 

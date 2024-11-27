@@ -43,7 +43,6 @@ const MemberRankEdit = () => {
 
   useEffect(() => {
     if (response && response.data) {
-      console.log("Setting form values:", response.data);
       form.setFieldsValue({
         rankName: response.data.ten_hang_thanh_vien,
         minSpend: response.data.chi_tieu_toi_thieu,

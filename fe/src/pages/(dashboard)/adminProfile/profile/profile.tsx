@@ -9,7 +9,6 @@ const Profile = ({ profile }: any) => {
   const onFinish = async (values: any) => {
     console.log("Success:", values);
   };
-  console.log("Profile:", profile?.tai_khoan);
   const thongtin = profile?.tai_khoan;
   return (
     <div className="max-w mx-auto p-6 bg-white rounded-lg shadow-lg">

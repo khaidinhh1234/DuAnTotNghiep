@@ -63,7 +63,6 @@ const Dashboard = () => {
     if (error) console.error("Error fetching data:", error);
     console.log("Fetched data:", data);
   }, [data, error]);
-  console.log(data);
 
   const don_hang_chot = data?.don_hang_chot;
   const don_hang_hoan = data?.don_hang_hoan;
@@ -82,20 +81,20 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      <Row gutter={16}>
-        <Col span={12} sm={8}>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} md={8}>
           <Chart1 don_hang_chot={don_hang_chot} />
         </Col>
-        <Col span={12} sm={8}>
+        <Col xs={24} md={8}>
           <Chart2 don_hang_hoan={don_hang_hoan} />
         </Col>
-        <Col span={12} sm={8}>
+        <Col xs={24} md={8}>
           <Chart3 soluonsp={soluonsp} />
         </Col>
       </Row>
       <div className="mt-6 grid grid-cols-8 gap-5">
         <Row className="col-span-5 shadow-md bg-white rounded-md px-6 py-7">
-          <div className="grid grid-cols-3 gap-5 mb-5 mx-auto">
+          <div className="grid grid-cols-1  xl:grid-cols-3 gap-5 mb-5 mx-auto">
             <div>
               <Tablechart1
                 datestart={datestart as any}
@@ -103,20 +102,19 @@ const Dashboard = () => {
               />
             </div>
             <div>
-              {" "}
               <Tablechart2
                 datestart={datestart as any}
                 dateend={dateend as any}
               />
             </div>
             <div>
-              {" "}
               <Tablechart3
                 datestart={datestart as any}
                 dateend={dateend as any}
               />
             </div>
-          </div>{" "}
+          </div>
+
           <div className="">
             {" "}
             <Segmented

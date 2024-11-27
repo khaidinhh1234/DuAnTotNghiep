@@ -43,7 +43,6 @@ const RemoteEvaluate = () => {
             }
         },
     });
-    console.log("data", data)
     const mutation = useMutation({
         mutationFn: async ({
             id,

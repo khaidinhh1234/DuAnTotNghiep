@@ -58,7 +58,6 @@ const ProductCategoriesDM = ({ isPending }: any) => {
     : tenDanhMucCon
       ? tenDanhMucCon
       : tenDanhMucCha;
-  console.log(danhmuc);
   // lọc danh mục
   const [expanded, setExpanded] = useState<number[]>([]);
   const [parentChecked, setParentChecked] = useState<{
