@@ -603,7 +603,106 @@ const CheckOut = () => {
                           </td>
                         </tr>
                       ))}
-                      {/* End sản phẩm nguyên giá */} 
+                      {/* End sản phẩm nguyên giá */}
+                      {data?.san_pham_het_hang?.map((product: any) => (
+                        <tr
+                          key={product.id}
+                          className={`border-b border-gray-200 hover:bg-gray-100 ${product.het_hang ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                        >
+                          {/* Checkbox */}
+                          <td className="px-4 py-2">
+                            <input
+                              type="checkbox"
+                              className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+                              disabled={product.het_hang}
+                              onChange={() => handleSelectProduct(product.id)}
+                              title={product.het_hang ? 'Sản phẩm đã hết hàng' : 'Select product'}
+                            />
+                          </td>
+
+                          {/* Thông tin sản phẩm */}
+                          <td className="px-4 py-2">
+                            <div className="flex items-start gap-4">
+                              {/* Ảnh sản phẩm */}
+                              <div className="relative">
+                                <img
+                                  src={product.hinh_anh}
+                                  alt={product.ten_san_pham}
+                                  className="w-32 h-40 object-cover rounded-md"
+                                />
+                                {/* Hiển thị chữ 'Hết hàng' */}
+                                {product.het_hang === 1 && (
+                                  <p className="absolute bottom-0 left-0 right-0 text-center text-red-600 font-semibold bg-white bg-opacity-75">
+                                    Hết hàng
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Thông tin sản phẩm */}
+                              <div>
+                                <h3 className="font-semibold text-gray-700">{product.ten_san_pham}</h3>
+                                <p className="text-gray-500">{product.mau_sac}, {product.kich_thuoc}</p>
+                                <p className="text-gray-700 font-semibold mt-1">{formatCurrency(product.gia_hien_tai)}</p>
+                              </div>
+                            </div>
+                          </td>
+
+
+                          {/* Điều chỉnh số lượng */}
+                          <td className="hidden lg:table-cell px-4 py-2 text-center align-middle">
+                            <div className="flex items-center justify-center border rounded-lg mx-auto w-fit">
+                              <button
+                                onClick={() => {
+                                  if (!product.het_hang && !isProcessing[product.id]) {
+                                    decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong });
+                                  }
+                                }}
+                                className="py-1 px-3 rounded-l-lg"
+                                title={product.het_hang ? 'Không thể giảm, sản phẩm hết hàng' : 'Decrease quantity'}
+                                disabled={product.het_hang || isProcessing[product.id] || product.so_luong <= 1}
+                              >
+                                <i className="fa-solid fa-minus" />
+                              </button>
+                              <input
+                                value={product.so_luong}
+                                className="w-7 h-10 text-center"
+                                readOnly
+                                title={product.het_hang ? 'Sản phẩm hết hàng' : 'Product Quantity'}
+                              />
+                              <button
+                                onClick={() => {
+                                  if (!product.het_hang && !isProcessing[product.id]) {
+                                    increaseQuantity({ productId: product.id, currentQuantity: product.so_luong });
+                                  }
+                                }}
+                                className="py-1 px-3 rounded-r-lg"
+                                title={product.het_hang ? 'Không thể tăng, sản phẩm hết hàng' : 'Increase quantity'}
+                                disabled={product.het_hang || product.so_luong >= product.kho_hang || isProcessing[product.id]}
+                              >
+                                <i className="fa-solid fa-plus" />
+                              </button>
+                            </div>
+                          </td>
+
+                          {/* Giá tổng */}
+                          <td className="px-4 py-2">
+                            {formatCurrency(product.gia_hien_tai * product.so_luong)}
+                          </td>
+
+                          {/* Xóa sản phẩm */}
+                          <td className="px-4 py-2">
+                            <button
+                              onClick={() => Delete(product.id)}
+                              className="text-red-600 hover:text-red-800"
+                              title="Remove product"
+                            >
+                              <i className="fa-regular fa-trash-can" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+
                     </>
                   </tbody>
                 </table>

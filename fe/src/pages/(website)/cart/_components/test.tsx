@@ -29,7 +29,7 @@ const Test = () => {
   });
   const { mutate: increaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
-      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`, 
+      await instanceClient.put(`/gio-hang/tang-so-luong/${productId}`,
         { so_luong: currentQuantity + 1 },
         {
           headers: {
@@ -37,7 +37,7 @@ const Test = () => {
           },
         }
       );
-      
+
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
@@ -75,7 +75,7 @@ const Test = () => {
       // Bỏ chọn tất cả sản phẩm đang giảm giá
       setSelectedProducts((prevSelected) =>
         prevSelected.filter((productId) =>
-          !data?.san_pham_giam_gia.map((product:any) => product.id).includes(productId)
+          !data?.san_pham_giam_gia.map((product: any) => product.id).includes(productId)
         )
       );
     } else {
@@ -128,14 +128,14 @@ const Test = () => {
 
         {/* Thông báo */}
         <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-            <p className="font-bold text-green-600">
-              Chúc mừng! Đơn hàng của bạn được{" "}
-              <span className="text-green-700">Miễn phí vận chuyển</span>
-            </p>
-            <div className="bg-green-100 rounded-full h-2 mt-3">
-              <div className="bg-green-500 h-full w-full"></div>
-            </div>
+          <p className="font-bold text-green-600">
+            Chúc mừng! Đơn hàng của bạn được{" "}
+            <span className="text-green-700">Miễn phí vận chuyển</span>
+          </p>
+          <div className="bg-green-100 rounded-full h-2 mt-3">
+            <div className="bg-green-500 h-full w-full"></div>
           </div>
+        </div>
 
         {/* Khuyến mãi */}
         {/* <div className="flex items-center justify-between bg-red-100 text-red-600 px-6 py-4 rounded-lg mb-8">
@@ -168,12 +168,12 @@ const Test = () => {
                 >
                   <div className="flex items-center gap-6">
                     <input
-                          type="checkbox"
-                          checked={selectedProducts.includes(product.id)}
-                          onChange={() => handleCheckboxChange(product.id)}
-                          className="form-checkbox h-5 w-5 text-yellow-500"
-                          title={`Select ${product.ten_san_pham}`}
-                        />
+                      type="checkbox"
+                      checked={selectedProducts.includes(product.id)}
+                      onChange={() => handleCheckboxChange(product.id)}
+                      className="form-checkbox h-5 w-5 text-yellow-500"
+                      title={`Select ${product.ten_san_pham}`}
+                    />
                     <img
                       src={product.hinh_anh}
                       alt="Ảnh sản phẩm"
@@ -191,8 +191,8 @@ const Test = () => {
                   </div>
                   <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                     <button
-                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                      className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       −
                     </button>
                     <input
@@ -203,8 +203,8 @@ const Test = () => {
                       title={`Quantity of ${product.ten_san_pham}`}
                     />
                     <button
-                     onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                      className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       +
                     </button>
                   </div>
@@ -214,7 +214,6 @@ const Test = () => {
 
             {/* Danh mục sản phẩm nguyên giá */}
             <div className="bg-white p-6 rounded-lg shadow-md">
-             
               <div className="flex items-center mb-4">
                 <input
                   type="checkbox"
@@ -223,7 +222,7 @@ const Test = () => {
                   className="form-checkbox h-5 w-5 text-yellow-500"
                   title="Select all regular priced products"
                 />
-                 <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm nguyên giá</h2>
+                <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm nguyên giá</h2>
               </div>
               {data?.san_pham_nguyen_gia.map((product: any) => (
                 <div
@@ -253,8 +252,8 @@ const Test = () => {
                   </div>
                   <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                     <button
-                    onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                      className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       −
                     </button>
                     <input
@@ -265,46 +264,14 @@ const Test = () => {
                       title={`Quantity of ${product.ten_san_pham}`}
                     />
                     <button
-                    onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                    className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                      onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                      className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
                       +
                     </button>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Chi tiết đơn hàng */}
-          <div className="lg:col-span-4 col-span-12">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="font-bold text-xl mb-4">Chi tiết đơn hàng</h2>
-              <div className="flex justify-between mb-3">
-                <span className="text-gray-600">Tổng giá trị sản phẩm</span>
-                <span>{grandTotal} ₫</span>
-              </div>
-              <div className="flex justify-between mb-3">
-                <span className="text-gray-600">Giảm giá</span>
-                <span>-49.900 ₫</span>
-              </div>
-              <div className="flex justify-between mb-3">
-                <span className="text-gray-600">Vận chuyển</span>
-                <span>20.000 ₫</span>
-              </div>
-              <div className="flex justify-between mb-4">
-                <span className="text-gray-600">Giảm giá vận chuyển</span>
-                <span>−20.000 ₫</span>
-              </div>
-              <div className="border-t pt-4">
-                <div className="flex justify-between">
-                  <span className="font-bold">Tổng cộng</span>
-                  <span className="font-bold">{grandTotal} ₫</span>
-                </div>
-              </div>
-            </div>
-            <button className="w-full bg-yellow-500 text-white font-semibold py-2 rounded-lg mt-4">
-              Tiến hành thanh toán
-            </button>
           </div>
         </div>
       </div>

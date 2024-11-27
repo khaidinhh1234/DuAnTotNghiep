@@ -18,16 +18,12 @@ return new class extends Migration
         Schema::create('danh_gias', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(SanPham::class)->constrained();
             $table->foreignIdFor(DonHang::class)->constrained();
-            $table->foreignIdFor(BienTheSanPham::class)->constrained();
             $table->integer('so_sao_san_pham')->nullable();
             $table->integer('so_sao_dich_vu_van_chuyen')->nullable();
             $table->text('chat_luong_san_pham')->nullable();
-            $table->string('anh_danh_gia')->nullable();
             $table->text('mo_ta')->nullable();
             $table->text('phan_hoi')->nullable();
-            $table->integer('huu_ich')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
