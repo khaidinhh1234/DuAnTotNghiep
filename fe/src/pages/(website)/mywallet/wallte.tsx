@@ -31,35 +31,7 @@ function TaiChinh() {
   };
   console.log(datas);
 
-  const confirmPayment = useMutation({
-    mutationKey: ["payment-confirmation", orderId],
-    mutationFn: async () => {
-      const response = await instanceClient.post(`/xac-nhan-nap-tien`, {
-        orderId: orderId,
-        resultCode: resultCode,
-        amount: amount,
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      if (resultCode === 0) {
-        toast.success("Nạp tiền thành công");
-      }
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Nạp tiền thất bại");
-    },
-  });
-
-  useEffect(() => {
-    const shouldConfirm =
-      orderId && !sessionStorage.getItem(`payment-${orderId}`);
-
-    if (shouldConfirm) {
-      sessionStorage.setItem(`payment-${orderId}`, "confirmed");
-      confirmPayment.mutate();
-    }
-  }, [orderId]);
+  
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [pins, setPins] = useState(["", "", "", "", "", ""]);
@@ -99,7 +71,7 @@ function TaiChinh() {
       setIsSettingsOpen(true);
     }
   }, [walletStatus, isSuccess]);
-
+ 
   const { data: walletData } = useQuery({
     queryKey: ["walletData", storedVerificationCode],
     queryFn: async () => {
@@ -112,7 +84,36 @@ function TaiChinh() {
     enabled: !!storedVerificationCode,
     staleTime: 5 * 60 * 1000,
   });
+  const confirmPayment = useMutation({
+    mutationKey: ["payment-confirmation", orderId],
+    mutationFn: async () => {
+      const response = await instanceClient.post(`/xac-nhan-nap-tien`, {
+        orderId: orderId,
+        resultCode: resultCode,
+        amount: amount,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      if (resultCode === 0) {
+        toast.success("Nạp tiền thành công");
+      }
+      queryClient.invalidateQueries({ queryKey: ['walletData']})
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Nạp tiền thất bại");
+    },
+  });
 
+  useEffect(() => {
+    const shouldConfirm =
+      orderId && !sessionStorage.getItem(`payment-${orderId}`);
+
+    if (shouldConfirm) {
+      sessionStorage.setItem(`payment-${orderId}`, "confirmed");
+      confirmPayment.mutate();
+    }
+  }, [orderId]);
   const forgotPinMutation = useMutation({
     mutationFn: async () => {
       const response = await instanceClient.get("/quen-ma-xac-minh");
