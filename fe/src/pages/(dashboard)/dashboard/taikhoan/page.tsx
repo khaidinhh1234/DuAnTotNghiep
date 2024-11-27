@@ -69,7 +69,7 @@ const TaiKhoan = () => {
                   <img
                     src={item?.anh_hang_thanh_vien}
                     alt={item?.anh_hang_thanh_vien}
-                    className="w-12 h-10 mt-3 rounded-full border-4 border-red-500"
+                    className="w-12 h-auto mt-3 rounded-full border-4 border-red-500 object-cover"
                   />
                 </div>
                 <p className="text-sm text-gray-500 mt-2">Đã chi tiêu </p>
