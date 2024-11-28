@@ -1,7 +1,18 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-
-const DealsOfTheMonth = ({ chuong_trinh_uu_dai }: any) => {
+interface UuDai {
+  length: number;
+  ngay_bat_dau: string;
+  ngay_ket_thuc: string;
+  duong_dan: string;
+  duong_dan_anh: string;
+  ten_uu_dai: string;
+}
+const DealsOfTheMonth = ({
+  chuong_trinh_uu_dai,
+}: {
+  chuong_trinh_uu_dai: UuDai[];
+}) => {
   const calculateTimeLeft = (startDate: string, endDate: string) => {
     const now = new Date();
     const startTime = new Date(startDate);
@@ -32,9 +43,9 @@ const DealsOfTheMonth = ({ chuong_trinh_uu_dai }: any) => {
   };
 
   const gridClass =
-    chuong_trinh_uu_dai.length === 1
+    chuong_trinh_uu_dai?.length === 1
       ? "grid-cols-1"
-      : chuong_trinh_uu_dai.length === 2
+      : chuong_trinh_uu_dai?.length === 2
         ? "grid-cols-2"
         : "grid-cols-2 lg:grid-cols-4";
 

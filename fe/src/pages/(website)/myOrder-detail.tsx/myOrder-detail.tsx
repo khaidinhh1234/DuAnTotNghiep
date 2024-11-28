@@ -10,7 +10,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 const MyOrderdetail = () => {
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-
+  const [length, setLength] = useState(3);
   const { slug } = useParams();
   // console.log("Slug:", slug);
   const [danhgia, setDanhgia] = useState<boolean>(false);
@@ -128,79 +128,89 @@ const MyOrderdetail = () => {
         </>
       )}
       {view && (
-        <div className="fixed inset-0 pt-96 overflow-y-auto flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
+        <div className="fixed inset-0 pt-0 overflow-y-auto flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full space-y-4 overflow-y-auto h-auto">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
               Đánh giá của bạn
             </h2>
             <div className="">
               {donhang?.chi_tiets &&
-                donhang?.chi_tiets?.map((item: any, index: number) => (
-                  <div className="flex justify-between mb-1" key={index}>
-                    <div className="flex gap-5 items-center ">
-                      <div className=" rounded-md text-center">
-                        {" "}
-                        <img
-                          src={
-                            item?.bien_the_san_pham?.anh_bien_the[0]
-                              ?.duong_dan_anh
-                          }
-                          alt="Sản phẩm"
-                          className="w-20 h-24 rounded-md mb-5"
-                        />
-                      </div>
-                      <div className="px-1">
-                        <h3 className="font-bold my-1">
-                          {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
-                        </h3>
-                        <p className={`font-bold  block md:hidden`}>
-                          Giá: ${item?.thanh_tien.toLocaleString("vi-VN")}
-                        </p>
-                        <p className="mb-2">
-                          Size:
-                          <span>
-                            {
-                              item?.bien_the_san_pham?.kich_thuoc_bien_the
-                                ?.kich_thuoc
-                            }{" "}
-                            {item?.bien_the_san_pham?.kich_thuoc_bien_the
-                              ?.loai_kich_thuoc &&
-                              ` / ${
+                donhang?.chi_tiets
+                  ?.slice(0, 3)
+                  .map((item: any, index: number) => (
+                    <div className="flex justify-between mb-1" key={index}>
+                      <div className="flex gap-5 items-center ">
+                        <div className=" rounded-md text-center">
+                          {" "}
+                          <img
+                            src={
+                              item?.bien_the_san_pham?.anh_bien_the[0]
+                                ?.duong_dan_anh
+                            }
+                            alt="Sản phẩm"
+                            className="w-20 h-24 rounded-md mb-5"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <h3 className="font-bold my-1">
+                            {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
+                          </h3>
+                          <p className={`font-bold  block md:hidden`}>
+                            Giá: ${item?.thanh_tien.toLocaleString("vi-VN")}
+                          </p>
+                          <p className="mb-2">
+                            Size:
+                            <span>
+                              {
                                 item?.bien_the_san_pham?.kich_thuoc_bien_the
-                                  ?.loai_kich_thuoc
-                              }`}
+                                  ?.kich_thuoc
+                              }{" "}
+                              {item?.bien_the_san_pham?.kich_thuoc_bien_the
+                                ?.loai_kich_thuoc &&
+                                ` / ${
+                                  item?.bien_the_san_pham?.kich_thuoc_bien_the
+                                    ?.loai_kich_thuoc
+                                }`}
+                            </span>
+                            , Màu:{" "}
+                            <span>
+                              {
+                                item?.bien_the_san_pham?.mau_bien_the
+                                  ?.ten_mau_sac
+                              }
+                            </span>
+                          </p>
+                          <p className="mb-10">Số lượng: {item?.so_luong}</p>{" "}
+                        </div>
+                      </div>{" "}
+                      <div
+                        className={`text-center py-8 font-bold md:block  hidden mr-5`}
+                      >
+                        <p>
+                          {" "}
+                          <span className="text-gray-400 line-through mx-2">
+                            {item?.bien_the_san_pham?.gia_khuyen_mai &&
+                              (item?.bien_the_san_pham?.gia_ban).toLocaleString(
+                                "vi-VN"
+                              ) + "đ"}
                           </span>
-                          , Màu:{" "}
-                          <span>
-                            {item?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
-                          </span>
+                          {(item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi !==
+                          null
+                            ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
+                            : item?.bien_the_san_pham?.gia_khuyen_mai !== null
+                              ? item?.bien_the_san_pham?.gia_khuyen_mai
+                              : item?.bien_the_san_pham?.gia_ban
+                          ).toLocaleString("vi-VN")}{" "}
+                          đ
                         </p>
-                        <p className="mb-10">Số lượng: {item?.so_luong}</p>{" "}
                       </div>
-                    </div>{" "}
-                    <div
-                      className={`text-center py-8 font-bold md:block  hidden mr-5`}
-                    >
-                      <p>
-                        {" "}
-                        <span className="text-gray-400 line-through mx-2">
-                          {item?.bien_the_san_pham?.gia_khuyen_mai &&
-                            (item?.bien_the_san_pham?.gia_ban).toLocaleString(
-                              "vi-VN"
-                            ) + "đ"}
-                        </span>
-                        {(item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi !==
-                        null
-                          ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
-                          : item?.bien_the_san_pham?.gia_khuyen_mai !== null
-                            ? item?.bien_the_san_pham?.gia_khuyen_mai
-                            : item?.bien_the_san_pham?.gia_ban
-                        ).toLocaleString("vi-VN")}{" "}
-                        đ
-                      </p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+              {donhang?.chi_tiets && donhang?.chi_tiets?.length > 3 && (
+                <div className="text-center font-bold  mb-0   ">
+                  .................Còn tiếp..................
+                </div>
+              )}
 
               <div className="mx-5">
                 {chitiet?.danh_gia_chua_xoa &&
@@ -392,72 +402,85 @@ const MyOrderdetail = () => {
         <div className="py-6 grid grid-cols-7  border-b border-hrBlack">
           <div className="col-span-7 ">
             {donhang?.chi_tiets &&
-              donhang?.chi_tiets?.map((item: any, index: number) => (
-                <div className="flex justify-between mb-1" key={index}>
-                  <div className="flex gap-5 items-center ">
-                    <div className=" rounded-md text-center">
-                      {" "}
-                      <img
-                        src={
-                          item?.bien_the_san_pham?.anh_bien_the[0]
-                            ?.duong_dan_anh
-                        }
-                        alt="Sản phẩm"
-                        className="w-20 h-24 rounded-md mb-5"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <h3 className="font-bold my-1">
-                        {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
-                      </h3>
-                      <p className={`font-bold  block md:hidden`}>
-                        Giá: ${item?.thanh_tien.toLocaleString("vi-VN")}
-                      </p>
-                      <p className="mb-2">
-                        Size:
-                        <span>
-                          {
-                            item?.bien_the_san_pham?.kich_thuoc_bien_the
-                              ?.kich_thuoc
-                          }{" "}
-                          {item?.bien_the_san_pham?.kich_thuoc_bien_the
-                            ?.loai_kich_thuoc &&
-                            ` / ${
+              donhang?.chi_tiets
+                ?.slice(0, length)
+                .map((item: any, index: number) => (
+                  <div className="flex justify-between mb-1" key={index}>
+                    <div className="flex gap-5 items-center ">
+                      <div className=" rounded-md text-center">
+                        {" "}
+                        <img
+                          src={
+                            item?.bien_the_san_pham?.anh_bien_the[0]
+                              ?.duong_dan_anh
+                          }
+                          alt="Sản phẩm"
+                          className="w-20 h-24 rounded-md mb-5"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <h3 className="font-bold my-1">
+                          {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
+                        </h3>
+                        <p className={`font-bold  block md:hidden`}>
+                          Giá: ${item?.thanh_tien.toLocaleString("vi-VN")}
+                        </p>
+                        <p className="mb-2">
+                          Size:
+                          <span>
+                            {
                               item?.bien_the_san_pham?.kich_thuoc_bien_the
-                                ?.loai_kich_thuoc
-                            }`}
+                                ?.kich_thuoc
+                            }{" "}
+                            {item?.bien_the_san_pham?.kich_thuoc_bien_the
+                              ?.loai_kich_thuoc &&
+                              ` / ${
+                                item?.bien_the_san_pham?.kich_thuoc_bien_the
+                                  ?.loai_kich_thuoc
+                              }`}
+                          </span>
+                          , Màu:{" "}
+                          <span>
+                            {item?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
+                          </span>
+                        </p>
+                        <p className="mb-10">Số lượng: {item?.so_luong}</p>{" "}
+                      </div>
+                    </div>{" "}
+                    <div
+                      className={`text-center py-8 font-bold md:block  hidden mr-5`}
+                    >
+                      <p>
+                        {" "}
+                        <span className="text-gray-400 line-through mx-2">
+                          {item?.bien_the_san_pham?.gia_khuyen_mai &&
+                            (item?.bien_the_san_pham?.gia_ban).toLocaleString(
+                              "vi-VN"
+                            ) + "đ"}
                         </span>
-                        , Màu:{" "}
-                        <span>
-                          {item?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
-                        </span>
+                        {(item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi !==
+                        null
+                          ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
+                          : item?.bien_the_san_pham?.gia_khuyen_mai !== null
+                            ? item?.bien_the_san_pham?.gia_khuyen_mai
+                            : item?.bien_the_san_pham?.gia_ban
+                        ).toLocaleString("vi-VN")}{" "}
+                        đ
                       </p>
-                      <p className="mb-10">Số lượng: {item?.so_luong}</p>{" "}
                     </div>
-                  </div>{" "}
-                  <div
-                    className={`text-center py-8 font-bold md:block  hidden mr-5`}
-                  >
-                    <p>
-                      {" "}
-                      <span className="text-gray-400 line-through mx-2">
-                        {item?.bien_the_san_pham?.gia_khuyen_mai &&
-                          (item?.bien_the_san_pham?.gia_ban).toLocaleString(
-                            "vi-VN"
-                          ) + "đ"}
-                      </span>
-                      {(item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi !==
-                      null
-                        ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
-                        : item?.bien_the_san_pham?.gia_khuyen_mai !== null
-                          ? item?.bien_the_san_pham?.gia_khuyen_mai
-                          : item?.bien_the_san_pham?.gia_ban
-                      ).toLocaleString("vi-VN")}{" "}
-                      đ
-                    </p>
                   </div>
-                </div>
-              ))}
+                ))}
+            {donhang?.chi_tiets && donhang?.chi_tiets?.length > length && (
+              <div className="col-span-12 text-center mb-3">
+                <button
+                  onClick={() => setLength(length + 3)}
+                  className=" bg-slate-100 px-4 py-1  rounded-md hover:bg-white text-black border l"
+                >
+                  <i className="fa-solid fa-share"></i> Xem thêm ...
+                </button>
+              </div>
+            )}
+
             {/* {chi_tiet_don_hangs && chi_tiet_don_hangs.length >= 2 && ( */}
             <div className="text-start font-bold  mb-0  ">
               <span

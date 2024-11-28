@@ -35,7 +35,11 @@ const HomePage = () => {
     <div>
       <Banner banner={banner} />
       <Categories bo_suu_tap={bo_suu_tap} />
-      <Bestseller products={products} />
+      <Bestseller
+        products={products}
+        sectionTitle={"Sản phẩm mới nhất"}
+        isPromotional={false}
+      />
       <DealsOfTheMonth chuong_trinh_uu_dai={chuong_trinh_uu_dai} />
       <Customer danhgia={danhgia} />
       {/* <InstagramStories /> */}
