@@ -119,13 +119,13 @@ class DonHangClientController extends Controller
                 });
             } else {
                 $donHang = DonHang::where('user_id', $user->id)->with([
-                        'chiTiets.bienTheSanPham.sanPham',
-                        'chiTiets.bienTheSanPham.mauBienThe',
-                        'chiTiets.bienTheSanPham.kichThuocBienThe',
-                        'chiTiets.bienTheSanPham.anhBienThe',
-                        'danhGias.user',
-                        'vanChuyen',
-                    ])
+                    'chiTiets.bienTheSanPham.sanPham',
+                    'chiTiets.bienTheSanPham.mauBienThe',
+                    'chiTiets.bienTheSanPham.kichThuocBienThe',
+                    'chiTiets.bienTheSanPham.anhBienThe',
+                    'danhGias.user',
+                    'vanChuyen',
+                ])
                     ->when($request->filled('trang_thai_don_hang'), function ($query) use ($request) {
                         $query->where('trang_thai_don_hang', $request->trang_thai_don_hang)
                             ->orWhere('trang_thai_thanh_toan', $request->trang_thai_don_hang);
@@ -681,7 +681,7 @@ class DonHangClientController extends Controller
         try {
             $donHang = DonHang::where('ma_don_hang', $maDonHang)
                 ->where('user_id', $userId)
-                ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH])
+                ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXH])
                 ->first();
 
             if (!$donHang) {
@@ -696,6 +696,26 @@ class DonHangClientController extends Controller
                 'trang_thai_don_hang' => DonHang::TTDH_DH,
                 'ngay_huy' => $thoiGian,
             ]);
+
+            if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
+                DB::table('lich_su_giao_diches')->insert([
+                    'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
+                    'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
+                    'so_du_sau' => $donHang->giaoDichVi->viTien->so_du + $donHang->tong_tien_don_hang,
+                    'ngay_thay_doi' => Carbon::now(),
+                    'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
+                ]);
+                $donHang->giaoDichVi->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                $thongBao = ThongBao::create([
+                    'user_id' => $userId,
+                    'tieu_de' => 'Số tiền đã được hoàn trả',
+                    'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hoàn tiền.',
+                    'loai' => 'Hoàn tiền',
+                    'duong_dan' => $donHang->ma_don_hang,
+                    'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                ]);
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
+            }
 
             if (
                 in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
@@ -790,7 +810,7 @@ class DonHangClientController extends Controller
             HoanTien::create([
                 'giao_dich_vi_id' => $giaoDichVi->id,
                 'don_hang_id' => $donHang->id,
-                'so_tien_hoan' => $donHang->tong_tien_don_hang,
+                'so_tien_hoan' => $donHang->tong_tien_don_hang - 20000,
                 'ly_do' => $validated['li_do_hoan_hang'],
                 'thoi_gian_hoan' => now(),
             ]);
