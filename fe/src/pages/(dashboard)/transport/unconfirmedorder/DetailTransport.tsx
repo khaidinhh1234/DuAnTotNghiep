@@ -285,8 +285,8 @@ const DetailTransport = ({ record }: any) => {
             <div className="py-1 px-5 border bg-slate-100 rounded-md flex justify-between items-center">
               <div className="">
                 <h4 className="text-lg font-bold">
-                  Đơn Hàng:
-                  <span className="text-blue-500">{record?.ma_don_hang}</span>
+                  Đơn Vận Chuyển:{" "}
+                  <span className="text-blue-500">{record?.ma_van_chuyen}</span>
                 </h4>
                 <p className="text-base">
                   Ngày tạo:{" "}
