@@ -222,9 +222,8 @@ const AddProducts: React.FC = () => {
     const newCombinations = [];
     for (const color of colorVariant) {
       for (const sizeId of sizeVariant) {
-        const sizeData = kichthuoc.data.find((s: any) =>
-          s.id === sizeId &&
-          s.loai_kich_thuoc === selectedSizeType
+        const sizeData = kichthuoc.data.find(
+          (s: any) => s.id === sizeId && s.loai_kich_thuoc === selectedSizeType
         );
 
         if (sizeData) {
@@ -232,7 +231,7 @@ const AddProducts: React.FC = () => {
             color,
             size: sizeData.kich_thuoc,
             sizeId: sizeData.id,
-            sizeType: sizeData.loai_kich_thuoc
+            sizeType: sizeData.loai_kich_thuoc,
           });
         }
       }
@@ -267,7 +266,9 @@ const AddProducts: React.FC = () => {
         gia_tot: values.gia_tot ? 1 : 0,
         bo_suu_tap: values.tags,
         bien_the: combinations.map((combo, index) => ({
-          mau_sac_id: mausac?.data.find((c: any) => c.ten_mau_sac === combo.color)?.id,
+          mau_sac_id: mausac?.data.find(
+            (c: any) => c.ten_mau_sac === combo.color
+          )?.id,
           kich_thuoc_id: combo.sizeId,
           so_luong_bien_the: parseInt(values[`so_luong_bien_the-${index}`], 10),
           gia_ban: parseFloat(values[`gia_ban-${index}`]),
@@ -367,8 +368,10 @@ const AddProducts: React.FC = () => {
               rules={[
                 { required: true, message: "Mô tả ngắn bắt buộc phải nhập!" },
                 { min: 30, message: "Mô tả ngắn phải có ít nhất 30 ký tự!" },
-                { max: 225, message: "Mô tả ngắn không được vượt quá 225 ký tự!" },
-
+                {
+                  max: 225,
+                  message: "Mô tả ngắn không được vượt quá 225 ký tự!",
+                },
               ]}
             >
               <TextArea rows={5} placeholder="Nhập mô tả sản phẩm" />
@@ -660,8 +663,10 @@ const AddProducts: React.FC = () => {
                 <tbody>
                   {combinations &&
                     combinations.map((combo, index) => (
-                      <tr         key={`${combo.color}-${combo.sizeId}-${index}`} 
-                      className="border-t border-gray-300 text-center">
+                      <tr
+                        key={`${combo.color}-${combo.sizeId}-${index}`}
+                        className="border-t border-gray-300 text-center"
+                      >
                         <td className="p-1 border-r border-gray-300 text-center">
                           {" "}
                           {combo.size}
@@ -673,56 +678,66 @@ const AddProducts: React.FC = () => {
                           <Form.Item
                             name={`gia_ban-${index}`}
                             className="my-0 px-5"
-                          //   rules={[
-                          //     {
-                          //       required: true,
-                          //       message: "Vui lòng nhập giá bán!",
-                          //     },
-                          //     {
-                          //       type: "number",
-                          //       min: 1000,
-                          //       message: "Giá bán phải lớn hơn hoặc bằng 1000!",
-                          //     },
-                          //     {
-                          //       validator: (_, value) => {
-                          //         const chiPhiSanXuat = form.getFieldValue(
-                          //           `chi_phi_san_xuat-${index}`
-                          //         );
-                          //         if (
-                          //           value &&
-                          //           chiPhiSanXuat &&
-                          //           value < chiPhiSanXuat
-                          //         ) {
-                          //           return Promise.reject(
-                          //             "Giá bán phải lớn hơn hoặc bằng chi phí sản xuất!"
-                          //           );
-                          //         }
-                          //         if (
-                          //           value &&
-                          //           chiPhiSanXuat &&
-                          //           value > chiPhiSanXuat * 1.5
-                          //         ) {
-                          //           return Promise.reject(
-                          //             "Giá bán không được vượt quá 150% giá sản xuất!"
-                          //           );
-                          //         }
-                          //         return Promise.resolve();
-                          //       },
-                          //     },
-                          //   ]}
-                          // >
-                          //   <InputNumber
-                          //     style={{ width: "100%" }}
-                          //     min={1000}
-                          //     max={2000000}
-                          //     placeholder="Nhập giá bán"
-                          //   />
-                          rules={[
-                            { required: true, message: "Vui lòng nhập giá bán!" },
-                            { type: "number", min: 1000, message: "Giá bán phải lớn hơn hoặc bằng 1000!" },
-                          ]}
-                        >
-                          <InputNumber style={{ width: "100%" }} placeholder="Nhập giá bán" />
+                            //   rules={[
+                            //     {
+                            //       required: true,
+                            //       message: "Vui lòng nhập giá bán!",
+                            //     },
+                            //     {
+                            //       type: "number",
+                            //       min: 1000,
+                            //       message: "Giá bán phải lớn hơn hoặc bằng 1000!",
+                            //     },
+                            //     {
+                            //       validator: (_, value) => {
+                            //         const chiPhiSanXuat = form.getFieldValue(
+                            //           `chi_phi_san_xuat-${index}`
+                            //         );
+                            //         if (
+                            //           value &&
+                            //           chiPhiSanXuat &&
+                            //           value < chiPhiSanXuat
+                            //         ) {
+                            //           return Promise.reject(
+                            //             "Giá bán phải lớn hơn hoặc bằng chi phí sản xuất!"
+                            //           );
+                            //         }
+                            //         if (
+                            //           value &&
+                            //           chiPhiSanXuat &&
+                            //           value > chiPhiSanXuat * 1.5
+                            //         ) {
+                            //           return Promise.reject(
+                            //             "Giá bán không được vượt quá 150% giá sản xuất!"
+                            //           );
+                            //         }
+                            //         return Promise.resolve();
+                            //       },
+                            //     },
+                            //   ]}
+                            // >
+                            //   <InputNumber
+                            //     style={{ width: "100%" }}
+                            //     min={1000}
+                            //     max={2000000}
+                            //     placeholder="Nhập giá bán"
+                            //   />
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng nhập giá bán!",
+                              },
+                              {
+                                type: "number",
+                                min: 1000,
+                                message: "Giá bán phải lớn hơn hoặc bằng 1000!",
+                              },
+                            ]}
+                          >
+                            <InputNumber
+                              style={{ width: "100%" }}
+                              placeholder="Nhập giá bán"
+                            />
                           </Form.Item>
                         </td>
 
@@ -765,35 +780,6 @@ const AddProducts: React.FC = () => {
                           </Form.Item>
                         </td>
 
-                        {/* <td className="p-1 border-r border-gray-300 w-[20%]">
-                        <Form.Item
-                          name={`gia_khuyen_mai-${index}`}
-                          className="my-0 px-5"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập giá khuyến mãi!",
-                            },
-                            {
-                              validator: (_, value) => {
-                                const giaBan = form.getFieldValue(`gia_ban-${index}`);
-                                if (value && giaBan && value >= giaBan) {
-                                  return Promise.reject("Giá khuyến mãi phải nhỏ hơn giá bán!");
-                                }
-                                return Promise.resolve();
-                              },
-                            },
-                          ]}
-                          style={{ margin: 0 }}
-                        >
-                          <InputNumber
-                            placeholder="0"
-                            style={{ width: "100%" }}
-                            min={0}
-                          />
-                        </Form.Item>
-
-                      </td> */}
                         <td className="p-1 border-r border-gray-300 w-[20%]">
                           <Form.Item
                             name={`gia_khuyen_mai-${index}`}
@@ -804,10 +790,32 @@ const AddProducts: React.FC = () => {
                                   const giaBan = form.getFieldValue(
                                     `gia_ban-${index}`
                                   );
-                                  if (value && giaBan && value >= giaBan) {
-                                    return Promise.reject(
-                                      "Giá khuyến mãi phải nhỏ hơn giá bán!"
-                                    );
+                                  if (
+                                    value === undefined ||
+                                    value === null ||
+                                    value === ""
+                                  ) {
+                                    // Cho phép không nhập gì
+                                    return Promise.resolve();
+                                  }
+                                  if (giaBan) {
+                                    const giaToiThieu = giaBan * 0.8; // 80% giá bán
+                                    if (value < giaToiThieu) {
+                                      return Promise.reject(
+                                        new Error(
+                                          `Giá khuyến mãi không được nhỏ hơn 80% giá bán (tối thiểu ${giaToiThieu.toFixed(
+                                            0
+                                          )})!`
+                                        )
+                                      );
+                                    }
+                                    if (value > giaBan) {
+                                      return Promise.reject(
+                                        new Error(
+                                          "Giá khuyến mãi không được lớn hơn giá bán!"
+                                        )
+                                      );
+                                    }
                                   }
                                   return Promise.resolve();
                                 },

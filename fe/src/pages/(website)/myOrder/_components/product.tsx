@@ -39,7 +39,7 @@ const ProductItem = ({
   trang_thai_thanh_toan,
   created_at,
   phuong_thuc_thanh_toans,
-  danh_gias,
+  // danh_gias,
 }: any) => {
   // console.log(chi_tiet_don_hangs);
   // console.log("status", new Date(created_at));

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Product from "../../_component/Product";
 // import useDebounce from "@/components/hook/useDebounce";
 
-const Bestseller = ({ products, sectionTitle, isPromotional = false }: any) => {
+const Bestseller = ({ products, sectionTitle, isPromotional }: any) => {
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null

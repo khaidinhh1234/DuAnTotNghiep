@@ -149,7 +149,6 @@ const NewCategory = () => {
       ),
   });
 
-
   const columns: TableColumnsType<NewCategories> = [
     {
       title: "STT",
@@ -188,7 +187,7 @@ const NewCategory = () => {
       width: "30%",
       key: "mo_ta",
       dataIndex: "mo_ta",
-      render: (text) => (text? text : "Chưa có dữ liệu"),
+      render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
       title: "Thời gian tạo",
