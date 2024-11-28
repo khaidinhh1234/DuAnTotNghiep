@@ -1,10 +1,10 @@
 import instanceClient from "@/configs/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Slider } from "antd";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { message, Slider } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ProductsListDM from "./ProductListDm";
-
+import { useDebounce } from "use-debounce";
 const ProductCategoriesDM = ({ isPending }: any) => {
   const [showcate, setShowcate] = useState(true);
   const [showcolor, setShowcolor] = useState(true);
@@ -41,18 +41,20 @@ const ProductCategoriesDM = ({ isPending }: any) => {
   };
   const { tenDanhMucCha, tenDanhMucCon, tenDanhMucConCapBa } = useParams();
   //data
-  const datas = {
-    ...(selectedParentIds.length > 0 && {
-      danh_muc_con_ids: [...selectedParentIds],
-    }),
-    ...(selectedChildIds.length > 0 && {
-      danh_muc_chau_ids: [...selectedChildIds],
-    }),
-    ...(price.length > 0 && { gia_duoi: price[0] }),
-    ...(price.length > 0 && { gia_tren: price[1] }),
-    ...(selectedSize.length > 0 && { kich_thuoc_ids: [...selectedSize] }),
-    ...(selectedMau.length > 0 && { mau_sac_ids: [...selectedMau] }),
-  };
+  const datas = useMemo(() => {
+    return {
+      ...(selectedParentIds.length > 0 && {
+        danh_muc_con_ids: selectedParentIds,
+      }),
+      ...(selectedChildIds.length > 0 && {
+        danh_muc_chau_ids: selectedChildIds,
+      }),
+      ...(price.length > 0 && { gia_duoi: price[0], gia_tren: price[1] }),
+      ...(selectedSize.length > 0 && { kich_thuoc_ids: selectedSize }),
+      ...(selectedMau.length > 0 && { mau_sac_ids: selectedMau }),
+    };
+  }, [selectedParentIds, selectedChildIds, price, selectedSize, selectedMau]);
+
   const danhmuc = tenDanhMucConCapBa
     ? tenDanhMucConCapBa
     : tenDanhMucCon
@@ -163,35 +165,45 @@ const ProductCategoriesDM = ({ isPending }: any) => {
       });
     }
   };
+  const nav = useNavigate();
   const { data, refetch: refetch2 } = useQuery({
     queryKey: [
       "PRODUCTS_KEY",
       tenDanhMucCha,
       tenDanhMucCon,
       tenDanhMucConCapBa,
+      danhmuc,
     ],
     queryFn: async () => {
       try {
-        let url = "danhmuc";
-
-        // Ưu tiên danh mục cấp 3 -> danh mục con -> danh mục cha
-        if (tenDanhMucConCapBa) {
-          url += `/${tenDanhMucConCapBa}`;
-        } else if (tenDanhMucCon) {
-          url += `/${tenDanhMucCon}`;
-        } else if (tenDanhMucCha) {
-          url += `/${tenDanhMucCha}`;
+        if (tenDanhMucCha || tenDanhMucCon || tenDanhMucConCapBa) {
+          let url = "danhmuc";
+          if (tenDanhMucConCapBa) url += `/${tenDanhMucConCapBa}`;
+          else if (tenDanhMucCon) url += `/${tenDanhMucCon}`;
+          else if (tenDanhMucCha) url += `/${tenDanhMucCha}`;
+          const response = await instanceClient.post(url, datas);
+          return response.data;
+        } else if (danhmuc) {
+          const response = await instanceClient.get(
+            `lay-dm-ms-kt?loai=${danhmuc}`
+          );
+          if (response.data.status_code !== 200) {
+            throw new Error("Error fetching product");
+          }
+          return response.data;
         } else {
           throw new Error("Không có danh mục hợp lệ");
         }
-
-        const response = await instanceClient.post(url, datas);
-        return response.data;
       } catch (error) {
-        throw new Error("Lỗi khi lấy thông tin");
+        message.error("Lỗi khi lấy thông tin sản phẩm");
       }
     },
-    enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
+    options: {
+      staleTime: 5 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000,
+      enabled:
+        !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa || !!danhmuc,
+    },
   });
   const products = data?.data?.san_pham.data;
   const queryClient = useQueryClient();
@@ -210,7 +222,11 @@ const ProductCategoriesDM = ({ isPending }: any) => {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
-    enabled: !!danhmuc && !!datas, // chỉ gọi khi có `danhmuc` và `datas`
+    options: {
+      staleTime: 5 * 60 * 1000, // Cache stale trong 5 phút
+      cacheTime: 10 * 60 * 1000, // Cache giữ lại trong 10 phút
+      enabled: !!danhmuc && !!datas,
+    },
   });
 
   useEffect(() => {
