@@ -231,6 +231,17 @@ class DonHangController extends Controller
                     continue;
                 }
 
+                if($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT){
+                    DB::table('lich_su_giao_diches')->insert([
+                        'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
+                        'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
+                        'so_du_sau' => $donHang->giaoDichVi->viTien->so_du + $donHang->tong_tien_don_hang,
+                        'ngay_thay_doi' => Carbon::now(),
+                        'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
+                    ]);
+                    $donHang->giaoDichVi->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                }
+
                 $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
 
                 // Kiểm tra nếu trạng thái mới là 'hoàn tất' và cập nhật hạng thành viên
