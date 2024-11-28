@@ -54,7 +54,7 @@ const SiderComponent: React.FC = () => {
         mode="inline"
         defaultSelectedKeys={["/admin/dashboard"]}
         onClick={handleMenuClick}
-        className="text-white py-5 font-semibold text-base space-y-4"
+        className="text-white py-5 font-semibold text-base space-y-4 pb-20"
       >
         {/* Thống kê (Statistics) Menu */}
         {vaitro?.includes("Người giao hàng") ? null : (
@@ -182,11 +182,11 @@ const SiderComponent: React.FC = () => {
           </Menu.Item>
         )}
         {quyen?.includes("admin.thongtinweb.index") && (
-            <SubMenu key="sub7" icon={<AlignJustify />} title="Nội dung">
-              <Menu.Item key="/admin/Content/qlfooter">Footer</Menu.Item>
-              <Menu.Item key="/admin/Content/qlbanner">Banner</Menu.Item>
-            </SubMenu>
-          )}
+          <SubMenu key="sub7" icon={<AlignJustify />} title="Nội dung">
+            <Menu.Item key="/admin/Content/qlfooter">Footer</Menu.Item>
+            <Menu.Item key="/admin/Content/qlbanner">Banner</Menu.Item>
+          </SubMenu>
+        )}
       </Menu>
       {/* </Sider> */}
     </>

@@ -29,9 +29,9 @@ const MainHeader = () => {
     <div className="flex justify-between items-center p-4 bg-white">
       {/* Logo và Menu */}
       <div className="flex items-center gap-5">
-        <div className="relative">
+        <div className="relative bg-white z-10">
           <MenuOutlined
-            className="text-2xl cursor-pointer hover:text-blue-500 transition-colors sm:hidden"
+            className="text-2xl cursor-pointer hover:text-blue-500 transition-colors sm:hidden bg-white "
             onClick={() => setMenuVisible(!menuVisible)}
           />
           {menuVisible && (
@@ -45,10 +45,10 @@ const MainHeader = () => {
           <img
             src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729398683/Black_and_White_Circle_Business_Logo_1_ieyoum.png"
             alt="Logo"
-            className="w-16 h-16"
+            className="w-20 h-14"
           />
         </Link>
-        <h1 className="font-semibold text-lg md:text-2xl">
+        <h1 className="font-semibold text-md md:text-2xl">
           Giao Hàng Glow Express
         </h1>
       </div>
