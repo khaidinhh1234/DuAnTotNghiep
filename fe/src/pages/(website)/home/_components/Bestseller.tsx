@@ -34,10 +34,12 @@ const Bestseller = ({ products, sectionTitle, isPromotional = false }: any) => {
               if (isPromotional && !product?.chuong_trinh_uu_dai) return null; // Skip products that are not in promotion
 
               return (
+                
                 <div
                   className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[300px] w-[350px] mx-auto lg:mx-0"
                   key={index}
                 >
+                  
                   <Product
                     product={product}
                     handleMouseEnter={handleMouseEnter}
