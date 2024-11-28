@@ -14,6 +14,8 @@ import VerificationModal from "./VerificationModal";
 
 const ShippingAddressPage = () => {
   const [trangthai, settrangthai] = useState("Thanh toán khi nhận hàng");
+  const [user] = useLocalStorage("user" as any, {});
+  const khach = user.user;
   const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
   const { data } = useQuery({
     queryKey: ["profile"],
@@ -36,10 +38,13 @@ const ShippingAddressPage = () => {
   } = useForm({
     resolver: zodResolver(checkout_address),
     defaultValues: {
-      ten_nguoi_dat_hang: khachhang?.ho + " " + khachhang?.ten || "",
-      so_dien_thoai_nguoi_dat_hang: khachhang?.so_dien_thoai || "",
-      dia_chi_nguoi_dat_hang: khachhang?.dia_chi || "",
-      email_nguoi_dat_hang: khachhang?.email || "",
+      ten_nguoi_dat_hang: khachhang
+        ? khachhang?.ho + " " + khachhang?.ten
+        : khach?.ho + " " + khach?.ten,
+      so_dien_thoai_nguoi_dat_hang:
+        khachhang?.so_dien_thoai ?? khach?.so_dien_thoai,
+      dia_chi_nguoi_dat_hang: khachhang?.dia_chi ?? khach?.dia_chi,
+      email_nguoi_dat_hang: khachhang?.email || khach?.email,
       phuong_thuc_thanh_toan: "Thanh toán khi nhận hàng",
     },
   });
