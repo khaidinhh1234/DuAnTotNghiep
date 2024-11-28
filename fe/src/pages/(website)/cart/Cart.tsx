@@ -6,9 +6,9 @@ import Test2 from './_components/Test2'
 const Cart = () => {
   return (
     <>
-    {/* <CheckOut/> */}
+    <CheckOut/>
     {/* <Test/> */}
-    <Test2/>
+    {/* <Test2/> */}
     </>
   )
 }

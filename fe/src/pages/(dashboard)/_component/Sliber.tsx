@@ -181,6 +181,12 @@ const SiderComponent: React.FC = () => {
             Phân quyền
           </Menu.Item>
         )}
+        {quyen?.includes("admin.thongtinweb.index") && (
+            <SubMenu key="sub7" icon={<AlignJustify />} title="Nội dung">
+              <Menu.Item key="/admin/Content/qlfooter">Footer</Menu.Item>
+              <Menu.Item key="/admin/Content/qlbanner">Banner</Menu.Item>
+            </SubMenu>
+          )}
       </Menu>
       {/* </Sider> */}
     </>
