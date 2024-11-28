@@ -264,8 +264,8 @@ class TrangChuController extends Controller
             $data = ThongTinWeb::query()
                 ->first()
                 ->makeHidden(['banner']);
-            $data['footer_blogs'] = DanhMucTinTuc::query()->whereIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
-                ->with('tinTuc')->get();
+            $data['footer_blogs'] = DanhMucTinTuc::query()->whereNotIn('ten_danh_muc_tin_tuc', ['Dịch vụ khách hàng', 'Về chúng tôi'])
+                ->get();
 
             return response()->json([
                 'status' => true,
@@ -449,7 +449,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->delete();
+            $user->lichSuTimKiem->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -469,7 +469,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem()->where('id', $id)->delete();
+            $user->lichSuTimKiem->where('id', $id)->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
