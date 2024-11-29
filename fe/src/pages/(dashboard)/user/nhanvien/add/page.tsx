@@ -270,7 +270,7 @@ const UsersNhanvienAdd = () => {
                   </div>
                   <div className="grid grid-cols-6 gap-5">
                     <Form.Item
-                      label="Password"
+                      label="Mật khẩu"
                       name="password"
                       className="col-span-2"
                       rules={[

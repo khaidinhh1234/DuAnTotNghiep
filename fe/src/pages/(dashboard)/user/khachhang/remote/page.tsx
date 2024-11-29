@@ -318,7 +318,6 @@ const UserskhachangRemote: React.FC = () => {
           dataSource={user}
           pagination={{ pageSize: 10, className: "my-5" }}
         />
-        ;
       </div>
     </main>
   );

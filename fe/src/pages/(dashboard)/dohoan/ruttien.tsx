@@ -59,7 +59,7 @@ const WithdrawalRequests: React.FC = () => {
       return res.data;
     },
   });
-
+  console.log(data);
   const { mutate: confirmWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
       const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
@@ -122,16 +122,25 @@ const WithdrawalRequests: React.FC = () => {
 
   const columns: TableColumnsType<WithdrawalRequest> = [
     {
-      title: "Mã ví",
-      dataIndex: ["vi_tien", "id"],
-      key: "vi_tien_id",
+      title: "STT",
+      dataIndex: "id",
+      key: "key",
       width: "10%",
     },
+    {
+      title: "Tên khách hàng",
+      dataIndex: "id",
+      key: "key",
+      width: "10%",
+    },
+
     {
       title: "Số tiền rút",
       dataIndex: "so_tien",
       key: "so_tien",
       render: (amount) => formatCurrency(amount),
+
+      sorter: (a, b) => a.so_tien - b.so_tien,
       width: "15%",
     },
     {
@@ -160,16 +169,19 @@ const WithdrawalRequests: React.FC = () => {
       title: "Ngày tạo",
       dataIndex: "created_at",
       key: "created_at",
+      sorter: (a: any, b: any) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
       render: (date) => formatDate(date),
       width: "15%",
     },
-    {
-      title: "Số dư ví",
-      dataIndex: ["vi_tien", "so_du"],
-      key: "so_du",
-      render: (amount) => formatCurrency(amount),
-      width: "15%",
-    },
+    // {
+    //   title: "Số dư ví",
+    //   dataIndex: ["vi_tien", "so_du"],
+    //   key: "so_du",
+    //   sorter: (a, b) => a.vi_tien - b.vi_tien,
+    //   render: (amount) => formatCurrency(amount),
+    //   width: "15%",
+    // },
     {
       title: "Thao tác",
       key: "action",

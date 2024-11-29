@@ -596,7 +596,7 @@ const ProductList = ({
           items={tabItems}
           className="text-2xl"
         />
-        {/* <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 shadow-sm">
+        <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 shadow-sm">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 text-gray-400 mr-2"
@@ -616,7 +616,7 @@ const ProductList = ({
             placeholder="Bạn có thể tìm kiếm theo Mã đơn hàng hoặc Tên Sản phẩm"
             className="w-full bg-gray-100 text-sm focus:outline-none placeholder-gray-500"
           />
-        </div> */}
+        </div>
       </div>
       <div className="lg:col-span-9 col-span-8 lg:pl-4 h-full">
         <form>

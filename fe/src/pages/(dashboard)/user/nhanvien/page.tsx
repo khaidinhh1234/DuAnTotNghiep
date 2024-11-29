@@ -78,7 +78,7 @@ const UsersAdminNhanvien: React.FC = () => {
       index: index,
     }));
 
-  console.log(user);
+  // console.log(user);
 
   // const [searchText, setSearchText] = useState
   const [searchedColumn, setSearchedColumn] = useState("");

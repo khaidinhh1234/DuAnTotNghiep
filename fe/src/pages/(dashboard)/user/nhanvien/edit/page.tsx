@@ -261,7 +261,7 @@ const UsersnhanvienEdit = () => {
                         let age = today.getFullYear() - birthDate.getFullYear();
                         if (age < 3)
                           return Promise.reject(
-                            new Error("Khách hàng yêu cầu độ tuổi phù hợp!")
+                            new Error("Nhân viên yêu cầu độ tuổi phù hợp!")
                           );
                         if (birthDate > today)
                           return Promise.reject(
