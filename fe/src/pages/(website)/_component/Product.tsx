@@ -1,6 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import View from "./View";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import instanceClient from "@/configs/client";
+import { message } from "antd";
 interface ProductProps {
   product: any;
   index?: any;
@@ -20,6 +23,37 @@ const Product = ({
   yeuthich,
   prowish,
 }: ProductProps) => {
+  console.log(product.id);
+  const queryclient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async (id: any) => {
+      try {
+        const response = await instanceClient.post(`sanpham/yeuthich/${id}`);
+        // console.log(response.data);
+        if (
+          response.data.mess === "Sản phẩm đã được xóa khỏi danh sách yêu thích"
+        ) {
+          message.success("Xóa sản phẩm yêu thích thành công");
+        }
+        if (
+          response.data.mess === "Sản phẩm đã được thêm vào danh sách yêu thích"
+        ) {
+          message.success("Thêm sản phẩm yêu thích thành công");
+        }
+
+        return response.data;
+      } catch (error: any) {
+        message.error(error.response.data.message);
+        console.error("API error", error); // Thêm log lỗi API
+        throw new Error("Xóa sản phẩm yêu thích thất bại");
+      }
+    },
+    onSuccess: () => {
+      queryclient.invalidateQueries({
+        queryKey: ["PRODUCTS_KEY"],
+      });
+    },
+  });
   return (
     <div>
       {" "}
@@ -33,14 +67,16 @@ const Product = ({
             </span>
           )}
           {prowish !== undefined && (
-            <span>
+            <span onClick={() => mutate(product?.id)}>
               <i
                 className={`${
-                  product?.yeu_thich
-                    ? "text-red-500"
+                  prowish
+                    ? prowish
+                      ? "text-red-500"
+                      : "text-black hover:text-white"
                     : "text-black hover:text-white"
                 } z-10 fa-solid fa-heart text-xl pt-1 bg-white hover:bg-black w-11 h-11 flex items-center justify-center absolute top-3 right-6 btn invisible opacity-0 transition-opacity duration-300 rounded-full`}
-              />
+              ></i>
             </span>
           )}
           {/* <View id={product?.duong_dan} ID={product?.id} /> */}

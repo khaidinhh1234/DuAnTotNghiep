@@ -1,4 +1,3 @@
-
 // import instance from "@/configs/admin";
 // import { SearchOutlined } from "@ant-design/icons";
 // import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -364,7 +363,6 @@ const ProductsRemote: React.FC = () => {
     queryFn: async () => {
       try {
         const response = await instance.get("sanpham/thung-rac");
-        console.log("Fetched data:", response.data);
         return response.data;
       } catch (error) {
         console.error("Error fetching remote products:", error);
@@ -410,7 +408,7 @@ const ProductsRemote: React.FC = () => {
   const restoreMultipleProductsMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       await instance.patch("sanphams/khoi-phuc-xoa-mem-nhieu-san-pham", {
-        san_phams: ids 
+        san_phams: ids,
       });
     },
     onSuccess: () => {
@@ -569,14 +567,18 @@ const ProductsRemote: React.FC = () => {
           </div>
           <div>
             {/* Text tên sản phẩm */}
-            <p className="text-lg font-bold truncate w-40">{item.ten_san_pham}</p>
+            <p className="text-lg font-bold truncate w-40">
+              {item.ten_san_pham}
+            </p>
             {/* Mô tả ngắn */}
-            <p className="text-xs text-gray-500 truncate w-40">{item.mo_ta_ngan}</p>
+            <p className="text-xs text-gray-500 truncate w-40">
+              {item.mo_ta_ngan}
+            </p>
           </div>
         </div>
       ),
     },
-    
+
     // {
     //   title: "Ảnh sản phẩm",
     //   render: (record) => (
@@ -703,34 +705,35 @@ const ProductsRemote: React.FC = () => {
         </div>
       </div>
       <div className=" ">
-      <div className="max-w-sm my-2">
-  <div className="flex items-center">
-  <Button
-  type="primary"
-  onClick={handleRestoreMultiple}
-  disabled={selectedRowKeys.length === 0}
-  className={`
-    ${selectedRowKeys.length > 0
-      ? "bg-gradient-to-l to-cyan-500 text-white  "
-      : "bg-gray-200 text-gray-400 cursor-not-allowed"}
+        <div className="max-w-sm my-2">
+          <div className="flex items-center">
+            <Button
+              type="primary"
+              onClick={handleRestoreMultiple}
+              disabled={selectedRowKeys.length === 0}
+              className={`
+    ${
+      selectedRowKeys.length > 0
+        ? "bg-gradient-to-l to-cyan-500 text-white  "
+        : "bg-gray-200 text-gray-400 cursor-not-allowed"
+    }
     transition-all duration-300 ease-in-out
     font-bold py-2 px-4 rounded h-8 mr-2
   `}
->
-  Khôi phục ({selectedRowKeys.length})
-</Button>
+            >
+              Khôi phục ({selectedRowKeys.length})
+            </Button>
 
-    <Input
-      placeholder="Tìm kiếm..."
-      size="large"
-      value={searchText}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
-    />
-  </div>
-</div>
-
+            <Input
+              placeholder="Tìm kiếm..."
+              size="large"
+              value={searchText}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              className="flex-grow max-w-[300px]" // Điều chỉnh max-width tùy theo ý muốn
+            />
+          </div>
+        </div>
 
         <Table
           rowSelection={rowSelection}

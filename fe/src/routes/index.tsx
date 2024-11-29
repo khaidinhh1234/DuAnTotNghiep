@@ -137,7 +137,6 @@ import AllTransport from "@/pages/(van_chuyen)/AllTransport";
 import Blog from "@/pages/(website)/blog/Blog";
 import BlogCategories from "@/pages/(website)/blog/BlogCategories";
 import BlogDetail from "@/pages/(website)/blog/BlogDetail";
-import Test23 from "@/pages/(dashboard)/test";
 
 import NotificationPage1 from "@/pages/(dashboard)/_component/Notificationstb";
 import { ActionLog } from "@/pages/(dashboard)/ActionLog/page";
@@ -154,7 +153,8 @@ import ReturnOrders1 from "@/pages/(dashboard)/dohoan/hoanhang/page";
 import ReturnOrders from "@/pages/(van_chuyen)/ReturnOrders";
 import RemoteEvaluate from "@/pages/(dashboard)/evaluate/RemoteEvaluate";
 import Test from "@/pages/(dashboard)/test";
-
+import Test3 from "@/pages/(website)/abc";
+import PrivateShipper from "./PrivateShipper";
 const Router = () => {
   //
 
@@ -446,9 +446,17 @@ const Router = () => {
         <Route path="/changePassword" element={<ChangePassword />} />
         <Route path="/loginSuccessfull" element={<LoginSuccessfull />} />
         <Route path="/shipper" element={<Shipper />} />
-        <Route path="/shipper2" element={<AllTransport />} />
+        <Route
+          path="/shipper2"
+          element={
+            <PrivateShipper>
+              <AllTransport />
+            </PrivateShipper>
+          }
+        />
         <Route path="/return-orders" element={<ReturnOrders />} />
-        <Route path="/test2" element={<Test4 />} />
+        <Route path="/test2" element={<Test4 />} />{" "}
+        <Route path="/test" element={<Test3 />} />
       </Routes>
     </>
   );

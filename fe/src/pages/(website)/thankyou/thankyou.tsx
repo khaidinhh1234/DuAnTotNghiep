@@ -32,9 +32,7 @@ const ThankYouPage = () => {
     payType: payType,
     signature: signature,
   };
-  console.log(datas);
   const orderid = orderId ? orderId.split("-")[0] : "";
-  console.log(orderid);
   useQuery({
     queryKey: ["checkbill"],
     queryFn: async () => {

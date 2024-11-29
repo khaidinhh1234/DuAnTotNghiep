@@ -89,6 +89,9 @@ class ThongKeKhachHangController extends Controller
         $khachHang = User::select('users.*', DB::raw('CAST(SUM(don_hangs.tong_tien_don_hang) AS UNSIGNED) as tong_tien_da_mua'))
             ->join('don_hangs', 'users.id', '=', 'don_hangs.user_id')
             ->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
+            ->whereHas('vaiTros', function ($query) {
+                $query->where('ten_vai_tro', 'Khách hàng');
+            })
             ->whereNull('don_hangs.deleted_at')
             ->groupBy('users.id') // Nhóm theo người dùng để tính tổng tiền chi tiêu của từng khách hàng.
             ->orderByDesc(DB::raw('MAX(don_hangs.created_at)'))
@@ -344,7 +347,7 @@ class ThongKeKhachHangController extends Controller
         // Lấy thời gian 1 tháng trước
         $now = Carbon::now();
         $motThangTruoc = $now->copy()->subMonth();
-    
+
         // Truy vấn để lấy thông tin các khách hàng và tính toán các thông số
         $topKhachHang = User::select(
             'users.id',
@@ -397,9 +400,8 @@ class ThongKeKhachHangController extends Controller
                 'tong_tien_mua_hang' => (int) $khachHang->tong_tien_mua_hang,
             ];
         });
-    
+
         // Trả về kết quả dưới dạng JSON
         return response()->json($result);
     }
-    
 }

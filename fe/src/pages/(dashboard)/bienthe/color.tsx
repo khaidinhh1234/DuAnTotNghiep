@@ -18,21 +18,18 @@ const Color = () => {
     queryKey: ["color", id],
     queryFn: async () => {
       const response = await instance.get(`/bienthemausac/${id}`);
-      console.log("Raw API response:", response.data);
       return response.data;
     },
   });
 
   useEffect(() => {
     if (data && data.data) {
-      console.log("Setting form data:", data.data);
       const colorData = data.data;
       form.setFieldsValue({
         ten_mau_sac: colorData.ten_mau_sac,
         ma_mau_sac: colorData.ma_mau_sac,
       });
       setColor(colorData.ma_mau_sac);
-      console.log("Color set to:", colorData.ma_mau_sac);
     }
   }, [data, form]);
 
@@ -51,12 +48,10 @@ const Color = () => {
   });
 
   const onFinish = (values: IColor) => {
-    console.log("Form submitted with values:", values);
     updateMutation.mutate({ ...values, ma_mau_sac: color });
   };
 
   const handleColorChange = (newColor: any) => {
-    console.log("Color changed to:", newColor.hex);
     setColor(newColor.hex);
     form.setFieldsValue({ ma_mau_sac: newColor.hex });
   };
@@ -68,8 +63,6 @@ const Color = () => {
   const handleClose = () => {
     setDisplayColorPicker(false);
   };
-
-  console.log("Current color state:", color);
 
   const popover: React.CSSProperties = {
     position: "absolute",

@@ -124,12 +124,10 @@ const Danhgias = () => {
         uploadToCloudinary(file.originFileObj as RcFile)
       );
       const uploadedUrls = await Promise.all(uploadPromises);
-      console.log(uploadedUrls);
 
       data.anh_danh_gia = uploadedUrls; // Ghép các URL ảnh lại với nhau
     }
 
-    console.log(rateMessage);
     // Xử lý gửi dữ liệu, có thể gọi API hoặc lưu vào state tùy theo yêu cầu
     mutateDanhgia(data);
   };

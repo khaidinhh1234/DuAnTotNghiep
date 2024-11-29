@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Input, message, Modal, Rate } from "antd";
 import { SpadeIcon } from "lucide-react";
 import { useState } from "react";
+import Hoadon from "./hoadon";
+import { useParams } from "react-router-dom";
 
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
@@ -27,9 +29,10 @@ const Detail = ({ record }: any) => {
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
-  const numberOfRatings = 2; 
+  const numberOfRatings = 2;
   const averageRating = (item: any) => {
-    const totalStars = (item?.so_sao_san_pham || 0) + (item?.so_sao_dich_vu_van_chuyen || 0);
+    const totalStars =
+      (item?.so_sao_san_pham || 0) + (item?.so_sao_dich_vu_van_chuyen || 0);
     return totalStars / numberOfRatings;
   };
   const { data } = useQuery({
@@ -83,7 +86,7 @@ const Detail = ({ record }: any) => {
   });
   // const donhang = data?.data;
   const thongtin = data?.data.thong_tin;
-  console.log(tong, "thongtin");
+  // console.log(tong, "thongtin");
   // console.log("data", products);
   // console.log(vanchuyen, "vanchuyen");
   const handleCancel = () => {
@@ -157,6 +160,15 @@ const Detail = ({ record }: any) => {
     setIsModalOpen(false);
   };
   // console.log("record", record);
+  const { id } = useParams()
+  const { data: VanChuyen } = useQuery({
+    queryKey: ["vanchuyen", id],
+    queryFn: async () => {
+      const response = await instance.get(`/vanchuyen/${id}`);
+      return response.data;
+    },
+  })
+  console.log("anhShip:", VanChuyen?.data);
   return (
     <div>
       {" "}
@@ -473,27 +485,29 @@ const Detail = ({ record }: any) => {
                   </>
                 ) : record.trang_thai_don_hang === "Đã xác nhận" ? (
                   <>
-                    <button
-                      className="w-full py-2 border bg-green-700 rounded-lg text-white hover:bg-green-600"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Đang xử lý" })
-                      }
-                    >
-                      Hoàn tất chuẩn bị hàng
-                    </button>{" "}
-                    <button
-                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 font-semibold"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Hủy hàng" })
-                      }
-                    >
-                      Hủy
-                    </button>
+                    <div className="h-auto">
+                      {" "}
+                      <button
+                        className="w-full py-2 border bg-green-700 rounded-lg text-white hover:bg-green-600"
+                        onClick={() =>
+                          mutate({ id: record.id, action: "Đang xử lý" })
+                        }
+                      >
+                        Hoàn tất chuẩn bị hàng
+                      </button>{" "}
+                    </div>
                   </>
                 ) : record.trang_thai_don_hang === "Đang xử lý" ? (
-                  <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
-                    Chờ lấy hàng
-                  </span>
+                  <>
+                    {" "}
+                    <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
+                      Chờ lấy hàng
+                    </span>
+                    <div className="h-16">
+                      {" "}
+                      <Hoadon record={record} products={products} tong={tong} />
+                    </div>
+                  </>
                 ) : record.trang_thai_don_hang === "Đang giao hàng" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-purple-500 border-b-2 border-purple-500 hover:text-purple-600 hover:border-purple-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     Đang giao hàng
@@ -577,7 +591,8 @@ const Detail = ({ record }: any) => {
                                 {item?.user?.ho} {item?.user?.ten}
                               </h5>
                               {/* Giảm kích thước sao bằng scale-50 */}
-                              <Rate disabled
+                              <Rate
+                                disabled
                                 allowHalf
                                 value={averageRating(item)}
                               />

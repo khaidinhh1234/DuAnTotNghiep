@@ -59,7 +59,7 @@ Route::middleware([])
     ->name('client.')
     ->prefix('client')
     ->group(function () {
-        // Trang chủ    
+        // Trang chủ
         Route::get('trangchu', [TrangChuController::class, 'index']);
         Route::get('thong-tin-web', [TrangChuController::class, 'thongTinWeb']);
         Route::post('tim-kiem-goi-y', [TrangChuController::class, 'timKiemGoiY']);
@@ -137,7 +137,7 @@ Route::middleware([])
             Route::put('/gio-hang/tang-so-luong/{id}', [GioHangController::class, 'tangSoLuong']);
             Route::put('/gio-hang/giam-so-luong/{id}', [GioHangController::class, 'giamSoLuong']);
             Route::delete('/gio-hang/{id}', [GioHangController::class, 'destroy']);
-            Route::post('/gio-hang/sync', [GioHangController::class, 'syncCart']);
+            Route::put('/gio-hang/update/{id}', [GioHangController::class, 'update']);
             Route::post('/gio-hang/chon-san-pham', [GioHangController::class, 'updateSelection']);
             Route::get('/gio-hang/chi-tiet', [GioHangController::class, 'calculateTotal']);
             // Mã khuyến mãi

@@ -9,7 +9,6 @@ const Chart5 = () => {
       return res.data;
     },
   });
-  console.log(data);
   return (
     <>
       <CardHeader>

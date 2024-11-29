@@ -66,7 +66,7 @@ const AddVoucher = () => {
             : error?.response?.data?.errors?.ma_code?.[0]
               ? error?.response?.data?.errors?.ma_code?.[0]
               : error?.response?.data?.errors?.loai?.[0] == "phan_tram" ||
-                error?.response?.data?.errors?.giam_gia?.[0]
+                  error?.response?.data?.errors?.giam_gia?.[0]
                 ? "Giảm giá phải lớn hơn 0% và không quá 50%"
                 : "Có lỗi xảy ra",
         });
@@ -123,16 +123,16 @@ const AddVoucher = () => {
   const handleSubmit = (values: any) => {
     const endDate = values.ngay_ket_thuc
       ? DateTime.fromJSDate(values.ngay_ket_thuc.toDate()).toFormat(
-        "yyyy/MM/dd"
-      )
+          "yyyy/MM/dd"
+        )
       : null;
     const start = values.ngay_bat_dau
       ? DateTime.fromJSDate(values.ngay_bat_dau.toDate()).toFormat("yyyy/MM/dd")
       : null;
     const suutam = values.ngay_bat_dau_suu_tam
       ? DateTime.fromJSDate(values.ngay_bat_dau_suu_tam.toDate()).toFormat(
-        "yyyy/MM/dd"
-      )
+          "yyyy/MM/dd"
+        )
       : null;
     const san_phams = key.map((item) => item.match(/\d+/g)?.join("") || null);
     const danh_mucs = danhm.map((item) => item.match(/\d+/g)?.join("") || null);
@@ -216,7 +216,6 @@ const AddVoucher = () => {
   });
 
   const dm = danhmuc?.data ? formatCategories(danhmuc.data) : [];
-  console.log("dm:", dm)
   const [selectedValues1, setSelectedValues1] = useState<string[]>([]);
 
   // const handleDeselectAll1 = () => {
@@ -232,7 +231,6 @@ const AddVoucher = () => {
   //   setIsAllSelected1(true);
   // };
   const handleChange1 = (value: string[]) => {
-    console.log("value", value);
     setdanhmuc(value);
     setSelectedValues1(value);
     setIsAllSelected1(value.length === dm.length); // Cập nhật trạng thái chọn tất cả
@@ -492,7 +490,7 @@ const AddVoucher = () => {
                               placeholder="Vui lòng chọn"
                               value={selectedValues1}
                               onChange={handleChange1}
-                              options={dm} 
+                              options={dm}
                               dropdownRender={(menu) => (
                                 <div>
                                   <Divider style={{ margin: "4px 0" }} />

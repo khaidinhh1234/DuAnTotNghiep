@@ -9,6 +9,7 @@ use App\Models\VaiTro;
 use App\Events\ThongBaoMoi;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class GuiThongBaoFake extends Command
 {
@@ -18,6 +19,7 @@ class GuiThongBaoFake extends Command
     public function handle()
     {
         $users = User::get();
+        Log::info($users);
         for ($i = 0; $i < 10; $i++) {
             foreach ($users as $user) {
                 $thongBao = ThongBao::create([

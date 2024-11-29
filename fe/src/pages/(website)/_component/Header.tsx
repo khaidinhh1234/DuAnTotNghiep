@@ -3,13 +3,14 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instanceClient from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
-import { Dropdown, Menu, MenuProps, Spin } from "antd";
+import { Dropdown, Menu, MenuProps, Modal, Spin } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import CartOverlay from "./CartOverlay";
 import Notifications from "./Notifications";
 import Search from "./Search";
 import "./dropdown.css";
+import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -300,6 +301,13 @@ const Header = () => {
     { id: 2, label: "Nữ", slug: "nu" },
     { id: 3, label: "Trẻ em", slug: "tre-em" },
   ];
+
+  const handleCart = (e: React.MouseEvent) => {
+    if (!access_token) {
+      e.preventDefault(); // Ngăn chuyển hướng
+      setIsModalVisible(true); // Hiển thị Modal
+    }
+  };
   return (
     <header className="h-12 relative">
       <div className="bg-white w-full">
@@ -495,7 +503,7 @@ const Header = () => {
                 onMouseLeave={() => setIsCartVisible(false)}
               >
                 {" "}
-                <Link to="/gio-hang">
+                <Link to="/gio-hang" onClick={handleCart}>
                   <i className="fa-regular fa-bag-shopping text-xl relative px-1">
                     <span
                       className={`${
@@ -506,6 +514,14 @@ const Header = () => {
                     </span>
                   </i>
                 </Link>
+                <Modal
+                  visible={isModalVisible}
+                  onCancel={() => setIsModalVisible(false)}
+                  footer={null}
+                  width={500}
+                >
+                  <LoginPopup />
+                </Modal>
                 {/* <div className="absolute top-full left-0 pt-4 w-full"> */}
                 {/* <CartOverlay isVisible={isCartVisible} /> */}
                 {/* </div> */}
@@ -516,7 +532,9 @@ const Header = () => {
                   <Avatar className="relative" onClick={() => setcheck(!check)}>
                     <AvatarImage
                       src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
+                      className="w-10 h-10 rounded-full border-2 border-gray-200 shadow-md object-cover"
                     />
+
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   {check && (
@@ -534,7 +552,7 @@ const Header = () => {
                             <img
                               src={data?.data?.anh_nguoi_dung ?? anh_nguoi_dung}
                               alt=""
-                              className="w-[30px] h-[30px] rounded-full"
+                              className="w-8 h-8 rounded-full border-2 border-gray-200 shadow-md object-cover"
                             />
                             <h6 className="font-semibold mx-2 text-lg ">
                               {" "}

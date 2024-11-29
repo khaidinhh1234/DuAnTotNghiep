@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import instanceClient from '@/configs/client';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface WithdrawPageProps {
@@ -18,7 +18,7 @@ const WithdrawPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { bankData } = location.state as { bankData: WithdrawPageProps['bankData'] };
-  
+  const queryClient = useQueryClient()
   const [amount, setAmount] = useState<number>(0);
   const [useFullBalance, setUseFullBalance] = useState(false);
   const [lastToastTime, setLastToastTime] = useState(0);
@@ -42,7 +42,8 @@ const WithdrawPage = () => {
       setAmount(0);
       setUseFullBalance(false);
       toast.success('Rút tiền thành công');
-      navigate(-1);
+      navigate("/mypro/wallet");
+      queryClient.invalidateQueries({ queryKey: ['walletData'] });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.');

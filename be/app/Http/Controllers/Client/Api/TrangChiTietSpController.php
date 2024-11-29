@@ -58,7 +58,7 @@ class TrangChiTietSpController extends Controller
                 'danhGias.user',
                 'danhGias.danhGiaHuuIch',
                 'danhGias' => function ($query) {
-                    $query->withCount('danhGiaHuuIch');
+                    $query->withCount('danhGiaHuuIch')->distinct();
                 },
                 'danhGias.bienTheSanPham.mauBienThe',
                 'danhGias.bienTheSanPham.kichThuocBienThe',
@@ -69,6 +69,7 @@ class TrangChiTietSpController extends Controller
                 'boSuuTapSanPham',
                 'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
+
 
             // Kiểm tra xem sản phẩm có tồn tại không
             if (!$chiTietSanPham) {
@@ -85,10 +86,10 @@ class TrangChiTietSpController extends Controller
             } else {
                 $key .= '_guest_' . $request->ip();
             }
-    
+
             // Kiểm tra xem sản phẩm đã được xem trong 24 giờ chưa
             $lastViewed = Cache::get($key);
-    
+
             if (!$lastViewed || !($lastViewed instanceof \Carbon\Carbon) || now()->diffInHours($lastViewed) > 24) {
                 // Tăng lượt xem nếu chưa được xem trong 24 giờ
                 $chiTietSanPham->increment('luot_xem');

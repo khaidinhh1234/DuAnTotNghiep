@@ -9,14 +9,13 @@ const Chart5 = () => {
       return response.data;
     },
   });
-  console.log(data);
   return (
     <div className="grid grid-cols-3 gap-2">
       {" "}
       <Card className=" rounded-lg bg-[#F2F4F7] ">
         <div className="">
           <div className="">
-            <div className="text-black text-base">Đơn tạo mới:</div>
+            <div className="text-black text-base">Số đơn tạo:</div>
             <div className="text-black text-base font-bold">
               {data?.so_don_hang_moi || 0}
             </div>

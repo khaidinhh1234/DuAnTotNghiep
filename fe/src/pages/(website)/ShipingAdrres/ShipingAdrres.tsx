@@ -14,11 +14,21 @@ import VerificationModal from "./VerificationModal";
 
 const ShippingAddressPage = () => {
   const [trangthai, settrangthai] = useState("Thanh toán khi nhận hàng");
-  console.log(trangthai);
-  const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
-
   const [user] = useLocalStorage("user" as any, {});
-  const member = user?.user;
+  const khach = user.user;
+  const [macode, setmacode] = useState(""); // Trạng thái cho mã khuyến mãi
+  const { data } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.post("/cap-nhat-thong-tin");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    },
+  });
+  const khachhang = data?.data?.user;
   // console.log(member);
   const {
     register,
@@ -28,10 +38,13 @@ const ShippingAddressPage = () => {
   } = useForm({
     resolver: zodResolver(checkout_address),
     defaultValues: {
-      ten_nguoi_dat_hang: member?.ho + " " + member?.ten || "",
-      so_dien_thoai_nguoi_dat_hang: member?.so_dien_thoai || "",
-      dia_chi_nguoi_dat_hang: member?.dia_chi || "",
-      email_nguoi_dat_hang: member?.email || "",
+      ten_nguoi_dat_hang: khachhang
+        ? khachhang?.ho + " " + khachhang?.ten
+        : khach?.ho + " " + khach?.ten,
+      so_dien_thoai_nguoi_dat_hang:
+        khachhang?.so_dien_thoai ?? khach?.so_dien_thoai,
+      dia_chi_nguoi_dat_hang: khachhang?.dia_chi ?? khach?.dia_chi,
+      email_nguoi_dat_hang: khachhang?.email || khach?.email,
       phuong_thuc_thanh_toan: "Thanh toán khi nhận hàng",
     },
   });
@@ -122,7 +135,6 @@ const ShippingAddressPage = () => {
   };
 
   const onsubmit = (formData: any) => {
-    console.log(trangthai);
     // console.log(formData);
     // Kết hợp dữ liệu với mã khuyến mãi
     // Kiểm tra nếu tất cả các trường (ngoại trừ macode) đều có giá trị
@@ -132,7 +144,6 @@ const ShippingAddressPage = () => {
     );
     if (isDataComplete) {
       // Gọi hàm mutate với dữ liệu đã kết hợp
-      console.log(formData);
 
       mutate({ ...formData, macode, phuong_thuc_thanh_toan: trangthai });
       reset(); // Reset form sau khi gửi dữ liệu

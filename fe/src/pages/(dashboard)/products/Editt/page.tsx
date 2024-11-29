@@ -277,8 +277,7 @@ const EditProducts: React.FC = () => {
   }, [productData]);
   const [lockedSizes, setLockedSizes] = useState<number[]>([]);
   useEffect(() => {
-    console.log("productImage:", productImage);
-    console.log("productImageList:", productImageList);
+
   }, [productImage, productImageList]);
   useEffect(() => {
     if (productData && productData.data) {

@@ -10,7 +10,7 @@ import { useLocalStorage } from "@/components/hook/useStoratge";
 const MyOrderdetail = () => {
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-
+  const [length, setLength] = useState(3);
   const { slug } = useParams();
   // console.log("Slug:", slug);
   const [danhgia, setDanhgia] = useState<boolean>(false);
@@ -43,7 +43,7 @@ const MyOrderdetail = () => {
   };
   // console.log("Data:", data);
   const chitiet = data?.data;
-  // console.log("Chi tiết đơn hàng:", chitiet);
+  console.log("Chi tiết đơn hàng:", chitiet?.danh_gia?.length);
   // console.log(chitiet);
   // const chitietsanpham = data?.data?.don_hang;
   const thongtin = data?.data?.thong_tin;
@@ -128,14 +128,283 @@ const MyOrderdetail = () => {
         </>
       )}
       {view && (
-        <div className="fixed inset-0 pt-96 overflow-y-auto flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
+        <div className="fixed inset-0 pt-0 overflow-y-auto flex items-center justify-center bg-gray-500 bg-opacity-75 z-50 ">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full space-y-4 overflow-y-auto h-auto">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
               Đánh giá của bạn
             </h2>
             <div className="">
               {donhang?.chi_tiets &&
-                donhang?.chi_tiets?.map((item: any, index: number) => (
+                donhang?.chi_tiets
+                  ?.slice(0, 3)
+                  .map((item: any, index: number) => (
+                    <div className="flex justify-between mb-1" key={index}>
+                      <div className="flex gap-5 items-center ">
+                        <div className=" rounded-md text-center">
+                          {" "}
+                          <img
+                            src={
+                              item?.bien_the_san_pham?.anh_bien_the[0]
+                                ?.duong_dan_anh
+                            }
+                            alt="Sản phẩm"
+                            className="w-20 h-24 rounded-md mb-5"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <h3 className="font-bold my-1">
+                            {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
+                          </h3>
+                          <p className={`font-bold  block md:hidden`}>
+                            Giá: ${item?.thanh_tien.toLocaleString("vi-VN")}
+                          </p>
+                          <p className="mb-2">
+                            Size:
+                            <span>
+                              {
+                                item?.bien_the_san_pham?.kich_thuoc_bien_the
+                                  ?.kich_thuoc
+                              }{" "}
+                              {item?.bien_the_san_pham?.kich_thuoc_bien_the
+                                ?.loai_kich_thuoc &&
+                                ` / ${
+                                  item?.bien_the_san_pham?.kich_thuoc_bien_the
+                                    ?.loai_kich_thuoc
+                                }`}
+                            </span>
+                            , Màu:{" "}
+                            <span>
+                              {
+                                item?.bien_the_san_pham?.mau_bien_the
+                                  ?.ten_mau_sac
+                              }
+                            </span>
+                          </p>
+                          <p className="mb-10">Số lượng: {item?.so_luong}</p>{" "}
+                        </div>
+                      </div>{" "}
+                      <div
+                        className={`text-center py-8 font-bold md:block  hidden mr-5`}
+                      >
+                        <p>
+                          {" "}
+                          <span className="text-gray-400 line-through mx-2">
+                            {item?.bien_the_san_pham?.gia_khuyen_mai &&
+                              (item?.bien_the_san_pham?.gia_ban).toLocaleString(
+                                "vi-VN"
+                              ) + "đ"}
+                          </span>
+                          {(item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi !==
+                          null
+                            ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
+                            : item?.bien_the_san_pham?.gia_khuyen_mai !== null
+                              ? item?.bien_the_san_pham?.gia_khuyen_mai
+                              : item?.bien_the_san_pham?.gia_ban
+                          ).toLocaleString("vi-VN")}{" "}
+                          đ
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+              {donhang?.chi_tiets && donhang?.chi_tiets?.length > 3 && (
+                <div className="text-center font-bold  mb-0   ">
+                  .................Còn tiếp..................
+                </div>
+              )}
+
+              <div className="mx-5">
+                {chitiet?.danh_gia_chua_xoa &&
+                  chitiet?.danh_gia_chua_xoa
+                    ?.slice(0, 1)
+                    .map((item: any, index: number) => (
+                      <div
+                        className="border-b border-gray-300 py-5"
+                        key={index}
+                      >
+                        <div className="flex  items-start gap-5">
+                          <div>
+                            <img
+                              src={`${member?.anh_nguoi_dung}??https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png`}
+                              alt=""
+                              className="w-11 h-11 rounded-full"
+                            />
+                          </div>
+                          <div>
+                            <h1 className=" text-base font-semibold">
+                              {member?.ho + " " + member?.ten}
+                            </h1>
+
+                            <Rate
+                              disabled
+                              defaultValue={item?.so_sao_san_pham}
+                            />
+
+                            <h1 className="text-black/60 font-medium">
+                              Chất lượng sản phẩm:{" "}
+                              <span className="text-black">
+                                {item?.chat_luong_san_pham}
+                              </span>
+                            </h1>
+                            <h1 className="text-black font-semibold">
+                              {item?.mo_ta}
+                            </h1>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                {chitiet?.danh_gia_da_xoa &&
+                  chitiet?.danh_gia_da_xoa
+                    ?.slice(0, 1)
+                    .map((item: any, index: number) => (
+                      <div
+                        className="border-b border-gray-300 py-5"
+                        key={index}
+                      >
+                        <div className="flex  items-start gap-5">
+                          <div>
+                            <img
+                              src={`${member?.anh_nguoi_dung}??https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png`}
+                              alt=""
+                              className="w-11 h-11 rounded-full"
+                            />
+                          </div>
+                          <div>
+                            <h1 className=" text-base font-semibold">
+                              {member?.ho + " " + member?.ten}
+                            </h1>
+
+                            <Rate
+                              disabled
+                              defaultValue={item?.so_sao_san_pham}
+                            />
+
+                            <h1 className="text-black/60 font-medium">
+                              Chất lượng sản phẩm:{" "}
+                              <span className="text-black">
+                                {item?.chat_luong_san_pham}
+                              </span>
+                            </h1>
+                            <h1 className="text-black font-semibold">
+                              {item?.mo_ta}
+                            </h1>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+              </div>
+              <div className="flex justify-end mt-5 ">
+                <button
+                  className="text-black font-semibold px-16 py-2 border"
+                  onClick={() => setView(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="flex justify-between items-center border px-5 pt-4 pb-1">
+        <Link to={"/mypro/myorder"}>
+          <h1>
+            <i className="fa-solid fa-chevron-down fa-rotate-90"></i>TRỞ LẠI
+          </h1>
+        </Link>
+        <div className="flex gap-5 ">
+          <h1>MÃ ĐƠN HÀNG.{slug}</h1>{" "}
+          <h1
+            className={`border-l-2 pl-5  font-semibold ${
+              donhang?.trang_thai_don_hang == "Chờ xác nhận"
+                ? "text-orange-300"
+                : donhang?.trang_thai_don_hang == "Đã xác nhận"
+                  ? " text-orange-500 "
+                  : donhang?.trang_thai_don_hang == "Đang xử lý"
+                    ? " text-blue-500 "
+                    : donhang?.trang_thai_don_hang == "Đang giao hàng"
+                      ? " text-violet-500 "
+                      : donhang?.trang_thai_don_hang ==
+                          "Chờ khách hàng xác nhận"
+                        ? " text-yellow-500 "
+                        : donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng"
+                          ? " text-green-500 "
+                          : donhang?.trang_thai_don_hang ==
+                              "Đơn hàng bị từ chối nhân"
+                            ? " text-red-500 "
+                            : " text-red-500 "
+            }`}
+          >
+            {donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận"
+              ? "Giao thành công"
+              : donhang?.trang_thai_don_hang == "Đang xử lý"
+                ? "Chờ lấy hàng"
+                : donhang?.trang_thai_don_hang}
+          </h1>
+          {chitiet?.danh_gia_chua_xoa?.length <= 0 &&
+          chitiet?.danh_gia_da_xoa?.length <= 0 ? (
+            (donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
+              donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng") && (
+              <button
+                className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
+                onClick={() => handleDanhgia()}
+              >
+                Đánh giá
+              </button>
+            )
+          ) : (
+            <button
+              className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
+              onClick={() => setView(true)}
+            >
+              Xem Đánh giá
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="border-x  px-5 py-4">
+        {donhang?.trang_thai_don_hang !== "Đơn hàng bị từ chối nhân" && (
+          <>
+            {donhang?.trang_thai_don_hang !== "Hủy hàng" &&
+              donhang?.trang_thai_don_hang !== "Hoàn hàng" && (
+                <Steps
+                  current={current}
+                  labelPlacement="vertical"
+                  items={items}
+                />
+              )}
+            {(donhang?.trang_thai_don_hang === "Hủy hàng" ||
+              donhang?.trang_thai_don_hang === "Hoàn hàng") && (
+              <Steps
+                progressDot
+                current={2}
+                items={[
+                  { title: "Gửi yêu cầu" },
+                  { title: "Được chấp nhận" },
+                  {
+                    title:
+                      donhang?.trang_thai_don_hang === "Hủy hàng"
+                        ? "Hoàn tất thủ tục"
+                        : "Đã hoàn tiền",
+                  },
+                ]}
+              />
+            )}
+          </>
+        )}
+        {donhang?.trang_thai_don_hang === "Đơn hàng bị từ chối nhân" ? (
+          <div className="text-xl uppercase text-red-500">
+            Khách hàng từ chối nhận
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+      <div className="border p-5">
+        <div className="py-6 grid grid-cols-7  border-b border-hrBlack">
+          <div className="col-span-7 ">
+            {donhang?.chi_tiets &&
+              donhang?.chi_tiets
+                ?.slice(0, length)
+                .map((item: any, index: number) => (
                   <div className="flex justify-between mb-1" key={index}>
                     <div className="flex gap-5 items-center ">
                       <div className=" rounded-md text-center">
@@ -201,216 +470,17 @@ const MyOrderdetail = () => {
                     </div>
                   </div>
                 ))}
-
-              <div className="mx-5">
-                {chitiet?.danh_gia
-                  ?.slice(0, 1)
-                  .map((item: any, index: number) => (
-                    <div className="border-b border-gray-300 py-5" key={index}>
-                      <div className="flex  items-start gap-5">
-                        <div>
-                          <img
-                            src={`${member?.anh_nguoi_dung}??https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png`}
-                            alt=""
-                            className="w-11 h-11 rounded-full"
-                          />
-                        </div>
-                        <div>
-                          <h1 className=" text-base font-semibold">
-                            {member?.ho + " " + member?.ten}
-                          </h1>
-
-                          <Rate disabled defaultValue={item?.so_sao_san_pham} />
-
-                          <h1 className="text-black/60 font-medium">
-                            Chất lượng sản phẩm:{" "}
-                            <span className="text-black">
-                              {item?.chat_luong_san_pham}
-                            </span>
-                          </h1>
-                          <h1 className="text-black font-semibold">
-                            {item?.mo_ta}
-                          </h1>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-              <div className="flex justify-end mt-5 ">
+            {donhang?.chi_tiets && donhang?.chi_tiets?.length > length && (
+              <div className="col-span-12 text-center mb-3">
                 <button
-                  className="text-black font-semibold px-16 py-2 border"
-                  onClick={() => setView(false)}
+                  onClick={() => setLength(length + 3)}
+                  className=" bg-slate-100 px-4 py-1  rounded-md hover:bg-white text-black border l"
                 >
-                  OK
+                  <i className="fa-solid fa-share"></i> Xem thêm ...
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-      <div className="flex justify-between items-center border px-5 pt-4 pb-1">
-        <Link to={"/mypro/myorder"}>
-          <h1>
-            <i className="fa-solid fa-chevron-down fa-rotate-90"></i>TRỞ LẠI
-          </h1>
-        </Link>
-        <div className="flex gap-5 ">
-          <h1>MÃ ĐƠN HÀNG.{slug}</h1>{" "}
-          <h1
-            className={`border-l-2 pl-5  font-semibold ${
-              donhang?.trang_thai_don_hang == "Chờ xác nhận"
-                ? "text-orange-300"
-                : donhang?.trang_thai_don_hang == "Đã xác nhận"
-                  ? " text-orange-500 "
-                  : donhang?.trang_thai_don_hang == "Đang xử lý"
-                    ? " text-blue-500 "
-                    : donhang?.trang_thai_don_hang == "Đang giao hàng"
-                      ? " text-violet-500 "
-                      : donhang?.trang_thai_don_hang ==
-                          "Chờ khách hàng xác nhận"
-                        ? " text-yellow-500 "
-                        : donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng"
-                          ? " text-green-500 "
-                          : donhang?.trang_thai_don_hang ==
-                              "Đơn hàng bị từ chối nhân"
-                            ? " text-red-500 "
-                            : " text-red-500 "
-            }`}
-          >
-            {donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận"
-              ? "Giao thành công"
-              : donhang?.trang_thai_don_hang == "Đang xử lý"
-                ? "Chờ lấy hàng"
-                : donhang?.trang_thai_don_hang}
-          </h1>
-          {chitiet?.danh_gia?.length <= 0 ? (
-            donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
-            (donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng" && (
-              <button
-                className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
-                onClick={() => handleDanhgia()}
-              >
-                Đánh giá
-              </button>
-            ))
-          ) : (
-            <button
-              className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
-              onClick={() => setView(true)}
-            >
-              Xem Đánh giá
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="border-x  px-5 py-4">
-        {donhang?.trang_thai_don_hang !== "Đơn hàng bị từ chối nhân" && (
-          <>
-            {donhang?.trang_thai_don_hang !== "Hủy hàng" &&
-              donhang?.trang_thai_don_hang !== "Hoàn hàng" && (
-                <Steps
-                  current={current}
-                  labelPlacement="vertical"
-                  items={items}
-                />
-              )}
-            {(donhang?.trang_thai_don_hang === "Hủy hàng" ||
-              donhang?.trang_thai_don_hang === "Hoàn hàng") && (
-              <Steps
-                progressDot
-                current={2}
-                items={[
-                  { title: "Gửi yêu cầu" },
-                  { title: "Được chấp nhận" },
-                  {
-                    title:
-                      donhang?.trang_thai_don_hang === "Hủy hàng"
-                        ? "Hoàn tất thủ tục"
-                        : "Đã hoàn tiền",
-                  },
-                ]}
-              />
             )}
-          </>
-        )}
-        {donhang?.trang_thai_don_hang === "Đơn hàng bị từ chối nhân" ? (
-          <div className="text-xl uppercase text-red-500">
-            Khách hàng từ chối nhận
-          </div>
-        ) : (
-          ""
-        )}
-      </div>
-      <div className="border p-5">
-        <div className="py-6 grid grid-cols-7  border-b border-hrBlack">
-          <div className="col-span-7 ">
-            {donhang?.chi_tiets &&
-              donhang?.chi_tiets?.map((item: any, index: number) => (
-                <div className="flex justify-between mb-1" key={index}>
-                  <div className="flex gap-5 items-center ">
-                    <div className=" rounded-md text-center">
-                      {" "}
-                      <img
-                        src={
-                          item?.bien_the_san_pham?.anh_bien_the[0]
-                            ?.duong_dan_anh
-                        }
-                        alt="Sản phẩm"
-                        className="w-20 h-24 rounded-md mb-5"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <h3 className="font-bold my-1">
-                        {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
-                      </h3>
-                      <p className={`font-bold  block md:hidden`}>
-                        Giá: ${item?.thanh_tien.toLocaleString("vi-VN")}
-                      </p>
-                      <p className="mb-2">
-                        Size:
-                        <span>
-                          {
-                            item?.bien_the_san_pham?.kich_thuoc_bien_the
-                              ?.kich_thuoc
-                          }{" "}
-                          {item?.bien_the_san_pham?.kich_thuoc_bien_the
-                            ?.loai_kich_thuoc &&
-                            ` / ${
-                              item?.bien_the_san_pham?.kich_thuoc_bien_the
-                                ?.loai_kich_thuoc
-                            }`}
-                        </span>
-                        , Màu:{" "}
-                        <span>
-                          {item?.bien_the_san_pham?.mau_bien_the?.ten_mau_sac}
-                        </span>
-                      </p>
-                      <p className="mb-10">Số lượng: {item?.so_luong}</p>{" "}
-                    </div>
-                  </div>{" "}
-                  <div
-                    className={`text-center py-8 font-bold md:block  hidden mr-5`}
-                  >
-                    <p>
-                      {" "}
-                      <span className="text-gray-400 line-through mx-2">
-                        {item?.bien_the_san_pham?.gia_khuyen_mai &&
-                          (item?.bien_the_san_pham?.gia_ban).toLocaleString(
-                            "vi-VN"
-                          ) + "đ"}
-                      </span>
-                      {(item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi !==
-                      null
-                        ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
-                        : item?.bien_the_san_pham?.gia_khuyen_mai !== null
-                          ? item?.bien_the_san_pham?.gia_khuyen_mai
-                          : item?.bien_the_san_pham?.gia_ban
-                      ).toLocaleString("vi-VN")}{" "}
-                      đ
-                    </p>
-                  </div>
-                </div>
-              ))}
+
             {/* {chi_tiet_don_hangs && chi_tiet_don_hangs.length >= 2 && ( */}
             <div className="text-start font-bold  mb-0  ">
               <span

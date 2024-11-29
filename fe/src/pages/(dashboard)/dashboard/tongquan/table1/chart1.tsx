@@ -37,32 +37,30 @@ const Chart1 = ({ datestart, dateend }: ChartProps) => {
   return (
     <div>
       {" "}
-      <Card className=" rounded-lg bg-[#F2F4F7] w-72">
-        <div className="">
-          <div className="flex justify-between">
+      <Card className="rounded-lg bg-[#F2F4F7] w-full sm:w-72 px-4">
+        <div className="space-y-1">
+          <div className="flex justify-between items-center">
             <div className="text-black">Tổng tiền:</div>
             <div className="text-black">_</div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <div className="text-black">Doanh thu:</div>
             <div className="text-black font-bold text-md">
-              {" "}
               <Statistic
                 value={data?.tong_doanh_thu || 0}
                 formatter={formatter}
                 suffix="đ"
-                valueStyle={{ fontSize: "16px" }} // Giảm font size ở đây
+                valueStyle={{ fontSize: "16px" }}
               />
             </div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <div className="text-black text-lg">Số đơn:</div>
             <div className="text-black text-lg font-semibold">
-              {" "}
               <Statistic
                 value={data?.so_don_hang || 0}
                 formatter={formatter}
-                valueStyle={{ fontSize: "17px" }} // Giảm font size ở đây
+                valueStyle={{ fontSize: "17px" }}
               />
             </div>
           </div>

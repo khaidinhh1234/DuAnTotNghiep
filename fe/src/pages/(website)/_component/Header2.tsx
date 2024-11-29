@@ -332,7 +332,7 @@ const Header2 = () => {
             Bài viết
           </Link>
           <Link to="/vourcher" className="text-xl">
-            Khuyến mại
+            Khuyến mãi
           </Link>
           <Link to="/contact" className="text-xl">
             Liên hệ

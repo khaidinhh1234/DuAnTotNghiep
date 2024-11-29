@@ -43,7 +43,6 @@ const EvaluateAdmin = () => {
       }
     },
   });
-  console.log(data)
   const mutation = useMutation({
     mutationFn: async ({
       id,
@@ -275,7 +274,13 @@ const EvaluateAdmin = () => {
                 )}
                 <div>
                   <div>{sanPham.ten_san_pham}</div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                    }}
+                  >
                     <span>{icon}</span>
                     <small>{label}</small>
                   </div>
@@ -330,7 +335,8 @@ const EvaluateAdmin = () => {
           >
             <Button
               // onClick={() => hideEvaluate.mutate(record.id as number)}
-              className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300">
+              className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300"
+            >
               Ẩn
             </Button>
           </Popconfirm>
@@ -390,12 +396,22 @@ const EvaluateAdmin = () => {
         {currentEvaluate && (
           <div className="flex flex-col gap-2">
             <div style={{ textAlign: "left" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
                 {currentEvaluate.san_pham?.length > 0 ? (
                   currentEvaluate.san_pham.map((product: any) => (
                     <div
                       key={product.id}
-                      style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
                     >
                       {product.anh_san_pham ? (
                         <img

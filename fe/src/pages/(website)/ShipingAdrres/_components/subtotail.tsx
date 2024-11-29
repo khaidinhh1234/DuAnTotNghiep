@@ -8,7 +8,6 @@ const Subtotal = ({ tong_tien, Macode, trangthai, isPending }: any) => {
     if (selectedDiscount === null) return;
   }, [selectedDiscount]);
   const handleSelectVoucher = (data: number | any) => {
-    console.log(data);
     setSelectedDiscount(data.giam_gia);
 
     Macode(data.index);
