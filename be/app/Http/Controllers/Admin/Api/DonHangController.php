@@ -441,13 +441,16 @@ class DonHangController extends Controller
                 $minDonHangCount = $shippers->min(fn($shipper) => $shipper->vanChuyens->count());
                 $shippersWithMinDonHang = $shippers->filter(fn($shipper) => $shipper->vanChuyens->count() == $minDonHangCount);
                 $shipper = $shippersWithMinDonHang->random();
-                Hoan_hang::create([
+                $hoanHang = Hoan_hang::create([
                     'don_hang_id' => $donHang->id,
                     'user_id' => $donHang->user_id,
                     'shipper_id' => $shipper->id,
                     'ngay_tao' => Carbon::now(),
                     'hoan_tien_id' => $id,
-                ]);
+                ]); 
+                // Gửi thông báo hoàn hàng qua Telegram
+                $thongBaoHoanHang = new ThongBaoTelegramController();
+                $thongBaoHoanHang->thongBaoHoanHang($hoanHang);
                 $donHang->update(['ngay_hoan' => Carbon::now()]);
                 $mess = 'Xác nhận hoàn hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
