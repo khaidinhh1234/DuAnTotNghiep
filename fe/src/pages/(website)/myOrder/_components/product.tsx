@@ -67,11 +67,12 @@ const ProductItem = ({
           `don-hang/huy-don-hang`,
           data
         );
+        // console.log(response.data);
         message.success("Hủy đơn hàng thành công");
         setIsModalOpen(false);
         return response.data;
-      } catch (error) {
-        message.error("Hủy đơn hàng thất bại");
+      } catch (error: any) {
+        message.error(error.response?.data?.message || "Hủy đơn hàng thất bại");
         console.log(error);
       }
 

@@ -78,7 +78,7 @@ const UsersAdminNhanvien: React.FC = () => {
       index: index,
     }));
 
-  console.log(user);
+  // console.log(user);
 
   // const [searchText, setSearchText] = useState
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -209,6 +209,7 @@ const UsersAdminNhanvien: React.FC = () => {
                 borderRadius: "50%",
                 marginRight: "10px",
               }}
+              className="rounded-full object-cover"
             />
           ) : (
             <div

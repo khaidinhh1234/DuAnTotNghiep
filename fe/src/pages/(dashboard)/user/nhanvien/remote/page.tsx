@@ -70,7 +70,7 @@ const UsersRemoteNhanvien: React.FC = () => {
       return res.data;
     },
   });
-  // (data?.data);
+  console.log(data);
   const user = data?.data
     ?.filter((item: any) =>
       item?.vai_tros?.some((item: any) => item?.ten_vai_tro !== "Khách hàng")
@@ -83,6 +83,7 @@ const UsersRemoteNhanvien: React.FC = () => {
         index: index,
       };
     });
+  console.log(user);
   const queryClient = useQueryClient();
   const mutate = useMutation({
     mutationFn: async (id: number) => {

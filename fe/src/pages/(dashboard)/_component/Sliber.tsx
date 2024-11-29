@@ -54,7 +54,7 @@ const SiderComponent: React.FC = () => {
         mode="inline"
         defaultSelectedKeys={["/admin/dashboard"]}
         onClick={handleMenuClick}
-        className="text-white py-5 font-semibold text-base space-y-4"
+        className="text-white py-5 font-semibold text-base space-y-4 pb-20"
       >
         {/* Thống kê (Statistics) Menu */}
         {vaitro?.includes("Người giao hàng") ? null : (
@@ -73,9 +73,7 @@ const SiderComponent: React.FC = () => {
           quyen?.includes("admin.bosuutap.index")) && (
           <SubMenu key="sub2" icon={<Package />} title="Sản phẩm">
             {quyen?.includes("admin.sanpham.index") && (
-              <Menu.Item key="/admin/products/list">
-                Danh sách sản phẩm
-              </Menu.Item>
+              <Menu.Item key="/admin/products/list">Sản phẩm</Menu.Item>
             )}
             {quyen?.includes("admin.bienthekichthuoc.index") &&
               quyen?.includes("admin.bienthemausac.index") && (
@@ -92,10 +90,10 @@ const SiderComponent: React.FC = () => {
           quyen?.includes("admin.danhmuc.index")) && (
           <SubMenu key="sub3" icon={<Folder />} title="Danh mục">
             {quyen?.includes("admin.danhmuc.index") && (
-              <Menu.Item key="/admin/categories">Danh mục sản phẩm</Menu.Item>
+              <Menu.Item key="/admin/categories">Sản phẩm</Menu.Item>
             )}
             {quyen?.includes("admin.danhmuctintuc.index") && (
-              <Menu.Item key="/admin/newcategory">Danh mục tin tức</Menu.Item>
+              <Menu.Item key="/admin/newcategory">Tin tức</Menu.Item>
             )}
           </SubMenu>
         )}
@@ -105,12 +103,10 @@ const SiderComponent: React.FC = () => {
           <SubMenu key="sub4" icon={<ShoppingCart />} title="Đơn hàng">
             <Menu.Item key="/admin/orders/transport">Tổng quan</Menu.Item>
             {quyen.includes("admin.donhang.index") && (
-              <Menu.Item key="/admin/orders/list">Danh sách đơn hàng</Menu.Item>
+              <Menu.Item key="/admin/orders/list">Đơn hàng</Menu.Item>
             )}
             {quyen.includes("admin.donhang.hoanhang") && (
-              <Menu.Item key="/admin/orders/donhoan">
-                Danh sách đơn hoàn
-              </Menu.Item>
+              <Menu.Item key="/admin/orders/donhoan">Đơn hoàn</Menu.Item>
             )}
             {quyen.includes("admin.vanchuyen.index") && (
               <SubMenu icon={<Truck />} key="van-chuyen" title="Vận chuyển">
@@ -182,11 +178,11 @@ const SiderComponent: React.FC = () => {
           </Menu.Item>
         )}
         {quyen?.includes("admin.thongtinweb.index") && (
-            <SubMenu key="sub7" icon={<AlignJustify />} title="Nội dung">
-              <Menu.Item key="/admin/Content/qlfooter">Footer</Menu.Item>
-              <Menu.Item key="/admin/Content/qlbanner">Banner</Menu.Item>
-            </SubMenu>
-          )}
+          <SubMenu key="sub7" icon={<AlignJustify />} title="Nội dung">
+            <Menu.Item key="/admin/Content/qlfooter">Footer</Menu.Item>
+            <Menu.Item key="/admin/Content/qlbanner">Banner</Menu.Item>
+          </SubMenu>
+        )}
       </Menu>
       {/* </Sider> */}
     </>

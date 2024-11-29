@@ -1,32 +1,55 @@
-
-import React, { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import CreditCardForm from "./cart";
-import { Checkbox } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Checkbox } from "antd";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const banks = [
-  { name: 'Agribank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Agribank_dk6etr.png' },
-  { name: 'BIDV', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Remove-bg.ai_1730368278163_z2amlh.png' },
-  { name: 'VietinBank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368830/vietinbank-logo_wijgpc.png' },
-  { name: 'MB', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730369995/Logo_MB_new_vncg2s.png' },
-  { name: 'SCB', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368830/y_nghi_logo_scb_truc_ngang_1__lcjqv6.webp' },
-  { name: 'Techcombank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730370081/Techcombank_logo_gqwney.png' },
-  { name: 'TPBank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368830/Logo-TPBank_mkek2w.webp' },
-  { name: 'VPBank', logo: 'https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/VPBank_logo.svg_eciill.png' },
+  {
+    name: "Agribank",
+    logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Agribank_dk6etr.png",
+  },
+  {
+    name: "BIDV",
+    logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/Remove-bg.ai_1730368278163_z2amlh.png",
+  },
+  {
+    name: "VietinBank",
+    logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730368830/vietinbank-logo_wijgpc.png",
+  },
+  {
+    name: "MB",
+    logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730369995/Logo_MB_new_vncg2s.png",
+  },
+  {
+    name: "SCB",
+    logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730368830/y_nghi_logo_scb_truc_ngang_1__lcjqv6.webp",
+  },
+  {
+    name: "Techcombank",
+    logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730370081/Techcombank_logo_gqwney.png",
+  },
+  {
+    name: "TPBank",
+    logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730368830/Logo-TPBank_mkek2w.webp",
+  },
+  {
+    name: "VPBank",
+    logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/VPBank_logo.svg_eciill.png",
+  },
 ];
 
 const fetchLinkedBanks = async () => {
-  const response = await instanceClient.get('/danh-sach-ngan-hang');
+  const response = await instanceClient.get("/danh-sach-ngan-hang");
   return response.data?.data?.map((bank: any) => ({
     accountNumber: bank.tai_khoan_ngan_hang,
     accountHolder: bank.ten_chu_tai_khoan,
     bankName: bank.ngan_hang,
     id: bank.id,
-    logo: bank.logo_ngan_hang
+    logo: bank.logo_ngan_hang,
   }));
 };
 
@@ -49,12 +72,16 @@ const BankAccount = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: linkedBanks = [], isLoading, isError } = useQuery({
-    queryKey: ['linkedBanks'],
+  const {
+    data: linkedBanks = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["linkedBanks"],
     queryFn: fetchLinkedBanks,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    staleTime: 0
+    staleTime: 0,
   });
 
   const deleteBankMutation = useMutation({
@@ -62,13 +89,14 @@ const BankAccount = () => {
       return instanceClient.post(`/huy-lien-ket-ngan-hang/${bankId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['linkedBanks'] });
-      toast.success('Xóa tài khoản ngân hàng thành công');
+      queryClient.invalidateQueries({ queryKey: ["linkedBanks"] });
+      toast.success("Xóa tài khoản ngân hàng thành công");
     },
     onError: (error: any) => {
-      const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại!';
+      const errorMessage =
+        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại!";
       toast.error(errorMessage);
-    }
+    },
   });
 
   const handleBankClick = (bankId: any) => {
@@ -91,13 +119,15 @@ const BankAccount = () => {
 
   const handleModalClose = () => {
     setShowCreditCardModal(false);
-    queryClient.invalidateQueries({ queryKey: ['linkedBanks'] });
+    queryClient.invalidateQueries({ queryKey: ["linkedBanks"] });
   };
 
   const handleWithdraw = () => {
     const selectedBankId = selectedBanks[0];
-    const selectedBank = linkedBanks.find((bank: { id: string }) => bank.id === selectedBankId);
-    navigate('/mypro/WithdrawPage', {
+    const selectedBank = linkedBanks.find(
+      (bank: { id: string }) => bank.id === selectedBankId
+    );
+    navigate("/mypro/WithdrawPage", {
       state: {
         bankData: {
           id: selectedBankId,
@@ -105,8 +135,8 @@ const BankAccount = () => {
           accountNumber: selectedBank?.accountNumber,
           accountHolder: selectedBank?.accountHolder,
           logo: selectedBank?.logo,
-        }
-      }
+        },
+      },
     });
   };
 
@@ -177,36 +207,54 @@ const BankAccount = () => {
               >
                 <Checkbox
                   onClick={(event) => event.stopPropagation()}
-                  onChange={(e) => handleCheckboxChange(bank.id, e.target.checked)}
+                  onChange={(e) =>
+                    handleCheckboxChange(bank.id, e.target.checked)
+                  }
                   checked={selectedBanks.includes(bank.id)}
                 />
-                <img src={bank.logo} alt={bank.bankName} className="w-12 h-12 mr-3 object-contain" />
+                <img
+                  src={bank.logo}
+                  alt={bank.bankName}
+                  className="w-12 h-12 mr-3 object-contain"
+                />
                 <div className="flex-1">
                   <div className="font-medium">{bank.bankName}</div>
-                  <div className="text-sm text-gray-500">{bank.accountHolder}</div>
+                  <div className="text-sm text-gray-500">
+                    {bank.accountHolder}
+                  </div>
                 </div>
-                <div className="text-gray-500">***{bank.accountNumber.slice(-4)}</div>
-                <div className={`w-3 h-3 ml-2 transform border-r-2 border-b-2 border-gray-500 transition-transform duration-200 ${selectedBankId === bank.id ? 'rotate-[225deg]' : 'rotate-45'}`}></div>
+                <div className="text-gray-500">
+                  ***{bank.accountNumber.slice(-4)}
+                </div>
+                <div
+                  className={`w-3 h-3 ml-2 transform border-r-2 border-b-2 border-gray-500 transition-transform duration-200 ${selectedBankId === bank.id ? "rotate-[225deg]" : "rotate-45"}`}
+                ></div>
               </div>
-              <div 
+              <div
                 className={`bg-gray-50 overflow-hidden transition-all duration-300 ease-in-out ${
-                  selectedBankId === bank.id ? 'max-h-64 py-4' : 'max-h-0'
+                  selectedBankId === bank.id ? "max-h-64 py-4" : "max-h-0"
                 }`}
               >
                 <div className="px-4 space-y-3">
                   <div>
-                    <label className="text-sm text-gray-500">Số tài khoản</label>
-                    <p className="font-medium">****{bank.accountNumber.slice(-4)}</p>
+                    <label className="text-sm text-gray-500">
+                      Số tài khoản
+                    </label>
+                    <p className="font-medium">
+                      ****{bank.accountNumber.slice(-4)}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500">Chủ tài khoản</label>
+                    <label className="text-sm text-gray-500">
+                      Chủ tài khoản
+                    </label>
                     <p className="font-medium">{bank.accountHolder}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Ngân hàng</label>
                     <p className="font-medium">{bank.bankName}</p>
                   </div>
-                  <button 
+                  <button
                     className="w-full py-2.5 mt-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -219,7 +267,7 @@ const BankAccount = () => {
               </div>
             </div>
           ))}
-          <div 
+          <div
             className="flex items-center px-4 py-4 bg-white border-b border-gray-200 cursor-pointer hover:bg-gray-100 text-gray-500"
             onClick={() => setShowBankSelection(true)}
           >
@@ -232,24 +280,39 @@ const BankAccount = () => {
       {showBankSelection && (
         <div className="max-w-screen-md mx-auto p-4 mt-6">
           <div className="flex items-center mb-6">
-            <button 
+            <button
               onClick={() => setShowBankSelection(false)}
               className="mr-4 text-gray-500 hover:text-gray-700"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
             <h1 className="text-xl">Thêm Tài khoản Ngân hàng liên kết</h1>
           </div>
           <div className="grid grid-cols-4 gap-6">
             {banks.map((bank) => (
-              <div 
-                key={bank.name} 
+              <div
+                key={bank.name}
                 className="text-center cursor-pointer hover:opacity-80 p-4 border rounded-lg transition-transform hover:scale-105"
                 onClick={() => handleBankSelection(bank)}
               >
-                <img src={bank.logo} alt={bank.name} className="mx-auto w-24 h-24 object-contain" />
+                <img
+                  src={bank.logo}
+                  alt={bank.name}
+                  className="mx-auto w-24 h-24 object-contain"
+                />
                 <p className="mt-2 text-sm font-medium">{bank.name}</p>
               </div>
             ))}

@@ -29,7 +29,7 @@ const MyOrder = () => {
         `danh-sach-don-hang?page=${pageParam}`,
         {
           trang_thai_don_hang: datas.trang_thai_don_hang,
-          ...(datas.loc && { ten_san_pham: datas.loc }),
+          loc: datas.loc,
         }
       );
       if (response.status !== 200) {
