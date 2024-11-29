@@ -99,6 +99,16 @@ class HoanHangController extends Controller
                     $hoanHang->update([
                         'trang_thai_hoan_hang' => $validated['trang_thai_hoan_hang']
                     ]);
+                    if ($hoanHang->trang_thai_hoan_hang == Hoan_hang::TTHH_DVC) {
+                        $hoanHang->update([
+                            'ngay_hoan_hang' => Carbon::now()
+                        ]);
+                    }
+                    if ($hoanHang->trang_thai_hoan_hang == Hoan_hang::TTHH_THTC) {
+                        $hoanHang->update([
+                            'ngay_hoan_hang_thanh_cong' => Carbon::now()
+                        ]);
+                    }
                 }
                 if ($hoanHang->trang_thai_hoan_hang == Hoan_hang::TTHH_THTC) {
                     $hoanTien = HoanTien::query()->where('id', $hoanHang->hoan_tien_id)->first();
