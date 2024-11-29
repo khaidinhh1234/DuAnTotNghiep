@@ -51,6 +51,10 @@ const WithdrawalRequests: React.FC = () => {
   const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("Tất cả");
+  const [isModalVisible1, setIsModalVisible1] = useState(false);
+
+  const handleOpen = () => setIsModalVisible1(true);
+  const handleClose = () => setIsModalVisible1(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["withdrawal-requests"],
@@ -188,7 +192,7 @@ const WithdrawalRequests: React.FC = () => {
       width: "20%",
       render: (_, record) => (
         <Space>
-          {record.trang_thai === "Chờ duyệt" && (
+          {record.trang_thai === "Chờ duyệt" ? (
             <>
               <Popconfirm
                 title="Xác nhận rút tiền"
@@ -236,6 +240,42 @@ const WithdrawalRequests: React.FC = () => {
                   Từ chối
                 </Button>
               </Popconfirm>
+            </>
+          ) : (
+            <>
+              <img
+                src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
+                alt="Ảnh minh chứng"
+                className="h-20 w-20 object-cover rounded-lg shadow-md shadow-black cursor-pointer"
+                onClick={handleOpen}
+              />
+
+              {/* Modal hiển thị ảnh lớn */}
+              <Modal
+                visible={isModalVisible1}
+                footer={null}
+                onCancel={handleClose}
+                centered
+              >
+                <div className="relative">
+                  <p
+                    className={`absolute top-[222px] ${record?.so_tien >= 1000000 ? "left-20 " : record?.so_tien >= 500000 ? "left-28 " : "left-32 "} text-4xl font-bold text-[#1A23AD]`}
+                  >
+                    {record?.so_tien?.toLocaleString("vi-VN")}
+                  </p>
+                  <p className="absolute top-[365px] left-28 text-2xl font-bold text-black/70 uppercase ">
+                    {record.ngan_hang.ten_chu_tai_khoan}
+                  </p>
+                  <p className="absolute top-[408px] left-[250px] text-xl font-medium text-[#868E93]">
+                    {record.ngan_hang.tai_khoan_ngan_hang}
+                  </p>
+                  <img
+                    src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
+                    alt="Ảnh minh chứng"
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              </Modal>
             </>
           )}
         </Space>

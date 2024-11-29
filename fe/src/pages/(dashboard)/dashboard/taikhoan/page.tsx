@@ -93,7 +93,7 @@ const TaiKhoan = () => {
           </div>
           <div className="col-span-4 shadow-md rounded-md border ">
             <h2 className="text-xl font-semibold mt-4  px-5 ">
-              Danh sách khách hàng tiêu biểu
+              Danh sách khách hàng tiêu biểu trong 30ngày qua
             </h2>
             <Chart5 chart5={chart5} />
           </div>
