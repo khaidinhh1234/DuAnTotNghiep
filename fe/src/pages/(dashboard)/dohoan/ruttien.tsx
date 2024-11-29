@@ -51,11 +51,28 @@ const WithdrawalRequests: React.FC = () => {
   const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("Tất cả");
+  const [selectedRecord, setSelectedRecord] =
+    useState<WithdrawalRequest | null>(null);
   const [isModalVisible1, setIsModalVisible1] = useState(false);
 
-  const handleOpen = () => setIsModalVisible1(true);
-  const handleClose = () => setIsModalVisible1(false);
+  const handleOpen = (record: WithdrawalRequest) => {
+    setSelectedRecord(record); // Lưu dữ liệu của hàng
+    setIsModalVisible1(true); // Hiển thị Modal
+  };
 
+  const handleClose = () => {
+    setIsModalVisible1(false);
+    setSelectedRecord(null); // Xóa dữ liệu khi đóng Modal
+  };
+  const bankImages: { [key: string]: string } = {
+    Agribank: "/istockphoto-1363842453-612x612.jpg",
+    Vietcombank: "/istockphoto-1234567890-1024x1024.jpg",
+    Techcombank: "/istockphoto-1363842453-612x612.jpg",
+    BIDV: "/istockphoto-1306226219-612x612.jpg",
+    VPBank: "/istockphoto-906026726-612x612.jpg",
+    MB: "/istockphoto-1306226219-612x612.jpg",
+    SCB: "/istockphoto-1139854753-612x612.jpg",
+  };
   const { data, isLoading } = useQuery({
     queryKey: ["withdrawal-requests"],
     queryFn: async () => {
@@ -133,9 +150,15 @@ const WithdrawalRequests: React.FC = () => {
     },
     {
       title: "Tên khách hàng",
-      dataIndex: "id",
-      key: "key",
+
       width: "10%",
+      render: (record) => (
+        <div className="flex items-center">
+          <span className="ml-2">
+            {record?.vi_tien?.user?.ho + " " + record?.vi_tien?.user?.ten}
+          </span>
+        </div>
+      ),
     },
 
     {
@@ -247,34 +270,41 @@ const WithdrawalRequests: React.FC = () => {
                 src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
                 alt="Ảnh minh chứng"
                 className="h-20 w-20 object-cover rounded-lg shadow-md shadow-black cursor-pointer"
-                onClick={handleOpen}
+                onClick={() => handleOpen(record)}
               />
 
-              {/* Modal hiển thị ảnh lớn */}
               <Modal
                 visible={isModalVisible1}
                 footer={null}
                 onCancel={handleClose}
                 centered
               >
-                <div className="relative">
-                  <p
-                    className={`absolute top-[222px] ${record?.so_tien >= 1000000 ? "left-20 " : record?.so_tien >= 500000 ? "left-28 " : "left-32 "} text-4xl font-bold text-[#1A23AD]`}
-                  >
-                    {record?.so_tien?.toLocaleString("vi-VN")}
-                  </p>
-                  <p className="absolute top-[365px] left-28 text-2xl font-bold text-black/70 uppercase ">
-                    {record.ngan_hang.ten_chu_tai_khoan}
-                  </p>
-                  <p className="absolute top-[408px] left-[250px] text-xl font-medium text-[#868E93]">
-                    {record.ngan_hang.tai_khoan_ngan_hang}
-                  </p>
-                  <img
-                    src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
-                    alt="Ảnh minh chứng"
-                    className="w-full h-auto object-cover"
-                  />
-                </div>
+                {selectedRecord && (
+                  <div className="relative">
+                    <p
+                      className={`absolute top-[222px] ${
+                        selectedRecord.so_tien >= 1000000
+                          ? "left-20"
+                          : selectedRecord.so_tien >= 500000
+                            ? "left-28"
+                            : "left-32"
+                      } text-4xl font-bold text-[#1A23AD]`}
+                    >
+                      {selectedRecord.so_tien?.toLocaleString("vi-VN")}
+                    </p>
+                    <p className="absolute top-[365px] left-28 text-2xl font-bold text-black/70 uppercase">
+                      {selectedRecord.ngan_hang?.ten_chu_tai_khoan}
+                    </p>
+                    <p className="absolute top-[408px] left-[250px] text-xl font-medium text-[#868E93]">
+                      {selectedRecord.ngan_hang?.tai_khoan_ngan_hang}
+                    </p>
+                    <img
+                      src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
+                      alt="Ảnh minh chứng"
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                )}
               </Modal>
             </>
           )}
@@ -324,8 +354,7 @@ const WithdrawalRequests: React.FC = () => {
                 <div
                   className="relative h-56 w-full rounded-xl p-6 text-white shadow-md"
                   style={{
-                    backgroundImage:
-                      "url('/istockphoto-1332736514-1024x1024.jpg')",
+                    backgroundImage: `url("${bankImages[selectedBank.ngan_hang] || "/istockphoto-1332736514-1024x1024.jpg"}")`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
@@ -344,7 +373,7 @@ const WithdrawalRequests: React.FC = () => {
                   </div>
                   <div className="absolute bottom-6 left-8 ">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-lg font-semibold">
+                      <p className="text-lg font-semibold ">
                         STK: {selectedBank.tai_khoan_ngan_hang}
                       </p>
                       <CopyOutlined
@@ -357,12 +386,12 @@ const WithdrawalRequests: React.FC = () => {
                         }}
                       />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-lg font-semibold">
-                        Chủ TK: {selectedBank.ten_chu_tai_khoan}
+                    <div className="flex items-center pr-2">
+                      <p className="text-lg font-semibold uppercase ">
+                        {selectedBank.ten_chu_tai_khoan}
                       </p>
                       <CopyOutlined
-                        className="cursor-pointer hover:text-blue-400 transition-colors -mt-4"
+                        className="cursor-pointer hover:text-blue-400 transition-colors -mt-4 px-0"
                         onClick={() => {
                           navigator.clipboard.writeText(
                             selectedBank.ten_chu_tai_khoan

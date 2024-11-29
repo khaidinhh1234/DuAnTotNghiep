@@ -210,6 +210,7 @@ const UsersAdminkhachhang: React.FC = () => {
                   borderRadius: "50%",
                   marginRight: "10px",
                 }}
+                className="rounded-full object-cover"
               />
             ) : (
               <div
