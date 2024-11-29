@@ -231,7 +231,13 @@ class DonHangController extends Controller
                     continue;
                 }
 
-                if($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT){
+                if ($request->trang_thai_don_hang == DonHang::TTDH_DH) {
+                    $donHang->chiTiets->each(function ($chiTiet) {
+                        $chiTiet->bienTheSanPham->each->increment('so_luong_bien_the', $chiTiet->so_luong);
+                    });
+                }
+
+                if ($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                     DB::table('lich_su_giao_diches')->insert([
                         'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
                         'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
@@ -518,7 +524,7 @@ class DonHangController extends Controller
     public function danhSachYeuCauRutTien()
     {
         try {
-            $yeuCauRutTiens = YeuCauRutTien::with('viTien', 'nganHang')->get();
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien.user', 'nganHang')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

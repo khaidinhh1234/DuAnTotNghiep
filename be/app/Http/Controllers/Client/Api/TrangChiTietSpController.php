@@ -58,7 +58,7 @@ class TrangChiTietSpController extends Controller
                 'danhGias.user',
                 'danhGias.danhGiaHuuIch',
                 'danhGias' => function ($query) {
-                    $query->withCount('danhGiaHuuIch')->distinct();
+                    $query->withCount('danhGiaHuuIch');
                 },
                 'danhGias.bienTheSanPham.mauBienThe',
                 'danhGias.bienTheSanPham.kichThuocBienThe',
