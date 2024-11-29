@@ -14,6 +14,8 @@ class VanChuyen extends Model
     const TTVC_DGH = 'Đang giao hàng';
     const TTVC_GHTC = 'Giao hàng thành công';
     const TTVC_GHTB = 'Giao hàng thất bại';
+    const TTVC_HOAN_HANG = 'nhận hàng hoàn';
+
 
     // Trạng thái cod
     const TTCOD_CN = 'Chưa nhận';

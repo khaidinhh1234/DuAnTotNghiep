@@ -1068,13 +1068,20 @@ class ThongKeTongQuanController extends Controller
     {
         $ngayBatDau = Carbon::today();
         $ngayKetThuc = Carbon::tomorrow();
-
+        // $trangThaiOnline = [
+        //     DonHang::TTDH_DXH,
+        //     DonHang::TTDH_DGH,
+        //     DonHang::TTDH_HTDH,
+        //     DonHang::TTDH_CKHCN,
+        // ];
         $trangThai = [
+
             // DonHang::TTDH_DGH,
             DonHang::TTDH_DXH,
             DonHang::TTDH_HTDH,
             DonHang::TTDH_CKHCN,
             DonHang::TTDH_CXNHH
+
 
         ];
 

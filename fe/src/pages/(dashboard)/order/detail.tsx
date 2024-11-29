@@ -5,6 +5,7 @@ import { Button, Input, message, Modal, Rate } from "antd";
 import { SpadeIcon } from "lucide-react";
 import { useState } from "react";
 import Hoadon from "./hoadon";
+import { useParams } from "react-router-dom";
 
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
@@ -159,6 +160,15 @@ const Detail = ({ record }: any) => {
     setIsModalOpen(false);
   };
   // console.log("record", record);
+  const { id } = useParams()
+  const { data: VanChuyen } = useQuery({
+    queryKey: ["vanchuyen", id],
+    queryFn: async () => {
+      const response = await instance.get(`/vanchuyen/${id}`);
+      return response.data;
+    },
+  })
+  console.log("anhShip:", VanChuyen?.data);
   return (
     <div>
       {" "}

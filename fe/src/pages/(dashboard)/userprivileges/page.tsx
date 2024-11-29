@@ -2,7 +2,7 @@ import instance from "@/configs/admin";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Input, message, Space, Table } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import type { InputRef, TableColumnsType } from "antd";
@@ -197,13 +197,20 @@ const UserPrivilegeAdmin = () => {
     },
   });
   const vaitro = data?.data
-    .map((item: any) => {
-      return { ...item, key: item.id };
-    })
-    .reverse();
-  const [filteredData, setFilteredData] = useState(vaitro);
+    ? data.data.map((item: any) => ({ ...item, key: item.id })).reverse()
+    : [];
+
+  const [filteredData, setFilteredData] = useState([]);
+
+  useEffect(() => {
+    if (vaitro) {
+      setFilteredData(vaitro);
+    }
+  }, [vaitro]);
+
   const onSearch = (value: string) => {
-    const filtered = vaitro?.filter(
+    if (!vaitro) return;
+    const filtered = vaitro.filter(
       (item: any) =>
         item.ten_vai_tro.toLowerCase().includes(value.toLowerCase()) ||
         item.mo_ta.toLowerCase().includes(value.toLowerCase())
@@ -238,7 +245,7 @@ const UserPrivilegeAdmin = () => {
       <div>
         <Table
           columns={columns}
-          dataSource={filteredData}
+          dataSource={filteredData || []}
           pagination={{ pageSize: 10, className: "my-5" }}
           rowKey="id"
           // onChange={handleTableChange}

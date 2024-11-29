@@ -70,6 +70,25 @@ class ThongBaoTelegramController extends Controller
 
         return response()->json(['message' => 'Thông báo hoàn tất đơn hàng đã được gửi.']);
     }
+ 
+    public function thongBaoHoanHang($hoanHang)
+    {
+        $donHang = $hoanHang->donHang;
+        $shipper = User::find($hoanHang->shipper_id);
+
+        if (!$shipper || !$shipper->telegram_chat_id) {
+            return response()->json(['message' => 'Shipper không có thông tin Telegram.'], 404);
+        }
+
+        $message = "🔄 Đơn hàng {$donHang->ma_don_hang} đang được hoàn hàng!\n";
+        $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
+        $message .= "Tổng tiền hoàn: {$hoanHang->so_tien_hoan} VND\n";
+        $message .= "Đường dẫn: http://192.168.250.174:5173/shipper\n";
+        
+        $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
+
+        return response()->json(['message' => 'Thông báo hoàn hàng đã được gửi.']);
+    }
 
     // Hàm gửi tin nhắn qua Telegram
     private function sendTelegramMessage($chatId, $message)

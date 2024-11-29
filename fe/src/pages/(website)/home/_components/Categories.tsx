@@ -11,10 +11,15 @@ const Categories = ({ bo_suu_tap }: any) => {
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
   );
-
-  const handleMouseEnter = (productId: number, variantIndex: any) => {
+  const handleMouseEnter = (productId: number, variantIndex: number) => {
     setHoveredProductId(productId);
     setHoveredVariantIndex(variantIndex);
+  };
+
+  // Khi chuột rời khỏi nút màu
+  const handleMouseLeave = () => {
+    setHoveredProductId(null);
+    setHoveredVariantIndex(null);
   };
   // const { mutate, isPending } = useMutation({
   //   mutationFn: async (id: any) => {
@@ -80,11 +85,10 @@ const Categories = ({ bo_suu_tap }: any) => {
             <div className="flex justify-center items-center  my-10">
               {bo_suu_tap?.map((item: any, index: number) => (
                 <button
-                  className={` px-1 py-1 lg:px-5 lg:py-2 font-bold text-xs lg:text-base rounded-3xl lg:pt-3 lg:mx-3 ${
-                    activeTab === index
-                      ? "bg-black/80 text-white"
-                      : " text-gray-500"
-                  }`}
+                  className={` px-1 py-1 lg:px-5 lg:py-2 font-bold text-xs lg:text-base rounded-3xl lg:pt-3 lg:mx-3 ${activeTab === index
+                    ? "bg-black/80 text-white"
+                    : " text-gray-500"
+                    }`}
                   key={index}
                   onClick={() => setActiveTab(index)}
                   title={item?.ten}
@@ -123,10 +127,15 @@ const Categories = ({ bo_suu_tap }: any) => {
                         <Link to={`/product-detail/${item.duong_dan}`}>
                           <div className="w-[400px] lg:w-[300px] lg:h-[400px] h-[500px] bg-neutral-200/70 relative">
                             <img
-                              src={item.anh_san_pham}
+                              src={
+                                hoveredProductId === item?.id && hoveredVariantIndex !== null
+                                  ? item?.mau_sac_va_anh?.[hoveredVariantIndex]?.hinh_anh
+                                  : item.anh_san_pham
+                              }
                               alt={item.ten_san_pham}
                               className="absolute top-0 left-0 w-full h-full object-cover z-10 rounded-t-md"
                             />
+
                             {item.trong_chuong_trinh_uu_dai && (
                               <div
                                 className="absolute bottom-0 left-0 text-white px-4 py-2 rounded-tr-2xl text-sm font-bold z-20 flex items-center space-x-2"
@@ -175,26 +184,30 @@ const Categories = ({ bo_suu_tap }: any) => {
                         </p>
 
                         <p className="font-bold text-lg flex items-center">
-                          {item?.mau_sac_va_anh?.map(
-                            (variant: any, index: number) => (
-                              <button
-                                key={index}
-                                className={`w-7 h-7 rounded-full border mr-1 ${
-                                  hoveredProductId === item?.id &&
-                                  hoveredVariantIndex === index
-                                    ? "border-black"
-                                    : "border-gray-300 hover:border-black"
-                                }`}
-                                style={{
-                                  backgroundColor: variant?.ma_mau_sac,
-                                }}
-                                title={variant?.ten_mau_sac}
-                                onMouseEnter={() =>
-                                  handleMouseEnter(item?.id, index)
-                                }
-                              />
-                            )
-                          )}
+                          {item?.mau_sac_va_anh?.map((variant: any, index: number) => (
+                            <button
+                              key={index}
+                              style={{
+                                width: "28px",
+                                height: "28px",
+                                borderRadius: "50%",
+                                marginRight: "4px",
+                                border: `2px solid ${hoveredProductId === item?.id && hoveredVariantIndex === index
+                                    ? "black" // Viền đen khi hover
+                                    : "gray" // Viền xám khi không hover
+                                  }`,
+                                transform:
+                                  hoveredProductId === item?.id && hoveredVariantIndex === index
+                                    ? "scale(1.1)" // Phóng to khi hover
+                                    : "scale(1)", // Kích thước mặc định
+                                backgroundColor: variant?.ma_mau_sac,
+                                transition: "all 0.3s ease",
+                              }}
+                              title={variant?.ten_mau_sac}
+                              onMouseEnter={() => handleMouseEnter(item?.id, index)}
+                              onMouseLeave={handleMouseLeave}
+                            />
+                          ))}
                         </p>
                       </div>
                     </SwiperSlide>
