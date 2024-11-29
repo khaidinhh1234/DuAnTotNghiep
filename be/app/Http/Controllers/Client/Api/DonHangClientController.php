@@ -697,6 +697,11 @@ class DonHangClientController extends Controller
                 'ngay_huy' => $thoiGian,
             ]);
 
+            $donHang->chiTiets->each(function ($chiTiet) {
+                $bienTheSanPham = $chiTiet->bienTheSanPham;
+                $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+            });
+
             if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                 DB::table('lich_su_giao_diches')->insert([
                     'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
@@ -797,6 +802,12 @@ class DonHangClientController extends Controller
                 'hinh_anh_hoan_tra' => $validated['hinh_anh_hoan_tra'],
                 'ngay_hoan' => now(),
             ]);
+
+            $donHang->chiTiets->each(function ($chiTiet) {
+                $bienTheSanPham = $chiTiet->bienTheSanPham;
+                $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+            });
+
             $viTienId = User::find($userId)->viTien->id;
             $giaoDichVi = GiaoDichVi::create([
                 'vi_tien_id' => $viTienId,
