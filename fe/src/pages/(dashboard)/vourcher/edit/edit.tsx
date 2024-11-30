@@ -425,12 +425,38 @@ const EditVoucher = () => {
                               return Promise.resolve();
                             }
                             if (
-                              value.isBefore(startDate, "day") ||
+                              value.isBefore(
+                                startDate.subtract(7, "day"),
+                                "day"
+                              ) ||
+                              value.isAfter(startDate, "day")
+                            ) {
+                              return Promise.reject(
+                                new Error(
+                                  "Ngày bắt đầu sưu tầm có thể 7 ngày trước ngày bắt đầu khuyến mãi!"
+                                )
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const startDate = getFieldValue("ngay_bat_dau");
+                            const endDate = getFieldValue("ngay_ket_thuc");
+                            if (!value || !startDate || !endDate) {
+                              return Promise.resolve();
+                            }
+                            if (
+                              value.isBefore(
+                                startDate.subtract(7, "day"),
+                                "day"
+                              ) ||
                               value.isAfter(endDate, "day")
                             ) {
                               return Promise.reject(
                                 new Error(
-                                  "Ngày bắt đầu sưu tầm phải nằm trong khoảng ngày khuyến mãi!"
+                                  "Ngày bắt đầu sưu tầm không vượt quá ngày kết thúc!"
                                 )
                               );
                             }
@@ -847,9 +873,9 @@ const EditVoucher = () => {
                   </Form.Item>{" "}
                   <div className="flex gap-2 ">
                     <Form.Item className=" flex whitespace-nowrap">
-                      <Button htmlType="submit">
+                      <Link to={"/admin/vouchers"}>
                         <span className="text-sm">Hủy</span>
-                      </Button>
+                      </Link>
                     </Form.Item>
                     <Form.Item className=" flex whitespace-nowrap">
                       <Button
@@ -858,9 +884,7 @@ const EditVoucher = () => {
                         className="w-[240px] bg-blue-500 text-white hover:bg-blue-600 py-2 rounded-md border-0 flex items-center gap-2"
                       >
                         <CheckOutlined className="text-white text-lg" />
-                        <span className="text-sm">
-                          Hoàn tất & Đăng khuyến mãi
-                        </span>
+                        <span className="text-sm">Cập nhật khuyến mãi</span>
                       </Button>
                     </Form.Item>{" "}
                   </div>
