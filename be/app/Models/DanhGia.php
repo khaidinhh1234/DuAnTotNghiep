@@ -44,11 +44,6 @@ class DanhGia extends Model
     }
     public function danhGiaBienTheSanPhams()
     {
-        return $this->belongsToMany(BienTheSanPham::class, 'danh_gia_san_phams', 'danh_gia_id', 'bien_the_san_pham_id')->withPivot('san_pham_id');
-    }
-    public function bienTheSanPham()
-    {
-        return $this->belongsToMany(BienTheSanPham::class, 'danh_gia_san_phams', 'danh_gia_id', 'bien_the_san_pham_id')->withPivot('san_pham_id');
-
+        return $this->belongsToMany(BienTheSanPham::class, 'danh_gia_san_phams', 'danh_gia_id', 'bien_the_san_pham_id');
     }
 }

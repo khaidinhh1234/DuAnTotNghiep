@@ -48,87 +48,81 @@ class TrangChiTietSpController extends Controller
     public function chiTietSanPham(Request $request, $duongDan)
     {
         try {
+            $SanPham = SanPham::where('duong_dan', $duongDan)->first();
+            $id = $SanPham->id;
             // Lấy chi tiết sản phẩm với các quan hệ cần thiết
             $chiTietSanPham = SanPham::with([
-                'danhMuc' => function ($query) {
-                    $query->with([
-                        'parent',  // Lấy danh mục cha
-                    ]);
-                },
-                'danhGias.user',
-                'danhGias.danhGiaHuuIch',
-                'danhGias' => function ($query) {
-                    $query->withCount('danhGiaHuuIch');
-                },
-                'danhGias.bienTheSanPham.mauBienThe',
-                'danhGias.bienTheSanPham.kichThuocBienThe',
-                'danhGias.donHang',
-                'bienTheSanPham.anhBienThe',
-                'bienTheSanPham.mauBienThe',
-                'bienTheSanPham.kichThuocBienThe',
-                'boSuuTapSanPham',
-                'khachHangYeuThich',
+            'danhMuc.parent',  // Lấy danh mục cha
+            'danhGias.user',
+            'danhGias.danhGiaHuuIch',
+            'danhGias' => function ($query) {
+                $query->withCount('danhGiaHuuIch');
+            },
+            'danhGias.danhGiaBienTheSanPhams' => function ($query) use($id) {
+                $query->wherePivot('san_pham_id', $id)->with('mauBienThe', 'kichThuocBienThe')->first();
+            },
+            // 'danhGias.donHang.bienTheSanPhams.kichThuocBienThe',
+            // 'danhGias.donHang',
+            'boSuuTapSanPham',
+            'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
-
 
             // Kiểm tra xem sản phẩm có tồn tại không
             if (!$chiTietSanPham) {
-                return response()->json([
-                    'status' => false,
-                    'status_code' => 404,
-                    'message' => 'Không tìm thấy sản phẩm'
-                ], 404);
+            return response()->json([
+                'status' => false,
+                'status_code' => 404,
+                'message' => 'Không tìm thấy sản phẩm'
+            ], 404);
             }
 
             $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
             if (Auth::guard('api')->check()) {
-                $key .= '_user_' . Auth::guard('api')->user()->id;
+            $key .= '_user_' . Auth::guard('api')->user()->id;
             } else {
-                $key .= '_guest_' . $request->ip();
+            $key .= '_guest_' . $request->ip();
             }
 
             // Kiểm tra xem sản phẩm đã được xem trong 24 giờ chưa
             $lastViewed = Cache::get($key);
 
             if (!$lastViewed || !($lastViewed instanceof \Carbon\Carbon) || now()->diffInHours($lastViewed) > 24) {
-                // Tăng lượt xem nếu chưa được xem trong 24 giờ
-                $chiTietSanPham->increment('luot_xem');
-                // Lưu thông tin vào Cache với thời gian hết hạn là 24 giờ
-                Cache::put($key, now(), 24 * 60); // 24 giờ
+            // Tăng lượt xem nếu chưa được xem trong 24 giờ
+            $chiTietSanPham->increment('luot_xem');
+            // Lưu thông tin vào Cache với thời gian hết hạn là 24 giờ
+            Cache::put($key, now(), 24 * 60); // 24 giờ
             }
 
             // Cập nhật trạng thái đánh giá hữu ích
             foreach ($chiTietSanPham->danhGias as $danhGia) {
-                $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
+            $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
             }
 
             // Kiểm tra trạng thái yêu thích của sản phẩm
             $chiTietSanPham['trang_thai_yeu_thich'] = false;
             if (Auth::guard('api')->check()) {
-                $user = Auth::guard('api')->user();
-                $chiTietSanPham['trang_thai_yeu_thich'] = $chiTietSanPham->khachHangYeuThich->contains('id', $user->id);
+            $user = Auth::guard('api')->user();
+            $chiTietSanPham['trang_thai_yeu_thich'] = $chiTietSanPham->khachHangYeuThich->contains('id', $user->id);
             }
 
             // Lấy thêm thông tin danh mục cha và ông của danh mục sản phẩm
             $danhMuc = $chiTietSanPham->danhMuc;
 
-            // Lấy cha của danh mục
-            $danhMuc->load('parent');  // Load danh mục cha
+            // Lấy cha và ông của danh mục
             $chaDanhMuc = $danhMuc->parent;
-
-            // Lấy ông của danh mục
             $ongDanhMuc = $chaDanhMuc ? $chaDanhMuc->parent : null;
 
             // Thêm vào dữ liệu trả về
             $chiTietSanPham['cha_danh_muc'] = $chaDanhMuc;
             $chiTietSanPham['ong_danh_muc'] = $ongDanhMuc;
+            // $chiTietSanPham['bien_the_san_pham'] = $chiTietSanPham->danhGias->danhGiaBienTheSanPhams;
 
             // Trả về chi tiết sản phẩm cùng với các thông tin danh mục cha và ông
             return response()->json([
-                'status' => true,
-                'status_code' => 200,
-                'message' => 'Chi tiết sản phẩm',
-                'data' => $chiTietSanPham
+            'status' => true,
+            'status_code' => 200,
+            'message' => 'Chi tiết sản phẩm',
+            'data' => $chiTietSanPham
             ]);
         } catch (\Exception $exception) {
             // Xử lý lỗi nếu có
