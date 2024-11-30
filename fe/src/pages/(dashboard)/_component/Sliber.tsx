@@ -123,7 +123,7 @@ const SiderComponent: React.FC = () => {
         {quyen?.includes("admin.rut-tien.xacnhan") && (
           <Menu.Item
             key="/admin/orders/ruttien"
-            icon={<DollarOutlined style={{ fontSize: "24px" }} />}
+            icon={<DollarOutlined style={{ fontSize: "23px" }} />}
           >
             Rút tiền
           </Menu.Item>
