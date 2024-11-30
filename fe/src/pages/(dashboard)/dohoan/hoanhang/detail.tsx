@@ -18,7 +18,7 @@ const Detail = ({ record }: any) => {
   const returnOrderDetail = data?.data?.hoan_hang;
   const orderInfo = returnOrderDetail?.don_hang;
   const products = orderInfo?.chi_tiets;
-
+  console.log(returnOrderDetail);
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);

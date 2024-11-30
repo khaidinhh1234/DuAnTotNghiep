@@ -51,7 +51,28 @@ const WithdrawalRequests: React.FC = () => {
   const [selectedBank, setSelectedBank] = useState<BankInfo | null>(null);
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<string>("Tất cả");
+  const [selectedRecord, setSelectedRecord] =
+    useState<WithdrawalRequest | null>(null);
+  const [isModalVisible1, setIsModalVisible1] = useState(false);
 
+  const handleOpen = (record: WithdrawalRequest) => {
+    setSelectedRecord(record); // Lưu dữ liệu của hàng
+    setIsModalVisible1(true); // Hiển thị Modal
+  };
+
+  const handleClose = () => {
+    setIsModalVisible1(false);
+    setSelectedRecord(null); // Xóa dữ liệu khi đóng Modal
+  };
+  const bankImages: { [key: string]: string } = {
+    Agribank: "/istockphoto-1363842453-612x612.jpg",
+    Vietcombank: "/istockphoto-1234567890-1024x1024.jpg",
+    Techcombank: "/istockphoto-1363842453-612x612.jpg",
+    BIDV: "/istockphoto-1306226219-612x612.jpg",
+    VPBank: "/istockphoto-906026726-612x612.jpg",
+    MB: "/istockphoto-1306226219-612x612.jpg",
+    SCB: "/istockphoto-1139854753-612x612.jpg",
+  };
   const { data, isLoading } = useQuery({
     queryKey: ["withdrawal-requests"],
     queryFn: async () => {
@@ -59,7 +80,7 @@ const WithdrawalRequests: React.FC = () => {
       return res.data;
     },
   });
-
+  console.log(data);
   const { mutate: confirmWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
       const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
@@ -122,16 +143,31 @@ const WithdrawalRequests: React.FC = () => {
 
   const columns: TableColumnsType<WithdrawalRequest> = [
     {
-      title: "Mã ví",
-      dataIndex: ["vi_tien", "id"],
-      key: "vi_tien_id",
+      title: "STT",
+      dataIndex: "id",
+      key: "key",
       width: "10%",
     },
+    {
+      title: "Tên khách hàng",
+
+      width: "10%",
+      render: (record) => (
+        <div className="flex items-center">
+          <span className="ml-2">
+            {record?.vi_tien?.user?.ho + " " + record?.vi_tien?.user?.ten}
+          </span>
+        </div>
+      ),
+    },
+
     {
       title: "Số tiền rút",
       dataIndex: "so_tien",
       key: "so_tien",
       render: (amount) => formatCurrency(amount),
+
+      sorter: (a, b) => a.so_tien - b.so_tien,
       width: "15%",
     },
     {
@@ -160,23 +196,26 @@ const WithdrawalRequests: React.FC = () => {
       title: "Ngày tạo",
       dataIndex: "created_at",
       key: "created_at",
+      sorter: (a: any, b: any) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
       render: (date) => formatDate(date),
       width: "15%",
     },
-    {
-      title: "Số dư ví",
-      dataIndex: ["vi_tien", "so_du"],
-      key: "so_du",
-      render: (amount) => formatCurrency(amount),
-      width: "15%",
-    },
+    // {
+    //   title: "Số dư ví",
+    //   dataIndex: ["vi_tien", "so_du"],
+    //   key: "so_du",
+    //   sorter: (a, b) => a.vi_tien - b.vi_tien,
+    //   render: (amount) => formatCurrency(amount),
+    //   width: "15%",
+    // },
     {
       title: "Thao tác",
       key: "action",
       width: "20%",
       render: (_, record) => (
         <Space>
-          {record.trang_thai === "Chờ duyệt" && (
+          {record.trang_thai === "Chờ duyệt" ? (
             <>
               <Popconfirm
                 title="Xác nhận rút tiền"
@@ -225,6 +264,49 @@ const WithdrawalRequests: React.FC = () => {
                 </Button>
               </Popconfirm>
             </>
+          ) : (
+            <>
+              <img
+                src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
+                alt="Ảnh minh chứng"
+                className="h-20 w-20 object-cover rounded-lg shadow-md shadow-black cursor-pointer"
+                onClick={() => handleOpen(record)}
+              />
+
+              <Modal
+                visible={isModalVisible1}
+                footer={null}
+                onCancel={handleClose}
+                centered
+              >
+                {selectedRecord && (
+                  <div className="relative">
+                    <p
+                      className={`absolute top-[222px] ${
+                        selectedRecord.so_tien >= 1000000
+                          ? "left-20"
+                          : selectedRecord.so_tien >= 500000
+                            ? "left-28"
+                            : "left-32"
+                      } text-4xl font-bold text-[#1A23AD]`}
+                    >
+                      {selectedRecord.so_tien?.toLocaleString("vi-VN")}
+                    </p>
+                    <p className="absolute top-[365px] left-28 text-2xl font-bold text-black/70 uppercase">
+                      {selectedRecord.ngan_hang?.ten_chu_tai_khoan}
+                    </p>
+                    <p className="absolute top-[408px] left-[250px] text-xl font-medium text-[#868E93]">
+                      {selectedRecord.ngan_hang?.tai_khoan_ngan_hang}
+                    </p>
+                    <img
+                      src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
+                      alt="Ảnh minh chứng"
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                )}
+              </Modal>
+            </>
           )}
         </Space>
       ),
@@ -272,8 +354,7 @@ const WithdrawalRequests: React.FC = () => {
                 <div
                   className="relative h-56 w-full rounded-xl p-6 text-white shadow-md"
                   style={{
-                    backgroundImage:
-                      "url('/istockphoto-1332736514-1024x1024.jpg')",
+                    backgroundImage: `url("${bankImages[selectedBank.ngan_hang] || "/istockphoto-1332736514-1024x1024.jpg"}")`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
@@ -292,7 +373,7 @@ const WithdrawalRequests: React.FC = () => {
                   </div>
                   <div className="absolute bottom-6 left-8 ">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-lg font-semibold">
+                      <p className="text-lg font-semibold ">
                         STK: {selectedBank.tai_khoan_ngan_hang}
                       </p>
                       <CopyOutlined
@@ -305,12 +386,12 @@ const WithdrawalRequests: React.FC = () => {
                         }}
                       />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-lg font-semibold">
-                        Chủ TK: {selectedBank.ten_chu_tai_khoan}
+                    <div className="flex items-center pr-2">
+                      <p className="text-lg font-semibold uppercase ">
+                        {selectedBank.ten_chu_tai_khoan}
                       </p>
                       <CopyOutlined
-                        className="cursor-pointer hover:text-blue-400 transition-colors -mt-4"
+                        className="cursor-pointer hover:text-blue-400 transition-colors -mt-4 px-0"
                         onClick={() => {
                           navigator.clipboard.writeText(
                             selectedBank.ten_chu_tai_khoan

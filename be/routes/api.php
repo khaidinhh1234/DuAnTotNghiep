@@ -262,7 +262,7 @@ Route::middleware(['auth.sanctum'])
             ->group(function () {
                 Route::get('donhang', [DonHangController::class, 'index'])->name('donhang.index');
                 Route::get('donhang/{id}', [DonHangController::class, 'show'])->name('donhang.show');
-                Route::get('donhang/{id}/bill', [DonHangController::class, 'inHoaDon'])->name('donhang.bill');
+                Route::get('donhang/{id}/bill', [DonHangController::class, 'inHoaDon'])->name('donhang.bill')->withoutMiddleware('auth.checkrole');
                 Route::put('donhang/trang-thai-thanh-toan', [DonHangController::class, 'updatePaymentStatus'])->name('donhang.tttt');
                 Route::put('donhang/trang-thai-don-hang', [DonHangController::class, 'capNhatTrangThaiDonHang'])->name('donhang.ttdh');
                 Route::get('donhang/export', [DonHangController::class, 'export'])->name('donhang.export');
@@ -286,7 +286,7 @@ Route::middleware(['auth.sanctum'])
                 Route::put('vanchuyen/xac-nhan-van-chuyen/{id}', [VanChuyenController::class, 'xacNhanVanChuyen'])->name('vanchuyen.xacnhan');
                 //Hoàn hàng
                 Route::get('hoanhang/danh-sach', [HoanHangController::class, 'index'])->name('hoanhang.index');
-                Route::get('hoanhang/chitiet/{id}', [HoanHangController::class, 'show'])->name('hoanhang.show');
+                Route::get('hoanhang/chitiet/{id}', action: [HoanHangController::class, 'show'])->name('hoanhang.show');
                 Route::put('hoanhang/xac-nhan-hoan-hang', [HoanHangController::class, 'capNhatTrangThaiHoanHang'])->name('hoanhang.tthh');
             });
 
@@ -342,7 +342,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('taikhoan/roles', [TaiKhoanController::class, 'danhSachVaiTro'])->withoutMiddleware('auth.checkrole');
                 Route::get('taikhoan/thung-rac', [TaiKhoanController::class, 'danhSachTaiKhoanDaXoa'])->name('taikhoan.thungrac');
                 Route::post('taikhoan/thung-rac/{id}', [TaiKhoanController::class, 'khoiPhucTaiKhoan'])->name('taikhoan.khoiphuc');
-                Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->name('taikhoan.show');
+                Route::get('taikhoan/{id}', [TaiKhoanController::class, 'show'])->withoutMiddleware('auth.checkrole');
                 Route::post('taikhoan/cap-nhat-mat-khau', [TaiKhoanController::class, 'doiMatKhau'])->withoutMiddleware('auth.checkrole');
             });
 
@@ -357,8 +357,8 @@ Route::middleware(['auth.sanctum'])
 
         //        Route::middleware('auth.checkrole')
         //            ->group(function () {
-        Route::get('thong-bao', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'index'])->name('thongbao.index');
-        Route::post('thong-bao/da-doc/{id}', [App\Http\Controllers\Admin\Api\ThongBaoController::class, 'daXem']);
+        Route::get('thong-bao', [ThongBaoController::class, 'index'])->name('thongbao.index');
+        Route::post('thong-bao/da-doc/{id}', [ThongBaoController::class, 'daXem']);
         //            });
 
         // Liên hệ

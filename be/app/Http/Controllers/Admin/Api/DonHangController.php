@@ -231,7 +231,13 @@ class DonHangController extends Controller
                     continue;
                 }
 
-                if($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT){
+                if ($request->trang_thai_don_hang == DonHang::TTDH_DH) {
+                    $donHang->chiTiets->each(function ($chiTiet) {
+                        $chiTiet->bienTheSanPham->each->increment('so_luong_bien_the', $chiTiet->so_luong);
+                    });
+                }
+
+                if ($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                     DB::table('lich_su_giao_diches')->insert([
                         'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
                         'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
@@ -465,13 +471,19 @@ class DonHangController extends Controller
                 $minDonHangCount = $shippers->min(fn($shipper) => $shipper->vanChuyens->count());
                 $shippersWithMinDonHang = $shippers->filter(fn($shipper) => $shipper->vanChuyens->count() == $minDonHangCount);
                 $shipper = $shippersWithMinDonHang->random();
-                Hoan_hang::create([
+                $hoanHang = Hoan_hang::create([
                     'don_hang_id' => $donHang->id,
                     'user_id' => $donHang->user_id,
                     'shipper_id' => $shipper->id,
                     'ngay_tao' => Carbon::now(),
                     'hoan_tien_id' => $id,
-                ]);
+
+                ]); 
+                // Gửi thông báo hoàn hàng qua Telegram
+                $thongBaoHoanHang = new ThongBaoTelegramController();
+                $thongBaoHoanHang->thongBaoHoanHang($hoanHang);
+                $donHang->update(['ngay_hoan' => Carbon::now()]);
+
                 $mess = 'Xác nhận hoàn hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $hoanTien->update(['trang_thai' => 'tu_choi']);
@@ -512,7 +524,7 @@ class DonHangController extends Controller
     public function danhSachYeuCauRutTien()
     {
         try {
-            $yeuCauRutTiens = YeuCauRutTien::with('viTien', 'nganHang')->get();
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien.user', 'nganHang')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

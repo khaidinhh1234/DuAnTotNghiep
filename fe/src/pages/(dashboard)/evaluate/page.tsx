@@ -253,7 +253,7 @@ const EvaluateAdmin = () => {
 
         return (
           <div style={{ textAlign: "left", paddingBottom: "60px" }}>
-            {record.san_pham?.map((sanPham: any, index: number) => (
+            {record.san_pham?.slice(0, 3).map((sanPham: any, index: number) => (
               <div
                 key={index}
                 style={{ display: "flex", gap: "10px", marginBottom: "8px" }}
@@ -287,6 +287,9 @@ const EvaluateAdmin = () => {
                 </div>
               </div>
             ))}
+            {record.san_pham?.length > 3 && (
+              <span>+{record.san_pham?.length - 3} sản phẩm khác</span>
+            )}
           </div>
         );
       },

@@ -12,7 +12,7 @@ const Chart4: React.FC = () => {
       return response.data || {};
     },
   });
-
+  console.log(chart1);
   const [chartData, setChartData] = useState({
     series: [
       {
@@ -112,7 +112,7 @@ const Chart4: React.FC = () => {
             showInfo={false}
             className="px-5 w-72"
           />
-          <span>{chart1?.không_co_ngay_sinh || 0}</span>
+          <span>{chart1?.khong_co_ngay_sinh || 0}</span>
         </div>
         <div className="flex items-center gap-3 mx-5">
           <p className="w-3 h-3 bg-[#38ef7d] mt-3 rounded-lg"></p>{" "}

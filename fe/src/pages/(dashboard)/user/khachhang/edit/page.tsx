@@ -10,6 +10,7 @@ import {
   message,
   Radio,
 } from "antd";
+import dayjs from "dayjs";
 import moment from "moment";
 import { Link, useNavigate, useParams } from "react-router-dom";
 type FieldType = {
@@ -71,7 +72,7 @@ const UserskhachhangEdit = () => {
     const data = {
       ...values,
       ngay_sinh: values.ngay_sinh
-        ? (values.ngay_sinh as any).format("YYYY-MM-DD")
+        ? values.ngay_sinh.format("YYYY-MM-DD")
         : undefined,
     };
     mutate.mutate(data as any);
@@ -114,9 +115,7 @@ const UserskhachhangEdit = () => {
               onFinish={onFinish}
               initialValues={{
                 ...user,
-                ngay_sinh: user?.ngay_sinh
-                  ? moment(user?.ngay_sinh)
-                  : undefined,
+                ngay_sinh: user?.ngay_sinh ? dayjs(user.ngay_sinh) : null,
               }}
               autoComplete="off"
             >

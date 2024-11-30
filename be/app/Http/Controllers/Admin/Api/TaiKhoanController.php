@@ -263,7 +263,7 @@ class TaiKhoanController extends Controller
     public function danhSachTaiKhoanDaXoa()
     {
         try {
-            $taiKhoan = User::onlyTrashed()->orderByDesc('deleted_at')->get();
+            $taiKhoan = User::onlyTrashed()->with('vaiTros')->orderByDesc('deleted_at')->get();
             return response()->json([
                 'success' => true,
                 'status_code' => 200,
