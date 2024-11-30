@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
 import { FastForward, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -18,7 +18,6 @@ const CheckOut = () => {
   });
   const [fadeEffect, setFadeEffect] = useState<{ [key: string]: boolean }>({});
   const [isProcessing, setIsProcessing] = useState<Record<string, boolean>>({});
-
   const { data } = useQuery({
     queryKey: ["cart", access_token],
     queryFn: async () => {
@@ -32,7 +31,7 @@ const CheckOut = () => {
       } catch (error) {
         throw new Error("Error fetching cart data");
       }
-    },
+    }
   });
   const { mutate: increaseQuantity } = useMutation({
     mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
@@ -58,7 +57,7 @@ const CheckOut = () => {
     },
     onError: (_, { productId }) => {
       setIsProcessing((prev) => ({ ...prev, [productId]: false }));
-      toast.error("Có lỗi xảy ra khi tăng số lượng.");
+      toast.error("Error: " + JSON.stringify)
     },
   });
 
@@ -207,15 +206,19 @@ const CheckOut = () => {
       gioHangIds: string[];
       isChecked: boolean;
     }) => {
-      await instanceClient.post(
-        `/gio-hang/chon-san-pham`,
-        { gio_hang_ids: gioHangIds, chon: isChecked ? 1 : 0 },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
+      try {
+        await instanceClient.post(
+          `/gio-hang/chon-san-pham`,
+          { gio_hang_ids: gioHangIds, chon: isChecked ? 1 : 0 },
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+      } catch (error) {
+
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
@@ -273,11 +276,53 @@ const CheckOut = () => {
       }
     }
   }, [data]);
+// nhập ôố lượng
+  const [quantity, setQuantity] = useState<number>(1);
+  const { mutate: updateQuantity } = useMutation({
+    mutationFn: async ({ productId, newQuantity }: { productId: string; newQuantity: number }) => {
+      try {
+        const response = await instanceClient.put(`/gio-hang/update/${productId}`, {
+          so_luong: newQuantity,
+        });
+        return response.data;
+      } catch (error) {
+        // throw error.response?.data?.message || "Đã có lỗi xảy ra!";
+      }
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['cart', access_token] })
+      // toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error("Số lượng trong kho đã hết");
+    },
+  });
 
+  const handleChangeQuantity = (event: any, product: any) => {
+    const newQuantity = Number(event.target.value);
+
+    if (newQuantity < 1 || newQuantity > product.so_luong_bien_the) {
+      toast.error("Số lượng không hợp lệ!");
+      return;
+    }
+
+    setQuantity(newQuantity);
+
+    setIsProcessing((prev) => ({ ...prev, [product.id]: true }));
+    updateQuantity(
+      { productId: product.id, newQuantity },
+      {
+        onSettled: () => {
+          setIsProcessing((prev) => ({ ...prev, [product.id]: false }));
+        },
+      }
+    );
+  };
   return (
     <>
       {data?.san_pham_giam_gia?.length === 0 &&
-        data?.san_pham_nguyen_gia?.length === 0 ? (
+        data?.san_pham_nguyen_gia?.length === 0 &&
+        data?.san_pham_het_hang?.length === 0 ? (
         <div className="flex flex-col items-center justify-center pt-32 pb-20">
           <img
             src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
@@ -285,8 +330,7 @@ const CheckOut = () => {
             className="w-[600px] h-[200px] md:w-[500px] md:h-[400px] object-cover"
           />
           <Link
-            to="/shop"
-            // className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md shadow hover:bg-blue-600 transition duration-200"
+            to="/shop/nam"
             className="px-20 py-4 mt-4 btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold transition duration-200"
           >
             Quay lại cửa hàng
@@ -337,7 +381,6 @@ const CheckOut = () => {
                         <input
                           type="checkbox"
                           checked={
-                            // Kiểm tra tất cả sản phẩm có chon === 1
                             [...(data?.san_pham_giam_gia ?? []), ...(data?.san_pham_nguyen_gia ?? [])].every(product => product.chon === 1)
                           }
                           className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
@@ -439,13 +482,15 @@ const CheckOut = () => {
                                 </button>
                               )}
                               <input
+                                type="number"
                                 value={product.so_luong}
-                                className="w-7 h-10 text-center"
+                                onChange={(event) => handleChangeQuantity(event, product)}
                                 placeholder="Quantity"
                                 min="1"
                                 max={product.so_luong_bien_the}
                                 title="Product Quantity"
-                                readOnly
+                                disabled={isProcessing[product.id]}
+                                className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               />
                               <button
                                 onClick={() => {
@@ -553,14 +598,16 @@ const CheckOut = () => {
                                   <i className="fa-solid fa-minus" />
                                 </button>
                               )}
-                              <input
+                               <input
+                                type="number"
                                 value={product.so_luong}
-                                className="w-7 h-10 text-center"
+                                onChange={(event) => handleChangeQuantity(event, product)}
                                 placeholder="Quantity"
                                 min="1"
                                 max={product.so_luong_bien_the}
                                 title="Product Quantity"
-                                readOnly
+                                disabled={isProcessing[product.id]}
+                                className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                               />
                               <button
                                 onClick={() => {
@@ -569,7 +616,6 @@ const CheckOut = () => {
                                     toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
                                     return; // Dừng lại nếu đạt giới hạn
                                   }
-
                                   // Gọi hàm tăng số lượng nếu còn tồn kho
                                   if (!isProcessing[product.id]) {
                                     increaseQuantity({
