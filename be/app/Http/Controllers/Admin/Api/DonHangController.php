@@ -477,8 +477,8 @@ class DonHangController extends Controller
                     'shipper_id' => $shipper->id,
                     'ngay_tao' => Carbon::now(),
                     'hoan_tien_id' => $id,
-
                 ]); 
+                // dd($hoanHang); 
                 // Gửi thông báo hoàn hàng qua Telegram
                 $thongBaoHoanHang = new ThongBaoTelegramController();
                 $thongBaoHoanHang->thongBaoHoanHang($hoanHang);
