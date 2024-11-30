@@ -14,7 +14,7 @@ class HoanHangController extends Controller
     public function index()
     {
         try {
-            $hoanHangs = Hoan_hang::all();
+            $hoanHangs = Hoan_hang::query()->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -101,7 +101,7 @@ class HoanHangController extends Controller
                     ]);
                     if ($hoanHang->trang_thai_hoan_hang == Hoan_hang::TTHH_DVC) {
                         $hoanHang->update([
-                            'ngay_hoan_hang' => Carbon::now()
+                            'ngay_lay_hang' => Carbon::now()
                         ]);
                     }
                     if ($hoanHang->trang_thai_hoan_hang == Hoan_hang::TTHH_THTC) {

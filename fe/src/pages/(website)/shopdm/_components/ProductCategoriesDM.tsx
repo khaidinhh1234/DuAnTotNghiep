@@ -436,7 +436,7 @@ const ProductCategoriesDM = ({ isPending }: any) => {
                                     checked={
                                       childChecked[index]?.[indexCon] || false
                                     }
-                                    disabled={!parentChecked[index]}
+                                    // disabled={!parentChecked[index]}
                                     onChange={(e) => {
                                       const isChecked = e.target.checked;
                                       handleChildChange(
