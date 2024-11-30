@@ -27,6 +27,7 @@ class UpdateDonHangRequest extends FormRequest
         return [
             'id' => 'required|array',
             'trang_thai_don_hang' => 'required',
+            'ly_do_huy' => 'nullable|string',
         ];
     }
 

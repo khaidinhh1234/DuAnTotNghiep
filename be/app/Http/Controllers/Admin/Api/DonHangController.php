@@ -235,6 +235,7 @@ class DonHangController extends Controller
                     $donHang->chiTiets->each(function ($chiTiet) {
                         $chiTiet->bienTheSanPham->each->increment('so_luong_bien_the', $chiTiet->so_luong);
                     });
+                    $donHang->update(['ly_do_huy' => $request->ly_do_huy]);
                 }
 
                 if ($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
@@ -422,6 +423,7 @@ class DonHangController extends Controller
         try {
             $donHangs = HoanTien::query()
                 ->with('donHang', 'giaoDichVi')
+                ->orderByDesc('id')
                 ->get();
             return response()->json([
                 'status' => true,
@@ -477,8 +479,8 @@ class DonHangController extends Controller
                     'shipper_id' => $shipper->id,
                     'ngay_tao' => Carbon::now(),
                     'hoan_tien_id' => $id,
-                ]); 
-                // dd($hoanHang); 
+                ]);
+                // dd($hoanHang);
                 // Gửi thông báo hoàn hàng qua Telegram
                 $thongBaoHoanHang = new ThongBaoTelegramController();
                 $thongBaoHoanHang->thongBaoHoanHang($hoanHang);
