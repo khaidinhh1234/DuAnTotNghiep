@@ -1,29 +1,34 @@
-
-import React, { useEffect, useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import instanceClient from '@/configs/client';
-import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import instanceClient from "@/configs/client";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   status: boolean;
   onRegisterSuccess?: (code: string) => void;
-
 }
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ 
-  isOpen, 
+const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen,
   onClose,
   status,
-  onRegisterSuccess 
+  onRegisterSuccess,
 }) => {
   const [showRegistration, setShowRegistration] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [oldPassword, setOldPassword] = useState(['', '', '', '', '', '']);
-  const [password, setPassword] = useState(['', '', '', '', '', '']);
-  const [confirmPassword, setConfirmPassword] = useState(['', '', '', '', '', '']);
+  const [oldPassword, setOldPassword] = useState(["", "", "", "", "", ""]);
+  const [password, setPassword] = useState(["", "", "", "", "", ""]);
+  const [confirmPassword, setConfirmPassword] = useState([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
 
   // const setupPasswordMutation = useMutation({
   //   mutationFn: async (data: { ma_xac_minh?: string, ma_xac_minh_moi: string }) => {
@@ -41,74 +46,81 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   //   }
   // });
 
-const setupPasswordMutation = useMutation({
-  mutationFn: async (data: { ma_xac_minh?: string, ma_xac_minh_moi: string }) => {
-    return await instanceClient.post('/thiet-lap-ma-xac-minh', data);
-  },
-  onSuccess: () => {
-    const passwordString = password.join('');
-    
-    localStorage.setItem('walletVerificationCode', passwordString);
-    
-    onRegisterSuccess?.(passwordString);
-    
-    setShowRegistration(false);
-    setShowChangePassword(false);
-    onClose();
-    resetPasswordFields();
-    toast.success('Thiết lập mã pin thành công!');
-  },
-  onError: () => {
-    toast.error('Có lỗi xảy ra. Vui lòng thử lại!');
-  }
-});
+  const setupPasswordMutation = useMutation({
+    mutationFn: async (data: {
+      ma_xac_minh?: string;
+      ma_xac_minh_moi: string;
+    }) => {
+      return await instanceClient.post("/thiet-lap-ma-xac-minh", data);
+    },
+    onSuccess: () => {
+      const passwordString = password.join("");
+
+      localStorage.setItem("walletVerificationCode", passwordString);
+
+      onRegisterSuccess?.(passwordString);
+
+      setShowRegistration(false);
+      setShowChangePassword(false);
+      onClose();
+      resetPasswordFields();
+      toast.success("Thiết lập mã pin thành công!");
+    },
+    onError: () => {
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại!");
+    },
+  });
 
   const handleSubmit = () => {
-    const passwordString = password.join('');
-    const confirmPasswordString = confirmPassword.join('');
-    const oldPasswordString = oldPassword.join('');
+    const passwordString = password.join("");
+    const confirmPasswordString = confirmPassword.join("");
+    const oldPasswordString = oldPassword.join("");
 
     if (passwordString !== confirmPasswordString) {
-      toast.error('Mã pin không khớp');
+      toast.error("Mã pin không khớp");
       return;
     }
 
     if (passwordString.length !== 6) {
-      toast.error('Vui lòng nhập đủ 6 số');
+      toast.error("Vui lòng nhập đủ 6 số");
       return;
     }
 
     if (showChangePassword) {
       if (oldPasswordString.length !== 6) {
-        toast.error('Vui lòng nhập đủ 6 số cho mã pin cũ');
+        toast.error("Vui lòng nhập đủ 6 số cho mã pin cũ");
         return;
       }
       setupPasswordMutation.mutate({
         ma_xac_minh: oldPasswordString,
-        ma_xac_minh_moi: passwordString
+        ma_xac_minh_moi: passwordString,
       });
     } else {
       setupPasswordMutation.mutate({
         ma_xac_minh: passwordString,
         // ma_xac_minh_moi: passwordString
-         ma_xac_minh_moi: ''
+        ma_xac_minh_moi: "",
       });
     }
   };
 
-  const handleInputChange = (index: number, value: string, inputType: 'old' | 'new' | 'confirm') => {
-    const newValue = value.replace(/[^0-9]/g, '');
-    
+  const handleInputChange = (
+    index: number,
+    value: string,
+    inputType: "old" | "new" | "confirm"
+  ) => {
+    const newValue = value.replace(/[^0-9]/g, "");
+
     const updateState = {
       old: setOldPassword,
       new: setPassword,
-      confirm: setConfirmPassword
+      confirm: setConfirmPassword,
     }[inputType];
 
     const currentState = {
       old: oldPassword,
       new: password,
-      confirm: confirmPassword
+      confirm: confirmPassword,
     }[inputType];
 
     const newState = [...currentState];
@@ -122,41 +134,45 @@ const setupPasswordMutation = useMutation({
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>, inputType: 'old' | 'new' | 'confirm') => {
-    if (e.key === 'Backspace') {
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+    inputType: "old" | "new" | "confirm"
+  ) => {
+    if (e.key === "Backspace") {
       const updateState = {
         old: setOldPassword,
         new: setPassword,
-        confirm: setConfirmPassword
+        confirm: setConfirmPassword,
       }[inputType];
 
       const currentState = {
         old: oldPassword,
         new: password,
-        confirm: confirmPassword
+        confirm: confirmPassword,
       }[inputType];
 
       const newState = [...currentState];
-      if (newState[index] === '') {
+      if (newState[index] === "") {
         if (index > 0) {
           const inputs = document.getElementsByClassName(`${inputType}-input`);
           const prevInput = inputs[index - 1] as HTMLInputElement;
           if (prevInput) {
             prevInput.focus();
-            newState[index - 1] = '';
+            newState[index - 1] = "";
           }
         }
       } else {
-        newState[index] = '';
+        newState[index] = "";
       }
       updateState(newState);
     }
   };
 
   const resetPasswordFields = () => {
-    setOldPassword(['', '', '', '', '', '']);
-    setPassword(['', '', '', '', '', '']);
-    setConfirmPassword(['', '', '', '', '', '']);
+    setOldPassword(["", "", "", "", "", ""]);
+    setPassword(["", "", "", "", "", ""]);
+    setConfirmPassword(["", "", "", "", "", ""]);
   };
   useEffect(() => {
     if (!status) {
@@ -169,7 +185,7 @@ const setupPasswordMutation = useMutation({
     <>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Cài đặt ví</h2>
-        <button 
+        <button
           onClick={() => {
             onClose();
             setShowRegistration(false);
@@ -183,8 +199,9 @@ const setupPasswordMutation = useMutation({
       </div>
       <div className="space-y-4">
         {!status ? (
-          <button 
+          <button
             onClick={() => {
+              onClose();
               resetPasswordFields();
               setShowRegistration(true);
             }}
@@ -195,28 +212,25 @@ const setupPasswordMutation = useMutation({
           </button>
         ) : (
           <>
-          <button 
-            onClick={() => {
-              resetPasswordFields();
-              setShowChangePassword(true);
-            }}
-            className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-between"
-          >
-            <span>Đổi mã pin ví</span>
-            <i className="fa-solid fa-chevron-right text-gray-400"></i>
-          </button>
+            <button
+              onClick={() => {
+                resetPasswordFields();
+                setShowChangePassword(true);
+              }}
+              className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-between"
+            >
+              <span>Đổi mã pin ví</span>
+              <i className="fa-solid fa-chevron-right text-gray-400"></i>
+            </button>
 
-              <Link to="/mypro/bank">
-              <button 
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-between"
-              >
+            <Link to="/mypro/bank">
+              <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-between">
                 <span>Phương Thức thanh toán</span>
                 <i className="fa-solid fa-chevron-right text-gray-400"></i>
               </button>
             </Link>
-            </>
+          </>
         )}
-    
       </div>
     </>
   );
@@ -226,8 +240,9 @@ const setupPasswordMutation = useMutation({
       <div className="bg-white rounded-lg p-6 w-96">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">{title}</h2>
-          <button 
+          <button
             onClick={() => {
+              onClose();
               setShowRegistration(false);
               setShowChangePassword(false);
               resetPasswordFields();
@@ -237,11 +252,13 @@ const setupPasswordMutation = useMutation({
             <i className="fa-solid fa-times"></i>
           </button>
         </div>
-        
+
         <div className="space-y-4">
           {showChangePassword && (
             <div className="mb-6">
-              <label className="block text-gray-700 font-semibold mb-2">Nhập mã pin ví cũ</label>
+              <label className="block text-gray-700 font-semibold mb-2">
+                Nhập mã pin ví cũ
+              </label>
               <div className="flex justify-between space-x-2">
                 {oldPassword.map((digit, index) => (
                   <input
@@ -249,8 +266,10 @@ const setupPasswordMutation = useMutation({
                     type="password"
                     maxLength={1}
                     value={digit}
-                    onChange={(e) => handleInputChange(index, e.target.value, 'old')}
-                    onKeyDown={(e) => handleKeyDown(index, e, 'old')}
+                    onChange={(e) =>
+                      handleInputChange(index, e.target.value, "old")
+                    }
+                    onKeyDown={(e) => handleKeyDown(index, e, "old")}
                     className="old-input w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 ))}
@@ -260,7 +279,7 @@ const setupPasswordMutation = useMutation({
 
           <div className="mb-6">
             <label className="block text-gray-700 font-semibold mb-2">
-              {showChangePassword ? 'Nhập mã pin ví mới' : 'Nhập mã pin ví'}
+              {showChangePassword ? "Nhập mã pin ví mới" : "Nhập mã pin ví"}
             </label>
             <div className="flex justify-between space-x-2">
               {password.map((digit, index) => (
@@ -269,8 +288,10 @@ const setupPasswordMutation = useMutation({
                   type="password"
                   maxLength={1}
                   value={digit}
-                  onChange={(e) => handleInputChange(index, e.target.value, 'new')}
-                  onKeyDown={(e) => handleKeyDown(index, e, 'new')}
+                  onChange={(e) =>
+                    handleInputChange(index, e.target.value, "new")
+                  }
+                  onKeyDown={(e) => handleKeyDown(index, e, "new")}
                   className="new-input w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               ))}
@@ -278,7 +299,9 @@ const setupPasswordMutation = useMutation({
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 font-semibold mb-2">Nhập lại mã pin ví</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Nhập lại mã pin ví
+            </label>
             <div className="flex justify-between space-x-2">
               {confirmPassword.map((digit, index) => (
                 <input
@@ -286,20 +309,22 @@ const setupPasswordMutation = useMutation({
                   type="password"
                   maxLength={1}
                   value={digit}
-                  onChange={(e) => handleInputChange(index, e.target.value, 'confirm')}
-                  onKeyDown={(e) => handleKeyDown(index, e, 'confirm')}
+                  onChange={(e) =>
+                    handleInputChange(index, e.target.value, "confirm")
+                  }
+                  onKeyDown={(e) => handleKeyDown(index, e, "confirm")}
                   className="confirm-input w-10 h-10 text-center text-2xl border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               ))}
             </div>
           </div>
 
-          <button 
+          <button
             onClick={handleSubmit}
             disabled={setupPasswordMutation.isPending}
             className="w-full bg-black text-white py-3 rounded-md hover:bg-gray-800 text-sm font-bold disabled:bg-gray-400"
           >
-            {setupPasswordMutation.isPending ? 'Đang xử lý...' : 'Xác nhận'}
+            {setupPasswordMutation.isPending ? "Đang xử lý..." : "Xác nhận"}
           </button>
         </div>
       </div>
@@ -310,8 +335,8 @@ const setupPasswordMutation = useMutation({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96">
         {!showRegistration && !showChangePassword && renderMainMenu()}
-        {showRegistration && renderPasswordForm('Đăng ký mã pin ví')}
-        {showChangePassword && renderPasswordForm('Đổi mã pin ví')}
+        {showRegistration && renderPasswordForm("Đăng ký mã pin ví")}
+        {showChangePassword && renderPasswordForm("Đổi mã pin ví")}
       </div>
     </div>
   );

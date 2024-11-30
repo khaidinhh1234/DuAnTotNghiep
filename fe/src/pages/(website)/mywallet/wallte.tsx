@@ -31,8 +31,6 @@ function TaiChinh() {
   };
   console.log(datas);
 
-  
-
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [pins, setPins] = useState(["", "", "", "", "", ""]);
   const [showForgotPinModal, setShowForgotPinModal] = useState(false);
@@ -71,7 +69,7 @@ function TaiChinh() {
       setIsSettingsOpen(true);
     }
   }, [walletStatus, isSuccess]);
- 
+
   const { data: walletData } = useQuery({
     queryKey: ["walletData", storedVerificationCode],
     queryFn: async () => {
@@ -98,7 +96,7 @@ function TaiChinh() {
       if (resultCode === 0) {
         toast.success("Nạp tiền thành công");
       }
-      queryClient.invalidateQueries({ queryKey: ['walletData']})
+      queryClient.invalidateQueries({ queryKey: ["walletData"] });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Nạp tiền thất bại");
@@ -313,7 +311,7 @@ function TaiChinh() {
           </div>
 
           <div className="bg-white rounded-lg p-4 shadow-sm mt-6 border border-gray-120">
-            <h2 className="text-lg font-semibold mb-4">Lịch sử Giao Dịch</h2>
+            <h2 className="text-lg font-semibold mb-4">Lịch sử Nạp tiền</h2>
             {walletData.data?.viUser?.lich_su_giao_dichs?.length > 0 ? (
               <ul className="max-h-[400px] overflow-y-auto">
                 {walletData.data?.viUser?.lich_su_giao_dichs
