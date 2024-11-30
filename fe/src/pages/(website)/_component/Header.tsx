@@ -268,11 +268,12 @@ const Header = () => {
       }
     },
   });
-  const allItems = [
-    ...(data1?.san_pham_giam_gia || []),
-    ...(data1?.san_pham_nguyen_gia || []),
-  ];
-  const totalUniqueProducts = allItems.length;
+  // console.log("data1", data1);
+  // const allItems = [
+  //   ...(data1?.san_pham_giam_gia || []),
+  //   ...(data1?.san_pham_nguyen_gia || []),
+  // ];
+  // const totalUniqueProducts = allItems.length;
 
   const MenuList = [
     {
@@ -510,7 +511,7 @@ const Header = () => {
                         menu == true ? "bg-opacity-60 text-opacity-60" : ""
                       } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
-                      {totalUniqueProducts || 0}{" "}
+                      {data1?.tong_so_luong || 0}{" "}
                     </span>
                   </i>
                 </Link>
