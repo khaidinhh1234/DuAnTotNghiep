@@ -157,7 +157,7 @@ const CheckOut = () => {
   };
 
   const handleCheckout = () => {
-    if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length) {
+    if (!data?.san_pham_giam_gia.length && !data?.san_pham_nguyen_gia.length && !data?.san_pham_het_hang.length) {
       toast.error(
         "Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán."
       );
@@ -276,7 +276,7 @@ const CheckOut = () => {
       }
     }
   }, [data]);
-// nhập ôố lượng
+  // nhập ôố lượng
   const [quantity, setQuantity] = useState<number>(1);
   const { mutate: updateQuantity } = useMutation({
     mutationFn: async ({ productId, newQuantity }: { productId: string; newQuantity: number }) => {
@@ -338,37 +338,64 @@ const CheckOut = () => {
         </div>
       ) : (
         <section className="container">
-          <div className="lg:mx-12 mx-6 lg:my-[84px] my-[42px]">
-            <h1 className="h1cart">Giỏ hàng</h1>
-            <div className="grid lg:grid-cols-12 gap-4 px-0 justify-center">
-              <div className="lg:col-span-8 col-span-6 md:px-0 px-3">
-                <div className="bg-white shadow-md rounded-lg p-6 mb-8 w-[770px]">
+          <div className="lg:mx-12 mx-4 lg:my-[84px] my-[42px]">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
+              Giỏ hàng
+            </h1>
+            <div className="grid lg:grid-cols-12 gap-4 justify-center">
+              <div className="lg:col-span-8 col-span-12 px-3 md:px-6">
+                <div className="bg-white shadow-md rounded-lg p-4 md:p-6 mb-8 w-full max-w-full">
                   <p className="font-bold text-black">
                     {totalSelectedPrice >= 500000 ? (
-                      <>Chúc mừng! Đơn hàng của bạn được <span className="text-black">Miễn phí vận chuyển</span></>
+                      <>
+                        Chúc mừng! Đơn hàng của bạn được{' '}
+                        <span className="text-black">Miễn phí vận chuyển</span>
+                      </>
                     ) : (
-                      <>Thêm {formatCurrency(500000 - totalSelectedPrice)} để được <span className="text-black">Miễn phí vận chuyển</span></>
+                      <>
+                        Thêm{' '}
+                        <span className="text-red-500">
+                          {formatCurrency(500000 - totalSelectedPrice)}
+                        </span>{' '}
+                        để được <span className="text-black">Miễn phí vận chuyển</span>
+                      </>
                     )}
                   </p>
 
+                  {/* Progress bar */}
                   <div className="relative bg-gray-100 rounded-full h-2 mt-3">
                     <div
-                      className={`h-full ${totalSelectedPrice >= 500000 ? 'bg-green-500' : 'bg-yellow-400'}`}
+                      className={`h-full ${totalSelectedPrice >= 500000 ? 'bg-green-500' : 'bg-yellow-400'
+                        }`}
                       style={{
-                        width: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
+                        width: `${Math.min(
+                          (totalSelectedPrice / 500000) * 100,
+                          100
+                        )}%`,
                       }}
                     >
                       <div
                         className="absolute top-0 flex items-center justify-center"
                         style={{
-                          left: `${Math.min((totalSelectedPrice / 500000) * 100, 100)}%`,
-                          transform: 'translate(-40%, -40%)',
+                          left: `${Math.min(
+                            (totalSelectedPrice / 500000) * 100,
+                            100
+                          )}%`,
+                          transform: 'translate(-50%, -50%)',
                           zIndex: 10,
                         }}
                       >
                         <div
-                          className={`w-8 h-8 rounded-full ${totalSelectedPrice >= 500000 ? 'bg-green-200' : 'bg-yellow-200'} flex items-center justify-center`}>
-                          <Star className={`text-${totalSelectedPrice >= 500000 ? 'green' : 'yellow'}-500`} size={16} />
+                          className={`w-6 h-6 md:w-8 md:h-8 rounded-full ${totalSelectedPrice >= 500000
+                              ? 'bg-green-200'
+                              : 'bg-yellow-200'
+                            } flex items-center justify-center`}
+                        >
+                          <Star
+                            className={`text-${totalSelectedPrice >= 500000 ? 'green' : 'yellow'
+                              }-500`}
+                            size={14}
+                          />
                         </div>
                       </div>
                     </div>
@@ -598,7 +625,7 @@ const CheckOut = () => {
                                   <i className="fa-solid fa-minus" />
                                 </button>
                               )}
-                               <input
+                              <input
                                 type="number"
                                 value={product.so_luong}
                                 onChange={(event) => handleChangeQuantity(event, product)}

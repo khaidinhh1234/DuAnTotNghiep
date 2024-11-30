@@ -102,7 +102,7 @@ const BlogDetail = () => {
                 <img
                   src={data?.data?.baiVietDetail.anh_tin_tuc}
                   alt={data?.data?.baiVietDetail.tieu_de}
-                  className="w-full h-[600px] mb-10"
+                  className="w-full h-auto mb-10"
                 />
                 <h1 className="text-4xl font-semibold mb-6">
                   {data?.data?.baiVietDetail.tieu_de}
