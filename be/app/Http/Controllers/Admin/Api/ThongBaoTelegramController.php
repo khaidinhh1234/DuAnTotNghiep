@@ -82,7 +82,7 @@ class ThongBaoTelegramController extends Controller
 
         $message = "🔄 Đơn hàng {$donHang->ma_don_hang} đang được hoàn hàng!\n";
         $message .= "Khách hàng: {$donHang->ten_nguoi_dat_hang}\n";
-        $message .= "Tổng tiền hoàn: {$hoanHang->so_tien_hoan} VND\n";
+        $message .= "Tổng tiền hoàn: {$donHang->tong_tien_don_hang} VND\n";
         $message .= "Đường dẫn: http://192.168.250.174:5173/shipper\n";
         
         $this->sendTelegramMessage($shipper->telegram_chat_id, $message);
