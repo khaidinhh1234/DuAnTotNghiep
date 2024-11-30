@@ -181,7 +181,7 @@ const WithdrawalRequests: React.FC = () => {
           onClick={() => showBankModal(bank)}
           className="text-sky-500  underline decoration-sky-500"
         >
-          {bank.ngan_hang}
+          {bank?.ngan_hang}
         </Button>
       ),
     },
