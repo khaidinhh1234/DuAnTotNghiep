@@ -111,7 +111,6 @@ function App() {
     if (!user) {
       return;
     }
-
     let userId: number;
     try {
       const parsedUser = JSON.parse(user);

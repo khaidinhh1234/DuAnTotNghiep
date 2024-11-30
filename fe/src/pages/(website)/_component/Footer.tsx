@@ -241,7 +241,7 @@ const Footer = () => {
                   <Link to="/contact">Liên hệ</Link>
                 </li>
                 <li className="mb-3">
-                  <Link to="/shop/tre_em">Trẻ em</Link>
+                  <Link to="/shop/tre-em">Trẻ em</Link>
                 </li>
                 <li className="mb-3">
                   <Link to="/shop/nam">Nam</Link>

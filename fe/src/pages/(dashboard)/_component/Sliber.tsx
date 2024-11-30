@@ -54,7 +54,7 @@ const SiderComponent: React.FC = () => {
         mode="inline"
         defaultSelectedKeys={["/admin/dashboard"]}
         onClick={handleMenuClick}
-        className="text-white py-5 font-semibold text-base space-y-4 pb-20"
+        className="text-white py-5 font-semibold text-base space-y-4 pb-20 "
       >
         {/* Thống kê (Statistics) Menu */}
         {vaitro?.includes("Người giao hàng") ? null : (

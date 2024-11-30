@@ -412,12 +412,38 @@ const AddVoucher = () => {
                               return Promise.resolve();
                             }
                             if (
-                              value.isBefore(startDate, "day") ||
+                              value.isBefore(
+                                startDate.subtract(7, "day"),
+                                "day"
+                              ) ||
+                              value.isAfter(startDate, "day")
+                            ) {
+                              return Promise.reject(
+                                new Error(
+                                  "Ngày bắt đầu sưu tầm có thể 7 ngày trước ngày bắt đầu khuyến mãi!"
+                                )
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        }),
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            const startDate = getFieldValue("ngay_bat_dau");
+                            const endDate = getFieldValue("ngay_ket_thuc");
+                            if (!value || !startDate || !endDate) {
+                              return Promise.resolve();
+                            }
+                            if (
+                              value.isBefore(
+                                startDate.subtract(7, "day"),
+                                "day"
+                              ) ||
                               value.isAfter(endDate, "day")
                             ) {
                               return Promise.reject(
                                 new Error(
-                                  "Ngày bắt đầu sưu tầm phải nằm trong khoảng ngày khuyến mãi!"
+                                  "Ngày bắt đầu sưu tầm không vượt quá ngày kết thúc!"
                                 )
                               );
                             }
