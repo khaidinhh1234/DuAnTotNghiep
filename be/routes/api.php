@@ -269,6 +269,7 @@ Route::middleware(['auth.sanctum'])
                 Route::get('donhanghoan', [DonHangController::class, 'hoanHang'])->name('donhang.hoanhang');
                 Route::get('lay-thong-tin-don', [DonHangController::class, 'layThongTinDon'])->withoutMiddleware('auth.checkrole');
                 Route::put('donhang/xac-nhan-hoan-hang/{id}', [DonHangController::class, 'xacNhanHoanHang'])->withoutMiddleware('auth.checkrole');
+                Route::put('donhang/xac-nhan-huy-hang/{id}', [DonHangController::class, 'xacNhanHuyHang'])->withoutMiddleware('auth.checkrole');
                 Route::get('donhang/lay-thong-tin-don-hoan', [DonHangController::class, 'danhSachDonHangHoan']);
             });
 

@@ -233,29 +233,31 @@ class DonHangController extends Controller
 
                 if ($request->trang_thai_don_hang == DonHang::TTDH_DH) {
                     $donHang->chiTiets->each(function ($chiTiet) {
-                        $chiTiet->bienTheSanPham->each->increment('so_luong_bien_the', $chiTiet->so_luong);
+                        $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
                     });
-                    $donHang->update(['ly_do_huy' => $request->ly_do_huy]);
+                    $donHang->update([
+                        'ly_do_huy' => $request->ly_do_huy,
+                        'ngay_huy' => Carbon::now(),
+                    ]);
                 }
 
                 if ($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                     DB::table('lich_su_giao_diches')->insert([
-                        'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
-                        'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
-                        'so_du_sau' => $donHang->giaoDichVi->viTien->so_du + $donHang->tong_tien_don_hang,
+                        'vi_tien_id' => $donHang->user->viTien->id,
+                        'so_du_truoc' => $donHang->user->viTien->so_du,
+                        'so_du_sau' => $donHang->user->viTien->so_du + $donHang->tong_tien_don_hang,
                         'ngay_thay_doi' => Carbon::now(),
                         'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
                     ]);
-                    $donHang->giaoDichVi->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                    $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
                 }
-
+                if ($request->trang_thai_don_hang == DonHang::TTDH_DH && in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DXH, DonHang::TTDH_DXL])) {
+                    $donHang->update([
+                        'trang_thai_don_hang' => DonHang::TTDH_CXNDH,
+                    ]);
+                }
                 $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
 
-                // Kiểm tra nếu trạng thái mới là 'hoàn tất' và cập nhật hạng thành viên
-                // if ($request->trang_thai_don_hang === DonHang::TTDH_HTDH) {
-                //     $capNhatHangThanhVien = new CapNhatHangThanhVien();
-                //     $capNhatHangThanhVien->handle($donHang->user_id); // truyền user_id của người mua để cập nhật hạng thành viên
-                // }
                 if ($request->trang_thai_don_hang === DonHang::TTDH_DXL) {
                     if ($shippers->isEmpty()) {
                         throw new \Exception('Không có shipper nào trong hệ thống');
@@ -523,6 +525,45 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+
+    public function xacNhanHuyHang(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'trang_thai' => 'required|string|in:da_huy,tu_choi'
+            ]);
+
+            DB::beginTransaction();
+            $donHang = DonHang::findOrFail($id);
+
+            if ($validated['trang_thai'] === 'da_huy') {
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DH]);
+                $donHang->chiTiets->each(function ($chiTiet) {
+                    $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+                });
+                $mess = 'Xác nhận hủy hàng thành công.';
+            } else if ($validated['trang_thai'] === 'tu_choi') {
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_TCHH]);
+                $mess = 'Từ chối hủy hàng thành công.';
+            }
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => $mess,
+                'data' => $donHang
+            ], status: 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi xác nhận hủy hàng.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function danhSachYeuCauRutTien()
     {
         try {
