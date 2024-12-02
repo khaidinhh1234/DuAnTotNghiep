@@ -27,7 +27,7 @@ class TaiKhoanController extends Controller
             'so_dien_thoai' => 'nullable|string',
             'dia_chi' => 'nullable|string',
             'ngay_sinh' => 'nullable|date',
-            'gioi_tinh' => 'nullable|in:0,1,2',
+            'gioi_tinh' => 'nullable|in:1,2,3',
         ]);
 
         $userId = Auth::guard('api')->user()->id;
