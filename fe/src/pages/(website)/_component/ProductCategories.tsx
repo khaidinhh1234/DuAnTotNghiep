@@ -147,37 +147,36 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
 
   // console.log("data", data?.data?.data);
   // danh mục
-// Replace the existing useQuery for locsanpham with:
-const { data: locsanpham } = useQuery({
-  queryKey: ["LOCSLIBAR"],
-  queryFn: async () => {
-    try {
-      const response = await instanceClient.post("/tim-kiem-goi-y", {
-        query: query || undefined,
-        danh_muc_cha_ids: parentIds.length > 0 ? parentIds : undefined,
-        danh_muc_con_ids: childIds.length > 0 ? childIds : undefined,
-        gia_duoi: price[0],
-        gia_tren: price[1],
-        kich_thuoc_ids: selectedSize.length > 0 ? selectedSize : undefined,
-        mau_sac_ids: selectedMau.length > 0 ? selectedMau : undefined
-      });
+  // Replace the existing useQuery for locsanpham with:
+  const { data: locsanpham } = useQuery({
+    queryKey: ["LOCSLIBAR"],
+    queryFn: async () => {
+      try {
+        const response = await instanceClient.post("/tim-kiem-goi-y", {
+          query: query || undefined,
+          danh_muc_cha_ids: parentIds.length > 0 ? parentIds : undefined,
+          danh_muc_con_ids: childIds.length > 0 ? childIds : undefined,
+          gia_duoi: price[0],
+          gia_tren: price[1],
+          kich_thuoc_ids: selectedSize.length > 0 ? selectedSize : undefined,
+          mau_sac_ids: selectedMau.length > 0 ? selectedMau : undefined,
+        });
 
-      if (response.data.status_code !== 200) {
-        throw new Error("Error fetching filtered products");
+        if (response.data.status_code !== 200) {
+          throw new Error("Error fetching filtered products");
+        }
+
+        return {
+          danhMucCha: response.data.danh_sach_loc?.original?.danhMuc || [],
+          mauSac: response.data.danh_sach_loc?.original?.mauSac || [],
+          kichThuoc: response.data.danh_sach_loc?.original?.kichThuoc || [],
+        };
+      } catch (error) {
+        throw new Error("Error filtering products");
       }
-
-      return {
-        danhMucCha: response.data.danh_sach_loc?.original?.danhMuc || [],
-        mauSac: response.data.danh_sach_loc?.original?.mauSac || [],
-        kichThuoc: response.data.danh_sach_loc?.original?.kichThuoc || []
-      };
-    } catch (error) {
-      throw new Error("Error filtering products");
-    }
-  },
-  enabled: true // Query will run immediately
-});
-
+    },
+    enabled: true, // Query will run immediately
+  });
 
   const mau_sac = locsanpham?.mauSac;
 
@@ -314,7 +313,7 @@ const { data: locsanpham } = useQuery({
                                       isChecked && mutate(itemcon.id);
                                     }}
                                   />
-                                  {itemcon.ten_danh_muc}
+                                  {itemcon?.ten_danh_muc}
                                 </label>
                               </div>
                             ))}

@@ -138,7 +138,6 @@ class TrangChiTietSpController extends Controller
         }
     }
 
-
     public function danhSachSanPhamCungLoai($id)
     {
         try {

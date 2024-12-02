@@ -4,8 +4,7 @@ import { message, Slider } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ProductsListDM from "./ProductListDm";
-import { useDebounce } from "use-debounce";
-const ProductCategoriesDM = ({ isPending }: any) => {
+const ProductCategoriesDM = () => {
   const [showcate, setShowcate] = useState(true);
   const [showcolor, setShowcolor] = useState(true);
   const [showprice, setShowprice] = useState(true);
@@ -18,7 +17,7 @@ const ProductCategoriesDM = ({ isPending }: any) => {
   );
 
   // lọc giá
-  const [price, setPrice] = useState([0, 1000000]);
+  const [price, setPrice] = useState([0, 2000000]);
   // size
   const [selectedSize, setselectedSize] = useState<number[]>([]);
   // mau sac
@@ -43,18 +42,13 @@ const ProductCategoriesDM = ({ isPending }: any) => {
   //data
   const datas = useMemo(() => {
     return {
-      ...(selectedParentIds.length > 0 && {
-        danh_muc_con_ids: selectedParentIds,
-      }),
-      ...(selectedChildIds.length > 0 && {
-        danh_muc_chau_ids: selectedChildIds,
-      }),
-      ...(price.length > 0 && { gia_duoi: price[0], gia_tren: price[1] }),
-      ...(selectedSize.length > 0 && { kich_thuoc_ids: selectedSize }),
-      ...(selectedMau.length > 0 && { mau_sac_ids: selectedMau }),
+      ...(selectedParentIds.length && { danh_muc_con_ids: selectedParentIds }),
+      ...(selectedChildIds.length && { danh_muc_chau_ids: selectedChildIds }),
+      ...(price.length && { gia_duoi: price[0], gia_tren: price[1] }),
+      ...(selectedSize.length && { kich_thuoc_ids: selectedSize }),
+      ...(selectedMau.length && { mau_sac_ids: selectedMau }),
     };
   }, [selectedParentIds, selectedChildIds, price, selectedSize, selectedMau]);
-
   const danhmuc = tenDanhMucConCapBa
     ? tenDanhMucConCapBa
     : tenDanhMucCon
@@ -122,9 +116,8 @@ const ProductCategoriesDM = ({ isPending }: any) => {
     // Cập nhật danh sách con được chọn
     if (checked) {
       setSelectedChildIds((prev) => [...prev, childId]);
-      const grandchildIds = grandchildren.map(
-        (grandchild: any) => grandchild.id
-      );
+      const grandchildIds =
+        grandchildren?.map((grandchild: any) => grandchild?.id) ?? [];
       setSelectedGrandchildIds((prev) => [...prev, ...grandchildIds]);
       // Đảm bảo cha được chọn
       setParentChecked((prevState) => ({
@@ -140,9 +133,8 @@ const ProductCategoriesDM = ({ isPending }: any) => {
     } else {
       // Bỏ chọn con
       setSelectedChildIds((prev) => prev.filter((id) => id !== childId));
-      const grandchildIds = grandchildren.map(
-        (grandchild: any) => grandchild.id
-      );
+      const grandchildIds =
+        grandchildren?.map((grandchild: any) => grandchild?.id) ?? [];
       setSelectedGrandchildIds((prev) =>
         prev.filter((id) => !grandchildIds.includes(id))
       );
@@ -198,12 +190,9 @@ const ProductCategoriesDM = ({ isPending }: any) => {
         message.error("Không có danh mục hợp lệ");
       }
     },
-    options: {
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
-      enabled:
-        !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa || !!danhmuc,
-    },
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
+    enabled: !!tenDanhMucCha || !!tenDanhMucCon || !!tenDanhMucConCapBa,
   });
   const products = data?.data?.san_pham.data;
   const queryClient = useQueryClient();
@@ -226,17 +215,19 @@ const ProductCategoriesDM = ({ isPending }: any) => {
         throw new Error("Lỗi khi lấy thông tin");
       }
     },
-    options: {
-      staleTime: 5 * 60 * 1000, // Cache stale trong 5 phút
-      cacheTime: 10 * 60 * 1000, // Cache giữ lại trong 10 phút
-      enabled: !!danhmuc && !!datas,
-    },
+
+    staleTime: 5 * 60 * 1000, // Cache stale trong 5 phút
+    cacheTime: 10 * 60 * 1000, // Cache giữ lại trong 10 phút
+    enabled: !!danhmuc && !!datas,
   });
 
   useEffect(() => {
-    refetch();
-    refetch2();
-    datas;
+    const timeout = setTimeout(() => {
+      refetch();
+      refetch2();
+      datas;
+    }, 300); // Debounce 300ms
+    return () => clearTimeout(timeout);
   }, [danhmuc, refetch, refetch2, datas]);
   const mau_sac = locsanpham?.mauSac;
   const sizes = locsanpham?.kichThuoc;
@@ -303,6 +294,7 @@ const ProductCategoriesDM = ({ isPending }: any) => {
       );
     }
   };
+
   if (isLoading)
     return (
       <div className="flex items-center justify-center min-h-screen">

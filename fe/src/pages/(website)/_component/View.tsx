@@ -85,7 +85,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
   const [open, setOpen] = React.useState<boolean>(false);
   // danh gia
   const averageRating = useMemo(() => {
-    if (!data || !product || product?.danh_gias.length === 0) return 0;
+    if (!data || !product || product.danh_gias.length === 0) return 0;
     const totalStars = product.danh_gias.reduce(
       (sum: any, review: any) => sum + review.so_sao_san_pham,
       0
@@ -215,7 +215,7 @@ const View = ({ id, ID }: { id: string; ID: number }) => {
   // const images = [product, products1, products2, sanPham2];
 
   useEffect(() => {
-    if (product && product.bien_the_san_pham.length > 0) {
+    if (product && product?.bien_the_san_pham?.length > 0) {
       const firstVariant = product?.bien_the_san_pham[0];
       setSelectedColor(firstVariant?.mau_bien_the?.ma_mau_sac);
       setSelectedSize(firstVariant?.kich_thuoc_bien_the?.kich_thuoc);

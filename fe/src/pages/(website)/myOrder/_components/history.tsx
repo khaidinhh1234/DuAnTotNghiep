@@ -28,19 +28,13 @@ const History = () => {
   });
   // console.log(lichsus);
   return (
-    <div>
-      <div>
-        <div className="bg-white rounded-lg shadow-lg p-6 border">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-            Lịch sử Giao Dịch
-          </h2>
-          {/* No transactions message */}
-
-          {/* Table */}
-          <table
-            className="w-full text-left border-collapse"
-            v-if="transactions.length"
-          >
+    <div className="p-4">
+      <div className="bg-white rounded-lg shadow-lg p-6 border">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+          Lịch sử Giao Dịch
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
             <thead>
               <tr className="text-gray-600 uppercase text-sm leading-normal bg-gray-100">
                 <th className="py-3 px-4 border-b">Mã giao dịch</th>
@@ -53,7 +47,7 @@ const History = () => {
               </tr>
             </thead>
             <tbody className="text-gray-700 text-sm font-light">
-              {lichsus.length != 0 ? (
+              {lichsus.length !== 0 ? (
                 lichsus.slice(0, 6).map((item: any) => (
                   <tr className="hover:bg-gray-50" key={item?.id}>
                     <td className="py-3 px-4 border-b">{item.transId}</td>
@@ -88,8 +82,6 @@ const History = () => {
               )}
             </tbody>
           </table>
-
-          {/* Display if there are no transactions */}
         </div>
       </div>
     </div>

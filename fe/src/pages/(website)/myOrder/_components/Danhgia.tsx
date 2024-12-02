@@ -203,7 +203,7 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
             {/* Image/Video Upload */}
             <Form.Item
               name="rankImage"
-              label="Hình cho hạng thành viên"
+              label="Hình ảnh đánh giá"
               valuePropName="fileList"
               getValueFromEvent={(e) => {
                 if (Array.isArray(e)) {
