@@ -576,7 +576,7 @@ const ProductList = ({
   };
   return (
     <>
-      <div className="flex flex-row lg:justify-between lg:items-center">
+      <div className="flex flex-row justify-between lg:items-center">
         <h2 className="text-lg md:text-2xl font-bold text-black-500 mx-4">
           Đơn hàng của bạn
         </h2>

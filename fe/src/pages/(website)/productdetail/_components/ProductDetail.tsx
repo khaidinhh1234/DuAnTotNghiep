@@ -364,7 +364,7 @@ const ProductDetail: React.FC = () => {
       };
     }
   }, [selectedVariant]);
-
+  console.log(product);
   useEffect(() => {
     if (product) {
       const defaultVariant = product?.bien_the_san_pham[0];

@@ -10,7 +10,7 @@ import instanceClient from "@/configs/client";
 
 const HomePage = () => {
   const { data } = useQuery({
-    queryKey: ["PRODUCTS_KEY"],
+    queryKey: ["TRANGCHU", "PRODUCTS_KEY"],
     queryFn: async () => {
       try {
         const response = await instanceClient.get("trangchu");
@@ -31,15 +31,18 @@ const HomePage = () => {
   const banner = data?.banner?.banner || [];
   const products = data?.danh_sach_san_pham_moi || [];
   const bo_suu_tap = data?.bo_suu_tap_ua_chuongs || [];
+  console.log(products);
   return (
     <div>
       <Banner banner={banner} />
       <Categories bo_suu_tap={bo_suu_tap} />
-      <Bestseller
-        products={products}
-        sectionTitle={"Sản phẩm mới nhất"}
-        isPromotional={false}
-      />
+      {products.length > 0 && (
+        <Bestseller
+          products={products}
+          sectionTitle={"Sản phẩm mới nhất"}
+          isPromotional={false}
+        />
+      )}
       <DealsOfTheMonth chuong_trinh_uu_dai={chuong_trinh_uu_dai} />
       <Customer danhgia={danhgia} />
       {/* <InstagramStories /> */}

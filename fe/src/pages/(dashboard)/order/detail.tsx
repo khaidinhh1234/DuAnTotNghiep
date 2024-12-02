@@ -42,22 +42,11 @@ const Detail = ({ record }: any) => {
       return response.data;
     },
   });
-  // console.log(data, "data");
-  // console.log(data,'datatoString');
-  // const { data: vanchuyen, isLoading } = useQuery({
-  //   queryKey: ["vanchuyen"],
-  //   queryFn: async () => {
-  //     const response = await instance.get("/vanchuyen");
-  //     return response.data;
-  //   },
-  // });
-  // const { data: danhgia  } = useQuery({
-  //   queryKey: ["danhgiasanpham"],
-  //   queryFn: async () => {
-  //     const response = await instance.get(`/danhsachdanhgia`);
-  //     return response.data;
-  //   },
-  // });
+  const [showPopup, setShowPopup] = useState(false);
+  const [note, setNote] = useState(
+    "Đơn hàng của bạn có dấu hiệu bất thường sử dụng thông tin giả"
+  ); // State để lưu ghi chú
+  console.log("record", note);
   const mutation = useMutation({
     mutationFn: async ({
       id,
@@ -101,6 +90,7 @@ const Detail = ({ record }: any) => {
         const response = await instance.put("/donhang/trang-thai-don-hang", {
           trang_thai_don_hang: action,
           id: [id],
+          ly_do_huy: note,
         });
         // console.log("response", response);
         const error = response.data.message;
@@ -131,7 +121,10 @@ const Detail = ({ record }: any) => {
       });
     },
   });
-
+  const handleCancel3 = () => {
+    mutate({ id: record.id, action: "Hủy hàng" });
+    setShowPopup(false); // Ẩn popup sau khi xử lý
+  };
   // if (isLoading) {
   //   return <div>Loading...</div>;
   // }
@@ -160,15 +153,15 @@ const Detail = ({ record }: any) => {
     setIsModalOpen(false);
   };
   // console.log("record", record);
-  const { id } = useParams()
-  const { data: VanChuyen } = useQuery({
-    queryKey: ["vanchuyen", id],
-    queryFn: async () => {
-      const response = await instance.get(`/vanchuyen/${id}`);
-      return response.data;
-    },
-  })
-  console.log("anhShip:", VanChuyen?.data);
+  // const { id } = useParams();
+  // const { data: VanChuyen } = useQuery({
+  //   queryKey: ["vanchuyen", id],
+  //   queryFn: async () => {
+  //     const response = await instance.get(`/vanchuyen/${id}`);
+  //     return response.data;
+  //   },
+  // });
+  // console.log("anhShip:", VanChuyen?.data);
   return (
     <div>
       {" "}
@@ -480,7 +473,7 @@ const Detail = ({ record }: any) => {
                         mutate({ id: record.id, action: "Hủy hàng" })
                       }
                     >
-                      Hủy
+                      Hủy đơn hàng
                     </button>
                   </>
                 ) : record.trang_thai_don_hang === "Đã xác nhận" ? (
@@ -493,8 +486,50 @@ const Detail = ({ record }: any) => {
                           mutate({ id: record.id, action: "Đang xử lý" })
                         }
                       >
-                        Hoàn tất chuẩn bị hàng
+                        Chờ lấy hàng
                       </button>{" "}
+                      <button
+                        className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 mt-2"
+                        onClick={() => setShowPopup(true)}
+                      >
+                        Hủy đơn hàng
+                      </button>
+                      {showPopup && (
+                        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-20">
+                          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                            <h3 className="text-lg font-bold mb-4">
+                              Xác nhận hủy đơn hàng
+                            </h3>
+                            <p className="mb-4">
+                              Bạn có chắc chắn muốn hủy đơn hàng này không?
+                            </p>
+
+                            {/* Phần note */}
+                            <textarea
+                              className="w-full p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+                              placeholder="Nhập lý do hủy đơn hàng (nếu có)"
+                              rows={4}
+                              value={note}
+                              onChange={(e) => setNote(e.target.value)}
+                            ></textarea>
+
+                            <div className="mt-4 flex justify-end space-x-2">
+                              <button
+                                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                                onClick={() => setShowPopup(false)}
+                              >
+                                Hủy
+                              </button>
+                              <button
+                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
+                                onClick={handleCancel3}
+                              >
+                                Xác nhận
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : record.trang_thai_don_hang === "Đang xử lý" ? (

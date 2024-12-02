@@ -226,7 +226,7 @@ const MyOrderdetail = () => {
                             <img
                               src={`${member?.anh_nguoi_dung}??https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png`}
                               alt=""
-                              className="w-11 h-11 rounded-full"
+                              className="w-11 h-11 rounded-full  object-cover"
                             />
                           </div>
                           <div>

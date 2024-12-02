@@ -572,7 +572,7 @@ const OrderAdmin: React.FC = () => {
     { label: "Tổng đơn hàng", key: "Tất cả" },
     { label: "Chờ xác nhận", key: "Chờ xác nhận" },
     { label: "Đã xác nhận", key: "Đã xác nhận" },
-    { label: "Hoàn tất chuẩn bị", key: "Đang xử lý" },
+    { label: "Chờ lấy hàng", key: "Đang xử lý" },
 
     { label: "Giao hàng thất bại", key: "Đơn hàng bị từ chối nhân" },
 

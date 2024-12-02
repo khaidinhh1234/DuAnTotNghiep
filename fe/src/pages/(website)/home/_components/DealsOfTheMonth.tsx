@@ -51,6 +51,11 @@ const DealsOfTheMonth = ({
 
   return (
     <section className="bg-gray-100 py-10">
+      <div className="container mx-auto">
+        <h2 className="text-4xl font-semibold text-gray-800 mb-10 text-center">
+          Chương Trình Ưu Đãi
+        </h2>
+      </div>
       <div className={`max-w-7xl mx-auto grid ${gridClass} gap-8`}>
         {chuong_trinh_uu_dai?.slice(0, 8).map((item: any, index: any) => {
           const [countdown, setCountdown] = useState(() =>

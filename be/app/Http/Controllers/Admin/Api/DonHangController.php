@@ -233,29 +233,24 @@ class DonHangController extends Controller
 
                 if ($request->trang_thai_don_hang == DonHang::TTDH_DH) {
                     $donHang->chiTiets->each(function ($chiTiet) {
-                        $chiTiet->bienTheSanPham->each->increment('so_luong_bien_the', $chiTiet->so_luong);
+                        $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
                     });
                     $donHang->update(['ly_do_huy' => $request->ly_do_huy]);
                 }
 
                 if ($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                     DB::table('lich_su_giao_diches')->insert([
-                        'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
-                        'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
-                        'so_du_sau' => $donHang->giaoDichVi->viTien->so_du + $donHang->tong_tien_don_hang,
+                        'vi_tien_id' => $donHang->user->viTien->id,
+                        'so_du_truoc' => $donHang->user->viTien->so_du,
+                        'so_du_sau' => $donHang->user->viTien->so_du + $donHang->tong_tien_don_hang,
                         'ngay_thay_doi' => Carbon::now(),
                         'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
                     ]);
-                    $donHang->giaoDichVi->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                    $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
                 }
 
                 $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
 
-                // Kiểm tra nếu trạng thái mới là 'hoàn tất' và cập nhật hạng thành viên
-                // if ($request->trang_thai_don_hang === DonHang::TTDH_HTDH) {
-                //     $capNhatHangThanhVien = new CapNhatHangThanhVien();
-                //     $capNhatHangThanhVien->handle($donHang->user_id); // truyền user_id của người mua để cập nhật hạng thành viên
-                // }
                 if ($request->trang_thai_don_hang === DonHang::TTDH_DXL) {
                     if ($shippers->isEmpty()) {
                         throw new \Exception('Không có shipper nào trong hệ thống');
@@ -327,7 +322,6 @@ class DonHangController extends Controller
             ], 500);
         }
     }
-
     public function export()
     {
         // Tải xuống file Excel với tên 'donhang.xlsx'

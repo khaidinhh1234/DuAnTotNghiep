@@ -281,11 +281,13 @@ const Search = () => {
   return (
     <div className="relative">
       <div
-        className="flex items-center px-5 py-2 rounded-full bg-gray-100 border border-gray-300 cursor-pointer hover:bg-gray-200"
+        className="flex items-center px-3 md:px-5 py-2 rounded-full bg-gray-100 border border-gray-300 cursor-pointer hover:bg-gray-200 transition-all duration-300"
         onClick={() => setIsModalVisible(true)}
       >
-        <SearchOutlined className="text-2xl mr-3" />
-        <span className="text-gray-500 text-lg">Tìm kiếm</span>
+        <SearchOutlined className="text-xl md:text-2xl mr-0 md:mr-3" />
+        <span className="text-gray-500 text-sm md:text-lg hidden sm:block">
+          Tìm kiếm
+        </span>
       </div>
 
       <Modal
