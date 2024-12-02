@@ -54,10 +54,6 @@ const datas = [
     value: "2",
     label: "Hoàn tất Chuẩn bị",
   },
-  {
-    value: "3",
-    label: "Hủy đơn hàng",
-  },
 ];
 type DataIndex = keyof any;
 const OrderAdmin: React.FC = () => {
@@ -294,7 +290,7 @@ const OrderAdmin: React.FC = () => {
                   : record.trang_thai_don_hang === "Đang giao hàng"
                     ? "Đang giao hàng"
                     : record.trang_thai_don_hang === "Chờ khách hàng xác nhận"
-                      ? "Hoàn tất (chờ xác nhận)"
+                      ? "Chờ khách hàng xác nhận"
                       : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
                         ? "Hoàn tất đơn hàng"
                         : record.trang_thai_don_hang === "Hủy hàng"
@@ -448,24 +444,24 @@ const OrderAdmin: React.FC = () => {
             ? "Đã xác nhận"
             : trangthai == "2"
               ? "Đang xử lý"
-              : trangthai == "3"
-                ? "Hủy hàng"
-                : "Đã xác nhận";
+              : "Đã xác nhận";
         const response = await instance.put("donhang/trang-thai-don-hang", {
           trang_thai_don_hang: trangthais,
           id: data,
         });
-        const error = response.data.message;
+        const datas = response.data.data.length;
+        const error = response.data;
+        // console.log("error", datas);
         start();
-        if (error === "Cập nhật trạng thái đơn hàng thành công") {
+        if (datas >= 1) {
           message.open({
-            type: "success",
-            content: error,
+            type: "error",
+            content: `Không thể cập nhật trạng thái ${datas} đơn hàng không hợp lệ`,
           });
         } else {
           message.open({
             type: "success",
-            content: error,
+            content: error.message,
           });
         }
         return response.data;

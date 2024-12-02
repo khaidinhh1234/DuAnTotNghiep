@@ -1,13 +1,7 @@
 import { EyeOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Image, message, Modal, Rate } from "antd";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,15 +16,16 @@ import SizeGuideModal from "./SizeGuide";
 
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import instanceClient from "@/configs/client";
+import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 import { debounce } from "lodash";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import { Swiper, SwiperSlide } from "swiper/react";
+import Danhgias from "./Danhgias";
 import Footer from "./Footer";
 import RelatedProducts from "./RelatedProducts";
-import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 interface ProductData {
   id: number;
   ten_san_pham: string;
@@ -159,47 +154,37 @@ const ProductDetail: React.FC = () => {
   const [viewed, setViewed] = useState(false);
   useEffect(() => {
     if (slug) {
-      const viewedProduct = JSON.parse(
-        localStorage.getItem("viewedProduct") || "{}"
-      );
-      const currentTime = Date.now();
+      const checkAndIncreaseView = () => {
+        const viewedProduct = JSON.parse(
+          localStorage.getItem("viewedProduct") || "{}"
+        );
+        const currentTime = Date.now();
 
-      // Kiểm tra nếu sản phẩm chưa được xem hoặc đã qua 24 giờ
-      if (
-        !viewedProduct[slug] ||
-        (currentTime - viewedProduct[slug]) / (1000 * 60 * 60) > 24
-      ) {
-        instanceClient
-          .get(`/chi-tiet-san-pham/${slug}`, {
-            params: { tang_luot_xem: "true" },
-          })
-          .then(() => {
-            console.log("Lượt xem đã tăng");
-            // Cập nhật thời gian xem
-            viewedProduct[slug] = currentTime;
-            localStorage.setItem(
-              "viewedProduct",
-              JSON.stringify(viewedProduct)
-            );
-            setViewed(true);
-          })
-          .catch((error) => {
-            console.error("Lỗi khi tăng lượt xem:", error);
-          });
-      } else {
-        setViewed(true); // Đã xem trong vòng 24 giờ
-      }
+        if (
+          !viewedProduct[slug] ||
+          (currentTime - viewedProduct[slug]) / (1000 * 60 * 60) > 24
+        ) {
+          instanceClient
+            .get(`/chi-tiet-san-pham/${slug}`, {
+              params: { tang_luot_xem: "true" },
+            })
+            .then(() => {
+              viewedProduct[slug] = currentTime;
+              localStorage.setItem(
+                "viewedProduct",
+                JSON.stringify(viewedProduct)
+              );
+              setViewed(true);
+            })
+            .catch(console.error);
+        } else {
+          setViewed(true);
+        }
+      };
+
+      checkAndIncreaseView();
     }
   }, [slug]);
-
-  // useEffect(() => {
-  //   const storedToken = localStorage.getItem("accessToken");
-  //   if (storedToken) {
-  //     setToken(storedToken);
-  //     instance.defaults.headers.common["Authorization"] =
-  //       `Bearer ${storedToken}`;
-  //   }
-  // }, []);
 
   const queryClient = useQueryClient();
   const nav = useNavigate();
@@ -210,21 +195,12 @@ const ProductDetail: React.FC = () => {
         const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`);
         return response.data.data;
       } catch (error) {
-        // nav("/404");
+        nav("/404");
       }
       // return response.data.data;
     },
   });
-  console.log(product);
-  // const { data: relatedProducts } = useQuery<{ data: RelatedProduct[] }>({
-  //   queryKey: ["relatedProducts", id],
-  //   queryFn: () => fetchRelatedProducts(Number(id)),
-  //   enabled: !!product,
-  // });
-  // console.log(product);
-  // useEffect(() => {
-  //   refetch();
-  // }, [id, refetch]);
+
   const likeMutation = useMutation({
     mutationFn: ({ reviewId, isLiked }: { reviewId: any; isLiked: any }) => {
       if (!access_token) {
@@ -364,7 +340,6 @@ const ProductDetail: React.FC = () => {
       };
     }
   }, [selectedVariant]);
-  console.log(product);
   useEffect(() => {
     if (product) {
       const defaultVariant = product?.bien_the_san_pham[0];
@@ -1032,177 +1007,16 @@ const ProductDetail: React.FC = () => {
             </h2>
 
             {activeTab === "reviews" && (
-              <div className="space-y-6">
-                {product?.danh_gias?.map((review: any) => (
-                  <div
-                    key={review?.id}
-                    className="border p-4 rounded-lg shadow-sm"
-                  >
-                    <div className="flex items-center space-x-4 mb-3">
-                      <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                        <img
-                          src={
-                            review?.user?.anh_nguoi_dung ||
-                            "https://i.pravatar.cc/100"
-                          }
-                          alt={`${review?.user?.ho} ${review?.user?.ten}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="font-medium">{`${review?.user?.ho} ${review?.user?.ten}`}</h4>
-                        <div className="flex items-center justify-between">
-                          <span className="text-yellow-500 text-sm">
-                            {"★".repeat(review?.so_sao_san_pham)}
-                            {"☆".repeat(5 - review?.so_sao_san_pham)}
-                          </span>
-                          <span className="ml-1 text-xs text-gray-500">
-                            {new Date(review?.created_at).toLocaleString()}
-                          </span>
-                          <div className="flex-1 text-xs text-gray-600 border-l border-gray-300 pl-1 ml-1">
-                            <span className="">Phân loại hàng:</span>{" "}
-                            {
-                              review?.bien_the_san_pham?.mau_bien_the
-                                ?.ten_mau_sac
-                            }
-                            ,
-                            {
-                              review?.bien_the_san_pham?.kich_thuoc_bien_the
-                                ?.kich_thuoc
-                            }
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-gray-600 text-sm mb-3">
-                      <span>Đúng với mô tả:</span>{" "}
-                      <span className="font-bold">{review?.mo_ta}</span>
-                    </p>
-
-                    <p className="text-gray-600  text-sm mb-2">
-                      <span className="font-bold">
-                        {" "}
-                        {review?.chat_luong_san_pham}
-                      </span>
-                    </p>
-
-                    {review?.anh_danh_gia && (
-                      <div className="flex flex-wrap gap-2">
-                        {review?.anh_danh_gia
-                          .split(",")
-                          .map((img: string, index: number) => (
-                            <div
-                              key={index}
-                              className="w-[72px] h-[72px] overflow-hidden rounded-lg"
-                            >
-                              <img
-                                src={img.trim()}
-                                alt={`Review Image ${index + 1}`}
-                                className="w-full h-full object-cover"
-                                onClick={() =>
-                                  review?.anh_danh_gia &&
-                                  handlePreview(review?.anh_danh_gia)
-                                }
-                              />
-                            </div>
-                          ))}
-                      </div>
-                    )}
-                    {review?.phan_hoi && (
-                      <div className="mt-2 pl-4 border-l-2 border-gray-300">
-                        <p className="text-gray-600 italic text-sm">
-                          Phản hồi: {review?.phan_hoi}
-                        </p>
-                      </div>
-                    )}
-                    <div className="mt-2 flex items-center space-x-4">
-                      <button
-                        className={`like-button flex items-center space-x-2 ${likeMutation?.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
-                        onClick={() =>
-                          handleReviewLike(
-                            review?.id,
-                            review?.trang_thai_danh_gia_nguoi_dung
-                          )
-                        }
-                        disabled={likeMutation?.isPending}
-                      >
-                        <i
-                          className={
-                            review.trang_thai_danh_gia_nguoi_dung
-                              ? "fa-solid fa-thumbs-up text-blue-500"
-                              : "fa-regular fa-thumbs-up text-gray-500"
-                          }
-                        ></i>
-
-                        <span>
-                          {likeMutation?.isPending ? (
-                            "Đang xử lý..."
-                          ) : (
-                            <>
-                              {review?.trang_thai_danh_gia_nguoi_dung
-                                ? "Đã thích"
-                                : "Hữu ích"}{" "}
-                              ({review?.danh_gia_huu_ich_count})
-                            </>
-                          )}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <>
+                <Danhgias
+                  product={product}
+                  handlePreview={handlePreview}
+                  handleReviewLike={handleReviewLike}
+                  likeMutation={likeMutation}
+                />
+              </>
             )}
-            {/* 
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold mt-8 mb-4">
-                Add your Review
-              </h3>
-              <form className="space-y-4">
-                <div>
-                  <label className="block font-medium">Your Rating</label>
-                  <div className="flex space-x-2 text-yellow-500 text-xl">
-                    {[...Array(5)].map((_, i) => (
-                      <button key={i} type="button">
-                        ★
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
-                <div>
-                  <label className="block font-medium">Name</label>
-                  <input
-                    type="text"
-                    className="w-full border p-2 rounded"
-                    placeholder="Enter Your Name"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium">Email Address</label>
-                  <input
-                    type="email"
-                    className="w-full border p-2 rounded"
-                    placeholder="Enter Your Email"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium">Your Review</label>
-                  <textarea
-                    className="w-full border p-2 rounded"
-                    placeholder="Enter Your Review"
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="bg-black text-white px-4 py-2 rounded"
-                >
-                  Submit
-                </button>
-              </form>
-            </div> */}
             <form className="space-y-4">{/* Review form here */}</form>
           </div>
         )}

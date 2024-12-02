@@ -29,8 +29,8 @@ class DonHang extends Model
     const TTDH_DHTB = 'Đơn hàng bị từ chối nhân';
     const TTDH_HH = 'Hoàn hàng';
     const TTDH_CXNHH = 'Chờ xác nhận hoàn hàng';
+    const TTDH_CXNDH = 'Chờ xác nhận hủy hàng';
     const TTDH_TCHH = 'Từ chối hoàn hàng';
-
 
     // Lí do hủy hàng
     const HH_TDTT = 'Thay đổi thông tin';
@@ -118,10 +118,10 @@ class DonHang extends Model
             $donHang->ma_don_hang = 'DH' . strtoupper(uniqid());
         });
 
-    //     static::updated(function ($donHang) {
-    //         if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH && $donHang->trang_thai_thanh_toan === DonHang::TTTT_DTT) {
-    //             event(new DonHangHoanTat($donHang));
-    //         }
+        //     static::updated(function ($donHang) {
+        //         if ($donHang->trang_thai_don_hang === DonHang::TTDH_HTDH && $donHang->trang_thai_thanh_toan === DonHang::TTTT_DTT) {
+        //             event(new DonHangHoanTat($donHang));
+        //         }
         // });
     }
 

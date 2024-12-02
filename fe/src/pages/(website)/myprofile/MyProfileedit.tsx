@@ -5,10 +5,10 @@ import ListMyProfile from "./_components/Listmyprofile";
 const MyProfileedit = () => {
   const [user] = useLocalStorage("user" as any, {});
   const member = user?.user;
-    // console.log(member);
+  // console.log(member);
   return (
     <>
-      <MyProfilePage member={member} />
+      <MyProfilePage />
       {/* <ListMyProfile member={member} /> */}
     </>
   );

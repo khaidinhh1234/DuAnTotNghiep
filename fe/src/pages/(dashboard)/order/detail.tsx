@@ -43,10 +43,8 @@ const Detail = ({ record }: any) => {
     },
   });
   const [showPopup, setShowPopup] = useState(false);
-  const [note, setNote] = useState(
-    "Đơn hàng của bạn có dấu hiệu bất thường sử dụng thông tin giả"
-  ); // State để lưu ghi chú
-  console.log("record", note);
+  const [note, setNote] = useState("Đơn hàng của bạn có dấu hiệu bất thường"); // State để lưu ghi chú
+  // console.log("record", note);
   const mutation = useMutation({
     mutationFn: async ({
       id,
@@ -468,10 +466,8 @@ const Detail = ({ record }: any) => {
                       Xác nhận đơn hàng
                     </button>{" "}
                     <button
-                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700"
-                      onClick={() =>
-                        mutate({ id: record.id, action: "Hủy hàng" })
-                      }
+                      className="w-full py-2 border bg-red-500 rounded-lg text-white hover:bg-red-700 mt-2"
+                      onClick={() => setShowPopup(true)}
                     >
                       Hủy đơn hàng
                     </button>

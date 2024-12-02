@@ -338,17 +338,17 @@ const ProductItem = ({
           </div>
         </div>
       )}
-      <div className="py-6 grid grid-cols-7  border-b border-hrBlack">
+      <div className="py-6 grid grid-cols-7  border-b border-hrBlack px-5 lg:px-0">
         <div className="col-span-5 ">
           <div className="flex justify-between ">
             <div className="grid justify-between">
-              <div className="flex gap-5 items-center ">
+              <div className="flex gap-5 items-start  md:items-center">
                 <div className=" rounded-md text-center">
                   {" "}
                   <img
                     src={img ?? sanPham2}
                     alt={img ?? sanPham2}
-                    className="w-36 h-40 lg:w-20 lg:h-24 rounded-md mb-5"
+                    className="w-36 h-30 lg:w-20 lg:h-24 rounded-md mb-5"
                   />
                   <span
                     className={`text-xs px-2 py-1 rounded-sm ${
@@ -576,7 +576,7 @@ const ProductList = ({
   };
   return (
     <>
-      <div className="flex flex-row justify-between lg:items-center">
+      <div className="flex flex-row lg:justify-between lg:items-center">
         <h2 className="text-lg md:text-2xl font-bold text-black-500 mx-4">
           Đơn hàng của bạn
         </h2>

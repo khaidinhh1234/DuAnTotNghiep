@@ -873,6 +873,7 @@ class DonHangClientController extends Controller
 
         try {
             $user = User::findOrFail($userId);
+            $nganHang = NganHang::findOrFail($nganHangId);
             $viUser = $user->viTien;
             if ($user->viTien->so_du < $soTien) {
                 return response()->json([
@@ -884,6 +885,10 @@ class DonHangClientController extends Controller
                 'vi_tien_id' => $viUser->id,
                 'ngan_hang_id' => $nganHangId,
                 'so_tien' => (int)$soTien,
+                'tai_khoan_ngan_hang' => $nganHang->tai_khoan_ngan_hang,
+                'ten_chu_tai_khoan' => $nganHang->ten_chu_tai_khoan,
+                'ngan_hang' => $nganHang->ngan_hang,
+                'logo_ngan_hang' => $nganHang->logo_ngan_hang,
                 'trang_thai' => 'cho_duyet',
             ]);
 

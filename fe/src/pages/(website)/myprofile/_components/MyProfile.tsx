@@ -1,4 +1,3 @@
-
 import { CameraOutlined } from "@ant-design/icons";
 import { Avatar, Button, Radio, DatePicker, Upload, message, Form } from "antd";
 import { useState, useEffect } from "react";
@@ -67,7 +66,10 @@ const MyProfilePage = () => {
         ngay_sinh: dayjs(formData.ngay_sinh).format("YYYY-MM-DD"),
       };
 
-      const response = await instanceClient.post("/cap-nhat-thong-tin", updatedData);
+      const response = await instanceClient.post(
+        "/cap-nhat-thong-tin",
+        updatedData
+      );
       nav("/mypro/myprofile");
       return response.data;
     },
@@ -101,6 +103,7 @@ const MyProfilePage = () => {
   };
 
   const handleSubmit = (values: ProfileFormData) => {
+    console.log(values);
     updateProfileMutation.mutate(values);
   };
 

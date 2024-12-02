@@ -235,7 +235,10 @@ class DonHangController extends Controller
                     $donHang->chiTiets->each(function ($chiTiet) {
                         $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
                     });
-                    $donHang->update(['ly_do_huy' => $request->ly_do_huy]);
+                    $donHang->update([
+                        'ly_do_huy' => $request->ly_do_huy,
+                        'ngay_huy' => Carbon::now(),
+                    ]);
                 }
 
                 if ($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
@@ -248,7 +251,11 @@ class DonHangController extends Controller
                     ]);
                     $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
                 }
-
+                if ($request->trang_thai_don_hang == DonHang::TTDH_DH && in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DXH, DonHang::TTDH_DXL])) {
+                    $donHang->update([
+                        'trang_thai_don_hang' => DonHang::TTDH_CXNDH,
+                    ]);
+                }
                 $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
 
                 if ($request->trang_thai_don_hang === DonHang::TTDH_DXL) {
@@ -517,6 +524,45 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+
+    public function xacNhanHuyHang(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'trang_thai' => 'required|string|in:da_huy,tu_choi'
+            ]);
+
+            DB::beginTransaction();
+            $donHang = DonHang::findOrFail($id);
+
+            if ($validated['trang_thai'] === 'da_huy') {
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DH]);
+                $donHang->chiTiets->each(function ($chiTiet) {
+                    $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+                });
+                $mess = 'Xác nhận hủy hàng thành công.';
+            } else if ($validated['trang_thai'] === 'tu_choi') {
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_TCHH]);
+                $mess = 'Từ chối hủy hàng thành công.';
+            }
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => $mess,
+                'data' => $donHang
+            ], status: 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi xác nhận hủy hàng.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function danhSachYeuCauRutTien()
     {
         try {

@@ -264,7 +264,7 @@ const WithdrawalRequests: React.FC = () => {
                 </Button>
               </Popconfirm>
             </>
-          ) : (
+          ) : record.trang_thai === "Đã rút" ? (
             <>
               <img
                 src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
@@ -307,6 +307,8 @@ const WithdrawalRequests: React.FC = () => {
                 )}
               </Modal>
             </>
+          ) : (
+            ""
           )}
         </Space>
       ),
