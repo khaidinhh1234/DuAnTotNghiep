@@ -756,7 +756,7 @@ class DonHangClientController extends Controller
                 'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hủy.',
                 'loai' => 'Đơn hàng',
                 'duong_dan' => $donHang->ma_don_hang,
-                'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
             ]);
 
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
