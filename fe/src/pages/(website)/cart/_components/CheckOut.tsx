@@ -720,8 +720,6 @@ const CheckOut = () => {
                               </div>
                             </div>
                           </td>
-
-
                           {/* Điều chỉnh số lượng */}
                           <td className="hidden lg:table-cell px-4 py-2 text-center align-middle">
                             <div className="flex items-center justify-center border rounded-lg mx-auto w-fit">
