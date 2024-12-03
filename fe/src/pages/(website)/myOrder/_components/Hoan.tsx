@@ -192,7 +192,7 @@ const HoanTien = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Tên sản phẩm bắt buộc phải nhập!",
+                    message: "Mô tả sản phẩm bắt buộc phải nhập!",
                   },
                 ]}
               >

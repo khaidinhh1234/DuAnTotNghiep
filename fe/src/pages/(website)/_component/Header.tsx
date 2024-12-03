@@ -207,7 +207,6 @@ const Header = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   // const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
   // const handleMouseLeave = () => {
@@ -285,8 +284,16 @@ const Header = () => {
       path: "/ourstory",
     },
     {
-      name: "Sản phẩm",
-      path: "/shop",
+      name: "Nam",
+      path: "/shop/nam",
+    },
+    {
+      name: "Nữ",
+      path: "/shop/nu",
+    },
+    {
+      name: "Trẻ em",
+      path: "/shop/tre-em",
     },
     {
       name: "Khuyến mãi",
@@ -348,7 +355,9 @@ const Header = () => {
                         to={item.path}
                         onClick={() => setMenu(!menu)}
                         className={({ isActive }) =>
-                          isActive ? "underline decoration-sky-500" : ""
+                          isActive
+                            ? "underline decoration-sky-500"
+                            : "hover:underline hover:text-red-500"
                         }
                       >
                         {item.name}
@@ -381,15 +390,24 @@ const Header = () => {
           </button>
         </div>
         <div className="fixed w-full  h-[86px] z-20 bg-neutral-100 pt-4 ">
-          <div className=" mx-40 flex justify-between items-center ">
-            <div className="lg:hidden order-1 relative">
+          <div className="mx-10 md:mx-40 flex justify-between items-center ">
+            <div className="lg:hidden order-1 relative flex">
               <button
                 onClick={() => {
                   setMenu(!menu);
                 }}
               >
-                <i className="fa-solid fa-bars text-2xl mx-5"></i>
-              </button>
+                <i className="fa-solid fa-bars text-3xl mx-0"></i>
+              </button>{" "}
+              <div className="lg:w-36 mx-10">
+                <Link to="/">
+                  <img
+                    src={logo}
+                    alt="Logo"
+                    className="lg:w-[120px] lg:h-[35px] w-32 h-9"
+                  />
+                </Link>
+              </div>
             </div>
             <nav className="hidden lg:flex order-3 items-cennter justify-start">
               <div className="lg:w-36">

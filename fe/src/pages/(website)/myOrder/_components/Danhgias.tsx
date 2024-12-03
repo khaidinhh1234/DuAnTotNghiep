@@ -201,7 +201,7 @@ const Danhgias = () => {
             {/* Image/Video Upload */}
             <Form.Item
               name="rankImage"
-              label="Hình cho hạng thành viên"
+              label="Ảnh đánh giá"
               valuePropName="fileList"
               getValueFromEvent={(e) => {
                 if (Array.isArray(e)) {

@@ -14,6 +14,10 @@ class YeuCauRutTien extends Model
         'vi_tien_id',
         'so_tien',
         'ngan_hang_id',
+        'tai_khoan_ngan_hang',
+        'ten_chu_tai_khoan',
+        'ngan_hang',
+        'logo_ngan_hang',
         'trang_thai',
     ];
 

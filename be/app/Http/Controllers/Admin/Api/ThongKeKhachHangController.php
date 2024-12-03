@@ -263,7 +263,7 @@ class ThongKeKhachHangController extends Controller
         ]);
     }
     
-    function rankVaChiTieu()
+     function rankVaChiTieu()
     {
         $hangs = HangThanhVien::with('users.donHangs')->get();
 

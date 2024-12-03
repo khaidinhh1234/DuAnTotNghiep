@@ -23,6 +23,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('member:update-rank')->everyMinute();
         $schedule->command('app:xoa-don-chua-thanh-toan')->everyMinute();
         $schedule->command('app:xac-nhan-rut-tien')->everyMinute();
+        $schedule->command('app:cap-nhat-huy-hang')->everyMinute();
     }
 
     /**

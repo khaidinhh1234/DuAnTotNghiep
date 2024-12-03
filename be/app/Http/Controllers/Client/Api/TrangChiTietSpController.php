@@ -48,21 +48,22 @@ class TrangChiTietSpController extends Controller
     public function chiTietSanPham(Request $request, $duongDan)
     {
         try {
+            $SanPham = SanPham::where('duong_dan', $duongDan)->first();
+            $idBienThe = $SanPham->bienTheDanhGias->pluck('id')->unique()->values()->toArray();
+
             // Lấy chi tiết sản phẩm với các quan hệ cần thiết
             $chiTietSanPham = SanPham::with([
-                'danhMuc' => function ($query) {
-                    $query->with([
-                        'parent',  // Lấy danh mục cha
-                    ]);
-                },
+                'danhMuc.parent',  // Lấy danh mục cha
                 'danhGias.user',
                 'danhGias.danhGiaHuuIch',
                 'danhGias' => function ($query) {
                     $query->withCount('danhGiaHuuIch');
                 },
-                'danhGias.bienTheSanPham.mauBienThe',
-                'danhGias.bienTheSanPham.kichThuocBienThe',
-                'danhGias.donHang',
+                'danhGias.danhGiaBienTheSanPhams' => function ($query) use ($idBienThe) {
+                    $query->whereIn('bien_the_san_pham_id', $idBienThe)
+                        ->with(['mauBienThe', 'kichThuocBienThe']);
+                },
+                'danhGias.anhDanhGias',
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
@@ -70,7 +71,15 @@ class TrangChiTietSpController extends Controller
                 'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
 
-
+            // Lọc các đánh giá biến thể sản phẩm duy nhất
+            $chiTietSanPham->danhGias->each(function ($danhGia) use ($idBienThe) {
+                foreach ($idBienThe as $id) {
+                    $danhGias = BienTheSanPham::where('id', $id)->with(['DanhGiaBienThe' => function ($query) use ($id) {
+                        $query->where('bien_the_san_pham_id', $id);
+                    }])->first();
+                    $danhGia->danhGiaBienTheSanPhams->danh_gia_bien_the_san_phams = $danhGias;
+                }
+            });
             // Kiểm tra xem sản phẩm có tồn tại không
             if (!$chiTietSanPham) {
                 return response()->json([
@@ -79,7 +88,6 @@ class TrangChiTietSpController extends Controller
                     'message' => 'Không tìm thấy sản phẩm'
                 ], 404);
             }
-
             $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
             if (Auth::guard('api')->check()) {
                 $key .= '_user_' . Auth::guard('api')->user()->id;
@@ -112,11 +120,8 @@ class TrangChiTietSpController extends Controller
             // Lấy thêm thông tin danh mục cha và ông của danh mục sản phẩm
             $danhMuc = $chiTietSanPham->danhMuc;
 
-            // Lấy cha của danh mục
-            $danhMuc->load('parent');  // Load danh mục cha
+            // Lấy cha và ông của danh mục
             $chaDanhMuc = $danhMuc->parent;
-
-            // Lấy ông của danh mục
             $ongDanhMuc = $chaDanhMuc ? $chaDanhMuc->parent : null;
 
             // Thêm vào dữ liệu trả về
@@ -140,7 +145,6 @@ class TrangChiTietSpController extends Controller
             ], 500);
         }
     }
-
 
     public function danhSachSanPhamCungLoai($id)
     {

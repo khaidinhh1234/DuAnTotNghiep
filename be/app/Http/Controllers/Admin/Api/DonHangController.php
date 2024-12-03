@@ -202,110 +202,115 @@ class DonHangController extends Controller
 
             foreach ($request->id as $id) {
                 $donHang = DonHang::findOrFail($id);
-                $shippers = User::query()->with('vaiTros')->whereHas('vaiTros', function ($query) {
-                    $query->where('ten_vai_tro', 'Người giao hàng');
-                })->get();
-                if (in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DGH, DonHang::TTDH_CKHCN]) && $request->trang_thai_don_hang === DonHang::TTDH_DH) {
-                    $messages[] = 'Không thể hủy đơn hàng khi đơn hàng đang được giao hoặc đã giao thành công.';
-                    continue;
-                }
-
-                $validTransitions = [
-                    DonHang::TTDH_CXH => [DonHang::TTDH_DXH, DonHang::TTDH_DH],
-                    DonHang::TTDH_DXH => [DonHang::TTDH_DXL, DonHang::TTDH_DH],
-                    DonHang::TTDH_DXL => [DonHang::TTDH_DGH, DonHang::TTDH_DH],
-                    DonHang::TTDH_DGH => [DonHang::TTDH_CKHCN, DonHang::TTDH_DHTB],
-                    DonHang::TTDH_CKHCN => [DonHang::TTDH_HTDH],
-                    DonHang::TTDH_HTDH => [DonHang::TTDH_HH],
-                    DonHang::TTDH_DH => [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL],
-                ];
-
-                if (!isset($validTransitions[$donHang->trang_thai_don_hang]) || !in_array($request->trang_thai_don_hang, $validTransitions[$donHang->trang_thai_don_hang])) {
-                    $messages[] = 'Không thể cập nhật trạng thái ngược lại hoặc trạng thái không hợp lệ.';
-                    continue;
-                }
-
-                $trangThaiCu = $donHang->trang_thai_don_hang;
-
-                if ($trangThaiCu === $request->trang_thai_don_hang) {
-                    continue;
-                }
-
-                if ($request->trang_thai_don_hang == DonHang::TTDH_DH) {
-                    $donHang->chiTiets->each(function ($chiTiet) {
-                        $chiTiet->bienTheSanPham->each->increment('so_luong_bien_the', $chiTiet->so_luong);
-                    });
-                }
-
-                if ($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
-                    DB::table('lich_su_giao_diches')->insert([
-                        'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
-                        'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
-                        'so_du_sau' => $donHang->giaoDichVi->viTien->so_du + $donHang->tong_tien_don_hang,
-                        'ngay_thay_doi' => Carbon::now(),
-                        'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
-                    ]);
-                    $donHang->giaoDichVi->viTien->increment('so_du', $donHang->tong_tien_don_hang);
-                }
-
-                $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
-
-                // Kiểm tra nếu trạng thái mới là 'hoàn tất' và cập nhật hạng thành viên
-                // if ($request->trang_thai_don_hang === DonHang::TTDH_HTDH) {
-                //     $capNhatHangThanhVien = new CapNhatHangThanhVien();
-                //     $capNhatHangThanhVien->handle($donHang->user_id); // truyền user_id của người mua để cập nhật hạng thành viên
-                // }
-                if ($request->trang_thai_don_hang === DonHang::TTDH_DXL) {
-                    if ($shippers->isEmpty()) {
-                        throw new \Exception('Không có shipper nào trong hệ thống');
+                if ($donHang->trang_thai_don_hang != DonHang::TTDH_DH) {
+                    $shippers = User::query()->with('vaiTros')->whereHas('vaiTros', function ($query) {
+                        $query->where('ten_vai_tro', 'Người giao hàng');
+                    })->get();
+                    if (in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DGH, DonHang::TTDH_CKHCN]) && $request->trang_thai_don_hang === DonHang::TTDH_DH) {
+                        $messages[] = 'Không thể hủy đơn hàng khi đơn hàng đang được giao hoặc đã giao thành công.';
+                        continue;
                     }
 
-                    $minDonHangCount = $shippers->min(fn($shipper) => $shipper->vanChuyens->count());
-                    $shippersWithMinDonHang = $shippers->filter(fn($shipper) => $shipper->vanChuyens->count() == $minDonHangCount);
-                    $shipper = $shippersWithMinDonHang->random();
+                    $validTransitions = [
+                        DonHang::TTDH_CXH => [DonHang::TTDH_DXH, DonHang::TTDH_DH],
+                        DonHang::TTDH_DXH => [DonHang::TTDH_DXL, DonHang::TTDH_DH],
+                        DonHang::TTDH_DXL => [DonHang::TTDH_DGH, DonHang::TTDH_DH],
+                        DonHang::TTDH_DGH => [DonHang::TTDH_CKHCN, DonHang::TTDH_DHTB],
+                        DonHang::TTDH_CKHCN => [DonHang::TTDH_HTDH],
+                        DonHang::TTDH_HTDH => [DonHang::TTDH_HH],
+                        DonHang::TTDH_DH => [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL],
+                    ];
 
-                    $vanChuyen = VanChuyen::create([
-                        'don_hang_id' => $donHang->id,
+                    if (!isset($validTransitions[$donHang->trang_thai_don_hang]) || !in_array($request->trang_thai_don_hang, $validTransitions[$donHang->trang_thai_don_hang])) {
+                        $messages[] = 'Không thể cập nhật trạng thái ngược lại hoặc trạng thái không hợp lệ.';
+                        continue;
+                    }
+
+                    $trangThaiCu = $donHang->trang_thai_don_hang;
+
+                    if ($trangThaiCu === $request->trang_thai_don_hang) {
+                        continue;
+                    }
+
+                    if ($request->trang_thai_don_hang == DonHang::TTDH_DH) {
+                        $donHang->chiTiets->each(function ($chiTiet) {
+                            $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+                        });
+                        $donHang->update([
+                            'ly_do_huy' => $request->ly_do_huy,
+                            'ngay_huy' => Carbon::now(),
+                        ]);
+                    }
+
+                    if ($request->trang_thai_don_hang == DonHang::TTDH_DH && $donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
+                        DB::table('lich_su_giao_diches')->insert([
+                            'vi_tien_id' => $donHang->user->viTien->id,
+                            'so_du_truoc' => $donHang->user->viTien->so_du,
+                            'so_du_sau' => $donHang->user->viTien->so_du + $donHang->tong_tien_don_hang,
+                            'ngay_thay_doi' => Carbon::now(),
+                            'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
+                        ]);
+                        $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                    }
+                    if ($request->trang_thai_don_hang == DonHang::TTDH_DH && in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DXH, DonHang::TTDH_DXL])) {
+                        $donHang->update([
+                            'trang_thai_don_hang' => DonHang::TTDH_CXNDH,
+                        ]);
+                    }
+                    $donHang->update(['trang_thai_don_hang' => $request->trang_thai_don_hang]);
+
+                    if ($request->trang_thai_don_hang === DonHang::TTDH_DXL) {
+                        if ($shippers->isEmpty()) {
+                            throw new \Exception('Không có shipper nào trong hệ thống');
+                        }
+
+                        $minDonHangCount = $shippers->min(fn($shipper) => $shipper->vanChuyens->count());
+                        $shippersWithMinDonHang = $shippers->filter(fn($shipper) => $shipper->vanChuyens->count() == $minDonHangCount);
+                        $shipper = $shippersWithMinDonHang->random();
+
+                        $vanChuyen = VanChuyen::create([
+                            'don_hang_id' => $donHang->id,
+                            'user_id' => $donHang->user_id,
+                            'shipper_id' => $shipper->id,
+                            'ngay_tao' => Carbon::now(),
+                            'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
+                            'cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? VanChuyen::TTCOD_KT : VanChuyen::TTCOD_CN,
+                            'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? 0 : $donHang->tong_tien_don_hang,
+                        ]);
+
+                        $thongBaoTele = new ThongBaoTelegramController();
+                        $thongBaoTele->thongBaoDonHangMoi($vanChuyen->id);
+                    }
+
+                    $thongBao = ThongBao::create([
                         'user_id' => $donHang->user_id,
-                        'shipper_id' => $shipper->id,
-                        'ngay_tao' => Carbon::now(),
-                        'trang_thai_van_chuyen' => VanChuyen::TTVC_CXL,
-                        'cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? VanChuyen::TTCOD_KT : VanChuyen::TTCOD_CN,
-                        'tien_cod' => $donHang->phuong_thuc_thanh_toan !== DonHang::PTTT_TT ? 0 : $donHang->tong_tien_don_hang,
+                        'tieu_de' => 'Đơn hàng của bạn đã có cập nhật mới',
+                        'noi_dung' => 'Đơn hàng ' . $donHang->ma_don_hang . ' đã được cập nhật từ trạng thái ' .
+                            DonHang::getTrangThaiDonHang($trangThaiCu) . ' sang ' .
+                            DonHang::getTrangThaiDonHang($request->trang_thai_don_hang),
+                        'loai' => 'Đơn hàng',
+                        'duong_dan' => $donHang->ma_don_hang,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                     ]);
 
-                    $thongBaoTele = new ThongBaoTelegramController();
-                    $thongBaoTele->thongBaoDonHangMoi($vanChuyen->id);
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+
+                    $userAdmin = User::query()->with('vaiTros')
+                        ->whereHas('vaiTros', function ($query) {
+                            $query->where('ten_vai_tro', 'Quản trị viên');
+                        })->first();
+
+                    $thongBao = ThongBao::create([
+                        'user_id' => $userAdmin->id,
+                        'tieu_de' => 'Đơn hàng ' . $donHang->ma_don_hang . ' đã có cập nhật mới',
+                        'noi_dung' => '',
+                        'loai' => 'Rút tiền',
+                        'duong_dan' => $donHang->ma_don_hang,
+                        'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                    ]);
+
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 }
-
-                $thongBao = ThongBao::create([
-                    'user_id' => $donHang->user_id,
-                    'tieu_de' => 'Đơn hàng của bạn đã có cập nhật mới',
-                    'noi_dung' => 'Đơn hàng ' . $donHang->ma_don_hang . ' đã được cập nhật từ trạng thái ' .
-                        DonHang::getTrangThaiDonHang($trangThaiCu) . ' sang ' .
-                        DonHang::getTrangThaiDonHang($request->trang_thai_don_hang),
-                    'loai' => 'Đơn hàng',
-                    'duong_dan' => $donHang->ma_don_hang,
-                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                ]);
-
-                broadcast(new ThongBaoMoi($thongBao))->toOthers();
-
-                $userAdmin = User::query()->with('vaiTros')
-                    ->whereHas('vaiTros', function ($query) {
-                        $query->where('ten_vai_tro', 'Quản trị viên');
-                    })->first();
-
-                $thongBao = ThongBao::create([
-                    'user_id' => $userAdmin->id,
-                    'tieu_de' => 'Đơn hàng ' . $donHang->ma_don_hang . ' đã có cập nhật mới',
-                    'noi_dung' => '',
-                    'loai' => 'Rút tiền',
-                    'duong_dan' => $donHang->ma_don_hang,
-                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-                ]);
-
-                broadcast(new ThongBaoMoi($thongBao))->toOthers();
             }
 
             DB::commit();
@@ -326,7 +331,6 @@ class DonHangController extends Controller
             ], 500);
         }
     }
-
     public function export()
     {
         // Tải xuống file Excel với tên 'donhang.xlsx'
@@ -422,6 +426,7 @@ class DonHangController extends Controller
         try {
             $donHangs = HoanTien::query()
                 ->with('donHang', 'giaoDichVi')
+                ->orderByDesc('id')
                 ->get();
             return response()->json([
                 'status' => true,
@@ -477,8 +482,8 @@ class DonHangController extends Controller
                     'shipper_id' => $shipper->id,
                     'ngay_tao' => Carbon::now(),
                     'hoan_tien_id' => $id,
-                ]); 
-                // dd($hoanHang); 
+                ]);
+                // dd($hoanHang);
                 // Gửi thông báo hoàn hàng qua Telegram
                 $thongBaoHoanHang = new ThongBaoTelegramController();
                 $thongBaoHoanHang->thongBaoHoanHang($hoanHang);
@@ -521,10 +526,80 @@ class DonHangController extends Controller
             ], 500);
         }
     }
+
+    public function danhSachChoXacNhanHuyHang()
+    {
+        try {
+            $donHangs = DonHang::where('li_do_huy_hang', '!=', null)
+                ->orderByDesc('id')->get();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'data' => $donHangs
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi lấy danh sách đơn hàng.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function xacNhanHuyHang(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'trang_thai' => 'required|string|in:da_huy,tu_choi',
+                'ly_do_tu_choi' => 'required_if:trang_thai,tu_choi'
+            ]);
+
+            DB::beginTransaction();
+            $donHang = DonHang::findOrFail($id);
+
+            if ($validated['trang_thai'] === 'da_huy') {
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DH]);
+                $donHang->chiTiets->each(function ($chiTiet) {
+                    $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+                });
+                $mess = 'Xác nhận hủy hàng thành công.';
+            } else if ($validated['trang_thai'] === 'tu_choi') {
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DXH]);
+                $thongbao = ThongBao::create([
+                    'user_id' => $donHang->user_id,
+                    'tieu_de' => 'Yêu cầu hủy hàng của bạn đã bị từ chối',
+                    'noi_dung' => 'Yêu cầu hủy hàng của bạn đã bị từ chối. Vui lòng liên hệ với cửa hàng',
+                    'loai' => 'Yêu cầu rút tiền',
+                    'duong_dan' => 'yeu-cau-rut-tien',
+                    'id_duong_dan' => $donHang->id,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+                broadcast(new ThongBaoMoi($thongbao))->toOthers();
+                $mess = 'Từ chối hủy hàng thành công.';
+            }
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => $mess,
+                'data' => $donHang
+            ], status: 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã xảy ra lỗi khi xác nhận hủy hàng.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function danhSachYeuCauRutTien()
     {
         try {
-            $yeuCauRutTiens = YeuCauRutTien::with('viTien.user', 'nganHang')->get();
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien.user')->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

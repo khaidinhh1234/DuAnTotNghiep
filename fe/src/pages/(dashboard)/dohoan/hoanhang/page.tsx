@@ -1,8 +1,8 @@
 // import { SearchOutlined } from "@ant-design/icons";
 // import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// import { 
-//   Button, DatePicker, Flex, Input, message, 
-//   Popconfirm, Select, Space, Spin, Table, Tabs 
+// import {
+//   Button, DatePicker, Flex, Input, message,
+//   Popconfirm, Select, Space, Spin, Table, Tabs
 // } from "antd";
 // import type { InputRef, TableColumnsType } from "antd";
 // import React, { useEffect, useRef, useState } from "react";
@@ -92,7 +92,7 @@
 
 //   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 //     const searchValue = e.target.value.toLowerCase();
-//     const filtered = returnOrders?.filter((item) => 
+//     const filtered = returnOrders?.filter((item) =>
 //       item.ma_hoan_hang.toLowerCase().includes(searchValue) ||
 //       item.trang_thai_hoan_hang.toLowerCase().includes(searchValue)
 //     );
@@ -191,7 +191,7 @@ const ReturnOrders1: React.FC = () => {
       return response.data;
     },
   });
-
+  // console.log(data);
   const returnOrders: ReturnOrderType[] | undefined = data?.data;
 
   const columns: TableColumnsType<ReturnOrderType> = [
@@ -206,47 +206,49 @@ const ReturnOrders1: React.FC = () => {
       dataIndex: "ngay_tao",
       key: "ngay_tao",
       render: (date) => new Date(date).toLocaleDateString("vi-VN"),
-      sorter: (a, b) => new Date(a.ngay_tao).getTime() - new Date(b.ngay_tao).getTime(),
+      sorter: (a, b) =>
+        new Date(a.ngay_tao).getTime() - new Date(b.ngay_tao).getTime(),
     },
-   
-      {
-        title: "Ngày lấy hàng",
-        dataIndex: "ngay_lay_hang",
-        key: "ngay_lay_hang",
-        render: (date) => date ? new Date(date).toLocaleDateString("vi-VN") : "Chưa lấy hàng",
-      },
-      {
-        title: "Ngày hoàn thành",
-        dataIndex: "ngay_hoan_hang_thanh_cong",
-        key: "ngay_hoan_hang_thanh_cong",
-        render: (date) => date ? new Date(date).toLocaleDateString("vi-VN") : "Chưa hoàn thành",
-      },
-      {
-        title: "Trạng thái",
-        dataIndex: "trang_thai_hoan_hang",
-        key: "trang_thai_hoan_hang",
-        render: (status) => (
-          <div
+
+    {
+      title: "Ngày lấy hàng",
+      dataIndex: "ngay_lay_hang",
+      key: "ngay_lay_hang",
+      render: (date) =>
+        date ? new Date(date).toLocaleDateString("vi-VN") : "Chưa lấy hàng",
+    },
+    {
+      title: "Ngày hoàn thành",
+      dataIndex: "ngay_hoan_hang_thanh_cong",
+      key: "ngay_hoan_hang_thanh_cong",
+      render: (date) =>
+        date ? new Date(date).toLocaleDateString("vi-VN") : "Chưa hoàn thành",
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "trang_thai_hoan_hang",
+      key: "trang_thai_hoan_hang",
+      render: (status) => (
+        <div
           className={`font-bold ${
             status === "Trả hàng thành công"
               ? "text-green-500"
               : status === "Chờ lấy hàng hoàn"
-              ? "text-yellow-500"
-              : status === "Đang vận chuyển"
-              ? "text-blue-500"
-              : "text-gray-500"
+                ? "text-yellow-500"
+                : status === "Đang vận chuyển"
+                  ? "text-blue-500"
+                  : "text-gray-500"
           }`}
         >
           {status}
         </div>
-        
-        ),
-      },
-      {
-        title: "Quản trị",
-        dataIndex: "products",
-        render: (_, record) => <Detail record={record} />,
-      },
+      ),
+    },
+    {
+      title: "Quản trị",
+      dataIndex: "products",
+      render: (_, record) => <Detail record={record} />,
+    },
   ];
 
   useEffect(() => {
@@ -255,7 +257,9 @@ const ReturnOrders1: React.FC = () => {
         const matchesSearch =
           searchText === "" ||
           order.ma_hoan_hang.toLowerCase().includes(searchText.toLowerCase()) ||
-          order.trang_thai_hoan_hang.toLowerCase().includes(searchText.toLowerCase());
+          order.trang_thai_hoan_hang
+            .toLowerCase()
+            .includes(searchText.toLowerCase());
 
         const matchesTab =
           activeTab === "Tất cả" || order.trang_thai_hoan_hang === activeTab;
@@ -314,7 +318,7 @@ const ReturnOrders1: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="font-semibold md:text-3xl">Hoàn hàng</h1>
       </div>
-      
+
       <Tabs
         defaultActiveKey="Tất cả"
         activeKey={activeTab}

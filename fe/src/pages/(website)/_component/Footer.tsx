@@ -30,7 +30,7 @@ const Footer = () => {
       return response.data;
     },
   });
-
+  console.log(apiResponse);
   const mapContainerStyle = {
     width: "100%",
     height: "350px",
@@ -241,7 +241,7 @@ const Footer = () => {
                   <Link to="/contact">Liên hệ</Link>
                 </li>
                 <li className="mb-3">
-                  <Link to="/shop/tre_em">Trẻ em</Link>
+                  <Link to="/shop/tre-em">Trẻ em</Link>
                 </li>
                 <li className="mb-3">
                   <Link to="/shop/nam">Nam</Link>
@@ -254,9 +254,9 @@ const Footer = () => {
             <div className="lg:col-span-2 col-span-6">
               <h1 className="text-xl font-semibold mb-3">Tin Tức</h1>
               <ul>
-                {websiteInfo?.footer_blogs.slice(0, 2).map((category: any) => (
+                {websiteInfo?.footer_blogs.slice(0, 8).map((category: any) => (
                   <li key={category.id} className="mb-3">
-                    <Link to={`/tin-tuc/${category.duong_dan}`}>
+                    <Link to={`/danhmuctintuc/${category.duong_dan}`}>
                       {category.ten_danh_muc_tin_tuc}
                     </Link>
                   </li>
@@ -267,7 +267,7 @@ const Footer = () => {
                   category.tin_tuc?.slice(0, 6).map((news: any) => (
                     <li key={news.id} className="mb-3">
                       <Link
-                        to={`/tin-tuc/${category.duong_dan}/${news.duong_dan}`}
+                        to={`/danhmuctintuc/${category.duong_dan}/${news.duong_dan}`}
                       >
                         {news.tieu_de}
                       </Link>
@@ -329,11 +329,13 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="flex justify-between py-3">
+          <div className="flex justify-betweend py-2">
             <div>
               <img src={bank} alt="" className="h-7" />
             </div>
-            <div>© 2024 Glow Clothing.</div>
+            <div className="text-center mx-auto py-3">
+              © 2024 Glow Clothing.
+            </div>
             <div className="*:text-2xl *:px-3">
               <a
                 href={websiteInfo?.link_facebook}

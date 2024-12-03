@@ -54,10 +54,6 @@ const datas = [
     value: "2",
     label: "Hoàn tất Chuẩn bị",
   },
-  {
-    value: "3",
-    label: "Hủy đơn hàng",
-  },
 ];
 type DataIndex = keyof any;
 const OrderAdmin: React.FC = () => {
@@ -294,7 +290,7 @@ const OrderAdmin: React.FC = () => {
                   : record.trang_thai_don_hang === "Đang giao hàng"
                     ? "Đang giao hàng"
                     : record.trang_thai_don_hang === "Chờ khách hàng xác nhận"
-                      ? "Hoàn tất (chờ xác nhận)"
+                      ? "Chờ khách hàng xác nhận"
                       : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
                         ? "Hoàn tất đơn hàng"
                         : record.trang_thai_don_hang === "Hủy hàng"
@@ -350,67 +346,7 @@ const OrderAdmin: React.FC = () => {
         );
       },
     },
-    // {
-    //   title: "Giao hàng",
-    //   dataIndex: "trang_thai_van_chuyen",
-    //   ...getColumnSearchProps("trang_thai_van_chuyen"),
-    //   sorter: (a: any, b: any) =>
-    //     a.trang_thai_van_chuyen.localeCompare(b.trang_thai_van_chuyen),
-    //   onFilter: (value: boolean | React.Key, record: any) =>
-    //     record.trang_thai_van_chuyen
-    //       .toLowerCase()
-    //       .includes(String(value).toLowerCase()),
 
-    //   render: (_, record) => {
-    //     return (
-    //       <div
-    //         className={
-    //           record.trang_thai_van_chuyen === "Chờ xử lý"
-    //             ? "text-orange-500 font-bold text-[15px]"
-    //             : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-    //               ? "text-blue-500 font-bold text-[15px]"
-    //               : record.trang_thai_van_chuyen === "Đang giao hàng"
-    //                 ? "text-green-500 font-bold text-[15px]"
-    //                 : record.trang_thai_van_chuyen === "Giao hàng thành công"
-    //                   ? "text-teal-500 font-bold text-[15px]"
-    //                   : "text-red-500 font-bold text-[15px]" // Trạng thái khác
-    //         }
-    //       >
-    //         {record.trang_thai_van_chuyen === "Chờ xử lý"
-    //           ? "Chờ xử lý"
-    //           : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-    //             ? "Chờ lấy hàng"
-    //             : record.trang_thai_van_chuyen === "Đang giao hàng"
-    //               ? "Đang giao hàng"
-    //               : record.trang_thai_van_chuyen === "Giao hàng thành công"
-    //                 ? "Giao hàng thành công"
-    //                 : "Hủy"}
-    //       </div>
-    //     );
-    //   },
-    // },
-    // {
-    //   title: "COD",
-    //   render: (_, record) => {
-    //     return (
-    //       <div
-    //         className={
-    //           record.trang_thai_thanh_toan === "Chưa thanh toán"
-    //             ? "text-red-500 font-bold text-[15px]" // Màu đỏ cho "Chưa thanh toán"
-    //             : record.trang_thai_thanh_toan === "Đã thanh toán"
-    //               ? "text-green-500 font-bold text-[15px]" // Màu xanh lá cho "Đã thanh toán"
-    //               : "text-gray-500 font-bold text-[15px]" // Màu xám cho các trạng thái khác
-    //         }
-    //       >
-    //         {record.trang_thai_thanh_toan === "Chưa thanh toán"
-    //           ? "Chưa Nhận"
-    //           : record.trang_thai_thanh_toan === "Đã thanh toán"
-    //             ? "Đã Nhận"
-    //             : "Không thu tiền"}
-    //       </div>
-    //     );
-    //   },
-    // },
     {
       title: "Tổng tiền",
       dataIndex: " tong_tien_don_hang",
@@ -448,24 +384,24 @@ const OrderAdmin: React.FC = () => {
             ? "Đã xác nhận"
             : trangthai == "2"
               ? "Đang xử lý"
-              : trangthai == "3"
-                ? "Hủy hàng"
-                : "Đã xác nhận";
+              : "Đã xác nhận";
         const response = await instance.put("donhang/trang-thai-don-hang", {
           trang_thai_don_hang: trangthais,
           id: data,
         });
-        const error = response.data.message;
+        const datas = response.data.data.length;
+        const error = response.data;
+        // console.log("error", datas);
         start();
-        if (error === "Cập nhật trạng thái đơn hàng thành công") {
+        if (datas >= 1) {
           message.open({
-            type: "success",
-            content: error,
+            type: "error",
+            content: `Không thể cập nhật trạng thái ${datas} đơn hàng không hợp lệ`,
           });
         } else {
           message.open({
             type: "success",
-            content: error,
+            content: error.message,
           });
         }
         return response.data;
@@ -572,7 +508,7 @@ const OrderAdmin: React.FC = () => {
     { label: "Tổng đơn hàng", key: "Tất cả" },
     { label: "Chờ xác nhận", key: "Chờ xác nhận" },
     { label: "Đã xác nhận", key: "Đã xác nhận" },
-    { label: "Hoàn tất chuẩn bị", key: "Đang xử lý" },
+    { label: "Chờ lấy hàng", key: "Đang xử lý" },
 
     { label: "Giao hàng thất bại", key: "Đơn hàng bị từ chối nhân" },
 

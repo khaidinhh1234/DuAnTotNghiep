@@ -6,6 +6,7 @@ import type { GetProp, UploadProps } from "antd";
 import { Button, Form, Input, message, Modal, Rate, Upload } from "antd";
 import { RcFile, UploadFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Danhgia = ({ setDanhgia, slug }: any) => {
   const [reviewText, setReviewText] = useState("");
@@ -87,6 +88,7 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
+  const nav = useNavigate();
   const queryClient = useQueryClient();
   const { mutate: mutateDanhgia } = useMutation({
     mutationFn: async (data: any) => {
@@ -95,6 +97,7 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
         if (response.status === 200) {
           message.success("Đánh giá thành công");
           setDanhgia(false);
+          nav("/mypro/myorder");
         }
       } catch (error) {
         message.error("Đánh giá thất bại");
@@ -200,7 +203,7 @@ const Danhgia = ({ setDanhgia, slug }: any) => {
             {/* Image/Video Upload */}
             <Form.Item
               name="rankImage"
-              label="Hình cho hạng thành viên"
+              label="Hình ảnh đánh giá"
               valuePropName="fileList"
               getValueFromEvent={(e) => {
                 if (Array.isArray(e)) {
