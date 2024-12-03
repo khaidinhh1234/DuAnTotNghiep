@@ -49,7 +49,8 @@ class TrangChiTietSpController extends Controller
     {
         try {
             $SanPham = SanPham::where('duong_dan', $duongDan)->first();
-            $id = $SanPham->id;
+            $idBienThe = $SanPham->bienTheDanhGias->pluck('id')->unique()->values()->toArray();
+
             // Lấy chi tiết sản phẩm với các quan hệ cần thiết
             $chiTietSanPham = SanPham::with([
                 'danhMuc.parent',  // Lấy danh mục cha
@@ -58,11 +59,11 @@ class TrangChiTietSpController extends Controller
                 'danhGias' => function ($query) {
                     $query->withCount('danhGiaHuuIch');
                 },
-                'danhGias.danhGiaBienTheSanPhams' => function ($query) use ($id) {
-                    $query->wherePivot('san_pham_id', $id)->with('mauBienThe', 'kichThuocBienThe')->first();
+                'danhGias.danhGiaBienTheSanPhams' => function ($query) use ($idBienThe) {
+                    $query->whereIn('bien_the_san_pham_id', $idBienThe)
+                        ->with(['mauBienThe', 'kichThuocBienThe']);
                 },
                 'danhGias.anhDanhGias',
-                // 'danhGias.donHang',
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
@@ -70,6 +71,15 @@ class TrangChiTietSpController extends Controller
                 'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
 
+            // Lọc các đánh giá biến thể sản phẩm duy nhất
+            $chiTietSanPham->danhGias->each(function ($danhGia) use ($idBienThe) {
+                foreach ($idBienThe as $id) {
+                    $danhGias = BienTheSanPham::where('id', $id)->with(['DanhGiaBienThe' => function ($query) use ($id) {
+                        $query->where('bien_the_san_pham_id', $id);
+                    }])->first();
+                    $danhGia->danhGiaBienTheSanPhams->danh_gia_bien_the_san_phams = $danhGias;
+                }
+            });
             // Kiểm tra xem sản phẩm có tồn tại không
             if (!$chiTietSanPham) {
                 return response()->json([
@@ -78,7 +88,6 @@ class TrangChiTietSpController extends Controller
                     'message' => 'Không tìm thấy sản phẩm'
                 ], 404);
             }
-
             $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
             if (Auth::guard('api')->check()) {
                 $key .= '_user_' . Auth::guard('api')->user()->id;
@@ -118,7 +127,6 @@ class TrangChiTietSpController extends Controller
             // Thêm vào dữ liệu trả về
             $chiTietSanPham['cha_danh_muc'] = $chaDanhMuc;
             $chiTietSanPham['ong_danh_muc'] = $ongDanhMuc;
-            // $chiTietSanPham['bien_the_san_pham'] = $chiTietSanPham->danhGias->danhGiaBienTheSanPhams;
 
             // Trả về chi tiết sản phẩm cùng với các thông tin danh mục cha và ông
             return response()->json([

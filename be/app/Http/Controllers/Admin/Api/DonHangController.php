@@ -530,7 +530,8 @@ class DonHangController extends Controller
     public function danhSachChoXacNhanHuyHang()
     {
         try {
-            $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXNDH)->orderByDesc('id')->get();
+            $donHangs = DonHang::where('li_do_huy_hang', '!=', null)
+                ->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -564,7 +565,7 @@ class DonHangController extends Controller
                 });
                 $mess = 'Xác nhận hủy hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
-                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_TCHH]);
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DXH]);
                 $thongbao = ThongBao::create([
                     'user_id' => $donHang->user_id,
                     'tieu_de' => 'Yêu cầu hủy hàng của bạn đã bị từ chối',
@@ -574,6 +575,7 @@ class DonHangController extends Controller
                     'id_duong_dan' => $donHang->id,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
+                broadcast(new ThongBaoMoi($thongbao))->toOthers();
                 $mess = 'Từ chối hủy hàng thành công.';
             }
             DB::commit();
