@@ -123,9 +123,9 @@ const Search = () => {
 
   const renderProductCard = (product: SearchResult) => (
     <div className="container" key={product.id}>
-      <div className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 w-[250px] mx-auto lg:mx-0">
+      <div className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6 mb-2 lg:w-[250px] w-[350px] mx-auto lg:mx-0">
         <div className="product-card hover:bg-zinc-100 rounded-md shadow-lg shadow-black/10">
-          <div className="relative w-full h-[300px]">
+          <div className="relative w-full lg:h-[300px] h-96">
             <Link
               to={`/product-detail/${product.duong_dan}`}
               onClick={() => setIsModalVisible(false)}
@@ -139,7 +139,7 @@ const Search = () => {
                       : product.anh_san_pham
                   }
                   alt={product.ten_san_pham}
-                  className="w-full h-[300px] object-cover rounded-t-md"
+                  className="w-full lg:h-[300px] h-96 object-cover rounded-t-md"
                 />
                 {product.hang_moi === 1 && (
                   <span className="absolute top-3 left-4 bg-red-500 text-white px-2 py-[2px] rounded-md text-sm font-bold">
@@ -253,9 +253,9 @@ const Search = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-7 justify-center gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 lg:gap-6 gap-0">
               {products.slice(0, 6).map((item, index) => (
-                <div key={index} className="px-20">
+                <div key={index} className="lg:px-20">
                   {renderProductCard(item)}
                 </div>
               ))}

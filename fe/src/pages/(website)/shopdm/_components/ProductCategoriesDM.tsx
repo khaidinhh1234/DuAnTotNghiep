@@ -359,7 +359,7 @@ const ProductCategoriesDM = () => {
       {" "}
       <section>
         <div className="container">
-          <div className="flex flex-wrap items-start w-full mt-5">
+          <div className="flex flex-wrap items-start w-full ">
             {/* <!-- Sidebar Filters --> */}
             <button
               className="lg:hidden w-0.5/4 py-3 px-1 pl-4 mb-4 lg:mb-0"
@@ -528,8 +528,8 @@ const ProductCategoriesDM = () => {
                     <div className="w-full">
                       <Slider
                         range
-                        defaultValue={[0, 1000000]}
-                        max={1000000}
+                        defaultValue={[0, 2000000]}
+                        max={2000000}
                         onAfterChange={(value) => {
                           setPrice(value as [number, number]);
                           // mutate();

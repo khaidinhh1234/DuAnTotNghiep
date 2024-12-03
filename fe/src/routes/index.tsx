@@ -155,6 +155,7 @@ import RemoteEvaluate from "@/pages/(dashboard)/evaluate/RemoteEvaluate";
 import Test from "@/pages/(dashboard)/test";
 import Test3 from "@/pages/(website)/abc";
 import PrivateShipper from "./PrivateShipper";
+import Donhuy from "@/pages/(dashboard)/donhuy/page";
 const Router = () => {
   //
 
@@ -324,6 +325,7 @@ const Router = () => {
           <Route path="orders/donhoan" element={<RefundRequests />} />
           <Route path="orders/collect" element={<Collect />} />
           <Route path="orders/hoanhang" element={<ReturnOrders1 />} />
+          <Route path="orders/donhuy" element={<Donhuy />} />
           {/* khuyến mãi */}
           <Route path="vouchers" element={<VoucherAdmin />} />{" "}
           <Route path="add-vocher" element={<AddVoucher />} />

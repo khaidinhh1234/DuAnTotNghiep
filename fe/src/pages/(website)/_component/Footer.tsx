@@ -30,7 +30,7 @@ const Footer = () => {
       return response.data;
     },
   });
-
+  console.log(apiResponse);
   const mapContainerStyle = {
     width: "100%",
     height: "350px",
@@ -329,12 +329,14 @@ const Footer = () => {
             </div>
           </div>
 
-          <div >
-            {/* <div>
+          <div className="flex justify-betweend py-2">
+            <div>
               <img src={bank} alt="" className="h-7" />
-            </div> */}
-            <div className="text-center mx-auto py-3">© 2024 Glow Clothing.</div>
-            {/* <div className="*:text-2xl *:px-3">
+            </div>
+            <div className="text-center mx-auto py-3">
+              © 2024 Glow Clothing.
+            </div>
+            <div className="*:text-2xl *:px-3">
               <a
                 href={websiteInfo?.link_facebook}
                 target="_blank"
@@ -372,7 +374,7 @@ const Footer = () => {
                   style={{ color: "#ffffff" }}
                 />
               </a>
-            </div> */}
+            </div>
           </div>
         </div>
       </footer>

@@ -1,26 +1,36 @@
-import instance from '@/configs/admin';
-import { SearchOutlined } from '@ant-design/icons';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Input, InputRef, message, Modal, Space, Table, TableColumnsType, Tabs } from 'antd';
-import { FilterDropdownProps } from 'antd/es/table/interface';
-import dayjs from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
-import Highlighter from 'react-highlight-words';
+import instance from "@/configs/admin";
+import { SearchOutlined } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Button,
+  Input,
+  InputRef,
+  message,
+  Modal,
+  Space,
+  Table,
+  TableColumnsType,
+  Tabs,
+} from "antd";
+import { FilterDropdownProps } from "antd/es/table/interface";
+import dayjs from "dayjs";
+import React, { useEffect, useRef, useState } from "react";
+import Highlighter from "react-highlight-words";
 const { Search } = Input;
 type DataIndex = keyof Support;
 interface Support {
-  id: string | number,
-  user_id: string | number,
-  name: string
-  sdt_lien_he: number
-  email: string
-  noi_dung_lien_he: string,
-  trang_thai_lien_he: string,
-  created_at: string,
+  id: string | number;
+  user_id: string | number;
+  name: string;
+  sdt_lien_he: number;
+  email: string;
+  noi_dung_lien_he: string;
+  trang_thai_lien_he: string;
+  created_at: string;
   user: {
-    ho: string,
-    ten: string
-  }
+    ho: string;
+    ten: string;
+  };
 }
 const datas = [
   { value: "1", label: "Chưa xử lý" },
@@ -41,14 +51,13 @@ const PageSupport: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("Tất cả");
   const searchInput = useRef<InputRef>(null);
   const { data } = useQuery({
-    queryKey: ['phanhoilienhe'],
+    queryKey: ["phanhoilienhe"],
     queryFn: async () => {
-      const res = await instance.get(`/lien-he`)
-      return res.data
-    }
-  })
+      const res = await instance.get(`/lien-he`);
+      return res.data;
+    },
+  });
 
- 
   const mutation = useMutation({
     mutationFn: async ({
       id,
@@ -59,7 +68,7 @@ const PageSupport: React.FC = () => {
     }) => {
       // console.log(phan_hoi,'sưefsefd');
       const response = await instance.put(`/lien-he/${id}`, {
-        noi_dung_phan_hoi: phan_hoi
+        noi_dung_phan_hoi: phan_hoi,
       });
       return response.data;
     },
@@ -102,7 +111,7 @@ const PageSupport: React.FC = () => {
       }
     }
   }, [support, activeTab]);
-  
+
   const handleSearch = (
     selectedKeys: string[],
     confirm: FilterDropdownProps["confirm"],
@@ -197,38 +206,43 @@ const PageSupport: React.FC = () => {
       }
     }
   }, [support, activeTab]);
-  
+
   const dataSource = filteredData.map((support: Support, index: number) => ({
     key: support.id,
     ...support,
     index: index + 1,
     user_id: `${support?.user?.ho} ${support?.user?.ten}` || "Chưa có dữ liệu",
   }));
-  
-  
+
   const columns: TableColumnsType<Support> = [
     {
-      title: 'STT',
-      dataIndex: 'index',
-      key: 'id',
+      title: "STT",
+      dataIndex: "index",
+      key: "id",
     },
     {
-      title: 'Họ tên',
-      dataIndex: 'user_id',
-      key: 'user_id',
-      width: '15%',
+      title: "Họ tên",
+      dataIndex: "user_id",
+      key: "user_id",
+      width: "15%",
       ...getColumnSearchProps("user_id"),
       sorter: (a: any, b: any) => a.user_id.localeCompare(b.user_id),
       render: (text) => (text ? text : "Chưa có dữ liệu"),
     },
     {
-      title: 'Thông tin liên hệ',
-      dataIndex: '',
-      key: 'thong_tin_lien_he',
+      title: "Thông tin liên hệ",
+      dataIndex: "",
+      key: "thong_tin_lien_he",
       render: (text: { email: string; sdt_lien_he: string }) => (
         <div>
-          <div><strong>Email</strong>: <a href={`mailto:${text.email}`}>{text.email}</a></div>
-          <div><strong>Số điện thoại</strong>: <a href={`tel:${text.sdt_lien_he}`}>{text.sdt_lien_he}</a></div>
+          <div>
+            <strong>Email</strong>:{" "}
+            <a href={`mailto:${text.email}`}>{text.email}</a>
+          </div>
+          <div>
+            <strong>Số điện thoại</strong>:{" "}
+            <a href={`tel:${text.sdt_lien_he}`}>{text.sdt_lien_he}</a>
+          </div>
         </div>
       ),
     },
@@ -245,18 +259,20 @@ const PageSupport: React.FC = () => {
     // },
 
     {
-      title: 'Trạng thái',
-      dataIndex: 'trang_thai_lien_he',
-      key: 'trang_thai_lien_he',
+      title: "Trạng thái",
+      dataIndex: "trang_thai_lien_he",
+      key: "trang_thai_lien_he",
       render: (_, record) => {
         return (
-          <div className={'font-bold text-[15px] ' +
-            (record.trang_thai_lien_he === "da_xu_ly"
-              ? "text-green-500"
-              : record.trang_thai_lien_he === "chua_xu_ly"
-                ? "text-yellow-500"
-                : '')
-          }
+          <div
+            className={
+              "font-bold text-[15px] " +
+              (record.trang_thai_lien_he === "da_xu_ly"
+                ? "text-green-500"
+                : record.trang_thai_lien_he === "chua_xu_ly"
+                  ? "text-yellow-500"
+                  : "")
+            }
           >
             {record.trang_thai_lien_he === "da_xu_ly"
               ? "Đã xử lý"
@@ -268,10 +284,11 @@ const PageSupport: React.FC = () => {
       },
     },
     {
-      title: 'Thời gian',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: (created_at: string) => dayjs(created_at).format('DD/MM/YYYY HH:mm') || "Không có dữ liệu",
+      title: "Thời gian",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (created_at: string) =>
+        dayjs(created_at).format("DD/MM/YYYY HH:mm") || "Không có dữ liệu",
     },
     {
       title: "Quản trị",
@@ -304,7 +321,8 @@ const PageSupport: React.FC = () => {
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold px-px">Liên hệ khách hàng</span>
+          Quản trị /{" "}
+          <span className="font-semibold px-px">Liên hệ khách hàng</span>
         </h1>
       </div>
       <div className="flex items-center justify-between">
@@ -344,13 +362,13 @@ const PageSupport: React.FC = () => {
           <button
             key="ok"
             onClick={handleOk}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            disabled={currentEvaluate?.trang_thai_lien_he === "da_xu_ly"}
+            className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600  ${currentEvaluate?.trang_thai_lien_he === "da_xu_ly" ? "cursor-not-allowed" : ""}`}
           >
-            Gửi    </button>,
+            Gửi{" "}
+          </button>,
         ]}
       >
-
-
         <h1 className="text-3xl font-bold">Chi tiết nội dung liên hệ</h1>
         {currentEvaluate && (
           <div className="grid grid-cols-12 gap-4">
@@ -367,18 +385,39 @@ const PageSupport: React.FC = () => {
 
             <div className="col-span-9">
               <p>
-                <strong>Thông tin người liên hệ:</strong> {/* spell-checker: disable-line */}
-                <div><strong>Email</strong>: <a href={`mailto:${currentEvaluate.email}`}>{currentEvaluate.email}</a></div>
-                <div><strong>Số điện thoại</strong>: <a href={`tel:${currentEvaluate.sdt_lien_he}`}>{currentEvaluate.sdt_lien_he}</a></div> {/* spell-checker: disable-line */}
+                <strong>Thông tin người liên hệ:</strong>{" "}
+                {/* spell-checker: disable-line */}
+                <div>
+                  <strong>Email</strong>:{" "}
+                  <a href={`mailto:${currentEvaluate.email}`}>
+                    {currentEvaluate.email}
+                  </a>
+                </div>
+                <div>
+                  <strong>Số điện thoại</strong>:{" "}
+                  <a href={`tel:${currentEvaluate.sdt_lien_he}`}>
+                    {currentEvaluate.sdt_lien_he}
+                  </a>
+                </div>{" "}
+                {/* spell-checker: disable-line */}
               </p>
-              <p className='mb-20'><strong>Nội dung liên hệ: </strong> {currentEvaluate.noi_dung_lien_he}</p> {/* spell-checker: disable-line */}
-
+              <p className="mb-20">
+                <strong>Nội dung liên hệ: </strong>{" "}
+                {currentEvaluate.noi_dung_lien_he}
+              </p>{" "}
+              {/* spell-checker: disable-line */}
               {/* Input for feedback */}
               <Input.TextArea
                 rows={4}
                 value={phan_hoi[currentEvaluate.id as number] || ""}
-                onChange={(e) => setphan_hoi({ ...phan_hoi, [currentEvaluate.id as number]: e.target.value })} // spell-checker: disable-line
-                placeholder="Nhập phản hồi" // spell-checker: disable-line
+                onChange={(e) =>
+                  setphan_hoi({
+                    ...phan_hoi,
+                    [currentEvaluate.id as number]: e.target.value,
+                  })
+                } // spell-checker: disable-line
+                placeholder="Nhập phản hồi" //
+                disabled={currentEvaluate.trang_thai_lien_he === "da_xu_ly"}
                 className="mt-4 w-full max-w-full"
               />
             </div>

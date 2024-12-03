@@ -1,24 +1,7 @@
 // import Link from "next/link";
-import {
-  Home,
-  LineChart,
-  Menu,
-  Package,
-  Package2,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
 
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,10 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Notifications from "./Notifications";
-import { useRef, useState } from "react";
 
 const Header = () => {
   const [user] = useLocalStorage("user" as any, {});
@@ -57,7 +39,7 @@ const Header = () => {
           {" "}
           <div className="sticky top-0 z-10 flex h-[60px] items-center border-b border-gray-300 px-4 lg:px-6 bg-white ">
             <Link
-              to="/"
+              to="/admin"
               className="flex items-center gap-2 font-bold text-black text-xl "
             >
               {/* <Package className="h-6 w-6" /> */}

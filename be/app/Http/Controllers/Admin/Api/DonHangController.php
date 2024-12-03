@@ -597,7 +597,7 @@ class DonHangController extends Controller
     public function danhSachYeuCauRutTien()
     {
         try {
-            $yeuCauRutTiens = YeuCauRutTien::with('viTien.user', 'nganHang')->orderByDesc('id')->get();
+            $yeuCauRutTiens = YeuCauRutTien::with('viTien.user')->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,

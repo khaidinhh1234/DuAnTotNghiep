@@ -33,7 +33,7 @@ class StoreTaiKhoanRequest extends FormRequest
             'so_dien_thoai' => 'nullable|string|max:15',
             'dia_chi' => 'nullable|string',
             'ngay_sinh' => 'nullable|date',
-            'gioi_tinh' => 'nullable|in:1,2,0',
+            'gioi_tinh' => 'nullable|in:1,2,3',
             'vai_tros' => 'array'
         ];
     }

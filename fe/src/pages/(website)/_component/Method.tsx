@@ -12,7 +12,7 @@ const Method = () => {
               <h3 className="font-bold text-xl mt-3 mb-2">
                 Miễn phí vận chuyển
               </h3>
-              <p>Miễn phí vận chuyển cho đơn hàng trên $150</p>
+              <p>Miễn phí vận chuyển cho đơn hàng trên 500.000đ</p>
             </div>
             <div className="mx-auto">
               <i className="fa-regular fa-circle-dollar text-3xl"></i>

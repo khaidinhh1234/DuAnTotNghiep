@@ -156,7 +156,21 @@ const MyOrderdetail = () => {
                             {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
                           </h3>
                           <p className={`font-bold  block md:hidden`}>
-                            Giá: ${item?.thanh_tien.toLocaleString("vi-VN")}
+                            Giá:{" "}
+                            <span className="text-gray-400 line-through mx-2">
+                              {item?.bien_the_san_pham?.gia_khuyen_mai &&
+                                (item?.bien_the_san_pham?.gia_ban).toLocaleString(
+                                  "vi-VN"
+                                ) + "đ"}
+                            </span>
+                            {(item?.bien_the_san_pham
+                              ?.gia_khuyen_mai_tam_thoi !== null
+                              ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
+                              : item?.bien_the_san_pham?.gia_khuyen_mai !== null
+                                ? item?.bien_the_san_pham?.gia_khuyen_mai
+                                : item?.bien_the_san_pham?.gia_ban
+                            ).toLocaleString("vi-VN")}{" "}
+                            đ
                           </p>
                           <p className="mb-2">
                             Size:
@@ -306,12 +320,14 @@ const MyOrderdetail = () => {
       )}
       <div className="flex justify-between items-center border px-5 pt-4 pb-1">
         <Link to={"/mypro/myorder"}>
-          <h1>
-            <i className="fa-solid fa-chevron-down fa-rotate-90"></i>TRỞ LẠI
+          <h1 className="flex">
+            <i className="fa-solid fa-chevron-down fa-rotate-90"></i>{" "}
+            <span className="hidden md:block">TRỞ LẠI</span>
           </h1>
         </Link>
         <div className="flex gap-5 ">
-          <h1>MÃ ĐƠN HÀNG.{slug}</h1>{" "}
+          <h1 className="hidden md:block">MÃ ĐƠN HÀNG.</h1>
+          <span className="pt-1 md:pt-0">{slug}</span>
           <h1
             className={`border-l-2 pl-5  font-semibold ${
               donhang?.trang_thai_don_hang == "Chờ xác nhận"
@@ -343,20 +359,33 @@ const MyOrderdetail = () => {
           chitiet?.danh_gia_da_xoa?.length <= 0 ? (
             (donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
               donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng") && (
-              <button
-                className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
-                onClick={() => handleDanhgia()}
-              >
-                Đánh giá
-              </button>
+              <>
+                {" "}
+                <button
+                  className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer hidden md:block"
+                  onClick={() => handleDanhgia()}
+                >
+                  Đánh giá
+                </button>
+                <i
+                  className="fa-regular fa-star text-[#FFD43B] md:hidden cursor-pointer "
+                  onClick={() => handleDanhgia()}
+                ></i>
+              </>
             )
           ) : (
-            <button
-              className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer "
-              onClick={() => setView(true)}
-            >
-              Xem Đánh giá
-            </button>
+            <>
+              <button
+                className="border-l-2 px-2 text-red-500 font-semibold cursor-pointer hidden md:block"
+                onClick={() => setView(true)}
+              >
+                Xem Đánh giá
+              </button>
+              <i
+                className="fa-solid fa-star  text-[#FFD43B] md:hidden cursor-pointer "
+                onClick={() => setView(true)}
+              ></i>
+            </>
           )}
         </div>
       </div>
@@ -423,7 +452,21 @@ const MyOrderdetail = () => {
                           {item?.bien_the_san_pham?.san_pham?.ten_san_pham}
                         </h3>
                         <p className={`font-bold  block md:hidden`}>
-                          Giá: ${item?.thanh_tien.toLocaleString("vi-VN")}
+                          Giá:{" "}
+                          <span className="text-gray-400 line-through mx-2">
+                            {item?.bien_the_san_pham?.gia_khuyen_mai &&
+                              (item?.bien_the_san_pham?.gia_ban).toLocaleString(
+                                "vi-VN"
+                              ) + "đ"}
+                          </span>
+                          {(item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi !==
+                          null
+                            ? item?.bien_the_san_pham?.gia_khuyen_mai_tam_thoi
+                            : item?.bien_the_san_pham?.gia_khuyen_mai !== null
+                              ? item?.bien_the_san_pham?.gia_khuyen_mai
+                              : item?.bien_the_san_pham?.gia_ban
+                          ).toLocaleString("vi-VN")}{" "}
+                          đ
                         </p>
                         <p className="mb-2">
                           Size:
@@ -513,7 +556,7 @@ const MyOrderdetail = () => {
                       ? "Hoàn hàng"
                       : donhang?.trang_thai_don_hang}
               </span>
-              <span className="px-10 font-medium">
+              <span className="md:px-10 font-medium">
                 Sản phẩm của bạn đã{" "}
                 {donhang?.trang_thai_don_hang === "Đang xử lý"
                   ? "Chờ lấy hàng"
@@ -576,18 +619,39 @@ const MyOrderdetail = () => {
                 "Không có địa chỉ"}
             </p>
           </div>
-          <div className="border-l px-5 flex justify-between">
-            {/* <h1>THÔNG TIN ĐƠN HÀNG</h1> */}
-            <div className="text-end">
-              {" "}
+          <div className="border-l px-5 flex flex-col md:flex-row justify-between">
+            <div className="text-end mb-4 md:mb-0">
               <p>Tổng tiền hàng</p>
-              <p>Tiết kiệm</p>
-              <p>Phí vận chuyển</p>
-              <p>Voucher từ GLOW</p>
-              <p>Thành tiền</p>
+              <p className="md:hidden">
+                ₫
+                {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
+                  "vn-VN"
+                )}
+              </p>
+              <p>Tiết kiệm</p>{" "}
+              <p className="md:hidden">
+                ₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}
+              </p>
+              <p>Phí vận chuyển</p>{" "}
+              <p className="md:hidden">
+                ₫
+                {chitiet?.tien_ship !== 0
+                  ? (chitiet?.tien_ship ?? "Miễn Phí Ship")
+                  : "Miễn Phí Ship"}
+              </p>
+              <p>Voucher từ GLOW</p>{" "}
+              <p className="md:hidden">
+                ₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
+              </p>
+              <p>Thành tiền</p>{" "}
+              <p className="text-red-600 font-semibold text-2xl md:hidden">
+                {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
+                  "vi-VN"
+                )}{" "}
+                đ
+              </p>
             </div>
-            <div className="text-right">
-              {" "}
+            <div className="text-right hidden md:block">
               <p>
                 ₫
                 {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
@@ -596,15 +660,11 @@ const MyOrderdetail = () => {
               </p>
               <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p>
               <p>
-                {(chitiet?.tien_ship != 0
+                {chitiet?.tien_ship !== 0
                   ? (chitiet?.tien_ship ?? "Miễn Phí Ship")
-                  : "Miễn Phí Ship"
-                ).toLocaleString("vn-VN")}{" "}
+                  : "Miễn Phí Ship"}
               </p>
-              <p>
-                {" "}
-                ₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
-              </p>
+              <p>₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}</p>
               <p className="text-red-600 font-semibold text-2xl">
                 {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
                   "vi-VN"
