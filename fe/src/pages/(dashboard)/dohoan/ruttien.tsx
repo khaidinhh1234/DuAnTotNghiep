@@ -27,6 +27,8 @@ interface BankInfo {
 }
 
 interface WithdrawalRequest {
+  ten_chu_tai_khoan: any;
+  tai_khoan_ngan_hang: any;
   id: number;
   vi_tien_id: number;
   ngan_hang_id: number;
@@ -56,6 +58,7 @@ const WithdrawalRequests: React.FC = () => {
   const [isModalVisible1, setIsModalVisible1] = useState(false);
 
   const handleOpen = (record: WithdrawalRequest) => {
+    console.log(record);
     setSelectedRecord(record); // Lưu dữ liệu của hàng
     setIsModalVisible1(true); // Hiển thị Modal
   };
@@ -81,6 +84,12 @@ const WithdrawalRequests: React.FC = () => {
     },
   });
   console.log(data);
+  const rutTien = data?.data.map((item: any, index: number) => {
+    return {
+      key: index + 1,
+      ...item,
+    };
+  });
   const { mutate: confirmWithdrawal } = useMutation({
     mutationFn: async (id: number) => {
       const response = await instance.post(`/rut-tien/xac-nhan/${id}`, {
@@ -144,7 +153,7 @@ const WithdrawalRequests: React.FC = () => {
   const columns: TableColumnsType<WithdrawalRequest> = [
     {
       title: "STT",
-      dataIndex: "id",
+      dataIndex: "key",
       key: "key",
       width: "10%",
     },
@@ -175,13 +184,13 @@ const WithdrawalRequests: React.FC = () => {
       dataIndex: "ngan_hang",
       key: "ngan_hang",
       width: "15%",
-      render: (bank: BankInfo) => (
+      render: (bank: any, record: any) => (
         <Button
           type="link"
-          onClick={() => showBankModal(bank)}
+          onClick={() => showBankModal(record)}
           className="text-sky-500  underline decoration-sky-500"
         >
-          {bank?.ngan_hang}
+          {bank ?? "không có thông tin ngân hàng"}
         </Button>
       ),
     },
@@ -292,11 +301,12 @@ const WithdrawalRequests: React.FC = () => {
                     >
                       {selectedRecord.so_tien?.toLocaleString("vi-VN")}
                     </p>
-                    <p className="absolute top-[365px] left-28 text-2xl font-bold text-black/70 uppercase">
-                      {selectedRecord.ngan_hang?.ten_chu_tai_khoan}
+                    <p className="absolute top-[365px] inset-x-0 text-2xl font-bold text-black/70 uppercase text-center">
+                      {selectedRecord?.ten_chu_tai_khoan}
                     </p>
+
                     <p className="absolute top-[408px] left-[250px] text-xl font-medium text-[#868E93]">
-                      {selectedRecord.ngan_hang?.tai_khoan_ngan_hang}
+                      {selectedRecord.tai_khoan_ngan_hang}
                     </p>
                     <img
                       src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1732895634/r1rikwdi75gdimpnspmj.png"
@@ -332,7 +342,7 @@ const WithdrawalRequests: React.FC = () => {
 
         <Table
           columns={columns}
-          dataSource={data?.data}
+          dataSource={rutTien}
           pagination={{
             pageSize: 10,
             className: "my-5",

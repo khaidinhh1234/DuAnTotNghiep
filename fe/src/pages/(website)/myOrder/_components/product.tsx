@@ -339,7 +339,7 @@ const ProductItem = ({
         </div>
       )}
       <div className="py-6 grid grid-cols-7  border-b border-hrBlack px-5 lg:px-0">
-        <div className="col-span-5 ">
+        <div className=" md:col-span-5  col-span-7">
           <div className="flex justify-between ">
             <div className="grid justify-between">
               <div className="flex gap-5 items-start  md:items-center">
@@ -397,7 +397,7 @@ const ProductItem = ({
                     </span>
                     , Màu: <span>{mau}</span>
                   </p>
-                  <p className="mb-10">Số lượng: {quantity}</p>{" "}
+                  <p className="md:mb-10">Số lượng: {quantity}</p>{" "}
                   <span className="">
                     Sản phẩm của bạn{" "}
                     {status === "Đang xử lý"
@@ -518,7 +518,7 @@ const ProductItem = ({
             </span>
           </div>
         </div>{" "}
-        <div className="block sm:hidden col-span-2 text-end w-[450px]">
+        <div className="block sm:hidden col-span-2 text-end w-[420px]">
           <Link to={`/mypro/myorder/${ma_don_hang}`}>
             <button className="hover:bg-blackL hover:text-white shadow font-medium shadow-black/50 text-sm py-3 px-6 mb-2 rounded-lg w-[100%]">
               Xem Đơn Hàng
@@ -527,7 +527,8 @@ const ProductItem = ({
           <br />
           {(status === "Chờ xác nhận" ||
             status === "Đã xác nhận" ||
-            status === "Hoàn tất đơn hàng" ||
+            // status === "Đang xử lý" ||
+
             status === "Chờ khách hàng xác nhận") && (
             <button
               className={`${
@@ -535,9 +536,10 @@ const ProductItem = ({
                 status === "Chờ khách hàng xác nhận"
                   ? "bg-black hover:bg-black/50"
                   : "bg-[#FF7262] hover:bg-[#e9b2ac]"
-              } shadow-md shadow-slate-600/50 text-white  text-sm py-3 rounded-lg mb-2 w-[50%]`}
-              onClick={() => {
-                console.log("click");
+              } shadow-md shadow-slate-600/50 text-white  text-sm py-3 rounded-lg mb-2 w-[100%]`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleCancelOrder();
               }}
             >
               {status === "Chờ khách hàng xác nhận"
@@ -545,12 +547,45 @@ const ProductItem = ({
                 : "Hủy Đơn Hàng"}
             </button>
           )}
+          {status === "Hoàn tất đơn hàng" &&
+            trang_thai_thanh_toan === "Đã thanh toán" && (
+              <Link
+                to={`/mypro/hoanhang/${ma_don_hang}`}
+                className={`${
+                  status === "Hoàn tất đơn hàng" ||
+                  status === "Chờ khách hàng xác nhận"
+                    ? "bg-black hover:bg-black/50"
+                    : "bg-[#FF7262] hover:bg-[#e9b2ac]"
+                } 
+        shadow-md shadow-slate-600/50 
+        text-white text-sm py-3 
+        rounded-lg w-full block text-center`}
+              >
+                Hoàn hàng
+              </Link>
+            )}
 
-          {trang_thai_thanh_toan == "Chưa thanh toán" && (
-            <button className="shadow-md shadow-slate-600/50 w-[49%]  hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-6 mb-2 rounded-lg text-white">
-              Tiếp tục thanh toán
-            </button>
-          )}
+          {isToday(dateToCheck) &&
+            phuong_thuc_thanh_toans !== "Thanh toán khi nhận hàng" &&
+            trang_thai_thanh_toan == "Chưa thanh toán" &&
+            status == "Chờ xác nhận" && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPayment(true);
+                }}
+                className="shadow-md shadow-slate-600/50 w-[100%]  hover:text-white  bg-[#FF7262] hover:bg-[#e9b2ac] font-medium  text-sm py-3 px-6 mb-2 rounded-lg text-white"
+              >
+                {isPending ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin "></i> Tiếp tục
+                    thanh toán
+                  </>
+                ) : (
+                  "Tiếp tục thanh toán"
+                )}
+              </button>
+            )}
         </div>
       </div>
     </>

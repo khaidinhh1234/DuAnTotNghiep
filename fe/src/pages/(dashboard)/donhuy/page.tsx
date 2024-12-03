@@ -18,7 +18,8 @@ import type { TableColumnsType, TableProps } from "antd";
 // import type { FilterDropdownProps } from "antd/es/table/interface";
 // import Highlighter from "react-highlight-words";
 import instance from "@/configs/admin";
-import RefundDetail from "./RefundDetail";
+import DonhuyDetail from "./detail";
+// import RefundDetail from "./RefundDetail";
 
 const { RangePicker } = DatePicker;
 const { Search } = Input;
@@ -36,12 +37,14 @@ interface RefundRequest {
   };
 }
 
+type TableRowSelection<T> = TableProps<T>["rowSelection"];
+
 // const statusOptions = [
 //   { value: "hoan_thanh_cong", label: "Xác nhận đơn hoàn" },
 //   { value: "tu_choi", label: "Từ chối" }
 // ];
 
-const RefundRequests: React.FC = () => {
+const Donhuy: React.FC = () => {
   //   const [searchText, setSearchText] = useState("");
   //   const [searchedColumn, setSearchedColumn] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -109,6 +112,10 @@ const RefundRequests: React.FC = () => {
     },
   });
 
+  const handleConfirm = (id: number) => {
+    mutate({ ids: [id], status: "accept" });
+  };
+
   const handleTotalSearch = (value: string) => {
     if (value) {
       const filtered = data?.data.filter((item: RefundRequest) => {
@@ -145,7 +152,7 @@ const RefundRequests: React.FC = () => {
 
   const tabItems = [
     { label: "Tất cả", key: "Tất cả" },
-    { label: "Chờ xác nhận hoàn hàng", key: "cho_xac_nhan" },
+    { label: "Chờ xác nhận ", key: "cho_xac_nhan" },
     { label: "Hoàn hàng", key: "hoan_thanh_cong" },
     { label: "Từ chối", key: "tu_choi" },
   ];
@@ -171,7 +178,18 @@ const RefundRequests: React.FC = () => {
       width: "15%",
     },
     {
-      title: "Số tiền hoàn",
+      title: "Trạng thái đơn hàng",
+      dataIndex: "trang_thai",
+      key: "trang_thai",
+      width: "15%",
+      render: (status) => (
+        <>
+          <Tag color={getStatusColor(status)}>Đang giao hàng</Tag>
+        </>
+      ),
+    },
+    {
+      title: "Số tiền hoàn trả",
       dataIndex: "so_tien_hoan",
       key: "so_tien_hoan",
       width: "15%",
@@ -181,23 +199,23 @@ const RefundRequests: React.FC = () => {
           currency: "VND",
         }).format(amount),
     },
-    {
-      title: "Hình ảnh minh chứng",
-      dataIndex: "don_hang",
-      width: "20%",
-      render: (value) => (
-        <Image
-          src={value.hinh_anh_hoan_tra}
-          alt="minh chứng"
-          width={100}
-          height={100}
-          className="rounded-md object-cover"
-          preview={{
-            mask: "Click", // Văn bản hiển thị khi hover vào ảnh
-          }}
-        />
-      ),
-    },
+    // {
+    //   title: "Hình ảnh minh chứng",
+    //   dataIndex: "don_hang",
+    //   width: "20%",
+    //   render: (value) => (
+    //     <Image
+    //       src={value.hinh_anh_hoan_tra}
+    //       alt="minh chứng"
+    //       width={100}
+    //       height={100}
+    //       className="rounded-md object-cover"
+    //       preview={{
+    //         mask: "Click", // Văn bản hiển thị khi hover vào ảnh
+    //       }}
+    //     />
+    //   ),
+    // },
     {
       title: "Lý do",
       dataIndex: "ly_do",
@@ -220,7 +238,7 @@ const RefundRequests: React.FC = () => {
       ),
     },
     {
-      title: "Thời gian hoàn",
+      title: "Thời gian đặt hàng",
       dataIndex: "thoi_gian_hoan",
       key: "thoi_gian_hoan",
       width: "15%",
@@ -332,22 +350,29 @@ const RefundRequests: React.FC = () => {
                 </Popconfirm>
               </>
             )}
-          <RefundDetail record={record} />
+          <DonhuyDetail record={record} />
         </Space>
       ),
     },
   ];
 
+  const rowSelection: TableRowSelection<RefundRequest> = {
+    selectedRowKeys,
+    onChange: (newSelectedRowKeys) => {
+      setSelectedRowKeys(newSelectedRowKeys);
+    },
+  };
+
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex items-center">
         <h1 className="md:text-base">
-          Quản trị / <span className="font-semibold">Yêu cầu hoàn hàng</span>
+          Quản trị / <span className="font-semibold">Yêu cầu hủy hàng</span>
         </h1>
       </div>
 
       <div className="flex items-center justify-between mb-4">
-        <h1 className="font-semibold md:text-3xl">Yêu cầu hoàn hàng</h1>
+        <h1 className="font-semibold md:text-3xl">Yêu cầu hủy đơn hàng</h1>
       </div>
 
       <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
@@ -367,7 +392,7 @@ const RefundRequests: React.FC = () => {
         </Flex>
 
         <Table
-          // rowSelection={rowSelection}
+          rowSelection={rowSelection}
           columns={columns}
           dataSource={filteredData}
           loading={isLoading}
@@ -382,4 +407,4 @@ const RefundRequests: React.FC = () => {
   );
 };
 
-export default RefundRequests;
+export default Donhuy;

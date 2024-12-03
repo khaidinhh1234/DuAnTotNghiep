@@ -346,67 +346,7 @@ const OrderAdmin: React.FC = () => {
         );
       },
     },
-    // {
-    //   title: "Giao hàng",
-    //   dataIndex: "trang_thai_van_chuyen",
-    //   ...getColumnSearchProps("trang_thai_van_chuyen"),
-    //   sorter: (a: any, b: any) =>
-    //     a.trang_thai_van_chuyen.localeCompare(b.trang_thai_van_chuyen),
-    //   onFilter: (value: boolean | React.Key, record: any) =>
-    //     record.trang_thai_van_chuyen
-    //       .toLowerCase()
-    //       .includes(String(value).toLowerCase()),
 
-    //   render: (_, record) => {
-    //     return (
-    //       <div
-    //         className={
-    //           record.trang_thai_van_chuyen === "Chờ xử lý"
-    //             ? "text-orange-500 font-bold text-[15px]"
-    //             : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-    //               ? "text-blue-500 font-bold text-[15px]"
-    //               : record.trang_thai_van_chuyen === "Đang giao hàng"
-    //                 ? "text-green-500 font-bold text-[15px]"
-    //                 : record.trang_thai_van_chuyen === "Giao hàng thành công"
-    //                   ? "text-teal-500 font-bold text-[15px]"
-    //                   : "text-red-500 font-bold text-[15px]" // Trạng thái khác
-    //         }
-    //       >
-    //         {record.trang_thai_van_chuyen === "Chờ xử lý"
-    //           ? "Chờ xử lý"
-    //           : record.trang_thai_van_chuyen === "Chờ lấy hàng"
-    //             ? "Chờ lấy hàng"
-    //             : record.trang_thai_van_chuyen === "Đang giao hàng"
-    //               ? "Đang giao hàng"
-    //               : record.trang_thai_van_chuyen === "Giao hàng thành công"
-    //                 ? "Giao hàng thành công"
-    //                 : "Hủy"}
-    //       </div>
-    //     );
-    //   },
-    // },
-    // {
-    //   title: "COD",
-    //   render: (_, record) => {
-    //     return (
-    //       <div
-    //         className={
-    //           record.trang_thai_thanh_toan === "Chưa thanh toán"
-    //             ? "text-red-500 font-bold text-[15px]" // Màu đỏ cho "Chưa thanh toán"
-    //             : record.trang_thai_thanh_toan === "Đã thanh toán"
-    //               ? "text-green-500 font-bold text-[15px]" // Màu xanh lá cho "Đã thanh toán"
-    //               : "text-gray-500 font-bold text-[15px]" // Màu xám cho các trạng thái khác
-    //         }
-    //       >
-    //         {record.trang_thai_thanh_toan === "Chưa thanh toán"
-    //           ? "Chưa Nhận"
-    //           : record.trang_thai_thanh_toan === "Đã thanh toán"
-    //             ? "Đã Nhận"
-    //             : "Không thu tiền"}
-    //       </div>
-    //     );
-    //   },
-    // },
     {
       title: "Tổng tiền",
       dataIndex: " tong_tien_don_hang",
