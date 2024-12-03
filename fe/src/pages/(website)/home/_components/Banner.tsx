@@ -9,10 +9,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
+import { Link } from "react-router-dom";
 
 const Banner = ({ banner }: any) => {
   // const mau = banner?.[0]?.noi_dung?.mau_tieu_de_chinh;
-  // console.log(banner);
+  console.log(banner);
   return (
     <div>
       {" "}
@@ -67,7 +68,8 @@ const Banner = ({ banner }: any) => {
                     </div>
                     {item?.noi_dung?.tieu_de_nut && (
                       <div>
-                        <button
+                        <Link
+                          to={item?.noi_dung?.duong_link}
                           style={{
                             backgroundColor: item?.noi_dung?.mau_nut,
                             color: item?.noi_dung?.mau_tieu_de_nut,
@@ -90,7 +92,7 @@ const Banner = ({ banner }: any) => {
                         >
                           {item?.noi_dung?.tieu_de_nut}
                           <i className="fa-solid fa-arrow-right ml-3"></i>
-                        </button>
+                        </Link>
                       </div>
                     )}
                   </div>

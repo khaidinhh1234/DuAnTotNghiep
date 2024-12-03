@@ -40,7 +40,7 @@ const UsersAdminkhachhang: React.FC = () => {
       return res.data;
     },
   });
-  // console.log(data);
+  console.log(data);
   const user = data?.data
     ?.filter((item: any) =>
       item?.vai_tros?.some((item: any) => item?.ten_vai_tro === "Khách hàng")

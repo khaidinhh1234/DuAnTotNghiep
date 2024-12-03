@@ -62,18 +62,21 @@ export const changePassword = z
     message: "Mật khẩu  không khớp",
     path: ["password_confirmation"],
   });
-  export const lienhe = z.object({
-    email: z.string().email({ message: "Email không hợp lệ" }),
-  
-    name: z
-    .string()
-    .min(2, { message: "Vui lòng nhập Tên" })
-    .max(20, { message: "Không quá 20 ký tự" })
+export const lienhe = z.object({
+  email: z.string().email({ message: "Email không hợp lệ" }),
 
-    .max(20, { message: "Không quá 20 ký tự" })
-    .regex(/^[A-Za-zÀ-ỹ]+(?:\s[A-Za-zÀ-ỹ]+)?$/, {
+  name: z
+    .string()
+    .min(5, { message: "Vui lòng nhập đầy đủ họ tên" })
+    .max(30, { message: "Không quá 30 ký tự" })
+    .regex(/^[A-Za-zÀ-ỹ]+(?:\s[A-Za-zÀ-ỹ]+)*$/, {
       message: "Không chứa ký tự đặc biệt, số và dấu cách",
     }),
-    loai_lien_he: z.string(),
-    noi_dung_lien_he: z.string().min(1, "Vui lòng nhập nội dung liên hệ")
-  });
+  loai_lien_he: z.string(),
+  noi_dung_lien_he: z
+    .string()
+    .min(1, { message: "Vui lòng nhập nội dung liên hệ" })
+    .regex(/^\S.*\S$|^\S{1}$/, {
+      message: "Nội dung liên hệ không được có khoảng trắng ở đầu hoặc cuối",
+    }),
+});

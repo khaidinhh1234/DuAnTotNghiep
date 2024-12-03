@@ -39,7 +39,7 @@ const ContactPage = () => {
     }
   }, []);
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
       try {
         const response = await instanceClient.post("lienhe", data);
@@ -177,9 +177,14 @@ const ContactPage = () => {
 
                 <button
                   type="submit"
-                  className="btn-black lg:text-lg lg:py-2 lg:px-7 py-2 px-5 font-medium rounded-lg"
+                  className={`btn-black lg:text-lg lg:py-2 lg:px-7 py-2 px-5 font-medium rounded-lg
+                  isPending ? "cursor-not-allowed" : "hover:bg-black hover:text-white"
+                  
+                  `}
                 >
-                  <span>Gửi yêu cầu hỗ trợ</span>
+                  <span>
+                    {isPending ? "Đang gửi..." : "Gửi yêu cầu hỗ trợ"}
+                  </span>
                 </button>
               </form>
             </div>

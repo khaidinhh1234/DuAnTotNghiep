@@ -221,7 +221,7 @@ const UsersnhanvienEdit = () => {
                       Nữ
                     </Radio>
                     <Radio
-                      value="0"
+                      value="3"
                       className="flex flex-row items-end flex-nowrap"
                     >
                       Khác...

@@ -207,7 +207,6 @@ const Header = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   // const [searchValue, setSearchValue] = useState("");
   const [menu, setMenu] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
   // const handleMouseLeave = () => {
@@ -285,8 +284,16 @@ const Header = () => {
       path: "/ourstory",
     },
     {
-      name: "Sản phẩm",
-      path: "/shop",
+      name: "Nam",
+      path: "/shop/nam",
+    },
+    {
+      name: "Nữ",
+      path: "/shop/nu",
+    },
+    {
+      name: "Trẻ em",
+      path: "/shop/tre-em",
     },
     {
       name: "Khuyến mãi",
@@ -348,7 +355,9 @@ const Header = () => {
                         to={item.path}
                         onClick={() => setMenu(!menu)}
                         className={({ isActive }) =>
-                          isActive ? "underline decoration-sky-500" : ""
+                          isActive
+                            ? "underline decoration-sky-500"
+                            : "hover:underline hover:text-red-500"
                         }
                       >
                         {item.name}

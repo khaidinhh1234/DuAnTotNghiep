@@ -14,7 +14,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const [parentIds, setParentIds] = useState<number[]>([]);
   const [childIds, setChildIds] = useState<number[]>([]);
   // lọc giá
-  const [price, setPrice] = useState([0, 1000000]);
+  const [price, setPrice] = useState([0, 2000000]);
   // size
   const [selectedSize, setselectedSize] = useState<number[]>([]);
   // console.log(selectedSize);
@@ -349,8 +349,8 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                     <div className="w-full">
                       <Slider
                         range
-                        defaultValue={[0, 1000000]}
-                        max={1000000}
+                        defaultValue={[0, 2000000]}
+                        max={2000000}
                         onAfterChange={(value) => {
                           setPrice(value as [number, number]);
                           mutate();

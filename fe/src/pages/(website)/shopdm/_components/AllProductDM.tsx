@@ -35,7 +35,7 @@ const AllProductDM = () => {
     <>
       <section>
         <div className="container">
-          <div className=" flex  mt-20 text-2xl font-bold">
+          <div className=" flex  mt-16 text-2xl font-bold">
             <h1 className="font-bold">Danh Mục </h1>{" "}
             <p className="pl-2 capitalize ">
               {data?.data?.danh_muc?.ten_danh_muc ?? "Không xác định"}
