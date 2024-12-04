@@ -353,7 +353,6 @@ const ProductCategoriesDM = () => {
         </svg>
       </div>
     );
-  //   1233412312
   return (
     <div>
       {" "}
