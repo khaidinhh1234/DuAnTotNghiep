@@ -82,6 +82,7 @@ function TaiChinh() {
     enabled: !!storedVerificationCode,
     staleTime: 5 * 60 * 1000,
   });
+  console.log(walletData);
   const confirmPayment = useMutation({
     mutationKey: ["payment-confirmation", orderId],
     mutationFn: async () => {

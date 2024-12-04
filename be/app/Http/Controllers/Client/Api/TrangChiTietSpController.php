@@ -57,7 +57,8 @@ class TrangChiTietSpController extends Controller
                 'danhGias.user',
                 'danhGias.danhGiaHuuIch',
                 'danhGias' => function ($query) {
-                    $query->withCount('danhGiaHuuIch');
+                    $query->withCount('danhGiaHuuIch')
+                    ->take(5);
                 },
                 'danhGias.danhGiaBienTheSanPhams' => function ($query) use ($idBienThe) {
                     $query->whereIn('bien_the_san_pham_id', $idBienThe)
@@ -71,15 +72,7 @@ class TrangChiTietSpController extends Controller
                 'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
 
-            // Lọc các đánh giá biến thể sản phẩm duy nhất
-            $chiTietSanPham->danhGias->each(function ($danhGia) use ($idBienThe) {
-                foreach ($idBienThe as $id) {
-                    $danhGias = BienTheSanPham::where('id', $id)->with(['DanhGiaBienThe' => function ($query) use ($id) {
-                        $query->where('bien_the_san_pham_id', $id);
-                    }])->first();
-                    $danhGia->danhGiaBienTheSanPhams->danh_gia_bien_the_san_phams = $danhGias;
-                }
-            });
+
             // Kiểm tra xem sản phẩm có tồn tại không
             if (!$chiTietSanPham) {
                 return response()->json([

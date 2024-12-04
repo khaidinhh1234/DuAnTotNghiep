@@ -53,7 +53,7 @@ const ProductItem = ({
   const [phuong_thuc_thanh_toan, setPhuongthuc] = useState<any>({});
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
 
-  const { mutate } = useMutation({
+  const { mutate, isPending: PendingHuy } = useMutation({
     mutationFn: async (data: any) => {
       // console.log(data);
 
@@ -73,7 +73,6 @@ const ProductItem = ({
         return response.data;
       } catch (error: any) {
         message.error(error.response?.data?.message || "Hủy đơn hàng thất bại");
-        console.log(error);
       }
 
       // const response = await  instanceClient.post(`don-hang/huy-don-hang`, data);
@@ -120,8 +119,14 @@ const ProductItem = ({
   const closeModal = () => setIsModalOpen(false);
   const handleSubmit = (e: any) => {
     e.preventDefault();
+
     const data = { li_do_huy_hang, ma_don_hang };
-    mutate(data);
+    if (status === "Chờ xác nhận") {
+      mutate(data);
+    } else {
+      // mutate(data);
+      mutate(data);
+    }
   };
   // const handlehoan ()=>{
 
@@ -183,7 +188,7 @@ const ProductItem = ({
   const handlethanhtoan = (e: any) => {
     e.preventDefault();
     const data = { ma_don_hang, phuong_thuc_thanh_toan };
-    console.log(data);
+    // console.log(data);
     mutatePayment(data);
   };
   const handleVerification = async (verificationCode: string) => {
@@ -215,13 +220,25 @@ const ProductItem = ({
       value: "Momo_QR",
       img: "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1730963854/nzgq1qiuvtynqdkhwc5g.png",
     },
-    { name: "Thẻ ATM  và tài khoản ngân hàng", value: "Momo_ATM" },
+    {
+      name: "Thẻ ATM  và tài khoản ngân hàng",
+      value: "Momo_ATM",
+      img: "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1733305709/knq1aqw2tzipqogr6yuh.png",
+    },
     // {
     //   name: "Thanh toán qua Visa, MasterCard, JCB",
     //   value: "Ví điện tử",
     // },
-    { name: "Ví Glow Clothing", value: "Ví tiền" },
-    { name: "Thanh toán khi nhận hàng", value: "Thanh toán khi nhận hàng" },
+    {
+      name: "Ví Glow Clothing",
+      value: "Ví tiền",
+      img: "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1733307344/dsey7ucvjr4tgezo2fcr.png",
+    },
+    {
+      name: "Thanh toán khi nhận hàng",
+      value: "Thanh toán khi nhận hàng",
+      img: "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1733307239/evmx2ztwos57kifois3n.png",
+    },
   ];
   //upload image
 
@@ -255,7 +272,7 @@ const ProductItem = ({
                     <img
                       src={reason?.img}
                       alt={reason?.name}
-                      className="w-12 h-12"
+                      className="w-auto h-12"
                     />
                   </label>
                 ))}
@@ -461,7 +478,7 @@ const ProductItem = ({
                 status === "Chờ khách hàng xác nhận"
                   ? "bg-black hover:bg-black/50"
                   : "bg-[#FF7262] hover:bg-[#e9b2ac]"
-              } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg my-2`}
+              } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg my-2 ${PendingHuy ? "cursor-not-allowed" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
                 handleCancelOrder();
@@ -470,7 +487,9 @@ const ProductItem = ({
               {status === "Chờ khách hàng xác nhận" &&
               status !== "Hoàn tất đơn hàng"
                 ? "Đã nhận hàng"
-                : "Hủy Đơn Hàng"}
+                : PendingHuy
+                  ? "Loading..."
+                  : "Hủy Đơn Hàng"}
             </button>
           )}
           <br />

@@ -175,7 +175,7 @@ class TaiKhoanController extends Controller
             $taiKhoan->update([
                 'ho' => $request->ho,
                 'ten' => $request->ten,
-                'anh_nguoi_dung' => $request->anh_nguoi_dung ?? 'https://res.cloudinary.com/dpundwxg1/image/upload/v1729485508/Avatar-trang-den_apceuv.png',
+                'anh_nguoi_dung' => $request->anh_nguoi_dung ??  $taikhoan->anh_nguoi_dung,
                 'so_dien_thoai' => $request->so_dien_thoai,
                 'dia_chi' => $request->dia_chi,
                 'ngay_sinh' => $request->ngay_sinh,

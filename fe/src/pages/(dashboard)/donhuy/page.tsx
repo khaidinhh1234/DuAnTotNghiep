@@ -19,6 +19,8 @@ import type { TableColumnsType, TableProps } from "antd";
 // import Highlighter from "react-highlight-words";
 import instance from "@/configs/admin";
 import DonhuyDetail from "./detail";
+import FormatDate from "@/components/hook/formatdata";
+import Notehuy from "./notehuy";
 // import RefundDetail from "./RefundDetail";
 
 const { RangePicker } = DatePicker;
@@ -30,11 +32,12 @@ interface RefundRequest {
   ly_do: string;
   trang_thai: string;
   thoi_gian_hoan: string;
-  don_hang: {
-    ma_don_hang: string;
-    tong_tien_don_hang: number;
-    trang_thai_don_hang: string;
-  };
+  trang_thai_thanh_toan: string;
+
+  ma_don_hang: string;
+  tong_tien_don_hang: number;
+  trang_thai_don_hang: string;
+  created_at: string;
 }
 
 type TableRowSelection<T> = TableProps<T>["rowSelection"];
@@ -51,13 +54,14 @@ const Donhuy: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("Tất cả");
   const [filteredData, setFilteredData] = useState<RefundRequest[]>([]);
   //   const searchInput = useRef<InputRef>(null);
+  console.log("selectedRowKeys", filteredData);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["refund-requests"],
+    queryKey: ["donhuy"],
     queryFn: async () => {
-      const res = await instance.get("/donhanghoan");
-      return res.data;
+      const res = await instance.get("/danh-sach-don-huy");
+      return res.data.data;
     },
   });
   console.log(data);
@@ -81,58 +85,50 @@ const Donhuy: React.FC = () => {
   const { mutate } = useMutation({
     mutationFn: async ({
       ids,
-      status,
+      trang_thai,
     }: {
-      ids: React.Key[];
-      status: string;
+      ids: number;
+      trang_thai: string;
     }) => {
-      const formData = new FormData();
-      formData.append("_method", "PUT");
-      formData.append(
-        "trang_thai",
-        status === "accept" ? "hoan_thanh_cong" : "tu_choi"
-      );
-
-      const response = await instance.post(
-        `/donhang/xac-nhan-hoan-hang/${ids[0]}`,
-        formData
-      );
-
-      // Update localStorage when adding new acted items
-      const newActedItems = [...actedItems, ids[0] as number];
-      setActedItems(newActedItems);
-      localStorage.setItem("actedItems", JSON.stringify(newActedItems));
+      console.log("ids:", trang_thai);
+      const response = await instance.put(`/donhang/xac-nhan-huy-hang/${ids}`, {
+        trang_thai: trang_thai,
+      });
 
       return response.data;
     },
     onSuccess: () => {
       message.success("Cập nhật trạng thái thành công");
-      queryClient.invalidateQueries({ queryKey: ["refund-requests"] });
-      setSelectedRowKeys([]);
+      queryClient.invalidateQueries({ queryKey: ["donhuy"] });
+      // setSelectedRowKeys([]);
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi cập nhật trạng thái");
     },
   });
 
-  const handleConfirm = (id: number) => {
-    mutate({ ids: [id], status: "accept" });
-  };
+  // const handleConfirm = (id: number) => {
+  //   mutate({ ids: [id], status: "accept" });
+  // };
 
   const handleTotalSearch = (value: string) => {
     if (value) {
-      const filtered = data?.data.filter((item: RefundRequest) => {
+      const filtered = data.filter((item: RefundRequest) => {
+        console.log("item", item);
         return (
-          item.don_hang.ma_don_hang
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          item.ly_do.toLowerCase().includes(value.toLowerCase()) ||
-          item.trang_thai.toLowerCase().includes(value.toLowerCase()) ||
-          item.don_hang.trang_thai_don_hang
-            .toLowerCase()
-            .includes(value.toLowerCase())
+          item.ma_don_hang.toLowerCase().includes(value.toLowerCase()) ||
+          (item.trang_thai_thanh_toan === "Đã thanh toán" &&
+            item.tong_tien_don_hang
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase())) ||
+          item.trang_thai_thanh_toan.toLowerCase().includes(value.toLowerCase())
         );
       });
+      console.log("filtered", filtered);
       setFilteredData(filtered || []);
     } else {
-      setFilteredData(data?.data || []);
+      setFilteredData(data || []);
     }
   };
 
@@ -140,65 +136,90 @@ const Donhuy: React.FC = () => {
     if (dateStrings[0] && dateStrings[1]) {
       const startDate = new Date(dateStrings[0]);
       const endDate = new Date(dateStrings[1]);
-      const filtered = data?.data.filter((item: RefundRequest) => {
-        const itemDate = new Date(item.thoi_gian_hoan);
+      console.log("startDate", data);
+      const filtered = data.filter((item: RefundRequest) => {
+        const itemDate = new Date(item.created_at);
         return itemDate >= startDate && itemDate <= endDate;
       });
+      console.log("filtered", filtered);
       setFilteredData(filtered || []);
     } else {
-      setFilteredData(data?.data || []);
+      setFilteredData(data || []);
     }
   };
 
-  const tabItems = [
-    { label: "Tất cả", key: "Tất cả" },
-    { label: "Chờ xác nhận ", key: "cho_xac_nhan" },
-    { label: "Hoàn hàng", key: "hoan_thanh_cong" },
-    { label: "Từ chối", key: "tu_choi" },
-  ];
-
+  // const tabItems = [
+  //   { label: "Tất cả", key: "Tất cả" },
+  //   { label: "Chờ xác nhận ", key: "cho_xac_nhan" },
+  //   { label: "Hoàn hàng", key: "hoan_thanh_cong" },
+  //   { label: "Từ chối", key: "tu_choi" },
+  // ];
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "cho_xac_nhan":
+      case "Chờ xác nhận hủy hàng":
         return "blue";
-      case "hoan_thanh_cong":
+      case "Hủy hàng":
         return "green";
       case "tu_choi":
         return "red";
       default:
-        return "default";
+        return "red";
     }
   };
-
   const columns: TableColumnsType<RefundRequest> = [
     {
       title: "Mã đơn hàng",
-      dataIndex: ["don_hang", "ma_don_hang"],
+      dataIndex: "ma_don_hang",
       key: "ma_don_hang",
-      width: "15%",
+      width: "10%",
+      sorter: (a: any, b: any) => a.ma_don_hang.localeCompare(b.ma_don_hang),
     },
     {
-      title: "Trạng thái đơn hàng",
-      dataIndex: "trang_thai",
-      key: "trang_thai",
+      title: "Người đặt hàng",
+      dataIndex: "ten_nguoi_dat_hang",
+      key: "ten_nguoi_dat_hang",
+      width: "15%",
+    },
+
+    {
+      title: "Trạng thái thanh toán",
+      dataIndex: "trang_thai_thanh_toan",
+      key: "trang_thai_thanh_toan",
       width: "15%",
       render: (status) => (
         <>
-          <Tag color={getStatusColor(status)}>Đang giao hàng</Tag>
+          {status === "Đã thanh toán" ? (
+            <span className="inline-block px-5 py-1 text-white bg-green-500 rounded-md font-bold">
+              Đã thanh toán
+            </span>
+          ) : (
+            <span className="inline-block px-3 py-1 text-white bg-red-500 rounded-md font-bold">
+              Chưa thanh toán
+            </span>
+          )}
         </>
       ),
     },
     {
       title: "Số tiền hoàn trả",
-      dataIndex: "so_tien_hoan",
-      key: "so_tien_hoan",
+      dataIndex: "tong_tien_don_hang",
+      key: "tong_tien_don_hang",
       width: "15%",
-      render: (amount) =>
-        new Intl.NumberFormat("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }).format(amount),
+      sorter: (a: any, b: any) => a.tong_tien_don_hang - b.tong_tien_don_hang,
+      render: (amount, record) => {
+        // Kiểm tra nếu đã thanh toán
+        // console.log("record", record);
+        if (record.trang_thai_thanh_toan === "Đã thanh toán") {
+          return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(amount); // Hiển thị số tiền nếu đã thanh toán
+        } else {
+          return "0 đ"; // Hiển thị "0 đ" nếu chưa thanh toán
+        }
+      },
     },
+
     // {
     //   title: "Hình ảnh minh chứng",
     //   dataIndex: "don_hang",
@@ -218,30 +239,34 @@ const Donhuy: React.FC = () => {
     // },
     {
       title: "Lý do",
-      dataIndex: "ly_do",
-      key: "ly_do",
+      dataIndex: "li_do_huy_hang",
+      key: "li_do_huy_hang",
       width: "20%",
     },
     {
       title: "Trạng thái",
-      dataIndex: "trang_thai",
-      key: "trang_thai",
+      dataIndex: "trang_thai_don_hang",
+      key: "trang_thai_don_hang",
       width: "15%",
       render: (status) => (
         <Tag color={getStatusColor(status)}>
-          {status === "cho_xac_nhan"
-            ? "Chờ xác nhận hoàn hàng"
-            : status === "hoan_thanh_cong"
+          {status === "Chờ xác nhận hủy hàng"
+            ? "Chờ xác nhận"
+            : status === "Hủy hàng"
               ? "Đã xác nhận"
               : "Từ chối"}
         </Tag>
+        // <></>
       ),
     },
     {
       title: "Thời gian đặt hàng",
-      dataIndex: "thoi_gian_hoan",
-      key: "thoi_gian_hoan",
+      dataIndex: "created_at",
+      key: "created_at",
       width: "15%",
+      sorter: (a: any, b: any) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      render: (date) => FormatDate(date),
     },
     // {
     //     title: "Thao tác",
@@ -301,57 +326,50 @@ const Donhuy: React.FC = () => {
       key: "action",
       width: "20%",
       render: (_, record) => (
-        <Space>
-          {!actedItems.includes(record.id) &&
-            record.trang_thai === "cho_xac_nhan" && (
-              <>
-                <Popconfirm
-                  title="Xác nhận yêu cầu"
-                  description="Bạn có chắc chắn muốn xác nhận yêu cầu này?"
-                  onConfirm={() =>
-                    mutate({ ids: [record.id], status: "accept" })
-                  }
-                  okButtonProps={{
-                    className:
-                      "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium",
-                  }}
-                  cancelButtonProps={{
-                    className:
-                      "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium",
-                  }}
-                  okText="Xác nhận"
-                  cancelText="Hủy"
-                >
-                  <Button className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
-                    Xác nhận
-                  </Button>
-                </Popconfirm>
-
-                <Popconfirm
-                  title="Từ chối yêu cầu"
-                  description="Bạn có chắc chắn muốn từ chối yêu cầu này?"
-                  onConfirm={() =>
-                    mutate({ ids: [record.id], status: "reject" })
-                  }
-                  okButtonProps={{
-                    className:
-                      "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium",
-                  }}
-                  cancelButtonProps={{
-                    className:
-                      "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium",
-                  }}
-                  okText="Xác nhận"
-                  cancelText="Hủy"
-                >
-                  <Button className="bg-gradient-to-l from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 text-white font-bold border border-red-300">
-                    Từ chối
-                  </Button>
-                </Popconfirm>
-              </>
-            )}
-          <DonhuyDetail record={record} />
-        </Space>
+        // <Space>
+        //   {record.trang_thai === "Chờ xác nhận hủy hàng" && (
+        <div className="flex gap-1">
+          <Popconfirm
+            title="Xác nhận"
+            description="Bạn có chắc chắn muốn xác nhận yêu cầu này?"
+            onConfirm={() => mutate({ ids: record.id, trang_thai: "da_huy" })}
+            okButtonProps={{
+              className:
+                "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium",
+            }}
+            cancelButtonProps={{
+              className:
+                "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium",
+            }}
+            okText="Xác nhận"
+            cancelText="Hủy"
+          >
+            <Button className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+              Xác nhận
+            </Button>
+          </Popconfirm>
+          {/* 
+          <Popconfirm
+            title="Từ chối yêu cầu"
+            description="Bạn có chắc chắn muốn từ chối yêu cầu này?"
+            onConfirm={() => mutate({ ids: record.id, trang_thai: "tu_choi" })}
+            okButtonProps={{
+              className:
+                "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium",
+            }}
+            cancelButtonProps={{
+              className:
+                "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium",
+            }}
+            okText="Xác nhận"
+            cancelText="Hủy"
+          > */}
+          <Notehuy id={record.id} />
+          {/* </Popconfirm> */}
+        </div>
+        // )}
+        // {/* <DonhuyDetail record={record} /> */}
+        // </Space>
       ),
     },
   ];
@@ -375,7 +393,7 @@ const Donhuy: React.FC = () => {
         <h1 className="font-semibold md:text-3xl">Yêu cầu hủy đơn hàng</h1>
       </div>
 
-      <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
+      {/* <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} /> */}
 
       <Flex gap="middle" vertical>
         <Flex align="center" gap="middle">
@@ -392,9 +410,8 @@ const Donhuy: React.FC = () => {
         </Flex>
 
         <Table
-          rowSelection={rowSelection}
           columns={columns}
-          dataSource={filteredData}
+          dataSource={filteredData ?? data}
           loading={isLoading}
           pagination={{
             pageSize: 10,

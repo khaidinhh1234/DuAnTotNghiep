@@ -33,7 +33,7 @@ const columns: TableColumnsType<DataType> = [
   {
     title: "Số lượng thực bán",
     dataIndex: "so_luong_thuc_ban",
-    width: 150,
+    width: 200,
   },
   {
     title: "Tiền hàng",

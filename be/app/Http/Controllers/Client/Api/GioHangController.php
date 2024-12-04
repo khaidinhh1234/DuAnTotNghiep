@@ -25,7 +25,7 @@ class GioHangController extends Controller
                 ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                 ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
                 ->where('gio_hangs.user_id', $userId)
-                ->whereNull("gio_hangs.deleted_at")
+               ->whereNull("gio_hangs.deleted_at")
                 ->select(
                     'gio_hangs.id',
                     'gio_hangs.bien_the_san_pham_id',
@@ -40,7 +40,8 @@ class GioHangController extends Controller
                     'bien_the_san_phams.gia_khuyen_mai',
                     'bien_the_san_phams.gia_khuyen_mai_tam_thoi',
                     'bien_the_mau_sacs.ten_mau_sac as mau_sac',
-                    'bien_the_kich_thuocs.kich_thuoc'
+                    'bien_the_kich_thuocs.kich_thuoc',
+                    'san_phams.deleted_at as ngay_xoa',
                 )
                 ->orderBy('gio_hangs.created_at', 'desc')
                 ->get();
@@ -85,19 +86,32 @@ class GioHangController extends Controller
             });
 
             $sanPhamGiamGia = $gioHangs->filter(function ($item) {
-                return $item->het_hang === 0 && isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu;
+                return $item->het_hang === 0 && isset($item->gia_cu) && $item->gia_hien_tai < $item->gia_cu
+                    && $item->trang_thai == 1 && $item->ngay_xoa == null;
             })->map(function ($item) {
                 $item->tiet_kiem = ($item->gia_cu - $item->gia_hien_tai) * $item->so_luong;
                 return $item;
             });
 
             $sanPhamNguyenGia = $gioHangs->filter(function ($item) {
-                return is_null($item->gia_khuyen_mai) && is_null($item->gia_khuyen_mai_tam_thoi) && $item->het_hang === 0;
+                return is_null($item->gia_khuyen_mai) && is_null($item->gia_khuyen_mai_tam_thoi)
+                    && $item->het_hang === 0 && $item->trang_thai == 1 && $item->ngay_xoa == null;
             });
 
             $sanPhamHetHang = $gioHangs->filter(function ($item) {
-                return $item->het_hang === 1;
+                return $item->het_hang === 1 && $item->trang_thai == 1 && $item->ngay_xoa == null;
             });
+
+            $sanPhamKhongHoatDong = $gioHangs->filter(function ($item) {
+                if($item->trang_thai == 0 || $item->ngay_xoa != null){
+                    if ($item->chon === 1) {
+                        DB::table('gio_hangs')->where('id', $item->id)->update(['chon' => 0]);                    
+                   }
+                }
+                return $item->trang_thai == 0 || $item->ngay_xoa != null;
+            });
+
+
 
             $tongSoLuong = $gioHangs->sum('so_luong');
 
@@ -107,6 +121,7 @@ class GioHangController extends Controller
                 'san_pham_giam_gia' => $sanPhamGiamGia->values(),
                 'san_pham_nguyen_gia' => $sanPhamNguyenGia->values(),
                 'san_pham_het_hang' => $sanPhamHetHang->values(),
+                'san_pham_khong_hoat_dong' => $sanPhamKhongHoatDong->values(),
                 'tong_so_luong' => $tongSoLuong,
                 'thong_bao' => $messages,
             ]);
