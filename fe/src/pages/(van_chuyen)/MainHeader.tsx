@@ -20,7 +20,7 @@ const MainHeader = () => {
     },
   ];
   const logout = () => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("access_token");
     localStorage.removeItem("user"); //
     nav("/login");
     // setUser(null);

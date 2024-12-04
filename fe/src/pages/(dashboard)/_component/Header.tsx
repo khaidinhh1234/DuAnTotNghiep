@@ -26,7 +26,7 @@ const Header = () => {
   const notificationRef = useRef<HTMLDivElement>(null);
   const logout = () => {
     nav("/login");
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("access_token");
     localStorage.removeItem("user");
     // setUser(null);
   };

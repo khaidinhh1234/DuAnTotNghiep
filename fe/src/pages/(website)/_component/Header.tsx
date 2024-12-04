@@ -199,7 +199,7 @@ const Header = () => {
   };
   // console.log("giaohang", giaohangs);
   const logout = () => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("access_token");
     localStorage.removeItem("user"); //
     nav("/");
     // setUser(null);
