@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button, Tag, Descriptions } from "antd";
+import FormatDate from "@/components/hook/formatdata";
 
 interface RefundDetailProps {
   record: any;
@@ -10,14 +11,14 @@ const DonhuyDetail: React.FC<RefundDetailProps> = ({ record }) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "cho_xac_nhan":
+      case "Chờ xác nhận hủy hàng":
         return "blue";
-      case "hoan_thanh_cong":
+      case "Hủy hàng":
         return "green";
       case "tu_choi":
         return "red";
       default:
-        return "default";
+        return "red";
     }
   };
 
@@ -45,7 +46,7 @@ const DonhuyDetail: React.FC<RefundDetailProps> = ({ record }) => {
     <>
       <Button onClick={() => setIsModalOpen(true)}>Xem chi tiết </Button>
       <Modal
-        title="Chi tiết yêu cầu hoàn tiền"
+        title="Chi tiết yêu cầu hủy hàng"
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
@@ -53,58 +54,65 @@ const DonhuyDetail: React.FC<RefundDetailProps> = ({ record }) => {
       >
         <Descriptions bordered column={2}>
           <Descriptions.Item label="Mã đơn hàng" span={2}>
-            {record.don_hang.ma_don_hang}
+            {record.ma_don_hang}
           </Descriptions.Item>
           <Descriptions.Item label="Thông tin người đặt" span={2}>
             <div className="space-y-2">
               <div>
                 <strong>Tên người đặt:</strong>{" "}
-                {record.don_hang.ten_nguoi_dat_hang || "Chưa cập nhật"}
+                {record.ten_nguoi_dat_hang || "Chưa cập nhật"}
               </div>
               <div>
                 <strong>Số điện thoại:</strong>{" "}
-                {record.don_hang.so_dien_thoai_nguoi_dat_hang ||
-                  "Chưa cập nhật"}
+                {record.so_dien_thoai_nguoi_dat_hang || "Chưa cập nhật"}
               </div>
               <div>
                 <strong>Địa chỉ:</strong>{" "}
-                {record.don_hang.dia_chi_nguoi_dat_hang || "Chưa cập nhật"}
+                {record.dia_chi_nguoi_dat_hang || "Chưa cập nhật"}
               </div>
             </div>
           </Descriptions.Item>
 
-          <Descriptions.Item label="Số tiền hoàn">
-            {formatCurrency(record.so_tien_hoan)}
+          <Descriptions.Item label="Số tiền hoàn trả">
+            {
+              record.trang_thai_thanh_toan === "Đã thanh toán"
+                ? formatCurrency(record.tong_tien_don_hang)
+                : "0 đ" // Hiển thị "0 đ" nếu chưa thanh toán
+            }
           </Descriptions.Item>
 
           <Descriptions.Item label="Trạng thái">
-            <Tag color={getStatusColor(record.trang_thai)}>
-              {formatStatus(record.trang_thai)}
+            <Tag color={getStatusColor(record.trang_thai_don_hang)}>
+              {record.trang_thai_don_hang === "Chờ xác nhận hủy hàng"
+                ? "Chờ xác nhận"
+                : record.trang_thai_don_hang === "Hủy hàng"
+                  ? "Đã xác nhận"
+                  : "Từ chối"}
             </Tag>
           </Descriptions.Item>
 
           <Descriptions.Item label="Lý do hoàn tiền" span={2}>
-            {record.ly_do}
+            {record.li_do_huy_hang}
           </Descriptions.Item>
 
           <Descriptions.Item label="Thời gian hoàn">
-            {record.thoi_gian_hoan}
+            {FormatDate(record.created_at)}
           </Descriptions.Item>
 
           <Descriptions.Item label="Trạng thái đơn hàng">
-            {record.don_hang.trang_thai_don_hang}
+            {record.trang_thai_don_hang}
           </Descriptions.Item>
 
           <Descriptions.Item label="Tổng tiền đơn hàng" span={2}>
-            {formatCurrency(record.don_hang.tong_tien_don_hang)}
+            {formatCurrency(record.tong_tien_don_hang)}
           </Descriptions.Item>
 
           <Descriptions.Item label="Phương thức thanh toán" span={2}>
-            {record.don_hang.phuong_thuc_thanh_toan}
+            {record.phuong_thuc_thanh_toan}
           </Descriptions.Item>
 
           <Descriptions.Item label="Trạng thái thanh toán" span={2}>
-            {record.don_hang.trang_thai_thanh_toan}
+            {record.trang_thai_thanh_toan}
           </Descriptions.Item>
 
           {record.giao_dich_vi && (

@@ -22,43 +22,48 @@ const LoginForm = () => {
   });
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
-      // console.log(user);
-      const { data } = await instance.post("/login", user);
-      localStorage.setItem("user", JSON.stringify(data));
-      localStorage.setItem("accessToken", data?.access_token);
-      const users = JSON.parse(localStorage.getItem("user") || "{}");
-      const isDeliveryPerson = users?.user?.vai_tros?.some(
-        (vai_tro: any) => vai_tro?.ten_vai_tro === "Người giao hàng"
-      );
-      const hasPermission = users?.user?.vai_tros?.some(
-        (vai_tro: any) => vai_tro?.ten_vai_tro !== "Khách hàng"
-      );
-      if (isDeliveryPerson) {
-        message.success("Đăng nhập thành công");
-        localStorage.setItem("user", JSON.stringify(data));
-        localStorage.setItem("accessToken", data?.access_token);
-        return nav("/shipper2");
-      } else if (hasPermission && !isDeliveryPerson) {
-        message.success("Đăng nhập thành công");
-        localStorage.setItem("user", JSON.stringify(data));
-        localStorage.setItem("accessToken", data?.access_token);
-        return nav("/admin");
-      } else {
-        toast.success(" Glow Clothing Xin chào bạn");
-        return nav("/");
-      }
-    },
+      try {
+        const { data } = await instance.post("/login", user);
 
-    onError: (error: any) => {
-      if (
-        error.response.data.message == "Tài khoản hoặc mật khẩu không chính xác"
-      ) {
-        toast.error("Tài khoản hoặc mật khẩu không chính xác");
-      } else {
-        toast.error("Đăng nhập thất bại");
+        // Lưu vào localStorage
+
+        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("access_token", JSON.stringify(data.access_token));
+
+        // const token = JSON.parse(localStorage.getItem("access_token") || "{}");
+
+        // Kiểm tra role
+        const roles = data?.user?.vai_tros || [];
+        const isDeliveryPerson = roles.some(
+          (role: any) => role.ten_vai_tro === "Người giao hàng"
+        );
+        const hasPermission = roles.some(
+          (role: any) => role.ten_vai_tro !== "Khách hàng"
+        );
+
+        if (isDeliveryPerson) {
+          message.success("Đăng nhập thành công");
+          return nav("/shipper2");
+        } else if (hasPermission) {
+          message.success("Đăng nhập thành công");
+          return nav("/admin");
+        } else {
+          toast.success("Glow Clothing Xin chào bạn");
+          return nav("/");
+        }
+      } catch (error: any) {
+        // Xử lý lỗi
+        const errorMessage = error?.response?.data?.message;
+        if (errorMessage === "Tài khoản hoặc mật khẩu không chính xác") {
+          toast.error("Tài khoản hoặc mật khẩu không chính xác");
+        } else {
+          toast.error("Đăng nhập thất bại");
+        }
+        throw error;
       }
     },
   });
+
   const onSubmit = (data: any) => {
     mutate(data);
   };
