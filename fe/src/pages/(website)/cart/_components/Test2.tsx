@@ -379,7 +379,8 @@ const Test2 = () => {
         <>
             {data?.san_pham_giam_gia?.length === 0 &&
                 data?.san_pham_nguyen_gia?.length === 0 &&
-                data?.san_pham_het_hang?.length === 0 ? (
+                data?.san_pham_het_hang?.length === 0 &&
+                data?.san_pham_khong_hoat_dong.length === 0? (
                 <div className="flex flex-col items-center justify-center pt-32 pb-20">
                     <img
                         src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
@@ -470,7 +471,9 @@ const Test2 = () => {
                                                                     className="w-32 h-40 object-cover rounded-md"
                                                                 />
                                                                 <div className="flex flex-col justify-between">
-                                                                    <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
+                                                                    <Link to={`/product-detail/${product?.duong_dan}`}>
+                                                                    <h3 className="font-semibold w-[300px] hover:text-red-500">{product.ten_san_pham}</h3>
+                                                                    </Link>
                                                                     <p className="text-sm text-gray-500">
                                                                         {product.mau_sac}, {product.kich_thuoc}
                                                                     </p>

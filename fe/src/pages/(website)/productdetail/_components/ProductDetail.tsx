@@ -137,9 +137,10 @@ const ProductDetail: React.FC = () => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   // const [token, setToken] = useState<string | null>(null);
   // const nav = useNavigate();
-  const [user] = useLocalStorage("user" as any, {});
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   // const access_token = user.access_token || localStorage.getItem("access_token");
-  const access_token = JSON.parse(localStorage.getItem("access_token") || "{}");
+  const access_token = user.access_token 
+
   const [selectedColorDisplay, setSelectedColorDisplay] = useState<
     string | null
   >(null);
@@ -236,6 +237,7 @@ const ProductDetail: React.FC = () => {
   // add to cart
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
+     try {
       const response = await instanceClient.post(
         "/gio-hang",
         {
@@ -248,11 +250,17 @@ const ProductDetail: React.FC = () => {
           },
         }
       );
+      toast.success("Thêm giỏ hàng thành công");
+
       return response.data;
+
+     } catch (error: any) {
+       toast.error(error.response?.data?.message || "Có l��i xảy ra khi thêm vào gi�� hàng.");
+     }
     },
     onSuccess: (data) => {
       if (data?.status) {
-        toast.success(data.message);
+        
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
         toast.error(data.message);
@@ -260,10 +268,15 @@ const ProductDetail: React.FC = () => {
     },
     onError: (error: any) => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
-      );
+      if(error.response?.data?.message == "Mã token không hợp lệ hoặc không tìm thấy người dùng"){
+        setIsModalVisible(true);
+      }else {
+        toast.error(
+          error.response?.data?.message ||
+            "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+        );
+      }
+      
     },
   });
   const [isModalVisible, setIsModalVisible] = useState(false);
