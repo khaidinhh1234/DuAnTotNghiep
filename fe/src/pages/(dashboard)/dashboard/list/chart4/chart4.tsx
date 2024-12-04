@@ -3,6 +3,7 @@ import { Activity } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import instance from "@/configs/admin";
+import { Skeleton } from "antd";
 
 const Chart4: React.FC = () => {
   const { data, isLoading } = useQuery({
@@ -12,7 +13,12 @@ const Chart4: React.FC = () => {
       return res.data;
     },
   });
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div>
+        <Skeleton />
+      </div>
+    );
   console.log(data);
   return (
     <Card x-chunk="dashboard-01-chunk-3" className="bg-white">
@@ -24,7 +30,7 @@ const Chart4: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold text-red-700">
-          + {(data?.block_hien_tai ?? 0).toLocaleString("vn-VN")}
+          + {(data?.activity_hien_tai ?? 0).toLocaleString("vn-VN")}
         </div>
         <p className="text-sm text-muted-foreground text-green-600">
           +201 <span className="text-black"> kể từ giờ trước</span>

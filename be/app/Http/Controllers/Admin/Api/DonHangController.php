@@ -550,7 +550,7 @@ class DonHangController extends Controller
     {
         try {
             $validated = $request->validate([
-                'trang_thai' => 'required|string|in:da_huy,tu_choi',
+                'trang_thai' => 'nullable|string|in:da_huy,tu_choi',
                 'ly_do_tu_choi' => 'required_if:trang_thai,tu_choi'
             ]);
 
@@ -564,7 +564,7 @@ class DonHangController extends Controller
                 });
                 $mess = 'Xác nhận hủy hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
-                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_TCHH]);
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DXH]);
                 $thongbao = ThongBao::create([
                     'user_id' => $donHang->user_id,
                     'tieu_de' => 'Yêu cầu hủy hàng của bạn đã bị từ chối',

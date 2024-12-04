@@ -120,7 +120,7 @@ class ThongKeSanPham extends Controller
         // Lấy danh sách sản phẩm và thống kê trực tiếp từ database
         $thongKeSanPhams = SanPham::with(['bienTheSanPham.chiTiets.donHang' => function ($query) use ($ngayBatDau, $ngayKetThuc) {
             $query->where('trang_thai_don_hang', DonHang::TTDH_HTDH)
-                ->whereBetween('created_at', [$ngayBatDau, $ngayKetThuc]);
+                ->whereBetween('ngay_hoan_thanh_don', [$ngayBatDau, $ngayKetThuc]);
         }])
             ->get()
             ->map(function ($sanPham) {
