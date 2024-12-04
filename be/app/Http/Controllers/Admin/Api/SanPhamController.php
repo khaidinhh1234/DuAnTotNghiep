@@ -28,6 +28,7 @@ class SanPhamController extends Controller
                 'bienTheSanPham.kichThuocBienThe',
                 'boSuuTapSanPham'
             ])
+                ->where('trang_thai', 1)
                 ->orderByDesc('id')
                 ->get();
 
@@ -295,13 +296,14 @@ class SanPhamController extends Controller
     public function danhSachSanPhamDaXoa()
     {
         try {
-            $sanPhamDaXoa = SanPham::onlyTrashed()->with([
+            $sanPhamDaXoa = SanPham::with([
                 'danhMuc',
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
                 'boSuuTapSanPham'
-            ])->orderBy('deleted_at', 'desc')->get();
+            ])
+                ->where('trang_thai', 0)->orderByDesc('id')->get();
 
             return response()->json([
                 'success' => true,
