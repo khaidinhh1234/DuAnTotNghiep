@@ -151,15 +151,15 @@ const Detail = ({ record }: any) => {
     setIsModalOpen(false);
   };
   // console.log("record", record);
-  // const { id } = useParams();
-  // const { data: VanChuyen } = useQuery({
-  //   queryKey: ["vanchuyen", id],
-  //   queryFn: async () => {
-  //     const response = await instance.get(`/vanchuyen/${id}`);
-  //     return response.data;
-  //   },
-  // });
-  // console.log("anhShip:", VanChuyen?.data);
+  const id = record?.id
+  const { data: VanChuyen } = useQuery({
+    queryKey: ["vanchuyen"],
+    queryFn: async () => {
+      const response = await instance.get(`/vanchuyen/${id}`);
+      return response.data;
+    },
+  });
+  console.log("anhShip:", VanChuyen?.data);
   return (
     <div>
       {" "}

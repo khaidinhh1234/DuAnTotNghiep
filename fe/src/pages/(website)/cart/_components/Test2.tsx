@@ -463,7 +463,7 @@ const Test2 = () => {
                                                                 onChange={() => handleSelectProduct(product.id)}
                                                                 title="Select discount product"
                                                             />
-                                                            <div className="flex items-start space-x-4">
+                                                            <div className="flex items-start space-x-4 mr-10">
                                                                 <img
                                                                     src={product.hinh_anh}
                                                                     alt="Ảnh sản phẩm"
@@ -489,7 +489,7 @@ const Test2 = () => {
                                                             </div>
 
                                                         </div>
-                                                        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                                        <div className="flex border border-gray-300 rounded-lg overflow-hidden">
                                                             {product.so_luong === 1 ? (
                                                                 <Popconfirm
                                                                     title="Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?"
@@ -552,8 +552,6 @@ const Test2 = () => {
                                                                 +
                                                             </button>
                                                         </div>
-
-
                                                         <button
                                                             onClick={() => Delete(product.id)}
                                                             className="text-red-600 hover:text-red-800"
@@ -715,11 +713,19 @@ const Test2 = () => {
                                                                 onChange={() => handleSelectProduct(product.id)}
                                                                 title={product.het_hang ? 'Sản phẩm đã hết hàng' : 'Select product'}
                                                             />
-                                                            <img
-                                                                src={product.hinh_anh}
-                                                                alt="Ảnh sản phẩm"
-                                                                className="w-32 h-40 object-cover rounded-md"
-                                                            />
+                                                            <div className="flex items-start space-x-4">
+                                                            <div className="relative w-32 h-40">
+                                                                <img
+                                                                    src={product.hinh_anh}
+                                                                    alt="Ảnh sản phẩm"
+                                                                    className="w-full h-full object-cover rounded-md"
+                                                                />
+                                                                {product.het_hang === 1 && (
+                                                                    <p className="absolute bottom-0 left-0 w-full text-center text-red-600 font-semibold bg-white bg-opacity-75 py-1 rounded-b-md">
+                                                                        Hết hàng
+                                                                    </p>
+                                                                )}
+                                                            </div>
                                                             <div>
                                                                 <h3 className="font-semibold">{product.ten_san_pham}</h3>
                                                                 <p className="text-sm text-gray-500">
@@ -737,12 +743,13 @@ const Test2 = () => {
                                                                     Đã tiết kiệm {formatCurrency(product.tiet_kiem)}
                                                                 </p> */}
                                                             </div>
+                                                            </div>
                                                         </div>
 
                                                         <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                                                             <button
                                                                 onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                                                                className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                                                                className="px-4 py-2 text-gray-500 hover:text-black transition-colors" disabled={product.het_hang === 1}>
                                                                 −
                                                             </button>
                                                             <input
@@ -754,7 +761,97 @@ const Test2 = () => {
                                                             />
                                                             <button
                                                                 onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
-                                                                className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                                                                className="px-4 py-2 text-gray-500 hover:text-black transition-colors" disabled={product.het_hang === 1}>
+                                                                +
+                                                            </button>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => Delete(product.id)}
+                                                            className="text-red-600 hover:text-red-800"
+                                                        >
+                                                            <i className="fa-regular fa-trash-can"></i>
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {/* san phan khong ban */}
+                                        {data?.san_pham_khong_hoat_dong?.length > 0 && (
+                                            <div className="bg-white p-6 rounded-lg shadow-md mb-6 w-[765px]">
+                                                <div className="flex items-center mb-4">
+                                                    <input
+                                                        type="checkbox"
+
+                                                        className="form-checkbox h-5 w-5 text-yellow-500"
+                                                        title="Select all discounted products"
+                                                        disabled={true}
+                                                    />
+
+                                                    <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm ngừng bán</h2>
+                                                </div>
+                                                {data?.san_pham_khong_hoat_dong.map((product: any) => (
+                                                    <div
+                                                        key={product.id}
+                                                        // className="flex justify-between items-center border-b py-4"
+                                                        className={`flex justify-between items-center border-b py-4 border-gray-200  ${product.het_hang === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-center gap-6">
+                                                            <input
+                                                                type="checkbox"
+                                                                className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+                                                                disabled={product.het_hang === 0}
+                                                                onChange={() => handleSelectProduct(product.id)}
+                                                                title={product.het_hang === 0 ? 'Sản phẩm đã hết hàng' : 'Select product'}
+                                                            />
+                                                            <div className="flex items-start space-x-4">
+                                                            <div className="relative w-32 h-40">
+                                                                <img
+                                                                    src={product.hinh_anh}
+                                                                    alt="Ảnh sản phẩm"
+                                                                    className="w-full h-full object-cover rounded-md"
+                                                                />
+                                                                {product.het_hang === 0 && (
+                                                                    <p className="absolute bottom-0 left-0 w-full text-center text-red-600 font-semibold bg-white bg-opacity-75 py-1 rounded-b-md">
+                                                                        Ngừng bán
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                            <div>
+                                                                <h3 className="font-semibold">{product.ten_san_pham}</h3>
+                                                                <p className="text-sm text-gray-500">
+                                                                    {product.mau_sac}, {product.kich_thuoc}
+                                                                </p>
+                                                                <div className="flex items-center">
+                                                                    <p className="text-red-500 font-bold mr-2">
+                                                                        {formatCurrency(product.gia_hien_tai)}
+                                                                    </p>
+                                                                    <p className="text-gray-400 line-through">
+                                                                        {formatCurrency(product.gia_cu)}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                                            <button
+                                                                onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                                                                className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                                                                disabled={product.het_hang === 0}
+                                                                >
+                                                                −
+                                                            </button>
+                                                            <input
+                                                                type="text"
+                                                                value={product.so_luong}
+                                                                className="w-12 text-center border-none outline-none"
+                                                                readOnly
+                                                                title={`Quantity of ${product.ten_san_pham}`}
+                                                            />
+                                                            <button
+                                                                onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                                                                className="px-4 py-2 text-gray-500 hover:text-black transition-colors" disabled={product.het_hang === 0}>
                                                                 +
                                                             </button>
                                                         </div>

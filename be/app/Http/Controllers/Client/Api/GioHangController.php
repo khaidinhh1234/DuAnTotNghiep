@@ -25,7 +25,7 @@ class GioHangController extends Controller
                 ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                 ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
                 ->where('gio_hangs.user_id', $userId)
-//                ->whereNull("gio_hangs.deleted_at")
+               ->whereNull("gio_hangs.deleted_at")
                 ->select(
                     'gio_hangs.id',
                     'gio_hangs.bien_the_san_pham_id',
@@ -103,8 +103,15 @@ class GioHangController extends Controller
             });
 
             $sanPhamKhongHoatDong = $gioHangs->filter(function ($item) {
+                if($item->trang_thai == 0 || $item->ngay_xoa != null){
+                    if ($item->chon === 1) {
+                        DB::table('gio_hangs')->where('id', $item->id)->update(['chon' => 0]);                    
+                   }
+                }
                 return $item->trang_thai == 0 || $item->ngay_xoa != null;
             });
+
+
 
             $tongSoLuong = $gioHangs->sum('so_luong');
 
