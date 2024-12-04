@@ -470,7 +470,7 @@ const Test2 = () => {
                                                                     className="w-32 h-40 object-cover rounded-md"
                                                                 />
                                                                 <div className="flex flex-col justify-between">
-                                                                    <h3 className="font-semibold">{product.ten_san_pham}</h3>
+                                                                    <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
                                                                     <p className="text-sm text-gray-500">
                                                                         {product.mau_sac}, {product.kich_thuoc}
                                                                     </p>
@@ -598,7 +598,7 @@ const Test2 = () => {
                                                                     className="w-32 h-40 object-cover rounded-md"
                                                                 />
                                                                 <div className="flex flex-col justify-between">
-                                                                    <h3 className="font-semibold">{product.ten_san_pham}</h3>
+                                                                    <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
                                                                     <p className="text-sm text-gray-500">
                                                                         {product.mau_sac}, {product.kich_thuoc}
                                                                     </p>
@@ -727,7 +727,7 @@ const Test2 = () => {
                                                                 )}
                                                             </div>
                                                             <div>
-                                                                <h3 className="font-semibold">{product.ten_san_pham}</h3>
+                                                                <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
                                                                 <p className="text-sm text-gray-500">
                                                                     {product.mau_sac}, {product.kich_thuoc}
                                                                 </p>
@@ -818,7 +818,7 @@ const Test2 = () => {
                                                                 )}
                                                             </div>
                                                             <div>
-                                                                <h3 className="font-semibold">{product.ten_san_pham}</h3>
+                                                                <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
                                                                 <p className="text-sm text-gray-500">
                                                                     {product.mau_sac}, {product.kich_thuoc}
                                                                 </p>
