@@ -715,11 +715,19 @@ const Test2 = () => {
                                                                 onChange={() => handleSelectProduct(product.id)}
                                                                 title={product.het_hang ? 'Sản phẩm đã hết hàng' : 'Select product'}
                                                             />
-                                                            <img
-                                                                src={product.hinh_anh}
-                                                                alt="Ảnh sản phẩm"
-                                                                className="w-32 h-40 object-cover rounded-md"
-                                                            />
+                                                            <div className="flex items-start space-x-4">
+                                                            <div className="relative w-32 h-40">
+                                                                <img
+                                                                    src={product.hinh_anh}
+                                                                    alt="Ảnh sản phẩm"
+                                                                    className="w-full h-full object-cover rounded-md"
+                                                                />
+                                                                {product.het_hang === 1 && (
+                                                                    <p className="absolute bottom-0 left-0 w-full text-center text-red-600 font-semibold bg-white bg-opacity-75 py-1 rounded-b-md">
+                                                                        Hết hàng
+                                                                    </p>
+                                                                )}
+                                                            </div>
                                                             <div>
                                                                 <h3 className="font-semibold">{product.ten_san_pham}</h3>
                                                                 <p className="text-sm text-gray-500">
@@ -736,6 +744,7 @@ const Test2 = () => {
                                                                 {/* <p className="text-xs text-red-500 font-semibold">
                                                                     Đã tiết kiệm {formatCurrency(product.tiet_kiem)}
                                                                 </p> */}
+                                                            </div>
                                                             </div>
                                                         </div>
 
