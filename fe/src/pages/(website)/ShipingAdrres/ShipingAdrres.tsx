@@ -155,8 +155,9 @@ const ShippingAddressPage = () => {
   const handleCode = (data: any) => {
     setmacode(data ? data : ""); // Cập nhật trạng thái mã khuyến mãi
   };
+
   const { data: checkout } = useQuery({
-    queryKey: ["cart"],
+    queryKey: ["CART_DETAIL"],
     queryFn: async () => {
       try {
         const response = await instanceClient.get(`/gio-hang/chi-tiet`);
@@ -167,10 +168,11 @@ const ShippingAddressPage = () => {
       }
     },
   });
+  console.log(checkout);
   const navigate = useNavigate();
   const tong_tien = checkout?.chi_tiet_don_hang;
   const products = checkout?.chi_tiet_don_hang?.san_pham;
-  if (products.length === 0) {
+  if (products?.length === 0) {
     navigate("/gio-hang");
     toast.error("Sản phẩm của bạn đã hết hàng ");
     // return null;

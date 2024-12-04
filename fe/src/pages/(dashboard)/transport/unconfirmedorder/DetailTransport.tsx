@@ -295,9 +295,9 @@ const DetailTransport = ({ record }: any) => {
                   </span>
                 </p>{" "}
               </div>{" "}
-              <div
+              {/* <div
                 className={`font-bold text-[15px] ${
-                  record.trang_thai_van_chuyen === "Chờ xử lý"
+                  record.trang_thai_van_chuyen === "chờ xử lý"
                     ? "text-yellow-400" // Chờ xác nhận: màu vàng nhạt
                     : record.trang_thai_van_chuyen === "Đang giao hàng"
                       ? "text-purple-500" // Đang giao hàng: màu tím
@@ -306,35 +306,33 @@ const DetailTransport = ({ record }: any) => {
                         ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                           ? "text-red-500" // Giao hàng thất bại: màu đ��
-                          : ``
+                          : `text-red-500`
                 }`}
-              >
-                <div
-                  className={`${
-                    record.trang_thai_van_chuyen === "Chờ xử lý"
-                      ? "bg-blue-400" // Chờ xác nhận: màu vàng nhạt
-                      : record.trang_thai_van_chuyen === "Đang giao hàng"
-                        ? "bg-purple-500" // Đang giao hàng: màu tím
-                        : record.trang_thai_van_chuyen ===
-                            "Giao hàng thành công"
-                          ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
-                          : record.trang_thai_van_chuyen ===
-                              "Giao hàng thất bại"
-                            ? "bg-red-500" // Giao hàng thất bại: màu đ��
-                            : "bg-red-500" // Các trạng thái khác: màu đỏ
-                  } text-white px-2 py-1 font-bold rounded-lg`}
-                >
-                  {record.trang_thai_van_chuyen === "Chờ xử lý"
-                    ? "Chờ xử lý" // Chờ xác nhận: màu vàng nhạt
+              > */}
+              <div
+                className={`${
+                  record.trang_thai_van_chuyen === "chờ xử lý"
+                    ? "bg-blue-500" // Chờ xác nhận: màu vàng nhạt
                     : record.trang_thai_van_chuyen === "Đang giao hàng"
-                      ? "Đang giao hàng" // Đang giao hàng: màu tím
+                      ? "bg-purple-500" // Đang giao hàng: màu tím
                       : record.trang_thai_van_chuyen === "Giao hàng thành công"
-                        ? "Giao hàng thành công"
+                        ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-                          ? "Giao hàng thất bại"
-                          : ""}
-                </div>
+                          ? "bg-red-500" // Giao hàng thất bại: màu đ��
+                          : "bg-red-500" // Các trạng thái khác: màu đỏ
+                } text-white px-2 py-1 font-bold rounded-lg`}
+              >
+                {record.trang_thai_van_chuyen === "chờ xử lý"
+                  ? "Chờ xử lý" // Chờ xác nhận: màu vàng nhạt
+                  : record.trang_thai_van_chuyen === "Đang giao hàng"
+                    ? "Đang giao hàng" // Đang giao hàng: màu tím
+                    : record.trang_thai_van_chuyen === "Giao hàng thành công"
+                      ? "Giao hàng thành công"
+                      : record.trang_thai_van_chuyen === "Giao hàng thất bại"
+                        ? "Giao hàng thất bại"
+                        : record.trang_thai_van_chuyen}
               </div>
+              {/* </div> */}
             </div>
             <div className="bg-slate-100 border px-5  my-5">
               <h1 className="text-lg font-bold mt-5 ">Tất Cả Sản Phẩm</h1>{" "}
@@ -426,7 +424,7 @@ const DetailTransport = ({ record }: any) => {
                       <p>Trạng thái vận chuyển</p>{" "}
                       <span
                         className={`   ${
-                          record.trang_thai_van_chuyen == "Chờ xử lý"
+                          record.trang_thai_van_chuyen == "chờ xử lý"
                             ? "bg-blue-500"
                             : record.trang_thai_van_chuyen == "Đang giao hàng"
                               ? "bg-purple-500"
@@ -436,7 +434,7 @@ const DetailTransport = ({ record }: any) => {
                                 : record.trang_thai_van_chuyen ==
                                     "Giao hàng thất bại"
                                   ? "bg-red-500"
-                                  : record
+                                  : "bg-red-500"
                         }
                         } text-white px-2 font-bold rounded-lg h-6`}
                       >
@@ -453,7 +451,7 @@ const DetailTransport = ({ record }: any) => {
                                 : record.trang_thai_van_chuyen ==
                                     "Giao hàng thất bại"
                                   ? "Giao hàng thất bại"
-                                  : record}
+                                  : record.trang_thai_van_chuyen}
                       </span>
                     </div>
                     <div className="flex justify-between">

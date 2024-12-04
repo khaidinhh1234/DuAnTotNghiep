@@ -34,6 +34,8 @@ interface RefundRequest {
   thoi_gian_hoan: string;
   trang_thai_thanh_toan: string;
 
+  ten_nguoi_dat_hang: string;
+
   ma_don_hang: string;
   tong_tien_don_hang: number;
   trang_thai_don_hang: string;
@@ -65,22 +67,22 @@ const Donhuy: React.FC = () => {
     },
   });
   console.log(data);
-  useEffect(() => {
-    if (data?.data) {
-      if (activeTab === "Tất cả") {
-        setFilteredData(data.data);
-      } else {
-        const filtered = data.data.filter(
-          (item: RefundRequest) => item.trang_thai === activeTab
-        );
-        setFilteredData(filtered);
-      }
-    }
-  }, [data, activeTab]);
-  const [actedItems, setActedItems] = useState<number[]>(() => {
-    const saved = localStorage.getItem("actedItems");
-    return saved ? JSON.parse(saved) : [];
-  });
+  // useEffect(() => {
+  //   if (data?.data) {
+  //     if (activeTab === "Tất cả") {
+  //       setFilteredData(data.data);
+  //     } else {
+  //       const filtered = data.data.filter(
+  //         (item: RefundRequest) => item.trang_thai === activeTab
+  //       );
+  //       setFilteredData(filtered);
+  //     }
+  //   }
+  // }, [data, activeTab]);
+  // const [actedItems, setActedItems] = useState<number[]>(() => {
+  //   const saved = localStorage.getItem("actedItems");
+  //   return saved ? JSON.parse(saved) : [];
+  // });
 
   const { mutate } = useMutation({
     mutationFn: async ({
@@ -122,7 +124,10 @@ const Donhuy: React.FC = () => {
               .toString()
               .toLowerCase()
               .includes(value.toLowerCase())) ||
-          item.trang_thai_thanh_toan.toLowerCase().includes(value.toLowerCase())
+          item.trang_thai_thanh_toan
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          item.ten_nguoi_dat_hang.toLowerCase().includes(value.toLowerCase())
         );
       });
       console.log("filtered", filtered);
@@ -326,29 +331,31 @@ const Donhuy: React.FC = () => {
       key: "action",
       width: "20%",
       render: (_, record) => (
-        // <Space>
-        //   {record.trang_thai === "Chờ xác nhận hủy hàng" && (
-        <div className="flex gap-1">
-          <Popconfirm
-            title="Xác nhận"
-            description="Bạn có chắc chắn muốn xác nhận yêu cầu này?"
-            onConfirm={() => mutate({ ids: record.id, trang_thai: "da_huy" })}
-            okButtonProps={{
-              className:
-                "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium",
-            }}
-            cancelButtonProps={{
-              className:
-                "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium",
-            }}
-            okText="Xác nhận"
-            cancelText="Hủy"
-          >
-            <Button className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
-              Xác nhận
-            </Button>
-          </Popconfirm>
-          {/* 
+        <Space>
+          {record.trang_thai_don_hang !== "Hủy hàng" && (
+            <div className="flex gap-1">
+              <Popconfirm
+                title="Xác nhận"
+                description="Bạn có chắc chắn muốn xác nhận yêu cầu này?"
+                onConfirm={() =>
+                  mutate({ ids: record.id, trang_thai: "da_huy" })
+                }
+                okButtonProps={{
+                  className:
+                    "bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white border-none font-medium",
+                }}
+                cancelButtonProps={{
+                  className:
+                    "hover:bg-gray-100 border border-gray-300 text-gray-600 font-medium",
+                }}
+                okText="Xác nhận"
+                cancelText="Hủy"
+              >
+                <Button className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
+                  Xác nhận
+                </Button>
+              </Popconfirm>
+              {/* 
           <Popconfirm
             title="Từ chối yêu cầu"
             description="Bạn có chắc chắn muốn từ chối yêu cầu này?"
@@ -364,12 +371,12 @@ const Donhuy: React.FC = () => {
             okText="Xác nhận"
             cancelText="Hủy"
           > */}
-          <Notehuy id={record.id} />
-          {/* </Popconfirm> */}
-        </div>
-        // )}
-        // {/* <DonhuyDetail record={record} /> */}
-        // </Space>
+              <Notehuy id={record.id} />
+              {/* </Popconfirm> */}
+            </div>
+          )}
+          <DonhuyDetail record={record} />
+        </Space>
       ),
     },
   ];
