@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const AddAddressForm = ({ register, products, errors, settrangthai }: any) => {
+  const [limit, setLimit] = useState(3);
   return (
     <div className="">
       <h3 className="title-h3">Sản phẩm đã đặt</h3>
@@ -35,51 +36,65 @@ const AddAddressForm = ({ register, products, errors, settrangthai }: any) => {
 
         <tbody>
           {products &&
-            products?.map(
-              (product: {
-                id: string;
-                hinh_anh: string;
-                ten_san_pham: string;
-                kich_thuoc: string;
-                mau_sac: string;
-                gia_hien_tai: number;
-                so_luong: number;
-              }) => (
-                <tr
-                  key={product.id}
-                  className="border-b border-gray-200 hover:bg-gray-100 text-sm sm:text-base"
-                >
-                  <td className="px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 ">
-                    <img
-                      src={product.hinh_anh}
-                      alt={product.ten_san_pham}
-                      className="w-16 h-20 object-cover rounded-md"
-                    />
-                    <div>
-                      <h3 className="font-semibold text-gray-700 text-base sm:text-lg">
-                        {product.ten_san_pham}
-                      </h3>
-                      <p className="text-gray-600">
-                        Size: <span>{product.kich_thuoc}</span>, Màu:{" "}
-                        <span>{product.mau_sac}</span>
-                      </p>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2">
-                    {product.gia_hien_tai.toLocaleString("vi-VN")}₫
-                  </td>
-                  <td className="px-4 py-2 hidden lg:table-cell text-center">
-                    {product.so_luong.toLocaleString("vi-VN")}
-                  </td>
-                  <td className="px-4 py-2">
-                    {(product.gia_hien_tai * product.so_luong).toLocaleString(
-                      "vi-VN"
-                    )}
-                    ₫
-                  </td>
-                </tr>
-              )
-            )}
+            products
+              ?.slice(0, limit)
+              .map(
+                (product: {
+                  id: string;
+                  hinh_anh: string;
+                  ten_san_pham: string;
+                  kich_thuoc: string;
+                  mau_sac: string;
+                  gia_hien_tai: number;
+                  so_luong: number;
+                }) => (
+                  <tr
+                    key={product.id}
+                    className="border-b border-gray-200 hover:bg-gray-100 text-sm sm:text-base"
+                  >
+                    <td className="px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 ">
+                      <img
+                        src={product.hinh_anh}
+                        alt={product.ten_san_pham}
+                        className="w-16 h-20 object-cover rounded-md"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-gray-700 text-base sm:text-lg">
+                          {product.ten_san_pham}
+                        </h3>
+                        <p className="text-gray-600">
+                          Size: <span>{product.kich_thuoc}</span>, Màu:{" "}
+                          <span>{product.mau_sac}</span>
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-2">
+                      {product.gia_hien_tai.toLocaleString("vi-VN")}₫
+                    </td>
+                    <td className="px-4 py-2 hidden lg:table-cell text-center">
+                      {product.so_luong.toLocaleString("vi-VN")}
+                    </td>
+                    <td className="px-4 py-2">
+                      {(product.gia_hien_tai * product.so_luong).toLocaleString(
+                        "vi-VN"
+                      )}
+                      ₫
+                    </td>
+                  </tr>
+                )
+              )}
+          {products?.length > limit && (
+            <tr
+              className="border-b border-gray-200 hover:bg-gray-100 text-sm sm:text-base cursor-pointer"
+              onClick={() => setLimit(limit + 3)}
+            >
+              <td colSpan={4} className="px-4 py-4 text-center">
+                <h3 className="font-semibold text-gray-700 text-base sm:text-lg">
+                  Xem thêm {products.length - 3} sản phẩm khác...
+                </h3>
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
 
