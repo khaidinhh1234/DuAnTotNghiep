@@ -143,7 +143,7 @@ class ThongKeKhachHangController extends Controller
             DB::beginTransaction();
             $now = Carbon::now();
             $activityHienTai = DB::table('users')
-                ->whereNull('deleted_at')
+                ->whereNotNull('deleted_at')
                 ->count();  // Đếm số lượt đăng ký
             // // Lùi về tháng trước
             // $thangTruoc = $now->subMonth();
@@ -204,10 +204,10 @@ class ThongKeKhachHangController extends Controller
             'khac' => User::where('gioi_tinh', User::TYPE_KHAC)->count(),
             'conlai' => User::whereNull('gioi_tinh')->count()
         ];
-    
+
         $gioiTinhValues = array_values($gioiTinhCounts);
         $tongSoNguoiDung = array_sum($gioiTinhCounts);
-    
+
         // Tính tỉ lệ phần trăm giới tính
         $gioiTinhPhanTram = [
             'nam' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['nam'] / $tongSoNguoiDung) * 100, 2) : 0,
@@ -215,23 +215,23 @@ class ThongKeKhachHangController extends Controller
             'khac' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['khac'] / $tongSoNguoiDung) * 100, 2) : 0,
             'conlai' => $tongSoNguoiDung > 0 ? round(($gioiTinhCounts['conlai'] / $tongSoNguoiDung) * 100, 2) : 0,
         ];
-    
+
         // Khởi tạo mảng tuổi và số lượng
         $tuoiLabels = ['duoi_18', '18_24', '25_34', '35_44', '45_54', 'tren_55'];
         $doTuoiCounts = array_fill_keys($tuoiLabels, 0);
-    
+
         // Lấy danh sách người dùng có ngày sinh hợp lệ và tính toán tuổi
         $users = User::whereNotNull('ngay_sinh')->get();
-    
+
         $coNgaySinh = $users->count();
         $khongCoNgaysinh = User::whereNull('ngay_sinh')->count();
-    
+
         $phanTramKhongCoNgaySinh = $ngaySinhUser = User::count() > 0 ? round(($khongCoNgaysinh / User::count()) * 100, 2) : 0;
         $phanTramCoNgaySinh = $coNgaySinh > 0 ? round(($coNgaySinh / User::count()) * 100, 2) : 0;
-    
+
         foreach ($users as $user) {
             $tuoi = Carbon::parse($user->ngay_sinh)->age;
-    
+
             if ($tuoi < 18) {
                 $doTuoiCounts['duoi_18']++;
             } elseif ($tuoi >= 18 && $tuoi <= 24) {
@@ -246,10 +246,10 @@ class ThongKeKhachHangController extends Controller
                 $doTuoiCounts['tren_55']++;
             }
         }
-    
+
         $tuoiGroups = array_keys($doTuoiCounts);
         $soLuongGroups = array_values($doTuoiCounts);
-    
+
         return response()->json([
             'khong_co_ngay_sinh' => $khongCoNgaysinh,
             'co_ngay_sinh' => $coNgaySinh,
@@ -262,8 +262,8 @@ class ThongKeKhachHangController extends Controller
             'so_luong' => $soLuongGroups,
         ]);
     }
-    
-     function rankVaChiTieu()
+
+    function rankVaChiTieu()
     {
         $hangs = HangThanhVien::with('users.donHangs')->get();
 

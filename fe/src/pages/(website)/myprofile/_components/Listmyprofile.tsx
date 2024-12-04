@@ -5,7 +5,7 @@ import Sidebar from "./../../_component/Slibar";
 import { Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instanceClient from "@/configs/client";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -15,7 +15,8 @@ const ListMyProfile = () => {
   const [avatarImage, setAvatarImage] = useState<string>("");
   const [{ user }, setUser] = useLocalStorage("user" as any, {});
   const [tempImageUrl, setTempImageUrl] = useState<string>("");
-
+  // console.log(user);
+  console.log(tempImageUrl);
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === "user") {
@@ -41,7 +42,7 @@ const ListMyProfile = () => {
       }
     },
   });
-
+  const queryClient = useQueryClient();
   // console.log(hang_thanh_vien);
   const updateAvatarMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -63,6 +64,9 @@ const ListMyProfile = () => {
       setTempImageUrl("");
       refetch();
       // toast.success('Cập nhật ảnh đại diện thành công');
+      queryClient.invalidateQueries({
+        queryKey: ["profile"],
+      });
     },
     onError: () => {
       setTempImageUrl("");
@@ -87,6 +91,8 @@ const ListMyProfile = () => {
 
     return `${day} tháng ${month} Năm ${year}`;
   }
+  console.log(avatarImage);
+  console.log(url);
   const phantram =
     ((data?.data?.tong_tien_hang - hang_thanh_vien?.chi_tieu_toi_thieu) /
       (hang_thanh_vien?.chi_tieu_toi_da -

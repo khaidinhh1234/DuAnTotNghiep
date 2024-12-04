@@ -283,7 +283,7 @@ const Detail = ({ record }: any) => {
                           ? "Đang giao hàng"
                           : record.trang_thai_don_hang ===
                               "Chờ khách hàng xác nhận"
-                            ? "Hoàn tất(chờ xác nhận)"
+                            ? "Chờ khách hàng xác nhận"
                             : record.trang_thai_don_hang === "Hoàn tất đơn hàng"
                               ? "Hoàn tất đơn hàng"
                               : record.trang_thai_don_hang === "Hủy hàng"
@@ -299,7 +299,9 @@ const Detail = ({ record }: any) => {
                                       : record.trang_thai_don_hang ===
                                           "Từ chối hoàn hàng"
                                         ? "Từ chối hoàn hàng"
-                                        : "Giao hàng thất bại"}
+                                        : record.trang_thai_don_hang
+                                          ? "Giao hàng thất bại"
+                                          : record.trang_thai_don_hang}
                 </div>
               </div>
             </div>
@@ -543,8 +545,7 @@ const Detail = ({ record }: any) => {
                   <span className="w-full py-1 px-2 text-base font-medium text-purple-500 border-b-2 border-purple-500 hover:text-purple-600 hover:border-purple-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     Đang giao hàng
                   </span>
-                ) : record.trang_thai_don_hang === "Hoàn tất đơn hàng" ||
-                  record.trang_thai_don_hang === "Chờ khách hàng xác nhận" ? (
+                ) : record.trang_thai_don_hang === "Hoàn tất đơn hàng" ? (
                   <span className="w-full py-1 px-2 text-base font-medium text-green-500 border-b-2 border-green-500 hover:text-green-600 hover:border-green-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     Hoàn tất đơn hàng
                   </span>
@@ -553,7 +554,7 @@ const Detail = ({ record }: any) => {
                     Hủy đơn hàng
                   </span>
                 ) : (
-                  <span className="w-full py-1 px-2 text-base font-medium text-red-300 border-b-2 border-red-300 hover:text-red-600 hover:border-red-600 transition-all duration-300 ease-in-out cursor-default text-center">
+                  <span className="w-full py-1 px-2 text-base font-medium text-red-500 border-b-2 border-red-500 hover:text-red-600 hover:border-red-600 transition-all duration-300 ease-in-out cursor-default text-center">
                     {record.trang_thai_don_hang}
                   </span>
                 )}

@@ -41,7 +41,12 @@ const banks = [
     logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/VPBank_logo.svg_eciill.png",
   },
 ];
-
+function maskCardNumber(cardNumber: any) {
+  const firstFour = cardNumber.slice(0, 4); // Lấy 4 số đầu
+  const lastFour = cardNumber.slice(-4); // Lấy 4 số cuối
+  const masked = "*".repeat(cardNumber.length - 8); // Tạo chuỗi *** cho phần còn lại
+  return `${firstFour}${masked}${lastFour}`;
+}
 const fetchLinkedBanks = async () => {
   const response = await instanceClient.get("/danh-sach-ngan-hang");
   return response.data?.data?.map((bank: any) => ({
@@ -83,7 +88,7 @@ const BankAccount = () => {
     refetchOnMount: true,
     staleTime: 0,
   });
-
+  console.log(linkedBanks);
   const deleteBankMutation = useMutation({
     mutationFn: (bankId: string) => {
       return instanceClient.post(`/huy-lien-ket-ngan-hang/${bankId}`);
@@ -224,7 +229,7 @@ const BankAccount = () => {
                   </div>
                 </div>
                 <div className="text-gray-500">
-                  ***{bank.accountNumber.slice(-4)}
+                  {maskCardNumber(bank.accountNumber)}
                 </div>
                 <div
                   className={`w-3 h-3 ml-2 transform border-r-2 border-b-2 border-gray-500 transition-transform duration-200 ${selectedBankId === bank.id ? "rotate-[225deg]" : "rotate-45"}`}
@@ -241,14 +246,16 @@ const BankAccount = () => {
                       Số tài khoản
                     </label>
                     <p className="font-medium">
-                      ****{bank.accountNumber.slice(-4)}
+                      {maskCardNumber(bank.accountNumber)}
                     </p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">
                       Chủ tài khoản
                     </label>
-                    <p className="font-medium">{bank.accountHolder}</p>
+                    <p className="font-medium uppercase">
+                      {bank.accountHolder}
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Ngân hàng</label>

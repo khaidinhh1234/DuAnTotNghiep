@@ -551,7 +551,7 @@ class DonHangController extends Controller
     {
         try {
             $validated = $request->validate([
-                'trang_thai' => 'required|string|in:da_huy,tu_choi',
+                'trang_thai' => 'nullable|string|in:da_huy,tu_choi',
                 'ly_do_tu_choi' => 'required_if:trang_thai,tu_choi'
             ]);
 
