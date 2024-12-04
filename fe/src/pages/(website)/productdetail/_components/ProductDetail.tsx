@@ -138,8 +138,8 @@ const ProductDetail: React.FC = () => {
   // const [token, setToken] = useState<string | null>(null);
   // const nav = useNavigate();
   const [user] = useLocalStorage("user" as any, {});
-  const access_token =
-    user.access_token || localStorage.getItem("access_token");
+  // const access_token = user.access_token || localStorage.getItem("access_token");
+  const access_token = JSON.parse(localStorage.getItem("access_token") || "{}");
   const [selectedColorDisplay, setSelectedColorDisplay] = useState<
     string | null
   >(null);
@@ -234,26 +234,6 @@ const ProductDetail: React.FC = () => {
     },
   });
   // add to cart
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const handleAddToCart = () => {
-    if (quantity < 1) {
-      toast.error("Số lượng phải lớn hơn hoặc bằng 1");
-      return;
-    }
-    const firstVariant = product?.bien_the_san_pham[0];
-    const variantIdToUse = selectedVariantId || firstVariant?.id;
-    if (!variantIdToUse) {
-      toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
-      return;
-    }
-    if (!access_token) {
-      setIsModalVisible(true);
-      return;
-    }
-
-    addToCart(variantIdToUse);
-  };
-
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
       const response = await instanceClient.post(
@@ -286,7 +266,24 @@ const ProductDetail: React.FC = () => {
       );
     },
   });
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const handleAddToCart = () => {
+    if (quantity < 1) {
+      toast.error("Số lượng phải lớn hơn hoặc bằng 1");
+      return;
+    }
+    const firstVariant = product?.bien_the_san_pham[0];
+    const variantIdToUse = selectedVariantId || firstVariant?.id;
+    if (!variantIdToUse) {
+      toast.error("Không có biến thể nào để thêm vào giỏ hàng.");
+      return;
+    }
+    if (access_token) {
+      addToCart(variantIdToUse);
+      return;
+    }
+    setIsModalVisible(true);
+  };
   const handleReviewLike = useCallback(
     debounce((reviewId: number, isLiked: boolean) => {
       if (!access_token) {
