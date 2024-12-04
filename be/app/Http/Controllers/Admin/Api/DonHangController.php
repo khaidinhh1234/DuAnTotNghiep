@@ -530,7 +530,8 @@ class DonHangController extends Controller
     public function danhSachChoXacNhanHuyHang()
     {
         try {
-            $donHangs = DonHang::where('trang_thai_don_hang', DonHang::TTDH_CXNDH)->orderByDesc('id')->get();
+            $donHangs = DonHang::where('li_do_huy_hang', '!=', null)
+                ->orderByDesc('id')->get();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -574,6 +575,7 @@ class DonHangController extends Controller
                     'id_duong_dan' => $donHang->id,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
+                broadcast(new ThongBaoMoi($thongbao))->toOthers();
                 $mess = 'Từ chối hủy hàng thành công.';
             }
             DB::commit();

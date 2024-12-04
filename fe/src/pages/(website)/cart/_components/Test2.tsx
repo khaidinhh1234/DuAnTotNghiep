@@ -3,7 +3,7 @@ import instanceClient from "@/configs/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Popconfirm } from "antd";
 import { FastForward, Star } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -18,7 +18,6 @@ const Test2 = () => {
     });
     const [fadeEffect, setFadeEffect] = useState<{ [key: string]: boolean }>({});
     const [isProcessing, setIsProcessing] = useState<Record<string, boolean>>({});
-
     const { data } = useQuery({
         queryKey: ["cart", access_token],
         queryFn: async () => {
@@ -32,7 +31,7 @@ const Test2 = () => {
             } catch (error) {
                 throw new Error("Error fetching cart data");
             }
-        },
+        }
     });
     const { mutate: increaseQuantity } = useMutation({
         mutationFn: async ({ productId, currentQuantity }: { productId: string; currentQuantity: number }) => {
@@ -58,7 +57,7 @@ const Test2 = () => {
         },
         onError: (_, { productId }) => {
             setIsProcessing((prev) => ({ ...prev, [productId]: false }));
-            toast.error("Có lỗi xảy ra khi tăng số lượng.");
+            toast.error("Error: " + JSON.stringify)
         },
     });
 
@@ -175,30 +174,6 @@ const Test2 = () => {
         Delete(productId);
     };
 
-    // Xử lý khi chọn tất cả
-    const handleSelectAll = (isChecked: boolean) => {
-        if (isChecked) {
-            const allProductIds = [
-                ...data?.san_pham_giam_gia.map((product: any) => product.id),
-                ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
-            ];
-            setSelectedProducts(allProductIds);
-            localStorage.setItem('selectedProducts', JSON.stringify(allProductIds));
-            // Gọi SelectedProduct với tất cả ID
-            SelectedProduct({ gioHangIds: allProductIds, isChecked: true });
-        } else {
-            const allProductIds = [
-                ...data?.san_pham_giam_gia.map((product: any) => product.id),
-                ...data?.san_pham_nguyen_gia.map((product: any) => product.id),
-            ];
-            setSelectedProducts([]); // Cập nhật trạng thái không chọn
-            localStorage.setItem('selectedProducts', JSON.stringify([]));
-            // Gọi SelectedProduct với tất cả ID và trạng thái không chọn
-            SelectedProduct({ gioHangIds: allProductIds, isChecked: false });
-        }
-    };
-
-    // chọn sản phẩm
     const { mutate: SelectedProduct } = useMutation({
         mutationFn: async ({
             gioHangIds,
@@ -207,15 +182,19 @@ const Test2 = () => {
             gioHangIds: string[];
             isChecked: boolean;
         }) => {
-            await instanceClient.post(
-                `/gio-hang/chon-san-pham`,
-                { gio_hang_ids: gioHangIds, chon: isChecked ? 1 : 0 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${access_token}`,
-                    },
-                }
-            );
+            try {
+                await instanceClient.post(
+                    `/gio-hang/chon-san-pham`,
+                    { gio_hang_ids: gioHangIds, chon: isChecked ? 1 : 0 },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${access_token}`,
+                        },
+                    }
+                );
+            } catch (error) {
+
+            }
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
@@ -224,35 +203,57 @@ const Test2 = () => {
             toast.error(error.message || "Có lỗi xảy ra khi chọn sản phẩm.");
         },
     });
+    // Xử lý khi chọn tất cả sản phẩm giảm giá
+    const handleSelectAllDiscounted = (isChecked: boolean) => {
+        const discountedProductIds = data?.san_pham_giam_gia.map((product: any) => product.id) || [];
+        if (isChecked) {
+            const updatedSelectedProducts = [...new Set([...selectedProducts, ...discountedProductIds])];
+            setSelectedProducts(updatedSelectedProducts);
+            localStorage.setItem("selectedProducts", JSON.stringify(updatedSelectedProducts));
+            SelectedProduct({ gioHangIds: discountedProductIds, isChecked: true });
+        } else {
+            const updatedSelectedProducts = selectedProducts.filter(
+                (id) => !discountedProductIds.includes(id)
+            );
+            setSelectedProducts(updatedSelectedProducts);
+            localStorage.setItem("selectedProducts", JSON.stringify(updatedSelectedProducts));
+            SelectedProduct({ gioHangIds: discountedProductIds, isChecked: false });
+        }
+    };
 
+    // Xử lý khi chọn tất cả sản phẩm nguyên giá
+    const handleSelectAllRegular = (isChecked: boolean) => {
+        const regularProductIds = data?.san_pham_nguyen_gia.map((product: any) => product.id) || [];
+        if (isChecked) {
+            const updatedSelectedProducts = [...new Set([...selectedProducts, ...regularProductIds])];
+            setSelectedProducts(updatedSelectedProducts);
+            localStorage.setItem("selectedProducts", JSON.stringify(updatedSelectedProducts));
+            SelectedProduct({ gioHangIds: regularProductIds, isChecked: true });
+        } else {
+            const updatedSelectedProducts = selectedProducts.filter(
+                (id) => !regularProductIds.includes(id)
+            );
+            setSelectedProducts(updatedSelectedProducts);
+            localStorage.setItem("selectedProducts", JSON.stringify(updatedSelectedProducts));
+            SelectedProduct({ gioHangIds: regularProductIds, isChecked: false });
+        }
+    };
+
+    // Xử lý khi chọn một sản phẩm
     const handleSelectProduct = (productId: string) => {
         const isChecked = selectedProducts.includes(productId);
-        // Cập nhật trạng thái selectedProducts
         const updatedSelectedProducts = isChecked
-            ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn sản phẩm
-            : [...selectedProducts, productId]; // Chọn sản phẩm
+            ? selectedProducts.filter((id) => id !== productId) // Bỏ chọn
+            : [...selectedProducts, productId]; // Chọn
         setSelectedProducts(updatedSelectedProducts);
-        console.log("check:", isChecked);
-        // Gọi SelectedProduct với danh sách mới và trạng thái đã chọn ngược lại
+        localStorage.setItem("selectedProducts", JSON.stringify(updatedSelectedProducts));
         SelectedProduct({ gioHangIds: [productId], isChecked: !isChecked });
-        localStorage.setItem(
-            "selectedProducts",
-            JSON.stringify(updatedSelectedProducts)
-        );
     };
+    // Tải sản phẩm từ localStorage khi component khởi tạo
     useEffect(() => {
-        // Retrieve saved selection from localStorage on component mount
         const savedSelectedProducts = localStorage.getItem("selectedProducts");
         if (savedSelectedProducts) {
             setSelectedProducts(JSON.parse(savedSelectedProducts));
-        }
-    }, []);
-
-    // Tải sản phẩm từ localStorage khi component khởi tạo
-    useEffect(() => {
-        const storedProducts = localStorage.getItem("selectedProducts");
-        if (storedProducts) {
-            setSelectedProducts(JSON.parse(storedProducts));
         }
     }, []);
 
@@ -260,6 +261,7 @@ const Test2 = () => {
     useEffect(() => {
         localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
     }, [selectedProducts]);
+
     // 
     useEffect(() => {
         if (data) {
@@ -273,6 +275,62 @@ const Test2 = () => {
             }
         }
     }, [data]);
+    // nhập ôố lượng
+    const { mutate: updateQuantity } = useMutation({
+        mutationFn: async ({ productId, newQuantity }: { productId: string; newQuantity: number }) => {
+            try {
+                const response = await instanceClient.put(`/gio-hang/update/${productId}`, {
+                    so_luong: newQuantity,
+                });
+                return response.data;
+            } catch (error) {
+                // throw error.response?.data?.message || "Đã có lỗi xảy ra!";
+            }
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['cart', access_token] })
+            // toast.success(data.message);
+        },
+        onError: (error) => {
+            toast.error("Số lượng trong kho đã hết");
+        },
+    });
+    const [inputValues, setInputValues] = useState<Record<string, string>>({});
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null); 
+
+    const handleChangeQuantity = (event: React.ChangeEvent<HTMLInputElement>, product: any) => {
+        const value = event.target.value;
+        setInputValues((prev) => ({ ...prev, [product.id]: value }));
+    
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+    
+        setFadeEffect((prev) => ({ ...prev, [product.id]: true }));
+    
+        timeoutRef.current = setTimeout(() => {
+            const newQuantity = Number(value);
+    
+            if (newQuantity < 1 || newQuantity > product.so_luong_bien_the) {
+                toast.error("Số lượng không hợp lệ!");
+                return;
+            }
+    
+            setIsProcessing((prev) => ({ ...prev, [product.id]: true }));
+            updateQuantity(
+                { productId: product.id, newQuantity },
+                {
+                    onSettled: () => {
+                        setIsProcessing((prev) => ({ ...prev, [product.id]: false }));
+                    },
+                }
+            );
+    
+            setTimeout(() => {
+                setFadeEffect((prev) => ({ ...prev, [product.id]: false }));
+            }, 500); 
+        }, 500); 
+    };
 
     return (
         <>
@@ -286,7 +344,7 @@ const Test2 = () => {
                         className="w-[600px] h-[200px] md:w-[500px] md:h-[400px] object-cover"
                     />
                     <Link
-                        to="/shop"
+                        to="/shop/nam"
                         // className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md shadow hover:bg-blue-600 transition duration-200"
                         className="px-20 py-4 mt-4 btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold transition duration-200"
                     >
@@ -331,41 +389,42 @@ const Test2 = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="grid lg:grid-cols-12 gap-6 justify-center">
+                                <div className="grid lg:grid-cols-12 gap-6 ">
                                     {/* Sản phẩm */}
                                     <div className="lg:col-span-8 col-span-12">
                                         {/* Danh mục sản phẩm giảm giá */}
-                                        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+                                        {data?.san_pham_giam_gia?.length > 0 && (
+                                        <div className="bg-white p-6 rounded-lg shadow-md mb-6 w-[765px]">
                                             <div className="flex items-center mb-4">
                                                 <input
                                                     type="checkbox"
                                                     checked={
                                                         [...(data?.san_pham_giam_gia ?? [])].every(product => product.chon === 1)
                                                     }
-                                                    onChange={(e) => handleSelectAll(e.target.checked)}
-                                                    className="form-checkbox h-5 w-5 text-yellow-500"
+                                                    onChange={(e) => handleSelectAllDiscounted(e.target.checked)}
+                                                    className="form-checkbox h-5 w-5 text-yellow-500 "
                                                     title="Select all discounted products"
                                                 />
-                                                <h2 className="font-bold text-xl mb-0 ml-2">Đang được giảm giá</h2>
+                                                <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm giảm giá</h2>
                                             </div>
-
                                             {data?.san_pham_giam_gia.map((product: any) => (
                                                 <div
                                                     key={product.id}
-                                                    className="flex justify-between items-center border-b py-4"
+                                                    // className="flex justify-between items-center border-b py-4"
+                                                    className={`flex justify-between items-center border-b py-4  rounded-md ${fadeEffect[product.id] ? "opacity-50 transition-opacity duration-300" : ""}`}
                                                 >
                                                     <div className="flex items-center gap-6">
                                                         <input
                                                             type="checkbox"
-                                                            checked={selectedProducts.includes(product.id)}
-                                                            //   onChange={() => handleCheckboxChange(product.id)}
-                                                            className="form-checkbox h-5 w-5 text-yellow-500"
-                                                            title={`Select ${product.ten_san_pham}`}
+                                                            className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+                                                            checked={product.chon === 1 || selectedProducts.includes(product.id)}
+                                                            onChange={() => handleSelectProduct(product.id)}
+                                                            title="Select discount product"
                                                         />
                                                         <img
                                                             src={product.hinh_anh}
                                                             alt="Ảnh sản phẩm"
-                                                            className="w-20 h-20 object-cover rounded-md"
+                                                            className="w-32 h-40 object-cover rounded-md"
                                                         />
                                                         <div>
                                                             <h3 className="font-semibold">{product.ten_san_pham}</h3>
@@ -385,29 +444,67 @@ const Test2 = () => {
                                                             </p>
                                                         </div>
                                                     </div>
-
-                                                    <div className="flex items-center gap-2">
-                                                        <button
-                                                            onClick={() => decreaseQuantity(product.id)}
-                                                            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
-                                                            disabled={product.so_luong <= 1}
-                                                        >
-                                                            <i className="fa-solid fa-minus"></i>
-                                                        </button>
+                                                    <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                                        {product.so_luong === 1 ? (
+                                                            <Popconfirm
+                                                                title="Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?"
+                                                                onConfirm={() => handleRemoveProduct(product.id)}
+                                                                okText="Có"
+                                                                cancelText="Không"
+                                                            >
+                                                                <button className="py-1 px-3 rounded-l-lg" title="Decrease quantity">
+                                                                    −
+                                                                </button>
+                                                            </Popconfirm>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => {
+                                                                    if (!isProcessing[product.id]) {
+                                                                        decreaseQuantity({ productId: product.id, currentQuantity: product.quantity });
+                                                                    }
+                                                                }}
+                                                                className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                                                                title="Decrease quantity"
+                                                                disabled={isProcessing[product.id] || product.quantity <= 1 || fadeEffect[product.id]}
+                                                            >
+                                                                −
+                                                            </button>
+                                                        )}
                                                         <input
-                                                            type="text"
-                                                            value={product.so_luong}
-                                                            className="w-10 text-center border rounded-md"
-                                                            readOnly
+                                                            type="number"
+                                                            value={inputValues[product.id] ?? product.so_luong}
+                                                            onChange={(event) => handleChangeQuantity(event, product)}
+                                                            placeholder=""
+                                                            min="1"
+                                                            max={product.so_luong_bien_the}
+                                                            title="Product Quantity"
+                                                            disabled={isProcessing[product.id] }
+                                                            className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                                         />
                                                         <button
-                                                            onClick={() => increaseQuantity(product.id)}
-                                                            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
-                                                            disabled={product.so_luong >= product.so_luong_bien_the}
+                                                            onClick={() => {
+                                                                // Kiểm tra nếu số lượng sản phẩm hiện tại đã đạt đến số lượng tối đa của biến thể
+                                                                if (product.so_luong >= product.so_luong_bien_the) {
+                                                                    toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
+                                                                    return; // Dừng lại nếu đạt giới hạn
+                                                                }
+
+                                                                // Gọi hàm tăng số lượng nếu còn tồn kho
+                                                                if (!isProcessing[product.id]) {
+                                                                    increaseQuantity({
+                                                                        productId: product.id,
+                                                                        currentQuantity: product.so_luong,
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                                                            title="Increase quantity"
+                                                            disabled={product.so_luong >= product.so_luong_bien_the || fadeEffect[product.id] || isProcessing[product.id]} // Vô hiệu hóa nút nếu đạt giới hạn
                                                         >
-                                                            <i className="fa-solid fa-plus"></i>
+                                                            +
                                                         </button>
                                                     </div>
+
                                                     <button
                                                         onClick={() => Delete(product.id)}
                                                         className="text-red-600 hover:text-red-800"
@@ -417,16 +514,17 @@ const Test2 = () => {
                                                 </div>
                                             ))}
                                         </div>
-
+                                        )}
                                         {/* Danh mục sản phẩm nguyên giá */}
-                                        <div className="bg-white p-6 rounded-lg shadow-md">
+                                        {data?.san_pham_nguyen_gia?.length > 0 && (
+                                        <div className="bg-white p-6 rounded-lg shadow-md mb-6 w-[765px]">
                                             <div className="flex items-center mb-4">
                                                 <input
                                                     type="checkbox"
                                                     checked={
-                                                        [...(data?.san_pham_nguyen_gia?? [])].every(product => product.chon === 1)
+                                                        [...(data?.san_pham_nguyen_gia ?? [])].every(product => product.chon === 1)
                                                     }
-                                                    // onChange={(e) => handleSelectAll(e.target.checked)}
+                                                    onChange={(e) => handleSelectAllRegular(e.target.checked)}
                                                     className="form-checkbox h-5 w-5 text-blue-500"
                                                     title="Select all regular priced products"
                                                 />
@@ -436,20 +534,20 @@ const Test2 = () => {
                                             {data?.san_pham_nguyen_gia.map((product: any) => (
                                                 <div
                                                     key={product.id}
-                                                    className="flex justify-between items-center border-b py-4"
+                                                    className={`flex justify-between items-center border-b py-4  rounded-md ${fadeEffect[product.id] ? "opacity-50 transition-opacity duration-300" : ""}`}
                                                 >
                                                     <div className="flex items-center gap-6">
                                                         <input
                                                             type="checkbox"
-                                                            checked={selectedProducts.includes(product.id)}
-                                                            //   onChange={() => handleCheckboxChange(product.id)}
-                                                            className="form-checkbox h-5 w-5 text-blue-500"
-                                                            title={`Select ${product.ten_san_pham}`}
+                                                            className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+                                                            checked={product.chon === 1 || selectedProducts.includes(product.id)}
+                                                            onChange={() => handleSelectProduct(product.id)}
+                                                            title="Select discount product"
                                                         />
                                                         <img
                                                             src={product.hinh_anh}
                                                             alt="Ảnh sản phẩm"
-                                                            className="w-20 h-20 object-cover rounded-md"
+                                                            className="w-32 h-40 object-cover rounded-md"
                                                         />
                                                         <div>
                                                             <h3 className="font-semibold">{product.ten_san_pham}</h3>
@@ -462,26 +560,64 @@ const Test2 = () => {
                                                         </div>
                                                     </div>
 
-                                                    <div className="flex items-center gap-2">
-                                                        <button
-                                                            onClick={() => decreaseQuantity(product.id)}
-                                                            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
-                                                            disabled={product.so_luong <= 1}
-                                                        >
-                                                            <i className="fa-solid fa-minus"></i>
-                                                        </button>
-                                                        <input
-                                                            type="text"
-                                                            value={product.so_luong}
-                                                            className="w-10 text-center border rounded-md"
-                                                            readOnly
+                                                    <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                                        {product.so_luong === 1 ? (
+                                                            <Popconfirm
+                                                                title="Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?"
+                                                                onConfirm={() => handleRemoveProduct(product.id)}
+                                                                okText="Có"
+                                                                cancelText="Không"
+                                                            >
+                                                                <button className="py-1 px-3 rounded-l-lg" title="Decrease quantity">
+                                                                    −
+                                                                </button>
+                                                            </Popconfirm>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => {
+                                                                    if (!isProcessing[product.id]) {
+                                                                        decreaseQuantity({ productId: product.id, currentQuantity: product.quantity });
+                                                                    }
+                                                                }}
+                                                                className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                                                                title="Decrease quantity"
+                                                                disabled={isProcessing[product.id] || product.quantity <= 1 || fadeEffect[product.id]}
+                                                            >
+                                                                −
+                                                            </button>
+                                                        )}
+                                                         <input
+                                                            type="number"
+                                                            value={inputValues[product.id] ?? product.so_luong}
+                                                            onChange={(event) => handleChangeQuantity(event, product)}
+                                                            placeholder=""
+                                                            min="1"
+                                                            max={product.so_luong_bien_the}
+                                                            title="Product Quantity"
+                                                            disabled={isProcessing[product.id] }
+                                                            className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                                         />
                                                         <button
-                                                            onClick={() => increaseQuantity(product.id)}
-                                                            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
-                                                            disabled={product.so_luong >= product.so_luong_bien_the}
+                                                            onClick={() => {
+                                                                // Kiểm tra nếu số lượng sản phẩm hiện tại đã đạt đến số lượng tối đa của biến thể
+                                                                if (product.so_luong >= product.so_luong_bien_the) {
+                                                                    toast.error("Sản phẩm đã đạt đến số lượng tồn kho tối đa.");
+                                                                    return; // Dừng lại nếu đạt giới hạn
+                                                                }
+
+                                                                // Gọi hàm tăng số lượng nếu còn tồn kho
+                                                                if (!isProcessing[product.id]) {
+                                                                    increaseQuantity({
+                                                                        productId: product.id,
+                                                                        currentQuantity: product.so_luong,
+                                                                    });
+                                                                }
+                                                            }}
+                                                            className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
+                                                            title="Increase quantity"
+                                                            disabled={product.so_luong >= product.so_luong_bien_the || fadeEffect[product.id] || isProcessing[product.id]} // Vô hiệu hóa nút nếu đạt giới hạn
                                                         >
-                                                            <i className="fa-solid fa-plus"></i>
+                                                            +
                                                         </button>
                                                     </div>
                                                     <button
@@ -493,37 +629,42 @@ const Test2 = () => {
                                                 </div>
                                             ))}
                                         </div>
-                                        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+                                        )}
+                                        {/* san phẩm hết hàng */}
+                                        {data?.san_pham_het_hang?.length > 0 && (
+                                        <div className="bg-white p-6 rounded-lg shadow-md mb-6 w-[765px]">
                                             <div className="flex items-center mb-4">
                                                 <input
                                                     type="checkbox"
                                                     checked={
                                                         [...(data?.san_pham_het_hang ?? [])].every(product => selectedProducts.includes(product.id))
                                                     }
-                                                    onChange={(e) => handleSelectAll(e.target.checked)}
+                                                    // onChange={(e) => handleSelectAll(e.target.checked)}
                                                     className="form-checkbox h-5 w-5 text-yellow-500"
                                                     title="Select all discounted products"
                                                 />
-                                                <h2 className="font-bold text-xl mb-0 ml-2">Đang được giảm giá</h2>
+                                                <h2 className="font-bold text-xl mb-0 ml-2">Sản phẩm hết hàng</h2>
                                             </div>
 
                                             {data?.san_pham_het_hang.map((product: any) => (
                                                 <div
                                                     key={product.id}
-                                                    className="flex justify-between items-center border-b py-4"
+                                                    // className="flex justify-between items-center border-b py-4"
+                                                    className={`flex justify-between items-center border-b py-4 border-gray-200  ${product.het_hang ? 'opacity-50 cursor-not-allowed' : ''
+                                                        }`}
                                                 >
                                                     <div className="flex items-center gap-6">
                                                         <input
                                                             type="checkbox"
-                                                            checked={selectedProducts.includes(product.id)}
-                                                            //   onChange={() => handleCheckboxChange(product.id)}
-                                                            className="form-checkbox h-5 w-5 text-yellow-500"
-                                                            title={`Select ${product.ten_san_pham}`}
+                                                            className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-indigo-500 focus:ring-2 cursor-pointer"
+                                                            disabled={product.het_hang}
+                                                            onChange={() => handleSelectProduct(product.id)}
+                                                            title={product.het_hang ? 'Sản phẩm đã hết hàng' : 'Select product'}
                                                         />
                                                         <img
                                                             src={product.hinh_anh}
                                                             alt="Ảnh sản phẩm"
-                                                            className="w-20 h-20 object-cover rounded-md"
+                                                            className="w-32 h-40 object-cover rounded-md"
                                                         />
                                                         <div>
                                                             <h3 className="font-semibold">{product.ten_san_pham}</h3>
@@ -544,26 +685,23 @@ const Test2 = () => {
                                                         </div>
                                                     </div>
 
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                                                         <button
-                                                            onClick={() => decreaseQuantity(product.id)}
-                                                            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
-                                                            disabled={product.so_luong <= 1}
-                                                        >
-                                                            <i className="fa-solid fa-minus"></i>
+                                                            onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                                                            className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                                                            −
                                                         </button>
                                                         <input
                                                             type="text"
                                                             value={product.so_luong}
-                                                            className="w-10 text-center border rounded-md"
+                                                            className="w-12 text-center border-none outline-none"
                                                             readOnly
+                                                            title={`Quantity of ${product.ten_san_pham}`}
                                                         />
                                                         <button
-                                                            onClick={() => increaseQuantity(product.id)}
-                                                            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg"
-                                                            disabled={product.so_luong >= product.so_luong_bien_the}
-                                                        >
-                                                            <i className="fa-solid fa-plus"></i>
+                                                            onClick={() => increaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
+                                                            className="px-4 py-2 text-gray-500 hover:text-black transition-colors">
+                                                            +
                                                         </button>
                                                     </div>
                                                     <button
@@ -575,9 +713,9 @@ const Test2 = () => {
                                                 </div>
                                             ))}
                                         </div>
+                                        )}
                                     </div>
                                 </div>
-
                             </div>
 
                             {/* CHI TIẾT */}

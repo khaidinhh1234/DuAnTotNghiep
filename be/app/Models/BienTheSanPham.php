@@ -45,4 +45,8 @@ class BienTheSanPham extends Model
     {
         return $this->hasMany(DonHangChiTiet::class, 'bien_the_san_pham_id', 'id');
     }
+    public function DanhGiaBienThe()
+    {
+        return $this->belongsToMany(DanhGia::class, 'danh_gia_san_phams', 'bien_the_san_pham_id', 'danh_gia_id');
+    }
 }
