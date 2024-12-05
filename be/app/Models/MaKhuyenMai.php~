@@ -21,7 +21,7 @@ class MaKhuyenMai extends Model
         'ngay_bat_dau',
         'ngay_ket_thuc',
         'chi_tieu_toi_thieu',
-        'giam_toi_da',
+        'tong_giam_gia_toi_da',
         'ngay_bat_dau_suu_tam',
         'trang_thai',
         'ap_dung',
