@@ -24,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('don_hangs', function (Blueprint $table) {
-            $table->enum('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL, DonHang::TTDH_DGH, DonHang::TTDH_CKHCN, DonHang::TTDH_HTDH, DonHang::TTDH_DHTB, DonHang::TTDH_DH, DonHang::TTDH_HH,DonHang::TTDH_CXNHH, ])->nullable()->change();
+            $table->enum('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXL, DonHang::TTDH_DGH, DonHang::TTDH_CKHCN, DonHang::TTDH_HTDH, DonHang::TTDH_DHTB, DonHang::TTDH_DH, DonHang::TTDH_HH,DonHang::TTDH_CXNHH])->nullable()->change();
         });
     }
 };
