@@ -54,6 +54,7 @@ class MaKhuyenMaiController extends Controller
             'so_luong' => 'required|integer|min:1',
             'giam_gia' => 'required|numeric',
             'chi_tieu_thoi_thieu' => 'nullable|numeric',
+            'giam_toi_da' => 'nullable|numeric',
             'khuyen_mai_san_pham' => 'nullable|array',
             'khuyen_mai_danh_muc' => 'nullable|array',
             'hang_thanh_vien' => 'required|array',

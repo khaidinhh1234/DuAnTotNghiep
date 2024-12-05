@@ -1,0 +1,74 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import instanceClient from "@/configs/client";
+import { Slider } from "antd";
+
+const AllProduct = () => {
+    const { slug } = useParams();
+
+    const { data, isLoading, isError, error } = useQuery(
+        ["PRODUCTSLOC", slug],
+        async () => {
+            const response = await instanceClient.post(
+                `chuong-trinh-uu-dai/${slug}`,
+                {
+                    danh_muc_ids: [], // Bạn có thể thay đổi nếu cần
+                    mau_sac_ids: [], // Bạn có thể thay đổi nếu cần
+                    kich_thuoc_ids: [], // Bạn có thể thay đổi nếu cần
+                    gia_duoi: 0, // Đặt giá trị phù hợp
+                    gia_tren: 1000, // Đặt giá trị phù hợp
+                    page: 1, // Số trang hiện tại
+                }
+            );
+            return response.data;
+        }
+    );
+
+    if (isLoading) return <p>Loading...</p>;
+    if (isError) return <p>Error: {error.message}</p>;
+
+    const promotion = data?.chuong_trinh;
+
+    return (
+        <section>
+            <div className="container">
+                <div className="flex mt-[70px] mb-9">
+                    <p className="pr-2">Sản phẩm</p>
+                    <span>--</span>
+                    <p className="px-2">{slug}</p>
+                </div>
+
+                {promotion && (
+                    <div className="promotion-details">
+                        <h2 className="promotion-title">{promotion.ten_uu_dai}</h2>
+                        <img
+                            src={promotion.duong_dan_anh}
+                            alt={promotion.ten_uu_dai}
+                            className="promotion-image"
+                        />
+                        <p className="promotion-description">{promotion.mo_ta}</p>
+
+                        <Slider
+                            min={0}
+                            max={1000}
+                            defaultValue={100}
+                            className="promotion-slider"
+                            tooltipVisible
+                            step={10}
+                            marks={{
+                                0: "0",
+                                250: "250",
+                                500: "500",
+                                750: "750",
+                                1000: "1000",
+                            }}
+                        />
+                    </div>
+                )}
+            </div>
+        </section>
+    );
+};
+
+export default AllProduct;
