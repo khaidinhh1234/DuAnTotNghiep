@@ -18,8 +18,8 @@ use App\Models\NganHang;
 use App\Models\SanPham;
 use App\Models\ThongBao;
 use App\Models\User;
+use App\Models\ViTien;
 use App\Models\YeuCauRutTien;
-use App\Services\NominatimService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -464,9 +464,9 @@ class DonHangClientController extends Controller
                         if ($maGiamGia->user()->where('id', $userId)->doesntExist()) {
                             return response()->json(['status' => false, 'message' => 'Mã giảm giá không áp dụng cho người dùng này.'], 400);
                         }
-
+                        
                         $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                            ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
+                            ? min($tongTienDonHang * $maGiamGia->giam_gia / 100, $maGiamGia->giam_toi_da)
                             : $maGiamGia->giam_gia;
 
                         $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
@@ -702,6 +702,7 @@ class DonHangClientController extends Controller
         ]);
 
         $userId = Auth::id();
+        $viTien = ViTien::where('user_id', $userId)->first();
         $maDonHang = $request->ma_don_hang;
         $lidoHuyHang = $request->li_do_huy_hang;
 
@@ -756,7 +757,14 @@ class DonHangClientController extends Controller
                 $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
             ) {
                 $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
-            }
+            
+
+            // if (
+            //     in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
+            //     $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
+            // ) {
+            //     $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+            // }
 
             foreach ($donHang->chiTiets as $chiTiet) {
                 $bienTheSanPham = $chiTiet->bienTheSanPham;
@@ -785,7 +793,7 @@ class DonHangClientController extends Controller
                 'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hủy.',
                 'loai' => 'Đơn hàng',
                 'duong_dan' => $donHang->ma_don_hang,
-                'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
             ]);
 
             broadcast(new ThongBaoMoi($thongBao))->toOthers();
@@ -902,6 +910,7 @@ class DonHangClientController extends Controller
 
         try {
             $user = User::findOrFail($userId);
+            $nganHang = NganHang::findOrFail($nganHangId);
             $viUser = $user->viTien;
             if ($user->viTien->so_du < $soTien) {
                 return response()->json([
@@ -913,6 +922,10 @@ class DonHangClientController extends Controller
                 'vi_tien_id' => $viUser->id,
                 'ngan_hang_id' => $nganHangId,
                 'so_tien' => (int)$soTien,
+                'tai_khoan_ngan_hang' => $nganHang->tai_khoan_ngan_hang,
+                'ten_chu_tai_khoan' => $nganHang->ten_chu_tai_khoan,
+                'ngan_hang' => $nganHang->ngan_hang,
+                'logo_ngan_hang' => $nganHang->logo_ngan_hang,
                 'trang_thai' => 'cho_duyet',
             ]);
 
@@ -935,7 +948,14 @@ class DonHangClientController extends Controller
                 'ngay_thay_doi' => now(),
                 'mo_ta' => 'Rút tiền từ ví tiền',
             ]);
-
+            $thongBao = ThongBao::create([
+                'user_id' => $userId,
+                'tieu_de' => 'Yêu cầu rút tiền',
+                'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
+                'loai' => 'Rút tiền',
+                'duong_dan' => $yeuCauRutTien->id,
+                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+            ]);
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Yêu cầu rút tiền',
