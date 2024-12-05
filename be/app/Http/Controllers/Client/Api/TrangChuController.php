@@ -118,6 +118,14 @@ class TrangChuController extends Controller
 
                 $sanPham->bien_the = $bienThe;
                 $sanPham->mau_sac_va_anh = $mauSacVaAnh;
+                $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
+                    ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
+                        $giaTriUuDai = $uuDai->loai === 'phan_tram'
+                            ? $uuDai->gia_tri_uu_dai . '%'
+                            : number_format($uuDai->gia_tri_uu_dai, 0, ',', '.') . ' VND';
+                        return $uuDai->ten_uu_dai . " - Giảm: " . $giaTriUuDai;
+                    })->implode(', ')
+                    : null;
 
                 return $sanPham;
             });

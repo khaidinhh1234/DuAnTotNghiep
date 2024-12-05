@@ -115,6 +115,15 @@ trait LocSanPhamTrait
                     ];
                 });
 
+                $sanPham->trong_chuong_trinh_uu_dai = $sanPham->chuongTrinhUuDais->isNotEmpty()
+                    ? $sanPham->chuongTrinhUuDais->map(function ($uuDai) {
+                        $giaTriUuDai = $uuDai->loai === 'phan_tram'
+                            ? $uuDai->gia_tri_uu_dai . '%'
+                            : number_format($uuDai->gia_tri_uu_dai, 0, ',', '.') . ' VND';
+                        return $uuDai->ten_uu_dai . " - Giảm: " . $giaTriUuDai;
+                    })->implode(', ')
+                    : null;
+
                 $trangThaiYeuthich = false;
                 if (Auth::guard('api')->check()) {
                     $user = Auth::guard('api')->user();
@@ -138,7 +147,8 @@ trait LocSanPhamTrait
                         ];
                     })->unique('ma_mau_sac')->values()->toArray(),
                     'trang_thai_yeu_thich' => $trangThaiYeuthich,
-                    'kich_thuocs' => $sanPham->bienTheSanPham->pluck('kichThuocBienThe.kich_thuoc')->unique()->values()->toArray()
+                    'kich_thuocs' => $sanPham->bienTheSanPham->pluck('kichThuocBienThe.kich_thuoc')->unique()->values()->toArray(),
+                    'trong_chuong_trinh_uu_dai' => $sanPham->trong_chuong_trinh_uu_dai
                 ];
             });
 
@@ -182,14 +192,6 @@ trait LocSanPhamTrait
                 $query->whereIn('san_pham_id', $sanPhamIds);
             })
                 ->get();
-
-            $mauSacs->map(function ($mauSac) use ($sanPhamIds) {
-                $mauSac->so_luong_san_pham = $mauSac->sanPhams->whereIn('id', $sanPhamIds)->count();
-            });
-
-            $kichThuoc->map(function ($kichThuoc) use ($sanPhamIds) {
-                $kichThuoc->so_luong_san_pham = $kichThuoc->sanPhams->whereIn('id', $sanPhamIds)->count();
-            });
 
             DB::commit();
 
