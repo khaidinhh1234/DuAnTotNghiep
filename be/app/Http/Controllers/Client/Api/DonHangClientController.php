@@ -438,7 +438,7 @@ class DonHangClientController extends Controller
                         }
 
                         $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                            ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
+                            ? min($tongTienDonHang * $maGiamGia->giam_gia / 100, $maGiamGia->giam_toi_da)
                             : $maGiamGia->giam_gia;
 
                         $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
