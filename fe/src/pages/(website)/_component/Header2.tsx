@@ -182,7 +182,7 @@ const Header2 = () => {
   // console.log("giaohang", giaohangs);
   const logout = () => {
     // nav("/login");
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("access_token");
     localStorage.removeItem("user");
     // setUser(null);
   };

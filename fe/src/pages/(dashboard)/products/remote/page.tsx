@@ -393,14 +393,14 @@ const ProductsRemote: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham-remote"] });
       message.open({
         type: "success",
-        content: "Khôi phục sản phẩm thành công",
+        content: "Cập nhật trạng thái sản phẩm thành công",
       });
       navigate("/admin/products");
     },
     onError: () => {
       message.open({
         type: "error",
-        content: "Khôi phục sản phẩm thất bại",
+        content: "Cập nhật trạng thái sản phẩm thất bại",
       });
     },
   });
@@ -415,7 +415,7 @@ const ProductsRemote: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham-remote"] });
       message.open({
         type: "success",
-        content: "Khôi phục các sản phẩm thành công",
+        content: "Cập nhật các trạng thái sản phẩm thành công",
       });
       setSelectedRowKeys([]);
       navigate("/admin/products");
@@ -423,7 +423,7 @@ const ProductsRemote: React.FC = () => {
     onError: () => {
       message.open({
         type: "error",
-        content: "Khôi phục các sản phẩm thất bại",
+        content: "Cập nhật các trạng thái sản phẩm thất bại",
       });
     },
   });
@@ -455,7 +455,7 @@ const ProductsRemote: React.FC = () => {
     if (selectedRowKeys.length > 0) {
       restoreMultipleProductsMutation.mutate(selectedRowKeys as string[]);
     } else {
-      message.warning("Vui lòng chọn ít nhất một sản phẩm để khôi phục");
+      message.warning("Vui lòng chọn ít nhất một sản phẩm để cập nhật");
     }
   };
 
@@ -650,7 +650,7 @@ const ProductsRemote: React.FC = () => {
             onClick={() => handleRestoreSingle(record.id)}
             className="bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold"
           >
-            Khôi phục
+            Hoạt động
           </Button>
         </Space>
       ),
@@ -721,7 +721,7 @@ const ProductsRemote: React.FC = () => {
     font-bold py-2 px-4 rounded h-8 mr-2
   `}
             >
-              Khôi phục ({selectedRowKeys.length})
+              Hoạt động({selectedRowKeys.length})
             </Button>
 
             <Input

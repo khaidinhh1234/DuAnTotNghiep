@@ -4,13 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { message, Tabs } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import HoanTien from "./Hoan";
-import React from "react";
-import { FrownOutlined, MehOutlined, SmileOutlined } from "@ant-design/icons";
-import { Flex, Rate } from "antd";
-import Danhgia from "./Danhgia";
+
 import VerificationModal from "../../ShipingAdrres/VerificationModal";
 import { toast } from "react-toastify";
+import Check from "@/components/hook/checkngay";
 
 // Component hiển thị thông tin sản phẩm
 const isToday = (date: any) => {
@@ -39,8 +36,14 @@ const ProductItem = ({
   trang_thai_thanh_toan,
   created_at,
   phuong_thuc_thanh_toans,
+
+  ly_do_huy,
+
+  ngay_hoan_thanh_don,
+
   // danh_gias,
 }: any) => {
+  console.log(Check(ngay_hoan_thanh_don));
   // console.log(chi_tiet_don_hangs);
   // console.log("status", new Date(created_at));
   const dateToCheck = new Date(created_at);
@@ -456,7 +459,8 @@ const ProductItem = ({
           </Link>
 
           <br />
-          {status === "Hoàn tất đơn hàng" &&
+          {Check(ngay_hoan_thanh_don) &&
+            status === "Hoàn tất đơn hàng" &&
             trang_thai_thanh_toan == "Đã thanh toán" && (
               <div className="mt-5">
                 {" "}
@@ -468,30 +472,31 @@ const ProductItem = ({
                 </Link>
               </div>
             )}
-          {(status === "Chờ xác nhận" ||
-            status === "Đã xác nhận" ||
-            // status === "Đang xử lý" ||
+          {!ly_do_huy &&
+            (status === "Chờ xác nhận" ||
+              status === "Đã xác nhận" ||
+              // status === "Đang xử lý" ||
 
-            status === "Chờ khách hàng xác nhận") && (
-            <button
-              className={`${
-                status === "Chờ khách hàng xác nhận"
-                  ? "bg-black hover:bg-black/50"
-                  : "bg-[#FF7262] hover:bg-[#e9b2ac]"
-              } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg my-2 ${PendingHuy ? "cursor-not-allowed" : ""}`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleCancelOrder();
-              }}
-            >
-              {status === "Chờ khách hàng xác nhận" &&
-              status !== "Hoàn tất đơn hàng"
-                ? "Đã nhận hàng"
-                : PendingHuy
-                  ? "Loading..."
-                  : "Hủy Đơn Hàng"}
-            </button>
-          )}
+              status === "Chờ khách hàng xác nhận") && (
+              <button
+                className={`${
+                  status === "Chờ khách hàng xác nhận"
+                    ? "bg-black hover:bg-black/50"
+                    : "bg-[#FF7262] hover:bg-[#e9b2ac]"
+                } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg my-2 ${PendingHuy ? "cursor-not-allowed" : ""}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleCancelOrder();
+                }}
+              >
+                {status === "Chờ khách hàng xác nhận" &&
+                status !== "Hoàn tất đơn hàng"
+                  ? "Đã nhận hàng"
+                  : PendingHuy
+                    ? "Loading..."
+                    : "Hủy Đơn Hàng"}
+              </button>
+            )}
           <br />
           {isToday(dateToCheck) &&
             phuong_thuc_thanh_toans !== "Thanh toán khi nhận hàng" &&
@@ -544,29 +549,31 @@ const ProductItem = ({
             </button>
           </Link>
           <br />
-          {(status === "Chờ xác nhận" ||
-            status === "Đã xác nhận" ||
-            // status === "Đang xử lý" ||
+          {!ly_do_huy &&
+            (status === "Chờ xác nhận" ||
+              status === "Đã xác nhận" ||
+              // status === "Đang xử lý" ||
 
-            status === "Chờ khách hàng xác nhận") && (
-            <button
-              className={`${
-                status === "Hoàn tất đơn hàng" ||
-                status === "Chờ khách hàng xác nhận"
-                  ? "bg-black hover:bg-black/50"
-                  : "bg-[#FF7262] hover:bg-[#e9b2ac]"
-              } shadow-md shadow-slate-600/50 text-white  text-sm py-3 rounded-lg mb-2 w-[100%]`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleCancelOrder();
-              }}
-            >
-              {status === "Chờ khách hàng xác nhận"
-                ? "Đã nhận hàng"
-                : "Hủy Đơn Hàng"}
-            </button>
-          )}
-          {status === "Hoàn tất đơn hàng" &&
+              status === "Chờ khách hàng xác nhận") && (
+              <button
+                className={`${
+                  status === "Hoàn tất đơn hàng" ||
+                  status === "Chờ khách hàng xác nhận"
+                    ? "bg-black hover:bg-black/50"
+                    : "bg-[#FF7262] hover:bg-[#e9b2ac]"
+                } shadow-md shadow-slate-600/50 text-white  text-sm py-3 rounded-lg mb-2 w-[100%]`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleCancelOrder();
+                }}
+              >
+                {status === "Chờ khách hàng xác nhận"
+                  ? "Đã nhận hàng"
+                  : "Hủy Đơn Hàng"}
+              </button>
+            )}
+          {Check(ngay_hoan_thanh_don) &&
+            status === "Hoàn tất đơn hàng" &&
             trang_thai_thanh_toan === "Đã thanh toán" && (
               <Link
                 to={`/mypro/hoanhang/${ma_don_hang}`}
@@ -621,7 +628,7 @@ const ProductList = ({
 }: any) => {
   const don_hang = donhang;
   const [searchValue, setSearchValue] = useState("");
-
+  console.log(don_hang);
   const handleKeyDown = (e: any) => {
     if (e.key === "Enter") {
       e.preventDefault(); // Ngăn trình duyệt refresh
@@ -716,6 +723,8 @@ const ProductList = ({
                 ma_don_hang={item.ma_don_hang || ""}
                 phuong_thuc_thanh_toans={item.phuong_thuc_thanh_toan || ""}
                 danh_gias={item.danh_gias || []}
+                ly_do_huy={item.ly_do_huy || ""}
+                ngay_hoan_thanh_don={item.ngay_hoan_thanh_don || null}
               />
             ))
           ) : (
