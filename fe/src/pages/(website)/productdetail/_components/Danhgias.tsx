@@ -17,7 +17,7 @@ const Danhgias = ({
     <div>
       {" "}
       <div className="space-y-6">
-        {product?.danh_gias?.map((review: any, index: number) => (
+        {product?.danhGias?.map((review: any, index: number) => (
           <div key={index} className="border p-4 rounded-lg shadow-sm">
             <div className="flex items-center space-x-4 mb-3">
               <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
@@ -39,18 +39,18 @@ const Danhgias = ({
                   <span className="ml-1 text-xs text-gray-500">
                     {new Date(review?.created_at).toLocaleString()}
                   </span>
-                  <div className="flex-1 text-xs text-gray-600 border-l border-gray-300 pl-1 ml-1">
+                  <div className="flex gap-1 text-xs text-gray-600 border-l border-gray-300 pl-1 ml-1">
                     <span className="">Phân loại hàng:</span>{" "}
-                    {
-                      review?.danh_gia_bien_the_san_phams[0]?.mau_bien_the
-                        ?.ten_mau_sac
-                    }{" "}
-                    ,{" "}
-                    {review?.danh_gia_bien_the_san_phams[0]?.kich_thuoc_bien_the
-                      ?.kich_thuoc +
-                      " | " +
-                      review?.danh_gia_bien_the_san_phams[0]
-                        ?.kich_thuoc_bien_the?.loai_kich_thuoc}
+                    {review.danh_gia_bien_the_san_phams.map(
+                      (item: any, index: any) => (
+                        <div key={index} className="flex ">
+                          {item?.mau_bien_the?.ten_mau_sac},
+                          {item?.kich_thuoc_bien_the?.kich_thuoc +
+                            " | " +
+                            "("+item?.kich_thuoc_bien_the?.loai_kich_thuoc+")"+ ","}
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               </div>

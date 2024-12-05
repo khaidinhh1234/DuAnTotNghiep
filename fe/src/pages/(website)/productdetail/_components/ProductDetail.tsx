@@ -277,8 +277,7 @@ const ProductDetail: React.FC = () => {
         setIsModalVisible(true);
       } else {
         toast.error(
-          error.response?.data?.message ||
-            "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+          error.response?.data?.message 
         );
       }
     },
