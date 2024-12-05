@@ -239,10 +239,10 @@ const PageSupport: React.FC = () => {
             <strong>Email</strong>:{" "}
             <a href={`mailto:${text.email}`}>{text.email}</a>
           </div>
-          <div>
+          {/* <div>
             <strong>Số điện thoại</strong>:{" "}
             <a href={`tel:${text.sdt_lien_he}`}>{text.sdt_lien_he}</a>
-          </div>
+          </div> */}
         </div>
       ),
     },

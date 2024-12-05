@@ -105,7 +105,7 @@ const ShippingAddressPage = () => {
             window.location.href = response.data.payUrl; // Chuyển hướng người dùng đến giao diện thanh toán của MoMo
             if (response.status === 200) {
               // message.success("Thanh toán MoMo thành công");
-              toast.success("Đặt hàng thành công");
+              toast.success("Chờ xử lý thanh toán");
             }
           }
         } else if (trangthai === "Thanh toán khi nhận hàng") {
@@ -155,19 +155,28 @@ const ShippingAddressPage = () => {
   const handleCode = (data: any) => {
     setmacode(data ? data : ""); // Cập nhật trạng thái mã khuyến mãi
   };
+
   const { data: checkout } = useQuery({
-    queryKey: ["cart"],
+    queryKey: ["CART_DETAIL"],
     queryFn: async () => {
       try {
         const response = await instanceClient.get(`/gio-hang/chi-tiet`);
         return response.data;
       } catch (error) {
+        // nav("/gio-hang");
         throw new Error("Error fetching cart data");
       }
     },
   });
+  console.log(checkout);
+  const navigate = useNavigate();
   const tong_tien = checkout?.chi_tiet_don_hang;
   const products = checkout?.chi_tiet_don_hang?.san_pham;
+  if (products?.length === 0) {
+    navigate("/gio-hang");
+    toast.error("Sản phẩm của bạn đã hết hàng ");
+    // return null;
+  }
   const handleVerification = async (code: string) => {
     try {
       const orderData = {

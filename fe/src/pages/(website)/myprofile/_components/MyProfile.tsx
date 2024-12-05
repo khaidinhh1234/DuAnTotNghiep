@@ -193,9 +193,15 @@ const MyProfilePage = () => {
               onChange={onGenderChange}
               className="flex gap-8 px-4 pb-3 bg-gray-50 rounded-xl border-2 border-gray-200"
             >
-              <Radio value="1">Nam</Radio>
-              <Radio value="2">Nữ</Radio>
-              <Radio value="3">Khác</Radio>
+              <Radio value="1" className="flex flex-row items-end flex-nowrap">
+                Nam
+              </Radio>
+              <Radio value="2" className="flex flex-row items-end flex-nowrap">
+                Nữ
+              </Radio>
+              <Radio value="3" className="flex flex-row items-end flex-nowrap">
+                Khác
+              </Radio>
             </Radio.Group>
           </Form.Item>
         </div>
@@ -206,7 +212,10 @@ const MyProfilePage = () => {
             label="Số Điện Thoại"
             rules={[
               { required: true, message: "Vui lòng nhập số điện thoại" },
-              { pattern: /^[0-9]{10}$/, message: "Số điện thoại không hợp lệ" },
+              {
+                pattern: /^[0-9]{10,11}$/,
+                message: "Số điện thoại phải có 10-11 chữ số",
+              },
             ]}
           >
             <input

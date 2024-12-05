@@ -172,7 +172,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
           kichThuoc: response.data.danh_sach_loc?.original?.kichThuoc || [],
         };
       } catch (error) {
-        throw new Error("Error filtering products");
+        throw new Error("lỗi khi lấy thông tin");
       }
     },
     enabled: true, // Query will run immediately
@@ -289,34 +289,36 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
                           </div>
 
                           {expanded.includes(index) &&
-                            item.children.map((itemcon: any, indexCon: any) => (
-                              <div
-                                className="flex justify-between items-center my-4 ml-4"
-                                key={indexCon}
-                              >
-                                <label className="flex">
-                                  <input
-                                    type="checkbox"
-                                    className="mr-2"
-                                    checked={
-                                      childChecked[index]?.[indexCon] || false
-                                    }
-                                    disabled={!parentChecked[index]}
-                                    onChange={(e) => {
-                                      const isChecked = e.target.checked;
-                                      handleChildChange(
-                                        index,
-                                        indexCon,
-                                        isChecked,
-                                        itemcon.id
-                                      );
-                                      isChecked && mutate(itemcon.id);
-                                    }}
-                                  />
-                                  {itemcon?.ten_danh_muc}
-                                </label>
-                              </div>
-                            ))}
+                            item?.children?.map(
+                              (itemcon: any, indexCon: any) => (
+                                <div
+                                  className="flex justify-between items-center my-4 ml-4"
+                                  key={indexCon}
+                                >
+                                  <label className="flex">
+                                    <input
+                                      type="checkbox"
+                                      className="mr-2"
+                                      checked={
+                                        childChecked[index]?.[indexCon] || false
+                                      }
+                                      disabled={!parentChecked[index]}
+                                      onChange={(e) => {
+                                        const isChecked = e.target.checked;
+                                        handleChildChange(
+                                          index,
+                                          indexCon,
+                                          isChecked,
+                                          itemcon.id
+                                        );
+                                        isChecked && mutate(itemcon.id);
+                                      }}
+                                    />
+                                    {itemcon?.ten_danh_muc}
+                                  </label>
+                                </div>
+                              )
+                            )}
                         </div>
                       ))}
                     </>
