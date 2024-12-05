@@ -570,8 +570,8 @@ class DonHangController extends Controller
                     'user_id' => $donHang->user_id,
                     'tieu_de' => 'Yêu cầu hủy hàng của bạn đã bị từ chối',
                     'noi_dung' => 'Yêu cầu hủy hàng của bạn đã bị từ chối. Vui lòng liên hệ với cửa hàng',
-                    'loai' => 'Yêu cầu hủy hàng',
-                    'duong_dan' => 'don-hang',
+                    'loai' => 'Yêu cầu rút tiền',
+                    'duong_dan' => 'yeu-cau-rut-tien',
                     'id_duong_dan' => $donHang->id,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);

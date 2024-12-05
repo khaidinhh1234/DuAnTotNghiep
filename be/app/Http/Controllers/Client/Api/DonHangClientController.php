@@ -693,24 +693,16 @@ class DonHangClientController extends Controller
                 ], 400);
             }
             $thoiGian = Carbon::now();
-            if ($donHang->trang_thai_don_hang == DonHang::TTDH_CXH) {
-                $donHang->update([
-                    'li_do_huy_hang' => $lidoHuyHang,
-                    'trang_thai_don_hang' => DonHang::TTDH_DH,
-                    'ngay_huy' => $thoiGian,
-                ]);
+            $donHang->update([
+                'li_do_huy_hang' => $lidoHuyHang,
+                'trang_thai_don_hang' => DonHang::TTDH_DH,
+                'ngay_huy' => $thoiGian,
+            ]);
 
-                $donHang->chiTiets->each(function ($chiTiet) {
-                    $bienTheSanPham = $chiTiet->bienTheSanPham;
-                    $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
-                });
-            } elseif (in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DXH, DonHang::TTDH_DXH])) {
-                $donHang->update([
-                    'li_do_huy_hang' => $lidoHuyHang,
-                    'trang_thai_don_hang' => DonHang::TTDH_CXNDH,
-                    'ngay_huy' => $thoiGian,
-                ]);
-            }
+            $donHang->chiTiets->each(function ($chiTiet) {
+                $bienTheSanPham = $chiTiet->bienTheSanPham;
+                $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+            });
 
             if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                 DB::table('lich_su_giao_diches')->insert([
