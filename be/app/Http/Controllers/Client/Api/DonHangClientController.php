@@ -18,6 +18,7 @@ use App\Models\NganHang;
 use App\Models\SanPham;
 use App\Models\ThongBao;
 use App\Models\User;
+use App\Models\ViTien;
 use App\Models\YeuCauRutTien;
 use Carbon\Carbon;
 use Exception;
@@ -673,6 +674,7 @@ class DonHangClientController extends Controller
         ]);
 
         $userId = Auth::id();
+        $viTien = ViTien::where('user_id', $userId)->first();
         $maDonHang = $request->ma_don_hang;
         $lidoHuyHang = $request->li_do_huy_hang;
 
@@ -704,13 +706,13 @@ class DonHangClientController extends Controller
 
             if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                 DB::table('lich_su_giao_diches')->insert([
-                    'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
-                    'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
-                    'so_du_sau' => $donHang->giaoDichVi->viTien->so_du + $donHang->tong_tien_don_hang,
+                    'vi_tien_id' => $viTien->id,
+                    'so_du_truoc' => $viTien->so_du,
+                    'so_du_sau' => $viTien->so_du + $donHang->tong_tien_don_hang,
                     'ngay_thay_doi' => Carbon::now(),
                     'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
                 ]);
-                $donHang->giaoDichVi->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                $viTien->increment('so_du', $donHang->tong_tien_don_hang);
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
                     'tieu_de' => 'Số tiền đã được hoàn trả',
@@ -722,12 +724,12 @@ class DonHangClientController extends Controller
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
             }
 
-            if (
-                in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
-                $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
-            ) {
-                $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
-            }
+            // if (
+            //     in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
+            //     $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
+            // ) {
+            //     $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+            // }
 
             foreach ($donHang->chiTiets as $chiTiet) {
                 $bienTheSanPham = $chiTiet->bienTheSanPham;

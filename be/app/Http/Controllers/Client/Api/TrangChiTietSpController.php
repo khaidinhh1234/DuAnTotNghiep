@@ -57,8 +57,7 @@ class TrangChiTietSpController extends Controller
                 'danhGias.user',
                 'danhGias.danhGiaHuuIch',
                 'danhGias' => function ($query) {
-                    $query->withCount('danhGiaHuuIch')
-                    ->take(5);
+                    $query->withCount('danhGiaHuuIch')->orderBy('created_at', 'desc');
                 },
                 'danhGias.danhGiaBienTheSanPhams' => function ($query) use ($idBienThe) {
                     $query->whereIn('bien_the_san_pham_id', $idBienThe)
@@ -71,8 +70,10 @@ class TrangChiTietSpController extends Controller
                 'boSuuTapSanPham',
                 'khachHangYeuThich',
             ])->where('duong_dan', $duongDan)->first();
-
-
+                if($chiTietSanPham){
+                    $chiTietSanPham->danhGias = $chiTietSanPham->danhGias->unique('id');
+                }
+            // dd($chiTietSanPham->danhGias->pluck('id')->unique()->values()->toArray());
             // Kiểm tra xem sản phẩm có tồn tại không
             if (!$chiTietSanPham) {
                 return response()->json([
@@ -239,7 +240,7 @@ class TrangChiTietSpController extends Controller
     {
         try {
             $user = Auth::guard('api')->id();
-            if (!$user) {
+            if (!isset($user)) {
                 return response()->json(['message' => 'Bạn cần đăng nhập để like đánh giá.'], 401);
             }
 
