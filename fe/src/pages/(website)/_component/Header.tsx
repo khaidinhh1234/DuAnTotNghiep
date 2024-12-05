@@ -2,15 +2,14 @@ import { logo } from "@/assets/img";
 import { useLocalStorage } from "@/components/hook/useStoratge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import instanceClient from "@/configs/client";
+import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 import { useQuery } from "@tanstack/react-query";
 import { Dropdown, Menu, MenuProps, Modal, Spin } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import CartOverlay from "./CartOverlay";
 import Notifications from "./Notifications";
 import Search from "./Search";
 import "./dropdown.css";
-import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 interface Category {
   id: number;
   ten_danh_muc: string;
@@ -529,7 +528,7 @@ const Header = () => {
                         menu == true ? "bg-opacity-60 text-opacity-60" : ""
                       } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
-                      {data1?.tong_so_luong || 0}{" "}
+                      {data1?.tong_so_luong > 99 ? "+99" : (data1?.tong_so_luong || 0)}
                     </span>
                   </i>
                 </Link>

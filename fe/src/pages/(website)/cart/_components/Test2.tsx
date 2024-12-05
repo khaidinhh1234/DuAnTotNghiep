@@ -63,7 +63,7 @@ const Test2 = () => {
         },
         onError: (_, { productId }) => {
             setIsProcessing((prev) => ({ ...prev, [productId]: false }));
-            toast.error("Error: " + JSON.stringify)
+            toast.error("Sản phẩm trong kho không đủ số lượng bạn yêu cầu. Vui lòng điều chỉnh.");
         },
     });
 
@@ -380,7 +380,7 @@ const Test2 = () => {
             {data?.san_pham_giam_gia?.length === 0 &&
                 data?.san_pham_nguyen_gia?.length === 0 &&
                 data?.san_pham_het_hang?.length === 0 &&
-                data?.san_pham_khong_hoat_dong.length === 0? (
+                data?.san_pham_khong_hoat_dong.length === 0 ? (
                 <div className="flex flex-col items-center justify-center pt-32 pb-20">
                     <img
                         src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
@@ -433,7 +433,7 @@ const Test2 = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="grid lg:grid-cols-12 gap-6 ">
+                                <div className="grid lg:grid-cols-12 gap-6 relative z-50">
                                     {/* Sản phẩm */}
                                     <div className="lg:col-span-8 col-span-12">
                                         {/* Danh mục sản phẩm giảm giá */}
@@ -472,7 +472,7 @@ const Test2 = () => {
                                                                 />
                                                                 <div className="flex flex-col justify-between">
                                                                     <Link to={`/product-detail/${product?.duong_dan}`}>
-                                                                    <h3 className="font-semibold w-[300px] hover:text-red-500">{product.ten_san_pham}</h3>
+                                                                        <h3 className="font-semibold w-[300px] hover:text-red-500">{product.ten_san_pham}</h3>
                                                                     </Link>
                                                                     <p className="text-sm text-gray-500">
                                                                         {product.mau_sac}, {product.kich_thuoc}
@@ -717,35 +717,35 @@ const Test2 = () => {
                                                                 title={product.het_hang ? 'Sản phẩm đã hết hàng' : 'Select product'}
                                                             />
                                                             <div className="flex items-start space-x-4">
-                                                            <div className="relative w-32 h-40">
-                                                                <img
-                                                                    src={product.hinh_anh}
-                                                                    alt="Ảnh sản phẩm"
-                                                                    className="w-full h-full object-cover rounded-md"
-                                                                />
-                                                                {product.het_hang === 1 && (
-                                                                    <p className="absolute bottom-0 left-0 w-full text-center text-red-600 font-semibold bg-white bg-opacity-75 py-1 rounded-b-md">
-                                                                        Hết hàng
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                            <div>
-                                                                <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
-                                                                <p className="text-sm text-gray-500">
-                                                                    {product.mau_sac}, {product.kich_thuoc}
-                                                                </p>
-                                                                <div className="flex items-center">
-                                                                    <p className="text-red-500 font-bold mr-2">
-                                                                        {formatCurrency(product.gia_hien_tai)}
-                                                                    </p>
-                                                                    <p className="text-gray-400 line-through">
-                                                                        {formatCurrency(product.gia_cu)}
-                                                                    </p>
+                                                                <div className="relative w-32 h-40">
+                                                                    <img
+                                                                        src={product.hinh_anh}
+                                                                        alt="Ảnh sản phẩm"
+                                                                        className="w-full h-full object-cover rounded-md"
+                                                                    />
+                                                                    {product.het_hang === 1 && (
+                                                                        <p className="absolute bottom-0 left-0 w-full text-center text-red-600 font-semibold bg-white bg-opacity-75 py-1 rounded-b-md">
+                                                                            Hết hàng
+                                                                        </p>
+                                                                    )}
                                                                 </div>
-                                                                {/* <p className="text-xs text-red-500 font-semibold">
+                                                                <div>
+                                                                    <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
+                                                                    <p className="text-sm text-gray-500">
+                                                                        {product.mau_sac}, {product.kich_thuoc}
+                                                                    </p>
+                                                                    <div className="flex items-center">
+                                                                        <p className="text-red-500 font-bold mr-2">
+                                                                            {formatCurrency(product.gia_hien_tai)}
+                                                                        </p>
+                                                                        <p className="text-gray-400 line-through">
+                                                                            {formatCurrency(product.gia_cu)}
+                                                                        </p>
+                                                                    </div>
+                                                                    {/* <p className="text-xs text-red-500 font-semibold">
                                                                     Đã tiết kiệm {formatCurrency(product.tiet_kiem)}
                                                                 </p> */}
-                                                            </div>
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -808,32 +808,32 @@ const Test2 = () => {
                                                                 title={product.het_hang === 0 ? 'Sản phẩm đã hết hàng' : 'Select product'}
                                                             />
                                                             <div className="flex items-start space-x-4">
-                                                            <div className="relative w-32 h-40">
-                                                                <img
-                                                                    src={product.hinh_anh}
-                                                                    alt="Ảnh sản phẩm"
-                                                                    className="w-full h-full object-cover rounded-md"
-                                                                />
-                                                                {product.het_hang === 0 && (
-                                                                    <p className="absolute bottom-0 left-0 w-full text-center text-red-600 font-semibold bg-white bg-opacity-75 py-1 rounded-b-md">
-                                                                        Ngừng bán
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                            <div>
-                                                                <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
-                                                                <p className="text-sm text-gray-500">
-                                                                    {product.mau_sac}, {product.kich_thuoc}
-                                                                </p>
-                                                                <div className="flex items-center">
-                                                                    <p className="text-red-500 font-bold mr-2">
-                                                                        {formatCurrency(product.gia_hien_tai)}
-                                                                    </p>
-                                                                    <p className="text-gray-400 line-through">
-                                                                        {formatCurrency(product.gia_cu)}
-                                                                    </p>
+                                                                <div className="relative w-32 h-40">
+                                                                    <img
+                                                                        src={product.hinh_anh}
+                                                                        alt="Ảnh sản phẩm"
+                                                                        className="w-full h-full object-cover rounded-md"
+                                                                    />
+                                                                    {product.het_hang === 0 && (
+                                                                        <p className="absolute bottom-0 left-0 w-full text-center text-red-600 font-semibold bg-white bg-opacity-75 py-1 rounded-b-md">
+                                                                            Ngừng bán
+                                                                        </p>
+                                                                    )}
                                                                 </div>
-                                                            </div>
+                                                                <div>
+                                                                    <h3 className="font-semibold w-[300px]">{product.ten_san_pham}</h3>
+                                                                    <p className="text-sm text-gray-500">
+                                                                        {product.mau_sac}, {product.kich_thuoc}
+                                                                    </p>
+                                                                    <div className="flex items-center">
+                                                                        <p className="text-red-500 font-bold mr-2">
+                                                                            {formatCurrency(product.gia_hien_tai)}
+                                                                        </p>
+                                                                        <p className="text-gray-400 line-through">
+                                                                            {formatCurrency(product.gia_cu)}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -842,7 +842,7 @@ const Test2 = () => {
                                                                 onClick={() => decreaseQuantity({ productId: product.id, currentQuantity: product.so_luong })}
                                                                 className="px-4 py-2 text-gray-500 hover:text-black transition-colors"
                                                                 disabled={product.het_hang === 0}
-                                                                >
+                                                            >
                                                                 −
                                                             </button>
                                                             <input
@@ -874,8 +874,8 @@ const Test2 = () => {
 
                             {/* CHI TIẾT */}
                             <div className="lg:col-span-4 col-span-6">
-                                <div className="border px-4 py-1 lg:w-[359px] rounded-md">
-                                    <h1 className="text-xl font-bold mt-4">Chi tiết đơn hàng</h1>
+                                <div className="border px-4 py-2 md:py-3 lg:w-[359px] w-full rounded-md">
+                                    <h1 className="text-lg md:text-xl font-bold mt-4 text-center md:text-left">Chi tiết đơn hàng</h1>
                                     {(() => {
                                         // Lấy danh sách sản phẩm giảm giá và nguyên giá từ data
                                         const discountedProductIds = data?.san_pham_giam_gia.map((product: any) => product.id) || [];
@@ -896,14 +896,14 @@ const Test2 = () => {
                                                     <img
                                                         src="https://m.yodycdn.com/web/prod/_next/static/media/cart-empty.250eba9c.svg"
                                                         alt="Empty cart"
-                                                        className="mx-auto my-4"
+                                                        className="mx-auto my-4 w-40 md:w-52"
                                                     />
-                                                    <p className="text-gray-500 mb-4">
+                                                    <p className="text-gray-500 mb-4 text-sm md:text-base">
                                                         Vui lòng chọn các sản phẩm trong giỏ hàng trước khi thanh toán.
                                                     </p>
                                                     <Button
                                                         disabled
-                                                        className="bg-gray-300 cursor-not-allowed rounded-lg mb-4 w-[320px] h-[56px] font-semibold"
+                                                        className="bg-gray-300 cursor-not-allowed rounded-lg mb-4 w-full md:w-[320px] h-[48px] md:h-[56px] font-semibold text-sm"
                                                     >
                                                         Mua hàng
                                                     </Button>
@@ -915,41 +915,41 @@ const Test2 = () => {
                                         return (
                                             <div>
                                                 <div className="flex justify-between font-bold border-b border-hrBlack">
-                                                    <h4>Tổng giá trị sản phẩm</h4>
-                                                    <span className="px-2">
+                                                    <h4 className="text-sm md:text-base">Tổng giá trị sản phẩm</h4>
+                                                    <span className="px-2 text-sm md:text-base">
                                                         {totalSelectedPrice.toLocaleString("vn-VN")} ₫
                                                     </span>
                                                 </div>
                                                 <div className="py-4">
                                                     <div className="flex justify-between font-medium">
-                                                        <p>Tiết kiệm</p>
-                                                        <span className="px-2 text-red-500">
+                                                        <p className="text-sm md:text-base">Tiết kiệm</p>
+                                                        <span className="px-2 text-red-500 text-sm md:text-base">
                                                             {totalSavings ? totalSavings.toLocaleString("vn-VN") : "0"} ₫
                                                         </span>
                                                     </div>
 
                                                     <div className="flex justify-between font-medium mb-0">
-                                                        <p>Phí giao hàng</p>
-                                                        <span className="px-2">{formatCurrency(20000)}</span>
+                                                        <p className="text-sm md:text-base">Phí giao hàng</p>
+                                                        <span className="px-2 text-sm md:text-base">{formatCurrency(20000)}</span>
                                                     </div>
                                                     {totalSelectedPrice > 498000 && (
                                                         <div className="flex justify-between font-medium border-b border-hrBlack">
-                                                            <p>Giảm giá vận chuyển</p>
-                                                            <span className="px-2 text-red-500">
+                                                            <p className="text-sm md:text-base">Giảm giá vận chuyển</p>
+                                                            <span className="px-2 text-red-500 text-sm md:text-base">
                                                                 - {formatCurrency(20000)}
                                                             </span>
                                                         </div>
                                                     )}
                                                 </div>
                                                 <div className="flex justify-between font-bold mb-8">
-                                                    <h4>Tổng cộng</h4>
-                                                    <span>{formatCurrency(finalTotal)}</span>
+                                                    <h4 className="text-sm md:text-base">Tổng cộng</h4>
+                                                    <span className="text-sm md:text-base">{formatCurrency(finalTotal)}</span>
                                                 </div>
                                                 <div className="flex justify-center">
                                                     <Link to="/shippingAddressPage">
                                                         <Button
                                                             onClick={handleCheckout}
-                                                            className="btn-black rounded-lg mb-4 w-[320px] h-[56px] font-semibold"
+                                                            className="btn-black rounded-lg mb-4 w-full md:w-[320px] h-[48px] md:h-[56px] font-semibold text-sm md:text-base"
                                                         >
                                                             Mua hàng ({tongSoLuong})
                                                         </Button>
@@ -960,6 +960,7 @@ const Test2 = () => {
                                     })()}
                                 </div>
                             </div>
+
 
                         </div>
                     </div>
