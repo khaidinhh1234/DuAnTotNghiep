@@ -1,6 +1,7 @@
 import { IUser } from "@/common/types/user";
 import { loginSchema } from "@/common/validations/auth";
-import instance from "@/configs/auth";
+import instanceauth from "@/configs/auth";
+import instanceClient from "@/configs/client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -9,6 +10,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import instance from "@/configs/admin";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,15 +25,21 @@ const LoginForm = () => {
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
       try {
-        const { data } = await instance.post("/login", user);
+        const { data } = await instanceauth.post("/login", user);
 
         // Lưu vào localStorage
 
         localStorage.setItem("user", JSON.stringify(data));
-        localStorage.setItem("access_token", JSON.stringify(data.access_token));
-
-        // const token = JSON.parse(localStorage.getItem("access_token") || "{}");
-
+        localStorage.setItem("access_token", data.access_token);
+        const token = localStorage.getItem("access_token");
+        if (token) {
+          console.log(token);
+          instance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          instanceClient.defaults.headers.common["Authorization"] =
+            `Bearer ${token}`;
+        } else {
+          console.warn("Token not found");
+        }
         // Kiểm tra role
         const roles = data?.user?.vai_tros || [];
         const isDeliveryPerson = roles.some(

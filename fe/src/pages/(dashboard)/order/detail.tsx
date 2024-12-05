@@ -5,7 +5,6 @@ import { Button, Input, message, Modal, Rate } from "antd";
 import { SpadeIcon } from "lucide-react";
 import { useState } from "react";
 import Hoadon from "./hoadon";
-import { useParams } from "react-router-dom";
 
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);

@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { forgotpassword } from "@/common/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import instance from "@/configs/auth";
+import instanceauth from "@/configs/auth";
 
 const ForgotPasswordForm = () => {
   const {
@@ -20,7 +20,7 @@ const ForgotPasswordForm = () => {
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
       try {
-        const res = await instance.post("/forgot-password", user);
+        const res = await instanceauth.post("/forgot-password", user);
         toast.success(" Gửi yêu cầu  thành công");
         nav(`/login`);
         // console.log(res);

@@ -1,6 +1,6 @@
 import { IUser } from "@/common/types/user";
 import { registerSchema } from "@/common/validations/auth";
-import instance from "@/configs/auth";
+import instanceauth from "@/configs/auth";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -22,7 +22,7 @@ const SignupForm = () => {
     mutationFn: async (user: IUser) => {
       // console.log(user);
       try {
-        const res = await instance.post("/register", user);
+        const res = await instanceauth.post("/register", user);
 
         toast.success("Đăng ký thành công");
         nav("/login");
