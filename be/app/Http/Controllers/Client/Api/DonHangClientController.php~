@@ -31,6 +31,12 @@ use Illuminate\Support\Facades\Mail;
 
 class DonHangClientController extends Controller
 {
+    protected $nominatimService;
+
+    public function __construct(NominatimService $nominatimService)
+    {
+        $this->nominatimService = $nominatimService;
+    }
     public function execPostRequest($url, $data)
     {
         $ch = curl_init($url);
@@ -376,6 +382,28 @@ class DonHangClientController extends Controller
                 'message' => 'Không thể đặt hàng với vai trò ' . $vaiTroKhongHopLe,
             ]);
         }
+
+        // Gọi dịch vụ geocodeAddress với địa chỉ người dùng nhập
+        $result = $this->nominatimService->geocodeAddress($request->dia_chi_nguoi_dat_hang);
+        dd($result);
+        // Kiểm tra nếu $result có kết quả hợp lệ và có các thông tin cần thiết
+        if ($result && isset($result[0]['display_name'], $result[0]['lat'], $result[0]['lon'])) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Địa chỉ hợp lệ.',
+                'details' => [
+                    'display_name' => $result[0]['display_name'], // Địa chỉ chuẩn
+                    'lat' => $result[0]['lat'],  // Vĩ độ
+                    'lon' => $result[0]['lon'],  // Kinh độ
+                ],
+            ]);
+        }
+
+        // Nếu không có kết quả hoặc thiếu thông tin
+        return response()->json([
+            'success' => false,
+            'message' => 'Địa chỉ không hợp lệ hoặc không rõ ràng.',
+        ], 400);
         try {
             DB::beginTransaction();
 
@@ -706,13 +734,13 @@ class DonHangClientController extends Controller
 
             if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                 DB::table('lich_su_giao_diches')->insert([
-                    'vi_tien_id' => $viTien->id,
-                    'so_du_truoc' => $viTien->so_du,
-                    'so_du_sau' => $viTien->so_du + $donHang->tong_tien_don_hang,
+                    'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
+                    'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
+                    'so_du_sau' => $donHang->giaoDichVi->viTien->so_du + $donHang->tong_tien_don_hang,
                     'ngay_thay_doi' => Carbon::now(),
                     'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
                 ]);
-                $viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                $donHang->giaoDichVi->viTien->increment('so_du', $donHang->tong_tien_don_hang);
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
                     'tieu_de' => 'Số tiền đã được hoàn trả',
@@ -723,6 +751,13 @@ class DonHangClientController extends Controller
                 ]);
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
             }
+
+            if (
+                in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
+                $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
+            ) {
+                $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+            
 
             // if (
             //     in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
@@ -913,7 +948,14 @@ class DonHangClientController extends Controller
                 'ngay_thay_doi' => now(),
                 'mo_ta' => 'Rút tiền từ ví tiền',
             ]);
-
+            $thongBao = ThongBao::create([
+                'user_id' => $userId,
+                'tieu_de' => 'Yêu cầu rút tiền',
+                'noi_dung' => 'Yêu cầu rút tiền của bạn đã được gửi.',
+                'loai' => 'Rút tiền',
+                'duong_dan' => $yeuCauRutTien->id,
+                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+            ]);
             $thongBao = ThongBao::create([
                 'user_id' => $userId,
                 'tieu_de' => 'Yêu cầu rút tiền',
