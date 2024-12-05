@@ -7,7 +7,7 @@ const Bestseller = ({ products, sectionTitle, isPromotional }: any) => {
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
   );
-  const [visibleProductsCount, setVisibleProductsCount] = useState(8);
+  const [visibleProductsCount, setVisibleProductsCount] = useState(4);
 
   const handleSeeMore = () => {
     setVisibleProductsCount(visibleProductsCount + 8);
