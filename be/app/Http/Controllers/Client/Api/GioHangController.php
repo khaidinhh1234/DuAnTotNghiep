@@ -105,7 +105,7 @@ class GioHangController extends Controller
             $sanPhamKhongHoatDong = $gioHangs->filter(function ($item) {
                 if($item->trang_thai == 0 || $item->ngay_xoa != null){
                     if ($item->chon === 1) {
-                        DB::table('gio_hangs')->where('id', $item->id)->update(['chon' => 0]);                    
+                        DB::table('gio_hangs')->where('id', $item->id)->update(['chon' => 0]);
                    }
                 }
                 return $item->trang_thai == 0 || $item->ngay_xoa != null;
@@ -423,7 +423,7 @@ class GioHangController extends Controller
             }
 
             $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                ? ($tongGiaTriGioHang * $maGiamGia->giam_gia / 100)
+                ? min($tongGiaTriGioHang * $maGiamGia->giam_gia / 100, $maGiamGia->giam_toi_da)
                 : $maGiamGia->giam_gia;
 
             if ($soTienGiamGia > $tongGiaTriGioHang) {
