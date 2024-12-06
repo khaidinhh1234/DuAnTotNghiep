@@ -130,7 +130,7 @@ function CreditCardForm({ bankData }: { bankData: BankData }) {
   };
 
   const isFormValid = () => {
-    return cardNumber.length >= 6 && cardHolder.trim().length > 10;
+    return cardNumber.length >= 4 && cardHolder.trim().length > 10;
   };
   const bankImages: { [key: string]: string } = {
     Agribank: "/istockphoto-1363842453-612x612.jpg",
