@@ -561,7 +561,10 @@ class DonHangController extends Controller
             $viTien = $donHang->user->viTien;
             $userId = $donHang->user_id;
             if ($validated['trang_thai'] === 'da_huy') {
-                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DH]);
+                $donHang->update([
+                    'trang_thai_don_hang' => DonHang::TTDH_DH,
+                    'ly_do_tu_choi' => 1
+                ]);
                 if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                     DB::table('lich_su_giao_diches')->insert([
                         'vi_tien_id' => $viTien->id,
@@ -611,7 +614,6 @@ class DonHangController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
-                $donHang->ly_do_tu_choi = true;
                 $mess = 'Xác nhận hủy hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DXH]);
@@ -625,7 +627,6 @@ class DonHangController extends Controller
                 ]);
                 broadcast(new ThongBaoMoi($thongbao))->toOthers();
                 $mess = 'Từ chối hủy hàng thành công.';
-                $donHang->ly_do_tu_choi = false;
             }
             DB::commit();
             return response()->json([
