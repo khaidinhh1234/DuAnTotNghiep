@@ -585,21 +585,21 @@ class DonHangController extends Controller
                     $bienTheSanPham = $chiTiet->bienTheSanPham;
                     $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
 
-                    $gioHangItem = GioHang::withTrashed()
-                        ->where('user_id', $userId)
-                        ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
-                        ->first();
+                    // $gioHangItem = GioHang::withTrashed()
+                    //     ->where('user_id', $userId)
+                    //     ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
+                    //     ->first();
 
-                    if ($gioHangItem) {
-                        $gioHangItem->restore();
-                        $gioHangItem->increment('so_luong', $chiTiet->so_luong);
-                    } else {
-                        GioHang::create([
-                            'user_id' => $userId,
-                            'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
-                            'so_luong' => $chiTiet->so_luong,
-                        ]);
-                    }
+                    // if ($gioHangItem) {
+                    //     $gioHangItem->restore();
+                    //     $gioHangItem->increment('so_luong', $chiTiet->so_luong);
+                    // } else {
+                    //     GioHang::create([
+                    //         'user_id' => $userId,
+                    //         'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
+                    //         'so_luong' => $chiTiet->so_luong,
+                    //     ]);
+                    // }
                 }
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
@@ -611,9 +611,6 @@ class DonHangController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
-                $donHang->chiTiets->each(function ($chiTiet) {
-                    $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
-                });
                 $mess = 'Xác nhận hủy hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DXH]);

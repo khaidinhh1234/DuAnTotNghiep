@@ -683,9 +683,8 @@ class DonHangClientController extends Controller
         try {
             $donHang = DonHang::where('ma_don_hang', $maDonHang)
                 ->where('user_id', $userId)
-                ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXH])
+                ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH])
                 ->first();
-
             if (!$donHang) {
                 return response()->json([
                     'status' => false,
@@ -699,11 +698,6 @@ class DonHangClientController extends Controller
                     'trang_thai_don_hang' => DonHang::TTDH_DH,
                     'ngay_huy' => $thoiGian,
                 ]);
-
-                $donHang->chiTiets->each(function ($chiTiet) {
-                    $bienTheSanPham = $chiTiet->bienTheSanPham;
-                    $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
-                });
 
                 if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
                     DB::table('lich_su_giao_diches')->insert([
@@ -724,7 +718,6 @@ class DonHangClientController extends Controller
                     ]);
                     broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 }
-
                 foreach ($donHang->chiTiets as $chiTiet) {
                     $bienTheSanPham = $chiTiet->bienTheSanPham;
                     $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);

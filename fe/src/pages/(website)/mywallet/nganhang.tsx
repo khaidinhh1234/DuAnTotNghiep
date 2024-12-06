@@ -44,8 +44,8 @@ const banks = [
 function maskCardNumber(cardNumber: any) {
   const firstFour = cardNumber.slice(0, 4); // Lấy 4 số đầu
   const lastFour = cardNumber.slice(-4); // Lấy 4 số cuối
-  const masked = "*".repeat(cardNumber.length - 8); // Tạo chuỗi *** cho phần còn lại
-  return `${firstFour}${masked}${lastFour}`;
+  // const masked = "*".repeat(cardNumber.length - 8); // Tạo chuỗi *** cho phần còn lại
+  // return `${firstFour}${masked}${lastFour}`;
 }
 const fetchLinkedBanks = async () => {
   const response = await instanceClient.get("/danh-sach-ngan-hang");

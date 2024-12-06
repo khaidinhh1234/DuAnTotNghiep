@@ -30,8 +30,8 @@ const BlogCategories = () => {
         return response.data;
       } catch (error) {
         // console.log("error:", error);
-        message.error("Danh mục tin tức không tồn tại");
-        nav("/blog");
+        nav("/404");
+        message.error("Bài viết không tồn tại");
         return error;
       }
       // const response = await instanceClient.get(`/danhmuctintuc/${duongDan}`);
