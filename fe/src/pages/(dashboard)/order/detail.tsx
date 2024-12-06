@@ -58,7 +58,9 @@ const Detail = ({ record }: any) => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ORDER_DETAIL"] });
+      queryClient.invalidateQueries({
+        queryKey: ["ORDER_DETAIL"],
+      });
     },
     onError: (error) => {
       console.error("Error:", error);

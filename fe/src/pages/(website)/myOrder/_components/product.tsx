@@ -37,18 +37,18 @@ const ProductItem = ({
   created_at,
   phuong_thuc_thanh_toans,
 
-  ly_do_huy,
+  ly_do_tu_choi,
 
   ngay_hoan_thanh_don,
 
   // danh_gias,
 }: any) => {
-  console.log(Check(ngay_hoan_thanh_don));
   // console.log(chi_tiet_don_hangs);
   // console.log("status", new Date(created_at));
   const dateToCheck = new Date(created_at);
   // console.log(isToday(dateToCheck));
   // console.log(values);
+  console.log(ly_do_tu_choi);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
   const queryClient = useQueryClient();
@@ -472,7 +472,7 @@ const ProductItem = ({
                 </Link>
               </div>
             )}
-          {!ly_do_huy &&
+          {!ly_do_tu_choi &&
             (status === "Chờ xác nhận" ||
               status === "Đã xác nhận" ||
               // status === "Đang xử lý" ||
@@ -549,7 +549,7 @@ const ProductItem = ({
             </button>
           </Link>
           <br />
-          {!ly_do_huy &&
+          {!ly_do_tu_choi &&
             (status === "Chờ xác nhận" ||
               status === "Đã xác nhận" ||
               // status === "Đang xử lý" ||
@@ -723,7 +723,7 @@ const ProductList = ({
                 ma_don_hang={item.ma_don_hang || ""}
                 phuong_thuc_thanh_toans={item.phuong_thuc_thanh_toan || ""}
                 danh_gias={item.danh_gias || []}
-                ly_do_huy={item.ly_do_huy || ""}
+                ly_do_tu_choi={item.ly_do_tu_choi ?? false}
                 ngay_hoan_thanh_don={item.ngay_hoan_thanh_don || null}
               />
             ))

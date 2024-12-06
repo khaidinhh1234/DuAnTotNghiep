@@ -19,7 +19,7 @@ const getDateAndTimeWithSeconds = (utcDate: any) => {
 };
 const Hoadon = ({ record, products, tong }: any) => {
   const [code, setCode] = useState("");
-
+  console.log(record);
   const generateRandomCode = () => {
     const prefix = "HC";
     const middleNumbers = Math.floor(Math.random() * 90 + 10); // Số ngẫu nhiên từ 10 đến 99
@@ -45,6 +45,7 @@ const Hoadon = ({ record, products, tong }: any) => {
   });
 
   const mavanchuyen = data?.data?.van_chuyen;
+  console.log(mavanchuyen);
   useEffect(() => {
     const randomCode = generateRandomCode();
     setCode(randomCode);

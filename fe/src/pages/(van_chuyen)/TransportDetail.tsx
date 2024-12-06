@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 const TransportDetail = ({ record }: any) => {
-  console.log("record:", record);
   const [modalWidth, setModalWidth] = useState(400);
 
   useEffect(() => {
@@ -32,11 +31,10 @@ const TransportDetail = ({ record }: any) => {
       const response = await instance.get(`/vanchuyen/${id}`);
       return response.data;
     },
-    enabled: !!id,
+    // enabled: !!id,
   });
 
   const vanChuyenData = data?.data?.van_chuyen;
-  console.log(vanChuyenData);
   const products = data?.data?.van_chuyen?.don_hang?.chi_tiets?.map(
     (item: any) => {
       return {
@@ -49,7 +47,7 @@ const TransportDetail = ({ record }: any) => {
   const donhang = data?.data?.van_chuyen?.don_hang;
 
   const vanchuyen = data?.data?.van_chuyen;
-
+  console.log(vanchuyen);
   // const webcam = data?.data?.anh_xac_thuc;
   // console.log(webcam);
   const handleCancel = () => {
@@ -261,23 +259,23 @@ const TransportDetail = ({ record }: any) => {
   const handleSendNote = async () => {
     try {
       setLoading(true);
-  
+
       if (!currentNote) {
         message.error("Vui lòng nhập ghi chú trước khi gửi");
         setLoading(false);
         return;
       }
-  
+
       const newNote = currentNote.trim();
       const updatedNotes = [...notes, newNote];
       setNotes(updatedNotes);
       setCurrentNote("");
-  
+
       const ghiChuCapNhat = updatedNotes.reduce((acc, note, index) => {
         acc[`lan${index + 1}`] = note;
         return acc;
       }, {});
-  
+
       const response = await instance.put(
         `/vanchuyen/xac-nhan-van-chuyen/${record.id}`,
         {
@@ -285,19 +283,21 @@ const TransportDetail = ({ record }: any) => {
           shipper_xac_nhan: "2", // 2: Giao hàng thất bại
         }
       );
-  
+
       if (response?.data?.status) {
-        message.success(response?.data?.message || "Ghi chú đã được gửi thành công");
-  
+        message.success(
+          response?.data?.message || "Ghi chú đã được gửi thành công"
+        );
+
         const newNoteCount = noteSubmissionCount + 1; // Tăng số lần gửi ghi chú
         setNoteSubmissionCount(newNoteCount);
-  
+
         // Ẩn phần ghi chú nếu đã gửi đủ 3 lần
         if (newNoteCount >= 3) {
           setButtonLabel("Xác nhận giao hàng thất bại");
           setIsDeliveryFailed(true); // Cập nhật trạng thái
         }
-  
+
         queryClient.invalidateQueries({ queryKey: ["vanchuyen"] });
       } else {
         message.error(response?.data?.message || "Có lỗi xảy ra");
@@ -309,7 +309,7 @@ const TransportDetail = ({ record }: any) => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div>
       {" "}
@@ -364,10 +364,9 @@ const TransportDetail = ({ record }: any) => {
                       className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
                     />
                     <div className="flex flex-col justify-between w-full">
-                      <h3
-                        className="text-sm md:text-lg font-semibold truncate-title hover:text-red-500 cursor-pointer"
-                      >
-                        {product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Unknown Product"}
+                      <h3 className="text-sm md:text-lg font-semibold truncate-title hover:text-red-500 cursor-pointer">
+                        {product?.bien_the_san_pham?.san_pham?.ten_san_pham ||
+                          "Unknown Product"}
                       </h3>
                       <div className="text-xs md:text-base text-gray-500 mt-1">
                         Size:{" "}
@@ -545,7 +544,7 @@ const TransportDetail = ({ record }: any) => {
             <div className="flex flex-col gap-2 w-full">
               {/* Nút Giao hàng */}
               {record.trang_thai_van_chuyen === "Chờ xử lý" ||
-                record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
+              record.trang_thai_van_chuyen === "Chờ lấy hàng" ? (
                 <button
                   className="w-full py-2 border bg-blue-600 rounded-lg text-white hover:bg-blue-700"
                   onClick={() => {
