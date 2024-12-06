@@ -161,12 +161,12 @@ const ProductsAdmin: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sanpham"] });
-      message.success("Thao tác thành công");
+      message.success("Cập nhật trạng thái thành công");
       setSelectedRowKeys([]);
     },
     onError: (error) => {
       console.error("Error performing bulk action:", error);
-      message.error("Thao tác thất bại");
+      message.error("Cập nhật trạng thái thất bại");
     },
   });
 
@@ -284,18 +284,18 @@ const ProductsAdmin: React.FC = () => {
 
   const bulkActionMenu = (
     <Menu>
-      <Menu.Item key="activate" onClick={() => handleBulkAction("activate")}>
+      {/* <Menu.Item key="activate" onClick={() => handleBulkAction("activate")}>
         Kích hoạt
-      </Menu.Item>
+      </Menu.Item> */}
       <Menu.Item
         key="deactivate"
         onClick={() => handleBulkAction("deactivate")}
       >
         Hủy kích hoạt
       </Menu.Item>
-      <Menu.Item key="delete" onClick={() => handleBulkAction("delete")}>
+      {/* <Menu.Item key="delete" onClick={() => handleBulkAction("delete")}>
         Xóa
-      </Menu.Item>
+      </Menu.Item> */}
     </Menu>
   );
 
@@ -359,7 +359,7 @@ const ProductsAdmin: React.FC = () => {
       className: "text-center",
       render: (_, item) => (
         <Space>
-          <Popconfirm
+          {/* <Popconfirm
             title="Chuyển vào thùng rác"
             description="Bạn có chắc chắn muốn xóa không?"
             okText="Có"
@@ -369,7 +369,7 @@ const ProductsAdmin: React.FC = () => {
             <Button className="bg-gradient-to-l from-red-400  to-red-600 hover:from-red-500 hover:to-red-700  text-white font-bold border border-red-300 ">
               Xóa
             </Button>
-          </Popconfirm>
+          </Popconfirm> */}
           <Link to={`/admin/products/edit/${item.id}`}>
             <Button className=" bg-gradient-to-l from-green-400 to-cyan-500 text-white hover:from-green-500 hover:to-cyan-500 border border-green-300 font-bold">
               Cập nhật
@@ -437,9 +437,9 @@ const ProductsAdmin: React.FC = () => {
             </Button>
           </Link>
           <Link to="/admin/products/remote">
-            <Button className="bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
-              <DeleteOutlined className="mr-1" />
-              Thùng rác
+            <Button className="bg-gradient-to-r font-medium from-orange-500 to-orange-500 text-white rounded-lg py-1 hover:bg-red-600 shadow-md transition-colors flex items-center">
+              {/* <DeleteOutlined className="mr-1" /> */}
+              Dừng phân phối
             </Button>
           </Link>
         </div>
@@ -447,14 +447,28 @@ const ProductsAdmin: React.FC = () => {
       <div className="max-w-full my-2">
         <div className="flex  justify-between">
           <div className="flex">
-            <Dropdown overlay={bulkActionMenu} disabled={!hasSelected}>
-              <Button
-                type="primary"
-                className=" text-white font-bold py-2 px-4 rounded h-8 mr-2"
-              >
-                Thao tác ({selectedRowKeys.length})
-              </Button>
-            </Dropdown>
+            {/* <Dropdown disabled={selectedRowKeys.length === 0}> */}
+            <Button
+              type="primary"
+              onClick={() =>
+                bulkActionMutation.mutate({
+                  action: "deactivate",
+                  ids: selectedRowKeys,
+                })
+              }
+              className={`
+                  ${
+                    selectedRowKeys.length > 0
+                      ? "bg-gradient-to-l to-cyan-500 text-white  "
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  }
+                  transition-all duration-300 ease-in-out
+                  font-bold py-2 px-4 rounded h-8 mr-2
+                `}
+            >
+              Ngừng kinh doanh ({selectedRowKeys.length})
+            </Button>
+            {/* </Dropdown> */}
             <Input
               placeholder="Tìm kiếm..."
               size="large"

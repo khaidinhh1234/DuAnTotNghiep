@@ -45,7 +45,7 @@ const MainHeader = () => {
           <img
             src="https://res.cloudinary.com/dcvu7e7ps/image/upload/v1729398683/Black_and_White_Circle_Business_Logo_1_ieyoum.png"
             alt="Logo"
-            className="w-20 h-14"
+            className="w-full lg:w-24 lg:h-24 h-14"
           />
         </Link>
         <h1 className="font-semibold text-md md:text-2xl">

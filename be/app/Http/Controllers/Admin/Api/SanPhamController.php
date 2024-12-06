@@ -28,6 +28,7 @@ class SanPhamController extends Controller
                 'bienTheSanPham.kichThuocBienThe',
                 'boSuuTapSanPham'
             ])
+                ->where('trang_thai', 1)
                 ->orderByDesc('id')
                 ->get();
 
@@ -295,13 +296,14 @@ class SanPhamController extends Controller
     public function danhSachSanPhamDaXoa()
     {
         try {
-            $sanPhamDaXoa = SanPham::onlyTrashed()->with([
+            $sanPhamDaXoa = SanPham::with([
                 'danhMuc',
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
                 'boSuuTapSanPham'
-            ])->orderBy('deleted_at', 'desc')->get();
+            ])
+                ->where("trang_thai", 0)->orderBy('deleted_at', 'desc')->get();
 
             return response()->json([
                 'success' => true,
@@ -319,20 +321,12 @@ class SanPhamController extends Controller
         }
     }
 
-    public function khoiPhucSanPham(int $id)
+    public function khoiPhucSanPham(string $id)
     {
         try {
             DB::beginTransaction();
-
-            $sanPham = SanPham::onlyTrashed()->with(['bienTheSanPham', 'boSuuTapSanPham'])->findOrFail($id);
-
-            $sanPham->restore();
-
-            foreach ($sanPham->bienTheSanPham()->onlyTrashed()->get() as $bienThe) {
-                $bienThe->restore();
-                $bienThe->anhBienThe()->onlyTrashed()->restore();
-            }
-
+            $sanPham = SanPham::findOrFail($id);
+            $sanPham->update(['trang_thai' => 1]);
             DB::commit();
             return response()->json([
                 'success' => true,
@@ -568,11 +562,13 @@ class SanPhamController extends Controller
     {
         $validatedData = $request->validate([
             'san_phams' => 'required|array',
-            'san_phams.*' => 'required|exists:san_phams,id',
+            // 'san_phams.*' => 'required|exists:san_phams,id',
         ]);
 
-        SanPham::whereIn('id', $validatedData['san_phams'])->restore();
-
+        foreach ($validatedData['san_phams'] as $sanPhamId) {
+            $sanPham = SanPham::find($sanPhamId);
+            $sanPham->update(['trang_thai' => 1]);
+        }
         return response()->json(['message' => 'Khôi phục thành công cho các sản phẩm'], 200);
     }
 }

@@ -332,7 +332,7 @@ const Donhuy: React.FC = () => {
       width: "20%",
       render: (_, record) => (
         <Space>
-          {record.trang_thai_don_hang !== "Hủy hàng" && (
+          {record.trang_thai_don_hang === "Chờ xác nhận hủy hàng" && (
             <div className="flex gap-1">
               <Popconfirm
                 title="Xác nhận"
@@ -418,7 +418,7 @@ const Donhuy: React.FC = () => {
 
         <Table
           columns={columns}
-          dataSource={filteredData ?? data}
+          dataSource={data}
           loading={isLoading}
           pagination={{
             pageSize: 10,

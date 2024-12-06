@@ -139,7 +139,7 @@ const ProductDetail: React.FC = () => {
   // const nav = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   // const access_token = user.access_token || localStorage.getItem("access_token");
-  const access_token = user.access_token 
+  const access_token = user.access_token;
 
   const [selectedColorDisplay, setSelectedColorDisplay] = useState<
     string | null
@@ -238,30 +238,31 @@ const ProductDetail: React.FC = () => {
   // add to cart
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-     try {
-      const response = await instanceClient.post(
-        "/gio-hang",
-        {
-          bien_the_san_pham_id: variantId,
-          so_luong: quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
+      try {
+        const response = await instanceClient.post(
+          "/gio-hang",
+          {
+            bien_the_san_pham_id: variantId,
+            so_luong: quantity,
           },
-        }
-      );
-      toast.success("Thêm giỏ hàng thành công");
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        toast.success("Thêm giỏ hàng thành công");
 
-      return response.data;
-
-     } catch (error: any) {
-       toast.error(error.response?.data?.message || "Có l��i xảy ra khi thêm vào gi�� hàng.");
-     }
+        return response.data;
+      } catch (error: any) {
+        toast.error(
+          error.response?.data?.message ||
+            "Có l��i xảy ra khi thêm vào gi�� hàng."
+        );
+      }
     },
     onSuccess: (data) => {
       if (data?.status) {
-        
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
         toast.error(data.message);
@@ -269,14 +270,16 @@ const ProductDetail: React.FC = () => {
     },
     onError: (error: any) => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      if(error.response?.data?.message == "Mã token không hợp lệ hoặc không tìm thấy người dùng"){
+      if (
+        error.response?.data?.message ==
+        "Mã token không hợp lệ hoặc không tìm thấy người dùng"
+      ) {
         setIsModalVisible(true);
-      }else {
+      } else {
         toast.error(
           error.response?.data?.message 
         );
       }
-      
     },
   });
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -640,21 +643,6 @@ const ProductDetail: React.FC = () => {
                   <h3 className="font-bold text-2xl">
                     {product?.ten_san_pham}
                   </h3>
-                  {selectedVariant && (
-                    <div className="mt-2">
-                      <a
-                        className={` text-sm px-2 py-1 rounded-sm ${
-                          selectedVariant?.so_luong_bien_the > 0
-                            ? "bg-[#3CD139]/10 text-[#3CD139]"
-                            : "bg-red-500 text-white"
-                        }`}
-                      >
-                        {selectedVariant?.so_luong_bien_the > 0
-                          ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
-                          : "Hết hàng"}
-                      </a>
-                    </div>
-                  )}
                 </div>
                 <div className="flex items-center">
                   <h4 className="mb-3 text-lg font-normal">
@@ -681,6 +669,22 @@ const ProductDetail: React.FC = () => {
                     </span>
                   </div>
                 </div>
+                {selectedVariant && (
+                  <div className="mb-2">
+                    <a
+                      className={` text-base px-2 py-1 rounded-sm ${
+                        selectedVariant?.so_luong_bien_the > 0
+                          ? "bg-[#3CD139]/10 text-[#3CD139]"
+                          : "bg-red-500 text-white"
+                      }`}
+                    >
+                      {selectedVariant?.so_luong_bien_the > 0
+                        ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
+                        : "Hết hàng"}
+                    </a>
+                  </div>
+                )}
+
                 <div className="flex items-center space-x-2 mb-2">
                   <EyeOutlined style={{ fontSize: "24px" }} />
                   <span className="font-bold text-lg">{product?.luot_xem}</span>

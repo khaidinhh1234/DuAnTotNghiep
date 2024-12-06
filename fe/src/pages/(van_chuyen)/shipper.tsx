@@ -73,7 +73,7 @@ const Shipper: React.FC = () => {
   const nav = useNavigate();
   const logout = () => {
     localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("access_token");
     nav("/login");
   };
   const { mutate } = useMutation({

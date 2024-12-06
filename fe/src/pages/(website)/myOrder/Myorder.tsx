@@ -8,8 +8,8 @@ import { Tabs } from "antd";
 const MyOrder = () => {
   const [activeTab, setActiveTab] = useState<string>("");
   const [timkiem, setTimkiem] = useState<string>("");
-  console.log(timkiem);
-  console.log(activeTab);
+  // console.log(timkiem);
+  // console.log(activeTab);
   const datas = {
     trang_thai_don_hang: activeTab,
     loc: timkiem || "",
@@ -44,9 +44,8 @@ const MyOrder = () => {
     },
     initialPageParam: 1,
   });
-
   const loadMoreRef = useRef<HTMLDivElement>(null);
-
+  // console.log(data);
   useEffect(() => {
     if (!loadMoreRef.current) return;
 
@@ -75,7 +74,6 @@ const MyOrder = () => {
   //     return { ...page, chitiet: page.data };
   //   }) || [];
   const orders = data?.pages.flatMap((page) => page.data.don_hang) || [];
-  console.log(datas);
   const tabItems = [
     { label: "Tổng đơn hàng", key: "" },
     { label: "Chờ thanh toán", key: "Chưa thanh toán" },
