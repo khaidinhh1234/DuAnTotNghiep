@@ -41,12 +41,14 @@ const banks = [
     logo: "https://res.cloudinary.com/dpundwxg1/image/upload/v1730368831/VPBank_logo.svg_eciill.png",
   },
 ];
-function maskCardNumber(cardNumber: any) {
-  const firstFour = cardNumber.slice(0, 4); // Lấy 4 số đầu
-  const lastFour = cardNumber.slice(-4); // Lấy 4 số cuối
-  const masked = "*".repeat(cardNumber.length - 8); // Tạo chuỗi *** cho phần còn lại
-  return `${firstFour}${masked}${lastFour}`;
-}
+const maskCardNumber = (cardNumber: string) => {
+  const totalDigits = cardNumber.length;
+  const visibleDigits = totalDigits > 4 ? 4 : 2; // Hiển thị 4 số cuối nếu dài hơn 4 số, hiển thị 2 số cuối nếu bằng 4 số
+  const maskLength = Math.max(0, totalDigits - visibleDigits); // Đảm bảo không âm
+  return "*".repeat(maskLength) + cardNumber.slice(-visibleDigits);
+};
+
+
 const fetchLinkedBanks = async () => {
   const response = await instanceClient.get("/danh-sach-ngan-hang");
   return response.data?.data?.map((bank: any) => ({

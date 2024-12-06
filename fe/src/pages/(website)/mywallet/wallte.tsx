@@ -1,3 +1,4 @@
+
 import instanceClient from "@/configs/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, useRef } from "react";
@@ -30,22 +31,18 @@ function TaiChinh() {
     signature: signature,
   };
   console.log(datas);
-
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [pins, setPins] = useState(["", "", "", "", "", ""]);
   const [showForgotPinModal, setShowForgotPinModal] = useState(false);
   const [storedVerificationCode, setStoredVerificationCode] = useState(() =>
     localStorage.getItem("walletVerificationCode")
   );
+  
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const {
-    data: walletStatus,
-    isSuccess,
-    refetch: refetchWalletStatus,
-  } = useQuery({
+  const { data: walletStatus, isSuccess, refetch: refetchWalletStatus } = useQuery({
     queryKey: ["walletStatus"],
     queryFn: async () => {
       try {
@@ -53,10 +50,7 @@ function TaiChinh() {
         return response.data;
       } catch (error: any) {
         if (error.response?.status === 400) {
-          return {
-            status: false,
-            status_code: 400,
-          };
+          return { status: false, status_code: 400 };
         }
         throw error;
       }
@@ -64,13 +58,7 @@ function TaiChinh() {
     retry: false,
   });
 
-  useEffect(() => {
-    if (isSuccess && walletStatus?.status === false) {
-      setIsSettingsOpen(true);
-    }
-  }, [walletStatus, isSuccess]);
-
-  const { data: walletData } = useQuery({
+  const { data: walletData, refetch: refetchWalletData } = useQuery({
     queryKey: ["walletData", storedVerificationCode],
     queryFn: async () => {
       if (!storedVerificationCode) return null;
@@ -80,9 +68,9 @@ function TaiChinh() {
       return response.data;
     },
     enabled: !!storedVerificationCode,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
-  console.log(walletData);
+
   const confirmPayment = useMutation({
     mutationKey: ["payment-confirmation", orderId],
     mutationFn: async () => {
@@ -96,23 +84,16 @@ function TaiChinh() {
     onSuccess: () => {
       if (resultCode === 0) {
         toast.success("Nạp tiền thành công");
+        queryClient.invalidateQueries({ queryKey: ["walletData"] });
+        queryClient.invalidateQueries({ queryKey: ["walletStatus"] });
+        refetchWalletData();
       }
-      queryClient.invalidateQueries({ queryKey: ["walletData"] });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Nạp tiền thất bại");
     },
   });
 
-  useEffect(() => {
-    const shouldConfirm =
-      orderId && !sessionStorage.getItem(`payment-${orderId}`);
-
-    if (shouldConfirm) {
-      sessionStorage.setItem(`payment-${orderId}`, "confirmed");
-      confirmPayment.mutate();
-    }
-  }, [orderId]);
   const forgotPinMutation = useMutation({
     mutationFn: async () => {
       const response = await instanceClient.get("/quen-ma-xac-minh");
@@ -123,8 +104,7 @@ function TaiChinh() {
       setShowForgotPinModal(false);
     },
     onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại!";
+      const errorMessage = error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại!";
       toast.error(errorMessage);
     },
   });
@@ -152,6 +132,27 @@ function TaiChinh() {
     },
   });
 
+  useEffect(() => {
+    if (isSuccess && walletStatus?.status === false) {
+      setIsSettingsOpen(true);
+    }
+  }, [walletStatus, isSuccess]);
+
+  useEffect(() => {
+    const shouldConfirm = orderId && !sessionStorage.getItem(`payment-${orderId}`);
+    
+    if (shouldConfirm) {
+      sessionStorage.setItem(`payment-${orderId}`, "confirmed");
+      confirmPayment.mutate();
+      
+      const timer = setTimeout(() => {
+        refetchWalletData();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [orderId]);
+
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
 
@@ -176,11 +177,13 @@ function TaiChinh() {
       verifyWalletMutation.mutate(code);
     }
   };
+
   const handleRegisterSuccess = async (code: string) => {
     setStoredVerificationCode(code);
     await refetchWalletStatus();
     queryClient.invalidateQueries({ queryKey: ["walletData", code] });
   };
+
   return (
     <div className="p-4 min-h-screen">
       <div className="flex items-center align-center justify-between mb-4">
@@ -242,9 +245,7 @@ function TaiChinh() {
               </button>
               <button
                 onClick={handleVerification}
-                disabled={
-                  pins.some((pin) => !pin) || verifyWalletMutation.isPending
-                }
+                disabled={pins.some((pin) => !pin) || verifyWalletMutation.isPending}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
                 {verifyWalletMutation.isPending ? "Đang xử lý..." : "Xác nhận"}
@@ -259,8 +260,7 @@ function TaiChinh() {
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">Xác nhận quên mã pin</h2>
             <p className="text-gray-600 mb-6">
-              Bạn có chắc chắn muốn lấy lại mã pin? Chúng tôi sẽ gửi đến email
-              của bạn.
+              Bạn có chắc chắn muốn lấy lại mã pin? Chúng tôi sẽ gửi đến email của bạn.
             </p>
 
             <div className="flex justify-end space-x-3">
@@ -281,12 +281,14 @@ function TaiChinh() {
           </div>
         </div>
       )}
+
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         status={walletStatus?.status}
         onRegisterSuccess={handleRegisterSuccess}
       />
+
       {walletData?.data && (
         <>
           <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-120">
