@@ -3,39 +3,127 @@
 namespace App\Http\Controllers\Client\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BienTheKichThuoc;
+use App\Models\BienTheMauSac;
 use App\Models\BienTheSanPham;
 use App\Models\DanhGia;
+use App\Models\DanhMuc;
 use App\Models\SanPham;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class TrangChiTietSpController extends Controller
 {
-    public function chiTietSanPham($id)
+    public function danhMucCha(Request $request)
     {
         try {
-            $userId = Auth::id();
+            // Bắt đầu transaction
+            DB::beginTransaction();
+            // Lấy danh mục có cha_id là null
+            $danhMucCha = DanhMuc::query()->whereNull('cha_id')->get();
+            // Commit transaction nếu mọi thứ thành công
+            DB::commit();
 
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Lấy dữ liệu thành công.',
+                'danhMucCha' => $danhMucCha,
+            ], 200);
+        } catch (\Exception $e) {
+            // Rollback nếu có lỗi
+            DB::rollBack();
+            // Trả về lỗi
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy dự liệu.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function chiTietSanPham(Request $request, $duongDan)
+    {
+        try {
+            // Lấy chi tiết sản phẩm với các quan hệ cần thiết
             $chiTietSanPham = SanPham::with([
-                'danhMuc',
+                'danhMuc' => function ($query) {
+                    $query->with([
+                        'parent',  // Lấy danh mục cha
+                    ]);
+                },
                 'danhGias.user',
                 'danhGias.danhGiaHuuIch',
                 'danhGias' => function ($query) {
-                    $query->withCount('danhGiaHuuIch');
+                    $query->withCount('danhGiaHuuIch')->();
                 },
                 'danhGias.bienTheSanPham.mauBienThe',
                 'danhGias.bienTheSanPham.kichThuocBienThe',
+                'danhGias.donHang',
                 'bienTheSanPham.anhBienThe',
                 'bienTheSanPham.mauBienThe',
                 'bienTheSanPham.kichThuocBienThe',
                 'boSuuTapSanPham',
-            ])->findOrFail($id);
+                'khachHangYeuThich',
+            ])->where('duong_dan', $duongDan)->first();
 
-            foreach ($chiTietSanPham->danhGias as $danhGia) {
-                $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->where('user_id', $userId)->exists();
+
+            // Kiểm tra xem sản phẩm có tồn tại không
+            if (!$chiTietSanPham) {
+                return response()->json([
+                    'status' => false,
+                    'status_code' => 404,
+                    'message' => 'Không tìm thấy sản phẩm'
+                ], 404);
             }
 
+            $key = 'san_pham_da_xem_' . $chiTietSanPham->id;
+            if (Auth::guard('api')->check()) {
+                $key .= '_user_' . Auth::guard('api')->user()->id;
+            } else {
+                $key .= '_guest_' . $request->ip();
+            }
+
+            // Kiểm tra xem sản phẩm đã được xem trong 24 giờ chưa
+            $lastViewed = Cache::get($key);
+
+            if (!$lastViewed || !($lastViewed instanceof \Carbon\Carbon) || now()->diffInHours($lastViewed) > 24) {
+                // Tăng lượt xem nếu chưa được xem trong 24 giờ
+                $chiTietSanPham->increment('luot_xem');
+                // Lưu thông tin vào Cache với thời gian hết hạn là 24 giờ
+                Cache::put($key, now(), 24 * 60); // 24 giờ
+            }
+
+            // Cập nhật trạng thái đánh giá hữu ích
+            foreach ($chiTietSanPham->danhGias as $danhGia) {
+                $danhGia->trang_thai_danh_gia_nguoi_dung = $danhGia->danhGiaHuuIch()->exists();
+            }
+
+            // Kiểm tra trạng thái yêu thích của sản phẩm
+            $chiTietSanPham['trang_thai_yeu_thich'] = false;
+            if (Auth::guard('api')->check()) {
+                $user = Auth::guard('api')->user();
+                $chiTietSanPham['trang_thai_yeu_thich'] = $chiTietSanPham->khachHangYeuThich->contains('id', $user->id);
+            }
+
+            // Lấy thêm thông tin danh mục cha và ông của danh mục sản phẩm
+            $danhMuc = $chiTietSanPham->danhMuc;
+
+            // Lấy cha của danh mục
+            $danhMuc->load('parent');  // Load danh mục cha
+            $chaDanhMuc = $danhMuc->parent;
+
+            // Lấy ông của danh mục
+            $ongDanhMuc = $chaDanhMuc ? $chaDanhMuc->parent : null;
+
+            // Thêm vào dữ liệu trả về
+            $chiTietSanPham['cha_danh_muc'] = $chaDanhMuc;
+            $chiTietSanPham['ong_danh_muc'] = $ongDanhMuc;
+
+            // Trả về chi tiết sản phẩm cùng với các thông tin danh mục cha và ông
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -43,6 +131,7 @@ class TrangChiTietSpController extends Controller
                 'data' => $chiTietSanPham
             ]);
         } catch (\Exception $exception) {
+            // Xử lý lỗi nếu có
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
@@ -217,6 +306,124 @@ class TrangChiTietSpController extends Controller
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi thực hiện bỏ like đánh giá.',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
+    public function goiY(Request $request)
+    {
+        // Validate input dữ liệu
+        $request->validate([
+            'chieu_cao' => 'required|numeric|min:0',
+            'can_nang' => 'required|numeric|min:0',
+            'san_pham_id' => 'required|exists:san_phams,id'
+        ]);
+
+        // Lấy dữ liệu từ request
+        $chieuCao = $request->input('chieu_cao');
+        $canNang = $request->input('can_nang');
+        $sanPhamId = $request->input('san_pham_id');
+
+        // Lấy sản phẩm và danh mục liên quan
+        $sanPham = SanPham::with('danhMuc')->find($sanPhamId);
+
+        if (!$sanPham || !$sanPham->danhMuc) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Sản phẩm không tồn tại hoặc không có danh mục.',
+            ], 404);
+        }
+
+        // Lấy danh mục chính (nếu có cha)
+        $danhMuc = $sanPham->danhMuc->cha_id ? DanhMuc::find($sanPham->danhMuc->cha_id) : $sanPham->danhMuc;
+        //  dd($danhMuc);
+        // Lấy tên danh mục và giới tính (sử dụng cho việc lọc kích thước)
+        $tenDanhMuc = strtolower($danhMuc->ten_danh_muc);
+
+        // Tìm kích thước phù hợp với chiều cao, cân nặng và loại kích thước
+        $kichThuoc = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
+            ->where('chieu_cao_toi_thieu', '<=', $chieuCao)
+            ->where('chieu_cao_toi_da', '>=', $chieuCao)
+            ->where('can_nang_toi_thieu', '<=', $canNang)
+            ->where('can_nang_toi_da', '>=', $canNang)
+            ->first();
+
+        // Nếu không tìm thấy kích thước phù hợp
+        if (!$kichThuoc) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy kích thước phù hợp.',
+            ], 404);
+        }
+
+        // Tìm biến thể sản phẩm phù hợp với sản phẩm và kích thước
+        $bienTheSanPham = BienTheSanPham::where('san_pham_id', $sanPhamId)
+            ->where('bien_the_kich_thuoc_id', $kichThuoc->id)
+            ->with('mauBienThe')
+            ->get(['bien_the_mau_sac_id', 'so_luong_bien_the', 'gia_ban', 'gia_khuyen_mai']);
+
+        // Nếu không tìm thấy biến thể sản phẩm phù hợp
+        if ($bienTheSanPham->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Không tìm thấy biến thể sản phẩm phù hợp.',
+                'debug' => [
+                    'san_pham_id' => $sanPhamId,
+                    'kich_thuoc_id' => $kichThuoc->id,
+                ]
+            ], 404);
+        }
+
+        // Chuyển biến thể sản phẩm thành định dạng trả về
+        $result = $bienTheSanPham->map(function ($variant) {
+            return [
+                'bien_the_mau_sac' => $variant->mauBienThe,
+                'so_luong' => $variant->so_luong_bien_the,
+                'gia_ban' => $variant->gia_ban,
+                'gia_khuyen_mai' => $variant->gia_khuyen_mai ?? null,
+                'co_san_kho' => $variant->so_luong_bien_the > 0,
+            ];
+        });
+
+        // Gợi ý kích thước khác gần với chiều cao và cân nặng
+        $kichThuocGoiY = BienTheKichThuoc::where('loai_kich_thuoc', $tenDanhMuc)
+            ->where(function ($query) use ($chieuCao, $canNang) {
+                $query->whereBetween('chieu_cao_toi_thieu', [$chieuCao - 10, $chieuCao + 10])
+                    ->orWhereBetween('chieu_cao_toi_da', [$chieuCao - 10, $chieuCao + 10])
+                    ->whereBetween('can_nang_toi_thieu', [$canNang - 10, $canNang + 10])
+                    ->orWhereBetween('can_nang_toi_da', [$canNang - 10, $canNang + 10]);
+            })
+            ->pluck('kich_thuoc');
+
+        // Trả về kết quả
+        return response()->json([
+            'status' => true,
+            'kich_thuoc' => $kichThuoc->kich_thuoc,
+            'bien_the_san_pham' => $result,
+            'goi_y' => [
+                'kich_thuoc_duoc_goi_y' => $kichThuocGoiY,
+                'huong_dan_cham_soc' => 'Giặt tay trong nước lạnh, không sử dụng chất tẩy. Phơi khô tự nhiên.'
+            ],
+        ]);
+    }
+
+
+    public function loadKichThuoc()
+    {
+        try {
+            $kichThuocs = BienTheKichThuoc::all()->groupBy('loai_kich_thuoc');
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Danh sách kích thước theo loại',
+                'data' => $kichThuocs
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => false,
+                'status_code' => 500,
+                'message' => 'Đã có lỗi xảy ra khi lấy danh sách kích thước',
                 'error' => $exception->getMessage()
             ], 500);
         }

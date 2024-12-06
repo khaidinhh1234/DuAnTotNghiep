@@ -6,8 +6,13 @@ import { lienhe } from "@/common/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { lienhetype } from "@/common/types/product";
 import { useEffect, useState } from "react";
+import { useLocalStorage } from "@/components/hook/useStoratge";
+import { Modal } from "antd";
+import LoginPopup from "@/pages/(auth)/loginpopup/LoginPopup";
 
 const ContactPage = () => {
+  const [user] = useLocalStorage("user" as any, {});
+  
   const {
     register,
     handleSubmit,
@@ -58,7 +63,15 @@ const ContactPage = () => {
   const onSubmit = (data: any) => {
     mutate(data);
   };
-
+  const access_token =
+    user.access_token || localStorage.getItem("access_token");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const handleCart = (e: React.MouseEvent) => {
+    if (!access_token) {
+      e.preventDefault(); // Ngăn chuyển hướng
+      setIsModalVisible(true); // Hiển thị Modal
+    }
+  };
   return (
     <>
       <main className="py-10">
@@ -176,6 +189,7 @@ const ContactPage = () => {
                 </div>
 
                 <button
+                onClick={handleCart}
                   type="submit"
                   className={`btn-black lg:text-lg lg:py-2 lg:px-7 py-2 px-5 font-medium rounded-lg
                   isPending ? "cursor-not-allowed" : "hover:bg-black hover:text-white"
@@ -186,6 +200,14 @@ const ContactPage = () => {
                     {isPending ? "Đang gửi..." : "Gửi yêu cầu hỗ trợ"}
                   </span>
                 </button>
+                <Modal
+                  visible={isModalVisible}
+                  onCancel={() => setIsModalVisible(false)}
+                  footer={null}
+                  width={500}
+                >
+                  <LoginPopup />
+                </Modal>
               </form>
             </div>
           </div>

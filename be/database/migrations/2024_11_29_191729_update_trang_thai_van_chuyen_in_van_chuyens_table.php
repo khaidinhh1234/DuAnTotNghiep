@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::table('van_chuyens', function (Blueprint $table) {
             $table->enum('trang_thai_van_chuyen', [
-                'chờ xử lý',
-                'đang giao hàng',
-                'giao hàng thành công',
-                'giao hàng thất bại',
-                'nhận hàng hoàn'
-            ])->default('chờ xử lý')->change();
+                'Chờ xử lý',
+                'Đang giao hàng',
+                'Giao hàng thành công',
+                'Giao hàng thất bại',
+                'Nhận hàng hoàn'
+            ])->default('Chờ xử lý')->change();
         });
     }
 
@@ -26,11 +26,12 @@ return new class extends Migration
     {
         Schema::table('van_chuyens', function (Blueprint $table) {
             $table->enum('trang_thai_van_chuyen', [
-                'chờ xử lý',
-                'đang giao hàng',
-                'giao hàng thành công',
-                'giao hàng thất bại'
-            ])->default('chờ xử lý')->change();
+                'Chờ xử lý',
+                'Đang giao hàng',
+                'Giao hàng thành công',
+                'Giao hàng thất bại',
+                'Nhận hàng hoàn'
+            ])->default('Chờ xử lý')->change();
         });
     }
 };

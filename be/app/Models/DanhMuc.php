@@ -14,7 +14,8 @@ class DanhMuc extends Model
         'cha_id',
         'ten_danh_muc',
         'duong_dan',
-        'anh_danh_muc'
+        'anh_danh_muc',
+        'danh_muc_id'
     ];
 
     // Quan hệ với danh mục cha

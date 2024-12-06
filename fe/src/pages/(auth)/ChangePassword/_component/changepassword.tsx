@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePassword } from "@/common/validations/auth";
 import { Skeleton } from "antd";
-import instance from "@/configs/auth";
+import instanceauth from "@/configs/auth";
 type IUser = {
   password: string;
   password_confirmation: string;
@@ -20,7 +20,7 @@ const Change = () => {
     queryKey: ["check"],
     queryFn: async () => {
       try {
-        const res = await instance.post("/check-token-forgot", { token });
+        const res = await instanceauth.post("/check-token-forgot", { token });
 
         return res.data;
       } catch (error: any) {
@@ -43,7 +43,7 @@ const Change = () => {
   const { mutate } = useMutation({
     mutationFn: async (user: IUser) => {
       try {
-        const res = await instance.post("/reset-password", user);
+        const res = await instanceauth.post("/reset-password", user);
         if (res.data.status) {
           toast.success(res.data.message);
           setTimeout(() => {

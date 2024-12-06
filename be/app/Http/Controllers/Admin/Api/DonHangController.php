@@ -10,6 +10,7 @@ use App\Http\Requests\UpdatePaymentStatusRequest;
 use App\Listeners\CapNhatHangThanhVien;
 use App\Models\DonHang;
 use App\Models\GiaoDichVi;
+use App\Models\GioHang;
 use App\Models\Hoan_hang;
 use App\Models\HoanTien;
 use App\Models\MaKhuyenMai;
@@ -557,22 +558,68 @@ class DonHangController extends Controller
 
             DB::beginTransaction();
             $donHang = DonHang::findOrFail($id);
-
+            $viTien = $donHang->user->viTien;
+            $userId = $donHang->user_id;
             if ($validated['trang_thai'] === 'da_huy') {
                 $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DH]);
-                $donHang->chiTiets->each(function ($chiTiet) {
-                    $chiTiet->bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
-                });
+                if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
+                    DB::table('lich_su_giao_diches')->insert([
+                        'vi_tien_id' => $viTien->id,
+                        'so_du_truoc' => $viTien->so_du,
+                        'so_du_sau' => $viTien->so_du + $donHang->tong_tien_don_hang,
+                        'ngay_thay_doi' => Carbon::now(),
+                        'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
+                    ]);
+                    $viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                    $thongBao = ThongBao::create([
+                        'user_id' => $userId,
+                        'tieu_de' => 'Số tiền đã được hoàn trả',
+                        'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hoàn tiền.',
+                        'loai' => 'Hoàn tiền',
+                        'duong_dan' => $donHang->ma_don_hang,
+                        'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                    ]);
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                }
+                foreach ($donHang->chiTiets as $chiTiet) {
+                    $bienTheSanPham = $chiTiet->bienTheSanPham;
+                    $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+
+                    // $gioHangItem = GioHang::withTrashed()
+                    //     ->where('user_id', $userId)
+                    //     ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
+                    //     ->first();
+
+                    // if ($gioHangItem) {
+                    //     $gioHangItem->restore();
+                    //     $gioHangItem->increment('so_luong', $chiTiet->so_luong);
+                    // } else {
+                    //     GioHang::create([
+                    //         'user_id' => $userId,
+                    //         'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
+                    //         'so_luong' => $chiTiet->so_luong,
+                    //     ]);
+                    // }
+                }
+                $thongBao = ThongBao::create([
+                    'user_id' => $userId,
+                    'tieu_de' => 'Đơn hàng đã hủy',
+                    'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hủy.',
+                    'loai' => 'Đơn hàng',
+                    'duong_dan' => $donHang->ma_don_hang,
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
+                ]);
+
+                broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 $mess = 'Xác nhận hủy hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
                 $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DXH]);
                 $thongbao = ThongBao::create([
                     'user_id' => $donHang->user_id,
                     'tieu_de' => 'Yêu cầu hủy hàng của bạn đã bị từ chối',
-                    'noi_dung' => 'Yêu cầu hủy hàng của bạn đã bị từ chối. Vui lòng liên hệ với cửa hàng',
-                    'loai' => 'Yêu cầu rút tiền',
-                    'duong_dan' => 'yeu-cau-rut-tien',
-                    'id_duong_dan' => $donHang->id,
+                    'noi_dung' => 'Yêu cầu hủy đơn hàng mã ' . $donHang->ma_don_hang . 'của bạn đã bị từ chối. Vui lòng liên hệ với cửa hàng',
+                    'loai' => 'Yêu cầu hủy hàng',
+                    'duong_dan' => $donHang->ma_don_hang,
                     'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
                 broadcast(new ThongBaoMoi($thongbao))->toOthers();

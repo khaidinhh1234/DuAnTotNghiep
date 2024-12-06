@@ -5,7 +5,6 @@ import { Button, Input, message, Modal, Rate } from "antd";
 import { SpadeIcon } from "lucide-react";
 import { useState } from "react";
 import Hoadon from "./hoadon";
-import { useParams } from "react-router-dom";
 
 const Detail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
@@ -151,7 +150,7 @@ const Detail = ({ record }: any) => {
     setIsModalOpen(false);
   };
   // console.log("record", record);
-  const id = record?.id
+  const id = record?.id;
   const { data: VanChuyen } = useQuery({
     queryKey: ["vanchuyen"],
     queryFn: async () => {
@@ -258,7 +257,7 @@ const Detail = ({ record }: any) => {
                                   "Hoàn tất đơn hàng"
                                 ? "text-green-500" // Hoàn tất đơn hàng: màu xanh lá
                                 : record.trang_thai_don_hang === "Hủy hàng"
-                                  ? "text-red-500" // Hủy hàng: màu đỏ
+                                  ? "" // Hủy hàng: màu đỏ
                                   : record.trang_thai_don_hang ===
                                       "Đơn hàng bị từ chối nhân"
                                     ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
@@ -270,7 +269,7 @@ const Detail = ({ record }: any) => {
                                         : record.trang_thai_don_hang ===
                                             "Từ chối hoàn hàng"
                                           ? "text-gray-500" // Từ chối hoàn hàng: màu xám
-                                          : "text-gray-700" // Các trạng thái khác: màu đỏ
+                                          : "text-red-500" // Các trạng thái khác: màu đỏ
                   }  px-2 py-1 font-bold rounded-lg`}
                 >
                   {record.trang_thai_don_hang === "Chờ xác nhận"
@@ -299,9 +298,16 @@ const Detail = ({ record }: any) => {
                                       : record.trang_thai_don_hang ===
                                           "Từ chối hoàn hàng"
                                         ? "Từ chối hoàn hàng"
-                                        : record.trang_thai_don_hang
-                                          ? "Giao hàng thất bại"
-                                          : record.trang_thai_don_hang}
+                                        : record.trang_thai_don_hang ===
+                                            "Chờ xác nhận hủy hàng"
+                                          ? "Chờ xác nhận hủy hàng"
+                                          : record.trang_thai_don_hang ===
+                                              "Đã hủy hàng"
+                                            ? "Đã hủy hàng"
+                                            : record.trang_thai_don_hang ===
+                                                "Giao hàng thất bại"
+                                              ? "Giao hàng thất bại"
+                                              : record.trang_thai_don_hang}
                 </div>
               </div>
             </div>

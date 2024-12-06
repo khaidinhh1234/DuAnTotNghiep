@@ -100,9 +100,8 @@ class KhuyenMaiController extends Controller
 //            dd($sanPhamIds);
             $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
             $sanPhamDetails = $this->locSanPham($sanPhamIds, $request);
+            dd($sanPhamDetails);
             $sanPhamData = $sanPhamDetails->getData();
-
-
             $chuongTrinh->san_pham = $sanPhamData->data;
             $chuongTrinh->danh_sach_loc = $danhSachLoc;
 
@@ -115,9 +114,9 @@ class KhuyenMaiController extends Controller
             if ($ngayBatDau && $ngayHienTai < $ngayBatDau) {
                 return response()->json([
                     'status' => true,
+                    'trang_thai' => 'Chưa bắt đầu chương trình',
                     'data' => [
                         'chuong_trinh' => $chuongTrinh,
-                        'trang_thai' => 'Chưa bắt đầu chương trình',
                     ]
                 ]);
             } elseif ($ngayKetThuc && $ngayHienTai > $ngayKetThuc) {
@@ -128,9 +127,9 @@ class KhuyenMaiController extends Controller
             } else {
                 return response()->json([
                     'status' => true,
+                    'trang_thai' => 'Chương trình đang diễn ra',
                     'data' => [
                         'chuong_trinh' => $chuongTrinh,
-                        'trang_thai' => 'Chương trình đang diễn ra',
                     ]
                 ]);
             }

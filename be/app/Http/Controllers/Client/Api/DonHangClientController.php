@@ -18,6 +18,7 @@ use App\Models\NganHang;
 use App\Models\SanPham;
 use App\Models\ThongBao;
 use App\Models\User;
+use App\Models\ViTien;
 use App\Models\YeuCauRutTien;
 use Carbon\Carbon;
 use Exception;
@@ -437,7 +438,7 @@ class DonHangClientController extends Controller
                         }
 
                         $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
-                            ? $tongTienDonHang * ($maGiamGia->giam_gia / 100)
+                            ? min($tongTienDonHang * $maGiamGia->giam_gia / 100, $maGiamGia->giam_toi_da)
                             : $maGiamGia->giam_gia;
 
                         $daSuDung = DB::table('nguoi_dung_ma_khuyen_mai')
@@ -673,6 +674,7 @@ class DonHangClientController extends Controller
         ]);
 
         $userId = Auth::id();
+        $viTien = ViTien::where('user_id', $userId)->first();
         $maDonHang = $request->ma_don_hang;
         $lidoHuyHang = $request->li_do_huy_hang;
 
@@ -681,9 +683,8 @@ class DonHangClientController extends Controller
         try {
             $donHang = DonHang::where('ma_don_hang', $maDonHang)
                 ->where('user_id', $userId)
-                ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH, DonHang::TTDH_DXH])
+                ->whereIn('trang_thai_don_hang', [DonHang::TTDH_CXH, DonHang::TTDH_DXH])
                 ->first();
-
             if (!$donHang) {
                 return response()->json([
                     'status' => false,
@@ -691,75 +692,77 @@ class DonHangClientController extends Controller
                 ], 400);
             }
             $thoiGian = Carbon::now();
-            $donHang->update([
-                'li_do_huy_hang' => $lidoHuyHang,
-                'trang_thai_don_hang' => DonHang::TTDH_DH,
-                'ngay_huy' => $thoiGian,
-            ]);
-
-            $donHang->chiTiets->each(function ($chiTiet) {
-                $bienTheSanPham = $chiTiet->bienTheSanPham;
-                $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
-            });
-
-            if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
-                DB::table('lich_su_giao_diches')->insert([
-                    'vi_tien_id' => $donHang->giaoDichVi->vi_tien_id,
-                    'so_du_truoc' => $donHang->giaoDichVi->viTien->so_du,
-                    'so_du_sau' => $donHang->giaoDichVi->viTien->so_du + $donHang->tong_tien_don_hang,
-                    'ngay_thay_doi' => Carbon::now(),
-                    'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
+            if ($donHang->trang_thai_don_hang == DonHang::TTDH_CXH) {
+                $donHang->update([
+                    'li_do_huy_hang' => $lidoHuyHang,
+                    'trang_thai_don_hang' => DonHang::TTDH_DH,
+                    'ngay_huy' => $thoiGian,
                 ]);
-                $donHang->giaoDichVi->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+
+                if ($donHang->trang_thai_thanh_toan == DonHang::TTTT_DTT) {
+                    DB::table('lich_su_giao_diches')->insert([
+                        'vi_tien_id' => $viTien->id,
+                        'so_du_truoc' => $viTien->so_du,
+                        'so_du_sau' => $viTien->so_du + $donHang->tong_tien_don_hang,
+                        'ngay_thay_doi' => Carbon::now(),
+                        'mo_ta' => 'Hoàn tiền đơn hàng #' . $donHang->ma_don_hang,
+                    ]);
+                    $viTien->increment('so_du', $donHang->tong_tien_don_hang);
+                    $thongBao = ThongBao::create([
+                        'user_id' => $userId,
+                        'tieu_de' => 'Số tiền đã được hoàn trả',
+                        'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hoàn tiền.',
+                        'loai' => 'Hoàn tiền',
+                        'duong_dan' => $donHang->ma_don_hang,
+                        'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                    ]);
+                    broadcast(new ThongBaoMoi($thongBao))->toOthers();
+                }
+                foreach ($donHang->chiTiets as $chiTiet) {
+                    $bienTheSanPham = $chiTiet->bienTheSanPham;
+                    $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
+
+                    // $gioHangItem = GioHang::withTrashed()
+                    //     ->where('user_id', $userId)
+                    //     ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
+                    //     ->first();
+
+                    // if ($gioHangItem) {
+                    //     $gioHangItem->restore();
+                    //     $gioHangItem->increment('so_luong', $chiTiet->so_luong);
+                    // } else {
+                    //     GioHang::create([
+                    //         'user_id' => $userId,
+                    //         'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
+                    //         'so_luong' => $chiTiet->so_luong,
+                    //     ]);
+                    // }
+                }
+
                 $thongBao = ThongBao::create([
                     'user_id' => $userId,
-                    'tieu_de' => 'Số tiền đã được hoàn trả',
-                    'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hoàn tiền.',
-                    'loai' => 'Hoàn tiền',
+                    'tieu_de' => 'Đơn hàng đã hủy',
+                    'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hủy.',
+                    'loai' => 'Đơn hàng',
                     'duong_dan' => $donHang->ma_don_hang,
-                    'hinh_thu_nho' => 'https://path-to-thumbnail-image.png',
+                    'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
                 ]);
+
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
+            } elseif (in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DXH, DonHang::TTDH_DXH])) {
+                $donHang->update([
+                    'li_do_huy_hang' => $lidoHuyHang,
+                    'trang_thai_don_hang' => DonHang::TTDH_CKHCN,
+                    'ngay_huy' => $thoiGian,
+                ]);
             }
 
-            if (
-                in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
-                $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
-            ) {
-                $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
-            }
-
-            foreach ($donHang->chiTiets as $chiTiet) {
-                $bienTheSanPham = $chiTiet->bienTheSanPham;
-                $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
-
-                $gioHangItem = GioHang::withTrashed()
-                    ->where('user_id', $userId)
-                    ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
-                    ->first();
-
-                if ($gioHangItem) {
-                    $gioHangItem->restore();
-                    $gioHangItem->increment('so_luong', $chiTiet->so_luong);
-                } else {
-                    GioHang::create([
-                        'user_id' => $userId,
-                        'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
-                        'so_luong' => $chiTiet->so_luong,
-                    ]);
-                }
-            }
-
-            $thongBao = ThongBao::create([
-                'user_id' => $userId,
-                'tieu_de' => 'Đơn hàng đã hủy',
-                'noi_dung' => 'Đơn hàng mã ' . $donHang->ma_don_hang . ' của bạn đã được hủy.',
-                'loai' => 'Đơn hàng',
-                'duong_dan' => $donHang->ma_don_hang,
-                'hinh_thu_nho' => 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande-bon-de-commande-bon-de-commande-bon-de-travail-systeme-de-gestion-des-commandes-achats-inventaire-conception-d-icones.png',
-            ]);
-
-            broadcast(new ThongBaoMoi($thongBao))->toOthers();
+            // if (
+            //     in_array($donHang->phuong_thuc_thanh_toan, [DonHang::PTTT_VT, DonHang::PTTT_MM_ATM, DonHang::PTTT_MM_QR]) &&
+            //     $donHang->trang_thai_thanh_toan == DonHang::TTTT_CTT
+            // ) {
+            //     $donHang->user->viTien->increment('so_du', $donHang->tong_tien_don_hang);
+            // }
 
             DB::commit();
 

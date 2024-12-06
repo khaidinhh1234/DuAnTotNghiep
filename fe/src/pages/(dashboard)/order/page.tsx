@@ -273,12 +273,9 @@ const OrderAdmin: React.FC = () => {
                               : record.trang_thai_don_hang === "Hoàn hàng"
                                 ? "text-blue-700" // Hoàn hàng: màu xanh đậm
                                 : record.trang_thai_don_hang ===
-                                    "Chờ xác nhận hoàn hàng"
-                                  ? "text-yellow-500" // Chờ xác nhận hoàn hàng: màu vàng đậm
-                                  : record.trang_thai_don_hang ===
-                                      "Từ chối hoàn hàng"
-                                    ? "text-gray-500" // Từ chối hoàn hàng: màu xám
-                                    : "text-gray-700") // Mặc định: màu xám đậm
+                                    "Từ chối hoàn hàng"
+                                  ? "text-gray-500" // Từ chối hoàn hàng: màu xám
+                                  : "text-red-500") // Mặc định: màu xám đậm
             }
           >
             {record.trang_thai_don_hang === "Chờ xác nhận"
@@ -306,7 +303,7 @@ const OrderAdmin: React.FC = () => {
                                 : record.trang_thai_don_hang ===
                                     "Từ chối hoàn hàng"
                                   ? "Từ chối hoàn hàng"
-                                  : "Giao hàng thất bại"}
+                                  : record.trang_thai_don_hang}
           </div>
         );
       },
@@ -509,12 +506,9 @@ const OrderAdmin: React.FC = () => {
     { label: "Chờ xác nhận", key: "Chờ xác nhận" },
     { label: "Đã xác nhận", key: "Đã xác nhận" },
     { label: "Chờ lấy hàng", key: "Đang xử lý" },
-
     { label: "Giao hàng thất bại", key: "Đơn hàng bị từ chối nhân" },
-
     { label: "Giao hàng thành công", key: "Hoàn tất đơn hàng" },
     { label: "Chưa thanh toán", key: "Chưa thanh toán" },
-
     { label: "Đã thanh toán", key: "Đã thanh toán" },
   ];
 

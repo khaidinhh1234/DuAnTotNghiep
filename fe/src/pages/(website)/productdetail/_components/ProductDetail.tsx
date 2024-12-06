@@ -212,6 +212,7 @@ const ProductDetail: React.FC = () => {
         : instanceClient.post(`/danh-gia/${reviewId}/like`);
     },
     onSuccess: (_: any, variables: { reviewId: number; isLiked: boolean }) => {
+      queryClient.invalidateQueries({ queryKey: ["product", slug] });
       queryClient.setQueryData<ProductData>(["product", slug], (oldProduct) => {
         if (!oldProduct) return oldProduct;
         return {
@@ -272,8 +273,7 @@ const ProductDetail: React.FC = () => {
         setIsModalVisible(true);
       }else {
         toast.error(
-          error.response?.data?.message ||
-            "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng."
+          error.response?.data?.message 
         );
       }
       
