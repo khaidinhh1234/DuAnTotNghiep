@@ -722,21 +722,23 @@ class DonHangClientController extends Controller
                     $bienTheSanPham = $chiTiet->bienTheSanPham;
                     $bienTheSanPham->increment('so_luong_bien_the', $chiTiet->so_luong);
 
-                    // $gioHangItem = GioHang::withTrashed()
-                    //     ->where('user_id', $userId)
-                    //     ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
-                    //     ->first();
+                    $gioHangItem = GioHang::withTrashed()
+                        ->where('user_id', $userId)
+                        ->where('bien_the_san_pham_id', $chiTiet->bien_the_san_pham_id)
+                        ->latest('created_at')
+                        ->first();
 
-                    // if ($gioHangItem) {
-                    //     $gioHangItem->restore();
-                    //     $gioHangItem->increment('so_luong', $chiTiet->so_luong);
-                    // } else {
-                    //     GioHang::create([
-                    //         'user_id' => $userId,
-                    //         'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
-                    //         'so_luong' => $chiTiet->so_luong,
-                    //     ]);
-                    // }
+                    if ($gioHangItem) {
+                        if ($gioHangItem->trashed()) {
+                            $gioHangItem->restore();
+                        }
+                    } else {
+                        GioHang::create([
+                            'user_id' => $userId,
+                            'bien_the_san_pham_id' => $chiTiet->bien_the_san_pham_id,
+                            'so_luong' => $chiTiet->so_luong,
+                        ]);
+                    }
                 }
 
                 $thongBao = ThongBao::create([

@@ -139,7 +139,7 @@ const ProductDetail: React.FC = () => {
   // const nav = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   // const access_token = user.access_token || localStorage.getItem("access_token");
-  const access_token = user.access_token 
+  const access_token = user.access_token
 
   const [selectedColorDisplay, setSelectedColorDisplay] = useState<
     string | null
@@ -220,12 +220,12 @@ const ProductDetail: React.FC = () => {
           danh_gias: oldProduct.danh_gias.map((review) =>
             review.id === variables.reviewId
               ? {
-                  ...review,
-                  trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
-                  danh_gia_huu_ich_count: variables.isLiked
-                    ? review.danh_gia_huu_ich_count - 1
-                    : review.danh_gia_huu_ich_count + 1,
-                }
+                ...review,
+                trang_thai_danh_gia_nguoi_dung: !variables.isLiked,
+                danh_gia_huu_ich_count: variables.isLiked
+                  ? review.danh_gia_huu_ich_count - 1
+                  : review.danh_gia_huu_ich_count + 1,
+              }
               : review
           ),
         };
@@ -238,30 +238,30 @@ const ProductDetail: React.FC = () => {
   // add to cart
   const { mutate: addToCart } = useMutation({
     mutationFn: async (variantId: number) => {
-     try {
-      const response = await instanceClient.post(
-        "/gio-hang",
-        {
-          bien_the_san_pham_id: variantId,
-          so_luong: quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
+      try {
+        const response = await instanceClient.post(
+          "/gio-hang",
+          {
+            bien_the_san_pham_id: variantId,
+            so_luong: quantity,
           },
-        }
-      );
-      toast.success("Thêm giỏ hàng thành công");
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        toast.success("Thêm giỏ hàng thành công");
 
-      return response.data;
+        return response.data;
 
-     } catch (error: any) {
-       toast.error(error.response?.data?.message || "Có l��i xảy ra khi thêm vào gi�� hàng.");
-     }
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || "Có l��i xảy ra khi thêm vào gi�� hàng.");
+      }
     },
     onSuccess: (data) => {
       if (data?.status) {
-        
+
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
         toast.error(data.message);
@@ -269,14 +269,14 @@ const ProductDetail: React.FC = () => {
     },
     onError: (error: any) => {
       console.error("Lỗi khi thêm vào giỏ hàng:", error);
-      if(error.response?.data?.message == "Mã token không hợp lệ hoặc không tìm thấy người dùng"){
+      if (error.response?.data?.message == "Mã token không hợp lệ hoặc không tìm thấy người dùng") {
         setIsModalVisible(true);
-      }else {
+      } else {
         toast.error(
-          error.response?.data?.message 
+          error.response?.data?.message
         );
       }
-      
+
     },
   });
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -370,8 +370,13 @@ const ProductDetail: React.FC = () => {
       (v) =>
         v?.mau_bien_the?.ma_mau_sac === color &&
         v?.kich_thuoc_bien_the?.kich_thuoc === selectedSize
-    );
 
+    );
+    if (!access_token) {
+      setIsModalVisible(true);
+      return;
+    }
+    setIsModalVisible(false);
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
     updateImages(color, selectedSize);
@@ -386,7 +391,11 @@ const ProductDetail: React.FC = () => {
         v?.kich_thuoc_bien_the?.kich_thuoc === size &&
         v?.mau_bien_the?.ma_mau_sac === selectedColor
     );
-
+    if (!access_token) {
+      setIsModalVisible(true);
+      return
+    }
+    setIsModalVisible(false);
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedSizeDisplay(size);
     updateImages(selectedColor, size);
@@ -610,7 +619,7 @@ const ProductDetail: React.FC = () => {
                   freeMode={true}
                   watchSlidesProgress={true}
                   modules={[FreeMode, Navigation, Thumbs]}
-                  // className="mySwiper1"
+                // className="mySwiper1"
                 >
                   {currentImages?.map((image, index) => (
                     <SwiperSlide key={`thumb-${index}`}>
@@ -643,11 +652,10 @@ const ProductDetail: React.FC = () => {
                   {selectedVariant && (
                     <div className="mt-2">
                       <a
-                        className={` text-sm px-2 py-1 rounded-sm ${
-                          selectedVariant?.so_luong_bien_the > 0
-                            ? "bg-[#3CD139]/10 text-[#3CD139]"
-                            : "bg-red-500 text-white"
-                        }`}
+                        className={` text-sm px-2 py-1 rounded-sm ${selectedVariant?.so_luong_bien_the > 0
+                          ? "bg-[#3CD139]/10 text-[#3CD139]"
+                          : "bg-red-500 text-white"
+                          }`}
                       >
                         {selectedVariant?.so_luong_bien_the > 0
                           ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
@@ -744,9 +752,8 @@ const ProductDetail: React.FC = () => {
                     return (
                       <button
                         key={index}
-                        className={`w-9 h-9 rounded-md border-2 ${
-                          selectedColor === color ? "border-black" : ""
-                        } ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
+                        className={`w-9 h-9 rounded-md border-2 ${selectedColor === color ? "border-black" : ""
+                          } ${!isAvailable ? "opacity-50 cursor-not-allowed relative" : ""}`}
                         style={{ backgroundColor: color }}
                         onClick={() => isAvailable && handleColorClick(color)}
                         disabled={!isAvailable}
@@ -826,10 +833,10 @@ const ProductDetail: React.FC = () => {
                   ).map((size, index) => {
                     const isAvailable = selectedColor
                       ? isVariantAvailable(
-                          product?.bien_the_san_pham as any,
-                          selectedColor,
-                          size
-                        )
+                        product?.bien_the_san_pham as any,
+                        selectedColor,
+                        size
+                      )
                       : false;
 
                     return (
@@ -866,7 +873,13 @@ const ProductDetail: React.FC = () => {
               <div className="mt-12 flex gap-5">
                 <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                   <button
-                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    onClick={() => {
+                      if (!access_token) {
+                        setIsModalVisible(true);
+                        return;
+                      }
+                      setQuantity((prev) => Math.max(1, prev - 1));
+                    }}
                     className="py-2 pr-2"
                   >
                     <i className="fa-solid fa-minus" />
@@ -891,19 +904,28 @@ const ProductDetail: React.FC = () => {
                       } else {
                         setQuantity(Math.max(1, inputQuantity)); // Đảm bảo số lượng không thấp hơn 1
                       }
+                      if(!access_token) {
+                        setIsModalVisible(true);
+                        return;
+                      }
                     }}
+                    
                     className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                   />
 
                   <button
-                    onClick={() =>
+                    onClick={() =>{
+                      if (!access_token) {
+                        setIsModalVisible(true);
+                        return;
+                      }
                       setQuantity((prev) =>
                         Math.min(
                           selectedVariant?.so_luong_bien_the || 1,
                           prev + 1
                         )
                       )
-                    }
+                    }}
                     className="py-2 pl-2"
                   >
                     <i className="fa-solid fa-plus" />
@@ -962,11 +984,10 @@ const ProductDetail: React.FC = () => {
         {activeTab === "descriptions" && (
           <div className="mb-4">
             <div
-              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${
-                isDescriptionExpanded
-                  ? "h-auto"
-                  : "max-h-[500px] overflow-hidden"
-              }`}
+              className={`description mb-4 text-sm px-5 whitespace-pre-wrap relative ${isDescriptionExpanded
+                ? "h-auto"
+                : "max-h-[500px] overflow-hidden"
+                }`}
             >
               <div
                 dangerouslySetInnerHTML={{ __html: product?.noi_dung || "" }}
