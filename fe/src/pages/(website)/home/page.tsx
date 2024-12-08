@@ -10,7 +10,7 @@ import instanceClient from "@/configs/client";
 
 const HomePage = () => {
   const { data, isLoading } = useQuery({
-    queryKey: ["TRANGCHU", "PRODUCTS_KEY"],
+    queryKey: ["PRODUCTS_KEY", "TRANGCHU"],
     queryFn: async () => {
       try {
         const response = await instanceClient.get("trangchu");

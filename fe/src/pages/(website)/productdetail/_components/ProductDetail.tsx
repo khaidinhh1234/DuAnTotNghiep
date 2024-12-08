@@ -194,8 +194,15 @@ const ProductDetail: React.FC = () => {
     queryFn: async () => {
       try {
         const response = await instanceClient.get(`/chi-tiet-san-pham/${slug}`);
+        console.log(response.data);
+        if (response.data.status_code !== 200) {
+          nav("/404");
+          return false;
+        }
+
         return response.data.data;
       } catch (error) {
+        message.error("Có lỗi khi lấy thông tin sản phẩm");
         nav("/404");
       }
       // return response.data.data;
@@ -276,9 +283,7 @@ const ProductDetail: React.FC = () => {
       ) {
         setIsModalVisible(true);
       } else {
-        toast.error(
-          error.response?.data?.message 
-        );
+        toast.error(error.response?.data?.message);
       }
     },
   });

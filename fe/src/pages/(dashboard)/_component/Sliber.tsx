@@ -90,7 +90,7 @@ const SiderComponent: React.FC = () => {
           quyen?.includes("admin.danhmuc.index")) && (
           <SubMenu key="sub3" icon={<Folder />} title="Danh mục">
             {quyen?.includes("admin.danhmuc.index") && (
-              <Menu.Item key="/admin/categories">Sản phẩm</Menu.Item>
+              <Menu.Item key="/admin/categories">Danh mục </Menu.Item>
             )}
             {quyen?.includes("admin.danhmuctintuc.index") && (
               <Menu.Item key="/admin/newcategory">Tin tức</Menu.Item>
