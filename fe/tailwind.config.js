@@ -15,6 +15,19 @@ export default {
       fontFamily: {
         lexend: '"Lexend", sans-serif',
       },
+      animation: {
+        "snow-fall": "snow-fall 10s linear infinite",
+      },
+      keyframes: {
+        "snow-fall": {
+          "0%": {
+            transform: "translateY(0) translateX(0)", // Vị trí ban đầu
+          },
+          "100%": {
+            transform: "translateY(100vh) translateX(100vw)", // Vị trí cuối cùng
+          },
+        },
+      },
     },
   },
   darkMode: false, // or 'media' or 'class'
