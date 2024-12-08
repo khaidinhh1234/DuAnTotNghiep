@@ -379,7 +379,11 @@ const ProductDetail: React.FC = () => {
         v?.mau_bien_the?.ma_mau_sac === color &&
         v?.kich_thuoc_bien_the?.kich_thuoc === selectedSize
     );
-
+    if (!access_token) {
+      setIsModalVisible(true);
+      return;
+    }
+    setIsModalVisible(false);
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedColorDisplay(selectedVariant?.mau_bien_the?.ten_mau_sac || null);
     updateImages(color, selectedSize);
@@ -394,7 +398,11 @@ const ProductDetail: React.FC = () => {
         v?.kich_thuoc_bien_the?.kich_thuoc === size &&
         v?.mau_bien_the?.ma_mau_sac === selectedColor
     );
-
+    if (!access_token) {
+      setIsModalVisible(true);
+      return;
+    }
+    setIsModalVisible(false);
     setSelectedVariantId(selectedVariant?.id ?? null); // Lưu ID của biến thể
     setSelectedSizeDisplay(size);
     updateImages(selectedColor, size);
@@ -648,6 +656,21 @@ const ProductDetail: React.FC = () => {
                   <h3 className="font-bold text-2xl">
                     {product?.ten_san_pham}
                   </h3>
+                  {selectedVariant && (
+                    <div className="mt-2">
+                      <a
+                        className={` text-sm px-2 py-1 rounded-sm ${
+                          selectedVariant?.so_luong_bien_the > 0
+                            ? "bg-[#3CD139]/10 text-[#3CD139]"
+                            : "bg-red-500 text-white"
+                        }`}
+                      >
+                        {selectedVariant?.so_luong_bien_the > 0
+                          ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
+                          : "Hết hàng"}
+                      </a>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center">
                   <h4 className="mb-3 text-lg font-normal">
@@ -875,7 +898,13 @@ const ProductDetail: React.FC = () => {
               <div className="mt-12 flex gap-5">
                 <div className="border rounded-lg border-black xl:w-32 xl:h-14  ld:w-24 lg:h-10  md:w-32 md:h-14  w-24 h-10 flex justify-center items-center shadow-lg shadow-slate-400/50">
                   <button
-                    onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                    onClick={() => {
+                      if (!access_token) {
+                        setIsModalVisible(true);
+                        return;
+                      }
+                      setQuantity((prev) => Math.max(1, prev - 1));
+                    }}
                     className="py-2 pr-2"
                   >
                     <i className="fa-solid fa-minus" />
@@ -900,19 +929,27 @@ const ProductDetail: React.FC = () => {
                       } else {
                         setQuantity(Math.max(1, inputQuantity)); // Đảm bảo số lượng không thấp hơn 1
                       }
+                      if (!access_token) {
+                        setIsModalVisible(true);
+                        return;
+                      }
                     }}
                     className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10  w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center text-lg font-semibold"
                   />
 
                   <button
-                    onClick={() =>
+                    onClick={() => {
+                      if (!access_token) {
+                        setIsModalVisible(true);
+                        return;
+                      }
                       setQuantity((prev) =>
                         Math.min(
                           selectedVariant?.so_luong_bien_the || 1,
                           prev + 1
                         )
-                      )
-                    }
+                      );
+                    }}
                     className="py-2 pl-2"
                   >
                     <i className="fa-solid fa-plus" />

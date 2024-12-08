@@ -433,7 +433,7 @@ const Test2 = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="grid lg:grid-cols-12 gap-6 relative z-50">
+                                <div className="grid lg:grid-cols-12 gap-6 relative ">
                                     {/* Sản phẩm */}
                                     <div className="lg:col-span-8 col-span-12">
                                         {/* Danh mục sản phẩm giảm giá */}

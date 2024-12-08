@@ -1,17 +1,24 @@
 import instanceClient from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Import Swiper CSS
 import { bannerOurStory } from "@/assets/img";
+import { message } from "antd";
 
 const Blog = () => {
+  const nav = useNavigate()
   const { data } = useQuery({
     queryKey: ["baiviet"],
     queryFn: async () => {
+     try {
       const response = await instanceClient.get(`/load-danh-muc-tin-tuc`);
       console.log("Response data:", response.data);
       return response.data;
+     } catch (error) {
+      nav("/404");
+      message.error("Bài viết không tồn tại");
+     }
     },
   });
   const formatDate = (dateString: string) => {
