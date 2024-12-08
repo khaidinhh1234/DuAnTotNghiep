@@ -100,7 +100,7 @@ class KhuyenMaiController extends Controller
 //            dd($sanPhamIds);
             $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
             $sanPhamDetails = $this->locSanPham($sanPhamIds, $request);
-            dd($sanPhamDetails);
+            // dd($sanPhamDetails);
             $sanPhamData = $sanPhamDetails->getData();
             $chuongTrinh->san_pham = $sanPhamData->data;
             $chuongTrinh->danh_sach_loc = $danhSachLoc;
