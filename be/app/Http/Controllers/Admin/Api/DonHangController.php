@@ -616,7 +616,7 @@ class DonHangController extends Controller
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
                 $mess = 'Xác nhận hủy hàng thành công.';
             } else if ($validated['trang_thai'] === 'tu_choi') {
-                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DXH]);
+                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_DXH, 'ly_do_tu_choi' => 1]);
                 $thongbao = ThongBao::create([
                     'user_id' => $donHang->user_id,
                     'tieu_de' => 'Yêu cầu hủy hàng của bạn đã bị từ chối',

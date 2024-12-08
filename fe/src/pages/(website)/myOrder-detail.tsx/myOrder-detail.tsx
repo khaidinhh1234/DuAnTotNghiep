@@ -355,7 +355,7 @@ const MyOrderdetail = () => {
           </h1>
           {chitiet?.danh_gia_chua_xoa?.length <= 0 &&
           chitiet?.danh_gia_da_xoa?.length <= 0 ? (
-            Check(donhang?.ngay_hoan_thanh_don) &&
+            // Check(donhang?.ngay_hoan_thanh_don) &&
             (donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
               donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng") && (
               <>

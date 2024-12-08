@@ -48,7 +48,8 @@ const ProductItem = ({
   const dateToCheck = new Date(created_at);
   // console.log(isToday(dateToCheck));
   // console.log(values);
-  console.log(ly_do_tu_choi);
+  const hoanhangtuchoi = ly_do_tu_choi === 1 ? true : false;
+  console.log(hoanhangtuchoi);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
   const queryClient = useQueryClient();
@@ -472,7 +473,7 @@ const ProductItem = ({
                 </Link>
               </div>
             )}
-          {!ly_do_tu_choi &&
+          {!hoanhangtuchoi &&
             (status === "Chờ xác nhận" ||
               status === "Đã xác nhận" ||
               // status === "Đang xử lý" ||
@@ -549,7 +550,7 @@ const ProductItem = ({
             </button>
           </Link>
           <br />
-          {!ly_do_tu_choi &&
+          {!hoanhangtuchoi &&
             (status === "Chờ xác nhận" ||
               status === "Đã xác nhận" ||
               // status === "Đang xử lý" ||
@@ -628,7 +629,7 @@ const ProductList = ({
 }: any) => {
   const don_hang = donhang;
   const [searchValue, setSearchValue] = useState("");
-  console.log(don_hang);
+  console.log("donhang", don_hang);
   const handleKeyDown = (e: any) => {
     if (e.key === "Enter") {
       e.preventDefault(); // Ngăn trình duyệt refresh
@@ -723,7 +724,7 @@ const ProductList = ({
                 ma_don_hang={item.ma_don_hang || ""}
                 phuong_thuc_thanh_toans={item.phuong_thuc_thanh_toan || ""}
                 danh_gias={item.danh_gias || []}
-                ly_do_tu_choi={item.ly_do_tu_choi ?? false}
+                ly_do_tu_choi={item.ly_do_tu_choi ?? 0}
                 ngay_hoan_thanh_don={item.ngay_hoan_thanh_don || null}
               />
             ))
