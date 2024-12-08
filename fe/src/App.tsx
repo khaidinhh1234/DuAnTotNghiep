@@ -1,12 +1,14 @@
-import { useEffect, useState, useRef } from "react";
 import Echo from "laravel-echo";
+import { useEffect, useRef, useState } from "react";
 
-import Router from "./routes";
 import "react-toastify/dist/ReactToastify.css";
+import Router from "./routes";
 
 import Pusher from "pusher-js";
 
+import Snowfall from "react-snowfall";
 import { ToastContainer } from "react-toastify";
+
 
 const notificationSoundUrl = "/explosion-42132.mp3";
 
@@ -163,9 +165,10 @@ function App() {
       prev.filter((notification) => notification.id !== id)
     );
   };
-
+  
   return (
     <>
+    
       <Banner notifications={notifications} onDelete={handleDelete} />
       <Router />
 

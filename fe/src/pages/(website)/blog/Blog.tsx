@@ -52,9 +52,9 @@ const Blog = () => {
       ) : (
         <div className="mt-10 pl-20 pb-20">
           {/* Hiển thị danh mục tin tức */}
-          <h2 className="text-5xl font-bold mb-4 text-center mt-20">
+          {/* <h2 className="text-5xl font-bold mb-4 text-center mt-20">
             Danh mục tin tức
-          </h2>
+          </h2> */}
           {data?.Danh_muc_tin_tuc?.length > 0 && (
             <Swiper
               spaceBetween={20}
@@ -64,7 +64,7 @@ const Blog = () => {
             >
               {data.Danh_muc_tin_tuc.map((item: any) => (
                 <SwiperSlide key={item.id}>
-                  <div className="p-4 bg-white rounded-lg shadow-md relative">
+                  <div className="p-4 bg-white  relative">
                     <Link to={`/danhmuctintuc/${item.duong_dan}`}>
                       <div className="relative w-full h-40 rounded-lg overflow-hidden cursor-pointer">
                         <img

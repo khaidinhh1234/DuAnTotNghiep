@@ -153,7 +153,7 @@ const BlogCategories = () => {
                           alt={article.tieu_de}
                           className="w-full h-[700px] object-cover"
                         />
-                        <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 p-4 flex justify-between items-end">
+                        {/* <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 p-4 flex justify-between items-end">
                           <div className="text-white ml-10">
                             <h3 className="text-lg font-semibold">
                               {article.tieu_de}
@@ -171,7 +171,7 @@ const BlogCategories = () => {
                           >
                             Đọc thêm
                           </Link>
-                        </div>
+                        </div> */}
                       </div>
                     </Link>
                   )
