@@ -12,7 +12,7 @@ interface Props {
 }
 const PrivateShipper: React.FC<Props> = ({ children }) => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const access_token = JSON.parse(localStorage.getItem("access_token") || "{}");
+  const access_token = localStorage.getItem("access_token");
   const token = user?.access_token;
   // console.log(token);
   instance.interceptors.request.use(

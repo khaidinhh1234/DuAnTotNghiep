@@ -261,7 +261,6 @@ const ProductDetail: React.FC = () => {
     },
     onSuccess: (data) => {
       if (data?.status) {
-
         queryClient.invalidateQueries({ queryKey: ["cart", access_token] });
       } else {
         toast.error(data.message);
@@ -276,7 +275,6 @@ const ProductDetail: React.FC = () => {
           error.response?.data?.message
         );
       }
-
     },
   });
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -689,6 +687,22 @@ const ProductDetail: React.FC = () => {
                     </span>
                   </div>
                 </div>
+                {selectedVariant && (
+                  <div className="mb-2">
+                    <a
+                      className={` text-base px-2 py-1 rounded-sm ${
+                        selectedVariant?.so_luong_bien_the > 0
+                          ? "bg-[#3CD139]/10 text-[#3CD139]"
+                          : "bg-red-500 text-white"
+                      }`}
+                    >
+                      {selectedVariant?.so_luong_bien_the > 0
+                        ? `Còn hàng ${selectedVariant?.so_luong_bien_the}`
+                        : "Hết hàng"}
+                    </a>
+                  </div>
+                )}
+
                 <div className="flex items-center space-x-2 mb-2">
                   <EyeOutlined style={{ fontSize: "24px" }} />
                   <span className="font-bold text-lg">{product?.luot_xem}</span>

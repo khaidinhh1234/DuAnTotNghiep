@@ -325,7 +325,10 @@ class DonHangClientController extends Controller
 
             if ($donHang->vanChuyen->shipper_xac_nhan) {
                 $donHang->vanChuyen->update(['khach_hang_xac_nhan' => "1"]);
-                $donHang->update(['trang_thai_don_hang' => DonHang::TTDH_HTDH]);
+                $donHang->update([
+                    'trang_thai_don_hang' => DonHang::TTDH_HTDH,
+                    'ngay_hoan_thanh_don' => now()
+                ]);
             } else {
                 return response()->json([
                     'status' => false,
@@ -751,10 +754,10 @@ class DonHangClientController extends Controller
                 ]);
 
                 broadcast(new ThongBaoMoi($thongBao))->toOthers();
-            } elseif (in_array($donHang->trang_thai_don_hang, [DonHang::TTDH_DXH, DonHang::TTDH_DXH])) {
+            } elseif ($donHang->trang_thai_don_hang == DonHang::TTDH_DXH) {
                 $donHang->update([
                     'li_do_huy_hang' => $lidoHuyHang,
-                    'trang_thai_don_hang' => DonHang::TTDH_CKHCN,
+                    'trang_thai_don_hang' => DonHang::TTDH_CXNDH,
                     'ngay_huy' => $thoiGian,
                 ]);
             }

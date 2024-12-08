@@ -58,7 +58,9 @@ const Detail = ({ record }: any) => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ORDER_DETAIL"] });
+      queryClient.invalidateQueries({
+        queryKey: ["ORDER_DETAIL"],
+      });
     },
     onError: (error) => {
       console.error("Error:", error);
@@ -257,7 +259,7 @@ const Detail = ({ record }: any) => {
                                   "Hoàn tất đơn hàng"
                                 ? "text-green-500" // Hoàn tất đơn hàng: màu xanh lá
                                 : record.trang_thai_don_hang === "Hủy hàng"
-                                  ? "" // Hủy hàng: màu đỏ
+                                  ? "Hủy hàng" // Hủy hàng: màu đỏ
                                   : record.trang_thai_don_hang ===
                                       "Đơn hàng bị từ chối nhân"
                                     ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
@@ -302,8 +304,8 @@ const Detail = ({ record }: any) => {
                                             "Chờ xác nhận hủy hàng"
                                           ? "Chờ xác nhận hủy hàng"
                                           : record.trang_thai_don_hang ===
-                                              "Đã hủy hàng"
-                                            ? "Đã hủy hàng"
+                                              "Hủy hàng"
+                                            ? "Hủy hàng"
                                             : record.trang_thai_don_hang ===
                                                 "Giao hàng thất bại"
                                               ? "Giao hàng thất bại"
@@ -463,6 +465,42 @@ const Detail = ({ record }: any) => {
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
 
               <div className="flex flex-col gap-2">
+                {showPopup && (
+                  <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-20">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                      <h3 className="text-lg font-bold mb-4">
+                        Xác nhận hủy đơn hàng
+                      </h3>
+                      <p className="mb-4">
+                        Bạn có chắc chắn muốn hủy đơn hàng này không?
+                      </p>
+
+                      {/* Phần note */}
+                      <textarea
+                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+                        placeholder="Nhập lý do hủy đơn hàng (nếu có)"
+                        rows={4}
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                      ></textarea>
+
+                      <div className="mt-4 flex justify-end space-x-2">
+                        <button
+                          className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                          onClick={() => setShowPopup(false)}
+                        >
+                          Hủy
+                        </button>
+                        <button
+                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
+                          onClick={handleCancel3}
+                        >
+                          Xác nhận
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {record.trang_thai_don_hang === "Chờ xác nhận" ? (
                   <>
                     <button
@@ -498,42 +536,6 @@ const Detail = ({ record }: any) => {
                       >
                         Hủy đơn hàng
                       </button>
-                      {showPopup && (
-                        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-20">
-                          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                            <h3 className="text-lg font-bold mb-4">
-                              Xác nhận hủy đơn hàng
-                            </h3>
-                            <p className="mb-4">
-                              Bạn có chắc chắn muốn hủy đơn hàng này không?
-                            </p>
-
-                            {/* Phần note */}
-                            <textarea
-                              className="w-full p-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-                              placeholder="Nhập lý do hủy đơn hàng (nếu có)"
-                              rows={4}
-                              value={note}
-                              onChange={(e) => setNote(e.target.value)}
-                            ></textarea>
-
-                            <div className="mt-4 flex justify-end space-x-2">
-                              <button
-                                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-                                onClick={() => setShowPopup(false)}
-                              >
-                                Hủy
-                              </button>
-                              <button
-                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700"
-                                onClick={handleCancel3}
-                              >
-                                Xác nhận
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </>
                 ) : record.trang_thai_don_hang === "Đang xử lý" ? (

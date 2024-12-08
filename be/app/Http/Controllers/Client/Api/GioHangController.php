@@ -25,7 +25,7 @@ class GioHangController extends Controller
                 ->join('bien_the_mau_sacs', 'bien_the_san_phams.bien_the_mau_sac_id', '=', 'bien_the_mau_sacs.id')
                 ->join('bien_the_kich_thuocs', 'bien_the_san_phams.bien_the_kich_thuoc_id', '=', 'bien_the_kich_thuocs.id')
                 ->where('gio_hangs.user_id', $userId)
-               ->whereNull("gio_hangs.deleted_at")
+                ->whereNull("gio_hangs.deleted_at")
                 ->select(
                     'gio_hangs.id',
                     'gio_hangs.bien_the_san_pham_id',
@@ -54,8 +54,7 @@ class GioHangController extends Controller
                         DB::table('gio_hangs')->where('id', $item->id)->update(['chon' => 0, 'het_hang' => 1]);
                         $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã hết hàng.";
                     }
-                }
-                else {
+                } else {
                     if ($item->het_hang === 1) {
                         DB::table('gio_hangs')->where('id', $item->id)->update(['het_hang' => 0, 'chon' => 1]);
                         $messages[] = "Sản phẩm '{$item->ten_san_pham}' đã có hàng trở lại.";
@@ -103,10 +102,10 @@ class GioHangController extends Controller
             });
 
             $sanPhamKhongHoatDong = $gioHangs->filter(function ($item) {
-                if($item->trang_thai == 0 || $item->ngay_xoa != null){
+                if ($item->trang_thai == 0 || $item->ngay_xoa != null) {
                     if ($item->chon === 1) {
                         DB::table('gio_hangs')->where('id', $item->id)->update(['chon' => 0]);
-                   }
+                    }
                 }
                 return $item->trang_thai == 0 || $item->ngay_xoa != null;
             });
@@ -143,7 +142,7 @@ class GioHangController extends Controller
                 'so_luong' => 'required|integer|min:1',
             ]);
 
-            if(Auth::user()->vaiTros()->whereNot('ten_vai_tro', 'Khách hàng')->exists()) {
+            if (Auth::user()->vaiTros()->whereNot('ten_vai_tro', 'Khách hàng')->exists()) {
                 return response()->json([
                     'status' => false,
                     'message' => 'Không thể thêm sản phẩm vào giỏ hàng.'
@@ -180,7 +179,7 @@ class GioHangController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Sản phẩm đã được thêm vào giỏ hàng thành công!',
+                'message' => 'Sản phẩm đã thêm vào giỏ hàng',
                 'data' => $gioHang
             ], 201);
         } catch (\Exception $e) {
@@ -619,7 +618,7 @@ class GioHangController extends Controller
                 'message' => 'Đã thay đổi số lượng sản phẩm thành công!',
                 'data' => $gioHang
             ]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
                 'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
