@@ -143,13 +143,22 @@ class VanChuyenController extends Controller
                 if ($validate['trang_thai_van_chuyen'] == VanChuyen::TTVC_DGH) {
                     $tieuDeThongBao = 'Đơn hàng đang được giao';
                     $noiDungThongBao = 'Đơn hàng #' . $vanChuyen->donHang->ma_don_hang . ' hiện đang trong quá trình vận chuyển đến bạn.';
+                    $vanChuyen->donHang->update([
+                        'trang_thai_don_hang' => DonHang::TTDH_DGH
+                    ]);
                 } elseif ($validate['trang_thai_van_chuyen'] == VanChuyen::TTVC_GHTC) {
                     $tieuDeThongBao = 'Giao hàng thành công';
                     $noiDungThongBao = 'Đơn hàng #' . $vanChuyen->donHang->ma_don_hang . ' đã được giao thành công vào lúc ' . now()->format('H:i d/m/Y') . '.';
                     $hinhAnhThongBao = 'https://e1.pngegg.com/pngimages/542/837/png-clipart-icone-de-commande.png';
+                    $vanChuyen->donHang->update([
+                        'trang_thai_don_hang' => DonHang::TTDH_CKHCN
+                    ]);
                 } elseif ($validate['trang_thai_van_chuyen'] == VanChuyen::TTVC_GHTB) {
                     $tieuDeThongBao = 'Giao hàng thất bại';
                     $noiDungThongBao = 'Đơn hàng #' . $vanChuyen->donHang->ma_don_hang . ' đã thất bại trong quá trình giao hàng. Vui lòng kiểm tra lại địa chỉ hoặc liên hệ hỗ trợ.';
+                    $vanChuyen->donHang->update([
+                        'trang_thai_don_hang' => DonHang::TTDH_DHTB
+                    ]);
                 } else {
                     $tieuDeThongBao = 'Cập nhật trạng thái vận chuyển';
                     $noiDungThongBao = 'Đơn hàng #' . $vanChuyen->donHang->ma_don_hang . ' đã được cập nhật trạng thái mới.';
@@ -205,13 +214,16 @@ class VanChuyenController extends Controller
             if ($vanChuyen->shipper_xac_nhan == 0) {
                 if ($validate['shipper_xac_nhan'] == 2) {
                     $ghiChuHienTai = $vanChuyen->ghi_chu ? json_decode($vanChuyen->ghi_chu, true) : [];
-
                     if ($vanChuyen->so_lan_giao >= 2) {
                         $ghiChuHienTai['lan3'] = $validate['ghi_chu']['lan3'] ?? 'Giao hàng thất bại lần 3';
                         $vanChuyen->update([
                             'trang_thai_van_chuyen' => VanChuyen::TTVC_GHTB,
                             'shipper_xac_nhan' => $validate['shipper_xac_nhan'],
                             'ghi_chu' => json_encode($ghiChuHienTai),
+                        ]);
+
+                        $vanChuyen->donHang->update([
+                            'trang_thai_don_hang' => DonHang::TTDH_DHTB
                         ]);
 
                         $thongBao = ThongBao::create([
@@ -259,8 +271,6 @@ class VanChuyenController extends Controller
                         'trang_thai_thanh_toan' => DonHang::TTTT_DTT,
                         'trang_thai_don_hang' => DonHang::TTDH_CKHCN
                     ]);
-
-
 
                     $thongBao = ThongBao::create([
                         'user_id' => $vanChuyen->user_id,
