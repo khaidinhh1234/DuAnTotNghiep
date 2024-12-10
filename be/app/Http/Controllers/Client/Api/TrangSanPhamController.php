@@ -120,15 +120,16 @@ class TrangSanPhamController extends Controller
             // Lấy tất cả màu sắc theo đường dẫn của danh mục
             $mauSacs = BienTheMauSac::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
                 $query->where('duong_dan', $loai);
-            }])->get()->filter(function ($mauSac) {
-                return $mauSac->sanPhams->isNotEmpty();
-            });
-            // dd($mauSacs);
+            }])->get();
             // Lấy tất cả kích thước theo đường dẫn của danh mục và loại kích thước
             $kichThuoc = BienTheKichThuoc::with(['sanPhams.danhMuc' => function ($query) use ($loai) {
                 $query->where('duong_dan', $loai);
-            }])->get()->filter(function ($kichThuoc) {
-                return $kichThuoc->sanPhams->isNotEmpty();
+            }])->get()->filter(function ($kichThuoc) use ($loai) {
+                if ($kichThuoc->loai_kich_thuoc == $loai) {
+                    return $kichThuoc;
+                } else if ($kichThuoc->loai_kich_thuoc == 'tre_em' && $loai == 'tre-em') {
+                    return $kichThuoc;
+                }
             });
 
             // Commit transaction nếu mọi thứ thành công
