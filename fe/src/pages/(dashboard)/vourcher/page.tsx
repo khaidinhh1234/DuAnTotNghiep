@@ -155,7 +155,7 @@ const VoucherAdmin: React.FC = () => {
       title: "STT",
 
       // key: "key",
-      width: "5%",
+      // width: "5%",
       className: "text-center",
       render: (index) => (
         <span className="text-gray-600 text-md">{index.index}</span>
@@ -176,7 +176,7 @@ const VoucherAdmin: React.FC = () => {
 
       sorter: (a: any, b: any) => a.so_luong_da_su_dung - b.so_luong_da_su_dung,
 
-      width: "25%",
+      // width: "25%",
       render: (record) => (
         <>
           <span
@@ -192,7 +192,7 @@ const VoucherAdmin: React.FC = () => {
       title: "Trạng thái",
       dataIndex: "trang_thai",
       key: "trang_thai",
-      width: "30%",
+      // width: "30%",
       sorter: (a: any, b: any) => a.trang_thai - b.trang_thai,
       onFilter: (value: boolean | React.Key, record: any) =>
         record.trang_thai

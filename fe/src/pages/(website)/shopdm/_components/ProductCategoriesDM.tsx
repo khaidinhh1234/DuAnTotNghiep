@@ -573,7 +573,7 @@ const ProductCategoriesDM = () => {
                           }`}
                           style={{ backgroundColor: item.ma_mau_sac }}
                         ></span>
-                        <span className="mt-2 text-sm font-semibold">
+                        <span className="mt-2  text-center text-sm font-semibold w-20 truncate">
                           {item.ten_mau_sac}
                         </span>
                       </div>

@@ -607,7 +607,7 @@ class GioHangController extends Controller
             $bienTheSanPham = BienTheSanPham::findOrFail($gioHang->bien_the_san_pham_id);
             if ($request->so_luong > $bienTheSanPham->so_luong_bien_the) {
                 return response()->json([
-                    'message' => 'Số lượng sản phẩm vượt quá số lượng tồn kho.'
+                    'message' => "Rất tiếc, bạn chỉ có thể mua tối đa $bienTheSanPham->so_luong_bien_the sản phẩm."
                 ], 400);
             }
             $gioHang->update([

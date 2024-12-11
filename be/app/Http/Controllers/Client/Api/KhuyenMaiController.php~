@@ -100,9 +100,11 @@ class KhuyenMaiController extends Controller
 //            dd($sanPhamIds);
             $danhSachLoc = $this->layDanhMucMauSacKichThuoc($sanPhamIds);
             $sanPhamDetails = $this->locSanPham($sanPhamIds, $request);
+<<<<<<< HEAD
+=======
+            // dd($sanPhamDetails);
+>>>>>>> 69c3eab16dd04f69a71a05b90a51fae6fc26a1ee
             $sanPhamData = $sanPhamDetails->getData();
-
-
             $chuongTrinh->san_pham = $sanPhamData->data;
             $chuongTrinh->danh_sach_loc = $danhSachLoc;
 
@@ -115,9 +117,9 @@ class KhuyenMaiController extends Controller
             if ($ngayBatDau && $ngayHienTai < $ngayBatDau) {
                 return response()->json([
                     'status' => true,
+                    'trang_thai' => 'Chưa bắt đầu chương trình',
                     'data' => [
                         'chuong_trinh' => $chuongTrinh,
-                        'trang_thai' => 'Chưa bắt đầu chương trình',
                     ]
                 ]);
             } elseif ($ngayKetThuc && $ngayHienTai > $ngayKetThuc) {
@@ -128,9 +130,9 @@ class KhuyenMaiController extends Controller
             } else {
                 return response()->json([
                     'status' => true,
+                    'trang_thai' => 'Chương trình đang diễn ra',
                     'data' => [
                         'chuong_trinh' => $chuongTrinh,
-                        'trang_thai' => 'Chương trình đang diễn ra',
                     ]
                 ]);
             }
@@ -312,9 +314,14 @@ class KhuyenMaiController extends Controller
             $danhMucIdsWithSubCategories = array_unique($danhMucIdsWithSubCategories);
 
             $query = MaKhuyenMai::query()
-                ->where('trang_thai', 1)
-                ->where('ngay_bat_dau_suu_tam', '<=', now())
-                ->where('ngay_ket_thuc', '>=', now());
+                ->join('nguoi_dung_ma_khuyen_mai', 'ma_khuyen_mais.id', '=', 'nguoi_dung_ma_khuyen_mai.ma_khuyen_mai_id') // Thực hiện JOIN với bảng nguoi_dung_ma_khuyen_mai
+                ->where('ma_khuyen_mais.trang_thai', 1)
+                ->where('ma_khuyen_mais.ngay_bat_dau_suu_tam', '<=', now())
+                ->where('ma_khuyen_mais.ngay_ket_thuc', '>=', now())
+                ->whereColumn('ma_khuyen_mais.so_luong_da_su_dung', '<', 'ma_khuyen_mais.so_luong')
+                ->where('nguoi_dung_ma_khuyen_mai.user_id', $user->id)
+                ->where('nguoi_dung_ma_khuyen_mai.da_su_dung', 0)
+                ->select('ma_khuyen_mais.*');
 
             if ($request->filled('ma_code')) {
                 $query->where('ma_code', 'LIKE', '%' . $request->ma_code . '%');
