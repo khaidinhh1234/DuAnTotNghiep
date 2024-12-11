@@ -30,7 +30,6 @@ const Footer = () => {
       return response.data;
     },
   });
-  console.log(apiResponse);
   const mapContainerStyle = {
     width: "100%",
     height: "350px",

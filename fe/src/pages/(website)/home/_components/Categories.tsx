@@ -85,10 +85,11 @@ const Categories = ({ bo_suu_tap }: any) => {
             <div className="flex justify-center items-center  my-10">
               {bo_suu_tap?.map((item: any, index: number) => (
                 <button
-                  className={` px-1 py-1 lg:px-5 lg:py-2 font-bold text-xs lg:text-base rounded-3xl lg:pt-3 lg:mx-3 ${activeTab === index
-                    ? "bg-black/80 text-white"
-                    : " text-gray-500"
-                    }`}
+                  className={` px-1 py-1 lg:px-5 lg:py-2 font-bold text-xs lg:text-base rounded-3xl lg:pt-3 lg:mx-3 ${
+                    activeTab === index
+                      ? "bg-black/80 text-white"
+                      : " text-gray-500"
+                  }`}
                   key={index}
                   onClick={() => setActiveTab(index)}
                   title={item?.ten}
@@ -128,8 +129,10 @@ const Categories = ({ bo_suu_tap }: any) => {
                           <div className="w-[400px] lg:w-[300px] lg:h-[400px] h-[500px] bg-neutral-200/70 relative">
                             <img
                               src={
-                                hoveredProductId === item?.id && hoveredVariantIndex !== null
-                                  ? item?.mau_sac_va_anh?.[hoveredVariantIndex]?.hinh_anh
+                                hoveredProductId === item?.id &&
+                                hoveredVariantIndex !== null
+                                  ? item?.mau_sac_va_anh?.[hoveredVariantIndex]
+                                      ?.hinh_anh
                                   : item.anh_san_pham
                               }
                               alt={item.ten_san_pham}
@@ -184,30 +187,37 @@ const Categories = ({ bo_suu_tap }: any) => {
                         </p>
 
                         <p className="font-bold text-lg flex items-center">
-                          {item?.mau_sac_va_anh?.map((variant: any, index: number) => (
-                            <button
-                              key={index}
-                              style={{
-                                width: "28px",
-                                height: "28px",
-                                borderRadius: "50%",
-                                marginRight: "4px",
-                                border: `2px solid ${hoveredProductId === item?.id && hoveredVariantIndex === index
-                                    ? "black" // Viền đen khi hover
-                                    : "gray" // Viền xám khi không hover
+                          {item?.mau_sac_va_anh?.map(
+                            (variant: any, index: number) => (
+                              <button
+                                key={index}
+                                style={{
+                                  width: "28px",
+                                  height: "28px",
+                                  borderRadius: "50%",
+                                  marginRight: "4px",
+                                  border: `2px solid ${
+                                    hoveredProductId === item?.id &&
+                                    hoveredVariantIndex === index
+                                      ? "black" // Viền đen khi hover
+                                      : "gray" // Viền xám khi không hover
                                   }`,
-                                transform:
-                                  hoveredProductId === item?.id && hoveredVariantIndex === index
-                                    ? "scale(1.1)" // Phóng to khi hover
-                                    : "scale(1)", // Kích thước mặc định
-                                backgroundColor: variant?.ma_mau_sac,
-                                transition: "all 0.3s ease",
-                              }}
-                              title={variant?.ten_mau_sac}
-                              onMouseEnter={() => handleMouseEnter(item?.id, index)}
-                              onMouseLeave={handleMouseLeave}
-                            />
-                          ))}
+                                  transform:
+                                    hoveredProductId === item?.id &&
+                                    hoveredVariantIndex === index
+                                      ? "scale(1.1)" // Phóng to khi hover
+                                      : "scale(1)", // Kích thước mặc định
+                                  backgroundColor: variant?.ma_mau_sac,
+                                  transition: "all 0.3s ease",
+                                }}
+                                title={variant?.ten_mau_sac}
+                                onMouseEnter={() =>
+                                  handleMouseEnter(item?.id, index)
+                                }
+                                onMouseLeave={handleMouseLeave}
+                              />
+                            )
+                          )}
                         </p>
                       </div>
                     </SwiperSlide>
