@@ -135,39 +135,59 @@ class ThongKeDoanhThuController extends Controller
             // Lọc doanh thu theo tháng
             $query->whereMonth('ngay_hoan_thanh_don', $thang)
                 ->whereYear('ngay_hoan_thanh_don', $nam);
+
             $tongDoanhThuThang = (float) $query->sum('tong_tien_don_hang');
+
             // Nếu không có tuần được chỉ định, trả về doanh thu theo tháng chia theo tuần
             if (!$tuan) {
                 $startOfMonth = now()->setDate($nam, $thang, 1)->startOfMonth();
                 $endOfMonth = now()->setDate($nam, $thang, 1)->endOfMonth();
+
                 // Khởi tạo mảng doanh thu theo tuần
-                $doanhThu['theo_thang']['tuan'] = [];
-                $doanhThu['theo_thang']['doanh_thu'] = [];
+                $doanhThu = [
+                    'theo_thang' => [
+                        'tuan' => [],
+                        'doanh_thu' => [],
+                    ]
+                ];
+
                 // Lấy doanh thu chia theo tuần
                 $weeksData = $query->clone()
                     ->selectRaw('WEEK(ngay_hoan_thanh_don, 1) as week, SUM(tong_tien_don_hang) as doanh_thu_tuan')
                     ->whereBetween('ngay_hoan_thanh_don', [$startOfMonth, $endOfMonth])
                     ->groupBy('week')
                     ->get();
+
+                // Khắc phục tuần cuối năm khi kết thúc ở năm mới
                 $currentWeek = $startOfMonth->weekOfYear;
                 $endWeek = $endOfMonth->weekOfYear;
-                // Khởi tạo mảng để chứa các tuần có doanh thu
-                $weekMap = $weeksData->pluck('doanh_thu_tuan', 'week');
-                // Duyệt qua từng tuần và gán doanh thu, ép kiểu về float
-                for ($i = $currentWeek; $i <= $endWeek; $i++) {
-                    // $doanhThu['theo_thang']['tuan'][] = $i - $currentWeek + 1; // Số tuần
-                    $doanhThu['theo_thang']['doanh_thu'][] = (float) $weekMap->get($i, 0); // Doanh thu
-                    $doanhThu['theo_thang']['tuan'][] = 'Tuần ' . ($i - $currentWeek + 1); // Thêm tên tuần
+
+                if ($endWeek < $currentWeek) {
+                    $endWeek += 52; // Xử lý khi tháng 12 kéo dài qua năm mới
                 }
-                // Kiểm tra nếu tổng doanh thu của các tuần không khớp với tổng doanh thu tháng
+
+                // Chuyển dữ liệu tuần vào mảng map
+                $weekMap = $weeksData->pluck('doanh_thu_tuan', 'week');
+
+                // Duyệt qua từng tuần và gán doanh thu
+                for ($i = $currentWeek; $i <= $endWeek; $i++) {
+                    $weekNumber = ($i - $currentWeek + 1);
+                    $doanhThu['theo_thang']['doanh_thu'][] = (float) $weekMap->get($i, 0);
+                    $doanhThu['theo_thang']['tuan'][] = "Tuần $weekNumber";
+                }
+
+                // Đảm bảo doanh thu không bị lệch
                 $tongDoanhThuTuan = array_sum($doanhThu['theo_thang']['doanh_thu']);
                 if ($tongDoanhThuTuan != $tongDoanhThuThang) {
-                    // $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra';
-                    $doanhThu['theo_thang']['doanh_thu'][] = (float) ($tongDoanhThuThang - $tongDoanhThuTuan); // Ép kiểu về float
-                    $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra'; // Thêm tên cho tổng kiểm tra
+                    $chenhLech = (float) ($tongDoanhThuThang - $tongDoanhThuTuan);
+                    $doanhThu['theo_thang']['doanh_thu'][] = $chenhLech;
+                    $doanhThu['theo_thang']['tuan'][] = 'Tổng kiểm tra';
                 }
-                // Trả về tổng doanh thu của tháng và doanh thu theo từng tuần
-                return response()->json(['tong_doanh_thu_thang' => $tongDoanhThuThang] + $doanhThu);
+
+                // Trả về kết quả
+                return response()->json([
+                    'tong_doanh_thu_thang' => $tongDoanhThuThang
+                ] + $doanhThu);
             }
         }
 

@@ -401,7 +401,9 @@ const Header = () => {
               <div className="lg:w-36 mx-10">
                 <Link to="/">
                   <img
-                    src={logo}
+                    src={
+                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1733674338/mcix5sx1uxkjyhs33hss.png"
+                    }
                     alt="Logo"
                     className="lg:w-[120px] lg:h-[35px] w-32 h-9"
                   />
@@ -412,7 +414,9 @@ const Header = () => {
               <div className="lg:w-36">
                 <Link to="/">
                   <img
-                    src={logo}
+                    src={
+                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1733674338/mcix5sx1uxkjyhs33hss.png"
+                    }
                     alt="Logo"
                     className="lg:w-[120px] lg:h-[35px] w-32 h-9"
                   />
@@ -528,7 +532,9 @@ const Header = () => {
                         menu == true ? "bg-opacity-60 text-opacity-60" : ""
                       } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
-                      {data1?.tong_so_luong > 99 ? "+99" : (data1?.tong_so_luong || 0)}
+                      {data1?.tong_so_luong > 99
+                        ? "+99"
+                        : data1?.tong_so_luong || 0}
                     </span>
                   </i>
                 </Link>

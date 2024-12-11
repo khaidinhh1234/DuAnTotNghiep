@@ -203,7 +203,6 @@ const BannerManagement: React.FC = () => {
     });
   };
 
-
   if (isLoading)
     return (
       <div className="flex items-center justify-center mt-[250px]">
@@ -211,8 +210,7 @@ const BannerManagement: React.FC = () => {
       </div>
     );
 
-    if (isError) return <div>Error</div>;
-
+  if (isError) return <div>Error</div>;
 
   if (banners.length === 0) {
     return (
@@ -416,7 +414,7 @@ const BannerManagement: React.FC = () => {
                       borderRadius: "8px",
                       position: "relative",
                       overflow: "hidden",
-                      height: "400px",
+                      height: "300px",
                       width: "100%",
                     }}
                   >
@@ -433,7 +431,7 @@ const BannerManagement: React.FC = () => {
                         zIndex: 0,
                       }}
                     />
-                    <div className="absolute top-[130px] w-[500px] left-10">
+                    <div className="absolute top-[75px] w-[500px] left-10">
                       <div className="mb-4">
                         <p
                           className="font-semibold text-base mb-2"
@@ -448,7 +446,7 @@ const BannerManagement: React.FC = () => {
                           {banner.noi_dung.tieu_de_phu}
                         </p>
                         <p
-                          className="text-sm font-normal uppercase"
+                          className="text-xs font-normal uppercase w-[450px]"
                           style={{
                             color: banner.noi_dung.mau_van_ban_quang_cao,
                           }}
@@ -490,7 +488,7 @@ const BannerManagement: React.FC = () => {
             saveMutation.mutate(banners);
           }}
           loading={saveMutation.isPending}
-          >
+        >
           Lưu thay đổi
         </Button>
       </div>

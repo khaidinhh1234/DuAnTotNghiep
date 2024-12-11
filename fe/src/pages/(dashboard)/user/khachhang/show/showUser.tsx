@@ -23,9 +23,7 @@ const ShowNhanvien = () => {
     },
   });
   const user = data?.data?.tai_khoan;
-  // console.log(user);
   const trangthai = data?.data;
-  console.log(trangthai);
   // console.log(user.don_hangs.length);
   const phantram =
     ((trangthai?.tong_tien_don_hang -
@@ -125,11 +123,13 @@ const ShowNhanvien = () => {
                 </h3>
                 <p className="my-10">
                   <strong>Số điện thoại:</strong>{" "}
-                  <span>{user?.so_dien_thoai}</span>
+                  <span>{user?.so_dien_thoai ?? "chưa cập nhật dữ liệu"}</span>
                 </p>
                 <p className="my-10">
                   <strong>Ngày sinh: </strong>
-                  {new Date(user?.ngay_sinh).toLocaleDateString("vi-VN")}
+                  {user?.ngay_sinh
+                    ? new Date(user.ngay_sinh).toLocaleDateString("vi-VN")
+                    : "Chưa cập nhật dữ liệu"}
                 </p>
                 <p className="my-10">
                   <strong>Giới tính:</strong>{" "}
@@ -138,7 +138,9 @@ const ShowNhanvien = () => {
                       ? "Nam"
                       : user?.gioi_tinh == "2"
                         ? "Nữ"
-                        : "Khác"}
+                        : user?.gioi_tinh == "3"
+                          ? "Khác"
+                          : "Chưa cập nhật dữ liệu"}
                   </span>
                 </p>
                 <p className="my-10">

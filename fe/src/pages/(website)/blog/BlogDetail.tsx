@@ -94,7 +94,7 @@ const BlogDetail = () => {
   return (
     <div>
       {/* Chi tiết bài viết */}
-      <div className="flex w-full px-10 mt-10 ml-5 mb-20">
+      <div className="flex w-full px-10 mt-20 ml-5 mb-20">
         <div className="w-2/3 pr-5">
           <div className="w-full">
             {data?.data?.baiVietDetail ? (
@@ -124,7 +124,7 @@ const BlogDetail = () => {
         </div>
 
         {/* Bài viết liên quan */}
-        <div className="w-1/3 pl-5">
+        <div className="w-1/3 pl-5 mt-3">
           <h3 className="text-2xl font-semibold mb-4">Bài viết liên quan</h3>
           <div className="space-y-4">
             {data?.data?.baiVietTop && data?.data?.baiVietTop.length > 0 ? (
@@ -153,8 +153,8 @@ const BlogDetail = () => {
       </div>
 
       {/* Danh mục nổi bật */}
-      <div>
-        <h2 className="text-5xl font-bold mb-4">Danh mục nổi bật</h2>
+      <div className="mb-36">
+        {/* <h2 className="text-5xl font-bold mb-4">Danh mục nổi bật</h2> */}
         {data?.data?.danhMucTinTuc &&
         Array.isArray(data?.data?.danhMucTinTuc) &&
         data?.data?.danhMucTinTuc.length > 0 ? (

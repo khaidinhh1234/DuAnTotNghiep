@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import Danhgia from "../myOrder/_components/Danhgia";
 import { useState } from "react";
 import { useLocalStorage } from "@/components/hook/useStoratge";
-import Check from "@/components/hook/checkngay";
+import { Check, Checkhoan } from "@/components/hook/checkngay";
 
 const MyOrderdetail = () => {
   const [user] = useLocalStorage("user" as any, {});
@@ -48,6 +48,7 @@ const MyOrderdetail = () => {
   const thongtin = data?.data?.thong_tin;
   // console.log(thongtin);
   const donhang = data?.data?.don_hang;
+  console.log(donhang);
   const phoneNumber =
     donhang?.so_dien_thoai_nguoi_dat_hang ?? thongtin?.so_dien_thoai;
   const formattedPhoneNumber = phoneNumber?.replace(/^0/, "(+84)");
@@ -55,7 +56,8 @@ const MyOrderdetail = () => {
   const current =
     donhang?.trang_thai_don_hang === "Hoàn tất đơn hàng"
       ? 4
-      : donhang?.trang_thai_don_hang === "Chờ khách hàng xác nhận"
+      : donhang?.trang_thai_don_hang === "Chờ khách hàng xác nhận" ||
+          donhang?.trang_thai_don_hang === "Từ chối hoàn hàng"
         ? 3
         : donhang?.trang_thai_don_hang === "Đang giao hàng"
           ? 2
@@ -355,9 +357,10 @@ const MyOrderdetail = () => {
           </h1>
           {chitiet?.danh_gia_chua_xoa?.length <= 0 &&
           chitiet?.danh_gia_da_xoa?.length <= 0 ? (
-            Check(donhang?.ngay_hoan_thanh_don) &&
-            (donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
-              donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng") && (
+            (Checkhoan(donhang?.ngay_hoan_thanh_don) ||
+              donhang?.trang_thai_don_hang == "Chờ khách hàng xác nhận" ||
+              (Checkhoan(donhang?.ngay_hoan_thanh_don) &&
+                donhang?.trang_thai_don_hang == "Hoàn tất đơn hàng")) && (
               <>
                 {" "}
                 <button

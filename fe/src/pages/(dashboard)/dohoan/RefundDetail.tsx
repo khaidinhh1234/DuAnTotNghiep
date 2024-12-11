@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Button, Tag, Descriptions } from 'antd';
+import React, { useState } from "react";
+import { Modal, Button, Tag, Descriptions } from "antd";
 
 interface RefundDetailProps {
   record: any;
@@ -35,17 +35,15 @@ const RefundDetail: React.FC<RefundDetailProps> = ({ record }) => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(amount);
   };
 
   return (
     <>
-      <Button type="link" onClick={() => setIsModalOpen(true)}>
-        Xem chi tiết
-      </Button>
+      <Button onClick={() => setIsModalOpen(true)}>Xem chi tiết</Button>
 
       <Modal
         title="Chi tiết yêu cầu hoàn tiền"
@@ -59,18 +57,22 @@ const RefundDetail: React.FC<RefundDetailProps> = ({ record }) => {
             {record.don_hang.ma_don_hang}
           </Descriptions.Item>
           <Descriptions.Item label="Thông tin người đặt" span={2}>
-  <div className="space-y-2">
-    <div>
-      <strong>Tên người đặt:</strong> {record.don_hang.ten_nguoi_dat_hang || 'Chưa cập nhật'}
-    </div>
-    <div>
-      <strong>Số điện thoại:</strong> {record.don_hang.so_dien_thoai_nguoi_dat_hang || 'Chưa cập nhật'}
-    </div>
-    <div>
-      <strong>Địa chỉ:</strong> {record.don_hang.dia_chi_nguoi_dat_hang || 'Chưa cập nhật'}
-    </div>
-  </div>
-</Descriptions.Item>
+            <div className="space-y-2">
+              <div>
+                <strong>Tên người đặt:</strong>{" "}
+                {record.don_hang.ten_nguoi_dat_hang || "Chưa cập nhật"}
+              </div>
+              <div>
+                <strong>Số điện thoại:</strong>{" "}
+                {record.don_hang.so_dien_thoai_nguoi_dat_hang ||
+                  "Chưa cập nhật"}
+              </div>
+              <div>
+                <strong>Địa chỉ:</strong>{" "}
+                {record.don_hang.dia_chi_nguoi_dat_hang || "Chưa cập nhật"}
+              </div>
+            </div>
+          </Descriptions.Item>
 
           <Descriptions.Item label="Số tiền hoàn">
             {formatCurrency(record.so_tien_hoan)}
@@ -112,14 +114,21 @@ const RefundDetail: React.FC<RefundDetailProps> = ({ record }) => {
                 {record.giao_dich_vi.ma_giao_dich}
               </Descriptions.Item>
               <Descriptions.Item label="Trạng thái giao dịch">
-                <Tag color={record.giao_dich_vi.trang_thai === 'thanh_cong' ? 'green' : 'blue'}>
-                  {record.giao_dich_vi.trang_thai === 'thanh_cong' ? 'Thành công' : 'Đang xử lý'}
+                <Tag
+                  color={
+                    record.giao_dich_vi.trang_thai === "thanh_cong"
+                      ? "green"
+                      : "blue"
+                  }
+                >
+                  {record.giao_dich_vi.trang_thai === "thanh_cong"
+                    ? "Thành công"
+                    : "Đang xử lý"}
                 </Tag>
               </Descriptions.Item>
             </>
           )}
         </Descriptions>
-        
       </Modal>
     </>
   );

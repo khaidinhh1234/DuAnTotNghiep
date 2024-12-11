@@ -1,17 +1,24 @@
 import instanceClient from "@/configs/client";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css"; // Import Swiper CSS
 import { bannerOurStory } from "@/assets/img";
+import { message } from "antd";
 
 const Blog = () => {
+  const nav = useNavigate()
   const { data } = useQuery({
     queryKey: ["baiviet"],
     queryFn: async () => {
+     try {
       const response = await instanceClient.get(`/load-danh-muc-tin-tuc`);
       console.log("Response data:", response.data);
       return response.data;
+     } catch (error) {
+      nav("/404");
+      message.error("Bài viết không tồn tại");
+     }
     },
   });
   const formatDate = (dateString: string) => {
@@ -45,9 +52,9 @@ const Blog = () => {
       ) : (
         <div className="mt-10 pl-20 pb-20">
           {/* Hiển thị danh mục tin tức */}
-          <h2 className="text-5xl font-bold mb-4 text-center mt-20">
+          {/* <h2 className="text-5xl font-bold mb-4 text-center mt-20">
             Danh mục tin tức
-          </h2>
+          </h2> */}
           {data?.Danh_muc_tin_tuc?.length > 0 && (
             <Swiper
               spaceBetween={20}
@@ -57,7 +64,7 @@ const Blog = () => {
             >
               {data.Danh_muc_tin_tuc.map((item: any) => (
                 <SwiperSlide key={item.id}>
-                  <div className="p-4 bg-white rounded-lg shadow-md relative">
+                  <div className="p-4 bg-white  relative">
                     <Link to={`/danhmuctintuc/${item.duong_dan}`}>
                       <div className="relative w-full h-40 rounded-lg overflow-hidden cursor-pointer">
                         <img

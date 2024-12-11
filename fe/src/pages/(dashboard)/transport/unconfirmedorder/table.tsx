@@ -187,7 +187,7 @@ const TableUncomfirmedOrder: React.FC = () => {
         setFilteredData(transport);
       } else {
         // Lọc dữ liệu theo trạng thái của tab đang được chọn
-        const filtered = transport.filter(
+        const filtered = transport?.filter(
           (item) => item.trang_thai_van_chuyen === activeTab
         );
         setFilteredData(filtered);

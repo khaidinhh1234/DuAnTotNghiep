@@ -30,8 +30,8 @@ const BlogCategories = () => {
         return response.data;
       } catch (error) {
         // console.log("error:", error);
-        message.error("Danh mục tin tức không tồn tại");
-        nav("/blog");
+        nav("/404");
+        message.error("Bài viết không tồn tại");
         return error;
       }
       // const response = await instanceClient.get(`/danhmuctintuc/${duongDan}`);
@@ -153,7 +153,7 @@ const BlogCategories = () => {
                           alt={article.tieu_de}
                           className="w-full h-[700px] object-cover"
                         />
-                        <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 p-4 flex justify-between items-end">
+                        {/* <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 p-4 flex justify-between items-end">
                           <div className="text-white ml-10">
                             <h3 className="text-lg font-semibold">
                               {article.tieu_de}
@@ -171,7 +171,7 @@ const BlogCategories = () => {
                           >
                             Đọc thêm
                           </Link>
-                        </div>
+                        </div> */}
                       </div>
                     </Link>
                   )
