@@ -24,7 +24,7 @@ const Customer = ({ danhgia }: any) => {
         <div className="container">
           <div className="mb-14">
             <h1 className="text-4xl font-semibold pl-9">
-              Đánh giá của khách hàng
+              {danhgia?.length !== 0 ? "Đánh giá của khách hàng" : ""}
             </h1>
           </div>
 

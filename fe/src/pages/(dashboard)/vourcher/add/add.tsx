@@ -43,10 +43,9 @@ const AddVoucher = () => {
   const [maxDiscount, setMaxDiscount] = useState<number>(0);
   const [maxDiscountAmount, setMaxDiscountAmount] = useState<number>(0);
   const [displayDates, setDisplayDates] = useState({
-    startDate: '',
-    endDate: ''
+    startDate: "",
+    endDate: "",
   });
-  
 
   // const [searchTerm, setSearchTerm] = useState("");
   const nav = useNavigate();
@@ -105,7 +104,7 @@ const AddVoucher = () => {
       return response.data;
     },
   });
-  // console.log("sanpham", sanpham);
+
   const sp = sanpham?.data?.map((item: any) => ({
     value: `${item.ten_san_pham}  ${item.id}`,
     label: item.ten_san_pham || item.id,
@@ -156,7 +155,6 @@ const AddVoucher = () => {
       ma_code: voucherCode,
       ap_dung_vi: apDungVi,
       ...(tabKey === false && { giam_toi_da: values.giam_toi_da }),
-
     };
     mutate(formValues);
     // console.log("formValues", formValues);
@@ -247,13 +245,13 @@ const AddVoucher = () => {
     // console.log(`Selected: ${value}`);
   };
   useEffect(() => {
-    const startDate = form.getFieldValue('ngay_bat_dau');
-    const endDate = form.getFieldValue('ngay_ket_thuc');
+    const startDate = form.getFieldValue("ngay_bat_dau");
+    const endDate = form.getFieldValue("ngay_ket_thuc");
     if (startDate && endDate) {
-      form.validateFields(['ngay_bat_dau', 'ngay_ket_thuc']);
+      form.validateFields(["ngay_bat_dau", "ngay_ket_thuc"]);
     }
-  }, [form.getFieldValue('ngay_bat_dau'), form.getFieldValue('ngay_ket_thuc')]);
-  
+  }, [form.getFieldValue("ngay_bat_dau"), form.getFieldValue("ngay_ket_thuc")]);
+
   //reset
   const handleReset = () => {
     setSelectedValues([]);
@@ -369,13 +367,15 @@ const AddVoucher = () => {
                         }),
                       ]}
                     >
-                   <DatePicker
-    onChange={(date) => {
-      setDisplayDates(prev => ({
-        ...prev,
-        startDate: date ? dayjs(date).format('DD/MM/YY') : ''
-      }));
-    }}
+                      <DatePicker
+                        onChange={(date) => {
+                          setDisplayDates((prev) => ({
+                            ...prev,
+                            startDate: date
+                              ? dayjs(date).format("DD/MM/YY")
+                              : "",
+                          }));
+                        }}
                       />
                     </Form.Item>
                     <Form.Item
@@ -410,13 +410,14 @@ const AddVoucher = () => {
                         }),
                       ]}
                     >
-                   <DatePicker
-    onChange={(date) => {
-      setDisplayDates(prev => ({
-        ...prev,
-        endDate: date ? dayjs(date).format('DD/MM/YY') : ''
-      }));
-    }}/>
+                      <DatePicker
+                        onChange={(date) => {
+                          setDisplayDates((prev) => ({
+                            ...prev,
+                            endDate: date ? dayjs(date).format("DD/MM/YY") : "",
+                          }));
+                        }}
+                      />
                     </Form.Item>
                   </div>
                   <div>
@@ -640,7 +641,7 @@ const AddVoucher = () => {
                      ${tabKey ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
-                      <img src={codinh} alt="" className="w-14 h-14 " />
+                      <img src={codinh} alt="" className="w-14 h-14  mx-auto" />
                       {/* <p>khaidinh</p> */}
                     </div>
                     <div className="col-span-3 leading-[15px]">
@@ -651,9 +652,9 @@ const AddVoucher = () => {
                         Số tiền tối thiểu {max ? max?.toLocaleString() : 0} ₫{" "}
                       </p>
                       <span>
-  {displayDates.startDate} - {displayDates.endDate}
-</span>
-</div>
+                        {displayDates.startDate} - {displayDates.endDate}
+                      </span>
+                    </div>
                   </div>
                 </div>{" "}
                 <div
@@ -680,7 +681,7 @@ const AddVoucher = () => {
                       <img
                         src={giamgiaphantram}
                         alt=""
-                        className="w-16 h-16 "
+                        className="w-16 h-16  mx-auto"
                       />
                       {/* <p>khaidinh</p> */}
                     </div>
@@ -692,13 +693,17 @@ const AddVoucher = () => {
                         Số tiền tối thiểu {max ? max?.toLocaleString() : 0} ₫{" "}
                       </p>
                       <p>
-    Giảm tối đa {maxDiscountAmount ? maxDiscountAmount.toLocaleString() : 0} ₫
-  </p>
+                        Giảm tối đa{" "}
+                        {maxDiscountAmount
+                          ? maxDiscountAmount.toLocaleString()
+                          : 0}{" "}
+                        ₫
+                      </p>
 
-  <span>
-  {displayDates.startDate} - {displayDates.endDate}
-</span>                    
-</div>
+                      <span>
+                        {displayDates.startDate} - {displayDates.endDate}
+                      </span>
+                    </div>
                   </div>
                 </div>{" "}
               </div>
@@ -774,75 +779,81 @@ const AddVoucher = () => {
                   )}{" "}
                   {tabKey == false && (
                     <>
-                    <Form.Item
-                      label="Giảm giá"
-                      name="giam_gia"
-                      initialValue={30}
-                      rules={[
-                        { required: true, message: "Bắt buộc phải điền!" },
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            const chi_tieu_toi_thieu =
-                              getFieldValue("chi_tieu_toi_thieu");
-                            if (
-                              value > 0 &&
-                              value <= 0.5 * chi_tieu_toi_thieu
-                            ) {
-                              return Promise.resolve();
+                      <Form.Item
+                        label="Giảm giá"
+                        name="giam_gia"
+                        initialValue={30}
+                        rules={[
+                          { required: true, message: "Bắt buộc phải điền!" },
+                          ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              const chi_tieu_toi_thieu =
+                                getFieldValue("chi_tieu_toi_thieu");
+                              if (
+                                value > 0 &&
+                                value <= 0.5 * chi_tieu_toi_thieu
+                              ) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error(
+                                  "Giảm giá phải lớn hơn 0% và không quá 50%"
+                                )
+                              );
+                            },
+                          }),
+                        ]}
+                        className="mb-0 w-[150%]"
+                      >
+                        <InputNumber
+                          addonAfter="%"
+                          defaultValue={30}
+                          min={1}
+                          max={50}
+                          onChange={(value: any) => {
+                            if (value > 50) {
+                              setphantram(50);
+                            } else {
+                              setphantram(value as any);
                             }
-                            return Promise.reject(
-                              new Error(
-                                "Giảm giá phải lớn hơn 0% và không quá 50%"
-                              )
-                            );
+                          }}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Giảm tối đa"
+                        name="giam_toi_da"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Bắt buộc phải điền giảm giá tối đa!",
                           },
-                        }),
-                      ]}
-                      className="mb-0 w-[150%]"
-                    >
-                      <InputNumber
-                        addonAfter="%"
-                        defaultValue={30}
-                        min={1}
-                        max={50}
-                        onChange={(value: any) => {
-                          if (value > 50) {
-                            setphantram(50);
-                          } else {
-                            setphantram(value as any);
-                          }
-                        }}
-                      />
-                    </Form.Item>
-                    <Form.Item
-      label="Giảm tối đa"
-      name="giam_toi_da"
-      rules={[
-        { required: true, message: "Bắt buộc phải điền giảm giá tối đa!" },
-        ({ getFieldValue }) => ({
-          validator(_, value) {
-            const chi_tieu_toi_thieu = getFieldValue("chi_tieu_toi_thieu");
-            if (value > 0 && value <= chi_tieu_toi_thieu) {
-              return Promise.resolve();
-            }
-            return Promise.reject(
-              new Error("Giảm giá tối đa không được vượt quá giá trị đơn hàng")
-            );
-          },
-        }),
-      ]}
-      className="mb-0 w-[150%]"
-    >
-  <InputNumber
-    addonAfter="đ"
-    min={1000}
-    onChange={(value) => {
-      setMaxDiscountAmount(value as number);
-      form.setFieldsValue({ giam_toi_da: value });
-    }}
-    placeholder="Nhập giảm giá tối đa"
-  />
-    </Form.Item>
+                          ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              const chi_tieu_toi_thieu =
+                                getFieldValue("chi_tieu_toi_thieu");
+                              if (value > 0 && value <= chi_tieu_toi_thieu) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error(
+                                  "Giảm giá tối đa không được vượt quá giá trị đơn hàng"
+                                )
+                              );
+                            },
+                          }),
+                        ]}
+                        className="mb-0 w-[150%]"
+                      >
+                        <InputNumber
+                          addonAfter="đ"
+                          min={1000}
+                          onChange={(value) => {
+                            setMaxDiscountAmount(value as number);
+                            form.setFieldsValue({ giam_toi_da: value });
+                          }}
+                          placeholder="Nhập giảm giá tối đa"
+                        />
+                      </Form.Item>
                     </>
                   )}
                   <Form.Item
