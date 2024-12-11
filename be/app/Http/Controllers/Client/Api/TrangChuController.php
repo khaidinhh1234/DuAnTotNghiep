@@ -338,6 +338,7 @@ class TrangChuController extends Controller
         try {
             $dataLichSuTimKiem = [];
             if (Auth::check()) {
+                // Lấy danh sách lịch sử tìm kiếm hiện tại
                 $dataLichSuTimKiem = LichSuTimKiem::query()
                     ->select('tim_kiem', 'id')
                     ->where('user_id', Auth::id())
@@ -345,17 +346,25 @@ class TrangChuController extends Controller
                     ->limit(10)
                     ->get();
 
-                $duplicates = DB::table('lich_su_tim_kiems')
-                    ->select('tim_kiem', DB::raw('MAX(id) as latest_id'))
+                // Tìm các ID cần giữ lại (loại bỏ trùng lặp và lấy ID mới nhất)
+                $uniqueIds = DB::table('lich_su_tim_kiems')
+                    ->select(DB::raw('MAX(id) as latest_id'))
                     ->where('user_id', Auth::id())
-                    ->whereRaw('LENGTH(tim_kiem) = 1')
                     ->groupBy('tim_kiem')
                     ->pluck('latest_id');
 
+                // Xóa các bản ghi không nằm trong danh sách ID cần giữ lại
                 DB::table('lich_su_tim_kiems')
                     ->where('user_id', Auth::id())
-                    ->whereNotIn('id', $duplicates)
+                    ->whereNotIn('id', $uniqueIds)
                     ->delete();
+
+                // Xóa các từ khóa có độ dài chỉ 1 ký tự
+                DB::table('lich_su_tim_kiems')
+                    ->where('user_id', Auth::id())
+                    ->whereRaw('LENGTH(tim_kiem) = 1')
+                    ->delete();
+
                 return response()->json([
                     'status' => true,
                     'data' => $dataLichSuTimKiem
@@ -364,6 +373,7 @@ class TrangChuController extends Controller
         } catch (Exception $exception) {
             return response()->json([
                 'status' => false,
+                'message' => $exception->getMessage(),
             ]);
         }
     }
