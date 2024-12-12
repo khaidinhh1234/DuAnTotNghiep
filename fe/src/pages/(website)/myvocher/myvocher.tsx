@@ -1,4 +1,3 @@
-
 // import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 // import instanceClient from "@/configs/client";
 // import "swiper/css";
@@ -54,10 +53,9 @@
 //     queryFn: getVouchers,
 //   });
 
-
 //   const activeVouchers = vouchersData?.data.filter(
-//     (voucher: Voucher) => 
-//       voucher.trang_thai === 1 && 
+//     (voucher: Voucher) =>
+//       voucher.trang_thai === 1 &&
 //       voucher.da_thu_thap === 1
 //   ) || [];
 
@@ -74,7 +72,6 @@
 //       .filter((v: Voucher) => v.da_thu_thap === 1)
 //       .map((v: Voucher) => v.ma_code);
 //   });
- 
 
 //   const saveMutation = useMutation({
 //     mutationFn: (maCode: string) => {
@@ -325,7 +322,7 @@ const MyVoucher = () => {
         <section className="container">
           <div className="space-y-6 ">
             <h2 className="text-2xl font-bold text-black-500">
-              Vocher của bạn
+              Mã khuyến mãi của bạn
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {currentVouchers && currentVouchers.length !== 0 ? (

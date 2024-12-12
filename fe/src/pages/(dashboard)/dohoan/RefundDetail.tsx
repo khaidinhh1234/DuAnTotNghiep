@@ -46,7 +46,7 @@ const RefundDetail: React.FC<RefundDetailProps> = ({ record }) => {
       <Button onClick={() => setIsModalOpen(true)}>Xem chi tiết</Button>
 
       <Modal
-        title="Chi tiết yêu cầu hoàn tiền"
+        title="Chi tiết yêu cầu hoàn hàng"
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}

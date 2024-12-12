@@ -641,7 +641,7 @@ const MyOrderdetail = () => {
                   ? (chitiet?.tien_ship ?? "Miễn Phí Ship")
                   : "Miễn Phí Ship"}
               </p>
-              <p>Voucher từ GLOW</p>{" "}
+              <p>Mã khuyến mãi từ GLOW</p>{" "}
               <p className="md:hidden">
                 ₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}
               </p>

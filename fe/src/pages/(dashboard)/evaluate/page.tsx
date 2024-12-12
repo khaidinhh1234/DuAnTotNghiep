@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 
 type DataIndex = keyof IEvaluate;
 const EvaluateAdmin = () => {
+  const [lengths, setLength] = useState(3);
   const queryClient = useQueryClient();
   // const { id } = useParams();
   const [searchedColumn, setSearchedColumn] = useState<string>("");
@@ -100,6 +101,7 @@ const EvaluateAdmin = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setLength(3);
   };
 
   const handlephan_hoiChange = (id: number, value: string) => {
@@ -407,32 +409,47 @@ const EvaluateAdmin = () => {
                 }}
               >
                 {currentEvaluate.san_pham?.length > 0 ? (
-                  currentEvaluate.san_pham.map((product: any) => (
-                    <div
-                      key={product.id}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
-                      {product.anh_san_pham ? (
-                        <img
-                          src={product.anh_san_pham}
-                          alt={product.ten_san_pham}
+                  <>
+                    {currentEvaluate.san_pham
+                      .slice(0, lengths)
+                      .map((product: any) => (
+                        <div
+                          key={product.id}
                           style={{
-                            width: "50px",
-                            height: "50px",
-                            objectFit: "cover",
-                            borderRadius: "8px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
                           }}
-                        />
-                      ) : (
-                        <span>Ảnh sản phẩm ẩn</span>
-                      )}
-                      <span>{product.ten_san_pham || "Sản phẩm ẩn"}</span>
-                    </div>
-                  ))
+                        >
+                          {product.anh_san_pham ? (
+                            <img
+                              src={product.anh_san_pham}
+                              alt={product.ten_san_pham}
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                objectFit: "cover",
+                                borderRadius: "8px",
+                              }}
+                            />
+                          ) : (
+                            <span>Ảnh sản phẩm ẩn</span>
+                          )}
+                          <span>{product.ten_san_pham || "Sản phẩm ẩn"}</span>
+                        </div>
+                      ))}
+                    {currentEvaluate.san_pham?.length > lengths && (
+                      <div className="mx-auto">
+                        {" "}
+                        <button
+                          onClick={() => setLength(lengths + 3)}
+                          className="text-blue-500 border px-5 py-1 rounded-sm hover:bg-blue-500 hover:text-white"
+                        >
+                          Xem thêm
+                        </button>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <span>Không có sản phẩm</span>
                 )}
