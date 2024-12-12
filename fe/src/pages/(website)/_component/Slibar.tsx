@@ -83,7 +83,7 @@ const Slibar = () => {
             },
             {
               to: "/mypro/vocher",
-              label: "Voucher của tôi",
+              label: "Mã khuyến mãi",
               icon: "fa-light fa-ticket",
             },
             {

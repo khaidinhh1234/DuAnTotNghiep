@@ -1,5 +1,4 @@
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
-import type { GetProps } from "antd";
 import {
   Button,
   DatePicker,
@@ -30,7 +29,6 @@ const EditVoucher = () => {
   // const [voucherCode, setVoucherCode] = useState(""); // Duplicate declaration removed
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
-  const [isAllSelected2, setIsAllSelected2] = useState(false);
 
   const [tabKey, setTabKey] = useState<boolean | undefined>(undefined);
   // const [max, setMax] = useState(479000);
@@ -185,12 +183,11 @@ const EditVoucher = () => {
     // console.log(`Selected: ${value}`);
   };
   const handleChange2 = (value: string[]) => {
-    // console.log("value1", value);
     setSelectedValues2(value);
-    // setIsAllSelected2(value.length === data.length); // Cập nhật trạng thái chọn tất cả
+
     // console.log(`Selected: ${value}`);
   };
-  type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+
   //danhmuc
 
   const { data: danhmuc } = useQuery({

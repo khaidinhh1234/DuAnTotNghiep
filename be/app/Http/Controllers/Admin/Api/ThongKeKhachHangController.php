@@ -301,9 +301,6 @@ class ThongKeKhachHangController extends Controller
         $now = Carbon::now();
         $startDate = $now->copy()->subMonth(); // Ngày bắt đầu là 1 tháng trước
 
-        // Tổng khách hàng cộng dồn
-        $tongKhachHangCongDon = 0;
-
         // Tạo các mốc thời gian cho từng ngày từ 1 tháng trước đến hiện tại
         for ($date = $startDate; $date->lessThanOrEqualTo($now); $date->addDay()) {
             // Tính mốc thời gian hiện tại (cuối ngày)
@@ -313,27 +310,22 @@ class ThongKeKhachHangController extends Controller
             // Tính khách hàng mới (đăng ký trong ngày hiện tại)
             $khachHangMoi = User::whereBetween('created_at', [$mocThoiGianTruoc, $mocThoiGianHienTai])->count();
 
-            // Cập nhật số lượng khách hàng cũ
-            $khachHangCu = User::where('created_at', '<', $now->copy()->subMonth())->count(); // Khách hàng cũ (đăng ký trước 1 tháng)
-
-            // $khachHangCu =User::where('created_at', '<', $startDate->copy()->subMonth())->where('created_at', '>=', $startDate)->count();
-
-            // Cộng dồn tổng số khách hàng mới
-            $tongKhachHangCongDon += $khachHangMoi;
+            // Đếm khách hàng cũ trong khoảng thời gian trước đó
+            $khachHangCu = User::where('created_at', '<', $mocThoiGianTruoc)->count();
 
             // Lưu dữ liệu vào mảng cho mỗi ngày
             if ($date->day % 2 == 1) { // Chỉ lưu dữ liệu cho các ngày lẻ (1, 3, 5, ...)
                 $mocTime[] = $date->format('Y-m-d'); // Thêm mốc thời gian vào mảng
-                $soLuongKhachHangMoi[] = $tongKhachHangCongDon; // Tổng khách hàng mới cộng dồn
-                $soLuongKhachHangCu[] = $khachHangCu; // Khách hàng cũ (đăng ký trước 1 tháng)
-                $tongSoLuongKhachHang[] = $tongKhachHangCongDon + $khachHangCu; // Tổng số khách hàng
+                $soLuongKhachHangMoi[] = $khachHangMoi; // Khách hàng mới trong ngày
+                $soLuongKhachHangCu[] = $khachHangCu; // Khách hàng cũ đến ngày hiện tại
+                $tongSoLuongKhachHang[] = $khachHangMoi + $khachHangCu; // Tổng số khách hàng
             }
         }
 
         // Trả về kết quả dưới dạng JSON
         return response()->json([
-            'so_luong_khach_hang_moi' => $soLuongKhachHangMoi,  // Tổng khách hàng mới cộng dồn
-            'so_luong_khach_hang_cu' => $soLuongKhachHangCu,    // Khách hàng cũ (đăng ký trước 1 tháng)
+            'so_luong_khach_hang_moi' => $soLuongKhachHangMoi,  // Khách hàng mới trong ngày
+            'so_luong_khach_hang_cu' => $soLuongKhachHangCu,    // Khách hàng cũ đến ngày hiện tại
             'tong_so_luong_khach_hang' => $tongSoLuongKhachHang,  // Tổng số khách hàng
             'moc_time' => $mocTime  // Mốc thời gian (ngày)
         ]);

@@ -1,10 +1,10 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
-  SearchOutlined,
+  // SearchOutlined,
 } from "@ant-design/icons";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType } from "antd";
 import {
   Button,
   Input,
@@ -15,8 +15,8 @@ import {
   Table,
   Tag,
 } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
+// import type { FilterDropdownProps } from "antd/es/table/interface";
+// import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/admin";
@@ -38,7 +38,7 @@ interface PromotionType {
   chi_tieu_toi_thieu: number;
 }
 
-type DataIndex = keyof PromotionType;
+// type DataIndex = keyof PromotionType;
 
 const VoucherAdmin: React.FC = () => {
   const {
@@ -130,25 +130,22 @@ const VoucherAdmin: React.FC = () => {
     }
   };
 
-  const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
+  // const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
 
-  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const searchInput = useRef<InputRef>(null);
+  // const handleSearch = (
+  //   selectedKeys: string[],
+  //   confirm: FilterDropdownProps["confirm"],
+  //   dataIndex: DataIndex
+  // ) => {
+  //   confirm();
+  //   setSearchText(selectedKeys[0]);
+  //   setSearchedColumn(dataIndex);
+  // };
 
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: FilterDropdownProps["confirm"],
-    dataIndex: DataIndex
-  ) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
-
-  const handleReset = (clearFilters: () => void) => {
-    clearFilters();
-    setSearchText("");
-  };
+  // const handleReset = (clearFilters: () => void) => {
+  //   clearFilters();
+  //   setSearchText("");
+  // };
 
   const columns: TableColumnsType<PromotionType> = [
     {

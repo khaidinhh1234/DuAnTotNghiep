@@ -325,7 +325,7 @@ const ProductItem = ({
             <form className="space-y-3">
               {[
                 "Muốn thay đổi địa chỉ giao hàng",
-                "Muốn nhập/thay đổi mã Voucher",
+                "Muốn nhập/thay đổi mã khuyến mãi",
                 "Muốn thay đổi sản phẩm trong đơn hàng (size, màu sắc, số lượng, ...)",
                 "Thủ tục thanh toán quá rắc rối",
                 "Tìm thấy giá rẻ hơn ở chỗ khác",
