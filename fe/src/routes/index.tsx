@@ -457,8 +457,8 @@ const Router = () => {
           }
         />
         <Route path="/return-orders" element={<ReturnOrders />} />
-        <Route path="/test2" element={<Test4 />} />{" "}
-        <Route path="/test" element={<Test3 />} />
+        {/* <Route path="/test2" element={<Test4 />} />{" "}
+        <Route path="/test" element={<Test3 />} /> */}
       </Routes>
     </>
   );

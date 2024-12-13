@@ -18,22 +18,25 @@ const Detail = ({ record }: any) => {
       {" "}
       <div onClick={() => setOpen(true)}>
         {" "}
-        <div className="max-w-96 grid grid-cols-6  bg-slate-100  rounded-lg hover:shadow-black/30 shadow-lg mx-auto ">
-          <div className="px-4 py-5 text-center col-span-2">
-            <h2 className="text-gray-700 text-md font-semibold">LÊN TỚI</h2>
-            <h1 className="text-red-600 text-lg font-bold">
+        <div className="max-w-96 grid grid-cols-1 sm:grid-cols-6 bg-slate-100 rounded-lg hover:shadow-black/30 shadow-lg mx-auto">
+          {/* Phần bên trái */}
+          <div className="px-4 py-5 text-center col-span-1 sm:col-span-2">
+            <h2 className="text-gray-700 text-sm sm:text-md font-semibold">
+              LÊN TỚI
+            </h2>
+            <h1 className="text-red-600 text-base sm:text-lg font-bold">
               {record.giam_gia.toLocaleString()}{" "}
               {record.loai === "tien_mat" ? "VNĐ" : "%"}
             </h1>
             <h2 className="text-gray-700 text-xs font-bold">GLOW CLOTHING</h2>
           </div>
 
-          {/* Phần bên phải: Nội dung clearance sale */}
-          <div className="col-span-4 px-4 py-3 bg-gradient-to-r from-slate-400 to-black text-center  rounded-e-lg ">
-            <h1 className="text-white text-md font-semibold tracking-tight">
+          {/* Phần bên phải */}
+          <div className="col-span-1 sm:col-span-4 px-4 py-3 bg-gradient-to-r from-slate-400 to-black text-center rounded-e-lg">
+            <h1 className="text-white text-sm sm:text-md font-semibold tracking-tight">
               <h5>{record.mo_ta}</h5>
             </h1>
-            <h1 className="text-white text-lg font-extrabold mt-1">
+            <h1 className="text-white text-base sm:text-lg font-extrabold mt-1">
               {record.ma_code}
             </h1>
             <button className="mt-3 px-4 py-1 bg-white text-red-600 font-medium rounded-full hover:bg-gray-100 transition duration-300">
@@ -52,7 +55,7 @@ const Detail = ({ record }: any) => {
         onCancel={handleCancel}
         closable={false} // Ẩn dấu X
       >
-        <div className="max-w-4xl h-[400px] grid grid-cols-6 bg-slate-100 rounded-lg shadow-lg hover:shadow-black/30 mx-auto scale-125">
+        <div className="max-w-4xl h-[430px] grid grid-cols-6 bg-slate-100 rounded-lg shadow-lg hover:shadow-black/30 mx-auto scale-125">
           <div className="px-4 py-5 text-center col-span-2 my-auto">
             <h2 className="text-gray-700 text-3xl font-bold">LÊN TỚI</h2>
             <h1 className="text-red-600 text-7xl font-black">
@@ -87,6 +90,11 @@ const Detail = ({ record }: any) => {
                   Số tiền tối thiểu:{" "}
                   {(record?.chi_tieu_toi_thieu).toLocaleString("vi-VN")} ₫
                 </h1>{" "}
+                {record?.giam_toi_da && (
+                <h1 className="text-white text-xl font-semibold tracking-tight">
+    Giảm tối đa {Number(record.giam_toi_da).toLocaleString("vi-VN")}đ
+  </h1>
+)}
                 <h1 className="text-white text-xl font-semibold tracking-tight">
                   Ngày bắt đầu sử dụng: {ngay_bat_dau_suu_tam}
                 </h1>{" "}

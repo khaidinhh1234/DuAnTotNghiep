@@ -5,10 +5,12 @@ const ImageSection = () => {
       <img
         src={logo}
         alt="Krist Logo"
-       className="absolute top-5 left-5 w-[150px] md:w-34"
+        className="absolute top-5 left-5 w-[150px] md:w-34"
       />
       <img
-        src={imglogin2}
+        src={
+          "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1734025913/vt0ijlzhxvv9ckf9fcqj.jpg"
+        }
         alt="Fashion Model"
         className="object-cover w-1024 h-800"
       />

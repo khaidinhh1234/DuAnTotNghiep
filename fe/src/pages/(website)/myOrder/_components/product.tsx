@@ -7,7 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import VerificationModal from "../../ShipingAdrres/VerificationModal";
 import { toast } from "react-toastify";
-import Check from "@/components/hook/checkngay";
+import { Check } from "@/components/hook/checkngay";
+import { Checkhoan } from "@/components/hook/checkngay";
 
 // Component hiển thị thông tin sản phẩm
 const isToday = (date: any) => {
@@ -43,12 +44,16 @@ const ProductItem = ({
 
   // danh_gias,
 }: any) => {
+  // console.log("status", ngay_hoan_thanh_don);
+  // console.log("status", Checkhoan(ngay_hoan_thanh_don));
   // console.log(chi_tiet_don_hangs);
   // console.log("status", new Date(created_at));
   const dateToCheck = new Date(created_at);
   // console.log(isToday(dateToCheck));
   // console.log(values);
-  console.log(ly_do_tu_choi);
+  console.log("status", ly_do_tu_choi);
+  const hoanhangtuchoi = ly_do_tu_choi == 1 ? false : true;
+  console.log(hoanhangtuchoi);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Payment, setPayment] = useState(false);
   const queryClient = useQueryClient();
@@ -115,7 +120,7 @@ const ProductItem = ({
     } else if (status === "Chờ khách hàng xác nhận") {
       mutateXacnhan(ma_don_hang);
     } else {
-      setIsModalOpen(true); // Show the modal when other statuses are met
+      setIsModalOpen(true);
     }
   };
 
@@ -320,7 +325,7 @@ const ProductItem = ({
             <form className="space-y-3">
               {[
                 "Muốn thay đổi địa chỉ giao hàng",
-                "Muốn nhập/thay đổi mã Voucher",
+                "Muốn nhập/thay đổi mã khuyến mãi",
                 "Muốn thay đổi sản phẩm trong đơn hàng (size, màu sắc, số lượng, ...)",
                 "Thủ tục thanh toán quá rắc rối",
                 "Tìm thấy giá rẻ hơn ở chỗ khác",
@@ -459,7 +464,7 @@ const ProductItem = ({
           </Link>
 
           <br />
-          {Check(ngay_hoan_thanh_don) &&
+          {Checkhoan(ngay_hoan_thanh_don) &&
             status === "Hoàn tất đơn hàng" &&
             trang_thai_thanh_toan == "Đã thanh toán" && (
               <div className="mt-5">
@@ -472,31 +477,31 @@ const ProductItem = ({
                 </Link>
               </div>
             )}
-          {!ly_do_tu_choi &&
-            (status === "Chờ xác nhận" ||
-              status === "Đã xác nhận" ||
-              // status === "Đang xử lý" ||
+          {(status === "Chờ xác nhận" ||
+            (hoanhangtuchoi && status === "Đã xác nhận") ||
+            // status === "Đang xử lý" ||
 
-              status === "Chờ khách hàng xác nhận") && (
-              <button
-                className={`${
-                  status === "Chờ khách hàng xác nhận"
-                    ? "bg-black hover:bg-black/50"
-                    : "bg-[#FF7262] hover:bg-[#e9b2ac]"
-                } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg my-2 ${PendingHuy ? "cursor-not-allowed" : ""}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleCancelOrder();
-                }}
-              >
-                {status === "Chờ khách hàng xác nhận" &&
-                status !== "Hoàn tất đơn hàng"
-                  ? "Đã nhận hàng"
-                  : PendingHuy
-                    ? "Loading..."
-                    : "Hủy Đơn Hàng"}
-              </button>
-            )}
+            hoanhangtuchoi ||
+            status === "Chờ khách hàng xác nhận") && (
+            <button
+              className={`${
+                status === "Chờ khách hàng xác nhận"
+                  ? "bg-black hover:bg-black/50"
+                  : "bg-[#FF7262] hover:bg-[#e9b2ac]"
+              } shadow-md shadow-slate-600/50 text-white w-[146px] text-sm py-3 rounded-lg my-2 ${PendingHuy ? "cursor-not-allowed" : ""}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleCancelOrder();
+              }}
+            >
+              {status === "Chờ khách hàng xác nhận" &&
+              status !== "Hoàn tất đơn hàng"
+                ? "Đã nhận hàng"
+                : PendingHuy
+                  ? "Loading..."
+                  : "Hủy Đơn Hàng"}
+            </button>
+          )}
           <br />
           {isToday(dateToCheck) &&
             phuong_thuc_thanh_toans !== "Thanh toán khi nhận hàng" &&
@@ -549,11 +554,10 @@ const ProductItem = ({
             </button>
           </Link>
           <br />
-          {!ly_do_tu_choi &&
+          {hoanhangtuchoi &&
             (status === "Chờ xác nhận" ||
               status === "Đã xác nhận" ||
               // status === "Đang xử lý" ||
-
               status === "Chờ khách hàng xác nhận") && (
               <button
                 className={`${
@@ -572,7 +576,7 @@ const ProductItem = ({
                   : "Hủy Đơn Hàng"}
               </button>
             )}
-          {Check(ngay_hoan_thanh_don) &&
+          {Checkhoan(ngay_hoan_thanh_don) &&
             status === "Hoàn tất đơn hàng" &&
             trang_thai_thanh_toan === "Đã thanh toán" && (
               <Link
@@ -628,7 +632,7 @@ const ProductList = ({
 }: any) => {
   const don_hang = donhang;
   const [searchValue, setSearchValue] = useState("");
-  console.log(don_hang);
+  console.log("donhang", don_hang);
   const handleKeyDown = (e: any) => {
     if (e.key === "Enter") {
       e.preventDefault(); // Ngăn trình duyệt refresh
@@ -723,7 +727,7 @@ const ProductList = ({
                 ma_don_hang={item.ma_don_hang || ""}
                 phuong_thuc_thanh_toans={item.phuong_thuc_thanh_toan || ""}
                 danh_gias={item.danh_gias || []}
-                ly_do_tu_choi={item.ly_do_tu_choi ?? false}
+                ly_do_tu_choi={item.ly_do_tu_choi ?? 0}
                 ngay_hoan_thanh_don={item.ngay_hoan_thanh_don || null}
               />
             ))

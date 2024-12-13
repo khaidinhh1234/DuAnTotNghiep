@@ -1,10 +1,10 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
-  SearchOutlined,
+  // SearchOutlined,
 } from "@ant-design/icons";
-import type { InputRef, TableColumnsType, TableColumnType } from "antd";
+import type { TableColumnsType } from "antd";
 import {
   Button,
   Input,
@@ -15,8 +15,8 @@ import {
   Table,
   Tag,
 } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
-import Highlighter from "react-highlight-words";
+// import type { FilterDropdownProps } from "antd/es/table/interface";
+// import Highlighter from "react-highlight-words";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import instance from "@/configs/admin";
@@ -38,7 +38,7 @@ interface PromotionType {
   chi_tieu_toi_thieu: number;
 }
 
-type DataIndex = keyof PromotionType;
+// type DataIndex = keyof PromotionType;
 
 const VoucherAdmin: React.FC = () => {
   const {
@@ -130,32 +130,29 @@ const VoucherAdmin: React.FC = () => {
     }
   };
 
-  const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
+  // const [searchedColumn, setSearchedColumn] = useState<DataIndex | "">("");
 
-  // const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const searchInput = useRef<InputRef>(null);
+  // const handleSearch = (
+  //   selectedKeys: string[],
+  //   confirm: FilterDropdownProps["confirm"],
+  //   dataIndex: DataIndex
+  // ) => {
+  //   confirm();
+  //   setSearchText(selectedKeys[0]);
+  //   setSearchedColumn(dataIndex);
+  // };
 
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: FilterDropdownProps["confirm"],
-    dataIndex: DataIndex
-  ) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
-
-  const handleReset = (clearFilters: () => void) => {
-    clearFilters();
-    setSearchText("");
-  };
+  // const handleReset = (clearFilters: () => void) => {
+  //   clearFilters();
+  //   setSearchText("");
+  // };
 
   const columns: TableColumnsType<PromotionType> = [
     {
       title: "STT",
 
       // key: "key",
-      width: "5%",
+      // width: "5%",
       className: "text-center",
       render: (index) => (
         <span className="text-gray-600 text-md">{index.index}</span>
@@ -176,7 +173,7 @@ const VoucherAdmin: React.FC = () => {
 
       sorter: (a: any, b: any) => a.so_luong_da_su_dung - b.so_luong_da_su_dung,
 
-      width: "25%",
+      // width: "25%",
       render: (record) => (
         <>
           <span
@@ -192,7 +189,7 @@ const VoucherAdmin: React.FC = () => {
       title: "Trạng thái",
       dataIndex: "trang_thai",
       key: "trang_thai",
-      width: "30%",
+      // width: "30%",
       sorter: (a: any, b: any) => a.trang_thai - b.trang_thai,
       onFilter: (value: boolean | React.Key, record: any) =>
         record.trang_thai

@@ -1,5 +1,4 @@
 import { ArrowLeftOutlined, CheckOutlined } from "@ant-design/icons";
-import type { GetProps } from "antd";
 import {
   Button,
   DatePicker,
@@ -14,7 +13,7 @@ import {
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
+import { codinh, giamgiaphantram } from "@/assets/img";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import instance from "@/configs/admin";
@@ -30,10 +29,9 @@ const EditVoucher = () => {
   // const [voucherCode, setVoucherCode] = useState(""); // Duplicate declaration removed
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
-  const [isAllSelected2, setIsAllSelected2] = useState(false);
 
   const [tabKey, setTabKey] = useState<boolean | undefined>(undefined);
-  const [max, setMax] = useState(479000);
+  // const [max, setMax] = useState(479000);
   const [voucher, setVoucher] = useState(56010);
   const [phantram, setphantram] = useState(30);
   const [voucherCode] = useState("");
@@ -56,6 +54,7 @@ const EditVoucher = () => {
       return response.data;
     },
   });
+  console.log("voucherid", voucherid);
   const hang_thanh_viens = voucherid?.data?.hang_thanh_viens.map(
     (item: any) => ({
       value: item.ten_hang_thanh_vien,
@@ -117,22 +116,7 @@ const EditVoucher = () => {
     label: item.ten_san_pham || item.id,
   }));
   // console.log("sp", sp);
-  const {
-    data: hang,
-    isLoading: hangLoading,
-    isError: hangError,
-  } = useQuery({
-    queryKey: ["hang"],
-    queryFn: async () => {
-      const response = await instance.get("/hangthanhvien");
-      return response.data;
-    },
-  });
 
-  const data = hang?.data?.map((item: any) => ({
-    value: item.id,
-    label: item.ten_hang_thanh_vien,
-  }));
   // check date
   const handleSubmit = (values: any) => {
     const endDate = values.ngay_ket_thuc
@@ -199,12 +183,11 @@ const EditVoucher = () => {
     // console.log(`Selected: ${value}`);
   };
   const handleChange2 = (value: string[]) => {
-    // console.log("value1", value);
     setSelectedValues2(value);
-    setIsAllSelected2(value.length === data.length); // Cập nhật trạng thái chọn tất cả
+
     // console.log(`Selected: ${value}`);
   };
-  type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+
   //danhmuc
 
   const { data: danhmuc } = useQuery({
@@ -235,7 +218,7 @@ const EditVoucher = () => {
     setIsAllSelected1(true);
   };
   const handleChange1 = (value: string[]) => {
-    console.log("value", value);
+    // console.log("value", value);
     setdanhmuc(value);
     setSelectedValues1(value);
     setIsAllSelected1(value.length === dm.length); // Cập nhật trạng thái chọn tất cả
@@ -260,10 +243,9 @@ const EditVoucher = () => {
   useEffect(() => {
     // generateRandomCode();
     setTabKey(voucherid?.data?.loai == "tien_mat");
-  }, []);
-  console.log("voucherid", tabKey);
-  if (hangLoading) return <p>Loading...</p>;
-  if (hangError) return <p>error...</p>;
+  }, [voucherid]);
+  // console.log("voucherid", tabKey);
+
   return (
     <main className="relative flex flex-1 flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
@@ -485,7 +467,7 @@ const EditVoucher = () => {
                       <Radio.Group
                         className="flex "
                         value={
-                          voucherid?.data?.san_phams.length === 0 &&
+                          voucherid?.data?.san_phams.length >= 30 &&
                           voucherid?.data?.danh_mucs.length === 0
                             ? 0
                             : voucherid?.data?.san_phams.length > 0
@@ -659,15 +641,16 @@ const EditVoucher = () => {
                     className={`grid grid-cols-5  px-3 py-5  rounded-lg 
                      ${tabKey ? "bg-slate-200 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
-                    <div className=" col-span-2 mx-auto pt-3">
-                      <img src="" alt="" className="w-10 h-10 " />
-                      <p>khaidinh</p>
+                    <div className=" col-span-2 mx-auto pt-3 ">
+                      <img src={codinh} alt="" className="w-14 h-14 mx-auto" />
+                      <p>Glow Clothing</p>
                     </div>
                     <div className="col-span-3 leading-[15px]">
                       <p className="font-bold text-2xl">
-                        {voucherid?.data?.giam_gia < 100
+                        {(voucherid?.data?.giam_gia < 100
                           ? 56010
-                          : voucherid?.data?.giam_gia}
+                          : voucherid?.data?.giam_gia
+                        )?.toLocaleString()}{" "}
                         ₫
                       </p>
                       <p>
@@ -699,8 +682,12 @@ const EditVoucher = () => {
                     className={`grid grid-cols-5  px-3 py-5 text-slate-900 rounded-lg  ${tabKey === false ? "bg-blue-100 text-slate-900" : "bg-slate-200 text-slate-500"}`}
                   >
                     <div className=" col-span-2 mx-auto pt-3">
-                      <img src="" alt="" className="w-10 h-10 " />
-                      <p>khaidinh</p>
+                      <img
+                        src={giamgiaphantram}
+                        alt=""
+                        className="w-16 h-16  mx-auto"
+                      />
+                      <p>Glow Clothing</p>
                     </div>
                     <div className="col-span-3 leading-[15px]">
                       <p className="font-bold text-2xl">
@@ -727,7 +714,7 @@ const EditVoucher = () => {
                     label="Nếu giá trị đơn hàng đạt tới
 "
                     name="chi_tieu_toi_thieu"
-                    initialValue={voucherid?.data?.chi_tieu_toi_thieu}
+                    // initialValue={voucherid?.data?.chi_tieu_toi_thieu}
                     rules={[
                       {
                         required: true,
@@ -741,9 +728,9 @@ const EditVoucher = () => {
                       min={0}
                       readOnly
                       disabled
-                      value={voucherid?.data?.chi_tieu_toi_thieu}
+                      // defaultValue={voucherid?.data?.chi_tieu_toi_thieu}
                       max={9999999999}
-                      onChange={(value) => setMax(value as any)}
+                      // onChange={(value) => setMax(value as any)}
                       placeholder="Nhập giá trị đơn hàng đạt tớ"
                     />
                   </Form.Item>{" "}
@@ -751,7 +738,7 @@ const EditVoucher = () => {
                     <Form.Item
                       label="Giảm giá"
                       name="giam_gia"
-                      initialValue={voucherid?.data?.giam_gia}
+                      // initialValue={voucherid?.data?.giam_gia}
                       rules={[
                         { required: true, message: "Bắt buộc phải điền!" },
                         ({ getFieldValue }) => ({
@@ -788,7 +775,7 @@ const EditVoucher = () => {
                         addonAfter="đ"
                         readOnly
                         disabled
-                        defaultValue={voucherid?.data?.giam_gia}
+                        // defaultValue={voucherid?.data?.giam_gia}
                         min={1}
                         onChange={(value) => setVoucher(value as any)}
                       />
@@ -798,7 +785,7 @@ const EditVoucher = () => {
                     <Form.Item
                       label="Giảm giá"
                       name="giam_gia"
-                      initialValue={voucherid?.data?.giam_gia}
+                      // initialValue={voucherid?.data?.giam_gia}
                       rules={[
                         { required: true, message: "Bắt buộc phải điền!" },
                         ({ getFieldValue }) => ({
@@ -823,7 +810,7 @@ const EditVoucher = () => {
                     >
                       <InputNumber
                         addonAfter="%"
-                        defaultValue={voucherid?.data?.giam_gia}
+                        // defaultValue={voucherid?.data?.giam_gia}
                         disabled
                         min={1}
                         max={50}
@@ -841,14 +828,14 @@ const EditVoucher = () => {
                     label="Số lượng mã giảm giá
 "
                     name="so_luong"
-                    initialValue={voucherid?.data?.so_luong}
+                    // initialValue={voucherid?.data?.so_luong}
                     rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >
                     <InputNumber
                       className="w-[60%] rounded-md"
                       placeholder="Nhập số lượng"
-                      max={50}
+                      max={1000}
                       min={voucherid?.data?.so_luong}
                     />
                   </Form.Item>{" "}
@@ -868,7 +855,7 @@ const EditVoucher = () => {
                       disabled
                       defaultValue={hang_thanh_viens}
                       onChange={handleChange2}
-                      options={data}
+                      options={hang_thanh_viens}
                     />
                   </Form.Item>{" "}
                   <div className="flex gap-2 ">

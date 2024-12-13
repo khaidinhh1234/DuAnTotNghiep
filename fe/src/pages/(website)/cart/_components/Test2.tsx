@@ -293,87 +293,96 @@ const Test2 = () => {
                 });
                 return response.data;
             } catch (error) {
-                // throw error.response?.data?.message || "Đã có lỗi xảy ra!";
+                if (error instanceof Error && (error as any).response && (error as any).response.data && (error as any).response.data.message) {
+                    throw new Error(((error as any).response.data as { message: string }).message);
+                }
+                throw error;
             }
         },
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['cart', access_token] })
-            // toast.success(data.message);
+            queryClient.invalidateQueries({ queryKey: ['cart', access_token] });
         },
         onError: (error) => {
-            toast.error("Số lượng trong kho đã hết");
+            toast.error(error.message);
         },
     });
+
+
     const [inputValues, setInputValues] = useState<Record<string, string>>({});
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const handleChangeQuantity = (
-        event: React.ChangeEvent<HTMLInputElement>,
-        product: any
-    ) => {
-        const value = event.target.value;
+const handleChangeQuantity = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    product: any
+) => {
+    const value = event.target.value;
+    const newQuantity = Number(value);
 
-        // Cập nhật state để hiển thị giá trị tạm thời
-        setInputValues((prev) => ({ ...prev, [product.id]: value }));
+    // Cập nhật giá trị input ngay lập tức
+    setInputValues((prev) => ({ ...prev, [product.id]: value }));
 
-        // Xóa timeout trước đó nếu có
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
+    if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+    }
 
-        setFadeEffect((prev) => ({ ...prev, [product.id]: true }));
+    // Bắt đầu hiệu ứng fade
+    setFadeEffect((prev) => ({ ...prev, [product.id]: true }));
 
-        // Đặt timeout mới
-        timeoutRef.current = setTimeout(() => {
-            const newQuantity = Number(value);
-
-            // Kiểm tra nếu không nhập giá trị hoặc giá trị không hợp lệ
-            if (!value || isNaN(newQuantity) || newQuantity < 1) {
-                // toast.error("Số lượng không hợp lệ! Tự động đặt lại thành 1.");
-                setInputValues((prev) => ({ ...prev, [product.id]: 1 }));
-
-                // Gọi API cập nhật về số lượng 1
-                setIsProcessing((prev) => ({ ...prev, [product.id]: true }));
-                updateQuantity(
-                    { productId: product.id, newQuantity: 1 },
-                    {
-                        onSettled: () => {
-                            setIsProcessing((prev) => ({ ...prev, [product.id]: false }));
-                        },
-                    }
-                );
-
-                // Tắt hiệu ứng fade sau 500ms
-                setTimeout(() => {
-                    setFadeEffect((prev) => ({ ...prev, [product.id]: false }));
-                }, 500);
-
-                return;
-            }
-
-            // Kiểm tra số lượng hợp lệ trong khoảng cho phép
-            if (newQuantity > product.so_luong_bien_the) {
-                toast.error("Số lượng không hợp lệ!");
-                return;
-            }
-
-            // Gọi API cập nhật số lượng hợp lệ
+    timeoutRef.current = setTimeout(() => {
+        // Nếu giá trị nhập vào không hợp lệ (không phải số, hoặc bé hơn 1)
+        if (!value || isNaN(newQuantity) || newQuantity < 1) {
+            // Reset giá trị input về 1 nếu không hợp lệ
+            setInputValues((prev) => ({ ...prev, [product.id]: '1' }));
+            
             setIsProcessing((prev) => ({ ...prev, [product.id]: true }));
+
             updateQuantity(
-                { productId: product.id, newQuantity },
+                { productId: product.id, newQuantity: 1 },
                 {
                     onSettled: () => {
                         setIsProcessing((prev) => ({ ...prev, [product.id]: false }));
                     },
                 }
             );
-
             setTimeout(() => {
                 setFadeEffect((prev) => ({ ...prev, [product.id]: false }));
             }, 500);
-        }, 500); // Timeout 500ms
-    };
+            return;
+        }
 
+        // Kiểm tra nếu số lượng nhập vào vượt quá số lượng trong kho
+        if (newQuantity > product.so_luong_bien_the) {
+            // Cập nhật giá trị nhập vào với số lượng tối đa trong kho ngay lập tức
+            setInputValues((prev) => ({ ...prev, [product.id]: String(product.so_luong_bien_the) }));
+
+            // Hiển thị thông báo số lượng vượt quá
+            toast.error(`Rất tiếc, bạn chỉ có thể mua tối đa ${product.so_luong_bien_the} sản phẩm.`, {
+                autoClose: 3000,
+            });
+
+            // Không gửi backend khi số lượng vượt quá
+            setTimeout(() => {
+                setFadeEffect((prev) => ({ ...prev, [product.id]: false }));
+            }, 500);
+            return;
+        }
+
+        // Nếu không có vấn đề gì, gửi dữ liệu
+        setIsProcessing((prev) => ({ ...prev, [product.id]: true }));
+        updateQuantity(
+            { productId: product.id, newQuantity },
+            {
+                onSettled: () => {
+                    setIsProcessing((prev) => ({ ...prev, [product.id]: false }));
+                },
+            }
+        );
+
+        setTimeout(() => {
+            setFadeEffect((prev) => ({ ...prev, [product.id]: false }));
+        }, 500);
+    }, 500);
+};
 
     return (
         <>
@@ -433,7 +442,7 @@ const Test2 = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="grid lg:grid-cols-12 gap-6 relative z-50">
+                                <div className="grid lg:grid-cols-12 gap-6 relative ">
                                     {/* Sản phẩm */}
                                     <div className="lg:col-span-8 col-span-12">
                                         {/* Danh mục sản phẩm giảm giá */}
@@ -518,22 +527,24 @@ const Test2 = () => {
                                                                     −
                                                                 </button>
                                                             )}
-                                                            <input
-                                                                type="number"
-                                                                value={inputValues[product.id] ?? product.so_luong}
-                                                                onChange={(event) => handleChangeQuantity(event, product)}
-                                                                onBlur={() => {
-                                                                    if (!inputValues[product.id]) {
-                                                                        setInputValues((prev) => ({ ...prev, [product.id]: product.so_luong }));
-                                                                    }
-                                                                }}
-                                                                placeholder=""
-                                                                min="1"
-                                                                max={product.so_luong_bien_the}
-                                                                title="Product Quantity"
-                                                                disabled={isProcessing[product.id]}
-                                                                className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                                                            />
+                                                           <input
+    type="number"
+    value={inputValues[product.id] ?? product.so_luong}  // Đảm bảo giá trị được lấy từ state
+    onChange={(event) => handleChangeQuantity(event, product)}
+    onBlur={() => {
+        if (!inputValues[product.id]) {
+            setInputValues((prev) => ({ ...prev, [product.id]: product.so_luong }));
+        }
+    }}
+    placeholder=""
+    min="1"
+    max={product.so_luong_bien_the}
+    title="Product Quantity"
+    disabled={isProcessing[product.id]}
+    className="xl:w-10 xl:h-10 lg:w-5 lg:h-5 md:w-10 md:h-10 w-5 h-5 border-0 focus:ring-0 focus:outline-none text-center appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+/>
+
+
                                                             <button
                                                                 onClick={() => {
                                                                     if (product.so_luong >= product.so_luong_bien_the) {

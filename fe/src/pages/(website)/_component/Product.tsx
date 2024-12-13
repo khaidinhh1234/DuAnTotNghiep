@@ -23,7 +23,6 @@ const Product = ({
   yeuthich,
   prowish,
 }: ProductProps) => {
-  console.log(product.id);
   const queryclient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: async (id: any) => {
@@ -43,8 +42,9 @@ const Product = ({
 
         return response.data;
       } catch (error: any) {
-        message.error(error.response.data.message);
-        console.error("API error", error); // Thêm log lỗi API
+        message.error(error.response.data.mess);
+        // console.log(error.response.data.mess);
+        // console.error("API error", error.response); // Thêm log lỗi API
         throw new Error("Xóa sản phẩm yêu thích thất bại");
       }
     },
