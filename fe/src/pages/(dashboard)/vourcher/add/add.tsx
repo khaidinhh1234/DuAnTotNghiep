@@ -40,7 +40,6 @@ const AddVoucher = () => {
   const [danhm, setdanhmuc] = useState<string[]>([]);
   const apDungVi = form.getFieldValue("ap_dung_vi") ? 1 : 0;
   const [isAllSelected1, setIsAllSelected1] = useState(false);
-  const [maxDiscount, setMaxDiscount] = useState<number>(0);
   const [maxDiscountAmount, setMaxDiscountAmount] = useState<number>(0);
   const [displayDates, setDisplayDates] = useState({
     startDate: '',
