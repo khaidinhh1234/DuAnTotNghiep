@@ -25,6 +25,7 @@ export interface Voucher {
   so_luong_da_su_dung: any;
   ap_dung_vi: number;
   trang_thai_su_dung: string;
+  giam_toi_da: number;
 }
 
 export interface VoucherResponse {
@@ -86,6 +87,7 @@ const Voucher = () => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
+ 
   // if (isLoading)
   //   return (
   //     <div className="flex items-center justify-center min-h-screen">
@@ -200,11 +202,16 @@ const Voucher = () => {
                           : `Giảm: ${voucher.giam_gia}%`}
                       </h2>
                       <p className="text-sm text-gray-600 max-w-[200px] break-words">
-                        {voucher.loai === "tien_mat"
-                          ? `Giảm: ${formatCurrency(voucher.giam_gia)}`
-                          : `Giảm: ${voucher.giam_gia}%`}
-                        cho đơn từ {formatCurrency(voucher.chi_tieu_toi_thieu)}
-                      </p>
+  {voucher.loai === "tien_mat"
+    ? `Giảm ${Number(voucher.giam_gia).toLocaleString()}đ`
+    : `Giảm ${voucher.giam_gia}% ${
+        voucher.giam_toi_da
+          ? `(tối đa ${Number(voucher.giam_toi_da).toLocaleString()}đ)`
+          : ""
+      }`}{" "}
+  cho đơn từ {Number(voucher.chi_tieu_toi_thieu).toLocaleString()}đ
+</p>
+
 
                       <div
                         className={`${

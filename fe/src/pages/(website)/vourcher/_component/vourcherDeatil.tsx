@@ -11,9 +11,21 @@ const VoucherDetail = ({
   onClose,
   voucher,
   onSave,
+  isSaved,
 }: VoucherDetailProps) => {
   if (!isOpen || !voucher) return null;
+  const isDisabled = isSaved || voucher.trang_thai_su_dung === "Đã sử dụng";
+  const buttonColor = isDisabled
+    ? "bg-gray-400"
+    : voucher.ap_dung_vi
+    ? "bg-[#ee4d2d]"
+    : "bg-[#63b1bc]";
 
+  const buttonText = isSaved 
+    ? "Đã lưu"
+    : voucher.trang_thai_su_dung === "Đã sử dụng"
+    ? "Đã dùng" 
+    : "Lưu mã";
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-lg">
@@ -59,11 +71,16 @@ const VoucherDetail = ({
                   : `Giảm ${voucher.giam_gia}%`}
               </h2>
               <p className="text-sm text-gray-600 max-w-[200px] break-words">
-                {voucher.loai === "tien_mat"
-                  ? `Giảm ${voucher.giam_gia.toLocaleString()}đ`
-                  : `Giảm ${voucher.giam_gia}%`}{" "}
-                cho đơn từ {voucher.chi_tieu_toi_thieu.toLocaleString()}đ
-              </p>
+  {voucher.loai === "tien_mat"
+    ? `Giảm ${Number(voucher.giam_gia).toLocaleString()}đ`
+    : `Giảm ${voucher.giam_gia}% ${
+        voucher.giam_toi_da
+          ? `(tối đa ${Number(voucher.giam_toi_da).toLocaleString()}đ)`
+          : ""
+      }`}{" "}
+  cho đơn từ {Number(voucher.chi_tieu_toi_thieu).toLocaleString()}đ
+</p>
+
 
               <div className={`${
                 voucher.ap_dung_vi 
@@ -87,24 +104,25 @@ const VoucherDetail = ({
             </div>
 
             <div className="flex-shrink-0">
-              <button
-                onClick={() => onSave(voucher.ma_code)}
-                disabled={voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"}
-                className={`${
-                  voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"
-                    ? "bg-gray-400"
-                    : voucher.ap_dung_vi
-                    ? "bg-[#ee4d2d]"
-                    : "bg-[#63b1bc]"
-                } text-white font-semibold py-2 px-8 rounded whitespace-nowrap`}
-              >
-                {voucher.da_thu_thap === 1 
-                  ? "Đã lưu" 
-                  : voucher.trang_thai_su_dung === "Đã sử dụng"
-                  ? "Đã dùng"
-                  : "Lưu mã"}
-              </button>
-            </div>
+  <button
+    onClick={() => onSave(voucher.ma_code)}
+    disabled={isSaved || voucher.trang_thai_su_dung === "Đã sử dụng"}
+    className={`${
+      isSaved || voucher.trang_thai_su_dung === "Đã sử dụng"
+        ? "bg-gray-400"
+        : voucher.ap_dung_vi
+        ? "bg-[#ee4d2d]"
+        : "bg-[#63b1bc]"
+    } text-white font-semibold py-2 px-8 rounded whitespace-nowrap`}
+  >
+    {isSaved 
+      ? "Đã lưu" 
+      : voucher.trang_thai_su_dung === "Đã sử dụng"
+      ? "Đã dùng"
+      : "Lưu mã"}
+  </button>
+</div>
+
           </div>
         </div>
 
@@ -112,36 +130,32 @@ const VoucherDetail = ({
           <ul className="list-none space-y-3">
             <li>
               - Hạn sử dụng:{" "}
-              {new Date(voucher.ngay_bat_dau).toLocaleDateString()} -{" "}
-              {new Date(voucher.ngay_ket_thuc).toLocaleDateString()}
+              {new Date(voucher?.ngay_bat_dau).toLocaleDateString()} -{" "}
+              {new Date(voucher?.ngay_ket_thuc).toLocaleDateString()}
             </li>
-            <li>- Ưu đãi: {voucher.mo_ta}</li>
-            <li>- {voucher.ap_dung}</li>
+            <li>- Ưu đãi: {voucher?.mo_ta}</li>
+            <li>- {voucher?.ap_dung}</li>
             <li>
-              - Đơn tối thiểu {voucher.chi_tieu_toi_thieu.toLocaleString()}đ
+              - Đơn tối thiểu {voucher?.chi_tieu_toi_thieu.toLocaleString()}đ
             </li>
+            {voucher?.giam_toi_da && (
+  <li>
+    - Giảm tối đa {Number(voucher.giam_toi_da).toLocaleString("vi-VN")}đ
+  </li>
+)}
+
             <li>- Mỗi khách hàng được dùng duy nhất 1 lần</li>
             <li>- Áp dụng 01 mã ưu đãi/ 01 hoá đơn thanh toán.</li>
           </ul>
         </div>
 
         <button
-          onClick={() => onSave(voucher.ma_code)}
-          disabled={voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"}
-          className={`${
-            voucher.da_thu_thap === 1 || voucher.trang_thai_su_dung === "Đã sử dụng"
-              ? "bg-gray-400"
-              : voucher.ap_dung_vi
-              ? "bg-[#ee4d2d]"
-              : "bg-[#63b1bc]"
-          } text-white py-2 px-40 mt-8 block mx-auto text-lg font-semibold`}
-        >
-          {voucher.da_thu_thap === 1 
-            ? "Đã lưu" 
-            : voucher.trang_thai_su_dung === "Đã sử dụng"
-            ? "Đã dùng"
-            : "Lưu mã"}
-        </button>
+      onClick={() => onSave(voucher.ma_code)}
+      disabled={isDisabled}
+      className={`${buttonColor} text-white py-2 px-40 mt-8 block mx-auto text-lg font-semibold`}
+    >
+      {buttonText}
+    </button>
       </div>
     </div>
   );
