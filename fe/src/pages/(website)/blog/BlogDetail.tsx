@@ -26,6 +26,7 @@ const BlogDetail = () => {
     },
     enabled: !!duong_dan,
   });
+
   // Format ngày tháng
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -45,13 +46,10 @@ const BlogDetail = () => {
       );
       const currentTime = Date.now();
 
-      // Kiểm tra nếu đã có bài viết trong LocalStorage
       if (!viewedArticles[duong_dan]) {
-        // Nếu chưa xem, tăng lượt xem và lưu thời gian vào LocalStorage
         instanceClient
           .post(`/xem-bai-viet/${duong_dan}`, { tang_luot_xem: true })
           .then(() => {
-            console.log("Lượt xem đã tăng");
             viewedArticles[duong_dan] = currentTime;
             localStorage.setItem(
               "viewedArticles",
@@ -63,16 +61,13 @@ const BlogDetail = () => {
             console.error("Lỗi khi tăng lượt xem:", error);
           });
       } else {
-        // Nếu đã xem, kiểm tra xem có quá 24 giờ chưa
         const lastViewedTime = viewedArticles[duong_dan];
         const hoursPassed = (currentTime - lastViewedTime) / (1000 * 60 * 60);
 
         if (hoursPassed > 24) {
-          // Nếu đã quá 24 giờ, tăng lượt xem lại
           instanceClient
             .post(`/xem-bai-viet/${duong_dan}`, { tang_luot_xem: true })
             .then(() => {
-              console.log("Lượt xem đã tăng");
               viewedArticles[duong_dan] = currentTime;
               localStorage.setItem(
                 "viewedArticles",
@@ -84,7 +79,6 @@ const BlogDetail = () => {
               console.error("Lỗi khi tăng lượt xem:", error);
             });
         } else {
-          // Nếu chưa đủ 24 giờ, chỉ đánh dấu đã xem
           setViewed(true);
         }
       }
@@ -94,8 +88,8 @@ const BlogDetail = () => {
   return (
     <div>
       {/* Chi tiết bài viết */}
-      <div className="flex w-full px-10 mt-20 ml-5 mb-20">
-        <div className="w-2/3 pr-5">
+      <div className="flex flex-col lg:flex-row w-full px-10 mt-20 ml-5 mb-20">
+        <div className="lg:w-2/3 pr-5">
           <div className="w-full">
             {data?.data?.baiVietDetail ? (
               <div className="mt-4">
@@ -124,19 +118,17 @@ const BlogDetail = () => {
         </div>
 
         {/* Bài viết liên quan */}
-        <div className="w-1/3 pl-5 mt-3">
+        <div className="lg:w-1/3 pl-5 mt-3">
           <h3 className="text-2xl font-semibold mb-4">Bài viết liên quan</h3>
           <div className="space-y-4">
             {data?.data?.baiVietTop && data?.data?.baiVietTop.length > 0 ? (
               data?.data?.baiVietTop.map((baiViet: any) => (
                 <div key={baiViet.id} className="flex items-start">
-                  {/* <Link to={`/xem-bai-viet/${baiViet.duong_dan}`}> */}
                   <img
                     src={baiViet.anh_tin_tuc}
                     alt={baiViet.tieu_de}
                     className="w-16 h-16 rounded object-cover mr-4"
                   />
-                  {/* </Link> */}
                   <div>
                     <h4 className="text-lg font-medium">{baiViet.tieu_de}</h4>
                     <p className="text-gray-500 text-sm">
@@ -154,41 +146,58 @@ const BlogDetail = () => {
 
       {/* Danh mục nổi bật */}
       <div className="mb-36">
-        {/* <h2 className="text-5xl font-bold mb-4">Danh mục nổi bật</h2> */}
-        {data?.data?.danhMucTinTuc &&
-        Array.isArray(data?.data?.danhMucTinTuc) &&
-        data?.data?.danhMucTinTuc.length > 0 ? (
-          <Swiper
-            spaceBetween={20}
-            slidesPerView={6}
-            loop={true}
-            className="related-articles-slides"
-          >
-            {data?.data?.danhMucTinTuc.map((item: any) => (
-              <SwiperSlide key={item.id}>
-                <div className="p-4 bg-white rounded-lg shadow-md relative">
-                  <Link to={`/danhmuctintuc/${item.duong_dan}`}>
-                    <div className="relative w-full h-40 rounded-lg overflow-hidden cursor-pointer">
-                      <img
-                        src={item.hinh_anh}
-                        alt={item.ten_danh_muc_tin_tuc}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                        <span className="text-white text-lg font-semibold text-center px-2">
-                          {item.ten_danh_muc_tin_tuc}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
+  {data?.data?.danhMucTinTuc &&
+  Array.isArray(data?.data?.danhMucTinTuc) &&
+  data?.data?.danhMucTinTuc.length > 0 ? (
+    <Swiper
+      spaceBetween={20}
+      loop={true}
+      className="related-articles-slides"
+      breakpoints={{
+        // On large screens (1024px and up), show 6 slides
+        1024: {
+          slidesPerView: 6,
+        },
+        // On medium screens (768px to 1023px), show 4 slides
+        768: {
+          slidesPerView: 4,
+        },
+        // On small screens (640px to 767px), show 3 slides
+        640: {
+          slidesPerView: 3,
+        },
+        // On very small screens (below 640px), show 2 slides
+        480: {
+          slidesPerView: 2,
+        },
+      }}
+    >
+      {data?.data?.danhMucTinTuc.map((item: any) => (
+        <SwiperSlide key={item.id}>
+          <div className="p-4 bg-white rounded-lg shadow-md relative">
+            <Link to={`/danhmuctintuc/${item.duong_dan}`}>
+              <div className="relative w-full h-40 rounded-lg overflow-hidden cursor-pointer">
+                <img
+                  src={item.hinh_anh}
+                  alt={item.ten_danh_muc_tin_tuc}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                  <span className="text-white text-lg font-semibold text-center px-2">
+                    {item.ten_danh_muc_tin_tuc}
+                  </span>
                 </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        ) : (
-          <p>Không có danh mục nổi bật.</p>
-        )}
-      </div>
+              </div>
+            </Link>
+          </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  ) : (
+    <p>Không có danh mục nổi bật.</p>
+  )}
+</div>
+
     </div>
   );
 };
