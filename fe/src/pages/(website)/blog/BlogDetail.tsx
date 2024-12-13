@@ -146,57 +146,53 @@ const BlogDetail = () => {
 
       {/* Danh mục nổi bật */}
       <div className="mb-36">
-  {data?.data?.danhMucTinTuc &&
-  Array.isArray(data?.data?.danhMucTinTuc) &&
-  data?.data?.danhMucTinTuc.length > 0 ? (
-    <Swiper
-      spaceBetween={20}
-      loop={true}
-      className="related-articles-slides"
-      breakpoints={{
-        // On large screens (1024px and up), show 6 slides
-        1024: {
-          slidesPerView: 6,
-        },
-        // On medium screens (768px to 1023px), show 4 slides
-        768: {
-          slidesPerView: 4,
-        },
-        // On small screens (640px to 767px), show 3 slides
-        640: {
-          slidesPerView: 3,
-        },
-        // On very small screens (below 640px), show 2 slides
-        480: {
-          slidesPerView: 2,
-        },
-      }}
-    >
-      {data?.data?.danhMucTinTuc.map((item: any) => (
-        <SwiperSlide key={item.id}>
-          <div className="p-4 bg-white rounded-lg shadow-md relative">
-            <Link to={`/danhmuctintuc/${item.duong_dan}`}>
-              <div className="relative w-full h-40 rounded-lg overflow-hidden cursor-pointer">
-                <img
-                  src={item.hinh_anh}
-                  alt={item.ten_danh_muc_tin_tuc}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                  <span className="text-white text-lg font-semibold text-center px-2">
-                    {item.ten_danh_muc_tin_tuc}
-                  </span>
+        {data?.data?.danhMucTinTuc &&
+          Array.isArray(data?.data?.danhMucTinTuc) &&
+          data?.data?.danhMucTinTuc.length > 0 ? (
+          <Swiper
+            spaceBetween={20}
+            loop={true}
+            className="related-articles-slides"
+            breakpoints={{
+              1024: {
+                slidesPerView: 6,
+              },
+              768: {
+                slidesPerView: 4,
+              },
+              640: {
+                slidesPerView: 3,
+              },
+              480: {
+                slidesPerView: 2,
+              },
+            }}
+          >
+            {data?.data?.danhMucTinTuc.map((item: any) => (
+              <SwiperSlide key={item.id}>
+                <div className="p-4 bg-white rounded-lg shadow-md relative">
+                  <Link to={`/danhmuctintuc/${item.duong_dan}`}>
+                    <div className="relative w-full h-40 rounded-lg overflow-hidden cursor-pointer">
+                      <img
+                        src={item.hinh_anh}
+                        alt={item.ten_danh_muc_tin_tuc}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                        <span className="text-white text-lg font-semibold text-center px-2">
+                          {item.ten_danh_muc_tin_tuc}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
                 </div>
-              </div>
-            </Link>
-          </div>
-        </SwiperSlide>
-      ))}
-    </Swiper>
-  ) : (
-    <p>Không có danh mục nổi bật.</p>
-  )}
-</div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <p>Không có danh mục nổi bật.</p>
+        )}
+      </div>
 
     </div>
   );
