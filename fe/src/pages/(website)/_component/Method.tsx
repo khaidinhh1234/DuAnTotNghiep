@@ -1,35 +1,48 @@
-// import React from 'react'
-
 const Method = () => {
   return (
     <>
-      <section>
-        {/* <!-- End Main --> */}
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 mt-12 mb-24">
-            <div className="mx-auto">
-              <i className="fa-regular fa-box text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">
+      <section className="bg-neutral-100 py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14">
+            {/* Phần tử 1 */}
+            <div className="text-center flex flex-col items-center">
+              <i className="fa-regular fa-box text-5xl text-primary mb-4"></i>
+              <h3 className="font-bold text-lg lg:text-xl mt-3 mb-2">
                 Miễn phí vận chuyển
               </h3>
-              <p>Miễn phí vận chuyển cho đơn hàng trên 500.000đ</p>
+              <p className="text-sm lg:text-base">
+                Miễn phí vận chuyển cho đơn hàng trên 500.000đ
+              </p>
             </div>
-            <div className="mx-auto">
-              <i className="fa-regular fa-circle-dollar text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">Đảm bảo hoàn tiền</h3>
-              <p>Trong vòng 30 ngày để đổi hàng</p>
+            {/* Phần tử 2 */}
+            <div className="text-center flex flex-col items-center">
+              <i className="fa-regular fa-circle-dollar text-5xl text-primary mb-4"></i>
+              <h3 className="font-bold text-lg lg:text-xl mt-3 mb-2">
+                Đảm bảo hoàn tiền
+              </h3>
+              <p className="text-sm lg:text-base">
+                Trong vòng 30 ngày để đổi hàng
+              </p>
             </div>
-            <div className="mx-auto">
-              <i className="fa-regular fa-headphones text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">Hỗ trợ trực tuyến</h3>
-              <p>24 giờ một ngày, 7 ngày một tuần</p>
+            {/* Phần tử 3 */}
+            <div className="text-center flex flex-col items-center">
+              <i className="fa-regular fa-headphones text-5xl text-primary mb-4"></i>
+              <h3 className="font-bold text-lg lg:text-xl mt-3 mb-2">
+                Hỗ trợ trực tuyến
+              </h3>
+              <p className="text-sm lg:text-base">
+                24 giờ một ngày, 7 ngày một tuần
+              </p>
             </div>
-            <div className="mx-auto">
-              <i className="fa-light fa-credit-card text-3xl"></i>
-              <h3 className="font-bold text-xl mt-3 mb-2">
+            {/* Phần tử 4 */}
+            <div className="text-center flex flex-col items-center">
+              <i className="fa-light fa-credit-card text-5xl text-primary mb-4"></i>
+              <h3 className="font-bold text-lg lg:text-xl mt-3 mb-2">
                 Thanh toán linh hoạt
               </h3>
-              <p>Thanh toán bằng nhiều thẻ tín dụng</p>
+              <p className="text-sm lg:text-base">
+                Thanh toán bằng nhiều thẻ tín dụng
+              </p>
             </div>
           </div>
         </div>
