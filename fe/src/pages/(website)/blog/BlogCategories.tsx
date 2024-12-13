@@ -107,14 +107,14 @@ const BlogCategories = () => {
         {data?.danhMuc ? (
           <>
             <div className="flex justify-center py-10">
-              <div className="flex flex-row items-stretch gap-0 w-full px-10 h-full">
-                <div className="w-1/2 bg-gray-100 p-28">
+              <div className="flex flex-col md:flex-row items-stretch w-full px-5 h-full">
+                <div className="w-full md:w-1/2 bg-gray-100 p-10 md:p-28">
                   <h3 className="text-5xl font-semibold mb-5">
                     {data.danhMuc.ten_danh_muc_tin_tuc}
                   </h3>
                   <p className="text-xl text-gray-500">{data.danhMuc.mo_ta}</p>
                 </div>
-                <div className="w-1/2 h-full">
+                <div className="w-full md:w-1/2 h-full">
                   <img
                     src={data.danhMuc.hinh_anh}
                     alt={data.danhMuc.ten_danh_muc_tin_tuc}
@@ -128,76 +128,61 @@ const BlogCategories = () => {
           <p>Chưa có dữ liệu :3 </p>
         )}
       </div>
-      {/* baiVietCoNhieuLuotXem và baiVietCoLuotXemNhieuNhatTrong24h  */}
-      <div className="flex w-full px-10 mt-10 ml-5 mb-20">
-        <div className="w-2/3 pr-5">
+      {/* baiVietCoNhieuLuotXem và baiVietCoLuotXemNhieuNhatTrong24h */}
+      <div className="flex flex-col lg:flex-row w-full px-5 mt-10 mb-20 gap-10">
+        <div className="w-full lg:w-2/3">
           <div className="w-full">
             {data?.baiVietCoLuotXemNhieuNhatTrong24h &&
-            data.baiVietCoLuotXemNhieuNhatTrong24h.length > 0 ? (
+              data.baiVietCoLuotXemNhieuNhatTrong24h.length > 0 ? (
               <Carousel
                 dots={false}
                 arrows={true}
                 autoplay
                 autoplaySpeed={2000}
-                className="h-[700px] autoplay"
+                className="h-[400px] sm:h-[500px] lg:h-[700px] w-full"
               >
-                {data.baiVietCoLuotXemNhieuNhatTrong24h.map(
-                  (article: Article) => (
-                    <Link to={`/xem-bai-viet/${article.duong_dan}`}>
-                      <div
-                        key={article.id}
-                        className="h-full relative flex justify-center items-center"
-                      >
-                        <img
-                          src={article.anh_tin_tuc}
-                          alt={article.tieu_de}
-                          className="w-full h-[700px] object-cover"
-                        />
-                        {/* <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 p-4 flex justify-between items-end">
-                          <div className="text-white ml-10">
-                            <h3 className="text-lg font-semibold">
-                              {article.tieu_de}
-                            </h3>
-                            <p
-                              className="text-sm mt-1 line-clamp-2"
-                              dangerouslySetInnerHTML={{
-                                __html: article.noi_dung,
-                              }}
-                            ></p>
-                          </div>
-                          <Link
-                            to={`/xem-bai-viet/${article.duong_dan}`}
-                            className="px-4 py-2 border-2 border-white bg-transparent text-white rounded-md hover:bg-white hover:text-black hover:scale-110 mb-10 mr-14 transition-transform"
-                          >
-                            Đọc thêm
-                          </Link>
-                        </div> */}
+                {data.baiVietCoLuotXemNhieuNhatTrong24h.map((article: Article) => (
+                  <Link to={`/xem-bai-viet/${article.duong_dan}`} key={article.id}>
+                    <div className="h-full relative flex justify-center items-center">
+                      <img
+                        src={article.anh_tin_tuc}
+                        alt={article.tieu_de}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 bg-opacity-50 p-4 flex justify-between items-end">
+                        <Link
+                          to={`/xem-bai-viet/${article.duong_dan}`}
+                          className="px-4 py-2 border-2 border-white bg-transparent text-white rounded-md hover:bg-white hover:text-black hover:scale-110 mb-10 mr-14 transition-transform"
+                        >
+                          Đọc thêm
+                        </Link>
                       </div>
-                    </Link>
-                  )
-                )}
+                    </div>
+                  </Link>
+                ))}
               </Carousel>
             ) : (
               <p>Chưa có bài viết nào trong 24h này.</p>
             )}
           </div>
         </div>
-        <div className="w-1/3 pl-5 mb-20">
-          <h3 className="text-2xl font-semibold mb-4">
-            Bài viết có nhiều lượt xem
-          </h3>
-          {data?.baiVietCoNhieuLuotXem &&
-          data.baiVietCoNhieuLuotXem.length > 0 ? (
+
+        <div className="w-full lg:w-1/3">
+          <h3 className="text-2xl font-semibold mb-4">Bài viết có nhiều lượt xem</h3>
+          {data?.baiVietCoNhieuLuotXem && data.baiVietCoNhieuLuotXem.length > 0 ? (
             <div className="space-y-4">
               {data.baiVietCoNhieuLuotXem.map((article: Article) => (
                 <div key={article.id} className="flex items-center gap-4">
                   <Link to={`/xem-bai-viet/${article.duong_dan}`}>
-                    <img
-                      src={article.anh_tin_tuc}
-                      alt={article.tieu_de}
-                      className="w-32 h-32 object-cover rounded"
-                    />
+                    <div className="relative w-32 h-32">
+                      <img
+                        src={article.anh_tin_tuc}
+                        alt={article.tieu_de}
+                        className="absolute inset-0 w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
                   </Link>
+
                   <div>
                     <Link to={`/xem-bai-viet/${article.duong_dan}`}>
                       <h4 className="text-lg font-medium">{article.tieu_de}</h4>
@@ -214,20 +199,21 @@ const BlogCategories = () => {
           )}
         </div>
       </div>
-      {/* bài viết */}
-      <div className="flex flex-col w-full px-10 mt-10 ml-5">
-        <h3 className="text-2xl font-semibold mb-4">Bài viết liên quan</h3>
-        <div className="grid grid-cols-3 gap-5">
+
+      {/* bài viết liên quan */}
+      <div className="w-full px-5 mt-48">
+        <h3 className="text-4xl font-semibold mb-4">Bài viết liên quan</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {data?.baiViet?.data && data.baiViet.data.length > 0 ? (
             data.baiViet.data.map((article: Article) => (
-              <Link to={`/xem-bai-viet/${article.duong_dan}`}>
-                <div key={article.id} className="p-4">
+              <Link to={`/xem-bai-viet/${article.duong_dan}`} key={article.id}>
+                <div className="p-4">
                   <img
                     src={article.anh_tin_tuc}
                     alt={article.tieu_de}
-                    className="w-full h-96 object-cover"
+                    className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-lg"
                   />
-                  <h4 className="text-3xl font-bold hover:text-red-600 mt-2">
+                  <h4 className="text-xl sm:text-2xl font-bold hover:text-red-600 mt-2">
                     {article.tieu_de}
                   </h4>
                   <p className="text-sm text-gray-500">
@@ -241,6 +227,7 @@ const BlogCategories = () => {
           )}
         </div>
       </div>
+
     </div>
   );
 };
