@@ -109,7 +109,15 @@ class MaKhuyenMaiController extends Controller
             $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
 
             if (!empty($dataKhuyenMaiDanhMuc)) {
-                $maKhuyenMai->danhMucs()->sync($dataKhuyenMaiDanhMuc);
+                $allDanhMucIds = [];
+                foreach ($dataKhuyenMaiDanhMuc as $danhMucId) {
+                    $danhMucCon = $this->getAllDanhMucIds([$danhMucId]);
+                    $allDanhMucIds = array_merge($allDanhMucIds, $danhMucCon);
+                }
+
+                $allDanhMucIds = array_unique($allDanhMucIds);
+
+                $maKhuyenMai->danhMucs()->sync($allDanhMucIds);
             } else if (!empty($dataKhuyenMaiSanPham)) {
                 $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
             } else {
@@ -162,6 +170,20 @@ class MaKhuyenMaiController extends Controller
         return $result;
     }
 
+
+    private function getAllDanhMucIds($danhMucIds)
+    {
+        $allIds = collect($danhMucIds);
+
+        foreach ($danhMucIds as $danhMucId) {
+            $children = DB::table('danh_mucs')->where('cha_id', $danhMucId)->pluck('id')->toArray();
+            if (!empty($children)) {
+                $allIds = $allIds->merge($this->getAllDanhMucIds($children));
+            }
+        }
+
+        return $allIds->unique()->toArray();
+    }
 
     public function show(string $id)
     {
