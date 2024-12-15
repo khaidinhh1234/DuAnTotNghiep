@@ -247,6 +247,7 @@ class DonHangClientController extends Controller
                 if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
                     $soTienGiamGia = $donHang->tong_tien_don_hang;
                 }
+                $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien' - $soTienGiamGia);
             }
 
             // Xử lý chi tiết đơn hàng
@@ -283,7 +284,9 @@ class DonHangClientController extends Controller
             ];
 
             $tongSoLuong = $donHang->chiTiets->sum('so_luong');
-            $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
+            if (!$donHang->ma_giam_gia) {
+                $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien');
+            }
 
             // Tính tiền ship
             $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
@@ -465,11 +468,10 @@ class DonHangClientController extends Controller
                         ['user_id' => $userId, 'ma_khuyen_mai_id' => $maGiamGia->id],
                         ['da_su_dung' => true, 'ngay_su_dung' => now()]
                     );
-
-                    }
-                } else {
-                    return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
                 }
+            } else {
+                return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
+            }
 
             if ($tongTienDonHang < 500000) {
                 $tongTienDonHang += 20000;

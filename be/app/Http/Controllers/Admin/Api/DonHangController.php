@@ -340,7 +340,7 @@ class DonHangController extends Controller
 
     public function inHoaDon(string $id)
     {
-        $vanChuyen = vanChuyen::findOrFail($id);
+        $vanChuyen = donHang::with( 'vanChuyen')->findOrFail($id);
         return response()->json([
             'status' => false,
             'status_code' => 404,
