@@ -28,7 +28,7 @@ class SanPham extends Model
 
     public function danhMuc()
     {
-        return $this->hasMany(DanhMuc::class, 'id', 'danh_muc_id');
+        return $this->belongsTo(DanhMuc::class, 'danh_muc_id', 'id');
     }
 
     public function bienTheSanPham()
