@@ -239,6 +239,7 @@ class DonHangClientController extends Controller
 
             $maGiamGia = MaKhuyenMai::where('ma_code', $donHang->ma_giam_gia)->first();
             $soTienGiamGia = 0;
+            $tongTien = $donHang->tong_tien_don_hang;
             if ($donHang->ma_giam_gia) {
                 $soTienGiamGia = $maGiamGia->loai === 'phan_tram'
                     ? ($donHang->tong_tien_don_hang * $maGiamGia->giam_gia / 100)
@@ -247,7 +248,7 @@ class DonHangClientController extends Controller
                 if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
                     $soTienGiamGia = $donHang->tong_tien_don_hang;
                 }
-                $tongTienSanPham = $donHang->chiTiets->sum('thanh_tien' - $soTienGiamGia);
+                $tongTien = $donHang->chiTiets->sum('thanh_tien') - $soTienGiamGia;
             }
 
             // Xử lý chi tiết đơn hàng
@@ -291,7 +292,7 @@ class DonHangClientController extends Controller
             // Tính tiền ship
             $tienShip = $donHang->mien_phi_van_chuyen == 1 ? 0 : 20000;
             $tietKiemShip = $donHang->mien_phi_van_chuyen == 1 ? 20000 : 0;
-
+            $tongTienSAnPham = $donHang->chiTiets->sum('thanh_tien');
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -300,11 +301,11 @@ class DonHangClientController extends Controller
                     'don_hang' => $donHang,
                     'chi_tiet_cua_don_hang' => $chiTietDonHang,
                     'tong_so_luong' => $tongSoLuong,
-                    'tong_thanh_tien_san_pham' => $tongTienSanPham,
+                    'tong_thanh_tien_san_pham' => $tongTien,
                     'tien_ship' => $tienShip,
                     'so_tien_giam_gia' => $soTienGiamGia,
-                    'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
-                    'tong_tien' => $donHang->tong_tien_don_hang - $soTienGiamGia,
+                    // 'tiet_kiem' => $donHang->
+                    'tong_tien' => $donHang->chiTiets->sum('thanh_tien'),
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? "",
                     'danh_gia_chua_xoa' => $danhGiaChuaXoa->values(),
                     'danh_gia_da_xoa' => $danhGiaDaXoa->values(),
@@ -412,7 +413,7 @@ class DonHangClientController extends Controller
                 $tongTienDonHang += $gia * $sanPham->so_luong;
             }
 
-            if ($request->filled('ma_giam_gia')) {
+        if (isset($request->ma_giam_gia)) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
 
                 if ($maGiamGia) {
