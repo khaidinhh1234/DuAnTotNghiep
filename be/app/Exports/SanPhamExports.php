@@ -116,9 +116,12 @@ class SanPhamExports implements FromCollection, WithHeadings, WithMapping, WithS
                     return $kichThuoc;
             }
         })->unique()->implode(', ');
+        $danhmuc = $sanPham->danhMuc;
+        dd($danhmuc
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    ->toArray());
         return [
             $sanPham->id,
-            $sanPham->danh_muc == null ? 'Không có' : $sanPham->danh_muc,
+            $danhmuc == null ? 'Không có' : $danhmuc->ten_danh_muc,
             $sanPham->ten_san_pham == null ? 'Không có' : $sanPham->ten_san_pham,
             $sanPham->ma_san_pham == null ? 'Không có' : $sanPham->ma_san_pham,
             $sanPham->anh_san_pham == null ? 'Không có' : $sanPham->anh_san_pham,
