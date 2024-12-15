@@ -41,7 +41,7 @@ const MyOrderdetail = () => {
   const handleDanhgia = () => {
     setDanhgia(true);
   };
-  // console.log("Data:", data);
+  console.log("Data:", data);
   const chitiet = data?.data;
   // console.log(chitiet);
   // const chitietsanpham = data?.data?.don_hang;

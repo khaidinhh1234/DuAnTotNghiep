@@ -28,7 +28,7 @@ class SanPham extends Model
 
     public function danhMuc()
     {
-        return $this->hasMany(DanhMuc::class, 'id', 'danh_muc_id');
+        return $this->belongsTo(DanhMuc::class, 'danh_muc_id', 'id');
     }
 
     public function bienTheSanPham()
@@ -63,6 +63,6 @@ class SanPham extends Model
     public function bienTheDanhGias()
     {
         return $this->belongsToMany(BienTheSanPham::class, 'danh_gia_san_phams', 'san_pham_id', 'bien_the_san_pham_id')
-                ->withPivot('bien_the_san_pham_id');
+            ->withPivot('bien_the_san_pham_id');
     }
 }

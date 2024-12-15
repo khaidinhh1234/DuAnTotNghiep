@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Voucheruser from "./voucheruser";
 
 const Subtotal = ({ tong_tien, Macode, trangthai, isPending }: any) => {
+  console.log("tong_tien", tong_tien);
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
   const ap = trangthai === "Ví tiền" ? 1 : 0;
   useEffect(() => {
