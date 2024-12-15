@@ -248,7 +248,6 @@ class DonHangClientController extends Controller
                 if ($soTienGiamGia > $donHang->tong_tien_don_hang) {
                     $soTienGiamGia = $donHang->tong_tien_don_hang;
                 }
-
                 $tongTien = $donHang->chiTiets->sum('thanh_tien') - $soTienGiamGia;
             }
 
@@ -305,7 +304,9 @@ class DonHangClientController extends Controller
                     'tong_thanh_tien_san_pham' => $tongTien,
                     'tien_ship' => $tienShip,
                     'so_tien_giam_gia' => $soTienGiamGia,
+
                     // 'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+
                     'tong_tien' => $donHang->chiTiets->sum('thanh_tien'),
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? "",
                     'danh_gia_chua_xoa' => $danhGiaChuaXoa->values(),
