@@ -42,7 +42,7 @@ const Hoadon = ({ record, products, tong }: any) => {
       return response.data;
     },
   });
-  console.log(bill);
+  console.log("sdfhu", bill);
 
   const { data } = useQuery({
     queryKey: ["SHIPPER"],

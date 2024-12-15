@@ -146,7 +146,8 @@ const ShippingAddressPage = () => {
 
       mutate({
         ...formData,
-        ma_giam_gia: macode,
+
+        // ...(macode && { ma_giam_gia: macode }),
         phuong_thuc_thanh_toan: trangthai,
       });
       reset(); // Reset form sau khi gửi dữ liệu
