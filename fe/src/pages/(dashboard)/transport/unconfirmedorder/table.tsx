@@ -195,7 +195,7 @@ const TableUncomfirmedOrder: React.FC = () => {
     }
   }, [transport, activeTab]);
 
-  const dataSource: TransportData[] = (filteredData ?? []).map(
+  const dataSource: TransportData[] = (filteredData ?? [])?.map(
     (item: any): TransportData => ({
       key: item.id,
       ...item,

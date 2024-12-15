@@ -304,7 +304,9 @@ class DonHangClientController extends Controller
                     'tong_thanh_tien_san_pham' => $tongTien,
                     'tien_ship' => $tienShip,
                     'so_tien_giam_gia' => $soTienGiamGia,
-                    // 'tiet_kiem' => $donHang->
+
+                    // 'tiet_kiem' => $soTienGiamGia + $tietKiemShip,
+
                     'tong_tien' => $donHang->chiTiets->sum('thanh_tien'),
                     'anh_xac_thuc' => $donHang->vanChuyen->anh_xac_thuc ?? "",
                     'danh_gia_chua_xoa' => $danhGiaChuaXoa->values(),
@@ -413,7 +415,9 @@ class DonHangClientController extends Controller
                 $tongTienDonHang += $gia * $sanPham->so_luong;
             }
 
-        if (isset($request->ma_giam_gia)) {
+
+            if (isset($request->ma_giam_gia)) {
+
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
 
                 if ($maGiamGia) {

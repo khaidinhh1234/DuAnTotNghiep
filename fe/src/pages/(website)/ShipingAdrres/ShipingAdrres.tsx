@@ -77,6 +77,7 @@ const ShippingAddressPage = () => {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: any) => {
+      console.log(data);
       try {
         // Bước 1: Tạo đơn hàng
         if (trangthai === "Ví tiền") {
@@ -100,7 +101,6 @@ const ShippingAddressPage = () => {
             "payment/momo",
             momoPaymentData
           );
-
           if (response.data && response.data.payUrl) {
             window.location.href = response.data.payUrl; // Chuyển hướng người dùng đến giao diện thanh toán của MoMo
             if (response.status === 200) {
@@ -116,7 +116,6 @@ const ShippingAddressPage = () => {
           message.error("Đặt hàng thất bại");
           throw new Error("Error during order creation or MoMo payment");
         }
-
         return order.data;
       } catch (error) {
         // console.log(error);
@@ -145,7 +144,12 @@ const ShippingAddressPage = () => {
     if (isDataComplete) {
       // Gọi hàm mutate với dữ liệu đã kết hợp
 
-      mutate({ ...formData, macode, phuong_thuc_thanh_toan: trangthai });
+      mutate({
+        ...formData,
+
+        // ...(macode && { ma_giam_gia: macode }),
+        phuong_thuc_thanh_toan: trangthai,
+      });
       reset(); // Reset form sau khi gửi dữ liệu
     } else {
       console.log("Dữ liệu chưa đầy đủ");
