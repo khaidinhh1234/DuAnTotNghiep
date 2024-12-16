@@ -873,7 +873,7 @@ const AddVoucher = () => {
                   <Form.Item
                     label="Hạng thành viên  (áp dụng )
 "
-                    name="hang_thanh_vien"
+                    name="hang_thanh_viens"
                     rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >

@@ -415,7 +415,7 @@ class DonHangClientController extends Controller
                 $tongTienDonHang += $gia * $sanPham->so_luong;
             }
 
-            if (isset($request->ma_giam_gia) && count($request->ma_giam_gia) > 0) {
+            if (isset($request->ma_giam_gia)) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
 
                 if ($maGiamGia) {

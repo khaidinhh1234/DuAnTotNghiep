@@ -32,7 +32,7 @@ const RevenuePage = () => {
                   </p>
                   <div className="flex items-center mt-1 text-gray-500 text-sm md:text-base">
                     <WalletOutlined className="mr-1" />
-                    Shopee Đảm Bảo
+                    Glow Đảm Bảo
                   </div>
                   <div className="mt-6 flex flex-col items-center text-gray-400">
                     <svg

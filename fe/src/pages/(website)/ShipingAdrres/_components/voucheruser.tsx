@@ -18,6 +18,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
   ap,
 }: any) => {
   const [selectedDiscount, setSelectedDiscount] = useState<number | null>(null);
+  const [giamtoida, setGiamtoida] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [clickedIndex, setClickedIndex] = useState<string | null>(null);
@@ -44,7 +45,11 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
     if (selectedDiscount !== null && clickedIndex !== null) {
       mutate(clickedIndex, {
         onSuccess: () => {
-          onSelectVoucher({ giam_gia: selectedDiscount, index: clickedIndex });
+          onSelectVoucher({
+            giam_gia: selectedDiscount,
+            index: clickedIndex,
+            giam_toi_da: giamtoida,
+          });
           handleCancel();
         },
       });
@@ -76,13 +81,16 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
   const handleClick = ({
     index,
     giam_gia,
+    giam_toi_da,
   }: {
     index: string;
     giam_gia: number;
+    giam_toi_da: number;
   }) => {
     const newIndex = clickedIndex === index ? null : index;
     setClickedIndex(newIndex);
     setSelectedDiscount(newIndex ? giam_gia : null);
+    setGiamtoida(newIndex ? giam_toi_da : null);
   };
   // console.log(ap);
   const { data, refetch } = useQuery({
@@ -104,7 +112,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
     },
     enabled: false, // Disable automatic fetch on mount
   });
-
+  console.log(data);
   useEffect(() => {
     refetch();
   }, [ap, refetch]);
@@ -193,6 +201,7 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
                       handleClick({
                         index: item?.ma_khuyen_mai?.ma_code,
                         giam_gia: item?.ma_khuyen_mai?.giam_gia,
+                        giam_toi_da: item?.ma_khuyen_mai?.giam_toi_da,
                       })
                     }
                     key={index}
@@ -210,12 +219,15 @@ const Voucheruser: React.FC<VoucheruserProps> = ({
                       <p className="text-sm text-gray-500">
                         Giảm{" "}
                         {item?.ma_khuyen_mai?.giam_gia > 100
-                          ? item?.ma_khuyen_mai?.giam_gia.toLocaleString(
+                          ? item?.ma_khuyen_mai?.giam_gia?.toLocaleString(
                               "vi-VN"
                             ) + "k"
-                          : item?.ma_khuyen_mai?.giam_gia + "%"}{" "}
+                          : item?.ma_khuyen_mai?.giam_gia +
+                            `% tối đa ₫${Number(
+                              item?.ma_khuyen_mai?.giam_toi_da
+                            ).toLocaleString("vi-VN")}`}{" "}
                         cho đơn từ{" "}
-                        {item?.ma_khuyen_mai?.chi_tieu_toi_thieu.toLocaleString(
+                        {item?.ma_khuyen_mai?.chi_tieu_toi_thieu?.toLocaleString(
                           "vi-VN"
                         )}
                         k
