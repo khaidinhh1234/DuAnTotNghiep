@@ -311,7 +311,7 @@ const DetailTransport = ({ record }: any) => {
               > */}
               <div
                 className={`${
-                  record.trang_thai_van_chuyen === "chờ xử lý"
+                  record.trang_thai_van_chuyen === "Chờ xử lý"
                     ? "bg-blue-500" // Chờ xác nhận: màu vàng nhạt
                     : record.trang_thai_van_chuyen === "Đang giao hàng"
                       ? "bg-purple-500" // Đang giao hàng: màu tím
@@ -319,7 +319,7 @@ const DetailTransport = ({ record }: any) => {
                         ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                           ? "bg-red-500" // Giao hàng thất bại: màu đ��
-                          : "bg-red-500" // Các trạng thái khác: màu đỏ
+                          : "bg-red-500" 
                 } text-white px-2 py-1 font-bold rounded-lg`}
               >
                 {record.trang_thai_van_chuyen === "chờ xử lý"
@@ -424,7 +424,7 @@ const DetailTransport = ({ record }: any) => {
                       <p>Trạng thái vận chuyển</p>{" "}
                       <span
                         className={`   ${
-                          record.trang_thai_van_chuyen == "chờ xử lý"
+                          record.trang_thai_van_chuyen == "Chờ xử lý"
                             ? "bg-blue-500"
                             : record.trang_thai_van_chuyen == "Đang giao hàng"
                               ? "bg-purple-500"
@@ -523,8 +523,8 @@ const DetailTransport = ({ record }: any) => {
               <hr />
               <p> Vui lòng xác nhận đơn hàng đã nhận hàng</p>
               <div className="flex flex-col gap-2">
-                {record.trang_thai_van_chuyen === "Đang xử lý" ? (
-                  <span className="w-full py-1 px-2 text-base font-medium text-yellow-500 border-b-2 border-yellow-500 hover:text-yellow-600 hover:border-yellow-600 transition-all duration-300 ease-in-out cursor-default text-center ">
+                {record.trang_thai_van_chuyen === "Chờ xử lý" ? (
+                  <span className="w-full py-1 px-2 text-base font-medium text-blue-500 border-b-2 border-blue-500 hover:text-blue-600 hover:border-blue-600 transition-all duration-300 ease-in-out cursor-default text-center ">
                     Chờ lấy hàng
                   </span>
                 ) : record.trang_thai_van_chuyen === "Đang giao hàng" ? (
