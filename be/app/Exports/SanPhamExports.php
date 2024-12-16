@@ -47,7 +47,7 @@ class SanPhamExports implements FromCollection, WithHeadings, WithMapping, WithS
     public function styles(Worksheet $sheet)
     {
         $sheet->getColumnDimension('A')->setWidth(20);
-        $sheet->getColumnDimension('B')->setWidth(20);
+        // $sheet->getColumnDimension('B')->setWidth(20);
         $sheet->getColumnDimension('C')->setWidth(30);
         $sheet->getColumnDimension('D')->setWidth(20);
         $sheet->getColumnDimension('E')->setWidth(30);
@@ -116,9 +116,11 @@ class SanPhamExports implements FromCollection, WithHeadings, WithMapping, WithS
                     return $kichThuoc;
             }
         })->unique()->implode(', ');
+        // $danhmuc = $sanPham->danhMuc;
+        // dd($danhMuc);                                                                                                                                                                                                                                                                                                                                                              ->toArray());
         return [
             $sanPham->id,
-            $sanPham->danh_muc == null ? 'Không có' : $sanPham->danh_muc,
+            // $danhMuc == null ? 'Không có' : $danhMuc,
             $sanPham->ten_san_pham == null ? 'Không có' : $sanPham->ten_san_pham,
             $sanPham->ma_san_pham == null ? 'Không có' : $sanPham->ma_san_pham,
             $sanPham->anh_san_pham == null ? 'Không có' : $sanPham->anh_san_pham,

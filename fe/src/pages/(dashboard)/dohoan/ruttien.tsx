@@ -423,10 +423,10 @@ const WithdrawalRequests: React.FC = () => {
                     {formatDate(selectedBank.created_at)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                {/* <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <span className="text-gray-600">Mã ngân hàng</span>
                   <span className="font-medium">#{selectedBank.id}</span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
