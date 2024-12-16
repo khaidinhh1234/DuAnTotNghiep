@@ -63,6 +63,6 @@ class SanPham extends Model
     public function bienTheDanhGias()
     {
         return $this->belongsToMany(BienTheSanPham::class, 'danh_gia_san_phams', 'san_pham_id', 'bien_the_san_pham_id')
-                ->withPivot('bien_the_san_pham_id');
+            ->withPivot('bien_the_san_pham_id');
     }
 }

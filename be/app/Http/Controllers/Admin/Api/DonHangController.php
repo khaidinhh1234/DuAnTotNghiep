@@ -340,30 +340,13 @@ class DonHangController extends Controller
 
     public function inHoaDon(string $id)
     {
-        $thongTinWeb = ThongTinWeb::first();
-        $hoaDon = DonHang::query()
-            ->with([
-                'user',
-                'chiTiets.bienTheSanPham.sanPham',
-                'chiTiets.bienTheSanPham.mauBienThe',
-                'chiTiets.bienTheSanPham.kichThuocBienThe',
-                'vanChuyen'
-            ])
-            ->find($id);
-        if (is_null($hoaDon['ten_nguoi_dat_hang']) && is_null($hoaDon['so_dien_thoai_nguoi_dat_hang']) && is_null($hoaDon['dia_chi_nguoi_dat_hang'])) {
-            $hoaDon['ten_nguoi_dat_hang'] = $hoaDon->user->ho . ' ' . $hoaDon->user->ten;
-            $hoaDon['so_dien_thoai_nguoi_dat_hang'] = $hoaDon->user->so_dien_thoai;
-            $hoaDon['dia_chi_nguoi_dat_hang'] = $hoaDon->user->dia_chi;
-        }
-        if ($hoaDon) {
-            $pdf = Pdf::loadView('hoadon.bill', compact('hoaDon', 'thongTinWeb'));
-            return $pdf->download('Hoadon' . $id . '.pdf');
-        }
+        $vanChuyen = donHang::with( 'vanChuyen')->findOrFail($id);
         return response()->json([
             'status' => false,
             'status_code' => 404,
-            'message' => 'Đã xảy ra lỗi khi in hóa đơn',
-        ], 404);
+            'data' => $vanChuyen,
+            // 'message' => '',
+        ], 200);
     }
 
     public function layThongTinDon()

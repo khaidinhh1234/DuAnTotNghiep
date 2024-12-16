@@ -354,7 +354,7 @@ const ProductCategoriesDM = () => {
       </div>
     );
   return (
-    <div>
+    <div className="mb-20">
       {" "}
       <section>
         <div className="container">

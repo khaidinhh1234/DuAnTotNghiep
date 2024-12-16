@@ -13,7 +13,8 @@ const Chart2: React.FC = () => {
   });
   if (isLoading) return <div>Loading...</div>;
   // console.log(data);
-
+  const result = data?.chenh_lech_phan_tram.toFixed(1);
+  const checkdata = result > 0 ? true : false;
   return (
     <Card x-chunk="dashboard-01-chunk-1" className="bg-white">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -28,9 +29,10 @@ const Chart2: React.FC = () => {
             : 0
           ).toLocaleString("vi-VN")}
         </div>
-        <p className="text-sm text-muted-foreground text-green-600">
-          +{data?.chenh_lech_phan_tram ?? 0} %{" "}
-          <span className="text-black">so với tháng trước</span>
+        <p
+          className={`text-sm text-muted-foreground ${checkdata ? "text-green-600" : "text-red-500"}`}
+        >
+          {result ?? 0} % <span className="text-black">so với tháng trước</span>
         </p>
       </CardContent>
     </Card>
