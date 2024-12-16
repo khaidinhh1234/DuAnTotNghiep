@@ -34,13 +34,13 @@ class KhuyenMaiController extends Controller
                 ->where('nguoi_dung_ma_khuyen_mai.user_id', $user->id)
                 ->where('ma_khuyen_mais.ngay_bat_dau', '<=', $currentDate)
                 ->where('ma_khuyen_mais.ngay_ket_thuc', '>=', $currentDate)
-                ->where('trang_thai', 1)
+                ->where('ma_khuyen_mais.trang_thai', 1)
+                ->where('nguoi_dung_ma_khuyen_mai.da_su_dung', 0)
                 ->where('nguoi_dung_ma_khuyen_mai.da_su_dung', 0)
                 ->select(
                     'ma_khuyen_mais.*',
                     'nguoi_dung_ma_khuyen_mai.da_su_dung',
                     'nguoi_dung_ma_khuyen_mai.ngay_su_dung',
-                    DB::raw("IF(nguoi_dung_ma_khuyen_mai.da_su_dung, 'Đã sử dụng', 'Chưa sử dụng') as trang_thai_su_dung")
                 )
                 ->get();
 
@@ -156,12 +156,10 @@ class KhuyenMaiController extends Controller
             $maKhuyenMais = MaKhuyenMai::whereHas('hangThanhViens', function ($query) use ($hangThanhVien) {
                 $query->where('hang_thanh_vien_id', $hangThanhVien->id);
             })
-                ->join('nguoi_dung_ma_khuyen_mai', 'ma_khuyen_mais.id', '=', 'nguoi_dung_ma_khuyen_mai.ma_khuyen_mai_id')
                 ->where('trang_thai', 1)
                 ->where('ngay_bat_dau_suu_tam', '<=', now())
                 ->where('ngay_ket_thuc', '>=', now())
                 ->whereColumn('so_luong_da_su_dung', '<', 'so_luong')
-                ->where('nguoi_dung_ma_khuyen_mai.da_su_dung', 0)
                 ->get();
 
             if ($maKhuyenMais->isEmpty()) {

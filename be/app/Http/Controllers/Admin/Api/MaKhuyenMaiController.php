@@ -57,7 +57,7 @@ class MaKhuyenMaiController extends Controller
             'giam_toi_da' => 'nullable|numeric',
             'khuyen_mai_san_pham' => 'nullable|array',
             'khuyen_mai_danh_muc' => 'nullable|array',
-            'hang_thanh_vien' => 'required|array',
+            'hang_thanh_viens' => 'required|array',
             'ap_dung_vi' => 'required|in:0,1'
         ]);
 
@@ -124,7 +124,7 @@ class MaKhuyenMaiController extends Controller
                 $maKhuyenMai->sanPhams()->sync(DB::table('san_phams')->pluck('id'));
             }
 
-            $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
+            $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_viens);
 
             DB::commit();
 

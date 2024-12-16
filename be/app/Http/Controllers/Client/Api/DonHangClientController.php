@@ -471,7 +471,6 @@ class DonHangClientController extends Controller
                         ['user_id' => $userId, 'ma_khuyen_mai_id' => $maGiamGia->id],
                         ['da_su_dung' => true, 'ngay_su_dung' => now()]
                     );
-
                 }
             }
 
