@@ -65,4 +65,9 @@ class SanPham extends Model
         return $this->belongsToMany(BienTheSanPham::class, 'danh_gia_san_phams', 'san_pham_id', 'bien_the_san_pham_id')
             ->withPivot('bien_the_san_pham_id');
     }
+
+    public function khuyenMai()
+    {
+        return $this->belongsToMany(MaKhuyenMai::class, 'san_pham_khuyen_mai', 'san_pham_id', 'khuyen_mai_id');
+    }
 }
