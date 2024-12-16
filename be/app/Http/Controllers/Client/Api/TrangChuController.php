@@ -467,7 +467,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem->delete();
+            $user->lichSuTimKiem()->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
@@ -487,7 +487,7 @@ class TrangChuController extends Controller
     {
         try {
             $user = Auth::guard('api')->user();
-            $user->lichSuTimKiem->where('id', $id)->delete();
+            $user->lichSuTimKiem()->where('id', $id)->delete();
             return response()->json([
                 'status' => true,
                 'status_code' => 200,
