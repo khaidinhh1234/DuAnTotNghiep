@@ -649,7 +649,7 @@ const Detail = ({ record }: any) => {
                               </p>
                             )}
                           </div>
-                          <div className="flex">
+                          {/* <div className="flex">
                             <button
                               onClick={() => showModal(record)}
                               disabled={!!item.phan_hoi}
@@ -664,7 +664,7 @@ const Detail = ({ record }: any) => {
                             <button className="mx-2 px-4 text-blue-500 ">
                               Ẩn
                             </button>
-                          </div>
+                          </div> */}
                         </div>
                       )
                     )
@@ -673,7 +673,7 @@ const Detail = ({ record }: any) => {
                   )}
                 </>
               )}
-              <Modal
+              {/* <Modal
                 title="Phản hồi đánh giá"
                 open={isModalOpen}
                 onOk={handleOk}
@@ -699,7 +699,7 @@ const Detail = ({ record }: any) => {
                     />
                   </div>
                 )}
-              </Modal>
+              </Modal> */}
             </div>
           </div>
         </div>
