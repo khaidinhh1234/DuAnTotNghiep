@@ -185,9 +185,12 @@ class DonHangClientController extends Controller
                 $tongSoLuong = $donHang->sum(function ($order) {
                     return $order->chiTiets->sum('so_luong');
                 });
-                $tongTienSanPham = $donHang->sum(function ($order) {
+                $tongTienSanPham = $donHang->sum(function ($order) use ($donHang) {
                     if ($order->chiTiets->sum('thanh_tien') < 500000) {
                         return $order->chiTiets->sum('thanh_tien') + 20000;
+                    }
+                    if ($donHang->sanPham->KhuyenMai) {
+                        return $order->chiTiets->sum('thanh_tien') - $donHang->sanPham->KhuyenMai->giam_gia;
                     }
                     return $order->chiTiets->sum('thanh_tien');
                 });
@@ -415,7 +418,7 @@ class DonHangClientController extends Controller
                 $tongTienDonHang += $gia * $sanPham->so_luong;
             }
 
-            if (isset($request->ma_giam_gia) && count($request->ma_giam_gia) > 0) {
+            if (isset($request->ma_giam_gia)) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
 
                 if ($maGiamGia) {

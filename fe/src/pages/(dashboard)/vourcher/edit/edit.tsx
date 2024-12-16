@@ -61,7 +61,21 @@ const EditVoucher = () => {
       label: item.ten_hang_thanh_vien,
     })
   );
+
+  // console.log("hang_thanh_viens", voucherid?.data?.hang_thanh_viens);
+  useEffect(() => {
+    {
+      form.setFieldsValue({
+        ...voucherid?.data,
+        hang_thanh_vien: voucherid?.data?.hang_thanh_viens,
+        ngay_bat_dau: dayjs(voucherid?.data?.ngay_bat_dau),
+        ngay_ket_thuc: dayjs(voucherid?.data?.ngay_ket_thuc),
+        ngay_bat_dau_suu_tam: dayjs(voucherid?.data?.ngay_bat_dau_suu_tam),
+      });
+    }
+  }, [voucherid]);
   // console.log("hang_thanh_viens", hang_thanh_viens);
+
   const { mutate } = useMutation({
     // mutationKey: "createVoucher",
     mutationFn: async (values: any) => {
@@ -840,10 +854,10 @@ const EditVoucher = () => {
                     />
                   </Form.Item>{" "}
                   <Form.Item
-                    label="Hạng thành viên  (áp dụng )
+                    label="Hạng thành viên (áp dụng )
 "
                     name="hang_thanh_vien"
-                    initialValue={voucherid?.data?.hang_thanh_vien}
+                    initialValue={hang_thanh_viens}
                     // rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >
