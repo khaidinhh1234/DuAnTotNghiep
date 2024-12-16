@@ -55,7 +55,7 @@ const Detail = ({ record }: any) => {
         onCancel={handleCancel}
         closable={false} // Ẩn dấu X
       >
-        <div className="max-w-4xl h-[400px] grid grid-cols-6 bg-slate-100 rounded-lg shadow-lg hover:shadow-black/30 mx-auto scale-125">
+        <div className="max-w-4xl h-[430px] grid grid-cols-6 bg-slate-100 rounded-lg shadow-lg hover:shadow-black/30 mx-auto scale-125">
           <div className="px-4 py-5 text-center col-span-2 my-auto">
             <h2 className="text-gray-700 text-3xl font-bold">LÊN TỚI</h2>
             <h1 className="text-red-600 text-7xl font-black">
@@ -90,6 +90,11 @@ const Detail = ({ record }: any) => {
                   Số tiền tối thiểu:{" "}
                   {(record?.chi_tieu_toi_thieu).toLocaleString("vi-VN")} ₫
                 </h1>{" "}
+                {record?.giam_toi_da && (
+                <h1 className="text-white text-xl font-semibold tracking-tight">
+    Giảm tối đa {Number(record.giam_toi_da).toLocaleString("vi-VN")}đ
+  </h1>
+)}
                 <h1 className="text-white text-xl font-semibold tracking-tight">
                   Ngày bắt đầu sử dụng: {ngay_bat_dau_suu_tam}
                 </h1>{" "}

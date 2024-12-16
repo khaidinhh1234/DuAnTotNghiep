@@ -397,10 +397,10 @@ const DetailTransport = ({ record }: any) => {
                           {item?.so_luong}
                         </td>
                         <td className="text-center w-[20%] font-semibold  ">
-                          {(item?.gia).toLocaleString()} VNĐ
+                          {item?.gia?.toLocaleString()} VNĐ
                         </td>
                         <td className="text-center w-[35%] font-semibold">
-                          {(item?.thanh_tien).toLocaleString()} VNĐ
+                          {item?.thanh_tien?.toLocaleString()} VNĐ
                         </td>
                       </tr>
                     ))}
@@ -476,7 +476,7 @@ const DetailTransport = ({ record }: any) => {
                   <h1 className="text-lg font-semibold">Tổng tiền hàng</h1>
                   <p className="text-base font-semibold">
                     <span>
-                      {tong?.tong_thanh_tien_san_pham.toLocaleString("vi-VN")}
+                      {tong?.tong_thanh_tien_san_pham?.toLocaleString("vi-VN")}
                     </span>{" "}
                     VNĐ
                   </p>
@@ -487,7 +487,7 @@ const DetailTransport = ({ record }: any) => {
                     -{" "}
                     <span>
                       {tong?.van_chuyen?.don_hang?.so_tien_giam_gia
-                        ? tong?.van_chuyen?.don_hang?.so_tien_giam_gia.toLocaleString(
+                        ? tong?.van_chuyen?.don_hang?.so_tien_giam_gia?.toLocaleString(
                             "vi-VN"
                           )
                         : 0}{" "}
