@@ -415,9 +415,7 @@ class DonHangClientController extends Controller
                 $tongTienDonHang += $gia * $sanPham->so_luong;
             }
 
-
-            if (isset($request->ma_giam_gia)) {
-
+            if (isset($request->ma_giam_gia) && count($request->ma_giam_gia) > 0) {
                 $maGiamGia = MaKhuyenMai::where('ma_code', $request->ma_giam_gia)->first();
 
                 if ($maGiamGia) {
@@ -473,9 +471,8 @@ class DonHangClientController extends Controller
                         ['user_id' => $userId, 'ma_khuyen_mai_id' => $maGiamGia->id],
                         ['da_su_dung' => true, 'ngay_su_dung' => now()]
                     );
+
                 }
-            } else {
-                return response()->json(['status' => false, 'message' => 'Mã giảm giá không hợp lệ.'], 400);
             }
 
             if ($tongTienDonHang < 500000) {
