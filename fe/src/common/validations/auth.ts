@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().email({ message: "Email không hợp lệ" }),
+  email: z.string().email({ message: "Email không được bỏ trống" }),
 
   password: z
     .string()
-    .min(6, { message: "Mật khẩu không chính xác" })
+    .min(6, { message: "Mật khẩu không được bỏ trống" })
 
     .regex(/^\S+$/, { message: "Mật khẩu không đúng định dạng" }),
 });
