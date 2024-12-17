@@ -134,8 +134,8 @@ const MyProfilePage = () => {
           to="/mypro/myProfile"
           className="btn-black items-center md:px-8 md:py-3 px-4 py-2 flex whitespace-nowrap rounded-lg hover:text-black"
         >
-          <i className="fa-solid fa-pen-to-square" />
-          <span>Quay lại</span>
+          <span>Quay lại</span>{" "}
+          <i className="fa-sharp-duotone fa-regular fa-arrow-right-from-bracket mx-2"></i>
         </Link>
       </div>
 
