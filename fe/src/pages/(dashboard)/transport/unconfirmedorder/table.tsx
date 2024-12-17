@@ -195,7 +195,9 @@ const TableUncomfirmedOrder: React.FC = () => {
     }
   }, [transport, activeTab]);
 
-  const dataSource: TransportData[] = (Array.isArray(filteredData) ? filteredData : []).map(
+  const dataSource: TransportData[] = (
+    Array.isArray(filteredData) ? filteredData : []
+  ).map(
     (item: any): TransportData => ({
       key: item.id,
       ...item,
@@ -205,7 +207,6 @@ const TableUncomfirmedOrder: React.FC = () => {
       shipper_id: item.don_hang?.shipper?.ho_ten || "Chưa có dữ liệu",
     })
   );
-  
 
   const handleChange = (value: string) => {
     setTrangThai(value);

@@ -121,6 +121,10 @@ const UserskhachhangAdd = () => {
                       pattern: /^[^\s]+(\s+[^\s]+)*$/,
                       message: "Vui lòng nhập họ không chứa ký tự trắng!",
                     },
+                    {
+                      min: 2,
+                      message: "Họ của khách hàng phải có ít nhất 2 ký tự!",
+                    }
                   ]}
                 >
                   <Input placeholder="Nhập Họ của khách hàng" />
@@ -138,6 +142,10 @@ const UserskhachhangAdd = () => {
                       pattern: /^[^\s]+(\s+[^\s]+)*$/,
                       message: "Vui lòng nhập tên không chứa ký tự trắng!",
                     },
+                    {
+                      min: 2,
+                      message: "Tên của khách hàng phải có ít nhất 2 ký tự!",
+                    }
                   ]}
                 >
                   <Input placeholder="Nhập tên của khách hàng" />
@@ -175,45 +183,6 @@ const UserskhachhangAdd = () => {
                   </Radio.Group>
                 </Form.Item>
               </div>
-              {/* <Form.Item label="Danh mục Tài khoản" name="category">
-                  <Select
-                    defaultValue="Vui long chon danh muc"
-                    className="w-[490px]"
-                    // onChange={handleChange}
-                    //   options={
-                    //     category?.map((item: ICategory) => ({
-                    //       value: item._id,
-                    //       label: item.name,
-                    //     })) || []
-                    //   }
-                  />
-                </Form.Item> */}
-              {/* <div className="grid grid-cols-2 gap-5">
-                <Form.Item
-                  label="Mô tả ngắn"
-                  name="description"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Tên Tài khoản bắt buộc phải nhập!",
-                    },
-                  ]}
-                >
-                  <TextArea rows={5} placeholder="Nhập mô tả Tài khoản" />
-                </Form.Item>
-                <Form.Item
-                  label="Nội dung"
-                  name="description"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Tên Tài khoản bắt buộc phải nhập!",
-                    },
-                  ]}
-                >
-                  <TextArea rows={5} placeholder="Nhập mô tả Tài khoản" />
-                </Form.Item>
-              </div> */}
               <div className="grid grid-cols-3 gap-5">
                 <Form.Item
                   label="Email"
@@ -265,9 +234,9 @@ const UserskhachhangAdd = () => {
                         const today = new Date();
                         const birthDate = new Date(value);
                         let age = today.getFullYear() - birthDate.getFullYear();
-                        if (age < 3) {
+                        if (age < 17) {
                           return Promise.reject(
-                            new Error("Khách hàng yêu cầu độ tuổi phù hợp!")
+                            new Error("Yêu cầu khách hàng phải trên 17 tuổi!")
                           );
                         }
                         if (birthDate > today) {
@@ -297,7 +266,7 @@ const UserskhachhangAdd = () => {
                     },
 
                     {
-                      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/,
+                      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{6,}$/,
                       message: "Mật khẩu phải chứa ít nhất 1 chữ hoa và 1 số!",
                     },
                   ]}

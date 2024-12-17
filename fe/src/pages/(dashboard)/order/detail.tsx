@@ -236,14 +236,18 @@ const Detail = ({ record }: any) => {
                               "Chờ khách hàng xác nhận"
                               ? "text-green-700"
                               : record.trang_thai_don_hang ===
-                                "Hoàn tất đơn hàng"
-                                ? "text-green-500" // Đã giao hàng thành công: màu xanh lá
+
+                                  "Hoàn tất đơn hàng"
+                                ? "text-green-500"
+
                                 : record.trang_thai_don_hang === "Hủy hàng"
-                                  ? "bg-red-200"
+                                  ? "bg-red-100"
                                   : record.trang_thai_don_hang === "Hoàn hàng"
                                     ? "bg-green-500"
-                                    : "text-red-500" // Các trạng thái khác: màu đỏ
-                  }`}
+
+                                    : "text-red-500"
+                }`}
+
               >
                 <div
                   className={`${record.trang_thai_don_hang === "Chờ xác nhận"
@@ -261,15 +265,17 @@ const Detail = ({ record }: any) => {
                                 "Hoàn tất đơn hàng"
                                 ? "text-green-500" // Hoàn tất đơn hàng: màu xanh lá
                                 : record.trang_thai_don_hang === "Hủy hàng"
-                                  ? "Hủy hàng" // Hủy hàng: màu đỏ
+                                  ? "text-red-500" // Hủy hàng: màu đỏ
                                   : record.trang_thai_don_hang ===
                                     "Đơn hàng bị từ chối nhân"
                                     ? "text-red-700" // Đơn hàng bị từ chối nhận: màu đỏ đậm
                                     : record.trang_thai_don_hang === "Hoàn hàng"
                                       ? "text-blue-700" // Hoàn hàng: màu xanh đậm
                                       : record.trang_thai_don_hang ===
-                                        "Chờ xác nhận hoàn hàng"
-                                        ? "text-yellow-500" // Chờ xác nhận hoàn hàng: màu vàng đậm
+
+                                          "Chờ xác nhận hoàn hàng"
+                                        ? "text-yellow-500"
+
                                         : record.trang_thai_don_hang ===
                                           "Từ chối hoàn hàng"
                                           ? "text-gray-500" // Từ chối hoàn hàng: màu xám

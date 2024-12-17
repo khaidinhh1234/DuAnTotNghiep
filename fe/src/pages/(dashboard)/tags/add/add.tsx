@@ -247,7 +247,7 @@ const Tagsadd = () => {
       nav("/admin/products/tags");
     },
     onError: (error) => {
-      message.error(error.message);
+      message.error("Thêm bộ sưu tập thất bại");
     },
     onSettled: () => {
       setIsSubmitting(false);

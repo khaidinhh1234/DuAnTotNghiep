@@ -158,16 +158,19 @@ const DetailTransport = ({ record }: any) => {
                 }`}
               > */}
               <div
-                className={`${record.trang_thai_van_chuyen === "Chờ xử lý"
-                  ? "bg-blue-500" // Chờ xác nhận: màu vàng nhạt
-                  : record.trang_thai_van_chuyen === "Đang giao hàng"
-                    ? "bg-purple-500" // Đang giao hàng: màu tím
-                    : record.trang_thai_van_chuyen === "Giao hàng thành công"
-                      ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
-                      : record.trang_thai_van_chuyen === "Giao hàng thất bại"
-                        ? "bg-red-500" // Giao hàng thất bại: màu đ��
-                        : "bg-red-500"
-                  } text-white px-2 py-1 font-bold rounded-lg`}
+
+                className={`${
+                  record.trang_thai_van_chuyen === "Chờ xử lý"
+                    ? "bg-blue-500" // Chờ xác nhận: màu vàng nhạt
+                    : record.trang_thai_van_chuyen === "Đang giao hàng"
+                      ? "bg-purple-500" // Đang giao hàng: màu tím
+                      : record.trang_thai_van_chuyen === "Giao hàng thành công"
+                        ? "bg-green-500" // Đã giao hàng thành công: màu xanh lá
+                        : record.trang_thai_van_chuyen === "Giao hàng thất bại"
+                          ? "bg-red-500" // Giao hàng thất bại: màu đ��
+                          : "bg-red-500"
+                } text-white px-2 py-1 font-bold rounded-lg`}
+
               >
                 {record.trang_thai_van_chuyen === "chờ xử lý"
                   ? "Chờ xử lý" // Chờ xác nhận: màu vàng nhạt

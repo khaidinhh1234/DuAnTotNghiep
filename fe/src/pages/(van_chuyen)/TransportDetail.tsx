@@ -7,7 +7,10 @@ import Webcam from "react-webcam";
 
 const TransportDetail = ({ record }: any) => {
   const [modalWidth, setModalWidth] = useState(400);
-
+  const [visibleProducts, setVisibleProducts] = useState(2);
+  const handleLoadMore = () => {
+    setVisibleProducts(products.length);
+  };
   useEffect(() => {
     const updateWidth = () => {
       setModalWidth(window.innerWidth >= 768 ? 1200 : 400);
@@ -41,7 +44,7 @@ const TransportDetail = ({ record }: any) => {
         ...item,
       };
     }
-  );
+  ) || [];
   const thongtin = data?.data?.thong_tin;
   // console.log(thongtin);
   const donhang = data?.data?.van_chuyen?.don_hang;
@@ -308,9 +311,9 @@ const TransportDetail = ({ record }: any) => {
           </div>
           <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
             <div className="w-full md:w-3/4">
-              {products ? (
-                products.map((product: any) => (
-                  <div key={product.id} className="flex mb-4 border-b pb-4">
+              {products && products.length > 0 ? (
+                      products.slice(0, visibleProducts).map((product: any, index: number) => (
+                  <div key={index} className="flex mb-4 border-b pb-4">
                     <img
                       src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
                       alt="Product Image"
@@ -358,6 +361,16 @@ const TransportDetail = ({ record }: any) => {
               ) : (
                 <p>Loading...</p>
               )}
+              {visibleProducts < products.length && (
+                      <div className="flex  ">
+                        <div
+                          // onClick={handleLoadMore}
+                          className="font-bold"
+                        >
+                           <i className="fa-solid fa-share"></i> Xem thêm ...
+                        </div>
+                      </div>
+                    )}
             </div>
           </div>
         </div>

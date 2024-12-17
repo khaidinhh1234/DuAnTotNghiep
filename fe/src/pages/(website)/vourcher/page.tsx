@@ -42,6 +42,7 @@ const formatCurrency = (amount: number) => {
 };
 
 const Voucher = () => {
+  const [lengthss, setLengthss] = useState(6);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const queryClient = useQueryClient();
 
@@ -52,11 +53,13 @@ const Voucher = () => {
       return response.data;
     },
   });
-
+  const reversedData = vouchersData?.data?.slice().reverse();
   const [savedVouchers, setSavedVouchers] = useState<string[]>(() => {
     return (
-      vouchersData?.data
+      reversedData
+
         .filter((v: Voucher) => v.da_thu_thap === 1)
+
         .map((v: Voucher) => v.ma_code) || []
     );
   });
@@ -87,7 +90,7 @@ const Voucher = () => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
- 
+
   // if (isLoading)
   //   return (
   //     <div className="flex items-center justify-center min-h-screen">
@@ -167,103 +170,112 @@ const Voucher = () => {
           <div className="space-y-8 px-4">
             <h2 className="text-3xl font-bold text-black-500">Tất cả ưu đãi</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vouchersData?.data && vouchersData.data.length > 0 ? (
-                vouchersData.data.map((voucher: Voucher) => (
-                  <div
-                    key={voucher.id}
-                    className={`flex items-center border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative ${
-                      voucher.ap_dung_vi ? "bg-[#fff]" : "bg-white"
-                    }`}
-                  >
-                    {voucher.trang_thai_su_dung === "Đã sử dụng" && (
-                      <div className="absolute top-0 right-0 bg-gray-500 text-white px-3 py-1 rounded-bl-lg">
-                        Đã sử dụng
-                      </div>
-                    )}
+              {reversedData && reversedData.length > 0 ? (
+                <>
+                  {reversedData
+                    ?.slice(0, lengthss)
 
-                    <div className="absolute top-2 -right-1 flex items-center">
-                      <div className="bg-red-100 text-red-500 font-bold text-sm px-2 py-1 rounded-l-full shadow-md relative">
-                        x {voucher.so_luong - voucher.so_luong_da_su_dung}
-                      </div>
+                    .map((voucher: Voucher) => (
                       <div
-                        className="absolute -bottom-1 -right-0 w-1 h-1 bg-[#fe9f8c]"
-                        style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
-                      ></div>
-                    </div>
-
-                    <div className="absolute -top-2 right-36 w-4 h-4 bg-gray-100 rounded-full md:block hidden"></div>
-                    <div className="absolute top-4 right-[9.50rem] bottom-4 border-r border-dashed border-gray-300 md:block hidden"></div>
-                    <div className="absolute -bottom-2 right-36 w-4 h-4 bg-gray-100 rounded-full md:block hidden"></div>
-
-                    <div className="flex-grow">
-                      <h2 className="text-lg font-semibold">
-                        {voucher.loai === "tien_mat"
-                          ? `Giảm: ${formatCurrency(voucher.giam_gia)}`
-                          : `Giảm: ${voucher.giam_gia}%`}
-                      </h2>
-                      <p className="text-sm text-gray-600 max-w-[200px] break-words">
-  {voucher.loai === "tien_mat"
-    ? `Giảm ${Number(voucher.giam_gia).toLocaleString()}đ`
-    : `Giảm ${voucher.giam_gia}% ${
-        voucher.giam_toi_da
-          ? `(tối đa ${Number(voucher.giam_toi_da).toLocaleString()}đ)`
-          : ""
-      }`}{" "}
-  cho đơn từ {Number(voucher.chi_tieu_toi_thieu).toLocaleString()}đ
-</p>
-
-
-                      <div
-                        className={`${
-                          voucher.ap_dung_vi
-                            ? "bg-[#ee4d2d] text-[#fff]"
-                            : "bg-[#cfebee] text-[#63b1bc]"
-                        } px-2 py-1 rounded mt-2 inline-block`}
+                        key={voucher.id}
+                        className={`flex items-center border border-gray-200 rounded-lg p-4 shadow-md w-full min-h-[150px] relative ${
+                          voucher.ap_dung_vi ? "bg-[#fff]" : "bg-white"
+                        }`}
                       >
-                        {voucher.ma_code}
-                      </div>
+                        {voucher.trang_thai_su_dung === "Đã sử dụng" && (
+                          <div className="absolute top-0 right-0 bg-gray-500 text-white px-3 py-1 rounded-bl-lg">
+                            Đã sử dụng
+                          </div>
+                        )}
 
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-[60px] mt-2">
-                        <p className="text-red-500 text-sm">
-                          Còn {calculateDaysLeft(voucher.ngay_ket_thuc)} ngày
-                        </p>
-                        <a
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setSelectedVoucher(voucher);
-                          }}
-                          className="text-gray-700 text-sm font-bold -mt-[14px] cursor-pointer"
-                        >
-                          Điều kiện
-                        </a>
-                      </div>
-                    </div>
+                        <div className="absolute top-2 -right-1 flex items-center">
+                          <div className="bg-red-100 text-red-500 font-bold text-sm px-2 py-1 rounded-l-full shadow-md relative">
+                            x {voucher.so_luong - voucher.so_luong_da_su_dung}
+                          </div>
+                          <div
+                            className="absolute -bottom-1 -right-0 w-1 h-1 bg-[#fe9f8c]"
+                            style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
+                          ></div>
+                        </div>
 
-                    <div className="flex-shrink-0">
-                      <button
-                        onClick={() => handleSaveVoucher(voucher.ma_code)}
-                        disabled={
-                          voucher.da_thu_thap === 1 ||
-                          voucher.trang_thai_su_dung === "Đã sử dụng"
-                        }
-                        className={`${
-                          voucher.da_thu_thap === 1 ||
-                          voucher.trang_thai_su_dung === "Đã sử dụng"
-                            ? "bg-gray-400"
-                            : voucher.ap_dung_vi
-                              ? "bg-[#ee4d2d]"
-                              : "bg-[#63b1bc]"
-                        } text-white font-semibold py-2 px-8 rounded whitespace-nowrap`}
-                      >
-                        {voucher.da_thu_thap === 1
-                          ? "Đã lưu"
-                          : voucher.trang_thai_su_dung === "Đã sử dụng"
-                            ? "Đã dùng"
-                            : "Lưu mã"}
-                      </button>
-                    </div>
-                  </div>
-                ))
+                        <div className="absolute -top-2 right-36 w-4 h-4 bg-gray-100 rounded-full md:block hidden"></div>
+                        <div className="absolute top-4 right-[9.50rem] bottom-4 border-r border-dashed border-gray-300 md:block hidden"></div>
+                        <div className="absolute -bottom-2 right-36 w-4 h-4 bg-gray-100 rounded-full md:block hidden"></div>
+
+                        <div className="flex-grow">
+                          <h2 className="text-lg font-semibold">
+                            {voucher.loai === "tien_mat"
+                              ? `Giảm: ${formatCurrency(voucher.giam_gia)}`
+                              : `Giảm: ${voucher.giam_gia}%`}
+                          </h2>
+                          <p className="text-sm text-gray-600 max-w-[200px] break-words">
+                            {voucher.loai === "tien_mat"
+                              ? `Giảm ${Number(voucher.giam_gia).toLocaleString()}đ`
+                              : `Giảm ${voucher.giam_gia}% ${
+                                  voucher.giam_toi_da
+                                    ? `(tối đa ${Number(voucher.giam_toi_da).toLocaleString()}đ)`
+                                    : ""
+                                }`}{" "}
+                            cho đơn từ{" "}
+                            {Number(
+                              voucher.chi_tieu_toi_thieu
+                            ).toLocaleString()}
+                            đ
+                          </p>
+
+                          <div
+                            className={`${
+                              voucher.ap_dung_vi
+                                ? "bg-[#ee4d2d] text-[#fff]"
+                                : "bg-[#cfebee] text-[#63b1bc]"
+                            } px-2 py-1 rounded mt-2 inline-block`}
+                          >
+                            {voucher.ma_code}
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-[60px] mt-2">
+                            <p className="text-red-500 text-sm">
+                              Còn {calculateDaysLeft(voucher.ngay_ket_thuc)}{" "}
+                              ngày
+                            </p>
+                            <a
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedVoucher(voucher);
+                              }}
+                              className="text-gray-700 text-sm font-bold -mt-[14px] cursor-pointer"
+                            >
+                              Điều kiện
+                            </a>
+                          </div>
+                        </div>
+
+                        <div className="flex-shrink-0">
+                          <button
+                            onClick={() => handleSaveVoucher(voucher.ma_code)}
+                            disabled={
+                              voucher.da_thu_thap === 1 ||
+                              voucher.trang_thai_su_dung === "Đã sử dụng"
+                            }
+                            className={`${
+                              voucher.da_thu_thap === 1 ||
+                              voucher.trang_thai_su_dung === "Đã sử dụng"
+                                ? "bg-gray-400"
+                                : voucher.ap_dung_vi
+                                  ? "bg-[#ee4d2d]"
+                                  : "bg-[#63b1bc]"
+                            } text-white font-semibold py-2 px-8 rounded whitespace-nowrap`}
+                          >
+                            {voucher.da_thu_thap === 1
+                              ? "Đã lưu"
+                              : voucher.trang_thai_su_dung === "Đã sử dụng"
+                                ? "Đã dùng"
+                                : "Lưu mã"}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </>
               ) : (
                 <div className="col-span-9 h-[230px] ">
                   <img
@@ -273,7 +285,17 @@ const Voucher = () => {
                   />
                 </div>
               )}
-            </div>
+            </div>{" "}
+            {lengthss < reversedData.length && (
+              <div
+                className="flex justify-center mt-10"
+                onClick={() => setLengthss(lengthss + 6)}
+              >
+                <button className="px-10 py-3 mt-4 btn-black rounded-lg mb-4 font-semibold transition duration-200">
+                  Xem thêm
+                </button>
+              </div>
+            )}
           </div>
         </section>
       </main>

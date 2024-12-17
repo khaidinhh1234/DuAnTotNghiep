@@ -17,12 +17,13 @@ const NewCategoriesAdd = () => {
       return response.data;
     },
     onSuccess: () => {
-      message.success("Thêm danh mục thành công");
+      message.success("Thêm danh mục tin tức thành công");
       form.resetFields();
       nav("/admin/newcategory/add");
     },
     onError: (error) => {
-      message.error(error.message);
+      // console.log(error);
+      message.error("Thêm danh mục tin tức thất bại. Vui lòng kiểm tra lại thông tin!");
     },
   });
   // const onFinish = (values: any) => {
