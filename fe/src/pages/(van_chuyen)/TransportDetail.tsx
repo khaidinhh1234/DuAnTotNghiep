@@ -367,7 +367,7 @@ const TransportDetail = ({ record }: any) => {
                           // onClick={handleLoadMore}
                           className="font-bold"
                         >
-                           <i className="fa-solid fa-share"></i> Xem thêm ...
+                           <i className="fa-solid fa-share"></i> Xem thêm chi tiết
                         </div>
                       </div>
                     )}

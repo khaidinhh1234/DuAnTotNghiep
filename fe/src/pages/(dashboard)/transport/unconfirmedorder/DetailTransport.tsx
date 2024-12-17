@@ -83,11 +83,11 @@ const DetailTransport = ({ record }: any) => {
   // const id = record?.id;
   // console.log(id)
   const { data } = useQuery({
-    queryKey: ["VANCHUYEN" , record?.id],
+    queryKey: ["VANCHUYEN", record?.id],
     queryFn: async () => {
       try {
         const response = await instance.get(`/vanchuyen/${record?.id}`);
-      return response.data;
+        return response.data;
       } catch (error) {
         throw new Error(error as any);
       }
@@ -159,8 +159,7 @@ const DetailTransport = ({ record }: any) => {
               > */}
               <div
 
-                className={`${
-                  record.trang_thai_van_chuyen === "Chờ xử lý"
+                className={`${record.trang_thai_van_chuyen === "Chờ xử lý"
                     ? "bg-blue-500" // Chờ xác nhận: màu vàng nhạt
                     : record.trang_thai_van_chuyen === "Đang giao hàng"
                       ? "bg-purple-500" // Đang giao hàng: màu tím
@@ -169,7 +168,7 @@ const DetailTransport = ({ record }: any) => {
                         : record.trang_thai_van_chuyen === "Giao hàng thất bại"
                           ? "bg-red-500" // Giao hàng thất bại: màu đ��
                           : "bg-red-500"
-                } text-white px-2 py-1 font-bold rounded-lg`}
+                  } text-white px-2 py-1 font-bold rounded-lg`}
 
               >
                 {record.trang_thai_van_chuyen === "chờ xử lý"
@@ -205,9 +204,11 @@ const DetailTransport = ({ record }: any) => {
                             <div className="flex gap-5 items-center  w-[50%] my-2">
                               <img
                                 src={
-                                  item?.bien_the_san_pham?.san_pham?.anh_san_pham || ""
+                                  item?.bien_the_san_pham?.anh_bien_the?.length > 0
+                                    ? item?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
+                                    : ""
                                 }
-                                alt={""}
+                                alt={item?.bien_the_san_pham?.san_pham?.ten_san_pham || "Ảnh sản phẩm"}
                                 className="w-20 h-20"
                               />
                               <div>
@@ -265,7 +266,7 @@ const DetailTransport = ({ record }: any) => {
                           onClick={handleLoadMore}
                           className="font-bold"
                         >
-                           <i className="fa-solid fa-share"></i> Xem thêm ...
+                          <i className="fa-solid fa-share"></i> Xem thêm ...
                         </div>
                       </div>
                     )}
