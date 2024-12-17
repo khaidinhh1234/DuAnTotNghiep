@@ -122,11 +122,17 @@ const Detail = ({ record }: any) => {
                             <div className="flex gap-4">
                               <img
                                 src={
+<<<<<<< HEAD
+                                  item?.bien_the_san_pham?.anh_bien_the?.length > 0
+                                    ? item?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
+                                    : ""
+=======
                                   item?.bien_the_san_pham?.anh_bien_the?.[0]?.duong_dan_anh 
                                   || item?.bien_the_san_pham?.san_pham
                                     ?.anh_san_pham
+>>>>>>> 4de503017f9b956af33110dd7476a2eaa4a44b26
                                 }
-                                alt=""
+                                alt={item?.bien_the_san_pham?.san_pham?.ten_san_pham || "Ảnh sản phẩm"}
                                 className="w-20 h-20 object-cover rounded"
                               />
                               <div>

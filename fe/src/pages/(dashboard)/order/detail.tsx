@@ -343,8 +343,9 @@ const Detail = ({ record }: any) => {
                               <div className="flex gap-5 items-center  w-[50%] my-2">
                                 <img
                                   src={
-                                    item?.bien_the_san_pham?.san_pham
-                                      ?.anh_san_pham
+                                    item?.bien_the_san_pham?.anh_bien_the?.length > 0 
+                                    ? item?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
+                                    : ''
                                   }
                                   alt={
                                     item?.bien_the_san_pham?.san_pham

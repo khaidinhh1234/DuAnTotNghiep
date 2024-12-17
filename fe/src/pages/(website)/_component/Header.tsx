@@ -400,9 +400,7 @@ const Header = () => {
               <div className="lg:w-36 mx-10">
                 <Link to="/">
                   <img
-                    src={
-                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1733674338/mcix5sx1uxkjyhs33hss.png"
-                    }
+                    src={logo}
                     alt="Logo"
                     className="lg:w-[120px] lg:h-[35px] w-32 h-9"
                   />
@@ -413,9 +411,7 @@ const Header = () => {
               <div className="lg:w-36">
                 <Link to="/">
                   <img
-                    src={
-                      "https://res.cloudinary.com/dcvu7e7ps/image/upload/v1733674338/mcix5sx1uxkjyhs33hss.png"
-                    }
+                    src={logo}
                     alt="Logo"
                     className="lg:w-[120px] lg:h-[35px] w-32 h-9"
                   />

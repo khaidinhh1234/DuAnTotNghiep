@@ -8,7 +8,10 @@ const ReturnOrderDetail = ({ record }: any) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const id = record?.id;
-
+  const [visibleProducts, setVisibleProducts] = useState(2);
+  const handleLoadMore = () => {
+    setVisibleProducts(products.length);
+  };
   useEffect(() => {
     const updateWidth = () => {
       setModalWidth(window.innerWidth >= 768 ? 1200 : 400);
@@ -28,7 +31,7 @@ const ReturnOrderDetail = ({ record }: any) => {
   });
 
   const returnOrder = data?.data?.hoan_hang;
-  const products = data?.data?.hoan_hang?.don_hang?.chi_tiets;
+  const products = data?.data?.hoan_hang?.don_hang?.chi_tiets || [];
   const thongtin = data?.data?.thong_tin;
   const donhang = data?.data?.hoan_hang?.don_hang;
 
@@ -69,13 +72,18 @@ const ReturnOrderDetail = ({ record }: any) => {
           </div>
           <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
             <div className="w-full md:w-3/4">
-              {products?.map((product: any) => (
+            {products && products.length > 0 ? (
+                products.slice(0, visibleProducts).map((product: any, index: number) => (
                 <div key={product.id} className="flex mb-4 border-b pb-4">
                   <img
-                    src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
-                    alt="Product"
-                    className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
-                  />
+                      src={
+                        product?.bien_the_san_pham?.anh_bien_the?.length > 0
+                          ? product?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
+                          : ""
+                      }
+                      alt={product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Ảnh sản phẩm"}
+                      className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
+                    />
                   <div className="flex flex-col justify-between w-full">
                     <h3 className="text-sm md:text-lg font-semibold truncate hover:text-red-500 cursor-pointer">
                       {product?.bien_the_san_pham?.san_pham?.ten_san_pham}
@@ -113,7 +121,20 @@ const ReturnOrderDetail = ({ record }: any) => {
                     </div>
                   </div>
                 </div>
-              ))}
+               ))
+              ) : (
+                <p>Loading...</p>
+              )}
+              {visibleProducts < products.length && (
+                <div className="flex  ">
+                  <div
+                    // onClick={handleLoadMore}
+                    className="font-bold"
+                  >
+                    <i className="fa-solid fa-share"></i> Xem thêm chi tiết
+                  </div>
+                </div>
+              )}
             </div>
             <div className="w-full md:w-1/4 flex flex-col items-end space-y-2 p-4">
               <div>
@@ -192,11 +213,16 @@ const ReturnOrderDetail = ({ record }: any) => {
             </div>
             <div className="flex flex-col md:flex-row items-start space-y-4 md:space-x-4 mb-4">
               <div className="w-full md:w-3/4">
-                {products?.map((product: any) => (
+              {products && products.length > 0 ? (
+                products.slice(0, visibleProducts).map((product: any, index: number) => (
                   <div key={product.id} className="flex mb-4 border-b pb-4">
                     <img
-                      src={product?.bien_the_san_pham?.san_pham?.anh_san_pham}
-                      alt="Product"
+                      src={
+                        product?.bien_the_san_pham?.anh_bien_the?.length > 0
+                          ? product?.bien_the_san_pham?.anh_bien_the[0]?.duong_dan_anh
+                          : ""
+                      }
+                      alt={product?.bien_the_san_pham?.san_pham?.ten_san_pham || "Ảnh sản phẩm"}
                       className="w-20 h-20 md:w-24 md:h-28 object-cover rounded mr-4"
                     />
                     <div className="flex flex-col justify-between w-full">
@@ -231,7 +257,20 @@ const ReturnOrderDetail = ({ record }: any) => {
                       </div>
                     </div>
                   </div>
-                ))}
+                 ))
+                ) : (
+                  <p>Loading...</p>
+                )}
+                {visibleProducts < products.length && (
+                  <div className="flex  ">
+                    <div
+                      onClick={handleLoadMore}
+                      className="font-bold"
+                    >
+                      <i className="fa-solid fa-share"></i> Xem thêm chi tiết
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="w-full md:w-1/4 flex flex-col items-end space-y-2 p-4">
                 <div>

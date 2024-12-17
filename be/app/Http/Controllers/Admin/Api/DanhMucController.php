@@ -8,6 +8,7 @@ use App\Models\DanhMuc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DanhMucController extends Controller
@@ -69,37 +70,43 @@ class DanhMucController extends Controller
     {
         try {
             DB::beginTransaction();
+    
             $validateDanhMuc = $request->validate([
-                'ten_danh_muc' => 'required|max:255',
+                'ten_danh_muc' => [
+                    'required', 
+                    'max:255', 
+                    Rule::unique('danh_mucs', 'ten_danh_muc')
+                ],
                 'cha_id' => 'nullable',
                 'anh_danh_muc' => 'nullable',
                 'duong_dan' => 'nullable',
-
             ]);
-
+    
             $validateDanhMuc['anh_danh_muc'] = $request->anh_danh_muc;
             $validateDanhMuc['duong_dan'] = Str::slug($validateDanhMuc['ten_danh_muc']);
+    
             $danhMuc = DanhMuc::create($validateDanhMuc);
+    
             DB::commit();
-            return response()->json(
-                [
-                    'status' => true,
-                    'status_code' => 200,
-                    'message' => 'Danh mục đã được thêm thành công',
-                    'data' => $danhMuc,
-                ],
-                200
-            );
+    
+            return response()->json([
+                'status' => true,
+                'status_code' => 200,
+                'message' => 'Danh mục đã được thêm thành công',
+                'data' => $danhMuc,
+            ], 200);
         } catch (\Exception $exception) {
             DB::rollBack();
+    
             return response()->json([
                 'status' => false,
                 'status_code' => 500,
                 'message' => 'Đã có lỗi xảy ra khi thêm danh mục',
-                'error' => $exception->getMessage()
+                'error' => $exception->getMessage(),
             ], 500);
         }
     }
+    
 
     /**
      * Display the specified resource.
