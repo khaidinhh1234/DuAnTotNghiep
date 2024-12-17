@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Form, Input, Select, Upload, message, DatePicker, TreeSelect, Col, Row } from "antd";
+import { Button, Form, Input, Select, Upload, message, DatePicker, Col, Row } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from 'moment';
 
@@ -41,7 +41,6 @@ const ChuongTrinhUuDaiAdd: React.FC = () => {
   const nav = useNavigate();
   const [availableProducts, setAvailableProducts] = useState<ISanPham[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
-  const [categories, setCategories] = useState<IDanhMuc[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ISanPham[]>([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
 
@@ -52,7 +51,7 @@ const ChuongTrinhUuDaiAdd: React.FC = () => {
       return response.data;
     },
   });
-
+console.log(availableProductsData);
 
 
 
@@ -105,24 +104,13 @@ const ChuongTrinhUuDaiAdd: React.FC = () => {
     }
     return childCategories;
   };
-
-  const handleCategoryChange = (selectedCategories: string[]) => {
-    if (selectedCategories.length === 0) {
-      setFilteredProducts(availableProducts);
-    } else {
-      const allSelectedCategories = selectedCategories.flatMap(catId => {
-        const category = categories.find(cat => cat.id.toString() === catId);
-        return category ? getAllChildCategories(category) : [catId];
-      });
-
-      const filtered = availableProducts.filter(product => 
-        allSelectedCategories.includes(product.danh_muc_id.toString())
-      );
-      setFilteredProducts(filtered);
+  useEffect(() => {
+    if (availableProductsData?.data) {
+      setAvailableProducts(availableProductsData.data);
+      setFilteredProducts(availableProductsData.data);
     }
-    setSelectedProducts([]);
-    setIsAllSelected(false);
-  };
+  }, [availableProductsData]);
+
 
   const renderTreeNodes = (data: IDanhMuc[]): { title: string; value: string; children: any[] }[] => 
     data.map((item): { title: string; value: string; children: any[] } => ({
@@ -278,7 +266,7 @@ const ChuongTrinhUuDaiAdd: React.FC = () => {
                   >
                     <Select placeholder="Chọn loại ưu đãi" style={{ width: 610 }}>
                       <Select.Option value="phan_tram">Phần trăm</Select.Option>
-                      <Select.Option value="tien">Tiền</Select.Option>
+                      {/* <Select.Option value="tien">Tiền</Select.Option> */}
                     </Select>
                   </Form.Item>
                   <Form.Item

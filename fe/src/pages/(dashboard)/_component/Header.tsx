@@ -13,6 +13,8 @@ import {
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Notifications from "./Notifications";
+import instance from "@/configs/admin";
+import { useQuery } from "@tanstack/react-query";
 
 const Header = () => {
   const [user] = useLocalStorage("user" as any, {});
@@ -21,6 +23,8 @@ const Header = () => {
     user?.user?.vai_tros?.map((item: any) => item.ten_vai_tro) || [];
   const ten = user?.user?.ho + " " + user?.user?.ten;
   const anh = user?.user?.anh_nguoi_dung;
+  const id = user?.user?.id;
+
   const nav = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -31,7 +35,19 @@ const Header = () => {
     // setUser(null);
   };
   const [unreadCount, setUnreadCount] = useState(0);
-
+  const { data } = useQuery({
+    queryKey: ["taikhoanid"],
+    queryFn: async () => {
+      try {
+        const res = await instance.get(`/taikhoan/${id}`);
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
+  console.log(data);
+  const profile = data?.data;
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b bg-white px-4 lg:h-[60px] lg:px-6">
       <div className="w-full flex-1">
@@ -79,7 +95,7 @@ const Header = () => {
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" size="icon" className="rounded-full">
             <img
-              src={anh}
+              src={profile?.tai_khoan?.anh_nguoi_dung || anh}
               alt={anh}
               className="w-[30px] h-[30px] rounded-full"
             />
