@@ -367,6 +367,12 @@ const AddVoucher = () => {
                       ]}
                     >
                       <DatePicker
+                        disabledDate={(current) => {
+                          // Disable các ngày đã qua
+                          return (
+                            current && current.isBefore(dayjs().startOf("day"))
+                          );
+                        }}
                         onChange={(date) => {
                           setDisplayDates((prev) => ({
                             ...prev,
@@ -401,7 +407,9 @@ const AddVoucher = () => {
                             }
                             if (value.diff(startDate, "day") > 365) {
                               return Promise.reject(
-                                new Error(" không quá 365 ngày!")
+                                new Error(
+                                  "Ngày kết thúc không được cách ngày bắt đầu quá 365 ngày!"
+                                )
                               );
                             }
                             return Promise.resolve();
@@ -410,6 +418,15 @@ const AddVoucher = () => {
                       ]}
                     >
                       <DatePicker
+                        disabledDate={(current) => {
+                          const startDate = form.getFieldValue("ngay_bat_dau"); // Lấy ngày bắt đầu từ form
+                          // Disable ngày thấp hơn ngày bắt đầu hoặc ngày đã qua
+                          return (
+                            current &&
+                            (current.isBefore(dayjs().startOf("day")) || // Chặn các ngày đã qua
+                              (startDate && current.isBefore(startDate, "day"))) // Chặn ngày trước ngày bắt đầu
+                          );
+                        }}
                         onChange={(date) => {
                           setDisplayDates((prev) => ({
                             ...prev,
@@ -440,35 +457,18 @@ const AddVoucher = () => {
                               value.isBefore(
                                 startDate.subtract(7, "day"),
                                 "day"
-                              ) ||
-                              value.isAfter(startDate, "day")
+                              )
                             ) {
                               return Promise.reject(
                                 new Error(
-                                  "Ngày bắt đầu sưu tầm có thể 7 ngày trước ngày bắt đầu khuyến mãi!"
+                                  "Ngày bắt đầu sưu tầm không quá 7 ngày ngày bắt đầu!"
                                 )
                               );
                             }
-                            return Promise.resolve();
-                          },
-                        }),
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            const startDate = getFieldValue("ngay_bat_dau");
-                            const endDate = getFieldValue("ngay_ket_thuc");
-                            if (!value || !startDate || !endDate) {
-                              return Promise.resolve();
-                            }
-                            if (
-                              value.isBefore(
-                                startDate.subtract(7, "day"),
-                                "day"
-                              ) ||
-                              value.isAfter(endDate, "day")
-                            ) {
+                            if (value.isAfter(endDate, "day")) {
                               return Promise.reject(
                                 new Error(
-                                  "Ngày bắt đầu sưu tầm không vượt quá ngày kết thúc!"
+                                  "Ngày bắt đầu sưu tầm không được sau ngày kết thúc!"
                                 )
                               );
                             }
@@ -570,7 +570,7 @@ const AddVoucher = () => {
                               mode="multiple"
                               allowClear
                               style={{ width: "100%" }}
-                              placeholder="Please select"
+                              placeholder="Vui lòng chọn"
                               value={selectedValues1}
                               onChange={handleChange1}
                               // onSearch={handleSearch1}
@@ -873,7 +873,7 @@ const AddVoucher = () => {
                   <Form.Item
                     label="Hạng thành viên  (áp dụng )
 "
-                    name="hang_thanh_vien"
+                    name="hang_thanh_viens"
                     rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
                     className="mb-0 w-[150%]"
                   >

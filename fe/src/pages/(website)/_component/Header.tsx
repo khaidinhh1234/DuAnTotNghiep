@@ -255,11 +255,7 @@ const Header = () => {
     queryKey: ["cart", access_token],
     queryFn: async () => {
       try {
-        const response = await instanceClient.get(`/gio-hang`, {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        });
+        const response = await instanceClient.get(`/gio-hang`);
         return response.data;
       } catch (error) {
         throw new Error("Error fetching cart data");
@@ -295,6 +291,10 @@ const Header = () => {
       path: "/shop/tre-em",
     },
     {
+      name: "Bài viết",
+      path: "/blog",
+    },
+    {
       name: "Khuyến mãi",
       path: "/vourcher",
     },
@@ -320,9 +320,8 @@ const Header = () => {
       <div className="bg-white w-full">
         {/* Add the corresponding closing tag for this div */}
         <div
-          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${
-            menu ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`fixed top-0 left-0 w-full h-screen z-20 transition-transform duration-300 ease-in-out ${menu ? "translate-x-0" : "-translate-x-full"
+            }`}
           style={{
             backgroundColor: menu ? "rgba(0, 0, 0, 0.4)" : "transparent",
           }}
@@ -510,11 +509,10 @@ const Header = () => {
                 </i>
 
                 <div
-                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${
-                    showNotifications
+                  className={`absolute -right-2 px-2 mt-2 z-50 transition-opacity duration-300 ${showNotifications
                       ? "opacity-100"
                       : "opacity-0 pointer-events-none"
-                  }`}
+                    }`}
                 >
                   <Notifications onUnreadCountChange={setUnreadCount} />
                 </div>
@@ -528,9 +526,8 @@ const Header = () => {
                 <Link to="/gio-hang" onClick={handleCart}>
                   <i className="fa-regular fa-bag-shopping text-xl relative px-1">
                     <span
-                      className={`${
-                        menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                      } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
+                      className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                        } -bottom-1 right-0 w-4 h-4 px-1 py-1 text-[10px] bg-red-500 rounded-full absolute text-white flex items-center justify-center`}
                     >
                       {data1?.tong_so_luong > 99
                         ? "+99"
@@ -635,9 +632,8 @@ const Header = () => {
               ) : (
                 <Link to="/login">
                   <button
-                    className={`${
-                      menu == true ? "bg-opacity-60 text-opacity-60" : ""
-                    } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
+                    className={`${menu == true ? "bg-opacity-60 text-opacity-60" : ""
+                      } bg-blackL border-black shadow-lg shadow-slate-600/50 hover:text-black hover:border-0 hover:bg-white text-white lg:px-6 lg:py-3 px-2 py-2 lg:rounded-xl rounded-lg text-lg font-medium`}
                   >
                     Đăng nhập
                   </button>

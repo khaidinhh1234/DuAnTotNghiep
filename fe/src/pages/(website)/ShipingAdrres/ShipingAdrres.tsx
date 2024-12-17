@@ -100,7 +100,6 @@ const ShippingAddressPage = () => {
             "payment/momo",
             momoPaymentData
           );
-
           if (response.data && response.data.payUrl) {
             window.location.href = response.data.payUrl; // Chuyển hướng người dùng đến giao diện thanh toán của MoMo
             if (response.status === 200) {
@@ -110,13 +109,12 @@ const ShippingAddressPage = () => {
           }
         } else if (trangthai === "Thanh toán khi nhận hàng") {
           toast.success("Đặt hàng thành công");
-          nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`); // Chuyển hướng người dùng đến trang cảm ơn
+          nav(`/thankyou?orderId=${order.data.data.ma_don_hang}&resultCode=0`);
         } else {
           nav("/mypro/myorder/");
           message.error("Đặt hàng thất bại");
           throw new Error("Error during order creation or MoMo payment");
         }
-
         return order.data;
       } catch (error) {
         // console.log(error);
@@ -127,6 +125,8 @@ const ShippingAddressPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+
       // message.success("Đặt hàng thành công");
     },
   });
@@ -144,8 +144,11 @@ const ShippingAddressPage = () => {
     );
     if (isDataComplete) {
       // Gọi hàm mutate với dữ liệu đã kết hợp
-
-      mutate({ ...formData, macode, phuong_thuc_thanh_toan: trangthai });
+      mutate({
+        ...formData,
+        ...(macode && { ma_giam_gia: macode }),
+        phuong_thuc_thanh_toan: trangthai,
+      });
       reset(); // Reset form sau khi gửi dữ liệu
     } else {
       console.log("Dữ liệu chưa đầy đủ");

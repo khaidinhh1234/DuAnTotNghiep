@@ -104,7 +104,7 @@ const ListMyProfile = () => {
         <div className="flex flex-col md:flex-row gap-5 items-center">
           <div className="relative">
             <Avatar
-              src={userpro.anh_nguoi_dung || avatarImage || url}
+              src={userpro?.anh_nguoi_dung || avatarImage || url}
               size={100}
               className="border-4 border-white shadow-lg bg-top bg-no-repeat"
             />

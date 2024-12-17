@@ -4,13 +4,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import View from "../../_component/View";
 import Product from "../../_component/Product";
-const ProductsListDM = ({
-  products,
-
-  // isPending,
-  // data,
-  // onPage,
-}: any) => {
+const ProductsListDM = ({ products = [] }: any) => {
+  const [visibleProducts, setVisibleProducts] = useState(9);  
   const [hoveredProductId, setHoveredProductId] = useState<number | null>(null);
   const [hoveredVariantIndex, setHoveredVariantIndex] = useState<number | null>(
     null
@@ -23,6 +18,9 @@ const ProductsListDM = ({
   // const handleWishlist = (id: any) => {
   //   Wishlist(id) as any;
   // };
+  const handleLoadMore = () => {
+    setVisibleProducts((prev) => prev + 9); // Hiển thị thêm 9 sản phẩm mỗi lần
+  };
   return (
     <>
       <div className="flex justify-between sm:items-center items-start mb-4  overflow-hidden">
@@ -39,7 +37,8 @@ const ProductsListDM = ({
         <div className="container">
           <div className="grid grid-cols-9 justify-center lg:gap-20 gap-14 mx-auto">
             {products && products.length !== 0 ? (
-              products.map((product: any, index: any) => (
+              products.slice(0, visibleProducts).map((product: any, index: any) => (
+              // products.map((product: any, index: any) => (
                 <div
                   className="xl:col-span-3 lg:col-span-4 col-span-12 md:col-span-6  lg:w-[300px] w-[350px] mx-auto lg:mx-0"
                   key={index}
@@ -78,6 +77,16 @@ const ProductsListDM = ({
         <button onClick={() => fetchNextPage()}>Tải thêm đơn hàng</button>
       )} */}
           {/* </div> */}
+          {visibleProducts < products.length && (
+            <div className="flex justify-center mt-10">
+              <button
+                onClick={handleLoadMore}
+                className="px-10 py-3 mt-4 btn-black rounded-lg mb-4 font-semibold transition duration-200"
+              >
+                Xem thêm <i className="fa-solid fa-chevron-down"></i>
+              </button>
+            </div>
+          )}
         </div>
       </section>
     </>

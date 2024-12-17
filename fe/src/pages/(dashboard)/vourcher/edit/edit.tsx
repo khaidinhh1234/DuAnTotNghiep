@@ -55,13 +55,31 @@ const EditVoucher = () => {
     },
   });
   console.log("voucherid", voucherid);
-  const hang_thanh_viens = voucherid?.data?.hang_thanh_viens.map(
-    (item: any) => ({
-      value: item.ten_hang_thanh_vien,
-      label: item.ten_hang_thanh_vien,
-    })
-  );
+  // const hang_thanh_viens =
+  //   voucherid?.data?.hang_thanh_viens.map((item: any) => ({
+  //     value: item.ten_hang_thanh_vien,
+  //     label: item.ten_hang_thanh_vien,
+  //   })) || [];
+
+  console.log("hang_thanh_viens", voucherid?.data?.hang_thanh_viens);
+  useEffect(() => {
+    if (voucherid) {
+      const hang_thanh_viens =
+        voucherid?.data?.hang_thanh_viens.map((item: any) => ({
+          value: item.ten_hang_thanh_vien,
+          label: item.ten_hang_thanh_vien,
+        })) || [];
+      form.setFieldsValue({
+        ...voucherid?.data,
+        hang_thanh_viens: hang_thanh_viens.map((item: anyany) => item.value),
+        ngay_bat_dau: dayjs(voucherid?.data?.ngay_bat_dau),
+        ngay_ket_thuc: dayjs(voucherid?.data?.ngay_ket_thuc),
+        ngay_bat_dau_suu_tam: dayjs(voucherid?.data?.ngay_bat_dau_suu_tam),
+      });
+    }
+  }, [voucherid, form]);
   // console.log("hang_thanh_viens", hang_thanh_viens);
+
   const { mutate } = useMutation({
     // mutationKey: "createVoucher",
     mutationFn: async (values: any) => {
@@ -840,24 +858,24 @@ const EditVoucher = () => {
                     />
                   </Form.Item>{" "}
                   <Form.Item
-                    label="Hạng thành viên  (áp dụng )
-"
-                    name="hang_thanh_vien"
-                    initialValue={voucherid?.data?.hang_thanh_vien}
-                    // rules={[{ required: true, message: "Bắt buộc phải điền!" }]}
+                    label="Hạng thành viên (áp dụng)"
+                    name="hang_thanh_viens"
                     className="mb-0 w-[150%]"
                   >
                     <Select
                       mode="multiple"
                       allowClear
                       style={{ width: "40%" }}
-                      placeholder="Please select"
+                      placeholder="Hạng thành viên"
                       disabled
-                      defaultValue={hang_thanh_viens}
-                      onChange={handleChange2}
-                      options={hang_thanh_viens}
+                      options={
+                        voucherid?.data?.hang_thanh_viens?.map((item: any) => ({
+                          value: item.ten_hang_thanh_vien,
+                          label: item.ten_hang_thanh_vien,
+                        })) || []
+                      }
                     />
-                  </Form.Item>{" "}
+                  </Form.Item>
                   <div className="flex gap-2 ">
                     <Form.Item className=" flex whitespace-nowrap">
                       <Link to={"/admin/vouchers"}>

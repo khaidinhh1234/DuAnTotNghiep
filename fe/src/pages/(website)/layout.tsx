@@ -12,7 +12,7 @@ const Layout = () => {
       <Outlet />
       
       {/* Tuyết rơi xuyên suốt màn hình */}
-      <div className="fixed top-0 left-0 right-0 bottom-0 z-50 pointer-events-none overflow-hidden">
+      {/* <div className="fixed top-0 left-0 right-0 bottom-0 z-50 pointer-events-none overflow-hidden">
         {[...Array(30)].map((_, index) => (
           <div
             key={index}
@@ -27,7 +27,7 @@ const Layout = () => {
            <i className="fa-regular fa-snowflake"></i>
           </div>
         ))}
-      </div>
+      </div> */}
 
       <Footer />
     </div>

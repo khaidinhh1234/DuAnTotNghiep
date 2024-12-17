@@ -57,7 +57,7 @@ class MaKhuyenMaiController extends Controller
             'giam_toi_da' => 'nullable|numeric',
             'khuyen_mai_san_pham' => 'nullable|array',
             'khuyen_mai_danh_muc' => 'nullable|array',
-            'hang_thanh_vien' => 'required|array',
+            'hang_thanh_viens' => 'required|array',
             'ap_dung_vi' => 'required|in:0,1'
         ]);
 
@@ -109,14 +109,22 @@ class MaKhuyenMaiController extends Controller
             $maKhuyenMai = MaKhuyenMai::create($dataMaKhuyenMai);
 
             if (!empty($dataKhuyenMaiDanhMuc)) {
-                $maKhuyenMai->danhMucs()->sync($dataKhuyenMaiDanhMuc);
+                $allDanhMucIds = [];
+                foreach ($dataKhuyenMaiDanhMuc as $danhMucId) {
+                    $danhMucCon = $this->getAllDanhMucIds([$danhMucId]);
+                    $allDanhMucIds = array_merge($allDanhMucIds, $danhMucCon);
+                }
+
+                $allDanhMucIds = array_unique($allDanhMucIds);
+
+                $maKhuyenMai->danhMucs()->sync($allDanhMucIds);
             } else if (!empty($dataKhuyenMaiSanPham)) {
                 $maKhuyenMai->sanPhams()->sync($dataKhuyenMaiSanPham);
             } else {
                 $maKhuyenMai->sanPhams()->sync(DB::table('san_phams')->pluck('id'));
             }
 
-            $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_vien);
+            $maKhuyenMai->hangThanhViens()->sync($request->hang_thanh_viens);
 
             DB::commit();
 
@@ -162,6 +170,20 @@ class MaKhuyenMaiController extends Controller
         return $result;
     }
 
+
+    private function getAllDanhMucIds($danhMucIds)
+    {
+        $allIds = collect($danhMucIds);
+
+        foreach ($danhMucIds as $danhMucId) {
+            $children = DB::table('danh_mucs')->where('cha_id', $danhMucId)->pluck('id')->toArray();
+            if (!empty($children)) {
+                $allIds = $allIds->merge($this->getAllDanhMucIds($children));
+            }
+        }
+
+        return $allIds->unique()->toArray();
+    }
 
     public function show(string $id)
     {

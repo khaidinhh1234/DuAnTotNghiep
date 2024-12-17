@@ -1,7 +1,4 @@
-import { Bar, BarChart, Rectangle, XAxis } from "recharts";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer } from "@/components/ui/chart";
 import instance from "@/configs/admin";
 import { useQuery } from "@tanstack/react-query";
 
@@ -18,6 +15,8 @@ export default function Chart1() {
     },
   });
   // console.log(data);
+  const result = data?.chenh_lech_phan_tram.toFixed(1);
+  const checkdata = result > 0 ? true : false;
   return (
     <Card className="w-full bg-white">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -33,8 +32,10 @@ export default function Chart1() {
             <div className="font-bold text-green-700">
               {data?.doanh_thu_thang_hien_tai.toLocaleString("vi-VN")} đ
             </div>
-            <span className="text-sm text-muted-foreground text-green-600">
-              +{data?.chenh_lech_phan_tram}%{" "}
+            <span
+              className={`text-sm text-muted-foreground ${checkdata ? "text-green-600" : "text-red-500"} `}
+            >
+              {result ?? 0} %{" "}
               <span className="text-black">so với tháng trước</span>
             </span>
           </div>{" "}

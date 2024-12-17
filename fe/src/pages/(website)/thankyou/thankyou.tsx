@@ -128,7 +128,7 @@ const ThankYouPage = () => {
           )}
         </h2>
         <p className="text-base mb-8 max-w-xl mx-auto leading-relaxed">
-          Cùng Shopee bảo vệ quyền lợi của bạn - Thường xuyên kiểm tra tin nhắn
+          Cùng GlowClowthingGlowClowthing bảo vệ quyền lợi của bạn - Thường xuyên kiểm tra tin nhắn
           từ Người bán tại Glow Chat / Chi nhắn & thanh toán khi đơn mua ở trạng
           thái "Đang giao hàng".
         </p>

@@ -25,7 +25,7 @@ const HomePage = () => {
     staleTime: 1000 * 60,
   });
   const chuong_trinh_uu_dai = data?.chuong_trinh_uu_dai || [];
-  // console.log(chuong_trinh_uu_dai);
+  console.log(chuong_trinh_uu_dai);
   const danhgia = data?.danh_gia_khach_hang || [];
 
   const banner = data?.banner?.banner || [];

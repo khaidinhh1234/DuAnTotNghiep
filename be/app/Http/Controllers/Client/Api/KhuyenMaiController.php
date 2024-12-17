@@ -34,12 +34,13 @@ class KhuyenMaiController extends Controller
                 ->where('nguoi_dung_ma_khuyen_mai.user_id', $user->id)
                 ->where('ma_khuyen_mais.ngay_bat_dau', '<=', $currentDate)
                 ->where('ma_khuyen_mais.ngay_ket_thuc', '>=', $currentDate)
-                ->where('trang_thai', 1)
+                ->where('ma_khuyen_mais.trang_thai', 1)
+                ->where('nguoi_dung_ma_khuyen_mai.da_su_dung', 0)
+                ->where('nguoi_dung_ma_khuyen_mai.da_su_dung', 0)
                 ->select(
                     'ma_khuyen_mais.*',
                     'nguoi_dung_ma_khuyen_mai.da_su_dung',
                     'nguoi_dung_ma_khuyen_mai.ngay_su_dung',
-                    DB::raw("IF(nguoi_dung_ma_khuyen_mai.da_su_dung, 'Đã sử dụng', 'Chưa sử dụng') as trang_thai_su_dung")
                 )
                 ->get();
 
@@ -269,14 +270,6 @@ class KhuyenMaiController extends Controller
     public function danhSachMaKhuyenMaiTheoSanPhamGioHang(Request $request)
     {
         try {
-//            $dataApDungVi = [];
-//
-//            if ($request->ap_dung_vi == 1) {
-//                $dataApDungVi = [0, 1];
-//            } else {
-//                $dataApDungVi = [0];
-//            }
-
             $user = $request->user();
             if (!$user) {
                 return response()->json(['status' => false, 'message' => 'Bạn cần đăng nhập để xem mã khuyến mãi.'], 401);
@@ -303,12 +296,6 @@ class KhuyenMaiController extends Controller
             $sanPhamIds = $sanPhamGioHang->pluck('san_pham_id')->toArray();
             $danhMucIds = $sanPhamGioHang->pluck('danh_muc_id')->unique()->toArray();
 
-            $danhMucIdsWithSubCategories = [];
-            foreach ($danhMucIds as $id) {
-                $danhMucIdsWithSubCategories = array_merge($danhMucIdsWithSubCategories, $this->getDanhMucHierarchy($id));
-            }
-            $danhMucIdsWithSubCategories = array_unique($danhMucIdsWithSubCategories);
-
             $query = MaKhuyenMai::query()
                 ->join('nguoi_dung_ma_khuyen_mai', 'ma_khuyen_mais.id', '=', 'nguoi_dung_ma_khuyen_mai.ma_khuyen_mai_id') // Thực hiện JOIN với bảng nguoi_dung_ma_khuyen_mai
                 ->where('ma_khuyen_mais.trang_thai', 1)
@@ -323,7 +310,7 @@ class KhuyenMaiController extends Controller
                 $query->where('ma_code', 'LIKE', '%' . $request->ma_code . '%');
             }
 
-            $maKhuyenMai = $query->get()->map(function ($ma) use ($request, $sanPhamIds, $danhMucIdsWithSubCategories, $tongGiaTriGioHang) {
+            $maKhuyenMai = $query->get()->map(function ($ma) use ($request, $sanPhamIds, $danhMucIds, $tongGiaTriGioHang) {
                 $apDung = true;
                 $errorMessages = [];
                 $soTienGiamGia = 0;
@@ -339,17 +326,16 @@ class KhuyenMaiController extends Controller
                 }
 
                 $sanPhamKhongApDung = $ma->sanPhams()->whereIn('id', $sanPhamIds)->doesntExist();
-                $danhMucKhongApDung = $ma->danhMucs()->whereIn('id', $danhMucIdsWithSubCategories)->doesntExist();
-
-                if ($sanPhamKhongApDung && $danhMucKhongApDung) {
+                $danhMucKhongApDung = $ma->danhMucs()->whereIn('id', $danhMucIds)->doesntExist();
+                if ($sanPhamKhongApDung === true && $danhMucKhongApDung === true) {
                     $apDung = false;
                     $errorMessages[] = 'Mã khuyến mãi không áp dụng cho sản phẩm hoặc danh mục trong giỏ hàng.';
                 }
 
                 if ($apDung) {
                     $soTienGiamGia = $ma->loai === 'phan_tram'
-                        ? ($tongGiaTriGioHang * $ma->giam_gia / 100)
-                        : $ma->giam_gia;
+                        ? min($tongGiaTriGioHang * $ma->giam_gia / 100, $ma->giam_toi_da)
+                            : $ma->giam_gia;
 
                     if ($soTienGiamGia > $tongGiaTriGioHang) {
                         $soTienGiamGia = $tongGiaTriGioHang;

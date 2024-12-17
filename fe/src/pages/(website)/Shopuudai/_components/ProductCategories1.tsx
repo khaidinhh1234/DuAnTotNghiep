@@ -21,7 +21,7 @@ const ProductCategories = ({ handleWishlist, isPending }: any) => {
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
-    queryKey: ["PRODUCTSLOC", slug],
+    queryKey: ["PRODUCTS_KEY", slug],
     queryFn: async () => {
       const response = await instanceClient.post(
         `chuong-trinh-uu-dai/${slug}`,
@@ -53,7 +53,7 @@ console.log(data)
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["PRODUCTSLOC"], data);
+      queryClient.setQueryData(["PRODUCTS_KEY"], data);
     },
   });
 

@@ -41,7 +41,7 @@ const MyOrderdetail = () => {
   const handleDanhgia = () => {
     setDanhgia(true);
   };
-  // console.log("Data:", data);
+  console.log("Data:", data);
   const chitiet = data?.data;
   // console.log(chitiet);
   // const chitietsanpham = data?.data?.don_hang;
@@ -630,15 +630,15 @@ const MyOrderdetail = () => {
                   "vn-VN"
                 )}
               </p>
-              <p>Tiết kiệm</p>{" "}
+              {/* <p>Tiết kiệm</p>{" "}
               <p className="md:hidden">
                 ₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}
-              </p>
+              </p> */}
               <p>Phí vận chuyển</p>{" "}
               <p className="md:hidden">
                 ₫
                 {chitiet?.tien_ship !== 0
-                  ? (chitiet?.tien_ship ?? "Miễn Phí Ship")
+                  ? (chitiet?.tien_ship?.toLocaleString() ?? "Miễn Phí Ship")
                   : "Miễn Phí Ship"}
               </p>
               <p>Mã khuyến mãi từ GLOW</p>{" "}
@@ -654,16 +654,11 @@ const MyOrderdetail = () => {
               </p>
             </div>
             <div className="text-right hidden md:block">
-              <p>
-                ₫
-                {(chitiet?.tong_thanh_tien_san_pham ?? 0).toLocaleString(
-                  "vn-VN"
-                )}
-              </p>
-              <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p>
+              <p>₫{(chitiet?.tong_tien ?? 0).toLocaleString("vn-VN")}</p>
+              {/* <p>₫{(chitiet?.tiet_kiem ?? 0).toLocaleString("vn-VN")}</p> */}
               <p>
                 {chitiet?.tien_ship !== 0
-                  ? (chitiet?.tien_ship ?? "Miễn Phí Ship")
+                  ? "₫" + chitiet?.tien_ship?.toLocaleString()
                   : "Miễn Phí Ship"}
               </p>
               <p>₫{(chitiet?.so_tien_giam_gia ?? 0).toLocaleString("vn-VN")}</p>

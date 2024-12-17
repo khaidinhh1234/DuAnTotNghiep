@@ -35,6 +35,14 @@ const Hoadon = ({ record, products, tong }: any) => {
 
     return `${prefix}-${middleNumbers}-${suffixNumbers}-${randomLetter1}${randomLetter2}${randomLetter3}`;
   };
+  const { data: bill } = useQuery({
+    queryKey: ["SHIPPER"],
+    queryFn: async () => {
+      const response = await instance.get(`/donhang/${record.id}/bill`);
+      return response.data;
+    },
+  });
+  console.log("sdfhu", bill);
 
   const { data } = useQuery({
     queryKey: ["SHIPPER"],
