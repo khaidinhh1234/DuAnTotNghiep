@@ -21,7 +21,7 @@ export function LayoutAdmin() {
         {/* Sidebar */}
         <Sider
           width={320}
-          className="bg-white text-white h-screen overflow-y-auto"
+          className="bg-white text-white h-screen overflow-y-auto "
           style={{
             position: "fixed", // Sidebar cố định
             left: 0, // Căn lề trái

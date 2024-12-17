@@ -9,7 +9,6 @@ import Pusher from "pusher-js";
 import Snowfall from "react-snowfall";
 import { ToastContainer } from "react-toastify";
 
-
 const notificationSoundUrl = "/explosion-42132.mp3";
 
 const Banner = ({ notifications = [], onDelete }) => {
@@ -29,7 +28,7 @@ const Banner = ({ notifications = [], onDelete }) => {
         backgroundColor: "#ffffff",
         color: "#000000",
         padding: "10px 15px",
-        zIndex: 1000,
+        zIndex: 2000,
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         borderRadius: "8px",
         display: notificationList.length > 0 ? "block" : "none",
@@ -165,10 +164,9 @@ function App() {
       prev.filter((notification) => notification.id !== id)
     );
   };
-  
+
   return (
     <>
-    
       <Banner notifications={notifications} onDelete={handleDelete} />
       <Router />
 
